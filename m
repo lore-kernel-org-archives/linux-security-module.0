@@ -2,150 +2,168 @@ Return-Path: <SRS0=QYhf=SU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85BBFC282DA
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 00:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B80C282DA
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 00:17:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 434A8214DA
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 00:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555545685;
-	bh=BN1ZZXdzmYfqgnAQ5ZzEyFPan2Z6Qebjaw9X+M6aDOU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=YS6x2d3cbOCZ9rRAx2F+Yv/4RTfdDU1ONXuNI7EIIBWio4UsvKZx3xDIli4D8IJ6/
-	 p6xdB/7wBK52HB3ZUpDCfR6QE/c9gLLUpWdYUDtyA/q0AtxiUDMxB1p8uMdtBBNrCZ
-	 tdluIt0gLL05JAP/en3KhBW9iJHv8rWzrWFohN8w=
+	by mail.kernel.org (Postfix) with ESMTP id A22C12183E
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 00:17:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733211AbfDRABY (ORCPT
+        id S2387586AbfDRARV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 20:01:24 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39234 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728268AbfDRABY (ORCPT
+        Wed, 17 Apr 2019 20:17:21 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50684 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730037AbfDRARV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 20:01:24 -0400
-Received: by mail-lj1-f195.google.com with SMTP id l7so272891ljg.6
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 17:01:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+kn5mtINPt4na060bar/tC0RHNfqAb7J/PmuZQ0Dyi8=;
-        b=IBLCLtPuOlIJGx6ETpn93rimEqBz5Au/0GjooFZAo0KIJTxoTsJPz413yAtvfmWoXY
-         BqvjzirjujDpTm8Z8RGtzbE47EZiPUSxIfegDrH1aTumTX5oM8C5bVyiexfx7ifgxxPB
-         UMawmkwQ/X7ZweYBYxIOjMj+Jba1Zio7Xb4vw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+kn5mtINPt4na060bar/tC0RHNfqAb7J/PmuZQ0Dyi8=;
-        b=YO8HwqJBIGW6pVSgoY3VDAyTXRTmigkLGOvjvOCSQKifIrlrvyfNzplQ5WwNc1vq9L
-         Cc2ZAVweZ5pKIqHSX0yZS00c+350iRFKcoGgneyaBL8rq78ISKqK5cqU9zHA5WUeFzsn
-         fDmkQGnftvbkLkjflGR0nLUiRyC8l29qlyZhbjPszEk+A0LUsiMLNYMFdpugku4spqfD
-         9UvEuvJTeyWo/csxCkKnIqRW7lgwL2OE7G7VlwVRczvuII4gV2N7qjcLKp1ix/QeKRzd
-         JrgkUASfFahdOuaDdO+iKI0ABdEJxN4lvQRieC35kMJ3P4GADAPy0zAi5s16vojEcdvv
-         pn5A==
-X-Gm-Message-State: APjAAAU6ElPMPXu5AqAWaKwRiD3pxO88W2lW+w+M3NEKLZ09juKjzTxR
-        IV21iXJjGmLIiwSLgGWgnQ7bDgwDwa4=
-X-Google-Smtp-Source: APXvYqwf1837kmunaqaZXlWezC70OzcU1xs0YWxBPfCDAjtbFnc2DflbhPQ6U+TgSO3egzBjmA2aAA==
-X-Received: by 2002:a2e:9151:: with SMTP id q17mr6793789ljg.87.1555545681674;
-        Wed, 17 Apr 2019 17:01:21 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id v21sm82722lfg.26.2019.04.17.17.01.21
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Apr 2019 17:01:21 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id v22so260519lje.9
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 17:01:21 -0700 (PDT)
-X-Received: by 2002:a2e:5dd2:: with SMTP id v79mr48356924lje.22.1555545190479;
- Wed, 17 Apr 2019 16:53:10 -0700 (PDT)
+        Wed, 17 Apr 2019 20:17:21 -0400
+Received: from static-50-53-47-167.bvtn.or.frontiernet.net ([50.53.47.167] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1hGujs-0007hi-AD; Thu, 18 Apr 2019 00:17:16 +0000
+Subject: Re: kernel BUG at kernel/cred.c:434!
+To:     Paul Moore <paul@paul-moore.com>, Oleg Nesterov <oleg@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     "chengjian (D)" <cj.chengjian@huawei.com>,
+        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
+        Li Bin <huawei.libin@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SELinux <selinux@vger.kernel.org>,
+        Yang Yingliang <yangyingliang@huawei.com>
+References: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
+ <20190415134331.GC22204@redhat.com>
+ <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
+ <20190415150520.GA13257@redhat.com>
+ <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
+ <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
+ <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
+ <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
+ <20190417145711.GI32622@redhat.com>
+ <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
+ <20190417162723.GK32622@redhat.com>
+ <CAHC9VhT_nk1jmrTj3W=F+1gP1vU3iZsZ=UGOCwdiBLbUsOc9=w@mail.gmail.com>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <d994da06-7f34-e275-3e89-b46192660b99@canonical.com>
+Date:   Wed, 17 Apr 2019 17:17:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <cover.1554248001.git.khalid.aziz@oracle.com> <f1ac3700970365fb979533294774af0b0dd84b3b.1554248002.git.khalid.aziz@oracle.com>
- <20190417161042.GA43453@gmail.com> <e16c1d73-d361-d9c7-5b8e-c495318c2509@oracle.com>
- <20190417170918.GA68678@gmail.com> <56A175F6-E5DA-4BBD-B244-53B786F27B7F@gmail.com>
- <20190417172632.GA95485@gmail.com> <063753CC-5D83-4789-B594-019048DE22D9@gmail.com>
- <alpine.DEB.2.21.1904172317460.3174@nanos.tec.linutronix.de>
- <CAHk-=wgBMg9P-nYQR2pS0XwVdikPCBqLsMFqR9nk=wSmAd4_5g@mail.gmail.com> <alpine.DEB.2.21.1904180129000.3174@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1904180129000.3174@nanos.tec.linutronix.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 17 Apr 2019 16:52:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whUwOjFW6RjHVM8kNOv1QVLJuHj2Dda0=mpLPdJ1UyatQ@mail.gmail.com>
-Message-ID: <CAHk-=whUwOjFW6RjHVM8kNOv1QVLJuHj2Dda0=mpLPdJ1UyatQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
- Ownership (XPFO)
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Nadav Amit <nadav.amit@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>, juergh@gmail.com,
-        Tycho Andersen <tycho@tycho.ws>, jsteckli@amazon.de,
-        Kees Cook <keescook@google.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        Tyler Hicks <tyhicks@canonical.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Jon Masters <jcm@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        iommu <iommu@lists.linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Khalid Aziz <khalid@gonehiking.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Dave Hansen <dave@sr71.net>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHC9VhT_nk1jmrTj3W=F+1gP1vU3iZsZ=UGOCwdiBLbUsOc9=w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 17, 2019 at 4:42 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Wed, 17 Apr 2019, Linus Torvalds wrote:
->
-> > With SMEP, user space pages are always NX.
->
-> We talk past each other. The user space page in the ring3 valid virtual
-> address space (non negative) is of course protected by SMEP.
->
-> The attack utilizes the kernel linear mapping of the physical
-> memory. I.e. user space address 0x43210 has a kernel equivalent at
-> 0xfxxxxxxxxxx. So if the attack manages to trick the kernel to that valid
-> kernel address and that is mapped X --> game over. SMEP does not help
-> there.
+On 4/17/19 4:39 PM, Paul Moore wrote:
+> On Wed, Apr 17, 2019 at 12:27 PM Oleg Nesterov <oleg@redhat.com> wrote:
+>> On 04/17, Paul Moore wrote:
+>>>
+>>> On Wed, Apr 17, 2019 at 10:57 AM Oleg Nesterov <oleg@redhat.com> wrote:
+>>>> On 04/17, Paul Moore wrote:
+>>>>>
+>>>>> I'm tempted to simply return an error in selinux_setprocattr() if
+>>>>> the task's credentials are not the same as its real_cred;
+>>>>
+>>>> What about other modules? I have no idea what smack_setprocattr() is,
+>>>> but it too does prepare_creds/commit creds.
+>>>>
+>>>> it seems that the simplest workaround should simply add the additional
+>>>> cred == real_cred into proc_pid_attr_write().
+>>>
+>>> Yes, that is simple, but I worry about what other LSMs might want to
+>>> do.  While I believe failing if the effective creds are not the same
+>>> as the real_creds is okay for SELinux (possibly Smack too), I worry
+>>> about what other LSMs may want to do.  After all,
+>>> proc_pid_attr_write() doesn't change the the creds itself, that is
+>>> something the specific LSMs do.
+>>
+>> Yes, but if proc_pid_attr_write() is called with cred != real_cred then
+>> something is already wrong?
+> 
+> True, or at least I would think so.
+> 
+> Looking at the current tree there are three LSMs which implement
+> setprocattr hooks: SELinux, Smack, and AppArmor.  I know Casey has
+> already mentioned that he wasn't able to trigger the problem in Smack,
+> but looking at smack_setprocattr() I see the similar commit_creds()
+> usage so I would expect the same problem in Smack; what say you Casey?
+>  Looking at apparmor_setprocattr(), it appears that it too could end
+> up calling commit_creds() via aa_set_current_hat().
+> 
+> Since it looks like all three LSMs which implement the setprocattr
+> hook are vulnerable I'm open to the idea that proc_pid_attr_write() is
+> a better choice for the cred != read_cred check, but I would want to
+> make sure John and Casey are okay with that.
+> 
+> John?
 
-Oh, agreed.
+heh yeah,
 
-But that would simply be a kernel bug. We should only map kernel pages
-executable when we have kernel code in them, and we should certainly
-not allow those pages to be mapped writably in user space.
+seems I messed up our check, we actually have
 
-That kind of "executable in kernel, writable in user" would be a
-horrendous and major bug.
+	if (current_cred() != current_real_cred())
+		return -EBUSY;
 
-So i think it's a non-issue.
+on the change_profile path and missed it on the change_hat
+one.
 
-> From the top of my head I'd say this is a non issue as those kernel address
-> space mappings _should_ be NX, but we got bitten by _should_ in the past:)
+It makes sense to lift the check up earlier
 
-I do agree that bugs can happen, obviously, and we might have missed something.
-
-But in the context of XPFO, I would argue (*very* strongly) that the
-likelihood of the above kind of bug is absolutely *miniscule* compared
-to the likelihood that we'd have something wrong in the software
-implementation of XPFO.
-
-So if the argument is "we might have bugs in software", then I think
-that's an argument _against_ XPFO rather than for it.
-
-                Linus
