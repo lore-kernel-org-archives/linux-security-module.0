@@ -2,133 +2,175 @@ Return-Path: <SRS0=QYhf=SU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2E3C10F0E
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 10:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7254C10F0E
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 12:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83555217D7
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 10:53:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE67B2183E
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 12:42:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1555591378;
+	bh=h9qyoCxbFTiFLg18zOHH1LOvqUQw+0hkZKUNirVyBWA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=Sdk4MIK56cbWlyJ87k3h4EC8FhI9ryK1/+f5F3icUvwDHBuelpiPtDnzHl+DLQbit
+	 Vjs/SD39cfPsC8X+2WXElvvpS4cT7QmEPjvqUo7qERAQQnPrPwpLZYmDFN5LyYMRP+
+	 eJoiWJGj7Mm3VhOCJU0RouXysQTU15PHAILvERX4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388623AbfDRKxl (ORCPT
+        id S2388437AbfDRMmn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Apr 2019 06:53:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35696 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388457AbfDRKxk (ORCPT
+        Thu, 18 Apr 2019 08:42:43 -0400
+Received: from casper.infradead.org ([85.118.1.10]:49308 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726162AbfDRMmm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Apr 2019 06:53:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 81F44AE4B;
-        Thu, 18 Apr 2019 10:53:38 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 9B4D81E15AE; Thu, 18 Apr 2019 12:53:35 +0200 (CEST)
-Date:   Thu, 18 Apr 2019 12:53:35 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Subject: Re: fanotify and LSM path hooks
-Message-ID: <20190418105335.GB28541@quack2.suse.cz>
-References: <CAOQ4uxgn=YNj8cJuccx2KqxEVGZy1z3DBVYXrD=Mc7Dc=Je+-w@mail.gmail.com>
- <20190416154513.GB13422@quack2.suse.cz>
- <CAOQ4uxh66kAozqseiEokqM3wDJws7=cnY-aFXH_0515nvsi2-A@mail.gmail.com>
- <20190417113012.GC26435@quack2.suse.cz>
- <CAJfpegsyzYTkUw7rgpQfB0BKqK-LBZh6fBMUO5iq2JHv1youzw@mail.gmail.com>
- <20190417140558.GB15563@quack2.suse.cz>
- <CAJfpegvYnnjv7uoQjL1avx5tO-0H0ZecmVK9Sgk-F1NoW0HAuw@mail.gmail.com>
+        Thu, 18 Apr 2019 08:42:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=FVaqqPnygq1+XAL2fV0XyKGzQwLVOq4vtfOZzXdI+DY=; b=mhYX69b7VKfQqcoKdU0MCUDY48
+        wz7J5q7ip7jfFijvK+A2ZbRvvIroxJe506D3ZMQrb3CoLvm9xyPHHWa/5V6VVBpMznpOnG3TfkBul
+        kz42uT6vbsEoSWFDuxWpELrhXI3brxwrB2rUkFxbS3l/dQ1clL/hYTVu4waRAQlFVAZ3+DkBqFnzm
+        gqZN/EwyZolsR5K1343i6maSxSww63KZgfyNN3MAFzgqy9B9T+AHfzMgzbhHjdvpwUt4XzdVhma0k
+        h/lt7McRzt4geBfeCA+wuguIFyeSB89NrhZTxPp/AqEhMrzdLLhaX7EmpBQ/MpRtZ2kCWwpclFQTQ
+        +L6+vL3A==;
+Received: from 177.132.233.55.dynamic.adsl.gvt.net.br ([177.132.233.55] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hH6N8-0000gI-FO; Thu, 18 Apr 2019 12:42:35 +0000
+Date:   Thu, 18 Apr 2019 09:42:23 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-fbdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-watchdog@vger.kernel.org, xdp-newbies@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, bpf@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-pm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-scsi@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org, dm-devel@redhat.com, target-devel@vger.kernel.org,
+        netdev@vger.kernel.org, kexec@lists.infradead.org,
+        linux-fpga@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        linux-security-module@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Avoiding merge conflicts while adding new docs - Was: Re: [PATCH
+ 00/57] Convert files to ReST
+Message-ID: <20190418091526.00e074d1@coco.lan>
+In-Reply-To: <cover.1555382110.git.mchehab+samsung@kernel.org>
+References: <cover.1555382110.git.mchehab+samsung@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegvYnnjv7uoQjL1avx5tO-0H0ZecmVK9Sgk-F1NoW0HAuw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed 17-04-19 16:14:32, Miklos Szeredi wrote:
-> On Wed, Apr 17, 2019 at 4:06 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Wed 17-04-19 14:14:58, Miklos Szeredi wrote:
-> > > On Wed, Apr 17, 2019 at 1:30 PM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > On Tue 16-04-19 21:24:44, Amir Goldstein wrote:
-> > > > > > I'm not so sure about directory pre-modification hooks. Given the amount of
-> > > > > > problems we face with applications using fanotify permission events and
-> > > > > > deadlocking the system, I'm not very fond of expanding that API... AFAIU
-> > > > > > you want to use such hooks for recording (and persisting) that some change
-> > > > > > is going to happen and provide crash-consistency guarantees for such
-> > > > > > journal?
-> > > > > >
-> > > > >
-> > > > > That's the general idea.
-> > > > > I have two use cases for pre-modification hooks:
-> > > > > 1. VFS level snapshots
-> > > > > 2. persistent change tracking
-> > > > >
-> > > > > TBH, I did not consider implementing any of the above in userspace,
-> > > > > so I do not have a specific interest in extending the fanotify API.
-> > > > > I am actually interested in pre-modify fsnotify hooks (not fanotify),
-> > > > > that a snapshot or change tracking subsystem can register with.
-> > > > > An in-kernel fsnotify event handler can set a flag in current task
-> > > > > struct to circumvent system deadlocks on nested filesystem access.
-> > > >
-> > > > OK, I'm not opposed to fsnotify pre-modify hooks as such. As long as
-> > > > handlers stay within the kernel, I'm fine with that. After all this is what
-> > > > LSMs are already doing. Just exposing this to userspace for arbitration is
-> > > > what I have a problem with.
-> > >
-> > > There's one more usecase that I'd like to explore: providing coherent
-> > > view of host filesystem in virtualized environments.  This requires
-> > > that guest is synchronously notified when the host filesystem changes.
-> > >   I do agree, however, that adding sync hooks to userspace is
-> > > problematic.
-> > >
-> > > One idea would be to use shared memory instead of a procedural
-> > > notification.  I.e. application (hypervisor) registers a pointer to a
-> > > version number that the kernel associates with the given inode.  When
-> > > the inode is changed, then the version number is incremented.  The
-> > > guest kernel can then look at the version number when verifying cache
-> > > validity.   That way perfect coherency is guaranteed between host and
-> > > guest filesystems without allowing a broken guest or even a broken
-> > > hypervisor to DoS the host.
-> >
-> > Well, statx() and looking at i_version can do this for you. So I guess
-> > that's too slow for your purposes?
-> 
-> Okay, missing piece of information: we want to make use of the dcache
-> and icache in the guest kernel, otherwise lookup/stat will be
-> painfully slow.  That would preclude doing statx() or anything else
-> that requires a synchronous round trip to the host for the likely case
-> of a valid cache.
+Jon,
 
-Ok, understood.
- 
-> > Also how many inodes do you want to
-> > monitor like this?
-> 
-> Everything that's in the guest caches.  Which means: a lot.
+Em Mon, 15 Apr 2019 23:55:25 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
 
-Yeah, but that would mean also non-trivial amount of memory pinned for this
-communication channel... And AFAIU the cost of invalidation going to the
-guest isn't so critical as that isn't expected to be that frequent. It is
-only the cost of 'is_valid' check that needs to be low to make the caching
-in the guest useful. So won't it be better if we just had some kind of ring
-buffer for invalidation events going from host to guest, host could just
-queue event there (i.e., event processing from the host would have well
-bounded time like processing normal fsnotify events has), guest would be
-consuming events and updating its validity information. If the buffer
-overflows, it means "invalidate all" which is expensive for the guest but
-if buffers are reasonably sized, it should not happen frequently...
+> I have a separate patch series with do the actual rename and
+> adjustment of references. I opted to submit this first, as it
+> sounds easier to merge this way, as each subsystem maintainer
+> can apply the conversion directly on their trees (or at docs
+> tree), avoiding merge conflects.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Based on the number of feedbacks we have about this, I'm
+considering to submit a second version of my conversion patch
+series that would be doing the rename together with each patch,
+adding the rst files to an index file.
+
+However, doing that would produce lots of warnings. We have
+already lots of those at linux-next:
+
+	checking consistency... 
+
+	docs/Documentation/accelerators/ocxl.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/admin-guide/mm/numaperf.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/allocators.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/attributes.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/bigalloc.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/bitmaps.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/blockgroup.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/blocks.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/checksums.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/directory.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/eainode.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/group_descr.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/ifork.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/inlinedata.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/inodes.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/journal.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/mmp.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/special_inodes.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/filesystems/ext4/super.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/fmc/index.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/gpu/msm-crash-dump.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/interconnect/interconnect.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/laptops/lg-laptop.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/virtual/kvm/amd-memory-encryption.rst: WARNING: document isn't included in any toctree
+	docs/Documentation/virtual/kvm/vcpu-requests.rst: WARNING: document isn't included in any toctree
+
+After thinking a little bit and doing some tests, I think a good solution
+would be to add ":orphan:" markup to the new .rst files that were not
+added yet into the main body (e. g. something like the enclosed example).
+
+That will make Sphinx suppress the:
+	"WARNING: document isn't included in any toctree"
+warning for the new files, while they're not included at the main indexes.
+
+This way, maintainers can do all the hard work of doing/applying the ReST
+file conversion/addition patch series on their own trees, and, once
+everything gets merged, submit a patch against the latest docs-next
+tree, removing the :orphan: tag and add them to the common index.rst
+files.
+
+That should largely avoid merging conflicts.
+
+For example, assuming that someone converts the stuff at
+Documentation/accounting and rename the text files there to
+RST (I'm actually doing that), he could add the enclosed change on
+the top of its index file:
+
+	diff --git a/Documentation/accounting/index.rst b/Documentation/accounting/index.rst
+	index e7dda5afa73f..e1f6284b5ff3 100644
+	--- a/Documentation/accounting/index.rst
+	+++ b/Documentation/accounting/index.rst
+	@@ -1,3 +1,5 @@
+	+:orphan:
+	+
+	 ==========
+	 Accounting
+	 ==========
+
+With would make Sphinx to ignore the subdir index file while
+reporting errors. It will still build the documentation, allowing
+the developer to test the changes.
+
+One of the advantages is that checking the orphaned docs is as
+easy as running:
+
+	$ git grep -l ":orphan:" Documentation/
+	...
+	Documentation/accounting/index.rst
+	...
+
+Making easy for people to check the orphaned files and send a fixup
+patch if something got orphaned after the merge window and send a
+fixes patches to be applied upstream.
+
+What do you think?
+
+Regards,
+Mauro
