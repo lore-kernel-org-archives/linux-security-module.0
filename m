@@ -2,128 +2,133 @@ Return-Path: <SRS0=QYhf=SU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC5EC10F0B
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 06:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2E3C10F0E
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 10:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82E2621850
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 06:39:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axtens.net header.i=@axtens.net header.b="qPeJj8KN"
+	by mail.kernel.org (Postfix) with ESMTP id 83555217D7
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 10:53:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388043AbfDRGjB (ORCPT
+        id S2388623AbfDRKxl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Apr 2019 02:39:01 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42221 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387971AbfDRGjA (ORCPT
+        Thu, 18 Apr 2019 06:53:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35696 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388457AbfDRKxk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Apr 2019 02:39:00 -0400
-Received: by mail-pg1-f193.google.com with SMTP id p6so710332pgh.9
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 23:39:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=nY+EP2R9METKYDuku3g6nVrECtlVH8EVx2p8MKZ118k=;
-        b=qPeJj8KNRZcPDLVMnDM575b8I8uxbwGFOuzY1O3nklzeCIIQBISrbzJ1N2wdOOVj+/
-         I2IJoL0wlUjVDUzGjZyXUMsftii3pT3o2enK8JGO4UOPTEQsNXyaxFXIXnFoUE+/hCXC
-         czjEDUc/+Pf6wCKACtzH7LS3kSMb4SIBPrxSc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=nY+EP2R9METKYDuku3g6nVrECtlVH8EVx2p8MKZ118k=;
-        b=rZl+EMd7FqoAyNJUDBMy+CiH+Cr30Zix25hpliu3psTCFu+RQsavxUONkCT1RpdiM9
-         wXauVXciJ6nIDCMrLEYo0kjsEh0ISRSCC+kzJqnY3RUZ4Xc3lUJuWfJtnxvjLjFyOyZc
-         zAOKfzMHLDLxu2p1Hwu1zrJylwlJggHlnLpQsVcLozPT3rlV6bEp7cBErQb6Kh0xWdvC
-         n0dCBPVgOwqR/j3ZOKBMS0xhev4+g94DyY3SFSITVWv5YkIfFG44c2vWrxp4pABVz9kt
-         kGGyfuIUMDmQ3zH7r1E0pjVw20q0VmHGe438pZ/2DNoqiAZGRryNcw6H0EnwxwrJI9ES
-         JQgA==
-X-Gm-Message-State: APjAAAW3eyoMi9eptCGF/kVJik7/sna+ZTKIUw8T6CE9KxoclNvHOr4o
-        PHx1eRR/VuN/2vtuWPmLb6n5ow==
-X-Google-Smtp-Source: APXvYqxZQNAupenw4ViEZhxPwMbqUfoM1c99inLaaEY0blftbhWIrmuvbI2M9nVCeRWQyuAGrPHrpw==
-X-Received: by 2002:a63:3857:: with SMTP id h23mr85072995pgn.305.1555569540173;
-        Wed, 17 Apr 2019 23:39:00 -0700 (PDT)
-Received: from localhost (124-171-99-108.dyn.iinet.net.au. [124.171.99.108])
-        by smtp.gmail.com with ESMTPSA id o81sm1603642pfa.156.2019.04.17.23.38.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Apr 2019 23:38:59 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Matthew Garrett <matthewgarrett@google.com>, jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-api@vger.kernel.org, luto@kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, cmr <cmr@informatik.wtf>
-Subject: Re: [PATCH V32 01/27] Add the ability to lock down access to the running kernel image
-In-Reply-To: <059c523e-926c-24ee-0935-198031712145@au1.ibm.com>
-References: <20190404003249.14356-1-matthewgarrett@google.com> <20190404003249.14356-2-matthewgarrett@google.com> <059c523e-926c-24ee-0935-198031712145@au1.ibm.com>
-Date:   Thu, 18 Apr 2019 16:38:54 +1000
-Message-ID: <87zhonyg01.fsf@dja-thinkpad.axtens.net>
+        Thu, 18 Apr 2019 06:53:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 81F44AE4B;
+        Thu, 18 Apr 2019 10:53:38 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9B4D81E15AE; Thu, 18 Apr 2019 12:53:35 +0200 (CEST)
+Date:   Thu, 18 Apr 2019 12:53:35 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Subject: Re: fanotify and LSM path hooks
+Message-ID: <20190418105335.GB28541@quack2.suse.cz>
+References: <CAOQ4uxgn=YNj8cJuccx2KqxEVGZy1z3DBVYXrD=Mc7Dc=Je+-w@mail.gmail.com>
+ <20190416154513.GB13422@quack2.suse.cz>
+ <CAOQ4uxh66kAozqseiEokqM3wDJws7=cnY-aFXH_0515nvsi2-A@mail.gmail.com>
+ <20190417113012.GC26435@quack2.suse.cz>
+ <CAJfpegsyzYTkUw7rgpQfB0BKqK-LBZh6fBMUO5iq2JHv1youzw@mail.gmail.com>
+ <20190417140558.GB15563@quack2.suse.cz>
+ <CAJfpegvYnnjv7uoQjL1avx5tO-0H0ZecmVK9Sgk-F1NoW0HAuw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvYnnjv7uoQjL1avx5tO-0H0ZecmVK9Sgk-F1NoW0HAuw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Andrew,
+On Wed 17-04-19 16:14:32, Miklos Szeredi wrote:
+> On Wed, Apr 17, 2019 at 4:06 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 17-04-19 14:14:58, Miklos Szeredi wrote:
+> > > On Wed, Apr 17, 2019 at 1:30 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Tue 16-04-19 21:24:44, Amir Goldstein wrote:
+> > > > > > I'm not so sure about directory pre-modification hooks. Given the amount of
+> > > > > > problems we face with applications using fanotify permission events and
+> > > > > > deadlocking the system, I'm not very fond of expanding that API... AFAIU
+> > > > > > you want to use such hooks for recording (and persisting) that some change
+> > > > > > is going to happen and provide crash-consistency guarantees for such
+> > > > > > journal?
+> > > > > >
+> > > > >
+> > > > > That's the general idea.
+> > > > > I have two use cases for pre-modification hooks:
+> > > > > 1. VFS level snapshots
+> > > > > 2. persistent change tracking
+> > > > >
+> > > > > TBH, I did not consider implementing any of the above in userspace,
+> > > > > so I do not have a specific interest in extending the fanotify API.
+> > > > > I am actually interested in pre-modify fsnotify hooks (not fanotify),
+> > > > > that a snapshot or change tracking subsystem can register with.
+> > > > > An in-kernel fsnotify event handler can set a flag in current task
+> > > > > struct to circumvent system deadlocks on nested filesystem access.
+> > > >
+> > > > OK, I'm not opposed to fsnotify pre-modify hooks as such. As long as
+> > > > handlers stay within the kernel, I'm fine with that. After all this is what
+> > > > LSMs are already doing. Just exposing this to userspace for arbitration is
+> > > > what I have a problem with.
+> > >
+> > > There's one more usecase that I'd like to explore: providing coherent
+> > > view of host filesystem in virtualized environments.  This requires
+> > > that guest is synchronously notified when the host filesystem changes.
+> > >   I do agree, however, that adding sync hooks to userspace is
+> > > problematic.
+> > >
+> > > One idea would be to use shared memory instead of a procedural
+> > > notification.  I.e. application (hypervisor) registers a pointer to a
+> > > version number that the kernel associates with the given inode.  When
+> > > the inode is changed, then the version number is incremented.  The
+> > > guest kernel can then look at the version number when verifying cache
+> > > validity.   That way perfect coherency is guaranteed between host and
+> > > guest filesystems without allowing a broken guest or even a broken
+> > > hypervisor to DoS the host.
+> >
+> > Well, statx() and looking at i_version can do this for you. So I guess
+> > that's too slow for your purposes?
+> 
+> Okay, missing piece of information: we want to make use of the dcache
+> and icache in the guest kernel, otherwise lookup/stat will be
+> painfully slow.  That would preclude doing statx() or anything else
+> that requires a synchronous round trip to the host for the likely case
+> of a valid cache.
 
->> +		If CONFIG_LOCK_DOWN_KERNEL is enabled, the kernel can be
->> +		moved to a more locked down state at runtime by writing to
->> +		this attribute. Valid values are:
->> +
->> +		integrity:
->> +			The kernel will disable functionality that allows
->> +			userland to modify the running kernel image, other
->> +			than through the loading or execution of appropriately
->> +			signed objects.
->> +
->> +		confidentiality:
->> +			The kernel will disable all functionality disabled by
->> +			the integrity mode, but additionally will disable
->> +			features that potentially permit userland to obtain
->> +			confidential information stored within the kernel.
->
-> [+ linuxppc, mpe, dja, cmr]
->
-> I'm thinking about whether we should lock down the powerpc xmon debug 
-> monitor - intuitively, I think the answer is yes if for no other reason 
-> than Least Astonishment, when lockdown is enabled you probably don't 
-> expect xmon to keep letting you access kernel memory.
->
-> Semantically though, xmon is not a userspace process - it's in kernel 
-> and reads debug commands/outputs debug data directly from/to the 
-> console. Is that a threat vector that this series cares about?
+Ok, understood.
+ 
+> > Also how many inodes do you want to
+> > monitor like this?
+> 
+> Everything that's in the guest caches.  Which means: a lot.
 
-I guess there are 2 ways you could think about lockdown:
+Yeah, but that would mean also non-trivial amount of memory pinned for this
+communication channel... And AFAIU the cost of invalidation going to the
+guest isn't so critical as that isn't expected to be that frequent. It is
+only the cost of 'is_valid' check that needs to be low to make the caching
+in the guest useful. So won't it be better if we just had some kind of ring
+buffer for invalidation events going from host to guest, host could just
+queue event there (i.e., event processing from the host would have well
+bounded time like processing normal fsnotify events has), guest would be
+consuming events and updating its validity information. If the buffer
+overflows, it means "invalidate all" which is expensive for the guest but
+if buffers are reasonably sized, it should not happen frequently...
 
- - It adds a security boundary between the kernel and UID 0, so that
-   userland cannot compromise the integrity/confidentiality of the
-   locked down kernel.
-
- - It is a bundle of related security boundaries so that the
-   integrity/confidentiality of a running, locked down kernel cannot be
-   compromised, even by a privileged, physically present user.
-
-You're right that techincally xmon is in the kernel and on the console
-rather than in userland, so it doesn't fall within the first concept of
-lockdown. But I think usecases for lockdown tend to expect something
-more like the second concept.
-
-IOW, lockdown is a trapdoor - once you've locked down a kernel, you
-can't get out of lockdown (except by rebooting). xmon would allow you to
-get out of the trapdoor, so I think it should be restricted by lockdown.
-
-Regards,
-Daniel
-
->
->
-> -- 
-> Andrew Donnellan              OzLabs, ADL Canberra
-> andrew.donnellan@au1.ibm.com  IBM Australia Limited
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
