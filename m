@@ -3,51 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CB2C10F0E
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 03:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B5DC10F14
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 03:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 203E02184B
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 03:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB2D32184B
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 03:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388021AbfDRDwG (ORCPT
+        id S2388081AbfDRDw0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 23:52:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33060 "EHLO
+        Wed, 17 Apr 2019 23:52:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34052 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388007AbfDRDwF (ORCPT
+        by vger.kernel.org with ESMTP id S2388074AbfDRDwW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 23:52:05 -0400
+        Wed, 17 Apr 2019 23:52:22 -0400
 Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3I3o8bS115883
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 23:52:04 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rxee6p2wh-1
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3I3oAfG116114
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 23:52:21 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2rxee6p368-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 23:52:04 -0400
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 23:52:21 -0400
 Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 18 Apr 2019 04:52:03 +0100
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 18 Apr 2019 04:52:20 +0100
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 18 Apr 2019 04:51:57 +0100
+        Thu, 18 Apr 2019 04:52:15 +0100
 Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3I3pun326083470
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3I3qDXn16842966
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Apr 2019 03:51:56 GMT
+        Thu, 18 Apr 2019 03:52:13 GMT
 Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 05D8178067;
-        Thu, 18 Apr 2019 03:51:56 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 885607805F;
+        Thu, 18 Apr 2019 03:52:13 +0000 (GMT)
 Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9B69E7805C;
-        Thu, 18 Apr 2019 03:51:51 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 15E427805C;
+        Thu, 18 Apr 2019 03:52:09 +0000 (GMT)
 Received: from morokweng.localdomain.com (unknown [9.85.230.182])
         by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 18 Apr 2019 03:51:51 +0000 (GMT)
+        Thu, 18 Apr 2019 03:52:08 +0000 (GMT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -65,20 +65,20 @@ Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         Jonathan Corbet <corbet@lwn.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v10 03/12] PKCS#7: Introduce pkcs7_get_digest()
-Date:   Thu, 18 Apr 2019 00:51:11 -0300
+Subject: [PATCH v10 06/12] ima: Use designated initializers for struct ima_event_data
+Date:   Thu, 18 Apr 2019 00:51:14 -0300
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190418035120.2354-1-bauerman@linux.ibm.com>
 References: <20190418035120.2354-1-bauerman@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19041803-0016-0000-0000-000009A21AC0
+x-cbid: 19041803-0020-0000-0000-00000ED91E0A
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010947; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000284; SDB=6.01190666; UDB=6.00623948; IPR=6.00971462;
- MB=3.00026492; MTD=3.00000008; XFM=3.00000015; UTC=2019-04-18 03:52:02
+ MB=3.00026493; MTD=3.00000008; XFM=3.00000015; UTC=2019-04-18 03:52:19
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19041803-0017-0000-0000-000042DB3460
-Message-Id: <20190418035120.2354-4-bauerman@linux.ibm.com>
+x-cbparentid: 19041803-0021-0000-0000-000065794A29
+Message-Id: <20190418035120.2354-7-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-18_03:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -90,101 +90,61 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA will need to access the digest of the PKCS7 message (as calculated by
-the kernel) before the signature is verified, so introduce
-pkcs7_get_digest() for that purpose.
+Designated initializers allow specifying only the members of the struct
+that need initialization. Non-mentioned members are initialized to zero.
 
-Also, modify pkcs7_digest() to detect when the digest was already
-calculated so that it doesn't have to do redundant work. Verifying that
-sinfo->sig->digest isn't NULL is sufficient because both places which
-allocate sinfo->sig (pkcs7_parse_message() and pkcs7_note_signed_info())
-use kzalloc() so sig->digest is always initialized to zero.
+This makes the code a bit clearer (particularly in ima_add_boot_aggregate()
+and also allows adding a new member to the struct without having to update
+all struct initializations.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
 ---
- crypto/asymmetric_keys/pkcs7_verify.c | 33 +++++++++++++++++++++++++++
- include/crypto/pkcs7.h                |  4 ++++
- 2 files changed, 37 insertions(+)
+ security/integrity/ima/ima_api.c  | 11 +++++++----
+ security/integrity/ima/ima_init.c |  4 ++--
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_keys/pkcs7_verify.c
-index 97c77f66b20d..5c3de46b0b73 100644
---- a/crypto/asymmetric_keys/pkcs7_verify.c
-+++ b/crypto/asymmetric_keys/pkcs7_verify.c
-@@ -16,6 +16,7 @@
- #include <linux/err.h>
- #include <linux/asn1.h>
- #include <crypto/hash.h>
-+#include <crypto/hash_info.h>
- #include <crypto/public_key.h>
- #include "pkcs7_parser.h"
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index c7505fb122d4..0639d0631f2c 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -133,8 +133,9 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+ {
+ 	struct ima_template_entry *entry;
+ 	struct inode *inode = file_inode(file);
+-	struct ima_event_data event_data = {iint, file, filename, NULL, 0,
+-					    cause};
++	struct ima_event_data event_data = { .iint = iint, .file = file,
++					     .filename = filename,
++					     .violation = cause };
+ 	int violation = 1;
+ 	int result;
  
-@@ -33,6 +34,10 @@ static int pkcs7_digest(struct pkcs7_message *pkcs7,
+@@ -284,8 +285,10 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+ 	int result = -ENOMEM;
+ 	struct inode *inode = file_inode(file);
+ 	struct ima_template_entry *entry;
+-	struct ima_event_data event_data = {iint, file, filename, xattr_value,
+-					    xattr_len, NULL};
++	struct ima_event_data event_data = { .iint = iint, .file = file,
++					     .filename = filename,
++					     .xattr_value = xattr_value,
++					     .xattr_len = xattr_len };
+ 	int violation = 0;
  
- 	kenter(",%u,%s", sinfo->index, sinfo->sig->hash_algo);
- 
-+	/* The digest was calculated already. */
-+	if (sig->digest)
-+		return 0;
-+
- 	if (!sinfo->sig->hash_algo)
- 		return -ENOPKG;
- 
-@@ -122,6 +127,34 @@ static int pkcs7_digest(struct pkcs7_message *pkcs7,
- 	return ret;
- }
- 
-+int pkcs7_get_digest(struct pkcs7_message *pkcs7, const u8 **buf, u32 *len,
-+		     enum hash_algo *hash_algo)
-+{
-+	struct pkcs7_signed_info *sinfo = pkcs7->signed_infos;
-+	int i, ret;
-+
-+	/*
-+	 * This function doesn't support messages with more than one signature.
-+	 */
-+	if (sinfo == NULL || sinfo->next != NULL)
-+		return -EBADMSG;
-+
-+	ret = pkcs7_digest(pkcs7, sinfo);
-+	if (ret)
-+		return ret;
-+
-+	*buf = sinfo->sig->digest;
-+	*len = sinfo->sig->digest_size;
-+
-+	for (i = 0; i < HASH_ALGO__LAST; i++)
-+		if (!strcmp(hash_algo_name[i], sinfo->sig->hash_algo)) {
-+			*hash_algo = i;
-+			break;
-+		}
-+
-+	return 0;
-+}
-+
- /*
-  * Find the key (X.509 certificate) to use to verify a PKCS#7 message.  PKCS#7
-  * uses the issuer's name and the issuing certificate serial number for
-diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
-index 583f199400a3..3bfe6829eaae 100644
---- a/include/crypto/pkcs7.h
-+++ b/include/crypto/pkcs7.h
-@@ -13,6 +13,7 @@
- #define _CRYPTO_PKCS7_H
- 
- #include <linux/verification.h>
-+#include <linux/hash_info.h>
- #include <crypto/public_key.h>
- 
- struct key;
-@@ -44,4 +45,7 @@ extern int pkcs7_verify(struct pkcs7_message *pkcs7,
- extern int pkcs7_supply_detached_data(struct pkcs7_message *pkcs7,
- 				      const void *data, size_t datalen);
- 
-+extern int pkcs7_get_digest(struct pkcs7_message *pkcs7, const u8 **buf,
-+			    u32 *len, enum hash_algo *hash_algo);
-+
- #endif /* _CRYPTO_PKCS7_H */
+ 	if (iint->measured_pcrs & (0x1 << pcr))
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 6c9295449751..ef6c3a26296e 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -49,8 +49,8 @@ static int __init ima_add_boot_aggregate(void)
+ 	const char *audit_cause = "ENOMEM";
+ 	struct ima_template_entry *entry;
+ 	struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
+-	struct ima_event_data event_data = {iint, NULL, boot_aggregate_name,
+-					    NULL, 0, NULL};
++	struct ima_event_data event_data = { .iint = iint,
++					     .filename = boot_aggregate_name };
+ 	int result = -ENOMEM;
+ 	int violation = 0;
+ 	struct {
 
