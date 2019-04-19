@@ -2,153 +2,102 @@ Return-Path: <SRS0=lufb=SV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 796D0C282DA
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 18:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA9AC282DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 18:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D70620645
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 18:51:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAC2120663
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 18:55:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="mxkAJYVm"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="EaGOt+0E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728442AbfDSSv0 (ORCPT
+        id S1728618AbfDSSzQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Apr 2019 14:51:26 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39184 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbfDSSv0 (ORCPT
+        Fri, 19 Apr 2019 14:55:16 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39932 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728579AbfDSSzQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Apr 2019 14:51:26 -0400
-Received: by mail-lf1-f67.google.com with SMTP id d12so4631186lfk.6
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2019 11:51:24 -0700 (PDT)
+        Fri, 19 Apr 2019 14:55:16 -0400
+Received: by mail-qk1-f193.google.com with SMTP id j10so3367453qkk.6
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2019 11:55:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iK1taWbgATs8Vl8fFsChTbd5jcA8vAv8F4ZJybEWxxU=;
-        b=mxkAJYVmuq2pr6gOlJ0xL389JPlOlngx6VE/088bLhYmI7OQF43z1E4M8O+BW+POKE
-         PR3zP9uyePtE3LCa5weImSzv4ICMWTzz1c5kVbO/oEStZ9XsFILFY6EwGQ0qUbS/bYxH
-         LSfJCvjW+t2Mlq438H0xzjAr8ue1U7JJW7+v5mnKOGqFFBvvp+61pGdvqkCUFshPPUGa
-         qeYIw1MTq4rk3hS9QIjOLMVgF+L3sfuY3II0YNEM15IRnJMhVjnMixF0qIowDclYTvoR
-         swb2KkBkXzVVOIhVIPkg5L62a1BSReSf6rDDUEF2ScPoVS51vzwe6v41CLkIdSLk7IwG
-         IpOw==
+        h=subject:from:to:cc:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=IyzQ5btbQftJrbWM0aHTnEtKVALpoNzETGpMHZaIPvE=;
+        b=EaGOt+0EjjEkZgjxbIbsyF5CCsH0DiRZAP64/JO76ukHiMz7xpBd/ZHMZlU8hwD05Q
+         9uh0QsqqJuizACVSgE+gZpSqDgOZDCiHVMu8oWbUzHJVkes/fjAXHxrD6dzu2NgHxTzX
+         k1wY1aKglJ5k2JJg1OO3dKnu6fHSIywZoXslbRflUCvFg06dSx9wOi/NQ0F1/YYf2w12
+         VRtTwMmoDALfx92FZLAfpwy3hvk4AZKdjUo3xqRqgeOWbTyyIjNz7HCJO7z7vfaZ00fV
+         JJOa+HrmSsiZe2gPRd6xgkSxVbGMhZkFbzY7HHnxVdEf4kuMoqr4ulDiKZhN+eXLqHYb
+         aZFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iK1taWbgATs8Vl8fFsChTbd5jcA8vAv8F4ZJybEWxxU=;
-        b=e3LwmQB8UGmrT4TeT6igSorgPM3eSFaF5r9z0z/K0cKLNIFP8MnCPcQUMO8NRqk2rm
-         CQKPwaBWsia/OueO5ZL07nyetX9+UB+CGD1Zxt5MELDl3WHcx+O+UVo+X5BtVlrrHdIM
-         TnFV6t4TyGHbCCui4WdLbiY9GdM8VeyflwsoESw4jRW6WzSdvvZr7Itbu2Zn3/Ll/E+D
-         EqTrdDjaOJEK1FLWkbItWHilbhBsT5n7fCyIigSt8DqlwJGCKX8fORWS4Z4Pgo7KKB1R
-         1wC0TYLzjkSXwyaqkxGVlaiHbER6ie3XGhROnf6JQnR8BTU2fjsMqiqUxP+PxPNOMiVD
-         3QPA==
-X-Gm-Message-State: APjAAAUiI6Pv7M/N4uSNIwLLO31TMDG2t/UaV7Vn0iI5AJNyxMj08FBq
-        I5mnWS+CQhrjRqrBK6TTFOrSybFWXiUhn3qspScw
-X-Google-Smtp-Source: APXvYqyHYDOuzDa4e9JuBSsCJiFvs/FyB2lIMrmM48Pvdmxy8YprG6nz6qk/neEAlYQkJTgIXoi7dCWZIHUWMztxVGs=
-X-Received: by 2002:a19:2814:: with SMTP id o20mr2658257lfo.117.1555690420662;
- Fri, 19 Apr 2019 09:13:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
- <20190415134331.GC22204@redhat.com> <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
- <20190415150520.GA13257@redhat.com> <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
- <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
- <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com> <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
- <20190417145711.GI32622@redhat.com> <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
- <20190417162723.GK32622@redhat.com> <CAHC9VhT_nk1jmrTj3W=F+1gP1vU3iZsZ=UGOCwdiBLbUsOc9=w@mail.gmail.com>
- <0ca3f4cf-5c64-2fc0-1885-9dbcca2f4b47@schaufler-ca.com> <5CB7E5D4.2060703@huawei.com>
- <CAHC9VhQkrR+m9_dYLg4VG-26TdUnf8XFjbmuVQ70YCOp6DhN_g@mail.gmail.com>
- <5CB933C4.7000300@huawei.com> <CAHC9VhTdJ6uUOjyxrk=+iOkKe=VN+N9DMPtV=OchAY34x95g=w@mail.gmail.com>
- <5CB9DC75.7010600@huawei.com>
-In-Reply-To: <5CB9DC75.7010600@huawei.com>
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=IyzQ5btbQftJrbWM0aHTnEtKVALpoNzETGpMHZaIPvE=;
+        b=cpfHqYoL5KYggGiYDZ5/IzAp4npioFfUV0roz1yoBYEF1IevHxOH7Ej+DtY6t1fdan
+         igEvIS3+AySf0UUwqli58NLLTpDFHOuXg9bVmQQXWv7MkFd2Nio/4BjmTokk2FNjO18t
+         PRiPlvb31wES06IYQ+db515CHbhWWiAqj+4y/8/Ow5G6/FkvuBUZ2dHxwnTU6AY3wsCN
+         E3RTzVR9K3+qwGa2yU06RvDrYmzJAGLTFZa0hnCiEmnl1MSxTtpUR381Qbn0u1oEcH+x
+         Uxax0ZQB6IFvQKJUfzOBzAOqLbDix2vRRUnkjNPgE5C9mWy5G9Ud4vZvF5uDTSx9knv3
+         ncUg==
+X-Gm-Message-State: APjAAAXRLl8LxtJVJs71HzxJRAs3FtYy6YR6n86X6egjIyesAFzzJ/do
+        HgQQDFdAuaXsRKU2PGMZwfhfwaZ4VQ==
+X-Google-Smtp-Source: APXvYqxjIFdh64aCmn9++d8Zgq+lvKLUbo7+LEFA6/PpeMyN4ILZGc9obA0vkGVNMfX58ANeYQdOiw==
+X-Received: by 2002:a37:2c82:: with SMTP id s124mr4258770qkh.286.1555700114582;
+        Fri, 19 Apr 2019 11:55:14 -0700 (PDT)
+Received: from localhost (static-96-233-112-89.bstnma.ftas.verizon.net. [96.233.112.89])
+        by smtp.gmail.com with ESMTPSA id i24sm3512340qti.76.2019.04.19.11.55.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 19 Apr 2019 11:55:13 -0700 (PDT)
+Subject: [PATCH] proc: prevent changes to overridden credentials
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 19 Apr 2019 12:13:29 -0400
-Message-ID: <CAHC9VhQqxL+LsK8YTD6PpTHaZsZ-PxAq3atdZKQcZLQZQH7t4g@mail.gmail.com>
-Subject: Re: kernel BUG at kernel/cred.c:434!
-To:     Yang Yingliang <yangyingliang@huawei.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Oleg Nesterov <oleg@redhat.com>, john.johansen@canonical.com,
-        "chengjian (D)" <cj.chengjian@huawei.com>,
-        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>,
-        Anna Schumaker <Anna.Schumaker@netapp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
-        Li Bin <huawei.libin@huawei.com>,
-        Jason Yan <yanaijie@huawei.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SELinux <selinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     linux-security-module@vger.kernel.org
+Cc:     selinux@vger.kernel.org, cj.chengjian@huawei.com,
+        john.johansen@canonical.com, casey@schaufler-ca.com
+Date:   Fri, 19 Apr 2019 14:55:12 -0400
+Message-ID: <155570011247.27135.12509150054846153288.stgit@chester>
+User-Agent: StGit/0.19-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 19, 2019 at 10:34 AM Yang Yingliang
-<yangyingliang@huawei.com> wrote:
-> On 2019/4/19 21:24, Paul Moore wrote:
-> > On Thu, Apr 18, 2019 at 10:42 PM Yang Yingliang
-> > <yangyingliang@huawei.com> wrote:
-> >> On 2019/4/19 10:04, Paul Moore wrote:
-> >>> On Wed, Apr 17, 2019 at 10:50 PM Yang Yingliang
-> >>> <yangyingliang@huawei.com> wrote:
-> >>>> On 2019/4/18 8:24, Casey Schaufler wrote:
-> >>>>> On 4/17/2019 4:39 PM, Paul Moore wrote:
-> >>>>>> Since it looks like all three LSMs which implement the setprocattr
-> >>>>>> hook are vulnerable I'm open to the idea that proc_pid_attr_write() is
-> >>>>>> a better choice for the cred != read_cred check, but I would want to
-> >>>>>> make sure John and Casey are okay with that.
-> >>>>>>
-> >>>>>> John?
-> >>>>>>
-> >>>>>> Casey?
-> >>>>> I'm fine with the change going into proc_pid_attr_write().
-> >>>> The cred != real_cred checking is not enough.
-> >>>>
-> >>>> Consider this situation, when doing override, cred, real_cred and
-> >>>> new_cred are all same:
-> >>>>
-> >>>> after override_creds()    cred == real_cred == new1_cred
-> >>> I'm sorry, you've lost me.  After override_creds() returns
-> >>> current->cred and current->real_cred are not going to be the same,
-> >>> yes?
-> >> It's possible the new  cred is equal to current->real_cred and
-> >> current->cred,
-> >> so after overrides_creds(), they have the same value.
-> > Both task_struct.cred and task_struct.real_cred are pointer values,
-> > assuming that one uses prepare_creds() to allocate/initialize a new
-> > cred struct for use with override_creds() then the newly created cred
-> > should never be equal to task_struct.real_cred.  Am I missing
-> > something, or are you thinking of something else?
->
-> In do_acct_process(), file->f_cred may equal to current->real_cred, I
-> confirm
-> it by adding some debug message in do_acct_process() like this:
+Prevent userspace from changing the the /proc/PID/attr values if the
+task's credentials are currently overriden.  This not only makes sense
+conceptually, it also prevents some really bizarre error cases caused
+when trying to commit credentials to a task with overridden
+credentials.
 
-I would expect that; real_cred is the task's objective DAC
-credentials, so using it for f_cred makes sense.
+Cc: <stable@vger.kernel.org>
+Reported-by: "chengjian (D)" <cj.chengjian@huawei.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ fs/proc/base.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-What we are now talking about is the task's subjective credentials,
-which can be overridden via override_creds(), and are what the LSMs
-change via proc_pid_attr_write().
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ddef482f1334..87ba007b86db 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2539,6 +2539,11 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+ 		rcu_read_unlock();
+ 		return -EACCES;
+ 	}
++	/* Prevent changes to overridden credentials. */
++	if (current_cred() != current_real_cred()) {
++		rcu_read_unlock();
++		return -EBUSY;
++	}
+ 	rcu_read_unlock();
+ 
+ 	if (count > PAGE_SIZE)
 
-> --- a/kernel/acct.c
-> +++ b/kernel/acct.c
-> @@ -481,6 +481,7 @@ static void do_acct_process(struct bsd_acct_struct
-> *acct)
->          flim = current->signal->rlim[RLIMIT_FSIZE].rlim_cur;
->          current->signal->rlim[RLIMIT_FSIZE].rlim_cur = RLIM_INFINITY;
->          /* Perform file operations on behalf of whoever enabled
-> accounting */
-> +       pr_info("task:%px new cred:%px real cred:%px cred:%px\n",
-> current, file->f_cred, current->real_cred, current->cred);
->          orig_cred = override_creds(file->f_cred);
-
--- 
-paul moore
-www.paul-moore.com
