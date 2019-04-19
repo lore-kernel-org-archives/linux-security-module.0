@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F65C282E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A4EC282E0
 	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 00:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 744B9204FD
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 00:49:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2316217F9
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 00:49:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="NIAaceYR"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="prcoC2/i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfDSAtN (ORCPT
+        id S1727065AbfDSAtN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Thu, 18 Apr 2019 20:49:13 -0400
-Received: from sonic308-9.consmr.mail.bf2.yahoo.com ([74.6.130.48]:35900 "EHLO
+Received: from sonic308-9.consmr.mail.bf2.yahoo.com ([74.6.130.48]:32963 "EHLO
         sonic308-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727069AbfDSAtL (ORCPT
+        by vger.kernel.org with ESMTP id S1727068AbfDSAtM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Apr 2019 20:49:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1555634950; bh=XgvZ3rj387jRjl/mTxiiNwjJyuYQ67qm2e5z9K9Qfis=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=NIAaceYRZuG1Bb1pZ40MysyMH/6hvvgPHX6MMA5yY9dMSfbnFgXW/Mral9I+eT/Ks9rcCvge+qMUTJOMWHMRPUpdTeVbTgOT+UPZwQb4bCa7lwAGhY/IzXbRaKMkU7hmLkAxx9hqKa2MyeymTJJ8Rv7vPTOHyBKv8sfDGRIg+3yBegBU75O5PthXtPJdvVfgK/18/YOTdNO5WXiTdlg0LsRZFCkKOdfP8Yc0+NuRJZ8gQGczIfHemPmbMg1egJejCxKd6Jk/Hy8En1As0t7m851bTsm3For+hpZ22xCGxP+7QacSMW7oZmP9FgdBw8tyF7wE5bz33vTHEQwVpgXbjw==
-X-YMail-OSG: UCEo2GQVM1kc2pf3KtfEYPnj9xYYlnK2hjhZPqRtnNRLzwxNkAorR59Ma82e2V2
- 9KCB2k2A6upDFQJ2DppKQIbL6QFG.8ddibkHciDoEk5WYOtbYlA8nNKQe1StHt7ksAWLopj9Lhv1
- wX6f.JrY1CwXA3w2EDSh2A9B1vRBz9nxECqQQSgy7sgohZT5uDstcJt4fx1anuvL.VZyTsTtrBPA
- YqVF7ce1i5bX6pmpNBaXN.FDok2t6OD7SO1yytj8NYL90Q1DlaWGhmGS1gTzduff0viL1XZl1FrV
- c3NJqaD2zzU.U6kL1JcwlcQquEdIAuvvzvkH33vOklMyIqoqtsF6WeKD35.7kYLCvVyUtwgh_3TS
- l5yncG1teILzMYrIQZhE.2AJ_IbmSW91Iu300eAWKciqd4CTcExGjB7MlfjqC0CoUz_F1dJ5mbKn
- WtXhCNWJv6KQSuvmwOiFj0ih3tB1nVILAmw5BmCDybK3O5HD5BZidITZ1z2C3a4S2xpWJuCsPbid
- 7ipWbNbzA4CSUNYCCNDRTyf.aNC1NWMvBNO6.o5G0AtSQzDJcGByNtk4kPuN_p6M_4RERx843Xk5
- .ZUqL5W9EeZ0o6MgdanDB5KOtXCuEHlo8hH1HJimisOu6wbx5fLIQ3sviz0Yw7ir_Ab0eBMvAF18
- MkjzypjCyWjWn369YZB5_UwvA.EloqADDFN7TKu36U0r_Ijuu8zrfVUYOHdg2ZGE_pdyweWhbLGV
- UsrEXqQIc3VoIxjTeFYCouQCcDUQnKQW._jt8h_NxhKWhxjM0w6f.gtzrh3T6q_z938oaAfDoYCA
- 4xf0b0xDLmRARrUHanwNlyNNI_YcXYIAMFzqiRnd6ndHKdBm6iV9507DUDldsKXhmXlPzpMBQ.8N
- 1NLtg5gUNs3Ot8J4Dijue.1R8IvaZo9tkgnxrtHP87ZFb4l0fbYW8Sqdq1kQK3b9KL54emP6v2jb
- rDt3xbGJUxWRR2TbixZeo6JdvSaEaNH8Hzs.K07tWb46UEsBGRXBKu5SHq.TCdAyu7vYxU8AuWVC
- oghdPP8w4A1SV3hVfQR_sTKE3J.U1U_DVMFn_S9VfuYCVicn2GLmTMp3ms.WYObjvtpXzW.2zIEh
- OarGnx8afrT.NLVGGS3j4w5uWsKUgY1dRSTG0dPxvOfQpSMdYmblgp2wBcuuX14gO8zlPuTOVTfz
- _0yscGdMyI931Jw--
+        Thu, 18 Apr 2019 20:49:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1555634950; bh=NzIbNj3420MeAfnn4NhgXXttfOBB14E8Boq0C6nczTs=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=prcoC2/iCKF+27jb05Rbk4mayV4i8GbD1ObfHAJmCFLDNFtsevmeOxSYqVzG+NPQqiN7+qhNIBfvCfuIAx7gXib+E7eQ5S8HU6CWNTY+4m21znthOpt7Iznpk7OIUFPjRqIRBOerJDy8LMCR4UxMOzynxkjK8lFhIQDuezD6h87um3PX4MWIcA/W9fNhqP1YkQf8tQTUfJ65rOrSlRrVUdD54ZLt/EZFqbKe+6tFx3NOEkaAJWFiB8AswZO9lrZa2uWmSOgJ+zhRao8T5c22H02KNkPpKf1YBVZHj4wsQ7+PTDohYjuqywU2Uvq9WcOH5MSUpK6rU+1L/PiN8VeKEg==
+X-YMail-OSG: vYUajbMVM1ly1OonIjcNznEpUadDEAXSA6rn7P9Vh8mh60HjN4qZb8aAfT5yqTT
+ 8DGUCUbFW_NrLFRPUsaT58oAnQN9M8r.mYWdbsW0i5qvg7DlU7c3NGOLP2NiQudeg0KmFpuT_dPu
+ 2oCps96.w5zy.olzf.WVSQ5HEVrFKL.GMdj4k1tK4UQZ4j.UNQ0v0gqHuzPmJIWZh5JzESe02crK
+ FToIbyaxAUS_uqpxwc6UZFg6y2WwiZfj9N2Zs99a.2IBJY8KFvTFJoRoqa0eOLVzAJs33N.dBhYz
+ eru23dWuvsBi3SHDMpdxYKRgq88j_Dub5RODLKRt4z5uYi89QtnIkvOl30WvjzZLoam3C3eNXeDB
+ nOJRGDUsNLywLb07jB41lFX05R05z9ZGV3jgMKPsPMMWPRDdvdDcyzOSmkoZVhbDlIqrJFN82xjf
+ Gn1UO1YZKnxdwxkCbVumXKElmQwBuuSL5zWEe6c2rtsd9YGOXocWash7VbEK9lEiaaGQdVT4KAoA
+ oBzTIG._I_4LOLZ1YGua.I.YY3mrNZaHZ9M6CBBlXJd1W0X4jhy6cQu1eHy4doJ6uQXhjeh9K2sR
+ Wler9sAJmCN8WyRP.rvaYnPtoYZhqkuaGatXe2ss1A9G4ydrrNg8XWWM8Bdj.l3DXsq5nue5vLrc
+ TITpS_k8VDthRYZTZfQYBg1KHz4HMzFquEFo20wdVpI4G3EffyQ6x_UYPzhOAOtsp4JryDokEgY5
+ s5nv1JV7MiLIazHQ370FB5DI74dffPVqOef7UR.Lo5pWlM6awolPeNph0wsbq0NEKBbaFkE0ohxz
+ yD3KhLv_SrqZ7QFyJnzlQA4Xm6chgdohYYeFrE9T_WiAJoalbDrDu1pSPg1D1qhAe1Mbj31Hepmx
+ 7p33IRG1saEnaTaJTEhB9qop_PJB265rDxCrb6tCDu5EORmU1Oe9giRipwLysLJASzYFMWaWrd90
+ xnrOcXeqP_IAkSenyBDyId7N0KVSW6e_dyAqT71F7CXjPB9.1TputkmMf4vG6BJ5mxZGKUNKFMnt
+ I0gNK917yS9T4THPqExwRtYNnGcCrqCLiAS8ChmPU8hDeXucsn81n4rj5aPUv7TsIHCTNuxyFywt
+ 2sLb95gAwI4ZlctPtk.cMCUAE2djA92ejTUR2.nncVPmd5V2efNSYwkLjt3Yz7uIVq9nKwuwAqx6
+ LGi6tArg_mYtq
 Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.bf2.yahoo.com with HTTP; Fri, 19 Apr 2019 00:49:10 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp419.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 524225efee00edb3a1e75559f6c5c8ed;
-          Fri, 19 Apr 2019 00:49:06 +0000 (UTC)
+          Fri, 19 Apr 2019 00:49:05 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     casey@schaufler-ca.com
-Subject: [PATCH 72/90] LSM: Fix for security_init_inode_security
-Date:   Thu, 18 Apr 2019 17:45:59 -0700
-Message-Id: <20190419004617.64627-73-casey@schaufler-ca.com>
+Subject: [PATCH 71/90] LSM: Infrastructure security blobs for mount options
+Date:   Thu, 18 Apr 2019 17:45:58 -0700
+Message-Id: <20190419004617.64627-72-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190419004617.64627-1-casey@schaufler-ca.com>
 References: <20190419004617.64627-1-casey@schaufler-ca.com>
@@ -58,76 +58,262 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The code assumes you can call evm_init_inode_security more
-than once for an inode, but that won't work because security.evm
-is a single value attribute. This does not make EVM work properly,
-but does allow the security modules to initialize their attributes.
+Manage LSM data for mount options in the infrastructure
+rather than in the individual modules.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/security.c | 35 +++++++++++++++++++++++++----------
- 1 file changed, 25 insertions(+), 10 deletions(-)
+ include/linux/lsm_hooks.h  |  5 +++++
+ security/security.c        | 18 ++++++++++++++++++
+ security/selinux/hooks.c   | 31 ++++++++++++++++++-------------
+ security/smack/smack_lsm.c | 19 +++++++++++++------
+ 4 files changed, 54 insertions(+), 19 deletions(-)
 
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 5135b8d1d759..34f98cfe2ffd 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2066,6 +2066,7 @@ struct lsm_blob_sizes {
+ 	int	lbs_key;
+ 	int	lbs_msg_msg;
+ 	int	lbs_task;
++	int	lbs_mnt_opts;
+ };
+ 
+ /*
+@@ -2139,4 +2140,8 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ 
+ extern int lsm_inode_alloc(struct inode *inode);
+ 
++#ifdef CONFIG_SECURITY
++void *lsm_mnt_opts_alloc(void);
++#endif
++
+ #endif /* ! __LINUX_LSM_HOOKS_H */
 diff --git a/security/security.c b/security/security.c
-index 63b001e60b59..1a54e7b1196e 100644
+index f1e2ffe81829..63b001e60b59 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -1102,11 +1102,24 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 	if (unlikely(IS_PRIVATE(inode)))
+@@ -177,6 +177,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+ #ifdef CONFIG_KEYS
+ 	lsm_set_blob_size(&needed->lbs_key, &blob_sizes.lbs_key);
+ #endif
++	lsm_set_blob_size(&needed->lbs_mnt_opts, &blob_sizes.lbs_mnt_opts);
+ 	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
+ 	lsm_set_blob_size(&needed->lbs_sock, &blob_sizes.lbs_sock);
+ 	lsm_set_blob_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
+@@ -315,6 +316,7 @@ static void __init ordered_lsm_init(void)
+ #ifdef CONFIG_KEYS
+ 	init_debug("key blob size        = %d\n", blob_sizes.lbs_key);
+ #endif /* CONFIG_KEYS */
++	init_debug("mnt_opts blob size   = %d\n", blob_sizes.lbs_mnt_opts);
+ 	init_debug("msg_msg blob size    = %d\n", blob_sizes.lbs_msg_msg);
+ 	init_debug("sock blob size       = %d\n", blob_sizes.lbs_sock);
+ 	init_debug("superblock blob size = %d\n", blob_sizes.lbs_superblock);
+@@ -726,6 +728,21 @@ int lsm_superblock_alloc(struct super_block *sb)
+ 	return 0;
+ }
+ 
++/**
++ * lsm_mnt_opts_alloc - allocate a composite mnt_opts blob
++ *
++ * Allocate the mount options blob
++ *
++ * Returns the blob, or NULL if memory can't be allocated.
++ */
++void *lsm_mnt_opts_alloc(void)
++{
++	if (blob_sizes.lbs_mnt_opts == 0)
++		return NULL;
++
++	return kzalloc(blob_sizes.lbs_mnt_opts, GFP_KERNEL);
++}
++
+ /*
+  * Hook list operation macros.
+  *
+@@ -939,6 +956,7 @@ void security_free_mnt_opts(void **mnt_opts)
+ 	if (!*mnt_opts)
+ 		return;
+ 	call_void_hook(sb_free_mnt_opts, *mnt_opts);
++	kfree(*mnt_opts);
+ 	*mnt_opts = NULL;
+ }
+ EXPORT_SYMBOL(security_free_mnt_opts);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 17ba47f9f4e2..86578f7de131 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -383,14 +383,20 @@ struct selinux_mnt_opts {
+ 	const char *fscontext, *context, *rootcontext, *defcontext;
+ };
+ 
++static void *selinux_mnt_opts(void *mnt_opts)
++{
++	if (mnt_opts)
++		return mnt_opts + selinux_blob_sizes.lbs_mnt_opts;
++	return NULL;
++}
++
+ static void selinux_free_mnt_opts(void *mnt_opts)
+ {
+-	struct selinux_mnt_opts *opts = mnt_opts;
++	struct selinux_mnt_opts *opts = selinux_mnt_opts(mnt_opts);
+ 	kfree(opts->fscontext);
+ 	kfree(opts->context);
+ 	kfree(opts->rootcontext);
+ 	kfree(opts->defcontext);
+-	kfree(opts);
+ }
+ 
+ static inline int inode_doinit(struct inode *inode)
+@@ -638,7 +644,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 	const struct cred *cred = current_cred();
+ 	struct superblock_security_struct *sbsec = selinux_superblock(sb);
+ 	struct dentry *root = sbsec->sb->s_root;
+-	struct selinux_mnt_opts *opts = mnt_opts;
++	struct selinux_mnt_opts *opts = selinux_mnt_opts(mnt_opts);
+ 	struct inode_security_struct *root_isec;
+ 	u32 fscontext_sid = 0, context_sid = 0, rootcontext_sid = 0;
+ 	u32 defcontext_sid = 0;
+@@ -653,7 +659,8 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 			   server is ready to handle calls. */
+ 			goto out;
+ 		}
+-		rc = -EINVAL;
++		/* Don't set any SELinux options. Allow any other LSM
++		   that's on the stack to do so. */
+ 		pr_warn("SELinux: Unable to set superblock options "
+ 			"before the security server is initialized\n");
+ 		goto out;
+@@ -980,16 +987,17 @@ static int selinux_sb_clone_mnt_opts(const struct super_block *oldsb,
+ 
+ static int selinux_add_opt(int token, const char *s, void **mnt_opts)
+ {
+-	struct selinux_mnt_opts *opts = *mnt_opts;
++	struct selinux_mnt_opts *opts = selinux_mnt_opts(*mnt_opts);
+ 
+ 	if (token == Opt_seclabel)	/* eaten and completely ignored */
  		return 0;
  
--	if (!initxattrs)
--		return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
--				     dir, qstr, NULL, NULL, NULL);
-+	if (!initxattrs) {
-+		rc = -EOPNOTSUPP;
-+		hlist_for_each_entry(p,
-+				     &security_hook_heads.inode_init_security,
-+				     list) {
-+			rc = p->hook.inode_init_security(inode, dir, qstr,
-+							 NULL, NULL, NULL);
-+			if (rc == -EOPNOTSUPP) {
-+				rc = 0;
-+				continue;
-+			}
-+			if (rc)
-+				break;
-+		}
-+		return rc;
-+	}
- 
--	repo = kzalloc((LSM_COUNT * 2) * sizeof(*repo), GFP_NOFS);
-+	repo = kzalloc((LSM_COUNT + 1) * sizeof(*repo), GFP_NOFS);
- 	if (repo == NULL)
- 		return -ENOMEM;
- 
-@@ -1117,18 +1130,20 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 		rc = p->hook.inode_init_security(inode, dir, qstr,
- 						 &repo[i].name, &repo[i].value,
- 						 &repo[i].value_len);
-+		if (rc == -EOPNOTSUPP)
-+			continue;
- 		if (rc)
- 			goto out;
- 
--		rc = evm_inode_init_security(inode, &repo[i], &repo[i + 1]);
--		if (rc)
--			goto out;
--
--		i += 2;
-+		i++;
+ 	if (!opts) {
+-		opts = kzalloc(sizeof(struct selinux_mnt_opts), GFP_KERNEL);
++		opts = lsm_mnt_opts_alloc();
+ 		if (!opts)
+ 			return -ENOMEM;
+ 		*mnt_opts = opts;
++		opts = selinux_mnt_opts(opts);
  	}
-+	rc = evm_inode_init_security(inode, &repo[i], &repo[i + 1]);
-+	if (rc)
-+		goto out;
+ 	if (!s)
+ 		return -ENOMEM;
+@@ -1042,10 +1050,8 @@ static int selinux_add_mnt_opt(const char *option, const char *val, int len,
+ 	rc = selinux_add_opt(token, val, mnt_opts);
+ 	if (unlikely(rc)) {
+ 		kfree(val);
+-		if (*mnt_opts) {
++		if (*mnt_opts)
+ 			selinux_free_mnt_opts(*mnt_opts);
+-			*mnt_opts = NULL;
+-		}
+ 	}
+ 	return rc;
+ }
+@@ -2611,10 +2617,8 @@ static int selinux_sb_eat_lsm_opts(char *options, void **mnt_opts)
+ 			rc = selinux_add_opt(token, arg, mnt_opts);
+ 			if (unlikely(rc)) {
+ 				kfree(arg);
+-				if (*mnt_opts) {
++				if (*mnt_opts)
+ 					selinux_free_mnt_opts(*mnt_opts);
+-					*mnt_opts = NULL;
+-				}
+ 				return rc;
+ 			}
+ 		} else {
+@@ -2637,7 +2641,7 @@ static int selinux_sb_eat_lsm_opts(char *options, void **mnt_opts)
+ 
+ static int selinux_sb_remount(struct super_block *sb, void *mnt_opts)
+ {
+-	struct selinux_mnt_opts *opts = mnt_opts;
++	struct selinux_mnt_opts *opts = selinux_mnt_opts(mnt_opts);
+ 	struct superblock_security_struct *sbsec = selinux_superblock(sb);
+ 	u32 sid;
+ 	int rc;
+@@ -6641,6 +6645,7 @@ struct lsm_blob_sizes selinux_blob_sizes __lsm_ro_after_init = {
+ #ifdef CONFIG_KEYS
+ 	.lbs_key = sizeof(struct key_security_struct),
+ #endif /* CONFIG_KEYS */
++	.lbs_mnt_opts = sizeof(struct selinux_mnt_opts),
+ 	.lbs_msg_msg = sizeof(struct msg_security_struct),
+ 	.lbs_sock = sizeof(struct sk_security_struct),
+ 	.lbs_superblock = sizeof(struct superblock_security_struct),
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 0e2f68e5b895..3fd46cd2c4b1 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -574,26 +574,33 @@ struct smack_mnt_opts {
+ 	const char *fsdefault, *fsfloor, *fshat, *fsroot, *fstransmute;
+ };
+ 
++static void *smack_mnt_opts(void *opts)
++{
++	if (opts)
++		return opts + smack_blob_sizes.lbs_mnt_opts;
++	return NULL;
++}
 +
- 	rc = initxattrs(inode, repo, fs_data);
- out:
--	for (i-- ; i >= 0; i--)
-+	for (i++ ; i >= 0; i--)
- 		kfree(repo[i].value);
- 	kfree(repo);
- 	return (rc == -EOPNOTSUPP) ? 0 : rc;
+ static void smack_free_mnt_opts(void *mnt_opts)
+ {
+-	struct smack_mnt_opts *opts = mnt_opts;
++	struct smack_mnt_opts *opts = smack_mnt_opts(mnt_opts);
+ 	kfree(opts->fsdefault);
+ 	kfree(opts->fsfloor);
+ 	kfree(opts->fshat);
+ 	kfree(opts->fsroot);
+ 	kfree(opts->fstransmute);
+-	kfree(opts);
+ }
+ 
+ static int smack_add_opt(int token, const char *s, void **mnt_opts)
+ {
+-	struct smack_mnt_opts *opts = *mnt_opts;
++	struct smack_mnt_opts *opts = smack_mnt_opts(*mnt_opts);
+ 
+ 	if (!opts) {
+-		opts = kzalloc(sizeof(struct smack_mnt_opts), GFP_KERNEL);
++		opts = lsm_mnt_opts_alloc();
+ 		if (!opts)
+ 			return -ENOMEM;
+ 		*mnt_opts = opts;
++		opts = smack_mnt_opts(opts);
+ 	}
+ 	if (!s)
+ 		return -ENOMEM;
+@@ -741,7 +748,6 @@ static int smack_sb_eat_lsm_opts(char *options, void **mnt_opts)
+ 				kfree(arg);
+ 				if (*mnt_opts)
+ 					smack_free_mnt_opts(*mnt_opts);
+-				*mnt_opts = NULL;
+ 				return rc;
+ 			}
+ 		} else {
+@@ -784,7 +790,7 @@ static int smack_set_mnt_opts(struct super_block *sb,
+ 	struct superblock_smack *sp = smack_superblock(sb);
+ 	struct inode_smack *isp;
+ 	struct smack_known *skp;
+-	struct smack_mnt_opts *opts = mnt_opts;
++	struct smack_mnt_opts *opts = smack_mnt_opts(mnt_opts);
+ 	bool transmute = false;
+ 
+ 	if (sp->smk_flags & SMK_SB_INITIALIZED)
+@@ -4586,6 +4592,7 @@ struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
+ #ifdef CONFIG_KEYS
+ 	.lbs_key = sizeof(struct smack_known *),
+ #endif /* CONFIG_KEYS */
++	.lbs_mnt_opts = sizeof(struct smack_mnt_opts),
+ 	.lbs_msg_msg = sizeof(struct smack_known *),
+ 	.lbs_sock = sizeof(struct socket_smack),
+ 	.lbs_superblock = sizeof(struct superblock_smack),
 -- 
 2.19.1
 
