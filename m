@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B34C282E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 00:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBCDC10F14
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 00:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C40DA21736
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 00:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFB1D217F9
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 00:48:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TD8b2eBY"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="j/CV0okt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbfDSAsg (ORCPT
+        id S1726450AbfDSAsj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Apr 2019 20:48:36 -0400
-Received: from sonic308-9.consmr.mail.bf2.yahoo.com ([74.6.130.48]:35562 "EHLO
-        sonic308-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726964AbfDSAsg (ORCPT
+        Thu, 18 Apr 2019 20:48:39 -0400
+Received: from sonic317-33.consmr.mail.bf2.yahoo.com ([74.6.129.88]:43162 "EHLO
+        sonic317-33.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726997AbfDSAsj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Apr 2019 20:48:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1555634915; bh=mIUpIvzdXdT+Bhe9HVyLHFmBoIk5UXgAItDFEpi4VkQ=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=TD8b2eBYAEum0r5FJgY1+91qCCrnZZf1Xjd3eEQ1jIhfaXKRQ7sCzY8DlG71SvTNs8OnvC4vH/0aWVCwmJ/EWJqKsRYqfc4YCzfTHH+hzMaBGTisOa9ftIKhlEOV2yZ/cZRkJawpcEfyqYPWdvPVF/adLS8SEs0jBXO2T0fNfssXhPNQbwZTpiZGLXxfYGiHMF7Q1sRhOhrpyRAkt7isnshn1Srb88EsQSIpCiliSPIw6SjT82hMMtIecjSoEIHfZsbBtHB+1D4E6fX6JKfWbFWMZxq4lONn6np1f6RIDXiNUOV4b0GARO8RZdKChas6cg2GNd9pJktr6fTWnm/xGQ==
-X-YMail-OSG: mu8mkSgVM1kXYF2bOZLnDkb_EHnGqeaYie9Q8eLRyROIhjUwGHJMKZ5zW9mudgz
- bRFV_rJ5CE4AtKjcZZg0umejAL64kxEeM0AG2UiBG0.tO9KC.Mtk9BN4bwEEUXUho6r2PXv5EiRv
- J7OPmd28NEGV2kdqSdHz0w7IOQvjdBKP.Y3Dtv3SyVnJst9GXXMn3Wb9S7zKjyWWaqxdxPXqI.Ky
- RQdAdtt20a4zMAfrAm.W5Flmpwf9ixwL1BFJw7B0V1EtLud9dSuxK7rGv8Grp1yc4QW9GXEvHp29
- AKOMK967282RVlPMxLsmry_nJZMLWhXb0VoGqC9TWUFbJWV6yfjG92.OK.UtSslAcaZJ40a4jo6y
- Ey7SQiTpr2nimRuF3TG9kczabarzCKk.vIZkeMWtcuHVsLKckCkMbg1r3_v7WYRg6boYJ0KJ6_58
- sUQyROIzUNCGD37CgchfrfN0flV9AmKYFGvE9RbkTeKb.4zVGZkqunZYz_hkLRHsYJkjwnPRjFxb
- kny5kidnWksHJzZnB8jdbPSwD8u7l2R0o0ZXTHkyfmFmqohLKeBNf7QAL7VSRPSWcavQZBV9Obgm
- a9Yx3HfLjzc5qqCHKZz5VWAAwQmaBZBf.iUDlV.jMeLobqYMwKBV1LM4zVd0wI755wLBlYp10Rpf
- cuu9CgkG_Uq2NGz.msfzL3TpvDz2tw6_THfue0TMPOrMWoKAU0v5iB3ZUc1Juz5qOtR1APewJ202
- EyG0H5z6b59e6NTqsFSycqDUruNxPvL7kjTS9WpIIOGKQGjbns5Eb_iDQu8Ox2k.8KRYI_xMdA5q
- _tpSRfHbPVPgIc1irtT2Tgi5muLq0xP57nATQ7wtt81YpgkXRaQta4WWFcH.mt6GNHbVZwVL3Jxa
- q7qJamY_lIWETtGc4KptuSvsHAsavy5JefGPoq592nnmXAxnGUKc7_.MYEY4HUjOMFyZNaNG6lt.
- oc2lhhygkNpXt9EkmbOWmP5ae.3iEiD9OxR8.EpVlvvu4Fahto0f7UYNQHrji_E392SFz82IrlFz
- jYxiZNxnei0QoXxG50X1sNxoN7GPXJyuOrvsaUBL3xeRHyAPVTw7K0VqA7PICKVnLyEaIInnhULq
- fYYcYPpjTJljFsax6hlV09yUukzNOlAPFxuZdy3aoUbn.vNaGrz0Rk7QaUtyWvHn.DqMpAzPkh56
- Cmi9_98wNG.zz.w--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.bf2.yahoo.com with HTTP; Fri, 19 Apr 2019 00:48:35 +0000
+        Thu, 18 Apr 2019 20:48:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1555634918; bh=NriQJ/Ly+k4Qx0CdGV3MY+BheCtZdoxEEIBOuIRJP8o=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=j/CV0oktmGBdcaihmWg5i+mw6b4BZ7k2KcBlWJ76M9aCxBgc9FAoSMyzQy2GiuiLUobxQTCUkcfS5ns2iW9o212ERNkYk8//1u/2RZmitwBPie9Nzlfmv8JjgutaKrCxZB8u3EKERPjyzMlMIbKYi2zYbW2mPqh1i2DsSQr/s5YhQABVZGtE0duhYoLlELlfwEMdJBHq5Mr3dw6qKHNJZzKQLa4KYucO6pNGkgyC5pkOOTRG5UtJgVWp2HO97QhKybm54eE4bpaPAkTFSAyh9UDtzeNxx43fl38b8obCO/nSna9F/iMVTtqypRunxmK294BUfItrLAJstyi2aPtBBQ==
+X-YMail-OSG: CLU.fegVM1nG72SpjvTJ8RCWUp_0KaIo5Lg9vc.grXsS_ei2jiOrTIso1BLlVN_
+ _H1Z8YD3rfKGK0ebNnQBlK2reSHSTIXJGH1Qnlq6Ubk_IPecrBnA9dpUL7pWuJh8CsuGGMkYS1UN
+ E5ZcyrDkgB5T_X5MF9O5gkCUI0E_ZNqZCkujDpIaaMaZSwBMO0fTCG4YimiecO5m2b_uHDHZDfwH
+ c88D6QrmFzrheQWgPfXBW0J1C3K2Z67Ly6Lm.y.IVJ8I7Ll5lak.9LmfitmeogeoN9Jb5GLw7meZ
+ NHeEQTKEg_d1GLS8ZlBKtYU.ZvtHlL6CqKUNDqYAvogUN.ECbKxFOZ2Xv9z6S8EGgArf58QABKsh
+ dcdEc_KFHWTJvei_m3sMioMsbkG4RdD2WStnVcTdUz3Wje_fM2khRkI15.xA.HsVOlHYyqIi.nXm
+ KT9CjUhLzlwHYTKjD5GQDas6cby88E7R2SAfrEuneyeNGbil9bLYmNlgjKad4zqDzVjVKc.LkbN3
+ 6YN8ccguAwhMClm6rTBwOM5FFp3Sc6exg7tAn3RYCX0nB0sgm91ZEdFTV9mFonR._qRNjNTG_k4F
+ aYCOUqFDQ6TdqC.e5J8sgGFwnDV2Tdl9nWr8JP.8f0Fy91j46sR8eg741GpQH9kPvC63tcI6SDKh
+ 8UllII.kZOVBijwki9GtV_xYGGkPVLv5eq6ytJcS0oKJwzH0pvNrbHl6WEQZZR_B9M5BwlKMsu0X
+ doCCxewZJhOVO9WuNgdtKoWPADAQDabPHe4BWJbttjiH1bQKj3vRrwaNbGaexOt7ESiwS3zZgFCG
+ 2IldB4zUzlTkuW76He3CM3zu8WsRP.yvyNTQnwGWEctDwXSOn0qVM1v8Dbrspd9H.pDc8SymrXFV
+ Bb8_j8q2IXxZ66FFZNBW7hUK5ADCQbO_oVYSKLXuWk9f8tYpdp_DL4fhdsnqt8eFXz56GCVFl6b9
+ KSZ5LCuS2METOABUZ91hdin5BeFQVuN_Lp2msympKC4DiHkzcXcSVf69YbUSzKZcpILXJs1jAGet
+ h6RUpKBTvpEhQJ6ey5vkwoldyZVuwo_qQ.JmVnU7yEtYUqBBEBqzCTxIGmQLmweFOLqHE7OYWWJA
+ mYcWu8lbT..1xZfuRUFSUJiawwsYeMf9cz38jkQY9.vwq2j.CfSv04bvpI.o.wXCPpTFKV2xPnn_
+ e2M.ndZLJzHFT7g--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.bf2.yahoo.com with HTTP; Fri, 19 Apr 2019 00:48:38 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp432.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 828306e040049ab0082b23fbf6722cca;
-          Fri, 19 Apr 2019 00:48:31 +0000 (UTC)
+          Fri, 19 Apr 2019 00:48:34 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     casey@schaufler-ca.com
-Subject: [PATCH 56/90] LSM: Special handling for secctx lsm hooks
-Date:   Thu, 18 Apr 2019 17:45:43 -0700
-Message-Id: <20190419004617.64627-57-casey@schaufler-ca.com>
+Subject: [PATCH 59/90] AppArmor: Remove the exclusive flag
+Date:   Thu, 18 Apr 2019 17:45:46 -0700
+Message-Id: <20190419004617.64627-60-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190419004617.64627-1-casey@schaufler-ca.com>
 References: <20190419004617.64627-1-casey@schaufler-ca.com>
@@ -59,93 +59,29 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Create a special set of LSM hooks for the translation
-to human readable security data.
+With the inclusion of the "display" process attribute
+mechanism AppArmor no longer needs to be treated as an
+"exclusive" security module. Remove the flag that indicates
+it is exclusive.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/lsm_hooks.h | 10 ++++++++++
- security/security.c       | 32 ++++++++++++++++++++++++--------
- 2 files changed, 34 insertions(+), 8 deletions(-)
+ security/apparmor/lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 014791349bbd..0653f295897a 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2040,6 +2040,16 @@ struct security_hook_list {
- 	char				*lsm;
- } __randomize_layout;
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 771b0ae24a5f..a8b11a7f29fa 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1705,7 +1705,7 @@ static int __init apparmor_init(void)
  
-+/*
-+ * The set of hooks that may be selected for a specific module.
-+ */
-+struct lsm_one_hooks {
-+	char *lsm;
-+	union security_list_options secid_to_secctx;
-+	union security_list_options secctx_to_secid;
-+	union security_list_options socket_getpeersec_stream;
-+};
-+
- /*
-  * Security blob size or offset data.
-  */
-diff --git a/security/security.c b/security/security.c
-index ae43735575d6..b05265ec24f0 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -420,6 +420,9 @@ static int lsm_append(char *new, char **result)
- 	return 0;
- }
- 
-+/* Base list of once-only hooks */
-+struct lsm_one_hooks lsm_base_one;
-+
- /**
-  * security_add_hooks - Add a modules hooks to the hook lists.
-  * @hooks: the hooks to add
-@@ -436,6 +439,25 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
- 	for (i = 0; i < count; i++) {
- 		hooks[i].lsm = lsm;
- 		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
-+
-+		/*
-+		 * Check for the special hooks that are restricted to
-+		 * a single module to create the base set. Use the hooks
-+		 * from that module for the set, which may not be complete.
-+		 */
-+		if (lsm_base_one.lsm && strcmp(lsm_base_one.lsm, hooks[i].lsm))
-+			continue;
-+		if (hooks[i].head == &security_hook_heads.secid_to_secctx)
-+			lsm_base_one.secid_to_secctx = hooks[i].hook;
-+		else if (hooks[i].head == &security_hook_heads.secctx_to_secid)
-+			lsm_base_one.secctx_to_secid = hooks[i].hook;
-+		else if (hooks[i].head ==
-+				&security_hook_heads.socket_getpeersec_stream)
-+			lsm_base_one.socket_getpeersec_stream = hooks[i].hook;
-+		else
-+			continue;
-+		if (lsm_base_one.lsm == NULL)
-+			lsm_base_one.lsm = kstrdup(hooks[i].lsm, GFP_KERNEL);
- 	}
- 	if (lsm_append(lsm, &lsm_names) < 0)
- 		panic("%s - Cannot get early memory.\n", __func__);
-@@ -714,14 +736,8 @@ int lsm_superblock_alloc(struct super_block *sb)
- 
- #define call_one_int_hook(FUNC, IRC, ...) ({			\
- 	int RC = IRC;						\
--	do {							\
--		struct security_hook_list *P;			\
--								\
--		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
--			RC = P->hook.FUNC(__VA_ARGS__);		\
--			break;					\
--		}						\
--	} while (0);						\
-+	if (lsm_base_one.FUNC.FUNC)				\
-+		RC = lsm_base_one.FUNC.FUNC(__VA_ARGS__);	\
- 	RC;							\
- })
- 
+ DEFINE_LSM(apparmor) = {
+ 	.name = "apparmor",
+-	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.enabled = &apparmor_enabled,
+ 	.blobs = &apparmor_blob_sizes,
+ 	.init = apparmor_init,
 -- 
 2.19.1
 
