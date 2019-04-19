@@ -3,110 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D17C10F14
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 02:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1010FC10F14
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 03:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBF882171F
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 02:42:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D579A21736
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Apr 2019 03:06:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfDSCmZ (ORCPT
+        id S1727201AbfDSDGz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Apr 2019 22:42:25 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57706 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726822AbfDSCmZ (ORCPT
+        Thu, 18 Apr 2019 23:06:55 -0400
+Received: from mga04.intel.com ([192.55.52.120]:25756 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726822AbfDSDGz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Apr 2019 22:42:25 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8DE7C355CD7BCD18DF77;
-        Fri, 19 Apr 2019 10:35:01 +0800 (CST)
-Received: from [127.0.0.1] (10.177.19.219) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Fri, 19 Apr 2019
- 10:34:54 +0800
-Subject: Re: kernel BUG at kernel/cred.c:434!
-To:     Paul Moore <paul@paul-moore.com>
-References: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
- <20190415134331.GC22204@redhat.com>
- <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
- <20190415150520.GA13257@redhat.com>
- <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
- <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
- <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
- <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
- <20190417145711.GI32622@redhat.com>
- <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
- <20190417162723.GK32622@redhat.com>
- <CAHC9VhT_nk1jmrTj3W=F+1gP1vU3iZsZ=UGOCwdiBLbUsOc9=w@mail.gmail.com>
- <0ca3f4cf-5c64-2fc0-1885-9dbcca2f4b47@schaufler-ca.com>
- <5CB7E5D4.2060703@huawei.com>
- <CAHC9VhQkrR+m9_dYLg4VG-26TdUnf8XFjbmuVQ70YCOp6DhN_g@mail.gmail.com>
-CC:     Casey Schaufler <casey@schaufler-ca.com>,
-        Oleg Nesterov <oleg@redhat.com>, <john.johansen@canonical.com>,
-        "chengjian (D)" <cj.chengjian@huawei.com>,
-        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>,
-        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        Thu, 18 Apr 2019 23:06:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Apr 2019 20:06:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,368,1549958400"; 
+   d="scan'208";a="163188867"
+Received: from pgsmsx103.gar.corp.intel.com ([10.221.44.82])
+  by fmsmga004.fm.intel.com with ESMTP; 18 Apr 2019 20:06:51 -0700
+Received: from pgsmsx109.gar.corp.intel.com (10.221.44.109) by
+ PGSMSX103.gar.corp.intel.com (10.221.44.82) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 19 Apr 2019 11:06:49 +0800
+Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.40]) by
+ PGSMSX109.gar.corp.intel.com ([169.254.14.210]) with mapi id 14.03.0415.000;
+ Fri, 19 Apr 2019 11:06:49 +0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
-        Li Bin <huawei.libin@huawei.com>,
-        "Jason Yan" <yanaijie@huawei.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux Security Module list 
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+CC:     "Svahn, Kai" <kai.svahn@intel.com>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        SELinux <selinux@vger.kernel.org>
-From:   Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <5CB933C4.7000300@huawei.com>
-Date:   Fri, 19 Apr 2019 10:34:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v20 16/28] x86/sgx: Add provisioning
+Thread-Topic: [PATCH v20 16/28] x86/sgx: Add provisioning
+Thread-Index: AQHU9QorPuxiqm5t3UWkqdBgsZ38LKZCSaAA
+Date:   Fri, 19 Apr 2019 03:06:48 +0000
+Message-ID: <1555643200.2776.1.camel@intel.com>
+References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
+         <20190417103938.7762-17-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190417103938.7762-17-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.254.60.18]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <18CCDFF5DE53F24CB10B113661895E29@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhQkrR+m9_dYLg4VG-26TdUnf8XFjbmuVQ70YCOp6DhN_g@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.19.219]
-X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 2019/4/19 10:04, Paul Moore wrote:
-> On Wed, Apr 17, 2019 at 10:50 PM Yang Yingliang
-> <yangyingliang@huawei.com> wrote:
->> On 2019/4/18 8:24, Casey Schaufler wrote:
->>> On 4/17/2019 4:39 PM, Paul Moore wrote:
->>>> Since it looks like all three LSMs which implement the setprocattr
->>>> hook are vulnerable I'm open to the idea that proc_pid_attr_write() is
->>>> a better choice for the cred != read_cred check, but I would want to
->>>> make sure John and Casey are okay with that.
->>>>
->>>> John?
->>>>
->>>> Casey?
->>> I'm fine with the change going into proc_pid_attr_write().
->> The cred != real_cred checking is not enough.
->>
->> Consider this situation, when doing override, cred, real_cred and
->> new_cred are all same:
->>
->> after override_creds()    cred == real_cred == new1_cred
-> I'm sorry, you've lost me.  After override_creds() returns
-> current->cred and current->real_cred are not going to be the same,
-> yes?
-It's possible the new  cred is equal to current->real_cred and 
-current->cred,
-so after overrides_creds(), they have the same value.
->
->> after prepare_creds()     new2_cred
->> after commit_creds()     becasue the check is false, so cred ==
->> real_cred == new2_cred
->> after revert_creds()        cred == new1_cred, real_cred == new2_cred
->>
->> It will cause cred != real_cred finally.
-
-
+T24gV2VkLCAyMDE5LTA0LTE3IGF0IDEzOjM5ICswMzAwLCBKYXJra28gU2Fra2luZW4gd3JvdGU6
+DQo+IEluIG9yZGVyIHRvIHByb3ZpZGUgYSBtZWNoYW5pc20gZm9yIGRldmlsZXJpbmcgcHJvdmlz
+b25pbmcgcmlnaHRzOg0KPiANCj4gMS4gQWRkIGEgbmV3IGRldmljZSBmaWxlIC9kZXYvc2d4L3By
+b3Zpc2lvbiB0aGF0IHdvcmtzIGFzIGEgdG9rZW4gZm9yDQo+ICAgIGFsbG93aW5nIGFuIGVuY2xh
+dmUgdG8gaGF2ZSB0aGUgcHJvdmlzaW9uaW5nIHByaXZpbGVnZXMuDQo+IDIuIEFkZCBhIG5ldyBp
+b2N0bCBjYWxsZWQgU0dYX0lPQ19FTkNMQVZFX1NFVF9BVFRSSUJVVEUgdGhhdCBhY2NlcHRzIHRo
+ZQ0KPiAgICBmb2xsb3dpbmcgZGF0YSBzdHJ1Y3R1cmU6DQo+IA0KPiAgICBzdHJ1Y3Qgc2d4X2Vu
+Y2xhdmVfc2V0X2F0dHJpYnV0ZSB7DQo+ICAgICAgICAgICAgX191NjQgYWRkcjsNCj4gICAgICAg
+ICAgICBfX3U2NCBhdHRyaWJ1dGVfZmQ7DQo+ICAgIH07DQo+IA0KPiBBIGRhZW1vbiBjb3VsZCBz
+aXQgb24gdG9wIG9mIC9kZXYvc2d4L3Byb3Zpc2lvbiBhbmQgc2VuZCBhIGZpbGUNCj4gZGVzY3Jp
+cHRvciBvZiB0aGlzIGZpbGUgdG8gYSBwcm9jZXNzIHRoYXQgbmVlZHMgdG8gYmUgYWJsZSB0byBw
+cm92aXNpb24NCj4gZW5jbGF2ZXMuDQo+IA0KPiBUaGUgd2F5IHRoaXMgQVBJIGlzIHVzZWQgaXMg
+c3RyYWlnaHQtZm9yd2FyZC4gTGV0cyBhc3N1bWUgdGhhdCBkZXZfZmQgaXMNCj4gYSBoYW5kbGUg
+dG8gL2Rldi9zZ3gvZW5jbGF2ZSBhbmQgcHJvdl9mZCBpcyBhIGhhbmRsZSB0bw0KPiAvZGV2L3Nn
+eC9wcm92aXNpb24uICBZb3Ugd291bGQgYWxsb3cgU0dYX0lPQ19FTkNMQVZFX0NSRUFURSB0bw0K
+PiBpbml0aWFsaXplIGFuIGVuY2xhdmUgd2l0aCB0aGUgUFJPVklTSU9OS0VZIGF0dHJpYnV0ZSBi
+eQ0KPiANCj4gcGFyYW1zLmFkZHIgPSA8ZW5jbGF2ZSBhZGRyZXNzPjsNCj4gcGFyYW1zLnRva2Vu
+X2ZkID0gcHJvdl9mZDsNCj4gDQpTaG91bGQgYmUgcGFyYW1zLmF0dHJpYnV0ZV9mZCA9IHByb3Zf
+ZmQ7DQoNClRoYW5rcywNCi1LYWk=
