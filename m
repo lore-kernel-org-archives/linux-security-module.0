@@ -2,221 +2,154 @@ Return-Path: <SRS0=3Hiv=SW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 290D1C282E0
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 Apr 2019 00:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9DCC282E2
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 Apr 2019 07:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8E1A2183F
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 Apr 2019 00:01:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCD82sAv"
+	by mail.kernel.org (Postfix) with ESMTP id B51CF2063F
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 Apr 2019 07:39:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfDTABG (ORCPT
+        id S1727263AbfDTHjK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Apr 2019 20:01:06 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35062 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfDTABF (ORCPT
+        Sat, 20 Apr 2019 03:39:10 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34656 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725863AbfDTHjK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Apr 2019 20:01:05 -0400
-Received: by mail-pf1-f193.google.com with SMTP id t21so3162891pfh.2;
-        Fri, 19 Apr 2019 17:01:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6Udj6MDjEqWBRWB1i5C2xUr4MKRsbtdhAIzejy8vmow=;
-        b=gCD82sAv+ZlkNXlJU9hJbOs5iCAmrfzB3oy6vpYE2sQLlUSPPhCqAr5yIbfLzs3U2r
-         c5j7mYHcdZg8kwYaAy2L4pNIRd/77dMRdL1wtDVyuzepwdj+3ydnL5N3uF2ttBXJRJly
-         FRdn4Fl5da8xORfgAZPVSg/2e8Fs7CixmAHoKKJkhcEKu+pdHrqvbAcgquSh+9jDHZaj
-         VgNTKYnRR0DjmQ/YJwlxtS6KV4L+HdwL6OZBw+c/c+mAUupBEcDgAPg4I1ttpoug+7Hs
-         Z+NC5pP9tk5WNC7pMM/TOHWJ457xHAdImb329PU1w0mLif2s+H+R/cZ4gmAO8HCPDzkp
-         mdMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6Udj6MDjEqWBRWB1i5C2xUr4MKRsbtdhAIzejy8vmow=;
-        b=jmOnmodMTibMPIDtC1x9YmMtBvZu+mD3JKMSVvVXNPRfizIUoNXnykTt2E6PNw7Fow
-         RtqEJlUDLlYhooztiw/55eZCgJk+an2NKJAo8UyQoZu9Zr5nIyUtH0T4i2zXujvJ+zRU
-         R/6Z0FvPq9g5/ATrc7yHEN+WV6+w+BLGuwR+FI5WUXX/C476LiJr9jN73wIEyZscAwAZ
-         q50keJFN71cOZRvjpQ3lCT4CWbavM1hRE7EAQfx+qttZrnMZKKdCQRkEnFbvwcqMNF/o
-         2qiekSihF1lwUI3o7EQEa2rERt3tWv57kOPb3QVcqf6CNAI+NpYpNzFB8ceA8O4i/aEk
-         22MQ==
-X-Gm-Message-State: APjAAAXkEBsqpr4Gs7IH4mX1A6giSwZwCmVwOPL4/Bhb2Mky/qnPVlN8
-        QUiV/ILd5mBNsZ5AviYw21nx0xvH9i4=
-X-Google-Smtp-Source: APXvYqyK+W7gLzZTugjx0dKijkj5bV/fhfWRonLPt/0OxjNSSdWurcgX8ghBFxSXzyLinNym0awu3Q==
-X-Received: by 2002:a63:1b04:: with SMTP id b4mr4199312pgb.305.1555718464537;
-        Fri, 19 Apr 2019 17:01:04 -0700 (PDT)
-Received: from prsriva-linux.corp.microsoft.com ([2001:4898:80e8:2:5828:72bc:96ef:ce7c])
-        by smtp.gmail.com with ESMTPSA id f5sm6699142pgo.75.2019.04.19.17.01.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Apr 2019 17:01:03 -0700 (PDT)
-From:   Prakhar Srivastava <prsriva02@gmail.com>
-X-Google-Original-From: Prakhar Srivastava
-To:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     zohar@linux.vnet.ibm.com, Prakhar Srivastava <prsriva02@gmail.com>,
-        Prakhar Srivastava <prsriva@microsoft.com>
-Subject: [PATCHv2] use event name instead of enum to make the call generic
-Date:   Fri, 19 Apr 2019 17:00:56 -0700
-Message-Id: <20190420000057.5222-2-prsriva02@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190420000057.5222-1-prsriva02@gmail.com>
-References: <20190420000057.5222-1-prsriva02@gmail.com>
+        Sat, 20 Apr 2019 03:39:10 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D92EC885BE359E474BB9;
+        Sat, 20 Apr 2019 15:39:05 +0800 (CST)
+Received: from [127.0.0.1] (10.177.19.219) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Sat, 20 Apr 2019
+ 15:38:57 +0800
+Subject: Re: kernel BUG at kernel/cred.c:434!
+To:     Paul Moore <paul@paul-moore.com>
+References: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
+ <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
+ <20190415150520.GA13257@redhat.com>
+ <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
+ <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
+ <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
+ <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
+ <20190417145711.GI32622@redhat.com>
+ <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
+ <20190417162723.GK32622@redhat.com>
+ <CAHC9VhT_nk1jmrTj3W=F+1gP1vU3iZsZ=UGOCwdiBLbUsOc9=w@mail.gmail.com>
+ <0ca3f4cf-5c64-2fc0-1885-9dbcca2f4b47@schaufler-ca.com>
+ <5CB7E5D4.2060703@huawei.com>
+ <CAHC9VhQkrR+m9_dYLg4VG-26TdUnf8XFjbmuVQ70YCOp6DhN_g@mail.gmail.com>
+ <5CB933C4.7000300@huawei.com>
+ <CAHC9VhTdJ6uUOjyxrk=+iOkKe=VN+N9DMPtV=OchAY34x95g=w@mail.gmail.com>
+ <5CB9DC75.7010600@huawei.com>
+ <CAHC9VhQqxL+LsK8YTD6PpTHaZsZ-PxAq3atdZKQcZLQZQH7t4g@mail.gmail.com>
+CC:     Casey Schaufler <casey@schaufler-ca.com>,
+        Oleg Nesterov <oleg@redhat.com>, <john.johansen@canonical.com>,
+        "chengjian (D)" <cj.chengjian@huawei.com>,
+        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
+        Li Bin <huawei.libin@huawei.com>,
+        "Jason Yan" <yanaijie@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SELinux <selinux@vger.kernel.org>
+From:   Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <5CBACC8F.8010409@huawei.com>
+Date:   Sat, 20 Apr 2019 15:38:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <CAHC9VhQqxL+LsK8YTD6PpTHaZsZ-PxAq3atdZKQcZLQZQH7t4g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.19.219]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Prakhar Srivastava <prsriva02@gmail.com>
 
-Signed-off-by: Prakhar Srivastava <prsriva@microsoft.com>
----
 
-remove enaums to control type of buffers entries, instead pass the event name to be used.
+On 2019/4/20 0:13, Paul Moore wrote:
+> On Fri, Apr 19, 2019 at 10:34 AM Yang Yingliang
+> <yangyingliang@huawei.com> wrote:
+>> On 2019/4/19 21:24, Paul Moore wrote:
+>>> On Thu, Apr 18, 2019 at 10:42 PM Yang Yingliang
+>>> <yangyingliang@huawei.com> wrote:
+>>>> On 2019/4/19 10:04, Paul Moore wrote:
+>>>>> On Wed, Apr 17, 2019 at 10:50 PM Yang Yingliang
+>>>>> <yangyingliang@huawei.com> wrote:
+>>>>>> On 2019/4/18 8:24, Casey Schaufler wrote:
+>>>>>>> On 4/17/2019 4:39 PM, Paul Moore wrote:
+>>>>>>>> Since it looks like all three LSMs which implement the setprocattr
+>>>>>>>> hook are vulnerable I'm open to the idea that proc_pid_attr_write() is
+>>>>>>>> a better choice for the cred != read_cred check, but I would want to
+>>>>>>>> make sure John and Casey are okay with that.
+>>>>>>>>
+>>>>>>>> John?
+>>>>>>>>
+>>>>>>>> Casey?
+>>>>>>> I'm fine with the change going into proc_pid_attr_write().
+>>>>>> The cred != real_cred checking is not enough.
+>>>>>>
+>>>>>> Consider this situation, when doing override, cred, real_cred and
+>>>>>> new_cred are all same:
+>>>>>>
+>>>>>> after override_creds()    cred == real_cred == new1_cred
+>>>>> I'm sorry, you've lost me.  After override_creds() returns
+>>>>> current->cred and current->real_cred are not going to be the same,
+>>>>> yes?
+>>>> It's possible the new  cred is equal to current->real_cred and
+>>>> current->cred,
+>>>> so after overrides_creds(), they have the same value.
+>>> Both task_struct.cred and task_struct.real_cred are pointer values,
+>>> assuming that one uses prepare_creds() to allocate/initialize a new
+>>> cred struct for use with override_creds() then the newly created cred
+>>> should never be equal to task_struct.real_cred.  Am I missing
+>>> something, or are you thinking of something else?
+>> In do_acct_process(), file->f_cred may equal to current->real_cred, I
+>> confirm
+>> it by adding some debug message in do_acct_process() like this:
+> I would expect that; real_cred is the task's objective DAC
+> credentials, so using it for f_cred makes sense.
+>
+> What we are now talking about is the task's subjective credentials,
+> which can be overridden via override_creds(), and are what the LSMs
+> change via proc_pid_attr_write().
+I'm not sure you got my point.
 
- include/linux/ima.h               | 10 ++--------
- kernel/kexec_file.c               |  3 +++
- security/integrity/ima/ima.h      |  2 +-
- security/integrity/ima/ima_main.c | 30 ++++++++++--------------------
- 4 files changed, 16 insertions(+), 29 deletions(-)
+I was saying cred != real_cred check is not quite right, because the 
+cred can
+be overridden by a same pointer as my print messages showing.
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 733d0cb9dedc..5e41507c57e5 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -14,12 +14,6 @@
- #include <linux/kexec.h>
- struct linux_binprm;
- 
--enum __buffer_id {
--	KERNEL_VERSION,
--	KEXEC_CMDLINE,
--	MAX_BUFFER_ID = KEXEC_CMDLINE
--} buffer_id;
--
- #ifdef CONFIG_IMA
- extern int ima_bprm_check(struct linux_binprm *bprm);
- extern int ima_file_check(struct file *file, int mask, int opened);
-@@ -29,7 +23,7 @@ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
- extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 			      enum kernel_read_file_id id);
- extern void ima_post_path_mknod(struct dentry *dentry);
--extern void ima_buffer_check(const void *buff, int size, enum buffer_id id);
-+extern void ima_buffer_check(const void *buff, int size, char *eventname);
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
-@@ -72,7 +66,7 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
- }
- 
- static inline void ima_buffer_check(const void *buff, int size,
--			enum buffer_id id)
-+			char *eventname)
- {
- 	return;
- }
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index b118735fea9d..2a5234eb4b28 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -182,6 +182,9 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 			ret = -EINVAL;
- 			goto out;
- 		}
-+
-+		ima_buffer_check(image->cmdline_buf, cmdline_len - 1,
-+				"kexec_cmdline");
- 	}
- 
- 	/* Call arch image load handlers */
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index b71f2f6f7421..fcade3c103ed 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -181,8 +181,8 @@ enum ima_hooks {
- 	FIRMWARE_CHECK,
- 	KEXEC_KERNEL_CHECK,
- 	KEXEC_INITRAMFS_CHECK,
--	BUFFER_CHECK,
- 	POLICY_CHECK,
-+	BUFFER_CHECK,
- 	MAX_CHECK
- };
- 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 6408cadaadbb..da82c705a5ed 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -160,8 +160,7 @@ void ima_file_free(struct file *file)
-  * (Instead of using the file hash the buffer hash is used).
-  * @buff - The buffer that needs to be added to the log
-  * @size - size of buffer(in bytes)
-- * @id - buffer id, this is differentiator for the various buffers
-- * that can be measured.
-+ * @id - eventname, event name to be used for buffer measurement.
-  *
-  * The buffer passed is added to the ima logs.
-  * If the sig template is used, then the sig field contains the buffer.
-@@ -170,7 +169,7 @@ void ima_file_free(struct file *file)
-  * On error cases surface errors from ima calls.
-  */
- static int process_buffer_measurement(const void *buff, int size,
--				enum buffer_id id)
-+				char *eventname)
- {
- 	int ret = -EINVAL;
- 	struct ima_template_entry *entry = NULL;
-@@ -185,23 +184,13 @@ static int process_buffer_measurement(const void *buff, int size,
- 	int violation = 0;
- 	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
- 
--	if (!buff || size ==  0)
-+	if (!buff || size ==  0 || !eventname)
- 		goto err_out;
- 
- 	if (ima_get_action(NULL, 0, BUFFER_CHECK, &pcr) != IMA_MEASURE)
- 		goto err_out;
- 
--	switch (buffer_id) {
--	case KERNEL_VERSION:
--		name = "Kernel-version";
--		break;
--	case KEXEC_CMDLINE:
--		name = "Kexec-cmdline";
--		break;
--	default:
--		goto err_out;
--	}
--
-+	name = eventname;
- 	memset(iint, 0, sizeof(*iint));
- 	memset(&hash, 0, sizeof(hash));
- 
-@@ -452,15 +441,16 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
-  * ima_buffer_check - based on policy, collect & store buffer measurement
-  * @buf: pointer to buffer
-  * @size: size of buffer
-- * @buffer_id: caller identifier
-+ * @eventname: caller identifier
-  *
-  * Buffers can only be measured, not appraised.  The buffer identifier
-- * is used as the measurement list entry name (eg. boot_cmdline).
-+ * is used as the measurement list entry name (eg. boot_cmdline,
-+ * kernel_version).
-  */
--void ima_buffer_check(const void *buf, int size, enum buffer_id id)
-+void ima_buffer_check(const void *buf, int size, char *eventname)
- {
--	if (buf && size != 0)
--		process_buffer_measurement(buf, size, id);
-+	if (buf && size != 0 && eventname)
-+		process_buffer_measurement(buf, size, eventname);
- 
- 	return;
- }
--- 
-2.17.1
+"cred != real_cred" means override_creds() is called, but "cred == 
+real_cred"
+doesn't mean override_creds() is not called.
+
+When we use "cred != real_cred" check, we may lost the situation that cred
+is overridden by a same pointer. In this case, we will do 
+override_creds() =>
+commit_creds() => revert_creds(), this make cred != real_cred, when a new
+commit_creds() is called, it also will trigger a BUG_ON().
+>
+>> --- a/kernel/acct.c
+>> +++ b/kernel/acct.c
+>> @@ -481,6 +481,7 @@ static void do_acct_process(struct bsd_acct_struct
+>> *acct)
+>>           flim = current->signal->rlim[RLIMIT_FSIZE].rlim_cur;
+>>           current->signal->rlim[RLIMIT_FSIZE].rlim_cur = RLIM_INFINITY;
+>>           /* Perform file operations on behalf of whoever enabled
+>> accounting */
+>> +       pr_info("task:%px new cred:%px real cred:%px cred:%px\n",
+>> current, file->f_cred, current->real_cred, current->cred);
+>>           orig_cred = override_creds(file->f_cred);
+
 
