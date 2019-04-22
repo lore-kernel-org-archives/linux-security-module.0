@@ -6,18 +6,18 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A76C10F11
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E37C282E1
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ECED2064A
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 647B92064A
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728707AbfDVS6s (ORCPT
+        id S1728761AbfDVS6s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Mon, 22 Apr 2019 14:58:48 -0400
-Received: from mga11.intel.com ([192.55.52.93]:60353 "EHLO mga11.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:60347 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728748AbfDVS6r (ORCPT
+        id S1728754AbfDVS6r (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Mon, 22 Apr 2019 14:58:47 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
@@ -26,7 +26,7 @@ Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 11:58:45 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,382,1549958400"; 
-   d="scan'208";a="136417161"
+   d="scan'208";a="136417168"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
   by orsmga008.jf.intel.com with ESMTP; 22 Apr 2019 11:58:42 -0700
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -43,11 +43,11 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v4 15/23] mm: Make hibernate handle unmapped pages
-Date:   Mon, 22 Apr 2019 11:57:57 -0700
-Message-Id: <20190422185805.1169-16-rick.p.edgecombe@intel.com>
+        Jessica Yu <jeyu@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v4 17/23] modules: Use vmalloc special flag
+Date:   Mon, 22 Apr 2019 11:57:59 -0700
+Message-Id: <20190422185805.1169-18-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
 References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
@@ -55,151 +55,198 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Make hibernate handle unmapped pages on the direct map when
-CONFIG_ARCH_HAS_SET_ALIAS is set. These functions allow for setting pages
-to invalid configurations, so now hibernate should check if the pages have
-valid mappings and handle if they are unmapped when doing a hibernate
-save operation.
+Use new flag for handling freeing of special permissioned memory in vmalloc
+and remove places where memory was set RW before freeing which is no longer
+needed.
 
-Previously this checking was already done when CONFIG_DEBUG_PAGEALLOC
-was configured. It does not appear to have a big hibernating performance
-impact. The speed of the saving operation before this change was measured
-as 819.02 MB/s, and after was measured at 813.32 MB/s.
+Since freeing of VM_FLUSH_RESET_PERMS memory is not supported in an
+interrupt by vmalloc, the freeing of init sections is moved to a work
+queue. Instead of call_rcu it now uses synchronize_rcu() in the work
+queue.
 
-Before:
-[    4.670938] PM: Wrote 171996 kbytes in 0.21 seconds (819.02 MB/s)
+Lastly, there is now a WARN_ON in module_memfree since it should not be
+called in an interrupt with special memory as is required for
+VM_FLUSH_RESET_PERMS.
 
-After:
-[    4.504714] PM: Wrote 178932 kbytes in 0.22 seconds (813.32 MB/s)
-
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Borislav Petkov <bp@alien8.de>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/mm/pageattr.c  |  4 ----
- include/linux/mm.h      | 18 ++++++------------
- kernel/power/snapshot.c |  5 +++--
- mm/page_alloc.c         |  7 +++++--
- 4 files changed, 14 insertions(+), 20 deletions(-)
+ kernel/module.c | 77 +++++++++++++++++++++++++------------------------
+ 1 file changed, 39 insertions(+), 38 deletions(-)
 
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 3574550192c6..daf4d645e537 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -2257,7 +2257,6 @@ int set_direct_map_default_noflush(struct page *page)
- 	return __set_pages_p(page, 1);
+diff --git a/kernel/module.c b/kernel/module.c
+index 2b2845ae983e..a9020bdd4cf6 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -98,6 +98,10 @@ DEFINE_MUTEX(module_mutex);
+ EXPORT_SYMBOL_GPL(module_mutex);
+ static LIST_HEAD(modules);
+ 
++/* Work queue for freeing init sections in success case */
++static struct work_struct init_free_wq;
++static struct llist_head init_free_list;
++
+ #ifdef CONFIG_MODULES_TREE_LOOKUP
+ 
+ /*
+@@ -1949,6 +1953,8 @@ void module_enable_ro(const struct module *mod, bool after_init)
+ 	if (!rodata_enabled)
+ 		return;
+ 
++	set_vm_flush_reset_perms(mod->core_layout.base);
++	set_vm_flush_reset_perms(mod->init_layout.base);
+ 	frob_text(&mod->core_layout, set_memory_ro);
+ 	frob_text(&mod->core_layout, set_memory_x);
+ 
+@@ -1972,15 +1978,6 @@ static void module_enable_nx(const struct module *mod)
+ 	frob_writable_data(&mod->init_layout, set_memory_nx);
  }
  
--#ifdef CONFIG_DEBUG_PAGEALLOC
- void __kernel_map_pages(struct page *page, int numpages, int enable)
+-static void module_disable_nx(const struct module *mod)
+-{
+-	frob_rodata(&mod->core_layout, set_memory_x);
+-	frob_ro_after_init(&mod->core_layout, set_memory_x);
+-	frob_writable_data(&mod->core_layout, set_memory_x);
+-	frob_rodata(&mod->init_layout, set_memory_x);
+-	frob_writable_data(&mod->init_layout, set_memory_x);
+-}
+-
+ /* Iterate through all modules and set each module's text as RW */
+ void set_all_modules_text_rw(void)
  {
- 	if (PageHighMem(page))
-@@ -2302,11 +2301,8 @@ bool kernel_page_present(struct page *page)
- 	pte = lookup_address((unsigned long)page_address(page), &level);
- 	return (pte_val(*pte) & _PAGE_PRESENT);
+@@ -2024,23 +2021,8 @@ void set_all_modules_text_ro(void)
+ 	}
+ 	mutex_unlock(&module_mutex);
  }
 -
- #endif /* CONFIG_HIBERNATION */
- 
--#endif /* CONFIG_DEBUG_PAGEALLOC */
+-static void disable_ro_nx(const struct module_layout *layout)
+-{
+-	if (rodata_enabled) {
+-		frob_text(layout, set_memory_rw);
+-		frob_rodata(layout, set_memory_rw);
+-		frob_ro_after_init(layout, set_memory_rw);
+-	}
+-	frob_rodata(layout, set_memory_x);
+-	frob_ro_after_init(layout, set_memory_x);
+-	frob_writable_data(layout, set_memory_x);
+-}
 -
- int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
- 				   unsigned numpages, unsigned long page_flags)
- {
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 6b10c21630f5..083d7b4863ed 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2610,37 +2610,31 @@ static inline void kernel_poison_pages(struct page *page, int numpages,
- 					int enable) { }
+ #else
+-static void disable_ro_nx(const struct module_layout *layout) { }
+ static void module_enable_nx(const struct module *mod) { }
+-static void module_disable_nx(const struct module *mod) { }
  #endif
  
--#ifdef CONFIG_DEBUG_PAGEALLOC
- extern bool _debug_pagealloc_enabled;
--extern void __kernel_map_pages(struct page *page, int numpages, int enable);
+ #ifdef CONFIG_LIVEPATCH
+@@ -2120,6 +2102,11 @@ static void free_module_elf(struct module *mod)
  
- static inline bool debug_pagealloc_enabled(void)
+ void __weak module_memfree(void *module_region)
  {
--	return _debug_pagealloc_enabled;
-+	return IS_ENABLED(CONFIG_DEBUG_PAGEALLOC) && _debug_pagealloc_enabled;
++	/*
++	 * This memory may be RO, and freeing RO memory in an interrupt is not
++	 * supported by vmalloc.
++	 */
++	WARN_ON(in_interrupt());
+ 	vfree(module_region);
  }
  
-+#if defined(CONFIG_DEBUG_PAGEALLOC) || defined(CONFIG_ARCH_HAS_SET_DIRECT_MAP)
-+extern void __kernel_map_pages(struct page *page, int numpages, int enable);
+@@ -2171,7 +2158,6 @@ static void free_module(struct module *mod)
+ 	mutex_unlock(&module_mutex);
+ 
+ 	/* This may be empty, but that's OK */
+-	disable_ro_nx(&mod->init_layout);
+ 	module_arch_freeing_init(mod);
+ 	module_memfree(mod->init_layout.base);
+ 	kfree(mod->args);
+@@ -2181,7 +2167,6 @@ static void free_module(struct module *mod)
+ 	lockdep_free_key_range(mod->core_layout.base, mod->core_layout.size);
+ 
+ 	/* Finally, free the core (containing the module structure) */
+-	disable_ro_nx(&mod->core_layout);
+ 	module_memfree(mod->core_layout.base);
+ }
+ 
+@@ -3420,17 +3405,34 @@ static void do_mod_ctors(struct module *mod)
+ 
+ /* For freeing module_init on success, in case kallsyms traversing */
+ struct mod_initfree {
+-	struct rcu_head rcu;
++	struct llist_node node;
+ 	void *module_init;
+ };
+ 
+-static void do_free_init(struct rcu_head *head)
++static void do_free_init(struct work_struct *w)
+ {
+-	struct mod_initfree *m = container_of(head, struct mod_initfree, rcu);
+-	module_memfree(m->module_init);
+-	kfree(m);
++	struct llist_node *pos, *n, *list;
++	struct mod_initfree *initfree;
 +
- static inline void
- kernel_map_pages(struct page *page, int numpages, int enable)
- {
--	if (!debug_pagealloc_enabled())
--		return;
--
- 	__kernel_map_pages(page, numpages, enable);
++	list = llist_del_all(&init_free_list);
++
++	synchronize_rcu();
++
++	llist_for_each_safe(pos, n, list) {
++		initfree = container_of(pos, struct mod_initfree, node);
++		module_memfree(initfree->module_init);
++		kfree(initfree);
++	}
  }
- #ifdef CONFIG_HIBERNATION
- extern bool kernel_page_present(struct page *page);
- #endif	/* CONFIG_HIBERNATION */
--#else	/* CONFIG_DEBUG_PAGEALLOC */
-+#else	/* CONFIG_DEBUG_PAGEALLOC || CONFIG_ARCH_HAS_SET_DIRECT_MAP */
- static inline void
- kernel_map_pages(struct page *page, int numpages, int enable) {}
- #ifdef CONFIG_HIBERNATION
- static inline bool kernel_page_present(struct page *page) { return true; }
- #endif	/* CONFIG_HIBERNATION */
--static inline bool debug_pagealloc_enabled(void)
--{
--	return false;
--}
--#endif	/* CONFIG_DEBUG_PAGEALLOC */
-+#endif	/* CONFIG_DEBUG_PAGEALLOC || CONFIG_ARCH_HAS_SET_DIRECT_MAP */
  
- #ifdef __HAVE_ARCH_GATE_AREA
- extern struct vm_area_struct *get_gate_vma(struct mm_struct *mm);
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index f08a1e4ee1d4..bc9558ab1e5b 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -1342,8 +1342,9 @@ static inline void do_copy_page(long *dst, long *src)
-  * safe_copy_page - Copy a page in a safe way.
++static int __init modules_wq_init(void)
++{
++	INIT_WORK(&init_free_wq, do_free_init);
++	init_llist_head(&init_free_list);
++	return 0;
++}
++module_init(modules_wq_init);
++
+ /*
+  * This is where the real work happens.
   *
-  * Check if the page we are going to copy is marked as present in the kernel
-- * page tables (this always is the case if CONFIG_DEBUG_PAGEALLOC is not set
-- * and in that case kernel_page_present() always returns 'true').
-+ * page tables. This always is the case if CONFIG_DEBUG_PAGEALLOC or
-+ * CONFIG_ARCH_HAS_SET_DIRECT_MAP is not set. In that case kernel_page_present()
-+ * always returns 'true'.
-  */
- static void safe_copy_page(void *dst, struct page *s_page)
- {
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d96ca5bc555b..34a70681a4af 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1131,7 +1131,9 @@ static __always_inline bool free_pages_prepare(struct page *page,
- 	}
- 	arch_free_page(page, order);
- 	kernel_poison_pages(page, 1 << order, 0);
--	kernel_map_pages(page, 1 << order, 0);
-+	if (debug_pagealloc_enabled())
-+		kernel_map_pages(page, 1 << order, 0);
+@@ -3507,7 +3509,6 @@ static noinline int do_init_module(struct module *mod)
+ #endif
+ 	module_enable_ro(mod, true);
+ 	mod_tree_remove_init(mod);
+-	disable_ro_nx(&mod->init_layout);
+ 	module_arch_freeing_init(mod);
+ 	mod->init_layout.base = NULL;
+ 	mod->init_layout.size = 0;
+@@ -3518,14 +3519,18 @@ static noinline int do_init_module(struct module *mod)
+ 	 * We want to free module_init, but be aware that kallsyms may be
+ 	 * walking this with preempt disabled.  In all the failure paths, we
+ 	 * call synchronize_rcu(), but we don't want to slow down the success
+-	 * path, so use actual RCU here.
++	 * path. module_memfree() cannot be called in an interrupt, so do the
++	 * work and call synchronize_rcu() in a work queue.
++	 *
+ 	 * Note that module_alloc() on most architectures creates W+X page
+ 	 * mappings which won't be cleaned up until do_free_init() runs.  Any
+ 	 * code such as mark_rodata_ro() which depends on those mappings to
+ 	 * be cleaned up needs to sync with the queued work - ie
+ 	 * rcu_barrier()
+ 	 */
+-	call_rcu(&freeinit->rcu, do_free_init);
++	if (llist_add(&freeinit->node, &init_free_list))
++		schedule_work(&init_free_wq);
 +
- 	kasan_free_nondeferred_pages(page, order);
+ 	mutex_unlock(&module_mutex);
+ 	wake_up_all(&module_wq);
  
- 	return true;
-@@ -2001,7 +2003,8 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
- 	set_page_refcounted(page);
+@@ -3822,10 +3827,6 @@ static int load_module(struct load_info *info, const char __user *uargs,
+ 	module_bug_cleanup(mod);
+ 	mutex_unlock(&module_mutex);
  
- 	arch_alloc_page(page, order);
--	kernel_map_pages(page, 1 << order, 1);
-+	if (debug_pagealloc_enabled())
-+		kernel_map_pages(page, 1 << order, 1);
- 	kasan_alloc_pages(page, order);
- 	kernel_poison_pages(page, 1 << order, 1);
- 	set_page_owner(page, order, gfp_flags);
+-	/* we can't deallocate the module until we clear memory protection */
+-	module_disable_ro(mod);
+-	module_disable_nx(mod);
+-
+  ddebug_cleanup:
+ 	ftrace_release_mod(mod);
+ 	dynamic_debug_remove(mod, info->debug);
 -- 
 2.17.1
 
