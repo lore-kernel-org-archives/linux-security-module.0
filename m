@@ -3,21 +3,21 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98EB9C10F11
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 152B7C282E1
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71D582064A
+	by mail.kernel.org (Postfix) with ESMTP id E0E3A2064A
 	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbfDVS7c (ORCPT
+        id S1728873AbfDVS7c (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Mon, 22 Apr 2019 14:59:32 -0400
-Received: from mga11.intel.com ([192.55.52.93]:60353 "EHLO mga11.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:60347 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728758AbfDVS6s (ORCPT
+        id S1728756AbfDVS6s (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Mon, 22 Apr 2019 14:58:48 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
@@ -26,7 +26,7 @@ Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 11:58:46 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,382,1549958400"; 
-   d="scan'208";a="136417173"
+   d="scan'208";a="136417170"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
   by orsmga008.jf.intel.com with ESMTP; 22 Apr 2019 11:58:42 -0700
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -43,10 +43,11 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH v4 19/23] x86/ftrace: Use vmalloc special flag
-Date:   Mon, 22 Apr 2019 11:58:01 -0700
-Message-Id: <20190422185805.1169-20-rick.p.edgecombe@intel.com>
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH v4 18/23] bpf: Use vmalloc special flag
+Date:   Mon, 22 Apr 2019 11:58:00 -0700
+Message-Id: <20190422185805.1169-19-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
 References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
@@ -55,70 +56,88 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
-permissioned memory in vmalloc and remove places where memory was set NX
-and RW before freeing which is no longer needed.
+permissioned memory in vmalloc and remove places where memory was set RW
+before freeing which is no longer needed. Don't track if the memory is RO
+anymore because it is now tracked in vmalloc.
 
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/ftrace.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ include/linux/filter.h | 17 +++--------------
+ kernel/bpf/core.c      |  1 -
+ 2 files changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-index 53ba1aa3a01f..0caf8122d680 100644
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -678,12 +678,8 @@ static inline void *alloc_tramp(unsigned long size)
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index 14ec3bdad9a9..7d3abde3f183 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -20,6 +20,7 @@
+ #include <linux/set_memory.h>
+ #include <linux/kallsyms.h>
+ #include <linux/if_vlan.h>
++#include <linux/vmalloc.h>
+ 
+ #include <net/sch_generic.h>
+ 
+@@ -503,7 +504,6 @@ struct bpf_prog {
+ 	u16			pages;		/* Number of allocated pages */
+ 	u16			jited:1,	/* Is our filter JIT'ed? */
+ 				jit_requested:1,/* archs need to JIT the prog */
+-				undo_set_mem:1,	/* Passed set_memory_ro() checkpoint */
+ 				gpl_compatible:1, /* Is filter GPL compatible? */
+ 				cb_access:1,	/* Is control block accessed? */
+ 				dst_needed:1,	/* Do we need dst entry? */
+@@ -733,27 +733,17 @@ bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size_default)
+ 
+ static inline void bpf_prog_lock_ro(struct bpf_prog *fp)
  {
- 	return module_alloc(size);
+-	fp->undo_set_mem = 1;
++	set_vm_flush_reset_perms(fp);
+ 	set_memory_ro((unsigned long)fp, fp->pages);
  }
--static inline void tramp_free(void *tramp, int size)
-+static inline void tramp_free(void *tramp)
- {
--	int npages = PAGE_ALIGN(size) >> PAGE_SHIFT;
+ 
+-static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
+-{
+-	if (fp->undo_set_mem)
+-		set_memory_rw((unsigned long)fp, fp->pages);
+-}
 -
--	set_memory_nx((unsigned long)tramp, npages);
--	set_memory_rw((unsigned long)tramp, npages);
- 	module_memfree(tramp);
- }
- #else
-@@ -692,7 +688,7 @@ static inline void *alloc_tramp(unsigned long size)
+ static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
  {
- 	return NULL;
- }
--static inline void tramp_free(void *tramp, int size) { }
-+static inline void tramp_free(void *tramp) { }
- #endif
- 
- /* Defined as markers to the end of the ftrace default trampolines */
-@@ -808,6 +804,8 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	/* ALLOC_TRAMP flags lets us know we created it */
- 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
- 
-+	set_vm_flush_reset_perms(trampoline);
-+
- 	/*
- 	 * Module allocation needs to be completed by making the page
- 	 * executable. The page is still writable, which is a security hazard,
-@@ -816,7 +814,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	set_memory_x((unsigned long)trampoline, npages);
- 	return (unsigned long)trampoline;
- fail:
--	tramp_free(trampoline, *tramp_size);
-+	tramp_free(trampoline);
- 	return 0;
++	set_vm_flush_reset_perms(hdr);
+ 	set_memory_ro((unsigned long)hdr, hdr->pages);
+ 	set_memory_x((unsigned long)hdr, hdr->pages);
  }
  
-@@ -947,7 +945,7 @@ void arch_ftrace_trampoline_free(struct ftrace_ops *ops)
- 	if (!ops || !(ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP))
- 		return;
+-static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
+-{
+-	set_memory_rw((unsigned long)hdr, hdr->pages);
+-}
+-
+ static inline struct bpf_binary_header *
+ bpf_jit_binary_hdr(const struct bpf_prog *fp)
+ {
+@@ -789,7 +779,6 @@ void __bpf_prog_free(struct bpf_prog *fp);
  
--	tramp_free((void *)ops->trampoline, ops->trampoline_size);
-+	tramp_free((void *)ops->trampoline);
- 	ops->trampoline = 0;
+ static inline void bpf_prog_unlock_free(struct bpf_prog *fp)
+ {
+-	bpf_prog_unlock_ro(fp);
+ 	__bpf_prog_free(fp);
  }
  
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index ff09d32a8a1b..c605397c79f0 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -848,7 +848,6 @@ void __weak bpf_jit_free(struct bpf_prog *fp)
+ 	if (fp->jited) {
+ 		struct bpf_binary_header *hdr = bpf_jit_binary_hdr(fp);
+ 
+-		bpf_jit_binary_unlock_ro(hdr);
+ 		bpf_jit_binary_free(hdr);
+ 
+ 		WARN_ON_ONCE(!bpf_prog_kallsyms_verify_off(fp));
 -- 
 2.17.1
 
