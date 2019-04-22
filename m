@@ -2,84 +2,154 @@ Return-Path: <SRS0=pIlI=SY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8191C10F11
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 21:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EED3C282E1
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 22:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D8BC214AE
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 21:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AE2020811
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 22:23:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vl0fYQ0U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbfDVVBR (ORCPT
+        id S1727413AbfDVWXr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Apr 2019 17:01:17 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:65382 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbfDVVBQ (ORCPT
+        Mon, 22 Apr 2019 18:23:47 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:41881 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727274AbfDVWXq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Apr 2019 17:01:16 -0400
-Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3ML15D4096615;
-        Tue, 23 Apr 2019 06:01:05 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
- Tue, 23 Apr 2019 06:01:05 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3ML104C096415
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 23 Apr 2019 06:01:05 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 69/90] LSM: Use full security context in
- security_inode_setsecctx
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-References: <20190419004617.64627-1-casey@schaufler-ca.com>
- <20190419004617.64627-70-casey@schaufler-ca.com>
- <04b749f6-097e-4faf-dc87-7892db728e3b@I-love.SAKURA.ne.jp>
- <57c13f30-2f24-cdc7-52a0-27d791ebe315@schaufler-ca.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <f4bbc85d-b2d5-3acd-2e88-4770591de13c@i-love.sakura.ne.jp>
-Date:   Tue, 23 Apr 2019 06:01:00 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 22 Apr 2019 18:23:46 -0400
+Received: by mail-vk1-f193.google.com with SMTP id d15so2752951vka.8
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Apr 2019 15:23:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Apsh13b43ex5kM603MFVFBzVRJeAAR6IMS53yCHVuRM=;
+        b=Vl0fYQ0UCHGtndl0jafErZw5vqbDAq4DrFX3SfBAIMhEhneL9rXawPTcud8fgV5g3D
+         W/sHE49ARVD9KYD5FloU01n2RfA2pTgnKMthR4SE5EVifhT+Zv7f89iMoQqyLkH17UHR
+         Ufjeoo3iZe8A1ywqY/dQX9OJ6hQY+RdFMicuSiIFmS2kjW0kxDgF0PQchZJoFDeQwLJ4
+         Bu9iNZw8/m1h5Vvq6bsIi0oFDRabTh4fUKE/VXZ1BpEeHCWZiVc862ytrlz+nAaTR+Cp
+         kF/vZydc6r2yg2X0nSiZbBoPzLhOuIzzabOzb88ffPr/VLLo66HUZNIe7JxAbYTKUz7T
+         O38g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Apsh13b43ex5kM603MFVFBzVRJeAAR6IMS53yCHVuRM=;
+        b=iVgAJbYU+yN0K4r6wat1/ubuam7lPcsHSMhA1pUVKrQHu/gBFANwB7cjXLpy03EP2s
+         rhf1XchLVDjabVoSc+nxHiui7Rd5qd9o2WULgvewGYb9N3OdI+auBF87UJFoXFx+HPhX
+         GiKm6Lffo67XfzVx/TuXab2YIqyRIG9+kglCU9wkohb7uf0mXyKKzd1AekdQIzXg3+LE
+         diJJRVOXr6JOSNgOHtrx8seO3n7llYuQu3Q7o48VcQ4/0YFY15Tz2xY/CTxutshdsTD+
+         2VJMLpX8t8m/g6MEnQZ5pq6AHZM8GMnH+ChBfhnq1plQPSjiTKnVyFNVQR5prjXqW0I6
+         CVVg==
+X-Gm-Message-State: APjAAAVet67OlQlGsHBPeDX5w7soI7jkOm5KPqRfu4+0MAPRz/jGmx1n
+        vxSF1ZERBGgygbjCrCrwYRZxluZtAxpB1PP1UklVIQ==
+X-Google-Smtp-Source: APXvYqxiq50qJu8wanUuH+yOCTaJNMUpHEhGXVEwCujnFscJAmlLegU3s6VeZj+61I7iVGG+tUCCywSMlxsTtse/mUo=
+X-Received: by 2002:a1f:2e07:: with SMTP id u7mr11692664vku.44.1555971825052;
+ Mon, 22 Apr 2019 15:23:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <57c13f30-2f24-cdc7-52a0-27d791ebe315@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <cover.1554248001.git.khalid.aziz@oracle.com> <f1ac3700970365fb979533294774af0b0dd84b3b.1554248002.git.khalid.aziz@oracle.com>
+ <20190417161042.GA43453@gmail.com> <e16c1d73-d361-d9c7-5b8e-c495318c2509@oracle.com>
+ <20190417170918.GA68678@gmail.com> <56A175F6-E5DA-4BBD-B244-53B786F27B7F@gmail.com>
+ <20190417172632.GA95485@gmail.com> <063753CC-5D83-4789-B594-019048DE22D9@gmail.com>
+ <alpine.DEB.2.21.1904172317460.3174@nanos.tec.linutronix.de>
+ <CAHk-=wgBMg9P-nYQR2pS0XwVdikPCBqLsMFqR9nk=wSmAd4_5g@mail.gmail.com>
+ <alpine.DEB.2.21.1904180129000.3174@nanos.tec.linutronix.de>
+ <CAHk-=whUwOjFW6RjHVM8kNOv1QVLJuHj2Dda0=mpLPdJ1UyatQ@mail.gmail.com>
+ <CALCETrXm9PuUTEEmzA8bQJmg=PHC_2XSywECittVhXbMJS1rSA@mail.gmail.com>
+ <CAGXu5jL-qJtW7eH8S2yhqciE+J+FWz8HHzTrGJTgVUbd55n6dQ@mail.gmail.com> <8f9d059d-e720-cd24-faa6-45493fc012e0@oracle.com>
+In-Reply-To: <8f9d059d-e720-cd24-faa6-45493fc012e0@oracle.com>
+From:   Kees Cook <keescook@google.com>
+Date:   Mon, 22 Apr 2019 15:23:32 -0700
+Message-ID: <CAGXu5jLPkD_6BL1m2=13KVTfZ7znr-xAyz+CB23eoeboFgCSOg@mail.gmail.com>
+Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
+ Ownership (XPFO)
+To:     Khalid Aziz <khalid.aziz@oracle.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Juerg Haefliger <juergh@gmail.com>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Julian Stecklina <jsteckli@amazon.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Juerg Haefliger <juerg.haefliger@canonical.com>,
+        deepa.srinivasan@oracle.com, chris hyser <chris.hyser@oracle.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Jon Masters <jcm@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        iommu <iommu@lists.linux-foundation.org>,
+        X86 ML <x86@kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Khalid Aziz <khalid@gonehiking.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Dave Hansen <dave@sr71.net>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/04/23 5:45, Casey Schaufler wrote:
-> On 4/22/2019 6:13 AM, Tetsuo Handa wrote:
->> On 2019/04/19 9:45, Casey Schaufler wrote:
->>> +    hlist_for_each_entry(hp, &security_hook_heads.inode_setsecctx, list) {
->>> +        if (strncmp(ctx, hp->lsm, strlen(hp->lsm))) {
->>> +            WARN_ONCE(1, "security_inode_setsecctx form1 error\n");
->>> +            rc = -EINVAL;
->>> +            break;
->>> +        }
->> Will you avoid using WARN*() ?
->> Since syzbot tests using panic_on_warn == 1, this WARN_ONCE() will act as panic().
-> 
-> If syzbot hits any of the WARN_ONCE()s in security_inode_setsecctx()
-> I want it to panic and generate a report. A badly formatted inode secctx
-> would indicate that kernfs isn't getting the string from
-> security_inode_getsecctx() or that it is getting corrupted somehow. In
-> either case, it would be a bug that needs fixing. I used WARN instead of
-> BUG for the kernfs people, who might break something by accident.
+On Thu, Apr 18, 2019 at 7:35 AM Khalid Aziz <khalid.aziz@oracle.com> wrote:
+>
+> On 4/17/19 11:41 PM, Kees Cook wrote:
+> > On Wed, Apr 17, 2019 at 11:41 PM Andy Lutomirski <luto@kernel.org> wrote:
+> >> I don't think this type of NX goof was ever the argument for XPFO.
+> >> The main argument I've heard is that a malicious user program writes a
+> >> ROP payload into user memory (regular anonymous user memory) and then
+> >> gets the kernel to erroneously set RSP (*not* RIP) to point there.
+> >
+> > Well, more than just ROP. Any of the various attack primitives. The NX
+> > stuff is about moving RIP: SMEP-bypassing. But there is still basic
+> > SMAP-bypassing for putting a malicious structure in userspace and
+> > having the kernel access it via the linear mapping, etc.
+> >
+> >> I find this argument fairly weak for a couple reasons.  First, if
+> >> we're worried about this, let's do in-kernel CFI, not XPFO, to
+> >
+> > CFI is getting much closer. Getting the kernel happy under Clang, LTO,
+> > and CFI is under active development. (It's functional for arm64
+> > already, and pieces have been getting upstreamed.)
+> >
+>
+> CFI theoretically offers protection with fairly low overhead. I have not
+> played much with CFI in clang. I agree with Linus that probability of
+> bugs in XPFO implementation itself is a cause of concern. If CFI in
+> Clang can provide us the same level of protection as XPFO does, I
+> wouldn't want to push for an expensive change like XPFO.
+>
+> If Clang/CFI can't get us there for extended period of time, does it
+> make sense to continue to poke at XPFO?
 
-Since the code continues with -EINVAL error, I assumed that this is not
-a bad situation. But if this can't be triggered by invalid input from
-userspace, BUG() is better.
+Well, I think CFI will certainly vastly narrow the execution paths
+available to an attacker, but what I continue to see XPFO useful for
+is stopping attacks that need to locate something in memory. (i.e. not
+ret2dir but, like, read2dir.) It's arguable that such attacks would
+just use heap, stack, etc to hold such things, but the linear map
+remains relatively easy to find/target. But I agree: the protection is
+getting more and more narrow (especially with CFI coming down the
+pipe), and if it's still a 28% hit, that's not going to be tenable for
+anyone but the truly paranoid. :)
 
-> 
-> If there's a strong objection to WARN_ONCE() in general, I can pull it.
->  
+All that said, there isn't a very good backward-edge CFI protection
+(i.e. ROP defense) on x86 in Clang. The forward-edge looks decent, but
+requires LTO, etc. My point is there is still a long path to gaining
+CFI in upstream.
+
+-- 
+Kees Cook
