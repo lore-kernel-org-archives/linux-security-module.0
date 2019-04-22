@@ -2,168 +2,190 @@ Return-Path: <SRS0=pIlI=SY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C081C10F11
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 19:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFDBC10F11
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 19:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE9220896
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 19:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0272204EC
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 19:55:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oLnlTenx"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="NWZMaT2D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfDVTc1 (ORCPT
+        id S1731310AbfDVTzu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Apr 2019 15:32:27 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:59108 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfDVTc1 (ORCPT
+        Mon, 22 Apr 2019 15:55:50 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45868 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730749AbfDVTtM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Apr 2019 15:32:27 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3MJUDBB049863;
-        Mon, 22 Apr 2019 19:30:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=WH/Ljdr8TJUTrAi5oLGMpFDZ+oLv/QGAaimWLH/RF5Y=;
- b=oLnlTenxF7nnPodU74CKxVdtTdurZTHC2c+IYDHYu4ConBppy1DQR5ZRD2yjJFvZgGWr
- s4yQwwuUvTu9u+sFyoVUu0Ps8OuhhW0poWi1ZMLvaVC5TBbAF1wwcZr5XAReyOOTF+by
- uC0TnLDiZT5r3TKE6PPp1vUjAz4Kig9RayQOAPeSyneDjrd8g3giZqr3VY0DWHpHGibW
- +Tp8jlms4x1+K3jD0LKvfWig3toDL2oxHG0Gk75UGHP6ZXqvAC5kZivppkWtzcLz1h9X
- XEAwsf7cBrXzU2kQ/Ajn/P/r+v3zskWbTDpMTbY0n+hrjLQtUDBZ3bbfv/WSjVOTlFLG 6g== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2ryv2q001q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Apr 2019 19:30:53 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3MJUfFP107047;
-        Mon, 22 Apr 2019 19:30:52 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2s0dwdv8c5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Apr 2019 19:30:52 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x3MJUjCf011034;
-        Mon, 22 Apr 2019 19:30:46 GMT
-Received: from [192.168.1.16] (/24.9.64.241)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 22 Apr 2019 12:30:45 -0700
-Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
- Ownership (XPFO)
-From:   Khalid Aziz <khalid.aziz@oracle.com>
-To:     Kees Cook <keescook@google.com>, Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juerg Haefliger <juergh@gmail.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Julian Stecklina <jsteckli@amazon.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        deepa.srinivasan@oracle.com, chris hyser <chris.hyser@oracle.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Jon Masters <jcm@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        iommu <iommu@lists.linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Khalid Aziz <khalid@gonehiking.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Dave Hansen <dave@sr71.net>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <cover.1554248001.git.khalid.aziz@oracle.com>
- <f1ac3700970365fb979533294774af0b0dd84b3b.1554248002.git.khalid.aziz@oracle.com>
- <20190417161042.GA43453@gmail.com>
- <e16c1d73-d361-d9c7-5b8e-c495318c2509@oracle.com>
- <20190417170918.GA68678@gmail.com>
- <56A175F6-E5DA-4BBD-B244-53B786F27B7F@gmail.com>
- <20190417172632.GA95485@gmail.com>
- <063753CC-5D83-4789-B594-019048DE22D9@gmail.com>
- <alpine.DEB.2.21.1904172317460.3174@nanos.tec.linutronix.de>
- <CAHk-=wgBMg9P-nYQR2pS0XwVdikPCBqLsMFqR9nk=wSmAd4_5g@mail.gmail.com>
- <alpine.DEB.2.21.1904180129000.3174@nanos.tec.linutronix.de>
- <CAHk-=whUwOjFW6RjHVM8kNOv1QVLJuHj2Dda0=mpLPdJ1UyatQ@mail.gmail.com>
- <CALCETrXm9PuUTEEmzA8bQJmg=PHC_2XSywECittVhXbMJS1rSA@mail.gmail.com>
- <CAGXu5jL-qJtW7eH8S2yhqciE+J+FWz8HHzTrGJTgVUbd55n6dQ@mail.gmail.com>
- <8f9d059d-e720-cd24-faa6-45493fc012e0@oracle.com>
-Organization: Oracle Corp
-Message-ID: <302e3d5b-d2fd-3c25-335b-466ba83035c5@oracle.com>
-Date:   Mon, 22 Apr 2019 13:30:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Mon, 22 Apr 2019 15:49:12 -0400
+Received: by mail-lf1-f66.google.com with SMTP id t11so9819657lfl.12
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Apr 2019 12:49:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=puiu4I9lOL69QlYiimmTVYqiP4I+hDN4HbYt+NJIAD4=;
+        b=NWZMaT2D9XPL5dMl6iAwPLIKN10E098gTACx1cBHLku+LqO8JCHkoE2ZHVTJ7j9Ish
+         4sVc5c16N+ZyFV9gxAMPy3lbOlD5uhcTKkSvSNFnTS5gXlgK8U+dJ6D7l2YDpUrnYyMS
+         yX+bIGMOqOPig+lGK0S7QnSFfIVYYVP2OvHzm2iVKtYF1ncdVTuswfO7L6aybk0r03N7
+         eyWoBvR0GEvWcutK57BkGZ3q3zAXNAlolbfWfjo7pRYcptwEPE5j1t3Bb/7pMwWArSKz
+         GC2yxaK6EJ14jRipgckrmBirmaYRHs2mlyGliDI4MK0uYDplhh+PugWiUw9TKPYm/f8P
+         vG2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=puiu4I9lOL69QlYiimmTVYqiP4I+hDN4HbYt+NJIAD4=;
+        b=cbqfTqSncLwqMO/zlz8NrTHzbAXNgg8M74MUvGvOSAFJmAyGB9+Yt8wk4eM0bh4IeS
+         2CLD8Z2sZQssPKoPoQLahhKUs8r9c0mOvMEvmjcHzROCie1EPAdZ4dN66R3QmBF8kTqQ
+         XgRMQIoFnFjl5NCE5xQmVJqFFXrsLWUPhN33XMeSALz4ehcBjqvLQdyyhZaE86qJwVhw
+         MHzRNIm20o/HxvE3KMvgJ8DLHi+z/i80LY0z1ksOYmXDhOfHtimlh2M4rJ+SrIMaBXT8
+         zEJBSwrgqEtbXhVn1Sef3ZIl2KvLIUu0RErn9wa6DTFVpWwK5uRCf0llFPcB1TljZN/V
+         oDBA==
+X-Gm-Message-State: APjAAAWpVRN2F7bLSeYaqRfSvfQLYEgKpxdvPsos2y9d+JHe6T5yGmBl
+        WVRKyalEv/OoN8Z3ggAD6kKRl3JRbdeOLFbIujGb
+X-Google-Smtp-Source: APXvYqzEUAwcfTJWLiQVgU/OFF4k51MYnvP+IVWebjavxYi8vsYvTIdr2/CUUYLYb7TWVlWWsPpn2e+uuj0XxKOLIqs=
+X-Received: by 2002:a19:6b0d:: with SMTP id d13mr11154050lfa.79.1555962550518;
+ Mon, 22 Apr 2019 12:49:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <8f9d059d-e720-cd24-faa6-45493fc012e0@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9235 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1904220147
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9235 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1904220147
+References: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
+ <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
+ <20190415150520.GA13257@redhat.com> <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
+ <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
+ <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com> <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
+ <20190417145711.GI32622@redhat.com> <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
+ <20190417162723.GK32622@redhat.com> <CAHC9VhT_nk1jmrTj3W=F+1gP1vU3iZsZ=UGOCwdiBLbUsOc9=w@mail.gmail.com>
+ <0ca3f4cf-5c64-2fc0-1885-9dbcca2f4b47@schaufler-ca.com> <5CB7E5D4.2060703@huawei.com>
+ <CAHC9VhQkrR+m9_dYLg4VG-26TdUnf8XFjbmuVQ70YCOp6DhN_g@mail.gmail.com>
+ <5CB933C4.7000300@huawei.com> <CAHC9VhTdJ6uUOjyxrk=+iOkKe=VN+N9DMPtV=OchAY34x95g=w@mail.gmail.com>
+ <5CB9DC75.7010600@huawei.com> <CAHC9VhQqxL+LsK8YTD6PpTHaZsZ-PxAq3atdZKQcZLQZQH7t4g@mail.gmail.com>
+ <5CBACC8F.8010409@huawei.com>
+In-Reply-To: <5CBACC8F.8010409@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 22 Apr 2019 15:48:58 -0400
+Message-ID: <CAHC9VhSZBh8B+1CPM=PdLdbSFq1ba1ffuOJTgnzE5oBLXUEDxQ@mail.gmail.com>
+Subject: Re: kernel BUG at kernel/cred.c:434!
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Oleg Nesterov <oleg@redhat.com>, john.johansen@canonical.com,
+        "chengjian (D)" <cj.chengjian@huawei.com>,
+        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
+        Li Bin <huawei.libin@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SELinux <selinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/18/19 8:34 AM, Khalid Aziz wrote:
-> On 4/17/19 11:41 PM, Kees Cook wrote:
->> On Wed, Apr 17, 2019 at 11:41 PM Andy Lutomirski <luto@kernel.org> wro=
-te:
->>> I don't think this type of NX goof was ever the argument for XPFO.
->>> The main argument I've heard is that a malicious user program writes =
-a
->>> ROP payload into user memory (regular anonymous user memory) and then=
+On Sat, Apr 20, 2019 at 3:39 AM Yang Yingliang <yangyingliang@huawei.com> wrote:
+> I'm not sure you got my point.
 
->>> gets the kernel to erroneously set RSP (*not* RIP) to point there.
->>
->> Well, more than just ROP. Any of the various attack primitives. The NX=
+I went back and looked at your previous emails again to try and
+understand what you are talking about, and I'm a little confused by
+some of the output ...
 
->> stuff is about moving RIP: SMEP-bypassing. But there is still basic
->> SMAP-bypassing for putting a malicious structure in userspace and
->> having the kernel access it via the linear mapping, etc.
->>
->>> I find this argument fairly weak for a couple reasons.  First, if
->>> we're worried about this, let's do in-kernel CFI, not XPFO, to
->>
->> CFI is getting much closer. Getting the kernel happy under Clang, LTO,=
+> --- a/kernel/acct.c
+> +++ b/kernel/acct.c
+> @@ -481,6 +481,7 @@ static void do_acct_process(struct bsd_acct_struct
+> *acct)
+>          flim = current->signal->rlim[RLIMIT_FSIZE].rlim_cur;
+>          current->signal->rlim[RLIMIT_FSIZE].rlim_cur = RLIM_INFINITY;
+>          /* Perform file operations on behalf of whoever enabled
+> accounting */
+> +       pr_info("task:%px new cred:%px real cred:%px cred:%px\n",
+> current, file->f_cred, current->real_cred, current->cred);
+>          orig_cred = override_creds(file->f_cred);
 
->> and CFI is under active development. (It's functional for arm64
->> already, and pieces have been getting upstreamed.)
->>
->=20
-> CFI theoretically offers protection with fairly low overhead. I have no=
-t
-> played much with CFI in clang. I agree with Linus that probability of
-> bugs in XPFO implementation itself is a cause of concern. If CFI in
-> Clang can provide us the same level of protection as XPFO does, I
-> wouldn't want to push for an expensive change like XPFO.
->=20
-> If Clang/CFI can't get us there for extended period of time, does it
-> make sense to continue to poke at XPFO?
+Okay, with this patch applied we should the task/cred info when
+do_acct_process is called.  Got it.
 
-Any feedback on continued effort on XPFO? If it makes sense to have XPFO
-available as a solution for ret2dir issue in case Clang/CFI does not
-work out, I will continue to refine it.
+> Messages:
+> [   56.643298] task:ffff88841a9595c0 new cred:ffff88841ae450c0 real
+> cred:ffff88841ae450c0 cred:ffff88841ae450c0    //They are same.
 
---
-Khalid
+Okay, it looks like do_acct_process() was called and f_cred,
+real_cred, and cred are all the same.
 
+> [   56.646609] Process accounting resumed
+
+It looks like do_acct_process() has called check_free_space() now.  So
+far so good.
+
+> [   56.649943] task:ffff88841a9595c0 new cred:ffff88841ae450c0 real
+> cred:ffff88841c96c300 cred:ffff88841ae450c0
+
+Wait a minute ... why are we seeing this again?  Looking at the task
+pointer and the timestamp, this is the same task exiting and trying to
+write to the accounting file, yes?  This output is particularly
+curious since it appears that real_cred has changed; where is this
+happening?
+
+> [   56.653565] ------------[ cut here ]------------
+> [   56.655119] kernel BUG at kernel/cred.c:434!
+> [   56.656590] invalid opcode: 0000 [#1] SMP PTI
+> [   56.658033] CPU: 2 PID: 4169 Comm: syz-executor.15 Not tainted
+> 5.1.0-rc4-00034-g869e3305f23d-dirty #143
+> [   56.661077] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
+> [   56.664895] RIP: 0010:commit_creds+0x1eb/0x230
+> [   56.666344] Code: 43 1c 0f 85 08 ff ff ff e9 10 ff ff ff 8b 45 10 39
+> 43 10 0f 85 18 ff ff ff 8b 43 20 39 45 20 0f 85 0c ff ff ff e9 14 ff ff
+> ff <0f> 0b 48 c7 c7 d0 d2 49 82 e8 17 3b 3e 00 0f 0b 48 c7 c7 c0 d2 49
+> [   56.672410] RSP: 0018:ffffc90003a17b20 EFLAGS: 00010287
+> [   56.674098] RAX: ffff88841a9595c0 RBX: ffff88841ae450c0 RCX:
+> 0000000000000000
+> [   56.676410] RDX: 0000000000000001 RSI: 0000000000000020 RDI:
+> ffff88841c96ce40
+> [   56.678691] RBP: 0000000000000001 R08: 0000000000800000 R09:
+> 0000000000000000
+> [   56.680997] R10: ffff88841c9265a0 R11: ffffffff810d6940 R12:
+> ffff88841a9595c0
+> [   56.681198] task:ffff88841a9195c0 new cred:ffff88841aeaa0c0 real
+> cred:ffff88841aeaa0c0 cred:ffff88841aeaa0c0
+> [   56.683293] R13: 0000000000000040 R14: ffff88841c96ce40 R15:
+> 0000000000000040
+> [   56.683296] FS:  00007f5969a5c700(0000) GS:ffff88842fa80000(0000)
+> knlGS:0000000000000000
+> [   56.683297] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   56.683299] CR2: 00007f82742214f0 CR3: 000000041cbc0005 CR4:
+> 00000000000206e0
+> [   56.683305] Call Trace:
+> [   56.683340]  selinux_setprocattr+0x17b/0x480
+> [   56.686513] Process accounting resumed
+> [   56.688849]  proc_pid_attr_write+0xc0/0xf0
+> [   56.688857]  __kernel_write+0x4f/0xf0
+> [   56.688866]  do_acct_process+0x538/0x750
+> [   56.703090]  ? __schedule+0x290/0x960
+> [   56.704311]  ? __queue_work+0x160/0x5c0
+> [   56.705571]  acct_pin_kill+0x1e/0x70
+> [   56.706743]  pin_kill+0x81/0x150
+> [   56.707813]  ? finish_wait+0x80/0x80
+> [   56.708985]  mnt_pin_kill+0x1e/0x30
+> [   56.710127]  cleanup_mnt+0x6e/0x70
+> [   56.711247]  task_work_run+0x8a/0xb0
+> [   56.712453]  do_exit+0x2e0/0xc80
+> [   56.713525]  do_group_exit+0x33/0xb0
+> [   56.714701]  get_signal+0x143/0x810
+> [   56.715865]  do_signal+0x36/0x610
+> [   56.716962]  ? __x64_sys_futex+0x134/0x180
+> [   56.718307]  ? _copy_to_user+0x22/0x30
+> [   56.719606]  exit_to_usermode_loop+0x80/0xe0
+> [   56.721003]  do_syscall_64+0x16c/0x180
+> [   56.722242]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+-- 
+paul moore
+www.paul-moore.com
