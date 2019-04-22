@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FECC10F11
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 19:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB74C282CE
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 19:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C6C22075A
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 19:00:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C859D206A3
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 19:00:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbfDVS6q (ORCPT
+        id S1727734AbfDVTAD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Apr 2019 14:58:46 -0400
+        Mon, 22 Apr 2019 15:00:03 -0400
 Received: from mga11.intel.com ([192.55.52.93]:60350 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728728AbfDVS6p (ORCPT
+        id S1728736AbfDVS6q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Apr 2019 14:58:45 -0400
+        Mon, 22 Apr 2019 14:58:46 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 11:58:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,382,1549958400"; 
-   d="scan'208";a="136417146"
+   d="scan'208";a="136417155"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
   by orsmga008.jf.intel.com with ESMTP; 22 Apr 2019 11:58:41 -0700
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -43,10 +43,13 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v4 10/23] x86/kprobes: Set instruction page as executable
-Date:   Mon, 22 Apr 2019 11:57:52 -0700
-Message-Id: <20190422185805.1169-11-rick.p.edgecombe@intel.com>
+Subject: [PATCH v4 13/23] x86/alternative: Remove the return value of text_poke_*()
+Date:   Mon, 22 Apr 2019 11:57:55 -0700
+Message-Id: <20190422185805.1169-14-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
 References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
@@ -56,60 +59,90 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Nadav Amit <namit@vmware.com>
 
-Set the page as executable after allocation.  This patch is a
-preparatory patch for a following patch that makes module allocated
-pages non-executable.
+The return value of text_poke_early() and text_poke_bp() is useless.
+Remove it.
 
-While at it, do some small cleanup of what appears to be unnecessary
-masking.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/text-patching.h |  4 ++--
+ arch/x86/kernel/alternative.c        | 11 ++++-------
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index a034cb808e7e..1591852d3ac4 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -431,8 +431,20 @@ void *alloc_insn_page(void)
- 	void *page;
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index a75eed841eed..c90678fd391a 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -18,7 +18,7 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
+ #define __parainstructions_end	NULL
+ #endif
  
- 	page = module_alloc(PAGE_SIZE);
--	if (page)
--		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
-+	if (!page)
-+		return NULL;
-+
-+	/*
-+	 * First make the page read-only, and only then make it executable to
-+	 * prevent it from being W+X in between.
-+	 */
-+	set_memory_ro((unsigned long)page, 1);
-+
-+	/*
-+	 * TODO: Once additional kernel code protection mechanisms are set, ensure
-+	 * that the page was not maliciously altered and it is still zeroed.
-+	 */
-+	set_memory_x((unsigned long)page, 1);
+-extern void *text_poke_early(void *addr, const void *opcode, size_t len);
++extern void text_poke_early(void *addr, const void *opcode, size_t len);
  
- 	return page;
- }
-@@ -440,8 +452,12 @@ void *alloc_insn_page(void)
- /* Recover page to RW mode before releasing it */
- void free_insn_page(void *page)
+ /*
+  * Clear and restore the kernel write-protection flag on the local CPU.
+@@ -37,7 +37,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
+ extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+-extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
++extern void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
+ extern __ro_after_init struct mm_struct *poking_mm;
+ extern __ro_after_init unsigned long poking_addr;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 3d2b6b6fb20c..18f959975ea0 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -265,7 +265,7 @@ static void __init_or_module add_nops(void *insns, unsigned int len)
+ 
+ extern struct alt_instr __alt_instructions[], __alt_instructions_end[];
+ extern s32 __smp_locks[], __smp_locks_end[];
+-void *text_poke_early(void *addr, const void *opcode, size_t len);
++void text_poke_early(void *addr, const void *opcode, size_t len);
+ 
+ /*
+  * Are we looking at a near JMP with a 1 or 4-byte displacement.
+@@ -667,8 +667,8 @@ void __init alternative_instructions(void)
+  * instructions. And on the local CPU you need to be protected again NMI or MCE
+  * handlers seeing an inconsistent instruction while you patch.
+  */
+-void *__init_or_module text_poke_early(void *addr, const void *opcode,
+-				       size_t len)
++void __init_or_module text_poke_early(void *addr, const void *opcode,
++				      size_t len)
  {
--	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
--	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
-+	/*
-+	 * First make the page non-executable, and only then make it writable to
-+	 * prevent it from being W+X in between.
-+	 */
-+	set_memory_nx((unsigned long)page, 1);
-+	set_memory_rw((unsigned long)page, 1);
- 	module_memfree(page);
+ 	unsigned long flags;
+ 
+@@ -691,7 +691,6 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 		 * that causes hangs on some VIA CPUs.
+ 		 */
+ 	}
+-	return addr;
+ }
+ 
+ __ro_after_init struct mm_struct *poking_mm;
+@@ -893,7 +892,7 @@ NOKPROBE_SYMBOL(poke_int3_handler);
+  *	  replacing opcode
+  *	- sync cores
+  */
+-void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
++void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ {
+ 	unsigned char int3 = 0xcc;
+ 
+@@ -935,7 +934,5 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ 	 * the writing of the new instruction.
+ 	 */
+ 	bp_patching_in_progress = false;
+-
+-	return addr;
  }
  
 -- 
