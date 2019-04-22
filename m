@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C80C282E3
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A76C10F11
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADF0C2064A
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ECED2064A
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbfDVS7S (ORCPT
+        id S1728707AbfDVS6s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Apr 2019 14:59:18 -0400
+        Mon, 22 Apr 2019 14:58:48 -0400
 Received: from mga11.intel.com ([192.55.52.93]:60353 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728764AbfDVS6s (ORCPT
+        id S1728748AbfDVS6r (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Apr 2019 14:58:48 -0400
+        Mon, 22 Apr 2019 14:58:47 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 11:58:46 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 11:58:45 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,382,1549958400"; 
-   d="scan'208";a="136417176"
+   d="scan'208";a="136417161"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
   by orsmga008.jf.intel.com with ESMTP; 22 Apr 2019 11:58:42 -0700
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -43,10 +43,11 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v4 20/23] x86/kprobes: Use vmalloc special flag
-Date:   Mon, 22 Apr 2019 11:58:02 -0700
-Message-Id: <20190422185805.1169-21-rick.p.edgecombe@intel.com>
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH v4 15/23] mm: Make hibernate handle unmapped pages
+Date:   Mon, 22 Apr 2019 11:57:57 -0700
+Message-Id: <20190422185805.1169-16-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
 References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
@@ -54,41 +55,151 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
-permissioned memory in vmalloc and remove places where memory was set NX
-and RW before freeing which is no longer needed.
+Make hibernate handle unmapped pages on the direct map when
+CONFIG_ARCH_HAS_SET_ALIAS is set. These functions allow for setting pages
+to invalid configurations, so now hibernate should check if the pages have
+valid mappings and handle if they are unmapped when doing a hibernate
+save operation.
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Previously this checking was already done when CONFIG_DEBUG_PAGEALLOC
+was configured. It does not appear to have a big hibernating performance
+impact. The speed of the saving operation before this change was measured
+as 819.02 MB/s, and after was measured at 813.32 MB/s.
+
+Before:
+[    4.670938] PM: Wrote 171996 kbytes in 0.21 seconds (819.02 MB/s)
+
+After:
+[    4.504714] PM: Wrote 178932 kbytes in 0.22 seconds (813.32 MB/s)
+
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Borislav Petkov <bp@alien8.de>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/kprobes/core.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ arch/x86/mm/pageattr.c  |  4 ----
+ include/linux/mm.h      | 18 ++++++------------
+ kernel/power/snapshot.c |  5 +++--
+ mm/page_alloc.c         |  7 +++++--
+ 4 files changed, 14 insertions(+), 20 deletions(-)
 
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 1591852d3ac4..136695e4434a 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -434,6 +434,7 @@ void *alloc_insn_page(void)
- 	if (!page)
- 		return NULL;
- 
-+	set_vm_flush_reset_perms(page);
- 	/*
- 	 * First make the page read-only, and only then make it executable to
- 	 * prevent it from being W+X in between.
-@@ -452,12 +453,6 @@ void *alloc_insn_page(void)
- /* Recover page to RW mode before releasing it */
- void free_insn_page(void *page)
- {
--	/*
--	 * First make the page non-executable, and only then make it writable to
--	 * prevent it from being W+X in between.
--	 */
--	set_memory_nx((unsigned long)page, 1);
--	set_memory_rw((unsigned long)page, 1);
- 	module_memfree(page);
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 3574550192c6..daf4d645e537 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -2257,7 +2257,6 @@ int set_direct_map_default_noflush(struct page *page)
+ 	return __set_pages_p(page, 1);
  }
  
+-#ifdef CONFIG_DEBUG_PAGEALLOC
+ void __kernel_map_pages(struct page *page, int numpages, int enable)
+ {
+ 	if (PageHighMem(page))
+@@ -2302,11 +2301,8 @@ bool kernel_page_present(struct page *page)
+ 	pte = lookup_address((unsigned long)page_address(page), &level);
+ 	return (pte_val(*pte) & _PAGE_PRESENT);
+ }
+-
+ #endif /* CONFIG_HIBERNATION */
+ 
+-#endif /* CONFIG_DEBUG_PAGEALLOC */
+-
+ int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
+ 				   unsigned numpages, unsigned long page_flags)
+ {
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 6b10c21630f5..083d7b4863ed 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2610,37 +2610,31 @@ static inline void kernel_poison_pages(struct page *page, int numpages,
+ 					int enable) { }
+ #endif
+ 
+-#ifdef CONFIG_DEBUG_PAGEALLOC
+ extern bool _debug_pagealloc_enabled;
+-extern void __kernel_map_pages(struct page *page, int numpages, int enable);
+ 
+ static inline bool debug_pagealloc_enabled(void)
+ {
+-	return _debug_pagealloc_enabled;
++	return IS_ENABLED(CONFIG_DEBUG_PAGEALLOC) && _debug_pagealloc_enabled;
+ }
+ 
++#if defined(CONFIG_DEBUG_PAGEALLOC) || defined(CONFIG_ARCH_HAS_SET_DIRECT_MAP)
++extern void __kernel_map_pages(struct page *page, int numpages, int enable);
++
+ static inline void
+ kernel_map_pages(struct page *page, int numpages, int enable)
+ {
+-	if (!debug_pagealloc_enabled())
+-		return;
+-
+ 	__kernel_map_pages(page, numpages, enable);
+ }
+ #ifdef CONFIG_HIBERNATION
+ extern bool kernel_page_present(struct page *page);
+ #endif	/* CONFIG_HIBERNATION */
+-#else	/* CONFIG_DEBUG_PAGEALLOC */
++#else	/* CONFIG_DEBUG_PAGEALLOC || CONFIG_ARCH_HAS_SET_DIRECT_MAP */
+ static inline void
+ kernel_map_pages(struct page *page, int numpages, int enable) {}
+ #ifdef CONFIG_HIBERNATION
+ static inline bool kernel_page_present(struct page *page) { return true; }
+ #endif	/* CONFIG_HIBERNATION */
+-static inline bool debug_pagealloc_enabled(void)
+-{
+-	return false;
+-}
+-#endif	/* CONFIG_DEBUG_PAGEALLOC */
++#endif	/* CONFIG_DEBUG_PAGEALLOC || CONFIG_ARCH_HAS_SET_DIRECT_MAP */
+ 
+ #ifdef __HAVE_ARCH_GATE_AREA
+ extern struct vm_area_struct *get_gate_vma(struct mm_struct *mm);
+diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
+index f08a1e4ee1d4..bc9558ab1e5b 100644
+--- a/kernel/power/snapshot.c
++++ b/kernel/power/snapshot.c
+@@ -1342,8 +1342,9 @@ static inline void do_copy_page(long *dst, long *src)
+  * safe_copy_page - Copy a page in a safe way.
+  *
+  * Check if the page we are going to copy is marked as present in the kernel
+- * page tables (this always is the case if CONFIG_DEBUG_PAGEALLOC is not set
+- * and in that case kernel_page_present() always returns 'true').
++ * page tables. This always is the case if CONFIG_DEBUG_PAGEALLOC or
++ * CONFIG_ARCH_HAS_SET_DIRECT_MAP is not set. In that case kernel_page_present()
++ * always returns 'true'.
+  */
+ static void safe_copy_page(void *dst, struct page *s_page)
+ {
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d96ca5bc555b..34a70681a4af 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1131,7 +1131,9 @@ static __always_inline bool free_pages_prepare(struct page *page,
+ 	}
+ 	arch_free_page(page, order);
+ 	kernel_poison_pages(page, 1 << order, 0);
+-	kernel_map_pages(page, 1 << order, 0);
++	if (debug_pagealloc_enabled())
++		kernel_map_pages(page, 1 << order, 0);
++
+ 	kasan_free_nondeferred_pages(page, order);
+ 
+ 	return true;
+@@ -2001,7 +2003,8 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
+ 	set_page_refcounted(page);
+ 
+ 	arch_alloc_page(page, order);
+-	kernel_map_pages(page, 1 << order, 1);
++	if (debug_pagealloc_enabled())
++		kernel_map_pages(page, 1 << order, 1);
+ 	kasan_alloc_pages(page, order);
+ 	kernel_poison_pages(page, 1 << order, 1);
+ 	set_page_owner(page, order, gfp_flags);
 -- 
 2.17.1
 
