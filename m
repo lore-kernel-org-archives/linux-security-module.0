@@ -2,103 +2,195 @@ Return-Path: <SRS0=pIlI=SY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB3CC282CE
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 201DDC10F11
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7801320B1F
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:11:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="tj7tFwRH"
+	by mail.kernel.org (Postfix) with ESMTP id DB8F32175B
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:58:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbfDVSLB (ORCPT
+        id S1727772AbfDVS6m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Apr 2019 14:11:01 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33078 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728396AbfDVSLB (ORCPT
+        Mon, 22 Apr 2019 14:58:42 -0400
+Received: from mga11.intel.com ([192.55.52.93]:60347 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727397AbfDVS6l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Apr 2019 14:11:01 -0400
-Received: by mail-lf1-f67.google.com with SMTP id j11so9635451lfm.0
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Apr 2019 11:10:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VXcU2rwgvZNUrY/itsQwdIy2L1lPb6tI46vmzKGhR7A=;
-        b=tj7tFwRHkoz7pjmoWjo3SMm0XDlteq238wWuL6ybJvcZrsL2JxJx2ZgWmSLn87CZaz
-         3H9UMN9Vl+EtCEoBnHNDHmKqQu/kM+RDgBqSjUVbPiz3cRoziivzTkzgQ4yI7VxlAdEG
-         z+hlqrR4xJpGsf8cLtXEHPnnOmIESFfziCIA53F9ODKsp8nKGME4m7xGR0xtaqIz5fVa
-         N1r8IKclGB9PtRt2chuWfiVxo3GoN7jdHO2AXTCaAGfFL2VT6NU9NdnPVATly+Ai5x0p
-         hYa0uvK6LBrsARi+w9cDmpI7t9dulKi/5unVNe4MBSDajRLPAPEKbimUzln15UcWTYGK
-         GBag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VXcU2rwgvZNUrY/itsQwdIy2L1lPb6tI46vmzKGhR7A=;
-        b=ES1aVOsyeTq2yuElKNLaxppqqju8Nxj9EF+eGYvQIEEuHaVSwB/Gii3rJUuADgY8xs
-         w9oo1XP6lvNDQBsynJJYdw58kslMuHWtfHAiDrpnwYLotPsvAha2Yk9XrO88TK80gfT7
-         vpBoPwbsT9RUbbbJclmyq2W0xoPhBbKnZ8zV/V68DLBYgIiT43BCDeM8GWM3w3ICQidw
-         VxSBPdYCJGZn5FU+ptBfdlZ2tkF8TFLf8XpnBc+SK12sSBntaN79Q4/1gxoCITYuNjmp
-         7AqYttDiTyq0poEuf0SUwcTJYHY2kN1BzI00O+zy6iJIExiR/6rsQbTneWawILegeo/d
-         kWkA==
-X-Gm-Message-State: APjAAAVxgXEosfImmuwhyeGNQo4i01vGlfg3qd0z1tDzlHLpvYad36LX
-        kcxME3qJJGgB3NGDeFxKI74lArN9xgy1OcrqPslb
-X-Google-Smtp-Source: APXvYqyFxh/7LRh2OUs07TaeIwkLdmUFOzPywD7hyxv8By/XR7oy9MGpTc3jNJvUlnYKg+aAZN4R8oJKU3Cyeok7DUc=
-X-Received: by 2002:ac2:4119:: with SMTP id b25mr11052807lfi.72.1555956658518;
- Mon, 22 Apr 2019 11:10:58 -0700 (PDT)
+        Mon, 22 Apr 2019 14:58:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 11:58:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,382,1549958400"; 
+   d="scan'208";a="136417117"
+Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
+  by orsmga008.jf.intel.com with ESMTP; 22 Apr 2019 11:58:40 -0700
+From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
+To:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v4 00/23] Merge text_poke fixes and executable lockdowns
+Date:   Mon, 22 Apr 2019 11:57:42 -0700
+Message-Id: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <cover.1555938375.git.mchehab+samsung@kernel.org> <72133d276dd8cde2d1ee8528b4e87ab2a614cbd0.1555938376.git.mchehab+samsung@kernel.org>
-In-Reply-To: <72133d276dd8cde2d1ee8528b4e87ab2a614cbd0.1555938376.git.mchehab+samsung@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 22 Apr 2019 14:10:47 -0400
-Message-ID: <CAHC9VhT7_vu1TeSWSFAJprf2iCgyHRYLpfpBvR48Yc40XefUcw@mail.gmail.com>
-Subject: Re: [PATCH v2 23/79] docs: netlabel: convert docs to ReST and rename
- to *.rst
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 22, 2019 at 9:28 AM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
->
-> Convert netlabel documentation to ReST.
->
-> This was trivial: just add proper title markups.
->
-> At its new index.rst, let's add a :orphan: while this is not linked to
-> the main index.rst file, in order to avoid build warnings.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  .../{cipso_ipv4.txt => cipso_ipv4.rst}        | 19 +++++++++++------
->  Documentation/netlabel/draft_ietf.rst         |  5 +++++
->  Documentation/netlabel/index.rst              | 21 +++++++++++++++++++
->  .../{introduction.txt => introduction.rst}    | 16 +++++++++-----
->  .../{lsm_interface.txt => lsm_interface.rst}  | 16 +++++++++-----
->  5 files changed, 61 insertions(+), 16 deletions(-)
->  rename Documentation/netlabel/{cipso_ipv4.txt => cipso_ipv4.rst} (87%)
->  create mode 100644 Documentation/netlabel/draft_ietf.rst
->  create mode 100644 Documentation/netlabel/index.rst
->  rename Documentation/netlabel/{introduction.txt => introduction.rst} (91%)
->  rename Documentation/netlabel/{lsm_interface.txt => lsm_interface.rst} (88%)
+Hi,
 
-Still looks fine to me.  I should go through these docs again to make
-sure they are current (the old email address definitely is a bad
-sign).
+Picking this up again after seeing how things shook out around the issue
+raised here: https://lkml.org/lkml/2019/2/22/702
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+This patchset improves several overlapping issues around stale TLB entries and
+W^X violations. It is combined from "x86/alternative: text_poke() enhancements
+v7" [1] and "Don’t leave executable TLB entries to freed pages v2" [2] patchsets
+that were conflicting.
+
+The related issues that this fixes:
+1. Fixmap PTEs that are used for patching are available for access from
+   other cores and might be exploited. They are not even flushed from
+   the TLB in remote cores, so the risk is even higher. Address this
+   issue by introducing a temporary mm that is only used during
+   patching. Unfortunately, due to init ordering, fixmap is still used
+   during boot-time patching. Future patches can eliminate the need for
+   it.
+2. Missing lockdep assertion to ensure text_mutex is taken. It is
+   actually not always taken, so fix the instances that were found not
+   to take the lock (although they should be safe even without taking
+   the lock).
+3. Module_alloc returning memory that is RWX until a module is finished
+   loading.
+4. Sometimes when memory is freed via the module subsystem, an
+   executable permissioned TLB entry can remain to a freed page. If the
+   page is re-used to back an address that will receive data from
+   userspace, it can result in user data being mapped as executable in
+   the kernel. The root of this behavior is vfree lazily flushing the
+   TLB, but not lazily freeing the underlying pages.
+
+Changes v3 to v4:
+ - Remove the size parameter from tramp_free() [Steven]
+ - Remove caching of hw_breakpoint_active() [Sean]
+ - Prevent the use of bpf_probe_write_user() while using temporary mm [Jann]
+ - Fix build issues on other archs
+
+Changes v2 to v3:
+ - Fix commit messages and comments [Boris]
+ - Rename VM_HAS_SPECIAL_PERMS [Boris]
+ - Remove unnecessary local variables [Boris]
+ - Rename set_alias_*() functions [Boris, Andy]
+ - Save/restore DR registers when using temporary mm
+ - Move line deletion from patch 10 to patch 17
+
+Changes v1 to v2:
+ - Adding “Reviewed-by tag” [Masami]
+ - Comment instead of code to warn against module removal while
+   patching [Masami]
+ - Avoiding open-coded TLB flush [Andy]
+ - Remove "This patch" [Borislav Petkov]
+ - Not set global bit during text poking [Andy, hpa]
+ - Add Ack from [Pavel Machek]
+ - Split patch 16 "Plug in new special vfree flag" into 4 patches (16-19)
+   to make it easier to review. There were no code changes.
+
+The changes from "Don’t leave executable TLB entries to freed pages
+v2" to v1:
+ - Add support for case of hibernate trying to save an unmapped page
+   on the directmap. (Ard Biesheuvel)
+ - No week arch breakout for vfree-ing special memory (Andy Lutomirski)
+ - Avoid changing deferred free code by moving modules init free to work
+   queue (Andy Lutomirski)
+ - Plug in new flag for kprobes and ftrace
+ - More arch generic names for set_pages functions (Ard Biesheuvel)
+ - Fix for TLB not always flushing the directmap (Nadav Amit)
+ 
+Changes from "x86/alternative: text_poke() enhancements v7" to v1
+ - Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
+ - Remove text_poke usage from ftrace (Nadav)
+ 
+[1] https://lkml.org/lkml/2018/12/5/200
+[2] https://lkml.org/lkml/2018/12/11/1571
+
+
+Andy Lutomirski (1):
+  x86/mm: Introduce temporary mm structs
+
+Nadav Amit (15):
+  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+  x86/jump_label: Use text_poke_early() during early init
+  x86/mm: Save DRs when loading a temporary mm
+  fork: Provide a function for copying init_mm
+  x86/alternative: Initialize temporary mm for patching
+  x86/alternative: Use temporary mm for text poking
+  x86/kgdb: Avoid redundant comparison of patched code
+  x86/ftrace: Set trampoline pages as executable
+  x86/kprobes: Set instruction page as executable
+  x86/module: Avoid breaking W^X while loading modules
+  x86/jump-label: Remove support for custom poker
+  x86/alternative: Remove the return value of text_poke_*()
+  x86/alternative: Comment about module removal races
+  tlb: provide default nmi_uaccess_okay()
+  bpf: Fail bpf_probe_write_user() while mm is switched
+
+Rick Edgecombe (7):
+  x86/mm/cpa: Add set_direct_map_ functions
+  mm: Make hibernate handle unmapped pages
+  vmalloc: Add flag for free of special permsissions
+  modules: Use vmalloc special flag
+  bpf: Use vmalloc special flag
+  x86/ftrace: Use vmalloc special flag
+  x86/kprobes: Use vmalloc special flag
+
+ arch/Kconfig                         |   4 +
+ arch/x86/Kconfig                     |   1 +
+ arch/x86/include/asm/fixmap.h        |   2 -
+ arch/x86/include/asm/mmu_context.h   |  56 ++++++++
+ arch/x86/include/asm/pgtable.h       |   3 +
+ arch/x86/include/asm/set_memory.h    |   3 +
+ arch/x86/include/asm/text-patching.h |   7 +-
+ arch/x86/include/asm/tlbflush.h      |   2 +
+ arch/x86/kernel/alternative.c        | 201 ++++++++++++++++++++-------
+ arch/x86/kernel/ftrace.c             |  22 +--
+ arch/x86/kernel/jump_label.c         |  21 ++-
+ arch/x86/kernel/kgdb.c               |  25 +---
+ arch/x86/kernel/kprobes/core.c       |  19 ++-
+ arch/x86/kernel/module.c             |   2 +-
+ arch/x86/mm/init_64.c                |  36 +++++
+ arch/x86/mm/pageattr.c               |  16 ++-
+ arch/x86/xen/mmu_pv.c                |   2 -
+ include/asm-generic/tlb.h            |   9 ++
+ include/linux/filter.h               |  18 +--
+ include/linux/mm.h                   |  18 +--
+ include/linux/sched/task.h           |   1 +
+ include/linux/set_memory.h           |  11 ++
+ include/linux/vmalloc.h              |  15 ++
+ init/main.c                          |   3 +
+ kernel/bpf/core.c                    |   1 -
+ kernel/fork.c                        |  24 +++-
+ kernel/module.c                      |  82 ++++++-----
+ kernel/power/snapshot.c              |   5 +-
+ kernel/trace/bpf_trace.c             |   8 ++
+ mm/page_alloc.c                      |   7 +-
+ mm/vmalloc.c                         | 113 ++++++++++++---
+ 31 files changed, 542 insertions(+), 195 deletions(-)
 
 -- 
-paul moore
-www.paul-moore.com
+2.17.1
+
