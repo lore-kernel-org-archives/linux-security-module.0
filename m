@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A05D1C282E3
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36404C10F11
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A38D2177B
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:58:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D1542075A
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 18:59:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbfDVS6u (ORCPT
+        id S1728824AbfDVS7H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Apr 2019 14:58:50 -0400
-Received: from mga11.intel.com ([192.55.52.93]:60350 "EHLO mga11.intel.com"
+        Mon, 22 Apr 2019 14:59:07 -0400
+Received: from mga11.intel.com ([192.55.52.93]:60353 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728742AbfDVS6u (ORCPT
+        id S1728773AbfDVS6s (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Apr 2019 14:58:50 -0400
+        Mon, 22 Apr 2019 14:58:48 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 11:58:45 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 11:58:47 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,382,1549958400"; 
-   d="scan'208";a="136417158"
+   d="scan'208";a="136417185"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
   by orsmga008.jf.intel.com with ESMTP; 22 Apr 2019 11:58:42 -0700
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -42,10 +42,13 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v4 14/23] x86/mm/cpa: Add set_direct_map_ functions
-Date:   Mon, 22 Apr 2019 11:57:56 -0700
-Message-Id: <20190422185805.1169-15-rick.p.edgecombe@intel.com>
+Subject: [PATCH v4 23/23] bpf: Fail bpf_probe_write_user() while mm is switched
+Date:   Mon, 22 Apr 2019 11:58:05 -0700
+Message-Id: <20190422185805.1169-24-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
 References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
@@ -53,131 +56,56 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add two new functions set_direct_map_default_noflush() and
-set_direct_map_invalid_noflush() for setting the direct map alias for the
-page to its default valid permissions and to an invalid state that cannot
-be cached in a TLB, respectively. These functions do not flush the TLB.
+From: Nadav Amit <namit@vmware.com>
 
-Note, __kernel_map_pages() does something similar but flushes the TLB and
-doesn't reset the permission bits to default on all architectures.
+When using a temporary mm, bpf_probe_write_user() should not be able to
+write to user memory, since user memory addresses may be used to map
+kernel memory.  Detect these cases and fail bpf_probe_write_user() in
+such cases.
 
-Also add an ARCH config ARCH_HAS_SET_DIRECT_MAP for specifying whether
-these have an actual implementation or a default empty one.
-
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Reported-by: Jann Horn <jannh@google.com>
+Suggested-by: Jann Horn <jannh@google.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/Kconfig                      |  4 ++++
- arch/x86/Kconfig                  |  1 +
- arch/x86/include/asm/set_memory.h |  3 +++
- arch/x86/mm/pageattr.c            | 14 +++++++++++---
- include/linux/set_memory.h        | 11 +++++++++++
- 5 files changed, 30 insertions(+), 3 deletions(-)
+ kernel/trace/bpf_trace.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 3ab446bd12ef..5e43fcbad4ca 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -249,6 +249,10 @@ config ARCH_HAS_FORTIFY_SOURCE
- config ARCH_HAS_SET_MEMORY
- 	bool
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index d64c00afceb5..94b0e37d90ef 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -14,6 +14,8 @@
+ #include <linux/syscalls.h>
+ #include <linux/error-injection.h>
  
-+# Select if arch has all set_direct_map_invalid/default() functions
-+config ARCH_HAS_SET_DIRECT_MAP
-+	bool
++#include <asm/tlb.h>
 +
- # Select if arch init_task must go in the __init_task_data section
- config ARCH_TASK_STRUCT_ON_STACK
-        bool
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 2ec5e850b807..45d788354376 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -66,6 +66,7 @@ config X86
- 	select ARCH_HAS_UACCESS_FLUSHCACHE	if X86_64
- 	select ARCH_HAS_UACCESS_MCSAFE		if X86_64 && X86_MCE
- 	select ARCH_HAS_SET_MEMORY
-+	select ARCH_HAS_SET_DIRECT_MAP
- 	select ARCH_HAS_STRICT_KERNEL_RWX
- 	select ARCH_HAS_STRICT_MODULE_RWX
- 	select ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
-index 07a25753e85c..ae7b909dc242 100644
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -85,6 +85,9 @@ int set_pages_nx(struct page *page, int numpages);
- int set_pages_ro(struct page *page, int numpages);
- int set_pages_rw(struct page *page, int numpages);
+ #include "trace_probe.h"
+ #include "trace.h"
  
-+int set_direct_map_invalid_noflush(struct page *page);
-+int set_direct_map_default_noflush(struct page *page);
-+
- extern int kernel_set_to_readonly;
- void set_kernel_text_rw(void);
- void set_kernel_text_ro(void);
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 4c570612e24e..3574550192c6 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -2209,8 +2209,6 @@ int set_pages_rw(struct page *page, int numpages)
- 	return set_memory_rw(addr, numpages);
- }
+@@ -163,6 +165,10 @@ BPF_CALL_3(bpf_probe_write_user, void *, unsafe_ptr, const void *, src,
+ 	 * access_ok() should prevent writing to non-user memory, but in
+ 	 * some situations (nommu, temporary switch, etc) access_ok() does
+ 	 * not provide enough validation, hence the check on KERNEL_DS.
++	 *
++	 * nmi_uaccess_okay() ensures the probe is not run in an interim
++	 * state, when the task or mm are switched. This is specifically
++	 * required to prevent the use of temporary mm.
+ 	 */
  
--#ifdef CONFIG_DEBUG_PAGEALLOC
--
- static int __set_pages_p(struct page *page, int numpages)
- {
- 	unsigned long tempaddr = (unsigned long) page_address(page);
-@@ -2249,6 +2247,17 @@ static int __set_pages_np(struct page *page, int numpages)
- 	return __change_page_attr_set_clr(&cpa, 0);
- }
+ 	if (unlikely(in_interrupt() ||
+@@ -170,6 +176,8 @@ BPF_CALL_3(bpf_probe_write_user, void *, unsafe_ptr, const void *, src,
+ 		return -EPERM;
+ 	if (unlikely(uaccess_kernel()))
+ 		return -EPERM;
++	if (unlikely(!nmi_uaccess_okay()))
++		return -EPERM;
+ 	if (!access_ok(unsafe_ptr, size))
+ 		return -EPERM;
  
-+int set_direct_map_invalid_noflush(struct page *page)
-+{
-+	return __set_pages_np(page, 1);
-+}
-+
-+int set_direct_map_default_noflush(struct page *page)
-+{
-+	return __set_pages_p(page, 1);
-+}
-+
-+#ifdef CONFIG_DEBUG_PAGEALLOC
- void __kernel_map_pages(struct page *page, int numpages, int enable)
- {
- 	if (PageHighMem(page))
-@@ -2282,7 +2291,6 @@ void __kernel_map_pages(struct page *page, int numpages, int enable)
- }
- 
- #ifdef CONFIG_HIBERNATION
--
- bool kernel_page_present(struct page *page)
- {
- 	unsigned int level;
-diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
-index 2a986d282a97..b5071497b8cb 100644
---- a/include/linux/set_memory.h
-+++ b/include/linux/set_memory.h
-@@ -17,6 +17,17 @@ static inline int set_memory_x(unsigned long addr,  int numpages) { return 0; }
- static inline int set_memory_nx(unsigned long addr, int numpages) { return 0; }
- #endif
- 
-+#ifndef CONFIG_ARCH_HAS_SET_DIRECT_MAP
-+static inline int set_direct_map_invalid_noflush(struct page *page)
-+{
-+	return 0;
-+}
-+static inline int set_direct_map_default_noflush(struct page *page)
-+{
-+	return 0;
-+}
-+#endif
-+
- #ifndef set_mce_nospec
- static inline int set_mce_nospec(unsigned long pfn)
- {
 -- 
 2.17.1
 
