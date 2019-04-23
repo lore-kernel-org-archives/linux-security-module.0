@@ -1,77 +1,94 @@
-Return-Path: <SRS0=pIlI=SY=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=iQUf=SZ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 863C7C10F11
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 22:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7C9C10F11
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 00:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52ED12075A
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Apr 2019 22:52:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5466620811
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 00:18:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbfDVWwL (ORCPT
+        id S1729703AbfDWAST (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Apr 2019 18:52:11 -0400
-Received: from namei.org ([65.99.196.166]:35318 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728965AbfDVWwL (ORCPT
+        Mon, 22 Apr 2019 20:18:19 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43378 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729664AbfDWAST (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Apr 2019 18:52:11 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x3MMq5NB015582;
-        Mon, 22 Apr 2019 22:52:05 GMT
-Date:   Tue, 23 Apr 2019 08:52:05 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-cc:     linux-security-module@vger.kernel.org
-Subject: Re: [PATCH (resend)] tomoyo: Add a kernel config option for fuzzing
- testing.
-In-Reply-To: <49c5ae17-86fb-e4d3-0e06-c205cf324c1d@I-love.SAKURA.ne.jp>
-Message-ID: <alpine.LRH.2.21.1904230851460.15541@namei.org>
-References: <1555067094-9861-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp> <49c5ae17-86fb-e4d3-0e06-c205cf324c1d@I-love.SAKURA.ne.jp>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 22 Apr 2019 20:18:19 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3N03baj049903
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Apr 2019 20:18:18 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2s1p4gca9n-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Apr 2019 20:18:18 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 23 Apr 2019 01:18:16 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 23 Apr 2019 01:18:13 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3N0ICqB36831360
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Apr 2019 00:18:12 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8E78E4C04A;
+        Tue, 23 Apr 2019 00:18:12 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C86514C040;
+        Tue, 23 Apr 2019 00:18:11 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.109.124])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 23 Apr 2019 00:18:11 +0000 (GMT)
+Subject: Re: [PATCH] kexec_buffer measure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     prakhar srivastava <prsriva02@gmail.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Date:   Mon, 22 Apr 2019 20:18:01 -0400
+In-Reply-To: <CAEFn8qKkXgxUKtribbtFwvG9NykGQo10jQ5Du_i9wJz-wKreOA@mail.gmail.com>
+References: <CAEFn8qKkXgxUKtribbtFwvG9NykGQo10jQ5Du_i9wJz-wKreOA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19042300-0008-0000-0000-000002DC7162
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19042300-0009-0000-0000-00002248BE1A
+Message-Id: <1555978681.4914.305.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-22_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=928 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904220180
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 22 Apr 2019, Tetsuo Handa wrote:
+[Cc'ing LSM mailing list]
 
-> James, will you apply this patch and
-> "[PATCH 3/3] tomoyo: Check address length before reading address family" and
-> "[PATCH] tomoyo: Change pathname calculation for read-only filesystems." ?
+On Fri, 2019-04-19 at 17:30 -0700, prakhar srivastava wrote:
 
-On the 2nd one, did we see any feedback from Al?
+> 2) Adding a LSM hook
+> We are doing both the command line and kernel version measurement in IMA.
+> Can you please elaborate on how this can be used outside of the scenario?
+> That will help me come back with a better design and code. I am
+> neutral about this.
 
+As I said previously, initially you might want to only measure the
+kexec boot command line, but will you ever want to verify or audit log
+the boot command line hash?  Perhaps LSMs would be interested in the
+boot command line.  Should this be an LSM hook?
 
-> 
-> On 2019/04/12 20:04, Tetsuo Handa wrote:
-> > syzbot is reporting kernel panic triggered by memory allocation fault
-> > injection before loading TOMOYO's policy [1]. To make the fuzzing tests
-> > useful, we need to assign a profile other than "disabled" (no-op) mode.
-> > Therefore, let's allow syzbot to load TOMOYO's built-in policy for
-> > "learning" mode using a kernel config option. This option must not be
-> > enabled for kernels built for production system, for this option also
-> > disables domain/program checks when modifying policy configuration via
-> > /sys/kernel/security/tomoyo/ interface.
-> > 
-> > [1] https://syzkaller.appspot.com/bug?extid=29569ed06425fcf67a95
-> > 
-> > Reported-by: syzbot <syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com>
-> > Reported-by: syzbot <syzbot+29569ed06425fcf67a95@syzkaller.appspotmail.com>
-> > Reported-by: syzbot <syzbot+2ee3f8974c2e7dc69feb@syzkaller.appspotmail.com>
-> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > ---
-> >  security/tomoyo/Kconfig  | 10 ++++++++++
-> >  security/tomoyo/common.c | 13 ++++++++++++-
-> >  2 files changed, 22 insertions(+), 1 deletion(-)
-> 
-
--- 
-James Morris
-<jmorris@namei.org>
+Mimi
 
