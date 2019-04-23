@@ -3,92 +3,162 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7C9C10F11
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 00:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED334C10F14
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 04:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5466620811
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 00:18:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7F6720843
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 04:08:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729703AbfDWAST (ORCPT
+        id S1728506AbfDWEIx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Apr 2019 20:18:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43378 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729664AbfDWAST (ORCPT
+        Tue, 23 Apr 2019 00:08:53 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:48350 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726594AbfDWEIw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Apr 2019 20:18:19 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3N03baj049903
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Apr 2019 20:18:18 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2s1p4gca9n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Apr 2019 20:18:18 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 23 Apr 2019 01:18:16 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 23 Apr 2019 01:18:13 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3N0ICqB36831360
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Apr 2019 00:18:12 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8E78E4C04A;
-        Tue, 23 Apr 2019 00:18:12 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C86514C040;
-        Tue, 23 Apr 2019 00:18:11 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.109.124])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 23 Apr 2019 00:18:11 +0000 (GMT)
-Subject: Re: [PATCH] kexec_buffer measure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     prakhar srivastava <prsriva02@gmail.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Date:   Mon, 22 Apr 2019 20:18:01 -0400
-In-Reply-To: <CAEFn8qKkXgxUKtribbtFwvG9NykGQo10jQ5Du_i9wJz-wKreOA@mail.gmail.com>
-References: <CAEFn8qKkXgxUKtribbtFwvG9NykGQo10jQ5Du_i9wJz-wKreOA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19042300-0008-0000-0000-000002DC7162
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19042300-0009-0000-0000-00002248BE1A
-Message-Id: <1555978681.4914.305.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-22_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=928 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904220180
+        Tue, 23 Apr 2019 00:08:52 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 25D7DCDD43B433BC305A;
+        Tue, 23 Apr 2019 12:08:46 +0800 (CST)
+Received: from [127.0.0.1] (10.177.19.219) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 23 Apr 2019
+ 12:08:38 +0800
+Subject: Re: kernel BUG at kernel/cred.c:434!
+To:     Paul Moore <paul@paul-moore.com>
+References: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
+ <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
+ <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
+ <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
+ <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
+ <20190417145711.GI32622@redhat.com>
+ <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
+ <20190417162723.GK32622@redhat.com>
+ <CAHC9VhT_nk1jmrTj3W=F+1gP1vU3iZsZ=UGOCwdiBLbUsOc9=w@mail.gmail.com>
+ <0ca3f4cf-5c64-2fc0-1885-9dbcca2f4b47@schaufler-ca.com>
+ <5CB7E5D4.2060703@huawei.com>
+ <CAHC9VhQkrR+m9_dYLg4VG-26TdUnf8XFjbmuVQ70YCOp6DhN_g@mail.gmail.com>
+ <5CB933C4.7000300@huawei.com>
+ <CAHC9VhTdJ6uUOjyxrk=+iOkKe=VN+N9DMPtV=OchAY34x95g=w@mail.gmail.com>
+ <5CB9DC75.7010600@huawei.com>
+ <CAHC9VhQqxL+LsK8YTD6PpTHaZsZ-PxAq3atdZKQcZLQZQH7t4g@mail.gmail.com>
+ <5CBACC8F.8010409@huawei.com>
+ <CAHC9VhSZBh8B+1CPM=PdLdbSFq1ba1ffuOJTgnzE5oBLXUEDxQ@mail.gmail.com>
+CC:     Casey Schaufler <casey@schaufler-ca.com>,
+        Oleg Nesterov <oleg@redhat.com>, <john.johansen@canonical.com>,
+        "chengjian (D)" <cj.chengjian@huawei.com>,
+        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
+        Li Bin <huawei.libin@huawei.com>,
+        "Jason Yan" <yanaijie@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SELinux <selinux@vger.kernel.org>, <yangyingliang@huawei.com>
+From:   Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <5CBE8FC4.8060400@huawei.com>
+Date:   Tue, 23 Apr 2019 12:08:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <CAHC9VhSZBh8B+1CPM=PdLdbSFq1ba1ffuOJTgnzE5oBLXUEDxQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.19.219]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[Cc'ing LSM mailing list]
 
-On Fri, 2019-04-19 at 17:30 -0700, prakhar srivastava wrote:
 
-> 2) Adding a LSM hook
-> We are doing both the command line and kernel version measurement in IMA.
-> Can you please elaborate on how this can be used outside of the scenario?
-> That will help me come back with a better design and code. I am
-> neutral about this.
+On 2019/4/23 3:48, Paul Moore wrote:
+> On Sat, Apr 20, 2019 at 3:39 AM Yang Yingliang <yangyingliang@huawei.com> wrote:
+>> I'm not sure you got my point.
+> I went back and looked at your previous emails again to try and
+> understand what you are talking about, and I'm a little confused by
+> some of the output ...
+>
+>> --- a/kernel/acct.c
+>> +++ b/kernel/acct.c
+>> @@ -481,6 +481,7 @@ static void do_acct_process(struct bsd_acct_struct
+>> *acct)
+>>           flim = current->signal->rlim[RLIMIT_FSIZE].rlim_cur;
+>>           current->signal->rlim[RLIMIT_FSIZE].rlim_cur = RLIM_INFINITY;
+>>           /* Perform file operations on behalf of whoever enabled
+>> accounting */
+>> +       pr_info("task:%px new cred:%px real cred:%px cred:%px\n",
+>> current, file->f_cred, current->real_cred, current->cred);
+>>           orig_cred = override_creds(file->f_cred);
+> Okay, with this patch applied we should the task/cred info when
+> do_acct_process is called.  Got it.
+>
+>> Messages:
+>> [   56.643298] task:ffff88841a9595c0 new cred:ffff88841ae450c0 real
+>> cred:ffff88841ae450c0 cred:ffff88841ae450c0    //They are same.
+> Okay, it looks like do_acct_process() was called and f_cred,
+> real_cred, and cred are all the same.
+This is a original message, without patch applied.
+>
+>> [   56.646609] Process accounting resumed
+> It looks like do_acct_process() has called check_free_space() now.  So
+> far so good.
+>
+>> [   56.649943] task:ffff88841a9595c0 new cred:ffff88841ae450c0 real
+>> cred:ffff88841c96c300 cred:ffff88841ae450c0
+> Wait a minute ... why are we seeing this again?  Looking at the task
+> pointer and the timestamp, this is the same task exiting and trying to
+> write to the accounting file, yes?  This output is particularly
+> curious since it appears that real_cred has changed; where is this
+> happening?
+This is the message when the BUG_ON was triggered without applying any
+fix patch.
 
-As I said previously, initially you might want to only measure the
-kexec boot command line, but will you ever want to verify or audit log
-the boot command line hash?  Perhaps LSMs would be interested in the
-boot command line.  Should this be an LSM hook?
 
-Mimi
+If we apply this patch "proc: prevent changes to overridden 
+credentials", program
+runs like this:
+
+1. As print message shows, before overriden, the pointer has the 
+following value:
+     real_cread=cred=0xffff88841ae450c0, f_cred=0xffff88841ae450c0
+     override_creds() is called in do_acct_process():
+     ...
+     /* Perform file operations on behalf of whoever enabled accounting */
+     orig_cred = override_creds(file->f_cred);
+     ...
+
+
+2. After override_creds(), if (current_cred() != current_real_cred()) is 
+not work here,
+we will call commit_creds()  in security_setprocattr().
+     ...
+     /* Prevent changes to overridden credentials. */
+         if (current_cred() != current_real_cred()) {
+             rcu_read_unlock();
+         return -EBUSY;
+     }
+     ...
+
+
+3. After commit_creds(), we have new cred and real_cred.
+     security_setprocattr()    //commit_creds is called here
+
+4. revert_creds() is called in in do_acct_process(), the cred
+is reverted to the old value(0xffff88841ae450c0)
+     ...
+     current->signal->rlim[RLIMIT_FSIZE].rlim_cur = flim;
+     revert_creds(orig_cred);
+
+5. After reverting, cred and real_cred are not equal.
+If it has a risk to trigger the BUG_ON, when doing another
+commit_creds() ?
+
+
 
