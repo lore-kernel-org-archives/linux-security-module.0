@@ -2,74 +2,71 @@ Return-Path: <SRS0=iQUf=SZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94406C282E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 19:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEAEC10F03
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 19:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6488B217D9
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 19:14:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97149217D9
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 19:17:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YQicmEXJ"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Cvr3QFQ2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbfDWTOv (ORCPT
+        id S1726018AbfDWTRs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Apr 2019 15:14:51 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:45688 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbfDWTOv (ORCPT
+        Tue, 23 Apr 2019 15:17:48 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:39041 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfDWTRr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Apr 2019 15:14:51 -0400
-Received: by mail-vs1-f65.google.com with SMTP id o10so8933745vsp.12
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Apr 2019 12:14:50 -0700 (PDT)
+        Tue, 23 Apr 2019 15:17:47 -0400
+Received: by mail-ua1-f66.google.com with SMTP id d5so5165460uan.6
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Apr 2019 12:17:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=32U2dfxVGqorGsN9k10OetrKjC+7ZLylQlERitBS26g=;
-        b=YQicmEXJvE7Tow30ovfEeQ7OOnLVp5QOpQuA2Yp/05T8K4KyNMZUwRCEOT7qsv8jUW
-         ji6LVmFsFQl5hazahb/dIo7+RTDl77DuX1J/52+4KgqU4FDGj2s/XsiCzYXx0E48D276
-         o38sdIgkaDZOG1/7dTK3PqR9YH4+X9a14h5O0=
+        bh=0R/r6+Dc1HS6D5GD+LDQaGbyZfhrZKOj7KqVz/9sduY=;
+        b=Cvr3QFQ2YBZeOM6VP8GWbG4gVQuTC9seTDsAXY+zY3+Ia4xqkynjotA2UmquFlIKuC
+         EDzL2OvkJTJEKfcYglm52pzlmdUvyolQPJpTy54k7dbJk2TusM9qmXtfPAJa/lN4S93d
+         kfLFsFz+oaGMN9tjJDfwR54RvQU0d6O3q681o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=32U2dfxVGqorGsN9k10OetrKjC+7ZLylQlERitBS26g=;
-        b=BOum2TbDOPCy7KaHTSm2ta+BKcuPlebXV0Z3jbzl5pmaj31EUsGPcJ89u+wszur3kx
-         CRCn6SIyJAOso6UC3VMqVWx/VTf69Ye5bgYw1aVFzmIOA7i9el3Ybh1Zi7rNVpzkEI8Y
-         ndUywLFxbjra5UUzbFBNbAxdawtO2uP36paX1bMffyo6IEHIqudUs9k6/uR6+4wBoQSp
-         lUtXZn+BTUDNFLOJ7FEqjoCjq031ufCuziQ+4pUWtBuVD2jn/+EdydRrM+kDMpgnhD4x
-         7zr0fnMbhf3LZvs/g1gc2RU6Y1Fx2P6IPZR19eq4gMS5uhBK3kwGr1zXBwxdlsmNPysj
-         TKVA==
-X-Gm-Message-State: APjAAAVXwkswlxJ+ym1r6+ZJCu+nk8+Ed2evCMxfY2/JKDZugBQBzSjF
-        nZ4AFFBCOidOs0jamZfAaP4bZjVbdqk=
-X-Google-Smtp-Source: APXvYqzig+FIXJFSMEnbgs4WEK9D90yIExrRxKS0MCZYOjUKYxOFLgIAmym615wlR43wumMmQ944OA==
-X-Received: by 2002:a67:e258:: with SMTP id w24mr14202555vse.20.1556046889486;
-        Tue, 23 Apr 2019 12:14:49 -0700 (PDT)
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
-        by smtp.gmail.com with ESMTPSA id 2sm18547599vke.27.2019.04.23.12.14.48
+        bh=0R/r6+Dc1HS6D5GD+LDQaGbyZfhrZKOj7KqVz/9sduY=;
+        b=V5/ipOpucr8nDCGg4T9pT7UVkEmbyfydMCDtDiOZPv4TikuJlqGL9jGdd7GfslUGst
+         kpkA56Dm7SHXBxyQKPsjkfZ1hfFFpJxDWdTfQdpWkti1+Kb69se3IHxT2wt14fUFJjj+
+         9JXT81xkTLMEKPOGfJpamV3wjGzhgQtqLE1Xxb6TtXV7JLzFbxXsO+zLrRmhU9HIjnLL
+         g3xEEzWcEomd6C6bWYvIdG0bqQ+1ysjTdJaehiTuoFqHoWLLB7uEYM+TNnUebZXBSDdT
+         07kBN5ExQ9Svn9fD0zuYnAyNslmwVBDQfpdWF6GQpvYKL09mT1iPxqR31eaJvpNrbkMd
+         MhPw==
+X-Gm-Message-State: APjAAAU2kbl0uQshr+KfJBirdstarKjjxpTTWk2DwvM4jElVOVf/e66X
+        YuyvjB13zixPrIIYcTDEPzsGejLKkW0=
+X-Google-Smtp-Source: APXvYqw9yl660lTzGiCVwo5ymsanvmE9qW+C9gLTtS4lU4aAsm0A79DFx7eTKGpV+G1sxXgmat6Y/g==
+X-Received: by 2002:a9f:2a8d:: with SMTP id z13mr14211875uai.62.1556047066007;
+        Tue, 23 Apr 2019 12:17:46 -0700 (PDT)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id g19sm4302147vkf.33.2019.04.23.12.17.44
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Apr 2019 12:14:48 -0700 (PDT)
-Received: by mail-vk1-f172.google.com with SMTP id 195so3460416vkx.9
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Apr 2019 12:14:48 -0700 (PDT)
-X-Received: by 2002:a1f:7d8e:: with SMTP id y136mr8461809vkc.40.1556046888180;
- Tue, 23 Apr 2019 12:14:48 -0700 (PDT)
+        Tue, 23 Apr 2019 12:17:45 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id w13so8953819vsc.4
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Apr 2019 12:17:44 -0700 (PDT)
+X-Received: by 2002:a05:6102:417:: with SMTP id d23mr5177794vsq.48.1556047064431;
+ Tue, 23 Apr 2019 12:17:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190418154208.131118-1-glider@google.com> <20190418154208.131118-3-glider@google.com>
- <7bf6bd62-c8e0-df3d-8e98-70063f2d175a@intel.com>
-In-Reply-To: <7bf6bd62-c8e0-df3d-8e98-70063f2d175a@intel.com>
+References: <20190418154208.131118-1-glider@google.com> <20190418154208.131118-4-glider@google.com>
+In-Reply-To: <20190418154208.131118-4-glider@google.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 23 Apr 2019 12:14:36 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+Lm0ba4ZQ91vZ8nZFvpJSxu_j_bEKMaa0NMsurmyZjjA@mail.gmail.com>
-Message-ID: <CAGXu5j+Lm0ba4ZQ91vZ8nZFvpJSxu_j_bEKMaa0NMsurmyZjjA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] gfp: mm: introduce __GFP_NOINIT
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+Date:   Tue, 23 Apr 2019 12:17:33 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKcBU43YGooE0NSk5BF9NhdHu6vuFOr8Zq6Fq-Dk4jNPA@mail.gmail.com>
+Message-ID: <CAGXu5jKcBU43YGooE0NSk5BF9NhdHu6vuFOr8Zq6Fq-Dk4jNPA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] RFC: net: apply __GFP_NOINIT to AF_UNIX sk_buff allocations
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Christoph Lameter <cl@linux.com>,
         Dmitry Vyukov <dvyukov@google.com>,
         Laura Abbott <labbott@redhat.com>,
@@ -81,39 +78,16 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 18, 2019 at 9:52 AM Dave Hansen <dave.hansen@intel.com> wrote:
+On Thu, Apr 18, 2019 at 8:42 AM Alexander Potapenko <glider@google.com> wrote:
 >
-> On 4/18/19 8:42 AM, Alexander Potapenko wrote:
-> > diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-> > index be84f5f95c97..f9d1f1236cd0 100644
-> > --- a/kernel/kexec_core.c
-> > +++ b/kernel/kexec_core.c
-> > @@ -302,7 +302,7 @@ static struct page *kimage_alloc_pages(gfp_t gfp_mask, unsigned int order)
-> >  {
-> >       struct page *pages;
-> >
-> > -     pages = alloc_pages(gfp_mask & ~__GFP_ZERO, order);
-> > +     pages = alloc_pages((gfp_mask & ~__GFP_ZERO) | __GFP_NOINIT, order);
-> >       if (pages) {
-> >               unsigned int count, i;
->
-> While this is probably not super security-sensitive, it's also not
-> performance sensitive.
+> Add sock_alloc_send_pskb_noinit(), which is similar to
+> sock_alloc_send_pskb(), but allocates with __GFP_NOINIT.
+> This helps reduce the slowdown on hackbench from 9% to 0.1%.
 
-It is, however, a pretty clear case of "and then we immediately zero it".
-
-> These sl*b ones seem like a bad idea.  We already have rules that sl*b
-> allocations must be initialized by callers, and we have reasonably
-> frequent bugs where the rules are broken.
-
-Hm? No, this is saying that the page allocator can skip the auto-init
-because the slab internals will be doing it later.
-
-> Setting __GFP_NOINIT might be reasonable to do, though, for slabs that
-> have a constructor.  We have much higher confidence that *those* are
-> going to get initialized properly.
-
-That's already handled in patch 1.
+I would include a detailed justification about why this is safe to do.
+I imagine (but haven't looked) that the skb is immediately written to
+after allocation, so this is basically avoiding a "double init". Is
+that correct?
 
 -- 
 Kees Cook
