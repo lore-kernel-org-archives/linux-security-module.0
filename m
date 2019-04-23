@@ -2,106 +2,95 @@ Return-Path: <SRS0=iQUf=SZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7A6C10F14
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 14:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DED0C282DD
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 16:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 982E021738
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 14:33:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3E5E2148D
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 16:53:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1DTSJR0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbfDWOd0 (ORCPT
+        id S1728990AbfDWQxK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Apr 2019 10:33:26 -0400
-Received: from mga04.intel.com ([192.55.52.120]:59062 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbfDWOdZ (ORCPT
+        Tue, 23 Apr 2019 12:53:10 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46232 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728615AbfDWQxK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Apr 2019 10:33:25 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP; 23 Apr 2019 07:33:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,386,1549958400"; 
-   d="scan'208";a="138092169"
-Received: from sbwarrax-mobl1.gar.corp.intel.com (HELO localhost) ([10.252.58.123])
-  by orsmga006.jf.intel.com with ESMTP; 23 Apr 2019 07:33:11 -0700
-Date:   Tue, 23 Apr 2019 17:33:09 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Huang, Kai" <kai.huang@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Svahn, Kai" <kai.svahn@intel.com>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "rientjes@google.com" <rientjes@google.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v20 16/28] x86/sgx: Add provisioning
-Message-ID: <20190423143309.GB26642@linux.intel.com>
-References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
- <20190417103938.7762-17-jarkko.sakkinen@linux.intel.com>
- <1555643200.2776.1.camel@intel.com>
+        Tue, 23 Apr 2019 12:53:10 -0400
+Received: by mail-pg1-f193.google.com with SMTP id v2so5474834pge.13;
+        Tue, 23 Apr 2019 09:53:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=Er4EroENafjpj6BNvtqsvuEsl/fZK0kj5FQcKEZWn4k=;
+        b=L1DTSJR0Mk6vwt7KNgYsAlkV2TfOnPFgHWk9IHCFAULoblfLM64ygg50XK3RWWbeNn
+         Zot7Pl0WrV1oOPmzIhvLJ9XHjFX6KP71K5hRZhKJfvY2MGoeS3BPmJhLEvVnB1UZSgIu
+         p49gk3m22O6NjGJ/UPLj4UAZgUJW3HlUgTqe4mgw8WnGXLDb+zdWvUgJry88nC637uFY
+         +DI9TOa+YZzyNjI0SOr1fwUDHYRZUBJKRhXHoKBf5sDZ9iHlzthJ9ONGhy4iNo6Nuejd
+         PzJpI+dMUi/4tazrwDzfvLBlvF3IEciP30z5SVkYDghclqaCz+7LoD4yNqyJGkQIwild
+         FPTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Er4EroENafjpj6BNvtqsvuEsl/fZK0kj5FQcKEZWn4k=;
+        b=ODl2QbSEz7dB7UmqxsV7KykCr6suqAQ+ka1JSDreIMUAWkLysBKGQsLFcR0f1IAWxA
+         DY0s25emMhI41zfDJW2evxC+J/OXlDKFXpMCHHlDkFU8PYQOh59YYj+1LaZbKiw232xX
+         hUaXnOYX2LRgOmt2HH9aPct4VRYROZwO6Q0cs5Kpdq/YVWM9e6YJClbSePudafx41CbK
+         26byplUyo/52nr8ZMJMQ+eeEwhGt47X4v6I2Pbi507oYihIG6QDDyYqonCSKcRKnG4hT
+         Wp62Fv7bYZUC0hL+HwvK56joW7X48SYOSYnzDS/hXQeoHSdQsGz1eGRgTP1jDvBpxF0Y
+         DI5A==
+X-Gm-Message-State: APjAAAXQ8+dXX24KVXBCvJEMCpRfnrZ31JFCVPp2yTJLhy3XT8LG4HQb
+        6DEMIJjIhnkJP8+UxhtSuA4=
+X-Google-Smtp-Source: APXvYqzb5B+L837HEp/YIU1euISbJNIWUxehJaKMUK8uNmUWEvLfgD9bkzevA8lbfJplRzSCn0aDpg==
+X-Received: by 2002:a63:4b15:: with SMTP id y21mr25732595pga.430.1556038389463;
+        Tue, 23 Apr 2019 09:53:09 -0700 (PDT)
+Received: from bharath12345-Inspiron-5559 ([103.110.42.34])
+        by smtp.gmail.com with ESMTPSA id 71sm47192565pfs.36.2019.04.23.09.53.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Apr 2019 09:53:08 -0700 (PDT)
+Date:   Tue, 23 Apr 2019 22:23:00 +0530
+From:   Bharath Vedartham <linux.bhar@gmail.com>
+To:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] apparmor: Force type-casting of current->real_cred
+Message-ID: <20190423165300.GA18837@bharath12345-Inspiron-5559>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1555643200.2776.1.camel@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 19, 2019 at 03:06:48AM +0000, Huang, Kai wrote:
-> On Wed, 2019-04-17 at 13:39 +0300, Jarkko Sakkinen wrote:
-> > In order to provide a mechanism for devilering provisoning rights:
-> > 
-> > 1. Add a new device file /dev/sgx/provision that works as a token for
-> >    allowing an enclave to have the provisioning privileges.
-> > 2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
-> >    following data structure:
-> > 
-> >    struct sgx_enclave_set_attribute {
-> >            __u64 addr;
-> >            __u64 attribute_fd;
-> >    };
-> > 
-> > A daemon could sit on top of /dev/sgx/provision and send a file
-> > descriptor of this file to a process that needs to be able to provision
-> > enclaves.
-> > 
-> > The way this API is used is straight-forward. Lets assume that dev_fd is
-> > a handle to /dev/sgx/enclave and prov_fd is a handle to
-> > /dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
-> > initialize an enclave with the PROVISIONKEY attribute by
-> > 
-> > params.addr = <enclave address>;
-> > params.token_fd = prov_fd;
-> > 
-> Should be params.attribute_fd = prov_fd;
-> 
-> Thanks,
-> -Kai
+This patch fixes the sparse warning:
+warning: cast removes address space '<asn:4>' of expression.
 
-Thanks.
+Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+---
+ security/apparmor/lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-/Jarkko
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 87500bd..36478c4 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1529,7 +1529,7 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
+  */
+ static int __init set_init_ctx(void)
+ {
+-	struct cred *cred = (struct cred *)current->real_cred;
++	struct cred *cred = (__force struct cred *)current->real_cred;
+ 
+ 	set_cred_label(cred, aa_get_label(ns_unconfined(root_ns)));
+ 
+-- 
+2.7.4
+
