@@ -2,70 +2,106 @@ Return-Path: <SRS0=iQUf=SZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F2DC10F14
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 10:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7A6C10F14
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 14:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56AD7206A3
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 10:44:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 982E021738
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 14:33:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbfDWKo5 (ORCPT
+        id S1727467AbfDWOd0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Apr 2019 06:44:57 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:63029 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbfDWKo5 (ORCPT
+        Tue, 23 Apr 2019 10:33:26 -0400
+Received: from mga04.intel.com ([192.55.52.120]:59062 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726421AbfDWOdZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Apr 2019 06:44:57 -0400
-Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3NAio2v083716;
-        Tue, 23 Apr 2019 19:44:51 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp);
- Tue, 23 Apr 2019 19:44:50 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3NAikP0083558
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 23 Apr 2019 19:44:50 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH (resend)] tomoyo: Add a kernel config option for fuzzing
- testing.
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-security-module@vger.kernel.org
-References: <1555067094-9861-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <49c5ae17-86fb-e4d3-0e06-c205cf324c1d@I-love.SAKURA.ne.jp>
- <alpine.LRH.2.21.1904230851460.15541@namei.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <4b80cba5-2a7b-93ac-3f4a-41d31c6c58fc@i-love.sakura.ne.jp>
-Date:   Tue, 23 Apr 2019 19:44:47 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 23 Apr 2019 10:33:25 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP; 23 Apr 2019 07:33:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,386,1549958400"; 
+   d="scan'208";a="138092169"
+Received: from sbwarrax-mobl1.gar.corp.intel.com (HELO localhost) ([10.252.58.123])
+  by orsmga006.jf.intel.com with ESMTP; 23 Apr 2019 07:33:11 -0700
+Date:   Tue, 23 Apr 2019 17:33:09 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Svahn, Kai" <kai.svahn@intel.com>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v20 16/28] x86/sgx: Add provisioning
+Message-ID: <20190423143309.GB26642@linux.intel.com>
+References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
+ <20190417103938.7762-17-jarkko.sakkinen@linux.intel.com>
+ <1555643200.2776.1.camel@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1904230851460.15541@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1555643200.2776.1.camel@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/04/23 7:52, James Morris wrote:
-> On Mon, 22 Apr 2019, Tetsuo Handa wrote:
+On Fri, Apr 19, 2019 at 03:06:48AM +0000, Huang, Kai wrote:
+> On Wed, 2019-04-17 at 13:39 +0300, Jarkko Sakkinen wrote:
+> > In order to provide a mechanism for devilering provisoning rights:
+> > 
+> > 1. Add a new device file /dev/sgx/provision that works as a token for
+> >    allowing an enclave to have the provisioning privileges.
+> > 2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
+> >    following data structure:
+> > 
+> >    struct sgx_enclave_set_attribute {
+> >            __u64 addr;
+> >            __u64 attribute_fd;
+> >    };
+> > 
+> > A daemon could sit on top of /dev/sgx/provision and send a file
+> > descriptor of this file to a process that needs to be able to provision
+> > enclaves.
+> > 
+> > The way this API is used is straight-forward. Lets assume that dev_fd is
+> > a handle to /dev/sgx/enclave and prov_fd is a handle to
+> > /dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
+> > initialize an enclave with the PROVISIONKEY attribute by
+> > 
+> > params.addr = <enclave address>;
+> > params.token_fd = prov_fd;
+> > 
+> Should be params.attribute_fd = prov_fd;
 > 
->> James, will you apply this patch and
->> "[PATCH 3/3] tomoyo: Check address length before reading address family" and
->> "[PATCH] tomoyo: Change pathname calculation for read-only filesystems." ?
-> 
-> On the 2nd one, did we see any feedback from Al?
-> 
+> Thanks,
+> -Kai
 
-Not yet. I wonder he has any comment...
+Thanks.
 
-But I believe there is no reason to delay this patch and
-"[PATCH 3/3] tomoyo: Check address length before reading address family" patch
-because these two patches are needed for avoiding crashes by syzbot's testing.
+/Jarkko
