@@ -2,78 +2,70 @@ Return-Path: <SRS0=iQUf=SZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD73C282DD
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 08:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F2DC10F14
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 10:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71FD620645
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 08:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556008311;
-	bh=sChlkpZNBPV7qVu8wP7DemgiHFo8Ohz2zHcR69ubJCI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=k6jnzqsnqXOgRY3+8jZkIvrtiz0NmsXNX9/63l0wyKb64wLW0O8cjQG3Gm4cAnZg7
-	 emFLo65tcvXbhoVJhp0Tf7t6jCdlFYnK9TZXUtgvIaKcgBrGl9G80/gp9Smf5d6Eb1
-	 0vDJXepSLbbqGYiL3BIOMbfM8ijszVWaVGQ7rHJ8=
+	by mail.kernel.org (Postfix) with ESMTP id 56AD7206A3
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 10:44:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725946AbfDWIbv (ORCPT
+        id S1726204AbfDWKo5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Apr 2019 04:31:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47696 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725939AbfDWIbu (ORCPT
+        Tue, 23 Apr 2019 06:44:57 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:63029 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfDWKo5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Apr 2019 04:31:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 86760AED6;
-        Tue, 23 Apr 2019 08:31:49 +0000 (UTC)
-Date:   Tue, 23 Apr 2019 10:31:48 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Alexander Potapenko <glider@google.com>, akpm@linux-foundation.org,
-        cl@linux.com, dvyukov@google.com, keescook@chromium.org,
-        labbott@redhat.com, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH 1/3] mm: security: introduce the init_allocations=1 boot
- option
-Message-ID: <20190423083148.GF25106@dhcp22.suse.cz>
-References: <20190418154208.131118-1-glider@google.com>
- <20190418154208.131118-2-glider@google.com>
- <981d439a-1107-2730-f27e-17635ee4a125@intel.com>
+        Tue, 23 Apr 2019 06:44:57 -0400
+Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3NAio2v083716;
+        Tue, 23 Apr 2019 19:44:51 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp);
+ Tue, 23 Apr 2019 19:44:50 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3NAikP0083558
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 23 Apr 2019 19:44:50 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH (resend)] tomoyo: Add a kernel config option for fuzzing
+ testing.
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-security-module@vger.kernel.org
+References: <1555067094-9861-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <49c5ae17-86fb-e4d3-0e06-c205cf324c1d@I-love.SAKURA.ne.jp>
+ <alpine.LRH.2.21.1904230851460.15541@namei.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <4b80cba5-2a7b-93ac-3f4a-41d31c6c58fc@i-love.sakura.ne.jp>
+Date:   Tue, 23 Apr 2019 19:44:47 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <981d439a-1107-2730-f27e-17635ee4a125@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <alpine.LRH.2.21.1904230851460.15541@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu 18-04-19 09:35:32, Dave Hansen wrote:
-> On 4/18/19 8:42 AM, Alexander Potapenko wrote:
-> > This option adds the possibility to initialize newly allocated pages and
-> > heap objects with zeroes. This is needed to prevent possible information
-> > leaks and make the control-flow bugs that depend on uninitialized values
-> > more deterministic.
+On 2019/04/23 7:52, James Morris wrote:
+> On Mon, 22 Apr 2019, Tetsuo Handa wrote:
 > 
-> Isn't it better to do this at free time rather than allocation time?  If
-> doing it at free, you can't even have information leaks for pages that
-> are in the allocator.
+>> James, will you apply this patch and
+>> "[PATCH 3/3] tomoyo: Check address length before reading address family" and
+>> "[PATCH] tomoyo: Change pathname calculation for read-only filesystems." ?
+> 
+> On the 2nd one, did we see any feedback from Al?
+> 
 
-I would tend to agree here. Free path is usually less performance sensitive
-than the allocation. Those really hot paths tend to defer the work.
+Not yet. I wonder he has any comment...
 
-I am also worried that an opt-out gfp flag would tend to be used
-incorrectly as the history has shown for others - e.g. __GFP_TEMPORARY.
-So I would rather see this robust without a fine tuning unless there is
-real use case that would suffer from this and we can think of a
-background scrubbing or something similar.
-
--- 
-Michal Hocko
-SUSE Labs
+But I believe there is no reason to delay this patch and
+"[PATCH 3/3] tomoyo: Check address length before reading address family" patch
+because these two patches are needed for avoiding crashes by syzbot's testing.
