@@ -2,314 +2,165 @@ Return-Path: <SRS0=iQUf=SZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E58FC282DD
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 19:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D34DC10F03
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 20:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55ADD21850
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 19:49:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 189B521850
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 20:19:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h3swRhic"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="gItHDwtX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfDWTte (ORCPT
+        id S1727243AbfDWUTD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Apr 2019 15:49:34 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39358 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbfDWTtc (ORCPT
+        Tue, 23 Apr 2019 16:19:03 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34801 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727181AbfDWUTD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Apr 2019 15:49:32 -0400
-Received: by mail-pl1-f194.google.com with SMTP id e92so6243057plb.6
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Apr 2019 12:49:31 -0700 (PDT)
+        Tue, 23 Apr 2019 16:19:03 -0400
+Received: by mail-lf1-f66.google.com with SMTP id h5so12746101lfm.1
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Apr 2019 13:19:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uOtKe5kyml7Js+Q+L87rwnDRHYJQCKAPp2OSkZdqNJI=;
-        b=h3swRhiciAEavLEU7ENqTEjg0wN2iiR/MN9y8Hna8P/bGPEx/d/Eq1EQHJOlCPg+56
-         TnFSmyf/mnJi1j7ACoWNaui2dTB8k7lJaTGCQHpzwTgXFiHJNoczQEsDo5HtGwcx2rEG
-         R6B7TaSFbb2Je7R7JHahwvM9UOuXUXMoeAmTI=
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ISPtN114/vVDuvBUDQI+XOUJt45zg0Mc6YZThYyu9sE=;
+        b=gItHDwtXfT3vkgFtkuMveM178GaK6E5BSH/sjG7WZHN92faZ+NIO1mJcaOYaIOXK1p
+         bcO0SzU+RR/oz/yNUATaISXuEoPyA8f8qymglN1JJpQCpAsN27sye6iJBExT/tUJ/kbN
+         4l0mde06G+ysr/0Rw0CMfKb/ILGd/JdqLCmZpxQ8/AVO+RLFcWITTnp9ROlmZdM2eXXI
+         liOIisIYiA/0G23ZhJ04RNJsV8Fzp2YB4Nrkd2cudFbA7PbxP82uHe9V3PeuCecpTzIH
+         EWubVuGPSeJLLeXFs/r/6MEE7c43R6qZ6Np/bmngVrrt0wOaABymndI9VLLE9OgtizXn
+         OOKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uOtKe5kyml7Js+Q+L87rwnDRHYJQCKAPp2OSkZdqNJI=;
-        b=b90qMM2fcbfCY5IiQvSmm3Do+e8iXvY++u3J8bIfQGotpEsFVUiht0gyXmsR/UZvJf
-         Ortdo+tHxn3/sTHLXhOt8oX4j+CZj6t3KjUg8t2PdEneHL+1Qm6AFaU5j/m1YHUNMbmP
-         4r9hgyiTwljv9s3L9rvBfvfBuH0Hh/6jhqZ4c6IfM98CU2ld/Lw5mok+O6OLuQF/f2SF
-         bHSVVzAlxmlvmZr7tw2T0VgeS2eNz9cNmfGFLTT45MRG5pcC1lm+O0otj5hfiMrcugDC
-         bhv1N4UvMtBlwPO4UJ3m/oSxfs2qycmdZTFW9Amq8EFD73JDqe9t1lz/eQ3QGqAcJyGB
-         SJzg==
-X-Gm-Message-State: APjAAAWhgGeA7Fd6/Q4C3d8RIKk4sfi3decJN0BXsU1jTUHjyIN+oMql
-        NKno4ST9lH7XK8FrSEUKtWZn1g==
-X-Google-Smtp-Source: APXvYqwFaRFwRy9VH6uH2q5jqI5hM3KzhHgD0CYIl1z3fLB1uzjxbvsnIzJ7vuH0E21hrNVEMnSzkQ==
-X-Received: by 2002:a17:902:9a85:: with SMTP id w5mr27979569plp.157.1556048971421;
-        Tue, 23 Apr 2019 12:49:31 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id a12sm17537959pgq.21.2019.04.23.12.49.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Apr 2019 12:49:29 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
-        Alexander Popov <alex.popov@linux.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Emese Revfy <re.emese@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 1/3] security: Create "kernel hardening" config area
-Date:   Tue, 23 Apr 2019 12:49:23 -0700
-Message-Id: <20190423194925.32151-2-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190423194925.32151-1-keescook@chromium.org>
-References: <20190423194925.32151-1-keescook@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ISPtN114/vVDuvBUDQI+XOUJt45zg0Mc6YZThYyu9sE=;
+        b=p7+teaLXeTOcL3SrLM7Ozj4S3dCAgEWeN3HNb55avpQ26IE/hnhhiIK6K37jU1Q0wa
+         gWuqN2ivIimSEOevG0XbirkXehWCIKT53DVND+g3M0FlcbrsdtYgpoZUEoYOVkwNC7Dy
+         0I4JxjUOjDLb3bfQdIZD5B9G6Lyt9nfHMcWPKp+8S/Qj4h25eUU8qlpKjFiYSweM84yV
+         4BEXXzHjnJ0XZ+5/bA1qKM6T/uE573Pl0dx1+og4cL6zpnxERoCtUCwaGd5AjJ64aQNd
+         tj9qRis131i7V3HquRUCzR/W/Lbtl3Iasvc6CmMHXDW7ZgRJIqp7ezJw9bb1yZPaXzUG
+         FrXA==
+X-Gm-Message-State: APjAAAXV3+Dr6sokR3y/WmiomIBWWwgDCX87oAOkFBRRxOg+RQoAoXLj
+        PORQssdJOlGgX0y1oHngJmyl/x4ogjeiUcmlQ/yF
+X-Google-Smtp-Source: APXvYqzrRBQ5T03gOBocls3T9W4sEi7dljbs3juDVJw6tHxpnKFH8khBxwRVfKUcuCt5dOaJL94v5xypJIJdjS7rrlw=
+X-Received: by 2002:a19:2814:: with SMTP id o20mr14905670lfo.117.1556050740201;
+ Tue, 23 Apr 2019 13:19:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
+ <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
+ <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
+ <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com> <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
+ <20190417145711.GI32622@redhat.com> <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
+ <20190417162723.GK32622@redhat.com> <CAHC9VhT_nk1jmrTj3W=F+1gP1vU3iZsZ=UGOCwdiBLbUsOc9=w@mail.gmail.com>
+ <0ca3f4cf-5c64-2fc0-1885-9dbcca2f4b47@schaufler-ca.com> <5CB7E5D4.2060703@huawei.com>
+ <CAHC9VhQkrR+m9_dYLg4VG-26TdUnf8XFjbmuVQ70YCOp6DhN_g@mail.gmail.com>
+ <5CB933C4.7000300@huawei.com> <CAHC9VhTdJ6uUOjyxrk=+iOkKe=VN+N9DMPtV=OchAY34x95g=w@mail.gmail.com>
+ <5CB9DC75.7010600@huawei.com> <CAHC9VhQqxL+LsK8YTD6PpTHaZsZ-PxAq3atdZKQcZLQZQH7t4g@mail.gmail.com>
+ <5CBACC8F.8010409@huawei.com> <CAHC9VhSZBh8B+1CPM=PdLdbSFq1ba1ffuOJTgnzE5oBLXUEDxQ@mail.gmail.com>
+ <5CBE8FC4.8060400@huawei.com>
+In-Reply-To: <5CBE8FC4.8060400@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 23 Apr 2019 16:18:49 -0400
+Message-ID: <CAHC9VhRitKcax43NL5JThKqsysyakmarYiC4qTQTkka5SNNHuw@mail.gmail.com>
+Subject: Re: kernel BUG at kernel/cred.c:434!
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Oleg Nesterov <oleg@redhat.com>, john.johansen@canonical.com,
+        "chengjian (D)" <cj.chengjian@huawei.com>,
+        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
+        Li Bin <huawei.libin@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SELinux <selinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Right now kernel hardening options are scattered around various Kconfig
-files. This can be a central place to collect these kinds of options
-going forward. This is initially populated with the memory initialization
-options from the gcc-plugins.
+On Tue, Apr 23, 2019 at 12:08 AM Yang Yingliang
+<yangyingliang@huawei.com> wrote:
+> On 2019/4/23 3:48, Paul Moore wrote:
+> > On Sat, Apr 20, 2019 at 3:39 AM Yang Yingliang <yangyingliang@huawei.com> wrote:
+> >> I'm not sure you got my point.
+> > I went back and looked at your previous emails again to try and
+> > understand what you are talking about, and I'm a little confused by
+> > some of the output ...
+> >
+> >> --- a/kernel/acct.c
+> >> +++ b/kernel/acct.c
+> >> @@ -481,6 +481,7 @@ static void do_acct_process(struct bsd_acct_struct
+> >> *acct)
+> >>           flim = current->signal->rlim[RLIMIT_FSIZE].rlim_cur;
+> >>           current->signal->rlim[RLIMIT_FSIZE].rlim_cur = RLIM_INFINITY;
+> >>           /* Perform file operations on behalf of whoever enabled
+> >> accounting */
+> >> +       pr_info("task:%px new cred:%px real cred:%px cred:%px\n",
+> >> current, file->f_cred, current->real_cred, current->cred);
+> >>           orig_cred = override_creds(file->f_cred);
+> > Okay, with this patch applied we should the task/cred info when
+> > do_acct_process is called.  Got it.
+> >
+> >> Messages:
+> >> [   56.643298] task:ffff88841a9595c0 new cred:ffff88841ae450c0 real
+> >> cred:ffff88841ae450c0 cred:ffff88841ae450c0    //They are same.
+> > Okay, it looks like do_acct_process() was called and f_cred,
+> > real_cred, and cred are all the same.
+>
+> This is a original message, without patch applied.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- scripts/gcc-plugins/Kconfig | 75 +++---------------------------
- security/Kconfig            |  2 +
- security/Kconfig.hardening  | 93 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 101 insertions(+), 69 deletions(-)
- create mode 100644 security/Kconfig.hardening
+The patch I am referring to is your pr_info patch (above).  I'm not
+talking about any other patches at the moment; I just want to
+understand the example dmesg output you copied into your email.
 
-diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-index 74271dba4f94..352f03878a1e 100644
---- a/scripts/gcc-plugins/Kconfig
-+++ b/scripts/gcc-plugins/Kconfig
-@@ -13,17 +13,19 @@ config HAVE_GCC_PLUGINS
- 	  An arch should select this symbol if it supports building with
- 	  GCC plugins.
- 
--menuconfig GCC_PLUGINS
--	bool "GCC plugins"
-+config GCC_PLUGINS
-+	bool
- 	depends on HAVE_GCC_PLUGINS
- 	depends on PLUGIN_HOSTCC != ""
-+	default y
- 	help
- 	  GCC plugins are loadable modules that provide extra features to the
- 	  compiler. They are useful for runtime instrumentation and static analysis.
- 
- 	  See Documentation/gcc-plugins.txt for details.
- 
--if GCC_PLUGINS
-+menu "GCC plugins"
-+	depends on GCC_PLUGINS
- 
- config GCC_PLUGIN_CYC_COMPLEXITY
- 	bool "Compute the cyclomatic complexity of a function" if EXPERT
-@@ -66,71 +68,6 @@ config GCC_PLUGIN_LATENT_ENTROPY
- 	   * https://grsecurity.net/
- 	   * https://pax.grsecurity.net/
- 
--config GCC_PLUGIN_STRUCTLEAK
--	bool "Zero initialize stack variables"
--	help
--	  While the kernel is built with warnings enabled for any missed
--	  stack variable initializations, this warning is silenced for
--	  anything passed by reference to another function, under the
--	  occasionally misguided assumption that the function will do
--	  the initialization. As this regularly leads to exploitable
--	  flaws, this plugin is available to identify and zero-initialize
--	  such variables, depending on the chosen level of coverage.
--
--	  This plugin was originally ported from grsecurity/PaX. More
--	  information at:
--	   * https://grsecurity.net/
--	   * https://pax.grsecurity.net/
--
--choice
--	prompt "Coverage"
--	depends on GCC_PLUGIN_STRUCTLEAK
--	default GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
--	help
--	  This chooses the level of coverage over classes of potentially
--	  uninitialized variables. The selected class will be
--	  zero-initialized before use.
--
--	config GCC_PLUGIN_STRUCTLEAK_USER
--		bool "structs marked for userspace"
--		help
--		  Zero-initialize any structures on the stack containing
--		  a __user attribute. This can prevent some classes of
--		  uninitialized stack variable exploits and information
--		  exposures, like CVE-2013-2141:
--		  https://git.kernel.org/linus/b9e146d8eb3b9eca
--
--	config GCC_PLUGIN_STRUCTLEAK_BYREF
--		bool "structs passed by reference"
--		help
--		  Zero-initialize any structures on the stack that may
--		  be passed by reference and had not already been
--		  explicitly initialized. This can prevent most classes
--		  of uninitialized stack variable exploits and information
--		  exposures, like CVE-2017-1000410:
--		  https://git.kernel.org/linus/06e7e776ca4d3654
--
--	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
--		bool "anything passed by reference"
--		help
--		  Zero-initialize any stack variables that may be passed
--		  by reference and had not already been explicitly
--		  initialized. This is intended to eliminate all classes
--		  of uninitialized stack variable exploits and information
--		  exposures.
--
--endchoice
--
--config GCC_PLUGIN_STRUCTLEAK_VERBOSE
--	bool "Report forcefully initialized variables"
--	depends on GCC_PLUGIN_STRUCTLEAK
--	depends on !COMPILE_TEST	# too noisy
--	help
--	  This option will cause a warning to be printed each time the
--	  structleak plugin finds a variable it thinks needs to be
--	  initialized. Since not all existing initializers are detected
--	  by the plugin, this can produce false positive warnings.
--
- config GCC_PLUGIN_RANDSTRUCT
- 	bool "Randomize layout of sensitive kernel structures"
- 	select MODVERSIONS if MODULES
-@@ -226,4 +163,4 @@ config GCC_PLUGIN_ARM_SSP_PER_TASK
- 	bool
- 	depends on GCC_PLUGINS && ARM
- 
--endif
-+endmenu
-diff --git a/security/Kconfig b/security/Kconfig
-index 1d6463fb1450..7aec8d094ce2 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -249,5 +249,7 @@ config LSM
- 
- 	  If unsure, leave this as the default.
- 
-+source "security/Kconfig.hardening"
-+
- endmenu
- 
-diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-new file mode 100644
-index 000000000000..19881341f1c2
---- /dev/null
-+++ b/security/Kconfig.hardening
-@@ -0,0 +1,93 @@
-+menu "Kernel hardening options"
-+
-+config GCC_PLUGIN_STRUCTLEAK
-+	bool
-+	help
-+	  While the kernel is built with warnings enabled for any missed
-+	  stack variable initializations, this warning is silenced for
-+	  anything passed by reference to another function, under the
-+	  occasionally misguided assumption that the function will do
-+	  the initialization. As this regularly leads to exploitable
-+	  flaws, this plugin is available to identify and zero-initialize
-+	  such variables, depending on the chosen level of coverage.
-+
-+	  This plugin was originally ported from grsecurity/PaX. More
-+	  information at:
-+	   * https://grsecurity.net/
-+	   * https://pax.grsecurity.net/
-+
-+menu "Memory initialization"
-+
-+choice
-+	prompt "Initialize kernel stack variables at function entry"
-+	default GCC_PLUGIN_STRUCTLEAK_BYREF_ALL if COMPILE_TEST && GCC_PLUGINS
-+	default INIT_STACK_NONE
-+	help
-+	  This option enables initialization of stack variables at
-+	  function entry time. This has the possibility to have the
-+	  greatest coverage (since all functions can have their
-+	  variables initialized), but the performance impact depends
-+	  on the function calling complexity of a given workload's
-+	  syscalls.
-+
-+	  This chooses the level of coverage over classes of potentially
-+	  uninitialized variables. The selected class will be
-+	  initialized before use in a function.
-+
-+	config INIT_STACK_NONE
-+		bool "no automatic initialization (weakest)"
-+		help
-+		  Disable automatic stack variable initialization.
-+		  This leaves the kernel vulnerable to the standard
-+		  classes of uninitialized stack variable exploits
-+		  and information exposures.
-+
-+	config GCC_PLUGIN_STRUCTLEAK_USER
-+		bool "zero-init structs marked for userspace (weak)"
-+		depends on GCC_PLUGINS
-+		select GCC_PLUGIN_STRUCTLEAK
-+		help
-+		  Zero-initialize any structures on the stack containing
-+		  a __user attribute. This can prevent some classes of
-+		  uninitialized stack variable exploits and information
-+		  exposures, like CVE-2013-2141:
-+		  https://git.kernel.org/linus/b9e146d8eb3b9eca
-+
-+	config GCC_PLUGIN_STRUCTLEAK_BYREF
-+		bool "zero-init structs passed by reference (strong)"
-+		depends on GCC_PLUGINS
-+		select GCC_PLUGIN_STRUCTLEAK
-+		help
-+		  Zero-initialize any structures on the stack that may
-+		  be passed by reference and had not already been
-+		  explicitly initialized. This can prevent most classes
-+		  of uninitialized stack variable exploits and information
-+		  exposures, like CVE-2017-1000410:
-+		  https://git.kernel.org/linus/06e7e776ca4d3654
-+
-+	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
-+		bool "zero-init anything passed by reference (very strong)"
-+		depends on GCC_PLUGINS
-+		select GCC_PLUGIN_STRUCTLEAK
-+		help
-+		  Zero-initialize any stack variables that may be passed
-+		  by reference and had not already been explicitly
-+		  initialized. This is intended to eliminate all classes
-+		  of uninitialized stack variable exploits and information
-+		  exposures.
-+
-+endchoice
-+
-+config GCC_PLUGIN_STRUCTLEAK_VERBOSE
-+	bool "Report forcefully initialized variables"
-+	depends on GCC_PLUGIN_STRUCTLEAK
-+	depends on !COMPILE_TEST	# too noisy
-+	help
-+	  This option will cause a warning to be printed each time the
-+	  structleak plugin finds a variable it thinks needs to be
-+	  initialized. Since not all existing initializers are detected
-+	  by the plugin, this can produce false positive warnings.
-+
-+endmenu
-+
-+endmenu
+With that in mind, the message above seems to indicate that
+do_acct_process() has been invoked with f_cred, real_cred, and cred
+all pointing to the same credentials struct, yes?
+
+> >> [   56.646609] Process accounting resumed
+> > It looks like do_acct_process() has called check_free_space() now.  So
+> > far so good.
+
+...
+
+> >> [   56.649943] task:ffff88841a9595c0 new cred:ffff88841ae450c0 real
+> >> cred:ffff88841c96c300 cred:ffff88841ae450c0
+> > Wait a minute ... why are we seeing this again?  Looking at the task
+> > pointer and the timestamp, this is the same task exiting and trying to
+> > write to the accounting file, yes?  This output is particularly
+> > curious since it appears that real_cred has changed; where is this
+> > happening?
+>
+> This is the message when the BUG_ON was triggered without applying any
+> fix patch.
+
+The only place in the code that generates this message is the bit of
+code that you patches in using the pr_info() patch (above), yes?  If
+so, that would seem to indicate that the same task is calling
+do_acct_process() twice, yes?  I may be fundamentally misunderstanding
+something about process accounting, but I though do_acct_process()
+would only be called once for a given task - while it was exiting.
+Yes, no?
+
+> If we apply this patch "proc: prevent changes to overridden
+> credentials", program
+> runs like this:
+
+I'd like to focus on understanding the dmesg output you shared first,
+because it doesn't seem to make sense to me.
+
 -- 
-2.17.1
-
+paul moore
+www.paul-moore.com
