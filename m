@@ -5,38 +5,43 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CD3C10F03
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 20:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F233C10F03
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 20:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1FE1218B0
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 20:36:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 045E6218B0
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 20:40:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfDWUg3 (ORCPT
+        id S1727229AbfDWUkX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Apr 2019 16:36:29 -0400
-Received: from mga04.intel.com ([192.55.52.120]:18617 "EHLO mga04.intel.com"
+        Tue, 23 Apr 2019 16:40:23 -0400
+Received: from mga02.intel.com ([134.134.136.20]:61834 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbfDWUg3 (ORCPT
+        id S1726136AbfDWUkX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Apr 2019 16:36:29 -0400
+        Tue, 23 Apr 2019 16:40:23 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Apr 2019 13:36:28 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Apr 2019 13:40:22 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,387,1549958400"; 
-   d="scan'208";a="318346461"
+   d="scan'208";a="318347348"
 Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
-  by orsmga005.jf.intel.com with ESMTP; 23 Apr 2019 13:36:28 -0700
-Subject: Re: [PATCH 1/3] mm: security: introduce the init_allocations=1 boot
- option
-To:     Alexander Potapenko <glider@google.com>, akpm@linux-foundation.org,
-        cl@linux.com, dvyukov@google.com, keescook@chromium.org,
-        labbott@redhat.com
-Cc:     linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
+  by orsmga005.jf.intel.com with ESMTP; 23 Apr 2019 13:40:22 -0700
+Subject: Re: [PATCH 2/3] gfp: mm: introduce __GFP_NOINIT
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
 References: <20190418154208.131118-1-glider@google.com>
- <20190418154208.131118-2-glider@google.com>
+ <20190418154208.131118-3-glider@google.com>
+ <7bf6bd62-c8e0-df3d-8e98-70063f2d175a@intel.com>
+ <CAGXu5j+Lm0ba4ZQ91vZ8nZFvpJSxu_j_bEKMaa0NMsurmyZjjA@mail.gmail.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -82,12 +87,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-Message-ID: <a0b69045-f6c4-0290-1c59-4dd75b05ee25@intel.com>
-Date:   Tue, 23 Apr 2019 13:36:28 -0700
+Message-ID: <2c66e43f-81d5-ebeb-495a-f3f3b65d315c@intel.com>
+Date:   Tue, 23 Apr 2019 13:40:19 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190418154208.131118-2-glider@google.com>
+In-Reply-To: <CAGXu5j+Lm0ba4ZQ91vZ8nZFvpJSxu_j_bEKMaa0NMsurmyZjjA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -95,32 +100,12 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/18/19 8:42 AM, Alexander Potapenko wrote:
-> +static void poison_dont(struct kmem_cache *c, void *object)
-> +{
-> +	/* Do nothing. Use for caches with constructors. */
-> +}
-> +
->  static struct kmem_cache *create_cache(const char *name,
->  		unsigned int object_size, unsigned int align,
->  		slab_flags_t flags, unsigned int useroffset,
-> @@ -381,6 +391,10 @@ static struct kmem_cache *create_cache(const char *name,
->  	s->size = s->object_size = object_size;
->  	s->align = align;
->  	s->ctor = ctor;
-> +	if (ctor)
-> +		s->poison_fn = poison_dont;
-> +	else
-> +		s->poison_fn = poison_zero;
->  	s->useroffset = useroffset;
->  	s->usersize = usersize;
->  
-> @@ -974,6 +988,7 @@ void __init create_boot_cache(struct kmem_cache *s, const char *name,
->  	s->align = calculate_alignment(flags, ARCH_KMALLOC_MINALIGN, size);
->  	s->useroffset = useroffset;
->  	s->usersize = usersize;
-> +	s->poison_fn = poison_zero;
+On 4/23/19 12:14 PM, Kees Cook wrote:
+>> These sl*b ones seem like a bad idea.  We already have rules that sl*b
+>> allocations must be initialized by callers, and we have reasonably
+>> frequent bugs where the rules are broken.
+> 
+> Hm? No, this is saying that the page allocator can skip the auto-init
+> because the slab internals will be doing it later.
 
-An empty indirect call is probably a pretty bad idea on systems with
-retpoline.  Isn't this just a bool anyway for either calling poison_dont
-or poison_zero?  Can it call anything else?
+Ahhh, got it.  I missed all the fun in patch 1.
