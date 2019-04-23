@@ -2,163 +2,78 @@ Return-Path: <SRS0=iQUf=SZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED334C10F14
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 04:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD73C282DD
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 08:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7F6720843
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 04:08:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71FD620645
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Apr 2019 08:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556008311;
+	bh=sChlkpZNBPV7qVu8wP7DemgiHFo8Ohz2zHcR69ubJCI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=k6jnzqsnqXOgRY3+8jZkIvrtiz0NmsXNX9/63l0wyKb64wLW0O8cjQG3Gm4cAnZg7
+	 emFLo65tcvXbhoVJhp0Tf7t6jCdlFYnK9TZXUtgvIaKcgBrGl9G80/gp9Smf5d6Eb1
+	 0vDJXepSLbbqGYiL3BIOMbfM8ijszVWaVGQ7rHJ8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbfDWEIx (ORCPT
+        id S1725946AbfDWIbv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Apr 2019 00:08:53 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48350 "EHLO huawei.com"
+        Tue, 23 Apr 2019 04:31:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47696 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726594AbfDWEIw (ORCPT
+        id S1725939AbfDWIbu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Apr 2019 00:08:52 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 25D7DCDD43B433BC305A;
-        Tue, 23 Apr 2019 12:08:46 +0800 (CST)
-Received: from [127.0.0.1] (10.177.19.219) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 23 Apr 2019
- 12:08:38 +0800
-Subject: Re: kernel BUG at kernel/cred.c:434!
-To:     Paul Moore <paul@paul-moore.com>
-References: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
- <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
- <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
- <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
- <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
- <20190417145711.GI32622@redhat.com>
- <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
- <20190417162723.GK32622@redhat.com>
- <CAHC9VhT_nk1jmrTj3W=F+1gP1vU3iZsZ=UGOCwdiBLbUsOc9=w@mail.gmail.com>
- <0ca3f4cf-5c64-2fc0-1885-9dbcca2f4b47@schaufler-ca.com>
- <5CB7E5D4.2060703@huawei.com>
- <CAHC9VhQkrR+m9_dYLg4VG-26TdUnf8XFjbmuVQ70YCOp6DhN_g@mail.gmail.com>
- <5CB933C4.7000300@huawei.com>
- <CAHC9VhTdJ6uUOjyxrk=+iOkKe=VN+N9DMPtV=OchAY34x95g=w@mail.gmail.com>
- <5CB9DC75.7010600@huawei.com>
- <CAHC9VhQqxL+LsK8YTD6PpTHaZsZ-PxAq3atdZKQcZLQZQH7t4g@mail.gmail.com>
- <5CBACC8F.8010409@huawei.com>
- <CAHC9VhSZBh8B+1CPM=PdLdbSFq1ba1ffuOJTgnzE5oBLXUEDxQ@mail.gmail.com>
-CC:     Casey Schaufler <casey@schaufler-ca.com>,
-        Oleg Nesterov <oleg@redhat.com>, <john.johansen@canonical.com>,
-        "chengjian (D)" <cj.chengjian@huawei.com>,
-        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>,
-        Anna Schumaker <Anna.Schumaker@netapp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
-        Li Bin <huawei.libin@huawei.com>,
-        "Jason Yan" <yanaijie@huawei.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SELinux <selinux@vger.kernel.org>, <yangyingliang@huawei.com>
-From:   Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <5CBE8FC4.8060400@huawei.com>
-Date:   Tue, 23 Apr 2019 12:08:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Tue, 23 Apr 2019 04:31:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 86760AED6;
+        Tue, 23 Apr 2019 08:31:49 +0000 (UTC)
+Date:   Tue, 23 Apr 2019 10:31:48 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Alexander Potapenko <glider@google.com>, akpm@linux-foundation.org,
+        cl@linux.com, dvyukov@google.com, keescook@chromium.org,
+        labbott@redhat.com, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH 1/3] mm: security: introduce the init_allocations=1 boot
+ option
+Message-ID: <20190423083148.GF25106@dhcp22.suse.cz>
+References: <20190418154208.131118-1-glider@google.com>
+ <20190418154208.131118-2-glider@google.com>
+ <981d439a-1107-2730-f27e-17635ee4a125@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhSZBh8B+1CPM=PdLdbSFq1ba1ffuOJTgnzE5oBLXUEDxQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.19.219]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <981d439a-1107-2730-f27e-17635ee4a125@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu 18-04-19 09:35:32, Dave Hansen wrote:
+> On 4/18/19 8:42 AM, Alexander Potapenko wrote:
+> > This option adds the possibility to initialize newly allocated pages and
+> > heap objects with zeroes. This is needed to prevent possible information
+> > leaks and make the control-flow bugs that depend on uninitialized values
+> > more deterministic.
+> 
+> Isn't it better to do this at free time rather than allocation time?  If
+> doing it at free, you can't even have information leaks for pages that
+> are in the allocator.
 
+I would tend to agree here. Free path is usually less performance sensitive
+than the allocation. Those really hot paths tend to defer the work.
 
-On 2019/4/23 3:48, Paul Moore wrote:
-> On Sat, Apr 20, 2019 at 3:39 AM Yang Yingliang <yangyingliang@huawei.com> wrote:
->> I'm not sure you got my point.
-> I went back and looked at your previous emails again to try and
-> understand what you are talking about, and I'm a little confused by
-> some of the output ...
->
->> --- a/kernel/acct.c
->> +++ b/kernel/acct.c
->> @@ -481,6 +481,7 @@ static void do_acct_process(struct bsd_acct_struct
->> *acct)
->>           flim = current->signal->rlim[RLIMIT_FSIZE].rlim_cur;
->>           current->signal->rlim[RLIMIT_FSIZE].rlim_cur = RLIM_INFINITY;
->>           /* Perform file operations on behalf of whoever enabled
->> accounting */
->> +       pr_info("task:%px new cred:%px real cred:%px cred:%px\n",
->> current, file->f_cred, current->real_cred, current->cred);
->>           orig_cred = override_creds(file->f_cred);
-> Okay, with this patch applied we should the task/cred info when
-> do_acct_process is called.  Got it.
->
->> Messages:
->> [   56.643298] task:ffff88841a9595c0 new cred:ffff88841ae450c0 real
->> cred:ffff88841ae450c0 cred:ffff88841ae450c0    //They are same.
-> Okay, it looks like do_acct_process() was called and f_cred,
-> real_cred, and cred are all the same.
-This is a original message, without patch applied.
->
->> [   56.646609] Process accounting resumed
-> It looks like do_acct_process() has called check_free_space() now.  So
-> far so good.
->
->> [   56.649943] task:ffff88841a9595c0 new cred:ffff88841ae450c0 real
->> cred:ffff88841c96c300 cred:ffff88841ae450c0
-> Wait a minute ... why are we seeing this again?  Looking at the task
-> pointer and the timestamp, this is the same task exiting and trying to
-> write to the accounting file, yes?  This output is particularly
-> curious since it appears that real_cred has changed; where is this
-> happening?
-This is the message when the BUG_ON was triggered without applying any
-fix patch.
+I am also worried that an opt-out gfp flag would tend to be used
+incorrectly as the history has shown for others - e.g. __GFP_TEMPORARY.
+So I would rather see this robust without a fine tuning unless there is
+real use case that would suffer from this and we can think of a
+background scrubbing or something similar.
 
-
-If we apply this patch "proc: prevent changes to overridden 
-credentials", program
-runs like this:
-
-1. As print message shows, before overriden, the pointer has the 
-following value:
-     real_cread=cred=0xffff88841ae450c0, f_cred=0xffff88841ae450c0
-     override_creds() is called in do_acct_process():
-     ...
-     /* Perform file operations on behalf of whoever enabled accounting */
-     orig_cred = override_creds(file->f_cred);
-     ...
-
-
-2. After override_creds(), if (current_cred() != current_real_cred()) is 
-not work here,
-we will call commit_creds()  in security_setprocattr().
-     ...
-     /* Prevent changes to overridden credentials. */
-         if (current_cred() != current_real_cred()) {
-             rcu_read_unlock();
-         return -EBUSY;
-     }
-     ...
-
-
-3. After commit_creds(), we have new cred and real_cred.
-     security_setprocattr()    //commit_creds is called here
-
-4. revert_creds() is called in in do_acct_process(), the cred
-is reverted to the old value(0xffff88841ae450c0)
-     ...
-     current->signal->rlim[RLIMIT_FSIZE].rlim_cur = flim;
-     revert_creds(orig_cred);
-
-5. After reverting, cred and real_cred are not equal.
-If it has a risk to trigger the BUG_ON, when doing another
-commit_creds() ?
-
-
-
+-- 
+Michal Hocko
+SUSE Labs
