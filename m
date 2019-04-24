@@ -2,57 +2,56 @@ Return-Path: <SRS0=4o4l=S2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E2EC10F11
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Apr 2019 04:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 934C1C10F11
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Apr 2019 04:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 342C6218D3
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Apr 2019 04:06:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 611DC218D3
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Apr 2019 04:07:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xkmh8J4Z"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Is9CTZxD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725934AbfDXEG2 (ORCPT
+        id S1725913AbfDXEHx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Apr 2019 00:06:28 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:23762 "EHLO
+        Wed, 24 Apr 2019 00:07:53 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:25669 "EHLO
         conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfDXEG2 (ORCPT
+        with ESMTP id S1725862AbfDXEHx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Apr 2019 00:06:28 -0400
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x3O46KOO031253;
-        Wed, 24 Apr 2019 13:06:21 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x3O46KOO031253
+        Wed, 24 Apr 2019 00:07:53 -0400
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x3O47PRq031718;
+        Wed, 24 Apr 2019 13:07:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x3O47PRq031718
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1556078781;
-        bh=/KSEYoat6LdzsbxXgMcr4MX80mtIOerKRK2HdrGWHQQ=;
+        s=dec2015msa; t=1556078846;
+        bh=3UDMqsndkmYz6XKGaN/fOzp7asY1sqsPmCYMIZ/pthA=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=xkmh8J4ZfQ8Jv8ZiBZTXJiU3QlIJsOYxzUFfYTg81WqTo/LH2EkWCT0oRz8EdYjQV
-         E/boOREQ++2a55DMsygvqrDs2/87jjAOnrAazIQEU1I+t8vYmFMPbH3OkbTzOa55Mx
-         eKqnaHYPV5b5MBlSzbEfW+9TGdXcGb/BZHlBmqubTpWqaLFaRq47+p+GlTeATFn28Z
-         eYQAoE6eEMotBg81zSv13VIpYazJPVmlyA7RvPt2dQIfbcDaw+/Ovcq5tq/ZML5tRe
-         rrlq2Pw8PA9hqbW1Drw5dNIZMzxjX2og4Jtsf6aGmidFFWiEfSklGjzb6SvIq2SIaV
-         PpM8CUWNiiTzQ==
-X-Nifty-SrcIP: [209.85.217.50]
-Received: by mail-vs1-f50.google.com with SMTP id n17so1298198vsr.1;
-        Tue, 23 Apr 2019 21:06:21 -0700 (PDT)
-X-Gm-Message-State: APjAAAUgx1bK0wtHhEro+W/5AMVTURHl9H6oVjhagBg16YCFBDtUQ/FI
-        mM75J0mCtizxHF+fHiL1xOR+sTxSmpqT0Uq1NSM=
-X-Google-Smtp-Source: APXvYqzALNGhw0kUVzQ/vxxBoJMMNdGwmPoof2uzmOqLi+JCMfqymIAldFINWDkx5TLzX6SPUmQLskSqfHdrafYD52E=
-X-Received: by 2002:a67:7a43:: with SMTP id v64mr16435712vsc.54.1556078780008;
- Tue, 23 Apr 2019 21:06:20 -0700 (PDT)
+        b=Is9CTZxD+gWJS63291bVcYMxueP92S2R+nM3D7Xvbpq+dFAxMvUDbnz0jJKhPVIUZ
+         bg9CFT8J0+B4wI5Y1YIetEqbDi+moH7sTW7yp68bmmNUSwOeTVD5cWv/b3IzG6nppx
+         aeL+EQ6VCA+mtlbiEFO4bjPdh88INSqW4vVC8q3l0r52hMA+gCZBan91J/wynZ6y5/
+         QyhYTTGKi7dsZ9eqri+I4j2EmnGr3RNgxguGet2dzi5aQoWgU2bWVfMISnFwkHN2tH
+         U021iLIGB4hcXqjpFvywv+81RuQfzJf3vzRb/gPJqz6J6JwaLC1ehi3L55FcT6PtXg
+         wU11win38vfDQ==
+X-Nifty-SrcIP: [209.85.222.51]
+Received: by mail-ua1-f51.google.com with SMTP id b8so5563144uaq.7;
+        Tue, 23 Apr 2019 21:07:26 -0700 (PDT)
+X-Gm-Message-State: APjAAAWZviEF0EgvIFpRBuEalk/s+5oExhxXFezBWGXUqaPTYaVPsQiF
+        ySZXH8y/eyOGN/iDwNipnNpIp7QUjd5djFkcmfQ=
+X-Google-Smtp-Source: APXvYqxgPwzJ+rl5//wdR14yMfFng195Q9GeRnEE/SVrL9urTnkk9YzOB805qCg362+Zpwg+j81l4vbvuIxDqTOaXak=
+X-Received: by 2002:ab0:7493:: with SMTP id n19mr1764615uap.121.1556078845150;
+ Tue, 23 Apr 2019 21:07:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190411180117.27704-1-keescook@chromium.org> <20190411180117.27704-2-keescook@chromium.org>
- <CAK7LNATvNJprA94Qypfub2rpbEEJkAeV3yqVyuk2aNEraDKZ6w@mail.gmail.com> <CAGXu5jLNwFfG-x-_Q6nTdU21t5B9z7dCgBekRiJ+MnUE14J12A@mail.gmail.com>
-In-Reply-To: <CAGXu5jLNwFfG-x-_Q6nTdU21t5B9z7dCgBekRiJ+MnUE14J12A@mail.gmail.com>
+References: <20190423194925.32151-1-keescook@chromium.org>
+In-Reply-To: <20190423194925.32151-1-keescook@chromium.org>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 24 Apr 2019 13:05:44 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASwf6Q_q-wtqxCuz7-HOYiBdQ-5QbhOCkhX8Ujh01oLNA@mail.gmail.com>
-Message-ID: <CAK7LNASwf6Q_q-wtqxCuz7-HOYiBdQ-5QbhOCkhX8Ujh01oLNA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] security: Create "kernel hardening" config area
+Date:   Wed, 24 Apr 2019 13:06:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARuX8XfO=YRX9dYpipyBTCtMbQqLJfuk6iMLfLdZe1-KQ@mail.gmail.com>
+Message-ID: <CAK7LNARuX8XfO=YRX9dYpipyBTCtMbQqLJfuk6iMLfLdZe1-KQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] Refactor memory initialization hardening
 To:     Kees Cook <keescook@chromium.org>
 Cc:     Alexander Potapenko <glider@google.com>,
         James Morris <jmorris@namei.org>,
@@ -75,95 +74,51 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 24, 2019 at 4:36 AM Kees Cook <keescook@chromium.org> wrote:
+On Wed, Apr 24, 2019 at 4:49 AM Kees Cook <keescook@chromium.org> wrote:
 >
-> On Thu, Apr 11, 2019 at 6:39 PM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> >
-> > On Fri, Apr 12, 2019 at 3:01 AM Kees Cook <keescook@chromium.org> wrote:
-> > >
-> > > Right now kernel hardening options are scattered around various Kconfig
-> > > files. This can be a central place to collect these kinds of options
-> > > going forward. This is initially populated with the memory initialization
-> > > options from the gcc-plugins.
-> > >
-> > > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > > ---
-> > >  scripts/gcc-plugins/Kconfig | 74 +++--------------------------
-> > >  security/Kconfig            |  2 +
-> > >  security/Kconfig.hardening  | 93 +++++++++++++++++++++++++++++++++++++
-> > >  3 files changed, 102 insertions(+), 67 deletions(-)
-> > >  create mode 100644 security/Kconfig.hardening
-> > >
-> > > diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-> > > index 74271dba4f94..84d471dea2b7 100644
-> > > --- a/scripts/gcc-plugins/Kconfig
-> > > +++ b/scripts/gcc-plugins/Kconfig
-> > > @@ -13,10 +13,11 @@ config HAVE_GCC_PLUGINS
-> > >           An arch should select this symbol if it supports building with
-> > >           GCC plugins.
-> > >
-> > > -menuconfig GCC_PLUGINS
-> > > -       bool "GCC plugins"
-> > > +config GCC_PLUGINS
-> > > +       bool
-> > >         depends on HAVE_GCC_PLUGINS
-> > >         depends on PLUGIN_HOSTCC != ""
-> > > +       default y
-> > >         help
-> > >           GCC plugins are loadable modules that provide extra features to the
-> > >           compiler. They are useful for runtime instrumentation and static analysis.
-> > > @@ -25,6 +26,8 @@ menuconfig GCC_PLUGINS
-> > >
-> > >  if GCC_PLUGINS
-> > >
-> > > +menu "GCC plugins"
-> > > +
-> >
-> >
-> >
-> > Just a tip to save "if" ... "endif" block.
-> >
-> >
-> > If you like, you can write like follows:
-> >
-> >
-> > menu "GCC plugins"
-> >           depends on GCC_PLUGINS
-> >
-> >   <menu body>
-> >
-> > endmenu
+> This refactors the stack memory initialization configs in order to
+> keep things together when adding Clang stack initialization, and in
+> preparation for future heap memory initialization configs.
 >
-> Ah yes, thanks! Adjusted.
->
-> > > +menu "Memory initialization"
-> > > +
-> > > +choice
-> > > +       prompt "Initialize kernel stack variables at function entry"
-> > > +       depends on GCC_PLUGINS
-> >
-> > On second thought,
-> > this 'depends on' is unnecessary
-> > because INIT_STACK_NONE should be always visible.
->
-> Oh yes, excellent point. Adjusted.
->
-> > Another behavior change is
-> > GCC_PLUGIN_STRUCTLEAK was previously enabled by all{yes,mod}config,
-> > and in the compile-test coverage.
->
-> I could set the defaults based on CONFIG_COMPILE_TEST, though? I.e.:
->
->         prompt "Initialize kernel stack variables at function entry"
->         default GCC_PLUGIN_STRUCTLEAK_BYREF_ALL if COMPILE_TEST && GCC_PLUGINS
->         default INIT_STACK_ALL if COMPILE_TEST && CC_HAS_AUTO_VAR_INIT
->         default INIT_STACK_NONE
+> I intend to carry this in the gcc-plugins tree, but I'd really like
+> to get Acks from Masahiro (Kconfig changes, Makefile change), and
+> from James (adding the new Kconfig.hardening to security/Kconfig).
 
-Looks a good idea to me.
+If needed,
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Thanks.
 
+> Thanks!
+>
+> -Kees
+>
+> v3:
+> - clean up menu/if with a merged "depends on" (masahiro)
+> - add CONFIG_COMPILE_TEST defaults (masahiro)
+>
+> v2:
+> - add plugin menu (masahiro)
+> - adjust patch subject prefixes (masahiro)
+> - drop redundent "depends" (masahiro)
+> - fixed early use of CC_HAS_AUTO_VAR_INIT (masahiro)
+> - dropped default-enabled for STACK_INIT_ALL (masahiro)
+>
+>
+> Kees Cook (3):
+>   security: Create "kernel hardening" config area
+>   security: Move stackleak config to Kconfig.hardening
+>   security: Implement Clang's stack initialization
+>
+>  Makefile                    |   5 ++
+>  scripts/gcc-plugins/Kconfig | 126 ++-------------------------
+>  security/Kconfig            |   2 +
+>  security/Kconfig.hardening  | 164 ++++++++++++++++++++++++++++++++++++
+>  4 files changed, 177 insertions(+), 120 deletions(-)
+>  create mode 100644 security/Kconfig.hardening
+>
+> --
+> 2.17.1
+>
 
 
 -- 
