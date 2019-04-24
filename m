@@ -2,227 +2,108 @@ Return-Path: <SRS0=4o4l=S2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37274C282E5
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Apr 2019 16:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D504C282E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Apr 2019 20:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC42208E4
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Apr 2019 16:15:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09D54218D3
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Apr 2019 20:47:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oVkon3wy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732544AbfDXQOz (ORCPT
+        id S1731771AbfDXUrA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Apr 2019 12:14:55 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34536 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727913AbfDXQOy (ORCPT
+        Wed, 24 Apr 2019 16:47:00 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:36064 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbfDXUrA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Apr 2019 12:14:54 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 186AAC0B2C40;
-        Wed, 24 Apr 2019 16:14:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-98.rdu2.redhat.com [10.10.121.98])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8D34917CEF;
-        Wed, 24 Apr 2019 16:14:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 10/11] keys: Network namespace domain tag
-From:   David Howells <dhowells@redhat.com>
-To:     ebiederm@xmission.com
-Cc:     netdev@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
-        keyrings@vger.kernel.org, dhowells@redhat.com,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dwalsh@redhat.com, vgoyal@redhat.com
-Date:   Wed, 24 Apr 2019 17:14:50 +0100
-Message-ID: <155612249070.8564.3179241610171819187.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155612240208.8564.13865046977065545591.stgit@warthog.procyon.org.uk>
-References: <155612240208.8564.13865046977065545591.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Wed, 24 Apr 2019 16:47:00 -0400
+Received: by mail-vs1-f65.google.com with SMTP id n4so11224008vsm.3
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Apr 2019 13:46:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XGnnbGnoa1Ix9iDFS5f9uTubbVrTmmHzn9+oJ3ixh0c=;
+        b=oVkon3wy+COciLYDZ4nDPAO2zQt5Oms9wubxc1BY5yKNnUX2itOfL6QmKXd1M5S2Xr
+         ijcKmWCpwAodDcke4IUkB9T8iocXZX5fAG5ezjB51JJN6PnkxG1Wp2crzGt4gvghlMGW
+         lUIXU7kX9iyPYXfyzisUjvTuJJ1GAHn4/lcbU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XGnnbGnoa1Ix9iDFS5f9uTubbVrTmmHzn9+oJ3ixh0c=;
+        b=IYD5fgdQ1Qx1REFJD3WNU+nLALUmZEdkTTIiwVf0uO2Mm6A7SR3e+DB3xiifqqPrMV
+         byrVpEZbVN4ud6E1Pi3NaDrKtTw8d6Luk1EqkH+dfu6Vf6fh3o1tWxMKEMSd1xOtAQT0
+         qSAlX7ocwk//NPXLsOta+L9vh/7kggyxZ04jRYzaDgKkbUr01/1PPdQ9KaivRyM4st0c
+         xLVTPmSyo68ptSp46bEU77BDqVIzxogY+JqW3R06LF6TOM5PUO78EZrSEutUw/ZKYoCd
+         AU9s7qMRfs7Giq83c43lqIV6FdzaJ/NRcvMx4tTLEyKwHTNpzBfUEmZ454sl2UQaeXs8
+         HT6g==
+X-Gm-Message-State: APjAAAUR3AdoP2P8bAFdpDYBDczuOA2kppsHwPl2Iybh7rxzjM5FbT/B
+        5lP1dbpSVgHmdt4qwgscY1gL7Ypt0mg=
+X-Google-Smtp-Source: APXvYqyST8w2yjs2lxlW7vAQlleDN+ChepceDBmGvYy5cX3y2XSBbLu7slVVm8dqPSt9/3wkogZh3g==
+X-Received: by 2002:a67:edcb:: with SMTP id e11mr18731638vsp.105.1556138818553;
+        Wed, 24 Apr 2019 13:46:58 -0700 (PDT)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
+        by smtp.gmail.com with ESMTPSA id o3sm3414877vko.50.2019.04.24.13.46.57
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Apr 2019 13:46:57 -0700 (PDT)
+Received: by mail-vk1-f175.google.com with SMTP id h71so4352920vkf.5
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Apr 2019 13:46:57 -0700 (PDT)
+X-Received: by 2002:a1f:a4d:: with SMTP id 74mr18565549vkk.13.1556138816641;
+ Wed, 24 Apr 2019 13:46:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 24 Apr 2019 16:14:54 +0000 (UTC)
+References: <20190423194925.32151-1-keescook@chromium.org> <CAK7LNARuX8XfO=YRX9dYpipyBTCtMbQqLJfuk6iMLfLdZe1-KQ@mail.gmail.com>
+In-Reply-To: <CAK7LNARuX8XfO=YRX9dYpipyBTCtMbQqLJfuk6iMLfLdZe1-KQ@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 24 Apr 2019 13:46:45 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJfYBTt836K7-SNdwZcHf9RhXKxRj+xefn_hhogt2UEnA@mail.gmail.com>
+Message-ID: <CAGXu5jJfYBTt836K7-SNdwZcHf9RhXKxRj+xefn_hhogt2UEnA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] Refactor memory initialization hardening
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Alexander Potapenko <glider@google.com>,
+        James Morris <jmorris@namei.org>,
+        Alexander Popov <alex.popov@linux.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Emese Revfy <re.emese@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Create key domain tags for network namespaces and make it possible to
-automatically tag keys that are used by networked services (e.g. AF_RXRPC,
-AFS, DNS) with the default network namespace if not set by the caller.
+On Tue, Apr 23, 2019 at 9:07 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> On Wed, Apr 24, 2019 at 4:49 AM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > This refactors the stack memory initialization configs in order to
+> > keep things together when adding Clang stack initialization, and in
+> > preparation for future heap memory initialization configs.
+> >
+> > I intend to carry this in the gcc-plugins tree, but I'd really like
+> > to get Acks from Masahiro (Kconfig changes, Makefile change), and
+> > from James (adding the new Kconfig.hardening to security/Kconfig).
+>
+> If needed,
+> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-This allows keys with the same description but in different namespaces to
-coexist within a keyring.
+Great; thanks! :)
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: netdev@vger.kernel.org
-cc: linux-nfs@vger.kernel.org
-cc: linux-cifs@vger.kernel.org
-cc: linux-afs@lists.infradead.org
----
-
- include/linux/key-type.h    |    3 +++
- include/net/net_namespace.h |    4 ++++
- net/core/net_namespace.c    |   18 ++++++++++++++++++
- net/dns_resolver/dns_key.c  |    1 +
- net/rxrpc/key.c             |    2 ++
- security/keys/keyring.c     |    7 ++++++-
- 6 files changed, 34 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/key-type.h b/include/linux/key-type.h
-index e49d1de0614e..2148a6bf58f1 100644
---- a/include/linux/key-type.h
-+++ b/include/linux/key-type.h
-@@ -74,6 +74,9 @@ struct key_type {
- 	 */
- 	size_t def_datalen;
- 
-+	unsigned int flags;
-+#define KEY_TYPE_NET_DOMAIN	0x00000001 /* Keys of this type have a net namespace domain */
-+
- 	/* vet a description */
- 	int (*vet_description)(const char *description);
- 
-diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
-index a68ced28d8f4..b96de08a3ace 100644
---- a/include/net/net_namespace.h
-+++ b/include/net/net_namespace.h
-@@ -45,6 +45,7 @@ struct net_generic;
- struct uevent_sock;
- struct netns_ipvs;
- struct bpf_prog;
-+struct key_subject;
- 
- 
- #define NETDEV_HASHBITS    8
-@@ -70,6 +71,9 @@ struct net {
- 						 */
- 	struct llist_node	cleanup_list;	/* namespaces on death row */
- 
-+#ifdef CONFIG_KEYS
-+	struct key_tag		*key_domain;	/* Key domain of operation tag */
-+#endif
- 	struct user_namespace   *user_ns;	/* Owning user namespace */
- 	struct ucounts		*ucounts;
- 	spinlock_t		nsid_lock;
-diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-index 17f36317363d..9c4c3dfe2576 100644
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -38,9 +38,16 @@ EXPORT_SYMBOL_GPL(net_namespace_list);
- DECLARE_RWSEM(net_rwsem);
- EXPORT_SYMBOL_GPL(net_rwsem);
- 
-+#ifdef CONFIG_KEYS
-+static struct key_tag init_net_key_domain = { .usage = REFCOUNT_INIT(1) };
-+#endif
-+
- struct net init_net = {
- 	.count		= REFCOUNT_INIT(1),
- 	.dev_base_head	= LIST_HEAD_INIT(init_net.dev_base_head),
-+#ifdef CONFIG_KEYS
-+	.key_domain	= &init_net_key_domain,
-+#endif
- };
- EXPORT_SYMBOL(init_net);
- 
-@@ -385,10 +392,20 @@ static struct net *net_alloc(void)
- 	if (!net)
- 		goto out_free;
- 
-+#ifdef CONFIG_KEYS
-+	net->key_domain = kzalloc(sizeof(struct key_tag), GFP_KERNEL);
-+	if (!net->key_domain)
-+		goto out_free_2;
-+#endif
-+
- 	rcu_assign_pointer(net->gen, ng);
- out:
- 	return net;
- 
-+#ifdef CONFIG_KEYS
-+out_free_2:
-+	kmem_cache_free(net_cachep, net);
-+#endif
- out_free:
- 	kfree(ng);
- 	goto out;
-@@ -565,6 +582,7 @@ static void cleanup_net(struct work_struct *work)
- 	list_for_each_entry_safe(net, tmp, &net_exit_list, exit_list) {
- 		list_del_init(&net->exit_list);
- 		dec_net_namespaces(net->ucounts);
-+		key_remove_domain(net->key_domain);
- 		put_user_ns(net->user_ns);
- 		net_drop_ns(net);
- 	}
-diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
-index a65d553e730d..3e1a90669006 100644
---- a/net/dns_resolver/dns_key.c
-+++ b/net/dns_resolver/dns_key.c
-@@ -314,6 +314,7 @@ static long dns_resolver_read(const struct key *key,
- 
- struct key_type key_type_dns_resolver = {
- 	.name		= "dns_resolver",
-+	.flags		= KEY_TYPE_NET_DOMAIN,
- 	.preparse	= dns_resolver_preparse,
- 	.free_preparse	= dns_resolver_free_preparse,
- 	.instantiate	= generic_key_instantiate,
-diff --git a/net/rxrpc/key.c b/net/rxrpc/key.c
-index e7f6b8823eb6..2722189ec273 100644
---- a/net/rxrpc/key.c
-+++ b/net/rxrpc/key.c
-@@ -43,6 +43,7 @@ static long rxrpc_read(const struct key *, char __user *, size_t);
-  */
- struct key_type key_type_rxrpc = {
- 	.name		= "rxrpc",
-+	.flags		= KEY_TYPE_NET_DOMAIN,
- 	.preparse	= rxrpc_preparse,
- 	.free_preparse	= rxrpc_free_preparse,
- 	.instantiate	= generic_key_instantiate,
-@@ -58,6 +59,7 @@ EXPORT_SYMBOL(key_type_rxrpc);
-  */
- struct key_type key_type_rxrpc_s = {
- 	.name		= "rxrpc_s",
-+	.flags		= KEY_TYPE_NET_DOMAIN,
- 	.vet_description = rxrpc_vet_description_s,
- 	.preparse	= rxrpc_preparse_s,
- 	.free_preparse	= rxrpc_free_preparse_s,
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index d2ad27535624..ffa368594a03 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -17,10 +17,12 @@
- #include <linux/seq_file.h>
- #include <linux/err.h>
- #include <linux/user_namespace.h>
-+#include <linux/nsproxy.h>
- #include <keys/keyring-type.h>
- #include <keys/user-type.h>
- #include <linux/assoc_array_priv.h>
- #include <linux/uaccess.h>
-+#include <net/net_namespace.h>
- #include "internal.h"
- 
- /*
-@@ -220,7 +222,10 @@ void key_set_index_key(struct keyring_index_key *index_key)
- 
- 	memcpy(index_key->desc, index_key->description, n);
- 
--	index_key->domain_tag = &default_domain_tag;
-+	if (index_key->type->flags & KEY_TYPE_NET_DOMAIN)
-+		index_key->domain_tag = current->nsproxy->net_ns->key_domain;
-+	else
-+		index_key->domain_tag = &default_domain_tag;
- 	hash_key_type_and_desc(index_key);
- }
- 
-
+-- 
+Kees Cook
