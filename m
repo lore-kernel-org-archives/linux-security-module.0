@@ -2,45 +2,31 @@ Return-Path: <SRS0=DaHd=S3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08523C43218
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Apr 2019 18:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A8FC43219
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Apr 2019 18:28:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FB9820717
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Apr 2019 18:18:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a2ZfRHVi"
+	by mail.kernel.org (Postfix) with ESMTP id B082720717
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Apr 2019 18:28:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729732AbfDYSR7 (ORCPT
+        id S1726358AbfDYS2I (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Apr 2019 14:17:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53528 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbfDYSR6 (ORCPT
+        Thu, 25 Apr 2019 14:28:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39950 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726040AbfDYS2I (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Apr 2019 14:17:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tRoNJ8c4cbN57uzpVjJsLti1b65Ha0XS4q1OKT5SUhc=; b=a2ZfRHViaari4YLFzrqFZ4Xcv
-        pPtn0t/Ikwnz+zDeTwk5ZwWrGRVlT58S1XUXFSR8UgdTWRWewHdmfi4Subbyk8BKZwyNIG9unYqRE
-        ALVHeVhS1e7uwc9LiONexeLx6a1SPYdmNRcLVe9GKIvDolsrpFXatNsNNIdTw21e/BJU5Dzhgy5ka
-        2lkgXtDWh8vQ0B1s4dKgSvZ/lZT23l0RSn0J3QDJjFMaHw2aIPTeZ+Ug3Pe6X1dqSAuPRxjAc55Yb
-        zKoCB0V6hKaeSVzY626itIKuX52IEH2PzF9nn3cwyYwucKNtPk/jTGTHqzLOiQgxvd7UEy1pISpqQ
-        iPcq7BOgw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hJiwK-0008P9-UW; Thu, 25 Apr 2019 18:17:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E5895203C072C; Thu, 25 Apr 2019 20:17:42 +0200 (CEST)
-Date:   Thu, 25 Apr 2019 20:17:42 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
+        Thu, 25 Apr 2019 14:28:08 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAC8E2067C;
+        Thu, 25 Apr 2019 18:28:05 +0000 (UTC)
+Date:   Thu, 25 Apr 2019 14:28:03 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
 To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
 Cc:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
         Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
@@ -48,38 +34,97 @@ Cc:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Nadav Amit <nadav.amit@gmail.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [PATCH v4 04/23] x86/mm: Save DRs when loading a temporary mm
-Message-ID: <20190425181742.GZ11158@hirez.programming.kicks-ass.net>
+        kristen@linux.intel.com, deneen.t.dock@intel.com
+Subject: Re: [PATCH v4 19/23] x86/ftrace: Use vmalloc special flag
+Message-ID: <20190425142803.4f2e354a@gandalf.local.home>
+In-Reply-To: <20190422185805.1169-20-rick.p.edgecombe@intel.com>
 References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
- <20190422185805.1169-5-rick.p.edgecombe@intel.com>
+        <20190422185805.1169-20-rick.p.edgecombe@intel.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190422185805.1169-5-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 22, 2019 at 11:57:46AM -0700, Rick Edgecombe wrote:
-> From: Nadav Amit <namit@vmware.com>
+On Mon, 22 Apr 2019 11:58:01 -0700
+Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
+
+> Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
+> permissioned memory in vmalloc and remove places where memory was set NX
+> and RW before freeing which is no longer needed.
 > 
-> Prevent user watchpoints from mistakenly firing while the temporary mm
-> is being used. As the addresses that of the temporary mm might overlap
-> those of the user-process, this is necessary to prevent wrong signals
-> or worse things from happening.
-
-Ooh, goody, that would be fun indeed.
-
-> Cc: Andy Lutomirski <luto@kernel.org>
-
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-
-> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+
+Tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@godomis.org>
+
+-- Steve
+
+> ---
+>  arch/x86/kernel/ftrace.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> index 53ba1aa3a01f..0caf8122d680 100644
+> --- a/arch/x86/kernel/ftrace.c
+> +++ b/arch/x86/kernel/ftrace.c
+> @@ -678,12 +678,8 @@ static inline void *alloc_tramp(unsigned long size)
+>  {
+>  	return module_alloc(size);
+>  }
+> -static inline void tramp_free(void *tramp, int size)
+> +static inline void tramp_free(void *tramp)
+>  {
+> -	int npages = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> -
+> -	set_memory_nx((unsigned long)tramp, npages);
+> -	set_memory_rw((unsigned long)tramp, npages);
+>  	module_memfree(tramp);
+>  }
+>  #else
+> @@ -692,7 +688,7 @@ static inline void *alloc_tramp(unsigned long size)
+>  {
+>  	return NULL;
+>  }
+> -static inline void tramp_free(void *tramp, int size) { }
+> +static inline void tramp_free(void *tramp) { }
+>  #endif
+>  
+>  /* Defined as markers to the end of the ftrace default trampolines */
+> @@ -808,6 +804,8 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+>  	/* ALLOC_TRAMP flags lets us know we created it */
+>  	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
+>  
+> +	set_vm_flush_reset_perms(trampoline);
+> +
+>  	/*
+>  	 * Module allocation needs to be completed by making the page
+>  	 * executable. The page is still writable, which is a security hazard,
+> @@ -816,7 +814,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+>  	set_memory_x((unsigned long)trampoline, npages);
+>  	return (unsigned long)trampoline;
+>  fail:
+> -	tramp_free(trampoline, *tramp_size);
+> +	tramp_free(trampoline);
+>  	return 0;
+>  }
+>  
+> @@ -947,7 +945,7 @@ void arch_ftrace_trampoline_free(struct ftrace_ops *ops)
+>  	if (!ops || !(ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP))
+>  		return;
+>  
+> -	tramp_free((void *)ops->trampoline, ops->trampoline_size);
+> +	tramp_free((void *)ops->trampoline);
+>  	ops->trampoline = 0;
+>  }
+>  
+
