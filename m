@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B7DC43219
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Apr 2019 20:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5C7C43218
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Apr 2019 20:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8850420717
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Apr 2019 20:39:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F17AD20717
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Apr 2019 20:48:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ba/RHj2P"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i7Hq0H2F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387650AbfDYUi7 (ORCPT
+        id S2387657AbfDYUsa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Apr 2019 16:38:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39774 "EHLO
+        Thu, 25 Apr 2019 16:48:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41932 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387630AbfDYUi6 (ORCPT
+        with ESMTP id S2387656AbfDYUsa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Apr 2019 16:38:58 -0400
+        Thu, 25 Apr 2019 16:48:30 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Getn4cTZ4pFTdmhspLn2WdzsbNKww/5YNBDIeCXTUdc=; b=Ba/RHj2PKqwoRzj/7lCLAnOuc
-        JR5I1Rltif9/m0BwLlHtq/xarEqQQzk7NYCfDBIFvwfaeW73JGyno4/3sXKiM/OeGLP12PzYHWyD7
-        mXYxKYSYIxOUsW/jb8kq4c0NOrkpvblGi+CQpZtEBwhz5eX1pNNs45/xq+6NdRpYyuAatYAgkHKaP
-        16qrHHWC5VV8gXJ+KWpbt/jLiTI22b4SYcU6cE192rn8HQRcxLlRJH9dcswMmfsSE3mGgF+VAHCq9
-        i8s4L9KvR6Oox3+8S6kfvlGEEzzNDD49oVHCCT97bAmfxpN02nxLIgmOQdqDO0rgM8CpsRocAJ7M0
-        /sPr8h5vQ==;
+         bh=FitD4X1vPtPf9AaJyZflnefh5ZXat3I/abaTtFAMS7o=; b=i7Hq0H2F0STZhj0SbYPU9kQNf
+        yXzbfggcqkI1DmqjyE4zkvAQBey/AeHaQSKy5gSbwKkLTwv/FT04TvnIrvxoYqSNGJVJJWdMtTTQQ
+        ZcfCSB6ucpcUXEcRxhfmRXEXntN3RoWa5wUxEQv1+JmF9Qy8PHR9FBVHKLLhTrA5p3yZQtkolmkVW
+        ZIlhF1hrp9QUzLO1OIox4w7fuAzYgpy60cawbqqe9L3Dq3cQeVsABBJkHqSY1z8O86LBog6oknxGO
+        JsbvmCIIwxF8uUxIR5t3ckfNmiE6XKhttFT2UJgruUV9acrrrYFEm3mAYeaPIBKlCrhCvxF5bTduV
+        Ne8RFT5Tg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hJl8p-0006Vb-2T; Thu, 25 Apr 2019 20:38:49 +0000
+        id 1hJlI6-0001R8-2x; Thu, 25 Apr 2019 20:48:22 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3B5C9200D2F43; Thu, 25 Apr 2019 22:38:45 +0200 (CEST)
-Date:   Thu, 25 Apr 2019 22:38:45 +0200
+        id 6AB02203C0A58; Thu, 25 Apr 2019 22:48:20 +0200 (CEST)
+Date:   Thu, 25 Apr 2019 22:48:20 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
 Cc:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
@@ -53,59 +53,52 @@ Cc:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com
-Subject: Re: [PATCH v4 16/23] vmalloc: Add flag for free of special
- permsissions
-Message-ID: <20190425203845.GA12232@hirez.programming.kicks-ass.net>
+Subject: Re: [PATCH v4 00/23] Merge text_poke fixes and executable lockdowns
+Message-ID: <20190425204820.GB12232@hirez.programming.kicks-ass.net>
 References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
- <20190422185805.1169-17-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190422185805.1169-17-rick.p.edgecombe@intel.com>
+In-Reply-To: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 22, 2019 at 11:57:58AM -0700, Rick Edgecombe wrote:
-> Add a new flag VM_FLUSH_RESET_PERMS, for enabling vfree operations to
-> immediately clear executable TLB entries before freeing pages, and handle
-> resetting permissions on the directmap. This flag is useful for any kind
-> of memory with elevated permissions, or where there can be related
-> permissions changes on the directmap. Today this is RO+X and RO memory.
+On Mon, Apr 22, 2019 at 11:57:42AM -0700, Rick Edgecombe wrote:
+> Andy Lutomirski (1):
+>   x86/mm: Introduce temporary mm structs
 > 
-> Although this enables directly vfreeing non-writeable memory now,
-> non-writable memory cannot be freed in an interrupt because the allocation
-> itself is used as a node on deferred free list. So when RO memory needs to
-> be freed in an interrupt the code doing the vfree needs to have its own
-> work queue, as was the case before the deferred vfree list was added to
-> vmalloc.
+> Nadav Amit (15):
+>   Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+>   x86/jump_label: Use text_poke_early() during early init
+>   x86/mm: Save DRs when loading a temporary mm
+>   fork: Provide a function for copying init_mm
+>   x86/alternative: Initialize temporary mm for patching
+>   x86/alternative: Use temporary mm for text poking
+>   x86/kgdb: Avoid redundant comparison of patched code
+>   x86/ftrace: Set trampoline pages as executable
+>   x86/kprobes: Set instruction page as executable
+>   x86/module: Avoid breaking W^X while loading modules
+>   x86/jump-label: Remove support for custom poker
+>   x86/alternative: Remove the return value of text_poke_*()
+>   x86/alternative: Comment about module removal races
+>   tlb: provide default nmi_uaccess_okay()
+>   bpf: Fail bpf_probe_write_user() while mm is switched
 > 
-> For architectures with set_direct_map_ implementations this whole operation
-> can be done with one TLB flush when centralized like this. For others with
-> directmap permissions, currently only arm64, a backup method using
-> set_memory functions is used to reset the directmap. When arm64 adds
-> set_direct_map_ functions, this backup can be removed.
-> 
-> When the TLB is flushed to both remove TLB entries for the vmalloc range
-> mapping and the direct map permissions, the lazy purge operation could be
-> done to try to save a TLB flush later. However today vm_unmap_aliases
-> could flush a TLB range that does not include the directmap. So a helper
-> is added with extra parameters that can allow both the vmalloc address and
-> the direct mapping to be flushed during this operation. The behavior of the
-> normal vm_unmap_aliases function is unchanged.
+> Rick Edgecombe (7):
+>   x86/mm/cpa: Add set_direct_map_ functions
+>   mm: Make hibernate handle unmapped pages
+>   vmalloc: Add flag for free of special permsissions
+>   modules: Use vmalloc special flag
+>   bpf: Use vmalloc special flag
+>   x86/ftrace: Use vmalloc special flag
+>   x86/kprobes: Use vmalloc special flag
 
-> +static inline void set_vm_flush_reset_perms(void *addr)
-> +{
-> +	struct vm_struct *vm = find_vm_area(addr);
-> +
-> +	if (vm)
-> +		vm->flags |= VM_FLUSH_RESET_PERMS;
-> +}
+This all looks good to me, I'll queue them tomorrow when I'm awake
+again. I'll move the last two patches to early in the series, since it
+appears to me they're fixes and should be in place before we make the
+situation worse with the temporary mm swizzling for text_poke.
 
-So, previously in the series we added NX to module_alloc() and fixed up
-all the usage site. And now we're going through those very same sites to
-add set_vm_flush_reset_perms().
-
-Why isn't module_alloc() calling the above function and avoid sprinkling
-it all over the place again?
+If you want to post a new version of patch 4 before then, that'd be
+awesome, otherwise I'll see if I can do those few edits myself.
