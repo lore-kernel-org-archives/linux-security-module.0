@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EBFC43219
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Apr 2019 21:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B13BC4321A
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Apr 2019 21:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E937206C0
+	by mail.kernel.org (Postfix) with ESMTP id 97794206C0
 	for <linux-security-module@archiver.kernel.org>; Thu, 25 Apr 2019 21:46:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388262AbfDYVqk (ORCPT
+        id S2388230AbfDYVqa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Apr 2019 17:46:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57654 "EHLO
+        Thu, 25 Apr 2019 17:46:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35210 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388260AbfDYVqg (ORCPT
+        by vger.kernel.org with ESMTP id S2388224AbfDYVqa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Apr 2019 17:46:36 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3PLYuTm143375
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2019 17:46:35 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2s3m2faf46-1
+        Thu, 25 Apr 2019 17:46:30 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3PLYAWO084407
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2019 17:46:28 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s3hu3yx07-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2019 17:46:35 -0400
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2019 17:46:28 -0400
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 25 Apr 2019 22:46:32 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 25 Apr 2019 22:46:26 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 25 Apr 2019 22:46:27 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3PLkQoE46923988
+        Thu, 25 Apr 2019 22:46:20 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3PLkJQT61538416
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Apr 2019 21:46:26 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6F4B3AE04D;
-        Thu, 25 Apr 2019 21:46:26 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EECBFAE051;
-        Thu, 25 Apr 2019 21:46:23 +0000 (GMT)
+        Thu, 25 Apr 2019 21:46:19 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CA28142041;
+        Thu, 25 Apr 2019 21:46:19 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 50F4B42049;
+        Thu, 25 Apr 2019 21:46:17 +0000 (GMT)
 Received: from rapoport-lnx (unknown [9.148.204.209])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 25 Apr 2019 21:46:23 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Fri, 26 Apr 2019 00:46:23 +0300
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 25 Apr 2019 21:46:17 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Fri, 26 Apr 2019 00:46:16 +0300
 From:   Mike Rapoport <rppt@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Alexandre Chartre <alexandre.chartre@oracle.com>,
@@ -64,138 +64,88 @@ Cc:     Alexandre Chartre <alexandre.chartre@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
         linux-security-module@vger.kernel.org, x86@kernel.org,
         Mike Rapoport <rppt@linux.ibm.com>
-Subject: [RFC PATCH 7/7] sci: add example system calls to exercse SCI
-Date:   Fri, 26 Apr 2019 00:45:54 +0300
+Subject: [RFC PATCH 5/7] x86/mm/fault: hook up SCI verification
+Date:   Fri, 26 Apr 2019 00:45:52 +0300
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
 References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19042521-0020-0000-0000-000003360C05
+x-cbid: 19042521-0016-0000-0000-000002750F36
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19042521-0021-0000-0000-000021887A43
-Message-Id: <1556228754-12996-8-git-send-email-rppt@linux.ibm.com>
+x-cbparentid: 19042521-0017-0000-0000-000032D18954
+Message-Id: <1556228754-12996-6-git-send-email-rppt@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-25_18:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=411 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1904250133
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+If a system call runs in isolated context, it's accesses to kernel code and
+data will be verified by SCI susbsytem.
+
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
- arch/x86/entry/common.c                |  6 +++-
- arch/x86/entry/syscalls/syscall_64.tbl |  3 ++
- kernel/Makefile                        |  2 +-
- kernel/sci-examples.c                  | 52 ++++++++++++++++++++++++++++++++++
- 4 files changed, 61 insertions(+), 2 deletions(-)
- create mode 100644 kernel/sci-examples.c
+ arch/x86/mm/fault.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 8f2a6fd..be0e1a7 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -275,7 +275,11 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
- #ifdef CONFIG_SYSCALL_ISOLATION
- static inline bool sci_required(unsigned long nr)
- {
--	return false;
-+	if (!static_cpu_has(X86_FEATURE_SCI))
-+		return false;
-+	if (nr < __NR_get_answer)
-+		return false;
-+	return true;
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 9d5c75f..baa2a2f 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -18,6 +18,7 @@
+ #include <linux/uaccess.h>		/* faulthandler_disabled()	*/
+ #include <linux/efi.h>			/* efi_recover_from_page_fault()*/
+ #include <linux/mm_types.h>
++#include <linux/sci.h>			/* sci_verify_and_map()		*/
+ 
+ #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
+ #include <asm/traps.h>			/* dotraplinkage, ...		*/
+@@ -1254,6 +1255,30 @@ static int fault_in_kernel_space(unsigned long address)
+ 	return address >= TASK_SIZE_MAX;
  }
  
- static inline unsigned long sci_syscall_enter(unsigned long nr)
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index f0b1709..a25e838 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -343,6 +343,9 @@
- 332	common	statx			__x64_sys_statx
- 333	common	io_pgetevents		__x64_sys_io_pgetevents
- 334	common	rseq			__x64_sys_rseq
-+335	64	get_answer		__x64_sys_get_answer
-+336	64	sci_write_dmesg		__x64_sys_sci_write_dmesg
-+337	64	sci_write_dmesg_bad	__x64_sys_sci_write_dmesg_bad
++#ifdef CONFIG_SYSCALL_ISOLATION
++static int sci_fault(struct pt_regs *regs, unsigned long hw_error_code,
++		     unsigned long address)
++{
++	struct task_struct *tsk = current;
++
++	if (!tsk->in_isolated_syscall)
++		return 0;
++
++	if (!sci_verify_and_map(regs, address, hw_error_code)) {
++		this_cpu_write(cpu_sci.sci_syscall, 0);
++		no_context(regs, hw_error_code, address, SIGKILL, 0);
++	}
++
++	return 1;
++}
++#else
++static inline int sci_fault(struct pt_regs *regs, unsigned long hw_error_code,
++			    unsigned long address)
++{
++	return 0;
++}
++#endif
++
+ /*
+  * Called for all faults where 'address' is part of the kernel address
+  * space.  Might get called for faults that originate from *code* that
+@@ -1301,6 +1326,9 @@ do_kern_addr_fault(struct pt_regs *regs, unsigned long hw_error_code,
+ 	if (kprobes_fault(regs))
+ 		return;
  
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 6aa7543..d6441d0 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -10,7 +10,7 @@ obj-y     = fork.o exec_domain.o panic.o \
- 	    extable.o params.o \
- 	    kthread.o sys_ni.o nsproxy.o \
- 	    notifier.o ksysfs.o cred.o reboot.o \
--	    async.o range.o smpboot.o ucount.o
-+	    async.o range.o smpboot.o ucount.o sci-examples.o
- 
- obj-$(CONFIG_MODULES) += kmod.o
- obj-$(CONFIG_MULTIUSER) += groups.o
-diff --git a/kernel/sci-examples.c b/kernel/sci-examples.c
-new file mode 100644
-index 0000000..9bfaad0
---- /dev/null
-+++ b/kernel/sci-examples.c
-@@ -0,0 +1,52 @@
-+#include <linux/kernel.h>
-+#include <linux/pid.h>
-+#include <linux/syscalls.h>
-+#include <linux/hugetlb.h>
-+#include <asm/special_insns.h>
++	if (sci_fault(regs, hw_error_code, address))
++		return;
 +
-+SYSCALL_DEFINE0(get_answer)
-+{
-+	return 42;
-+}
-+
-+#define BUF_SIZE 1024
-+
-+typedef void (*foo)(void);
-+
-+SYSCALL_DEFINE2(sci_write_dmesg, const char __user *, ubuf, size_t, count)
-+{
-+	char buf[BUF_SIZE];
-+
-+	if (!ubuf || count >= BUF_SIZE)
-+		return -EINVAL;
-+
-+	buf[count] = '\0';
-+	if (copy_from_user(buf, ubuf, count))
-+		return -EFAULT;
-+
-+	printk("%s\n", buf);
-+
-+	return count;
-+}
-+
-+SYSCALL_DEFINE2(sci_write_dmesg_bad, const char __user *, ubuf, size_t, count)
-+{
-+	unsigned long addr = (unsigned long)(void *)hugetlb_reserve_pages;
-+	char buf[BUF_SIZE];
-+	foo func1;
-+
-+	addr += 0xc5;
-+	func1 = (foo)(void *)addr;
-+	func1();
-+
-+	if (!ubuf || count >= BUF_SIZE)
-+		return -EINVAL;
-+
-+	buf[count] = '\0';
-+	if (copy_from_user(buf, ubuf, count))
-+		return -EFAULT;
-+
-+	printk("%s\n", buf);
-+
-+	return count;
-+}
+ 	/*
+ 	 * Note, despite being a "bad area", there are quite a few
+ 	 * acceptable reasons to get here, such as erratum fixups
 -- 
 2.7.4
 
