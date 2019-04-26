@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E5DC43218
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F67DC43218
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A7182084F
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E730B208C4
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbfDZHd0 (ORCPT
+        id S1725901AbfDZHbt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:33:26 -0400
+        Fri, 26 Apr 2019 03:31:49 -0400
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:2747 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726181AbfDZHbx (ORCPT
+        by vger.kernel.org with ESMTP id S1725942AbfDZHbs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Apr 2019 03:31:53 -0400
+        Fri, 26 Apr 2019 03:31:48 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
  15.0.1156.6; Fri, 26 Apr 2019 00:31:40 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id E15254129A;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 631F24129A;
         Fri, 26 Apr 2019 00:31:45 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -43,11 +43,13 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         <ard.biesheuvel@linaro.org>, <kristen@linux.intel.com>,
         <deneen.t.dock@intel.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v5 15/23] mm: Make hibernate handle unmapped pages
-Date:   Thu, 25 Apr 2019 17:11:35 -0700
-Message-ID: <20190426001143.4983-16-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v5 01/23] Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+Date:   Thu, 25 Apr 2019 17:11:21 -0700
+Message-ID: <20190426001143.4983-2-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
 References: <20190426001143.4983-1-namit@vmware.com>
@@ -59,153 +61,165 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Rick Edgecombe <rick.p.edgecombe@intel.com>
+text_mutex is currently expected to be held before text_poke() is
+called, but kgdb does not take the mutex, and instead *supposedly*
+ensures the lock is not taken and will not be acquired by any other core
+while text_poke() is running.
 
-Make hibernate handle unmapped pages on the direct map when
-CONFIG_ARCH_HAS_SET_ALIAS is set. These functions allow for setting pages
-to invalid configurations, so now hibernate should check if the pages have
-valid mappings and handle if they are unmapped when doing a hibernate
-save operation.
+The reason for the "supposedly" comment is that it is not entirely clear
+that this would be the case if gdb_do_roundup is zero.
 
-Previously this checking was already done when CONFIG_DEBUG_PAGEALLOC
-was configured. It does not appear to have a big hibernating performance
-impact. The speed of the saving operation before this change was measured
-as 819.02 MB/s, and after was measured at 813.32 MB/s.
+Create two wrapper functions, text_poke() and text_poke_kgdb(), which do
+or do not run the lockdep assertion respectively.
 
-Before:
-[    4.670938] PM: Wrote 171996 kbytes in 0.21 seconds (819.02 MB/s)
+While we are at it, change the return code of text_poke() to something
+meaningful. One day, callers might actually respect it and the existing
+BUG_ON() when patching fails could be removed. For kgdb, the return
+value can actually be used.
 
-After:
-[    4.504714] PM: Wrote 178932 kbytes in 0.22 seconds (813.32 MB/s)
-
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Borislav Petkov <bp@alien8.de>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/mm/pageattr.c  |  4 ----
- include/linux/mm.h      | 18 ++++++------------
- kernel/power/snapshot.c |  5 +++--
- mm/page_alloc.c         |  7 +++++--
- 4 files changed, 14 insertions(+), 20 deletions(-)
+ arch/x86/include/asm/text-patching.h |  1 +
+ arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
+ arch/x86/kernel/kgdb.c               | 11 +++---
+ 3 files changed, 45 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 3574550192c6..daf4d645e537 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -2257,7 +2257,6 @@ int set_direct_map_default_noflush(struct page *page)
- 	return __set_pages_p(page, 1);
- }
- 
--#ifdef CONFIG_DEBUG_PAGEALLOC
- void __kernel_map_pages(struct page *page, int numpages, int enable)
- {
- 	if (PageHighMem(page))
-@@ -2302,11 +2301,8 @@ bool kernel_page_present(struct page *page)
- 	pte = lookup_address((unsigned long)page_address(page), &level);
- 	return (pte_val(*pte) & _PAGE_PRESENT);
- }
--
- #endif /* CONFIG_HIBERNATION */
- 
--#endif /* CONFIG_DEBUG_PAGEALLOC */
--
- int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
- 				   unsigned numpages, unsigned long page_flags)
- {
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 6b10c21630f5..083d7b4863ed 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2610,37 +2610,31 @@ static inline void kernel_poison_pages(struct page *page, int numpages,
- 					int enable) { }
- #endif
- 
--#ifdef CONFIG_DEBUG_PAGEALLOC
- extern bool _debug_pagealloc_enabled;
--extern void __kernel_map_pages(struct page *page, int numpages, int enable);
- 
- static inline bool debug_pagealloc_enabled(void)
- {
--	return _debug_pagealloc_enabled;
-+	return IS_ENABLED(CONFIG_DEBUG_PAGEALLOC) && _debug_pagealloc_enabled;
- }
- 
-+#if defined(CONFIG_DEBUG_PAGEALLOC) || defined(CONFIG_ARCH_HAS_SET_DIRECT_MAP)
-+extern void __kernel_map_pages(struct page *page, int numpages, int enable);
-+
- static inline void
- kernel_map_pages(struct page *page, int numpages, int enable)
- {
--	if (!debug_pagealloc_enabled())
--		return;
--
- 	__kernel_map_pages(page, numpages, enable);
- }
- #ifdef CONFIG_HIBERNATION
- extern bool kernel_page_present(struct page *page);
- #endif	/* CONFIG_HIBERNATION */
--#else	/* CONFIG_DEBUG_PAGEALLOC */
-+#else	/* CONFIG_DEBUG_PAGEALLOC || CONFIG_ARCH_HAS_SET_DIRECT_MAP */
- static inline void
- kernel_map_pages(struct page *page, int numpages, int enable) {}
- #ifdef CONFIG_HIBERNATION
- static inline bool kernel_page_present(struct page *page) { return true; }
- #endif	/* CONFIG_HIBERNATION */
--static inline bool debug_pagealloc_enabled(void)
--{
--	return false;
--}
--#endif	/* CONFIG_DEBUG_PAGEALLOC */
-+#endif	/* CONFIG_DEBUG_PAGEALLOC || CONFIG_ARCH_HAS_SET_DIRECT_MAP */
- 
- #ifdef __HAVE_ARCH_GATE_AREA
- extern struct vm_area_struct *get_gate_vma(struct mm_struct *mm);
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index f08a1e4ee1d4..bc9558ab1e5b 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -1342,8 +1342,9 @@ static inline void do_copy_page(long *dst, long *src)
-  * safe_copy_page - Copy a page in a safe way.
-  *
-  * Check if the page we are going to copy is marked as present in the kernel
-- * page tables (this always is the case if CONFIG_DEBUG_PAGEALLOC is not set
-- * and in that case kernel_page_present() always returns 'true').
-+ * page tables. This always is the case if CONFIG_DEBUG_PAGEALLOC or
-+ * CONFIG_ARCH_HAS_SET_DIRECT_MAP is not set. In that case kernel_page_present()
-+ * always returns 'true'.
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index e85ff65c43c3..f8fc8e86cf01 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -35,6 +35,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+  * inconsistent instruction while you patch.
   */
- static void safe_copy_page(void *dst, struct page *s_page)
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
++extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 9a79c7808f9c..0a814d73547a 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -679,18 +679,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 	return addr;
+ }
+ 
+-/**
+- * text_poke - Update instructions on a live kernel
+- * @addr: address to modify
+- * @opcode: source of the copy
+- * @len: length to copy
+- *
+- * Only atomic text poke/set should be allowed when not doing early patching.
+- * It means the size must be writable atomically and the address must be aligned
+- * in a way that permits an atomic write. It also makes sure we fit on a single
+- * page.
+- */
+-void *text_poke(void *addr, const void *opcode, size_t len)
++static void *__text_poke(void *addr, const void *opcode, size_t len)
  {
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d96ca5bc555b..34a70681a4af 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1131,7 +1131,9 @@ static __always_inline bool free_pages_prepare(struct page *page,
- 	}
- 	arch_free_page(page, order);
- 	kernel_poison_pages(page, 1 << order, 0);
--	kernel_map_pages(page, 1 << order, 0);
-+	if (debug_pagealloc_enabled())
-+		kernel_map_pages(page, 1 << order, 0);
+ 	unsigned long flags;
+ 	char *vaddr;
+@@ -703,8 +692,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	 */
+ 	BUG_ON(!after_bootmem);
+ 
+-	lockdep_assert_held(&text_mutex);
+-
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+ 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+@@ -733,6 +720,43 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	return addr;
+ }
+ 
++/**
++ * text_poke - Update instructions on a live kernel
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ */
++void *text_poke(void *addr, const void *opcode, size_t len)
++{
++	lockdep_assert_held(&text_mutex);
 +
- 	kasan_free_nondeferred_pages(page, order);
- 
- 	return true;
-@@ -2001,7 +2003,8 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
- 	set_page_refcounted(page);
- 
- 	arch_alloc_page(page, order);
--	kernel_map_pages(page, 1 << order, 1);
-+	if (debug_pagealloc_enabled())
-+		kernel_map_pages(page, 1 << order, 1);
- 	kasan_alloc_pages(page, order);
- 	kernel_poison_pages(page, 1 << order, 1);
- 	set_page_owner(page, order, gfp_flags);
++	return __text_poke(addr, opcode, len);
++}
++
++/**
++ * text_poke_kgdb - Update instructions on a live kernel by kgdb
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ *
++ * Context: should only be used by kgdb, which ensures no other core is running,
++ *	    despite the fact it does not hold the text_mutex.
++ */
++void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
++{
++	return __text_poke(addr, opcode, len);
++}
++
+ static void do_sync_core(void *info)
+ {
+ 	sync_core();
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 4ff6b4cdb941..2b203ee5b879 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -759,13 +759,13 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (!err)
+ 		return err;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		return -EBUSY;
+-	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+-		  BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err)
+ 		return err;
+@@ -784,12 +784,13 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		goto knl_write;
+-	text_poke((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+ 		goto knl_write;
 -- 
 2.17.1
 
