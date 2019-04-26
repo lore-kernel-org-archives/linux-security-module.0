@@ -1,47 +1,71 @@
 Return-Path: <SRS0=T836=S4=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3405AC43218
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 09:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE8FC43219
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 09:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03CFC2077B
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 09:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D449F2084F
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 09:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556269502;
-	bh=uaBeEqmTZeit711eU/27JEsAvccaA7mOXg0Nh5Ekomo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=RyYWdtSDSkiqI4QmhXxLfJNJTzjvqEptH7Fxg5lpE4MOKD79qCo2qBuIUqXxZDFNR
-	 LI7xa1YRKjKVWx4xcKzN0SEOMOHO3FUkeSNUvv2il2Ly4sdAw/hsBi/T6aA31hQ3Wu
-	 sRE75+sojxgqmcvgpkhPS3xK2t/2RvOVThzfHVuQ=
+	s=default; t=1556272707;
+	bh=RY7deLFuQ2+MXOQ+UyRqt5TEtBMVYn3waYXdiSMSnN4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=PXuG85I7SHz77ItN1UbaDRs92GVW6RzYb/HjrTG6OuKWwMao32FtLBPOM60kaRBTU
+	 +by4U81j1hbc5lGjAL34DLlFUtRo2eWlq/mDtyu8gkjCQ38PIg9mFWYBHC//I60CMC
+	 tQC7do3gW5kDVgBjse1O64MOX+2aKB0gV9s11dOI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725923AbfDZJFB (ORCPT
+        id S1726247AbfDZJ6H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Apr 2019 05:05:01 -0400
-Received: from twin.jikos.cz ([91.219.245.39]:34186 "EHLO twin.jikos.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725800AbfDZJFB (ORCPT
+        Fri, 26 Apr 2019 05:58:07 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53538 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfDZJ6H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Apr 2019 05:05:01 -0400
-X-Greylist: delayed 3377 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Apr 2019 05:05:00 EDT
-Received: from twin.jikos.cz (jikos@[127.0.0.1])
-        by twin.jikos.cz (8.13.6/8.13.6) with ESMTP id x3Q87p6T000940
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 26 Apr 2019 10:07:52 +0200
-Received: from localhost (jikos@localhost)
-        by twin.jikos.cz (8.13.6/8.13.6/Submit) with ESMTP id x3Q87oY9000925;
-        Fri, 26 Apr 2019 10:07:50 +0200
-X-Authentication-Warning: twin.jikos.cz: jikos owned process doing -bs
-Date:   Fri, 26 Apr 2019 10:07:50 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     Mike Rapoport <rppt@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Fri, 26 Apr 2019 05:58:07 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 26so3066686wmj.3;
+        Fri, 26 Apr 2019 02:58:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YJCStWT0dNYPW3ntuISaTY+7m2TzWui5U3rbJsecnt4=;
+        b=K85URiHSmAJ1R+AeUwGYyucXzeBGpSgFJxfInaFSv6ntKK/zvtuQaZaAHMqosXdqCQ
+         PSwdwnK8AfCbRsW/xqF3cWnqK+cd8FYKwm1lw4QCJH13elJblsFe8d0B4rJmiaypHx2V
+         BPKTRORhHEpvy4fMFoXLQACGi5sY1E9IPfW7Gus8e0NvyirHI1shKtQemU1+usuMcDvY
+         yN+f5fiDh8kXry7A7CVvtVKcIK+17pib8MkhZzdPsM+nfv/EpYuyK3O/gTwUr/EbM0oj
+         VIpstDsdgthviqEU9Rm/RpgvIMDfui0KeJJYGLxqA7m8pSj8BmzEJj7hUPmI0hkzSEgV
+         0w/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YJCStWT0dNYPW3ntuISaTY+7m2TzWui5U3rbJsecnt4=;
+        b=P0G4Bbxo3ompvRS5A5SGaJpDh9G6UQQC4m0Kn5MIkK0lecGtTDCWI5XgKcPviNqPlF
+         WpdlGMY3OSYog/weJWOicxMd5BN0A0keXJWnnz9+x3sskMbB3FqktvRrJq9jT4FEMrKZ
+         2+0t3Epnh1BK6P4wRdZKXMRLhnmvgVgAaI6qnvO+W9+obAPGUPcyFVx577RC/Q8Vsl0g
+         HH6fozK8GuFnccppPf/8Gq4LiZ20PIjo+hemnTVmAvRSPQz/Iilp4cUgejqp/ROcKbpu
+         nqEWv4vJyJimoCPwgts7wnKf2VDYHWaKWa0IJtRmluvHXcV02K+b8WHYw2weHx80cvDp
+         D+7Q==
+X-Gm-Message-State: APjAAAXrQPxqRwRs7KDpW7SaNg8oabjxbbiufdKgVFlLfoQBG0H4bknA
+        xnvHWTmtdG48C+V/9nlBc10=
+X-Google-Smtp-Source: APXvYqxU4xRSO//2LeLOAQNJAxp8x2iYJV7YGaHBJl6zzDXEGkhWiOOILZ/XwIJJg56oj/prXk8sRw==
+X-Received: by 2002:a1c:f204:: with SMTP id s4mr7232803wmc.51.1556272685405;
+        Fri, 26 Apr 2019 02:58:05 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 4sm20102389wmg.12.2019.04.26.02.58.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Apr 2019 02:58:04 -0700 (PDT)
+Date:   Fri, 26 Apr 2019 11:58:02 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org,
         Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
@@ -50,30 +74,60 @@ cc:     Mike Rapoport <rppt@linux.ibm.com>,
         Kees Cook <keescook@chromium.org>,
         Paul Turner <pjt@google.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-MM <linux-mm@kvack.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        X86 ML <x86@kernel.org>
-Subject: Re: [RFC PATCH 0/7] x86: introduce system calls addess space
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call
  isolation
-In-Reply-To: <CALCETrWkYYh=L1nSO7GYt0FvMhjCcEaQiM2JEi3FfkJbYJFh2g@mail.gmail.com>
-Message-ID: <alpine.LRH.2.00.1904261006290.10464@gjva.wvxbf.pm>
-References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com> <CALCETrWkYYh=L1nSO7GYt0FvMhjCcEaQiM2JEi3FfkJbYJFh2g@mail.gmail.com>
-User-Agent: Alpine 2.00 (LRH 1167 2008-08-23)
+Message-ID: <20190426095802.GA35515@gmail.com>
+References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
+ <1556228754-12996-3-git-send-email-rppt@linux.ibm.com>
+ <20190426083144.GA126896@gmail.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190426083144.GA126896@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 25 Apr 2019, Andy Lutomirski wrote:
 
-> The benefit seems to come from making sure that the RET instruction 
-> actually goes somewhere that's already been faulted in.
+* Ingo Molnar <mingo@kernel.org> wrote:
 
-Which doesn't seem to be really compatible with things like retpolines or 
-anyone using FTRACE_WITH_REGS to modify stored instruction pointer.
+> I really don't like it where this is going. In a couple of years I 
+> really want to be able to think of PTI as a bad dream that is mostly 
+> over fortunately.
+> 
+> I have the feeling that compiler level protection that avoids 
+> corrupting the stack in the first place is going to be lower overhead, 
+> and would work in a much broader range of environments. Do we have 
+> analysis of what the compiler would have to do to prevent most ROP 
+> attacks, and what the runtime cost of that is?
+> 
+> I mean, C# and Java programs aren't able to corrupt the stack as long 
+> as the language runtime is corect. Has to be possible, right?
 
--- 
-Jiri Kosina
-SUSE Labs
+So if such security feature is offered then I'm afraid distros would be 
+strongly inclined to enable it - saying 'yes' to a kernel feature that 
+can keep your product off CVE advisories is a strong force.
+
+To phrase the argument in a bit more controversial form:
+
+   If the price of Linux using an insecure C runtime is to slow down 
+   system calls with immense PTI-alike runtime costs, then wouldn't it be 
+   the right technical decision to write the kernel in a language runtime 
+   that doesn't allow stack overflows and such?
+
+I.e. if having Linux in C ends up being slower than having it in Java, 
+then what's the performance argument in favor of using C to begin with? 
+;-)
+
+And no, I'm not arguing for Java or C#, but I am arguing for a saner 
+version of C.
+
+Thanks,
+
+	Ingo
