@@ -2,127 +2,156 @@ Return-Path: <SRS0=T836=S4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21909C43218
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 14:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51104C43219
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 14:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E468F2077B
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 14:41:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 157AB2084F
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 14:44:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ffuiVT02";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="c/LpaQH1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726120AbfDZOlN (ORCPT
+        id S1726138AbfDZOo4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Apr 2019 10:41:13 -0400
-Received: from mga17.intel.com ([192.55.52.151]:54720 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726060AbfDZOlN (ORCPT
+        Fri, 26 Apr 2019 10:44:56 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48692 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726039AbfDZOo4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Apr 2019 10:41:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Apr 2019 07:41:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,397,1549958400"; 
-   d="scan'208";a="165330519"
-Received: from gbotts-mobl.amr.corp.intel.com (HELO [10.254.86.96]) ([10.254.86.96])
-  by fmsmga004.fm.intel.com with ESMTP; 26 Apr 2019 07:41:10 -0700
-Subject: Re: [RFC PATCH 0/7] x86: introduce system calls addess space
- isolation
-To:     Mike Rapoport <rppt@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Fri, 26 Apr 2019 10:44:56 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1D6498EE121;
+        Fri, 26 Apr 2019 07:44:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1556289893;
+        bh=/lpGmp92SnREhL1+KYcT3K61/9XUBtMXsblw2FzasSA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ffuiVT02EUH2eECy83dfcFNE0+vtHiuMqwZTddJQ9i72bUb2GmJPUQ/sm8EEkHcHo
+         7s5JCI+ReUKz3zqcqceM62WaH4FaV7mcJrzSJJ9K//vZ7ZHvMVxIc/EXN2dCLZlbR1
+         UdDCE3eFWZCumi1vdbW8myheF2JfXWaKFyW/2nhA=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id yLJq8oWwvPYb; Fri, 26 Apr 2019 07:44:52 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id A49D78EE079;
+        Fri, 26 Apr 2019 07:44:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1556289892;
+        bh=/lpGmp92SnREhL1+KYcT3K61/9XUBtMXsblw2FzasSA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=c/LpaQH11DqvDOWdFo9PDAdk54y15cDtOZWHQOh+8ho92pzdbvphMPwb8YYoD5uE+
+         OUqSRgNfGV5Vz7NXA3F9BgYgufxJH/U3FD64SkY5TtK0zGfILci6vulc5QFUPCVy3j
+         4dWDzvE/ru3CwOUs8x6QTjse54n1e6KVdzFT6PE4=
+Message-ID: <1556289889.2833.17.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system
+ call isolation
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Ingo Molnar <mingo@kernel.org>, Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
         Andy Lutomirski <luto@kernel.org>,
         Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
         Jonathan Adams <jwadams@google.com>,
         Kees Cook <keescook@chromium.org>,
         Paul Turner <pjt@google.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Fri, 26 Apr 2019 07:44:49 -0700
+In-Reply-To: <20190426083144.GA126896@gmail.com>
 References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- mQINBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABtEVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT6JAjgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lcuQINBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABiQIfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-Message-ID: <1c12e195-1286-0136-eae5-4b392d9fe4c0@intel.com>
-Date:   Fri, 26 Apr 2019 07:41:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+         <1556228754-12996-3-git-send-email-rppt@linux.ibm.com>
+         <20190426083144.GA126896@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/25/19 2:45 PM, Mike Rapoport wrote:
-> The idea behind the prevention is that if we fault in pages in the
-> execution path, we can compare target address against the kernel symbol
-> table.  So if we're in a function, we allow local jumps (and simply falling
-> of the end of a page) but if we're jumping to a new function it must be to
-> an external label in the symbol table.  Since ROP attacks are all about
-> jumping to gadget code which is effectively in the middle of real
-> functions, the jumps they induce are to code that doesn't have an external
-> symbol, so it should mostly detect when they happen.
+On Fri, 2019-04-26 at 10:31 +0200, Ingo Molnar wrote:
+> * Mike Rapoport <rppt@linux.ibm.com> wrote:
+> 
+> > When enabled, the system call isolation (SCI) would allow execution
+> > of the system calls with reduced page tables. These page tables are
+> > almost identical to the user page tables in PTI. The only addition
+> > is the code page containing system call entry function that will
+> > continue exectution after the context switch.
+> > 
+> > Unlike PTI page tables, there is no sharing at higher levels and
+> > all the hierarchy for SCI page tables is cloned.
+> > 
+> > The SCI page tables are created when a system call that requires 
+> > isolation is executed for the first time.
+> > 
+> > Whenever a system call should be executed in the isolated
+> > environment, the context is switched to the SCI page tables. Any
+> > further access to the kernel memory will generate a page fault. The
+> > page fault handler can verify that the access is safe and grant it
+> > or kill the task otherwise.
+> > 
+> > The initial SCI implementation allows access to any kernel data,
+> > but it limits access to the code in the following way:
+> > * calls and jumps to known code symbols without offset are allowed
+> > * calls and jumps into a known symbol with offset are allowed only
+> > if that symbol was already accessed and the offset is in the next
+> > page 
+> > * all other code access are blocked
+> > 
+> > After the isolated system call finishes, the mappings created
+> > during its execution are cleared.
+> > 
+> > The entire SCI page table is lazily freed at task exit() time.
+> 
+> So this basically uses a similar mechanism to the horrendous PTI CR3 
+> switching overhead whenever a syscall seeks "protection", which
+> overhead is only somewhat mitigated by PCID.
+> 
+> This might work on PTI-encumbered CPUs.
+> 
+> While AMD CPUs don't need PTI, nor do they have PCID.
+> 
+> So this feature is hurting the CPU maker who didn't mess up, and is 
+> hurting future CPUs that don't need PTI ..
+> 
+> I really don't like it where this is going. In a couple of years I
+> really  want to be able to think of PTI as a bad dream that is mostly
+> over  fortunately.
 
-This turns the problem from: "attackers can leverage any data/code that
-the kernel has mapped (anything)" to "attackers can leverage any
-code/data that the current syscall has faulted in".
+Perhaps ROP gadgets were a bad first example.  The research object of
+the current patch set is really to investigate eliminating sandboxing
+for containers.  As you know, current sandboxes like gVisor and Nabla
+try to reduce the exposure to horizontal exploits (ability of an
+untrusted tenant to exploit the shared kernel to attack another tenant)
+by running significant chunks of kernel emulation code in userspace to
+reduce exposure of the tenant to code in the shared kernel.  The price
+paid for this is pretty horrendous in performance terms, but the
+benefit is multi-tenant safety.
 
-That seems like a pretty restrictive change.
+The question we were looking into is if we used per-tenant in-kernel
+address space isolation to improve the security of kernel system calls
+such that either the exploit becomes detectable or its consequences
+bounce back only on the tenant trying the exploit, we could eliminate
+the emulation for that system call and instead pass it through to the
+kernel, thus thinning out the sandbox layer without losing the security
+benefits.
 
-> At this time we are not suggesting any API that will enable the system
-> calls isolation. Because of the overhead required for this, it should only
-> be activated for processes or containers we know should be untrusted. We
-> still have no actual numbers, but surely forcing page faults during system
-> call execution will not come for free.
+We are looking at other aspects as well, like can we simply run chunks
+of the kernel in the user's address space as the sanbox emulation
+currently does, or can we hide a tenant's data objects such that
+they're not easily accessible from an exploited kernel.
 
-What's the minimum number of faults that have to occur to handle the
-simplest dummy fault?
+James
+
