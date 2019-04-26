@@ -2,119 +2,140 @@ Return-Path: <SRS0=T836=S4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B768CC43219
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 00:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E035C43218
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD2B206C1
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 00:30:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556238628;
-	bh=ZsIbUeLOxUI7bxZ1I5VzBXBiV9Win2BFl2iIJvXToNg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=mcA2Cq46nMXmbvi1u3AXqMeU4JnMwOSceCdsLy4BRlFoXZmGKBbqsWX8dtUZuqy7z
-	 2xN0Na9qGkYEN7HTYOEplEg7lR1K2xNb+FBH3ErH89p3Uzma2s+sNfdZbQurO+bbYU
-	 ilRM3emCDdH2vpkUjxoWLiWar/4tnM8rxe/k9h5I=
+	by mail.kernel.org (Postfix) with ESMTP id 4CBD12089E
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:31:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbfDZAa1 (ORCPT
+        id S1726124AbfDZHbt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Apr 2019 20:30:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbfDZAa1 (ORCPT
+        Fri, 26 Apr 2019 03:31:49 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:29121 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725912AbfDZHbr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Apr 2019 20:30:27 -0400
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B61B206C1
-        for <linux-security-module@vger.kernel.org>; Fri, 26 Apr 2019 00:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556238626;
-        bh=ZsIbUeLOxUI7bxZ1I5VzBXBiV9Win2BFl2iIJvXToNg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=iJrHk0kZ/gFNcHup+yJO1IU/jiKvq8UcCebL6oFhxQKeGUYldajgOXnb8Lm30cTvi
-         qoug8qHyBklQTma6MI254eyqpURUHLsu8dWN1BxqRUCLiFTDBS4nAUlWh4w+ABxbe3
-         DPkxUu30oTX2FPFGPWHA277miT6mNp7tgeqvVZVA=
-Received: by mail-wr1-f51.google.com with SMTP id g3so1842623wrx.9
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2019 17:30:26 -0700 (PDT)
-X-Gm-Message-State: APjAAAXAVcgdP+PS3zDTV3v2NlMYfGiC2+7VklEZ0N/iJ43LKLcCj2hk
-        cicWBCDMvr2lejXoz2RTM05PwVs3JB7dqEkmSf49YQ==
-X-Google-Smtp-Source: APXvYqxbTskaCiO3hbeKzbx/74RUetFFRSKpivliZ4T8CAe9gU+OYeZj1yN2RbB4/grljATC54DI2BoSF0qT+eHhBmU=
-X-Received: by 2002:a5d:63c7:: with SMTP id c7mr12902589wrw.199.1556238625152;
- Thu, 25 Apr 2019 17:30:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
-In-Reply-To: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 25 Apr 2019 17:30:13 -0700
-X-Gmail-Original-Message-ID: <CALCETrWkYYh=L1nSO7GYt0FvMhjCcEaQiM2JEi3FfkJbYJFh2g@mail.gmail.com>
-Message-ID: <CALCETrWkYYh=L1nSO7GYt0FvMhjCcEaQiM2JEi3FfkJbYJFh2g@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] x86: introduce system calls addess space isolation
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Alexandre Chartre <alexandre.chartre@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>,
+        Fri, 26 Apr 2019 03:31:47 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Fri, 26 Apr 2019 00:31:44 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 77C0D412A1;
+        Fri, 26 Apr 2019 00:31:45 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jonathan Adams <jwadams@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linux-MM <linux-mm@kvack.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        <linux_dti@icloud.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <akpm@linux-foundation.org>, <kernel-hardening@lists.openwall.com>,
+        <linux-mm@kvack.org>, <will.deacon@arm.com>,
+        <ard.biesheuvel@linaro.org>, <kristen@linux.intel.com>,
+        <deneen.t.dock@intel.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v5 03/23] x86/mm: Introduce temporary mm structs
+Date:   Thu, 25 Apr 2019 17:11:23 -0700
+Message-ID: <20190426001143.4983-4-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
+References: <20190426001143.4983-1-namit@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 25, 2019 at 2:46 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
->
-> Hi,
->
-> Address space isolation has been used to protect the kernel from the
-> userspace and userspace programs from each other since the invention of the
-> virtual memory.
->
-> Assuming that kernel bugs and therefore vulnerabilities are inevitable it
-> might be worth isolating parts of the kernel to minimize damage that these
-> vulnerabilities can cause.
->
-> The idea here is to allow an untrusted user access to a potentially
-> vulnerable kernel in such a way that any kernel vulnerability they find to
-> exploit is either prevented or the consequences confined to their isolated
-> address space such that the compromise attempt has minimal impact on other
-> tenants or the protected structures of the monolithic kernel.  Although we
-> hope to prevent many classes of attack, the first target we're looking at
-> is ROP gadget protection.
->
-> These patches implement a "system call isolation (SCI)" mechanism that
-> allows running system calls in an isolated address space with reduced page
-> tables to prevent ROP attacks.
->
-> ROP attacks involve corrupting the stack return address to repoint it to a
-> segment of code you know exists in the kernel that can be used to perform
-> the action you need to exploit the system.
->
-> The idea behind the prevention is that if we fault in pages in the
-> execution path, we can compare target address against the kernel symbol
-> table.  So if we're in a function, we allow local jumps (and simply falling
-> of the end of a page) but if we're jumping to a new function it must be to
-> an external label in the symbol table.
+From: Andy Lutomirski <luto@kernel.org>
 
-That's quite an assumption.  The entry code at least uses .L labels.
-Do you get that right?
+Using a dedicated page-table for temporary PTEs prevents other cores
+from using - even speculatively - these PTEs, thereby providing two
+benefits:
 
-As far as I can see, most of what's going on here has very little to
-do with jumps and calls.  The benefit seems to come from making sure
-that the RET instruction actually goes somewhere that's already been
-faulted in.  Am I understanding right?
+(1) Security hardening: an attacker that gains kernel memory writing
+abilities cannot easily overwrite sensitive data.
 
---Andy
+(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
+remote page-tables.
+
+To do so a temporary mm_struct can be used. Mappings which are private
+for this mm can be set in the userspace part of the address-space.
+During the whole time in which the temporary mm is loaded, interrupts
+must be disabled.
+
+The first use-case for temporary mm struct, which will follow, is for
+poking the kernel text.
+
+[ Commit message was written by Nadav Amit ]
+
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ arch/x86/include/asm/mmu_context.h | 33 ++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 19d18fae6ec6..24dc3b810970 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -356,4 +356,37 @@ static inline unsigned long __get_current_cr3_fast(void)
+ 	return cr3;
+ }
+ 
++typedef struct {
++	struct mm_struct *mm;
++} temp_mm_state_t;
++
++/*
++ * Using a temporary mm allows to set temporary mappings that are not accessible
++ * by other CPUs. Such mappings are needed to perform sensitive memory writes
++ * that override the kernel memory protections (e.g., W^X), without exposing the
++ * temporary page-table mappings that are required for these write operations to
++ * other CPUs. Using a temporary mm also allows to avoid TLB shootdowns when the
++ * mapping is torn down.
++ *
++ * Context: The temporary mm needs to be used exclusively by a single core. To
++ *          harden security IRQs must be disabled while the temporary mm is
++ *          loaded, thereby preventing interrupt handler bugs from overriding
++ *          the kernel memory protection.
++ */
++static inline temp_mm_state_t use_temporary_mm(struct mm_struct *mm)
++{
++	temp_mm_state_t temp_state;
++
++	lockdep_assert_irqs_disabled();
++	temp_state.mm = this_cpu_read(cpu_tlbstate.loaded_mm);
++	switch_mm_irqs_off(NULL, mm, current);
++	return temp_state;
++}
++
++static inline void unuse_temporary_mm(temp_mm_state_t prev_state)
++{
++	lockdep_assert_irqs_disabled();
++	switch_mm_irqs_off(NULL, prev_state.mm, current);
++}
++
+ #endif /* _ASM_X86_MMU_CONTEXT_H */
+-- 
+2.17.1
+
