@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB90EC4321A
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EE5C4321A
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB7F208CB
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:45:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC831208CB
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:45:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vdYahecr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jRSkWPKF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbfD0GnK (ORCPT
+        id S1726309AbfD0GnG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 27 Apr 2019 02:43:10 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33820 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbfD0GnJ (ORCPT
+        Sat, 27 Apr 2019 02:43:06 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35748 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbfD0GnF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 27 Apr 2019 02:43:09 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d5so1988647plr.1;
-        Fri, 26 Apr 2019 23:43:09 -0700 (PDT)
+        Sat, 27 Apr 2019 02:43:05 -0400
+Received: by mail-pf1-f193.google.com with SMTP id t21so2760176pfh.2;
+        Fri, 26 Apr 2019 23:43:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wqvLZPneRcLgxY6Wjfk6EEQBPauaGcOxn9fq0yjJ9xE=;
-        b=vdYahecrwl2Sp5UawSR3og0bnv/oKfDwV/Dqodp6SG75rtt3oI1BxkHqScjMRc/B0U
-         ndpm0CSM99X5DI5nXyZ0qilWlZ5y+YmffvE0rzTsPOh9Lg0wVC5gzIbXO3T2rI/43jKw
-         dSv/fQEMrgklgF9DfRp0UTkxOOmbTA2q76DVrniyNWh8V594RE3EBRYYfPR9C72DIbVe
-         QvUfF6WjCix52aEKKarcvG6J8JGMJ6kiAHPNxAecwgyTiM6P6ST8UlxjffLYXWC/UN5g
-         Hhv9thRtl94b6Emad3qIhmqwC571N8N4kkx/zbp3oEc24WAmffQk4ZXiiSSJrBGsI7VY
-         gu0w==
+        bh=2uQh+p4niM1XazCyX0W8SClLNopGSLFeOTKZKD97XRE=;
+        b=jRSkWPKFy+aX307nFA9nwPtBSyUtI3Rx2wzXkDoawmNR9EBxnEgbgOuHqpJlUzURZT
+         sV7k69m+oa16kaqF4hrYU8VlNGgLedRPtIQMrWtFfI1lYATZNKlBhFfYsdwu71vQpo8l
+         4hsC4E1OYjLOCvcQc0ZNw7818nwUnGdICNM7KZF/Pj8oVL04L5HnrLC4hGuv9gcmfZac
+         QEF3y8KkPlAdKQa7pk8VGNHlHNoii/EZVaGEr6IiXqB8Q9AYGmnR5/+s61lipbxEVDy4
+         WVZil8tiOMGEBeIN6IOofRQtzUr/x76R5xEihGyGfY+KVuW7UGM6aZN17saLTTNxIC81
+         Y9Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=wqvLZPneRcLgxY6Wjfk6EEQBPauaGcOxn9fq0yjJ9xE=;
-        b=sBGy4iBLh+YH3Vxoc5sewmFwb6rcbAnc/LfYQ+mQ2MNO8Y4II2Cz6J2gZEyc2s1wEU
-         4fgP8YiMkq9MdEkZDEAQzeh65SK9/cCPBdwV60HOvlaKkgM5wB4bMl+/TpLLfYve2Fm4
-         5cdTiHY74Z6eGInaz3bQPwkomNOe5HsIGjUclYn6SfZbb7Zhu4iuu+GDXllRl+ckqhhD
-         D8nTbg7x55e3eUEgy6a4DG2XINGIfLFmrBqumCK51LzsdKv5lsBZgOAlvwHVVzBn+dkG
-         du37msilFuHAZDe4AXrVZkLQALtuE35lbLSbP+hJSOyIwnMAVh6c6lsHgMNjAqU1JN+R
-         t9GQ==
-X-Gm-Message-State: APjAAAWvfm7NzmDxx0yJ1YgvNqsw4OPVTp3mpWQNySQwrQ/Ev/XVN30K
-        yib+jqHHG3sT4M9DdreZHKA=
-X-Google-Smtp-Source: APXvYqyiprnnWU4rXtsHhhC4I5UqVMx78ccNfm1X35wazpAaZSJma1EHcKW1CFUxAhCYo5lEBNcLEA==
-X-Received: by 2002:a17:902:aa83:: with SMTP id d3mr8074837plr.108.1556347388411;
-        Fri, 26 Apr 2019 23:43:08 -0700 (PDT)
+        bh=2uQh+p4niM1XazCyX0W8SClLNopGSLFeOTKZKD97XRE=;
+        b=eQRV5guHUU2XfBvJ7o5ErGNaf4RMF6S2teOdi7D5Ob1F8dg6VrxlMlWVZL6thVr5vc
+         S2MkNjdLLi/mj1rw7+XRo2QMpi5dsjwnxU3HKgw6L9b7Aucf3ny7G8pUzc8cy3z0SwpN
+         6IUJEYPMC47/KK7VlODDH1zN0wTBGgyP3vaSP1siwSS5uQw8UMs8RVWirE9OsL4YTKcT
+         mQwk5QkCNMIIi7otJv2wYNKaTh9GbPQE0t4thZRyP+SD+6lQftkeYvpZjc9x38csR1Xa
+         Wla7wAGIZYS+PxOqe8gpt6plGDECW0uAnLCNrewhZV9vxR2K07W8GhG1EKDb6SO6nM6k
+         NZ4A==
+X-Gm-Message-State: APjAAAVR853iMmTG0Xk/iTIM3kSlkaCTjcrNx2tX89k5vX0vLwnyURMf
+        HD5JGc5ZvIVE9oXf2lNvp4E=
+X-Google-Smtp-Source: APXvYqxfDuRpBbYxO71iQgRCpp9YwcxdysZGYp8xW7ZBvNhCbiRnBK6qmFG1IHuGhuou8D2zduF20Q==
+X-Received: by 2002:a62:26c1:: with SMTP id m184mr12194274pfm.102.1556347384381;
+        Fri, 26 Apr 2019 23:43:04 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.07
+        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Apr 2019 23:43:07 -0700 (PDT)
+        Fri, 26 Apr 2019 23:43:03 -0700 (PDT)
 From:   nadav.amit@gmail.com
 To:     Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
@@ -71,10 +71,13 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v6 04/24] x86/mm: Save debug registers when loading a temporary mm
-Date:   Fri, 26 Apr 2019 16:22:43 -0700
-Message-Id: <20190426232303.28381-5-nadav.amit@gmail.com>
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v6 01/24] Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+Date:   Fri, 26 Apr 2019 16:22:40 -0700
+Message-Id: <20190426232303.28381-2-nadav.amit@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426232303.28381-1-nadav.amit@gmail.com>
 References: <20190426232303.28381-1-nadav.amit@gmail.com>
@@ -84,67 +87,165 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Nadav Amit <namit@vmware.com>
 
-Prevent user watchpoints from mistakenly firing while the temporary mm
-is being used. As the addresses of the temporary mm might overlap those
-of the user-process, this is necessary to prevent wrong signals or worse
-things from happening.
+text_mutex is currently expected to be held before text_poke() is
+called, but kgdb does not take the mutex, and instead *supposedly*
+ensures the lock is not taken and will not be acquired by any other core
+while text_poke() is running.
+
+The reason for the "supposedly" comment is that it is not entirely clear
+that this would be the case if gdb_do_roundup is zero.
+
+Create two wrapper functions, text_poke() and text_poke_kgdb(), which do
+or do not run the lockdep assertion respectively.
+
+While we are at it, change the return code of text_poke() to something
+meaningful. One day, callers might actually respect it and the existing
+BUG_ON() when patching fails could be removed. For kgdb, the return
+value can actually be used.
 
 Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/mmu_context.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ arch/x86/include/asm/text-patching.h |  1 +
+ arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
+ arch/x86/kernel/kgdb.c               | 11 +++---
+ 3 files changed, 45 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 24dc3b810970..93dff1963337 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -13,6 +13,7 @@
- #include <asm/tlbflush.h>
- #include <asm/paravirt.h>
- #include <asm/mpx.h>
-+#include <asm/debugreg.h>
- 
- extern atomic64_t last_mm_ctx_id;
- 
-@@ -380,6 +381,21 @@ static inline temp_mm_state_t use_temporary_mm(struct mm_struct *mm)
- 	lockdep_assert_irqs_disabled();
- 	temp_state.mm = this_cpu_read(cpu_tlbstate.loaded_mm);
- 	switch_mm_irqs_off(NULL, mm, current);
-+
-+	/*
-+	 * If breakpoints are enabled, disable them while the temporary mm is
-+	 * used. Userspace might set up watchpoints on addresses that are used
-+	 * in the temporary mm, which would lead to wrong signals being sent or
-+	 * crashes.
-+	 *
-+	 * Note that breakpoints are not disabled selectively, which also causes
-+	 * kernel breakpoints (e.g., perf's) to be disabled. This might be
-+	 * undesirable, but still seems reasonable as the code that runs in the
-+	 * temporary mm should be short.
-+	 */
-+	if (hw_breakpoint_active())
-+		hw_breakpoint_disable();
-+
- 	return temp_state;
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index e85ff65c43c3..f8fc8e86cf01 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -35,6 +35,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+  * inconsistent instruction while you patch.
+  */
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
++extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 9a79c7808f9c..0a814d73547a 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -679,18 +679,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 	return addr;
  }
  
-@@ -387,6 +403,13 @@ static inline void unuse_temporary_mm(temp_mm_state_t prev_state)
+-/**
+- * text_poke - Update instructions on a live kernel
+- * @addr: address to modify
+- * @opcode: source of the copy
+- * @len: length to copy
+- *
+- * Only atomic text poke/set should be allowed when not doing early patching.
+- * It means the size must be writable atomically and the address must be aligned
+- * in a way that permits an atomic write. It also makes sure we fit on a single
+- * page.
+- */
+-void *text_poke(void *addr, const void *opcode, size_t len)
++static void *__text_poke(void *addr, const void *opcode, size_t len)
  {
- 	lockdep_assert_irqs_disabled();
- 	switch_mm_irqs_off(NULL, prev_state.mm, current);
-+
-+	/*
-+	 * Restore the breakpoints if they were disabled before the temporary mm
-+	 * was loaded.
-+	 */
-+	if (hw_breakpoint_active())
-+		hw_breakpoint_restore();
+ 	unsigned long flags;
+ 	char *vaddr;
+@@ -703,8 +692,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	 */
+ 	BUG_ON(!after_bootmem);
+ 
+-	lockdep_assert_held(&text_mutex);
+-
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+ 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+@@ -733,6 +720,43 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	return addr;
  }
  
- #endif /* _ASM_X86_MMU_CONTEXT_H */
++/**
++ * text_poke - Update instructions on a live kernel
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ */
++void *text_poke(void *addr, const void *opcode, size_t len)
++{
++	lockdep_assert_held(&text_mutex);
++
++	return __text_poke(addr, opcode, len);
++}
++
++/**
++ * text_poke_kgdb - Update instructions on a live kernel by kgdb
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ *
++ * Context: should only be used by kgdb, which ensures no other core is running,
++ *	    despite the fact it does not hold the text_mutex.
++ */
++void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
++{
++	return __text_poke(addr, opcode, len);
++}
++
+ static void do_sync_core(void *info)
+ {
+ 	sync_core();
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 4ff6b4cdb941..2b203ee5b879 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -759,13 +759,13 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (!err)
+ 		return err;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		return -EBUSY;
+-	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+-		  BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err)
+ 		return err;
+@@ -784,12 +784,13 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		goto knl_write;
+-	text_poke((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+ 		goto knl_write;
 -- 
 2.17.1
 
