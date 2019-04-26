@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 420A5C43219
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE3BC43218
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 135AD2087C
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D363A2087C
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWiWMfB1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JlRIHgbr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbfD0GnV (ORCPT
+        id S1726539AbfD0Goi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 27 Apr 2019 02:43:21 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44006 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbfD0GnU (ORCPT
+        Sat, 27 Apr 2019 02:44:38 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43190 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726479AbfD0GnR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 27 Apr 2019 02:43:20 -0400
-Received: by mail-pf1-f195.google.com with SMTP id e67so2741608pfe.10;
-        Fri, 26 Apr 2019 23:43:19 -0700 (PDT)
+        Sat, 27 Apr 2019 02:43:17 -0400
+Received: by mail-pl1-f196.google.com with SMTP id n8so2559750plp.10;
+        Fri, 26 Apr 2019 23:43:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CLKl6NZzJuOK2yM4IgvyVy0XzBWA5gDBiZYSHfLNQ00=;
-        b=LWiWMfB1NCPlUWHzx7KNU9QCQPe3RdgA8qCNPze1WHQjmMq2EnzDsMlPceyPd+MHEm
-         QMnqsza7hwGkI6ZFGgTOeRjeOEfXCrRJYup1t+tZNnEBvqMdc01pTHEj2bJKvz7BRo7K
-         E/q3JXY24fjwRSyZU/Tw4XNKZ1nfyh4euDeX0+jZD8/F9QgFlj4BNpu6QQplyXiEhS74
-         PVZ8Bi1kj7P4bpKFaIDD7kzaPwPpjBstpFpZumGDsgFZsa4oA3jDKygoO8TIjMEYq1h+
-         8j/kDmbTP0+sW4oBzq9jDl4H2CBcWV2hkh9XtxTKhVDjbhF8cy7tl1t7BO8Iros2slYv
-         iP/w==
+        bh=3mFI7V2IpbwOhuCcp+g9CO2dE2meFXsvyyAeb18NWyo=;
+        b=JlRIHgbr6HB0GM/dfrBCsDnNLxTkOKzTB7qYCbAx4tDSjiPWdWErWZcgNMKz3646h4
+         C8cKj9bZkmi6cPWikKj5uJAC7SrSg/qfrmI03cXhBRcOJHEMan3BYUSQ1ScXOsNa4u3Z
+         IDQ4DfzWzmEsKN3rKTGM5uTvN695pUVNWWV4a8LMMvLzAhr7fWiHf2k7ZmkakgE11lMg
+         wbrOSfmIb0CTjB/azGiS0/j+OjbriGytqXhtU6Bd27x2yAPLaWXYIt792EgmySvUAGOQ
+         9VF/satnq8MCbRYyAQp+FRH27QsFCLaAp8PdnQobxJM8asT3n363jT4JX9FD5F/9ebkE
+         0Uqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=CLKl6NZzJuOK2yM4IgvyVy0XzBWA5gDBiZYSHfLNQ00=;
-        b=lI+mvh/uuXJUbpWZjmK7o5G+JDl5zlSN1dPZXPc5jHKYv9uqb2YZtH4g8H1lVX5zoO
-         ssDRG8enaXxGjHII4qKuJHOOLP3UBGTFruxuajjDaEzAN3SSp+PpMz4z5k7aqTEd5OYM
-         BVxqSEfyXbLj/SYbBF6EVkcivLJVMLIhjQY59QuRWi8cJ2d1QNz9njg6OJRj+Ylcm3wc
-         VjhTfsd2EuVUCvGh+/nD0AcaaAx1qOWW8Xu6foGL+EML3ud6cki3Q2fXHuFTyKoUIFfk
-         X43kVEE/s++RuR5BIB5qWzZQXZE40feSFCbavrHG2h7AaamQucZz3hHsH1k+C7BvzKPl
-         DWtA==
-X-Gm-Message-State: APjAAAWriFohq44B0F7Gk1qnO8TjjZ7N/nZcxrhgLYE8U0gWcI86Yjdp
-        giaz6Jtyjru8xoJdfCrXuwM=
-X-Google-Smtp-Source: APXvYqx8IDeCvv7F4Tl+g2zi6Qtjw6+CBIajqUbAMvc7uvXy5z6A8pYUXx0y0vJXO744BzKTEFFO2g==
-X-Received: by 2002:aa7:91d6:: with SMTP id z22mr42068121pfa.242.1556347399283;
-        Fri, 26 Apr 2019 23:43:19 -0700 (PDT)
+        bh=3mFI7V2IpbwOhuCcp+g9CO2dE2meFXsvyyAeb18NWyo=;
+        b=Fb2V3scDSuIaD9RsJA5v4YGq3jzdnjbX11GqbT381MORxzQExTxtzQQd+InbiJk2I5
+         8nwCHLZlabvHLnuUb1X7q1n6G6Lq/gBi1Od9CKc2nioFZsnYX1ZjNYuWLsdw+0Tjn4TH
+         f7Wd0KCiZMqONkUfm7GJk0eQ7meuGsgqiOqs3QLnC8wND/R5ciH+kz4mRZ18UKMYah/V
+         uA5dSN2TFrtqLR48WmHiiqqzX2wyjKBrryKLjtqVXEgmq29oyr7m6Vhbfhs2YTdquxdN
+         RMKcwGZXCEmv1EHCyrC1ziVZ2SO2JHe/N7aE0M+yEtb4SqCs3alrnj/ITGLuuLSXP9z+
+         kSsw==
+X-Gm-Message-State: APjAAAUZpDRKLHtbae36L/n0J+5S0Y0DAH76955DFPID1Gs16v7mNlo9
+        dBSgrrl4k4tf2pSTUcT6yI8=
+X-Google-Smtp-Source: APXvYqx2WhBZnJIn8mqH1b7ixt4GF/6k4yp110M4lMdf7eXq6Mz7eqmVNfTsfdPSyk5JMfubTGyIEQ==
+X-Received: by 2002:a17:902:2927:: with SMTP id g36mr48053244plb.6.1556347396829;
+        Fri, 26 Apr 2019 23:43:16 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.16
+        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Apr 2019 23:43:18 -0700 (PDT)
+        Fri, 26 Apr 2019 23:43:16 -0700 (PDT)
 From:   nadav.amit@gmail.com
 To:     Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
@@ -72,9 +72,9 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
         Nadav Amit <namit@vmware.com>
-Subject: [PATCH v6 10/24] x86/ftrace: Set trampoline pages as executable
-Date:   Fri, 26 Apr 2019 16:22:49 -0700
-Message-Id: <20190426232303.28381-11-nadav.amit@gmail.com>
+Subject: [PATCH v6 09/24] x86/kgdb: Avoid redundant comparison of patched code
+Date:   Fri, 26 Apr 2019 16:22:48 -0700
+Message-Id: <20190426232303.28381-10-nadav.amit@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426232303.28381-1-nadav.amit@gmail.com>
 References: <20190426232303.28381-1-nadav.amit@gmail.com>
@@ -84,52 +84,63 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Nadav Amit <namit@vmware.com>
 
-Since alloc_module() will not set the pages as executable soon, set
-ftrace trampoline pages as executable after they are allocated.
+text_poke() already ensures that the written value is the correct one
+and fails if that is not the case. There is no need for an additional
+comparison. Remove it.
 
-For the time being, do not change ftrace to use the text_poke()
-interface. As a result, ftrace still breaks W^X.
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/ftrace.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/kernel/kgdb.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-index ef49517f6bb2..53ba1aa3a01f 100644
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -730,6 +730,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	unsigned long end_offset;
- 	unsigned long op_offset;
- 	unsigned long offset;
-+	unsigned long npages;
- 	unsigned long size;
- 	unsigned long retq;
- 	unsigned long *ptr;
-@@ -762,6 +763,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 		return 0;
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 2b203ee5b879..13b13311b792 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -747,7 +747,6 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long ip)
+ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ {
+ 	int err;
+-	char opc[BREAK_INSTR_SIZE];
  
- 	*tramp_size = size + RET_SIZE + sizeof(void *);
-+	npages = DIV_ROUND_UP(*tramp_size, PAGE_SIZE);
+ 	bpt->type = BP_BREAKPOINT;
+ 	err = probe_kernel_read(bpt->saved_instr, (char *)bpt->bpt_addr,
+@@ -766,11 +765,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 		return -EBUSY;
+ 	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+ 		       BREAK_INSTR_SIZE);
+-	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+-	if (err)
+-		return err;
+-	if (memcmp(opc, arch_kgdb_ops.gdb_bpt_instr, BREAK_INSTR_SIZE))
+-		return -EINVAL;
+ 	bpt->type = BP_POKE_BREAKPOINT;
  
- 	/* Copy ftrace_caller onto the trampoline memory */
- 	ret = probe_kernel_read(trampoline, (void *)start_offset, size);
-@@ -806,6 +808,12 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	/* ALLOC_TRAMP flags lets us know we created it */
- 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
+ 	return err;
+@@ -778,9 +772,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
  
-+	/*
-+	 * Module allocation needs to be completed by making the page
-+	 * executable. The page is still writable, which is a security hazard,
-+	 * but anyhow ftrace breaks W^X completely.
-+	 */
-+	set_memory_x((unsigned long)trampoline, npages);
- 	return (unsigned long)trampoline;
- fail:
- 	tramp_free(trampoline, *tramp_size);
+ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ {
+-	int err;
+-	char opc[BREAK_INSTR_SIZE];
+-
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
+ 	/*
+@@ -791,10 +782,7 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 		goto knl_write;
+ 	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
+ 		       BREAK_INSTR_SIZE);
+-	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+-	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+-		goto knl_write;
+-	return err;
++	return 0;
+ 
+ knl_write:
+ 	return probe_kernel_write((char *)bpt->bpt_addr,
 -- 
 2.17.1
 
