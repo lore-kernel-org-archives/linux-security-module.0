@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF5FC4321D
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF05C43218
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F18B2084F
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:32:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F31D02084F
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbfDZHcB (ORCPT
+        id S1726436AbfDZHc6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:32:01 -0400
+        Fri, 26 Apr 2019 03:32:58 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:29121 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726326AbfDZHcA (ORCPT
+        by vger.kernel.org with ESMTP id S1726316AbfDZHb7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Apr 2019 03:32:00 -0400
+        Fri, 26 Apr 2019 03:31:59 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Fri, 26 Apr 2019 00:31:44 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id B36F4412A2;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id AA61841299;
         Fri, 26 Apr 2019 00:31:45 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -44,9 +44,9 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         <deneen.t.dock@intel.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
         Nadav Amit <namit@vmware.com>
-Subject: [PATCH v5 10/23] x86/kprobes: Set instruction page as executable
-Date:   Thu, 25 Apr 2019 17:11:30 -0700
-Message-ID: <20190426001143.4983-11-namit@vmware.com>
+Subject: [PATCH v5 09/23] x86/ftrace: Set trampoline pages as executable
+Date:   Thu, 25 Apr 2019 17:11:29 -0700
+Message-ID: <20190426001143.4983-10-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
 References: <20190426001143.4983-1-namit@vmware.com>
@@ -58,62 +58,52 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Set the page as executable after allocation.  This patch is a
-preparatory patch for a following patch that makes module allocated
-pages non-executable.
+Since alloc_module() will not set the pages as executable soon, set
+ftrace trampoline pages as executable after they are allocated.
 
-While at it, do some small cleanup of what appears to be unnecessary
-masking.
+For the time being, do not change ftrace to use the text_poke()
+interface. As a result, ftrace still breaks W^X.
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ arch/x86/kernel/ftrace.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index a034cb808e7e..1591852d3ac4 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -431,8 +431,20 @@ void *alloc_insn_page(void)
- 	void *page;
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index ef49517f6bb2..53ba1aa3a01f 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -730,6 +730,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	unsigned long end_offset;
+ 	unsigned long op_offset;
+ 	unsigned long offset;
++	unsigned long npages;
+ 	unsigned long size;
+ 	unsigned long retq;
+ 	unsigned long *ptr;
+@@ -762,6 +763,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 		return 0;
  
- 	page = module_alloc(PAGE_SIZE);
--	if (page)
--		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
-+	if (!page)
-+		return NULL;
-+
-+	/*
-+	 * First make the page read-only, and only then make it executable to
-+	 * prevent it from being W+X in between.
-+	 */
-+	set_memory_ro((unsigned long)page, 1);
-+
-+	/*
-+	 * TODO: Once additional kernel code protection mechanisms are set, ensure
-+	 * that the page was not maliciously altered and it is still zeroed.
-+	 */
-+	set_memory_x((unsigned long)page, 1);
+ 	*tramp_size = size + RET_SIZE + sizeof(void *);
++	npages = DIV_ROUND_UP(*tramp_size, PAGE_SIZE);
  
- 	return page;
- }
-@@ -440,8 +452,12 @@ void *alloc_insn_page(void)
- /* Recover page to RW mode before releasing it */
- void free_insn_page(void *page)
- {
--	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
--	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
-+	/*
-+	 * First make the page non-executable, and only then make it writable to
-+	 * prevent it from being W+X in between.
-+	 */
-+	set_memory_nx((unsigned long)page, 1);
-+	set_memory_rw((unsigned long)page, 1);
- 	module_memfree(page);
- }
+ 	/* Copy ftrace_caller onto the trampoline memory */
+ 	ret = probe_kernel_read(trampoline, (void *)start_offset, size);
+@@ -806,6 +808,12 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	/* ALLOC_TRAMP flags lets us know we created it */
+ 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
  
++	/*
++	 * Module allocation needs to be completed by making the page
++	 * executable. The page is still writable, which is a security hazard,
++	 * but anyhow ftrace breaks W^X completely.
++	 */
++	set_memory_x((unsigned long)trampoline, npages);
+ 	return (unsigned long)trampoline;
+ fail:
+ 	tramp_free(trampoline, *tramp_size);
 -- 
 2.17.1
 
