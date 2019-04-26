@@ -2,111 +2,166 @@ Return-Path: <SRS0=T836=S4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 144EFC43219
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 16:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF53CC43218
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 18:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7C9F208CA
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 16:43:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E99920679
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 18:02:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="G6CRq2cv"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="LO2yBP/4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbfDZQnP (ORCPT
+        id S1726116AbfDZSCz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Apr 2019 12:43:15 -0400
-Received: from mail-eopbgr710084.outbound.protection.outlook.com ([40.107.71.84]:41632
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726167AbfDZQnP (ORCPT
+        Fri, 26 Apr 2019 14:02:55 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40983 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbfDZSCz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Apr 2019 12:43:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MLLKAhzdHx7DUdYm/ixbvignsGY2pog+oWt8K53xdOE=;
- b=G6CRq2cvYPDcqznoif5lXD2FoBWbIhBrzH3TNJHAV+1oxm37LjqntTt+xfdFz/n4bOApsZPnhRfOvtReVFRFp+zxQI7e2/tlpTVvoCEEn08OI6WeoUMrzfPa59/1zZiHvrExm/K2BPJThdXo4lM3MrnL0ufX4P0BsMbAXeLZMPg=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4903.namprd05.prod.outlook.com (52.135.235.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.6; Fri, 26 Apr 2019 16:43:09 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::e862:1b1b:7665:8094]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::e862:1b1b:7665:8094%3]) with mapi id 15.20.1835.010; Fri, 26 Apr 2019
- 16:43:09 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
+        Fri, 26 Apr 2019 14:02:55 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f6so1969089pgs.8
+        for <linux-security-module@vger.kernel.org>; Fri, 26 Apr 2019 11:02:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:date:message-id:subject
+         :references:in-reply-to:to:cc;
+        bh=uf9+Gc4IGjm5bXfQmbt+aGr/dzzLVRS2xZVZ9HE9m58=;
+        b=LO2yBP/43Gaxq2G427F4quiP0FFiCIk+EbiXVQe5DTb0hxctE2AttHWb6tWuexLs3L
+         ZkgG1bwlvK7lyTAodQcHTtnOIHnbCFp9kz0q5A0+btCGRUTPSe0ZDv/yUcUGoaI4Rnlk
+         POZD7BlXQwFPt1fFpDSqeXtHETEWLhggiXmUS7fRcPEHbEKMnALPeB2xOwiFoJBB6XqV
+         doRFYnnnMI40ZmQb8mE1Lgw+qjcbkk2g59wZvyeOR7s+5xpjLqhxr0BhfZT+vtLzmeT2
+         pNJbsy6DDny9FxIJnnFyBwYu1AkprSd5oSgpU/8x9kx6LPOL9cmTqq+QBhTSJsDQVwa+
+         NiJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version:date
+         :message-id:subject:references:in-reply-to:to:cc;
+        bh=uf9+Gc4IGjm5bXfQmbt+aGr/dzzLVRS2xZVZ9HE9m58=;
+        b=SdcMb8gzLDBpz99YJ9v3+p1cUHspbrorSq5D13bg7E8hYC5yNBIeZzmVjI9HdJXTd9
+         wuIpQ5slzP8ub1q4GFskQQvzSE0nMFRe1BYQ18U3BAvw+nrAfGhV9U6ee8SLnU88RHp2
+         m6MQyxCbqpvyYpVriAfqw+o6Sn3tZAeppFoaiwBHTyaYz3mZ63whFpxkSQJ+8YpfvtnY
+         zy+Tg61XIUYlYK8WnWqG/VaGnkiUnvCWlZ+iPs+YIsdtPmHczqtrOhpXLfPkKvB69mc+
+         lJ1HK9TqBPpWFpDw1UT8HSz3gFKZsE9TYSDNDZ0nYCNHMLhhcwVa7W5VseMI7cmvPBCV
+         H8jQ==
+X-Gm-Message-State: APjAAAUlDAm5Zft3kFs4NMGeJQVWQjtx/qJAJwM6g9J68HUrH0R7UmSO
+        3zFb4M2SWaiBj/ZKYb4fO2OWEw==
+X-Google-Smtp-Source: APXvYqzBEXuTEM05o6uGn8vlD4CMCKRLEInJ6zCYpq9KPk9r3ASAk9h3Sp5XQ3azdexwEX66AO8sKw==
+X-Received: by 2002:a62:e213:: with SMTP id a19mr46999249pfi.85.1556301774455;
+        Fri, 26 Apr 2019 11:02:54 -0700 (PDT)
+Received: from ?IPv6:2601:647:5803:15b9:2926:d41b:33e7:d8df? ([2601:647:5803:15b9:2926:d41b:33e7:d8df])
+        by smtp.gmail.com with ESMTPSA id f8sm8533429pfk.88.2019.04.26.11.02.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Apr 2019 11:02:53 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Date:   Fri, 26 Apr 2019 10:40:18 -0700
+Message-Id: <8E695557-1CD2-431A-99CC-49A4E8247BAE@amacapital.net>
+Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call isolation
+References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com> <1556228754-12996-3-git-send-email-rppt@linux.ibm.com> <627d9321-466f-c4ed-c658-6b8567648dc6@intel.com> <1556290658.2833.28.camel@HansenPartnership.com> <54090243-E4C7-4C66-8025-AFE0DF5DF337@amacapital.net> <1556291961.2833.42.camel@HansenPartnership.com>
+In-Reply-To: <1556291961.2833.42.camel@HansenPartnership.com>
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        linux-kernel@vger.kernel.org,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
         Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "deneen.t.dock@intel.com" <deneen.t.dock@intel.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: Re: [PATCH v5 14/23] x86/mm/cpa: Add set_direct_map_ functions
-Thread-Topic: [PATCH v5 14/23] x86/mm/cpa: Add set_direct_map_ functions
-Thread-Index: AQHU/E7LDKApHlfkUkuITMJWRFardKZOpaMA
-Date:   Fri, 26 Apr 2019 16:43:09 +0000
-Message-ID: <636228FC-71D6-418F-B671-4D6A3B69342C@vmware.com>
-References: <20190426001143.4983-1-namit@vmware.com>
- <20190426001143.4983-15-namit@vmware.com>
- <CAADWXX8yZJ9Z4yfqG9wQcb2r+0O7VCk2uQLcOU1=-BOnYhjnow@mail.gmail.com>
-In-Reply-To: <CAADWXX8yZJ9Z4yfqG9wQcb2r+0O7VCk2uQLcOU1=-BOnYhjnow@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 79778191-c6b0-4e1c-eb4a-08d6ca6643f9
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR05MB4903;
-x-ms-traffictypediagnostic: BYAPR05MB4903:
-x-microsoft-antispam-prvs: <BYAPR05MB4903D9CE7FDA7C97EA7CB71ED03E0@BYAPR05MB4903.namprd05.prod.outlook.com>
-x-forefront-prvs: 001968DD50
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(346002)(396003)(366004)(189003)(199004)(7416002)(4326008)(7736002)(476003)(66476007)(305945005)(25786009)(6512007)(2906002)(3846002)(6116002)(66066001)(8936002)(446003)(66446008)(186003)(64756008)(486006)(4744005)(66556008)(11346002)(6246003)(2616005)(26005)(53936002)(68736007)(5660300002)(73956011)(256004)(86362001)(66946007)(102836004)(53546011)(6506007)(76116006)(6436002)(54906003)(71200400001)(76176011)(81166006)(83716004)(316002)(99286004)(6916009)(81156014)(97736004)(8676002)(36756003)(6486002)(229853002)(33656002)(71190400001)(82746002)(478600001)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4903;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: ch5Q0ftsms5PAZYP3L25ycivx2UG2U3d4o7m19Iy/OP40CSsWfsHcpUUdXi9MCzYmwpGGwi1vwR0NLdqooqHVlLTWv+t8ePq5qu8eoBao38U+kz+81lEM95jwcfwKRMRWvOqNto+HVEBgQ4z9/1W241V2aTWioNfAxsyWGSHo06vTtkkdumC1LK+knuW/12aZvfsmgkL+cN4dCRNcHRjI7/JkJlMZXkkhhQcyZMvOTpIN6lm4QQHakJYxaJ5K9mprXnfgZEjxVi9EmL1eXTztnxBbUA5GEqLAHa+J7KyBZFK3RAkrQyd6t7A9g0LZb0yM1THi17z/lQX8EtNs6Qml8+spixG9j7L+2A2i95SqBjyaRBSyKfOgqRu1lyTcrHPjDy+FbOD7X5KYXzYfO8t+TPNfeUh0mRP4zcqhvfqkyo=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D1C68EF185691D48BD87873B5B102692@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79778191-c6b0-4e1c-eb4a-08d6ca6643f9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Apr 2019 16:43:09.2432
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4903
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+X-Mailer: iPhone Mail (16E227)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBPbiBBcHIgMjYsIDIwMTksIGF0IDk6NDAgQU0sIExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0Bs
-aW51eC1mb3VuZGF0aW9uLm9yZz4gd3JvdGU6DQo+IA0KPiBOYWRhdiwNCj4gDQo+IEkgZ2V0DQo+
-IA0KPiAgICAgICBkbWFyYz1mYWlsIChwPVFVQVJBTlRJTkUgc3A9Tk9ORSBkaXM9UVVBUkFOVElO
-RSkgaGVhZGVyLmZyb209dm13YXJlLmNvbQ0KPiANCj4gZm9yIHRoZXNlIGVtYWlscywgYmVjYXVz
-ZSB0aGV5IGxhY2sgdGhlIHZtd2FyZSBES0lNIHNpZ25hdHVyZS4NCj4gDQo+IEl0IGNsZWFybHkg
-ZGlkIGdvIHRocm91Z2ggc29tZSB2bXdhcmUgbWFpbCBzZXJ2ZXJzLCBidXQgYXBwYXJlbnRseSBu
-b3QNCj4gdGhlICpyaWdodCogZXh0ZXJuYWwgdm13YXJlIFNNVFAgZ2F0ZXdheS4NCj4gDQo+IFBs
-ZWFzZSBjaGVjayB3aXRoIHZtd2FyZSBNSVMgd2hhdCB0aGUgcmlnaHQgU01UUCBzZXR1cCBmb3Ig
-Z2l0LXNlbmQtZW1haWwgaXMuDQoNCkVyci4uIFNvcnJ5IGZvciB0aGF0LiBGb3IgdGhlIHRpbWUg
-YmVpbmcgSeKAmWxsIHVzZSBnbWFpbCBpbnN0ZWFkLg0KDQo=
+
+
+> On Apr 26, 2019, at 8:19 AM, James Bottomley <James.Bottomley@hansenpartne=
+rship.com> wrote:
+>=20
+> On Fri, 2019-04-26 at 08:07 -0700, Andy Lutomirski wrote:
+>>> On Apr 26, 2019, at 7:57 AM, James Bottomley <James.Bottomley@hanse
+>>> npartnership.com> wrote:
+>>>=20
+>>>>> On Fri, 2019-04-26 at 07:46 -0700, Dave Hansen wrote:
+>>>>> On 4/25/19 2:45 PM, Mike Rapoport wrote:
+>>>>> After the isolated system call finishes, the mappings created
+>>>>> during its execution are cleared.
+>>>>=20
+>>>> Yikes.  I guess that stops someone from calling write() a bunch
+>>>> of times on every filesystem using every block device driver and
+>>>> all the DM code to get a lot of code/data faulted in.  But, it
+>>>> also means not even long-running processes will ever have a
+>>>> chance of behaving anything close to normally.
+>>>>=20
+>>>> Is this something you think can be rectified or is there
+>>>> something fundamental that would keep SCI page tables from being
+>>>> cached across different invocations of the same syscall?
+>>>=20
+>>> There is some work being done to look at pre-populating the
+>>> isolated address space with the expected execution footprint of the
+>>> system call, yes.  It lessens the ROP gadget protection slightly
+>>> because you might find a gadget in the pre-populated code, but it
+>>> solves a lot of the overhead problem.
+>>=20
+>> I=E2=80=99m not even remotely a ROP expert, but: what stops a ROP payload=
+
+>> from using all the =E2=80=9Cfault-in=E2=80=9D gadgets that exist =E2=80=94=
+ any function that
+>> can return on an error without doing to much will fault in the whole
+>> page containing the function.
+>=20
+> The address space pre-population is still per syscall, so you don't get
+> access to the code footprint of a different syscall.  So the isolated
+> address space is created anew for every system call, it's just pre-
+> populated with that system call's expected footprint.
+
+That=E2=80=99s not what I mean. Suppose I want to use a ROP gadget in vmallo=
+c(), but vmalloc isn=E2=80=99t in the page tables. Then first push vmalloc i=
+tself into the stack. As long as RDI contains a sufficiently ridiculous valu=
+e, it should just return without doing anything. And it can return right bac=
+k into the ROP gadget, which is now available.
+
+>=20
+>> To improve this, we would want some thing that would try to check
+>> whether the caller is actually supposed to call the callee, which is
+>> more or less the hard part of CFI.  So can=E2=80=99t we just do CFI and c=
+all
+>> it a day?
+>=20
+> By CFI you mean control flow integrity?  In theory I believe so, yes,
+> but in practice doesn't it require a lot of semantic object information
+> which is easy to get from higher level languages like java but a bit
+> more difficult for plain C.
+
+Yes. As I understand it, grsecurity instruments gcc to create some kind of h=
+ash of all function signatures. Then any indirect call can effectively verif=
+y that it=E2=80=99s calling a function of the right type. And every return v=
+erified a cookie.
+
+On CET CPUs, RET gets checked directly, and I don=E2=80=99t see the benefit o=
+f SCI.
+
+>=20
+>> On top of that, a robust, maintainable implementation of this thing
+>> seems very complicated =E2=80=94 for example, what happens if vfree() get=
+s
+>> called?
+>=20
+> Address space Local vs global object tracking is another thing on our
+> list.  What we'd probably do is verify the global object was allowed to
+> be freed and then hand it off safely to the main kernel address space.
+>=20
+>=20
+
+This seems exceedingly complicated.=
