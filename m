@@ -2,105 +2,109 @@ Return-Path: <SRS0=T836=S4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C4D8C43219
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 15:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A78A5C43218
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 16:40:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57246205ED
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 15:48:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HkHXy+C7"
+	by mail.kernel.org (Postfix) with ESMTP id 6EAA420B7C
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 16:40:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556296842;
+	bh=aYGrbI1SERNmOyxhJ75tfrfLL0vn3KNBa/t1RILo5+8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=PNzeDDX/i9sP9o2SJhMj0r02VZ71cGIp26RTJGVlIZtijRyqzzN0ayxfM6Vrf0n1R
+	 z5xgGvSVi/k2dzQ6tQk+swK7m4WZwM8SSvXbVJ0Y99WSVU93JCS8osjbHGeS1iS7h6
+	 CX8LEM6HR9lHv55PoIZ+d/OddhY2g3mWlBgxLVBo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbfDZPsX (ORCPT
+        id S1726341AbfDZQkl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Apr 2019 11:48:23 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:44047 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbfDZPsX (ORCPT
+        Fri, 26 Apr 2019 12:40:41 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:53724 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726326AbfDZQkl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Apr 2019 11:48:23 -0400
-Received: by mail-vk1-f196.google.com with SMTP id q189so864956vkq.11
-        for <linux-security-module@vger.kernel.org>; Fri, 26 Apr 2019 08:48:22 -0700 (PDT)
+        Fri, 26 Apr 2019 12:40:41 -0400
+Received: by mail-it1-f196.google.com with SMTP id z4so6876531itc.3
+        for <linux-security-module@vger.kernel.org>; Fri, 26 Apr 2019 09:40:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=DMbwsVTmLlgBSQ3AQVV7zhO03Dui6VOqPccFtIRcq3Y=;
-        b=HkHXy+C75uEgB5TiO0Vne0wSo5yn2vGUtsU6jybLTVPKSb1T63ZmEiaBDbN8EW2xbt
-         +orApMccp/6S1dVqxvtK+NUcWVOU8I/1XVk+Qtw739qlHa/XZP65T1BcIBfO9BdGoccC
-         Dv9NF52KGawfYlKqzj04fjUkc1RNle2VK64j/nT7U7kUIsvJ3IC583S0kjlc2cvuFvMd
-         OiXjjj+S0umBivuYz1hJFjZwJe7zVlPL+1Rg/dra3jcpqHXzPVjNf5gjXsg/xAUZJOFO
-         DVtZwIb+aZbKpqpHW9FBplGFNuNcBHbxoMSHzp3Noqf6PWAot9GfK80aZaPI8cRY23ii
-         rkRg==
+         :cc;
+        bh=MpfVP/lrM2Q2wBohc8zzCs4q+zAicjTmbOR9EpWu+KM=;
+        b=YzBchEnw3mtY1YHu5sF33oylYVI3nOfEG4y0HZgQaJs3IGiOAGg2uLSxEMl9Byl9yI
+         c0nS4Koilqx/n6yAiEj7u/DZRZpuFI+SF8Q3SwqUJe2sMDyec493TAbUU9pgD0X3cwNm
+         0hERY2zqnEvAI+fi+jcfSLT6mHrs2vVPV5/AY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DMbwsVTmLlgBSQ3AQVV7zhO03Dui6VOqPccFtIRcq3Y=;
-        b=mODjlLEuxVtb0+dMjb29dW6l6S03QsOInK01qW0WPQlUUDhouzUANVNYESqUceTcpi
-         5yPtgL5vM9IVaf/Rtk6AbiRIVRWRNRufZm9dDlQ7wJGQ1FLDE1DWwD19DgQIoBvn7E46
-         RstKHn8ueMvSvcaEBv+eR0fjhR3NncnHOreEOSgbGypS9LNF1LoXaA1VYlBqGIR1iG44
-         xG+BJqKvJhZm0zNHfr71XLtrX/LsJ4DbCp3NkSkiixkVFT+Olg/RyQwPABHuw0+GB7To
-         ApMo4GH4g8WLPADtOE9CGB17qrdnfukegrFUyNL2dnpqBZX9rSEXGYhNY0zgVp4R3AZK
-         wrHg==
-X-Gm-Message-State: APjAAAXn+lFh3xBW1tOyC9FMs7KfrCBRUcSqyQYV6riIKx9TFL4viP+i
-        WkhZnNpnaAzTEGvfuRdqEz7KHfrBgymAECzcVOD81Q==
-X-Google-Smtp-Source: APXvYqx79Ste/jagBrDiXzEeRcMMHgTKLywIMfjMi3Q+uv4eDclN5Z45Fkcx93NdwD001hssuNLIENwwifs2h9i9o8Q=
-X-Received: by 2002:a1f:9487:: with SMTP id w129mr21556719vkd.29.1556293702099;
- Fri, 26 Apr 2019 08:48:22 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=MpfVP/lrM2Q2wBohc8zzCs4q+zAicjTmbOR9EpWu+KM=;
+        b=gSQnr4/yNtV3MhdICXz8l0yKzV38UyhDJSDozq6pP6lTs3V7sZoAZ9ye1H35hT9mkU
+         iS4NYFeIFpgpbPx7CcWGDwHTV4wCfxYxDiTCIIO3kXDJnciNBwkjbSUVB8JbfKYI2Ph/
+         ZMJ7nuFKa7Qe7UjNxsbWDthRNWl+Kl8TgcbNi41OvgXoa+oRtot2ayhrNz1MxDi10kRI
+         Wl+ODihuKIuj4sK5vWYpBClGOf6ui8v9g3b0BsNXLJHoelX3PNDGq2cCRKuoVLkBKi3x
+         KPu/wRqaX4bfh8tD0PaTO1oGznVURpsWkASW7QklyEzRgg8FjwY6WqIbBksxyixXDTBI
+         EsTA==
+X-Gm-Message-State: APjAAAVgA3wbG6NeGBFw+Qvl6oC9rTj3R5cPLZXbrh9lpVZBmd5cz7NX
+        121QcGXDztrjIUF7NNbrlUp7Z8jdGFw6ll+CeA/iLQ==
+X-Google-Smtp-Source: APXvYqwW9kSQ5c/BDQ9RuOU9AZc1pvkLKD+0Bxd2Hwf1ST13QGVew2CuHRgH9D9F36FW8jZnvHzXcwE8P2b2WkseHhg=
+X-Received: by 2002:a24:198f:: with SMTP id b137mr8812183itb.105.1556296840738;
+ Fri, 26 Apr 2019 09:40:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190418154208.131118-1-glider@google.com> <20190418154208.131118-2-glider@google.com>
- <alpine.DEB.2.21.1904260911570.8340@nuc-kabylake> <0100016a5a3f6121-e7ed483e-bc29-4d75-bd0a-8e3b973529f5-000000@email.amazonses.com>
-In-Reply-To: <0100016a5a3f6121-e7ed483e-bc29-4d75-bd0a-8e3b973529f5-000000@email.amazonses.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Fri, 26 Apr 2019 17:48:10 +0200
-Message-ID: <CAG_fn=Uj226XJqh_wErBLW6dLvp_eP_KaEJDuqxBhvag1Q=Jwg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mm: security: introduce the init_allocations=1 boot option
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
+References: <20190426001143.4983-1-namit@vmware.com> <20190426001143.4983-15-namit@vmware.com>
+In-Reply-To: <20190426001143.4983-15-namit@vmware.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 26 Apr 2019 09:40:29 -0700
+Message-ID: <CAADWXX8yZJ9Z4yfqG9wQcb2r+0O7VCk2uQLcOU1=-BOnYhjnow@mail.gmail.com>
+Subject: Re: [PATCH v5 14/23] x86/mm/cpa: Add set_direct_map_ functions
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kernel-hardening@lists.openwall.com, Linux-MM <linux-mm@kvack.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 26, 2019 at 5:24 PM Christopher Lameter <cl@linux.com> wrote:
+Nadav,
+
+I get
+
+       dmarc=fail (p=QUARANTINE sp=NONE dis=QUARANTINE) header.from=vmware.com
+
+for these emails, because they lack the vmware DKIM signature.
+
+It clearly did go through some vmware mail servers, but apparently not
+the *right* external vmware SMTP gateway.
+
+Please check with vmware MIS what the right SMTP setup for git-send-email is.
+
+                 Linus
+
+On Fri, Apr 26, 2019 at 12:32 AM Nadav Amit <namit@vmware.com> wrote:
 >
-> Hmmmm.... Maybe its better to zero on free? That way you dont need to
-> initialize the allocations. You could even check if someone mucked with
-> the object during allocation.
-As mentioned somewhere in the neighboring threads, Kees requested the
-options to initialize on both allocation and free, because we'll need
-this functionality for memory tagging someday.
-> This is a replication of some of the
-> inherent debugging facilities in the allocator though.
-I'm curious, how often do people use SL[AU]B poisoning and redzones these d=
-ays?
-Guess those should be superseded by KASAN already?
-I agree it makes sense to reuse the existing debugging code, but on
-the other hand we probably want to keep the initialization fast enough
-to be used in production.
+> From: Rick Edgecombe <rick.p.edgecombe@intel.com>
 >
-Re: poison_fn, it wasn't a good idea, so I'll be dropping it.
-
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+> Add two new functions set_direct_map_default_noflush() and
+> set_direct_map_invalid_noflush() for setting the direct map alias for the
+> page to its default valid permissions and to an invalid state that cannot
+> be cached in a TLB, respectively. These functions do not flush the TLB.
+...
