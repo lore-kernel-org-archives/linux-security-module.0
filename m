@@ -5,57 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E62C4321D
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B6EC4321A
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC03A2087C
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68FE32087C
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qfcv0jVy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oILNkBTM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726048AbfD0Goi (ORCPT
+        id S1726479AbfD0Gov (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 27 Apr 2019 02:44:38 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42640 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbfD0GnV (ORCPT
+        Sat, 27 Apr 2019 02:44:51 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33570 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbfD0GnQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 27 Apr 2019 02:43:21 -0400
-Received: by mail-pf1-f196.google.com with SMTP id w25so2743878pfi.9;
-        Fri, 26 Apr 2019 23:43:21 -0700 (PDT)
+        Sat, 27 Apr 2019 02:43:16 -0400
+Received: by mail-pl1-f195.google.com with SMTP id y3so1735586plp.0;
+        Fri, 26 Apr 2019 23:43:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yNv4uuWY37+QDIo+8eJ5Cs1RQKFygWuhu/mUpTFc+50=;
-        b=qfcv0jVylRwgUSdFp0yVo6y3SoCAOjol9XbR7W5+lwraaEg2QoXyt+VrAjGp9wzdAn
-         BOm9G9cC4mrsWbrKkWfeWua0CLcUhNFX2UYmr160CAGJNRPhpKunjycWCJnpjaUptQXK
-         FymoezD52jYoCa9vw1d8DrTtNcDpUD3gesH2ZoYEwsgq0bZE6tTukM9zPOscjJPRRiHd
-         0d0EQKT1ASnMLtYxkgiq4MVCWAUZf/kjKC/u6ibFbPlbEhDhs/jBfSTvPAadE2T4MBPs
-         yoHMRLVUDfJJ0O31Q2uS3OPiszz2lAVHUHfzcDpTk8KxpsBn4aqr0vTCALbdk7a/EPYd
-         2uWQ==
+        bh=uR9dojmxOmmxTLzrNkqbIEwKeNq3pUquy4Aauxui5YA=;
+        b=oILNkBTMPI8hbOfV9CTJU+m4eHw0hAUfxbTTNr2/RxOTWPpKbRKo8diZaBeA/Rmbm3
+         h5rZrB3HG0y3SmWymgT3Ka+NNLrVVEWGy5GTcbQKRQEA3wiSNrIdF0YIzNUEW260wZEH
+         KE+3wzmKUfVn5aWbi1XY/cRblwX7PCPz65YSoU43s/26wSMoHptHFPQTS+iXil5iGEw+
+         MKuU4t2I8rSFdXKCm6I3uOxZEQ1YYZq5IGQ+JuIwxQpw5oc2ihHafO/Cd4i7/tLG7zpn
+         Edmk3MnDF5/iWexA4JDZ+DyyFjQlaqdQ8ZangVzJbGAkvZg6LY9bd008qQlPu4OkFzMW
+         +mVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=yNv4uuWY37+QDIo+8eJ5Cs1RQKFygWuhu/mUpTFc+50=;
-        b=e36XDmzl6UQXWwFVnf1Aho7OYa6xYxx/ohzJMVW9lHybNH2PZQdH8bKlDrUn2puVx/
-         HrODl7AvP0qb/38oQYRDHwjENuuFmbysNLhayn7KAjkWNwmzWxpb2p9wZZ80Kko0zlOh
-         m33D5qlUf4EpEoI6Yo/raL9lm9KANbzYTczEf8jqvJCW+uQV8cj1zbkIOY30ayPWO6t7
-         KMTkHoRxr5yKENMHV86B6bkDzj3rbmHTunDaJ+nLe5iwQLo8qNxwxouY/901FCPIJnuE
-         bdsvfOwbpKfu85tnX6J13UwqPSchNti/M6I4yUwYo9OUmbOun9hVf8MKHSlrGLRSum/Y
-         xuWQ==
-X-Gm-Message-State: APjAAAVic7Kmx599MCiIJZgM1lzjuP0Vyvi5p/aQtl7ZrzCe/B2QJNIR
-        z05MD8SrRAYoLHRVtfO0bxk=
-X-Google-Smtp-Source: APXvYqxCgMCnuubydaHXfJIDthz2u46RkKoNrhpM9xg9spe5Zm1Eq7YBRg8tloTlDMLwvkBDrQMPvQ==
-X-Received: by 2002:a63:7f0b:: with SMTP id a11mr44847434pgd.234.1556347400564;
-        Fri, 26 Apr 2019 23:43:20 -0700 (PDT)
+        bh=uR9dojmxOmmxTLzrNkqbIEwKeNq3pUquy4Aauxui5YA=;
+        b=nptgxHFBLqFEODoHlGZciETAIKKIVwAxD4g/OUwG5sL3lzUAu0kiOBuheipDAsMRkJ
+         Fu9WJFJoAcWAAIvTIGMcEdl4JDgPFPMgTLn53+dyrWSO270qBcdYfpCd2GwQjBIJVRXq
+         VXzA8WCOjVD8hLH+++AiDVCUlykBqt7EAENqehgb5BRKy8FH13JjXzrolot50E4JnN3R
+         xknmGB8SbbuFl/um7bWWQ/qe9V8GpYurEr7hLqq/WimcXcp5XN2yOCI08/EnZ8WBrP+4
+         hcfzJy+K99lrpTs5fiXGQbvpjrojkkqaUS+9uaGH4ghWdsE44gda8Au0vI5ugCl7biyU
+         dQzA==
+X-Gm-Message-State: APjAAAUr8epavH373chztnRgEaFBaNlg/KeDFbhnEdAM08jQ5mG8Mf1J
+        LYceWKH+Okq5l7Zqd2yWDeQ=
+X-Google-Smtp-Source: APXvYqxGAw4qwJwGwZPBWfL5T3kXq42Nxulr2Eo5xhNgNYA2PVHpEfWTNqR9D9nfEhSjkOIDkP0Vjg==
+X-Received: by 2002:a17:902:e683:: with SMTP id cn3mr6142181plb.115.1556347395492;
+        Fri, 26 Apr 2019 23:43:15 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.19
+        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Apr 2019 23:43:20 -0700 (PDT)
+        Fri, 26 Apr 2019 23:43:14 -0700 (PDT)
 From:   nadav.amit@gmail.com
 To:     Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
@@ -71,10 +70,13 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v6 11/24] x86/kprobes: Set instruction page as executable
-Date:   Fri, 26 Apr 2019 16:22:50 -0700
-Message-Id: <20190426232303.28381-12-nadav.amit@gmail.com>
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v6 08/24] x86/alternative: Use temporary mm for text poking
+Date:   Fri, 26 Apr 2019 16:22:47 -0700
+Message-Id: <20190426232303.28381-9-nadav.amit@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426232303.28381-1-nadav.amit@gmail.com>
 References: <20190426232303.28381-1-nadav.amit@gmail.com>
@@ -84,62 +86,199 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Nadav Amit <namit@vmware.com>
 
-Set the page as executable after allocation.  This patch is a
-preparatory patch for a following patch that makes module allocated
-pages non-executable.
+text_poke() can potentially compromise security as it sets temporary
+PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
+from other cores accidentally or maliciously, if an attacker gains the
+ability to write onto kernel memory.
 
-While at it, do some small cleanup of what appears to be unnecessary
-masking.
+Moreover, since remote TLBs are not flushed after the temporary PTEs are
+removed, the time-window in which the code is writable is not limited if
+the fixmap PTEs - maliciously or accidentally - are cached in the TLB.
+To address these potential security hazards, use a temporary mm for
+patching the code.
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Finally, text_poke() is also not conservative enough when mapping pages,
+as it always tries to map 2 pages, even when a single one is sufficient.
+So try to be more conservative, and do not map more than needed.
+
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/fixmap.h |   2 -
+ arch/x86/kernel/alternative.c | 108 +++++++++++++++++++++++++++-------
+ arch/x86/xen/mmu_pv.c         |   2 -
+ 3 files changed, 86 insertions(+), 26 deletions(-)
 
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index a034cb808e7e..1591852d3ac4 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -431,8 +431,20 @@ void *alloc_insn_page(void)
- 	void *page;
+diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
+index 50ba74a34a37..9da8cccdf3fb 100644
+--- a/arch/x86/include/asm/fixmap.h
++++ b/arch/x86/include/asm/fixmap.h
+@@ -103,8 +103,6 @@ enum fixed_addresses {
+ #ifdef CONFIG_PARAVIRT
+ 	FIX_PARAVIRT_BOOTMAP,
+ #endif
+-	FIX_TEXT_POKE1,	/* reserve 2 pages for text_poke() */
+-	FIX_TEXT_POKE0, /* first page is last, because allocation is backward */
+ #ifdef	CONFIG_X86_INTEL_MID
+ 	FIX_LNW_VRTC,
+ #endif
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 11d5c710a94f..599203876c32 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -12,6 +12,7 @@
+ #include <linux/slab.h>
+ #include <linux/kdebug.h>
+ #include <linux/kprobes.h>
++#include <linux/mmu_context.h>
+ #include <asm/text-patching.h>
+ #include <asm/alternative.h>
+ #include <asm/sections.h>
+@@ -684,41 +685,104 @@ __ro_after_init unsigned long poking_addr;
  
- 	page = module_alloc(PAGE_SIZE);
--	if (page)
--		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
-+	if (!page)
-+		return NULL;
-+
-+	/*
-+	 * First make the page read-only, and only then make it executable to
-+	 * prevent it from being W+X in between.
-+	 */
-+	set_memory_ro((unsigned long)page, 1);
-+
-+	/*
-+	 * TODO: Once additional kernel code protection mechanisms are set, ensure
-+	 * that the page was not maliciously altered and it is still zeroed.
-+	 */
-+	set_memory_x((unsigned long)page, 1);
- 
- 	return page;
- }
-@@ -440,8 +452,12 @@ void *alloc_insn_page(void)
- /* Recover page to RW mode before releasing it */
- void free_insn_page(void *page)
+ static void *__text_poke(void *addr, const void *opcode, size_t len)
  {
--	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
--	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
-+	/*
-+	 * First make the page non-executable, and only then make it writable to
-+	 * prevent it from being W+X in between.
-+	 */
-+	set_memory_nx((unsigned long)page, 1);
-+	set_memory_rw((unsigned long)page, 1);
- 	module_memfree(page);
- }
++	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
++	struct page *pages[2] = {NULL};
++	temp_mm_state_t prev;
+ 	unsigned long flags;
+-	char *vaddr;
+-	struct page *pages[2];
+-	int i;
++	pte_t pte, *ptep;
++	spinlock_t *ptl;
++	pgprot_t pgprot;
  
+ 	/*
+-	 * While boot memory allocator is runnig we cannot use struct
+-	 * pages as they are not yet initialized.
++	 * While boot memory allocator is running we cannot use struct pages as
++	 * they are not yet initialized. There is no way to recover.
+ 	 */
+ 	BUG_ON(!after_bootmem);
+ 
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+-		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
++		if (cross_page_boundary)
++			pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+ 	} else {
+ 		pages[0] = virt_to_page(addr);
+ 		WARN_ON(!PageReserved(pages[0]));
+-		pages[1] = virt_to_page(addr + PAGE_SIZE);
++		if (cross_page_boundary)
++			pages[1] = virt_to_page(addr + PAGE_SIZE);
+ 	}
+-	BUG_ON(!pages[0]);
++	/*
++	 * If something went wrong, crash and burn since recovery paths are not
++	 * implemented.
++	 */
++	BUG_ON(!pages[0] || (cross_page_boundary && !pages[1]));
++
+ 	local_irq_save(flags);
+-	set_fixmap(FIX_TEXT_POKE0, page_to_phys(pages[0]));
+-	if (pages[1])
+-		set_fixmap(FIX_TEXT_POKE1, page_to_phys(pages[1]));
+-	vaddr = (char *)fix_to_virt(FIX_TEXT_POKE0);
+-	memcpy(&vaddr[(unsigned long)addr & ~PAGE_MASK], opcode, len);
+-	clear_fixmap(FIX_TEXT_POKE0);
+-	if (pages[1])
+-		clear_fixmap(FIX_TEXT_POKE1);
+-	local_flush_tlb();
+-	sync_core();
+-	/* Could also do a CLFLUSH here to speed up CPU recovery; but
+-	   that causes hangs on some VIA CPUs. */
+-	for (i = 0; i < len; i++)
+-		BUG_ON(((char *)addr)[i] != ((char *)opcode)[i]);
++
++	/*
++	 * Map the page without the global bit, as TLB flushing is done with
++	 * flush_tlb_mm_range(), which is intended for non-global PTEs.
++	 */
++	pgprot = __pgprot(pgprot_val(PAGE_KERNEL) & ~_PAGE_GLOBAL);
++
++	/*
++	 * The lock is not really needed, but this allows to avoid open-coding.
++	 */
++	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
++
++	/*
++	 * This must not fail; preallocated in poking_init().
++	 */
++	VM_BUG_ON(!ptep);
++
++	pte = mk_pte(pages[0], pgprot);
++	set_pte_at(poking_mm, poking_addr, ptep, pte);
++
++	if (cross_page_boundary) {
++		pte = mk_pte(pages[1], pgprot);
++		set_pte_at(poking_mm, poking_addr + PAGE_SIZE, ptep + 1, pte);
++	}
++
++	/*
++	 * Loading the temporary mm behaves as a compiler barrier, which
++	 * guarantees that the PTE will be set at the time memcpy() is done.
++	 */
++	prev = use_temporary_mm(poking_mm);
++
++	kasan_disable_current();
++	memcpy((u8 *)poking_addr + offset_in_page(addr), opcode, len);
++	kasan_enable_current();
++
++	/*
++	 * Ensure that the PTE is only cleared after the instructions of memcpy
++	 * were issued by using a compiler barrier.
++	 */
++	barrier();
++
++	pte_clear(poking_mm, poking_addr, ptep);
++	if (cross_page_boundary)
++		pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + 1);
++
++	/*
++	 * Loading the previous page-table hierarchy requires a serializing
++	 * instruction that already allows the core to see the updated version.
++	 * Xen-PV is assumed to serialize execution in a similar manner.
++	 */
++	unuse_temporary_mm(prev);
++
++	/*
++	 * Flushing the TLB might involve IPIs, which would require enabled
++	 * IRQs, but not if the mm is not used, as it is in this point.
++	 */
++	flush_tlb_mm_range(poking_mm, poking_addr, poking_addr +
++			   (cross_page_boundary ? 2 : 1) * PAGE_SIZE,
++			   PAGE_SHIFT, false);
++
++	/*
++	 * If the text does not match what we just wrote then something is
++	 * fundamentally screwy; there's nothing we can really do about that.
++	 */
++	BUG_ON(memcmp(addr, opcode, len));
++
++	pte_unmap_unlock(ptep, ptl);
+ 	local_irq_restore(flags);
+ 	return addr;
+ }
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index a21e1734fc1f..beb44e22afdf 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -2318,8 +2318,6 @@ static void xen_set_fixmap(unsigned idx, phys_addr_t phys, pgprot_t prot)
+ #elif defined(CONFIG_X86_VSYSCALL_EMULATION)
+ 	case VSYSCALL_PAGE:
+ #endif
+-	case FIX_TEXT_POKE0:
+-	case FIX_TEXT_POKE1:
+ 		/* All local page mappings */
+ 		pte = pfn_pte(phys, prot);
+ 		break;
 -- 
 2.17.1
 
