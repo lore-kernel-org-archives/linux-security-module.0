@@ -1,46 +1,67 @@
 Return-Path: <SRS0=T836=S4=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAD9C43218
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14128C43218
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 08:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CCF7206E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:50:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Op/BtNTT"
+	by mail.kernel.org (Postfix) with ESMTP id D00F7206E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 08:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556267517;
+	bh=SHcKjo86YRaBtbcui6ZNjTGtHieGQh8h35OGLG1KJxY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=icdUko4ZpAgShhPJCOuY6DzPwf2keXbxGs8SNkWiyWVAqezBb3u0BTfuZAVdaw2B3
+	 dybCe+9PnOKQWgQfUCHiETs484CZIXSS/41qVzr7SUoe8+2zWTNfN2ZUbj4GVs0lIE
+	 phnk1tCQovp5w9furfK51UBJZzu/L15951sAz4dE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725983AbfDZHuF (ORCPT
+        id S1726257AbfDZIbu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:50:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54664 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfDZHuF (ORCPT
+        Fri, 26 Apr 2019 04:31:50 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38420 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725993AbfDZIbt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Apr 2019 03:50:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=slE4aT5ZNj8dJtxH+FhGBwyu8kafNxlAmX6nDldrcS4=; b=Op/BtNTTdoi+lOukFcWX4choG
-        882I7O1OKUeSfugw5FDEE8frhdfBaCMcWl7hiSMX4nAWztIGM/B8ibBqKFJCnPoXp3/kDy8rx4YhC
-        uvUqRvrvrWFh2fq+KduiKrBv0H3yBWK9oBjFXVmqQdGZjrNASCAJ2og1IxUQGRcYMRhDFVfDSZfT+
-        4VC6UmQw9hJk/NJjOjl6W/Xu0rWytUIlcVnGCFV7+DZT3hSVyFwowHpwdkK1vdxZB0t5myzQODMOg
-        8HwgOCiydPFYEFjDX9PDp1qRkAhAtoU1oxTNk4Jif8MITPXfuFbirlP9K0Wd7JE+ALAjgNBoFEtto
-        wg1bodvqA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hJvcM-0000zs-Bl; Fri, 26 Apr 2019 07:49:58 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B4A6F29D1A323; Fri, 26 Apr 2019 09:49:56 +0200 (CEST)
-Date:   Fri, 26 Apr 2019 09:49:56 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
+        Fri, 26 Apr 2019 04:31:49 -0400
+Received: by mail-wr1-f68.google.com with SMTP id k16so3253306wrn.5;
+        Fri, 26 Apr 2019 01:31:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/8yEHGmmpSB8zJvfnDs0qm8YJnL5/w4ezpyP4pzX7OU=;
+        b=VkXjRe45hyNXVj6ZfWoXHr6MTHjtWL9wxGXVZSzLMcje4P0FbuT/Q7Jd+vA1p9zEB/
+         8RqkOkiJthWGtNBekTaSFZY4oXZh1GyFrxsJ68xk0BZzJnK06NtdNo3O+axMJWfCl1qE
+         GyHF+8T/9FBm0+DjXetmbgG3M0v8zroVHiOtLPRpaT6MrSmy9XOu160qeULDV180k0xa
+         kY+zWM78luJUpw4oMLsj3nAbD5QeSMjPf76uIIhHD82smYQ4sa2Gw/bOFqlaYzMnrmOq
+         /DJvD0YVbwD+SffY8PXAy25ufW7lJrslVydjKCvITbMXQredlQKDjMDmHDbLgT49Ymtn
+         CxwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/8yEHGmmpSB8zJvfnDs0qm8YJnL5/w4ezpyP4pzX7OU=;
+        b=jM7zytu7j/90bBqtngv2yQGzbvslQWvn1ANQhMtl4oUnPe1+cLiNzrbg35oG+YT1Nw
+         /ueimIvaeDaCzk9HdAQaxshUy+rClzoPv7S50SpQ/PfulLYYeGX5QuIgdHMa6qIBTcKx
+         7FH3oHng+/bNaXYKGCq9hqouQm2KBQlCSym5dd+cuey5sa87gcF+2L3FWQoo9u2jGrUx
+         iqTSZFOWaGRe3QkkGRVhMUBT1s4IpLu0oxqcQ8i1oVSc5bUENE9X7KaMA4fKcmqJkQKJ
+         HHsEXl3uNHKvvQkQvoMR1RvmP/2//N2+ZrDX1qVJSWDHMkbSSVThyNz0Vady3UhTRi73
+         huNg==
+X-Gm-Message-State: APjAAAX3QdY2Lv9SXr2O4FQwhzd6+iyWrpaPZFlHwyS8ORN6tqwPwtlL
+        qsdbd6xwRdX+0XGIjaVEWfE=
+X-Google-Smtp-Source: APXvYqz7R4wqcBRnF5mLwlUAgAYn64tt07z4jLjy3OlElfpQAtlWfTSEl2f9ae5ADnCd69ZUlZdi4A==
+X-Received: by 2002:a5d:654a:: with SMTP id z10mr3402530wrv.153.1556267507780;
+        Fri, 26 Apr 2019 01:31:47 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id v16sm20304256wru.76.2019.04.26.01.31.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Apr 2019 01:31:46 -0700 (PDT)
+Date:   Fri, 26 Apr 2019 10:31:44 +0200
+From:   Ingo Molnar <mingo@kernel.org>
 To:     Mike Rapoport <rppt@linux.ibm.com>
 Cc:     linux-kernel@vger.kernel.org,
         Alexandre Chartre <alexandre.chartre@oracle.com>,
@@ -52,11 +73,15 @@ Cc:     linux-kernel@vger.kernel.org,
         Jonathan Adams <jwadams@google.com>,
         Kees Cook <keescook@chromium.org>,
         Paul Turner <pjt@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call
  isolation
-Message-ID: <20190426074956.GZ4038@hirez.programming.kicks-ass.net>
+Message-ID: <20190426083144.GA126896@gmail.com>
 References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
  <1556228754-12996-3-git-send-email-rppt@linux.ibm.com>
 MIME-Version: 1.0
@@ -68,18 +93,63 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 26, 2019 at 12:45:49AM +0300, Mike Rapoport wrote:
+
+* Mike Rapoport <rppt@linux.ibm.com> wrote:
+
+> When enabled, the system call isolation (SCI) would allow execution of 
+> the system calls with reduced page tables. These page tables are almost 
+> identical to the user page tables in PTI. The only addition is the code 
+> page containing system call entry function that will continue 
+> exectution after the context switch.
+> 
+> Unlike PTI page tables, there is no sharing at higher levels and all 
+> the hierarchy for SCI page tables is cloned.
+> 
+> The SCI page tables are created when a system call that requires 
+> isolation is executed for the first time.
+> 
+> Whenever a system call should be executed in the isolated environment, 
+> the context is switched to the SCI page tables. Any further access to 
+> the kernel memory will generate a page fault. The page fault handler 
+> can verify that the access is safe and grant it or kill the task 
+> otherwise.
+> 
 > The initial SCI implementation allows access to any kernel data, but it
 > limits access to the code in the following way:
 > * calls and jumps to known code symbols without offset are allowed
 > * calls and jumps into a known symbol with offset are allowed only if that
 > symbol was already accessed and the offset is in the next page
 > * all other code access are blocked
+> 
+> After the isolated system call finishes, the mappings created during its
+> execution are cleared.
+> 
+> The entire SCI page table is lazily freed at task exit() time.
 
-So if you have a large function and an in-function jump skips a page
-you're toast.
+So this basically uses a similar mechanism to the horrendous PTI CR3 
+switching overhead whenever a syscall seeks "protection", which overhead 
+is only somewhat mitigated by PCID.
 
-Why not employ the instruction decoder we have and unconditionally allow
-all direct JMP/CALL but verify indirect JMP/CALL and RET ?
+This might work on PTI-encumbered CPUs.
 
-Anyway, I'm fearing the overhead of this one, this cannot be fast.
+While AMD CPUs don't need PTI, nor do they have PCID.
+
+So this feature is hurting the CPU maker who didn't mess up, and is 
+hurting future CPUs that don't need PTI ..
+
+I really don't like it where this is going. In a couple of years I really 
+want to be able to think of PTI as a bad dream that is mostly over 
+fortunately.
+
+I have the feeling that compiler level protection that avoids corrupting 
+the stack in the first place is going to be lower overhead, and would 
+work in a much broader range of environments. Do we have analysis of what 
+the compiler would have to do to prevent most ROP attacks, and what the 
+runtime cost of that is?
+
+I mean, C# and Java programs aren't able to corrupt the stack as long as 
+the language runtime is corect. Has to be possible, right?
+
+Thanks,
+
+	Ingo
