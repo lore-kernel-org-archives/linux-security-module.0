@@ -2,102 +2,85 @@ Return-Path: <SRS0=T836=S4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA022C4321B
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 593EDC43219
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D97B21479
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A92820684
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:42:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HzSM0zqj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725916AbfDZHbr (ORCPT
+        id S1725971AbfDZHmi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:31:47 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:29121 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725877AbfDZHbq (ORCPT
+        Fri, 26 Apr 2019 03:42:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43812 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbfDZHmi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Apr 2019 03:31:46 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Fri, 26 Apr 2019 00:31:44 -0700
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 6F14E41225;
-        Fri, 26 Apr 2019 00:31:45 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
+        Fri, 26 Apr 2019 03:42:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VSMhN+nfzaw1tZG3jJEpjZvzXxWyKbRMlymqbYuBFjg=; b=HzSM0zqj3Ao+/TzgNdgd1swkv
+        JUIT5sLDscQK7QUjPui60Fvql3zrVQm8NFusS8MfvwLnn55u3O48d96ky/W/rckJ6suzG75KqhZvp
+        goK9pKaYevwe0u0lWHZ/+tgW9cfR9Rhl3MSHvwuZ7mpfbVrxMvYP44caQxNOw681WR2JB4Hn9raAF
+        SoVI0o6PWu/nkXUh6kwm/JtEvs9Tw/s3BJSK1mR7t1FTOJki6PrvzB1LUl2J022GsIZyhT+n+oqh/
+        WFMNNLbCiyBzUksflqli8vZGvY7c1Ng1ZDfA4aDL35wGDW56lsq8MBGvtNgQMfbfcuCMquiyDm4dL
+        GfZMyX+tA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hJvV3-0005gQ-VC; Fri, 26 Apr 2019 07:42:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CB82029D1A321; Fri, 26 Apr 2019 09:42:23 +0200 (CEST)
+Date:   Fri, 26 Apr 2019 09:42:23 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
         Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        <linux_dti@icloud.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <akpm@linux-foundation.org>, <kernel-hardening@lists.openwall.com>,
-        <linux-mm@kvack.org>, <will.deacon@arm.com>,
-        <ard.biesheuvel@linaro.org>, <kristen@linux.intel.com>,
-        <deneen.t.dock@intel.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Nadav Amit <namit@vmware.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jonathan Adams <jwadams@google.com>,
         Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v5 02/23] x86/jump_label: Use text_poke_early() during early init
-Date:   Thu, 25 Apr 2019 17:11:22 -0700
-Message-ID: <20190426001143.4983-3-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
-References: <20190426001143.4983-1-namit@vmware.com>
+        Paul Turner <pjt@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+Subject: Re: [RFC PATCH 5/7] x86/mm/fault: hook up SCI verification
+Message-ID: <20190426074223.GY4038@hirez.programming.kicks-ass.net>
+References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
+ <1556228754-12996-6-git-send-email-rppt@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1556228754-12996-6-git-send-email-rppt@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There is no apparent reason not to use text_poke_early() during
-early-init, since no patching of code that might be on the stack is done
-and only a single core is running.
+On Fri, Apr 26, 2019 at 12:45:52AM +0300, Mike Rapoport wrote:
+> If a system call runs in isolated context, it's accesses to kernel code and
+> data will be verified by SCI susbsytem.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+>  arch/x86/mm/fault.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 
-This is required for the next patches that would set a temporary mm for
-text poking, and this mm is only initialized after some static-keys are
-enabled/disabled.
+There's a distinct lack of touching do_double_fault(). It appears to me
+that you'll instantly trigger #DF when you #PF, because the #PF handler
+itself will not be able to run.
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- arch/x86/kernel/jump_label.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index f99bd26bd3f1..e7d8c636b228 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -50,7 +50,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	jmp.offset = jump_entry_target(entry) -
- 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
- 
--	if (early_boot_irqs_disabled)
-+	/*
-+	 * As long as only a single processor is running and the code is still
-+	 * not marked as RO, text_poke_early() can be used; Checking that
-+	 * system_state is SYSTEM_BOOTING guarantees it.
-+	 */
-+	if (system_state == SYSTEM_BOOTING)
- 		poker = text_poke_early;
- 
- 	if (type == JUMP_LABEL_JMP) {
--- 
-2.17.1
+And then obviously you have to be very careful to make sure #DF can,
+_at_all_times_ run, otherwise you'll tripple-fault and we all know what
+that does.
 
