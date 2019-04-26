@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23983C43218
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC07C43218
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB4FB2084F
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F8CB2089E
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726176AbfDZHdP (ORCPT
+        id S1726246AbfDZHbz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:33:15 -0400
+        Fri, 26 Apr 2019 03:31:55 -0400
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:2747 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726242AbfDZHbz (ORCPT
+        by vger.kernel.org with ESMTP id S1726197AbfDZHby (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Apr 2019 03:31:55 -0400
+        Fri, 26 Apr 2019 03:31:54 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Fri, 26 Apr 2019 00:31:41 -0700
+ 15.0.1156.6; Fri, 26 Apr 2019 00:31:40 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 296F2412A3;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 1086741299;
         Fri, 26 Apr 2019 00:31:46 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -42,11 +42,10 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         <linux-mm@kvack.org>, <will.deacon@arm.com>,
         <ard.biesheuvel@linaro.org>, <kristen@linux.intel.com>,
         <deneen.t.dock@intel.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v5 22/23] mm/tlb: Provide default nmi_uaccess_okay()
-Date:   Thu, 25 Apr 2019 17:11:42 -0700
-Message-ID: <20190426001143.4983-23-namit@vmware.com>
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v5 19/23] x86/ftrace: Use vmalloc special flag
+Date:   Thu, 25 Apr 2019 17:11:39 -0700
+Message-ID: <20190426001143.4983-20-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
 References: <20190426001143.4983-1-namit@vmware.com>
@@ -58,55 +57,73 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-x86 has an nmi_uaccess_okay(), but other architectures do not.
-Arch-independent code might need to know whether access to user
-addresses is ok in an NMI context or in other code whose execution
-context is unknown.  Specifically, this function is needed for
-bpf_probe_write_user().
+From: Rick Edgecombe <rick.p.edgecombe@intel.com>
 
-Add a default implementation of nmi_uaccess_okay() for architectures
-that do not have such a function.
+Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
+permissioned memory in vmalloc and remove places where memory was set NX
+and RW before freeing which is no longer needed.
 
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/tlbflush.h | 2 ++
- include/asm-generic/tlb.h       | 9 +++++++++
- 2 files changed, 11 insertions(+)
+ arch/x86/kernel/ftrace.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 90926e8dd1f8..dee375831962 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -274,6 +274,8 @@ static inline bool nmi_uaccess_okay(void)
- 	return true;
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index 53ba1aa3a01f..0caf8122d680 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -678,12 +678,8 @@ static inline void *alloc_tramp(unsigned long size)
+ {
+ 	return module_alloc(size);
+ }
+-static inline void tramp_free(void *tramp, int size)
++static inline void tramp_free(void *tramp)
+ {
+-	int npages = PAGE_ALIGN(size) >> PAGE_SHIFT;
+-
+-	set_memory_nx((unsigned long)tramp, npages);
+-	set_memory_rw((unsigned long)tramp, npages);
+ 	module_memfree(tramp);
+ }
+ #else
+@@ -692,7 +688,7 @@ static inline void *alloc_tramp(unsigned long size)
+ {
+ 	return NULL;
+ }
+-static inline void tramp_free(void *tramp, int size) { }
++static inline void tramp_free(void *tramp) { }
+ #endif
+ 
+ /* Defined as markers to the end of the ftrace default trampolines */
+@@ -808,6 +804,8 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	/* ALLOC_TRAMP flags lets us know we created it */
+ 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
+ 
++	set_vm_flush_reset_perms(trampoline);
++
+ 	/*
+ 	 * Module allocation needs to be completed by making the page
+ 	 * executable. The page is still writable, which is a security hazard,
+@@ -816,7 +814,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	set_memory_x((unsigned long)trampoline, npages);
+ 	return (unsigned long)trampoline;
+ fail:
+-	tramp_free(trampoline, *tramp_size);
++	tramp_free(trampoline);
+ 	return 0;
  }
  
-+#define nmi_uaccess_okay nmi_uaccess_okay
-+
- /* Initialize cr4 shadow for this CPU. */
- static inline void cr4_init_shadow(void)
- {
-diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index b9edc7608d90..480e5b2a5748 100644
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -21,6 +21,15 @@
- #include <asm/tlbflush.h>
- #include <asm/cacheflush.h>
+@@ -947,7 +945,7 @@ void arch_ftrace_trampoline_free(struct ftrace_ops *ops)
+ 	if (!ops || !(ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP))
+ 		return;
  
-+/*
-+ * Blindly accessing user memory from NMI context can be dangerous
-+ * if we're in the middle of switching the current user task or switching
-+ * the loaded mm.
-+ */
-+#ifndef nmi_uaccess_okay
-+# define nmi_uaccess_okay() true
-+#endif
-+
- #ifdef CONFIG_MMU
+-	tramp_free((void *)ops->trampoline, ops->trampoline_size);
++	tramp_free((void *)ops->trampoline);
+ 	ops->trampoline = 0;
+ }
  
- /*
 -- 
 2.17.1
 
