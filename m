@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7C0C43219
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA72AC4321A
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E839A2087C
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:43:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9F38208CB
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 06:43:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bic4fgDh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q470hKxC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbfD0GnL (ORCPT
+        id S1726718AbfD0Gnd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 27 Apr 2019 02:43:11 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33561 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbfD0GnI (ORCPT
+        Sat, 27 Apr 2019 02:43:33 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44684 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbfD0Gnc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 27 Apr 2019 02:43:08 -0400
-Received: by mail-pl1-f196.google.com with SMTP id y3so1735493plp.0;
-        Fri, 26 Apr 2019 23:43:07 -0700 (PDT)
+        Sat, 27 Apr 2019 02:43:32 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y12so2555205plk.11;
+        Fri, 26 Apr 2019 23:43:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fM02CdP3EHsEznyJ/zI3DVkvywjW2Y0W5QE/m/kGqS8=;
-        b=Bic4fgDhw/zNUsH9AvCevjRRuqcBr7SeEwPi/mNBJHeVn3HWTtTQy0lqVBwB+uwJON
-         033sEQUJVf4JsE8w16M+5haGmPR56gXJit7dknF2eDmFepylyOdGJlykH0b1NW+PihEa
-         WnVuUa5XLxRLLr06QvgHjZbZbm6umZ2Z7Tk21XFYdu0XsSy3LVhSR76ovrEOyDS4RqXk
-         ethcFURK2XAu1qKbwE8JJm/EyYlwhoXg4rc/DRAR47BR1Lx07vr+RFt4HZ8bItbsDTBV
-         RxWJwnwgvwuNGmSEvPkHWRxMq59R7mUfHELo2gZLY6QtoYxwGmeesmwvk7AesQMYnBzh
-         N2AQ==
+        bh=03x8MyH4ONo6RL8TDAuJcYQYBUTk8Xfu5EMEl5vv8zs=;
+        b=Q470hKxCA0zkhL+IQMRmPe5UQg42Gi+l2RRmW947taZyL//Jesf10pqg7iknajn5cM
+         6MahwRUBormFC9ROtXZzOCBPO1osFE8XuHCncIgLvsCHxLcNuXntyLIPTNUxNKWwnbuS
+         YivKpxFXT45f055xbj7gqKyZeZCL6izznlo4y+QcynGiNpgPJSJn6cIDoQUEWR8q3NIV
+         QQ28y5mhdxTCv3ZGyzW3vgvH+5eRIAil3M9uo1sFkym+2/eXjUEbYhGGuoRIn6PGQ204
+         szqozT+L1TEHgWXr+gjrabBNVx0fQWsxwFBogU0RCWe7qqaev2wbboj0cmVtOcpDQP9M
+         I7SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=fM02CdP3EHsEznyJ/zI3DVkvywjW2Y0W5QE/m/kGqS8=;
-        b=e5nJILoW4Yh5mRcRPAYkwBgBwgQE8F8ZWff9Qy3k0Td1uCsVNrv9SnjrpjGTfBK04c
-         lojNPuNwOaRc/xPUHR5snNQCuXJ+ZHMaauaG4CBjZO03VGqBvTKLBnsU+R87m/c9+ciR
-         X9N37emomnkAnctBGm1TRfAkMIHE5icGFjhZvmxGESLtvPhe0Z/ziAuK+fADrIsiOjBg
-         NWXGMkUGfF5g4DuW5ookEz9wR8EsGkqrJsm4rdV+b4OILWeWLfqWDgqK8r8ezRPjkO4u
-         kQW7n4CyRwQFCGaO3fbh5kVbsnmtw7VVxjGQ5zNo2wLuKlGB4s587rXJX33UqWcBmzuC
-         VtgA==
-X-Gm-Message-State: APjAAAVCvWKTlJdMEjjUw6QmRdirFHf4Pfgyv17OXkn2qL3rU4RQZLTO
-        7m+LfOIYaO+twLZnihucWEU=
-X-Google-Smtp-Source: APXvYqxN6NLybNs8lwtcaE7rd9moWK47+PtSS3OruWZmc0YNonCQSY0zJUJKCwxGbV5SIYzeiwOfdw==
-X-Received: by 2002:a17:902:d83:: with SMTP id 3mr52111624plv.125.1556347387028;
-        Fri, 26 Apr 2019 23:43:07 -0700 (PDT)
+        bh=03x8MyH4ONo6RL8TDAuJcYQYBUTk8Xfu5EMEl5vv8zs=;
+        b=kFXVFkmMXdfC7/oyY9p08Z7JSxqpYcZyQXqA7qOk+GmXBUx4XCdSEEQfabP3VDscEw
+         XYUiOpAJ9qgVsjuTMWBMF9dWTB3eR2EPG0o5HsYFGm2RuWy18KBoMpjPk/W6Q55gDUEZ
+         /yXEcJpM1vWwfKgdtB0VcVDqwtCCJKkhKdSWsIEBoMb21Gx1RbanstNE+Lq4Ff1GTgn1
+         4LSgoBV2TwgzPwS/07KkaCpObWFVjW+EqHTaz3DpZlmpShydFKvbr0khcvp6TPbF6AI7
+         F1lk3ftEh3U0kyTyhKvLVIqEJs0rGzAN3HiqvR+LaXxZZatwK0M+uM31woJamc7Asa0J
+         n58w==
+X-Gm-Message-State: APjAAAVYmRZkXlb/YFXP4ss3DSpub5Jw2FTlBbGOVhXXbBvN1/5Y3gGr
+        8ToK/3zPdRmEHoKNHgIv8mY=
+X-Google-Smtp-Source: APXvYqwS9mBb6vrC0DhVyMmyRT5ZRdKwezrJErmAVG/FEmt+6AsmQkMSAz9lRez80K2MggQYstDNlg==
+X-Received: by 2002:a17:902:bd0c:: with SMTP id p12mr17355851pls.50.1556347411683;
+        Fri, 26 Apr 2019 23:43:31 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.05
+        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Apr 2019 23:43:06 -0700 (PDT)
+        Fri, 26 Apr 2019 23:43:31 -0700 (PDT)
 From:   nadav.amit@gmail.com
 To:     Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
@@ -71,12 +71,11 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v6 03/24] x86/mm: Introduce temporary mm structs
-Date:   Fri, 26 Apr 2019 16:22:42 -0700
-Message-Id: <20190426232303.28381-4-nadav.amit@gmail.com>
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH v6 19/24] bpf: Use vmalloc special flag
+Date:   Fri, 26 Apr 2019 16:22:58 -0700
+Message-Id: <20190426232303.28381-20-nadav.amit@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426232303.28381-1-nadav.amit@gmail.com>
 References: <20190426232303.28381-1-nadav.amit@gmail.com>
@@ -84,82 +83,91 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Rick Edgecombe <rick.p.edgecombe@intel.com>
 
-Using a dedicated page-table for temporary PTEs prevents other cores
-from using - even speculatively - these PTEs, thereby providing two
-benefits:
+Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
+permissioned memory in vmalloc and remove places where memory was set RW
+before freeing which is no longer needed. Don't track if the memory is RO
+anymore because it is now tracked in vmalloc.
 
-(1) Security hardening: an attacker that gains kernel memory writing
-abilities cannot easily overwrite sensitive data.
-
-(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
-remote page-tables.
-
-To do so a temporary mm_struct can be used. Mappings which are private
-for this mm can be set in the userspace part of the address-space.
-During the whole time in which the temporary mm is loaded, interrupts
-must be disabled.
-
-The first use-case for temporary mm struct, which will follow, is for
-poking the kernel text.
-
-[ Commit message was written by Nadav Amit ]
-
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/mmu_context.h | 33 ++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ include/linux/filter.h | 17 +++--------------
+ kernel/bpf/core.c      |  1 -
+ 2 files changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 19d18fae6ec6..24dc3b810970 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -356,4 +356,37 @@ static inline unsigned long __get_current_cr3_fast(void)
- 	return cr3;
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index 14ec3bdad9a9..7d3abde3f183 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -20,6 +20,7 @@
+ #include <linux/set_memory.h>
+ #include <linux/kallsyms.h>
+ #include <linux/if_vlan.h>
++#include <linux/vmalloc.h>
+ 
+ #include <net/sch_generic.h>
+ 
+@@ -503,7 +504,6 @@ struct bpf_prog {
+ 	u16			pages;		/* Number of allocated pages */
+ 	u16			jited:1,	/* Is our filter JIT'ed? */
+ 				jit_requested:1,/* archs need to JIT the prog */
+-				undo_set_mem:1,	/* Passed set_memory_ro() checkpoint */
+ 				gpl_compatible:1, /* Is filter GPL compatible? */
+ 				cb_access:1,	/* Is control block accessed? */
+ 				dst_needed:1,	/* Do we need dst entry? */
+@@ -733,27 +733,17 @@ bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size_default)
+ 
+ static inline void bpf_prog_lock_ro(struct bpf_prog *fp)
+ {
+-	fp->undo_set_mem = 1;
++	set_vm_flush_reset_perms(fp);
+ 	set_memory_ro((unsigned long)fp, fp->pages);
  }
  
-+typedef struct {
-+	struct mm_struct *mm;
-+} temp_mm_state_t;
-+
-+/*
-+ * Using a temporary mm allows to set temporary mappings that are not accessible
-+ * by other CPUs. Such mappings are needed to perform sensitive memory writes
-+ * that override the kernel memory protections (e.g., W^X), without exposing the
-+ * temporary page-table mappings that are required for these write operations to
-+ * other CPUs. Using a temporary mm also allows to avoid TLB shootdowns when the
-+ * mapping is torn down.
-+ *
-+ * Context: The temporary mm needs to be used exclusively by a single core. To
-+ *          harden security IRQs must be disabled while the temporary mm is
-+ *          loaded, thereby preventing interrupt handler bugs from overriding
-+ *          the kernel memory protection.
-+ */
-+static inline temp_mm_state_t use_temporary_mm(struct mm_struct *mm)
-+{
-+	temp_mm_state_t temp_state;
-+
-+	lockdep_assert_irqs_disabled();
-+	temp_state.mm = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	switch_mm_irqs_off(NULL, mm, current);
-+	return temp_state;
-+}
-+
-+static inline void unuse_temporary_mm(temp_mm_state_t prev_state)
-+{
-+	lockdep_assert_irqs_disabled();
-+	switch_mm_irqs_off(NULL, prev_state.mm, current);
-+}
-+
- #endif /* _ASM_X86_MMU_CONTEXT_H */
+-static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
+-{
+-	if (fp->undo_set_mem)
+-		set_memory_rw((unsigned long)fp, fp->pages);
+-}
+-
+ static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
+ {
++	set_vm_flush_reset_perms(hdr);
+ 	set_memory_ro((unsigned long)hdr, hdr->pages);
+ 	set_memory_x((unsigned long)hdr, hdr->pages);
+ }
+ 
+-static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
+-{
+-	set_memory_rw((unsigned long)hdr, hdr->pages);
+-}
+-
+ static inline struct bpf_binary_header *
+ bpf_jit_binary_hdr(const struct bpf_prog *fp)
+ {
+@@ -789,7 +779,6 @@ void __bpf_prog_free(struct bpf_prog *fp);
+ 
+ static inline void bpf_prog_unlock_free(struct bpf_prog *fp)
+ {
+-	bpf_prog_unlock_ro(fp);
+ 	__bpf_prog_free(fp);
+ }
+ 
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index ff09d32a8a1b..c605397c79f0 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -848,7 +848,6 @@ void __weak bpf_jit_free(struct bpf_prog *fp)
+ 	if (fp->jited) {
+ 		struct bpf_binary_header *hdr = bpf_jit_binary_hdr(fp);
+ 
+-		bpf_jit_binary_unlock_ro(hdr);
+ 		bpf_jit_binary_free(hdr);
+ 
+ 		WARN_ON_ONCE(!bpf_prog_kallsyms_verify_off(fp));
 -- 
 2.17.1
 
