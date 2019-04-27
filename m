@@ -1,71 +1,48 @@
 Return-Path: <SRS0=W8Zd=S5=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0477AC4321A
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 10:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F515C43218
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 10:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C486F20651
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 10:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556360537;
-	bh=yFxUqGZfvP30OujG83ka+08WSj3cOU16hsLHCDixXog=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EzAbjARBsXWkZCge9hOZ/0RfCg8fH/sOPd0Ge4vhzsm86GdKdSZg83p3A0tqgKAty
-	 tCmLddAWrv53NsOmVRQdY9bDVAGpG9Qd+CrMWbmPjua53tBxTCMUh8ZoZ0QzsP3c0y
-	 krW2S5BJY6R2s73JmSL1jOQAVXXQY9uiWsIXlCbk=
+	by mail.kernel.org (Postfix) with ESMTP id 3851020693
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Apr 2019 10:32:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d1C1qdVO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbfD0KWR (ORCPT
+        id S1725954AbfD0Kci (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 27 Apr 2019 06:22:17 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39135 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfD0KWQ (ORCPT
+        Sat, 27 Apr 2019 06:32:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43872 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfD0Kci (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 27 Apr 2019 06:22:16 -0400
-Received: by mail-wm1-f68.google.com with SMTP id n25so7952056wmk.4;
-        Sat, 27 Apr 2019 03:22:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=de/pNKGKEgMYXZXH86ILziX1rd53UXodWw8hsowIUv8=;
-        b=FHS55DQa7HVVSxloxBDHY12J9GGU3TjeKB6GK1roRSZM4TMRfM9dYUlqrluVFxih7k
-         iqu3tTBkjTimmoUUtRc9/3kuRbifUQxHT8LeZx+3LiD5TMcOcCNzsKRhSkft2PMnPL90
-         Vq7F63S3Kk/KiYW3nP3OGcmjIyvV1UhWBerCN544Ts7nwYpebY5UhaYNAcmZAxFT/J8R
-         UKBu4UL+M9o669No1gk+IM/qFwaWfD17ifFjhxENuLAmPXM7CnsSd3smT++LnH3M3sJn
-         Y4o3DE6SPT1Yxd9AwUXeqYCObbDwq5rB1DHi/FXl3JAY0c54wEc4nLvawZwVSQ5PJZ9e
-         +/YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=de/pNKGKEgMYXZXH86ILziX1rd53UXodWw8hsowIUv8=;
-        b=aMrj/UXK6IDoKs0Da9W82w5bj5l6Mv/xV6s4UQBdEEAHkA9M6hB5hhuxTIZLLXsUbA
-         B1fddk3XmjI8wqgnZBrJoCoIUwQZFaHXrkWXBVf/RbMeaVJFTWEJhUNqj0omkZJEKmST
-         eKse0fFMEg9IIz4vDIvZtQUHadlFZ1BiMvKQXGjzp+eI/69vpmYov6yR5GbnVNhP/Viv
-         UdEe2Kh39E15ALkSy1q3eijvJ6rmbBsSP8OXhrJ/iyit3eV/2K7aWkH0LXr7y56x1dq+
-         KTQux9z/nYT8ywCIRqQKRXd3mOWlgeDDKsWNRbgPtyeVnHV9Wji5f6jbGTg+0swIr9Fm
-         wucg==
-X-Gm-Message-State: APjAAAXkRrEBvuqgdVfNKsncR3FrqdPmCt7fmYamc2Xt0FaYm3icGA4s
-        wDV25bzbdE4wADPyBv85c4U=
-X-Google-Smtp-Source: APXvYqz9DACRCDQQ8Go5wbjbYqQ8/ZE2Kbv27Orbu2KzfOAXTXxbqBkygu2CrWu329RFlIYxLpfm2Q==
-X-Received: by 2002:a7b:cf2b:: with SMTP id m11mr10741651wmg.56.1556360534355;
-        Sat, 27 Apr 2019 03:22:14 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id r16sm22477270wrx.37.2019.04.27.03.22.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 27 Apr 2019 03:22:13 -0700 (PDT)
-Date:   Sat, 27 Apr 2019 12:22:10 +0200
-From:   Ingo Molnar <mingo@kernel.org>
+        Sat, 27 Apr 2019 06:32:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/wfN9cbY70jLMmaBiwAoTgOUu22N+b34JaAv4aDSiiM=; b=d1C1qdVOjLCTuijW+/UiQ9tUY
+        u2JXmjimTsgGi9pPouHXGSi+f0eSxX0HIH7HWyjHD2y24faIPOC4LiwlTeQlVCXXwbH52+wK2P9eq
+        yywoc+V3Gs/cQiwL8dgcGe75sw2HjavlRB57PNztNaUYzClj6YzlZMrjM04q4hUgigqLhYxdSJbxb
+        jeQuxl+5ANx0PaU2uwc7aLcQ72NXWvHAUBx2/u7X9KKyGjw7AJE3sQYMtfdJ/YUur1FQpoIwTn1Er
+        TXQQB6JzS3+BxL+eHmI18UWhjqcfLspCmuQ+hJBQiE5jEtCdrDhzwhLyK56zyuxFS/xnc9IAWvgY+
+        zs64p7GnA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hKKd8-0001Xn-GL; Sat, 27 Apr 2019 10:32:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 079E329D22409; Sat, 27 Apr 2019 12:32:25 +0200 (CEST)
+Date:   Sat, 27 Apr 2019 12:32:24 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
 To:     nadav.amit@gmail.com
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
+Cc:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
         Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
         x86@kernel.org, hpa@zytor.com,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -78,7 +55,7 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
         Nadav Amit <namit@vmware.com>
 Subject: Re: [PATCH v6 00/24] x86: text_poke() fixes and executable lockdowns
-Message-ID: <20190427102210.GA130188@gmail.com>
+Message-ID: <20190427103224.GG2623@hirez.programming.kicks-ass.net>
 References: <20190426232303.28381-1-nadav.amit@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -89,9 +66,7 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-* nadav.amit@gmail.com <nadav.amit@gmail.com> wrote:
-
+On Fri, Apr 26, 2019 at 04:22:39PM -0700, nadav.amit@gmail.com wrote:
 > From: Nadav Amit <namit@vmware.com>
 > 
 > *
@@ -100,15 +75,10 @@ List-ID: <linux-security-module.vger.kernel.org>
 > * Patch 7 (which was 6 in the previous version) is updated - the code is
 > * moved to common mm-init code with no further changes.
 > *
-> 
-> This patchset improves several overlapping issues around stale TLB
-> entries and W^X violations. It is combined from "x86/alternative:
-> text_poke() enhancements v7" [1] and "Don't leave executable TLB entries
-> to freed pages v2" [2] patchsets that were conflicting.
 
-Which tree is this again? It doesn't apply to Linus's latest nor to -tip 
-cleanly.
+I've added patch 5 and updated patch 7, I've left the rest of the
+patches from the previous series (and kept my re-ordering of the
+patches).
 
-Thanks,
+I pushed it all out to 0day again. Let's see if it's happy now.
 
-	Ingo
