@@ -2,103 +2,77 @@ Return-Path: <SRS0=32Xp=S7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F69CC43219
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 22:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 457F7C43219
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 22:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 152412075E
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 22:55:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 138A02075E
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 22:57:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="JE/CgKxf"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AF2He1xZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729620AbfD2Wze (ORCPT
+        id S1729672AbfD2W45 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Apr 2019 18:55:34 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45289 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729601AbfD2Wze (ORCPT
+        Mon, 29 Apr 2019 18:56:57 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46415 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729617AbfD2W45 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Apr 2019 18:55:34 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m18so6321545lje.12
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2019 15:55:33 -0700 (PDT)
+        Mon, 29 Apr 2019 18:56:57 -0400
+Received: by mail-io1-f67.google.com with SMTP id p23so10468130iol.13
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2019 15:56:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=fEaW15WXnU2V0dtGDjKdZi5j8WWSKMMheyucMQDKRlE=;
-        b=JE/CgKxfVFMT2O4k1B1n9IpLRcpNVbTxLJKQJSEYTPpJej7K0ymOZQzaX1eTgNVVc8
-         ODi8F4XgvYkXysUUYeH7U0sX5ATTAhhd81EUxhDrUIpbYuNEdLS8mlfKINsRlSe/dLJs
-         b9Yh5BhC8to5SKcjqa+Au0xXW9jjZyxpRAkzl3FiYc9JYpJrrYrCnKdwjt0+PQARyiB0
-         0NAV4T6DUMqAoue9U8asntZZ/+Rn1JiITlQdsU5s6V/8GGuE6UX7iz4Q0eV5jC/mi3+0
-         e9HFoyzaMDPSCYWCL65VsT9GivSoYsFKzpV/7sU70NgINIwuPaf1+IAUso45bEScsTf7
-         dwnw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gygjGy0Tx6m/3bovClGd2rLBa0pi6fNkHAIxfSZ8kUM=;
+        b=AF2He1xZrzkq68YRqvXpoaCfGbxnrVNa2SJu9UdF1Z6AYKHNfcloWp1li3hqdeB8Yw
+         MMLLDS6kIn076fI1Wk86rvhdrAp3CTIc33eVG/u/H06seb031gy2PyWw/pSUSCpXqcs4
+         QHWbCKbbkFGOAuP4i2ubnx/2+0b5W+Z3rkMYDMSUq1gvH1tfWVKTYKsR2k7Kmc91wGlR
+         P5edMWkg5ant75Z611KNqa0EZJGvVW9z+435VcX94/x/UQIxv6XKzHiP+mMarsqSwTVQ
+         le5Aa1ygiTZrQTZWiRMmP7I+cjqXXVUxk9fgBwc7Mmcgsum9SlhUFBYDXshYBzqR4xyK
+         569A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=fEaW15WXnU2V0dtGDjKdZi5j8WWSKMMheyucMQDKRlE=;
-        b=DB4CKW2s5G39OEcdTw0vUU+MKyBYUDBrr1bze+pD8twnw5OVvI4vp81DXa8/0Q0PSH
-         l2pRW4KMmif6Fn9hrnhjCXwCMmJqU0jEP7CMHh4JiFXz3SN8a2Mxy8UaI4fTcjWxnAKc
-         DDxIxkNvAAJnk0Eynto9uV7BKl+zuVNAIaOMK3LKAJD+BVzYaRP8MKNOiaLefS5qqj1d
-         rTTeW15HNkS3ewiZCDJN4ttjIDxk840gpvFCEGVSLXv4lfcArXK8BtVu/vc7zXVC8dhb
-         gDYkYup9XugQ91TU0R/Xgz3/FEAXkrTAj5tD+D+cGzz6NjEFkel/+hCdPtylIjAtcJJT
-         ogxQ==
-X-Gm-Message-State: APjAAAUq/FjLgFMl5X1gSxKbQh+C6Kk57lO0wCwNcRtJ6nvu6iqAVEWp
-        49CNG8l5hnPNnaUPAyRUDHeb64Q8nyMO7LOSbucy
-X-Google-Smtp-Source: APXvYqwt/xs7gpwOInhsa+VWGGSsdPSzmeyzfTV52zkPVRNXLp2xL9ILBAddJyokIiniKHcZETsfQfqIe5jw/Dtex+o=
-X-Received: by 2002:a2e:888a:: with SMTP id k10mr20443582lji.57.1556578532417;
- Mon, 29 Apr 2019 15:55:32 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gygjGy0Tx6m/3bovClGd2rLBa0pi6fNkHAIxfSZ8kUM=;
+        b=TmXaYrhwpyCiAvKXj0ZY6JSZZq+beMFzHxh58whdiNpM4DMRXCqg+/TAyegvHFpXEE
+         gHf6gta3hIhEcWt1ctpdZXTV9LOC5YwQVeyEpxzmNIEf9nT6dMS6KPanJTTO6noucWDt
+         mxmhuKBN8N+OMZah+fWuPT3jwQ+gQ0WUTegWPcHRLxX5I8IXMSvquCPOgDoYJH52+Yun
+         OodEWAE8ZjQGR4aMpVjFuR/eKT62ukmoJO4KwvOFlCa+2cgWnjPm9mw0BT2ck3+Q5wGk
+         V++UgXvK4Dwi+DWUg84PDCgw9QhHs9RHDvtG8zCcyTcC6uOghnPwL7yNFQb/WAAwi+sO
+         qPhg==
+X-Gm-Message-State: APjAAAXJD+/m0XsW0SS7oLLLnWfHrNxwnirSVwOH8v54SfEhu8UNs/08
+        F333dYXGv9Ou4x5BmQnZmxeQ0lDU0vF4S8dwDyN2RA==
+X-Google-Smtp-Source: APXvYqwELCQYSYxRolEnxOwvku+vu6EGCFx5Boay6oC9nRGmg6H97OlakZWLGo8xgn/GBDkG5aLRGbOMS5HGrk//aDw=
+X-Received: by 2002:a6b:e20e:: with SMTP id z14mr6314345ioc.169.1556578615904;
+ Mon, 29 Apr 2019 15:56:55 -0700 (PDT)
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 29 Apr 2019 18:55:19 -0400
-Message-ID: <CAHC9VhQ6QF7LvuFjr2YdYNX-3pW80nm+VJh4jK080JsKOzOVsA@mail.gmail.com>
-Subject: [GIT PULL] SELinux fixes for v5.1 (#3)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+References: <20190404003249.14356-1-matthewgarrett@google.com> <20190404003249.14356-2-matthewgarrett@google.com>
+In-Reply-To: <20190404003249.14356-2-matthewgarrett@google.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Mon, 29 Apr 2019 15:56:44 -0700
+Message-ID: <CACdnJus-+VTy0uOWg982SgZr55Lp7Xot653dJb_tO5T=J6D8nw@mail.gmail.com>
+Subject: Re: [PATCH V32 01/27] Add the ability to lock down access to the
+ running kernel image
+To:     James Morris <jmorris@namei.org>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+Hi James,
 
-One small patch for the stable folks to fix a problem when building
-against the latest glibc.  I'll be honest and say that I'm not really
-thrilled with the idea of sending this up right now, but Greg is a
-little annoyed so here I figured I would at least send the PR.
-
--Paul
-
---
-The following changes since commit 6a1afffb08ce5f9fb9ccc20f7ab24846c0142984:
-
- selinux: fix NULL dereference in policydb_destroy()
-   (2019-03-18 12:19:48 -0400)
-
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20190429
-
-for you to fetch changes up to dfbd199a7cfe3e3cd8531e1353cdbd7175bfbc5e:
-
- selinux: use kernel linux/socket.h for genheaders and mdp
-   (2019-04-29 11:34:58 -0400)
-
-----------------------------------------------------------------
-selinux/stable-5.1 PR 20190429
-
-----------------------------------------------------------------
-Paulo Alcantara (1):
-     selinux: use kernel linux/socket.h for genheaders and mdp
-
-scripts/selinux/genheaders/genheaders.c | 1 -
-scripts/selinux/mdp/mdp.c               | 1 -
-security/selinux/include/classmap.h     | 1 +
-3 files changed, 1 insertion(+), 2 deletions(-)
-
--- 
-paul moore
-www.paul-moore.com
+What's the best way forward with this? I'm still not entirely clear on
+how it can be implemented purely as an LSM, but if you have ideas on
+what sort of implementation you'd prefer I'm happy to work on that.
