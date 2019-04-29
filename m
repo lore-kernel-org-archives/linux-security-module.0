@@ -2,31 +2,63 @@ Return-Path: <SRS0=32Xp=S7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA65AC43219
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 18:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E18D8C43219
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 18:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB8DF20675
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 18:28:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0297216F4
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 18:43:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556563416;
+	bh=TYbYR6xdiAT33fFeBDJqUP8mpRliL4fUyIr32o3R6Ao=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=m1XEikEcZWuzM8HEAij8p0ZFDjhJf8Dz7XYtqNaWWHF9LayG9MsfM6NimaTwHgnwy
+	 IKFNzT9ptN/S08d2QrGLAXBmgYy21aMenvHC8w/QSS8hlmTLEWLWkNzQxVjUQ+hECX
+	 1lWsyhJum+D6rpUdIsIXLOzF18L/oHPullcc4Psc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbfD2S2x (ORCPT
+        id S1729228AbfD2Sne (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Apr 2019 14:28:53 -0400
-Received: from namei.org ([65.99.196.166]:36426 "EHLO namei.org"
+        Mon, 29 Apr 2019 14:43:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728962AbfD2S2x (ORCPT
+        id S1728946AbfD2Sne (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Apr 2019 14:28:53 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x3TIQxlq021250;
-        Mon, 29 Apr 2019 18:26:59 GMT
-Date:   Tue, 30 Apr 2019 04:26:59 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Ingo Molnar <mingo@kernel.org>
-cc:     Andy Lutomirski <luto@kernel.org>,
+        Mon, 29 Apr 2019 14:43:34 -0400
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 032C821670
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2019 18:43:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556563413;
+        bh=TYbYR6xdiAT33fFeBDJqUP8mpRliL4fUyIr32o3R6Ao=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Ild4RLQx9rtlOvTMTH/a2NOZwv2KhSkHHDSs0/ztbX9IjEWNeAvPTIQTDmmrTUpaP
+         P/Jlymb7EAxnHAX7dIW4dLamRL85KAqgyYJcADejzz0al8WIhPxUz7QWocmNVaz1IN
+         d+Gx835qgvYw2xFHS1KphzxoLeAN69ShA+e9NJA0=
+Received: by mail-wm1-f49.google.com with SMTP id z6so572837wmi.0
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2019 11:43:32 -0700 (PDT)
+X-Gm-Message-State: APjAAAXKKExnSP2iR7HaFFEfv3P+W9hsxqnPmG0kC9eHiIDT+gKTteLx
+        3a1UCaTZIB/vkhQ3rQi5S4567r2uPsg25cr79eb/LA==
+X-Google-Smtp-Source: APXvYqwXpPlusyb3Pkf6NhTuJxrB50rMCwVMOgK5uUwclcgN2qAcz9570f515mL5RGC1hGTQHUSXomHSXsEL/JsKib8=
+X-Received: by 2002:a7b:c844:: with SMTP id c4mr331867wml.108.1556563411667;
+ Mon, 29 Apr 2019 11:43:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
+ <1556228754-12996-3-git-send-email-rppt@linux.ibm.com> <20190426083144.GA126896@gmail.com>
+ <20190426095802.GA35515@gmail.com> <CALCETrV3xZdaMn_MQ5V5nORJbcAeMmpc=gq1=M9cmC_=tKVL3A@mail.gmail.com>
+ <20190427084752.GA99668@gmail.com> <20190427104615.GA55518@gmail.com> <alpine.LRH.2.21.1904300425200.20645@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1904300425200.20645@namei.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 29 Apr 2019 11:43:20 -0700
+X-Gmail-Original-Message-ID: <CALCETrX0T0_Cn8UivmRwtRZ8N3joT_MfQom+TKLZ2aqxqm7dYA@mail.gmail.com>
+Message-ID: <CALCETrX0T0_Cn8UivmRwtRZ8N3joT_MfQom+TKLZ2aqxqm7dYA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call isolation
+To:     James Morris <jmorris@namei.org>
+Cc:     Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
         Mike Rapoport <rppt@linux.ibm.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Alexandre Chartre <alexandre.chartre@oracle.com>,
@@ -45,31 +77,22 @@ cc:     Andy Lutomirski <luto@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call
- isolation
-In-Reply-To: <20190427104615.GA55518@gmail.com>
-Message-ID: <alpine.LRH.2.21.1904300425200.20645@namei.org>
-References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com> <1556228754-12996-3-git-send-email-rppt@linux.ibm.com> <20190426083144.GA126896@gmail.com> <20190426095802.GA35515@gmail.com> <CALCETrV3xZdaMn_MQ5V5nORJbcAeMmpc=gq1=M9cmC_=tKVL3A@mail.gmail.com>
- <20190427084752.GA99668@gmail.com> <20190427104615.GA55518@gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 27 Apr 2019, Ingo Molnar wrote:
+On Mon, Apr 29, 2019 at 11:27 AM James Morris <jmorris@namei.org> wrote:
+>
+> On Sat, 27 Apr 2019, Ingo Molnar wrote:
+>
+> >  - A C language runtime that is a subset of current C syntax and
+> >    semantics used in the kernel, and which doesn't allow access outside
+> >    of existing objects and thus creates a strictly enforced separation
+> >    between memory used for data, and memory used for code and control
+> >    flow.
+>
+> Might be better to start with Rust.
+>
 
->  - A C language runtime that is a subset of current C syntax and 
->    semantics used in the kernel, and which doesn't allow access outside 
->    of existing objects and thus creates a strictly enforced separation 
->    between memory used for data, and memory used for code and control 
->    flow.
-
-Might be better to start with Rust.
-
-
--- 
-James Morris
-<jmorris@namei.org>
-
+I think that Rust would be the clear winner as measured by how fun it sounds :)
