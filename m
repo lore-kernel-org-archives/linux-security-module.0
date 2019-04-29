@@ -2,57 +2,56 @@ Return-Path: <SRS0=32Xp=S7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC85FC43219
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 00:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6EADC004C9
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 04:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 793212067D
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 00:07:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A62E32087B
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Apr 2019 04:55:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axtens.net header.i=@axtens.net header.b="Or6uEcGq"
+	dkim=pass (1024-bit key) header.d=axtens.net header.i=@axtens.net header.b="MT3mzMT7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726223AbfD2AHA (ORCPT
+        id S1727158AbfD2Eyx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 28 Apr 2019 20:07:00 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34274 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbfD2AG7 (ORCPT
+        Mon, 29 Apr 2019 00:54:53 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43216 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbfD2EyJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 28 Apr 2019 20:06:59 -0400
-Received: by mail-pg1-f194.google.com with SMTP id c13so3320358pgt.1
-        for <linux-security-module@vger.kernel.org>; Sun, 28 Apr 2019 17:06:59 -0700 (PDT)
+        Mon, 29 Apr 2019 00:54:09 -0400
+Received: by mail-pf1-f196.google.com with SMTP id e67so4691590pfe.10
+        for <linux-security-module@vger.kernel.org>; Sun, 28 Apr 2019 21:54:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=axtens.net; s=google;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=n2mvnFGe7DhWnAVJ4HPTWEsItuKdoQBnBqAP6kIcYug=;
-        b=Or6uEcGq20/dbV741dpgRcmnluoZolSsauu907Q2n5IqtHesTqLypagpN4KylfV4J4
-         gV/Ri1WN8QiMSpSFwMNVrtg+g50Mh9dq9f59O5tPGvKm4CoKzYz808goOti/dswLGmR1
-         AYMHlHdbG1/yE0hzyy72pnjLNc6uo7AC6CMfw=
+        bh=CXY8NMI+MMoFwyd5a0U3G9swoqWap2mhzcLLts/Z+iE=;
+        b=MT3mzMT76800YDXvDZ5HeHvywukXbF/p5hE0jBqJpGYZZg1bhMX2UHmZ1HU1dvIheR
+         9V3fe+IwApl8EGbBqr2IZkMENTIoZrC2hLsTBul7PX4wqT1iG/MuEFlYgfUtMUoSToFc
+         7CbzrSVAtGB1V9nsEgm59WhrmtIFGM7bhpw1w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=n2mvnFGe7DhWnAVJ4HPTWEsItuKdoQBnBqAP6kIcYug=;
-        b=lm9Ggy/OSr0o/Jz0X5TV83J9ruKB7pAxtQ6tQbKgSr/Z0E8QxNTxSyeCHYDCGz4AtQ
-         ws/Z4IYDd+K6haXmwEUykNfo9KbGEcHu+3LGWNPhCqxpRqYzgciKb5DJ1wJ3Obswn5l4
-         Wh7Dx00WErge0hm7bSOsLZ9Fc4xm2C79+WQZDWW0chmSBsqM3Ejs88H/7JHQw8IDIHkw
-         tw3gDuX9g1z6r1kZnHXdJnDVizrgmE0yYVKrliEo6Et6gUITxQ9Q5NBbNBGXWaNJdWMZ
-         SjB4AfsPFEnCf1/azGVr70B56nWJ2OTFFf4i/rdSyrd7DokQfi2GhHKfJpP0SkoLR5hx
-         IXKQ==
-X-Gm-Message-State: APjAAAWrBMWJP4kLpaz/WGmURDyhCsU5elR57232BEXc1vlobPwgHtP5
-        2wVhaoCoZqMhfZWhDqj2YpfTkA==
-X-Google-Smtp-Source: APXvYqwb6MwKjVD4beBIgVSrqvnOCys+S049kGs7qQXovjqAUY28iQ+jdtiBGffI7iAuh/EIjCR1vg==
-X-Received: by 2002:a63:4714:: with SMTP id u20mr47465141pga.316.1556496419070;
-        Sun, 28 Apr 2019 17:06:59 -0700 (PDT)
+        bh=CXY8NMI+MMoFwyd5a0U3G9swoqWap2mhzcLLts/Z+iE=;
+        b=Pa8ACbty0BbH/oNK8nz9mRno48lNe24rHH3GkhCjov4qD29up+DNDVPO1za/0BfT2I
+         rvLusQyOvnLMwt33xTbJxauWHEWBr10w5KuHkgEU9E4sta30SLbXs9SmdKivZ95SI/Xd
+         CYo5+d2XjlP0KQ99iZto8+Bany00NIXRB+zrkxNzAYdkjYX14eaWNnOmqDR4wleYAAtR
+         F2PMfKGmd8AGgvtLT+o9p5DZ0gXzjSGsk35OMkoTjHh6fUNDzml17ZgcQR3KfQHA750O
+         xDzCFWtXGIpnpgmkYP3pRAvugzD462yBOrTMYvBpUpj9Iu+GPz0oQiLYDU5tbUbUxxl0
+         DILw==
+X-Gm-Message-State: APjAAAXlAz+kAsxAd008nEIUzmJS6UuNgzekYLYNVxTOthXoZCnSCAQh
+        Xgrt+32mGiNvF3DdMtyQNeWUMA==
+X-Google-Smtp-Source: APXvYqxOmKGuDu957cqrxEQ+1VImzuI7N1RjWAr+p16Qnie6ZNUhOIBHM3h6IhCgt1zC9o45e1De9A==
+X-Received: by 2002:a63:7d03:: with SMTP id y3mr55014550pgc.8.1556513648514;
+        Sun, 28 Apr 2019 21:54:08 -0700 (PDT)
 Received: from localhost (ppp121-45-207-92.bras1.cbr1.internode.on.net. [121.45.207.92])
-        by smtp.gmail.com with ESMTPSA id w23sm44714029pgj.72.2019.04.28.17.06.56
+        by smtp.gmail.com with ESMTPSA id j67sm74431179pfc.72.2019.04.28.21.54.06
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 28 Apr 2019 17:06:57 -0700 (PDT)
+        Sun, 28 Apr 2019 21:54:07 -0700 (PDT)
 From:   Daniel Axtens <dja@axtens.net>
 To:     Matthew Garrett <mjg59@google.com>,
         Andrew Donnellan <andrew.donnellan@au1.ibm.com>
@@ -65,47 +64,40 @@ Cc:     James Morris <jmorris@namei.org>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
         Michael Ellerman <mpe@ellerman.id.au>, cmr <cmr@informatik.wtf>
 Subject: Re: [PATCH V32 01/27] Add the ability to lock down access to the running kernel image
-In-Reply-To: <CACdnJus9AhAAYs-R94BH7HDuuQfXjgdhdqUR6Pvk9mxbuPx1=Q@mail.gmail.com>
-References: <20190404003249.14356-1-matthewgarrett@google.com> <20190404003249.14356-2-matthewgarrett@google.com> <059c523e-926c-24ee-0935-198031712145@au1.ibm.com> <CACdnJus9AhAAYs-R94BH7HDuuQfXjgdhdqUR6Pvk9mxbuPx1=Q@mail.gmail.com>
-Date:   Mon, 29 Apr 2019 10:06:51 +1000
-Message-ID: <87wojdy8ro.fsf@dja-thinkpad.axtens.net>
+In-Reply-To: <87wojdy8ro.fsf@dja-thinkpad.axtens.net>
+References: <20190404003249.14356-1-matthewgarrett@google.com> <20190404003249.14356-2-matthewgarrett@google.com> <059c523e-926c-24ee-0935-198031712145@au1.ibm.com> <CACdnJus9AhAAYs-R94BH7HDuuQfXjgdhdqUR6Pvk9mxbuPx1=Q@mail.gmail.com> <87wojdy8ro.fsf@dja-thinkpad.axtens.net>
+Date:   Mon, 29 Apr 2019 14:54:03 +1000
+Message-ID: <87tvehxvh0.fsf@dja-thinkpad.axtens.net>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Matthew Garrett <mjg59@google.com> writes:
+Hi, 
 
-> On Tue, Apr 16, 2019 at 1:40 AM Andrew Donnellan
-> <andrew.donnellan@au1.ibm.com> wrote:
->> I'm thinking about whether we should lock down the powerpc xmon debug
->> monitor - intuitively, I think the answer is yes if for no other reason
->> than Least Astonishment, when lockdown is enabled you probably don't
->> expect xmon to keep letting you access kernel memory.
->
-> The original patchset contained a sysrq hotkey to allow physically
-> present users to disable lockdown, so I'm not super concerned about
-> this case - I could definitely be convinced otherwise, though.
+>>> I'm thinking about whether we should lock down the powerpc xmon debug
+>>> monitor - intuitively, I think the answer is yes if for no other reason
+>>> than Least Astonishment, when lockdown is enabled you probably don't
+>>> expect xmon to keep letting you access kernel memory.
+>>
+>> The original patchset contained a sysrq hotkey to allow physically
+>> present users to disable lockdown, so I'm not super concerned about
+>> this case - I could definitely be convinced otherwise, though.
 
-So currently (and I'm pretty new to this as I've only recently rejoined
-IBM) we aren't considering access to the console to be sufficient to
-assert physical presence on bare-metal server-class Power machines. The
-short argument for this is that with IPMI and BMCs, a server's console
-isn't what it used to be. Our console is also a bit different to x86:
-we don't generally have bios configuration screens on the console.
+So Mimi contacted me offlist and very helpfully provided me with a much
+better and less confused justification for disabling xmon in lockdown:
 
-In your example, a sysrq key would allow you to disable lockdown after
-the system has booted. On Power though, we use Linux as a bootloader
-(Petitboot: https://github.com/open-power/petitboot) so being able to
-disable lockdown there allows an IPMI-connected user to prevent a signed
-kernel being loaded in the first place. I don't know if this is
-_actually_ worse, but it certainly feels worse.
+On x86, physical presence (== console access) is a trigger to
+disable/enable lockdown mode.
 
-There are of course some arguments against our approach. I'm aware of
-some of them. I'm also very open to being told that not equating console
-access with physical access is fundamentally silly or broken and that we
-should rethink things.
+In lockdown mode, you're not supposed to be able to modify memory. xmon
+allows you to modify memory, and therefore shouldn't be allowed in
+lockdown.
+
+So, if you can disable lockdown on the console that's probably OK, but
+it should be specifically disabling lockdown, not randomly editing
+memory with xmon.
 
 Regards,
 Daniel
