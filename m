@@ -2,85 +2,166 @@ Return-Path: <SRS0=l2r+=TA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22037C43219
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 21:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD8DC43219
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 21:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCC742080C
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 21:29:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E933821744
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 21:35:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Hp1gxzUw"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sq8KNLYM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726061AbfD3V3U (ORCPT
+        id S1726048AbfD3VfW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Apr 2019 17:29:20 -0400
-Received: from sonic308-8.consmr.mail.bf2.yahoo.com ([74.6.130.47]:34071 "EHLO
-        sonic308-8.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726048AbfD3V3U (ORCPT
+        Tue, 30 Apr 2019 17:35:22 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55301 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbfD3VfW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Apr 2019 17:29:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1556659758; bh=N5gTb/la1xwUFzbT9jPdDhRg6XMgokkcoXr4TBJvQKE=; h=To:Cc:From:Subject:Date:From:Subject; b=Hp1gxzUwO/8l+AyaHeSy7biMPsMY91bx8Klpgp5KJK6cbaHTQ9AbCZc4nS7bh5SCNt7M22ADre5oVmZqGsu+RfqYkbMNEGWd+ulrqnWjlaAST86vp8Z5hFB0VoBkf6Xw85uviuZ90EvMKQSqEqjRKSvgXwc+/uwNCiXsbl9k0UEwNdZl1vZ0kWkxdvvDKvg072M7NQvWztvlmAW15QcvbE75YderNG4OxzHNFB2ahC6JOupIMaTOx2rxtkCeX4YcykC0y//YquF/jGKMucNidR9H5xKKjgt7OyyR/diiwmuSqm76kekAI01Thd/LfPA53siGdqrzU9aEw/Cw/MVpGQ==
-X-YMail-OSG: _AYyzWQVM1l8sD.AcedcWcnhbW2Z1A2vwTwehYHGcXIZu5l22GPHBikNaWE6mn.
- uzHEEOOu_nysXyWxl5jonAg6.VLr5EBTPC34NlbmECwzs9XzUIP_iaa2byvhNR2OIosSieXp46vD
- W8jQ4xTA13rVJ18a.DYr.Qev6ffnsp0vhhwV6UnT5WNhTQGD2saCqf487Sw_LuaFEhGdfsILPQfQ
- NwVuxXKCJFSrO0aLUfBwdiG3cqjHLQNjm.Vb28yTYVlLlVr.dNbZsAlTTTO9OF2soPT5MFCpTjw7
- jlWIxUDa8SZz9HVIH0d2CQYcHF8eGYbe7Nh9_iyQKAGnuzqrU2XqHkPUTsf8Vz6fJ2WJbaDF48oz
- yImbLUF4TAZw3hCEraYa4MweBo.1mP9HYuiknfxHfOWZ3lE8Q6ybvxOmspQGBWLL7VZQyB0R5Q4y
- wKnIiIWJ5mXFMnEXEClb3gNulCbgoI_Z0HoP6yqQsdEiqMKhY95FQQ6SwM5f74oskEzg1Re51Uvo
- W1B0EwcUr3Hm_8AsnYZO833nyS9Faa3U9xv.t5wjJsNsw55Zl7t7mWuKDbLE89cl5I4VSxEYoTtp
- 8xQEZBpFMC0DZvpVQldvPSYT1X3YlpuIfA4UZl8Fiou3gax5vxxre_6cYZgeySMa0sgZxTV8a5gM
- RbVhEN39llMm4_vC7NGGXoluO451H7Pdwe.pf.j8C9RxvDCl6fJibWSDMwvgG3bjRVSB0GuNHav8
- LjO.zkq35dusJaq6STGsw5FIAukLbu6pQ7fY5aGopLve4PhwNyEwUj0UhQSg1.FJoztrqAWqiZBj
- 9XM0VdVLV3nPGOk8A9fbq0bQxEDmBMuQQiPEPtRME3Id.I4pVJd20DyyvklyS9.9d5T9k8eTo9zf
- BA8KsHwQHngAEh3BEfV3m7rkuR8lynJma25SD9EJ8sDw.0ItQ7Fqw4.rITdiUa7Pu7CTKyubce.j
- DaesC.11LKLcakjqs66uFhCxeUXcLyViEkqa8zSJccP_9SLDNHp4utUEzU_rD4L_S.aLb0TJxSLM
- DrzsHJ7xd26jvo0AzSVPn5wZ4zdbkFoIhCvb1dRPnWh9O8bNiBMJwCxGzRAh1fCGbIi6C4gTBP2v
- X4.Fpx95360kI4KLn4fz.DYXnU7129u_o.dJeqEEbo.32TZkmMq9GQFpR.pG.ek45ITFIywfm0la
- YeEssdtg7wno93ggHxXzYDJfQoW3lYsfpzV10KC_ulR5EQ64sOlIIa28fjJtTRVlkbdQ-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.bf2.yahoo.com with HTTP; Tue, 30 Apr 2019 21:29:18 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp430.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ec1f171c48426cfdbd6956f8ab8748c8;
-          Tue, 30 Apr 2019 21:29:13 +0000 (UTC)
-To:     James Morris <jmorris@namei.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Cc:     casey@schaufler-ca.com
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PULL] Smack: Repair for 5.2 build issue.
-Message-ID: <b1d1d0b8-51cb-657b-c8be-aa365a29c8a5@schaufler-ca.com>
-Date:   Tue, 30 Apr 2019 14:29:13 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 30 Apr 2019 17:35:22 -0400
+Received: by mail-it1-f195.google.com with SMTP id w130so7214627itc.5
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Apr 2019 14:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xwbA6m1IlkHcQAdDn+q8EF7OA9bDmXUDL8pQ3xlxeqo=;
+        b=Sq8KNLYMoEQTJQ8Stw6ktrYFYw+zkDUBePOHtQKKTkZvwVtovOluTVKwMnP5OxwkEI
+         xRPL4YOMPiqolt7cnNDIoRjpVwHdC9cPNhE5Az/2QlbtpvjxgVHuNqQuQHGGwpUVVukW
+         nC5xJQiZfC1wh2gFeunojseYcQqwKNo5P06mvHmBW2ZJ7630qxkTzOArc13ieUXbbmh7
+         u5k9icmaMxO9TnXKm5AyU5gnXzs5kmyR4Kumoh2cWT3xkILJnt8pw/wQ2BbT/p/BhhX2
+         Y8Wt5n3FwizMxkHPOOXZHoN+O5XlGBIpYOk+347M3eRzLEcaJhRYkVvbP14mTC1og8mp
+         0aeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xwbA6m1IlkHcQAdDn+q8EF7OA9bDmXUDL8pQ3xlxeqo=;
+        b=tm3NIZT022gWbvpYPq0/wLtV/ZLmfM8z6tgo7nQYWknA5oXpOYs5lcNFYQ4gvEIdd6
+         VSqlhdIEWRKfzuBKUWIjIH/aeJNG0wyBvyS+e/pyfjrBRzzAbI/DCwucQpcFJSeHwgWe
+         P9FlOvR3mh+rAnI8G5984cAhnb1nhl5mVAu02TIqCy+7igAddVUqogUt8iRlMr4E4s0s
+         KFyVTAiEYSysNk9MvQ435W71MHeolGMml6JA9atp1Gzq4126MbhBxQLBwN5PfVE7gAYo
+         3FIj+9WSk7QaXrfA+brv/boGAbCk549+8xYkdTiAunxb+I+g3OxLWOhGybM+gPdZGxDf
+         93pQ==
+X-Gm-Message-State: APjAAAXgdg9A8R9GDJeWxRYIPOE3Rq8ULuEUE17Sz4D+1/muks8RHqFC
+        n5Rs8eYjr0p9VPPncCOo5RcGv/hcaghdPYWYCR2+NQ==
+X-Google-Smtp-Source: APXvYqzIenEc1fHVzRGEEU14wPVQmKcjNo/JeR+UzSCvKt1pTOpxhl8Bq8KqDZSLgHNDy7fTG9L+3o5JTKEc6QSn4hM=
+X-Received: by 2002:a24:a86:: with SMTP id 128mr5346735itw.118.1556660120632;
+ Tue, 30 Apr 2019 14:35:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20190227202658.197113-1-matthewgarrett@google.com>
+ <20190227202658.197113-3-matthewgarrett@google.com> <CAJzaN5pUJoOCz5-ZDSnTb6dbVPuy0QwmFD0CeofAGK+bRQx0og@mail.gmail.com>
+ <CACdnJutpBPAX6TOGgs3Ng2v_cC5hAf-3pHThESvjQ9vbvQeVkA@mail.gmail.com>
+In-Reply-To: <CACdnJutpBPAX6TOGgs3Ng2v_cC5hAf-3pHThESvjQ9vbvQeVkA@mail.gmail.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Tue, 30 Apr 2019 14:35:09 -0700
+Message-ID: <CACdnJuvYAfFboej4e5jQ=iwhb-5Pi7BgSKEWGqJ0q=uarCoOfQ@mail.gmail.com>
+Subject: Re: [PATCH V5 2/4] tpm: Reserve the TPM final events table
+To:     Bartosz Szczepanek <bsz@semihalf.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+Content-Type: multipart/mixed; boundary="0000000000008759370587c62d7b"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-James, please pull this repair for a build problem with the last change.
+--0000000000008759370587c62d7b
+Content-Type: text/plain; charset="UTF-8"
 
-The following changes since commit b9ef5513c99bf9c8bfd9c9e8051b67f52b2dee1e:
+On Tue, Apr 30, 2019 at 12:51 PM Matthew Garrett <mjg59@google.com> wrote:
+> Yes, it looks like this is just broken. Can you try with the attached patch?
 
-   smack: Check address length before reading address family (2019-04-29 17:32:27 -0700)
+Actually, please try this one.
 
-are available in the git repository at:
+--0000000000008759370587c62d7b
+Content-Type: text/x-patch; charset="US-ASCII"; name="fix_log.diff"
+Content-Disposition: attachment; filename="fix_log.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jv4b8h1f0>
+X-Attachment-Id: f_jv4b8h1f0
 
-   https://github.com/cschaufler/next-smack.git smack-for-5.2-b
-
-for you to fetch changes up to 619ae03e922b65a1a5d4269ceae1e9e13a058d6b:
-
-   Smack: Fix kbuild reported build error (2019-04-30 14:13:32 -0700)
-
-----------------------------------------------------------------
-Casey Schaufler (1):
-       Smack: Fix kbuild reported build error
-
-  security/smack/smack_lsm.c | 2 ++
-  1 file changed, 2 insertions(+)
-
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZmlybXdhcmUvZWZpL3RwbS5jIGIvZHJpdmVycy9maXJtd2Fy
+ZS9lZmkvdHBtLmMKaW5kZXggMmNjYWE2NjYxYWFmLi5kYjBmZGFhOWM2NjYgMTAwNjQ0Ci0tLSBh
+L2RyaXZlcnMvZmlybXdhcmUvZWZpL3RwbS5jCisrKyBiL2RyaXZlcnMvZmlybXdhcmUvZWZpL3Rw
+bS5jCkBAIC0yOCw2ICsyOCw3IEBAIHN0YXRpYyBpbnQgdHBtMl9jYWxjX2V2ZW50X2xvZ19zaXpl
+KHZvaWQgKmRhdGEsIGludCBjb3VudCwgdm9pZCAqc2l6ZV9pbmZvKQogCQlpZiAoZXZlbnRfc2l6
+ZSA9PSAwKQogCQkJcmV0dXJuIC0xOwogCQlzaXplICs9IGV2ZW50X3NpemU7CisJCWNvdW50LS07
+CiAJfQogCiAJcmV0dXJuIHNpemU7CkBAIC00MSw2ICs0Miw3IEBAIGludCBfX2luaXQgZWZpX3Rw
+bV9ldmVudGxvZ19pbml0KHZvaWQpCiAJc3RydWN0IGxpbnV4X2VmaV90cG1fZXZlbnRsb2cgKmxv
+Z190Ymw7CiAJc3RydWN0IGVmaV90Y2cyX2ZpbmFsX2V2ZW50c190YWJsZSAqZmluYWxfdGJsOwog
+CXVuc2lnbmVkIGludCB0Ymxfc2l6ZTsKKwlpbnQgcmV0ID0gMDsKIAogCWlmIChlZmkudHBtX2xv
+ZyA9PSBFRklfSU5WQUxJRF9UQUJMRV9BRERSKSB7CiAJCS8qCkBAIC02MCwxMCArNjIsOSBAQCBp
+bnQgX19pbml0IGVmaV90cG1fZXZlbnRsb2dfaW5pdCh2b2lkKQogCiAJdGJsX3NpemUgPSBzaXpl
+b2YoKmxvZ190YmwpICsgbG9nX3RibC0+c2l6ZTsKIAltZW1ibG9ja19yZXNlcnZlKGVmaS50cG1f
+bG9nLCB0Ymxfc2l6ZSk7Ci0JZWFybHlfbWVtdW5tYXAobG9nX3RibCwgc2l6ZW9mKCpsb2dfdGJs
+KSk7CiAKIAlpZiAoZWZpLnRwbV9maW5hbF9sb2cgPT0gRUZJX0lOVkFMSURfVEFCTEVfQUREUikK
+LQkJcmV0dXJuIDA7CisJCWdvdG8gb3V0OwogCiAJZmluYWxfdGJsID0gZWFybHlfbWVtcmVtYXAo
+ZWZpLnRwbV9maW5hbF9sb2csIHNpemVvZigqZmluYWxfdGJsKSk7CiAKQEAgLTcxLDE3ICs3Miwy
+MCBAQCBpbnQgX19pbml0IGVmaV90cG1fZXZlbnRsb2dfaW5pdCh2b2lkKQogCQlwcl9lcnIoIkZh
+aWxlZCB0byBtYXAgVFBNIEZpbmFsIEV2ZW50IExvZyB0YWJsZSBAIDB4JWx4XG4iLAogCQkgICAg
+ICAgZWZpLnRwbV9maW5hbF9sb2cpOwogCQllZmkudHBtX2ZpbmFsX2xvZyA9IEVGSV9JTlZBTElE
+X1RBQkxFX0FERFI7Ci0JCXJldHVybiAtRU5PTUVNOworCQlyZXQgPSAtRU5PTUVNOworCQlnb3Rv
+IG91dDsKIAl9CiAKIAl0Ymxfc2l6ZSA9IHRwbTJfY2FsY19ldmVudF9sb2dfc2l6ZShmaW5hbF90
+YmwtPmV2ZW50cywKIAkJCQkJICAgIGZpbmFsX3RibC0+bnJfZXZlbnRzLAotCQkJCQkgICAgKHZv
+aWQgKillZmkudHBtX2xvZyk7CisJCQkJCSAgICBsb2dfdGJsLT5sb2cpOwogCW1lbWJsb2NrX3Jl
+c2VydmUoKHVuc2lnbmVkIGxvbmcpZmluYWxfdGJsLAogCQkJIHRibF9zaXplICsgc2l6ZW9mKCpm
+aW5hbF90YmwpKTsKIAllYXJseV9tZW11bm1hcChmaW5hbF90YmwsIHNpemVvZigqZmluYWxfdGJs
+KSk7CiAJZWZpX3RwbV9maW5hbF9sb2dfc2l6ZSA9IHRibF9zaXplOwogCi0JcmV0dXJuIDA7Citv
+dXQ6CisJZWFybHlfbWVtdW5tYXAobG9nX3RibCwgc2l6ZW9mKCpsb2dfdGJsKSk7CisJcmV0dXJu
+IHJldDsKIH0KIApkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC90cG1fZXZlbnRsb2cuaCBiL2lu
+Y2x1ZGUvbGludXgvdHBtX2V2ZW50bG9nLmgKaW5kZXggZGNjYzk3ZTYxMzVjLi42NjI0MTA3MTBh
+YzAgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvdHBtX2V2ZW50bG9nLmgKKysrIGIvaW5jbHVk
+ZS9saW51eC90cG1fZXZlbnRsb2cuaApAQCAtMTU4LDcgKzE1OCw2IEBAIHN0YXRpYyBpbmxpbmUg
+aW50IF9fY2FsY190cG0yX2V2ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2
+ZW50LAogewogCXN0cnVjdCB0Y2dfZWZpX3NwZWNpZF9ldmVudF9oZWFkICplZmlzcGVjaWQ7CiAJ
+c3RydWN0IHRjZ19ldmVudF9maWVsZCAqZXZlbnRfZmllbGQ7Ci0Jdm9pZCAqbWFwcGluZyA9IE5V
+TEw7CiAJaW50IG1hcHBpbmdfc2l6ZTsKIAl2b2lkICptYXJrZXI7CiAJdm9pZCAqbWFya2VyX3N0
+YXJ0OwpAQCAtMTc2LDkgKzE3NSw5IEBAIHN0YXRpYyBpbmxpbmUgaW50IF9fY2FsY190cG0yX2V2
+ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2ZW50LAogCS8qIE1hcCB0aGUg
+ZXZlbnQgaGVhZGVyICovCiAJaWYgKGRvX21hcHBpbmcpIHsKIAkJbWFwcGluZ19zaXplID0gbWFy
+a2VyIC0gbWFya2VyX3N0YXJ0OwotCQltYXBwaW5nID0gZWFybHlfbWVtcmVtYXAoKHVuc2lnbmVk
+IGxvbmcpbWFya2VyX3N0YXJ0LAorCQlldmVudCA9IGVhcmx5X21lbXJlbWFwKCh1bnNpZ25lZCBs
+b25nKW1hcmtlcl9zdGFydCwKIAkJCQkJIG1hcHBpbmdfc2l6ZSk7Ci0JCWlmICghbWFwcGluZykg
+eworCQlpZiAoIWV2ZW50KSB7CiAJCQlzaXplID0gMDsKIAkJCWdvdG8gb3V0OwogCQl9CkBAIC0x
+OTksOSArMTk4LDkgQEAgc3RhdGljIGlubGluZSBpbnQgX19jYWxjX3RwbTJfZXZlbnRfc2l6ZShz
+dHJ1Y3QgdGNnX3Bjcl9ldmVudDJfaGVhZCAqZXZlbnQsCiAJCWlmIChkb19tYXBwaW5nKSB7CiAJ
+CQllYXJseV9tZW11bm1hcChtYXBwaW5nLCBtYXBwaW5nX3NpemUpOwogCQkJbWFwcGluZ19zaXpl
+ID0gbWFya2VyIC0gbWFya2VyX3N0YXJ0ICsgaGFsZ19zaXplOwotCQkJbWFwcGluZyA9IGVhcmx5
+X21lbXJlbWFwKCh1bnNpZ25lZCBsb25nKW1hcmtlcl9zdGFydCwKKwkJCWV2ZW50ID0gZWFybHlf
+bWVtcmVtYXAoKHVuc2lnbmVkIGxvbmcpbWFya2VyX3N0YXJ0LAogCQkJCQkJIG1hcHBpbmdfc2l6
+ZSk7Ci0JCQlpZiAoIW1hcHBpbmcpIHsKKwkJCWlmICghZXZlbnQpIHsKIAkJCQlzaXplID0gMDsK
+IAkJCQlnb3RvIG91dDsKIAkJCX0KQEAgLTIxOSw5ICsyMTgsOSBAQCBzdGF0aWMgaW5saW5lIGlu
+dCBfX2NhbGNfdHBtMl9ldmVudF9zaXplKHN0cnVjdCB0Y2dfcGNyX2V2ZW50Ml9oZWFkICpldmVu
+dCwKIAkJCQlpZiAoZG9fbWFwcGluZykgewogCQkJCQllYXJseV9tZW11bm1hcChtYXBwaW5nLCBt
+YXBwaW5nX3NpemUpOwogCQkJCQltYXBwaW5nX3NpemUgPSBtYXJrZXIgLSBtYXJrZXJfc3RhcnQ7
+Ci0JCQkJCW1hcHBpbmcgPSBlYXJseV9tZW1yZW1hcCgodW5zaWduZWQgbG9uZyltYXJrZXJfc3Rh
+cnQsCisJCQkJCWV2ZW50ID0gZWFybHlfbWVtcmVtYXAoKHVuc2lnbmVkIGxvbmcpbWFya2VyX3N0
+YXJ0LAogCQkJCQkJICAgICAgbWFwcGluZ19zaXplKTsKLQkJCQkJaWYgKCFtYXBwaW5nKSB7CisJ
+CQkJCWlmICghZXZlbnQpIHsKIAkJCQkJCXNpemUgPSAwOwogCQkJCQkJZ290byBvdXQ7CiAJCQkJ
+CX0KQEAgLTI0MywxMSArMjQyLDExIEBAIHN0YXRpYyBpbmxpbmUgaW50IF9fY2FsY190cG0yX2V2
+ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2ZW50LAogCSAqIHdlIGRvbid0
+IG5lZWQgdG8gbWFwIGl0CiAJICovCiAJaWYgKGRvX21hcHBpbmcpIHsKLQkJZWFybHlfbWVtdW5t
+YXAobWFya2VyX3N0YXJ0LCBtYXBwaW5nX3NpemUpOworCQllYXJseV9tZW11bm1hcChtYXBwaW5n
+LCBtYXBwaW5nX3NpemUpOwogCQltYXBwaW5nX3NpemUgKz0gc2l6ZW9mKGV2ZW50X2ZpZWxkLT5l
+dmVudF9zaXplKTsKLQkJbWFwcGluZyA9IGVhcmx5X21lbXJlbWFwKCh1bnNpZ25lZCBsb25nKW1h
+cmtlcl9zdGFydCwKLQkJCQkJIG1hcHBpbmdfc2l6ZSk7Ci0JCWlmICghbWFwcGluZykgeworCQll
+dmVudCA9IGVhcmx5X21lbXJlbWFwKCh1bnNpZ25lZCBsb25nKW1hcmtlcl9zdGFydCwKKwkJCQkg
+ICAgICAgbWFwcGluZ19zaXplKTsKKwkJaWYgKCFldmVudCkgewogCQkJc2l6ZSA9IDA7CiAJCQln
+b3RvIG91dDsKIAkJfQpAQCAtMjU3LDggKzI1Niw2IEBAIHN0YXRpYyBpbmxpbmUgaW50IF9fY2Fs
+Y190cG0yX2V2ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2ZW50LAogCQkr
+IGV2ZW50X2ZpZWxkLT5ldmVudF9zaXplOwogCXNpemUgPSBtYXJrZXIgLSBtYXJrZXJfc3RhcnQ7
+CiAKLQlpZiAoKGV2ZW50LT5ldmVudF90eXBlID09IDApICYmIChldmVudF9maWVsZC0+ZXZlbnRf
+c2l6ZSA9PSAwKSkKLQkJc2l6ZSA9IDA7CiBvdXQ6CiAJaWYgKGRvX21hcHBpbmcpCiAJCWVhcmx5
+X21lbXVubWFwKG1hcHBpbmcsIG1hcHBpbmdfc2l6ZSk7Cg==
+--0000000000008759370587c62d7b--
