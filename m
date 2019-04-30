@@ -2,171 +2,145 @@ Return-Path: <SRS0=l2r+=TA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 950B6C43219
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 15:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF8CC43219
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 15:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7038B20652
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 15:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52AE921707
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 15:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbfD3PGj (ORCPT
+        id S1726101AbfD3PHA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Apr 2019 11:06:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43850 "EHLO mx1.redhat.com"
+        Tue, 30 Apr 2019 11:07:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37478 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726101AbfD3PGi (ORCPT
+        id S1726006AbfD3PHA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:06:38 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        Tue, 30 Apr 2019 11:07:00 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 550DE83F3B;
-        Tue, 30 Apr 2019 15:06:38 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4F28830BA1E9;
+        Tue, 30 Apr 2019 15:07:00 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-61.rdu2.redhat.com [10.10.120.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F006B600C2;
-        Tue, 30 Apr 2019 15:06:32 +0000 (UTC)
-Subject: [PATCH 00/11] keys: Namespacing [ver #2]
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B96866D080;
+        Tue, 30 Apr 2019 15:06:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 02/11] keys: Kill off request_key_async{,
+ _with_auxdata} [ver #2]
 From:   David Howells <dhowells@redhat.com>
 To:     ebiederm@xmission.com
-Cc:     linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
-        Jann Horn <jannh@google.com>, keyrings@vger.kernel.org,
-        dhowells@redhat.com, linux-security-module@vger.kernel.org,
+Cc:     keyrings@vger.kernel.org, dhowells@redhat.com,
+        linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         dwalsh@redhat.com, vgoyal@redhat.com
-Date:   Tue, 30 Apr 2019 16:06:31 +0100
-Message-ID: <155663679069.31331.3777091898004242996.stgit@warthog.procyon.org.uk>
+Date:   Tue, 30 Apr 2019 16:06:51 +0100
+Message-ID: <155663681116.31331.16982339995377317063.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155663679069.31331.3777091898004242996.stgit@warthog.procyon.org.uk>
+References: <155663679069.31331.3777091898004242996.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 30 Apr 2019 15:06:38 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 30 Apr 2019 15:07:00 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Kill off request_key_async{,_with_auxdata}() as they're not currently used.
 
-Here are some patches to make keys and keyrings more namespace aware.  Note
-that the branch is dependent on security/next-general.
-
-Firstly some miscellaneous patches to make the process easier:
-
- (1) Invalidate rather than revoke request_key() authentication keys to
-     recycle them more quickly.
-
- (2) Remove request_key_async*() as they aren't used and would have to be
-     namespaced.
-
- (3) Simplify key index_key handling so that the word-sized chunks
-     assoc_array requires don't have to be shifted about, making it easier
-     to add more bits into the key.
-
- (4) Cache the hash value so that we don't have to calculate on every key
-     we examine during a search (it involves a bunch of multiplications).
-
- (5) Allow keying_search() to search non-recursively.
-
-Then the main patches:
-
- (6) Make it so that keyring names are per-user_namespace from the point of
-     view of KEYCTL_JOIN_SESSION_KEYRING so that they're not accessible
-     cross-user_namespace.
-
- (7) Move the user and user-session keyrings to the user_namespace rather
-     than the user_struct.  This prevents them propagating directly across
-     user_namespaces boundaries (ie. the KEY_SPEC_* flags will only pick
-     from the current user_namespace).
-
- (8) Make it possible to include the target namespace in which the key shall
-     operate in the index_key.  This will allow the possibility of multiple
-     keys with the same description, but different target domains to be held
-     in the same keyring.
-
- (9) Make it so that keys are implicitly invalidated by removal of a domain
-     tag, causing them to be garbage collected.
-
-(10) Institute a network namespace domain tag that allows keys to be
-     differentiated by the network namespace in which they operate.  New keys
-     that are of a type marked 'KEY_TYPE_NET_DOMAIN' are assigned the network
-     domain in force when they are created.
-
-(11) Make it so that the desired network namespace can be handed down into the
-     request_key() mechanism.  This allows AFS, NFS, etc. to request keys
-     specific to the network namespace of the superblock.
-
-     This also means that the keys in the DNS record cache are thenceforth
-     namespaced, provided network filesystems pass the appropriate network
-     namespace down into dns_query().
-
-     For DNS, AFS and NFS are good; CIFS and Ceph are not.  Other cache
-     keyrings, such as idmapper keyrings, also need to set the domain tag.
-
-
-Changes:
-
-V2 fixes:
- - Missing initialisation of net key_domain usage count.
- - Missing barriering on the keyring register pointer.
- - Use snprintf() rather than sprintf().
- - Incorrect error handling in search_my_process_keyrings().
- - Incorrect error handling in call_sbin_request_key().
-
-The patches can be found on the following branch:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-namespace
-
-David
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
-David Howells (11):
-      keys: Invalidate used request_key authentication keys
-      keys: Kill off request_key_async{,_with_auxdata}
-      keys: Simplify key description management
-      keys: Cache the hash value to avoid lots of recalculation
-      keys: Add a 'recurse' flag for keyring searches
-      keys: Namespace keyring names
-      keys: Move the user and user-session keyrings to the user_namespace
-      keys: Include target namespace in match criteria
-      keys: Garbage collect keys for which the domain has been removed
-      keys: Network namespace domain tag
-      keys: Pass the network namespace into request_key mechanism
 
+ include/linux/key.h         |   11 ---------
+ security/keys/request_key.c |   50 -------------------------------------------
+ 2 files changed, 61 deletions(-)
 
- Documentation/security/keys/core.rst     |   10 +
- certs/blacklist.c                        |    2 
- crypto/asymmetric_keys/asymmetric_type.c |    2 
- fs/afs/addr_list.c                       |    4 
- fs/afs/dynroot.c                         |    7 -
- fs/cifs/dns_resolve.c                    |    3 
- fs/nfs/dns_resolve.c                     |    2 
- include/linux/dns_resolver.h             |    3 
- include/linux/key-type.h                 |    3 
- include/linux/key.h                      |   50 ++++--
- include/linux/sched/user.h               |   14 --
- include/linux/user_namespace.h           |   12 +
- include/net/net_namespace.h              |    4 
- kernel/user.c                            |   10 -
- kernel/user_namespace.c                  |    9 -
- lib/digsig.c                             |    2 
- net/ceph/messenger.c                     |    3 
- net/core/net_namespace.c                 |   19 ++
- net/dns_resolver/dns_key.c               |    1 
- net/dns_resolver/dns_query.c             |    6 -
- net/rxrpc/key.c                          |    6 -
- net/rxrpc/security.c                     |    2 
- security/integrity/digsig_asymmetric.c   |    4 
- security/keys/gc.c                       |    2 
- security/keys/internal.h                 |   10 +
- security/keys/key.c                      |    9 +
- security/keys/keyctl.c                   |    4 
- security/keys/keyring.c                  |  263 +++++++++++++++++-------------
- security/keys/persistent.c               |   10 +
- security/keys/proc.c                     |    3 
- security/keys/process_keys.c             |  252 ++++++++++++++++++-----------
- security/keys/request_key.c              |  113 +++++++------
- security/keys/request_key_auth.c         |    3 
- 33 files changed, 508 insertions(+), 339 deletions(-)
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 7099985e35a9..aaa93fe3f587 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -280,17 +280,6 @@ extern struct key *request_key_with_auxdata(struct key_type *type,
+ 					    size_t callout_len,
+ 					    void *aux);
+ 
+-extern struct key *request_key_async(struct key_type *type,
+-				     const char *description,
+-				     const void *callout_info,
+-				     size_t callout_len);
+-
+-extern struct key *request_key_async_with_auxdata(struct key_type *type,
+-						  const char *description,
+-						  const void *callout_info,
+-						  size_t callout_len,
+-						  void *aux);
+-
+ extern int wait_for_key_construction(struct key *key, bool intr);
+ 
+ extern int key_validate(const struct key *key);
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index a7b698394257..a5b74b7758f7 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -687,53 +687,3 @@ struct key *request_key_with_auxdata(struct key_type *type,
+ 	return key;
+ }
+ EXPORT_SYMBOL(request_key_with_auxdata);
+-
+-/*
+- * request_key_async - Request a key (allow async construction)
+- * @type: Type of key.
+- * @description: The searchable description of the key.
+- * @callout_info: The data to pass to the instantiation upcall (or NULL).
+- * @callout_len: The length of callout_info.
+- *
+- * As for request_key_and_link() except that it does not add the returned key
+- * to a keyring if found, new keys are always allocated in the user's quota and
+- * no auxiliary data can be passed.
+- *
+- * The caller should call wait_for_key_construction() to wait for the
+- * completion of the returned key if it is still undergoing construction.
+- */
+-struct key *request_key_async(struct key_type *type,
+-			      const char *description,
+-			      const void *callout_info,
+-			      size_t callout_len)
+-{
+-	return request_key_and_link(type, description, callout_info,
+-				    callout_len, NULL, NULL,
+-				    KEY_ALLOC_IN_QUOTA);
+-}
+-EXPORT_SYMBOL(request_key_async);
+-
+-/*
+- * request a key with auxiliary data for the upcaller (allow async construction)
+- * @type: Type of key.
+- * @description: The searchable description of the key.
+- * @callout_info: The data to pass to the instantiation upcall (or NULL).
+- * @callout_len: The length of callout_info.
+- * @aux: Auxiliary data for the upcall.
+- *
+- * As for request_key_and_link() except that it does not add the returned key
+- * to a keyring if found and new keys are always allocated in the user's quota.
+- *
+- * The caller should call wait_for_key_construction() to wait for the
+- * completion of the returned key if it is still undergoing construction.
+- */
+-struct key *request_key_async_with_auxdata(struct key_type *type,
+-					   const char *description,
+-					   const void *callout_info,
+-					   size_t callout_len,
+-					   void *aux)
+-{
+-	return request_key_and_link(type, description, callout_info,
+-				    callout_len, aux, NULL, KEY_ALLOC_IN_QUOTA);
+-}
+-EXPORT_SYMBOL(request_key_async_with_auxdata);
 
