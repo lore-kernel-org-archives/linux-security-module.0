@@ -2,166 +2,170 @@ Return-Path: <SRS0=l2r+=TA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD8DC43219
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 21:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2B7C43219
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 22:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E933821744
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 21:35:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sq8KNLYM"
+	by mail.kernel.org (Postfix) with ESMTP id 6592421743
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 22:39:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726048AbfD3VfW (ORCPT
+        id S1727495AbfD3Wj0 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Apr 2019 17:35:22 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:55301 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbfD3VfW (ORCPT
+        Tue, 30 Apr 2019 18:39:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58638 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726056AbfD3WjZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Apr 2019 17:35:22 -0400
-Received: by mail-it1-f195.google.com with SMTP id w130so7214627itc.5
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Apr 2019 14:35:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xwbA6m1IlkHcQAdDn+q8EF7OA9bDmXUDL8pQ3xlxeqo=;
-        b=Sq8KNLYMoEQTJQ8Stw6ktrYFYw+zkDUBePOHtQKKTkZvwVtovOluTVKwMnP5OxwkEI
-         xRPL4YOMPiqolt7cnNDIoRjpVwHdC9cPNhE5Az/2QlbtpvjxgVHuNqQuQHGGwpUVVukW
-         nC5xJQiZfC1wh2gFeunojseYcQqwKNo5P06mvHmBW2ZJ7630qxkTzOArc13ieUXbbmh7
-         u5k9icmaMxO9TnXKm5AyU5gnXzs5kmyR4Kumoh2cWT3xkILJnt8pw/wQ2BbT/p/BhhX2
-         Y8Wt5n3FwizMxkHPOOXZHoN+O5XlGBIpYOk+347M3eRzLEcaJhRYkVvbP14mTC1og8mp
-         0aeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xwbA6m1IlkHcQAdDn+q8EF7OA9bDmXUDL8pQ3xlxeqo=;
-        b=tm3NIZT022gWbvpYPq0/wLtV/ZLmfM8z6tgo7nQYWknA5oXpOYs5lcNFYQ4gvEIdd6
-         VSqlhdIEWRKfzuBKUWIjIH/aeJNG0wyBvyS+e/pyfjrBRzzAbI/DCwucQpcFJSeHwgWe
-         P9FlOvR3mh+rAnI8G5984cAhnb1nhl5mVAu02TIqCy+7igAddVUqogUt8iRlMr4E4s0s
-         KFyVTAiEYSysNk9MvQ435W71MHeolGMml6JA9atp1Gzq4126MbhBxQLBwN5PfVE7gAYo
-         3FIj+9WSk7QaXrfA+brv/boGAbCk549+8xYkdTiAunxb+I+g3OxLWOhGybM+gPdZGxDf
-         93pQ==
-X-Gm-Message-State: APjAAAXgdg9A8R9GDJeWxRYIPOE3Rq8ULuEUE17Sz4D+1/muks8RHqFC
-        n5Rs8eYjr0p9VPPncCOo5RcGv/hcaghdPYWYCR2+NQ==
-X-Google-Smtp-Source: APXvYqzIenEc1fHVzRGEEU14wPVQmKcjNo/JeR+UzSCvKt1pTOpxhl8Bq8KqDZSLgHNDy7fTG9L+3o5JTKEc6QSn4hM=
-X-Received: by 2002:a24:a86:: with SMTP id 128mr5346735itw.118.1556660120632;
- Tue, 30 Apr 2019 14:35:20 -0700 (PDT)
+        Tue, 30 Apr 2019 18:39:25 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 237C2308A9E2;
+        Tue, 30 Apr 2019 22:39:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-61.rdu2.redhat.com [10.10.120.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 669F317244;
+        Tue, 30 Apr 2019 22:39:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     jmorris@namei.org
+cc:     dhowells@redhat.com, dwalsh@redhat.com, vgoyal@redhat.com,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [GIT PULL] keys: Namespacing
 MIME-Version: 1.0
-References: <20190227202658.197113-1-matthewgarrett@google.com>
- <20190227202658.197113-3-matthewgarrett@google.com> <CAJzaN5pUJoOCz5-ZDSnTb6dbVPuy0QwmFD0CeofAGK+bRQx0og@mail.gmail.com>
- <CACdnJutpBPAX6TOGgs3Ng2v_cC5hAf-3pHThESvjQ9vbvQeVkA@mail.gmail.com>
-In-Reply-To: <CACdnJutpBPAX6TOGgs3Ng2v_cC5hAf-3pHThESvjQ9vbvQeVkA@mail.gmail.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Tue, 30 Apr 2019 14:35:09 -0700
-Message-ID: <CACdnJuvYAfFboej4e5jQ=iwhb-5Pi7BgSKEWGqJ0q=uarCoOfQ@mail.gmail.com>
-Subject: Re: [PATCH V5 2/4] tpm: Reserve the TPM final events table
-To:     Bartosz Szczepanek <bsz@semihalf.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Content-Type: multipart/mixed; boundary="0000000000008759370587c62d7b"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <560.1556663960.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Tue, 30 Apr 2019 23:39:20 +0100
+Message-ID: <561.1556663960@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 30 Apr 2019 22:39:25 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---0000000000008759370587c62d7b
-Content-Type: text/plain; charset="UTF-8"
+Hi James,
 
-On Tue, Apr 30, 2019 at 12:51 PM Matthew Garrett <mjg59@google.com> wrote:
-> Yes, it looks like this is just broken. Can you try with the attached patch?
+Can you pull this set of patches into the security tree and pass them along
+to Linus in the next merge window?  The primary thrust is to add
+namespacing to keyrings.
 
-Actually, please try this one.
+One miscellaneous and four prerequisite patches start:
 
---0000000000008759370587c62d7b
-Content-Type: text/x-patch; charset="US-ASCII"; name="fix_log.diff"
-Content-Disposition: attachment; filename="fix_log.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jv4b8h1f0>
-X-Attachment-Id: f_jv4b8h1f0
+ (1) Use invalidation to kill off request_key authentication tokens more
+     quickly than revoking them.
 
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZmlybXdhcmUvZWZpL3RwbS5jIGIvZHJpdmVycy9maXJtd2Fy
-ZS9lZmkvdHBtLmMKaW5kZXggMmNjYWE2NjYxYWFmLi5kYjBmZGFhOWM2NjYgMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvZmlybXdhcmUvZWZpL3RwbS5jCisrKyBiL2RyaXZlcnMvZmlybXdhcmUvZWZpL3Rw
-bS5jCkBAIC0yOCw2ICsyOCw3IEBAIHN0YXRpYyBpbnQgdHBtMl9jYWxjX2V2ZW50X2xvZ19zaXpl
-KHZvaWQgKmRhdGEsIGludCBjb3VudCwgdm9pZCAqc2l6ZV9pbmZvKQogCQlpZiAoZXZlbnRfc2l6
-ZSA9PSAwKQogCQkJcmV0dXJuIC0xOwogCQlzaXplICs9IGV2ZW50X3NpemU7CisJCWNvdW50LS07
-CiAJfQogCiAJcmV0dXJuIHNpemU7CkBAIC00MSw2ICs0Miw3IEBAIGludCBfX2luaXQgZWZpX3Rw
-bV9ldmVudGxvZ19pbml0KHZvaWQpCiAJc3RydWN0IGxpbnV4X2VmaV90cG1fZXZlbnRsb2cgKmxv
-Z190Ymw7CiAJc3RydWN0IGVmaV90Y2cyX2ZpbmFsX2V2ZW50c190YWJsZSAqZmluYWxfdGJsOwog
-CXVuc2lnbmVkIGludCB0Ymxfc2l6ZTsKKwlpbnQgcmV0ID0gMDsKIAogCWlmIChlZmkudHBtX2xv
-ZyA9PSBFRklfSU5WQUxJRF9UQUJMRV9BRERSKSB7CiAJCS8qCkBAIC02MCwxMCArNjIsOSBAQCBp
-bnQgX19pbml0IGVmaV90cG1fZXZlbnRsb2dfaW5pdCh2b2lkKQogCiAJdGJsX3NpemUgPSBzaXpl
-b2YoKmxvZ190YmwpICsgbG9nX3RibC0+c2l6ZTsKIAltZW1ibG9ja19yZXNlcnZlKGVmaS50cG1f
-bG9nLCB0Ymxfc2l6ZSk7Ci0JZWFybHlfbWVtdW5tYXAobG9nX3RibCwgc2l6ZW9mKCpsb2dfdGJs
-KSk7CiAKIAlpZiAoZWZpLnRwbV9maW5hbF9sb2cgPT0gRUZJX0lOVkFMSURfVEFCTEVfQUREUikK
-LQkJcmV0dXJuIDA7CisJCWdvdG8gb3V0OwogCiAJZmluYWxfdGJsID0gZWFybHlfbWVtcmVtYXAo
-ZWZpLnRwbV9maW5hbF9sb2csIHNpemVvZigqZmluYWxfdGJsKSk7CiAKQEAgLTcxLDE3ICs3Miwy
-MCBAQCBpbnQgX19pbml0IGVmaV90cG1fZXZlbnRsb2dfaW5pdCh2b2lkKQogCQlwcl9lcnIoIkZh
-aWxlZCB0byBtYXAgVFBNIEZpbmFsIEV2ZW50IExvZyB0YWJsZSBAIDB4JWx4XG4iLAogCQkgICAg
-ICAgZWZpLnRwbV9maW5hbF9sb2cpOwogCQllZmkudHBtX2ZpbmFsX2xvZyA9IEVGSV9JTlZBTElE
-X1RBQkxFX0FERFI7Ci0JCXJldHVybiAtRU5PTUVNOworCQlyZXQgPSAtRU5PTUVNOworCQlnb3Rv
-IG91dDsKIAl9CiAKIAl0Ymxfc2l6ZSA9IHRwbTJfY2FsY19ldmVudF9sb2dfc2l6ZShmaW5hbF90
-YmwtPmV2ZW50cywKIAkJCQkJICAgIGZpbmFsX3RibC0+bnJfZXZlbnRzLAotCQkJCQkgICAgKHZv
-aWQgKillZmkudHBtX2xvZyk7CisJCQkJCSAgICBsb2dfdGJsLT5sb2cpOwogCW1lbWJsb2NrX3Jl
-c2VydmUoKHVuc2lnbmVkIGxvbmcpZmluYWxfdGJsLAogCQkJIHRibF9zaXplICsgc2l6ZW9mKCpm
-aW5hbF90YmwpKTsKIAllYXJseV9tZW11bm1hcChmaW5hbF90YmwsIHNpemVvZigqZmluYWxfdGJs
-KSk7CiAJZWZpX3RwbV9maW5hbF9sb2dfc2l6ZSA9IHRibF9zaXplOwogCi0JcmV0dXJuIDA7Citv
-dXQ6CisJZWFybHlfbWVtdW5tYXAobG9nX3RibCwgc2l6ZW9mKCpsb2dfdGJsKSk7CisJcmV0dXJu
-IHJldDsKIH0KIApkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC90cG1fZXZlbnRsb2cuaCBiL2lu
-Y2x1ZGUvbGludXgvdHBtX2V2ZW50bG9nLmgKaW5kZXggZGNjYzk3ZTYxMzVjLi42NjI0MTA3MTBh
-YzAgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvdHBtX2V2ZW50bG9nLmgKKysrIGIvaW5jbHVk
-ZS9saW51eC90cG1fZXZlbnRsb2cuaApAQCAtMTU4LDcgKzE1OCw2IEBAIHN0YXRpYyBpbmxpbmUg
-aW50IF9fY2FsY190cG0yX2V2ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2
-ZW50LAogewogCXN0cnVjdCB0Y2dfZWZpX3NwZWNpZF9ldmVudF9oZWFkICplZmlzcGVjaWQ7CiAJ
-c3RydWN0IHRjZ19ldmVudF9maWVsZCAqZXZlbnRfZmllbGQ7Ci0Jdm9pZCAqbWFwcGluZyA9IE5V
-TEw7CiAJaW50IG1hcHBpbmdfc2l6ZTsKIAl2b2lkICptYXJrZXI7CiAJdm9pZCAqbWFya2VyX3N0
-YXJ0OwpAQCAtMTc2LDkgKzE3NSw5IEBAIHN0YXRpYyBpbmxpbmUgaW50IF9fY2FsY190cG0yX2V2
-ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2ZW50LAogCS8qIE1hcCB0aGUg
-ZXZlbnQgaGVhZGVyICovCiAJaWYgKGRvX21hcHBpbmcpIHsKIAkJbWFwcGluZ19zaXplID0gbWFy
-a2VyIC0gbWFya2VyX3N0YXJ0OwotCQltYXBwaW5nID0gZWFybHlfbWVtcmVtYXAoKHVuc2lnbmVk
-IGxvbmcpbWFya2VyX3N0YXJ0LAorCQlldmVudCA9IGVhcmx5X21lbXJlbWFwKCh1bnNpZ25lZCBs
-b25nKW1hcmtlcl9zdGFydCwKIAkJCQkJIG1hcHBpbmdfc2l6ZSk7Ci0JCWlmICghbWFwcGluZykg
-eworCQlpZiAoIWV2ZW50KSB7CiAJCQlzaXplID0gMDsKIAkJCWdvdG8gb3V0OwogCQl9CkBAIC0x
-OTksOSArMTk4LDkgQEAgc3RhdGljIGlubGluZSBpbnQgX19jYWxjX3RwbTJfZXZlbnRfc2l6ZShz
-dHJ1Y3QgdGNnX3Bjcl9ldmVudDJfaGVhZCAqZXZlbnQsCiAJCWlmIChkb19tYXBwaW5nKSB7CiAJ
-CQllYXJseV9tZW11bm1hcChtYXBwaW5nLCBtYXBwaW5nX3NpemUpOwogCQkJbWFwcGluZ19zaXpl
-ID0gbWFya2VyIC0gbWFya2VyX3N0YXJ0ICsgaGFsZ19zaXplOwotCQkJbWFwcGluZyA9IGVhcmx5
-X21lbXJlbWFwKCh1bnNpZ25lZCBsb25nKW1hcmtlcl9zdGFydCwKKwkJCWV2ZW50ID0gZWFybHlf
-bWVtcmVtYXAoKHVuc2lnbmVkIGxvbmcpbWFya2VyX3N0YXJ0LAogCQkJCQkJIG1hcHBpbmdfc2l6
-ZSk7Ci0JCQlpZiAoIW1hcHBpbmcpIHsKKwkJCWlmICghZXZlbnQpIHsKIAkJCQlzaXplID0gMDsK
-IAkJCQlnb3RvIG91dDsKIAkJCX0KQEAgLTIxOSw5ICsyMTgsOSBAQCBzdGF0aWMgaW5saW5lIGlu
-dCBfX2NhbGNfdHBtMl9ldmVudF9zaXplKHN0cnVjdCB0Y2dfcGNyX2V2ZW50Ml9oZWFkICpldmVu
-dCwKIAkJCQlpZiAoZG9fbWFwcGluZykgewogCQkJCQllYXJseV9tZW11bm1hcChtYXBwaW5nLCBt
-YXBwaW5nX3NpemUpOwogCQkJCQltYXBwaW5nX3NpemUgPSBtYXJrZXIgLSBtYXJrZXJfc3RhcnQ7
-Ci0JCQkJCW1hcHBpbmcgPSBlYXJseV9tZW1yZW1hcCgodW5zaWduZWQgbG9uZyltYXJrZXJfc3Rh
-cnQsCisJCQkJCWV2ZW50ID0gZWFybHlfbWVtcmVtYXAoKHVuc2lnbmVkIGxvbmcpbWFya2VyX3N0
-YXJ0LAogCQkJCQkJICAgICAgbWFwcGluZ19zaXplKTsKLQkJCQkJaWYgKCFtYXBwaW5nKSB7CisJ
-CQkJCWlmICghZXZlbnQpIHsKIAkJCQkJCXNpemUgPSAwOwogCQkJCQkJZ290byBvdXQ7CiAJCQkJ
-CX0KQEAgLTI0MywxMSArMjQyLDExIEBAIHN0YXRpYyBpbmxpbmUgaW50IF9fY2FsY190cG0yX2V2
-ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2ZW50LAogCSAqIHdlIGRvbid0
-IG5lZWQgdG8gbWFwIGl0CiAJICovCiAJaWYgKGRvX21hcHBpbmcpIHsKLQkJZWFybHlfbWVtdW5t
-YXAobWFya2VyX3N0YXJ0LCBtYXBwaW5nX3NpemUpOworCQllYXJseV9tZW11bm1hcChtYXBwaW5n
-LCBtYXBwaW5nX3NpemUpOwogCQltYXBwaW5nX3NpemUgKz0gc2l6ZW9mKGV2ZW50X2ZpZWxkLT5l
-dmVudF9zaXplKTsKLQkJbWFwcGluZyA9IGVhcmx5X21lbXJlbWFwKCh1bnNpZ25lZCBsb25nKW1h
-cmtlcl9zdGFydCwKLQkJCQkJIG1hcHBpbmdfc2l6ZSk7Ci0JCWlmICghbWFwcGluZykgeworCQll
-dmVudCA9IGVhcmx5X21lbXJlbWFwKCh1bnNpZ25lZCBsb25nKW1hcmtlcl9zdGFydCwKKwkJCQkg
-ICAgICAgbWFwcGluZ19zaXplKTsKKwkJaWYgKCFldmVudCkgewogCQkJc2l6ZSA9IDA7CiAJCQln
-b3RvIG91dDsKIAkJfQpAQCAtMjU3LDggKzI1Niw2IEBAIHN0YXRpYyBpbmxpbmUgaW50IF9fY2Fs
-Y190cG0yX2V2ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2ZW50LAogCQkr
-IGV2ZW50X2ZpZWxkLT5ldmVudF9zaXplOwogCXNpemUgPSBtYXJrZXIgLSBtYXJrZXJfc3RhcnQ7
-CiAKLQlpZiAoKGV2ZW50LT5ldmVudF90eXBlID09IDApICYmIChldmVudF9maWVsZC0+ZXZlbnRf
-c2l6ZSA9PSAwKSkKLQkJc2l6ZSA9IDA7CiBvdXQ6CiAJaWYgKGRvX21hcHBpbmcpCiAJCWVhcmx5
-X21lbXVubWFwKG1hcHBpbmcsIG1hcHBpbmdfc2l6ZSk7Cg==
---0000000000008759370587c62d7b--
+ (2) Remove request_key_async{,_with_auxdata} - I would need to add extra
+     arguments, but they're not currently used.
+
+ (3), (4) Simplify the key description management and cache the hash value
+     to avoid the need for constant recalculation during a search.  This
+     makes it easier to add namespace info to a key's index key.
+
+ (5) Make it possible for keyring_search() to do searches that don't
+     recurse down into and search keyrings linked to from the starting
+     keyring.
+
+Then the rest are about namespacing:
+
+ (6) Replace the global list of keyring names with per-user_namespace lists
+     and exclude certain internal keyrings from being added to the lists.
+
+ (7) Move the user and user-session keyrings from the user_struct, and
+     store them instead in a "user keyring register" in the user_namespace.
+     This prevents KEY_SPEC_* specifiers from picking keyrings from the
+     wrong namespace.  Note that it also means that uids that share a
+     user_struct will not see the same user keyrings inside and outside a
+     user_namespace.
+
+     This has been tested by Dan Walsh in a Fedora environment, though the
+     patch was modified from the one here.
+
+ (8) Provide the ability to add a domain tag to a key's index key, so that
+     a keyring can hold keys of the same type and description, but
+     different target namespace/domain.
+
+ (9) Make the garbage collector remove keys for which the target domain tag
+     has been removed.
+
+(10) Provide a domain tag for each network namespace.
+
+(11) Tag DNS resolver keys and rxrpc/afs keys so that keys for different
+     domains can coexist in the same keyrings.
+
+In the future, hopefully, it will be possible to use the domain tags in
+ACLs to grant permissions to namespaces for containerisation.
+
+David
+---
+The following changes since commit 6beff00b79ca0b5caf0ce6fb8e11f57311bd95f8:
+
+  seccomp: fix up grammar in comment (2019-04-23 16:21:12 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-namespace-20190430
+
+for you to fetch changes up to ccedc142360bd68fdaf444671d67d42fa306398b:
+
+  keys: Pass the network namespace into request_key mechanism (2019-04-25 13:10:25 +0100)
+
+----------------------------------------------------------------
+Keyrings namespacing
+
+----------------------------------------------------------------
+David Howells (11):
+      keys: Invalidate used request_key authentication keys
+      keys: Kill off request_key_async{,_with_auxdata}
+      keys: Simplify key description management
+      keys: Cache the hash value to avoid lots of recalculation
+      keys: Add a 'recurse' flag for keyring searches
+      keys: Namespace keyring names
+      keys: Move the user and user-session keyrings to the user_namespace
+      keys: Include target namespace in match criteria
+      keys: Garbage collect keys for which the domain has been removed
+      keys: Network namespace domain tag
+      keys: Pass the network namespace into request_key mechanism
+
+ Documentation/security/keys/core.rst     |  10 +-
+ certs/blacklist.c                        |   2 +-
+ crypto/asymmetric_keys/asymmetric_type.c |   2 +-
+ fs/afs/addr_list.c                       |   4 +-
+ fs/afs/dynroot.c                         |   7 +-
+ fs/cifs/dns_resolve.c                    |   3 +-
+ fs/nfs/dns_resolve.c                     |   2 +-
+ include/linux/dns_resolver.h             |   3 +-
+ include/linux/key-type.h                 |   3 +
+ include/linux/key.h                      |  50 ++++--
+ include/linux/sched/user.h               |  14 --
+ include/linux/user_namespace.h           |  12 +-
+ include/net/net_namespace.h              |   4 +
+ kernel/user.c                            |  10 +-
+ kernel/user_namespace.c                  |   9 +-
+ lib/digsig.c                             |   2 +-
+ net/ceph/messenger.c                     |   3 +-
+ net/core/net_namespace.c                 |  19 +++
+ net/dns_resolver/dns_key.c               |   1 +
+ net/dns_resolver/dns_query.c             |   6 +-
+ net/rxrpc/key.c                          |   6 +-
+ net/rxrpc/security.c                     |   2 +-
+ security/integrity/digsig_asymmetric.c   |   4 +-
+ security/keys/gc.c                       |   2 +-
+ security/keys/internal.h                 |  10 +-
+ security/keys/key.c                      |   9 +-
+ security/keys/keyctl.c                   |   4 +-
+ security/keys/keyring.c                  | 263 +++++++++++++++++--------------
+ security/keys/persistent.c               |  10 +-
+ security/keys/proc.c                     |   3 +-
+ security/keys/process_keys.c             | 252 ++++++++++++++++++-----------
+ security/keys/request_key.c              | 113 ++++++-------
+ security/keys/request_key_auth.c         |   3 +-
+ 33 files changed, 508 insertions(+), 339 deletions(-)
