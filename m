@@ -2,85 +2,212 @@ Return-Path: <SRS0=l2r+=TA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6348EC43219
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 00:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB50C04AA8
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 05:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3005921655
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 00:38:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="VRQ8COnB"
+	by mail.kernel.org (Postfix) with ESMTP id 2B4F320835
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Apr 2019 05:03:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556600626;
+	bh=eXP7RsfXrfyUY+29h6lW8hzlF88lmatIbZgOpU48Bno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=e34Py5xZ9+I1jtHk/wU7gj14y1ZMBLIKrXN1ZN6woEl+og6K0dqXaKFSUhX8ufqRM
+	 d2tg4V4hElavn0S1QNo9zBGkknFcHNCWUIn5OWzJt5TJBRWgcUgZFbEMRysLNkGgmu
+	 7lZjw5DfEYyEnLX5HqgxdVXXVcXR9Yl5TXPTGdTo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729550AbfD3Aiy (ORCPT
+        id S1725799AbfD3FDo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Apr 2019 20:38:54 -0400
-Received: from sonic308-9.consmr.mail.bf2.yahoo.com ([74.6.130.48]:35751 "EHLO
-        sonic308-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729238AbfD3Aiy (ORCPT
+        Tue, 30 Apr 2019 01:03:44 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37442 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbfD3FDn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Apr 2019 20:38:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1556584733; bh=1FeC1S4++IQ7ryibon/JcTlgcRWbwGcpLQcAzzsZj6M=; h=To:Cc:From:Subject:Date:From:Subject; b=VRQ8COnBnypVQV5nYUbZmWxFE/zZre3+CWSMr1Rbf+7g/69y7nSVVMXaVnWgFAHfRhGKkVDGQj8FfnmfSofcbp+jzFeYfgaps9KM/CidrnCsXCjGd05uSWWNSGo+X/hj83z98gu8MVwija8CzjwtxySYkqfWOgnenW8ROPRCgIaNJICvx1088Dpy2Wn1XgxUDk4LIrzi4182QPsyU3HZn2R4k7iyGxvGKbuQMNDHtFI7RKLxuUfOHUH4FwLzS+4G9S5d8VXl9WrpxbACIn4ALDxa1P+v8UHGCfPmRLt7Q9gj4I8qje6++CIqg6psHBMiEJE24tO3WE2AHdbu7Sphng==
-X-YMail-OSG: OEVLHtsVM1lwj8KeTahAeVgcMjBBMIsF9j_z7yjGJWaYdcWAupyh04d6FpZPsQr
- tBVaF6JlWzDMvMzdJDF_r3y9n7Eir4A0wIhoJALStRDi.B72ya_NQIEYKf2dJoVFKJzeK8FhbD6P
- d5AtRg13tWoeZEcalO5kCxrqDp8S7MOAzeDH_XU4KYB_uT7Sn9NBJZN0rz89CpESaZAjbLGjaOD4
- 5qB2j0kHbs7YG3IAg5SyoMcrx5tjkzft38TDmD4uGWhy_c8EDwxboSJORnk4iBjqq_qrWJn2Al23
- 5MauICkFynkKvdb9_zlffMvMydwqOWt8Jinh73ytbQRF38DCr0JNSTfz9Pa8tAEHKfAtMzbfAcCZ
- dorrafkdCaz4Vk_0fZa8Qzg8nbSPLtmssX4TKcAM19KQZLMxuls0nf6j95bguiCtcgQGqtQZbIu_
- uk4Fsnj.LXjCvlN2s1RxgEdAfKvy4eYEuo7llVWzeTnyAxPm86vTx7CSgg6Nx7Ubprybfx9fOrYy
- LPlLSqd87kUIxd8K6Dqgk03GKroWpWEp77nqux700o0Yu8qicYTTi18ruLJvWIO5bdKAgw2iM2ho
- t0FJ6CEYeNbWNBxMF8NoiHHkxbBJmgH683pHMNFYkcJWGBxFVLg2raJzhoxVM64CJ4BdAKkw0Xf_
- VRqX9KWM51DwxcwCWnH75yNiX39d6AnKdYmTaVC5ZO1HXSso8FqzSVg62xmvH05auIOemry6DTd_
- 97Uj207fIAE0ZetEz7AVq1Ac8vPwpHXXZVDYt.XcbJaxK6ZPIxdbTGeMdmasNPoyNmLQuIv89iX9
- q8LSNi8zICm1yOLXKegMXO4WUvmsBm69CWEp4K3wZmDkipVGp23eJFr5U5ETFSjUsWP3UcCXCOsI
- lPgjA7hcTu6lf3FYeGT9gUNm8KunjTrxlXg5ijmtj63Z5w1wo9N873qEIbRFQS3MRG4YqDqugTS7
- yHugqY5jmqbKRxwqzgILmCQXvwAvZ.fU3pFwUvd9pEuRpGDXJqhMLB5YTMGjaLuzr5GIotWgOlwG
- yWdmRGBVMtNyxfd6_QeYolOolsVdO0w18S6LmbiXXtfPilUSTHgedEEfew_F8LB9SZMsWbPOkqwE
- tN18zf0TJv26zzwgjXEs5qzoayo28TlnL1CTCRavHvjfHijhpsB1ktRJtrqbj4vBdHnHf6VCBk2Q
- yJdyo5crDSs6TFhRqR0b2FF4c4P1H2RdFXcoF8MFvEPneyaWml3.94BOHamgOuJagG3s-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.bf2.yahoo.com with HTTP; Tue, 30 Apr 2019 00:38:53 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp422.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 2ef11fb836ee2b43c029c6c851f1c03e;
-          Tue, 30 Apr 2019 00:38:52 +0000 (UTC)
-To:     James Morris <jmorris@namei.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     casey@schaufler-ca.com
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PULL] Smack: one more change for 5.2
-Message-ID: <a0fd7fe4-d86f-798e-df66-c4390bc38567@schaufler-ca.com>
-Date:   Mon, 29 Apr 2019 17:38:51 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 30 Apr 2019 01:03:43 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y5so2269263wma.2;
+        Mon, 29 Apr 2019 22:03:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uJMhjgb5zxPxkYouwBqnhllNEC+efi0qURt/Ty+nHUo=;
+        b=FyOMuExG82iTN6oz4qYVha+B3bpp5KXoEGFM4poaUXkHBlgm4D3jxK7KjJ1WCC7u07
+         GfhX3l0TgtL+N2ryxbvIoWI3p1mxnodj/Gelgl4MB/iStPTMl3C216nBQ1OLYcr9LWv7
+         f9fJWLRRPGlb9ehm9AItbG1ZRg/359MY24IeY0nSQ6+65n4LVYcFXp8uB5wYJ+6F0VWy
+         clD3PWaTfJpPV2gF9rfpz1DradCzkf4vFbiN+Pob75PEbuLEvulxANn/CoifX47ttGIG
+         UF5u7Wmog/KSABmwpt5wW/dQSGtG1HMX7sUsv5I2Zkq4bmwyhySw83vE7B6toFKDVF67
+         szkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uJMhjgb5zxPxkYouwBqnhllNEC+efi0qURt/Ty+nHUo=;
+        b=YVatzHLDedn0k+xiCesuiYo6FasJmVpXFcPa71mO4qJTEJe6tTduirWrjIfAkmHCfd
+         zkMpd3fK0SLjKZQQNTSaknjh4YGx8OAYdAeTv1jtpIqj7zePbx/ir+X5ApZGPhcx97mF
+         0t9dX13V6dGs+3o1IHrkca1pvIOMPqVCJWASupRln2rioc1fBi+vBXyiEWuBIfmgCOsd
+         orlmC4RS0fVxFxrLKemIHAj0jeyWgk5IRIE0j4YcdSwEU/A7ULAhEnuUUSEVnFq+i7XB
+         dz2xLEeW94b32E4vPxzsRLwVka2y0LtzrVkIA81b2mIhrVa19NgVS//BQlW4BnXRgcZR
+         vQFg==
+X-Gm-Message-State: APjAAAUgyZi3VTn9dqFqv3Vu9Z2brftl2YPTPJtuL+RM0J3kNL038n6K
+        cCQO0yYcZDv2jpHsdS9Accg=
+X-Google-Smtp-Source: APXvYqwIr1Hdnaga2YnCv7mTHEVJtWQOAcNEnI7VSaNz5v1406HQx408Ikkg4gOEKA7FxbiBmbab6A==
+X-Received: by 2002:a1c:a851:: with SMTP id r78mr1628659wme.36.1556600620617;
+        Mon, 29 Apr 2019 22:03:40 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id a4sm1224745wmf.45.2019.04.29.22.03.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Apr 2019 22:03:39 -0700 (PDT)
+Date:   Tue, 30 Apr 2019 07:03:37 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux-MM <linux-mm@kvack.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        X86 ML <x86@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call
+ isolation
+Message-ID: <20190430050336.GA92357@gmail.com>
+References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
+ <1556228754-12996-3-git-send-email-rppt@linux.ibm.com>
+ <20190426083144.GA126896@gmail.com>
+ <20190426095802.GA35515@gmail.com>
+ <CALCETrV3xZdaMn_MQ5V5nORJbcAeMmpc=gq1=M9cmC_=tKVL3A@mail.gmail.com>
+ <20190427084752.GA99668@gmail.com>
+ <20190427104615.GA55518@gmail.com>
+ <CALCETrUn_86VAd8FGacJ169xcWE6XQngAMMhvgd1Aa6ZxhGhtA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrUn_86VAd8FGacJ169xcWE6XQngAMMhvgd1Aa6ZxhGhtA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-James, would you pull this fix from Tetsuo? Thank you.
 
-The following changes since commit f7450bc6e76860564f3842a41892f9b74313cc23:
+* Andy Lutomirski <luto@kernel.org> wrote:
 
-   Smack: Fix IPv6 handling of 0 secmark (2019-04-03 14:28:38 -0700)
+> On Sat, Apr 27, 2019 at 3:46 AM Ingo Molnar <mingo@kernel.org> wrote:
 
-are available in the Git repository at:
+> > So I'm wondering whether there's a 4th choice as well, which avoids
+> > control flow corruption *before* it happens:
+> >
+> >  - A C language runtime that is a subset of current C syntax and
+> >    semantics used in the kernel, and which doesn't allow access outside
+> >    of existing objects and thus creates a strictly enforced separation
+> >    between memory used for data, and memory used for code and control
+> >    flow.
+> >
+> >  - This would involve, at minimum:
+> >
+> >     - tracking every type and object and its inherent length and valid
+> >       access patterns, and never losing track of its type.
+> >
+> >     - being a lot more organized about initialization, i.e. no
+> >       uninitialized variables/fields.
+> >
+> >     - being a lot more strict about type conversions and pointers in
+> >       general.
+> 
+> You're not the only one to suggest this.  There are at least a few
+> things that make this extremely difficult if not impossible.  For
+> example, consider this code:
+> 
+> void maybe_buggy(void)
+> {
+>   int a, b;
+>   int *p = &a;
+>   int *q = (int *)some_function((unsigned long)p);
+>   *q = 1;
+> }
+> 
+> If some_function(&a) returns &a, then all is well.  But if
+> some_function(&a) returns &b or even a valid address of some unrelated
+> kernel object, then the code might be entirely valid and correct C,
+> but I don't see how the runtime checks are supposed to tell whether
+> the resulting address is valid or is a bug.  This type of code is, I
+> think, quite common in the kernel -- it happens in every data
+> structure where we have unions of pointers and integers or where we
+> steal some known-zero bits of a pointer to store something else.
 
-   https://github.com/cschaufler/next-smack.git smack-for-5.2-b
+So the thing is, for the infinitely large state space of "valid C code" 
+we already disallow an infinitely many versions in the Linux kernel.
 
-for you to fetch changes up to b9ef5513c99bf9c8bfd9c9e8051b67f52b2dee1e:
+We have complicated rules that disallow certain C syntactical and 
+semantical constructs, both on the tooling (build failure/warning) and on 
+the review (style/taste) level.
 
-   smack: Check address length before reading address family (2019-04-29 17:32:27 -0700)
+So the question IMHO isn't whether it's "valid C", because we already 
+have the Linux kernel's own C syntax variant and are enforcing it with 
+varying degrees of success.
 
-----------------------------------------------------------------
-Tetsuo Handa (1):
-       smack: Check address length before reading address family
+The question is whether the example you gave can be written in a strongly 
+typed fashion, whether it makes sense to do so, and what the costs are.
 
-  security/smack/smack_lsm.c | 19 +++++++++++++++----
-  1 file changed, 15 insertions(+), 4 deletions(-)
+I think it's evident that it can be written with strongly typed 
+constructs, by separating pointers from embedded error codes - with 
+negative side effects to code generation: for example it increases 
+structure sizes and error return paths.
 
+I think there's four main costs of converting such a pattern to strongly 
+typed constructs:
+
+ - memory/cache footprint:  there's a nonzero cost there.
+ - performance:             this will hurt too.
+ - code readability:        this will probably improve.
+ - code robustness:         this will improve too.
+
+So I think the proper question to ask is not whether there's common C 
+syntax within the kernel that would have to be rewritten, but whether the 
+total sum of memory and runtime overhead of strongly typed C programming 
+(if it's possible/desirable) is larger than the total sum of a typical 
+Linux distro enabling the various current and proposed kernel hardening 
+features that have a runtime overhead:
+
+ - the SMAP/SMEP overhead of STAC/CLAC for every single user copy
+
+ - other usercopy hardening features
+
+ - stackprotector
+
+ - KASLR
+
+ - compiler plugins against information leaks
+
+ - proposed KASLR extension to implement module randomization and -PIE overhead
+
+ - proposed function call integrity checks
+
+ - proposed per system call kernel stack offset randomization
+
+ - ( and I'm sure I forgot about a few more, and it's all still only 
+     reactive security, not proactive security. )
+
+That's death by a thousand cuts and CR3 switching during system calls is 
+also throwing a hand grenade into the fight ;-)
+
+So if people are also proposing to do CR3 switches in every system call, 
+I'm pretty sure the answer is "yes, even a managed C runtime is probably 
+faster than *THAT* sum of a performanc mess" - at least with the current 
+CR3 switching x86-uarch cost structure...
+
+Thanks,
+
+	Ingo
