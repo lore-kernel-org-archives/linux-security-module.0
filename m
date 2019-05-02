@@ -2,170 +2,109 @@ Return-Path: <SRS0=FyGa=TC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 000C6C43219
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 21:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E240C43219
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 21:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C36C82085A
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 21:07:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFB0F20651
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 21:15:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ocallahan-org.20150623.gappssmtp.com header.i=@ocallahan-org.20150623.gappssmtp.com header.b="itZm4mid"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uvZDTO/q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbfEBVHw (ORCPT
+        id S1726053AbfEBVPg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 May 2019 17:07:52 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38580 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfEBVHw (ORCPT
+        Thu, 2 May 2019 17:15:36 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40178 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfEBVPg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 May 2019 17:07:52 -0400
-Received: by mail-lj1-f194.google.com with SMTP id e18so3519613lja.5;
-        Thu, 02 May 2019 14:07:49 -0700 (PDT)
+        Thu, 2 May 2019 17:15:36 -0400
+Received: by mail-it1-f194.google.com with SMTP id k64so5929525itb.5
+        for <linux-security-module@vger.kernel.org>; Thu, 02 May 2019 14:15:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ocallahan-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=McWTtx7Tp7tMDcpgUWURvLH3xAZpqNdcMywhax+H9u8=;
-        b=itZm4midVgkaAhNA0r5PfpUHd/gPvPcK3n8NB1YcbOEZ483aEikD/V8xjhyy+P9+G3
-         O7NWH6/7GmLn6LJLpEDCkVpkGs9kJ/xe/mv7xm8wikmwI4fYP7sz53GAq6W6EHAYb1HD
-         GqBFjxVO0csXNMBnth+6rtohGNFewYALcIuzyvwgO3fM9P1Cf/LDHEdEHRym28VQKEfU
-         HS1nlAec0MXtaXmT+tTwRyVPDIO7VWRcNB1+erwL//zEH8yVqp5XR08kdi5xnGhUODif
-         ltBMyBk20L0/nvjVz/Sz0sBx+AUjiAvNW4mSXVxcvNqlGkxwD2PFsXFgAP7gq01Jbfdy
-         UVbg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nOv6I9+ls0pg/L2LNTaF96Fgd3up03vC2d8X1+k10Jw=;
+        b=uvZDTO/qh64JrJcIkvq/4aiOSsw8Q0MsZnjxBm9sZiYPEaSC5Np2Wo1GcTWOQ+u8ua
+         hEMRKpS2KWAT3dnc3mJ3W9x2c9zrMfEah06LjsvZRIS9oHkvyrz4dGYO+j6NO4y9sztq
+         rGRFCDcUMjr7K+5d1OTLG/+y+Z6/P/J7FfyCY33gvI76Z1EtA9kLA6Qr3Ah5xSafeD7L
+         rn90/7Oxfc+zVew4pqQSP65HE62lJBgDMgHtLFYubHCLfWV/2UhQkeKD5y30/kj4jVQ2
+         g44lf9J8i86iUBu7OAM6W70hfxqdfPARM1zJthsfCLvd5Y7aW2lpcfVvLz6dF7bM0plU
+         16Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=McWTtx7Tp7tMDcpgUWURvLH3xAZpqNdcMywhax+H9u8=;
-        b=eue556EcU4s35RA9GKOS3kSnIOvCKo5MxzeQcNq73qRz0KcKgri5oorwyUZf/ON/AM
-         KDUIzp5YvgpImBrodYc3WoaFtFHtl3ibLtRCeHFH2jWeEKhQsMMg6l3CDfJW4eYKALoP
-         gdMbDPtUoD2YTX7LAtAxaInAe1ymylbbdZg3SVkS3CBLVbxBLCZsnmAgxJAysUnm0m9z
-         +lh+gAD3bysCkVS/ZmuGNfKnK374Ttr6w1u/tn/YQvVPPQonb8sp3K2m4GfLrh51Zb1j
-         V87RnOVz4vbszjWVPnw0rXp/GcfGM17zMGf0Aycld6Av/dQcol9SigHPmRUpAF1GOxVg
-         NmVg==
-X-Gm-Message-State: APjAAAV5ebiD9NsGUD/LnJTqdzdYS6c1u1douWGZ24RuOoFxOXfn2iCN
-        KPgFuzB8SuOvBDovCRNuTOeIIq423tR6zqqqpBM=
-X-Google-Smtp-Source: APXvYqx6SA6ZIHrK/cbob827p2TujSQac7Gf4FVBIEMUw8EiLG7mK+9ScmPjMrhhS+WzT5pz6bIPktW8RUiWcpMHi5M=
-X-Received: by 2002:a2e:4a1a:: with SMTP id x26mr2765684lja.49.1556831268788;
- Thu, 02 May 2019 14:07:48 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nOv6I9+ls0pg/L2LNTaF96Fgd3up03vC2d8X1+k10Jw=;
+        b=H7zWySyTodH5nsNdDccFMtZJBkwXG1V8VlyeTpIyVvmLBtE+yw4n2BjAEFCsB4/2XC
+         Mji7iIhJmDfpfEz5sLhu4XYMzWBZBhjw6HbcQ6533MYMX1q074W0rmQCjWpAc+n28ab2
+         ezmLia+/bqTubZyvt9wCFM74TLjR9hzdp1SNm1n21KOD/MWO0ipyawy4JZTxEu3iMzwi
+         SenwnaAJhpeP0XBmC066nFeR1x1mlEinMcdCiRuIlVXLIK8nTEa197xWnRWYPngjUgQd
+         JYK+3JUHHB2e0g0o5DXtahIWVDBxKcTX2D2v+fkx+x7rnhuNZO/APe/LxgCEmWBorCYh
+         l2yA==
+X-Gm-Message-State: APjAAAU0xe3tT16m+n9z6eQ4Tq6MgkUrXFaQiHZl0wCzg43YLsMHeIDA
+        KKX+D2O0wWF5xlcehL7HUARyptGasAOJo/WErkqkpA==
+X-Google-Smtp-Source: APXvYqzfwJniKNWcSzyn9xHnDRujlzoA6z9dBIzSGvJjoxZ4tSKU0QrYgIKizaFoffmvIPBtAp6YQAp4PV525jIfHOw=
+X-Received: by 2002:a24:eb04:: with SMTP id h4mr4550431itj.16.1556831734903;
+ Thu, 02 May 2019 14:15:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
- <1556228754-12996-3-git-send-email-rppt@linux.ibm.com> <20190426083144.GA126896@gmail.com>
- <20190426095802.GA35515@gmail.com> <CALCETrV3xZdaMn_MQ5V5nORJbcAeMmpc=gq1=M9cmC_=tKVL3A@mail.gmail.com>
- <20190427084752.GA99668@gmail.com> <20190427104615.GA55518@gmail.com>
- <CAOp6jLa1Rs2xrhJ2wpWoFbJGHyB99OX9doQZc+dNqOSUMgURsw@mail.gmail.com> <20190502152016.GA51567@gmail.com>
-In-Reply-To: <20190502152016.GA51567@gmail.com>
-Reply-To: robert@ocallahan.org
-From:   "Robert O'Callahan" <robert@ocallahan.org>
-Date:   Fri, 3 May 2019 09:07:37 +1200
-Message-ID: <CAOp6jLYAksmUN2EzZmu9qOkUgPS0=8t0w1zgCWrmhhOf16Fr4Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call isolation
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexandre Chartre <alexandre.chartre@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jonathan Adams <jwadams@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-MM <linux-mm@kvack.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
+References: <20190404003249.14356-1-matthewgarrett@google.com>
+ <20190404003249.14356-2-matthewgarrett@google.com> <CACdnJus-+VTy0uOWg982SgZr55Lp7Xot653dJb_tO5T=J6D8nw@mail.gmail.com>
+ <alpine.LRH.2.21.1905030653480.32502@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1905030653480.32502@namei.org>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Thu, 2 May 2019 14:15:23 -0700
+Message-ID: <CACdnJuusGU2DMXaPAjH3+QOcSj-9q6njbxxG-9s2PweDKognvw@mail.gmail.com>
+Subject: Re: [PATCH V32 01/27] Add the ability to lock down access to the
+ running kernel image
+To:     James Morris <jmorris@namei.org>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 3, 2019 at 3:20 AM Ingo Molnar <mingo@kernel.org> wrote:
-> So what might work better is if we defined a Rust dialect that used C
-> syntax. I.e. the end result would be something like the 'c2rust' or
-> 'citrus' projects, where code like this would be directly translatable to
-> Rust:
->
-> void gz_compress(FILE * in, gzFile out)
-> {
->         char buf[BUFLEN];
->         int len;
->         int err;
->
->         for (;;) {
->                 len = fread(buf, 1, sizeof(buf), in);
->                 if (ferror(in)) {
->                         perror("fread");
->                         exit(1);
->                 }
->                 if (len == 0)
->                         break;
->                 if (gzwrite(out, buf, (unsigned)len) != len)
->                         error(gzerror(out, &err));
->         }
->         fclose(in);
->
->         if (gzclose(out) != Z_OK)
->                 error("failed gzclose");
-> }
->
->
-> #[no_mangle]
-> pub unsafe extern "C" fn gz_compress(mut in_: *mut FILE, mut out: gzFile) {
->     let mut buf: [i8; 16384];
->     let mut len;
->     let mut err;
->     loop  {
->         len = fread(buf, 1, std::mem::size_of_val(&buf), in_);
->         if ferror(in_) != 0 { perror("fread"); exit(1); }
->         if len == 0 { break ; }
->         if gzwrite(out, buf, len as c_uint) != len {
->             error(gzerror(out, &mut err));
->         };
->     }
->     fclose(in_);
->     if gzclose(out) != Z_OK { error("failed gzclose"); };
-> }
->
-> Example taken from:
->
->    https://gitlab.com/citrus-rs/citrus
->
-> Does this make sense?
+On Thu, May 2, 2019 at 2:07 PM James Morris <jmorris@namei.org> wrote:
+> One possible direction is to (as previously mentioned) assign IDs to each
+> callsite and be able to check this ID against a simple policy array
+> (allow/deny).  The default policy choices could be reduced to 'all' or
+> 'none' during kconfig, and allow a custom policy to be loaded later if
+> desired.
 
-Are you saying you want a tool like c2rust/citrus that translates some
-new "looks like C, but really Rust" language into actual Rust at build
-time? I guess that might work, but I suspect your "looks like C"
-language isn't going to end up being much like C (e.g. it's going to
-need Rust-style enums-with-fields, Rust polymorphism, Rust traits, and
-Rust lifetimes), so it may not be beneficial, because you've just
-created a new language no-one knows, and that has some real downsides.
+Ok. My primary concern around this is that it's very difficult to use
+correctly in anything other than the "all" or "none" modes. If a new
+kernel feature is added with integrated lockdown support, if an admin
+is simply setting the flags of things they wish to block then this
+will be left enabled - and may violate the admin's expectations around
+integrity. On the other hand, if an admin is simply setting the flags
+of things they wish to permit, then adding lockdown support to an
+existing kernel feature may result in that feature suddenly being
+disabled, which may also violate the admin's expectations around the
+flags providing a stable set of behaviour.
 
-If you're inspired by the dream of transitioning to safer languages,
-then I think the first practical step would be to identify some part
-of the kernel where the payoff of converting code would be highest.
-This is probably something small, relatively isolated, that's not well
-tested, generally suspicious, but still in use. Then do an experiment,
-converting it to Rust (or something else) using off-the-shelf tools
-and manual labor, and see where the pain points are and what benefits
-accrue, if any. (Work like https://github.com/tsgates/rust.ko might be
-a helpful starting point.) Then you'd have some data to start thinking
-about how to reduce the costs, increase the benefits, and sell it to
-the kernel community. If you reached out to the Rust community you
-might find some volunteers to help with this.
+Given that, would you prefer such a policy expression to look like?
 
-Rob
--- 
-Su ot deraeppa sah dna Rehtaf eht htiw saw hcihw, efil lanrete eht uoy
-ot mialcorp ew dna, ti ot yfitset dna ti nees evah ew; deraeppa efil
-eht. Efil fo Drow eht gninrecnoc mialcorp ew siht - dehcuot evah sdnah
-ruo dna ta dekool evah ew hcihw, seye ruo htiw nees evah ew hcihw,
-draeh evah ew hcihw, gninnigeb eht morf saw hcihw taht.
+> Within the policy check hook, we could add a new LSM hook, which would
+> allow an LSM to restrictively override the lockdown policy with its own
+
+Ok, that makes sense. If we take this approach, does there need to be
+a separate policy mechanism at all? Users who want fine-grained
+control would be able to set the behaviour to "None" and then use
+their choice of LSM to express more fine-grained control.
+
+> This doesn't really address the completeness / maintenance issue (i.e. "do
+> we have everything covered and how do we ensure this on an ongoing
+> basis?", and "what will this new lockdown feature break?"), although it
+> should make it easier to add new lockdown callsites as they don't have to
+> be enabled by the user.
+
+I can start on this.
