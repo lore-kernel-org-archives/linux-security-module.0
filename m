@@ -2,110 +2,86 @@ Return-Path: <SRS0=FyGa=TC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 289F6C04AAA
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 20:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D0B5C43219
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 21:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC42620578
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 20:56:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KgC8Txd4"
+	by mail.kernel.org (Postfix) with ESMTP id 72A2920651
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 21:07:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbfEBU4k (ORCPT
+        id S1726289AbfEBVHV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 May 2019 16:56:40 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43696 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726297AbfEBU4k (ORCPT
+        Thu, 2 May 2019 17:07:21 -0400
+Received: from namei.org ([65.99.196.166]:37082 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725962AbfEBVHV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 May 2019 16:56:40 -0400
-Received: by mail-io1-f67.google.com with SMTP id v9so3440201iol.10
-        for <linux-security-module@vger.kernel.org>; Thu, 02 May 2019 13:56:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=W3LPddwCKGY2xDs2u/DUWFbBGqANYJTYynM8oS/U41s=;
-        b=KgC8Txd4sqFpfNVIU5Wc0c0htULB4U6DQmgHOL62Lo4Qhb7H8HeoP6A5oyBRfRlIxH
-         nbujZgFqKo77czxlk/kYHMvFORPVv3giYwy/vyNp+e5oH4IrW1KDEJN1DWBhUNtI7QWi
-         Jud+60EOp+yWaRfrdV/xm2B2vgIN4UsTjluESbASHsPOg2gqqxpsMYXqfKwILZWxH4Qf
-         xY8RD73W6/ytjIAP8KEyoS53A04zKtk6p1VGqlaftgWj7DFwAErc2E/gr9bz3vf8H1Ae
-         y3fHfE6gJdC97GBgVgLqfluYDtX+PSbeRDTlYIaOf3VAmN5x9tJYBIkgwJ8kvCLdXigZ
-         Rhkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=W3LPddwCKGY2xDs2u/DUWFbBGqANYJTYynM8oS/U41s=;
-        b=e8DVlcRZ8YfYsZKROXsvUFAQbs2OBSzQmdE5VHGA8+f/IDFaSyhR2ylpf/5u1+d/dJ
-         Mvnt224ecC+UTJnbpCzKN4v4XkAivQRwGJPat0LFe791/jTA6fpM6rnWgMEFeJu8oBdx
-         z46zA/dl7s1H8si+/sLhdcjVfAzn89AAaDhDKz7GMHWnPMTTn1WU8AqjuO8Z7cqgI/UQ
-         fOJVUrnYqw5ZTjAtY1htn3SwtjetyUB+g7Mk1RyoC0Rj9ded3YxsnRzhVfow/qwJkA4i
-         lKs6Gpj08YC7Zf02jIONKXMkL+syDulDPClSVv1H52fop1sOjHoJKDHS8TctWUqd4/az
-         ttWw==
-X-Gm-Message-State: APjAAAX4CkiEfbLeH2Gytq88jDGws7ys4JsFjzXXZJu3bNHkdHpz2dTi
-        EJOAAyqBGiLm6nkMGBc394G4O9ErZ150M/yxLrtF3Q==
-X-Google-Smtp-Source: APXvYqw8fJr5vPiI/5b4rrryNsL0YNv88XUlTZMDz7MCDm+On7B/QMbwAD7N2VgsEzqDAu88wY0gE9GedHWaSxSS7n4=
-X-Received: by 2002:a6b:7b47:: with SMTP id m7mr4208092iop.173.1556830599457;
- Thu, 02 May 2019 13:56:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190227202658.197113-1-matthewgarrett@google.com>
- <20190227202658.197113-3-matthewgarrett@google.com> <CAJzaN5pUJoOCz5-ZDSnTb6dbVPuy0QwmFD0CeofAGK+bRQx0og@mail.gmail.com>
- <CACdnJutpBPAX6TOGgs3Ng2v_cC5hAf-3pHThESvjQ9vbvQeVkA@mail.gmail.com>
- <CAKv+Gu9PF4u=-7QL4e36Q3S5kC4+5Z=yLYHLT9jE+eNY7YUV7A@mail.gmail.com> <CACdnJuvDuw0X9iwEqOu7EjM5ca1f+n7f=xqzrTPS9PyrmqKNHQ@mail.gmail.com>
-In-Reply-To: <CACdnJuvDuw0X9iwEqOu7EjM5ca1f+n7f=xqzrTPS9PyrmqKNHQ@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 2 May 2019 22:56:27 +0200
-Message-ID: <CAKv+Gu9GpmK7-kb2GJuhrL2Qau7ebqDdy4-LdwFDmPz-Os0quw@mail.gmail.com>
-Subject: Re: [PATCH V5 2/4] tpm: Reserve the TPM final events table
+        Thu, 2 May 2019 17:07:21 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x42L7F4G000848;
+        Thu, 2 May 2019 21:07:15 GMT
+Date:   Fri, 3 May 2019 07:07:15 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
 To:     Matthew Garrett <mjg59@google.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Bartosz Szczepanek <bsz@semihalf.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
+cc:     LSM List <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        David Howells <dhowells@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH V32 01/27] Add the ability to lock down access to the
+ running kernel image
+In-Reply-To: <CACdnJus-+VTy0uOWg982SgZr55Lp7Xot653dJb_tO5T=J6D8nw@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1905030653480.32502@namei.org>
+References: <20190404003249.14356-1-matthewgarrett@google.com> <20190404003249.14356-2-matthewgarrett@google.com> <CACdnJus-+VTy0uOWg982SgZr55Lp7Xot653dJb_tO5T=J6D8nw@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2 May 2019 at 20:04, Matthew Garrett <mjg59@google.com> wrote:
->
-> On Thu, May 2, 2019 at 12:15 AM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
-> >
-> > (+ Ingo)
-> >
-> > On Tue, 30 Apr 2019 at 21:52, Matthew Garrett <mjg59@google.com> wrote:
-> > >
-> > > On Tue, Apr 30, 2019 at 6:07 AM Bartosz Szczepanek <bsz@semihalf.com> wrote:
-> > > >
-> > > > I may be a little late with this comment, but I've just tested these
-> > > > patches on aarch64 platform (from the top of jjs/master) and got
-> > > > kernel panic ("Unable to handle kernel read", full log at the end of
-> > > > mail). I think there's problem with below call to
-> > > > tpm2_calc_event_log_size(), where physical address of efi.tpm_log is
-> > > > passed as (void *) and never remapped:
-> > >
-> > > Yes, it looks like this is just broken. Can you try with the attached patch?
-> >
-> > I'm a bit uncomfortable with EFI code that is obviously broken and
-> > untested being queued for the next merge window in another tree.
->
-> The patchset was Cc:ed to linux-efi@. Is there anything else I should
-> have done to ensure you picked it up rather than Jarkko?
+On Mon, 29 Apr 2019, Matthew Garrett wrote:
 
-No, I am not saying it was you who did anything wrong - Jarkko and I
-should probably have aligned better. But my own testing wouldn't have
-caught this particular issue either (I am still in the process of
-getting access to ARM machines with a TPM), so it wouldn't have made a
-huge difference in any case.
+> Hi James,
+> 
+> What's the best way forward with this? I'm still not entirely clear on
+> how it can be implemented purely as an LSM, but if you have ideas on
+> what sort of implementation you'd prefer I'm happy to work on that.
+
+It can't be implemented purely as an LSM.
+
+The concerns I have are:
+
+  o Mixing of mechanism and policy (they are hardcoded together)
+  o Too-coarse policy (all or nothing, which will lead many to choose   
+    nothing)
+  o Lack of integration with LSM
+  o Completeness
+  o Maintenance (including adding new lockdowns without breaking existing 
+    userspace)
+  
+One possible direction is to (as previously mentioned) assign IDs to each 
+callsite and be able to check this ID against a simple policy array 
+(allow/deny).  The default policy choices could be reduced to 'all' or 
+'none' during kconfig, and allow a custom policy to be loaded later if 
+desired.
+
+Within the policy check hook, we could add a new LSM hook, which would 
+allow an LSM to restrictively override the lockdown policy with its own 
+(so e.g. SELinux could utilize the context of the current process to 
+determine if a lockdown feature should be enforced).
+
+This doesn't really address the completeness / maintenance issue (i.e. "do 
+we have everything covered and how do we ensure this on an ongoing 
+basis?", and "what will this new lockdown feature break?"), although it 
+should make it easier to add new lockdown callsites as they don't have to 
+be enabled by the user.
+
+Thoughts?
+
+-- 
+James Morris
+<jmorris@namei.org>
+
