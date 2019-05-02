@@ -2,140 +2,133 @@ Return-Path: <SRS0=FyGa=TC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D123DC43219
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 11:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C062FC43219
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 13:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D5322075E
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 11:35:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ocallahan-org.20150623.gappssmtp.com header.i=@ocallahan-org.20150623.gappssmtp.com header.b="0H9qZOLd"
+	by mail.kernel.org (Postfix) with ESMTP id 98C3D2063F
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 13:18:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbfEBLft (ORCPT
+        id S1726341AbfEBNSM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 May 2019 07:35:49 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33776 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbfEBLfs (ORCPT
+        Thu, 2 May 2019 09:18:12 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:64557 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfEBNSM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 May 2019 07:35:48 -0400
-Received: by mail-lf1-f66.google.com with SMTP id j11so1640007lfm.0;
-        Thu, 02 May 2019 04:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ocallahan-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=j++TiTibQtSVl9YAF3/oqacqYf/6ZNJGN6BZGgzoCww=;
-        b=0H9qZOLdO21+HdB9rbdwA4TdkIwgdYm+/OeqS3IwlILWryk4o/i6fMK92cnzjlf5d+
-         0OAwzQOkeD28c7YH6eco8BUodMbodQLIvMA9K/+hCj9FFBanIhHsDTxWIaOFko8EKel3
-         zSFRM58Enni/0sfu1lojb+Rh0349rNJQwgnCVUMe353c38F3CMEFovePsjxDPeRfeIx/
-         utSiV3/LMYR2Dqu3XV4xeErBtRaiDgc5Sv6BSJuLmXC6Es8cPhdkIirs2LVr0GMugKnW
-         NBPJtLw2jgN5szGLBemMxX5/jwWj73+3M2fiJlRQZpw9YccJDve++TtuuJsE8ML9PRrE
-         NoqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=j++TiTibQtSVl9YAF3/oqacqYf/6ZNJGN6BZGgzoCww=;
-        b=LzL8/o0JZ8WQ/PaA9eYx8Nz886+Ks3cXE67uAJEtk51k96rwG38RpQ/lvsfFYuFlaA
-         TrjzaPVGxRflPQgqNagU+anIfDO1S2JrrxqOyXGxfFCj1d/OZa8lhN8oUNn/3HVxp4x8
-         TKKF+ckYezFEDIv0v8jQovfZpjL4Y2OsLmE3LLI/0pQo83i7rP/qX8HKTfKo6QoKRLpy
-         1hKg9L5drT6T5WlzMARwmrN2V6/Pp70nSsLRpVVtzNb/EmPTPKOqo0YbtUEa16ejKPft
-         53FQMZ5qPHZKT9U57YxD/rqXoFlhgdbskH7caVMt75P48VXWJHY4eRWCJ5bkt9i6s56L
-         6PAA==
-X-Gm-Message-State: APjAAAWwhPUmxxRP/42BqWUBXaJWJIbUUg3GSTJbkmCPx0V3+ct15LNL
-        fVA7Cx/ZQswpkHMWDboT7kiAvinvVt4a/Nj+5Hk=
-X-Google-Smtp-Source: APXvYqzxeUby9yFoLptAe0k7AKsIZUdYS+XMP7+LA0QnUSMXo1qvkRNSzH4R87VA/WRCVh9nvlZswwxjI6mg8WhdsxI=
-X-Received: by 2002:ac2:5a47:: with SMTP id r7mr1883560lfn.116.1556796946527;
- Thu, 02 May 2019 04:35:46 -0700 (PDT)
+        Thu, 2 May 2019 09:18:12 -0400
+Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x42DHfrQ066138;
+        Thu, 2 May 2019 22:17:41 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp);
+ Thu, 02 May 2019 22:17:41 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x42DHZSn066036
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 2 May 2019 22:17:41 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: [PATCH 1/2] apparmor: Use a memory pool instead per-CPU caches
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, tglx@linutronix.de
+References: <20190405133458.4809-1-bigeasy@linutronix.de>
+ <ae17e2a3-7d08-5863-4fba-66ddeac11541@canonical.com>
+ <20190430144725.gd6r3aketxuqdyir@linutronix.de>
+ <02d7772b-5d06-1c32-b089-454547fbe08b@canonical.com>
+ <20190502105158.2hluemukrdz5hbus@linutronix.de>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <7b41609f-2592-93c1-55f7-6026ff6dba26@I-love.SAKURA.ne.jp>
+Date:   Thu, 2 May 2019 22:17:35 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
- <1556228754-12996-3-git-send-email-rppt@linux.ibm.com> <20190426083144.GA126896@gmail.com>
- <20190426095802.GA35515@gmail.com> <CALCETrV3xZdaMn_MQ5V5nORJbcAeMmpc=gq1=M9cmC_=tKVL3A@mail.gmail.com>
- <20190427084752.GA99668@gmail.com> <20190427104615.GA55518@gmail.com>
-In-Reply-To: <20190427104615.GA55518@gmail.com>
-Reply-To: robert@ocallahan.org
-From:   "Robert O'Callahan" <robert@ocallahan.org>
-Date:   Thu, 2 May 2019 23:35:35 +1200
-Message-ID: <CAOp6jLa1Rs2xrhJ2wpWoFbJGHyB99OX9doQZc+dNqOSUMgURsw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call isolation
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexandre Chartre <alexandre.chartre@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jonathan Adams <jwadams@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-MM <linux-mm@kvack.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190502105158.2hluemukrdz5hbus@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Apr 27, 2019 at 10:46 PM Ingo Molnar <mingo@kernel.org> wrote:
->  - A C language runtime that is a subset of current C syntax and
->    semantics used in the kernel, and which doesn't allow access outside
->    of existing objects and thus creates a strictly enforced separation
->    between memory used for data, and memory used for code and control
->    flow.
->
->  - This would involve, at minimum:
->
->     - tracking every type and object and its inherent length and valid
->       access patterns, and never losing track of its type.
->
->     - being a lot more organized about initialization, i.e. no
->       uninitialized variables/fields.
->
->     - being a lot more strict about type conversions and pointers in
->       general.
->
->     - ... and a metric ton of other details.
+On 2019/05/02 19:51, Sebastian Andrzej Siewior wrote:
+>>>> * some buffer allocations had to be done with GFP_ATOMIC, making them
+>>>>   more likely to fail. Since we fail closed that means failure would
+>>>>   block access. This actually became a serious problem in a couple
+>>>>   places. Switching to per cpu buffers and blocking pre-empt was
+>>>>   the solution.
+>>>
+>>> GFP_KERNEL is allowed to use IO/SWAP and ATOMIC has emergency pools. The
+>>> new approach won't return a NULL pointer, simply spin to either allocate
+>>> new memory or get one which was just returned.
+>>>
+>>
+>> yeah, I am not really a fan of a potential infinite loop trying to allocate
+>> memory. It may be worth retrying once or twice but potentially infinitely
+>> spinning on failed allocation really isn't acceptable.
+> 
+> It shouldn't spin infinitely because even if kmalloc() does not return
+> any memory, one of the other CPUs should return their buffer at some
+> point. However, if you don't like it I could add two retries and return
+> NULL + fixup callers. On the other hand if the other CPUs BUG() with the
+> buffers then yes, we may spin.
+> So limited retries it is?
 
-Several research groups have tried to do this, and it is very
-difficult to do. In particular this was almost exactly the goal of
-C-Cured [1]. Much more recently, there's Microsoft's CheckedC [2] [3],
-which is less ambitious. Check the references of the latter for lots
-of relevant work. If anyone really pursues this they should talk
-directly to researchers who've worked on this, e.g. George Necula; you
-need to know what *didn't* work well, which is hard to glean from
-papers. (Academic publishing is broken that way.)
+There is 'The "too small to fail" memory-allocation rule'
+( https://lwn.net/Articles/627419/ ) where GFP_KERNEL allocation for
+size <= 32768 bytes never fails unless current thread was killed by
+the OOM killer. This means that kmalloc() in
 
-One problem with adopting "safe C" or Rust in the kernel is that most
-of your security mitigations (e.g. KASLR, CFI, other randomizations)
-probably need to remain in place as long as there is a significant
-amount of C in the kernel, which means the benefits from eliminating
-them will be realized very far in the future, if ever, which makes the
-whole exercise harder to justify.
++char *aa_get_buffer(void)
++{
++	union aa_buffer *aa_buf;
++
++try_again:
++	spin_lock(&aa_buffers_lock);
++	if (!list_empty(&aa_global_buffers)) {
++		aa_buf = list_first_entry(&aa_global_buffers, union aa_buffer,
++					  list);
++		list_del(&aa_buf->list);
++		spin_unlock(&aa_buffers_lock);
++		return &aa_buf->buffer[0];
++	}
++	spin_unlock(&aa_buffers_lock);
++
++	aa_buf = kmalloc(aa_g_path_max, GFP_KERNEL);
++	if (WARN_ON_ONCE(!aa_buf))
++		goto try_again;
++	return &aa_buf->buffer[0];
++}
 
-Having said that, I think there's a good case to be made for writing
-kernel code in Rust, e.g. sketchy drivers. The classes of bugs
-prevented in Rust are significantly broader than your usual safe-C
-dialect (e.g. data races).
+can't return NULL unless current thread was killed by the OOM killer
+if aa_g_path_max <= 32768. On the other hand, if aa_g_path_max > 32768,
+this allocation can easily fail, and retrying forever is very bad.
 
-[1] https://web.eecs.umich.edu/~weimerw/p/p477-necula.pdf
-[2] https://www.microsoft.com/en-us/research/uploads/prod/2019/05/checkedc-post2019.pdf
-[3] https://github.com/Microsoft/checkedc
+If current thread was killed by the OOM killer, current thread should be
+able to bail out without retrying. If allocation can never succeed (e.g.
+aa_g_path_max == 1073741824 was specified), we must bail out.
 
-Rob
--- 
-Su ot deraeppa sah dna Rehtaf eht htiw saw hcihw, efil lanrete eht uoy
-ot mialcorp ew dna, ti ot yfitset dna ti nees evah ew; deraeppa efil
-eht. Efil fo Drow eht gninrecnoc mialcorp ew siht - dehcuot evah sdnah
-ruo dna ta dekool evah ew hcihw, seye ruo htiw nees evah ew hcihw,
-draeh evah ew hcihw, gninnigeb eht morf saw hcihw taht.
+
+
+By the way, did you really test your patch?
+
+> @@ -1399,6 +1404,7 @@ static int param_set_aauint(const char *val, const struct kernel_param *kp)
+>  		return -EPERM;
+>  
+>  	error = param_set_uint(val, kp);
+> +	aa_g_path_max = min_t(uint32_t, aa_g_path_max, sizeof(union aa_buffer));
+
+I think that this will guarantee that aa_g_path_max <= sizeof(struct list_head)
+which is too small to succeed. :-(
+
+>  	pr_info("AppArmor: buffer size set to %d bytes\n", aa_g_path_max);
+>  
+>  	return error;
+
