@@ -2,207 +2,103 @@ Return-Path: <SRS0=FyGa=TC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A672C04AAA
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 15:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CFDC43219
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 15:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C35302085A
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 15:20:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556810423;
-	bh=+5L51YfIKRxnJt+D5XAz7/VyGqAloQkN9iDHxVEQXgc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WeQ2rjacCk7sDuE0dSlB0/PGTNGQzut3fVoi4/EIjhvi93BoHhz9FVyfrod/0iauF
-	 skKM74cxTYM4TcZRfKZhRGhTALWQR1xtzJZr6eJFWnMaLs66LYGjvnclhC33WZajre
-	 oByyIX2PRc5hOCriie4PLl+BZXJf4mjOWVnz0bb0=
+	by mail.kernel.org (Postfix) with ESMTP id E2CE7205C9
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 15:48:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbfEBPUX (ORCPT
+        id S1726958AbfEBPso (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 May 2019 11:20:23 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35794 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbfEBPUW (ORCPT
+        Thu, 2 May 2019 11:48:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35792 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727348AbfEBPsn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 May 2019 11:20:22 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y197so3157963wmd.0;
-        Thu, 02 May 2019 08:20:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5iZHfQ8GDd0Ls6ejuDG8WIo78Gj60D8gd5oYhOzj700=;
-        b=jzQVifsYy8fMTiCtgC1O/9kll4n/Bj8/l/rsGB4yIXwPIjtgnwSG+x57tTQeXNRS80
-         iLyJbX0f0w+pO0yQ2b4vnHUVDTsr/BMS8rX4nhkj7Vvs35/YFozk7UL1NsM0P2RZ59iM
-         Nc4dRwS4LJB1eLeikglNxQql9LvadPnzaAIaE+W55cwtiGo3evT7P/NSDExizrE/vdCK
-         FqTE48KQmO+PbE0P5rVeU8k+aVroL+uQHkCFzjIW+vcda2K7R+tkGG0/AHpLdnU0Ezfj
-         zjlItED5vppiw32GpvjIsHmnpXNVWabcs5oGKMrWTsggLyVmPETq7jDG+ZeynKNSVet4
-         pzqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5iZHfQ8GDd0Ls6ejuDG8WIo78Gj60D8gd5oYhOzj700=;
-        b=UyGxVhHnOaxh38n1ULkP5jV6ODu6PrAXiTgWAoxQzogDgLz3pOasDxNE8BqX1Ycf4/
-         zh2ybY4P+nup4puaNMyLNC+/egIFVIuIZO6ZDQSPbiNi2AHSaUBeEUarW8IuaOKvtOBL
-         FcL8kCI6Yfls2hadZujDSbDmi4NIsxF3LkBLXA1c8YsiszUedInWZyeXa3LnfwcAkVUJ
-         rUu3dopKqnaew3UPQTA2BW/Tmj8KPGj8S0m2vzIZXKVTk4aVEDHFgxlslgMj7LCNKkz8
-         MP1hrkzxMAQVmt2hZiqTKBXRDTM2JcIV2PmPI4lx2kVgcEGXNsdnYyol9IRijH1/ntDW
-         PwDQ==
-X-Gm-Message-State: APjAAAUKkaprRmvIYcEs+KM6KM1JC1zSb9kKv32rgeNnNOQ9dcoB1AlI
-        h2UU2I14JtAwkyV59DZxTRs=
-X-Google-Smtp-Source: APXvYqz2a88pHyfeJ1r7bzIgwGeuv5y1UhZAVXtEWIBuqYBjV11xhWa33BRF5AukmEhqJIMBc7tEnw==
-X-Received: by 2002:a7b:c353:: with SMTP id l19mr2664125wmj.12.1556810420312;
-        Thu, 02 May 2019 08:20:20 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id q7sm8729877wmc.11.2019.05.02.08.20.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 May 2019 08:20:19 -0700 (PDT)
-Date:   Thu, 2 May 2019 17:20:16 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Robert O'Callahan <robert@ocallahan.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexandre Chartre <alexandre.chartre@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jonathan Adams <jwadams@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-MM <linux-mm@kvack.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call
- isolation
-Message-ID: <20190502152016.GA51567@gmail.com>
-References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
- <1556228754-12996-3-git-send-email-rppt@linux.ibm.com>
- <20190426083144.GA126896@gmail.com>
- <20190426095802.GA35515@gmail.com>
- <CALCETrV3xZdaMn_MQ5V5nORJbcAeMmpc=gq1=M9cmC_=tKVL3A@mail.gmail.com>
- <20190427084752.GA99668@gmail.com>
- <20190427104615.GA55518@gmail.com>
- <CAOp6jLa1Rs2xrhJ2wpWoFbJGHyB99OX9doQZc+dNqOSUMgURsw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOp6jLa1Rs2xrhJ2wpWoFbJGHyB99OX9doQZc+dNqOSUMgURsw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 2 May 2019 11:48:43 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x42FmEaD111182
+        for <linux-security-module@vger.kernel.org>; Thu, 2 May 2019 11:48:42 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s81jgwn3m-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 02 May 2019 11:48:41 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 2 May 2019 16:48:38 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 2 May 2019 16:48:34 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x42FmX7O47448276
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 2 May 2019 15:48:33 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2EC26A404D;
+        Thu,  2 May 2019 15:48:33 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0E117A4051;
+        Thu,  2 May 2019 15:48:32 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.95.175])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  2 May 2019 15:48:31 +0000 (GMT)
+Subject: Re: [PATCH] kexec_buffer measure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     prakhar srivastava <prsriva02@gmail.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>
+Date:   Thu, 02 May 2019 11:48:21 -0400
+In-Reply-To: <1555978681.4914.305.camel@linux.ibm.com>
+References: <CAEFn8qKkXgxUKtribbtFwvG9NykGQo10jQ5Du_i9wJz-wKreOA@mail.gmail.com>
+         <1555978681.4914.305.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050215-0012-0000-0000-000003179DCD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050215-0013-0000-0000-000021500DB5
+Message-Id: <1556812101.4134.28.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-02_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=933 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905020105
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+[Cc'ing Paul, John, Casey]
 
-* Robert O'Callahan <robert@ocallahan.org> wrote:
-
-> On Sat, Apr 27, 2019 at 10:46 PM Ingo Molnar <mingo@kernel.org> wrote:
-> >  - A C language runtime that is a subset of current C syntax and
-> >    semantics used in the kernel, and which doesn't allow access outside
-> >    of existing objects and thus creates a strictly enforced separation
-> >    between memory used for data, and memory used for code and control
-> >    flow.
-> >
-> >  - This would involve, at minimum:
-> >
-> >     - tracking every type and object and its inherent length and valid
-> >       access patterns, and never losing track of its type.
-> >
-> >     - being a lot more organized about initialization, i.e. no
-> >       uninitialized variables/fields.
-> >
-> >     - being a lot more strict about type conversions and pointers in
-> >       general.
-> >
-> >     - ... and a metric ton of other details.
+On Mon, 2019-04-22 at 20:18 -0400, Mimi Zohar wrote:
+> [Cc'ing LSM mailing list]
 > 
-> Several research groups have tried to do this, and it is very
-> difficult to do. In particular this was almost exactly the goal of
-> C-Cured [1]. Much more recently, there's Microsoft's CheckedC [2] [3],
-> which is less ambitious. Check the references of the latter for lots
-> of relevant work. If anyone really pursues this they should talk
-> directly to researchers who've worked on this, e.g. George Necula; you
-> need to know what *didn't* work well, which is hard to glean from
-> papers. (Academic publishing is broken that way.)
+> On Fri, 2019-04-19 at 17:30 -0700, prakhar srivastava wrote:
 > 
-> One problem with adopting "safe C" or Rust in the kernel is that most
-> of your security mitigations (e.g. KASLR, CFI, other randomizations)
-> probably need to remain in place as long as there is a significant
-> amount of C in the kernel, which means the benefits from eliminating
-> them will be realized very far in the future, if ever, which makes the
-> whole exercise harder to justify.
+> > 2) Adding a LSM hook
+> > We are doing both the command line and kernel version measurement in IMA.
+> > Can you please elaborate on how this can be used outside of the scenario?
+> > That will help me come back with a better design and code. I am
+> > neutral about this.
 > 
-> Having said that, I think there's a good case to be made for writing
-> kernel code in Rust, e.g. sketchy drivers. The classes of bugs
-> prevented in Rust are significantly broader than your usual safe-C
-> dialect (e.g. data races).
-> 
-> [1] https://web.eecs.umich.edu/~weimerw/p/p477-necula.pdf
-> [2] https://www.microsoft.com/en-us/research/uploads/prod/2019/05/checkedc-post2019.pdf
-> [3] https://github.com/Microsoft/checkedc
+> As I said previously, initially you might want to only measure the
+> kexec boot command line, but will you ever want to verify or audit log
+> the boot command line hash?  Perhaps LSMs would be interested in the
+> boot command line.  Should this be an LSM hook?
 
-So what might work better is if we defined a Rust dialect that used C 
-syntax. I.e. the end result would be something like the 'c2rust' or 
-'citrus' projects, where code like this would be directly translatable to 
-Rust:
+From an LSM perspective, is there any interest in the boot command line?
 
-void gz_compress(FILE * in, gzFile out)
-{
-	char buf[BUFLEN];
-	int len;
-	int err;
+Mimi
 
-	for (;;) {
-		len = fread(buf, 1, sizeof(buf), in);
-		if (ferror(in)) {
-			perror("fread");
-			exit(1);
-		}
-		if (len == 0)
-			break;
-		if (gzwrite(out, buf, (unsigned)len) != len)
-			error(gzerror(out, &err));
-	}
-	fclose(in);
-
-	if (gzclose(out) != Z_OK)
-		error("failed gzclose");
-}
-
-
-#[no_mangle]
-pub unsafe extern "C" fn gz_compress(mut in_: *mut FILE, mut out: gzFile) {
-    let mut buf: [i8; 16384];
-    let mut len;
-    let mut err;
-    loop  {
-        len = fread(buf, 1, std::mem::size_of_val(&buf), in_);
-        if ferror(in_) != 0 { perror("fread"); exit(1); }
-        if len == 0 { break ; }
-        if gzwrite(out, buf, len as c_uint) != len {
-            error(gzerror(out, &mut err));
-        };
-    }
-    fclose(in_);
-    if gzclose(out) != Z_OK { error("failed gzclose"); };
-}
-
-Example taken from:
-
-   https://gitlab.com/citrus-rs/citrus
-
-Does this make sense?
-
-Thanks,
-
-	Ingo
