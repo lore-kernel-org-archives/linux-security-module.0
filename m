@@ -2,69 +2,152 @@ Return-Path: <SRS0=FyGa=TC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEBEC43219
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 08:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD32C04AA9
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 08:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D52320873
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 08:32:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C80F20651
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 08:53:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yWsXoM80"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726308AbfEBIco (ORCPT
+        id S1726378AbfEBIxp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 May 2019 04:32:44 -0400
-Received: from mga06.intel.com ([134.134.136.31]:47842 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725905AbfEBIcn (ORCPT
+        Thu, 2 May 2019 04:53:45 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35253 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbfEBIxo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 May 2019 04:32:43 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 01:32:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,421,1549958400"; 
-   d="scan'208";a="145370147"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
-  by fmsmga008.fm.intel.com with ESMTP; 02 May 2019 01:32:40 -0700
-Date:   Thu, 2 May 2019 11:32:40 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Bartosz Szczepanek <bsz@semihalf.com>
-Cc:     Matthew Garrett <matthewgarrett@google.com>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH V5 2/4] tpm: Reserve the TPM final events table
-Message-ID: <20190502083240.GJ14532@linux.intel.com>
-References: <20190227202658.197113-1-matthewgarrett@google.com>
- <20190227202658.197113-3-matthewgarrett@google.com>
- <CAJzaN5pUJoOCz5-ZDSnTb6dbVPuy0QwmFD0CeofAGK+bRQx0og@mail.gmail.com>
+        Thu, 2 May 2019 04:53:44 -0400
+Received: by mail-it1-f195.google.com with SMTP id l140so2090466itb.0
+        for <linux-security-module@vger.kernel.org>; Thu, 02 May 2019 01:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1X9ipyrjBCgysbixO7mllniKFp0zrqAX+YLVm+Qy1S0=;
+        b=yWsXoM80YUTgdMB6oO2DDbeU8DPDbcmA+PC+5sSaToOqaTpIKARGyOV/boF39l6Q1e
+         0aVuAgi17sn11G4czZdsXIIJkkaqL5RwBNxp2WmHWGQ0do7X2cYx5WD9ZEZgo4pNA4eM
+         jQeldBHxndo5h2SYoCG+q9P+M52Zgdto9W0VS1nmNRxaq9lQxMuYeHsQMqJOD1PiJBJL
+         ZbHxxKVWhhaxPoCfu7IaDYqyN9xb9KuFVUCbvvm5JUBTMgU9qJ+Cy7s2nVCb+dPkiDWV
+         FNdrFBiSFR1EnoD5PIjaMUH7Ka1MQhnuK2F3cSwxw0wBXszsZbDKh7ybJR69Ihjcb57D
+         zysw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1X9ipyrjBCgysbixO7mllniKFp0zrqAX+YLVm+Qy1S0=;
+        b=mGEUoKmY9edemrmDba5hOThgLYkmHqt5Vb4YB0N1eLigzbF9lLG5VMUR6wd5H6BbVb
+         3MxdZ0gHVorCuJfQO4Z71Gxz8KfxwNhJaW0EG4DTu+5bvCCJXMUZze8j/A5qNSkqwwhH
+         tt0Ae6ECM6fO2LhLkSRs9aI960eRTgXQBN6JRhi57SJIwQzFz72bh6BQySYuv2XK210u
+         eUJEfZqNlIZmyUD9GNC0rrKMCeh4yR4ke1cgOpySVOgA1yhsT/jHVSG+/SDkBjmiim0z
+         W7aHsfjfkl1q5vZ/HBHmJkJLT1nHqWxViYO1BKIV0iBhFtoDT12nvY/lSsGyw4n8NvwV
+         J3Wg==
+X-Gm-Message-State: APjAAAXgXmIH0VCbWetcyfX2uXLgjNjjYyFt70310YEES2stfhRcxCtJ
+        87VVNTKHQdgvrKrPsJeqTcvkxji+QRzBD6qtApXd5NXuKKU=
+X-Google-Smtp-Source: APXvYqx/xmKUay1hTDkSxXbGcJPVRadVdpD5CE7BMBOOohtgLIELm0otn+yCvfcjJqOQCM5tLVNFRPp2zEAvFndl3JM=
+X-Received: by 2002:a24:b342:: with SMTP id z2mr1327414iti.121.1556787223814;
+ Thu, 02 May 2019 01:53:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJzaN5pUJoOCz5-ZDSnTb6dbVPuy0QwmFD0CeofAGK+bRQx0og@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190502040441.30372-1-jlee@suse.com>
+In-Reply-To: <20190502040441.30372-1-jlee@suse.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 2 May 2019 10:53:31 +0200
+Message-ID: <CAKv+Gu9mjtNEWN-w4ix7VJMZ_kk-Qf6FfYFRu2mCosaAjMA4Vg@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v2] efi: add a function to convert the status value to string
+To:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 30, 2019 at 03:07:09PM +0200, Bartosz Szczepanek wrote:
-> I may be a little late with this comment, but I've just tested these
-> patches on aarch64 platform (from the top of jjs/master) and got
-> kernel panic ("Unable to handle kernel read", full log at the end of
-> mail). I think there's problem with below call to
-> tpm2_calc_event_log_size(), where physical address of efi.tpm_log is
-> passed as (void *) and never remapped:
+On Thu, 2 May 2019 at 06:04, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
+>
+> This function can be used to convert EFI status value to string
+> for printing out debug message. Using this function can improve
+> the readability of log.
+>
+> v2.
 
-Not late. This is not part of any PR yet. Thank you for the
-feedback!
+Please move the changelog out of the commit log (move it below the ---
+further down)
 
-Matthew, can you send an updated version of the whole patch set
-with fixes to this issue and also reordering of the includes?
+> - Changed the wording in subject and description.
+> - Moved the marco immediately after the status value definitions.
+> - Turned into a proper function instead of inline.
+>
 
-/Jarkko
+You missed my point here. A proper function means the function in a .c
+file, and only the declaration in a .h file. This way, you are still
+duplicating the literal strings into every object file that references
+this function.
+
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Anton Vorontsov <anton@enomsg.org>
+> Cc: Colin Cross <ccross@android.com>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> ---
+>  include/linux/efi.h | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index 54357a258b35..6f3f89a32eef 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -42,6 +42,34 @@
+>  #define EFI_ABORTED            (21 | (1UL << (BITS_PER_LONG-1)))
+>  #define EFI_SECURITY_VIOLATION (26 | (1UL << (BITS_PER_LONG-1)))
+>
+> +#define EFI_STATUS_STR(_status) \
+> +case EFI_##_status: \
+> +       return "EFI_" __stringify(_status);
+> +
+> +static __attribute__((unused)) char *
+> +efi_status_to_str(unsigned long status)
+> +{
+> +       switch (status) {
+> +       EFI_STATUS_STR(SUCCESS)
+> +       EFI_STATUS_STR(LOAD_ERROR)
+> +       EFI_STATUS_STR(INVALID_PARAMETER)
+> +       EFI_STATUS_STR(UNSUPPORTED)
+> +       EFI_STATUS_STR(BAD_BUFFER_SIZE)
+> +       EFI_STATUS_STR(BUFFER_TOO_SMALL)
+> +       EFI_STATUS_STR(NOT_READY)
+> +       EFI_STATUS_STR(DEVICE_ERROR)
+> +       EFI_STATUS_STR(WRITE_PROTECTED)
+> +       EFI_STATUS_STR(OUT_OF_RESOURCES)
+> +       EFI_STATUS_STR(NOT_FOUND)
+> +       EFI_STATUS_STR(ABORTED)
+> +       EFI_STATUS_STR(SECURITY_VIOLATION)
+> +       default:
+> +               pr_warn("Unknown efi status: 0x%lx", status);
+> +       }
+> +
+> +       return "Unknown efi status";
+> +}
+> +
+>  typedef unsigned long efi_status_t;
+>  typedef u8 efi_bool_t;
+>  typedef u16 efi_char16_t;              /* UNICODE character */
+> --
+> 2.16.4
+>
