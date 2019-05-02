@@ -2,98 +2,90 @@ Return-Path: <SRS0=FyGa=TC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB028C04AA8
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 07:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EF4C43219
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 08:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79524208C4
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 07:15:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cw7o1hcl"
+	by mail.kernel.org (Postfix) with ESMTP id E655720873
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 May 2019 08:27:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbfEBHPC (ORCPT
+        id S1726295AbfEBI1H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 May 2019 03:15:02 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34098 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725795AbfEBHPC (ORCPT
+        Thu, 2 May 2019 04:27:07 -0400
+Received: from mga03.intel.com ([134.134.136.65]:48270 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725944AbfEBI1G (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 May 2019 03:15:02 -0400
-Received: by mail-io1-f68.google.com with SMTP id h26so1219382ioj.1
-        for <linux-security-module@vger.kernel.org>; Thu, 02 May 2019 00:15:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0j/hy+dXgc/RAD1S28k76wVU38bkzXROFiJee/uy828=;
-        b=cw7o1hclMVDYD/mFSXXORj8k6owJ56onVZPfH09xygF9uxK4qjYMP+dvtxhcH8xSVX
-         unyG8nRFxcr+vKPkF0aqwp2FJ6t44k02rHFxIP+3FZID4voAH48LxjsffUcNfI48hlpj
-         BQg/QNZnuXxe64Uy2niIYoZzJcqprwnFK7Yuy3zilrCeV1kZ4m9oX3GRQ9kCnwpgy4W2
-         JXTyOvMsSYAwZF/xGCUjdWF/2z6GsXLBZMuWpHsx2EaYhZC0qLPwvipUzFrBHsxhU8Pi
-         awPEKVdHmGODJf6c0uVZCgrNapYJCSfmu/I5c13IkBxSvbyGyEoMguLbtWCYdtlebfxi
-         CZBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0j/hy+dXgc/RAD1S28k76wVU38bkzXROFiJee/uy828=;
-        b=lGfZ48XbU8gAaCk073NMEfk3ael/kVpoAMbSbPnbL0IdEKK2AJEGXEnZsf6GoKLk5v
-         2JpzWxWiNwYpxD5VRX3U5xMYFTlZOCESUHDtzuXoZjlnny+ce9y0Wuh8onTSPvvMfKDk
-         uHEPReYSpRrdt8wT83pA4IDx7okzz3gPFNCAzhHwhOiQn6vZlRLei+5lky4PkHwQOY0+
-         w0zfrx3TqrTbZMscmr7s4WogWmH3R317kcazJhR9iFkQuRv1tk4TwIHK2kqkqLjLItnP
-         G8VhwXmG/YDAenGbJORphvdrFtiRmXzT4uDLE3bJlihP1F1tqiDECmGqcxOsJeNXl4kY
-         2bqQ==
-X-Gm-Message-State: APjAAAXe3r8OLDuoIH0hauqB0qOXZN2XbLQlzBPwozD47UXR46oxUa0S
-        pnzqd7M0tuHd9KIjDEva+SpO4EcXt4B8KkLh6L6omw==
-X-Google-Smtp-Source: APXvYqyLXFhanRapf4HA+mfoEWHn5Jxfo9LLiiHWDJl2//wytx+jBGTeO77YmBHW8+v51a7Y5BRQwKsa/QawpWYEXPg=
-X-Received: by 2002:a6b:7b47:: with SMTP id m7mr1443589iop.173.1556781301704;
- Thu, 02 May 2019 00:15:01 -0700 (PDT)
+        Thu, 2 May 2019 04:27:06 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 01:27:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,421,1549958400"; 
+   d="scan'208";a="147606578"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
+  by fmsmga007.fm.intel.com with ESMTP; 02 May 2019 01:27:00 -0700
+Date:   Thu, 2 May 2019 11:27:00 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jethro Beekman <jethro@fortanix.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+        "haitao.huang@intel.com" <haitao.huang@intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "kai.svahn@intel.com" <kai.svahn@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "kai.huang@intel.com" <kai.huang@intel.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v20 16/28] x86/sgx: Add provisioning
+Message-ID: <20190502082700.GH14532@linux.intel.com>
+References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
+ <20190417103938.7762-17-jarkko.sakkinen@linux.intel.com>
+ <4aade310-6400-d448-6d24-12f4ae7b21f2@fortanix.com>
 MIME-Version: 1.0
-References: <20190227202658.197113-1-matthewgarrett@google.com>
- <20190227202658.197113-3-matthewgarrett@google.com> <CAJzaN5pUJoOCz5-ZDSnTb6dbVPuy0QwmFD0CeofAGK+bRQx0og@mail.gmail.com>
- <CACdnJutpBPAX6TOGgs3Ng2v_cC5hAf-3pHThESvjQ9vbvQeVkA@mail.gmail.com>
-In-Reply-To: <CACdnJutpBPAX6TOGgs3Ng2v_cC5hAf-3pHThESvjQ9vbvQeVkA@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 2 May 2019 09:14:49 +0200
-Message-ID: <CAKv+Gu9PF4u=-7QL4e36Q3S5kC4+5Z=yLYHLT9jE+eNY7YUV7A@mail.gmail.com>
-Subject: Re: [PATCH V5 2/4] tpm: Reserve the TPM final events table
-To:     Matthew Garrett <mjg59@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Bartosz Szczepanek <bsz@semihalf.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4aade310-6400-d448-6d24-12f4ae7b21f2@fortanix.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-(+ Ingo)
+On Wed, Apr 24, 2019 at 01:34:03AM +0000, Jethro Beekman wrote:
+> On 2019-04-17 03:39, Jarkko Sakkinen wrote:
+> > diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+> > index 7bf627ac4958..3b80acde8671 100644
+> > --- a/arch/x86/include/uapi/asm/sgx.h
+> > +++ b/arch/x86/include/uapi/asm/sgx.h
+> > @@ -16,6 +16,8 @@
+> >   	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
+> >   #define SGX_IOC_ENCLAVE_INIT \
+> >   	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+> > +#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
+> > +	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
+> 
+> Need to update Documentation/ioctl/ioctl-number.txt as well
 
-On Tue, 30 Apr 2019 at 21:52, Matthew Garrett <mjg59@google.com> wrote:
->
-> On Tue, Apr 30, 2019 at 6:07 AM Bartosz Szczepanek <bsz@semihalf.com> wrote:
-> >
-> > I may be a little late with this comment, but I've just tested these
-> > patches on aarch64 platform (from the top of jjs/master) and got
-> > kernel panic ("Unable to handle kernel read", full log at the end of
-> > mail). I think there's problem with below call to
-> > tpm2_calc_event_log_size(), where physical address of efi.tpm_log is
-> > passed as (void *) and never remapped:
->
-> Yes, it looks like this is just broken. Can you try with the attached patch?
+Tha patch contains ioctl update. Can you be more specific?
 
-I'm a bit uncomfortable with EFI code that is obviously broken and
-untested being queued for the next merge window in another tree.
-
-What is currently queued there? Can we revert this change for the time
-being, and resubmit it via the EFI tree for v5.3?
+/Jarkko
