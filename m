@@ -2,591 +2,389 @@ Return-Path: <SRS0=MkZ/=TD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BF1C43219
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 14:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D0FC004C9
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 14:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B6A92075E
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 14:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8B222087F
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 14:24:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MCyk1ycs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbfECOMa convert rfc822-to-8bit (ORCPT
+        id S1727792AbfECOYE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 May 2019 10:12:30 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57929 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727397AbfECOMa (ORCPT
+        Fri, 3 May 2019 10:24:04 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45425 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727652AbfECOYE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 May 2019 10:12:30 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hMYvF-0005pi-IL; Fri, 03 May 2019 16:12:21 +0200
-Date:   Fri, 3 May 2019 16:12:21 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, tglx@linutronix.de
-Subject: [PATCH v4] apparmor: Use a memory pool instead per-CPU caches
-Message-ID: <20190503141221.qvqdfbfmmmzc7gfr@linutronix.de>
-References: <ae17e2a3-7d08-5863-4fba-66ddeac11541@canonical.com>
- <20190430144725.gd6r3aketxuqdyir@linutronix.de>
- <02d7772b-5d06-1c32-b089-454547fbe08b@canonical.com>
- <20190502105158.2hluemukrdz5hbus@linutronix.de>
- <7b41609f-2592-93c1-55f7-6026ff6dba26@I-love.SAKURA.ne.jp>
- <20190502134730.d3ya46ave6a7bvom@linutronix.de>
- <001f651f-c544-c3fa-c0c2-f2a2b1ed565a@i-love.sakura.ne.jp>
- <20190503114827.yky7r2cjq7zy4dfm@linutronix.de>
- <20190503115145.anv7z4kk7okydthm@linutronix.de>
- <56de7347-b119-155d-675c-23a227ffd516@i-love.sakura.ne.jp>
+        Fri, 3 May 2019 10:24:04 -0400
+Received: by mail-io1-f67.google.com with SMTP id e8so5305908ioe.12
+        for <linux-security-module@vger.kernel.org>; Fri, 03 May 2019 07:24:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pA9kFE6H0SmKi93C2T8w40I2Yq3ijHdSE2kp5F4UjpM=;
+        b=MCyk1ycsMKHSoO/gC4Yskr13D7YXYX3ZhF92fkQlLVkLqtiSLmy0obOCTLfOn+T9PM
+         BosUT4A94MSMAYMLDaHqzoDV5CGVpejKgb/nB+yYq7bZz7pUQj6q33k6bxqDkYpfGFed
+         be/tfAyZKJEemAKtLhWwsYbH6MIQ/avBMqQuVKv27soX4aRDx/Jxa5lZANhV9km46AeW
+         s706+NNxnUaEPSqG4D0CTVBXm7Ho0pTARpLyM1Y7p2DFnKacVz5KI6qc1C4Mn0qTpUBY
+         C1QISuzkKi4JfHyIWZAcgyLWRn2Pl4VqYMD1qNuNytbqtjZ2oWT8RjaTgRndaTFdY3rs
+         Wimg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pA9kFE6H0SmKi93C2T8w40I2Yq3ijHdSE2kp5F4UjpM=;
+        b=ah+rMSY6ikRr/UiWoXEBtTb73LqQFYrJROdkmvvXGt+CWxRDbJ9KMh4q1gPlkZ6FXA
+         aJw2LDVNx8Rmb18o3EcZz0WZUv58sYq3JuM292iw/RX8P77YGoX0wepJkgqeitefEmAb
+         om2Zh+0OHrE94xEZdj8D5Ec46CgfFrIh9H496asviBI1os9ktSweD3WtjMfhq4Y6sqML
+         68D/1V547ZHr8TYdQs1yPh4YXjU6kIyQBMUNmGOkaW2Pe4ldjOemFc+AupPWvpdbT3ar
+         Y5qo/uuYGNYoNIzcWyLrNNTs9fjQijwaje+No49rJkc2oOK+bWPwNq+iNTODIhyvrTzD
+         QFXg==
+X-Gm-Message-State: APjAAAX5vAfoFPloUODwD47WqHnHxz0y0i9f80eWoPGi+nUiUHtzAhBu
+        zsuxAhBjUNfMQ70J7BFuycWJqnaw7oM2cUciz70tFw==
+X-Google-Smtp-Source: APXvYqyTKaim5gfkGTEXuZ9zBpnja9n0rJ06943CS3ntrXMDvHi7DgmdpH5lwKbYV+MN6E/L5BM0u44bAZ5SqpMMJ1o=
+X-Received: by 2002:a5e:9b17:: with SMTP id j23mr7421271iok.60.1556893442990;
+ Fri, 03 May 2019 07:24:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <56de7347-b119-155d-675c-23a227ffd516@i-love.sakura.ne.jp>
-User-Agent: NeoMutt/20180716
+References: <20190502040441.30372-1-jlee@suse.com> <20190502040441.30372-2-jlee@suse.com>
+ <CAKv+Gu8MESd3BXCKR=EH7Z1kWegm9XjTP38jBsizpgDAuyA3YQ@mail.gmail.com>
+ <20190503071819.GN11486@linux-l9pv.suse> <CAKv+Gu9CdWYMELxBz9WqaB4BSRbRx81iR-x4P+2OANAcfLUhUQ@mail.gmail.com>
+ <20190503085834.GQ11486@linux-l9pv.suse>
+In-Reply-To: <20190503085834.GQ11486@linux-l9pv.suse>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 3 May 2019 16:23:51 +0200
+Message-ID: <CAKv+Gu-AuoObBW5Ha_cXtYQOdeYYpTRBu=6RqH7+DYvwACKR1A@mail.gmail.com>
+Subject: Re: [PATCH 2/2 v3] efi: print appropriate status message when loading certificates
+To:     joeyli <jlee@suse.com>
+Cc:     Peter Jones <pjones@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The get_buffers() macro may provide one or two buffers to the caller.
-Those buffers are pre-allocated on init for each CPU. By default it
-allocates
-	2* 2 * MAX_PATH * POSSIBLE_CPU
+On Fri, 3 May 2019 at 10:59, joeyli <jlee@suse.com> wrote:
+>
+> On Fri, May 03, 2019 at 10:07:59AM +0200, Ard Biesheuvel wrote:
+> > On Fri, 3 May 2019 at 09:18, joeyli <jlee@suse.com> wrote:
+> > >
+> > > Hi Ard,
+> > >
+> > > On Thu, May 02, 2019 at 11:04:34AM +0200, Ard Biesheuvel wrote:
+> > > > On Thu, 2 May 2019 at 06:04, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
+> > > > >
+> > > > > When loading certificates list from UEFI variable, the original error
+> > > > > message direct shows the efi status code from UEFI firmware. It looks
+> > > > > ugly:
+> > > > >
+> > > > > [    2.335031] Couldn't get size: 0x800000000000000e
+> > > > > [    2.335032] Couldn't get UEFI MokListRT
+> > > > > [    2.339985] Couldn't get size: 0x800000000000000e
+> > > > > [    2.339987] Couldn't get UEFI dbx list
+> > > > >
+> > > > > So, this patch shows the status string instead of status code.
+> > > > >
+> > > > > On the other hand, the "Couldn't get UEFI" message doesn't need
+> > > > > to be exposed when db/dbx/mok variable do not exist. So, this
+> > > > > patch set the message level to debug.
+> > > > >
+> > > > > v3.
+> > > > > - Print messages similar to db/mok when loading dbx hash to blacklist:
+> > > > > [    1.500952] EFI: Blacklisting hash of an executable: UEFI:dbx
+> > > > > [    1.501773] blacklist: Loaded blacklisting hash
+> > > > > 'bin:80b4d96931bf0d02fd91a61e19d14f1da452e66db2408ca8604d411f92659f0a'
+> > > > >
+> > > > > - Setting messages for the existence of db/mok/dbx lists to debug level.
+> > > > >
+> > > > > v2.
+> > > > > Setting the MODSIGN messages level to debug.
+> > > > >
+> > > > > Link:
+> > > > > https://forums.opensuse.org/showthread.php/535324-MODSIGN-Couldn-t-get-UEFI-db-list?p=2897516#post2897516
+> > > > > Cc: James Morris <jmorris@namei.org>
+> > > > > Cc: Serge E. Hallyn" <serge@hallyn.com>
+> > > > > Cc: David Howells <dhowells@redhat.com>
+> > > > > Cc: Nayna Jain <nayna@linux.ibm.com>
+> > > > > Cc: Josh Boyer <jwboyer@fedoraproject.org>
+> > > > > Cc: Mimi Zohar <zohar@linux.ibm.com>
+> > > > > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> > > > > ---
+> > > > >  certs/blacklist.c                             |  3 +-
+> > > > >  security/integrity/platform_certs/load_uefi.c | 40 +++++++++++++++++++--------
+> > > > >  2 files changed, 31 insertions(+), 12 deletions(-)
+> > > > >
+> > > > > diff --git a/certs/blacklist.c b/certs/blacklist.c
+> > > > > index 3a507b9e2568..f91437e39e44 100644
+> > > > > --- a/certs/blacklist.c
+> > > > > +++ b/certs/blacklist.c
+> > > > > @@ -100,7 +100,8 @@ int mark_hash_blacklisted(const char *hash)
+> > > > >         if (IS_ERR(key)) {
+> > > > >                 pr_err("Problem blacklisting hash (%ld)\n", PTR_ERR(key));
+> > > > >                 return PTR_ERR(key);
+> > > > > -       }
+> > > > > +       } else
+> > > > > +               pr_notice("Loaded blacklisting hash '%s'\n", hash);
+> > > > >         return 0;
+> > > > >  }
+> > > > >
+> > > > > diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> > > > > index 81b19c52832b..6b6996e5bc27 100644
+> > > > > --- a/security/integrity/platform_certs/load_uefi.c
+> > > > > +++ b/security/integrity/platform_certs/load_uefi.c
+> > > > > @@ -1,5 +1,7 @@
+> > > > >  // SPDX-License-Identifier: GPL-2.0
+> > > > >
+> > > > > +#define pr_fmt(fmt) "EFI: "fmt
+> > > > > +
+> > > > >  #include <linux/kernel.h>
+> > > > >  #include <linux/sched.h>
+> > > > >  #include <linux/cred.h>
+> > > > > @@ -35,6 +37,18 @@ static __init bool uefi_check_ignore_db(void)
+> > > > >         return status == EFI_SUCCESS;
+> > > > >  }
+> > > > >
+> > > > > +static void str16_to_str(efi_char16_t *str16, char *str, int str_size)
+> > > > > +{
+> > > > > +       int i = 0;
+> > > > > +
+> > > > > +       while (str16[i] != '\0' && i < (str_size - 1)) {
+> > > > > +               str[i] = str16[i];
+> > > > > +               i++;
+> > > > > +       }
+> > > > > +
+> > > > > +       str[i] = '\0';
+> > > > > +}
+> > > > > +
+> > > > >  /*
+> > > > >   * Get a certificate list blob from the named EFI variable.
+> > > > >   */
+> > > > > @@ -44,13 +58,20 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+> > > > >         efi_status_t status;
+> > > > >         unsigned long lsize = 4;
+> > > > >         unsigned long tmpdb[4];
+> > > > > +       char namestr[16];
+> > > > >         void *db;
+> > > > >
+> > > > > +       str16_to_str(name, namestr, ARRAY_SIZE(namestr));
+> > > >
+> > > > Please drop this (and the function above) - instead, just return NULL
+> > > > if the variable is not found (without reporting an error).
+> > > >
+> > >
+> > > This name string is for printing debug level message, not error message.
+> > > This function already returns NULL when EFI_NOT_FOUND be returned by
+> > > firmware.
+> > >
+> > > > >         status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
+> > > > >         if (status != EFI_BUFFER_TOO_SMALL) {
+> > > > > -               pr_err("Couldn't get size: 0x%lx\n", status);
+> > > > > +               if (status == EFI_NOT_FOUND)
+> > > > > +                       pr_debug("UEFI %s list doesn't exist\n", namestr);
+> > > > > +               else
+> > > > > +                       pr_err("Couldn't get size for UEFI %s list: %s\n",
+> > > > > +                               namestr, efi_status_to_str(status));
+> > > > >                 return NULL;
+> > >
+> > > here returns NULL when EFI_NOT_FOUND. The message of existence is for
+> > > debugging.
+> > >
+> >
+> > I understand that. But I don't think we need it.
+> >
+>
+> OK. I will remove the debug message.
+>
+> > > > >         }
+> > > > > +       pr_debug("UEFI %s list exists\n", namestr);
+> > > > >
+> > > > >         db = kmalloc(lsize, GFP_KERNEL);
+> > > > >         if (!db)
+> > > > > @@ -59,7 +80,8 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+> > > > >         status = efi.get_variable(name, guid, NULL, &lsize, db);
+> > > > >         if (status != EFI_SUCCESS) {
+> > > > >                 kfree(db);
+> > > > > -               pr_err("Error reading db var: 0x%lx\n", status);
+> > > > > +               pr_err("Error reading UEFI %s list: %s\n",
+> > > > > +                       namestr, efi_status_to_str(status));
+> > > > >                 return NULL;
+> > > > >         }
+> > > > >
+> > > > > @@ -95,6 +117,7 @@ static __init void uefi_blacklist_hash(const char *source, const void *data,
+> > > > >  static __init void uefi_blacklist_x509_tbs(const char *source,
+> > > > >                                            const void *data, size_t len)
+> > > > >  {
+> > > > > +       pr_info("Blacklisting X.509 TBS hash: %s\n", source);
+> > > > >         uefi_blacklist_hash(source, data, len, "tbs:", 4);
+> > > > >  }
+> > > > >
+> > > > > @@ -104,6 +127,7 @@ static __init void uefi_blacklist_x509_tbs(const char *source,
+> > > > >  static __init void uefi_blacklist_binary(const char *source,
+> > > > >                                          const void *data, size_t len)
+> > > > >  {
+> > > > > +       pr_info("Blacklisting hash of an executable: %s\n", source);
+> > > > >         uefi_blacklist_hash(source, data, len, "bin:", 4);
+> > > > >  }
+> > > > >
+> > > >
+> > > > These are separate changes - I don't have an opinion whether they are
+> > > > appropriate or not, but they should be in a separate patch.
+> > > >
+> > >
+> > > I will move the message of blacklising hash to other patch. Thanks!
+> > >
+> > > > > @@ -154,9 +178,7 @@ static int __init load_uefi_certs(void)
+> > > > >          */
+> > > > >         if (!uefi_check_ignore_db()) {
+> > > > >                 db = get_cert_list(L"db", &secure_var, &dbsize);
+> > > > > -               if (!db) {
+> > > > > -                       pr_err("MODSIGN: Couldn't get UEFI db list\n");
+> > > > > -               } else {
+> > > > > +               if (db) {
+> > > > >                         rc = parse_efi_signature_list("UEFI:db",
+> > > > >                                         db, dbsize, get_handler_for_db);
+> > > > >                         if (rc)
+> > > > > @@ -167,9 +189,7 @@ static int __init load_uefi_certs(void)
+> > > > >         }
+> > > > >
+> > > > >         mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
+> > > > > -       if (!mok) {
+> > > > > -               pr_info("Couldn't get UEFI MokListRT\n");
+> > > > > -       } else {
+> > > > > +       if (mok) {
+> > > > >                 rc = parse_efi_signature_list("UEFI:MokListRT",
+> > > > >                                               mok, moksize, get_handler_for_db);
+> > > > >                 if (rc)
+> > > > > @@ -178,9 +198,7 @@ static int __init load_uefi_certs(void)
+> > > > >         }
+> > > > >
+> > > > >         dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
+> > > > > -       if (!dbx) {
+> > > > > -               pr_info("Couldn't get UEFI dbx list\n");
+> > > > > -       } else {
+> > > > > +       if (dbx) {
+> > > > >                 rc = parse_efi_signature_list("UEFI:dbx",
+> > > > >                                               dbx, dbxsize,
+> > > > >                                               get_handler_for_dbx);
+> > > > > --
+> > > > > 2.16.4
+> > > > >
+> > > >
+> > > > I think we should consider carefully what it means if some of these
+> > > > variables don't exist:
+> > > > - if secure boot is enabled, db and dbx must exist, so if they don't,
+> > > > something is wrong
+> > >
+> > > The existence of db/dbx is not related to secure boot. If manufacturer/user
+> > > enrolled certificate/hash to db or dbx, then the variable will be created.
+> > > If user didn't enroll anything to db/dbx, then variables will not show up.
+> > >
+> >
+> > Yes, but if secure boot is enabled and db is empty, how could you have
+> > booted in the first place?
+> >
+>
+> I agree. When secure boot enabled, kernel can not be booted without db.
+>
+> > And what about the converse case: if secure boot is not enabled, why
+> > should we trust the contents of db?
+> >
+>
+> The db and dbx are authenticated variables that it protected by KEK.
+> So it can be trusted even secure boot is disabled. Unless manufacturer
+> or user's KEK is leaked.
+>
 
-which equals 64KiB on a system with 4 CPUs or 1MiB with 64 CPUs and so
-on.
+Is that true for non-secureboot capable firmware? Of course, in that
+case, we cannot be sure that the kernel itself is trusted, but we
+shouldn't open up another hole either.
 
-Replace the per-CPU buffers with a common memory pool which is shared
-across all CPUs. The pool grows on demand and never shrinks. The pool
-starts with two (UP) or four (SMP) elements. By using this pool it is
-possible to request a buffer and keeping preemption enabled which avoids
-the hack in profile_transition().
+> > > > - secure boot might be enabled but we may be booting without shim.
+> > >
+> > > Shim always creates MokListRT no matter secure boot enabled or disabled.
+> > >
+> >
+> > That is not my point. What happens if you booted with secure boot
+> > enabled but without the help of shim?
+> >
+>
+> Without shim, the signed EFI stub can still be booted by EFI boot manager.
+> But the MokListRT will not be created for runtime. So MOK signed kernel
+> module can not be verified. (or IMA can not verify MOK signed kernel image
+> for kexec...)
+>
 
-It has been pointed out by Tetsuo Handa that GFP_KERNEL allocations for
-small amount of memory do not fail. In order not to have an endless
-retry, __GFP_RETRY_MAYFAIL is passed (so the memory allocation is not
-repeated until success) and retried once hoping that in the meantime a
-buffer has been returned to the pool. Since now NULL is possible all
-allocation paths check the buffer pointer and return -ENOMEM on failure.
+So if we opt out of using shim, we lose kexec capability as well? That
+doesn't make any sense.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-v3…v4:
-   - let aa_put_buffer() accept a NULL pointer, noticed by Tetsuo Handa
+In general, I am very uncomfortable with the way we have painted
+ourselves into a corner with shim. If I install Suse on a system that
+has the Suse cert in db or KEK, why would I need shim in the first
+place?
 
-v2…v3:
-   - remove an unused flags variable.
+> > > > - secure boot might be disabled.
+> > > >
+> > >
+> > > It's not about secure boot, db/dbx/MokListRT are always available at
+> > > runtime if user was enrolled something to those list.
+> > >
+> >
+> > Yes, but again, depending on whether shim was involved, and/or whether
+> > secure boot was enabled or not, the way we interpret these things may
+> > be very different.
+> >
+> > I want the reasoning to be sound before merging any patches that deal
+> > with these variables.
+>
+> Here is a simple summary:
+>
+> When secure boot is enabled:
+>     - db/dbx: Can be trusted because they are authenticated variables.
+>               (unless end user doesn't want to trust db/dbx)
+>     - MokListRT:
+>         - with shim: MokListRT will be created. It can be trusted.
+>         - without shim: MokListRT will not be created.
+>                         MOK protected kernel module or file can not be
+>                         verified.
+>
 
-v1…v2:
-   - Use max_t instead min_t for a minimal buffer.
-   - Pre-allocate 2 buffers on UP and 4 buffers on SMP systems.
-   - Use __GFP_RETRY_MAYFAIL | __GFP_NOWARN on memory allocation. The
-     allocation may fail under pressure and we will retry once.
-   - Add an error path to each caller of aa_get_buffer() if the memory
-     allocation fails.
+So who polices that MoKlistRT is not created?
 
- security/apparmor/domain.c       |  24 +++----
- security/apparmor/file.c         |  24 +++++--
- security/apparmor/include/path.h |  49 +-------------
- security/apparmor/lsm.c          | 107 +++++++++++++++++++++++--------
- security/apparmor/mount.c        |  65 +++++++++++++++----
- 5 files changed, 161 insertions(+), 108 deletions(-)
+> When secure boot is disabled:
+>     - db/dbx: Can be trusted because they are authenticated variables.
+>               (unless end user doesn't want to trust db/dbx)
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index ca2dccf5b445e..cae0e619ff4fe 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -689,20 +689,9 @@ static struct aa_label *profile_transition(struct aa_profile *profile,
- 	} else if (COMPLAIN_MODE(profile)) {
- 		/* no exec permission - learning mode */
- 		struct aa_profile *new_profile = NULL;
--		char *n = kstrdup(name, GFP_ATOMIC);
- 
--		if (n) {
--			/* name is ptr into buffer */
--			long pos = name - buffer;
--			/* break per cpu buffer hold */
--			put_buffers(buffer);
--			new_profile = aa_new_null_profile(profile, false, n,
--							  GFP_KERNEL);
--			get_buffers(buffer);
--			name = buffer + pos;
--			strcpy((char *)name, n);
--			kfree(n);
--		}
-+		new_profile = aa_new_null_profile(profile, false, name,
-+						  GFP_KERNEL);
- 		if (!new_profile) {
- 			error = -ENOMEM;
- 			info = "could not create null profile";
-@@ -907,7 +896,12 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
- 		ctx->nnp = aa_get_label(label);
- 
- 	/* buffer freed below, name is pointer into buffer */
--	get_buffers(buffer);
-+	buffer = aa_get_buffer();
-+	if (!buffer) {
-+		error = -ENOMEM;
-+		goto done;
-+	}
-+
- 	/* Test for onexec first as onexec override other x transitions. */
- 	if (ctx->onexec)
- 		new = handle_onexec(label, ctx->onexec, ctx->token,
-@@ -979,7 +973,7 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
- 
- done:
- 	aa_put_label(label);
--	put_buffers(buffer);
-+	aa_put_buffer(buffer);
- 
- 	return error;
- 
-diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-index d0afed9ebd0ed..7b424e73a8c74 100644
---- a/security/apparmor/file.c
-+++ b/security/apparmor/file.c
-@@ -336,12 +336,14 @@ int aa_path_perm(const char *op, struct aa_label *label,
- 
- 	flags |= PATH_DELEGATE_DELETED | (S_ISDIR(cond->mode) ? PATH_IS_DIR :
- 								0);
--	get_buffers(buffer);
-+	buffer = aa_get_buffer();
-+	if (!buffer)
-+		return -ENOMEM;
- 	error = fn_for_each_confined(label, profile,
- 			profile_path_perm(op, profile, path, buffer, request,
- 					  cond, flags, &perms));
- 
--	put_buffers(buffer);
-+	aa_put_buffer(buffer);
- 
- 	return error;
- }
-@@ -479,12 +481,18 @@ int aa_path_link(struct aa_label *label, struct dentry *old_dentry,
- 	int error;
- 
- 	/* buffer freed below, lname is pointer in buffer */
--	get_buffers(buffer, buffer2);
-+	buffer = aa_get_buffer();
-+	buffer2 = aa_get_buffer();
-+	error = -ENOMEM;
-+	if (!buffer || !buffer2)
-+		goto out;
-+
- 	error = fn_for_each_confined(label, profile,
- 			profile_path_link(profile, &link, buffer, &target,
- 					  buffer2, &cond));
--	put_buffers(buffer, buffer2);
--
-+out:
-+	aa_put_buffer(buffer);
-+	aa_put_buffer(buffer2);
- 	return error;
- }
- 
-@@ -528,7 +536,9 @@ static int __file_path_perm(const char *op, struct aa_label *label,
- 		return 0;
- 
- 	flags = PATH_DELEGATE_DELETED | (S_ISDIR(cond.mode) ? PATH_IS_DIR : 0);
--	get_buffers(buffer);
-+	buffer = aa_get_buffer();
-+	if (!buffer)
-+		return -ENOMEM;
- 
- 	/* check every profile in task label not in current cache */
- 	error = fn_for_each_not_in_set(flabel, label, profile,
-@@ -557,7 +567,7 @@ static int __file_path_perm(const char *op, struct aa_label *label,
- 	if (!error)
- 		update_file_ctx(file_ctx(file), label, request);
- 
--	put_buffers(buffer);
-+	aa_put_buffer(buffer);
- 
- 	return error;
- }
-diff --git a/security/apparmor/include/path.h b/security/apparmor/include/path.h
-index b6380c5f00972..b0b2ab85e42d8 100644
---- a/security/apparmor/include/path.h
-+++ b/security/apparmor/include/path.h
-@@ -15,7 +15,6 @@
- #ifndef __AA_PATH_H
- #define __AA_PATH_H
- 
--
- enum path_flags {
- 	PATH_IS_DIR = 0x1,		/* path is a directory */
- 	PATH_CONNECT_PATH = 0x4,	/* connect disconnected paths to / */
-@@ -30,51 +29,7 @@ int aa_path_name(const struct path *path, int flags, char *buffer,
- 		 const char **name, const char **info,
- 		 const char *disconnected);
- 
--#define MAX_PATH_BUFFERS 2
--
--/* Per cpu buffers used during mediation */
--/* preallocated buffers to use during path lookups */
--struct aa_buffers {
--	char *buf[MAX_PATH_BUFFERS];
--};
--
--#include <linux/percpu.h>
--#include <linux/preempt.h>
--
--DECLARE_PER_CPU(struct aa_buffers, aa_buffers);
--
--#define ASSIGN(FN, A, X, N) ((X) = FN(A, N))
--#define EVAL1(FN, A, X) ASSIGN(FN, A, X, 0) /*X = FN(0)*/
--#define EVAL2(FN, A, X, Y...)	\
--	do { ASSIGN(FN, A, X, 1);  EVAL1(FN, A, Y); } while (0)
--#define EVAL(FN, A, X...) CONCATENATE(EVAL, COUNT_ARGS(X))(FN, A, X)
--
--#define for_each_cpu_buffer(I) for ((I) = 0; (I) < MAX_PATH_BUFFERS; (I)++)
--
--#ifdef CONFIG_DEBUG_PREEMPT
--#define AA_BUG_PREEMPT_ENABLED(X) AA_BUG(preempt_count() <= 0, X)
--#else
--#define AA_BUG_PREEMPT_ENABLED(X) /* nop */
--#endif
--
--#define __get_buffer(C, N) ({						\
--	AA_BUG_PREEMPT_ENABLED("__get_buffer without preempt disabled");  \
--	(C)->buf[(N)]; })
--
--#define __get_buffers(C, X...)    EVAL(__get_buffer, C, X)
--
--#define __put_buffers(X, Y...) ((void)&(X))
--
--#define get_buffers(X...)						\
--do {									\
--	struct aa_buffers *__cpu_var = get_cpu_ptr(&aa_buffers);	\
--	__get_buffers(__cpu_var, X);					\
--} while (0)
--
--#define put_buffers(X, Y...)		\
--do {					\
--	__put_buffers(X, Y);		\
--	put_cpu_ptr(&aa_buffers);	\
--} while (0)
-+char *aa_get_buffer(void);
-+void aa_put_buffer(char *buf);
- 
- #endif /* __AA_PATH_H */
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 87500bde5a92d..c5915a6853738 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -47,8 +47,13 @@
- /* Flag indicating whether initialization completed */
- int apparmor_initialized;
- 
--DEFINE_PER_CPU(struct aa_buffers, aa_buffers);
-+union aa_buffer {
-+	struct list_head list;
-+	char buffer[1];
-+};
- 
-+static LIST_HEAD(aa_global_buffers);
-+static DEFINE_SPINLOCK(aa_buffers_lock);
- 
- /*
-  * LSM hook functions
-@@ -1406,6 +1411,7 @@ static int param_set_aauint(const char *val, const struct kernel_param *kp)
- 		return -EPERM;
- 
- 	error = param_set_uint(val, kp);
-+	aa_g_path_max = max_t(uint32_t, aa_g_path_max, sizeof(union aa_buffer));
- 	pr_info("AppArmor: buffer size set to %d bytes\n", aa_g_path_max);
- 
- 	return error;
-@@ -1518,6 +1524,48 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
- 	return 0;
- }
- 
-+char *aa_get_buffer(void)
-+{
-+	union aa_buffer *aa_buf;
-+	bool try_again = true;
-+
-+retry:
-+	spin_lock(&aa_buffers_lock);
-+	if (!list_empty(&aa_global_buffers)) {
-+		aa_buf = list_first_entry(&aa_global_buffers, union aa_buffer,
-+					  list);
-+		list_del(&aa_buf->list);
-+		spin_unlock(&aa_buffers_lock);
-+		return &aa_buf->buffer[0];
-+	}
-+	spin_unlock(&aa_buffers_lock);
-+
-+	aa_buf = kmalloc(aa_g_path_max, GFP_KERNEL | __GFP_RETRY_MAYFAIL |
-+			 __GFP_NOWARN);
-+	if (!aa_buf) {
-+		if (try_again) {
-+			try_again = false;
-+			goto retry;
-+		}
-+		pr_warn_once("AppArmor: Failed to allocate a memory buffer.\n");
-+		return NULL;
-+	}
-+	return &aa_buf->buffer[0];
-+}
-+
-+void aa_put_buffer(char *buf)
-+{
-+	union aa_buffer *aa_buf;
-+
-+	if (!buf)
-+		return;
-+	aa_buf = container_of(buf, union aa_buffer, buffer[0]);
-+
-+	spin_lock(&aa_buffers_lock);
-+	list_add(&aa_buf->list, &aa_global_buffers);
-+	spin_unlock(&aa_buffers_lock);
-+}
-+
- /*
-  * AppArmor init functions
-  */
-@@ -1538,38 +1586,48 @@ static int __init set_init_ctx(void)
- 
- static void destroy_buffers(void)
- {
--	u32 i, j;
-+	union aa_buffer *aa_buf;
- 
--	for_each_possible_cpu(i) {
--		for_each_cpu_buffer(j) {
--			kfree(per_cpu(aa_buffers, i).buf[j]);
--			per_cpu(aa_buffers, i).buf[j] = NULL;
--		}
-+	spin_lock(&aa_buffers_lock);
-+	while (!list_empty(&aa_global_buffers)) {
-+		aa_buf = list_first_entry(&aa_global_buffers, union aa_buffer,
-+					 list);
-+		list_del(&aa_buf->list);
-+		spin_unlock(&aa_buffers_lock);
-+		kfree(aa_buf);
-+		spin_lock(&aa_buffers_lock);
- 	}
-+	spin_unlock(&aa_buffers_lock);
- }
- 
- static int __init alloc_buffers(void)
- {
--	u32 i, j;
-+	union aa_buffer *aa_buf;
-+	int i, num;
- 
--	for_each_possible_cpu(i) {
--		for_each_cpu_buffer(j) {
--			char *buffer;
-+	/*
-+	 * A function may require two buffers at once. Usually the buffers are
-+	 * used for a short period of time and are shared. On UP kernel buffers
-+	 * two should be enough, with more CPUs it is possible that more
-+	 * buffers will be used simultaneously. The preallocated pool may grow.
-+	 * This preallocation has also the side-effect that AppArmor will be
-+	 * disabled early at boot if aa_g_path_max is extremly high.
-+	 */
-+	if (num_online_cpus() > 1)
-+		num = 4;
-+	else
-+		num = 2;
- 
--			if (cpu_to_node(i) > num_online_nodes())
--				/* fallback to kmalloc for offline nodes */
--				buffer = kmalloc(aa_g_path_max, GFP_KERNEL);
--			else
--				buffer = kmalloc_node(aa_g_path_max, GFP_KERNEL,
--						      cpu_to_node(i));
--			if (!buffer) {
--				destroy_buffers();
--				return -ENOMEM;
--			}
--			per_cpu(aa_buffers, i).buf[j] = buffer;
-+	for (i = 0; i < num; i++) {
-+
-+		aa_buf = kmalloc(aa_g_path_max, GFP_KERNEL |
-+				 __GFP_RETRY_MAYFAIL | __GFP_NOWARN);
-+		if (!aa_buf) {
-+			destroy_buffers();
-+			return -ENOMEM;
- 		}
-+		aa_put_buffer(&aa_buf->buffer[0]);
- 	}
--
- 	return 0;
- }
- 
-@@ -1734,7 +1792,7 @@ static int __init apparmor_init(void)
- 	error = alloc_buffers();
- 	if (error) {
- 		AA_ERROR("Unable to allocate work buffers\n");
--		goto buffers_out;
-+		goto alloc_out;
- 	}
- 
- 	error = set_init_ctx();
-@@ -1759,7 +1817,6 @@ static int __init apparmor_init(void)
- 
- buffers_out:
- 	destroy_buffers();
--
- alloc_out:
- 	aa_destroy_aafs();
- 	aa_teardown_dfa_engine();
-diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
-index 8c3787399356b..267a26fba14e1 100644
---- a/security/apparmor/mount.c
-+++ b/security/apparmor/mount.c
-@@ -412,11 +412,13 @@ int aa_remount(struct aa_label *label, const struct path *path,
- 
- 	binary = path->dentry->d_sb->s_type->fs_flags & FS_BINARY_MOUNTDATA;
- 
--	get_buffers(buffer);
-+	buffer = aa_get_buffer();
-+	if (!buffer)
-+		return -ENOMEM;
- 	error = fn_for_each_confined(label, profile,
- 			match_mnt(profile, path, buffer, NULL, NULL, NULL,
- 				  flags, data, binary));
--	put_buffers(buffer);
-+	aa_put_buffer(buffer);
- 
- 	return error;
- }
-@@ -441,11 +443,18 @@ int aa_bind_mount(struct aa_label *label, const struct path *path,
- 	if (error)
- 		return error;
- 
--	get_buffers(buffer, old_buffer);
-+	buffer = aa_get_buffer();
-+	old_buffer = aa_get_buffer();
-+	error = -ENOMEM;
-+	if (!buffer || old_buffer)
-+		goto out;
-+
- 	error = fn_for_each_confined(label, profile,
- 			match_mnt(profile, path, buffer, &old_path, old_buffer,
- 				  NULL, flags, NULL, false));
--	put_buffers(buffer, old_buffer);
-+out:
-+	aa_put_buffer(buffer);
-+	aa_put_buffer(old_buffer);
- 	path_put(&old_path);
- 
- 	return error;
-@@ -465,11 +474,13 @@ int aa_mount_change_type(struct aa_label *label, const struct path *path,
- 	flags &= (MS_REC | MS_SILENT | MS_SHARED | MS_PRIVATE | MS_SLAVE |
- 		  MS_UNBINDABLE);
- 
--	get_buffers(buffer);
-+	buffer = aa_get_buffer();
-+	if (!buffer)
-+		return -ENOMEM;
- 	error = fn_for_each_confined(label, profile,
- 			match_mnt(profile, path, buffer, NULL, NULL, NULL,
- 				  flags, NULL, false));
--	put_buffers(buffer);
-+	aa_put_buffer(buffer);
- 
- 	return error;
- }
-@@ -492,11 +503,17 @@ int aa_move_mount(struct aa_label *label, const struct path *path,
- 	if (error)
- 		return error;
- 
--	get_buffers(buffer, old_buffer);
-+	buffer = aa_get_buffer();
-+	old_buffer = aa_get_buffer();
-+	error = -ENOMEM;
-+	if (!buffer || !old_buffer)
-+		goto out;
- 	error = fn_for_each_confined(label, profile,
- 			match_mnt(profile, path, buffer, &old_path, old_buffer,
- 				  NULL, MS_MOVE, NULL, false));
--	put_buffers(buffer, old_buffer);
-+out:
-+	aa_put_buffer(buffer);
-+	aa_put_buffer(old_buffer);
- 	path_put(&old_path);
- 
- 	return error;
-@@ -537,17 +554,29 @@ int aa_new_mount(struct aa_label *label, const char *dev_name,
- 		}
- 	}
- 
--	get_buffers(buffer, dev_buffer);
-+	buffer = aa_get_buffer();
-+	if (!buffer) {
-+		error = -ENOMEM;
-+		goto out;
-+	}
- 	if (dev_path) {
- 		error = fn_for_each_confined(label, profile,
- 			match_mnt(profile, path, buffer, dev_path, dev_buffer,
- 				  type, flags, data, binary));
- 	} else {
-+		dev_buffer = aa_get_buffer();
-+		if (!dev_buffer) {
-+			error = -ENOMEM;
-+			goto out;
-+		}
- 		error = fn_for_each_confined(label, profile,
- 			match_mnt_path_str(profile, path, buffer, dev_name,
- 					   type, flags, data, binary, NULL));
- 	}
--	put_buffers(buffer, dev_buffer);
-+
-+out:
-+	aa_put_buffer(buffer);
-+	aa_put_buffer(dev_buffer);
- 	if (dev_path)
- 		path_put(dev_path);
- 
-@@ -595,10 +624,13 @@ int aa_umount(struct aa_label *label, struct vfsmount *mnt, int flags)
- 	AA_BUG(!label);
- 	AA_BUG(!mnt);
- 
--	get_buffers(buffer);
-+	buffer = aa_get_buffer();
-+	if (!buffer)
-+		return -ENOMEM;
-+
- 	error = fn_for_each_confined(label, profile,
- 			profile_umount(profile, &path, buffer));
--	put_buffers(buffer);
-+	aa_put_buffer(buffer);
- 
- 	return error;
- }
-@@ -671,7 +703,11 @@ int aa_pivotroot(struct aa_label *label, const struct path *old_path,
- 	AA_BUG(!old_path);
- 	AA_BUG(!new_path);
- 
--	get_buffers(old_buffer, new_buffer);
-+	old_buffer = aa_get_buffer();
-+	new_buffer = aa_get_buffer();
-+	error = -ENOMEM;
-+	if (!old_buffer || !new_buffer)
-+		goto out;
- 	target = fn_label_build(label, profile, GFP_ATOMIC,
- 			build_pivotroot(profile, new_path, new_buffer,
- 					old_path, old_buffer));
-@@ -690,7 +726,8 @@ int aa_pivotroot(struct aa_label *label, const struct path *old_path,
- 		/* already audited error */
- 		error = PTR_ERR(target);
- out:
--	put_buffers(old_buffer, new_buffer);
-+	aa_put_buffer(old_buffer);
-+	aa_put_buffer(new_buffer);
- 
- 	return error;
- 
--- 
-2.20.1
+Is this true? Does non-secure boot capable firmware still guarantee
+that db/dbx can't be created?
 
+>     - MokListRT:
+>         - with shim: MokListRT will be created. But it can not be trusted.
+>                      MOK protected kernel module or file can not be
+>                      verified.
+>         - without shim: MokListRT will not be created.
+>                         MOK protected kernel module or file can not be
+>                         verified.
+>
+
+Enabling this securely involves more than connecting the dots when it
+comes to db, MokListRT etc. I would like for someone to convince me as
+a maintainer, as well as the IMA maintainers, that the security
+requirements are still met in all cases we care about. Just copying db
+and MokListRT into a kernel keychain doesn't appear to do that, and if
+it does, it needs more documentation to clarify that.
