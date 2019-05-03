@@ -3,35 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0C3C43219
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 11:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 918F4C43219
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 11:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F832070B
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 11:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5671E2070B
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 11:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbfECLsg convert rfc822-to-8bit (ORCPT
+        id S1727425AbfECLvu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 May 2019 07:48:36 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57448 "EHLO
+        Fri, 3 May 2019 07:51:50 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57459 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727394AbfECLsg (ORCPT
+        with ESMTP id S1726572AbfECLvu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 May 2019 07:48:36 -0400
+        Fri, 3 May 2019 07:51:50 -0400
 Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1hMWfz-0003Cf-Om; Fri, 03 May 2019 13:48:28 +0200
-Date:   Fri, 3 May 2019 13:48:27 +0200
+        id 1hMWjB-0003El-Og; Fri, 03 May 2019 13:51:45 +0200
+Date:   Fri, 3 May 2019 13:51:45 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Cc:     John Johansen <john.johansen@canonical.com>,
         linux-security-module@vger.kernel.org,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>, tglx@linutronix.de
-Subject: [PATCH v2] apparmor: Use a memory pool instead per-CPU caches
-Message-ID: <20190503114827.yky7r2cjq7zy4dfm@linutronix.de>
+Subject: [PATCH v3] apparmor: Use a memory pool instead per-CPU caches
+Message-ID: <20190503115145.anv7z4kk7okydthm@linutronix.de>
 References: <20190405133458.4809-1-bigeasy@linutronix.de>
  <ae17e2a3-7d08-5863-4fba-66ddeac11541@canonical.com>
  <20190430144725.gd6r3aketxuqdyir@linutronix.de>
@@ -40,11 +40,12 @@ References: <20190405133458.4809-1-bigeasy@linutronix.de>
  <7b41609f-2592-93c1-55f7-6026ff6dba26@I-love.SAKURA.ne.jp>
  <20190502134730.d3ya46ave6a7bvom@linutronix.de>
  <001f651f-c544-c3fa-c0c2-f2a2b1ed565a@i-love.sakura.ne.jp>
+ <20190503114827.yky7r2cjq7zy4dfm@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8BIT
-In-Reply-To: <001f651f-c544-c3fa-c0c2-f2a2b1ed565a@i-love.sakura.ne.jp>
+In-Reply-To: <20190503114827.yky7r2cjq7zy4dfm@linutronix.de>
 User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
@@ -73,6 +74,9 @@ allocation paths check the buffer pointer and return -ENOMEM on failure.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
+v2…v3:
+   - remove an unused flags variable.
+
 v1…v2:
    - Use max_t instead min_t for a minimal buffer.
    - Pre-allocate 2 buffers on UP and 4 buffers on SMP systems.
@@ -82,11 +86,11 @@ v1…v2:
      allocation fails.
 
  security/apparmor/domain.c       |  24 +++----
- security/apparmor/file.c         |  24 +++++--
- security/apparmor/include/path.h |  49 +-------------
- security/apparmor/lsm.c          | 106 +++++++++++++++++++++++--------
- security/apparmor/mount.c        |  65 +++++++++++++++----
- 5 files changed, 160 insertions(+), 108 deletions(-)
+ security/apparmor/file.c         |  24 ++++---
+ security/apparmor/include/path.h |  49 +--------------
+ security/apparmor/lsm.c          | 105 +++++++++++++++++++++++--------
+ security/apparmor/mount.c        |  65 ++++++++++++++-----
+ 5 files changed, 159 insertions(+), 108 deletions(-)
 
 diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
 index ca2dccf5b445e..cae0e619ff4fe 100644
@@ -268,7 +272,7 @@ index b6380c5f00972..b0b2ab85e42d8 100644
  
  #endif /* __AA_PATH_H */
 diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 87500bde5a92d..942702dc3c0a2 100644
+index 87500bde5a92d..d8a3b8fe4de00 100644
 --- a/security/apparmor/lsm.c
 +++ b/security/apparmor/lsm.c
 @@ -47,8 +47,13 @@
@@ -341,7 +345,7 @@ index 87500bde5a92d..942702dc3c0a2 100644
  /*
   * AppArmor init functions
   */
-@@ -1538,38 +1584,49 @@ static int __init set_init_ctx(void)
+@@ -1538,38 +1584,48 @@ static int __init set_init_ctx(void)
  
  static void destroy_buffers(void)
  {
@@ -399,7 +403,6 @@ index 87500bde5a92d..942702dc3c0a2 100644
 -			}
 -			per_cpu(aa_buffers, i).buf[j] = buffer;
 +	for (i = 0; i < num; i++) {
-+		gfp_t flags;
 +
 +		aa_buf = kmalloc(aa_g_path_max, GFP_KERNEL |
 +				 __GFP_RETRY_MAYFAIL | __GFP_NOWARN);
@@ -413,7 +416,7 @@ index 87500bde5a92d..942702dc3c0a2 100644
  	return 0;
  }
  
-@@ -1734,7 +1791,7 @@ static int __init apparmor_init(void)
+@@ -1734,7 +1790,7 @@ static int __init apparmor_init(void)
  	error = alloc_buffers();
  	if (error) {
  		AA_ERROR("Unable to allocate work buffers\n");
@@ -422,7 +425,7 @@ index 87500bde5a92d..942702dc3c0a2 100644
  	}
  
  	error = set_init_ctx();
-@@ -1759,7 +1816,6 @@ static int __init apparmor_init(void)
+@@ -1759,7 +1815,6 @@ static int __init apparmor_init(void)
  
  buffers_out:
  	destroy_buffers();
