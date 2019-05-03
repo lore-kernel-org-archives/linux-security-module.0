@@ -2,389 +2,122 @@ Return-Path: <SRS0=MkZ/=TD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D0FC004C9
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 14:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A00FC43219
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 14:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B222087F
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 14:24:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MCyk1ycs"
+	by mail.kernel.org (Postfix) with ESMTP id D9E702087F
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 14:25:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbfECOYE (ORCPT
+        id S1727905AbfECOZJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 May 2019 10:24:04 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45425 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727652AbfECOYE (ORCPT
+        Fri, 3 May 2019 10:25:09 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40006 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727555AbfECOZJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 May 2019 10:24:04 -0400
-Received: by mail-io1-f67.google.com with SMTP id e8so5305908ioe.12
-        for <linux-security-module@vger.kernel.org>; Fri, 03 May 2019 07:24:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pA9kFE6H0SmKi93C2T8w40I2Yq3ijHdSE2kp5F4UjpM=;
-        b=MCyk1ycsMKHSoO/gC4Yskr13D7YXYX3ZhF92fkQlLVkLqtiSLmy0obOCTLfOn+T9PM
-         BosUT4A94MSMAYMLDaHqzoDV5CGVpejKgb/nB+yYq7bZz7pUQj6q33k6bxqDkYpfGFed
-         be/tfAyZKJEemAKtLhWwsYbH6MIQ/avBMqQuVKv27soX4aRDx/Jxa5lZANhV9km46AeW
-         s706+NNxnUaEPSqG4D0CTVBXm7Ho0pTARpLyM1Y7p2DFnKacVz5KI6qc1C4Mn0qTpUBY
-         C1QISuzkKi4JfHyIWZAcgyLWRn2Pl4VqYMD1qNuNytbqtjZ2oWT8RjaTgRndaTFdY3rs
-         Wimg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pA9kFE6H0SmKi93C2T8w40I2Yq3ijHdSE2kp5F4UjpM=;
-        b=ah+rMSY6ikRr/UiWoXEBtTb73LqQFYrJROdkmvvXGt+CWxRDbJ9KMh4q1gPlkZ6FXA
-         aJw2LDVNx8Rmb18o3EcZz0WZUv58sYq3JuM292iw/RX8P77YGoX0wepJkgqeitefEmAb
-         om2Zh+0OHrE94xEZdj8D5Ec46CgfFrIh9H496asviBI1os9ktSweD3WtjMfhq4Y6sqML
-         68D/1V547ZHr8TYdQs1yPh4YXjU6kIyQBMUNmGOkaW2Pe4ldjOemFc+AupPWvpdbT3ar
-         Y5qo/uuYGNYoNIzcWyLrNNTs9fjQijwaje+No49rJkc2oOK+bWPwNq+iNTODIhyvrTzD
-         QFXg==
-X-Gm-Message-State: APjAAAX5vAfoFPloUODwD47WqHnHxz0y0i9f80eWoPGi+nUiUHtzAhBu
-        zsuxAhBjUNfMQ70J7BFuycWJqnaw7oM2cUciz70tFw==
-X-Google-Smtp-Source: APXvYqyTKaim5gfkGTEXuZ9zBpnja9n0rJ06943CS3ntrXMDvHi7DgmdpH5lwKbYV+MN6E/L5BM0u44bAZ5SqpMMJ1o=
-X-Received: by 2002:a5e:9b17:: with SMTP id j23mr7421271iok.60.1556893442990;
- Fri, 03 May 2019 07:24:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190502040441.30372-1-jlee@suse.com> <20190502040441.30372-2-jlee@suse.com>
- <CAKv+Gu8MESd3BXCKR=EH7Z1kWegm9XjTP38jBsizpgDAuyA3YQ@mail.gmail.com>
- <20190503071819.GN11486@linux-l9pv.suse> <CAKv+Gu9CdWYMELxBz9WqaB4BSRbRx81iR-x4P+2OANAcfLUhUQ@mail.gmail.com>
- <20190503085834.GQ11486@linux-l9pv.suse>
-In-Reply-To: <20190503085834.GQ11486@linux-l9pv.suse>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 3 May 2019 16:23:51 +0200
-Message-ID: <CAKv+Gu-AuoObBW5Ha_cXtYQOdeYYpTRBu=6RqH7+DYvwACKR1A@mail.gmail.com>
-Subject: Re: [PATCH 2/2 v3] efi: print appropriate status message when loading certificates
-To:     joeyli <jlee@suse.com>
-Cc:     Peter Jones <pjones@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Josh Boyer <jwboyer@fedoraproject.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
+        Fri, 3 May 2019 10:25:09 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x43EMaOK128736
+        for <linux-security-module@vger.kernel.org>; Fri, 3 May 2019 10:25:08 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s8p4rkm25-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 03 May 2019 10:25:07 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 3 May 2019 15:25:05 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 3 May 2019 15:25:02 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x43EP1Nv40763456
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 3 May 2019 14:25:01 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B1AAFA4067;
+        Fri,  3 May 2019 14:25:01 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9EE52A405B;
+        Fri,  3 May 2019 14:25:00 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.95.126])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  3 May 2019 14:25:00 +0000 (GMT)
+Subject: Re: [PATCH] kexec_buffer measure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        prakhar srivastava <prsriva02@gmail.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>
+Date:   Fri, 03 May 2019 10:24:49 -0400
+In-Reply-To: <5490e443-b3ea-876e-a6b3-6a91005afe61@I-love.SAKURA.ne.jp>
+References: <CAEFn8qKkXgxUKtribbtFwvG9NykGQo10jQ5Du_i9wJz-wKreOA@mail.gmail.com>
+         <1555978681.4914.305.camel@linux.ibm.com>
+         <1556812101.4134.28.camel@linux.ibm.com>
+         <7af61ebe-28a8-799c-fe47-d72f247494ed@schaufler-ca.com>
+         <5490e443-b3ea-876e-a6b3-6a91005afe61@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050314-0020-0000-0000-00000338F15E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050314-0021-0000-0000-0000218B7E8A
+Message-Id: <1556893489.4754.45.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-03_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905030091
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 3 May 2019 at 10:59, joeyli <jlee@suse.com> wrote:
->
-> On Fri, May 03, 2019 at 10:07:59AM +0200, Ard Biesheuvel wrote:
-> > On Fri, 3 May 2019 at 09:18, joeyli <jlee@suse.com> wrote:
-> > >
-> > > Hi Ard,
-> > >
-> > > On Thu, May 02, 2019 at 11:04:34AM +0200, Ard Biesheuvel wrote:
-> > > > On Thu, 2 May 2019 at 06:04, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
-> > > > >
-> > > > > When loading certificates list from UEFI variable, the original error
-> > > > > message direct shows the efi status code from UEFI firmware. It looks
-> > > > > ugly:
-> > > > >
-> > > > > [    2.335031] Couldn't get size: 0x800000000000000e
-> > > > > [    2.335032] Couldn't get UEFI MokListRT
-> > > > > [    2.339985] Couldn't get size: 0x800000000000000e
-> > > > > [    2.339987] Couldn't get UEFI dbx list
-> > > > >
-> > > > > So, this patch shows the status string instead of status code.
-> > > > >
-> > > > > On the other hand, the "Couldn't get UEFI" message doesn't need
-> > > > > to be exposed when db/dbx/mok variable do not exist. So, this
-> > > > > patch set the message level to debug.
-> > > > >
-> > > > > v3.
-> > > > > - Print messages similar to db/mok when loading dbx hash to blacklist:
-> > > > > [    1.500952] EFI: Blacklisting hash of an executable: UEFI:dbx
-> > > > > [    1.501773] blacklist: Loaded blacklisting hash
-> > > > > 'bin:80b4d96931bf0d02fd91a61e19d14f1da452e66db2408ca8604d411f92659f0a'
-> > > > >
-> > > > > - Setting messages for the existence of db/mok/dbx lists to debug level.
-> > > > >
-> > > > > v2.
-> > > > > Setting the MODSIGN messages level to debug.
-> > > > >
-> > > > > Link:
-> > > > > https://forums.opensuse.org/showthread.php/535324-MODSIGN-Couldn-t-get-UEFI-db-list?p=2897516#post2897516
-> > > > > Cc: James Morris <jmorris@namei.org>
-> > > > > Cc: Serge E. Hallyn" <serge@hallyn.com>
-> > > > > Cc: David Howells <dhowells@redhat.com>
-> > > > > Cc: Nayna Jain <nayna@linux.ibm.com>
-> > > > > Cc: Josh Boyer <jwboyer@fedoraproject.org>
-> > > > > Cc: Mimi Zohar <zohar@linux.ibm.com>
-> > > > > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
-> > > > > ---
-> > > > >  certs/blacklist.c                             |  3 +-
-> > > > >  security/integrity/platform_certs/load_uefi.c | 40 +++++++++++++++++++--------
-> > > > >  2 files changed, 31 insertions(+), 12 deletions(-)
-> > > > >
-> > > > > diff --git a/certs/blacklist.c b/certs/blacklist.c
-> > > > > index 3a507b9e2568..f91437e39e44 100644
-> > > > > --- a/certs/blacklist.c
-> > > > > +++ b/certs/blacklist.c
-> > > > > @@ -100,7 +100,8 @@ int mark_hash_blacklisted(const char *hash)
-> > > > >         if (IS_ERR(key)) {
-> > > > >                 pr_err("Problem blacklisting hash (%ld)\n", PTR_ERR(key));
-> > > > >                 return PTR_ERR(key);
-> > > > > -       }
-> > > > > +       } else
-> > > > > +               pr_notice("Loaded blacklisting hash '%s'\n", hash);
-> > > > >         return 0;
-> > > > >  }
-> > > > >
-> > > > > diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-> > > > > index 81b19c52832b..6b6996e5bc27 100644
-> > > > > --- a/security/integrity/platform_certs/load_uefi.c
-> > > > > +++ b/security/integrity/platform_certs/load_uefi.c
-> > > > > @@ -1,5 +1,7 @@
-> > > > >  // SPDX-License-Identifier: GPL-2.0
-> > > > >
-> > > > > +#define pr_fmt(fmt) "EFI: "fmt
-> > > > > +
-> > > > >  #include <linux/kernel.h>
-> > > > >  #include <linux/sched.h>
-> > > > >  #include <linux/cred.h>
-> > > > > @@ -35,6 +37,18 @@ static __init bool uefi_check_ignore_db(void)
-> > > > >         return status == EFI_SUCCESS;
-> > > > >  }
-> > > > >
-> > > > > +static void str16_to_str(efi_char16_t *str16, char *str, int str_size)
-> > > > > +{
-> > > > > +       int i = 0;
-> > > > > +
-> > > > > +       while (str16[i] != '\0' && i < (str_size - 1)) {
-> > > > > +               str[i] = str16[i];
-> > > > > +               i++;
-> > > > > +       }
-> > > > > +
-> > > > > +       str[i] = '\0';
-> > > > > +}
-> > > > > +
-> > > > >  /*
-> > > > >   * Get a certificate list blob from the named EFI variable.
-> > > > >   */
-> > > > > @@ -44,13 +58,20 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
-> > > > >         efi_status_t status;
-> > > > >         unsigned long lsize = 4;
-> > > > >         unsigned long tmpdb[4];
-> > > > > +       char namestr[16];
-> > > > >         void *db;
-> > > > >
-> > > > > +       str16_to_str(name, namestr, ARRAY_SIZE(namestr));
-> > > >
-> > > > Please drop this (and the function above) - instead, just return NULL
-> > > > if the variable is not found (without reporting an error).
-> > > >
-> > >
-> > > This name string is for printing debug level message, not error message.
-> > > This function already returns NULL when EFI_NOT_FOUND be returned by
-> > > firmware.
-> > >
-> > > > >         status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
-> > > > >         if (status != EFI_BUFFER_TOO_SMALL) {
-> > > > > -               pr_err("Couldn't get size: 0x%lx\n", status);
-> > > > > +               if (status == EFI_NOT_FOUND)
-> > > > > +                       pr_debug("UEFI %s list doesn't exist\n", namestr);
-> > > > > +               else
-> > > > > +                       pr_err("Couldn't get size for UEFI %s list: %s\n",
-> > > > > +                               namestr, efi_status_to_str(status));
-> > > > >                 return NULL;
-> > >
-> > > here returns NULL when EFI_NOT_FOUND. The message of existence is for
-> > > debugging.
-> > >
-> >
-> > I understand that. But I don't think we need it.
-> >
->
-> OK. I will remove the debug message.
->
-> > > > >         }
-> > > > > +       pr_debug("UEFI %s list exists\n", namestr);
-> > > > >
-> > > > >         db = kmalloc(lsize, GFP_KERNEL);
-> > > > >         if (!db)
-> > > > > @@ -59,7 +80,8 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
-> > > > >         status = efi.get_variable(name, guid, NULL, &lsize, db);
-> > > > >         if (status != EFI_SUCCESS) {
-> > > > >                 kfree(db);
-> > > > > -               pr_err("Error reading db var: 0x%lx\n", status);
-> > > > > +               pr_err("Error reading UEFI %s list: %s\n",
-> > > > > +                       namestr, efi_status_to_str(status));
-> > > > >                 return NULL;
-> > > > >         }
-> > > > >
-> > > > > @@ -95,6 +117,7 @@ static __init void uefi_blacklist_hash(const char *source, const void *data,
-> > > > >  static __init void uefi_blacklist_x509_tbs(const char *source,
-> > > > >                                            const void *data, size_t len)
-> > > > >  {
-> > > > > +       pr_info("Blacklisting X.509 TBS hash: %s\n", source);
-> > > > >         uefi_blacklist_hash(source, data, len, "tbs:", 4);
-> > > > >  }
-> > > > >
-> > > > > @@ -104,6 +127,7 @@ static __init void uefi_blacklist_x509_tbs(const char *source,
-> > > > >  static __init void uefi_blacklist_binary(const char *source,
-> > > > >                                          const void *data, size_t len)
-> > > > >  {
-> > > > > +       pr_info("Blacklisting hash of an executable: %s\n", source);
-> > > > >         uefi_blacklist_hash(source, data, len, "bin:", 4);
-> > > > >  }
-> > > > >
-> > > >
-> > > > These are separate changes - I don't have an opinion whether they are
-> > > > appropriate or not, but they should be in a separate patch.
-> > > >
-> > >
-> > > I will move the message of blacklising hash to other patch. Thanks!
-> > >
-> > > > > @@ -154,9 +178,7 @@ static int __init load_uefi_certs(void)
-> > > > >          */
-> > > > >         if (!uefi_check_ignore_db()) {
-> > > > >                 db = get_cert_list(L"db", &secure_var, &dbsize);
-> > > > > -               if (!db) {
-> > > > > -                       pr_err("MODSIGN: Couldn't get UEFI db list\n");
-> > > > > -               } else {
-> > > > > +               if (db) {
-> > > > >                         rc = parse_efi_signature_list("UEFI:db",
-> > > > >                                         db, dbsize, get_handler_for_db);
-> > > > >                         if (rc)
-> > > > > @@ -167,9 +189,7 @@ static int __init load_uefi_certs(void)
-> > > > >         }
-> > > > >
-> > > > >         mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
-> > > > > -       if (!mok) {
-> > > > > -               pr_info("Couldn't get UEFI MokListRT\n");
-> > > > > -       } else {
-> > > > > +       if (mok) {
-> > > > >                 rc = parse_efi_signature_list("UEFI:MokListRT",
-> > > > >                                               mok, moksize, get_handler_for_db);
-> > > > >                 if (rc)
-> > > > > @@ -178,9 +198,7 @@ static int __init load_uefi_certs(void)
-> > > > >         }
-> > > > >
-> > > > >         dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
-> > > > > -       if (!dbx) {
-> > > > > -               pr_info("Couldn't get UEFI dbx list\n");
-> > > > > -       } else {
-> > > > > +       if (dbx) {
-> > > > >                 rc = parse_efi_signature_list("UEFI:dbx",
-> > > > >                                               dbx, dbxsize,
-> > > > >                                               get_handler_for_dbx);
-> > > > > --
-> > > > > 2.16.4
-> > > > >
-> > > >
-> > > > I think we should consider carefully what it means if some of these
-> > > > variables don't exist:
-> > > > - if secure boot is enabled, db and dbx must exist, so if they don't,
-> > > > something is wrong
-> > >
-> > > The existence of db/dbx is not related to secure boot. If manufacturer/user
-> > > enrolled certificate/hash to db or dbx, then the variable will be created.
-> > > If user didn't enroll anything to db/dbx, then variables will not show up.
-> > >
-> >
-> > Yes, but if secure boot is enabled and db is empty, how could you have
-> > booted in the first place?
-> >
->
-> I agree. When secure boot enabled, kernel can not be booted without db.
->
-> > And what about the converse case: if secure boot is not enabled, why
-> > should we trust the contents of db?
-> >
->
-> The db and dbx are authenticated variables that it protected by KEK.
-> So it can be trusted even secure boot is disabled. Unless manufacturer
-> or user's KEK is leaked.
->
+On Fri, 2019-05-03 at 09:53 +0900, Tetsuo Handa wrote:
+> On 2019/05/03 1:28, Casey Schaufler wrote:
+> > On 5/2/2019 8:48 AM, Mimi Zohar wrote:
+> >> [Cc'ing Paul, John, Casey]
+> >>
+> >> On Mon, 2019-04-22 at 20:18 -0400, Mimi Zohar wrote:
+> >>> [Cc'ing LSM mailing list]
+> >>>
+> >>> On Fri, 2019-04-19 at 17:30 -0700, prakhar srivastava wrote:
+> >>>
+> >>>> 2) Adding a LSM hook
+> >>>> We are doing both the command line and kernel version measurement in IMA.
+> >>>> Can you please elaborate on how this can be used outside of the scenario?
+> >>>> That will help me come back with a better design and code. I am
+> >>>> neutral about this.
+> >>> As I said previously, initially you might want to only measure the
+> >>> kexec boot command line, but will you ever want to verify or audit log
+> >>> the boot command line hash? Perhaps LSMs would be interested in the
+> >>> boot command line. Should this be an LSM hook?
+> >>   From an LSM perspective, is there any interest in the boot command line?
+> > 
+> > I can imagine an LSM that cares about the command line,
+> > but I don't have interest in it for any work I have in progress.
+> > 
+> 
+> Since the kernel command line controls which LSMs to enable, I doubt that
+> an LSM which cares about the command line can detect that the kernel command
+> line was tampered when the kernel command line was tampered...
 
-Is that true for non-secureboot capable firmware? Of course, in that
-case, we cannot be sure that the kernel itself is trusted, but we
-shouldn't open up another hole either.
+As the subject line indicates, this is the kexec boot command line.
 
-> > > > - secure boot might be enabled but we may be booting without shim.
-> > >
-> > > Shim always creates MokListRT no matter secure boot enabled or disabled.
-> > >
-> >
-> > That is not my point. What happens if you booted with secure boot
-> > enabled but without the help of shim?
-> >
->
-> Without shim, the signed EFI stub can still be booted by EFI boot manager.
-> But the MokListRT will not be created for runtime. So MOK signed kernel
-> module can not be verified. (or IMA can not verify MOK signed kernel image
-> for kexec...)
->
+This wouldn't be any different than the existing
+kernel_read_file_from_fd() and security_kernel_load_data() calls in
+kernel/kexec_file.c and  kernel/kexec.c, which provides the LSMs an
+opportunity to comment on the kexec image and initramfs.
 
-So if we opt out of using shim, we lose kexec capability as well? That
-doesn't make any sense.
+Mimi
 
-In general, I am very uncomfortable with the way we have painted
-ourselves into a corner with shim. If I install Suse on a system that
-has the Suse cert in db or KEK, why would I need shim in the first
-place?
-
-> > > > - secure boot might be disabled.
-> > > >
-> > >
-> > > It's not about secure boot, db/dbx/MokListRT are always available at
-> > > runtime if user was enrolled something to those list.
-> > >
-> >
-> > Yes, but again, depending on whether shim was involved, and/or whether
-> > secure boot was enabled or not, the way we interpret these things may
-> > be very different.
-> >
-> > I want the reasoning to be sound before merging any patches that deal
-> > with these variables.
->
-> Here is a simple summary:
->
-> When secure boot is enabled:
->     - db/dbx: Can be trusted because they are authenticated variables.
->               (unless end user doesn't want to trust db/dbx)
->     - MokListRT:
->         - with shim: MokListRT will be created. It can be trusted.
->         - without shim: MokListRT will not be created.
->                         MOK protected kernel module or file can not be
->                         verified.
->
-
-So who polices that MoKlistRT is not created?
-
-> When secure boot is disabled:
->     - db/dbx: Can be trusted because they are authenticated variables.
->               (unless end user doesn't want to trust db/dbx)
-
-Is this true? Does non-secure boot capable firmware still guarantee
-that db/dbx can't be created?
-
->     - MokListRT:
->         - with shim: MokListRT will be created. But it can not be trusted.
->                      MOK protected kernel module or file can not be
->                      verified.
->         - without shim: MokListRT will not be created.
->                         MOK protected kernel module or file can not be
->                         verified.
->
-
-Enabling this securely involves more than connecting the dots when it
-comes to db, MokListRT etc. I would like for someone to convince me as
-a maintainer, as well as the IMA maintainers, that the security
-requirements are still met in all cases we care about. Just copying db
-and MokListRT into a kernel keychain doesn't appear to do that, and if
-it does, it needs more documentation to clarify that.
