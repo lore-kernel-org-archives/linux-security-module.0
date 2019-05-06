@@ -1,123 +1,119 @@
-Return-Path: <SRS0=MkZ/=TD=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=99o1=TG=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A00FC43219
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 14:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA3BCC04A6B
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 May 2019 15:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9E702087F
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 May 2019 14:25:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B2BF204FD
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 May 2019 15:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1557157656;
+	bh=nwyVa1WiWiFrr5ce+XDtvyCdgI+uY2z1UGxbv/W60YM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hJ32KctJVraWWYK0/qp2sBJJzWNAxbOmC1hKFCT6vDXlFIzg2+gx5dNoHiad4jBlD
+	 I09yxaMIojPa5RATsGvebytXEJkjlx8+pWvc/KmpB7dn8BSqjxA9hCKam53oP37YEu
+	 efiSbe6yLcti56cYIm5lqU///8HwOxipJmzrfhRk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbfECOZJ (ORCPT
+        id S1727033AbfEFPr3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 May 2019 10:25:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40006 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727555AbfECOZJ (ORCPT
+        Mon, 6 May 2019 11:47:29 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44666 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbfEFPr3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 May 2019 10:25:09 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x43EMaOK128736
-        for <linux-security-module@vger.kernel.org>; Fri, 3 May 2019 10:25:08 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2s8p4rkm25-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 03 May 2019 10:25:07 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 3 May 2019 15:25:05 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 3 May 2019 15:25:02 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x43EP1Nv40763456
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 3 May 2019 14:25:01 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B1AAFA4067;
-        Fri,  3 May 2019 14:25:01 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9EE52A405B;
-        Fri,  3 May 2019 14:25:00 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.95.126])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  3 May 2019 14:25:00 +0000 (GMT)
-Subject: Re: [PATCH] kexec_buffer measure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        prakhar srivastava <prsriva02@gmail.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        John Johansen <john.johansen@canonical.com>
-Date:   Fri, 03 May 2019 10:24:49 -0400
-In-Reply-To: <5490e443-b3ea-876e-a6b3-6a91005afe61@I-love.SAKURA.ne.jp>
-References: <CAEFn8qKkXgxUKtribbtFwvG9NykGQo10jQ5Du_i9wJz-wKreOA@mail.gmail.com>
-         <1555978681.4914.305.camel@linux.ibm.com>
-         <1556812101.4134.28.camel@linux.ibm.com>
-         <7af61ebe-28a8-799c-fe47-d72f247494ed@schaufler-ca.com>
-         <5490e443-b3ea-876e-a6b3-6a91005afe61@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19050314-0020-0000-0000-00000338F15E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050314-0021-0000-0000-0000218B7E8A
-Message-Id: <1556893489.4754.45.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-03_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905030091
+        Mon, 6 May 2019 11:47:29 -0400
+Received: by mail-qk1-f194.google.com with SMTP id w25so2045503qkj.11;
+        Mon, 06 May 2019 08:47:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=E/XjEjFJHTNXNUvCeIBTVGrT6CD0tFJQfkjcnYeMhDY=;
+        b=WFo86atePse5UmQK+FdjsQtdOQVjO6JrWLd1xYEi2IMozqnr1cQ3J6vuxd3K5gctkU
+         XsHuazRLDKDlGNx+rMgrPMRCPJ6oBDmOOlutFuDcLwMPw4scj7kpqzMv7cl6hg35vWEY
+         5Jo6jnIk5CH1m9lNzIXjTixLiTU77ECI7aUU/JbALWp0cMUgMEwkMgZ7hD3uN9i6ImhW
+         2a3f1jij5WKh6ZVyp1ZYKiNoBS3PgNo3b11OoMZftLmzMwIrn3ULeWrJwifkleo4h6d6
+         bKGMiQvOOvCNzRjOGOOP6O5nxYth83P/miVp9QGwck0+wEWuGrwwA1wlrLAfhekoHQTn
+         pYyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=E/XjEjFJHTNXNUvCeIBTVGrT6CD0tFJQfkjcnYeMhDY=;
+        b=NTNWAM4SS7AOFuCA0Kiu3c+b8LmjB+xLCrDGUkba+mYj5LDMBfA9GhBRQCuLy3TuH4
+         jCVgt7gjD7QS1cDdm2zmsoNUFzIK1LNgN8i1rZSzswEK4NWUCAb36sGYGmopXgtFSfO9
+         ikD6c4W9gVejNPrfKHGR1cCnCmHnmzHvlNeYOPEq7GOlL1YbZNvn2nMCV0+SUcXvG/6v
+         DSoFpBYZpRbj2hnlpCR9RhUVchEkDlZ8C1AfVIJsVSum89XBoYNFJRj+Wyq1N5AhIVyQ
+         EgFBVIC1YudFsjxGm/UQX2D94YjSwE+ViJtcROsW4RoH4DFR4rJBmBJ7/H2xYC+4RaTb
+         98Ug==
+X-Gm-Message-State: APjAAAWTFqphWOk4BKHRdouGRrmAfFyNou0+amEv8C1obHttu3S6c0Hj
+        nk5EMp6Mhyx+loATAA3xtXs=
+X-Google-Smtp-Source: APXvYqyGWKd+xSOSpvNfUpsvwC4L227cvwkKiLHI1zuDfWsdmprNrmz8KfFvHgA6pkY4TuPO96A4Rg==
+X-Received: by 2002:a37:de16:: with SMTP id h22mr19541559qkj.306.1557157647429;
+        Mon, 06 May 2019 08:47:27 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::3:34f3])
+        by smtp.gmail.com with ESMTPSA id i23sm8328331qtc.18.2019.05.06.08.47.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 08:47:26 -0700 (PDT)
+Date:   Mon, 6 May 2019 08:47:25 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 08/79] docs: cgroup-v1: convert docs to ReST and
+ rename to *.rst
+Message-ID: <20190506154725.GS374014@devbig004.ftw2.facebook.com>
+References: <cover.1555938375.git.mchehab+samsung@kernel.org>
+ <c6e79690c038fc6bbf9265a065c1f861d6e156fa.1555938375.git.mchehab+samsung@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6e79690c038fc6bbf9265a065c1f861d6e156fa.1555938375.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2019-05-03 at 09:53 +0900, Tetsuo Handa wrote:
-> On 2019/05/03 1:28, Casey Schaufler wrote:
-> > On 5/2/2019 8:48 AM, Mimi Zohar wrote:
-> >> [Cc'ing Paul, John, Casey]
-> >>
-> >> On Mon, 2019-04-22 at 20:18 -0400, Mimi Zohar wrote:
-> >>> [Cc'ing LSM mailing list]
-> >>>
-> >>> On Fri, 2019-04-19 at 17:30 -0700, prakhar srivastava wrote:
-> >>>
-> >>>> 2) Adding a LSM hook
-> >>>> We are doing both the command line and kernel version measurement in IMA.
-> >>>> Can you please elaborate on how this can be used outside of the scenario?
-> >>>> That will help me come back with a better design and code. I am
-> >>>> neutral about this.
-> >>> As I said previously, initially you might want to only measure the
-> >>> kexec boot command line, but will you ever want to verify or audit log
-> >>> the boot command line hash? Perhaps LSMs would be interested in the
-> >>> boot command line. Should this be an LSM hook?
-> >>   From an LSM perspective, is there any interest in the boot command line?
-> > 
-> > I can imagine an LSM that cares about the command line,
-> > but I don't have interest in it for any work I have in progress.
-> > 
+On Mon, Apr 22, 2019 at 10:26:57AM -0300, Mauro Carvalho Chehab wrote:
+> Convert the cgroup-v1 files to ReST format, in order to
+> allow a later addition to the admin-guide.
 > 
-> Since the kernel command line controls which LSMs to enable, I doubt that
-> an LSM which cares about the command line can detect that the kernel command
-> line was tampered when the kernel command line was tampered...
+> The conversion is actually:
+>   - add blank lines and identation in order to identify paragraphs;
+>   - fix tables markups;
+>   - add some lists markups;
+>   - mark literal blocks;
+>   - adjust title markups.
+> 
+> At its new index.rst, let's add a :orphan: while this is not linked to
+> the main index.rst file, in order to avoid build warnings.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-As the subject line indicates, this is the kexec boot command line.
+Acked-by: Tejun Heo <tj@kernel.org>
 
-This wouldn't be any different than the existing
-kernel_read_file_from_fd() and security_kernel_load_data() calls in
-kernel/kexec_file.c and  kernel/kexec.c, which provides the LSMs an
-opportunity to comment on the kexec image and initramfs.
+Please feel free to route with other patches in the series.
 
-Mimi
+Thanks.
 
+-- 
+tejun
