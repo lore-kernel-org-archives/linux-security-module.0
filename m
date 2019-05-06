@@ -2,118 +2,125 @@ Return-Path: <SRS0=99o1=TG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA3BCC04A6B
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 May 2019 15:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532C8C04A6B
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 May 2019 15:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B2BF204FD
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 May 2019 15:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557157656;
-	bh=nwyVa1WiWiFrr5ce+XDtvyCdgI+uY2z1UGxbv/W60YM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hJ32KctJVraWWYK0/qp2sBJJzWNAxbOmC1hKFCT6vDXlFIzg2+gx5dNoHiad4jBlD
-	 I09yxaMIojPa5RATsGvebytXEJkjlx8+pWvc/KmpB7dn8BSqjxA9hCKam53oP37YEu
-	 efiSbe6yLcti56cYIm5lqU///8HwOxipJmzrfhRk=
+	by mail.kernel.org (Postfix) with ESMTP id 190B82087F
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 May 2019 15:53:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f20kg2QI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfEFPr3 (ORCPT
+        id S1726494AbfEFPxW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 May 2019 11:47:29 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:44666 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbfEFPr3 (ORCPT
+        Mon, 6 May 2019 11:53:22 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:44504 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbfEFPxW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 May 2019 11:47:29 -0400
-Received: by mail-qk1-f194.google.com with SMTP id w25so2045503qkj.11;
-        Mon, 06 May 2019 08:47:28 -0700 (PDT)
+        Mon, 6 May 2019 11:53:22 -0400
+Received: by mail-yw1-f68.google.com with SMTP id j4so10692857ywk.11
+        for <linux-security-module@vger.kernel.org>; Mon, 06 May 2019 08:53:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=E/XjEjFJHTNXNUvCeIBTVGrT6CD0tFJQfkjcnYeMhDY=;
-        b=WFo86atePse5UmQK+FdjsQtdOQVjO6JrWLd1xYEi2IMozqnr1cQ3J6vuxd3K5gctkU
-         XsHuazRLDKDlGNx+rMgrPMRCPJ6oBDmOOlutFuDcLwMPw4scj7kpqzMv7cl6hg35vWEY
-         5Jo6jnIk5CH1m9lNzIXjTixLiTU77ECI7aUU/JbALWp0cMUgMEwkMgZ7hD3uN9i6ImhW
-         2a3f1jij5WKh6ZVyp1ZYKiNoBS3PgNo3b11OoMZftLmzMwIrn3ULeWrJwifkleo4h6d6
-         bKGMiQvOOvCNzRjOGOOP6O5nxYth83P/miVp9QGwck0+wEWuGrwwA1wlrLAfhekoHQTn
-         pYyg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PHqK8HxWJmkg838Ejsrk0tA5kqRCulCluaWXdXlo56E=;
+        b=f20kg2QIE1Rlxrh4CiwM+uxgw2KRxHDkoexvliQuGqNrwoMIPX3mVmGwjXtuAHw1bZ
+         jYFlcsasdGH2hbs6ttxN4F8qRke/0CNHSBdb5LeueADX/teUJRM8DehJH45hOzNByY+9
+         5EIjUPdvGvaytvrPGC0z8y/3FYkT9WwkjZnW4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E/XjEjFJHTNXNUvCeIBTVGrT6CD0tFJQfkjcnYeMhDY=;
-        b=NTNWAM4SS7AOFuCA0Kiu3c+b8LmjB+xLCrDGUkba+mYj5LDMBfA9GhBRQCuLy3TuH4
-         jCVgt7gjD7QS1cDdm2zmsoNUFzIK1LNgN8i1rZSzswEK4NWUCAb36sGYGmopXgtFSfO9
-         ikD6c4W9gVejNPrfKHGR1cCnCmHnmzHvlNeYOPEq7GOlL1YbZNvn2nMCV0+SUcXvG/6v
-         DSoFpBYZpRbj2hnlpCR9RhUVchEkDlZ8C1AfVIJsVSum89XBoYNFJRj+Wyq1N5AhIVyQ
-         EgFBVIC1YudFsjxGm/UQX2D94YjSwE+ViJtcROsW4RoH4DFR4rJBmBJ7/H2xYC+4RaTb
-         98Ug==
-X-Gm-Message-State: APjAAAWTFqphWOk4BKHRdouGRrmAfFyNou0+amEv8C1obHttu3S6c0Hj
-        nk5EMp6Mhyx+loATAA3xtXs=
-X-Google-Smtp-Source: APXvYqyGWKd+xSOSpvNfUpsvwC4L227cvwkKiLHI1zuDfWsdmprNrmz8KfFvHgA6pkY4TuPO96A4Rg==
-X-Received: by 2002:a37:de16:: with SMTP id h22mr19541559qkj.306.1557157647429;
-        Mon, 06 May 2019 08:47:27 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::3:34f3])
-        by smtp.gmail.com with ESMTPSA id i23sm8328331qtc.18.2019.05.06.08.47.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 08:47:26 -0700 (PDT)
-Date:   Mon, 6 May 2019 08:47:25 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-block@vger.kernel.org,
-        cgroups@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 08/79] docs: cgroup-v1: convert docs to ReST and
- rename to *.rst
-Message-ID: <20190506154725.GS374014@devbig004.ftw2.facebook.com>
-References: <cover.1555938375.git.mchehab+samsung@kernel.org>
- <c6e79690c038fc6bbf9265a065c1f861d6e156fa.1555938375.git.mchehab+samsung@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PHqK8HxWJmkg838Ejsrk0tA5kqRCulCluaWXdXlo56E=;
+        b=lHI9F5caA+3ZMQdwnlpjRVyk5tlnhSbcfnJzB5Yh8xyvTrDYkx13VYrz3HAc6K1naI
+         4WswvuzdY7/10gkKc+ZFP8J/bZOwxPZCg4Kt5oeE7bIhheSzxzcIa0Saz0JgV+vMLSxf
+         q2ctjTuj2cdKt3hHRXzOubqBPwh29N3I0iUtcI3Y7Y4q9m42E6JBfXRIrsP7aVz383fX
+         WH2ddqdEolxxRyzBV+xsylQfl8FNcMqehvtBm0W1hAsWamq9cvzG71N3cMwL8wP087in
+         t09sjbAxtpXsPKnwO24pcV90ahD1b1rrZ3K83YpuxJST9SGIPpnwOjkHD9zp/9IhUilq
+         aNhA==
+X-Gm-Message-State: APjAAAWF2ySDQ21hQeiJ0GtUSAIKsKVHZ9f/xhXdIHJh6egA9qIWp3b9
+        xLz6U5sBj/O9zpcoggQuxcgBh3csbrzRpIJV5JoWfw==
+X-Google-Smtp-Source: APXvYqxRIxD47SQKRqEZvyca9VwI9jvrBgc4AGKK8zmx/LS8FB2IGoCnE7G9cG2ZJc8wHy5ujvC6PFOEAKcsjSWL1ZM=
+X-Received: by 2002:a25:3609:: with SMTP id d9mr15524756yba.260.1557158001547;
+ Mon, 06 May 2019 08:53:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6e79690c038fc6bbf9265a065c1f861d6e156fa.1555938375.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20190410165434.206579-1-mortonm@chromium.org> <CAGXu5jKid6ggjD7G=qLoAGdpprxQiXziKu5g=rcGw+d0sUPr9g@mail.gmail.com>
+In-Reply-To: <CAGXu5jKid6ggjD7G=qLoAGdpprxQiXziKu5g=rcGw+d0sUPr9g@mail.gmail.com>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Mon, 6 May 2019 08:53:10 -0700
+Message-ID: <CAJ-EccPz3fZXR-485szP28kTsFLN=Y6040GacxdNuSn9io-kPw@mail.gmail.com>
+Subject: Re: [PATCH 01/10] LSM: SafeSetID: fix pr_warn() to include newline
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 22, 2019 at 10:26:57AM -0300, Mauro Carvalho Chehab wrote:
-> Convert the cgroup-v1 files to ReST format, in order to
-> allow a later addition to the admin-guide.
-> 
-> The conversion is actually:
->   - add blank lines and identation in order to identify paragraphs;
->   - fix tables markups;
->   - add some lists markups;
->   - mark literal blocks;
->   - adjust title markups.
-> 
-> At its new index.rst, let's add a :orphan: while this is not linked to
-> the main index.rst file, in order to avoid build warnings.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+These 10 patches got buried, but Jann, Kees and myself are in
+agreement on how they look.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Could they get merged? Patches 8/10 and 9/10 have a v2 that should get
+merged instead of the originals. I can respond on all the patches that
+should get merged if that is helpful?
 
-Please feel free to route with other patches in the series.
-
-Thanks.
-
--- 
-tejun
+On Wed, Apr 10, 2019 at 10:09 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Wed, Apr 10, 2019 at 9:54 AM Micah Morton <mortonm@chromium.org> wrote:
+> >
+> > From: Jann Horn <jannh@google.com>
+> >
+> > Fix the pr_warn() calls in the SafeSetID LSM to have newlines at the end.
+> > Without this, denial messages will be buffered as incomplete lines in
+> > log_output(), and will then only show up once something else prints into
+> > dmesg.
+> >
+> > Signed-off-by: Jann Horn <jannh@google.com>
+> > Signed-off-by: Micah Morton <mortonm@chromium.org>
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+>
+> -Kees
+>
+> > ---
+> >  security/safesetid/lsm.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
+> > index cecd38e2ac80..2daecab3a4c0 100644
+> > --- a/security/safesetid/lsm.c
+> > +++ b/security/safesetid/lsm.c
+> > @@ -91,7 +91,7 @@ static int safesetid_security_capable(const struct cred *cred,
+> >                          * to functionality other than calling set*uid() (e.g.
+> >                          * allowing user to set up userns uid mappings).
+> >                          */
+> > -                       pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions",
+> > +                       pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions\n",
+> >                                 __kuid_val(cred->uid));
+> >                         return -1;
+> >                 }
+> > @@ -103,7 +103,7 @@ static int check_uid_transition(kuid_t parent, kuid_t child)
+> >  {
+> >         if (check_setuid_policy_hashtable_key_value(parent, child))
+> >                 return 0;
+> > -       pr_warn("UID transition (%d -> %d) blocked",
+> > +       pr_warn("UID transition (%d -> %d) blocked\n",
+> >                 __kuid_val(parent),
+> >                 __kuid_val(child));
+> >         /*
+> > --
+> > 2.21.0.392.gf8f6787159e-goog
+> >
+>
+>
+> --
+> Kees Cook
