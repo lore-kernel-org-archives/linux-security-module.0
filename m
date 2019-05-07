@@ -2,68 +2,165 @@ Return-Path: <SRS0=FAtl=TH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1717DC004C9
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 17:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7481C004C9
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 17:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDFFF20825
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 17:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557249614;
-	bh=KkJlf7VBOYLIp2BJ7v+Ugggdywbfl7gTZzDwmBxXYRw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=qP4XhGwyUZ0rGzw2PXmjwfgYOomrvjbH0mj/ehY8MZylDPJ0MuGeBg1QjpFjXu3KM
-	 ZIDDh6jOSGyry2eDOTLu2KsPLq1yYHcqHCOrGbxz11/7BgDYjqodjqT3YXEBkYvE5C
-	 GdCoiPOVpkZb8eemCwhimBn7vgDi3qQb7njqSUmU=
+	by mail.kernel.org (Postfix) with ESMTP id 52F5D205ED
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 17:23:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="HTAWHY9h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfEGRUJ (ORCPT
+        id S1727427AbfEGRXQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 May 2019 13:20:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726589AbfEGRUJ (ORCPT
+        Tue, 7 May 2019 13:23:16 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:32884 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbfEGRXQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 May 2019 13:20:09 -0400
-Subject: Re: [GIT PULL] Security subsystem: general updates for v5.2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557249608;
-        bh=KkJlf7VBOYLIp2BJ7v+Ugggdywbfl7gTZzDwmBxXYRw=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=VwZIRSLs6GOtqnrihfVMNQVIypQw3N5rGkvsI4sRqQ8PfElRymEIIUNC3t/Swg/Dx
-         33xGBigvd/Fafe7+kGYhghxnb7/nx1e0P88XMs3EtoTR2vANT3GdswBRJMRrw/7gAA
-         1Em3qee3pECciPCmWX4NIQshkCiyD+W/jGlME9QM=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <alpine.LRH.2.21.1905071333580.5714@namei.org>
-References: <alpine.LRH.2.21.1905071333580.5714@namei.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <alpine.LRH.2.21.1905071333580.5714@namei.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
- next-general
-X-PR-Tracked-Commit-Id: 6beff00b79ca0b5caf0ce6fb8e11f57311bd95f8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 78ee8b1b9b2fa1b51c51c42f3cffa0e12ad5f0ab
-Message-Id: <155724960854.23705.6925791491708118672.pr-tracker-bot@kernel.org>
-Date:   Tue, 07 May 2019 17:20:08 +0000
-To:     James Morris <jmorris@namei.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+        Tue, 7 May 2019 13:23:16 -0400
+Received: by mail-lj1-f194.google.com with SMTP id f23so15078998ljc.0
+        for <linux-security-module@vger.kernel.org>; Tue, 07 May 2019 10:23:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=o8VtjTD6U9Es50KJbjcJKdSYXX43ladKltot7A5aRyM=;
+        b=HTAWHY9hwy56emh+CK2+bMmDxMoIxqs7yaCFxdjRv6TNrbkDzU+GpDNJiqF1S678bN
+         UVo8m3llYZNo6trwCxHMjBzX5YmAy9fwvLhUjTaYadgOK4HHBNokanXtg5eV11CSgm9D
+         EWIU2GrCrBpogPhVYdfdYf15tyQFJ3OryvjAlx6Nd2uOKscK2csV9p3CdPFCekiOrCpE
+         6Q2yA4xwAESmVD3exgUN5/In46ri/902r0wC8jaDBw/DywThbLmmTWn4p+Llicpye6lV
+         +05Yuskd31Da9OqUwP2ALzLpHpDWmN5NsxOjdjy+YfRE+MwLhG/aQ8e1MSHQBcXWZKSQ
+         x5cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=o8VtjTD6U9Es50KJbjcJKdSYXX43ladKltot7A5aRyM=;
+        b=BRg3JLJY0hIJItegvZDMJMTUoRGqTjvavUo8rVnk6TS9/UZ/44ttNMLk0dtwkW9VCN
+         TiBNhOmZNTJVKYtz7maWexEd5k7dN6J3/MWEwEh1qryDIysJGS+x/EuQHbXzYMOcWRHE
+         DpVxmr6C9hOIP5PXsQmy1qdNwAVuPUmZGrqgtORdS5g2XmOuNsylYa8IrSCH4r8C8kJx
+         Tz5ZCMuQnnprb5JyrAsrE8HjPSPrNqfv3lfTEThcIhBYwEfU9Tv4i3DDM26zx2UTqb3X
+         cNaiV6BR22q6DkpJSHyl/mPGOt4nTRnaWLdMQNJAJ5dpDiTEKx88KP74bA8zUm9RWUAD
+         bYtA==
+X-Gm-Message-State: APjAAAUsUguthIPmDYJom6guGleiwwafph/xWxG4sBfUh/t6i1da/04W
+        fLW1GZDMAbI//lwnksDuPuAe1mzkLrVnlBHsij1g
+X-Google-Smtp-Source: APXvYqyIqydtKKpDZ9uwQ/0+Oi3WDAYlzeGo4LdM9WqIB/E5OzCvGAw7Mehyq+xk0Of58S8AP3H/YhKTpE2Bv/MJDsA=
+X-Received: by 2002:a2e:9350:: with SMTP id m16mr17769667ljh.38.1557249794156;
+ Tue, 07 May 2019 10:23:14 -0700 (PDT)
+MIME-Version: 1.0
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 7 May 2019 13:23:03 -0400
+Message-ID: <CAHC9VhSkOmRGvOje3HycoauPL+ZW9g9zZ3dqiPDmQTPUPnhCPg@mail.gmail.com>
+Subject: [GIT PULL] SELinux patches for v5.2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Tue, 7 May 2019 13:35:39 +1000 (AEST):
+Hi Linus,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+We've got a few SELinux patches for the v5.2 merge window, the
+highlights are below:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/78ee8b1b9b2fa1b51c51c42f3cffa0e12ad5f0ab
+- Add LSM hooks, and the SELinux implementation, for proper labeling
+of kernfs.  While we are only including the SELinux implementation
+here, the rest of the LSM folks have given the hooks a thumbs-up.
 
-Thank you!
+- Update the SELinux mdp (Make Dummy Policy) script to actually work
+on a modern system.
+
+- Disallow userspace to change the LSM credentials via /proc/self/attr
+when the task's credentials are already overridden.  The change was
+made in procfs because all the LSM folks agreed this was the Right
+Thing To Do and duplicating it across each LSM was going to be
+annoying.
+
+As a FYI, you will likely run into a minor merge problem with
+scripts/selinux/mdp.c due to patches sent up during the v5.1-rcX
+cycle, but it is pretty trivial to resolve (just make sure the
+kconfig.h include is included).  If you have any questions about the
+merge, you know where to find us.
+
+Please pull this for v5.2,
+-Paul
+
+--
+The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
+
+ Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20190507
+
+for you to fetch changes up to 35a196bef449b5824033865b963ed9a43fb8c730:
+
+ proc: prevent changes to overridden credentials (2019-04-29 09:51:21 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.2 PR 20190507
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+     selinux: avoid uninitialized variable warning
+
+Ondrej Mosnacek (10):
+     kernfs: clean up struct kernfs_iattrs
+     kernfs: do not alloc iattrs in kernfs_xattr_get
+     selinux: try security xattr after genfs for kernfs filesystems
+     kernfs: use simple_xattrs for security attributes
+     LSM: add new hook for kernfs node initialization
+     selinux: implement the kernfs_init_security hook
+     kernfs: initialize security of newly created nodes
+     LSM: lsm_hooks.h - fix missing colon in docstring
+     selinux: remove useless assignments
+     kernfs: fix xattr name handling in LSM helpers
+
+Paul Moore (2):
+     MAINTAINERS: update SELinux file patterns
+     proc: prevent changes to overridden credentials
+
+Paulo Alcantara (1):
+     selinux: use kernel linux/socket.h for genheaders and mdp
+
+Stephen Smalley (2):
+     scripts/selinux: modernize mdp
+     scripts/selinux: fix build
+
+Tetsuo Handa (1):
+     selinux: Check address length before reading address family
+
+YueHaibing (1):
+     selinux: Make selinux_kernfs_init_security static
+
+MAINTAINERS                             |   2 +-
+fs/kernfs/dir.c                         |  24 ++--
+fs/kernfs/inode.c                       | 162 +++++++++--------------
+fs/kernfs/kernfs-internal.h             |   8 +-
+fs/kernfs/symlink.c                     |   4 +-
+fs/proc/base.c                          |   5 +
+include/linux/kernfs.h                  |  13 ++
+include/linux/lsm_hooks.h               |  13 ++
+include/linux/security.h                |   9 ++
+scripts/selinux/genheaders/genheaders.c |   1 -
+scripts/selinux/install_policy.sh       |  92 +++++++------
+scripts/selinux/mdp/Makefile            |   2 +-
+scripts/selinux/mdp/mdp.c               | 166 ++++++++++++++++++++----
+security/security.c                     |   6 +
+security/selinux/hooks.c                | 229 +++++++++++++++++++++----------
+security/selinux/include/classmap.h     |   1 +
+security/selinux/include/security.h     |   1 +
+security/selinux/netlabel.c             |  14 +-
+security/selinux/ss/services.c          |   7 +-
+19 files changed, 488 insertions(+), 271 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+paul moore
+www.paul-moore.com
