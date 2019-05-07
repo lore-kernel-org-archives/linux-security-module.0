@@ -2,65 +2,64 @@ Return-Path: <SRS0=FAtl=TH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B0BC004C9
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 15:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 342DBC004C9
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 15:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9DFB20578
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 15:02:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00DCC20578
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 15:02:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X9zGjg+D"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DTLwFHNh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbfEGPCH (ORCPT
+        id S1726505AbfEGPCX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 May 2019 11:02:07 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:40794 "EHLO
+        Tue, 7 May 2019 11:02:23 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:44827 "EHLO
         mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbfEGPCH (ORCPT
+        with ESMTP id S1726452AbfEGPCX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 May 2019 11:02:07 -0400
-Received: by mail-yw1-f65.google.com with SMTP id 18so8654811ywe.7
-        for <linux-security-module@vger.kernel.org>; Tue, 07 May 2019 08:02:06 -0700 (PDT)
+        Tue, 7 May 2019 11:02:23 -0400
+Received: by mail-yw1-f65.google.com with SMTP id j4so13446113ywk.11
+        for <linux-security-module@vger.kernel.org>; Tue, 07 May 2019 08:02:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=JeScbsp/IKK0pKPzfC+v/hGa+AjOYD35W0DPYXRLxGw=;
-        b=X9zGjg+DeoaStr68A5ZmR/eTXP8GFMug9zKVLRcV37d19VqgRDxNAI5A/VOKAIiIYr
-         NCSDaHuA4/iQp7tK0CFjnNiQsOcuItj6mpRytyMatpQZ8NB8Pcr5o5JkeHCxk9LxqdNx
-         avAsFHPPmOd4VVzj1cTjOR9/Kh3tjyZb+ARHE=
+        bh=ziQeB12I9bka7R/oRXnmgk2P78BgzO5WFOB34fWpTdo=;
+        b=DTLwFHNhrcOq1eXo+Uw41iLaNfhEKRMOibFVdwmokqQ0rDa5mePHDFLU5WN7VQnRly
+         TX3n7S2Kw49irWtn0oUvggMrfZ2PMEwL5BQmJvMF+v+6+AtNN7WiphKFH9/jSuZ8DvrC
+         +bI218O1ZkmNYA/tnWy7ticiQlsnTd1AoADC4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=JeScbsp/IKK0pKPzfC+v/hGa+AjOYD35W0DPYXRLxGw=;
-        b=oz98SkBCkxP+0K2n/1PH+TludsU5PPsatVcrWjhew7saEFGnTBXduNGkwtjAU8RlHm
-         dy8UfPlRTEuKZsp5WA/GgQnFD1+n/tWQNHfI6GH+be3ksdTVThmdwyakT5c4mkCyd9mH
-         wOh7CTzoNzuYQdET3uS2kF40EvCcAs3fTchAm4FJ22ucbfNfdjTZDY33kyRTuS+2yjVG
-         D8+sFKxlXsuyRso296HkUIpN+3AD2pIH9cfCSW9/dUvPHcsq3567oMu3eZ/4NG+4P2Wg
-         GSI2yuaFnOwfrvguEWl17TZ+amUXbiL0TgXypmwCBUh6byyLbF0yopv3wPxxyoHqnzf6
-         nlKQ==
-X-Gm-Message-State: APjAAAUodQbYaDvXXdZ+rrFup35MlTpT6/9j43a7BPWq5y8sdwMsfEwk
-        iSH5T8yKfrrfQoV/ztS91CLyXDNEGc8Nbb+poq3gVQ==
-X-Google-Smtp-Source: APXvYqyy60duiL/yZbzpYNqJVRRKQxGrv3F3Sp31qdE2WSWf1dwbI9+nV0dPWvibEygwBiIlG4KLZrnpqgpfxZFReak=
-X-Received: by 2002:a25:3609:: with SMTP id d9mr19091724yba.260.1557241326490;
- Tue, 07 May 2019 08:02:06 -0700 (PDT)
+        bh=ziQeB12I9bka7R/oRXnmgk2P78BgzO5WFOB34fWpTdo=;
+        b=beFtqEg8BvtZCdI0td+L5LX72km46U/EprdqNX7YS3mzusHICn5rXsFPkiCw+Dydj/
+         ubxr03hKgIT2Dj9PU/FoNoifx0Emt+xrZX6DOeJieltVCAhNV761W4LSJFxX1S5NJ1HC
+         5d2UMl9uPLmGQ5a40lRsKmFO7SghbyCd1aqyN3FUhohMih0j5q5ItxqZv6DNsmAwk44u
+         Og3aoQF1k/bVVoOoRvHFYWOVi22Bembeh4bUviLMwDVPOMpgSjSl7tC9pPWRKzYiSfOH
+         mZhYFdvTUJAUPJr+7MaBZJsPZHEi9dpwBayfe/QZ2KkxT6XgdP7zvFANWT1Asx/rLLxf
+         oCnA==
+X-Gm-Message-State: APjAAAWvYebkrOcTe/41duVsb7u13uMAWmsFJOejl8M8RZjFhRyFaYqi
+        4ikhOKaCcjS4AfqbBLG3qoYj2QkzZtaVVuBRl5VbqQ==
+X-Google-Smtp-Source: APXvYqwGkUCZeYdDlZf5ELYZRc/mYdCyVct5nm8Iqd/dhUDK+bGv6+D7forubBHFb2XQpuuvF67sBUgr1inmC1UUI0E=
+X-Received: by 2002:a25:14c1:: with SMTP id 184mr12021885ybu.17.1557241342621;
+ Tue, 07 May 2019 08:02:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190410165558.211483-1-mortonm@chromium.org> <CAGXu5jJJTRgahj_hhiqkeWxLETWD5+=0800E0WNatq+3MrdPag@mail.gmail.com>
-In-Reply-To: <CAGXu5jJJTRgahj_hhiqkeWxLETWD5+=0800E0WNatq+3MrdPag@mail.gmail.com>
+References: <20190410165605.211749-1-mortonm@chromium.org> <CAGXu5jK9tc28tsxEKOQ=R9B2AUOJ5Rt3j=VNqr1PQcAyAeNpgQ@mail.gmail.com>
+ <CAG48ez0a6iyw_TCF2aY4ADbiveaAy+tZeiKjT0j7+36qC6W_og@mail.gmail.com> <CAGXu5jL8YYG-jTuQkfH1kBPSdY-FamO_YobcL_rCyNKqq3NHmw@mail.gmail.com>
+In-Reply-To: <CAGXu5jL8YYG-jTuQkfH1kBPSdY-FamO_YobcL_rCyNKqq3NHmw@mail.gmail.com>
 From:   Micah Morton <mortonm@chromium.org>
-Date:   Tue, 7 May 2019 08:01:55 -0700
-Message-ID: <CAJ-EccPp2cqoiRcb=R2JNt5fDByT9AXA+Y_q8VWNuyxTj2PRAw@mail.gmail.com>
-Subject: Re: [PATCH 06/10] LSM: SafeSetID: fix userns handling in securityfs
+Date:   Tue, 7 May 2019 08:02:11 -0700
+Message-ID: <CAJ-EccPNKfGWBwR8kL6zW4i=Sn+FbTJMNOoHx=0=mve9QGJFSQ@mail.gmail.com>
+Subject: Re: [PATCH 07/10] LSM: SafeSetID: rewrite userspace API to atomic updates
 To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
+Cc:     Jann Horn <jannh@google.com>, James Morris <jmorris@namei.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
@@ -68,57 +67,63 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Ready for merge.
 
-On Wed, Apr 10, 2019 at 10:16 AM Kees Cook <keescook@chromium.org> wrote:
+On Wed, Apr 10, 2019 at 11:20 AM Kees Cook <keescook@chromium.org> wrote:
 >
-> On Wed, Apr 10, 2019 at 9:56 AM Micah Morton <mortonm@chromium.org> wrote:
+> On Wed, Apr 10, 2019 at 10:47 AM Jann Horn <jannh@google.com> wrote:
 > >
-> > From: Jann Horn <jannh@google.com>
+> > On Wed, Apr 10, 2019 at 7:24 PM Kees Cook <keescook@chromium.org> wrote:
+> > > On Wed, Apr 10, 2019 at 9:56 AM Micah Morton <mortonm@chromium.org> wrote:
+> > > > From: Jann Horn <jannh@google.com>
+> > > >
+> > > > The current API of the SafeSetID LSM uses one write() per rule, and applies
+> > > > each written rule instantly. This has several downsides:
+> > > >
+> > > >  - While a policy is being loaded, once a single parent-child pair has been
+> > > >    loaded, the parent is restricted to that specific child, even if
+> > > >    subsequent rules would allow transitions to other child UIDs. This means
+> > > >    that during policy loading, set*uid() can randomly fail.
+> > > >  - To replace the policy without rebooting, it is necessary to first flush
+> > > >    all old rules. This creates a time window in which no constraints are
+> > > >    placed on the use of CAP_SETUID.
+> > > >  - If we want to perform sanity checks on the final policy, this requires
+> > > >    that the policy isn't constructed in a piecemeal fashion without telling
+> > > >    the kernel when it's done.
+> > > >
+> > > > Other kernel APIs - including things like the userns code and netfilter -
+> > > > avoid this problem by performing updates atomically. Luckily, SafeSetID
+> > > > hasn't landed in a stable (upstream) release yet, so maybe it's not too
+> > > > late to completely change the API.
+> > > >
+> > > > The new API for SafeSetID is: If you want to change the policy, open
+> > > > "safesetid/whitelist_policy" and write the entire policy,
+> > > > newline-delimited, in there.
+> > >
+> > > So the entire policy is expected to be sent in a single write() call?
+> > >
+> > > open()
+> > > write(policy1)
+> > > write(policy2)
+> > > close()
+> > >
+> > > means only policy2 is active?
 > >
-> > Looking at current_cred() in write handlers is bad form, stop doing that.
-> >
-> > Also, let's just require that the write is coming from the initial user
-> > namespace. Especially SAFESETID_WHITELIST_FLUSH requires privilege over all
-> > namespaces, and SAFESETID_WHITELIST_ADD should probably require it as well.
-> >
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> > Signed-off-by: Micah Morton <mortonm@chromium.org>
+> > No; if you do that, the first write() sets policy1, and the second
+> > write() fails with -EINVAL because of the "if (*ppos != 0) return
+> > -EINVAL;" in safesetid_file_write() (which already exists in the
+> > current version of the LSM).
 >
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Ah yes, thanks! I missed that check. Good!
 >
-> -Kees
+> >
+> > > I thought policy was meant to be built
+> > > over time? i.e. new policy could get appended to existing?
+> >
+> > That's what the current API does; as I've explained in the commit
+> > message, I think that that's a bad idea.
 >
-> > ---
-> >  security/safesetid/securityfs.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
-> > index 87e42b7f3e33..76c1e8a6ab93 100644
-> > --- a/security/safesetid/securityfs.c
-> > +++ b/security/safesetid/securityfs.c
-> > @@ -59,8 +59,8 @@ static int parse_policy_line(
-> >         if (ret)
-> >                 return ret;
-> >
-> > -       *parent = make_kuid(current_user_ns(), parsed_parent);
-> > -       *child = make_kuid(current_user_ns(), parsed_child);
-> > +       *parent = make_kuid(file->f_cred->user_ns, parsed_parent);
-> > +       *child = make_kuid(file->f_cred->user_ns, parsed_child);
-> >         if (!uid_valid(*parent) || !uid_valid(*child))
-> >                 return -EINVAL;
-> >
-> > @@ -92,7 +92,7 @@ static ssize_t safesetid_file_write(struct file *file,
-> >         kuid_t child;
-> >         int ret;
-> >
-> > -       if (!ns_capable(current_user_ns(), CAP_MAC_ADMIN))
-> > +       if (!file_ns_capable(file, &init_user_ns, CAP_MAC_ADMIN))
-> >                 return -EPERM;
-> >
-> >         if (*ppos != 0)
-> > --
-> > 2.21.0.392.gf8f6787159e-goog
-> >
->
+> Okay, sounds fine. It wasn't clear to me from the commit message if
+> you meant "write the whole policy during a single open/close" or
+> "write whole policy with a single initial write".
 >
 > --
 > Kees Cook
