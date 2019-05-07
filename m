@@ -2,165 +2,121 @@ Return-Path: <SRS0=FAtl=TH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7481C004C9
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 17:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E54CC46460
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 19:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52F5D205ED
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 17:23:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="HTAWHY9h"
+	by mail.kernel.org (Postfix) with ESMTP id 4B32B214AF
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 19:53:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbfEGRXQ (ORCPT
+        id S1726335AbfEGTxx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 May 2019 13:23:16 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:32884 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726406AbfEGRXQ (ORCPT
+        Tue, 7 May 2019 15:53:53 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51253 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfEGTxx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 May 2019 13:23:16 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f23so15078998ljc.0
-        for <linux-security-module@vger.kernel.org>; Tue, 07 May 2019 10:23:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=o8VtjTD6U9Es50KJbjcJKdSYXX43ladKltot7A5aRyM=;
-        b=HTAWHY9hwy56emh+CK2+bMmDxMoIxqs7yaCFxdjRv6TNrbkDzU+GpDNJiqF1S678bN
-         UVo8m3llYZNo6trwCxHMjBzX5YmAy9fwvLhUjTaYadgOK4HHBNokanXtg5eV11CSgm9D
-         EWIU2GrCrBpogPhVYdfdYf15tyQFJ3OryvjAlx6Nd2uOKscK2csV9p3CdPFCekiOrCpE
-         6Q2yA4xwAESmVD3exgUN5/In46ri/902r0wC8jaDBw/DywThbLmmTWn4p+Llicpye6lV
-         +05Yuskd31Da9OqUwP2ALzLpHpDWmN5NsxOjdjy+YfRE+MwLhG/aQ8e1MSHQBcXWZKSQ
-         x5cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=o8VtjTD6U9Es50KJbjcJKdSYXX43ladKltot7A5aRyM=;
-        b=BRg3JLJY0hIJItegvZDMJMTUoRGqTjvavUo8rVnk6TS9/UZ/44ttNMLk0dtwkW9VCN
-         TiBNhOmZNTJVKYtz7maWexEd5k7dN6J3/MWEwEh1qryDIysJGS+x/EuQHbXzYMOcWRHE
-         DpVxmr6C9hOIP5PXsQmy1qdNwAVuPUmZGrqgtORdS5g2XmOuNsylYa8IrSCH4r8C8kJx
-         Tz5ZCMuQnnprb5JyrAsrE8HjPSPrNqfv3lfTEThcIhBYwEfU9Tv4i3DDM26zx2UTqb3X
-         cNaiV6BR22q6DkpJSHyl/mPGOt4nTRnaWLdMQNJAJ5dpDiTEKx88KP74bA8zUm9RWUAD
-         bYtA==
-X-Gm-Message-State: APjAAAUsUguthIPmDYJom6guGleiwwafph/xWxG4sBfUh/t6i1da/04W
-        fLW1GZDMAbI//lwnksDuPuAe1mzkLrVnlBHsij1g
-X-Google-Smtp-Source: APXvYqyIqydtKKpDZ9uwQ/0+Oi3WDAYlzeGo4LdM9WqIB/E5OzCvGAw7Mehyq+xk0Of58S8AP3H/YhKTpE2Bv/MJDsA=
-X-Received: by 2002:a2e:9350:: with SMTP id m16mr17769667ljh.38.1557249794156;
- Tue, 07 May 2019 10:23:14 -0700 (PDT)
+        Tue, 7 May 2019 15:53:53 -0400
+Received: from static-50-53-34-51.bvtn.or.frontiernet.net ([50.53.34.51] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1hO69s-0008HY-Sk; Tue, 07 May 2019 19:53:49 +0000
+Subject: Re: [PATCH] apparmor: Force type-casting of current->real_cred
+To:     Bharath Vedartham <linux.bhar@gmail.com>, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190423165300.GA18837@bharath12345-Inspiron-5559>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <e6acda78-1979-6431-d7a2-26c277b7d6ee@canonical.com>
+Date:   Tue, 7 May 2019 12:53:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 7 May 2019 13:23:03 -0400
-Message-ID: <CAHC9VhSkOmRGvOje3HycoauPL+ZW9g9zZ3dqiPDmQTPUPnhCPg@mail.gmail.com>
-Subject: [GIT PULL] SELinux patches for v5.2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190423165300.GA18837@bharath12345-Inspiron-5559>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On 4/23/19 9:53 AM, Bharath Vedartham wrote:
+> This patch fixes the sparse warning:
+> warning: cast removes address space '<asn:4>' of expression.
+> 
+> Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
 
-We've got a few SELinux patches for the v5.2 merge window, the
-highlights are below:
 
-- Add LSM hooks, and the SELinux implementation, for proper labeling
-of kernfs.  While we are only including the SELinux implementation
-here, the rest of the LSM folks have given the hooks a thumbs-up.
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-- Update the SELinux mdp (Make Dummy Policy) script to actually work
-on a modern system.
+I will pull this into my tree
 
-- Disallow userspace to change the LSM credentials via /proc/self/attr
-when the task's credentials are already overridden.  The change was
-made in procfs because all the LSM folks agreed this was the Right
-Thing To Do and duplicating it across each LSM was going to be
-annoying.
+> ---
+>  security/apparmor/lsm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 87500bd..36478c4 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1529,7 +1529,7 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
+>   */
+>  static int __init set_init_ctx(void)
+>  {
+> -	struct cred *cred = (struct cred *)current->real_cred;
+> +	struct cred *cred = (__force struct cred *)current->real_cred;
+>  
+>  	set_cred_label(cred, aa_get_label(ns_unconfined(root_ns)));
+>  
+> 
 
-As a FYI, you will likely run into a minor merge problem with
-scripts/selinux/mdp.c due to patches sent up during the v5.1-rcX
-cycle, but it is pretty trivial to resolve (just make sure the
-kconfig.h include is included).  If you have any questions about the
-merge, you know where to find us.
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Please pull this for v5.2,
--Paul
-
---
-The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
-
- Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
-
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20190507
-
-for you to fetch changes up to 35a196bef449b5824033865b963ed9a43fb8c730:
-
- proc: prevent changes to overridden credentials (2019-04-29 09:51:21 -0400)
-
-----------------------------------------------------------------
-selinux/stable-5.2 PR 20190507
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-     selinux: avoid uninitialized variable warning
-
-Ondrej Mosnacek (10):
-     kernfs: clean up struct kernfs_iattrs
-     kernfs: do not alloc iattrs in kernfs_xattr_get
-     selinux: try security xattr after genfs for kernfs filesystems
-     kernfs: use simple_xattrs for security attributes
-     LSM: add new hook for kernfs node initialization
-     selinux: implement the kernfs_init_security hook
-     kernfs: initialize security of newly created nodes
-     LSM: lsm_hooks.h - fix missing colon in docstring
-     selinux: remove useless assignments
-     kernfs: fix xattr name handling in LSM helpers
-
-Paul Moore (2):
-     MAINTAINERS: update SELinux file patterns
-     proc: prevent changes to overridden credentials
-
-Paulo Alcantara (1):
-     selinux: use kernel linux/socket.h for genheaders and mdp
-
-Stephen Smalley (2):
-     scripts/selinux: modernize mdp
-     scripts/selinux: fix build
-
-Tetsuo Handa (1):
-     selinux: Check address length before reading address family
-
-YueHaibing (1):
-     selinux: Make selinux_kernfs_init_security static
-
-MAINTAINERS                             |   2 +-
-fs/kernfs/dir.c                         |  24 ++--
-fs/kernfs/inode.c                       | 162 +++++++++--------------
-fs/kernfs/kernfs-internal.h             |   8 +-
-fs/kernfs/symlink.c                     |   4 +-
-fs/proc/base.c                          |   5 +
-include/linux/kernfs.h                  |  13 ++
-include/linux/lsm_hooks.h               |  13 ++
-include/linux/security.h                |   9 ++
-scripts/selinux/genheaders/genheaders.c |   1 -
-scripts/selinux/install_policy.sh       |  92 +++++++------
-scripts/selinux/mdp/Makefile            |   2 +-
-scripts/selinux/mdp/mdp.c               | 166 ++++++++++++++++++++----
-security/security.c                     |   6 +
-security/selinux/hooks.c                | 229 +++++++++++++++++++++----------
-security/selinux/include/classmap.h     |   1 +
-security/selinux/include/security.h     |   1 +
-security/selinux/netlabel.c             |  14 +-
-security/selinux/ss/services.c          |   7 +-
-19 files changed, 488 insertions(+), 271 deletions(-)
-
--- 
-paul moore
-www.paul-moore.com
