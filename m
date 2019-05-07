@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EC9C004C9
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 15:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB103C004C9
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 15:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36EE120578
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 15:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72D3F20578
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 May 2019 15:01:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I/rKRHDc"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G6fAQDux"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfEGPBq (ORCPT
+        id S1725859AbfEGPB6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 May 2019 11:01:46 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:38795 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbfEGPBq (ORCPT
+        Tue, 7 May 2019 11:01:58 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37718 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbfEGPB5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 May 2019 11:01:46 -0400
-Received: by mail-yw1-f67.google.com with SMTP id b74so13338727ywe.5
-        for <linux-security-module@vger.kernel.org>; Tue, 07 May 2019 08:01:46 -0700 (PDT)
+        Tue, 7 May 2019 11:01:57 -0400
+Received: by mail-yw1-f66.google.com with SMTP id 186so4629085ywo.4
+        for <linux-security-module@vger.kernel.org>; Tue, 07 May 2019 08:01:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ggE0IExwCjB4k6WIxmzSu8XLZh0z2mz6L+zqNhg63xo=;
-        b=I/rKRHDcoy1zR0l1fLDiA0dDDETT3d5jF0dyIr6SPNq3ur0y+HVclnrCv7Nbnwtcwq
-         kgGx69WLh/2s8tZY32vY8IKUYh4OnraZl+mW1fNWzLIwt3vKwK+0ueTOjkF60VK+QLKU
-         tFS1wasWhenUTI2hb8miOiFuVW37jmEDeXzAk=
+        bh=Q1Ao0EL3fzpGzqcCZlr3ThSCXnnAEEIb4lmU9IoewpI=;
+        b=G6fAQDuxMpK+OeVsOqAr1qNZe9jkjPK3uV1Hj05ckhGeLhvANSPstZR9eb/Dmn45tm
+         l6Q55CFOYkqmvAdlBf+5BWbXKbKgqM2h6PNVNa3qOyq80UURuA2YKpZmyYQUd+qouCo7
+         QuZh2iX6cm3b/sym/vd9Go17bCcVh76S4J1zc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ggE0IExwCjB4k6WIxmzSu8XLZh0z2mz6L+zqNhg63xo=;
-        b=ISyfNYLxM99fK9+Y3vFJxFq/xS2m38iqFN/tvbWo11vzW/X9L21eqDLcX8BqMF0uyI
-         hslrsd6WlvUNVXgDZT86fAVraz7EkEuo1oSqZx06duNi2Pc2P3PkXY07OYj5WTkvrsF7
-         mmm20UvH9t0z2F1didTwGxdEzeq624on9hxNFwBsUGr5PWqKD8iaCzn4oxubS6OYvzk8
-         TN1+FKB0Yl48GnmSQVhOEGOiBL7Cyawh/RAm9Q06vMii0ZGyx718O//0QSmblbPXg8xQ
-         1I8dc8xZOOjPwOfON4s0QSZmaEV7QU7Fpff+JY1DrmPamrFBAt12bNObRBurejkwyej0
-         0kIw==
-X-Gm-Message-State: APjAAAWs9JLK6H9R4FPKL5Ocq6xY667XOn+fQdDPGX5T2wou+s/VAzXw
-        aWqcGgQSvBOB5TAsqkPVSxncl6YhGoYG4Msf4vZUaQ==
-X-Google-Smtp-Source: APXvYqxxXdA641IMZgkQ05k0vX6t9O7/RRfuOy1Uqwkxn96aypAds+RdzwhauTqUCopIC73Gxf2RJ34b2POju8ogpgs=
-X-Received: by 2002:a25:9b05:: with SMTP id y5mr20176387ybn.464.1557241305848;
- Tue, 07 May 2019 08:01:45 -0700 (PDT)
+        bh=Q1Ao0EL3fzpGzqcCZlr3ThSCXnnAEEIb4lmU9IoewpI=;
+        b=s/PUVaMf/gcePsFGA7gtKGi2xSILpw7Zc/3VHiSPJ3CMN4aU7cjjaJh32GwHnZ1QFm
+         +Kqq1e/FdAsXlovfh7J81H4msacqtsejr9aCueK6pxHPAhcvUkfVTz+zrdP39KGt3/2E
+         htnmOlutLOV+9YbfY1ljNAqn1rifcbD8Vh7T/NRqtPjX/ukLV1l6VDcrqZxb9yahpd6B
+         ZwzVVEaiBjceXCwkWVMrENIuZ4tFvMzmf+/xWQDX2JQfI47gpoQDiyeeZZX2OU0rN4yS
+         DLamP7NeeomR/r9BI28aykienEvG6nKoSSKuT83oMXzRXxcHGdMXg5GZ/61SgnrBY8xp
+         wkFg==
+X-Gm-Message-State: APjAAAXuUXgeDLzxPMka17m/Ziwo0YhQO4rDWsTy80b/AzZg2BZO1HlT
+        Up+6P8ANtCbuUhHZuvc8EnpOlzy6qJDpNaF8ankO0A==
+X-Google-Smtp-Source: APXvYqzF9pbBmck1zz64hXqDC0n1j+p27UDTWKIobjmyxl1zfaGFG/dQRi0adD2Ft/xdvRIeTFWT+OCPryqpw0vuAIo=
+X-Received: by 2002:a81:3ac5:: with SMTP id h188mr1342701ywa.322.1557241316248;
+ Tue, 07 May 2019 08:01:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190410165541.210809-1-mortonm@chromium.org> <CAGXu5j+tssZ24eGXJ9cQ+EFyYCiAkS_i3+gk1O84OrJS=JXu3g@mail.gmail.com>
-In-Reply-To: <CAGXu5j+tssZ24eGXJ9cQ+EFyYCiAkS_i3+gk1O84OrJS=JXu3g@mail.gmail.com>
+References: <20190410165548.211254-1-mortonm@chromium.org> <CAGXu5jK0GpT3MJfbNB=1bGGEGCah65v37_QXxOfhLOU0GM=Bwg@mail.gmail.com>
+In-Reply-To: <CAGXu5jK0GpT3MJfbNB=1bGGEGCah65v37_QXxOfhLOU0GM=Bwg@mail.gmail.com>
 From:   Micah Morton <mortonm@chromium.org>
-Date:   Tue, 7 May 2019 08:01:34 -0700
-Message-ID: <CAJ-EccOO3=8L-4ckX7=PW-7_jSnFthcscf0O70zKb0NacW=XxQ@mail.gmail.com>
-Subject: Re: [PATCH 04/10] LSM: SafeSetID: refactor safesetid_security_capable()
+Date:   Tue, 7 May 2019 08:01:45 -0700
+Message-ID: <CAJ-EccOkOC0OzVOX23bsTME+U9LmC7tj2bo4r55ZDyz4itbeJg@mail.gmail.com>
+Subject: Re: [PATCH 05/10] LSM: SafeSetID: refactor policy parsing
 To:     Kees Cook <keescook@chromium.org>
 Cc:     James Morris <jmorris@namei.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
@@ -68,15 +68,14 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Ready for merge.
 
-On Wed, Apr 10, 2019 at 10:14 AM Kees Cook <keescook@chromium.org> wrote:
+On Wed, Apr 10, 2019 at 10:15 AM Kees Cook <keescook@chromium.org> wrote:
 >
 > On Wed, Apr 10, 2019 at 9:55 AM Micah Morton <mortonm@chromium.org> wrote:
 > >
 > > From: Jann Horn <jannh@google.com>
 > >
-> > At the moment, safesetid_security_capable() has two nested conditional
-> > blocks, and one big comment for all the logic. Chop it up and reduce the
-> > amount of indentation.
+> > In preparation for changing the policy parsing logic, refactor the line
+> > parsing logic to be less verbose and move it into a separate function.
 > >
 > > Signed-off-by: Jann Horn <jannh@google.com>
 > > Signed-off-by: Micah Morton <mortonm@chromium.org>
@@ -86,61 +85,127 @@ On Wed, Apr 10, 2019 at 10:14 AM Kees Cook <keescook@chromium.org> wrote:
 > -Kees
 >
 > > ---
-> >  security/safesetid/lsm.c | 41 +++++++++++++++++++++++++---------------
-> >  1 file changed, 26 insertions(+), 15 deletions(-)
+> > I made a minor change to Jann's original patch to use u32 instead of
+> > s32 for the 'parsed_parent' and 'parsed_child' variables.
 > >
-> > diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-> > index 15cd13b5a211..ab429e1816c5 100644
-> > --- a/security/safesetid/lsm.c
-> > +++ b/security/safesetid/lsm.c
-> > @@ -55,21 +55,32 @@ static int safesetid_security_capable(const struct cred *cred,
-> >                                       int cap,
-> >                                       unsigned int opts)
-> >  {
-> > -       if (cap == CAP_SETUID &&
-> > -           setuid_policy_lookup(cred->uid, INVALID_UID) != SIDPOL_DEFAULT) {
-> > -               if (!(opts & CAP_OPT_INSETID)) {
-> > -                       /*
-> > -                        * Deny if we're not in a set*uid() syscall to avoid
-> > -                        * giving powers gated by CAP_SETUID that are related
-> > -                        * to functionality other than calling set*uid() (e.g.
-> > -                        * allowing user to set up userns uid mappings).
-> > -                        */
-> > -                       pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions\n",
-> > -                               __kuid_val(cred->uid));
-> > -                       return -1;
-> > -               }
-> > -       }
-> > -       return 0;
-> > +       /* We're only interested in CAP_SETUID. */
-> > +       if (cap != CAP_SETUID)
-> > +               return 0;
-> > +
-> > +       /*
-> > +        * If CAP_SETUID is currently used for a set*uid() syscall, we want to
-> > +        * let it go through here; the real security check happens later, in the
-> > +        * task_fix_setuid hook.
-> > +        */
-> > +       if ((opts & CAP_OPT_INSETID) != 0)
-> > +               return 0;
-> > +
-> > +       /*
-> > +        * If no policy applies to this task, allow the use of CAP_SETUID for
-> > +        * other purposes.
-> > +        */
-> > +       if (setuid_policy_lookup(cred->uid, INVALID_UID) == SIDPOL_DEFAULT)
-> > +               return 0;
-> > +
-> > +       /*
-> > +        * Reject use of CAP_SETUID for functionality other than calling
-> > +        * set*uid() (e.g. setting up userns uid mappings).
-> > +        */
-> > +       pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions\n",
-> > +               __kuid_val(cred->uid));
-> > +       return -1;
-> >  }
+> >  security/safesetid/securityfs.c | 84 +++++++++++++--------------------
+> >  1 file changed, 33 insertions(+), 51 deletions(-)
+> >
+> > diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
+> > index 2c6c829be044..90784a8d950a 100644
+> > --- a/security/safesetid/securityfs.c
+> > +++ b/security/safesetid/securityfs.c
+> > @@ -33,68 +33,50 @@ static struct safesetid_file_entry safesetid_files[] = {
 > >
 > >  /*
+> >   * In the case the input buffer contains one or more invalid UIDs, the kuid_t
+> > - * variables pointed to by 'parent' and 'child' will get updated but this
+> > + * variables pointed to by @parent and @child will get updated but this
+> >   * function will return an error.
+> > + * Contents of @buf may be modified.
+> >   */
+> > -static int parse_safesetid_whitelist_policy(const char __user *buf,
+> > -                                           size_t len,
+> > -                                           kuid_t *parent,
+> > -                                           kuid_t *child)
+> > +static int parse_policy_line(
+> > +       struct file *file, char *buf, kuid_t *parent, kuid_t *child)
+> >  {
+> > -       char *kern_buf;
+> > -       char *parent_buf;
+> > -       char *child_buf;
+> > -       const char separator[] = ":";
+> > +       char *child_str;
+> >         int ret;
+> > -       size_t first_substring_length;
+> > -       long parsed_parent;
+> > -       long parsed_child;
+> > +       u32 parsed_parent, parsed_child;
+> >
+> > -       /* Duplicate string from user memory and NULL-terminate */
+> > -       kern_buf = memdup_user_nul(buf, len);
+> > -       if (IS_ERR(kern_buf))
+> > -               return PTR_ERR(kern_buf);
+> > -
+> > -       /*
+> > -        * Format of |buf| string should be <UID>:<UID>.
+> > -        * Find location of ":" in kern_buf (copied from |buf|).
+> > -        */
+> > -       first_substring_length = strcspn(kern_buf, separator);
+> > -       if (first_substring_length == 0 || first_substring_length == len) {
+> > -               ret = -EINVAL;
+> > -               goto free_kern;
+> > -       }
+> > -
+> > -       parent_buf = kmemdup_nul(kern_buf, first_substring_length, GFP_KERNEL);
+> > -       if (!parent_buf) {
+> > -               ret = -ENOMEM;
+> > -               goto free_kern;
+> > -       }
+> > +       /* Format of |buf| string should be <UID>:<UID>. */
+> > +       child_str = strchr(buf, ':');
+> > +       if (child_str == NULL)
+> > +               return -EINVAL;
+> > +       *child_str = '\0';
+> > +       child_str++;
+> >
+> > -       ret = kstrtol(parent_buf, 0, &parsed_parent);
+> > +       ret = kstrtou32(buf, 0, &parsed_parent);
+> >         if (ret)
+> > -               goto free_both;
+> > +               return ret;
+> >
+> > -       child_buf = kern_buf + first_substring_length + 1;
+> > -       ret = kstrtol(child_buf, 0, &parsed_child);
+> > +       ret = kstrtou32(child_str, 0, &parsed_child);
+> >         if (ret)
+> > -               goto free_both;
+> > +               return ret;
+> >
+> >         *parent = make_kuid(current_user_ns(), parsed_parent);
+> > -       if (!uid_valid(*parent)) {
+> > -               ret = -EINVAL;
+> > -               goto free_both;
+> > -       }
+> > -
+> >         *child = make_kuid(current_user_ns(), parsed_child);
+> > -       if (!uid_valid(*child)) {
+> > -               ret = -EINVAL;
+> > -               goto free_both;
+> > -       }
+> > +       if (!uid_valid(*parent) || !uid_valid(*child))
+> > +               return -EINVAL;
+> >
+> > -free_both:
+> > -       kfree(parent_buf);
+> > -free_kern:
+> > +       return 0;
+> > +}
+> > +
+> > +static int parse_safesetid_whitelist_policy(
+> > +       struct file *file, const char __user *buf, size_t len,
+> > +       kuid_t *parent, kuid_t *child)
+> > +{
+> > +       char *kern_buf = memdup_user_nul(buf, len);
+> > +       int ret;
+> > +
+> > +       if (IS_ERR(kern_buf))
+> > +               return PTR_ERR(kern_buf);
+> > +       ret = parse_policy_line(file, kern_buf, parent, child);
+> >         kfree(kern_buf);
+> >         return ret;
+> >  }
+> > @@ -121,8 +103,8 @@ static ssize_t safesetid_file_write(struct file *file,
+> >                 flush_safesetid_whitelist_entries();
+> >                 break;
+> >         case SAFESETID_WHITELIST_ADD:
+> > -               ret = parse_safesetid_whitelist_policy(buf, len, &parent,
+> > -                                                                &child);
+> > +               ret = parse_safesetid_whitelist_policy(file, buf, len,
+> > +                                                      &parent, &child);
+> >                 if (ret)
+> >                         return ret;
+> >
 > > --
 > > 2.21.0.392.gf8f6787159e-goog
 > >
