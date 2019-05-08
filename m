@@ -2,152 +2,112 @@ Return-Path: <SRS0=Yqxb=TI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D36C04A6B
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 May 2019 13:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9944C04A6B
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 May 2019 15:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D148320644
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 May 2019 13:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77FCE20656
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 May 2019 15:38:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="UMtRA7bt"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GFN6F1CF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbfEHNWU (ORCPT
+        id S1726915AbfEHPiK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 May 2019 09:22:20 -0400
-Received: from mail-eopbgr780051.outbound.protection.outlook.com ([40.107.78.51]:38598
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725778AbfEHNWS (ORCPT
+        Wed, 8 May 2019 11:38:10 -0400
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:43349 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726830AbfEHPiJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 May 2019 09:22:18 -0400
+        Wed, 8 May 2019 11:38:09 -0400
+Received: by mail-qt1-f201.google.com with SMTP id q32so10353212qtk.10
+        for <linux-security-module@vger.kernel.org>; Wed, 08 May 2019 08:38:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=57n0axMWfSppjRKnE2U+vW//5BLzA4EzmC99Z5lXAeE=;
- b=UMtRA7btjltIWs48hXkIv4/4HA4IV3jQ8cBnXHCpLfp1I3Z4Akzil07iQIkMOgwEDQXTy0tz3IdYXq0FC5hSRTvvuT1Xev4r2cg33hAk4ofoV6UgoZNKh+NcLw6xgdfmxGeEwPGz/hf9ACdPlcTPaDajdfqjDPJ4X5c+Lq4NkTc=
-Received: from BN6PR03CA0059.namprd03.prod.outlook.com (2603:10b6:404:4c::21)
- by CY4PR03MB3125.namprd03.prod.outlook.com (2603:10b6:910:53::26) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1856.15; Wed, 8 May
- 2019 13:22:07 +0000
-Received: from CY1NAM02FT028.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::204) by BN6PR03CA0059.outlook.office365.com
- (2603:10b6:404:4c::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1878.21 via Frontend
- Transport; Wed, 8 May 2019 13:22:06 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.57)
- smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- CY1NAM02FT028.mail.protection.outlook.com (10.152.75.132) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1856.11
- via Frontend Transport; Wed, 8 May 2019 13:22:05 +0000
-Received: from NWD2HUBCAS9.ad.analog.com (nwd2hubcas9.ad.analog.com [10.64.69.109])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x48DM4Hp020338
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Wed, 8 May 2019 06:22:04 -0700
-Received: from NWD2MBX7.ad.analog.com ([fe80::190e:f9c1:9a22:9663]) by
- NWD2HUBCAS9.ad.analog.com ([fe80::44a2:871b:49ab:ea47%12]) with mapi id
- 14.03.0415.000; Wed, 8 May 2019 09:22:04 -0400
-From:   "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-To:     "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 03/16] lib,treewide: add new match_string() helper/macro
-Thread-Topic: [PATCH 03/16] lib,treewide: add new match_string() helper/macro
-Thread-Index: AQHVBZFQXT7pBvOEwE+osXNwuBSvQKZhdwMAgAACFgCAAADdAA==
-Date:   Wed, 8 May 2019 13:22:03 +0000
-Message-ID: <b2440bc9485456a7a90a488c528997587b22088b.camel@analog.com>
-References: <20190508112842.11654-1-alexandru.ardelean@analog.com>
-         <20190508112842.11654-5-alexandru.ardelean@analog.com>
-         <20190508131128.GL9224@smile.fi.intel.com>
-         <20190508131856.GB10138@kroah.com>
-In-Reply-To: <20190508131856.GB10138@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.50.1.244]
-x-adiroutedonprem: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1E6885BF46859D4BA859205743820E9A@analog.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(1496009)(396003)(136003)(376002)(346002)(39860400002)(2980300002)(189003)(199004)(486006)(70586007)(246002)(26005)(126002)(2906002)(6246003)(2501003)(316002)(86362001)(70206006)(54906003)(7416002)(11346002)(36756003)(110136005)(5660300002)(476003)(4744005)(50466002)(102836004)(356004)(446003)(478600001)(436003)(186003)(106002)(426003)(4326008)(2616005)(229853002)(8936002)(7736002)(14454004)(336012)(7636002)(3846002)(76176011)(118296001)(6116002)(7696005)(8676002)(2486003)(305945005)(47776003)(23676004)(142933001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR03MB3125;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bf20b47f-7a5e-4fec-5507-08d6d3b82ade
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4709054)(2017052603328)(7193020);SRVR:CY4PR03MB3125;
-X-MS-TrafficTypeDiagnostic: CY4PR03MB3125:
-X-Microsoft-Antispam-PRVS: <CY4PR03MB3125B0A44595D00ED95BC72FF9320@CY4PR03MB3125.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-Forefront-PRVS: 0031A0FFAF
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: Y23xOtmneh07yASE+/blELoCkrmoUK2VWWlwgfLPI2XEB7HSNAG31rJcUjy0gmVYvxrvWAJWix4tCmwxJND2sMhli4fdVGFvwA+r1WjwvaHAApuJYd3VNN4OWSQT/CJhB+OvvdFJJwQlGID7fD9BmmAUUIz44XSoq5JB1yP3qTQOjUc9QybzLdR4/w1V8KZgHUgitxp1f85Fsq6Gp/t7tpe3x9bohvD3luQWpxzuQodTpuIoNkt9J/0jNcc4OJcpeiQYGsEMFn1Wm6GweN4qfiaHcfFLjzADZt7JchoV72QH3aogegojaUXzeYue5Y1hMAswgJmlCCOkjQNQRyvvx6iYA32Asn2Wy2nCRCMqaFN0wb4+EM9SyjG0jUY9CnHEEttETR6crG7QDiTZNLtDe3Op5pVyuXYipjCRAcV6uKw=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2019 13:22:05.0484
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf20b47f-7a5e-4fec-5507-08d6d3b82ade
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR03MB3125
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=jQTDk5zUQiu0jSAANSS6F2tKehHuyoJNILpoLlCvpOE=;
+        b=GFN6F1CFAn8rem5iUDqLjf1tfi+RrhFiRNeh/0F2po0axneRlVapHhrppUL/61zKqa
+         fqziisUOusgcNBy3YbprB/0BuVtDJreqKdohUPF1WERb9r4bJ3xZCcu4ADVbVfVB6f31
+         F84NdwY+v3XeVNLpl7AvM3G0VguBxS7GRXu8APDPhsMHavQ2PJ8+w+3zWDJS+PLRRpI7
+         MxxjitSgkHRhSyhrDMur3ihTXAk0Ftgs1r521FXCwSoQzNtSD2nAihFYWbdWXr7fx4yF
+         Imhr3H9U682NR/6wHUZ2sy0nXTUp9qrTit0Sb4OCZM0m8HJEcpSQjyQYjKYB1xsIZJFE
+         IfCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=jQTDk5zUQiu0jSAANSS6F2tKehHuyoJNILpoLlCvpOE=;
+        b=HK4HZ+PbX5MoJ0f6vQ6pwCc1uBcMg2llFZS/LEQC0ry161rv9IM+K/xFHpZm+/ofjl
+         HBt0zwfDWjW0R5CudU/NYdDmi+7pnd2gEApjJvWdLqj/Q74HNOzurvkYdjHPcnA1rQkO
+         1Wf7S+oJBhdBAKK5bQKU5bUAkpO3q2ioC5EjQ2XmjmD/cVqc/pzUta6rEj1d0+D4ou+d
+         BMU1W6L0eT8Vga/o12L3Y296ho05csBU8lFrF9tCiUHNgGkOa/3lDscQA/AD8nZu7aBy
+         pyDcuvSe1gpFX2ezW1oRBo5pcKV6y0eYad8GhVvIt/nNLpeFrEndliek1z0v8vslJgh7
+         X9Xg==
+X-Gm-Message-State: APjAAAVvRU2I4svreSaBvWYryGVbuNVku0Vlnzptou8cfS5eZX6wSpCa
+        F9WI/pfQZeWpa0H8RXwLAXLCoCAQuOM=
+X-Google-Smtp-Source: APXvYqwB6BG1aUc84ClZ+1GOpENtD9vu+DWDbF6HSE0y1Oiy+N+VdKRxD9HjOVUJUdCXtfed6Q5q6eop53c=
+X-Received: by 2002:ac8:3fe3:: with SMTP id v32mr31243311qtk.307.1557329888814;
+ Wed, 08 May 2019 08:38:08 -0700 (PDT)
+Date:   Wed,  8 May 2019 17:37:32 +0200
+Message-Id: <20190508153736.256401-1-glider@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+Subject: [PATCH 0/4] RFC: add init_on_alloc/init_on_free boot options
+From:   Alexander Potapenko <glider@google.com>
+To:     akpm@linux-foundation.org, cl@linux.com, keescook@chromium.org,
+        labbott@redhat.com
+Cc:     linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, yamada.masahiro@socionext.com,
+        jmorris@namei.org, serge@hallyn.com, ndesaulniers@google.com,
+        kcc@google.com, dvyukov@google.com, sspatil@android.com,
+        rdunlap@infradead.org, jannh@google.com, mark.rutland@arm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-T24gV2VkLCAyMDE5LTA1LTA4IGF0IDE1OjE4ICswMjAwLCBHcmVnIEtIIHdyb3RlOg0KPiANCj4g
-DQo+IE9uIFdlZCwgTWF5IDA4LCAyMDE5IGF0IDA0OjExOjI4UE0gKzAzMDAsIEFuZHkgU2hldmNo
-ZW5rbyB3cm90ZToNCj4gPiBPbiBXZWQsIE1heSAwOCwgMjAxOSBhdCAwMjoyODoyOVBNICswMzAw
-LCBBbGV4YW5kcnUgQXJkZWxlYW4gd3JvdGU6DQo+ID4gPiBUaGlzIGNoYW5nZSByZS1pbnRyb2R1
-Y2VzIGBtYXRjaF9zdHJpbmcoKWAgYXMgYSBtYWNybyB0aGF0IHVzZXMNCj4gPiA+IEFSUkFZX1NJ
-WkUoKSB0byBjb21wdXRlIHRoZSBzaXplIG9mIHRoZSBhcnJheS4NCj4gPiA+IFRoZSBtYWNybyBp
-cyBhZGRlZCBpbiBhbGwgdGhlIHBsYWNlcyB0aGF0IGRvDQo+ID4gPiBgbWF0Y2hfc3RyaW5nKF9h
-LCBBUlJBWV9TSVpFKF9hKSwgcylgLCBzaW5jZSB0aGUgY2hhbmdlIGlzIHByZXR0eQ0KPiA+ID4g
-c3RyYWlnaHRmb3J3YXJkLg0KPiA+IA0KPiA+IENhbiB5b3Ugc3BsaXQgaW5jbHVkZS9saW51eC8g
-Y2hhbmdlIGZyb20gdGhlIHJlc3Q/DQo+IA0KPiBUaGF0IHdvdWxkIGJyZWFrIHRoZSBidWlsZCwg
-d2h5IGRvIHlvdSB3YW50IGl0IHNwbGl0IG91dD8gIFRoaXMgbWFrZXMNCj4gc2Vuc2UgYWxsIGFz
-IGEgc2luZ2xlIHBhdGNoIHRvIG1lLg0KPiANCg0KTm90IHJlYWxseS4NCkl0IHdvdWxkIGJlIGp1
-c3QgYmUgdGhlIG5ldyBtYXRjaF9zdHJpbmcoKSBoZWxwZXIvbWFjcm8gaW4gYSBuZXcgY29tbWl0
-Lg0KQW5kIHRoZSBjb252ZXJzaW9ucyBvZiB0aGUgc2ltcGxlIHVzZXJzIG9mIG1hdGNoX3N0cmlu
-ZygpICh0aGUgb25lcyB1c2luZw0KQVJSQVlfU0laRSgpKSBpbiBhbm90aGVyIGNvbW1pdC4NCg0K
-VGhhbmtzDQpBbGV4DQoNCj4gdGhhbmtzLA0KPiANCj4gZ3JlZyBrLWgNCg==
+Provide init_on_alloc and init_on_free boot options.
+
+These are aimed at preventing possible information leaks and making the
+control-flow bugs that depend on uninitialized values more deterministic.
+
+Enabling either of the options guarantees that the memory returned by the
+page allocator and SL[AOU]B is initialized with zeroes.
+
+Enabling init_on_free also guarantees that pages and heap objects are
+initialized right after they're freed, so it won't be possible to access
+stale data by using a dangling pointer.
+
+Alexander Potapenko (4):
+  mm: security: introduce init_on_alloc=1 and init_on_free=1 boot
+    options
+  lib: introduce test_meminit module
+  gfp: mm: introduce __GFP_NOINIT
+  net: apply __GFP_NOINIT to AF_UNIX sk_buff allocations
+
+ .../admin-guide/kernel-parameters.txt         |   8 +
+ drivers/infiniband/core/uverbs_ioctl.c        |   2 +-
+ include/linux/gfp.h                           |   6 +-
+ include/linux/mm.h                            |  22 ++
+ include/net/sock.h                            |   5 +
+ kernel/kexec_core.c                           |   4 +-
+ lib/Kconfig.debug                             |   8 +
+ lib/Makefile                                  |   1 +
+ lib/test_meminit.c                            | 205 ++++++++++++++++++
+ mm/dmapool.c                                  |   2 +-
+ mm/page_alloc.c                               |  62 +++++-
+ mm/slab.c                                     |  18 +-
+ mm/slab.h                                     |  16 ++
+ mm/slob.c                                     |  23 +-
+ mm/slub.c                                     |  28 ++-
+ net/core/sock.c                               |  31 ++-
+ net/unix/af_unix.c                            |  13 +-
+ security/Kconfig.hardening                    |  16 ++
+ 18 files changed, 439 insertions(+), 31 deletions(-)
+ create mode 100644 lib/test_meminit.c
+
+-- 
+2.21.0.1020.gf2820cf01a-goog
+
