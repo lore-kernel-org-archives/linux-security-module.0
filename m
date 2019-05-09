@@ -6,51 +6,40 @@ X-Spam-Status: No, score=-10.9 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C414EC04AB1
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 17:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DD6C04AB1
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 17:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A419120656
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 17:25:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1607820675
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 17:28:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbfEIRZ0 (ORCPT
+        id S1726659AbfEIR2u (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 May 2019 13:25:26 -0400
-Received: from namei.org ([65.99.196.166]:38266 "EHLO namei.org"
+        Thu, 9 May 2019 13:28:50 -0400
+Received: from namei.org ([65.99.196.166]:38274 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726656AbfEIRZZ (ORCPT
+        id S1726658AbfEIR2u (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 May 2019 13:25:25 -0400
+        Thu, 9 May 2019 13:28:50 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x49HPOMA025900;
-        Thu, 9 May 2019 17:25:24 GMT
-Date:   Fri, 10 May 2019 03:25:24 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x49HSnbA026139;
+        Thu, 9 May 2019 17:28:49 GMT
+Date:   Fri, 10 May 2019 03:28:49 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Security subsystem: integrity updates for v5.2
-Message-ID: <alpine.LRH.2.21.1905100323410.25349@namei.org>
+Subject: [GIT PULL] Security subsystem: Smack updates for v5.2
+Message-ID: <alpine.LRH.2.21.1905100325330.25349@namei.org>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-194307007-1557422724=:25349"
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From Casey: "There's one bug fix for IPv6 handling and two memory use 
+improvements."
 
---1665246916-194307007-1557422724=:25349
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
-
-From Mimi:
-    
-    "This pull request contains just three patches, the remainder are
-    either included in other pull requests (eg. audit, lockdown) or will
-    be upstreamed via other subsystems (eg. kselftests, Power).  Included
-    in this pull request is one bug fix, one documentation update, and
-    extending the x86 IMA arch policy rules to coordinate the different
-    kernel module signature verification methods."
+Plus a couple of further bugfixes.
 
 The following changes since commit fe9fd2ef383c2f5883fcd3f7adce0de9ce2556ff:
 
@@ -58,26 +47,30 @@ The following changes since commit fe9fd2ef383c2f5883fcd3f7adce0de9ce2556ff:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-smack
 
-for you to fetch changes up to 2bfebea90dd5e8c57ae1021a5d1bb6c1057eee6d:
+for you to fetch changes up to 8d31a5c35ed179825a2145881ad7cd8f9907d94b:
 
-  Merge branch 'next-integrity-for-james' of git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity into next-integrity (2019-04-12 15:20:23 -0700)
+  Merge branch 'smack-for-5.2-b' of https://github.com/cschaufler/next-smack into next-smack (2019-05-06 20:24:51 -0700)
 
 ----------------------------------------------------------------
-James Morris (1):
-      Merge branch 'next-integrity-for-james' of git://git.kernel.org/.../zohar/linux-integrity into next-integrity
+Casey Schaufler (3):
+      Smack: Create smack_rule cache to optimize memory usage
+      Smack: Fix IPv6 handling of 0 secmark
+      Smack: Fix kbuild reported build error
 
-Mimi Zohar (2):
-      x86/ima: require signed kernel modules
-      x86/ima: add missing include
+James Morris (3):
+      Merge branch 'smack-for-5.2' of https://github.com/cschaufler/next-smack into next-smack
+      Merge branch 'smack-for-5.2-b' of https://github.com/cschaufler/next-smack into next-smack
+      Merge branch 'smack-for-5.2-b' of https://github.com/cschaufler/next-smack into next-smack
 
-Petr Vorel (1):
-      doc/kernel-parameters.txt: Deprecate ima_appraise_tcb
+Tetsuo Handa (1):
+      smack: Check address length before reading address family
 
- Documentation/admin-guide/kernel-parameters.txt |  5 ++---
- arch/x86/kernel/ima_arch.c                      | 10 +++++++++-
- include/linux/module.h                          |  5 +++++
- kernel/module.c                                 |  5 +++++
- 4 files changed, 21 insertions(+), 4 deletions(-)
---1665246916-194307007-1557422724=:25349--
+Vishal Goel (1):
+      smack: removal of global rule list
+
+ security/smack/smack.h     |  1 +
+ security/smack/smack_lsm.c | 34 +++++++++++++++++++++++-----
+ security/smack/smackfs.c   | 55 ++++++++++++++--------------------------------
+ 3 files changed, 45 insertions(+), 45 deletions(-)
