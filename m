@@ -2,68 +2,72 @@ Return-Path: <SRS0=3Nce=TJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D686C04AB1
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 20:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44508C04AB1
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 22:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 602CD217D7
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 20:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557435026;
-	bh=gIJEdJgaa6GXbK6N5/rL43It8AHH+QUeyq0uEvYq6FU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=yR5C+q7rNdCTmCALF6lD01ywjlWhwRGb2ir10TQ9v+l0EbgtpXl9iHnHFs9qsrR4Z
-	 crC94DGJmioZy1EtfebXC44rjHQzK08AtA5KlDjax8TxdU8YVGb82qwgpLtAjKHUDZ
-	 SJ5iu5eF1fOTeU9ZeKmeGNA3CnG6lCpIGXJkIgUY=
+	by mail.kernel.org (Postfix) with ESMTP id 15E3B20989
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 22:19:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfEIUuU (ORCPT
+        id S1726909AbfEIWT5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 May 2019 16:50:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37416 "EHLO mail.kernel.org"
+        Thu, 9 May 2019 18:19:57 -0400
+Received: from namei.org ([65.99.196.166]:38378 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726968AbfEIUuQ (ORCPT
+        id S1726824AbfEIWT5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 May 2019 16:50:16 -0400
-Subject: Re: [GIT PULL] Security subsystem: Smack updates for v5.2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557435015;
-        bh=gIJEdJgaa6GXbK6N5/rL43It8AHH+QUeyq0uEvYq6FU=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=mwIG5r0185QMyMQcvZTAXA9UpK1iXkEe1RstPra7YDMZjz8AhQdszuavGeUbjl2g/
-         LLcn0SrMDwZWrEyvt90eBgGhdsG7RlHlGfJQGxg8jFk3pTIvq5972KFTwe0e0UgCHI
-         8ONheii/niwoNB2KPWos6x7ehckXXwE1UzfRt1ww=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <alpine.LRH.2.21.1905100325330.25349@namei.org>
-References: <alpine.LRH.2.21.1905100325330.25349@namei.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <alpine.LRH.2.21.1905100325330.25349@namei.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
- next-smack
-X-PR-Tracked-Commit-Id: 8d31a5c35ed179825a2145881ad7cd8f9907d94b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 800c608c976c3f0a6d02ed7fbc600f1f6962ac73
-Message-Id: <155743501574.12157.3971455155840137875.pr-tracker-bot@kernel.org>
-Date:   Thu, 09 May 2019 20:50:15 +0000
-To:     James Morris <jmorris@namei.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+        Thu, 9 May 2019 18:19:57 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x49MJtYU014529;
+        Thu, 9 May 2019 22:19:55 GMT
+Date:   Fri, 10 May 2019 08:19:55 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [GIT PULL] security subsytem: TPM changes for v5.2
+In-Reply-To: <CAHk-=whqzNFfeNOouBjH2GKMVgMi22fsNOaCgbUOnCPmKmEXeQ@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1905100819390.13541@namei.org>
+References: <alpine.LRH.2.21.1905100320110.25349@namei.org> <CAHk-=whqzNFfeNOouBjH2GKMVgMi22fsNOaCgbUOnCPmKmEXeQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Fri, 10 May 2019 03:28:49 +1000 (AEST):
+On Thu, 9 May 2019, Linus Torvalds wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-smack
+> On Thu, May 9, 2019 at 10:23 AM James Morris <jmorris@namei.org> wrote:
+> >
+> > Bugfixes and new selftests for v5.1 features (partial reads in /dev/tpm0).
+> 
+> What the heck is going on?
+> 
+> I got all of these long ago in the "TPM fixes" branch for 5.1. One
+> month ago, merge commit a556810d8e06.
+> 
+> These are just rebased (!) copies of stuff I already have, and they should
+> 
+>  (a) never have been rebased in the first place
+> 
+>  (b) certainly not be re-sent to me as a new branch
+> 
+> Please throw this branch away and make sure it really is dead and
+> buried and never shows up again.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/800c608c976c3f0a6d02ed7fbc600f1f6962ac73
+Yikes, ok.
 
-Thank you!
+> And take a moment to look at what happened and why this broken branch
+> was duplicated and sent twice!
+
+Could it be something I pulled in? I haven't used 'rebase' in many years.
+
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+James Morris
+<jmorris@namei.org>
+
