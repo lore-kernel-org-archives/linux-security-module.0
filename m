@@ -2,81 +2,116 @@ Return-Path: <SRS0=3Nce=TJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E790C04AAF
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 03:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EBBC04AB2
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 11:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEA7E20989
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 03:56:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D64320989
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 11:27:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbfEID4i (ORCPT
+        id S1726460AbfEIL1e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 May 2019 23:56:38 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:57330 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbfEID4i (ORCPT
+        Thu, 9 May 2019 07:27:34 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32927 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725872AbfEIL1d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 May 2019 23:56:38 -0400
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x493uX9p035504;
-        Thu, 9 May 2019 12:56:33 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
- Thu, 09 May 2019 12:56:33 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x493uSXZ035360
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 9 May 2019 12:56:33 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: Tomoyo build warnings
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-security-module@vger.kernel.org
-References: <alpine.LRH.2.21.1905090854080.14157@namei.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <73f71089-26e1-b19a-ec19-44fd91af729a@i-love.sakura.ne.jp>
-Date:   Thu, 9 May 2019 12:56:27 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 9 May 2019 07:27:33 -0400
+Received: from lhreml703-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id EE505197B016B0870572;
+        Thu,  9 May 2019 12:27:31 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.44) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 9 May 2019 12:27:25 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
+        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
+        <takondra@cisco.com>, <kamensky@cisco.com>, <hpa@zytor.com>,
+        <arnd@arndb.de>, <rob@landley.net>, <james.w.mcmechan@gmail.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2 0/3] initramfs: add support for xattrs in the initial ram disk
+Date:   Thu, 9 May 2019 13:24:17 +0200
+Message-ID: <20190509112420.15671-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1905090854080.14157@namei.org>
-Content-Type: text/plain; charset=iso-8859-7
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/05/09 7:54, James Morris wrote:
-> I'm seeing these during a kernel build in my tree:
+This patch set aims at solving the following use case: appraise files from
+the initial ram disk. To do that, IMA checks the signature/hash from the
+security.ima xattr. Unfortunately, this use case cannot be implemented
+currently, as the CPIO format does not support xattrs.
 
-Well, it seems that clang-4 and gcc-9 got this new warning, and
-Linus Torvalds recently silenced this warning...
+This proposal consists in marshaling pathnames and xattrs in a file called
+.xattr-list. They are unmarshaled by the CPIO parser after all files have
+been extracted.
 
-  commit 6f303d60534c46aa1a239f29c321f95c83dda748
-  Author: Linus Torvalds <torvalds@linux-foundation.org>
-  Date:   Wed May 1 11:05:41 2019 -0700
+The difference from v1 (https://lkml.org/lkml/2018/11/22/1182) is that all
+xattrs are stored in a single file and not per file (solves the file name
+limitation issue, as it is not necessary to add a suffix to files
+containing xattrs).
 
-      gcc-9: silence 'address-of-packed-member' warning
+The difference with another proposal
+(https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+included in an image without changing the image format, as opposed to
+defining a new one. As seen from the discussion, if a new format has to be
+defined, it should fix the issues of the existing format, which requires
+more time.
 
-      We already did this for clang, but now gcc has that warning too.  Yes,
-      yes, the address may be unaligned.  And that's kind of the point.
+To fulfill both requirements, adding support for xattrs in a short time and
+defining a new image format properly, this patch set takes an incremental
+approach: it introduces a parser of xattrs that can be used either if
+xattrs are in a regular file or directly added to the image (this patch set
+reuses patch 9/15 of the existing proposal); in addition, it introduces a
+wrapper of the xattr parser, to read xattrs from a file.
 
-      Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+The changes introduced by this patch set don't cause any compatibility
+issue: kernels without the xattr parser simply extracts .xattr-list and
+don't unmarshal xattrs; kernels with the xattr parser don't unmarshal
+xattrs if .xattr-list is not found in the image.
 
-Since "struct list_head" consists of aligned two pointers, I wonder
-how a member next to "struct list_head" can fail to be aligned...
+From the kernel space perspective, backporting this functionality to older
+kernels should be very easy. It is sufficient to add a call to the new
+function do_readxattrs(). From the user space perspective, no change is
+required for the use case. A new dracut module (module-setup.sh) will
+execute:
 
-  struct tomoyo_shared_acl_head {
-      struct list_head list;
-      atomic_t users;
-  } __packed;
+getfattr --absolute-names -d -P -R -e hex -m security.ima \
+    <file list> | xattr.awk -b > ${initdir}/.xattr-list
 
-But since this structure is not visible from userspace, I can accept
-dropping __packed and wasting a few bytes if that commit doesn't go upstream.
+where xattr.awk is the script that marshals xattrs (see patch 3/3). The
+same can be done with the initramfs-tools ram disk generator.
+
+Changelog
+
+v1:
+
+- move xattr unmarshaling to CPIO parser
+
+
+Mimi Zohar (1):
+  initramfs: set extended attributes
+
+Roberto Sassu (2):
+  fs: add ksys_lsetxattr() wrapper
+  initramfs: introduce do_readxattrs()
+
+ fs/xattr.c               |   9 ++-
+ include/linux/syscalls.h |   3 +
+ init/initramfs.c         | 152 ++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 161 insertions(+), 3 deletions(-)
+
+-- 
+2.17.1
 
