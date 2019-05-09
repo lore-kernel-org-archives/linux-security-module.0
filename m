@@ -6,77 +6,78 @@ X-Spam-Status: No, score=-10.9 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF85C04AB1
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 17:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C414EC04AB1
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 17:25:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BDEC20656
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 17:23:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A419120656
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 17:25:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfEIRXY (ORCPT
+        id S1726713AbfEIRZ0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 May 2019 13:23:24 -0400
-Received: from namei.org ([65.99.196.166]:38258 "EHLO namei.org"
+        Thu, 9 May 2019 13:25:26 -0400
+Received: from namei.org ([65.99.196.166]:38266 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726576AbfEIRXX (ORCPT
+        id S1726656AbfEIRZZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 May 2019 13:23:23 -0400
+        Thu, 9 May 2019 13:25:25 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x49HNMvU025826;
-        Thu, 9 May 2019 17:23:22 GMT
-Date:   Fri, 10 May 2019 03:23:22 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x49HPOMA025900;
+        Thu, 9 May 2019 17:25:24 GMT
+Date:   Fri, 10 May 2019 03:25:24 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [GIT PULL] security subsytem: TPM changes for v5.2
-Message-ID: <alpine.LRH.2.21.1905100320110.25349@namei.org>
+Subject: [GIT PULL] Security subsystem: integrity updates for v5.2
+Message-ID: <alpine.LRH.2.21.1905100323410.25349@namei.org>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/mixed; boundary="1665246916-194307007-1557422724=:25349"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From Jarkko:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Bugfixes and new selftests for v5.1 features (partial reads in /dev/tpm0).
+--1665246916-194307007-1557422724=:25349
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
 
+From Mimi:
+    
+    "This pull request contains just three patches, the remainder are
+    either included in other pull requests (eg. audit, lockdown) or will
+    be upstreamed via other subsystems (eg. kselftests, Power).  Included
+    in this pull request is one bug fix, one documentation update, and
+    extending the x86 IMA arch policy rules to coordinate the different
+    kernel module signature verification methods."
 
-The following changes since commit 8d93e952fba216cd0811247f6360d97e0465d5fc:
+The following changes since commit fe9fd2ef383c2f5883fcd3f7adce0de9ce2556ff:
 
-  LSM: lsm_hooks.h: fix documentation format (2019-03-26 16:46:22 -0700)
+  Revert "security: inode: fix a missing check for securityfs_create_file" (2019-04-10 14:59:20 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
 
-for you to fetch changes up to a94e55b91c7d1494c1a4598178dc5f1d7dfe12aa:
+for you to fetch changes up to 2bfebea90dd5e8c57ae1021a5d1bb6c1057eee6d:
 
-  Merge tag 'tpmdd-next-20190329' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm (2019-03-29 11:39:20 -0700)
+  Merge branch 'next-integrity-for-james' of git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity into next-integrity (2019-04-12 15:20:23 -0700)
 
 ----------------------------------------------------------------
 James Morris (1):
-      Merge tag 'tpmdd-next-20190329' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm
+      Merge branch 'next-integrity-for-james' of git://git.kernel.org/.../zohar/linux-integrity into next-integrity
 
-Jarkko Sakkinen (2):
-      KEYS: trusted: allow trusted.ko to initialize w/o a TPM
-      tpm: turn on TPM on suspend for TPM 1.x
+Mimi Zohar (2):
+      x86/ima: require signed kernel modules
+      x86/ima: add missing include
 
-Tadeusz Struk (3):
-      selftests/tpm2: Open tpm dev in unbuffered mode
-      selftests/tpm2: Extend tests to cover partial reads
-      tpm: fix an invalid condition in tpm_common_poll
+Petr Vorel (1):
+      doc/kernel-parameters.txt: Deprecate ima_appraise_tcb
 
-Yue Haibing (1):
-      tpm: Fix the type of the return value in calc_tpm2_event_size()
-
-ndesaulniers@google.com (1):
-      KEYS: trusted: fix -Wvarags warning
-
- drivers/char/tpm/eventlog/tpm2.c           |  4 +-
- drivers/char/tpm/tpm-dev-common.c          |  9 ++++-
- drivers/char/tpm/tpm-interface.c           | 14 +++----
- include/keys/trusted.h                     |  2 +-
- security/keys/trusted.c                    | 32 +++++++++++----
- tools/testing/selftests/tpm2/tpm2.py       |  5 ++-
- tools/testing/selftests/tpm2/tpm2_tests.py | 63 ++++++++++++++++++++++++++++++
- 7 files changed, 108 insertions(+), 21 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  5 ++---
+ arch/x86/kernel/ima_arch.c                      | 10 +++++++++-
+ include/linux/module.h                          |  5 +++++
+ kernel/module.c                                 |  5 +++++
+ 4 files changed, 21 insertions(+), 4 deletions(-)
+--1665246916-194307007-1557422724=:25349--
