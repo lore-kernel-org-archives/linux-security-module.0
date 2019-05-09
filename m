@@ -2,75 +2,104 @@ Return-Path: <SRS0=3Nce=TJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DD6C04AB1
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 17:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C49C04AB3
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 18:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1607820675
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 17:28:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A021217F5
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 18:33:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="m7MZm5jn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfEIR2u (ORCPT
+        id S1726716AbfEISdu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 May 2019 13:28:50 -0400
-Received: from namei.org ([65.99.196.166]:38274 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726658AbfEIR2u (ORCPT
+        Thu, 9 May 2019 14:33:50 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46835 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbfEISdu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 May 2019 13:28:50 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x49HSnbA026139;
-        Thu, 9 May 2019 17:28:49 GMT
-Date:   Fri, 10 May 2019 03:28:49 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Security subsystem: Smack updates for v5.2
-Message-ID: <alpine.LRH.2.21.1905100325330.25349@namei.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Thu, 9 May 2019 14:33:50 -0400
+Received: by mail-ot1-f65.google.com with SMTP id v17so3184657otp.13
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2019 11:33:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6LDuh9KBtjyZgSBqOPlt4ghOhYRTyR7+OimbX5fXjTc=;
+        b=m7MZm5jn+yUTyqYeKP+3U2AfIk2e/Jl7gRlj1d0vNElu89qzzwPGU4WFh2pRN3iGK8
+         6NkXYiIaZxmWqTWtDTsXMCjBrxg3Wi+ON8VLjl28KeXWmZ1yCAk7U2iA9U5wOLGpVrf6
+         4C4jvycCm53aEaILky7UnN3UKRuEHLH4DYCjk6kbWNpnMsPw3O4PTkZ34RDNe5jWnbck
+         UmNUnENCXk7ZL3MZ1rYS34gPy7dbedYHUod/vucgxDHzv2UGKYZZ9m/Ped5rsgK+BFk/
+         Fy+UM5SnDsH5pIswj8zYSyHMqUWESF+i8+t6ovRwRYGQ/c3kpcWuWIDJlTrTTBHJz/6S
+         zOfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6LDuh9KBtjyZgSBqOPlt4ghOhYRTyR7+OimbX5fXjTc=;
+        b=Ag94/QpSa/768fuDUTJkILyEPkkBxd6n9qqgg37aci6oY6Pa1zt9n63bQX9KxjSY35
+         QhotW8sdoUpDKxmkwddlCXd3+OmKjbPgnhK1Ah9WmBb1oCwj0L6bjmGSWi3ul8EznvqA
+         cUbW44jOKRxSOLPlUjk7BRbybjlY1Z3pTHz+vSPT7oJfnL7BvEW6VSS3o5Xk5/82r1hh
+         vtjTTsG0snvJAkAfPncvMU+zZdriu3zexwJ63TaC31/Yzw8De1+nf4EmdwmfQhYnsHbd
+         6XmWsxZSncD9imil8NtSPMDvgmR1aBQI2ABKyxkRfCuCQnYhdR40seRh3PpALCEYPe3e
+         y5IA==
+X-Gm-Message-State: APjAAAUV/fDlVc7UUgwx/emvq2ILbBEY3f0qZXHumYZP1JGXueS/e/Fg
+        eHd/GSNs7u/QqrxYxKEPcAwg7w==
+X-Google-Smtp-Source: APXvYqyC+t5IsIZRkPqBYoKSelJuMnV/D1ZbE+b+3mQahrODmHmWzUUCjlIwBfKd2Oj/f6iFjJVnEg==
+X-Received: by 2002:a9d:7c88:: with SMTP id q8mr151513otn.167.1557426829720;
+        Thu, 09 May 2019 11:33:49 -0700 (PDT)
+Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
+        by smtp.googlemail.com with ESMTPSA id j1sm1034165otl.43.2019.05.09.11.33.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 11:33:49 -0700 (PDT)
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk
+Cc:     linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
+        arnd@arndb.de, james.w.mcmechan@gmail.com
+References: <20190509112420.15671-1-roberto.sassu@huawei.com>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <fca8e601-1144-1bb8-c007-518651f624a5@landley.net>
+Date:   Thu, 9 May 2019 13:34:13 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190509112420.15671-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From Casey: "There's one bug fix for IPv6 handling and two memory use 
-improvements."
+On 5/9/19 6:24 AM, Roberto Sassu wrote:
+> This patch set aims at solving the following use case: appraise files from
+> the initial ram disk. To do that, IMA checks the signature/hash from the
+> security.ima xattr. Unfortunately, this use case cannot be implemented
+> currently, as the CPIO format does not support xattrs.
+> 
+> This proposal consists in marshaling pathnames and xattrs in a file called
+> .xattr-list. They are unmarshaled by the CPIO parser after all files have
+> been extracted.
 
-Plus a couple of further bugfixes.
+So it's in-band signalling that has a higher peak memory requirement.
 
-The following changes since commit fe9fd2ef383c2f5883fcd3f7adce0de9ce2556ff:
+> The difference with another proposal
+> (https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+> included in an image without changing the image format, as opposed to
+> defining a new one. As seen from the discussion, if a new format has to be
+> defined, it should fix the issues of the existing format, which requires
+> more time.
 
-  Revert "security: inode: fix a missing check for securityfs_create_file" (2019-04-10 14:59:20 -0700)
+So you've explicitly chosen _not_ to address Y2038 while you're there.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-smack
-
-for you to fetch changes up to 8d31a5c35ed179825a2145881ad7cd8f9907d94b:
-
-  Merge branch 'smack-for-5.2-b' of https://github.com/cschaufler/next-smack into next-smack (2019-05-06 20:24:51 -0700)
-
-----------------------------------------------------------------
-Casey Schaufler (3):
-      Smack: Create smack_rule cache to optimize memory usage
-      Smack: Fix IPv6 handling of 0 secmark
-      Smack: Fix kbuild reported build error
-
-James Morris (3):
-      Merge branch 'smack-for-5.2' of https://github.com/cschaufler/next-smack into next-smack
-      Merge branch 'smack-for-5.2-b' of https://github.com/cschaufler/next-smack into next-smack
-      Merge branch 'smack-for-5.2-b' of https://github.com/cschaufler/next-smack into next-smack
-
-Tetsuo Handa (1):
-      smack: Check address length before reading address family
-
-Vishal Goel (1):
-      smack: removal of global rule list
-
- security/smack/smack.h     |  1 +
- security/smack/smack_lsm.c | 34 +++++++++++++++++++++++-----
- security/smack/smackfs.c   | 55 ++++++++++++++--------------------------------
- 3 files changed, 45 insertions(+), 45 deletions(-)
+Rob
