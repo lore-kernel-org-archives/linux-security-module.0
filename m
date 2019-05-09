@@ -2,104 +2,101 @@ Return-Path: <SRS0=3Nce=TJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C49C04AB3
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 18:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F859C04AB1
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 19:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A021217F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 18:33:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="m7MZm5jn"
+	by mail.kernel.org (Postfix) with ESMTP id CECDA2173B
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 19:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1557431652;
+	bh=gMSZvH2jlV+E3jQtFqiDNxyLY2LVd3yMAAHRjgUI8bI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=oPuFS69ZWAmGf+qDjlfhj4Fgo9dr//a9dzQV0As4JToETVnx5jM3MdIysanKD1AMg
+	 VBwActJFcxxsZZlrSr3oJkN1IdsOxc+dT5XsENNkbncstKNnPMckJoQCu6IvM3z8OY
+	 5JraEo91ia6rPrvi1wlCnVhKe7vg88op3gSoXqiA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfEISdu (ORCPT
+        id S1726802AbfEITyM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 May 2019 14:33:50 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46835 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfEISdu (ORCPT
+        Thu, 9 May 2019 15:54:12 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45313 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbfEITyM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 May 2019 14:33:50 -0400
-Received: by mail-ot1-f65.google.com with SMTP id v17so3184657otp.13
-        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2019 11:33:50 -0700 (PDT)
+        Thu, 9 May 2019 15:54:12 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n22so2423407lfe.12
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2019 12:54:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6LDuh9KBtjyZgSBqOPlt4ghOhYRTyR7+OimbX5fXjTc=;
-        b=m7MZm5jn+yUTyqYeKP+3U2AfIk2e/Jl7gRlj1d0vNElu89qzzwPGU4WFh2pRN3iGK8
-         6NkXYiIaZxmWqTWtDTsXMCjBrxg3Wi+ON8VLjl28KeXWmZ1yCAk7U2iA9U5wOLGpVrf6
-         4C4jvycCm53aEaILky7UnN3UKRuEHLH4DYCjk6kbWNpnMsPw3O4PTkZ34RDNe5jWnbck
-         UmNUnENCXk7ZL3MZ1rYS34gPy7dbedYHUod/vucgxDHzv2UGKYZZ9m/Ped5rsgK+BFk/
-         Fy+UM5SnDsH5pIswj8zYSyHMqUWESF+i8+t6ovRwRYGQ/c3kpcWuWIDJlTrTTBHJz/6S
-         zOfA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oGG06UbFIpIka8kH8mF+DXo9oIX85rLGrtvTzTqeUYQ=;
+        b=Bhff/nyavJfT40PuALUNmV3NXjnHsrbN+pAjB4c+7XVvzcKW/ubj0wSd2FNv9dp01I
+         PEmNRE69Gq1/nhGrWzYnZGlXBoDh5fsc7w049UJnCsXJIwhkrczb6bJT2fpYeG8x9oPA
+         +f0BOPIBNwyU7J3ce6H2g/VMV1QRPpnEEQ8wU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6LDuh9KBtjyZgSBqOPlt4ghOhYRTyR7+OimbX5fXjTc=;
-        b=Ag94/QpSa/768fuDUTJkILyEPkkBxd6n9qqgg37aci6oY6Pa1zt9n63bQX9KxjSY35
-         QhotW8sdoUpDKxmkwddlCXd3+OmKjbPgnhK1Ah9WmBb1oCwj0L6bjmGSWi3ul8EznvqA
-         cUbW44jOKRxSOLPlUjk7BRbybjlY1Z3pTHz+vSPT7oJfnL7BvEW6VSS3o5Xk5/82r1hh
-         vtjTTsG0snvJAkAfPncvMU+zZdriu3zexwJ63TaC31/Yzw8De1+nf4EmdwmfQhYnsHbd
-         6XmWsxZSncD9imil8NtSPMDvgmR1aBQI2ABKyxkRfCuCQnYhdR40seRh3PpALCEYPe3e
-         y5IA==
-X-Gm-Message-State: APjAAAUV/fDlVc7UUgwx/emvq2ILbBEY3f0qZXHumYZP1JGXueS/e/Fg
-        eHd/GSNs7u/QqrxYxKEPcAwg7w==
-X-Google-Smtp-Source: APXvYqyC+t5IsIZRkPqBYoKSelJuMnV/D1ZbE+b+3mQahrODmHmWzUUCjlIwBfKd2Oj/f6iFjJVnEg==
-X-Received: by 2002:a9d:7c88:: with SMTP id q8mr151513otn.167.1557426829720;
-        Thu, 09 May 2019 11:33:49 -0700 (PDT)
-Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
-        by smtp.googlemail.com with ESMTPSA id j1sm1034165otl.43.2019.05.09.11.33.45
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oGG06UbFIpIka8kH8mF+DXo9oIX85rLGrtvTzTqeUYQ=;
+        b=k9SYUko3YNgZ/gE7j13BtB8ZpAGYGBYuDXTo6pA3D+B/93hTI1dhXoxHKKR5EeKNzR
+         uL4lHemb+FpJoAl0/5eyXkjhoXPuIZ0cSdHS1I/hvS0zgNsO0lCL424Q0GqweCwjMvAz
+         vwQTms6km6uHb7bFxwI5sL7VQO4PTIXMdh/QvhwF7jSm+Ug1c1oPtaM58Mv3WbeZWrO/
+         ZykwFCUa1ta8riRqLQm0/vZ3p8AAKJ/YNW14kN3zWaf3f6t1mGd7jTzU6DCDt/L4ZMaP
+         qoheVK+sGDUq06DRcDTIZKLftTgkeK7tNDH6qrs3qWwDipWKOdmpS8CibVqYjOnSlbOd
+         Jp+A==
+X-Gm-Message-State: APjAAAUZZHyvik6P/UTT3ZlQQ8xYvHpRZ4TJU7WXgprUF/EgPnWsyOdy
+        2atGs7gEdyV4wtBoKqeG+e02aDocqW4=
+X-Google-Smtp-Source: APXvYqz1W9qhomyQZoMue/TlZYdXEpQcJn6UgZmtFKWr+18NsuFt6T9PEFaFhtOks1A5qVMmg+CmVg==
+X-Received: by 2002:a19:196:: with SMTP id 144mr3764108lfb.35.1557431649597;
+        Thu, 09 May 2019 12:54:09 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id s16sm549016lji.61.2019.05.09.12.54.08
+        for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 11:33:49 -0700 (PDT)
-Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
- ram disk
-To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk
-Cc:     linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
-        arnd@arndb.de, james.w.mcmechan@gmail.com
-References: <20190509112420.15671-1-roberto.sassu@huawei.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <fca8e601-1144-1bb8-c007-518651f624a5@landley.net>
-Date:   Thu, 9 May 2019 13:34:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 09 May 2019 12:54:09 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 14so3091323ljj.5
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2019 12:54:08 -0700 (PDT)
+X-Received: by 2002:a2e:9ac8:: with SMTP id p8mr3140904ljj.79.1557431648546;
+ Thu, 09 May 2019 12:54:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190509112420.15671-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <alpine.LRH.2.21.1905100320110.25349@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1905100320110.25349@namei.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 9 May 2019 12:53:52 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whqzNFfeNOouBjH2GKMVgMi22fsNOaCgbUOnCPmKmEXeQ@mail.gmail.com>
+Message-ID: <CAHk-=whqzNFfeNOouBjH2GKMVgMi22fsNOaCgbUOnCPmKmEXeQ@mail.gmail.com>
+Subject: Re: [GIT PULL] security subsytem: TPM changes for v5.2
+To:     James Morris <jmorris@namei.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/9/19 6:24 AM, Roberto Sassu wrote:
-> This patch set aims at solving the following use case: appraise files from
-> the initial ram disk. To do that, IMA checks the signature/hash from the
-> security.ima xattr. Unfortunately, this use case cannot be implemented
-> currently, as the CPIO format does not support xattrs.
-> 
-> This proposal consists in marshaling pathnames and xattrs in a file called
-> .xattr-list. They are unmarshaled by the CPIO parser after all files have
-> been extracted.
+On Thu, May 9, 2019 at 10:23 AM James Morris <jmorris@namei.org> wrote:
+>
+> Bugfixes and new selftests for v5.1 features (partial reads in /dev/tpm0).
 
-So it's in-band signalling that has a higher peak memory requirement.
+What the heck is going on?
 
-> The difference with another proposal
-> (https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
-> included in an image without changing the image format, as opposed to
-> defining a new one. As seen from the discussion, if a new format has to be
-> defined, it should fix the issues of the existing format, which requires
-> more time.
+I got all of these long ago in the "TPM fixes" branch for 5.1. One
+month ago, merge commit a556810d8e06.
 
-So you've explicitly chosen _not_ to address Y2038 while you're there.
+These are just rebased (!) copies of stuff I already have, and they should
 
-Rob
+ (a) never have been rebased in the first place
+
+ (b) certainly not be re-sent to me as a new branch
+
+Please throw this branch away and make sure it really is dead and
+buried and never shows up again.
+
+And take a moment to look at what happened and why this broken branch
+was duplicated and sent twice!
+
+              Linus
