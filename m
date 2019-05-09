@@ -2,102 +2,194 @@ Return-Path: <SRS0=3Nce=TJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33106C04AB1
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 15:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFC2C04AB1
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 15:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED33D2085A
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 15:30:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="llu68/yW"
+	by mail.kernel.org (Postfix) with ESMTP id EF297216C4
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 15:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbfEIPaA (ORCPT
+        id S1726681AbfEIPme (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 May 2019 11:30:00 -0400
-Received: from sonic312-29.consmr.mail.gq1.yahoo.com ([98.137.69.210]:40868
-        "EHLO sonic312-29.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726187AbfEIPaA (ORCPT
+        Thu, 9 May 2019 11:42:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36238 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726187AbfEIPme (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 May 2019 11:30:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1557415798; bh=xyHh7rldW0yaAWUvjMEZaVnEJgJw4FoFOJT6EdmXXFc=; h=Subject:To:References:Cc:From:Date:In-Reply-To:From:Subject; b=llu68/yWMXMR67wUduQOtitn3tPcvQ7iuzEWscEpsga5+TLSZufh/D3bsjHnGzYLdDRV94B6lK9aX5eafcYl7rwC6+yzqQM/B7gIOXj4wDOMfjXv0bvwJZ2FhmnSTTL7E+DgnGZZCCeCNG+H/ZAbKbhrhw9+GrwujxzdZkTcaQC/Wwh3e4iqSbB1vdunArBp/Jsn7ptCZxzgb/TI77ct3zeTTbxCghI1NzwHAb+3NOg4d84bZJ2VCgC2tIJHlwJuK51S0TgGYjr8UNR9+VWBK7UBr9VD+qQ2NpFy8zgVzwDTEPct/+eYkWQDqYvq0As4PGa4IQuSR+fbmpBv/9mR1Q==
-X-YMail-OSG: RB3clxUVM1lKY9rQRBWwUskp0J4aTRmkpUAYmtmT.WxhfEZDQT2pPCDPGyJ722q
- FdIvYJ1OsDsR1UWLx8ZZ.E30sG3UUMTX18bhREmRmsHWKur.V5bqn73d6oroobu3ME.PUUPgfnZS
- YRqnBb4Xrvu42TjUOiC2P7uWj1m8V2jqOIXlJyxhZXJs3W45bK.F84WWYNGzl5fBVKzYTLQt7eXp
- 8g3VGf2ujM_zfqtMbaNiyQoyRkdkWrgtCNrn4NXu156c_Yn_U3NjZVIqUfiT97FHBQT7kqEabrir
- Esz6ImFn1CExsKHQvAvPFOSAs23hlP383ITRGrrRoo1y1qbEVbrQKm.wI18LXPr_ZpuTK5N1yDJY
- ebnpsc5MJP1hgzQqq9mIWOPxqJj4VzkcXpu7pduh1smLBdjgUBpOBQeqQ4qAXrsuzWDStQJb2Ckg
- n1uZf2Dp8H6zTSor7_NiY8qRZuIiD5rhhkC2gM4iZPTsoIu.2QHfNvS6ini.FUbprvA56DoXb4xL
- mdCVf_GYZJO9ZrKkNi4olufWQvfrTFbpN9Kdq4DVYAml1wgWoW9e90BcFzFaTb.smyu_JMauAq6o
- NCHATcippO0sDzUqnKCnIJTHAtE8YWTYqJ4m3r8yfHeinpyZQg53fa8Vu35g4fyyu2miAmfQC97Y
- qqAETlCLjMEFOKmwcueO.zzjzPL44b.AhbAbSE3TzfNH24eAdMTGKb34mmfWNBcvgLPQ6IULTRrk
- gPVAtFQTlsCIExm7f8fDKLXtfRj7d1eS4m_bn7N4lCsM_s9R8VIeRoFgWX9ZlWsDjgin.vq4S.ss
- kQ72mPuoDBf_YLjIYQnPUGj1yXlnwqovS94Plt9akgSq1cTKpSGpqKXg1Czj5b2fmAXpnqbLHckw
- 9SWVb8ifMc.dOjyqojP9S1UaPRwkFr8zhsEmQirpKmLVC2pAjf0ckgbNUfK.BD3a5GfoN4ktHaRz
- ZcgXqQR7ttuJ4ZUB0dWXhRutbnEg6DURrchwhCmGkGcjV.MSlgvFA14QtGekyrn1GtvK_ieeecCn
- 2mzk.VDGPhvCjiB_SF9xCztPQWMazRmTjKdDYBRi0_Pj4u8pC2EQXEDPKd17EixDKGKY_EROOIi3
- ioG.b0mu_X91pTaOImMAwar0r3vv8gxdDwc8HvAppA7.Y2FkGvm0jVbqSBcKgH7hpQ95wSiKCwtV
- aajd9n4nTx_lo0.5m0lSUCn.uVP2AFdv12t4w3hICNgVN5OXR
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Thu, 9 May 2019 15:29:58 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp432.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 55aa1e5d6171fdae2d0ab23330ce6005;
-          Thu, 09 May 2019 15:29:53 +0000 (UTC)
-Subject: Re: [PATCH next] security: smack: fix sap undeclared error in
- smack_socket_sendmsg
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-security-module@vger.kernel.org
-References: <20190509124628.189228-1-wangkefeng.wang@huawei.com>
-Cc:     casey@schaufler-ca.com
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <73cebc57-3947-c438-9316-0c64302e97e5@schaufler-ca.com>
-Date:   Thu, 9 May 2019 08:29:54 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190509124628.189228-1-wangkefeng.wang@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Thu, 9 May 2019 11:42:34 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x49Fe2ZS053340
+        for <linux-security-module@vger.kernel.org>; Thu, 9 May 2019 11:42:32 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2scq2303v9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2019 11:42:32 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 9 May 2019 16:42:30 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 May 2019 16:42:25 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x49FgOKc61472792
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 9 May 2019 15:42:24 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83835A4040;
+        Thu,  9 May 2019 15:42:24 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 32B28A4055;
+        Thu,  9 May 2019 15:42:22 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.95.107])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 May 2019 15:42:22 +0000 (GMT)
+Subject: Re: [PATCH v10 01/12] MODSIGN: Export module signature definitions
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
+Date:   Thu, 09 May 2019 11:42:08 -0400
+In-Reply-To: <20190418035120.2354-2-bauerman@linux.ibm.com>
+References: <20190418035120.2354-1-bauerman@linux.ibm.com>
+         <20190418035120.2354-2-bauerman@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050915-0008-0000-0000-000002E4F703
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050915-0009-0000-0000-000022517E40
+Message-Id: <1557416528.10635.62.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905090090
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/9/2019 5:46 AM, Kefeng Wang wrote:
-> If CONFIG_IPV6 is disabled, there is build error, fix it.
->
-> security/smack/smack_lsm.c: In function ‘smack_socket_sendmsg’:
-> security/smack/smack_lsm.c:3698:7: error: ‘sap’ undeclared (first use in this function)
->       sap->sin6_family != AF_INET6)
->
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+On Thu, 2019-04-18 at 00:51 -0300, Thiago Jung Bauermann wrote:
+> IMA will use the module_signature format for append signatures, so export
+> the relevant definitions and factor out the code which verifies that the
+> appended signature trailer is valid.
+> 
+> Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
+> and be able to use mod_check_sig() without having to depend on either
+> CONFIG_MODULE_SIG or CONFIG_MODULES.
+> 
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> Cc: Jessica Yu <jeyu@kernel.org>
 
-Thank you for your patch. This has already been fixed and
-will be in 5.2 when James sends the pull request.
+Just a couple minor questions/comments below.
+
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
 > ---
->   security/smack/smack_lsm.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index b5b333d72637..ff5b7dc6816f 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -3693,6 +3693,7 @@ static int smack_socket_sendmsg(struct socket *sock, struct msghdr *msg,
->   			return -EINVAL;
->   		rc = smack_netlabel_send(sock->sk, sip);
->   		break;
-> +#if IS_ENABLED(CONFIG_IPV6)
->   	case AF_INET6:
->   		if (msg->msg_namelen < SIN6_LEN_RFC2133 ||
->   		    sap->sin6_family != AF_INET6)
-> @@ -3707,6 +3708,7 @@ static int smack_socket_sendmsg(struct socket *sock, struct msghdr *msg,
->   		rc = smk_ipv6_port_check(sock->sk, sap, SMK_SENDING);
->   #endif
->   		break;
-> +#endif
->   	}
->   	return rc;
->   }
+
+< snip >
+
+
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 4592bf7997c0..a71019553ee1 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1906,7 +1906,7 @@ config MODULE_SRCVERSION_ALL
+>  config MODULE_SIG
+>  	bool "Module signature verification"
+>  	depends on MODULES
+> -	select SYSTEM_DATA_VERIFICATION
+> +	select MODULE_SIG_FORMAT
+>  	help
+>  	  Check modules for valid signatures upon load: the signature
+>  	  is simply appended to the module. For more information see
+> @@ -2036,6 +2036,10 @@ config TRIM_UNUSED_KSYMS
+>  
+>  endif # MODULES
+>  
+> +config MODULE_SIG_FORMAT
+> +	def_bool n
+> +	select SYSTEM_DATA_VERIFICATION
+
+Normally Kconfigs, in the same file, are defined before they are used.
+ I'm not sure if that is required or just a convention.
+
+
+>  config MODULES_TREE_LOOKUP
+>  	def_bool y
+>  	depends on PERF_EVENTS || TRACING
+> diff --git a/kernel/Makefile b/kernel/Makefile
+> index 6c57e78817da..d2f2488f80ab 100644
+> --- a/kernel/Makefile
+> +++ b/kernel/Makefile
+> @@ -57,6 +57,7 @@ endif
+>  obj-$(CONFIG_UID16) += uid16.o
+>  obj-$(CONFIG_MODULES) += module.o
+>  obj-$(CONFIG_MODULE_SIG) += module_signing.o
+> +obj-$(CONFIG_MODULE_SIG_FORMAT) += module_signature.o
+>  obj-$(CONFIG_KALLSYMS) += kallsyms.o
+>  obj-$(CONFIG_BSD_PROCESS_ACCT) += acct.o
+>  obj-$(CONFIG_CRASH_CORE) += crash_core.o
+> diff --git a/kernel/module.c b/kernel/module.c
+> index 985caa467aef..326ddeb364dd 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/export.h>
+>  #include <linux/extable.h>
+>  #include <linux/moduleloader.h>
+> +#include <linux/module_signature.h>
+>  #include <linux/trace_events.h>
+>  #include <linux/init.h>
+>  #include <linux/kallsyms.h>
+> diff --git a/kernel/module_signature.c b/kernel/module_signature.c
+> new file mode 100644
+> index 000000000000..6d5e59f27f55
+> --- /dev/null
+> +++ b/kernel/module_signature.c
+> @@ -0,0 +1,45 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Module signature checker
+> + *
+> + * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + */
+> +
+> +#include <linux/errno.h>
+> +#include <linux/printk.h>
+> +#include <linux/module_signature.h>
+> +#include <asm/byteorder.h>
+> +
+> +/**
+> + * mod_check_sig - check that the given signature is sane
+> + *
+> + * @ms:		Signature to check.
+> + * @file_len:	Size of the file to which @ms is appended.
+
+"name" is missing.
+
+Mimi
+
+> + */
+
