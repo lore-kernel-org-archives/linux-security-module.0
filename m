@@ -1,187 +1,93 @@
-Return-Path: <SRS0=3Nce=TJ=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=PrzU=TK=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF70AC04AB1
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 23:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67297C04AB1
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 May 2019 01:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB69E20850
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 May 2019 23:01:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 314ED2173B
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 May 2019 01:03:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfEIXBm (ORCPT
+        id S1726761AbfEJBDw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 May 2019 19:01:42 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44648 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726799AbfEIXBm (ORCPT
+        Thu, 9 May 2019 21:03:52 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50566 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726716AbfEJBDw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 May 2019 19:01:42 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x49MpgC6073605
-        for <linux-security-module@vger.kernel.org>; Thu, 9 May 2019 19:01:40 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sct39f7wq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2019 19:01:40 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 10 May 2019 00:01:37 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 10 May 2019 00:01:32 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x49N1VD750659486
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 May 2019 23:01:31 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BE2FF4C044;
-        Thu,  9 May 2019 23:01:31 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E739D4C040;
-        Thu,  9 May 2019 23:01:29 +0000 (GMT)
-Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 May 2019 23:01:29 +0000 (GMT)
-Subject: Re: [PATCH v10 11/12] ima: Define ima-modsig template
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
-Date:   Thu, 09 May 2019 19:01:29 -0400
-In-Reply-To: <20190418035120.2354-12-bauerman@linux.ibm.com>
-References: <20190418035120.2354-1-bauerman@linux.ibm.com>
-         <20190418035120.2354-12-bauerman@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Thu, 9 May 2019 21:03:52 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 78EC7A5449B1DB357F43;
+        Fri, 10 May 2019 09:03:50 +0800 (CST)
+Received: from [127.0.0.1] (10.177.19.180) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Fri, 10 May 2019
+ 09:03:46 +0800
+Subject: Re: [PATCH next] security: smack: fix sap undeclared error in
+ smack_socket_sendmsg
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        <linux-security-module@vger.kernel.org>
+References: <20190509124628.189228-1-wangkefeng.wang@huawei.com>
+ <73cebc57-3947-c438-9316-0c64302e97e5@schaufler-ca.com>
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+Message-ID: <7da8fa41-39d1-ad79-44db-9ef352dca4be@huawei.com>
+Date:   Fri, 10 May 2019 09:01:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <73cebc57-3947-c438-9316-0c64302e97e5@schaufler-ca.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19050923-0020-0000-0000-0000033B164F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050923-0021-0000-0000-0000218DBF5D
-Message-Id: <1557442889.10635.88.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905090130
+Content-Language: en-US
+X-Originating-IP: [10.177.19.180]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2019-04-18 at 00:51 -0300, Thiago Jung Bauermann wrote:
-> Define new "d-modsig" template field which holds the digest that is
-> expected to match the one contained in the modsig, and also new "modsig"
-> template field which holds the appended file signature.
-> 
-> Add a new "ima-modsig" defined template descriptor with the new fields as
-> well as the ones from the "ima-sig" descriptor.
-> 
-> Change ima_store_measurement() to accept a struct modsig * argument so that
-> it can be passed along to the templates via struct ima_event_data.
-> 
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 
-Thanks, Roberto.  Just some thoughts inline below.
-
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-
-> ---
-
-<snip>
-
-> +/*
-> + * Validating the appended signature included in the measurement list requires
-> + * the file hash calculated without the appended signature (i.e., the 'd-modsig'
-> + * field). Therefore, notify the user if they have the 'modsig' field but not
-> + * the 'd-modsig' field in the template.
-> + */
-> +static void check_current_template_modsig(void)
-> +{
-> +#define MSG "template with 'modsig' field also needs 'd-modsig' field\n"
-> +	struct ima_template_desc *template;
-> +	bool has_modsig, has_dmodsig;
-> +	static bool checked;
-> +	int i;
-> +
-> +	/* We only need to notify the user once. */
-> +	if (checked)
-> +		return;
-> +
-> +	has_modsig = has_dmodsig = false;
-> +	template = ima_template_desc_current();
-> +	for (i = 0; i < template->num_fields; i++) {
-> +		if (!strcmp(template->fields[i]->field_id, "modsig"))
-> +			has_modsig = true;
-> +		else if (!strcmp(template->fields[i]->field_id, "d-modsig"))
-> +			has_dmodsig = true;
-> +	}
-> +
-> +	if (has_modsig && !has_dmodsig)
-> +		pr_notice(MSG);
-> +
-> +	checked = true;
-> +#undef MSG
-> +}
-> +
-
-There was some recent discussion about supporting per IMA policy rule
-template formats.  This feature will allow just the kexec kernel image
-to require ima-modsig.  When per policy rule template formats support
-is upstreamed, this function will need to be updated.
-
-<snip>
-> 
-> @@ -389,3 +425,25 @@ int ima_eventsig_init(struct ima_event_data *event_data,
->  	return ima_write_template_field_data(xattr_value, event_data->xattr_len,
->  					     DATA_FMT_HEX, field_data);
->  }
-> +
-> +int ima_eventmodsig_init(struct ima_event_data *event_data,
-> +			 struct ima_field_data *field_data)
-> +{
-> +	const void *data;
-> +	u32 data_len;
-> +	int rc;
-> +
-> +	if (!event_data->modsig)
-> +		return 0;
-> +
-> +	/*
-> +	 * The xattr_value for IMA_MODSIG is a runtime structure containing
-> +	 * pointers. Get its raw data instead.
-> +	 */
-
-"xattr_value"?  The comment needs some clarification.
-
-Mimi
-
-> +	rc = ima_modsig_serialize(event_data->modsig, &data, &data_len);
-> +	if (rc)
-> +		return rc;
-> +
-> +	return ima_write_template_field_data(data, data_len,
-> +					     DATA_FMT_HEX, field_data);
-> +}
+On 2019/5/9 23:29, Casey Schaufler wrote:
+> On 5/9/2019 5:46 AM, Kefeng Wang wrote:
+>> If CONFIG_IPV6 is disabled, there is build error, fix it.
+>>
+>> security/smack/smack_lsm.c: In function ‘smack_socket_sendmsg’:
+>> security/smack/smack_lsm.c:3698:7: error: ‘sap’ undeclared (first use in this function)
+>>       sap->sin6_family != AF_INET6)
+>>
+>> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+>
+> Thank you for your patch. This has already been fixed and
+> will be in 5.2 when James sends the pull request.
+ok ; )
+>
+>> ---
+>>   security/smack/smack_lsm.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+>> index b5b333d72637..ff5b7dc6816f 100644
+>> --- a/security/smack/smack_lsm.c
+>> +++ b/security/smack/smack_lsm.c
+>> @@ -3693,6 +3693,7 @@ static int smack_socket_sendmsg(struct socket *sock, struct msghdr *msg,
+>>               return -EINVAL;
+>>           rc = smack_netlabel_send(sock->sk, sip);
+>>           break;
+>> +#if IS_ENABLED(CONFIG_IPV6)
+>>       case AF_INET6:
+>>           if (msg->msg_namelen < SIN6_LEN_RFC2133 ||
+>>               sap->sin6_family != AF_INET6)
+>> @@ -3707,6 +3708,7 @@ static int smack_socket_sendmsg(struct socket *sock, struct msghdr *msg,
+>>           rc = smk_ipv6_port_check(sock->sk, sap, SMK_SENDING);
+>>   #endif
+>>           break;
+>> +#endif
+>>       }
+>>       return rc;
+>>   }
+>
+>
 
