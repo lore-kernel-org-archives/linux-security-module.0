@@ -2,92 +2,94 @@ Return-Path: <SRS0=PrzU=TK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67297C04AB1
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 May 2019 01:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B53C04A6B
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 May 2019 06:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 314ED2173B
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 May 2019 01:03:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 089C62175B
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 May 2019 06:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfEJBDw (ORCPT
+        id S1727099AbfEJG42 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 May 2019 21:03:52 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50566 "EHLO huawei.com"
+        Fri, 10 May 2019 02:56:28 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32931 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726716AbfEJBDw (ORCPT
+        id S1726816AbfEJG42 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 May 2019 21:03:52 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 78EC7A5449B1DB357F43;
-        Fri, 10 May 2019 09:03:50 +0800 (CST)
-Received: from [127.0.0.1] (10.177.19.180) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Fri, 10 May 2019
- 09:03:46 +0800
-Subject: Re: [PATCH next] security: smack: fix sap undeclared error in
- smack_socket_sendmsg
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        <linux-security-module@vger.kernel.org>
-References: <20190509124628.189228-1-wangkefeng.wang@huawei.com>
- <73cebc57-3947-c438-9316-0c64302e97e5@schaufler-ca.com>
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-Message-ID: <7da8fa41-39d1-ad79-44db-9ef352dca4be@huawei.com>
-Date:   Fri, 10 May 2019 09:01:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 10 May 2019 02:56:28 -0400
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 80FC5F410DD9BCBB68F2;
+        Fri, 10 May 2019 07:56:26 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 10 May
+ 2019 07:56:16 +0100
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Rob Landley <rob@landley.net>, <viro@zeniv.linux.org.uk>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
+        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
+        <takondra@cisco.com>, <kamensky@cisco.com>, <hpa@zytor.com>,
+        <arnd@arndb.de>, <james.w.mcmechan@gmail.com>
+References: <20190509112420.15671-1-roberto.sassu@huawei.com>
+ <fca8e601-1144-1bb8-c007-518651f624a5@landley.net>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <bf0d02fc-d6ce-ef1d-bb7d-7ca14432c6fd@huawei.com>
+Date:   Fri, 10 May 2019 08:56:18 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <73cebc57-3947-c438-9316-0c64302e97e5@schaufler-ca.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <fca8e601-1144-1bb8-c007-518651f624a5@landley.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-X-Originating-IP: [10.177.19.180]
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
 X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 5/9/2019 8:34 PM, Rob Landley wrote:
+> On 5/9/19 6:24 AM, Roberto Sassu wrote:
+>> This patch set aims at solving the following use case: appraise files from
+>> the initial ram disk. To do that, IMA checks the signature/hash from the
+>> security.ima xattr. Unfortunately, this use case cannot be implemented
+>> currently, as the CPIO format does not support xattrs.
+>>
+>> This proposal consists in marshaling pathnames and xattrs in a file called
+>> .xattr-list. They are unmarshaled by the CPIO parser after all files have
+>> been extracted.
+> 
+> So it's in-band signalling that has a higher peak memory requirement.
 
-On 2019/5/9 23:29, Casey Schaufler wrote:
-> On 5/9/2019 5:46 AM, Kefeng Wang wrote:
->> If CONFIG_IPV6 is disabled, there is build error, fix it.
->>
->> security/smack/smack_lsm.c: In function ‘smack_socket_sendmsg’:
->> security/smack/smack_lsm.c:3698:7: error: ‘sap’ undeclared (first use in this function)
->>       sap->sin6_family != AF_INET6)
->>
->> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->
-> Thank you for your patch. This has already been fixed and
-> will be in 5.2 when James sends the pull request.
-ok ; )
->
->> ---
->>   security/smack/smack_lsm.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
->> index b5b333d72637..ff5b7dc6816f 100644
->> --- a/security/smack/smack_lsm.c
->> +++ b/security/smack/smack_lsm.c
->> @@ -3693,6 +3693,7 @@ static int smack_socket_sendmsg(struct socket *sock, struct msghdr *msg,
->>               return -EINVAL;
->>           rc = smack_netlabel_send(sock->sk, sip);
->>           break;
->> +#if IS_ENABLED(CONFIG_IPV6)
->>       case AF_INET6:
->>           if (msg->msg_namelen < SIN6_LEN_RFC2133 ||
->>               sap->sin6_family != AF_INET6)
->> @@ -3707,6 +3708,7 @@ static int smack_socket_sendmsg(struct socket *sock, struct msghdr *msg,
->>           rc = smk_ipv6_port_check(sock->sk, sap, SMK_SENDING);
->>   #endif
->>           break;
->> +#endif
->>       }
->>       return rc;
->>   }
->
->
+This can be modified. Now I allocate the memory necessary for the path
+and all xattrs of a file (max: .xattr-list size - 10 bytes). I could
+process each xattr individually (max: 255 + 1 + 65536 bytes).
 
+
+>> The difference with another proposal
+>> (https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+>> included in an image without changing the image format, as opposed to
+>> defining a new one. As seen from the discussion, if a new format has to be
+>> defined, it should fix the issues of the existing format, which requires
+>> more time.
+> 
+> So you've explicitly chosen _not_ to address Y2038 while you're there.
+
+Can you be more specific?
+
+Thanks
+
+Roberto
+
+
+> Rob
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
