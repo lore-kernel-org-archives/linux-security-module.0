@@ -2,68 +2,93 @@ Return-Path: <SRS0=wXDC=TL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C3BC04AB1
-	for <linux-security-module@archiver.kernel.org>; Sat, 11 May 2019 15:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC030C46470
+	for <linux-security-module@archiver.kernel.org>; Sat, 11 May 2019 18:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91F0F2184B
-	for <linux-security-module@archiver.kernel.org>; Sat, 11 May 2019 15:00:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557586836;
-	bh=T6pVOfdptkOhickgXKdhwoX33PocrD0eTvc02KmYvUk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=0tlm9IkCIcl9xSZ2XFArHhXb4EOjioJ4D4s94+pBwnfaIWQqiZXEEeahRPvo3U1aT
-	 RO40x89cnbTjwfjeHct7/BGxc0mWDI6N/ix3yBM94wT77ll8fQx9K3pb1qlOD5Wc7b
-	 3qpec50vreH3THpr0tCRbhziYjp3282lKFP+4zPU=
+	by mail.kernel.org (Postfix) with ESMTP id C1FF22173B
+	for <linux-security-module@archiver.kernel.org>; Sat, 11 May 2019 18:13:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="kyIAiixp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbfEKPAP (ORCPT
+        id S1726149AbfEKSNX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 11 May 2019 11:00:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728626AbfEKPAP (ORCPT
+        Sat, 11 May 2019 14:13:23 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35066 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfEKSNX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 11 May 2019 11:00:15 -0400
+        Sat, 11 May 2019 14:13:23 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j20so6316179lfh.2
+        for <linux-security-module@vger.kernel.org>; Sat, 11 May 2019 11:13:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CWP16Nyxw5qoo1hd2mChxbEzA6Fb4BMPJLsU//Q1vrc=;
+        b=kyIAiixp5qZdQKPS40mqarIBWtsGQQbSIaVwYs8g9wa7xANkHruKKuaChRej94Pg/i
+         nydybmuTIbEN/nIHH/fFtVf8Pwt/bwxeEFtarsy5916oxBYRM4xUagKe2FPfrzmmCLGH
+         jkpUh/MuNTKlmUCyvKbTSzLysX257xss7joIwm+l64AUvzaWNgHzNDHVNk4NWYhpVGwN
+         NWGtqNsbujAj0y+U7thWVn/c+tTXI5FYYRUtKUyfiD/XZEYEpqE276/Eq35y7Jeysdkx
+         BfvGGfNet6SgoPfcLHe2vdT2RPuWbLXmDF69X/fnGIMk3/kSjPP+x30nFDK0HDaUHLEO
+         IS+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CWP16Nyxw5qoo1hd2mChxbEzA6Fb4BMPJLsU//Q1vrc=;
+        b=hI2GSPTCiCIsT/KmhKGqszbYLRKgPjgu0xN1c6Dkwwkt1j+iqyFsHA96zg2DuqwKBb
+         5MgGXzD1LsVwXI/jfRNuHrP1NaMDGrEZ325oeXmA6ryxJSF3FqUDgLWaC/3BIVJ3rT/x
+         eRSoxsrYdPlWhwkDWozAcny0pFmKMBL2iL86TuAXUkjnjh8vyjvAY4dS6n9F/J7pPxHI
+         qFRA/h7SGlE2E1ni+RVifjwthLKpIu6glV37aO99C7s/6/5ZtZZFKGsWYSKKXfViBYCJ
+         VKDKNfX2XNj/Vg01N7EMacuYGlsEUopp+ATjfyNPc1Sg1f5T6d1P/S+jX8W6QmAakVbM
+         zdew==
+X-Gm-Message-State: APjAAAWxh6h94GRqdG+Hi4IxssPwa8pZoV5qdpX4ldpdoI0Kf1/6qnAL
+        JIirzUBdfWiIfKVyhrNz7GLY7ipDiTyTH0X7a004WMjZ8ghd
+X-Google-Smtp-Source: APXvYqyPZ06o+XO2LbPfsvUMqGLt/5r1ZRgUHok6ntDskfjhMm4IfhhujC45DdXbYCEHwKZO26Dprgpr44MS9YDq6Fk=
+X-Received: by 2002:a19:760c:: with SMTP id c12mr9090091lff.105.1557598400815;
+ Sat, 11 May 2019 11:13:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <alpine.LRH.2.21.1905110801350.9392@namei.org> <CAHk-=wg8UFHD_KmTWF3LMnDf_VN7cv_pofpc4eOHmx_8kmMPWw@mail.gmail.com>
+In-Reply-To: <CAHk-=wg8UFHD_KmTWF3LMnDf_VN7cv_pofpc4eOHmx_8kmMPWw@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sat, 11 May 2019 14:13:09 -0400
+Message-ID: <CAHC9VhSSwYk6isqz8N3nOO_O17C30E2EyCHKf5OqsdESeMoT7g@mail.gmail.com>
 Subject: Re: [GIT PULL] security subsystem: Tomoyo updates for v5.2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557586814;
-        bh=T6pVOfdptkOhickgXKdhwoX33PocrD0eTvc02KmYvUk=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=N5yOzackAgnUMLRvtQOZyVRD0VD3APVCA+K6FlsF7Qd9WCL2bSsWhamgNHsfVqxKs
-         bb6w0WJG6poqm8kvVJQIR44UetonQ+mAW489K60S4KBQ04jJUcOKIac1cazl6ES9bg
-         4RecJY8C4Vuh0GmqvXXA2AQiO2uwvcHZwRbJFLdg=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <alpine.LRH.2.21.1905110801350.9392@namei.org>
-References: <alpine.LRH.2.21.1905110801350.9392@namei.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <alpine.LRH.2.21.1905110801350.9392@namei.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
- next-tomoyo2
-X-PR-Tracked-Commit-Id: 4ad98ac46490d5f8441025930070eaf028cfd0f2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c367dc8d0dd2a1e1ed9fdc2dd831053bdfdf0968
-Message-Id: <155758681477.22634.12296218789154770772.pr-tracker-bot@kernel.org>
-Date:   Sat, 11 May 2019 15:00:14 +0000
-To:     James Morris <jmorris@namei.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Sat, 11 May 2019 08:09:22 +1000 (AEST):
+On Sat, May 11, 2019 at 10:38 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Fri, May 10, 2019 at 6:09 PM James Morris <jmorris@namei.org> wrote:
+> >
+> > These patches include fixes to enable fuzz testing, and a fix for
+> > calculating whether a filesystem is user-modifiable.
+>
+> So now these have been very recently rebased (on top of a random
+> merge-window "tree of the day" version) instead of having multiple
+> merges.
+>
+> That makes the history cleaner, but has its own issues.
+>
+> We really need to find a different model for the security layer patches.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tomoyo2
+If it helps, the process I use for the SELinux and audit trees is
+documented below.  While it's far from perfect (I still don't like
+basing the -next trees on -rcX releases) it has seemed to work
+reasonably well for some time now.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c367dc8d0dd2a1e1ed9fdc2dd831053bdfdf0968
-
-Thank you!
+* https://github.com/SELinuxProject/selinux-kernel/blob/master/README.md
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+paul moore
+www.paul-moore.com
