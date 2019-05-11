@@ -4,91 +4,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC030C46470
-	for <linux-security-module@archiver.kernel.org>; Sat, 11 May 2019 18:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC4EC04AB1
+	for <linux-security-module@archiver.kernel.org>; Sat, 11 May 2019 22:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1FF22173B
-	for <linux-security-module@archiver.kernel.org>; Sat, 11 May 2019 18:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B492B217D7
+	for <linux-security-module@archiver.kernel.org>; Sat, 11 May 2019 22:08:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="kyIAiixp"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="mLIyO2y+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726149AbfEKSNX (ORCPT
+        id S1726360AbfEKWIZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 11 May 2019 14:13:23 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35066 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfEKSNX (ORCPT
+        Sat, 11 May 2019 18:08:25 -0400
+Received: from sonic306-9.consmr.mail.bf2.yahoo.com ([74.6.132.48]:36750 "EHLO
+        sonic306-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726043AbfEKWIZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 11 May 2019 14:13:23 -0400
-Received: by mail-lf1-f66.google.com with SMTP id j20so6316179lfh.2
-        for <linux-security-module@vger.kernel.org>; Sat, 11 May 2019 11:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CWP16Nyxw5qoo1hd2mChxbEzA6Fb4BMPJLsU//Q1vrc=;
-        b=kyIAiixp5qZdQKPS40mqarIBWtsGQQbSIaVwYs8g9wa7xANkHruKKuaChRej94Pg/i
-         nydybmuTIbEN/nIHH/fFtVf8Pwt/bwxeEFtarsy5916oxBYRM4xUagKe2FPfrzmmCLGH
-         jkpUh/MuNTKlmUCyvKbTSzLysX257xss7joIwm+l64AUvzaWNgHzNDHVNk4NWYhpVGwN
-         NWGtqNsbujAj0y+U7thWVn/c+tTXI5FYYRUtKUyfiD/XZEYEpqE276/Eq35y7Jeysdkx
-         BfvGGfNet6SgoPfcLHe2vdT2RPuWbLXmDF69X/fnGIMk3/kSjPP+x30nFDK0HDaUHLEO
-         IS+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CWP16Nyxw5qoo1hd2mChxbEzA6Fb4BMPJLsU//Q1vrc=;
-        b=hI2GSPTCiCIsT/KmhKGqszbYLRKgPjgu0xN1c6Dkwwkt1j+iqyFsHA96zg2DuqwKBb
-         5MgGXzD1LsVwXI/jfRNuHrP1NaMDGrEZ325oeXmA6ryxJSF3FqUDgLWaC/3BIVJ3rT/x
-         eRSoxsrYdPlWhwkDWozAcny0pFmKMBL2iL86TuAXUkjnjh8vyjvAY4dS6n9F/J7pPxHI
-         qFRA/h7SGlE2E1ni+RVifjwthLKpIu6glV37aO99C7s/6/5ZtZZFKGsWYSKKXfViBYCJ
-         VKDKNfX2XNj/Vg01N7EMacuYGlsEUopp+ATjfyNPc1Sg1f5T6d1P/S+jX8W6QmAakVbM
-         zdew==
-X-Gm-Message-State: APjAAAWxh6h94GRqdG+Hi4IxssPwa8pZoV5qdpX4ldpdoI0Kf1/6qnAL
-        JIirzUBdfWiIfKVyhrNz7GLY7ipDiTyTH0X7a004WMjZ8ghd
-X-Google-Smtp-Source: APXvYqyPZ06o+XO2LbPfsvUMqGLt/5r1ZRgUHok6ntDskfjhMm4IfhhujC45DdXbYCEHwKZO26Dprgpr44MS9YDq6Fk=
-X-Received: by 2002:a19:760c:: with SMTP id c12mr9090091lff.105.1557598400815;
- Sat, 11 May 2019 11:13:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <alpine.LRH.2.21.1905110801350.9392@namei.org> <CAHk-=wg8UFHD_KmTWF3LMnDf_VN7cv_pofpc4eOHmx_8kmMPWw@mail.gmail.com>
-In-Reply-To: <CAHk-=wg8UFHD_KmTWF3LMnDf_VN7cv_pofpc4eOHmx_8kmMPWw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 11 May 2019 14:13:09 -0400
-Message-ID: <CAHC9VhSSwYk6isqz8N3nOO_O17C30E2EyCHKf5OqsdESeMoT7g@mail.gmail.com>
+        Sat, 11 May 2019 18:08:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1557612504; bh=sVwX4Pbfsm9Uj9dzX0wgQUbE125Ae2WKACxSBlL18uM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=mLIyO2y+0hf+tMf08WsNSspCjkvy/eujQBOD9Np9spL9tvaQ5VpLT3X41qYJ6rqag/SX5jfVJalTRHw7L/dfOsdFju/c6HiWJtZIlBcV2DVhS3LPy3Vkb55Iwfh4/9UVxZyFahyNB+DNt0DOj2obyD15t9tqeK+yfIeMP5zEIThfrMycWR75kZMi72/Okt6YWD+ygLeAN8+kV/UJoKyCMayDfJmvpGu+SRKPvmTC375S7JeZMDYxUutYvuE8lOhElDrGkOw+oVWNx+IbxZ3l4nINTlMBC0aPfmdSCFWHmWWUtsBCWFVJ0OtVX7xj0Hih0VEvu5ZW/lPUrcs+jv5IWA==
+X-YMail-OSG: ET_0JFYVM1mGTvVnpqtxwdc0ELvATxbKogTCBvQCzVy35Szp0cIPZojhdHVPHuL
+ QiKRUGrrWIK94HpWvEiHk8XYLyGAjPmww7HIcSIB90hbCZ1nfhYLEAR3Dhm3OmNiuxz0giDnv2wq
+ 6h_PsfkXUIiVBZUHMBRczQnwsO4SmP4P3.uo8226rn1KxCVzXsxQW6kIFX1.4ExpzzsSBhVnKC3c
+ IUpevFKflaeAIkqxoOgxLYzx5c6zQV6BaNZqPwwW9rj_rC.awj4HeslhuvXyIuu1.IVgDlfZ9Tjp
+ AtsLzmLxltsFJ4Lb23tDIf75zUZbwJerlrCIXS18rquMieacBywIMEAwhxUKXszD65slnQGrnKqE
+ 4iu16exxfVHLu0aLgb4xmxgnkKMzbZstC7Wcx..vT5PY_2bDIZ6ZT41BPsfpIlHOdDmeT3t.vs.g
+ l4kMb9USU3DAh7ba9a8vNoJL7hws8yIRlojUo1UdMCLYmoseQ_48A57NlhqPJRbJf2uH6Mpi08pB
+ hku6MXdoZ_W4pKWJ46lwQJo59zthHwE4ueiyBksShjhAvB5KdQ7OIZXXTl1OBaOxhonCKDelu5Dh
+ ONiYL1dKPP_ZP.YJhkBZrxEh4c9DAxDHbkx9W4y7WJD.z4i6_GJ8WiT5OlqlpCWN42GWhzVYBAV8
+ .r23iMCg8MLoYCfyakCruPAGLgd9_k1rYxuWecrPBFeMFHIz0vK3cydVLfHVBjXagMqJd2cJ.W7J
+ iMSBxdYY1cjZ03NaXZY2ju0ATd3Xo1xqUfzVVWorAzI5dxUb0TL0V6JZ4_ydniGfKeURzSHdjDDs
+ W_B28q53izGN6rIuGlBEuPWXR4zakerVGauSt.fzCR7B3UjyljoY.YmCBZ5tOdfTfn60OQ6LNbE7
+ diXGn1lq1PmAOrGf6_v1K8lJ9Bxf38UpD7rNOFNatnQNovTx5pL2bdLNUoAbsYXd.xooMJV9gada
+ 5ydGLcDg6D83Evmiv2vQzmTpou0hFoeXW5jP70b3g7oRsReMgypj3JX8SpRY3u4VCbyW9cafVDug
+ tuERVjNSF6qxZM_spWHFUWoHivgvFY_Dwxy_GNheYq2gb_SECn9pcEUgTV8.GAyrp_v2gp4Dvnrm
+ 6d0uDMErAwurCyZajfhpRCQ5b5s_ZTX4WAQnO0VA2bKxPi0aYzxZjEI7XqTxsAuhVt0zqEW.IT1B
+ RNFYYCk8Rs0ipXhMCkJxA2lW9qjTv8pR5HXlH91bo0s50JiPnXM93sc9E.WFnoPk3r8ztT8.UMhp
+ AyOXqe8VxoNmKCfj0HTq4R2E-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Sat, 11 May 2019 22:08:24 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
+          by smtp409.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 89f668ca3f757c7aa6565c3d3f390d4e;
+          Sat, 11 May 2019 22:08:20 +0000 (UTC)
 Subject: Re: [GIT PULL] security subsystem: Tomoyo updates for v5.2
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
+To:     Paul Moore <paul@paul-moore.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         James Morris <jmorris@namei.org>
 Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        casey@schaufler-ca.com
+References: <alpine.LRH.2.21.1905110801350.9392@namei.org>
+ <CAHk-=wg8UFHD_KmTWF3LMnDf_VN7cv_pofpc4eOHmx_8kmMPWw@mail.gmail.com>
+ <CAHC9VhSSwYk6isqz8N3nOO_O17C30E2EyCHKf5OqsdESeMoT7g@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <24d602d2-a1a7-7b1e-9035-a2d732cd822b@schaufler-ca.com>
+Date:   Sat, 11 May 2019 15:08:07 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAHC9VhSSwYk6isqz8N3nOO_O17C30E2EyCHKf5OqsdESeMoT7g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, May 11, 2019 at 10:38 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Fri, May 10, 2019 at 6:09 PM James Morris <jmorris@namei.org> wrote:
-> >
-> > These patches include fixes to enable fuzz testing, and a fix for
-> > calculating whether a filesystem is user-modifiable.
+On 5/11/2019 11:13 AM, Paul Moore wrote:
+> On Sat, May 11, 2019 at 10:38 AM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> On Fri, May 10, 2019 at 6:09 PM James Morris <jmorris@namei.org> wrote:
+>>> These patches include fixes to enable fuzz testing, and a fix for
+>>> calculating whether a filesystem is user-modifiable.
+>> So now these have been very recently rebased (on top of a random
+>> merge-window "tree of the day" version) instead of having multiple
+>> merges.
+>>
+>> That makes the history cleaner, but has its own issues.
+>>
+>> We really need to find a different model for the security layer patches.
+> If it helps, the process I use for the SELinux and audit trees is
+> documented below.  While it's far from perfect (I still don't like
+> basing the -next trees on -rcX releases) it has seemed to work
+> reasonably well for some time now.
 >
-> So now these have been very recently rebased (on top of a random
-> merge-window "tree of the day" version) instead of having multiple
-> merges.
->
-> That makes the history cleaner, but has its own issues.
->
-> We really need to find a different model for the security layer patches.
+> * https://github.com/SELinuxProject/selinux-kernel/blob/master/README.md
 
-If it helps, the process I use for the SELinux and audit trees is
-documented below.  While it's far from perfect (I still don't like
-basing the -next trees on -rcX releases) it has seemed to work
-reasonably well for some time now.
+On the whole this looks fine to me. I am less comfortable than Paul
+is regarding changes that happen elsewhere, so I would be more likely
+to base in the rc-1 than Paul. More developers test with SELinux than
+Smack. I am in the process of putting an appropriate GPG environment
+together for 5.3.
 
-* https://github.com/SELinuxProject/selinux-kernel/blob/master/README.md
+The LSM infrastructure work I've been doing should still go through
+James, as it has global implications.
 
--- 
-paul moore
-www.paul-moore.com
