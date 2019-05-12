@@ -2,131 +2,103 @@ Return-Path: <SRS0=opVv=TM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55889C04A6B
-	for <linux-security-module@archiver.kernel.org>; Sun, 12 May 2019 15:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBDCC04A6B
+	for <linux-security-module@archiver.kernel.org>; Sun, 12 May 2019 17:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC6872146F
-	for <linux-security-module@archiver.kernel.org>; Sun, 12 May 2019 15:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FF052146F
+	for <linux-security-module@archiver.kernel.org>; Sun, 12 May 2019 17:05:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="c3yr7vG4"
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="M1kb+HIz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbfELPde (ORCPT
+        id S1726900AbfELRFT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 May 2019 11:33:34 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:32908 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726478AbfELPde (ORCPT
+        Sun, 12 May 2019 13:05:19 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39200 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726903AbfELRFT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 May 2019 11:33:34 -0400
-Received: by mail-lf1-f66.google.com with SMTP id x132so7268116lfd.0
-        for <linux-security-module@vger.kernel.org>; Sun, 12 May 2019 08:33:32 -0700 (PDT)
+        Sun, 12 May 2019 13:05:19 -0400
+Received: by mail-oi1-f196.google.com with SMTP id v2so4296766oie.6
+        for <linux-security-module@vger.kernel.org>; Sun, 12 May 2019 10:05:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9r+ZomokzdXWblU1eNUZVwuwrP8R96EBwqrRjwYeKr4=;
-        b=c3yr7vG4M7K5xO6VFHElKBbxnn1f8y+/R859KR3R4Q+eCCRf6i7FQqjUJtXERqfS8L
-         pZeqSaQQEtfvETWFk7y3oV10tk7gRfI+ntCJWymwSEeYX31EkK3waAQgqhz7Qmr3hIfZ
-         Gf4R79gUSgSa8xWSkRlzEi6uQZsEHqFkGy4hl6o/btTquMqgVKrwAxiC5OMkOMpXat+i
-         xtRqbuHzfK9Ltsi9Sl5U1VhnmyAwspJ7DStrK5ccV2gMudTyhVMSSKebpheGWu/I6Uyp
-         IhnuMDvXTgsx+oukCOK7Q0d3j2+wWtbhjbqKJPnkobfHFxk16vI3IK5sQTaPGXBd5Hkt
-         s9ug==
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=QSdaCWlLqhcDnznsymm2aG1Z95spPWEN1cuWFhXTYhg=;
+        b=M1kb+HIzVOLjPCV4h6Pn4lve+FlnoRhh7JL/WOdRAHWhP7XRiXt2Sb1zCx+P73FWpH
+         KH+vO3XX2/+B76I47eV+x5dE3f6pnMgrTIJE7VNh4ZChznUcTJY9sLB9hecdROdExjmg
+         /JPQRL9+WNauQRy09PAuL4L+fpknOrj50gkModVL0BMNekoH7GBXdRdXfxoaLcWOG03L
+         Y+O3tl58C2QvVdDq9MUnLdKYMn7lI9M9GE8l5NKOH1AX/WldekcH2nLERHsnEiX4sVsK
+         tDUJ/uw9Na9lpPhy3YjlBknNgRsJ/+qzkinLg8HkU903BWLWhwIYA6J1YzU1WDzc0gEI
+         hjfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9r+ZomokzdXWblU1eNUZVwuwrP8R96EBwqrRjwYeKr4=;
-        b=JDNjr8bS7r2zQt31E1yrmaonUx/bh3FpWMKfNgvunAwyhQuY7pdHejMwLEraBXzGPV
-         rXemMJdqShPXtDAOENfBYZoN2TwL49deqKQSH7LkVj59pQB+IVw1RYVXsLkpLa1U3qZj
-         YUvLg9LJgh0mnbcVKHHOVCkjQKi2aJk88eIcrRviRfq+oGcFiJxb5ywBm1tKfTDeUBFf
-         gtV4JUn4XqZiI852mDEHy/ECzq6SwVo7YnNr6m0blx+WallXoL+AZRASzmndLnB117Nt
-         42j9m9W4a884AtDTeeNnDhOD5mB07ZeSry6Z4omy05Rw6X3e8oaT1pUOPhbOc77w1M8X
-         8KfQ==
-X-Gm-Message-State: APjAAAVZB0kKBs9N7wOPyI2OMutbGBMCuh2xe0vYy3JuHMyuQHcA6NK2
-        /5IEAYJbmd7ksazUL7WwDmkg91Wk9nZn9JBu86F9
-X-Google-Smtp-Source: APXvYqwssmfk79g0gXuyu6vL/pB+unVYXZl+YtSB3qWpfoKMUt9P1fd71z0mIORksqna2eKacd+sGg7pqj14k4Ji6Uw=
-X-Received: by 2002:a19:c394:: with SMTP id t142mr6613263lff.102.1557675211836;
- Sun, 12 May 2019 08:33:31 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QSdaCWlLqhcDnznsymm2aG1Z95spPWEN1cuWFhXTYhg=;
+        b=LGkMnUJqnkPnTuetL5XM/b8q+CZ6dTVSPxl/JUoDT5UJUahBg5ktIPU7n3YLoqKKfp
+         b92ftmT8Y7Lz4gCyS6Fx6SYoMY9YNCvqGWXfodyawVJiBZAzdf0SSn3saxDethZdR+Eq
+         fRYra6DaWs9bkIH+5TZNnE6ZBAYIuyMWH5LHt2yK0p/TyNR4P63TIplsEv/eWNxaz8Kd
+         HGEK3oMAW7c6xSVJMEctZANbWWcaIq5FP/GfBFdJ+4waG/pdbzKjBjxT34LjuBEBXuc4
+         zz3hVMoqMCBn0GLdiBWpLAkLAE874UmhZnRjj+7UP/Ya878aiMeYvCN8L0aG7pt+LpQp
+         qIBQ==
+X-Gm-Message-State: APjAAAU7YWZ5P8BbSVxMvYWJ9iSnhUbOGWDTay3wxLVZczg+Ku5zEGQL
+        xSwksP17dJ7lLzuSRw2o/NJV3g==
+X-Google-Smtp-Source: APXvYqyWbK23VrEkToZOwoQB+/N6sOOi7C92304sjVSrsw7En9uosUTt+tMWJRIvjnvIj1tmphPF2Q==
+X-Received: by 2002:aca:e594:: with SMTP id c142mr3854397oih.155.1557680718422;
+        Sun, 12 May 2019 10:05:18 -0700 (PDT)
+Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
+        by smtp.googlemail.com with ESMTPSA id w192sm4456571oiw.57.2019.05.12.10.05.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 12 May 2019 10:05:17 -0700 (PDT)
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
+        arnd@arndb.de, james.w.mcmechan@gmail.com
+References: <20190509112420.15671-1-roberto.sassu@huawei.com>
+ <20190512091748.s6fvy2f5p2a2o6ja@isilmar-4.linta.de>
+ <1557665567.10635.222.camel@linux.ibm.com>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
+Date:   Sun, 12 May 2019 12:05:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <alpine.LRH.2.21.1905110801350.9392@namei.org> <CAHk-=wg8UFHD_KmTWF3LMnDf_VN7cv_pofpc4eOHmx_8kmMPWw@mail.gmail.com>
- <CAHC9VhSSwYk6isqz8N3nOO_O17C30E2EyCHKf5OqsdESeMoT7g@mail.gmail.com> <24d602d2-a1a7-7b1e-9035-a2d732cd822b@schaufler-ca.com>
-In-Reply-To: <24d602d2-a1a7-7b1e-9035-a2d732cd822b@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 12 May 2019 11:33:20 -0400
-Message-ID: <CAHC9VhR-oqJwyvB2JhzTu2_nuZuENA=Y9f4rtfUrSGtLMnGZfw@mail.gmail.com>
-Subject: Re: [GIT PULL] security subsystem: Tomoyo updates for v5.2
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1557665567.10635.222.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, May 11, 2019 at 6:08 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 5/11/2019 11:13 AM, Paul Moore wrote:
-> > On Sat, May 11, 2019 at 10:38 AM Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> >> On Fri, May 10, 2019 at 6:09 PM James Morris <jmorris@namei.org> wrote:
-> >>> These patches include fixes to enable fuzz testing, and a fix for
-> >>> calculating whether a filesystem is user-modifiable.
-> >> So now these have been very recently rebased (on top of a random
-> >> merge-window "tree of the day" version) instead of having multiple
-> >> merges.
-> >>
-> >> That makes the history cleaner, but has its own issues.
-> >>
-> >> We really need to find a different model for the security layer patches.
-> >
-> > If it helps, the process I use for the SELinux and audit trees is
-> > documented below.  While it's far from perfect (I still don't like
-> > basing the -next trees on -rcX releases) it has seemed to work
-> > reasonably well for some time now.
-> >
-> > * https://github.com/SELinuxProject/selinux-kernel/blob/master/README.md
->
-> On the whole this looks fine to me. I am less comfortable than Paul
-> is regarding changes that happen elsewhere, so I would be more likely
-> to base in the rc-1 than Paul. More developers test with SELinux than
-> Smack. I am in the process of putting an appropriate GPG environment
-> together for 5.3.
+On 5/12/19 7:52 AM, Mimi Zohar wrote:
+> On Sun, 2019-05-12 at 11:17 +0200, Dominik Brodowski wrote:
+>> On Thu, May 09, 2019 at 01:24:17PM +0200, Roberto Sassu wrote:
+>>> This proposal consists in marshaling pathnames and xattrs in a file called
+>>> .xattr-list. They are unmarshaled by the CPIO parser after all files have
+>>> been extracted.
+>>
+>> Couldn't this parsing of the .xattr-list file and the setting of the xattrs
+>> be done equivalently by the initramfs' /init? Why is kernel involvement
+>> actually required here?
+> 
+> It's too late.  The /init itself should be signed and verified.
 
-I share your concern about external changes outside the subsystem
-breaking things; this doesn't happen all that often with the audit
-tree, but it seems to happen every couple of releases with the SELinux
-tree.  This is one of the reasons why I test linux/master +
-selinux/next + audit/next every few days, if not more often (see link
-below).  I've found this regular testing to be extremely helpful, and
-if anyone is interested I'd be happy to help you get something similar
-going.
+If the initramfs cpio.gz image was signed and verified by the extractor, how is
+the init in it _not_ verified?
 
-* http://www.paul-moore.com/blog/d/2019/04/kernel_secnext_repo.html
-
-FWIW, the reason I don't like basing against -rc1 (or any -rcX tag for
-that matter) is that the -rcX releases tend to be buggier than the
-"proper" releases.  However, in practice I find myself basing the
-selinux/next and audit/next branches against -rc1 almost every release
-now; the rate of change outside the subsystem trees is simply too
-high.
-
-> The LSM infrastructure work I've been doing should still go through
-> James, as it has global implications.
-
-As far as I'm concerned, whatever makes it easier for Linus to consume
-the changes is the preferred path.  My guess is that you are right and
-any *significant* changes to the LSM layer itself, e.g. security/*, is
-best sent via James' tree.  For smaller changes to the LSM layer I
-think it's okay if they go in via an individual LSM tree so long as
-all the other LSMs agree-on/ack the changes; which pretty much fits
-what we've been doing for some time now and it seems to work well
-enough.
-
--- 
-paul moore
-www.paul-moore.com
+Rob
