@@ -2,84 +2,99 @@ Return-Path: <SRS0=opVv=TM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFBCC04A6B
-	for <linux-security-module@archiver.kernel.org>; Sun, 12 May 2019 10:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBB8C04A6B
+	for <linux-security-module@archiver.kernel.org>; Sun, 12 May 2019 12:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81BA52146F
-	for <linux-security-module@archiver.kernel.org>; Sun, 12 May 2019 10:18:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="oImKz1LN"
+	by mail.kernel.org (Postfix) with ESMTP id B77872133D
+	for <linux-security-module@archiver.kernel.org>; Sun, 12 May 2019 12:53:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbfELKSm (ORCPT
+        id S1726477AbfELMxK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 May 2019 06:18:42 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45009 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbfELKSm (ORCPT
+        Sun, 12 May 2019 08:53:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39370 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726529AbfELMxK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 May 2019 06:18:42 -0400
-Received: from [IPv6:2601:646:8680:2bb1:80c8:8cb8:dd71:1e2e] ([IPv6:2601:646:8680:2bb1:80c8:8cb8:dd71:1e2e])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x4CAIN7l2991902
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Sun, 12 May 2019 03:18:24 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x4CAIN7l2991902
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1557656306;
-        bh=Sy4FTuOUSedIkErrZ5lDW71XRGPcUXqj45OdYbBsoqY=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=oImKz1LNFVMdrQxMMMNLKoqqQaVHc7Uv+sLqZpIK3Pm0CY+wCuE7fKdablrzkd94N
-         WkffPQW3oiMcMefKNzH18l/Dg+JmFpXcrfIJNZ3IGvMnvkVZHmsQ8/ZGlVtQpbLhBe
-         jh+p68S4gaKZ9Mrjy2ns5tiDv6u342eiv2k95evNdiNCRHs32SAuvcjTjixCpq+cQt
-         w8tBfBWvV8jufKfqRP2VHsLZ27DeNHCtwmCjj+sTHf83JV7p4aPKkUDzcSgAxT9KjE
-         j80F8tGt0xVmhCoQR5JNwkD8BqobjcASWIwhPgV32+tc5nd1bf4YfT0KhS/XF4RjmX
-         5wPYnlqZ7/k5w==
-Date:   Sun, 12 May 2019 03:18:16 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190512091748.s6fvy2f5p2a2o6ja@isilmar-4.linta.de>
-References: <20190509112420.15671-1-roberto.sassu@huawei.com> <20190512091748.s6fvy2f5p2a2o6ja@isilmar-4.linta.de>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial ram disk
+        Sun, 12 May 2019 08:53:10 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4CCpcGA010988
+        for <linux-security-module@vger.kernel.org>; Sun, 12 May 2019 08:53:08 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sebtnuwh6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Sun, 12 May 2019 08:53:08 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 12 May 2019 13:53:06 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 12 May 2019 13:53:01 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4CCr0bW60817534
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 12 May 2019 12:53:00 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 786AE42047;
+        Sun, 12 May 2019 12:53:00 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83C6442041;
+        Sun, 12 May 2019 12:52:58 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.95.158])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 12 May 2019 12:52:58 +0000 (GMT)
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     Dominik Brodowski <linux@dominikbrodowski.net>,
         Roberto Sassu <roberto.sassu@huawei.com>
-CC:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
+Cc:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
         silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, arnd@arndb.de,
-        rob@landley.net, james.w.mcmechan@gmail.com
-From:   hpa@zytor.com
-Message-ID: <4E92753A-04BD-4018-A3A4-5E3E4242D8B9@zytor.com>
+        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
+        arnd@arndb.de, rob@landley.net, james.w.mcmechan@gmail.com
+Date:   Sun, 12 May 2019 08:52:47 -0400
+In-Reply-To: <20190512091748.s6fvy2f5p2a2o6ja@isilmar-4.linta.de>
+References: <20190509112420.15671-1-roberto.sassu@huawei.com>
+         <20190512091748.s6fvy2f5p2a2o6ja@isilmar-4.linta.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19051212-0028-0000-0000-0000036CD1EF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19051212-0029-0000-0000-0000242C5BDA
+Message-Id: <1557665567.10635.222.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-12_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=847 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905120097
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On May 12, 2019 2:17:48 AM PDT, Dominik Brodowski <linux@dominikbrodowski=
-=2Enet> wrote:
->On Thu, May 09, 2019 at 01:24:17PM +0200, Roberto Sassu wrote:
->> This proposal consists in marshaling pathnames and xattrs in a file
->called
->> =2Exattr-list=2E They are unmarshaled by the CPIO parser after all file=
-s
->have
->> been extracted=2E
->
->Couldn't this parsing of the =2Exattr-list file and the setting of the
->xattrs
->be done equivalently by the initramfs' /init? Why is kernel involvement
->actually required here?
->
->Thanks,
->	Dominik
+On Sun, 2019-05-12 at 11:17 +0200, Dominik Brodowski wrote:
+> On Thu, May 09, 2019 at 01:24:17PM +0200, Roberto Sassu wrote:
+> > This proposal consists in marshaling pathnames and xattrs in a file called
+> > .xattr-list. They are unmarshaled by the CPIO parser after all files have
+> > been extracted.
+> 
+> Couldn't this parsing of the .xattr-list file and the setting of the xattrs
+> be done equivalently by the initramfs' /init? Why is kernel involvement
+> actually required here?
 
-There are a lot of things that could/should be done that way=2E=2E=2E
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+It's too late.  The /init itself should be signed and verified.
+
+Mimi
+
