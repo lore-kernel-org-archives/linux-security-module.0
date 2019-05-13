@@ -5,35 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBBDC04AA7
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 May 2019 18:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F241C04AA7
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 May 2019 18:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE984208CA
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 May 2019 18:03:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2451208C3
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 May 2019 18:22:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbfEMSDr (ORCPT
+        id S1726623AbfEMSWx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 May 2019 14:03:47 -0400
-Received: from namei.org ([65.99.196.166]:38884 "EHLO namei.org"
+        Mon, 13 May 2019 14:22:53 -0400
+Received: from namei.org ([65.99.196.166]:38910 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728201AbfEMSDq (ORCPT
+        id S1725928AbfEMSWx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 May 2019 14:03:46 -0400
+        Mon, 13 May 2019 14:22:53 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x4DI3gcn003503;
-        Mon, 13 May 2019 18:03:42 GMT
-Date:   Tue, 14 May 2019 04:03:42 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x4DIMpN5005114;
+        Mon, 13 May 2019 18:22:52 GMT
+Date:   Tue, 14 May 2019 04:22:51 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
+cc:     LSM List <linux-security-module@vger.kernel.org>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
 Subject: Re: [GIT PULL] security subsystem: Tomoyo updates for v5.2
-In-Reply-To: <CAHk-=wh33PsgxtwXdzDgx13tARBnhzkPV9294L2g6OjOBeNvfA@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1905140401320.14684@namei.org>
-References: <alpine.LRH.2.21.1905110801350.9392@namei.org> <CAHk-=wg8UFHD_KmTWF3LMnDf_VN7cv_pofpc4eOHmx_8kmMPWw@mail.gmail.com> <CAHC9VhSSwYk6isqz8N3nOO_O17C30E2EyCHKf5OqsdESeMoT7g@mail.gmail.com> <24d602d2-a1a7-7b1e-9035-a2d732cd822b@schaufler-ca.com>
- <CAHC9VhR-oqJwyvB2JhzTu2_nuZuENA=Y9f4rtfUrSGtLMnGZfw@mail.gmail.com> <CAHk-=wh33PsgxtwXdzDgx13tARBnhzkPV9294L2g6OjOBeNvfA@mail.gmail.com>
+In-Reply-To: <alpine.LRH.2.21.1905140352370.14684@namei.org>
+Message-ID: <alpine.LRH.2.21.1905140421360.4757@namei.org>
+References: <alpine.LRH.2.21.1905110801350.9392@namei.org> <CAHk-=wg8UFHD_KmTWF3LMnDf_VN7cv_pofpc4eOHmx_8kmMPWw@mail.gmail.com> <alpine.LRH.2.21.1905140352370.14684@namei.org>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -41,19 +38,21 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 12 May 2019, Linus Torvalds wrote:
+On Tue, 14 May 2019, James Morris wrote:
 
-> >     My guess is that you are right and
-> > any *significant* changes to the LSM layer itself, e.g. security/*, is
-> > best sent via James' tree.  For smaller changes to the LSM layer I
-> > think it's okay if they go in via an individual LSM tree so long as
-> > all the other LSMs agree-on/ack the changes; which pretty much fits
-> > what we've been doing for some time now and it seems to work well
-> > enough.
+> On Sat, 11 May 2019, Linus Torvalds wrote:
+
+> > So now these have been very recently rebased (on top of a random
+> > merge-window "tree of the day" version) instead of having multiple
+> > merges.
+> > 
+> > That makes the history cleaner, but has its own issues.
 > 
-> Yeah, I think that's the sane model. And I think it's mostly been working.
+> These are just plain patches from the author, they were not part of any 
+> publicly accessible tree -- there's nowhere they could be merged from.
 
-New LSMs also need to be guided in, as part of a community effort.
+The reason I created a new branch in this case was that the existing one 
+had the same issue as the TPM branch. 
 
 -- 
 James Morris
