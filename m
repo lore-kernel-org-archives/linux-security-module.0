@@ -2,66 +2,73 @@ Return-Path: <SRS0=BhGd=TO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A86DC04AB4
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 May 2019 14:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 136CBC04AB4
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 May 2019 14:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235E92085A
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 May 2019 14:36:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C17342085A
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 May 2019 14:40:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pikeD1jl"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZcTWXERQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726098AbfENOgL (ORCPT
+        id S1726567AbfENOkK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 May 2019 10:36:11 -0400
-Received: from mail-vs1-f73.google.com ([209.85.217.73]:43913 "EHLO
-        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbfENOgL (ORCPT
+        Tue, 14 May 2019 10:40:10 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:43883 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfENOkJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 May 2019 10:36:11 -0400
-Received: by mail-vs1-f73.google.com with SMTP id z126so2462027vsb.10
-        for <linux-security-module@vger.kernel.org>; Tue, 14 May 2019 07:36:10 -0700 (PDT)
+        Tue, 14 May 2019 10:40:09 -0400
+Received: by mail-vs1-f65.google.com with SMTP id d128so10461289vsc.10
+        for <linux-security-module@vger.kernel.org>; Tue, 14 May 2019 07:40:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=Go4t+yeK4FmEV47RVV/K/R0RvYRio180dlBaNN/E/uc=;
-        b=pikeD1jlvnTEk+uey8TbYun2V8C/qn4NetuazfEjFSiIKXfvKb/Y0U2HoOWYrcxEIV
-         RE5qYPWIkYK3IPMiDScQeSxK/srM5ptI7dU2jw4oxcInPVP6DLkKA9s1SNWvB2og986s
-         NIFLfXn07Iz5SdRS75NF4d20AWJ5nnn1P7j3lT5arszZfOIm7sh/AGz7F0MmvLClYAZn
-         cIlQ/W4XGYhtJCeuCcbxJGVNh5q+guM3Rv3w1yAkzVnieYfruF0+p9N4wanKkn7/p/SW
-         BszdBhtZ3MtpABxG0+mAR5ZuJsszQrRt2f6CbWb34BCMWiBptbrnvbZ6TunbLM8L5NWs
-         jCsA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Y9elDrG5a0+F5kcEhLlKdiEIdllXd8Jo5lrH+iv1S3k=;
+        b=ZcTWXERQUjmj2QwQIbFGnj39+bcTt8zmjam78wn6i6h9/7xg03z2XYlSaQ8cHpeoCY
+         guUpxGO0cXM4i2c3G8deAceAikaEUKjij0nW0aHk4HyQ+gRoOelIUeP+VgwPnXzWnRkV
+         LkNT5Q8yQBe06a7btM3bVgqu8jUv5sKwOuRGGkvZXq1KRk78gmWImqoFlpJ0vgATk6nW
+         sCnuzQvpXQjR+IQfrwj7QM2uvkCP01Pu3pnQEjrOJpFSXo7i26PkoZoJZougihhaqUNr
+         irl7wVGn63hxTHymxdj4CK9PYN2aelLMvjHDwmReblXxIKZm/glwKfnRwqQqGOIwztK+
+         5MdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=Go4t+yeK4FmEV47RVV/K/R0RvYRio180dlBaNN/E/uc=;
-        b=a2OUJ1qGnKBlkBEIVYO1MoyUe9wwFxEQHCPft7FP0ZyKe6zhojOlx2ogl8hWw+a2RU
-         M0t+SOALcGwMR5coIshYdfMDbGLnLwAofZT4r267kd08YnBgRQnpexNLzEje2nk0stNJ
-         aF2aRUejOsbj7P+M0JKOwBeY96RmXMcX8EzWjMf27KYLQm8YpKvtDRI5/MRukHjCn6kU
-         3NgjNEAlZY2taim/txLEk0O9TauWJTaerKI8198QH2ir7Bholaej6z8lVJQtVmkr55Ro
-         01BvDXaTY/JcnUbPgjM8V4cTHvmEwMUyk6Oqmz8kKh/geFlaxLN3oJlitBmnvFfahdh4
-         or8A==
-X-Gm-Message-State: APjAAAUyCbtjPDYgoaSvbRKAsiQ5iPnM5s4mr+hItKNLI//xIr9eiQGI
-        YG0qh+Xn3GtCICvNJVsFnW7CtNyU/D8=
-X-Google-Smtp-Source: APXvYqzAvmFIr0uQeT7SswT+cvcHP8YHOoi7bCs4Uurq0vvk2jm2KoyvFDp206pk1BoSOeKx0QNC4J5Rkl8=
-X-Received: by 2002:a67:ed11:: with SMTP id l17mr17817001vsp.154.1557844570196;
- Tue, 14 May 2019 07:36:10 -0700 (PDT)
-Date:   Tue, 14 May 2019 16:35:37 +0200
-In-Reply-To: <20190514143537.10435-1-glider@google.com>
-Message-Id: <20190514143537.10435-5-glider@google.com>
-Mime-Version: 1.0
-References: <20190514143537.10435-1-glider@google.com>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [PATCH v2 4/4] net: apply __GFP_NO_AUTOINIT to AF_UNIX sk_buff allocations
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Y9elDrG5a0+F5kcEhLlKdiEIdllXd8Jo5lrH+iv1S3k=;
+        b=egatX+aZuPq70onfDQZN7MM8QVqndrOYjn51vaxcXVpbHHuwC0Ybs1e9wLT0v7KKj2
+         0biKJxJ3mtx2twlC4FG6Uo0gXGheyPRnnRBvvrUxnJSBqVi6jUppH/zskiCP977aofzR
+         J4Ez2id2kdZFN1u/yTgy1WUthGYWvpz5H9gHLRNzoPi5H5YHzrf0YmgCONFB0f1OGdn2
+         1XG+gnyOBeQffzMcZh8tIF2u45+2Ypy31BrUfOvL2CUWBASvzFpcaxORqsIrQUlYAf63
+         68Bevh/ccj7yucVFGj6tTQHyll1ymiZOdWrVFEmfnUUyk7mFcElRGY1G82X9HK7NsDW8
+         Ipsg==
+X-Gm-Message-State: APjAAAVXIiXr8nj2uRMP2+UIZed/2k00jdv6FTFpbSkqWdSlqBfkPhDg
+        kIEi5kfHbMZGUs7/5xX+MOLDOvfDfMXzJuPP6+bGmQ==
+X-Google-Smtp-Source: APXvYqzV+X//RAjmEdX/1LhxUFJSBZDJ8YuwVfHmpMyjQL0u0/UdaqtrKVuZ7H23X6BGjtPvNdxJYGe9v7h+/LMYF4M=
+X-Received: by 2002:a67:7241:: with SMTP id n62mr16465896vsc.217.1557844808216;
+ Tue, 14 May 2019 07:40:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190508153736.256401-1-glider@google.com> <20190508153736.256401-4-glider@google.com>
+ <CAGXu5jJS=KgLwetdmDAUq9+KhUFTd=jnCES3BZJm+qBwUBmLjQ@mail.gmail.com>
+ <CAG_fn=VbJXHsqAeBD+g6zJ8WVTko4Ev2xytXrcJ-ztEWm7kOOA@mail.gmail.com> <CAFqt6zY1oY4YTfAd4RdV0-V8iUfK65LTHsdmxrSWs7KRnWrrCg@mail.gmail.com>
+In-Reply-To: <CAFqt6zY1oY4YTfAd4RdV0-V8iUfK65LTHsdmxrSWs7KRnWrrCg@mail.gmail.com>
 From:   Alexander Potapenko <glider@google.com>
-To:     akpm@linux-foundation.org, cl@linux.com, keescook@chromium.org
-Cc:     kernel-hardening@lists.openwall.com,
+Date:   Tue, 14 May 2019 16:39:56 +0200
+Message-ID: <CAG_fn=XzWcF=_L1zEU6Gd++u00N=j9GptVLvYOj0_kF0HRu+ig@mail.gmail.com>
+Subject: Re: [PATCH 3/4] gfp: mm: introduce __GFP_NOINIT
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
@@ -69,165 +76,208 @@ Cc:     kernel-hardening@lists.openwall.com,
         Kostya Serebryany <kcc@google.com>,
         Dmitry Vyukov <dvyukov@google.com>,
         Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         Jann Horn <jannh@google.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add sock_alloc_send_pskb_noinit(), which is similar to
-sock_alloc_send_pskb(), but allocates with __GFP_NO_AUTOINIT.
-This helps reduce the slowdown on hackbench in the init_on_alloc mode
-from 6.84% to 3.45%.
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Sat, May 11, 2019 at 9:28 AM
+To: Alexander Potapenko
+Cc: Kees Cook, Andrew Morton, Christoph Lameter, Laura Abbott,
+Linux-MM, linux-security-module, Kernel Hardening, Masahiro Yamada,
+James Morris, Serge E. Hallyn, Nick Desaulniers, Kostya Serebryany,
+Dmitry Vyukov, Sandeep Patil, Randy Dunlap, Jann Horn, Mark Rutland,
+Matthew Wilcox
 
-Slowdown for the initialization features compared to init_on_free=0,
-init_on_alloc=0:
+> On Thu, May 9, 2019 at 6:53 PM Alexander Potapenko <glider@google.com> wr=
+ote:
+> >
+> > From: Kees Cook <keescook@chromium.org>
+> > Date: Wed, May 8, 2019 at 9:16 PM
+> > To: Alexander Potapenko
+> > Cc: Andrew Morton, Christoph Lameter, Kees Cook, Laura Abbott,
+> > Linux-MM, linux-security-module, Kernel Hardening, Masahiro Yamada,
+> > James Morris, Serge E. Hallyn, Nick Desaulniers, Kostya Serebryany,
+> > Dmitry Vyukov, Sandeep Patil, Randy Dunlap, Jann Horn, Mark Rutland
+> >
+> > > On Wed, May 8, 2019 at 8:38 AM Alexander Potapenko <glider@google.com=
+> wrote:
+> > > > When passed to an allocator (either pagealloc or SL[AOU]B), __GFP_N=
+OINIT
+> > > > tells it to not initialize the requested memory if the init_on_allo=
+c
+> > > > boot option is enabled. This can be useful in the cases newly alloc=
+ated
+> > > > memory is going to be initialized by the caller right away.
+> > > >
+> > > > __GFP_NOINIT doesn't affect init_on_free behavior, except for SLOB,
+> > > > where init_on_free implies init_on_alloc.
+> > > >
+> > > > __GFP_NOINIT basically defeats the hardening against information le=
+aks
+> > > > provided by init_on_alloc, so one should use it with caution.
+> > > >
+> > > > This patch also adds __GFP_NOINIT to alloc_pages() calls in SL[AOU]=
+B.
+> > > > Doing so is safe, because the heap allocators initialize the pages =
+they
+> > > > receive before passing memory to the callers.
+> > > >
+> > > > Slowdown for the initialization features compared to init_on_free=
+=3D0,
+> > > > init_on_alloc=3D0:
+> > > >
+> > > > hackbench, init_on_free=3D1:  +6.84% sys time (st.err 0.74%)
+> > > > hackbench, init_on_alloc=3D1: +7.25% sys time (st.err 0.72%)
+> > > >
+> > > > Linux build with -j12, init_on_free=3D1:  +8.52% wall time (st.err =
+0.42%)
+> > > > Linux build with -j12, init_on_free=3D1:  +24.31% sys time (st.err =
+0.47%)
+> > > > Linux build with -j12, init_on_alloc=3D1: -0.16% wall time (st.err =
+0.40%)
+> > > > Linux build with -j12, init_on_alloc=3D1: +1.24% sys time (st.err 0=
+.39%)
+> > > >
+> > > > The slowdown for init_on_free=3D0, init_on_alloc=3D0 compared to th=
+e
+> > > > baseline is within the standard error.
+> > > >
+>
+> Not sure, but I think this patch will clash with Matthew's posted patch s=
+eries
+> *Remove 'order' argument from many mm functions*.
+Not sure I can do much with that before those patches reach mainline.
+Once they do, I'll update my patches.
+Please let me know if there's a better way to resolve such conflicts.
+> > > > Signed-off-by: Alexander Potapenko <glider@google.com>
+> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > > > Cc: James Morris <jmorris@namei.org>
+> > > > Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> > > > Cc: Nick Desaulniers <ndesaulniers@google.com>
+> > > > Cc: Kostya Serebryany <kcc@google.com>
+> > > > Cc: Dmitry Vyukov <dvyukov@google.com>
+> > > > Cc: Kees Cook <keescook@chromium.org>
+> > > > Cc: Sandeep Patil <sspatil@android.com>
+> > > > Cc: Laura Abbott <labbott@redhat.com>
+> > > > Cc: Randy Dunlap <rdunlap@infradead.org>
+> > > > Cc: Jann Horn <jannh@google.com>
+> > > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > > Cc: linux-mm@kvack.org
+> > > > Cc: linux-security-module@vger.kernel.org
+> > > > Cc: kernel-hardening@lists.openwall.com
+> > > > ---
+> > > >  include/linux/gfp.h | 6 +++++-
+> > > >  include/linux/mm.h  | 2 +-
+> > > >  kernel/kexec_core.c | 2 +-
+> > > >  mm/slab.c           | 2 +-
+> > > >  mm/slob.c           | 3 ++-
+> > > >  mm/slub.c           | 1 +
+> > > >  6 files changed, 11 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> > > > index fdab7de7490d..66d7f5604fe2 100644
+> > > > --- a/include/linux/gfp.h
+> > > > +++ b/include/linux/gfp.h
+> > > > @@ -44,6 +44,7 @@ struct vm_area_struct;
+> > > >  #else
+> > > >  #define ___GFP_NOLOCKDEP       0
+> > > >  #endif
+> > > > +#define ___GFP_NOINIT          0x1000000u
+> > >
+> > > I mentioned this in the other patch, but I think this needs to be
+> > > moved ahead of GFP_NOLOCKDEP and adjust the values for GFP_NOLOCKDEP
+> > > and to leave the IS_ENABLED() test in __GFP_BITS_SHIFT alone.
+> > Do we really need this blinking GFP_NOLOCKDEP bit at all?
+> > This approach doesn't scale, we can't even have a second feature that
+> > has a bit depending on the config settings.
+> > Cannot we just fix the number of bits instead?
+> >
+> > > >  /* If the above are modified, __GFP_BITS_SHIFT may need updating *=
+/
+> > > >
+> > > >  /*
+> > > > @@ -208,16 +209,19 @@ struct vm_area_struct;
+> > > >   * %__GFP_COMP address compound page metadata.
+> > > >   *
+> > > >   * %__GFP_ZERO returns a zeroed page on success.
+> > > > + *
+> > > > + * %__GFP_NOINIT requests non-initialized memory from the underlyi=
+ng allocator.
+> > > >   */
+> > > >  #define __GFP_NOWARN   ((__force gfp_t)___GFP_NOWARN)
+> > > >  #define __GFP_COMP     ((__force gfp_t)___GFP_COMP)
+> > > >  #define __GFP_ZERO     ((__force gfp_t)___GFP_ZERO)
+> > > > +#define __GFP_NOINIT   ((__force gfp_t)___GFP_NOINIT)
+> > > >
+> > > >  /* Disable lockdep for GFP context tracking */
+> > > >  #define __GFP_NOLOCKDEP ((__force gfp_t)___GFP_NOLOCKDEP)
+> > > >
+> > > >  /* Room for N __GFP_FOO bits */
+> > > > -#define __GFP_BITS_SHIFT (23 + IS_ENABLED(CONFIG_LOCKDEP))
+> > > > +#define __GFP_BITS_SHIFT (25)
+> > >
+> > > AIUI, this will break non-CONFIG_LOCKDEP kernels: it should just be:
+> > >
+> > > -#define __GFP_BITS_SHIFT (23 + IS_ENABLED(CONFIG_LOCKDEP))
+> > > +#define __GFP_BITS_SHIFT (24 + IS_ENABLED(CONFIG_LOCKDEP))
+> > >
+> > > >  #define __GFP_BITS_MASK ((__force gfp_t)((1 << __GFP_BITS_SHIFT) -=
+ 1))
+> > > >
+> > > >  /**
+> > > > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > > > index ee1a1092679c..8ab152750eb4 100644
+> > > > --- a/include/linux/mm.h
+> > > > +++ b/include/linux/mm.h
+> > > > @@ -2618,7 +2618,7 @@ DECLARE_STATIC_KEY_FALSE(init_on_alloc);
+> > > >  static inline bool want_init_on_alloc(gfp_t flags)
+> > > >  {
+> > > >         if (static_branch_unlikely(&init_on_alloc))
+> > > > -               return true;
+> > > > +               return !(flags & __GFP_NOINIT);
+> > > >         return flags & __GFP_ZERO;
+> > >
+> > > What do you think about renaming __GFP_NOINIT to __GFP_NO_AUTOINIT or=
+ something?
+> > >
+> > > Regardless, yes, this is nice.
+> > >
+> > > --
+> > > Kees Cook
+> >
+> >
+> >
+> > --
+> > Alexander Potapenko
+> > Software Engineer
+> >
+> > Google Germany GmbH
+> > Erika-Mann-Stra=C3=9Fe, 33
+> > 80636 M=C3=BCnchen
+> >
+> > Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+> > Registergericht und -nummer: Hamburg, HRB 86891
+> > Sitz der Gesellschaft: Hamburg
+> >
 
-hackbench, init_on_free=1:  +7.71% sys time (st.err 0.45%)
-hackbench, init_on_alloc=1: +3.45% sys time (st.err 0.86%)
 
-Linux build with -j12, init_on_free=1:  +8.34% wall time (st.err 0.39%)
-Linux build with -j12, init_on_free=1:  +24.13% sys time (st.err 0.47%)
-Linux build with -j12, init_on_alloc=1: -0.04% wall time (st.err 0.46%)
-Linux build with -j12, init_on_alloc=1: +0.50% sys time (st.err 0.45%)
 
-The slowdown for init_on_free=0, init_on_alloc=0 compared to the
-baseline is within the standard error.
+--=20
+Alexander Potapenko
+Software Engineer
 
-Signed-off-by: Alexander Potapenko <glider@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: Christoph Lameter <cl@linux.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Kostya Serebryany <kcc@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Sandeep Patil <sspatil@android.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-mm@kvack.org
-Cc: linux-security-module@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com
----
- v2:
-  - changed __GFP_NOINIT to __GFP_NO_AUTOINIT
----
- include/net/sock.h |  5 +++++
- net/core/sock.c    | 29 +++++++++++++++++++++++++----
- net/unix/af_unix.c | 13 +++++++------
- 3 files changed, 37 insertions(+), 10 deletions(-)
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
 
-diff --git a/include/net/sock.h b/include/net/sock.h
-index 4d208c0f9c14..0dcb90a0c14d 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -1626,6 +1626,11 @@ struct sk_buff *sock_alloc_send_skb(struct sock *sk, unsigned long size,
- struct sk_buff *sock_alloc_send_pskb(struct sock *sk, unsigned long header_len,
- 				     unsigned long data_len, int noblock,
- 				     int *errcode, int max_page_order);
-+struct sk_buff *sock_alloc_send_pskb_noinit(struct sock *sk,
-+					    unsigned long header_len,
-+					    unsigned long data_len,
-+					    int noblock, int *errcode,
-+					    int max_page_order);
- void *sock_kmalloc(struct sock *sk, int size, gfp_t priority);
- void sock_kfree_s(struct sock *sk, void *mem, int size);
- void sock_kzfree_s(struct sock *sk, void *mem, int size);
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 9ceb90c875bc..7c24b70b7069 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -2192,9 +2192,11 @@ static long sock_wait_for_wmem(struct sock *sk, long timeo)
-  *	Generic send/receive buffer handlers
-  */
- 
--struct sk_buff *sock_alloc_send_pskb(struct sock *sk, unsigned long header_len,
--				     unsigned long data_len, int noblock,
--				     int *errcode, int max_page_order)
-+struct sk_buff *sock_alloc_send_pskb_internal(struct sock *sk,
-+					      unsigned long header_len,
-+					      unsigned long data_len,
-+					      int noblock, int *errcode,
-+					      int max_page_order, gfp_t gfp)
- {
- 	struct sk_buff *skb;
- 	long timeo;
-@@ -2223,7 +2225,7 @@ struct sk_buff *sock_alloc_send_pskb(struct sock *sk, unsigned long header_len,
- 		timeo = sock_wait_for_wmem(sk, timeo);
- 	}
- 	skb = alloc_skb_with_frags(header_len, data_len, max_page_order,
--				   errcode, sk->sk_allocation);
-+				   errcode, sk->sk_allocation | gfp);
- 	if (skb)
- 		skb_set_owner_w(skb, sk);
- 	return skb;
-@@ -2234,8 +2236,27 @@ struct sk_buff *sock_alloc_send_pskb(struct sock *sk, unsigned long header_len,
- 	*errcode = err;
- 	return NULL;
- }
-+
-+struct sk_buff *sock_alloc_send_pskb(struct sock *sk, unsigned long header_len,
-+				     unsigned long data_len, int noblock,
-+				     int *errcode, int max_page_order)
-+{
-+	return sock_alloc_send_pskb_internal(sk, header_len, data_len,
-+		noblock, errcode, max_page_order, /*gfp*/0);
-+}
- EXPORT_SYMBOL(sock_alloc_send_pskb);
- 
-+struct sk_buff *sock_alloc_send_pskb_noinit(struct sock *sk,
-+					    unsigned long header_len,
-+					    unsigned long data_len,
-+					    int noblock, int *errcode,
-+					    int max_page_order)
-+{
-+	return sock_alloc_send_pskb_internal(sk, header_len, data_len,
-+		noblock, errcode, max_page_order, /*gfp*/__GFP_NO_AUTOINIT);
-+}
-+EXPORT_SYMBOL(sock_alloc_send_pskb_noinit);
-+
- struct sk_buff *sock_alloc_send_skb(struct sock *sk, unsigned long size,
- 				    int noblock, int *errcode)
- {
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index e68d7454f2e3..a4c15620b66d 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -1627,9 +1627,9 @@ static int unix_dgram_sendmsg(struct socket *sock, struct msghdr *msg,
- 		BUILD_BUG_ON(SKB_MAX_ALLOC < PAGE_SIZE);
- 	}
- 
--	skb = sock_alloc_send_pskb(sk, len - data_len, data_len,
--				   msg->msg_flags & MSG_DONTWAIT, &err,
--				   PAGE_ALLOC_COSTLY_ORDER);
-+	skb = sock_alloc_send_pskb_noinit(sk, len - data_len, data_len,
-+					  msg->msg_flags & MSG_DONTWAIT, &err,
-+					  PAGE_ALLOC_COSTLY_ORDER);
- 	if (skb == NULL)
- 		goto out;
- 
-@@ -1824,9 +1824,10 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
- 
- 		data_len = min_t(size_t, size, PAGE_ALIGN(data_len));
- 
--		skb = sock_alloc_send_pskb(sk, size - data_len, data_len,
--					   msg->msg_flags & MSG_DONTWAIT, &err,
--					   get_order(UNIX_SKB_FRAGS_SZ));
-+		skb = sock_alloc_send_pskb_noinit(sk, size - data_len, data_len,
-+						  msg->msg_flags & MSG_DONTWAIT,
-+						  &err,
-+						  get_order(UNIX_SKB_FRAGS_SZ));
- 		if (!skb)
- 			goto out_err;
- 
--- 
-2.21.0.1020.gf2820cf01a-goog
-
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
