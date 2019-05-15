@@ -2,296 +2,229 @@ Return-Path: <SRS0=njb8=TP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A409C04E53
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 May 2019 10:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A0BC46470
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 May 2019 18:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 173B020881
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 May 2019 10:07:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VfTOzfQH"
+	by mail.kernel.org (Postfix) with ESMTP id A3C0021473
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 May 2019 18:27:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1557944839;
+	bh=eyCci4NNHW/Zb8xOIWX1uiuQImd0sVgqVJNMBUtSyzo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=erV793gihYtYmjDbtgWY7b4mjjBESZ/uUGsRtEE+f68D8e1+QbZrNLzd4C8AlrGtU
+	 QrftrLItZcd+vxjao8zAzTjJ6tfs70A4TTe1/XAS+hR9AW0caGU7sN6Y9nXi8+B5Jk
+	 DKHlx0jacBKfLLWVq8ZEYbmcEjyqsTiZAF5oJQn4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725977AbfEOKHN (ORCPT
+        id S1727273AbfEOS1T (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 May 2019 06:07:13 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43715 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbfEOKHN (ORCPT
+        Wed, 15 May 2019 14:27:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34184 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726790AbfEOS1T (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 May 2019 06:07:13 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z5so1936151lji.10
-        for <linux-security-module@vger.kernel.org>; Wed, 15 May 2019 03:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=mscevK37/4nnD6iDAhQMYOtk0/NBE7+GVVa+J+i/xbw=;
-        b=VfTOzfQHAEh1LniZ7/hjqkQRXVW6w0NiARMgkQz8fdmWPYx+YFlHjKrWW9SFetMWs3
-         G9DBebsTzY+TzQqgaUZXHhuaJrAvPguyvG5rKygzDGVFRgykAzD9rO3eppEFQXrUDl0t
-         KiCIAIs50XeDjdechjn9tNOpCIzTltid3TPjj4d5um53TgSRkcuBRE+Vm8tHVDQSZq3j
-         4F5qTovSxa830D/kbxTzCF5Od4cASnkmz5b2FS8aG6wMt7X9c6XUSbGzNiMGEIJ+3WjJ
-         66h2W9OJYMa8ypZNTZ+p2ZcKlrFs73YpMOW0vtYnMkyh9XXQW7DWfejdxzaJMmnDynAB
-         L+Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=mscevK37/4nnD6iDAhQMYOtk0/NBE7+GVVa+J+i/xbw=;
-        b=YdJj6hkmhqoCmn5ztaNUFVF/95uV71iTXmNpbxFvdh506Q7S8TrMmiX+nqu22q0Y9m
-         5ekOfYv1Efmxis0jkyWD/7Sk+LPgigtgYv/PobRBtT66uRAGkQMZNVaINoF81axaWP+U
-         UEqDOSp3DfjP4m3phz/VItN2XOeiSMICdhbDDG8YxqJVzgN1RV4I920ZMefeJJT3ifYo
-         TWu/VsHB4SXZLLfbGQqlcsHG4iYtf4qk/OU04/pFx41UKFp1SUuWgffXHx5flULrUFo3
-         kHaJip2ihGdCRjtbF+XNBH2nW7sBHISrgMasYo4xuR0SNU7SSt4Yjwr9Ko804BrGkn0x
-         dBfA==
-X-Gm-Message-State: APjAAAVHkd/+PwfEP5K4O9N6gghO5nOSx6Rzp00Gidp1Y59bMnyk1QOW
-        A5AqKAADy4K4OXwuPqxjmo9j3ypman/ggH5vQXA=
-X-Google-Smtp-Source: APXvYqyq++NbMOADSqcuCndB8YwWAw8htvvh4qqGDhAqxC5mnRCZl3FTp2S7oPZzjTciowd41OY1QaLvEK3AiS3oH/o=
-X-Received: by 2002:a2e:960e:: with SMTP id v14mr4236733ljh.31.1557914830398;
- Wed, 15 May 2019 03:07:10 -0700 (PDT)
+        Wed, 15 May 2019 14:27:19 -0400
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FF9B21744
+        for <linux-security-module@vger.kernel.org>; Wed, 15 May 2019 18:27:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557944837;
+        bh=eyCci4NNHW/Zb8xOIWX1uiuQImd0sVgqVJNMBUtSyzo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=l+ze3bM9Xdq86BlYng6FD78FmBq7OVBDoDLIvX6TPDXdbjyb53Eyyr3Gmo9FBNwB0
+         VrEqBdvsYZznlPOWMqDeTQUbWDUQTB005XXgyHcaKsKlEvQjgebrHzPDQQRDk3LPvN
+         ZIXgbS7QZBNVKlbDrXxccBz6lOFRTKcRFQInOmbw=
+Received: by mail-wr1-f41.google.com with SMTP id r7so514025wrr.13
+        for <linux-security-module@vger.kernel.org>; Wed, 15 May 2019 11:27:17 -0700 (PDT)
+X-Gm-Message-State: APjAAAWyBemE4qmUptZMNn/bKixPed8XVjBROR9AzZC8F4G5vT6BFvlf
+        ILF30SxViPLOYpd7VTE82x1//cFuZYJBM9U+xWqw8g==
+X-Google-Smtp-Source: APXvYqy1pLyH4lK8J6UTt9LHYCA38HWu3si0XcCqLyKwswu7vOKZJZQHgx27uHEnWm6r8QGqq5mTnXm8Ea9kev7zK7A=
+X-Received: by 2002:a5d:4907:: with SMTP id x7mr14732988wrq.199.1557944835683;
+ Wed, 15 May 2019 11:27:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190508153736.256401-1-glider@google.com> <20190508153736.256401-4-glider@google.com>
- <CAGXu5jJS=KgLwetdmDAUq9+KhUFTd=jnCES3BZJm+qBwUBmLjQ@mail.gmail.com>
- <CAG_fn=VbJXHsqAeBD+g6zJ8WVTko4Ev2xytXrcJ-ztEWm7kOOA@mail.gmail.com>
- <CAFqt6zY1oY4YTfAd4RdV0-V8iUfK65LTHsdmxrSWs7KRnWrrCg@mail.gmail.com> <CAG_fn=XzWcF=_L1zEU6Gd++u00N=j9GptVLvYOj0_kF0HRu+ig@mail.gmail.com>
-In-Reply-To: <CAG_fn=XzWcF=_L1zEU6Gd++u00N=j9GptVLvYOj0_kF0HRu+ig@mail.gmail.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Wed, 15 May 2019 15:36:57 +0530
-Message-ID: <CAFqt6zYvftTKDbpc-PyHw_uNvAnYuswevAe=F12ACFrBP1N6xA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] gfp: mm: introduce __GFP_NOINIT
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+References: <8fe520bb-30bd-f246-a3d8-c5443e47a014@intel.com>
+ <358e9b36-230f-eb18-efdb-b472be8438b4@fortanix.com> <960B34DE67B9E140824F1DCDEC400C0F4E886094@ORSMSX116.amr.corp.intel.com>
+ <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com> <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
+ <20190513102926.GD8743@linux.intel.com> <20190514104323.GA7591@linux.intel.com>
+ <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
+ <20190514204527.GC1977@linux.intel.com> <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com>
+ <20190515013031.GF1977@linux.intel.com>
+In-Reply-To: <20190515013031.GF1977@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 15 May 2019 11:27:04 -0700
+X-Gmail-Original-Message-ID: <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
+Message-ID: <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
+Subject: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthew Wilcox <willy@infradead.org>
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 14, 2019 at 8:10 PM Alexander Potapenko <glider@google.com> wro=
-te:
->
-> From: Souptick Joarder <jrdr.linux@gmail.com>
-> Date: Sat, May 11, 2019 at 9:28 AM
-> To: Alexander Potapenko
-> Cc: Kees Cook, Andrew Morton, Christoph Lameter, Laura Abbott,
-> Linux-MM, linux-security-module, Kernel Hardening, Masahiro Yamada,
-> James Morris, Serge E. Hallyn, Nick Desaulniers, Kostya Serebryany,
-> Dmitry Vyukov, Sandeep Patil, Randy Dunlap, Jann Horn, Mark Rutland,
-> Matthew Wilcox
->
-> > On Thu, May 9, 2019 at 6:53 PM Alexander Potapenko <glider@google.com> =
-wrote:
-> > >
-> > > From: Kees Cook <keescook@chromium.org>
-> > > Date: Wed, May 8, 2019 at 9:16 PM
-> > > To: Alexander Potapenko
-> > > Cc: Andrew Morton, Christoph Lameter, Kees Cook, Laura Abbott,
-> > > Linux-MM, linux-security-module, Kernel Hardening, Masahiro Yamada,
-> > > James Morris, Serge E. Hallyn, Nick Desaulniers, Kostya Serebryany,
-> > > Dmitry Vyukov, Sandeep Patil, Randy Dunlap, Jann Horn, Mark Rutland
-> > >
-> > > > On Wed, May 8, 2019 at 8:38 AM Alexander Potapenko <glider@google.c=
-om> wrote:
-> > > > > When passed to an allocator (either pagealloc or SL[AOU]B), __GFP=
-_NOINIT
-> > > > > tells it to not initialize the requested memory if the init_on_al=
-loc
-> > > > > boot option is enabled. This can be useful in the cases newly all=
-ocated
-> > > > > memory is going to be initialized by the caller right away.
-> > > > >
-> > > > > __GFP_NOINIT doesn't affect init_on_free behavior, except for SLO=
-B,
-> > > > > where init_on_free implies init_on_alloc.
-> > > > >
-> > > > > __GFP_NOINIT basically defeats the hardening against information =
-leaks
-> > > > > provided by init_on_alloc, so one should use it with caution.
-> > > > >
-> > > > > This patch also adds __GFP_NOINIT to alloc_pages() calls in SL[AO=
-U]B.
-> > > > > Doing so is safe, because the heap allocators initialize the page=
-s they
-> > > > > receive before passing memory to the callers.
-> > > > >
-> > > > > Slowdown for the initialization features compared to init_on_free=
-=3D0,
-> > > > > init_on_alloc=3D0:
-> > > > >
-> > > > > hackbench, init_on_free=3D1:  +6.84% sys time (st.err 0.74%)
-> > > > > hackbench, init_on_alloc=3D1: +7.25% sys time (st.err 0.72%)
-> > > > >
-> > > > > Linux build with -j12, init_on_free=3D1:  +8.52% wall time (st.er=
-r 0.42%)
-> > > > > Linux build with -j12, init_on_free=3D1:  +24.31% sys time (st.er=
-r 0.47%)
-> > > > > Linux build with -j12, init_on_alloc=3D1: -0.16% wall time (st.er=
-r 0.40%)
-> > > > > Linux build with -j12, init_on_alloc=3D1: +1.24% sys time (st.err=
- 0.39%)
-> > > > >
-> > > > > The slowdown for init_on_free=3D0, init_on_alloc=3D0 compared to =
-the
-> > > > > baseline is within the standard error.
-> > > > >
-> >
-> > Not sure, but I think this patch will clash with Matthew's posted patch=
- series
-> > *Remove 'order' argument from many mm functions*.
-> Not sure I can do much with that before those patches reach mainline.
-> Once they do, I'll update my patches.
-> Please let me know if there's a better way to resolve such conflicts.
+Hi, LSM and SELinux people-
 
-I just thought to highlight about a possible conflict. Nothing else :)
-IMO, if other patch series merge into -next tree before this,
-then this series can be updated against -next.
+We're trying to figure out how SGX fits in with LSMs.  For background,
+an SGX library is functionally a bit like a DSO, except that it's
+nominally resistant to attack from outside and the process of loading
+it is complicated.  To load an enclave, a program can open
+/dev/sgx/enclave, do some ioctls to load the code and data segments
+into the enclave, call a special ioctl to "initialize" the enclave,
+and then call into the enclave (using special CPU instructions).
 
-... And I am sure others will have a better suggestion.
+One nastiness is that there is not actually a universally agreed upon,
+documented file format for enclaves.  Windows has an undocumented
+format, and there are probably a few others out there.  No one really
+wants to teach the kernel to parse enclave files.
 
-> > > > > Signed-off-by: Alexander Potapenko <glider@google.com>
-> > > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > > > > Cc: James Morris <jmorris@namei.org>
-> > > > > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> > > > > Cc: Nick Desaulniers <ndesaulniers@google.com>
-> > > > > Cc: Kostya Serebryany <kcc@google.com>
-> > > > > Cc: Dmitry Vyukov <dvyukov@google.com>
-> > > > > Cc: Kees Cook <keescook@chromium.org>
-> > > > > Cc: Sandeep Patil <sspatil@android.com>
-> > > > > Cc: Laura Abbott <labbott@redhat.com>
-> > > > > Cc: Randy Dunlap <rdunlap@infradead.org>
-> > > > > Cc: Jann Horn <jannh@google.com>
-> > > > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > > > Cc: linux-mm@kvack.org
-> > > > > Cc: linux-security-module@vger.kernel.org
-> > > > > Cc: kernel-hardening@lists.openwall.com
-> > > > > ---
-> > > > >  include/linux/gfp.h | 6 +++++-
-> > > > >  include/linux/mm.h  | 2 +-
-> > > > >  kernel/kexec_core.c | 2 +-
-> > > > >  mm/slab.c           | 2 +-
-> > > > >  mm/slob.c           | 3 ++-
-> > > > >  mm/slub.c           | 1 +
-> > > > >  6 files changed, 11 insertions(+), 5 deletions(-)
-> > > > >
-> > > > > diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> > > > > index fdab7de7490d..66d7f5604fe2 100644
-> > > > > --- a/include/linux/gfp.h
-> > > > > +++ b/include/linux/gfp.h
-> > > > > @@ -44,6 +44,7 @@ struct vm_area_struct;
-> > > > >  #else
-> > > > >  #define ___GFP_NOLOCKDEP       0
-> > > > >  #endif
-> > > > > +#define ___GFP_NOINIT          0x1000000u
-> > > >
-> > > > I mentioned this in the other patch, but I think this needs to be
-> > > > moved ahead of GFP_NOLOCKDEP and adjust the values for GFP_NOLOCKDE=
-P
-> > > > and to leave the IS_ENABLED() test in __GFP_BITS_SHIFT alone.
-> > > Do we really need this blinking GFP_NOLOCKDEP bit at all?
-> > > This approach doesn't scale, we can't even have a second feature that
-> > > has a bit depending on the config settings.
-> > > Cannot we just fix the number of bits instead?
-> > >
-> > > > >  /* If the above are modified, __GFP_BITS_SHIFT may need updating=
- */
-> > > > >
-> > > > >  /*
-> > > > > @@ -208,16 +209,19 @@ struct vm_area_struct;
-> > > > >   * %__GFP_COMP address compound page metadata.
-> > > > >   *
-> > > > >   * %__GFP_ZERO returns a zeroed page on success.
-> > > > > + *
-> > > > > + * %__GFP_NOINIT requests non-initialized memory from the underl=
-ying allocator.
-> > > > >   */
-> > > > >  #define __GFP_NOWARN   ((__force gfp_t)___GFP_NOWARN)
-> > > > >  #define __GFP_COMP     ((__force gfp_t)___GFP_COMP)
-> > > > >  #define __GFP_ZERO     ((__force gfp_t)___GFP_ZERO)
-> > > > > +#define __GFP_NOINIT   ((__force gfp_t)___GFP_NOINIT)
-> > > > >
-> > > > >  /* Disable lockdep for GFP context tracking */
-> > > > >  #define __GFP_NOLOCKDEP ((__force gfp_t)___GFP_NOLOCKDEP)
-> > > > >
-> > > > >  /* Room for N __GFP_FOO bits */
-> > > > > -#define __GFP_BITS_SHIFT (23 + IS_ENABLED(CONFIG_LOCKDEP))
-> > > > > +#define __GFP_BITS_SHIFT (25)
-> > > >
-> > > > AIUI, this will break non-CONFIG_LOCKDEP kernels: it should just be=
-:
-> > > >
-> > > > -#define __GFP_BITS_SHIFT (23 + IS_ENABLED(CONFIG_LOCKDEP))
-> > > > +#define __GFP_BITS_SHIFT (24 + IS_ENABLED(CONFIG_LOCKDEP))
-> > > >
-> > > > >  #define __GFP_BITS_MASK ((__force gfp_t)((1 << __GFP_BITS_SHIFT)=
- - 1))
-> > > > >
-> > > > >  /**
-> > > > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > > > index ee1a1092679c..8ab152750eb4 100644
-> > > > > --- a/include/linux/mm.h
-> > > > > +++ b/include/linux/mm.h
-> > > > > @@ -2618,7 +2618,7 @@ DECLARE_STATIC_KEY_FALSE(init_on_alloc);
-> > > > >  static inline bool want_init_on_alloc(gfp_t flags)
-> > > > >  {
-> > > > >         if (static_branch_unlikely(&init_on_alloc))
-> > > > > -               return true;
-> > > > > +               return !(flags & __GFP_NOINIT);
-> > > > >         return flags & __GFP_ZERO;
-> > > >
-> > > > What do you think about renaming __GFP_NOINIT to __GFP_NO_AUTOINIT =
-or something?
-> > > >
-> > > > Regardless, yes, this is nice.
-> > > >
-> > > > --
-> > > > Kees Cook
-> > >
-> > >
-> > >
-> > > --
-> > > Alexander Potapenko
-> > > Software Engineer
-> > >
-> > > Google Germany GmbH
-> > > Erika-Mann-Stra=C3=9Fe, 33
-> > > 80636 M=C3=BCnchen
-> > >
-> > > Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-> > > Registergericht und -nummer: Hamburg, HRB 86891
-> > > Sitz der Gesellschaft: Hamburg
-> > >
+There are two issues with how this interacts with LSMs:
+
+1) LSMs might want to be able to whitelist, blacklist, or otherwise
+restrict what enclaves can run at all.  The current proposal that
+everyone seems to dislike the least is to have a .sigstruct file on
+disk that contains a hash and signature of the enclave in a
+CPU-defined format.  To initialize an enclave, a program will pass an
+fd to this file, and a new LSM hook can be called to allow or disallow
+the operation.  In a SELinux context, the idea is that policy could
+require the .sigstruct file to be labeled with a type like
+sgx_sigstruct_t, and only enclaves that have a matching .sigstruct
+with such a label could run.
+
+2) Just like any other DSO, there are potential issues with how
+enclaves deal with writable vs executable memory.  This takes two
+forms.  First, a task should probably require EXECMEM, EXECMOD, or
+similar permission to run an enclave that can modify its own text.
+Second, it would be nice if a task that did *not* have EXECMEM,
+EXECMOD, or similar could still run the enclave if it had EXECUTE
+permission on the file containing the enclave.
+
+Currently, this all works because DSOs are run by mmapping the file to
+create multiple VMAs, some of which are executable, non-writable, and
+non-CoWed, and some of which are writable but not executable.  With
+SGX, there's only really one inode per enclave (the anon_inode that
+comes form /dev/sgx/enclave), and it can only be sensibly mapped
+MAP_SHARED.
+
+With the current version of the SGX driver, to run an enclave, I think
+you'll need either EXECUTE rights to /dev/sgx/enclave or EXECMOD or
+similar, all of which more or less mean that you can run any modified
+code you want, and none of which is useful to prevent enclaves from
+contain RWX segments.
+
+So my question is: what, if anything, should change to make this work bette=
+r?
+
+Here's a very vague proposal that's kind of like what I've been
+thinking over the past few days.  The SGX inode could track, for each
+page, a "safe-to-execute" bit.  When you first open /dev/sgx/enclave,
+you get a blank enclave and all pages are safe-to-execute.  When you
+do the ioctl to load context (which could be code, data, or anything
+else), the kernel will check whether the *source* VMA is executable
+and, if not, mark the page of the enclave being loaded as unsafe.
+Once the enclave is initialized, the driver will clear the
+safe-to-execute bit for any page that is successfully mapped writably.
+
+The intent is that a page of the enclave is safe-to-execute if that
+page was populated from executable memory and not modified since then.
+LSMs could then enforce a policy that you can map an enclave page RX
+if the page is safe-to-execute, you can map any page you want for
+write if there are no executable mappings, and you can only map a page
+for write and execute simultaneously if you can EXECMOD permission.
+This should allow an enclave to be loaded by userspace from a file
+with EXECUTE rights.
+
+So here are my questions:
+
+Are the goals I mentioned reasonable?
+
+Is the design I just outlined reasonable?  Would SELinux support this?
+
+Is there a better solution that works well enough?
+
+Thanks, all!
+
+> On May 14, 2019, at 6:30 PM, Sean Christopherson <sean.j.christopherson@i=
+ntel.com> wrote:
 >
 >
+>> But thinking this all through, it's a bit more complicated than any of
+>> this.  Looking at the SELinux code for inspiration, there are quite a
+>> few paths, but they boil down to two cases: EXECUTE is the right to
+>> map an unmodified file executably, and EXECMOD/EXECMEM (the
+>> distinction seems mostly irrelevant) is the right to create (via mmap
+>> or mprotect) a modified anonymous file mapping or a non-file-backed
+>> mapping that is executable.  So, if we do nothing, then mapping an
+>> enclave with execute permission will require either EXECUTE on the
+>> enclave inode or EXECMOD/EXECMEM, depending on exactly how this gets
+>> set up.
 >
-> --
-> Alexander Potapenko
-> Software Engineer
+> If we do literally nothing, then I'm pretty sure mapping an enclave will
+> require PROCESS__EXECMEM.  The mmap() for the actual enclave is done
+> using an anon inode, e.g. from /dev/sgx/enclave.  Anon inodes are marked
+> private, which means inode_has_perm() will always return "success".  The
+> only effective check is in file_map_prot_check() when default_noexec is
+> true, in which case requesting PROT_EXEC on private inodes requires
+> PROCESS__EXECMEM.
 >
-> Google Germany GmbH
-> Erika-Mann-Stra=C3=9Fe, 33
-> 80636 M=C3=BCnchen
+>> So all is well, sort of.  The problem is that I expect there will be
+>> people who want enclaves to work in a process that does not have these
+>> rights.  To make this work, we probably need do some surgery on
+>> SELinux.  ISTM the act of copying (via the EADD ioctl) data from a
+>> PROT_EXEC mapping to an enclave should not be construed as "modifying"
+>> the enclave for SELinux purposes.  Actually doing this could be
+>> awkward, since the same inode will have executable parts and
+>> non-executable parts, and SELinux can't really tell the difference.
 >
-> Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-> Registergericht und -nummer: Hamburg, HRB 86891
-> Sitz der Gesellschaft: Hamburg
+> Rather the do surgery on SELinux, why not go with Cedric's original
+> proposal and propagate the permissions from the source VMA to the EPC
+> VMA?
+
+Which EPC VMA?  Users can map the enclave fd again after EADD,
+resulting in a new VMA.  And any realistic enclave will presumably
+have RO, RW, and RX pages.
+
+>  The enclave mmap() from userspace could then be done with RO
+> permissions so as to not run afoul of LSMs.  Adding PROT_EXEC after
+> EADD would require PROCESS__EXECMEM, but that's in line with mprotect()
+> on regular memory.
+
+How does this help anything?  The driver currently only works with
+EXECMEM and, with this change, it still needs EXECMEM.
+
+I think that, if we=E2=80=99re going to make changes along these lines, the
+goal should be that you can have an enclave serialized in a file on
+disk such that you have EXECUTE on the file, and you should be able to
+load and run the enclave without needing EXECMEM.  (Unless the enclave
+is self-modifying, of course.)
