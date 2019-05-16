@@ -2,64 +2,40 @@ Return-Path: <SRS0=l9QZ=TQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E62BC04AAF
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 13:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C86C04AB4
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 13:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09DAD20818
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 13:20:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NyYpd+dk"
+	by mail.kernel.org (Postfix) with ESMTP id 2F89E20833
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 13:37:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbfEPNUB (ORCPT
+        id S1726923AbfEPNh3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 May 2019 09:20:01 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:42050 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726696AbfEPNUB (ORCPT
+        Thu, 16 May 2019 09:37:29 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59752 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbfEPNh3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 May 2019 09:20:01 -0400
-Received: by mail-vk1-f196.google.com with SMTP id u131so1006241vke.9
-        for <linux-security-module@vger.kernel.org>; Thu, 16 May 2019 06:20:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8Mom9MODQ5/QqS+RDXttev2mPfjd0+NlE9IuL/dY7r0=;
-        b=NyYpd+dkEe2YZFx36BzlohQJ+8JNYLj3zvAZeOi8NXLBd9Cfc1WAr4LKDFtfqnGpad
-         StU7H7B3CNs4PTRtMPNyu48VG0OZOTZup0nt++JNMt27PlrD0ZmxJV1bfN72QLCfNuf6
-         w7gdkwYzuTZZNUyNWLDDFcEpc+Yt/Koj5aaJMPvc1MnekJnzFPwg/6VOt0JMkZ3JCPck
-         x3J0yX/c5zszJjTgdOGbi0c8d6dY2RpB2WP5V1wutc4hZGvz37FMXRudGdXPGb3adGS4
-         HMQw1aG9pYnoANuDja2STHdq5iiD076Y53phnswgHQxYlemD+OLxg7fnU/di1ZVQ146z
-         ojdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8Mom9MODQ5/QqS+RDXttev2mPfjd0+NlE9IuL/dY7r0=;
-        b=cBomDeeVLSOD14WtOJrs5LdRiRguSDHcOCfs/gzbXaKmdR24Eyj9YtfbE1JKpsI9pA
-         ui4jo4SFkuGz3wpNisMW5CjeIKQpnPNZi1oMOvC3Rhcwo6asaEQ25YYzhD+sG30tbBwl
-         ti2AfuJav49hcPALwjU/EVXnDySqL0luTsGvzOi10RBuuC6SyXQ87brjtaCEDcI37YT7
-         gp0Yp2jZioYVPctiMeBx2WIBSHHzr+2NTykxCaCNPOezpE6TwXWfdZHvFJWdqt5CjJBq
-         KWJ9H6LmqZYP3jW7NpBto/wqjSM5mt6x/+Lix4DNYfj4YMPtKyxu58tyeKFZZhGRXjfe
-         3hnA==
-X-Gm-Message-State: APjAAAUew+zf4755Gux6SI8IXDoadXWiE0FjzLCNksSgXeClxpraQiBf
-        lRZVZUShLll69KhWhONhHPgGNAUd/1SOyi4/JVFvTg==
-X-Google-Smtp-Source: APXvYqwHkWIjT82JQxz+Mhj+wFekyLzeKbvlA3oD6vV2Dm+OkWUy416z1duYLdzrQPrdKwcvwPtwQgxdzG09+lz8BzY=
-X-Received: by 2002:a1f:3492:: with SMTP id b140mr22269628vka.8.1558012799699;
- Thu, 16 May 2019 06:19:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <00000000000032685a058900d170@google.com> <2b0b9d18-6773-f2dc-ecb2-9f8782d0962a@i-love.sakura.ne.jp>
-In-Reply-To: <2b0b9d18-6773-f2dc-ecb2-9f8782d0962a@i-love.sakura.ne.jp>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Thu, 16 May 2019 15:19:48 +0200
-Message-ID: <CAG_fn=UHjDv=Jc_nEKKknVGrr9CC4rZ+a+hw_yAL-j4y4=89cg@mail.gmail.com>
+        Thu, 16 May 2019 09:37:29 -0400
+Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4GDbRZ2038911;
+        Thu, 16 May 2019 22:37:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
+ Thu, 16 May 2019 22:37:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4GDbR4R038908
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 16 May 2019 22:37:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
 Subject: Re: KMSAN: uninit-value in tomoyo_check_inet_address
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Alexander Potapenko <glider@google.com>
 Cc:     syzbot <syzbot+1018d578c410f9f37261@syzkaller.appspotmail.com>,
         James Morris <jmorris@namei.org>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -67,77 +43,64 @@ Cc:     syzbot <syzbot+1018d578c410f9f37261@syzkaller.appspotmail.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
         takedakn@nttdata.co.jp
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <00000000000032685a058900d170@google.com>
+ <2b0b9d18-6773-f2dc-ecb2-9f8782d0962a@i-love.sakura.ne.jp>
+ <CAG_fn=UHjDv=Jc_nEKKknVGrr9CC4rZ+a+hw_yAL-j4y4=89cg@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <d13cd8cd-03d1-ddde-47e1-d61147520e19@i-love.sakura.ne.jp>
+Date:   Thu, 16 May 2019 22:37:30 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAG_fn=UHjDv=Jc_nEKKknVGrr9CC4rZ+a+hw_yAL-j4y4=89cg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Date: Thu, May 16, 2019 at 3:13 PM
-To: syzbot
-Cc: <glider@google.com>, <jmorris@namei.org>,
-<linux-kernel@vger.kernel.org>,
-<linux-security-module@vger.kernel.org>, <serge@hallyn.com>,
-<syzkaller-bugs@googlegroups.com>, <takedakn@nttdata.co.jp>
+On 2019/05/16 22:19, Alexander Potapenko wrote:
+>> commit e6193f78bb689f3f424559bb45f4a091c8b314df
+>> Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Date:   Fri Apr 12 19:59:36 2019 +0900
+>>
+>>     tomoyo: Check address length before reading address family
+>>
+>>     KMSAN will complain if valid address length passed to bind()/connect()/
+>>     sendmsg() is shorter than sizeof("struct sockaddr"->sa_family) bytes.
+>>
+>>     Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>>     Signed-off-by: James Morris <jamorris@linux.microsoft.com>
+> Apparently the fix didn't make it to 5.1, I'll cherry-pick it to KMSAN tree.
 
-> On 2019/05/16 21:58, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    3b955a40 usb-fuzzer: main usb gadget fuzzer driver
-> > git tree:       kmsan
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1027e608a00=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D602468164cc=
-dc30a
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D1018d578c410f=
-9f37261
-> > compiler:       clang version 9.0.0 (/home/glider/llvm/clang 06d00afa61=
-eef8f7f501ebdb4e8612ea43ec2d78)
-> >
-> > Unfortunately, I don't have any reproducer for this crash yet.
->
-> This should be already fixed in linux.git.
->
-> #syz fix: tomoyo: Check address length before reading address family
->
-> commit e6193f78bb689f3f424559bb45f4a091c8b314df
-> Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date:   Fri Apr 12 19:59:36 2019 +0900
->
->     tomoyo: Check address length before reading address family
->
->     KMSAN will complain if valid address length passed to bind()/connect(=
-)/
->     sendmsg() is shorter than sizeof("struct sockaddr"->sa_family) bytes.
->
->     Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->     Signed-off-by: James Morris <jamorris@linux.microsoft.com>
-Apparently the fix didn't make it to 5.1, I'll cherry-pick it to KMSAN tree=
-.
-OOC, how did you know about this bug?
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/syzkaller-bugs/2b0b9d18-6773-f2dc-ecb2-9f8782d0962a%40i-love.sakura.ne.jp=
-.
-> For more options, visit https://groups.google.com/d/optout.
+Together with three more patches listed bottom, please.
+
+> OOC, how did you know about this bug?
+
+I did a tree-wide check when writing a patch for
+
+  KMSAN: uninit-value in rds_bind
+  KMSAN: uninit-value in rds_connect
+
+reports. Patches for LSM part just did not make it to 5.1.
 
 
 
---=20
-Alexander Potapenko
-Software Engineer
+commit b9ef5513c99bf9c8bfd9c9e8051b67f52b2dee1e
+Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date:   Fri Apr 12 19:59:35 2019 +0900
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
+    smack: Check address length before reading address family
 
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+commit 619ae03e922b65a1a5d4269ceae1e9e13a058d6b
+Author: Casey Schaufler <casey@schaufler-ca.com>
+Date:   Tue Apr 30 14:13:32 2019 -0700
+
+    Smack: Fix kbuild reported build error
+
+commit c750e6929d3c76d13d1d0ba475989d6dd74785d5
+Author: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Date:   Fri Apr 12 19:59:34 2019 +0900
+
+    selinux: Check address length before reading address family
