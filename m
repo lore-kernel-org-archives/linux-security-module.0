@@ -2,89 +2,107 @@ Return-Path: <SRS0=l9QZ=TQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50873C04AB4
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 07:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEBBFC04AB4
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 11:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DB852082E
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 07:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F0D821473
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 11:41:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558006878;
+	bh=IMJiCZPSYS+y4kCm9xDnxJHtTTXzXjnfjEhhpmvOUww=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ZbN8DZ+j82+ORIpCM/T803wQCNjJj2Oov3YsfzhWTBvniLqJbRaIawAST7Ghm/HvQ
+	 aZ0cEty5M9yYWnhKjmPNc64+2UtN6jaybvGBLloUJhXvD4LuPpu8UrsAcCVjHG8zPc
+	 iZIdGJ6nTlnZQJBZLJwSSLPWyxT1c6zTbc3dKCOQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726374AbfEPHZK (ORCPT
+        id S1728096AbfEPLlR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 May 2019 03:25:10 -0400
-Received: from namei.org ([65.99.196.166]:39464 "EHLO namei.org"
+        Thu, 16 May 2019 07:41:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbfEPHZK (ORCPT
+        id S1727432AbfEPLlQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 May 2019 03:25:10 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x4G7OX82023904;
-        Thu, 16 May 2019 07:24:33 GMT
-Date:   Thu, 16 May 2019 17:24:33 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-In-Reply-To: <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1905161716460.23647@namei.org>
-References: <8fe520bb-30bd-f246-a3d8-c5443e47a014@intel.com> <358e9b36-230f-eb18-efdb-b472be8438b4@fortanix.com> <960B34DE67B9E140824F1DCDEC400C0F4E886094@ORSMSX116.amr.corp.intel.com> <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com>
- <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com> <20190513102926.GD8743@linux.intel.com> <20190514104323.GA7591@linux.intel.com> <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com> <20190514204527.GC1977@linux.intel.com>
- <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com> <20190515013031.GF1977@linux.intel.com> <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com> <alpine.LRH.2.21.1905160543070.19802@namei.org>
- <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com> <alpine.LRH.2.21.1905160844130.29250@namei.org> <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Thu, 16 May 2019 07:41:16 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F4E0216F4;
+        Thu, 16 May 2019 11:41:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558006876;
+        bh=IMJiCZPSYS+y4kCm9xDnxJHtTTXzXjnfjEhhpmvOUww=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wJbGsCUo50qXQUPbFGkuOzS79HG+LdsGWegXTYznk0vef0yhgMAFxDkXehYppYPvX
+         KaOUcQYMiuhs95G3vxtDb90y4CyRd2rLOzbEQ93bIUac4s0in/1ObJZ3hfgoGWs9a8
+         0j6a87C2GmYlU0tK68KGkFrN7FiYO5H4wL4wM7S8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 07/16] securityfs: fix use-after-free on symlink traversal
+Date:   Thu, 16 May 2019 07:40:58 -0400
+Message-Id: <20190516114107.8963-7-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190516114107.8963-1-sashal@kernel.org>
+References: <20190516114107.8963-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 15 May 2019, Andy Lutomirski wrote:
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-> On Wed, May 15, 2019 at 3:46 PM James Morris <jmorris@namei.org> wrote:
-> >
-> > You could try user.sigstruct, which does not require any privs.
-> >
-> 
-> I don't think I understand your proposal.  What file would this
-> attribute be on?  What would consume it?
+[ Upstream commit 46c874419652bbefdfed17420fd6e88d8a31d9ec ]
 
-It would be on the enclave file, so you keep the sigstruct bound to it, 
-rather than needing a separate file to manage.  It would simplify any LSM 
-policy check.
+symlink body shouldn't be freed without an RCU delay.  Switch securityfs
+to ->destroy_inode() and use of call_rcu(); free both the inode and symlink
+body in the callback.
 
-It would be consumed by (I guess) the SGX_INIT_THE_ENCLAVE ioctl in your 
-example, instead of having a 2nd fd.
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/inode.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-
+diff --git a/security/inode.c b/security/inode.c
+index 8dd9ca8848e43..829f15672e01f 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -26,17 +26,22 @@
+ static struct vfsmount *mount;
+ static int mount_count;
+ 
+-static void securityfs_evict_inode(struct inode *inode)
++static void securityfs_i_callback(struct rcu_head *head)
+ {
+-	truncate_inode_pages_final(&inode->i_data);
+-	clear_inode(inode);
++	struct inode *inode = container_of(head, struct inode, i_rcu);
+ 	if (S_ISLNK(inode->i_mode))
+ 		kfree(inode->i_link);
++	free_inode_nonrcu(inode);
++}
++
++static void securityfs_destroy_inode(struct inode *inode)
++{
++	call_rcu(&inode->i_rcu, securityfs_i_callback);
+ }
+ 
+ static const struct super_operations securityfs_super_operations = {
+ 	.statfs		= simple_statfs,
+-	.evict_inode	= securityfs_evict_inode,
++	.destroy_inode	= securityfs_destroy_inode,
+ };
+ 
+ static int fill_super(struct super_block *sb, void *data, int silent)
 -- 
-James Morris
-<jmorris@namei.org>
+2.20.1
 
