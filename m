@@ -3,142 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC97C04AAF
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 17:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9FEC04AB4
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 21:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D41E20815
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 17:03:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ros4p2hk"
+	by mail.kernel.org (Postfix) with ESMTP id 4C6FD2168B
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 21:00:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558040429;
+	bh=Z9A5Gn8IYTN5zojnjOV85wLmycj3ctbS4IY7KKu9Mag=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=p2tIBXnY3fG1wYrxdpzghBkiPleIG/WGEUhz3/pN1WmmSCHO89UVBUtg+qkIMopdx
+	 nOk7gWsIIbIOOktKUwDJDm8f7/Nu9yTgYFJtiS/5/wh9oiXgwunqz6skGa89Tj44bO
+	 a+kP/VjG91diLO6v8ADa0LSjYLmt/HEPuN43At3A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfEPRDP (ORCPT
+        id S1728188AbfEPVA2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 May 2019 13:03:15 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45064 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727210AbfEPRDO (ORCPT
+        Thu, 16 May 2019 17:00:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51634 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728184AbfEPVA2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 May 2019 13:03:14 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i21so1844534pgi.12
-        for <linux-security-module@vger.kernel.org>; Thu, 16 May 2019 10:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=2OkSls3BBuVCd2Q9OzzUfEJIECS5yJPO8xcocfnTaN4=;
-        b=Ros4p2hkOqmoHbdixDDcfrW1H7jyK9zIQYjqlUFzXr5CiZP+1t7cTKrai4i8J8Q1Jc
-         TzF8dMleKNk7RbmmoaakWyHRVMp2G/Ig5tkzDXUlXt800e0jwOfhD+WEBmHapdlbmP4M
-         EBbEoq8OjOlQ/XJdZ16uZvhYu/dMHPBTDkc+c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2OkSls3BBuVCd2Q9OzzUfEJIECS5yJPO8xcocfnTaN4=;
-        b=Ug/5y+BmesAuqczQ/CDLrpReCSBmDlFvkKxlNM7PqDMmFG3LOxliNBstN8HP1007vF
-         5r6BZU1QOvfih0/JehmEwj/A3MMt0yzhHwyaBwdtGTKou/9TUDPeLTMVvspGErYKbvE6
-         PWdwFmYdOH/RQ94n61bW43/R1DJhNJdCc+1V+ACsSHV3026EwpVUGXwFz2MgzV8cY8qL
-         VhKTHz3srTTuXqL4/yGSJsW+aHeRQbjtSqHnxY08mquuAma4JzQ72tIHlPSBD+tWPsnW
-         9ZhHyd/aJxt1KfiUMNk4y8C9V574MepmRpWQuyCXwHdgmMWnpF56tzChsBJyDqzzdaqf
-         hbsg==
-X-Gm-Message-State: APjAAAWRMxCM3FNi5H1V3eSseHPukpGSTc6D3LJ0WTVmy/hpikzdgt0p
-        VRSUJwSkWkrqArYqH+YOXNGDQw==
-X-Google-Smtp-Source: APXvYqxf86X0I5LWFcSKWu+jd0qD6qpD2y7bXzGg9HBoYqsOh3qhcsFm36RFG3tU2Ws97h56kHXWnw==
-X-Received: by 2002:aa7:9a8c:: with SMTP id w12mr54743779pfi.187.1558026193892;
-        Thu, 16 May 2019 10:03:13 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b3sm10386588pfr.146.2019.05.16.10.03.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 10:03:12 -0700 (PDT)
-Date:   Thu, 16 May 2019 10:03:11 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] mm: security: introduce init_on_alloc=1 and
- init_on_free=1 boot options
-Message-ID: <201905160953.903FD364BC@keescook>
-References: <20190514143537.10435-1-glider@google.com>
- <20190514143537.10435-2-glider@google.com>
- <201905160907.92FAC880@keescook>
- <CAG_fn=VsJmyuEUYy16R_M5Hu2CX-PJkz9Kw4rdy9XUCAYHwV5g@mail.gmail.com>
+        Thu, 16 May 2019 17:00:28 -0400
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D9FB21473
+        for <linux-security-module@vger.kernel.org>; Thu, 16 May 2019 21:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558040427;
+        bh=Z9A5Gn8IYTN5zojnjOV85wLmycj3ctbS4IY7KKu9Mag=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=a7BgMrGtgZnxHAYWSt6S3/k/FkXM/xyFOY56aB6mNWaH59iedF30vLtmnsAne7bNK
+         pKHgIPsdDoRnyTfZ8983ZTrMtZJvfYHnnPark1FEHJRh/BhMHtCldpFwiRsbWhGsNc
+         nwnxYdF8x9KNOmpmWOAp4pzRESsYLYIpNOTVGbtY=
+Received: by mail-wm1-f50.google.com with SMTP id 15so743179wmg.5
+        for <linux-security-module@vger.kernel.org>; Thu, 16 May 2019 14:00:26 -0700 (PDT)
+X-Gm-Message-State: APjAAAXVgsJBiwSKYHRyLRsM01/xTosLedOxIIND0D0EWehSF0wdKPgx
+        KcAA3RwG7OiUGXFZ8lAimYbCMXiR03xMXnCv5QDmQg==
+X-Google-Smtp-Source: APXvYqxyFCPtUJy1tK3AM0Pm9A3oAjys0XNTVLpwx7SvFZrupH0Xadu93+oLK89qkXjq20GSFTKUjie9fJ9+xPJMs2o=
+X-Received: by 2002:a1c:9689:: with SMTP id y131mr30689877wmd.74.1558040425543;
+ Thu, 16 May 2019 14:00:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG_fn=VsJmyuEUYy16R_M5Hu2CX-PJkz9Kw4rdy9XUCAYHwV5g@mail.gmail.com>
+References: <8fe520bb-30bd-f246-a3d8-c5443e47a014@intel.com>
+ <358e9b36-230f-eb18-efdb-b472be8438b4@fortanix.com> <960B34DE67B9E140824F1DCDEC400C0F4E886094@ORSMSX116.amr.corp.intel.com>
+ <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com> <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
+ <20190513102926.GD8743@linux.intel.com> <20190514104323.GA7591@linux.intel.com>
+ <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
+ <20190514204527.GC1977@linux.intel.com> <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com>
+ <20190515013031.GF1977@linux.intel.com> <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
+ <alpine.LRH.2.21.1905160543070.19802@namei.org> <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com>
+ <alpine.LRH.2.21.1905160844130.29250@namei.org> <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com>
+ <alpine.LRH.2.21.1905161716460.23647@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1905161716460.23647@namei.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 16 May 2019 14:00:13 -0700
+X-Gmail-Original-Message-ID: <CALCETrXb7R-5Uq5Wg2bS1mGBp5bor78LBAbosOtp3ZCpFMAsrQ@mail.gmail.com>
+Message-ID: <CALCETrXb7R-5Uq5Wg2bS1mGBp5bor78LBAbosOtp3ZCpFMAsrQ@mail.gmail.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     James Morris <jmorris@namei.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 16, 2019 at 06:42:37PM +0200, Alexander Potapenko wrote:
-> I suspect the slowdown of init_on_free is bigger than that of
-> PAX_SANITIZE_MEMORY, as we've set the goal to have fully zeroed memory
-> at alloc time.
-> If we want a mode that only wipes the user data upon free() but
-> doesn't eliminate all uninit memory, then we can make it faster.
+> On May 16, 2019, at 12:24 AM, James Morris <jmorris@namei.org> wrote:
+>
+>> On Wed, 15 May 2019, Andy Lutomirski wrote:
+>>
+>>> On Wed, May 15, 2019 at 3:46 PM James Morris <jmorris@namei.org> wrote:
+>>>
+>>> You could try user.sigstruct, which does not require any privs.
+>>>
+>>
+>> I don't think I understand your proposal.  What file would this
+>> attribute be on?  What would consume it?
+>
+> It would be on the enclave file, so you keep the sigstruct bound to it,
+> rather than needing a separate file to manage.  It would simplify any LSM
+> policy check.
+>
+> It would be consumed by (I guess) the SGX_INIT_THE_ENCLAVE ioctl in your
+> example, instead of having a 2nd fd.
+>
+>
 
-Yeah, I sent a separate email that discusses this a bit more.
-
-I think the goals of init_on_alloc and init_on_free are likely a bit
-different. Given init_on_alloc's much more cache-friendly performance,
-I think that it's likely the right way forward for getting to fully zeroed
-memory at alloc time. (Though I note that it already includes exclusions:
-such tradeoffs won't be unique to init_on_free.)
-
-init_on_free appears to give us similar coverage (but also reduces the
-lifetime of unused data), but isn't cache-friendly so it looks to need
-a lot more tuning/trade-offs. (Not that we shouldn't include it! It'll
-just need a bit more care to be reasonable.)
-
-> > +void __init report_meminit(void)
-> > +{
-> > +       const char *stack;
-> > +
-> > +       if (IS_ENABLED(CONFIG_INIT_STACK_ALL))
-> > +               stack = "all";
-> > +       else if (IS_ENABLED(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL))
-> > +               stack = "byref_all";
-> > +       else if (IS_ENABLED(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF))
-> > +               stack = "byref";
-> > +       else if (IS_ENABLED(CONFIG_GCC_PLUGIN_STRUCTLEAK_USER))
-> > +               stack = "__user";
-> > +       else
-> > +               stack = "off";
-> > +
-> > +       /* Report memory auto-initialization states for this boot. */
-> > +       pr_info("mem auto-init: stack:%s, heap alloc:%s, heap free:%s\n",
-> > +               stack, want_init_on_alloc(GFP_KERNEL) ? "on" : "off",
-> > +               want_init_on_free() ? "on" : "off");
-> > +}
-> >
-> > To get a boot line like:
-> >
-> >         mem auto-init: stack:off, heap alloc:off, heap free:on
-> For stack there's no binary on/off, as you can potentially build half
-> of the kernel with stack instrumentation and another half without it.
-> We could make the instrumentation insert a static global flag into
-> each translation unit, but this won't give us any interesting info.
-
-Well, yes, that's technically true, but I think reporting the kernel
-config here would make sense. If someone intentionally bypasses the
-stack auto-init for portions of the kernel, we can't meaningfully report
-it here. There will be exceptions for stack auto-init and heap auto-init.
-
--- 
-Kees Cook
+Okay, I think I see what you=E2=80=99re suggesting. I don=E2=80=99t think i=
+t works
+well, though, since loading the data from the enclave file will almost
+always be done in multiple chunks, and it=E2=80=99s not clear when the kern=
+el
+should look for the xattr or what to do if the xattr changes part way
+through.
