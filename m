@@ -1,148 +1,131 @@
-Return-Path: <SRS0=njb8=TP=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=l9QZ=TQ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3742C04E87
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 May 2019 23:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9215C46460
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 01:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F532089E
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 May 2019 23:13:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557962011;
-	bh=oXIRUhaHoitttMrIPB2rv0mrXlZVPITnJpfkP2WGxVA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=dew5iuXdj46SqcBbxjxNoZ9WsGH04c5a/FyTp7G2Ht2U5YLWtipqCcTdG14rvwMyi
-	 rTXzYv2T1blk8sTWCJupOFAITtwmwq+7bL/HfimS3hF2JIdZ5D4sMKVsE6Bzxyjpyr
-	 ZjbSP96wPimR+8EvwZ1PnCFihKKjMS/3t9i+LMTU=
+	by mail.kernel.org (Postfix) with ESMTP id 8703F20873
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 01:46:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="leKX6iwd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbfEOXNa (ORCPT
+        id S1727584AbfEPBql (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 May 2019 19:13:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41574 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbfEOXNa (ORCPT
+        Wed, 15 May 2019 21:46:41 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42403 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726888AbfEPBCD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 May 2019 19:13:30 -0400
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE92420881
-        for <linux-security-module@vger.kernel.org>; Wed, 15 May 2019 23:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557962009;
-        bh=oXIRUhaHoitttMrIPB2rv0mrXlZVPITnJpfkP2WGxVA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VbF8Ip5K02eLqRuNtSS6WygUsSTTLfyAYn9NcN3u9GKSyhtm3+BN8zkh35/Dq8Ekl
-         BLooL6ayE6/H0fEyV9VadrhQFqHsDyCMtDszV2imLL0hKb1Cba9BH4ZcIchASyFnVv
-         uYGJFISNfE49xSl0pLPqhJzxWUFndnszyL6u0ULw=
-Received: by mail-wr1-f52.google.com with SMTP id r7so1181811wrr.13
-        for <linux-security-module@vger.kernel.org>; Wed, 15 May 2019 16:13:28 -0700 (PDT)
-X-Gm-Message-State: APjAAAWTqQZwN6PKUaB4XwYYIFamrZMjcNE7hlNw/KtaPbFb7MoUdyah
-        jirj58KBzWAihUj/2GHNAfr1Q1Oq8pp20hE+AUAtiA==
-X-Google-Smtp-Source: APXvYqx8WK5Hi6FoJcSd9VsW2VbRkOOSjlnlo07tWriqsFOxSCmdirUQKhI03vZN1Sh8qXdY8fD30ruPZx0us0bAMz4=
-X-Received: by 2002:adf:fb4a:: with SMTP id c10mr26918322wrs.309.1557962007443;
- Wed, 15 May 2019 16:13:27 -0700 (PDT)
+        Wed, 15 May 2019 21:02:03 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 145so643256pgg.9
+        for <linux-security-module@vger.kernel.org>; Wed, 15 May 2019 18:02:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=kB1kmUsnU0wPfFGEdIrU26lZ3ENdFfZVOF7R429DJpY=;
+        b=leKX6iwd+E3ikfGY1//ltoNgIH4UsQxaJiOP4LVdzgDaHwTPnmCflqgZj3iMSpPogi
+         PgC4m5zp6O/OVfdH+hwsuGJbVzzncxBPRxzYWSA2cFKS10nMMGAdTlvTBBz9PRWqBtXG
+         0IY/4ObX8iKZI38lWxYnqS+6NDlXUzJI3O9zY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kB1kmUsnU0wPfFGEdIrU26lZ3ENdFfZVOF7R429DJpY=;
+        b=caQM57xjpFY7vMZk4Fu3fuJgMm5zVh2rdQrDKfVxpRgFHkhRJpZ7moaBvFw4hGTZJC
+         opykzEMnt+ojpps+LNm/KPzgBXygJj5T1b7YWAW2gcCfv6G+QWd7xrLFlLnlfU0aIipl
+         xKNRobkV2V5jQqeFD66/L+Z4j5NFVsZGj0IQqHapG0QTGpgzv0eW747QVkAC0AqK/HVz
+         OwrwVxt9VFFgHwjHTr2018MVuBG4d9fz1+B2EIsWYuNMDmY03SXaN+NfCsB9wYII2eL6
+         NRig4X4+IYnRyDXDIo+0j06VsP4F3Vk+nmN6JKZMedterK14NaZhw97ba7Aeenp8BtQk
+         tAkQ==
+X-Gm-Message-State: APjAAAUgAhoH8XMeXAS4V2uB6t/EUO8k+q94eoCHLNQX/e0JmlEEoZnc
+        7AgXnBfRGMHcaN555EKsN94sSw==
+X-Google-Smtp-Source: APXvYqwVz17Dgzf/syT6+WT0zM62IWrmEQAWI9YG2skem8A0ptTGY41DM3GMUa2e6NgcM+k+1vVkWw==
+X-Received: by 2002:a63:c046:: with SMTP id z6mr47778396pgi.387.1557968522985;
+        Wed, 15 May 2019 18:02:02 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id e16sm3288629pgv.89.2019.05.15.18.02.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 May 2019 18:02:02 -0700 (PDT)
+Date:   Wed, 15 May 2019 18:02:00 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexander Potapenko <glider@google.com>
+Cc:     akpm@linux-foundation.org, cl@linux.com,
+        kernel-hardening@lists.openwall.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Jann Horn <jannh@google.com>, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] lib: introduce test_meminit module
+Message-ID: <201905151752.2BD430A@keescook>
+References: <20190514143537.10435-1-glider@google.com>
+ <20190514143537.10435-3-glider@google.com>
 MIME-Version: 1.0
-References: <8fe520bb-30bd-f246-a3d8-c5443e47a014@intel.com>
- <358e9b36-230f-eb18-efdb-b472be8438b4@fortanix.com> <960B34DE67B9E140824F1DCDEC400C0F4E886094@ORSMSX116.amr.corp.intel.com>
- <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com> <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
- <20190513102926.GD8743@linux.intel.com> <20190514104323.GA7591@linux.intel.com>
- <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
- <20190514204527.GC1977@linux.intel.com> <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com>
- <20190515013031.GF1977@linux.intel.com> <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
- <alpine.LRH.2.21.1905160543070.19802@namei.org> <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com>
- <alpine.LRH.2.21.1905160844130.29250@namei.org>
-In-Reply-To: <alpine.LRH.2.21.1905160844130.29250@namei.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 15 May 2019 16:13:15 -0700
-X-Gmail-Original-Message-ID: <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com>
-Message-ID: <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-To:     James Morris <jmorris@namei.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190514143537.10435-3-glider@google.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 15, 2019 at 3:46 PM James Morris <jmorris@namei.org> wrote:
->
-> On Wed, 15 May 2019, Andy Lutomirski wrote:
->
-> > > Why not just use an xattr, like security.sgx ?
-> >
-> > Wouldn't this make it so that only someone with CAP_MAC_ADMIN could
-> > install an enclave?  I think that this decision should be left up the
-> > administrator, and it should be easy to set up a loose policy where
-> > anyone can load whatever enclave they want.  That's what would happen
-> > in my proposal if there was no LSM loaded or of the LSM policy didn't
-> > restrict what .sigstruct files were acceptable.
-> >
->
-> You could try user.sigstruct, which does not require any privs.
->
+On Tue, May 14, 2019 at 04:35:35PM +0200, Alexander Potapenko wrote:
+> Add tests for heap and pagealloc initialization.
+> These can be used to check init_on_alloc and init_on_free implementations
+> as well as other approaches to initialization.
 
-I don't think I understand your proposal.  What file would this
-attribute be on?  What would consume it?
+This is nice! Easy way to test the results. It might be helpful to show
+here what to expect when loading this module:
 
-I'm imagining that there's some enclave in a file
-crypto_thingy.enclave.  There's also a file crypto_thingy.sigstruct.
-crypto_thingy.enclave has type lib_t or similar so that it's
-executable.  crypto_thingy.sigstruct has type sgx_sigstruct_t.  The
-enclave loader does, in effect:
+with either init_on_alloc=1 or init_on_free=1, I happily see:
 
-void *source_data = mmap(crypto_thingy.enclave, PROT_READ | PROT_EXEC, ...);
-int sigstruct_fd = open("crypto_thingy.sigstruct", O_RDONLY);
-int enclave_fd = open("/dev/sgx/enclave", O_RDWR);
+	test_meminit: all 10 tests in test_pages passed
+	test_meminit: all 40 tests in test_kvmalloc passed
+	test_meminit: all 20 tests in test_kmemcache passed
+	test_meminit: all 70 tests passed!
 
-ioctl(enclave_fd, SGX_IOC_ADD_SOME_DATA, source_data + source_offset,
-enclave_offset, len, ...);
-ioctl(enclave_fd, SGX_IOC_ADD_SOME_DATA, source_data + source_offset2,
-enclave_offset2, len, ...);
-etc.
+and without:
 
-/* Here's where LSMs get to check that the sigstruct is acceptable.
-The CPU will check that the sigstruct matches the enclave. */
-ioctl(enclave_fd, SGX_INIT_THE_ENCLAVE, sigstruct_fd);
+	test_meminit: test_pages failed 10 out of 10 times
+	test_meminit: test_kvmalloc failed 40 out of 40 times
+	test_meminit: test_kmemcache failed 10 out of 20 times
+	test_meminit: failures: 60 out of 70
 
-/* Actually map the thing */
-mmap(enclave_fd RO section, PROT_READ, ...);
-mmap(enclave_fd RW section, PROT_READ | PROT_WRITE, ...);
-mmap(enclave_fd RX section, PROT_READ | PROT_EXEC, ...);
 
-/* This should fail unless EXECMOD is available, I think */
-mmap(enclave_fd RWX section, PROT_READ | PROT_WRITE | PROT_EXEC);
+> 
+> Signed-off-by: Alexander Potapenko <glider@google.com>
 
-And the idea here is that, if the .enclave file isn't mapped
-PROT_EXEC, then mmapping the RX section will also require EXECMEM or
-EXECMOD.
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Tested-by: Kees Cook <keescook@chromium.org>
+
+note below...
+
+> [...]
+> diff --git a/lib/test_meminit.c b/lib/test_meminit.c
+> new file mode 100644
+> index 000000000000..67d759498030
+> --- /dev/null
+> +++ b/lib/test_meminit.c
+> @@ -0,0 +1,205 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> [...]
+> +module_init(test_meminit_init);
+
+I get a warning at build about missing the license:
+
+WARNING: modpost: missing MODULE_LICENSE() in lib/test_meminit.o
+
+So, following the SPDX line, just add:
+
+MODULE_LICENSE("GPL");
+
+-- 
+Kees Cook
