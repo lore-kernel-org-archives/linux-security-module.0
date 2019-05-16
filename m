@@ -2,105 +2,76 @@ Return-Path: <SRS0=l9QZ=TQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C86C04AB4
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 13:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AE2C04AAF
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 16:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F89E20833
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 13:37:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C136720815
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 May 2019 16:17:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbfEPNh3 (ORCPT
+        id S1726481AbfEPQRd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 May 2019 09:37:29 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:59752 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbfEPNh3 (ORCPT
+        Thu, 16 May 2019 12:17:33 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32945 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726369AbfEPQRc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 May 2019 09:37:29 -0400
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4GDbRZ2038911;
-        Thu, 16 May 2019 22:37:27 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Thu, 16 May 2019 22:37:27 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4GDbR4R038908
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 16 May 2019 22:37:27 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: KMSAN: uninit-value in tomoyo_check_inet_address
-To:     Alexander Potapenko <glider@google.com>
-Cc:     syzbot <syzbot+1018d578c410f9f37261@syzkaller.appspotmail.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        takedakn@nttdata.co.jp
-References: <00000000000032685a058900d170@google.com>
- <2b0b9d18-6773-f2dc-ecb2-9f8782d0962a@i-love.sakura.ne.jp>
- <CAG_fn=UHjDv=Jc_nEKKknVGrr9CC4rZ+a+hw_yAL-j4y4=89cg@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <d13cd8cd-03d1-ddde-47e1-d61147520e19@i-love.sakura.ne.jp>
-Date:   Thu, 16 May 2019 22:37:30 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 16 May 2019 12:17:32 -0400
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 15D88A774FA91AD2A6E8;
+        Thu, 16 May 2019 17:17:31 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.36) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 16 May 2019 17:17:21 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH 1/4] evm: check hash algorithm passed to init_desc()
+Date:   Thu, 16 May 2019 18:12:54 +0200
+Message-ID: <20190516161257.6640-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAG_fn=UHjDv=Jc_nEKKknVGrr9CC4rZ+a+hw_yAL-j4y4=89cg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/05/16 22:19, Alexander Potapenko wrote:
->> commit e6193f78bb689f3f424559bb45f4a091c8b314df
->> Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Date:   Fri Apr 12 19:59:36 2019 +0900
->>
->>     tomoyo: Check address length before reading address family
->>
->>     KMSAN will complain if valid address length passed to bind()/connect()/
->>     sendmsg() is shorter than sizeof("struct sockaddr"->sa_family) bytes.
->>
->>     Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->>     Signed-off-by: James Morris <jamorris@linux.microsoft.com>
-> Apparently the fix didn't make it to 5.1, I'll cherry-pick it to KMSAN tree.
+This patch prevents memory access beyond the evm_tfm array by checking the
+validity of the index (hash algorithm) passed to init_desc(). The hash
+algorithm can be arbitrarily set if the security.ima xattr type is not
+EVM_XATTR_HMAC.
 
-Together with three more patches listed bottom, please.
+Fixes: 5feeb61183dde ("evm: Allow non-SHA1 digital signatures")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: stable@vger.kernel.org
+---
+ security/integrity/evm/evm_crypto.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> OOC, how did you know about this bug?
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index e11564eb645b..82a38e801ee4 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -89,6 +89,9 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ 		tfm = &hmac_tfm;
+ 		algo = evm_hmac;
+ 	} else {
++		if (hash_algo >= HASH_ALGO__LAST)
++			return ERR_PTR(-EINVAL);
++
+ 		tfm = &evm_tfm[hash_algo];
+ 		algo = hash_algo_name[hash_algo];
+ 	}
+-- 
+2.17.1
 
-I did a tree-wide check when writing a patch for
-
-  KMSAN: uninit-value in rds_bind
-  KMSAN: uninit-value in rds_connect
-
-reports. Patches for LSM part just did not make it to 5.1.
-
-
-
-commit b9ef5513c99bf9c8bfd9c9e8051b67f52b2dee1e
-Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date:   Fri Apr 12 19:59:35 2019 +0900
-
-    smack: Check address length before reading address family
-
-commit 619ae03e922b65a1a5d4269ceae1e9e13a058d6b
-Author: Casey Schaufler <casey@schaufler-ca.com>
-Date:   Tue Apr 30 14:13:32 2019 -0700
-
-    Smack: Fix kbuild reported build error
-
-commit c750e6929d3c76d13d1d0ba475989d6dd74785d5
-Author: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Date:   Fri Apr 12 19:59:34 2019 +0900
-
-    selinux: Check address length before reading address family
