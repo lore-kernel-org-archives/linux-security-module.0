@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDACC04AB4
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 16:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE9B4C04AB4
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 16:36:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30FB420848
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 16:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 990DD20848
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 16:36:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BrIhPn8i"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LKtwsZc+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725985AbfEQQ14 (ORCPT
+        id S1726462AbfEQQgi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 May 2019 12:27:56 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43520 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbfEQQ14 (ORCPT
+        Fri, 17 May 2019 12:36:38 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36164 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfEQQgi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 May 2019 12:27:56 -0400
-Received: by mail-pl1-f195.google.com with SMTP id n8so3555521plp.10
-        for <linux-security-module@vger.kernel.org>; Fri, 17 May 2019 09:27:56 -0700 (PDT)
+        Fri, 17 May 2019 12:36:38 -0400
+Received: by mail-pl1-f193.google.com with SMTP id d21so3597669plr.3
+        for <linux-security-module@vger.kernel.org>; Fri, 17 May 2019 09:36:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=iWEen/ZJGfJ/91ljuOGunKKjV2wkX9buixAuCmp2VbQ=;
-        b=BrIhPn8ivTpMxlGPBk6IKIJLDMLnaVlDNMmu/vyM0gUSzZQvMLtGhLveRkfKi2vAM6
-         +YkxY+z/cz2xTsv4w3Vlqtv9pbXvDXBqlfpTdOthbYK93wuom517jGpjWySLJNPNrOSc
-         h8Jjt1InPKK6ea8zEWJIYE8CvdlJcSCOeFKdo=
+        bh=IxZh0SFkgKtgTvTNPdcwfcLCN5N/2CbppecqxizinxM=;
+        b=LKtwsZc+FJwBUNCIrb11Y8GMSqCZzahf6uwtE13uOAtzpkKArDH0dIAHVyh3q8Aw/I
+         Y4JNbF8h+RK2YX8THwM9WWZfYiZndP/ijiJWhxq83LPfS7ocwy7iMhbMiGe+pULQw//3
+         aF2hXKEvTcj8VBtfWGt+/eQWXW1mCx/Jpv9gY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=iWEen/ZJGfJ/91ljuOGunKKjV2wkX9buixAuCmp2VbQ=;
-        b=eQMl/jXsP4BpkT77IYW8sezwK7t6PG3bDyZ2AFVOD9sC02o1YVNq9NPiOyVTJnAKMt
-         5h2Q/ZnEbMTMJnJogktMuSBN82WKH9VG5EpbkqRGakwrBxDSdhN/RA6VjxBZ2ApOyC3y
-         nXNAAr9yF5nzGIqxktePu4a7Enn43RXtedTbcyL0yJYNiQJuxMZwwzGpew3oFd8Illx9
-         eDF9wcjtYh2B1ZFuRuweWs9T6fe8pea3QJ7CwZxFdioLPzjbmldaPkBUqqJT9t3i3zs/
-         TTMxdBQWLVJvQ8ZEiB2+zrJL6gLMJSmQlGJ4MGiRZBzs0nKWGPn3S1N640u5RPmL0OjR
-         iPHA==
-X-Gm-Message-State: APjAAAUHSAal2L/1WDroVIzGRQ/U1Yk6jwumHvX/UN0GMk5qKROK8s1K
-        VDeT9CMlQGoNVN02HhkcaVH5eA==
-X-Google-Smtp-Source: APXvYqzdfBNgSus/Lm8itRXOgphQ1CTGG6b41OjNny+0hxO3EQG2Jz/Uzp0pZo6RricP0oBOyE23uA==
-X-Received: by 2002:a17:902:7d90:: with SMTP id a16mr56467129plm.122.1558110476011;
-        Fri, 17 May 2019 09:27:56 -0700 (PDT)
+        bh=IxZh0SFkgKtgTvTNPdcwfcLCN5N/2CbppecqxizinxM=;
+        b=VfZFHvYot4NCvcDp0nQAgB4YWzy7rekEz3cmDV7NGW8GV3k0cMt8AXxHLPHf5gHCys
+         jVCYFOzyqy81r1E0/cN39gAQqHmBoAnqpX5Vbx8aVVGqhqYDh4K2gYtZ7X/rslVJoQnr
+         MpjjSL0GrSalPz/dm0dzhOZDd3Dhio38M28mYdPRw19spK6DMA6i7uFbcYMBP+cC5w2w
+         d2gwIx2i6UHbYyRLlcK/DkAj26No8n/AjPgj7iphkBH0qhkyqjGQSW+XBVVp7Oy4gGUE
+         x9+OgqnOJKZGDNRUWCrp14qJrBlBl7SzE7/Sd3YIu0WmjznAvIXNfQXVuvhCGP8eEZxS
+         RQFA==
+X-Gm-Message-State: APjAAAVhT+qlpC/T5DEd8BkJariB+Qszh83oCCI9R7F1V+ruLoYyX2Zb
+        sNvxfY2uSYY0dJPyZQ9ugg+ttw==
+X-Google-Smtp-Source: APXvYqwar3NELFkZUW3aLvqx4k8Fr6KsRKzOY1J6woNFnEa2TxFFiU3swrxEMldmcv15oXzwZrP4YA==
+X-Received: by 2002:a17:902:2bc5:: with SMTP id l63mr59603305plb.202.1558110998204;
+        Fri, 17 May 2019 09:36:38 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i65sm12436762pgc.3.2019.05.17.09.27.54
+        by smtp.gmail.com with ESMTPSA id t25sm18130915pfq.91.2019.05.17.09.36.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 May 2019 09:27:55 -0700 (PDT)
-Date:   Fri, 17 May 2019 09:27:54 -0700
+        Fri, 17 May 2019 09:36:37 -0700 (PDT)
+Date:   Fri, 17 May 2019 09:36:36 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Michal Hocko <mhocko@kernel.org>
 Cc:     Alexander Potapenko <glider@google.com>,
@@ -70,90 +70,66 @@ Cc:     Alexander Potapenko <glider@google.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         Jann Horn <jannh@google.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
         Linux Memory Management List <linux-mm@kvack.org>,
         linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] gfp: mm: introduce __GFP_NO_AUTOINIT
-Message-ID: <201905170925.6FD47DDFFF@keescook>
+Subject: Re: [PATCH v2 1/4] mm: security: introduce init_on_alloc=1 and
+ init_on_free=1 boot options
+Message-ID: <201905170928.A8F3BEC1B1@keescook>
 References: <20190514143537.10435-1-glider@google.com>
- <20190514143537.10435-4-glider@google.com>
- <20190517125916.GF1825@dhcp22.suse.cz>
- <CAG_fn=VG6vrCdpEv0g73M-Au4wW07w8g0uydEiHA96QOfcCVhA@mail.gmail.com>
- <20190517132542.GJ6836@dhcp22.suse.cz>
- <CAG_fn=Ve88z2ezFjV6CthufMUhJ-ePNMT2=3m6J3nHWh9iSgsg@mail.gmail.com>
- <20190517140108.GK6836@dhcp22.suse.cz>
+ <20190514143537.10435-2-glider@google.com>
+ <20190517140446.GA8846@dhcp22.suse.cz>
+ <CAG_fn=W4k=mijnUpF98Hu6P8bFMHU81FHs4Swm+xv1k0wOGFFQ@mail.gmail.com>
+ <20190517142048.GM6836@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190517140108.GK6836@dhcp22.suse.cz>
+In-Reply-To: <20190517142048.GM6836@dhcp22.suse.cz>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 17, 2019 at 04:01:08PM +0200, Michal Hocko wrote:
-> On Fri 17-05-19 15:37:14, Alexander Potapenko wrote:
-> > > > > Freeing a memory is an opt-in feature and the slab allocator can already
-> > > > > tell many (with constructor or GFP_ZERO) do not need it.
-> > > > Sorry, I didn't understand this piece. Could you please elaborate?
+On Fri, May 17, 2019 at 04:20:48PM +0200, Michal Hocko wrote:
+> On Fri 17-05-19 16:11:32, Alexander Potapenko wrote:
+> > On Fri, May 17, 2019 at 4:04 PM Michal Hocko <mhocko@kernel.org> wrote:
 > > >
-> > > The allocator can assume that caches with a constructor will initialize
-> > > the object so additional zeroying is not needed. GFP_ZERO should be self
-> > > explanatory.
-> > Ah, I see. We already do that, see the want_init_on_alloc()
-> > implementation here: https://patchwork.kernel.org/patch/10943087/
-> > > > > So can we go without this gfp thing and see whether somebody actually
-> > > > > finds a performance problem with the feature enabled and think about
-> > > > > what can we do about it rather than add this maint. nightmare from the
-> > > > > very beginning?
+> > > On Tue 14-05-19 16:35:34, Alexander Potapenko wrote:
+> > > > The new options are needed to prevent possible information leaks and
+> > > > make control-flow bugs that depend on uninitialized values more
+> > > > deterministic.
 > > > >
-> > > > There were two reasons to introduce this flag initially.
-> > > > The first was double initialization of pages allocated for SLUB.
+> > > > init_on_alloc=1 makes the kernel initialize newly allocated pages and heap
+> > > > objects with zeroes. Initialization is done at allocation time at the
+> > > > places where checks for __GFP_ZERO are performed.
+> > > >
+> > > > init_on_free=1 makes the kernel initialize freed pages and heap objects
+> > > > with zeroes upon their deletion. This helps to ensure sensitive data
+> > > > doesn't leak via use-after-free accesses.
 > > >
-> > > Could you elaborate please?
-> > When the kernel allocates an object from SLUB, and SLUB happens to be
-> > short on free pages, it requests some from the page allocator.
-> > Those pages are initialized by the page allocator
+> > > Why do we need both? The later is more robust because even free memory
+> > > cannot be sniffed and the overhead might be shifted from the allocation
+> > > context (e.g. to RCU) but why cannot we stick to a single model?
+> > init_on_free appears to be slower because of cache effects. It's
+> > several % in the best case vs. <1% for init_on_alloc.
 > 
-> ... when the feature is enabled ...
-> 
-> > and split into objects. Finally SLUB initializes one of the available
-> > objects and returns it back to the kernel.
-> > Therefore the object is initialized twice for the first time (when it
-> > comes directly from the page allocator).
-> > This cost is however amortized by SLUB reusing the object after it's been freed.
-> 
-> OK, I see what you mean now. Is there any way to special case the page
-> allocation for this feature? E.g. your implementation tries to make this
-> zeroying special but why cannot you simply do this
-> 
-> 
-> struct page *
-> ____alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
-> 							nodemask_t *nodemask)
-> {
-> 	//current implementation
-> }
-> 
-> struct page *
-> __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
-> 							nodemask_t *nodemask)
-> {
-> 	if (your_feature_enabled)
-> 		gfp_mask |= __GFP_ZERO;
-> 	return ____alloc_pages_nodemask(gfp_mask, order, preferred_nid,
-> 					nodemask);
-> }
-> 
-> and use ____alloc_pages_nodemask from the slab or other internal
-> allocators?
+> This doesn't really explain why we need both.
 
-If an additional allocator function is preferred over a new GFP flag, then
-I don't see any reason not to do this. (Though adding more "__"s seems
-a bit unfriendly to code-documentation.) What might be better naming?
+There are a couple reasons. The first is that once we have hardware with
+memory tagging (e.g. arm64's MTE) we'll need both on_alloc and on_free
+hooks to do change the tags. With MTE, zeroing comes for "free" with
+tagging (though tagging is as slow as zeroing, so it's really the tagging
+that is free...), so we'll need to re-use the init_on_free infrastructure.
 
-This would mean that the skb changes later in the series would use the
-"no auto init" version of the allocator too, then.
+The second reason is for very paranoid use-cases where in-memory
+data lifetime is desired to be minimized. There are various arguments
+for/against the realism of the associated threat models, but given that
+we'll need the infrastructre for MTE anyway, and there are people who
+want wipe-on-free behavior no matter what the performance cost, it seems
+reasonable to include it in this series.
+
+All that said, init_on_alloc looks desirable enough that distros will
+likely build with it enabled by default (I hope), and the very paranoid
+users will switch to (or additionally enable) init_on_free for their
+systems.
 
 -- 
 Kees Cook
