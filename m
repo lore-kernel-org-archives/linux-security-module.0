@@ -2,234 +2,148 @@ Return-Path: <SRS0=DuHk=TR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 853AFC04E84
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 17:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA33AC04AB4
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 17:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59C832168B
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 17:00:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD14E20848
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 17:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558113070;
+	bh=o0/q2sA71kKE3iWSsv04fmRwIioc4TucZgZ6IoKeI9o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=yx98DLfe9GblDk4F3/bh4PQYVrHaPJeePUIjfqTkdmS63S5UGkBqmCKa8pCedtm8A
+	 aq23H7KIUMdA0dYjiZbfrmVSk2sEoC1Z0kgvZzpHik8ZdoHyndSgdBPnab4iWtv3W6
+	 qBbn5ZNH//v7D5duSHfr+e+ETIYy7hdFiCA7I4t4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbfEQQ76 (ORCPT
+        id S1728048AbfEQRLK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 May 2019 12:59:58 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32953 "EHLO huawei.com"
+        Fri, 17 May 2019 13:11:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51580 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726575AbfEQQ76 (ORCPT
+        id S1725933AbfEQRLK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 May 2019 12:59:58 -0400
-Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id A5B5E1A365CDA136CABA;
-        Fri, 17 May 2019 17:59:56 +0100 (IST)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
- by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Fri, 17 May 2019 17:59:46 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
-        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
-        <takondra@cisco.com>, <kamensky@cisco.com>, <hpa@zytor.com>,
-        <arnd@arndb.de>, <rob@landley.net>, <james.w.mcmechan@gmail.com>,
-        <niveditas98@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-Date:   Fri, 17 May 2019 18:55:19 +0200
-Message-ID: <20190517165519.11507-3-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190517165519.11507-1-roberto.sassu@huawei.com>
-References: <20190517165519.11507-1-roberto.sassu@huawei.com>
+        Fri, 17 May 2019 13:11:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9A57EADEA;
+        Fri, 17 May 2019 17:11:07 +0000 (UTC)
+Date:   Fri, 17 May 2019 19:11:05 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] gfp: mm: introduce __GFP_NO_AUTOINIT
+Message-ID: <20190517171105.GT6836@dhcp22.suse.cz>
+References: <20190514143537.10435-1-glider@google.com>
+ <20190514143537.10435-4-glider@google.com>
+ <20190517125916.GF1825@dhcp22.suse.cz>
+ <CAG_fn=VG6vrCdpEv0g73M-Au4wW07w8g0uydEiHA96QOfcCVhA@mail.gmail.com>
+ <20190517132542.GJ6836@dhcp22.suse.cz>
+ <CAG_fn=Ve88z2ezFjV6CthufMUhJ-ePNMT2=3m6J3nHWh9iSgsg@mail.gmail.com>
+ <20190517140108.GK6836@dhcp22.suse.cz>
+ <201905170925.6FD47DDFFF@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.154]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201905170925.6FD47DDFFF@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch adds support for an alternative method to add xattrs to files in
-the rootfs filesystem. Instead of extracting them directly from the ram
-disk image, they are extracted from a regular file called .xattr-list, that
-can be added by any ram disk generator available today. The file format is:
+On Fri 17-05-19 09:27:54, Kees Cook wrote:
+> On Fri, May 17, 2019 at 04:01:08PM +0200, Michal Hocko wrote:
+> > On Fri 17-05-19 15:37:14, Alexander Potapenko wrote:
+> > > > > > Freeing a memory is an opt-in feature and the slab allocator can already
+> > > > > > tell many (with constructor or GFP_ZERO) do not need it.
+> > > > > Sorry, I didn't understand this piece. Could you please elaborate?
+> > > >
+> > > > The allocator can assume that caches with a constructor will initialize
+> > > > the object so additional zeroying is not needed. GFP_ZERO should be self
+> > > > explanatory.
+> > > Ah, I see. We already do that, see the want_init_on_alloc()
+> > > implementation here: https://patchwork.kernel.org/patch/10943087/
+> > > > > > So can we go without this gfp thing and see whether somebody actually
+> > > > > > finds a performance problem with the feature enabled and think about
+> > > > > > what can we do about it rather than add this maint. nightmare from the
+> > > > > > very beginning?
+> > > > >
+> > > > > There were two reasons to introduce this flag initially.
+> > > > > The first was double initialization of pages allocated for SLUB.
+> > > >
+> > > > Could you elaborate please?
+> > > When the kernel allocates an object from SLUB, and SLUB happens to be
+> > > short on free pages, it requests some from the page allocator.
+> > > Those pages are initialized by the page allocator
+> > 
+> > ... when the feature is enabled ...
+> > 
+> > > and split into objects. Finally SLUB initializes one of the available
+> > > objects and returns it back to the kernel.
+> > > Therefore the object is initialized twice for the first time (when it
+> > > comes directly from the page allocator).
+> > > This cost is however amortized by SLUB reusing the object after it's been freed.
+> > 
+> > OK, I see what you mean now. Is there any way to special case the page
+> > allocation for this feature? E.g. your implementation tries to make this
+> > zeroying special but why cannot you simply do this
+> > 
+> > 
+> > struct page *
+> > ____alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+> > 							nodemask_t *nodemask)
+> > {
+> > 	//current implementation
+> > }
+> > 
+> > struct page *
+> > __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+> > 							nodemask_t *nodemask)
+> > {
+> > 	if (your_feature_enabled)
+> > 		gfp_mask |= __GFP_ZERO;
+> > 	return ____alloc_pages_nodemask(gfp_mask, order, preferred_nid,
+> > 					nodemask);
+> > }
+> > 
+> > and use ____alloc_pages_nodemask from the slab or other internal
+> > allocators?
+> 
+> If an additional allocator function is preferred over a new GFP flag, then
+> I don't see any reason not to do this. (Though adding more "__"s seems
+> a bit unfriendly to code-documentation.) What might be better naming?
 
-<file #N data len (ASCII, 10 chars)><file #N path>\0
-<xattr #N data len (ASCII, 8 chars)><xattr #N name>\0<xattr #N value>
+The naminig is the last thing I would be worried about. Let's focus on
+the most simplistic implementation first. And means, can we really make
+it as simple as above? At least on the page allocator level.
 
-.xattr-list can be generated by executing:
+> This would mean that the skb changes later in the series would use the
+> "no auto init" version of the allocator too, then.
 
-$ getfattr --absolute-names -d -h -R -e hex -m - \
-      <file list> | xattr.awk -b > ${initdir}/.xattr-list
-
-where the content of the xattr.awk script is:
-
-#! /usr/bin/awk -f
-{
-  if (!length($0)) {
-    printf("%.10x%s\0", len, file);
-    for (x in xattr) {
-      printf("%.8x%s\0", xattr_len[x], x);
-      for (i = 0; i < length(xattr[x]) / 2; i++) {
-        printf("%c", strtonum("0x"substr(xattr[x], i * 2 + 1, 2)));
-      }
-    }
-    i = 0;
-    delete xattr;
-    delete xattr_len;
-    next;
-  };
-  if (i == 0) {
-    file=$3;
-    len=length(file) + 8 + 1;
-  }
-  if (i > 0) {
-    split($0, a, "=");
-    xattr[a[1]]=substr(a[2], 3);
-    xattr_len[a[1]]=length(a[1]) + 1 + 8 + length(xattr[a[1]]) / 2;
-    len+=xattr_len[a[1]];
-  };
-  i++;
-}
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- init/initramfs.c | 99 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
-
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 0c6dd1d5d3f6..6ec018c6279a 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -13,6 +13,8 @@
- #include <linux/namei.h>
- #include <linux/xattr.h>
- 
-+#define XATTR_LIST_FILENAME ".xattr-list"
-+
- static ssize_t __init xwrite(int fd, const char *p, size_t count)
- {
- 	ssize_t out = 0;
-@@ -382,6 +384,97 @@ static int __init __maybe_unused do_setxattrs(char *pathname)
- 	return 0;
- }
- 
-+struct path_hdr {
-+	char p_size[10]; /* total size including p_size field */
-+	char p_data[];   /* <path>\0<xattrs> */
-+};
-+
-+static int __init do_readxattrs(void)
-+{
-+	struct path_hdr hdr;
-+	char *path = NULL;
-+	char str[sizeof(hdr.p_size) + 1];
-+	unsigned long file_entry_size;
-+	size_t size, path_size, total_size;
-+	struct kstat st;
-+	struct file *file;
-+	loff_t pos;
-+	int ret;
-+
-+	ret = vfs_lstat(XATTR_LIST_FILENAME, &st);
-+	if (ret < 0)
-+		return ret;
-+
-+	total_size = st.size;
-+
-+	file = filp_open(XATTR_LIST_FILENAME, O_RDONLY, 0);
-+	if (IS_ERR(file))
-+		return PTR_ERR(file);
-+
-+	pos = file->f_pos;
-+
-+	while (total_size) {
-+		size = kernel_read(file, (char *)&hdr, sizeof(hdr), &pos);
-+		if (size != sizeof(hdr)) {
-+			ret = -EIO;
-+			goto out;
-+		}
-+
-+		total_size -= size;
-+
-+		str[sizeof(hdr.p_size)] = 0;
-+		memcpy(str, hdr.p_size, sizeof(hdr.p_size));
-+		ret = kstrtoul(str, 16, &file_entry_size);
-+		if (ret < 0)
-+			goto out;
-+
-+		file_entry_size -= sizeof(sizeof(hdr.p_size));
-+		if (file_entry_size > total_size) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		path = vmalloc(file_entry_size);
-+		if (!path) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+
-+		size = kernel_read(file, path, file_entry_size, &pos);
-+		if (size != file_entry_size) {
-+			ret = -EIO;
-+			goto out_free;
-+		}
-+
-+		total_size -= size;
-+
-+		path_size = strnlen(path, file_entry_size);
-+		if (path_size == file_entry_size) {
-+			ret = -EINVAL;
-+			goto out_free;
-+		}
-+
-+		xattr_buf = path + path_size + 1;
-+		xattr_len = file_entry_size - path_size - 1;
-+
-+		ret = do_setxattrs(path);
-+		vfree(path);
-+		path = NULL;
-+
-+		if (ret < 0)
-+			break;
-+	}
-+out_free:
-+	vfree(path);
-+out:
-+	fput(file);
-+
-+	if (ret < 0)
-+		error("Unable to parse xattrs");
-+
-+	return ret;
-+}
-+
- static __initdata int wfd;
- 
- static int __init do_name(void)
-@@ -391,6 +484,11 @@ static int __init do_name(void)
- 	if (strcmp(collected, "TRAILER!!!") == 0) {
- 		free_hash();
- 		return 0;
-+	} else if (strcmp(collected, XATTR_LIST_FILENAME) == 0) {
-+		struct kstat st;
-+
-+		if (!vfs_lstat(collected, &st))
-+			do_readxattrs();
- 	}
- 	clean_path(collected, mode);
- 	if (S_ISREG(mode)) {
-@@ -562,6 +660,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
- 		buf += my_inptr;
- 		len -= my_inptr;
- 	}
-+	do_readxattrs();
- 	dir_utime();
- 	kfree(name_buf);
- 	kfree(symlink_buf);
+No, this would be an internal function to MM. I would really like to
+optimize once there are numbers from _real_ workloads to base those
+optimizations.
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
