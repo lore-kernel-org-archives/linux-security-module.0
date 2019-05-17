@@ -2,148 +2,101 @@ Return-Path: <SRS0=DuHk=TR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C56A0C04AB4
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 15:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E48C04AB4
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 15:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF2720833
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 15:51:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9F66204FD
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 15:59:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q5IfUkcu"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OzkQiwAz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbfEQPv3 (ORCPT
+        id S1729114AbfEQP7m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 May 2019 11:51:29 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:34353 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728551AbfEQPv3 (ORCPT
+        Fri, 17 May 2019 11:59:42 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40636 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728664AbfEQP7m (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 May 2019 11:51:29 -0400
-Received: by mail-ua1-f65.google.com with SMTP id 7so2877796uah.1
-        for <linux-security-module@vger.kernel.org>; Fri, 17 May 2019 08:51:29 -0700 (PDT)
+        Fri, 17 May 2019 11:59:42 -0400
+Received: by mail-pl1-f196.google.com with SMTP id g69so3539526plb.7
+        for <linux-security-module@vger.kernel.org>; Fri, 17 May 2019 08:59:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=K3Vrlw7jjRTYTYz1AgzZI4h2eYnMN5BSgG9wzkqpLb0=;
-        b=Q5IfUkcu0WjvcwlvR433YNjz64oeJCmRNDPkXbu+8hETl16gDKE6zTXpu6p7dkY4N6
-         eVDjSXDI68k8ExtJHdN9UzmOP59bD8K8byBeWHXqf412MKC5e9prPRzi3StboEwqSfBQ
-         8ZR2HIXUoQdqnMfp5QvDj8NFr5+DgQqGn8+ijVud/bPYdLOjbXeDS2j2K65qMHQbSC5v
-         uZqu4G2sBJesTbY1c/9Aw5oiSoi6puEXKeTyG20jFKniAvjJRF/Pt1fqyb5+ev06/pNi
-         1COM50IkfipdjLx3eakFwDTxCMtxfKpDbmZrjSvtJNABugPn0s2DEgjjb6XW07fkNBX/
-         cpXA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=INvyXgRgpc11QEZcWPLU82BNdrovIrWqBF0OwWnNsfE=;
+        b=OzkQiwAzJuMdG5Dif12dSl+nTEipCyWX7+SdFof6s8LaG66yLc+ruN0gDAGBN3TefY
+         bbuIBXARgwmT4asXLVzMmCU0JRbt6/7DH9DwiCiJAnIJzLM1zPJP0ntHL5Ncxor2ZBxm
+         kAshtNmIfG7mixRQlpwxZ/vwWgWZBCTFL4juE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=K3Vrlw7jjRTYTYz1AgzZI4h2eYnMN5BSgG9wzkqpLb0=;
-        b=lEtRrOziIq5US+YtYpCiuJUfhRPBxYK3jsMNQcCq2fV7RiNivBXuQSHyVA4UVGo1ns
-         S1aUU4R/Mmy5CxvNLlrjgp4UnzdksQ4N6QrBMghRf+xBxQXL6Y4Z6F4dB7wC7Pgjg58E
-         i7EcWm4KdsiGy0ozujtmCHERgkmp5yIdiDLof2m8kBwEI3xZ16tIaM3y+GW7x18Kclom
-         oj1bYi9ZsfbyBuMJu3cwhFhyXUXlUWkWYyWxYOeYg88a8riEVYBGHVwAVr3/OEbjQTJ6
-         dra31jU+Bjfjs2GhZcnXuhW+JuIIhv3t7TUCE6uxVDWBW/kVo5njDZhmE+mlL71YTJE5
-         4Stg==
-X-Gm-Message-State: APjAAAWI8I2dAlO2EO9XLyrU9mOCEPHUDvd98VBcrUzABF1dIu5+fxXT
-        ZikiSd9QBp9AHz5uZt6ItH+FZaC3SfCNyRDqSHaO/Q==
-X-Google-Smtp-Source: APXvYqyHBgjr6zQkV0VRITOnSTFo/Csy6VlzF4/NnOlUkrs7+IUo77Uxkz08YROnpav8K6N0iIzd8ewuExL2rchVXBY=
-X-Received: by 2002:ab0:d95:: with SMTP id i21mr22915022uak.110.1558108288339;
- Fri, 17 May 2019 08:51:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190514143537.10435-1-glider@google.com> <20190514143537.10435-3-glider@google.com>
- <201905151752.2BD430A@keescook>
-In-Reply-To: <201905151752.2BD430A@keescook>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Fri, 17 May 2019 17:51:17 +0200
-Message-ID: <CAG_fn=VVZ1FBygbAeTbdo2U2d2Zga6Z7wVitkqZB0YffCKYzag@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] lib: introduce test_meminit module
-To:     Kees Cook <keescook@chromium.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=INvyXgRgpc11QEZcWPLU82BNdrovIrWqBF0OwWnNsfE=;
+        b=lMjzSRRpQlyneD2kcW6Srg9rYvBcdoB1KB82kdiQa7+vBN2uca1bCvADhGX2RlawzQ
+         MCTBaBT9F4eX8czf3qAy9YNeBSh9ESiBXr4C4nLDuXEuj+oZuAXaMWumDHVtf8+Ca4m4
+         GU3NHifsCBxpuzDda5RAtZ1lapzkjT9V9r+ylQk+1ggQNN2fCfy7SeC5nZn8gE0e/l6s
+         XaJE46fTcxgWAqYw1UxKnXMOJqMqtnGkxIAvFJkpzO9ZJFEl5rVY7fF3o6qnQI7bRMz+
+         EgXRR73jzIn/SMmHs4kcVi7G6r8mgf9zEW39tJt2ITYjiNumzGP3I9hB9ypzInwgMlmh
+         3cMg==
+X-Gm-Message-State: APjAAAWMdfsImzjQJliLeP4SNGjSBGnZKOEeBEhxJ6clSTABsHTfpp0C
+        UKbuSwePOI+IfIAyMCvJY2M67g==
+X-Google-Smtp-Source: APXvYqxjjymERosAhEH8xGgc+gUj/iwHDQd5pedl+FQfW0PvQNBci/Cem9LJMaQfelInYHey+/OBlA==
+X-Received: by 2002:a17:902:7892:: with SMTP id q18mr12777643pll.163.1558108781558;
+        Fri, 17 May 2019 08:59:41 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id z14sm6716152pfk.73.2019.05.17.08.59.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 May 2019 08:59:40 -0700 (PDT)
+Date:   Fri, 17 May 2019 08:59:39 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexander Potapenko <glider@google.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Christoph Lameter <cl@linux.com>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Kostya Serebryany <kcc@google.com>,
         Dmitry Vyukov <dvyukov@google.com>,
         Sandeep Patil <sspatil@android.com>,
         Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
         Jann Horn <jannh@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Linux Memory Management List <linux-mm@kvack.org>,
         linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 5/4] mm: Introduce SLAB_NO_FREE_INIT and mark excluded
+ caches
+Message-ID: <201905170858.CE4109E77@keescook>
+References: <20190514143537.10435-5-glider@google.com>
+ <201905161746.16E885F@keescook>
+ <CAG_fn=W41zDac9DN9qVB_EwJG89f2cNBQYNyove4oO3dwe6d5Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG_fn=W41zDac9DN9qVB_EwJG89f2cNBQYNyove4oO3dwe6d5Q@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 16, 2019 at 3:02 AM Kees Cook <keescook@chromium.org> wrote:
->
-> On Tue, May 14, 2019 at 04:35:35PM +0200, Alexander Potapenko wrote:
-> > Add tests for heap and pagealloc initialization.
-> > These can be used to check init_on_alloc and init_on_free implementatio=
-ns
-> > as well as other approaches to initialization.
->
-> This is nice! Easy way to test the results. It might be helpful to show
-> here what to expect when loading this module:
-Do you want me to add the expected output to the patch description?
-> with either init_on_alloc=3D1 or init_on_free=3D1, I happily see:
->
->         test_meminit: all 10 tests in test_pages passed
->         test_meminit: all 40 tests in test_kvmalloc passed
->         test_meminit: all 20 tests in test_kmemcache passed
->         test_meminit: all 70 tests passed!
->
-> and without:
->
->         test_meminit: test_pages failed 10 out of 10 times
->         test_meminit: test_kvmalloc failed 40 out of 40 times
->         test_meminit: test_kmemcache failed 10 out of 20 times
->         test_meminit: failures: 60 out of 70
->
->
+On Fri, May 17, 2019 at 10:34:26AM +0200, Alexander Potapenko wrote:
+> On Fri, May 17, 2019 at 2:50 AM Kees Cook <keescook@chromium.org> wrote:
 > >
-> > Signed-off-by: Alexander Potapenko <glider@google.com>
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Tested-by: Kees Cook <keescook@chromium.org>
->
-> note below...
->
-> > [...]
-> > diff --git a/lib/test_meminit.c b/lib/test_meminit.c
-> > new file mode 100644
-> > index 000000000000..67d759498030
-> > --- /dev/null
-> > +++ b/lib/test_meminit.c
-> > @@ -0,0 +1,205 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > [...]
-> > +module_init(test_meminit_init);
->
-> I get a warning at build about missing the license:
->
-> WARNING: modpost: missing MODULE_LICENSE() in lib/test_meminit.o
->
-> So, following the SPDX line, just add:
->
-> MODULE_LICENSE("GPL");
-Will do, thanks!
-> --
-> Kees Cook
+> > In order to improve the init_on_free performance, some frequently
+> > freed caches with less sensitive contents can be excluded from the
+> > init_on_free behavior.
+> Did you see any notable performance improvement with this patch?
+> A similar one gave me only 1-2% on the parallel Linux build.
 
+Yup, that's in the other thread. I saw similar. But 1-2% on a 5% hit is
+a lot. ;)
 
-
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+-- 
+Kees Cook
