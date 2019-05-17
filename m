@@ -2,99 +2,150 @@ Return-Path: <SRS0=DuHk=TR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9D2C46460
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 21:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CA7C04E87
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 21:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D4DD2166E
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 21:16:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="HwpC4RrW"
+	by mail.kernel.org (Postfix) with ESMTP id D2CA02166E
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 21:36:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbfEQVQ5 (ORCPT
+        id S1727272AbfEQVgj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 May 2019 17:16:57 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:44607 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728238AbfEQVQ4 (ORCPT
+        Fri, 17 May 2019 17:36:39 -0400
+Received: from mga04.intel.com ([192.55.52.120]:19145 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726960AbfEQVgj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 May 2019 17:16:56 -0400
-Received: by mail-oi1-f194.google.com with SMTP id z65so6143382oia.11
-        for <linux-security-module@vger.kernel.org>; Fri, 17 May 2019 14:16:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=E2H9E8ynXEsa3QuvJM4S/38HaYT5LjHH75EOqiq4bas=;
-        b=HwpC4RrWhmVT2sRECgJy6qj4/VU5z3EioWa4gwjjVsUl7jx0XN/rPuOnEi6NhYrZ2p
-         F1zjTFDItG03H+5lRuQ6zyijuZDYz9b+wXrJyshH+ix8Vfmvxo5/vcTrWlI4n5tnBiWx
-         8LnqSWEna/zgdRZlB569dAnzMWBe1JzuL1m6C+p21hStLtZyu2JAiXnVe0VAQ7kn6LsK
-         E4WyjiheJBZrsyo2mI2o+hmJr4ceNC+4/Rs6tvPC4bweoNEYcXUXDGjVlJTy6mZKTHXu
-         jOucgFyRAwEUEsOPgwJcwAHcOsLwmGWLDUCDsO4Vr8KrVNIa7uplWoeTca22GrU9TLrt
-         GN+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=E2H9E8ynXEsa3QuvJM4S/38HaYT5LjHH75EOqiq4bas=;
-        b=hX4ZHc9Vm7li4tRTJNgICoXFnjSK6KncH8iwSqeCjGr0ZUymHMiLGmNUZ5CfTFI/D9
-         j7qlZQYfVyCJ8orUZcYGoepABx9gzhpXz8vQCuL1FlY8yI6aeAguRrsMgskdlJSYBSuJ
-         sa/8e3xLdyf5cEVqfwLYgEaqyos8Leh9UZ2AgmEfvWkLp18mga0kO1fxWsB2gTQuCpeS
-         nrAl+KdcI/y87RSdSlPTEtHfiMVxYh0bZJUedVSwHt2lDN/e6LasANvtdQkHs/tyBlLR
-         H93glIPGUWwUF/ae1W/Lm69WilRRUrnGeU13+6lPmdrjn9qiHM3OratcvKIwDaS8iWxr
-         FkWA==
-X-Gm-Message-State: APjAAAWSdPXkb0kXKc6x4wBmLU08/GEUtHwR7gT8rIa5SWjPDe0xrt+A
-        jUPYR3Abf96yz3dIy5JTuzS/tQ==
-X-Google-Smtp-Source: APXvYqySaxA8Ue4p1Miit+toZFZg3BakSoFRI3b4Xx15JMWDxpnkVOH27XxQnYKZoy9nFEinxmBHqA==
-X-Received: by 2002:a05:6808:a08:: with SMTP id n8mr11031oij.20.1558127816024;
-        Fri, 17 May 2019 14:16:56 -0700 (PDT)
-Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
-        by smtp.googlemail.com with ESMTPSA id g102sm3352444otg.59.2019.05.17.14.16.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 14:16:55 -0700 (PDT)
-Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-To:     hpa@zytor.com, Roberto Sassu <roberto.sassu@huawei.com>,
-        viro@zeniv.linux.org.uk
-Cc:     linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, arnd@arndb.de,
-        james.w.mcmechan@gmail.com, niveditas98@gmail.com
-References: <20190517165519.11507-1-roberto.sassu@huawei.com>
- <20190517165519.11507-3-roberto.sassu@huawei.com>
- <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <591c0770-7a82-3d45-e5b2-7ed347db812a@landley.net>
-Date:   Fri, 17 May 2019 16:17:31 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 17 May 2019 17:36:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 May 2019 14:36:38 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by fmsmga004.fm.intel.com with ESMTP; 17 May 2019 14:36:37 -0700
+Date:   Fri, 17 May 2019 14:36:37 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190517213637.GM15006@linux.intel.com>
+References: <CALCETrUfmyQ7ivNzQic0FyPXe1fmAnoK093jnz0i8DRn2LvdSA@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com>
+ <6a97c099-2f42-672e-a258-95bc09152363@tycho.nsa.gov>
+ <20190517150948.GA15632@linux.intel.com>
+ <ca807220-47e2-5ec2-982c-4fb4a72439c6@tycho.nsa.gov>
+ <80013cca-f1c2-f4d5-7558-8f4e752ada76@tycho.nsa.gov>
+ <837CE33B-A636-4BF8-B46E-0A8A40C5A563@amacapital.net>
+ <6d083885-1880-f33d-a54f-23518d56b714@tycho.nsa.gov>
+ <20190517192823.GG15006@linux.intel.com>
+ <c901ea99-5b43-a25d-03e8-55b4fce9c466@tycho.nsa.gov>
 MIME-Version: 1.0
-In-Reply-To: <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c901ea99-5b43-a25d-03e8-55b4fce9c466@tycho.nsa.gov>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/17/19 3:18 PM, hpa@zytor.com wrote:
-> Ok... I just realized this does not work for a modular initramfs, composed at load time from multiple files, which is a very real problem. Should be easy enough to deal with: instead of one large file, use one companion file per source file, perhaps something like filename..xattrs (suggesting double dots to make it less likely to conflict with a "real" file.) No leading dot, as it makes it more likely that archivers will sort them before the file proper.
+On Fri, May 17, 2019 at 04:09:22PM -0400, Stephen Smalley wrote:
+> On 5/17/19 3:28 PM, Sean Christopherson wrote:
+> >On Fri, May 17, 2019 at 02:05:39PM -0400, Stephen Smalley wrote:
+> >Yep, and that's by design in the overall proposal.  The trick is that
+> >ENCLAVE_ADD takes a source VMA and copies the contents *and* the
+> >permissions from the source VMA.  The source VMA points at regular memory
+> >that was mapped and populated using existing mechanisms for loading DSOs.
+> >
+> >E.g. at a high level:
+> >
+> >source_fd = open("/home/sean/path/to/my/enclave", O_RDONLY);
+> >for_each_chunk {
+> >         <hand waving - mmap()/mprotect() the enclave file into regular memory>
+> >}
+> >
+> >enclave_fd = open("/dev/sgx/enclave", O_RDWR); /* allocs anon inode */
+> >enclave_addr = mmap(NULL, size, PROT_READ, MAP_SHARED, enclave_fd, 0);
+> >
+> >ioctl(enclave_fd, ENCLAVE_CREATE, {enclave_addr});
+> >for_each_chunk {
+> >         struct sgx_enclave_add ioctlargs = {
+> >                 .offset = chunk.offset,
+> >                 .source = chunk.addr,
+> >                 .size   = chunk.size,
+> >                 .type   = chunk.type, /* SGX specific metadata */
+> >         }
+> >         ioctl(fd, ENCLAVE_ADD, &ioctlargs); /* modifies enclave's VMAs */
+> >}
+> >ioctl(fd, ENCLAVE_INIT, ...);
+> >
+> >
+> >Userspace never explicitly requests PROT_EXEC on enclave_fd, but SGX also
+> >ensures userspace isn't bypassing LSM policies by virtue of copying the
+> >permissions for EPC VMAs from regular VMAs that have already gone through
+> >LSM checks.
 > 
-> A side benefit is that the format can be simpler as there is no need to encode the filename.
-> 
-> A technically cleaner solution still, but which would need archiver modifications, would be to encode the xattrs as an optionally nameless file (just an empty string) with a new file mode value, immediately following the original file. The advantage there is that the archiver itself could support xattrs and other extended metadata (which has been requested elsewhere); the disadvantage obviously is that that it requires new support in the archiver. However, at least it ought to be simpler since it is still a higher protocol level than the cpio archive itself.
-> 
-> There's already one special case in cpio, which is the "!!!TRAILER!!!" filename; although I don't think it is part of the formal spec, to the extent there is one, I would expect that in practice it is always encoded with a mode of 0, which incidentally could be used to unbreak the case where such a filename actually exists. So one way to support such extended metadata would be to set mode to 0 and use the filename to encode the type of metadata. I wonder how existing GNU or BSD cpio (the BSD one is better maintained these days) would deal with reading such a file; it would at least not be a regression if it just read it still, possibly with warnings. It could also be possible to use bits 17:16 in the mode, which are traditionally always zero (mode_t being 16 bits), but I believe are present in most or all of the cpio formats for historical reasons. It might be accepted better by existing implementations to use one of these high bits combined with S_IFREG, I dont know.
-> 
+> Is O_RDWR required for /dev/sgx/enclave or would O_RDONLY suffice?  Do you
+> do anything other than ioctl() calls on it?
 
-I'll happily modify toybox cpio to understand xattrs (compress and decompress),
-the android guys do a lot with xattrs already. I tapped out of _this_ discussion
-from disgust with the proposed encoding.
+Hmm, in the current implementation, yes, O_RDWR is required.  An enclave
+and its associated EPC memory are represented and referenced by its fd,
+which is backed by /dev/sgx/enclave.  An enclave is not just code, e.g.
+also has a heap, stack, variables, etc..., which need to be mapped
+accordingly.  In the current implementation, userspace directly does
+mprotect() or mmap() on EPC VMAs, and so setting PROT_WRITE for the heap
+and whatnot requires opening /dev/sgx/enclave with O_RDWR.
 
-Rob
+I *think* /dev/sgx/enclave could be opened O_RDONLY if ENCLAVE_ADD stuffed
+the EPC VMA permissions, assuming the use case doesn't require changing
+permissions after the enclave has been created.
+
+The other reason userspace would need to open /dev/sgx/enclave O_RDWR
+would be to debug an enclave, e.g. pwrite() works on the enclave fd due
+to SGX restrictions on modifying EPC memory from outside the enclave.
+But that's an obvious case where FILE__WRITE should be required.
+
+> What's the advantage of allocating an anon inode in the above?  At present
+> anon inodes are exempted from inode-based checking, thereby losing the
+> ability to perform SELinux ioctl whitelisting, unlike the file-backed
+> /dev/sgx/enclave inode.
+
+Purely to trigger the EXECMEM check on any PROT_EXEC mapping.  However,
+the motiviation for that was due to my bad assumption that FILE__WRITE
+and FILE__EXECUTE are global and not per process.  If we can do as you
+suggest and allow creation of enclaves with O_RDONLY, then keeping a
+file-backed inode is definitely better as it means most processes only
+need FILE__READ and FILE__* in general has actual meaning.
+
+Thanks a bunch for your help!
