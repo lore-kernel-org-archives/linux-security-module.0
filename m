@@ -3,139 +3,162 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317A5C04AAF
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 00:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6C3C04E84
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 00:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3D5F206BF
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 00:26:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ASs9/AsK"
+	by mail.kernel.org (Postfix) with ESMTP id 0AF782087E
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 May 2019 00:26:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558052791;
+	bh=NztWQ67b79un61zbgNfI2N8kygb1psFx3jPAnJ9AZ9M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=TLciSXTpbnrcIfuPfd0maBwLRgoxrtFFOT69d2J0sTJm//C3a8kgoZcuB5uYBvRqG
+	 NkqXpypno6tzajksrIlBsInbPGREuaxPn4DoGUO4o6hEiuyZ/AD8hJ41WYK4x3HXwK
+	 rub/1+bxYfI5KJccihEpBV7qUEaRSc7KnfBJ8UK0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbfEQA0N (ORCPT
+        id S1727556AbfEQA0a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 May 2019 20:26:13 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38668 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbfEQA0N (ORCPT
+        Thu, 16 May 2019 20:26:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46168 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727543AbfEQA0a (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 May 2019 20:26:13 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b76so2715996pfb.5
-        for <linux-security-module@vger.kernel.org>; Thu, 16 May 2019 17:26:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ilDv0+YTa/WnY3XhZH80fN4U1WpmetjpQlVMabTh6tw=;
-        b=ASs9/AsKmgukkUd8ZkGKrmFLrJLHhcmjh9zttsNZWu9UiLxwGqq+jTPLZfvADEE6BT
-         0wo7n9b7ck3n1cRmgHDKeiMzhg+VhnE8FHKem/W4KuR+HtEfYDi+njtYVyXvv+cb4FKI
-         TheGLDDVwvh9uyy0Qq5Jox9zPBUe3teBFpXhw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ilDv0+YTa/WnY3XhZH80fN4U1WpmetjpQlVMabTh6tw=;
-        b=cezb4sHBCTfvD4XElJB4pUsyayxaXX3UdTVMghZEcu6HHbSsNCTjRThYqe0Apo5Y1y
-         coOIO0Vn+Bu4S8gGz51QNYEk/GPilobS+Td55/MlEIE2fKP18gTLpeXLhrkBrWI9ExFC
-         EzWTKAriJ9QoR93ov3KoyPjxKlMNuuemRbh6U/6D5Psvt1IjzvopG1EgkfD0FVKoj/Ty
-         WEk1I2LiZSvI+3KIEvTE1yc8CSrob6YZOYYXe0A1QYXco3Rgeo5NHiKEu+IecmtaYAyR
-         PVqnlRyh6atCms569i/+llFGi7UIj1CuQZAGk4o4K/XEHltBF6jTtze/+6K5Nprh54Fd
-         Azqg==
-X-Gm-Message-State: APjAAAW37lFAnKjtziTRZuKx/w0WtXmDig2uU6W5fugpzSAQN9XfalSS
-        ShyB428LxhfUr1zfj4QdWIC1fY6sSb8=
-X-Google-Smtp-Source: APXvYqwlMKqnUliknBdwEvFPxguLJNac2aseYZx+RJq6e02esXvj8m81/U384KtDWip6FxOC9kYkMg==
-X-Received: by 2002:a63:ef56:: with SMTP id c22mr2023348pgk.13.1558052772428;
-        Thu, 16 May 2019 17:26:12 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r64sm14143496pfa.25.2019.05.16.17.26.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 17:26:11 -0700 (PDT)
-Date:   Thu, 16 May 2019 17:26:09 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     akpm@linux-foundation.org, cl@linux.com,
-        kernel-hardening@lists.openwall.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thu, 16 May 2019 20:26:30 -0400
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D64A021734
+        for <linux-security-module@vger.kernel.org>; Fri, 17 May 2019 00:26:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558052789;
+        bh=NztWQ67b79un61zbgNfI2N8kygb1psFx3jPAnJ9AZ9M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=L1SWhJRYZKvea+sEKB8iBRJPEdS25Y/AC4lulser4bJgEe5UBtyCRGQcG6lkCzJto
+         8ehHfFQz7niGf2b4ANE/gIPmON2kGVQtua26wrVxnijcgNqx4M39criRzFKVGPefEY
+         OBdVuJW8707vwc/N/wejcOT0J3UxPEmr5yw2jkWs=
+Received: by mail-wm1-f52.google.com with SMTP id 7so5091843wmo.2
+        for <linux-security-module@vger.kernel.org>; Thu, 16 May 2019 17:26:28 -0700 (PDT)
+X-Gm-Message-State: APjAAAV0/PbF7rfF/HnW5nJSJDEmVOikfsoU2xm4bs2potCcTBaW5j7G
+        nYEahmry2OQBHiVyz7D85ufYmpG2je/vMNxY3nKojA==
+X-Google-Smtp-Source: APXvYqyzZC1sRMZCOrU+cBmKZj+z0GjEtH3CEoPL3iTBPQcsKOZibfNULUZeIIKzDi8ccIGrbCmULrKbXY5Q1EtKJgA=
+X-Received: by 2002:a1c:4107:: with SMTP id o7mr25806455wma.122.1558052787319;
+ Thu, 16 May 2019 17:26:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <960B34DE67B9E140824F1DCDEC400C0F4E886094@ORSMSX116.amr.corp.intel.com>
+ <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com> <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
+ <20190513102926.GD8743@linux.intel.com> <20190514104323.GA7591@linux.intel.com>
+ <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
+ <20190514204527.GC1977@linux.intel.com> <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com>
+ <20190515013031.GF1977@linux.intel.com> <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
+ <20190517000331.GD11204@linux.intel.com>
+In-Reply-To: <20190517000331.GD11204@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 16 May 2019 17:26:15 -0700
+X-Gmail-Original-Message-ID: <CALCETrWxw7xALE0kmiYBzomaSMAeXEVq-7rX7xeqPtDPeDQiCA@mail.gmail.com>
+Message-ID: <CALCETrWxw7xALE0kmiYBzomaSMAeXEVq-7rX7xeqPtDPeDQiCA@mail.gmail.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] net: apply __GFP_NO_AUTOINIT to AF_UNIX sk_buff
- allocations
-Message-ID: <201905161714.A53D472D9@keescook>
-References: <20190514143537.10435-1-glider@google.com>
- <20190514143537.10435-5-glider@google.com>
- <201905160923.BD3E530EFC@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201905160923.BD3E530EFC@keescook>
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 16, 2019 at 09:53:01AM -0700, Kees Cook wrote:
-> On Tue, May 14, 2019 at 04:35:37PM +0200, Alexander Potapenko wrote:
-> > Add sock_alloc_send_pskb_noinit(), which is similar to
-> > sock_alloc_send_pskb(), but allocates with __GFP_NO_AUTOINIT.
-> > This helps reduce the slowdown on hackbench in the init_on_alloc mode
-> > from 6.84% to 3.45%.
-> 
-> Out of curiosity, why the creation of the new function over adding a
-> gfp flag argument to sock_alloc_send_pskb() and updating callers? (There
-> are only 6 callers, and this change already updates 2 of those.)
-> 
-> > Slowdown for the initialization features compared to init_on_free=0,
-> > init_on_alloc=0:
-> > 
-> > hackbench, init_on_free=1:  +7.71% sys time (st.err 0.45%)
-> > hackbench, init_on_alloc=1: +3.45% sys time (st.err 0.86%)
+On Thu, May 16, 2019 at 5:03 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Wed, May 15, 2019 at 11:27:04AM -0700, Andy Lutomirski wrote:
+> > Here's a very vague proposal that's kind of like what I've been
+> > thinking over the past few days.  The SGX inode could track, for each
+> > page, a "safe-to-execute" bit.  When you first open /dev/sgx/enclave,
+> > you get a blank enclave and all pages are safe-to-execute.  When you
+> > do the ioctl to load context (which could be code, data, or anything
+> > else), the kernel will check whether the *source* VMA is executable
+> > and, if not, mark the page of the enclave being loaded as unsafe.
+> > Once the enclave is initialized, the driver will clear the
+> > safe-to-execute bit for any page that is successfully mapped writably.
+> >
+> > The intent is that a page of the enclave is safe-to-execute if that
+> > page was populated from executable memory and not modified since then.
+> > LSMs could then enforce a policy that you can map an enclave page RX
+> > if the page is safe-to-execute, you can map any page you want for
+> > write if there are no executable mappings, and you can only map a page
+> > for write and execute simultaneously if you can EXECMOD permission.
+> > This should allow an enclave to be loaded by userspace from a file
+> > with EXECUTE rights.
+>
+> I'm still confused as to why you want to track execute permissions on the
+> enclave pages and add SGX-specific LSM hooks.  Is there anything that
+> prevents userspace from building the enclave like any other DSO and then
+> copying it into enclave memory?
 
-So I've run some of my own wall-clock timings of kernel builds (which
-should be an pretty big "worst case" situation, and I see much smaller
-performance changes:
+It's entirely possible that I'm the one missing something.  But here's
+why I think this:
 
-everything off
-	Run times: 289.18 288.61 289.66 287.71 287.67
-	Min: 287.67 Max: 289.66 Mean: 288.57 Std Dev: 0.79
-		baseline
+> I feel like I'm missing something.
+>
+>   1. Userspace loads enclave into regular memory, e.g. like a normal DSO.
+>      All mmap(), mprotect(), etc... calls are subject to all existing
+>      LSM policies.
+>
+>   2. Userspace opens /dev/sgx/enclave to instantiate a new enclave.
+>
+>   3. Userspace uses mmap() to allocate virtual memory for its enclave,
+>      again subject to all existing LSM policies (sane userspaces map it RO
+>      since the permissions eventually get tossed anyways).
 
-init_on_alloc=1
-	Run times: 289.72 286.95 287.87 287.34 287.35
-	Min: 286.95 Max: 289.72 Mean: 287.85 Std Dev: 0.98
-		0.25% faster (within the std dev noise)
+Is userspace actually requred to mmap() the enclave prior to EADDing things?
 
-init_on_free=1
-	Run times: 303.26 301.44 301.19 301.55 301.39
-	Min: 301.19 Max: 303.26 Mean: 301.77 Std Dev: 0.75
-		4.57% slower
+>
+>   4. SGX subsystem refuses to service page faults for enclaves that have
+>      not yet been initialized, e.g. signals SIGBUS or SIGSEGV.
+>
+>   5. Userspace invokes SGX ioctl() to copy enclave from regulary VMA to
+>      enclave VMA.
+>
+>   6. SGX ioctl() propagates VMA protection-related flags from source VMA
+>      to enclave VMA, e.g. invokes mprotect_fixup().  Enclave VMA(s) may
+>      be split as part of this process.
 
-init_on_free=1 with the PAX_MEMORY_SANITIZE slabs excluded:
-	Run times: 299.19 299.85 298.95 298.23 298.64
-	Min: 298.23 Max: 299.85 Mean: 298.97 Std Dev: 0.55
-		3.60% slower
+Does this also call the LSM?  If so, what is it expected to do?  What
+happens if there are different regions with different permissions on
+the same page?  SGX has 256-byte granularity right?
 
-So the tuning certainly improved things by 1%. My perf numbers don't
-show the 24% hit you were seeing at all, though.
+>
+>   7. At all times, mprotect() calls on the enclave VMA are subject to
+>      existing LSM policies, i.e. it's not special cased for enclaves.
 
-> In the commit log it might be worth mentioning that this is only
-> changing the init_on_alloc case (in case it's not already obvious to
-> folks). Perhaps there needs to be a split of __GFP_NO_AUTOINIT into
-> __GFP_NO_AUTO_ALLOC_INIT and __GFP_NO_AUTO_FREE_INIT? Right now
-> __GFP_NO_AUTOINIT is only checked for init_on_alloc:
-
-I was obviously crazy here. :) GFP isn't present for free(), but a SLAB
-flag works (as was done in PAX_MEMORY_SANITIZE). I'll send the patch I
-used for the above timing test.
-
--- 
-Kees Cook
+I don't think the normal behavior actually works here.  An enclave is
+always MAP_SHARED, so (with SELinux) mprotecting() to X or RX requires
+EXECUTE and mprotecting() to RWX requires extra permissions.  But user
+code can also mmap() the enclave again.  What is supposed to happen in
+that case?
