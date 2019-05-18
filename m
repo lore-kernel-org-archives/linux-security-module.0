@@ -2,358 +2,218 @@ Return-Path: <SRS0=ku+q=TS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F9FC04AAF
-	for <linux-security-module@archiver.kernel.org>; Sat, 18 May 2019 05:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D2B7C04AAF
+	for <linux-security-module@archiver.kernel.org>; Sat, 18 May 2019 16:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0584A2166E
-	for <linux-security-module@archiver.kernel.org>; Sat, 18 May 2019 05:50:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29C5220449
+	for <linux-security-module@archiver.kernel.org>; Sat, 18 May 2019 16:12:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mIEuqgFs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbfERFuD (ORCPT
+        id S1729566AbfERQMn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 18 May 2019 01:50:03 -0400
-Received: from mga06.intel.com ([134.134.136.31]:23785 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725468AbfERFuD (ORCPT
+        Sat, 18 May 2019 12:12:43 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35831 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729522AbfERQMm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 18 May 2019 01:50:03 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 May 2019 22:49:58 -0700
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 17 May 2019 22:49:54 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1hRsED-0005px-KE; Sat, 18 May 2019 13:49:53 +0800
-Date:   Sat, 18 May 2019 13:49:34 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     kbuild-all@01.org, viro@zeniv.linux.org.uk,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
-        arnd@arndb.de, rob@landley.net, james.w.mcmechan@gmail.com,
-        niveditas98@gmail.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-Message-ID: <201905181320.40kqTTSD%lkp@intel.com>
-References: <20190517165519.11507-3-roberto.sassu@huawei.com>
+        Sat, 18 May 2019 12:12:42 -0400
+Received: by mail-it1-f195.google.com with SMTP id u186so16791580ith.0
+        for <linux-security-module@vger.kernel.org>; Sat, 18 May 2019 09:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NUYaBpI7HtM+jFnabamgjA4IxjSWFzxdWp6kmm3cyvc=;
+        b=mIEuqgFsXiDW3fTmdpRG+x6vjSNL10IgQt/XYQCA3tvAVqhB7QGkBxHPCI8wxwDhNd
+         LKhT/cUnMNci9N1bDfqzL1yn8/f8bRZj27gZzeRWqddEubo6SN4yvRpclKXOZMz5xKUq
+         5Jy0L71fygPiUrbWvc/eNo4ajwTAUj4ROThEKRkR+Wv3qIFs2Yax6JCqkAcALdbSrrhk
+         WixeukZ6A7rXQIIZ9adTcNBIRr66Pun66C+sC6rAy6XWix2BA/oWWbHiorYXcrJmzbUr
+         5C07cBiMW18gR75dHA5Mn8Jww09N2/+p29DRtnNsM/qqTrha/L3WWKTRqa3+fK63gTJd
+         qIcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NUYaBpI7HtM+jFnabamgjA4IxjSWFzxdWp6kmm3cyvc=;
+        b=gXPkalTqNxLuR9qU70hpJWrftyXQSA+Tyi2OmeOEZ28d7gzsq4HfJ2NvoTsot+IDVt
+         sPLc+UHvvUi1CnkMKJkogOf3bdERFYxWADQ6GJRqp3j55sV5QUJ3Sdwk+HjAo2WFvwDw
+         wRy483s29wf1H0BgA2NQ1+4kioyxlVjleyfp8TDsw4d4+A0piLJ/8g9ofLBuFAtQpLT4
+         d90ny4u5e+l8mnL+GYH5kxeE88ev15ANMH0c9pqJ3vs3bYie7cWsty+fc/pCcD06lWOf
+         mRBOfqRl8SzzWD1JIthQB7Ou0XVBgGnpZAA/Fv5QbxpLHfAPfhYqZnqmnsvZ0w3nTxHg
+         AJjg==
+X-Gm-Message-State: APjAAAVBFLWctUKa5+o7/DuZRDkOXyQL4hc+3REWdOJYyv8k8nCRWmiZ
+        MPjHQtJpayi/Yipozk1//Rrb0jQxbW66J1NvDDB7zA==
+X-Google-Smtp-Source: APXvYqwUL20YHqglcJVp2NUVYSoE87eqr/iSK2JugWCY2czDEEDb0iLbCV5bCK7vWFO/qjW7HnckzFSJVyUOyW4coOE=
+X-Received: by 2002:a24:ca84:: with SMTP id k126mr4027300itg.104.1558195961792;
+ Sat, 18 May 2019 09:12:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190517165519.11507-3-roberto.sassu@huawei.com>
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190517213918.26045-1-matthewgarrett@google.com> <20190517213918.26045-5-matthewgarrett@google.com>
+In-Reply-To: <20190517213918.26045-5-matthewgarrett@google.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 18 May 2019 18:12:29 +0200
+Message-ID: <CAKv+Gu935UN8D5pkD8S9G-7=06JmsN66RdXVOCMaJfcLz=37ew@mail.gmail.com>
+Subject: Re: [PATCH V6 4/4] efi: Attempt to get the TCG2 event log in the boot stub
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        =?UTF-8?Q?Peter_H=C3=BCwe?= <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thiebaud Weksteen <tweek@google.com>,
+        Bartosz Szczepanek <bsz@semihalf.com>,
+        Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
+On Fri, 17 May 2019 at 23:39, Matthew Garrett <matthewgarrett@google.com> wrote:
+>
+> From: Matthew Garrett <mjg59@google.com>
+>
+> Right now we only attempt to obtain the SHA1-only event log. The
+> protocol also supports a crypto agile log format, which contains digests
+> for all algorithms in use. Attempt to obtain this first, and fall back
+> to obtaining the older format if the system doesn't support it. This is
+> lightly complicated by the event sizes being variable (as we don't know
+> in advance which algorithms are in use), and the interface giving us
+> back a pointer to the start of the final entry rather than a pointer to
+> the end of the log - as a result, we need to parse the final entry to
+> figure out its length in order to know how much data to copy up to the
+> OS.
+>
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Thank you for the patch! Perhaps something to improve:
+This signoff doesn't belong here I think?
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.1 next-20190517]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> ---
+>  drivers/firmware/efi/libstub/tpm.c | 57 ++++++++++++++++++++----------
+>  1 file changed, 39 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+> index 5bd04f75d8d6..b3f30448e454 100644
+> --- a/drivers/firmware/efi/libstub/tpm.c
+> +++ b/drivers/firmware/efi/libstub/tpm.c
+> @@ -8,8 +8,13 @@
+>   *     Thiebaud Weksteen <tweek@google.com>
+>   */
+>  #include <linux/efi.h>
+> -#include <linux/tpm_eventlog.h>
+>  #include <asm/efi.h>
+> +/*
+> + * KASAN redefines memcpy() in a way that isn't available in the EFI stub.
+> + * We need to include asm/efi.h before linux/tpm_eventlog.h in order to avoid
+> + * the wrong memcpy() being referenced.
+> + */
+> +#include <linux/tpm_eventlog.h>
+>
 
-url:    https://github.com/0day-ci/linux/commits/Roberto-Sassu/initramfs-set-extended-attributes/20190518-055846
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+Please drop this hunk. I just sent out a patch to fix this properly.
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
-
-   init/initramfs.c:24:45: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected char const [noderef] <asn:1> *buf @@    got f] <asn:1> *buf @@
-   init/initramfs.c:24:45: sparse:    expected char const [noderef] <asn:1> *buf
-   init/initramfs.c:24:45: sparse:    got char const *p
-   init/initramfs.c:115:36: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got n:1> *filename @@
-   init/initramfs.c:115:36: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:115:36: sparse:    got char *filename
-   init/initramfs.c:303:24: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *name @@    got n:1> *name @@
-   init/initramfs.c:303:24: sparse:    expected char const [noderef] <asn:1> *name
-   init/initramfs.c:303:24: sparse:    got char *path
-   init/initramfs.c:305:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *pathname @@    got n:1> *pathname @@
-   init/initramfs.c:305:36: sparse:    expected char const [noderef] <asn:1> *pathname
-   init/initramfs.c:305:36: sparse:    got char *path
-   init/initramfs.c:307:37: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *pathname @@    got n:1> *pathname @@
-   init/initramfs.c:307:37: sparse:    expected char const [noderef] <asn:1> *pathname
-   init/initramfs.c:307:37: sparse:    got char *path
-   init/initramfs.c:317:43: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *oldname @@    got n:1> *oldname @@
-   init/initramfs.c:317:43: sparse:    expected char const [noderef] <asn:1> *oldname
-   init/initramfs.c:317:43: sparse:    got char *old
-   init/initramfs.c:317:48: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected char const [noderef] <asn:1> *newname @@    got char char const [noderef] <asn:1> *newname @@
-   init/initramfs.c:317:48: sparse:    expected char const [noderef] <asn:1> *newname
-   init/initramfs.c:317:48: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:404:25: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *name @@    got n:1> *name @@
-   init/initramfs.c:404:25: sparse:    expected char const [noderef] <asn:1> *name
-   init/initramfs.c:404:25: sparse:    got char *
->> init/initramfs.c:490:32: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *name @@    got char char const [noderef] <asn:1> *name @@
-   init/initramfs.c:490:32: sparse:    expected char const [noderef] <asn:1> *name
-   init/initramfs.c:490:32: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:500:41: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:500:41: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:500:41: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:512:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *pathname @@    got char char const [noderef] <asn:1> *pathname @@
-   init/initramfs.c:512:28: sparse:    expected char const [noderef] <asn:1> *pathname
-   init/initramfs.c:512:28: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:513:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:513:28: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:513:28: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:514:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:514:28: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:514:28: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:519:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:519:36: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:519:36: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:520:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:520:36: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:520:36: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:521:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:521:36: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:521:36: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:552:32: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *oldname @@    got n:1> *oldname @@
-   init/initramfs.c:552:32: sparse:    expected char const [noderef] <asn:1> *oldname
-   init/initramfs.c:552:32: sparse:    got char *
-   init/initramfs.c:552:53: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected char const [noderef] <asn:1> *newname @@    got char char const [noderef] <asn:1> *newname @@
-   init/initramfs.c:552:53: sparse:    expected char const [noderef] <asn:1> *newname
-   init/initramfs.c:552:53: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:553:21: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:553:21: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:553:21: sparse:    got char *static [toplevel] [assigned] collected
-
-vim +490 init/initramfs.c
-
-   310	
-   311	static int __init maybe_link(void)
-   312	{
-   313		if (nlink >= 2) {
-   314			char *old = find_link(major, minor, ino, mode, collected);
-   315			if (old) {
-   316				clean_path(collected, 0);
- > 317				return (ksys_link(old, collected) < 0) ? -1 : 1;
-   318			}
-   319		}
-   320		return 0;
-   321	}
-   322	
-   323	struct xattr_hdr {
-   324		char c_size[8]; /* total size including c_size field */
-   325		char c_data[];  /* <name>\0<value> */
-   326	};
-   327	
-   328	static int __init __maybe_unused do_setxattrs(char *pathname)
-   329	{
-   330		char *buf = xattr_buf;
-   331		char *bufend = buf + xattr_len;
-   332		struct xattr_hdr *hdr;
-   333		char str[sizeof(hdr->c_size) + 1];
-   334		struct path path;
-   335	
-   336		if (!xattr_len)
-   337			return 0;
-   338	
-   339		str[sizeof(hdr->c_size)] = 0;
-   340	
-   341		while (buf < bufend) {
-   342			char *xattr_name, *xattr_value;
-   343			unsigned long xattr_entry_size;
-   344			unsigned long xattr_name_size, xattr_value_size;
-   345			int ret;
-   346	
-   347			if (buf + sizeof(hdr->c_size) > bufend) {
-   348				error("malformed xattrs");
-   349				break;
-   350			}
-   351	
-   352			hdr = (struct xattr_hdr *)buf;
-   353			memcpy(str, hdr->c_size, sizeof(hdr->c_size));
-   354			ret = kstrtoul(str, 16, &xattr_entry_size);
-   355			buf += xattr_entry_size;
-   356			if (ret || buf > bufend || !xattr_entry_size) {
-   357				error("malformed xattrs");
-   358				break;
-   359			}
-   360	
-   361			xattr_name = hdr->c_data;
-   362			xattr_name_size = strnlen(xattr_name,
-   363						xattr_entry_size - sizeof(hdr->c_size));
-   364			if (xattr_name_size == xattr_entry_size - sizeof(hdr->c_size)) {
-   365				error("malformed xattrs");
-   366				break;
-   367			}
-   368	
-   369			xattr_value = xattr_name + xattr_name_size + 1;
-   370			xattr_value_size = buf - xattr_value;
-   371	
-   372			ret = kern_path(pathname, 0, &path);
-   373			if (!ret) {
-   374				ret = vfs_setxattr(path.dentry, xattr_name, xattr_value,
-   375						   xattr_value_size, 0);
-   376	
-   377				path_put(&path);
-   378			}
-   379	
-   380			pr_debug("%s: %s size: %lu val: %s (ret: %d)\n", pathname,
-   381				 xattr_name, xattr_value_size, xattr_value, ret);
-   382		}
-   383	
-   384		return 0;
-   385	}
-   386	
-   387	struct path_hdr {
-   388		char p_size[10]; /* total size including p_size field */
-   389		char p_data[];   /* <path>\0<xattrs> */
-   390	};
-   391	
-   392	static int __init do_readxattrs(void)
-   393	{
-   394		struct path_hdr hdr;
-   395		char *path = NULL;
-   396		char str[sizeof(hdr.p_size) + 1];
-   397		unsigned long file_entry_size;
-   398		size_t size, path_size, total_size;
-   399		struct kstat st;
-   400		struct file *file;
-   401		loff_t pos;
-   402		int ret;
-   403	
-   404		ret = vfs_lstat(XATTR_LIST_FILENAME, &st);
-   405		if (ret < 0)
-   406			return ret;
-   407	
-   408		total_size = st.size;
-   409	
-   410		file = filp_open(XATTR_LIST_FILENAME, O_RDONLY, 0);
-   411		if (IS_ERR(file))
-   412			return PTR_ERR(file);
-   413	
-   414		pos = file->f_pos;
-   415	
-   416		while (total_size) {
-   417			size = kernel_read(file, (char *)&hdr, sizeof(hdr), &pos);
-   418			if (size != sizeof(hdr)) {
-   419				ret = -EIO;
-   420				goto out;
-   421			}
-   422	
-   423			total_size -= size;
-   424	
-   425			str[sizeof(hdr.p_size)] = 0;
-   426			memcpy(str, hdr.p_size, sizeof(hdr.p_size));
-   427			ret = kstrtoul(str, 16, &file_entry_size);
-   428			if (ret < 0)
-   429				goto out;
-   430	
-   431			file_entry_size -= sizeof(sizeof(hdr.p_size));
-   432			if (file_entry_size > total_size) {
-   433				ret = -EINVAL;
-   434				goto out;
-   435			}
-   436	
-   437			path = vmalloc(file_entry_size);
-   438			if (!path) {
-   439				ret = -ENOMEM;
-   440				goto out;
-   441			}
-   442	
-   443			size = kernel_read(file, path, file_entry_size, &pos);
-   444			if (size != file_entry_size) {
-   445				ret = -EIO;
-   446				goto out_free;
-   447			}
-   448	
-   449			total_size -= size;
-   450	
-   451			path_size = strnlen(path, file_entry_size);
-   452			if (path_size == file_entry_size) {
-   453				ret = -EINVAL;
-   454				goto out_free;
-   455			}
-   456	
-   457			xattr_buf = path + path_size + 1;
-   458			xattr_len = file_entry_size - path_size - 1;
-   459	
-   460			ret = do_setxattrs(path);
-   461			vfree(path);
-   462			path = NULL;
-   463	
-   464			if (ret < 0)
-   465				break;
-   466		}
-   467	out_free:
-   468		vfree(path);
-   469	out:
-   470		fput(file);
-   471	
-   472		if (ret < 0)
-   473			error("Unable to parse xattrs");
-   474	
-   475		return ret;
-   476	}
-   477	
-   478	static __initdata int wfd;
-   479	
-   480	static int __init do_name(void)
-   481	{
-   482		state = SkipIt;
-   483		next_state = Reset;
-   484		if (strcmp(collected, "TRAILER!!!") == 0) {
-   485			free_hash();
-   486			return 0;
-   487		} else if (strcmp(collected, XATTR_LIST_FILENAME) == 0) {
-   488			struct kstat st;
-   489	
- > 490			if (!vfs_lstat(collected, &st))
-   491				do_readxattrs();
-   492		}
-   493		clean_path(collected, mode);
-   494		if (S_ISREG(mode)) {
-   495			int ml = maybe_link();
-   496			if (ml >= 0) {
-   497				int openflags = O_WRONLY|O_CREAT;
-   498				if (ml != 1)
-   499					openflags |= O_TRUNC;
-   500				wfd = ksys_open(collected, openflags, mode);
-   501	
-   502				if (wfd >= 0) {
-   503					ksys_fchown(wfd, uid, gid);
-   504					ksys_fchmod(wfd, mode);
-   505					if (body_len)
-   506						ksys_ftruncate(wfd, body_len);
-   507					vcollected = kstrdup(collected, GFP_KERNEL);
-   508					state = CopyFile;
-   509				}
-   510			}
-   511		} else if (S_ISDIR(mode)) {
-   512			ksys_mkdir(collected, mode);
-   513			ksys_chown(collected, uid, gid);
-   514			ksys_chmod(collected, mode);
-   515			dir_add(collected, mtime);
-   516		} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
-   517			   S_ISFIFO(mode) || S_ISSOCK(mode)) {
-   518			if (maybe_link() == 0) {
-   519				ksys_mknod(collected, mode, rdev);
-   520				ksys_chown(collected, uid, gid);
-   521				ksys_chmod(collected, mode);
-   522				do_utime(collected, mtime);
-   523			}
-   524		}
-   525		return 0;
-   526	}
-   527	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>  #include "efistub.h"
+>
+> @@ -57,7 +62,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
+>
+>  #endif
+>
+> -static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+> +void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+>  {
+>         efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
+>         efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
+> @@ -67,6 +72,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>         unsigned long first_entry_addr, last_entry_addr;
+>         size_t log_size, last_entry_size;
+>         efi_bool_t truncated;
+> +       int version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
+>         void *tcg2_protocol = NULL;
+>
+>         status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
+> @@ -74,14 +80,20 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>         if (status != EFI_SUCCESS)
+>                 return;
+>
+> -       status = efi_call_proto(efi_tcg2_protocol, get_event_log, tcg2_protocol,
+> -                               EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
+> -                               &log_location, &log_last_entry, &truncated);
+> -       if (status != EFI_SUCCESS)
+> -               return;
+> +       status = efi_call_proto(efi_tcg2_protocol, get_event_log,
+> +                               tcg2_protocol, version, &log_location,
+> +                               &log_last_entry, &truncated);
+> +
+> +       if (status != EFI_SUCCESS || !log_location) {
+> +               version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+> +               status = efi_call_proto(efi_tcg2_protocol, get_event_log,
+> +                                       tcg2_protocol, version, &log_location,
+> +                                       &log_last_entry, &truncated);
+> +               if (status != EFI_SUCCESS || !log_location)
+> +                       return;
+> +
+> +       }
+>
+> -       if (!log_location)
+> -               return;
+>         first_entry_addr = (unsigned long) log_location;
+>
+>         /*
+> @@ -96,8 +108,23 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>                  * We need to calculate its size to deduce the full size of
+>                  * the logs.
+>                  */
+> -               last_entry_size = sizeof(struct tcpa_event) +
+> -                       ((struct tcpa_event *) last_entry_addr)->event_size;
+> +               if (version == EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
+> +                       /*
+> +                        * The TCG2 log format has variable length entries,
+> +                        * and the information to decode the hash algorithms
+> +                        * back into a size is contained in the first entry -
+> +                        * pass a pointer to the final entry (to calculate its
+> +                        * size) and the first entry (so we know how long each
+> +                        * digest is)
+> +                        */
+> +                       last_entry_size =
+> +                               __calc_tpm2_event_size((void *)last_entry_addr,
+> +                                                   (void *)(long)log_location,
+> +                                                   false);
+> +               } else {
+> +                       last_entry_size = sizeof(struct tcpa_event) +
+> +                          ((struct tcpa_event *) last_entry_addr)->event_size;
+> +               }
+>                 log_size = log_last_entry - log_location + last_entry_size;
+>         }
+>
+> @@ -114,7 +141,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>
+>         memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+>         log_tbl->size = log_size;
+> -       log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+> +       log_tbl->version = version;
+>         memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
+>
+>         status = efi_call_early(install_configuration_table,
+> @@ -126,9 +153,3 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>  err_free:
+>         efi_call_early(free_pool, log_tbl);
+>  }
+> -
+> -void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+> -{
+> -       /* Only try to retrieve the logs in 1.2 format. */
+> -       efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
+> -}
+> --
+> 2.21.0.1020.gf2820cf01a-goog
+>
