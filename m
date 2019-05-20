@@ -2,71 +2,111 @@ Return-Path: <SRS0=478F=TU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5B4C04AAF
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 20:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C3D6C04E87
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 21:19:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE5702171F
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 20:55:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KwKcFS84"
+	by mail.kernel.org (Postfix) with ESMTP id 4BBE5216B7
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 21:19:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfETUzI (ORCPT
+        id S1726061AbfETVTX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 May 2019 16:55:08 -0400
-Received: from mail-qt1-f202.google.com ([209.85.160.202]:44928 "EHLO
-        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726813AbfETUzH (ORCPT
+        Mon, 20 May 2019 17:19:23 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53780 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726653AbfETVTX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 May 2019 16:55:07 -0400
-Received: by mail-qt1-f202.google.com with SMTP id t51so15300014qtb.11
-        for <linux-security-module@vger.kernel.org>; Mon, 20 May 2019 13:55:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=CEe51n1cJjGjM3r3jhy0lvCRaDr0xuP675ZqA1iPYL4=;
-        b=KwKcFS84Od+0uDcbkZwTpIrT43f2kU8zmORrILLiHk2F8YkNKiv1DApHnhAMtYlYNA
-         TTKtXmA8TJ8/ipv7ecH3TyAPVRf9bZ8GXZEFmFgwDXPD4Hjtc9OoZlG6aBmwZtYTn8Oc
-         Nvt9VJVKM4ko0egxxq7cUr2yFh5bt2A6FPsfeESlkTgj+tTo5HipWQkdt0PV7yGNpC2p
-         qwWO/zif0wXn7M/9LQBi1kh21TF0FRSHZu9qfX+5MMJsj7woSz3xBh9gb5WkU4/0KX4c
-         dnI+ZE7GgTCEi7VKzXkA1bmYAkK0Nv9eJ0xJyAJqd/DQAikMJoy/AIkKcuCOHk84b2v+
-         el5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=CEe51n1cJjGjM3r3jhy0lvCRaDr0xuP675ZqA1iPYL4=;
-        b=akNQHWG72t27DgH2Q9B0MIW+BGb8Ajg50xQWIYijzbtAzCRmTtGVjvJDXBGnstynBq
-         IvzuqPSvGHSMzzKH8+GxUUZqcPOqVRvDYSsf3xUafZD0uQ9yy8C9p/pbY0aRHm4U89Nv
-         dxD+iyvlFXd9MaOYpWayKbVgwtOGBitVru/Y/YpqpjlsSsm8O3KS0bH87f5LnBf8WiM+
-         f5Cdqw9OuJHmFLhk3oOBIixxDvGNRM3FMeUkNg3U3TLeUyy006kAN+zryeqxNGqH8xPY
-         ijXd4taGYs1lDlUs/VApJIsbov8HVvioMRK8XW4jqPwU9r4qDALryXrpVFTZRbUPo6LK
-         EUeQ==
-X-Gm-Message-State: APjAAAXPMF9l84hw1nIXYC2CGuDBR5quhAIKdRnElhEeVOcH5hZ0auFw
-        WHql2/QS3koYkwQlR8TAVRsmJkImBmgHrAh8FZ/c6w==
-X-Google-Smtp-Source: APXvYqxcgPZwWQB2M99XR5b353YmJ/Ei17uYUIv35ZBhj13nsYbaZL7VC+EcLkbxPlvT59VqEEmZiqG52LG+K02tnRds4g==
-X-Received: by 2002:a05:620a:144c:: with SMTP id i12mr32298826qkl.243.1558385706056;
- Mon, 20 May 2019 13:55:06 -0700 (PDT)
-Date:   Mon, 20 May 2019 13:54:57 -0700
-Message-Id: <20190520205501.177637-1-matthewgarrett@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [PATCH V7 0/4] Add support for crypto agile logs
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
+        Mon, 20 May 2019 17:19:23 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4KL1sqI008357
+        for <linux-security-module@vger.kernel.org>; Mon, 20 May 2019 17:19:22 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sm0p7ybby-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 20 May 2019 17:19:22 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 20 May 2019 22:19:20 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 20 May 2019 22:19:16 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4KLJF2158130518
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 May 2019 21:19:15 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6E4E6AE051;
+        Mon, 20 May 2019 21:19:15 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 44269AE045;
+        Mon, 20 May 2019 21:19:14 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.80.109])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 20 May 2019 21:19:14 +0000 (GMT)
+Subject: Re: [PATCH 1/4] evm: check hash algorithm passed to init_desc()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        dmitry.kasatkin@huawei.com, mjg59@google.com
+Cc:     linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com, bsz@semihalf.com
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        stable@vger.kernel.org
+Date:   Mon, 20 May 2019 17:19:03 -0400
+In-Reply-To: <20190516161257.6640-1-roberto.sassu@huawei.com>
+References: <20190516161257.6640-1-roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19052021-0028-0000-0000-0000036FBB40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19052021-0029-0000-0000-0000242F6259
+Message-Id: <1558387143.4039.74.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905200132
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Identical to previous version except without the KSAN workaround - Ard
-has a better solution for that.
+On Thu, 2019-05-16 at 18:12 +0200, Roberto Sassu wrote:
+> This patch prevents memory access beyond the evm_tfm array by checking the
+> validity of the index (hash algorithm) passed to init_desc(). The hash
+> algorithm can be arbitrarily set if the security.ima xattr type is not
+> EVM_XATTR_HMAC.
+> 
+> Fixes: 5feeb61183dde ("evm: Allow non-SHA1 digital signatures")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Cc: stable@vger.kernel.org
 
+Thanks!
+
+> ---
+>  security/integrity/evm/evm_crypto.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index e11564eb645b..82a38e801ee4 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -89,6 +89,9 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+>  		tfm = &hmac_tfm;
+>  		algo = evm_hmac;
+>  	} else {
+> +		if (hash_algo >= HASH_ALGO__LAST)
+> +			return ERR_PTR(-EINVAL);
+> +
+>  		tfm = &evm_tfm[hash_algo];
+>  		algo = hash_algo_name[hash_algo];
+>  	}
 
