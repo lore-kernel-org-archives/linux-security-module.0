@@ -2,117 +2,98 @@ Return-Path: <SRS0=478F=TU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8ACC04E87
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 21:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34001C04AAC
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 21:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCA56216B7
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 21:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14D26216B7
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 21:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbfETVUo (ORCPT
+        id S1727040AbfETVy3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 May 2019 17:20:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43606 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726026AbfETVUo (ORCPT
+        Mon, 20 May 2019 17:54:29 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:35994 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfETVy3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 May 2019 17:20:44 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4KL2KKt082494
-        for <linux-security-module@vger.kernel.org>; Mon, 20 May 2019 17:20:42 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sm1qbd15r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 20 May 2019 17:20:42 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 20 May 2019 22:20:40 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 20 May 2019 22:20:38 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4KLKbil60686518
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 May 2019 21:20:37 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24E49AE051;
-        Mon, 20 May 2019 21:20:37 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EE5F9AE04D;
-        Mon, 20 May 2019 21:20:35 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.80.109])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 20 May 2019 21:20:35 +0000 (GMT)
-Subject: Re: [PATCH 4/4] ima: only audit failed appraisal verifications
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        dmitry.kasatkin@huawei.com, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Date:   Mon, 20 May 2019 17:20:25 -0400
-In-Reply-To: <20190516161257.6640-4-roberto.sassu@huawei.com>
-References: <20190516161257.6640-1-roberto.sassu@huawei.com>
-         <20190516161257.6640-4-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19052021-0020-0000-0000-0000033EB794
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052021-0021-0000-0000-00002191919C
-Message-Id: <1558387225.4039.78.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905200132
+        Mon, 20 May 2019 17:54:29 -0400
+Received: from jaskaran-Intel-Server-Board-S1200V3RPS-UEFI-Development-Kit.corp.microsoft.com (unknown [131.107.160.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 69C3C20B7192;
+        Mon, 20 May 2019 14:54:28 -0700 (PDT)
+From:   Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+To:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
+        jmorris@namei.org
+Subject: [RFC 0/1] Add dm verity root hash pkcs7 sig validation.
+Date:   Mon, 20 May 2019 14:54:21 -0700
+Message-Id: <20190520215422.23939-1-jaskarankhurana@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2019-05-16 at 18:12 +0200, Roberto Sassu wrote:
-> This patch ensures that integrity_audit_msg() is called only when the
-> status is not INTEGRITY_PASS.
-> 
-> Fixes: 8606404fa555c ("ima: digital signature verification support")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Cc: stable@vger.kernel.org
-> ---
->  security/integrity/ima/ima_appraise.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index a32ed5d7afd1..f5f4506bcb8e 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -359,8 +359,9 @@ int ima_appraise_measurement(enum ima_hooks func,
->  			status = INTEGRITY_PASS;
->  		}
->  
-> -		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> -				    op, cause, rc, 0);
-> +		if (status != INTEGRITY_PASS)
-> +			integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
-> +					    filename, op, cause, rc, 0);
+This patch set adds in-kernel pkcs7 signature checking for the roothash of
+the dm-verity hash tree.
+The verification is to support cases where the roothash is not secured by
+Trusted Boot, UEFI Secureboot or similar technologies.
+One of the use cases for this is for dm-verity volumes mounted after boot,
+the root hash provided during the creation of the dm-verity volume has to
+be secure and thus in-kernel validation implemented here will be used
+before we trust the root hash and allow the block device to be created.
 
-For some reason, the integrity verification has failed.  In some
-specific cases, we'll let it pass, but do we really want to remove any
-indication that it failed in all cases?
+Why we are doing validation in the Kernel?
 
-Mimi
+The reason is to still be secure in cases where the attacker is able to
+compromise the user mode application in which case the user mode validation
+could not have been trusted.
+The root hash signature validation in the kernel along with existing
+dm-verity implementation gives a higher level of confidence in the
+executable code or the protected data. Before allowing the creation of
+the device mapper block device the kernel code will check that the detached
+pkcs7 signature passed to it validates the roothash and the signature is
+trusted by builtin keys set at kernel creation. The kernel should be
+secured using Verified boot, UEFI Secure Boot or similar technologies so we
+can trust it.
 
+What about attacker mounting non dm-verity volumes to run executable
+code?
 
->  	} else {
->  		ima_cache_flags(iint, func);
->  	}
+This verification can be used to have a security architecture where a LSM
+can enforce this verification for all the volumes and by doing this it can
+ensure that all executable code runs from signed and trusted dm-verity
+volumes.
+
+Further patches will be posted that build on this and enforce this
+verification based on policy for all the volumes on the system.
+
+How are these changes tested?
+
+veritysetup part of cryptsetup library was modified to take a optional
+root-hash-sig parameter.
+
+Commandline used to test the changes:
+
+veritysetup open  <data_device> <name> <hash_device> <root_hash>
+ --root-hash-sig=<root_hash_pkcs7_detached_sig>
+
+The changes for veritysetup are in a topic branch for now at:
+https://github.com/jaskarankhurana/veritysetup/tree/veritysetup_add_sig
+
+Jaskaran Khurana (1):
+  Add dm verity root hash pkcs7 sig validation.
+
+ drivers/md/Kconfig                |  23 ++++++
+ drivers/md/Makefile               |   2 +-
+ drivers/md/dm-verity-target.c     |  44 ++++++++--
+ drivers/md/dm-verity-verify-sig.c | 129 ++++++++++++++++++++++++++++++
+ drivers/md/dm-verity-verify-sig.h |  32 ++++++++
+ 5 files changed, 222 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/md/dm-verity-verify-sig.c
+ create mode 100644 drivers/md/dm-verity-verify-sig.h
+
+-- 
+2.17.1
 
