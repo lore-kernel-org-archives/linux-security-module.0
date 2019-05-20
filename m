@@ -1,219 +1,249 @@
-Return-Path: <SRS0=ku+q=TS=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=478F=TU=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D2B7C04AAF
-	for <linux-security-module@archiver.kernel.org>; Sat, 18 May 2019 16:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82664C04AAF
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 06:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29C5220449
-	for <linux-security-module@archiver.kernel.org>; Sat, 18 May 2019 16:12:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38BF820657
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 06:10:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mIEuqgFs"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Y0j6sgfc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbfERQMn (ORCPT
+        id S1730691AbfETGKb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 18 May 2019 12:12:43 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:35831 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729522AbfERQMm (ORCPT
+        Mon, 20 May 2019 02:10:31 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44745 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfETGKb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 18 May 2019 12:12:42 -0400
-Received: by mail-it1-f195.google.com with SMTP id u186so16791580ith.0
-        for <linux-security-module@vger.kernel.org>; Sat, 18 May 2019 09:12:42 -0700 (PDT)
+        Mon, 20 May 2019 02:10:31 -0400
+Received: by mail-qk1-f196.google.com with SMTP id w25so8079660qkj.11
+        for <linux-security-module@vger.kernel.org>; Sun, 19 May 2019 23:10:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NUYaBpI7HtM+jFnabamgjA4IxjSWFzxdWp6kmm3cyvc=;
-        b=mIEuqgFsXiDW3fTmdpRG+x6vjSNL10IgQt/XYQCA3tvAVqhB7QGkBxHPCI8wxwDhNd
-         LKhT/cUnMNci9N1bDfqzL1yn8/f8bRZj27gZzeRWqddEubo6SN4yvRpclKXOZMz5xKUq
-         5Jy0L71fygPiUrbWvc/eNo4ajwTAUj4ROThEKRkR+Wv3qIFs2Yax6JCqkAcALdbSrrhk
-         WixeukZ6A7rXQIIZ9adTcNBIRr66Pun66C+sC6rAy6XWix2BA/oWWbHiorYXcrJmzbUr
-         5C07cBiMW18gR75dHA5Mn8Jww09N2/+p29DRtnNsM/qqTrha/L3WWKTRqa3+fK63gTJd
-         qIcw==
+        bh=NFukLdZ7lb89NEuXmBM0ev5FCwA/kWpf23+eFLzEIzc=;
+        b=Y0j6sgfc8k9053lZUMt5CBFGP0kn69SC0iJEQW0SB6iNThpcQOmoG99zvBBpusukVZ
+         qA4kSf3AQnhuJgAcUxy6UuCw21GAZA6aj4EBvN4bY3FVkGlSAfQE2ruxt+Kkl658PCqX
+         MwZcFB/DwMSAmeq1+Nkcj/G40xH7lWYAslj7bLerr/3XAbdteF6FwjNgA3VWzkPGQ2IX
+         s32DEctR+QFtSws0fK7dWAUspu83t0DVKiNxQcBcLTOc88uPJPzxwbY2HpO2URmzy/Bm
+         /vrXXLx5jZ0hICGuwDA6cVtAeDAd7R3/V0KJ1YLrLnHNqidbInrrROqP1gBuCXqfziVK
+         wzCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NUYaBpI7HtM+jFnabamgjA4IxjSWFzxdWp6kmm3cyvc=;
-        b=gXPkalTqNxLuR9qU70hpJWrftyXQSA+Tyi2OmeOEZ28d7gzsq4HfJ2NvoTsot+IDVt
-         sPLc+UHvvUi1CnkMKJkogOf3bdERFYxWADQ6GJRqp3j55sV5QUJ3Sdwk+HjAo2WFvwDw
-         wRy483s29wf1H0BgA2NQ1+4kioyxlVjleyfp8TDsw4d4+A0piLJ/8g9ofLBuFAtQpLT4
-         d90ny4u5e+l8mnL+GYH5kxeE88ev15ANMH0c9pqJ3vs3bYie7cWsty+fc/pCcD06lWOf
-         mRBOfqRl8SzzWD1JIthQB7Ou0XVBgGnpZAA/Fv5QbxpLHfAPfhYqZnqmnsvZ0w3nTxHg
-         AJjg==
-X-Gm-Message-State: APjAAAVBFLWctUKa5+o7/DuZRDkOXyQL4hc+3REWdOJYyv8k8nCRWmiZ
-        MPjHQtJpayi/Yipozk1//Rrb0jQxbW66J1NvDDB7zA==
-X-Google-Smtp-Source: APXvYqwUL20YHqglcJVp2NUVYSoE87eqr/iSK2JugWCY2czDEEDb0iLbCV5bCK7vWFO/qjW7HnckzFSJVyUOyW4coOE=
-X-Received: by 2002:a24:ca84:: with SMTP id k126mr4027300itg.104.1558195961792;
- Sat, 18 May 2019 09:12:41 -0700 (PDT)
+        bh=NFukLdZ7lb89NEuXmBM0ev5FCwA/kWpf23+eFLzEIzc=;
+        b=j4/gH5D1ZuNFcEEFbXx94/n8b8HuNYW6dzj90V2VW8DHXO/Q55N1W0elpww9K+R8b/
+         OhmLciUSJ0rDMVmkhNwwauucCMADqWUTCGIWqgFCpP+LEUbR1ur6DiEf9foUEluC9l5Y
+         +Q1m9Ou1XS5gl6/AF+lTDDt9WSqYnPVVG+pq6zCu/8P0UAWE9t6EUutrVYAZm6td1Ba4
+         uC50AfAZCyKzr5VrGdA+WhMZMIvvoGlt9HiUXF2nKnxZfWu4TA+FJQqzhuycprB6AAE2
+         oDyliqmcTxONvN0m97nuwsF/QWlG46M+VYceFXRYtfHD2Lymi/k3sAJbuaqqdiAM4yj7
+         FuHQ==
+X-Gm-Message-State: APjAAAVWweLsXD+aHEBsGlfwTc9HTFgl2tiBn4VPGhQlXe82gvcP0uqe
+        /EQrWWeLtxhMSBaXbK2R7JM2bgrcjbzbZt2Br44=
+X-Google-Smtp-Source: APXvYqxhDBaw1gzS0+uR0z6oe2PI6vSPUSrFMeRAnod4ezCaN0wue1Ets49Z3HT+wJ4G1Ljd7FkZBW40qgfo4D/nd9s=
+X-Received: by 2002:a05:620a:5ed:: with SMTP id z13mr20140322qkg.84.1558332630219;
+ Sun, 19 May 2019 23:10:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190517213918.26045-1-matthewgarrett@google.com> <20190517213918.26045-5-matthewgarrett@google.com>
-In-Reply-To: <20190517213918.26045-5-matthewgarrett@google.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sat, 18 May 2019 18:12:29 +0200
-Message-ID: <CAKv+Gu935UN8D5pkD8S9G-7=06JmsN66RdXVOCMaJfcLz=37ew@mail.gmail.com>
-Subject: Re: [PATCH V6 4/4] efi: Attempt to get the TCG2 event log in the boot stub
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        =?UTF-8?Q?Peter_H=C3=BCwe?= <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Bartosz Szczepanek <bsz@semihalf.com>,
-        Matthew Garrett <mjg59@google.com>
+References: <20190514143537.10435-5-glider@google.com> <201905161746.16E885F@keescook>
+In-Reply-To: <201905161746.16E885F@keescook>
+From:   Mathias Krause <minipli@googlemail.com>
+Date:   Mon, 20 May 2019 08:10:19 +0200
+Message-ID: <CA+rthh9bLiohU78PBMonji_LPjj756rhTy22v9nL8LpL0cTb5g@mail.gmail.com>
+Subject: Re: [PATCH 5/4] mm: Introduce SLAB_NO_FREE_INIT and mark excluded caches
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        kernel-hardening@lists.openwall.com,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 17 May 2019 at 23:39, Matthew Garrett <matthewgarrett@google.com> wrote:
->
-> From: Matthew Garrett <mjg59@google.com>
->
-> Right now we only attempt to obtain the SHA1-only event log. The
-> protocol also supports a crypto agile log format, which contains digests
-> for all algorithms in use. Attempt to obtain this first, and fall back
-> to obtaining the older format if the system doesn't support it. This is
-> lightly complicated by the event sizes being variable (as we don't know
-> in advance which algorithms are in use), and the interface giving us
-> back a pointer to the start of the final entry rather than a pointer to
-> the end of the log - as a result, we need to parse the final entry to
-> figure out its length in order to know how much data to copy up to the
-> OS.
->
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Hi Kees,
 
-This signoff doesn't belong here I think?
+On Fri, 17 May 2019 at 02:50, Kees Cook <keescook@chromium.org> wrote:
+> In order to improve the init_on_free performance, some frequently
+> freed caches with less sensitive contents can be excluded from the
+> init_on_free behavior.
+>
+> This patch is modified from Brad Spengler/PaX Team's code in the
+> last public patch of grsecurity/PaX based on my understanding of the
+> code. Changes or omissions from the original code are mine and don't
+> reflect the original grsecurity/PaX code.
 
+you might want to give secunet credit for this one, as can be seen here:
+
+  https://github.com/minipli/linux-grsec/commit/309d494e7a3f6533ca68fc8b3bd89fa76fd2c2df
+
+However, please keep the "Changes or omissions from the original
+code..." part as your version slightly differs.
+
+Thanks,
+Mathias
+
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 > ---
->  drivers/firmware/efi/libstub/tpm.c | 57 ++++++++++++++++++++----------
->  1 file changed, 39 insertions(+), 18 deletions(-)
+>  fs/buffer.c          | 2 +-
+>  fs/dcache.c          | 3 ++-
+>  include/linux/slab.h | 3 +++
+>  kernel/fork.c        | 6 ++++--
+>  mm/rmap.c            | 5 +++--
+>  mm/slab.h            | 5 +++--
+>  net/core/skbuff.c    | 6 ++++--
+>  7 files changed, 20 insertions(+), 10 deletions(-)
 >
-> diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-> index 5bd04f75d8d6..b3f30448e454 100644
-> --- a/drivers/firmware/efi/libstub/tpm.c
-> +++ b/drivers/firmware/efi/libstub/tpm.c
-> @@ -8,8 +8,13 @@
->   *     Thiebaud Weksteen <tweek@google.com>
->   */
->  #include <linux/efi.h>
-> -#include <linux/tpm_eventlog.h>
->  #include <asm/efi.h>
-> +/*
-> + * KASAN redefines memcpy() in a way that isn't available in the EFI stub.
-> + * We need to include asm/efi.h before linux/tpm_eventlog.h in order to avoid
-> + * the wrong memcpy() being referenced.
-> + */
-> +#include <linux/tpm_eventlog.h>
->
-
-Please drop this hunk. I just sent out a patch to fix this properly.
-
->  #include "efistub.h"
->
-> @@ -57,7 +62,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
->
->  #endif
->
-> -static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-> +void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
->  {
->         efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
->         efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
-> @@ -67,6 +72,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->         unsigned long first_entry_addr, last_entry_addr;
->         size_t log_size, last_entry_size;
->         efi_bool_t truncated;
-> +       int version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
->         void *tcg2_protocol = NULL;
->
->         status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
-> @@ -74,14 +80,20 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->         if (status != EFI_SUCCESS)
->                 return;
->
-> -       status = efi_call_proto(efi_tcg2_protocol, get_event_log, tcg2_protocol,
-> -                               EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
-> -                               &log_location, &log_last_entry, &truncated);
-> -       if (status != EFI_SUCCESS)
-> -               return;
-> +       status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-> +                               tcg2_protocol, version, &log_location,
-> +                               &log_last_entry, &truncated);
-> +
-> +       if (status != EFI_SUCCESS || !log_location) {
-> +               version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-> +               status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-> +                                       tcg2_protocol, version, &log_location,
-> +                                       &log_last_entry, &truncated);
-> +               if (status != EFI_SUCCESS || !log_location)
-> +                       return;
-> +
-> +       }
->
-> -       if (!log_location)
-> -               return;
->         first_entry_addr = (unsigned long) log_location;
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 0faa41fb4c88..04a85bd4cf2e 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -3457,7 +3457,7 @@ void __init buffer_init(void)
+>         bh_cachep = kmem_cache_create("buffer_head",
+>                         sizeof(struct buffer_head), 0,
+>                                 (SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|
+> -                               SLAB_MEM_SPREAD),
+> +                               SLAB_MEM_SPREAD|SLAB_NO_FREE_INIT),
+>                                 NULL);
 >
 >         /*
-> @@ -96,8 +108,23 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->                  * We need to calculate its size to deduce the full size of
->                  * the logs.
->                  */
-> -               last_entry_size = sizeof(struct tcpa_event) +
-> -                       ((struct tcpa_event *) last_entry_addr)->event_size;
-> +               if (version == EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
-> +                       /*
-> +                        * The TCG2 log format has variable length entries,
-> +                        * and the information to decode the hash algorithms
-> +                        * back into a size is contained in the first entry -
-> +                        * pass a pointer to the final entry (to calculate its
-> +                        * size) and the first entry (so we know how long each
-> +                        * digest is)
-> +                        */
-> +                       last_entry_size =
-> +                               __calc_tpm2_event_size((void *)last_entry_addr,
-> +                                                   (void *)(long)log_location,
-> +                                                   false);
-> +               } else {
-> +                       last_entry_size = sizeof(struct tcpa_event) +
-> +                          ((struct tcpa_event *) last_entry_addr)->event_size;
-> +               }
->                 log_size = log_last_entry - log_location + last_entry_size;
->         }
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 8136bda27a1f..323b039accba 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -3139,7 +3139,8 @@ void __init vfs_caches_init_early(void)
+>  void __init vfs_caches_init(void)
+>  {
+>         names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
+> -                       SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
+> +                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_NO_FREE_INIT, 0,
+> +                       PATH_MAX, NULL);
 >
-> @@ -114,7 +141,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>         dcache_init();
+>         inode_init();
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 9449b19c5f10..7eba9ad8830d 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -92,6 +92,9 @@
+>  /* Avoid kmemleak tracing */
+>  #define SLAB_NOLEAKTRACE       ((slab_flags_t __force)0x00800000U)
 >
->         memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
->         log_tbl->size = log_size;
-> -       log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-> +       log_tbl->version = version;
->         memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
+> +/* Exclude slab from zero-on-free when init_on_free is enabled */
+> +#define SLAB_NO_FREE_INIT      ((slab_flags_t __force)0x01000000U)
+> +
+>  /* Fault injection mark */
+>  #ifdef CONFIG_FAILSLAB
+>  # define SLAB_FAILSLAB         ((slab_flags_t __force)0x02000000U)
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index b4cba953040a..9868585f5520 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -2550,11 +2550,13 @@ void __init proc_caches_init(void)
 >
->         status = efi_call_early(install_configuration_table,
-> @@ -126,9 +153,3 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->  err_free:
->         efi_call_early(free_pool, log_tbl);
+>         mm_cachep = kmem_cache_create_usercopy("mm_struct",
+>                         mm_size, ARCH_MIN_MMSTRUCT_ALIGN,
+> -                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
+> +                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT|
+> +                       SLAB_NO_FREE_INIT,
+>                         offsetof(struct mm_struct, saved_auxv),
+>                         sizeof_field(struct mm_struct, saved_auxv),
+>                         NULL);
+> -       vm_area_cachep = KMEM_CACHE(vm_area_struct, SLAB_PANIC|SLAB_ACCOUNT);
+> +       vm_area_cachep = KMEM_CACHE(vm_area_struct, SLAB_PANIC|SLAB_ACCOUNT|
+> +                                                   SLAB_NO_FREE_INIT);
+>         mmap_init();
+>         nsproxy_cache_init();
 >  }
-> -
-> -void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
-> -{
-> -       /* Only try to retrieve the logs in 1.2 format. */
-> -       efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
-> -}
-> --
-> 2.21.0.1020.gf2820cf01a-goog
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index e5dfe2ae6b0d..b7b8013eeb0a 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -432,10 +432,11 @@ static void anon_vma_ctor(void *data)
+>  void __init anon_vma_init(void)
+>  {
+>         anon_vma_cachep = kmem_cache_create("anon_vma", sizeof(struct anon_vma),
+> -                       0, SLAB_TYPESAFE_BY_RCU|SLAB_PANIC|SLAB_ACCOUNT,
+> +                       0, SLAB_TYPESAFE_BY_RCU|SLAB_PANIC|SLAB_ACCOUNT|
+> +                       SLAB_NO_FREE_INIT,
+>                         anon_vma_ctor);
+>         anon_vma_chain_cachep = KMEM_CACHE(anon_vma_chain,
+> -                       SLAB_PANIC|SLAB_ACCOUNT);
+> +                       SLAB_PANIC|SLAB_ACCOUNT|SLAB_NO_FREE_INIT);
+>  }
 >
+>  /*
+> diff --git a/mm/slab.h b/mm/slab.h
+> index 24ae887359b8..f95b4f03c57b 100644
+> --- a/mm/slab.h
+> +++ b/mm/slab.h
+> @@ -129,7 +129,8 @@ static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
+>  /* Legal flag mask for kmem_cache_create(), for various configurations */
+>  #define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | \
+>                          SLAB_CACHE_DMA32 | SLAB_PANIC | \
+> -                        SLAB_TYPESAFE_BY_RCU | SLAB_DEBUG_OBJECTS )
+> +                        SLAB_TYPESAFE_BY_RCU | SLAB_DEBUG_OBJECTS | \
+> +                        SLAB_NO_FREE_INIT)
+>
+>  #if defined(CONFIG_DEBUG_SLAB)
+>  #define SLAB_DEBUG_FLAGS (SLAB_RED_ZONE | SLAB_POISON | SLAB_STORE_USER)
+> @@ -535,7 +536,7 @@ static inline bool slab_want_init_on_alloc(gfp_t flags, struct kmem_cache *c)
+>  static inline bool slab_want_init_on_free(struct kmem_cache *c)
+>  {
+>         if (static_branch_unlikely(&init_on_free))
+> -               return !(c->ctor);
+> +               return !(c->ctor) && ((c->flags & SLAB_NO_FREE_INIT) == 0);
+>         else
+>                 return false;
+>  }
+> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+> index e89be6282693..b65902d2c042 100644
+> --- a/net/core/skbuff.c
+> +++ b/net/core/skbuff.c
+> @@ -3981,14 +3981,16 @@ void __init skb_init(void)
+>         skbuff_head_cache = kmem_cache_create_usercopy("skbuff_head_cache",
+>                                               sizeof(struct sk_buff),
+>                                               0,
+> -                                             SLAB_HWCACHE_ALIGN|SLAB_PANIC,
+> +                                             SLAB_HWCACHE_ALIGN|SLAB_PANIC|
+> +                                             SLAB_NO_FREE_INIT,
+>                                               offsetof(struct sk_buff, cb),
+>                                               sizeof_field(struct sk_buff, cb),
+>                                               NULL);
+>         skbuff_fclone_cache = kmem_cache_create("skbuff_fclone_cache",
+>                                                 sizeof(struct sk_buff_fclones),
+>                                                 0,
+> -                                               SLAB_HWCACHE_ALIGN|SLAB_PANIC,
+> +                                               SLAB_HWCACHE_ALIGN|SLAB_PANIC|
+> +                                               SLAB_NO_FREE_INIT,
+>                                                 NULL);
+>         skb_extensions_init();
+>  }
+> --
+> 2.17.1
+>
+>
+> --
+> Kees Cook
