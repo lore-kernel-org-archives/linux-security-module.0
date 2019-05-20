@@ -2,130 +2,150 @@ Return-Path: <SRS0=478F=TU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA99C04E87
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 09:39:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF59C04E87
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 10:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 576AB20859
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 09:39:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9FA420856
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 10:04:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730687AbfETJju (ORCPT
+        id S1731488AbfETKEF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 May 2019 05:39:50 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32956 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727720AbfETJju (ORCPT
+        Mon, 20 May 2019 06:04:05 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:32974 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729834AbfETKEE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 May 2019 05:39:50 -0400
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 4A75E6FA85003A8236AE;
-        Mon, 20 May 2019 10:39:48 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 20 May
- 2019 10:39:40 +0100
-Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-To:     Arvind Sankar <nivedita@alum.mit.edu>,
-        "H. Peter Anvin" <hpa@zytor.com>
-CC:     <viro@zeniv.linux.org.uk>, <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
-        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
-        <takondra@cisco.com>, <kamensky@cisco.com>, <arnd@arndb.de>,
-        <rob@landley.net>, <james.w.mcmechan@gmail.com>,
-        <niveditas98@gmail.com>
-References: <20190517165519.11507-1-roberto.sassu@huawei.com>
- <20190517165519.11507-3-roberto.sassu@huawei.com>
- <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
- <20190517210219.GA5998@rani.riverdale.lan>
- <d48f35a1-aab1-2f20-2e91-5e81a84b107f@zytor.com>
- <20190517221731.GA11358@rani.riverdale.lan>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <7bdca169-7a01-8c55-40e4-a832e876a0e5@huawei.com>
-Date:   Mon, 20 May 2019 11:39:46 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190517221731.GA11358@rani.riverdale.lan>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+        Mon, 20 May 2019 06:04:04 -0400
+X-Greylist: delayed 1333 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 06:04:03 EDT
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x4K9cIa4007978;
+        Mon, 20 May 2019 04:38:18 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x4K9cFlE007977;
+        Mon, 20 May 2019 04:38:15 -0500
+Date:   Mon, 20 May 2019 04:38:15 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190520093815.GA7187@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com> <20190514204527.GC1977@linux.intel.com> <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com> <20190515013031.GF1977@linux.intel.com> <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com> <alpine.LRH.2.21.1905160543070.19802@namei.org> <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com> <alpine.LRH.2.21.1905160844130.29250@namei.org> <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com> <alpine.LRH.2.21.1905161716460.23647@namei.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1905161716460.23647@namei.org>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 20 May 2019 04:38:18 -0500 (CDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/18/2019 12:17 AM, Arvind Sankar wrote:
-> On Fri, May 17, 2019 at 02:47:31PM -0700, H. Peter Anvin wrote:
->> On 5/17/19 2:02 PM, Arvind Sankar wrote:
->>> On Fri, May 17, 2019 at 01:18:11PM -0700, hpa@zytor.com wrote:
->>>>
->>>> Ok... I just realized this does not work for a modular initramfs, composed at load time from multiple files, which is a very real problem. Should be easy enough to deal with: instead of one large file, use one companion file per source file, perhaps something like filename..xattrs (suggesting double dots to make it less likely to conflict with a "real" file.) No leading dot, as it makes it more likely that archivers will sort them before the file proper.
->>> This version of the patch was changed from the previous one exactly to deal with this case --
->>> it allows for the bootloader to load multiple initramfs archives, each
->>> with its own .xattr-list file, and to have that work properly.
->>> Could you elaborate on the issue that you see?
->>>
->>
->> Well, for one thing, how do you define "cpio archive", each with its own
->> .xattr-list file? Second, that would seem to depend on the ordering, no,
->> in which case you depend critically on .xattr-list file following the
->> files, which most archivers won't do.
->>
->> Either way it seems cleaner to have this per file; especially if/as it
->> can be done without actually mucking up the format.
->>
->> I need to run, but I'll post a more detailed explanation of what I did
->> in a little bit.
->>
->> 	-hpa
->>
-> Not sure what you mean by how do I define it? Each cpio archive will
-> contain its own .xattr-list file with signatures for the files within
-> it, that was the idea.
+On Thu, May 16, 2019 at 05:24:33PM +1000, James Morris wrote:
+
+Good morning, I hope everyone had a pleasant weekend.
+
+James, I believe the last time our paths crossed was at the Linux
+Security Summit in Seattle, I trust you have been well since then.
+
+> On Wed, 15 May 2019, Andy Lutomirski wrote:
 > 
-> You need to review the code more closely I think -- it does not depend
-> on the .xattr-list file following the files to which it applies.
-> 
-> The code first extracts .xattr-list as though it was a regular file. If
-> a later dupe shows up (presumably from a second archive, although the
-> patch will actually allow a second one in the same archive), it will
-> then process the existing .xattr-list file and apply the attributes
-> listed within it. It then will proceed to read the second one and
-> overwrite the first one with it (this is the normal behaviour in the
-> kernel cpio parser). At the end once all the archives have been
-> extracted, if there is an .xattr-list file in the rootfs it will be
-> parsed (it would've been the last one encountered, which hasn't been
-> parsed yet, just extracted).
-> 
-> Regarding the idea to use the high 16 bits of the mode field in
-> the header that's another possibility. It would just require additional
-> support in the program that actually creates the archive though, which
-> the current patch doesn't.
+> > On Wed, May 15, 2019 at 3:46 PM James Morris <jmorris@namei.org> wrote:
+> > >
+> > > You could try user.sigstruct, which does not require any privs.
+> > >
+> > 
+> > I don't think I understand your proposal.  What file would this
+> > attribute be on?  What would consume it?
 
-Yes, for adding signatures for a subset of files, no changes to the ram
-disk generator are necessary. Everything is done by a custom module. To
-support a generic use case, it would be necessary to modify the
-generator to execute getfattr and the awk script after files have been
-placed in the temporary directory.
+> It would be on the enclave file, so you keep the sigstruct bound to
+> it, rather than needing a separate file to manage.  It would
+> simplify any LSM policy check.
+>
+> It would be consumed by (I guess) the SGX_INIT_THE_ENCLAVE ioctl in your 
+> example, instead of having a 2nd fd.
 
-If I understood the new proposal correctly, it would be task for cpio to
-read file metadata after the content and create a new record for each
-file with mode 0x18000, type of metadata encoded in the file name and
-metadata as file content. I don't know how easy it would be to modify
-cpio. Probably the amount of changes would be reasonable.
+I've watched this discussion regarding LSM, sigstructs and file
+descriptors with some fascination, since all of this infrastructure
+already exists and should be well understood by anyone who has been
+active in SGX runtime development.  There would thus seem to be a
+disconnect between SGX driver developers and the consumers of the
+services of the driver.
 
-The kernel will behave in a similar way. It will call do_readxattrs() in
-do_copy() for each file. Since the only difference between the current
-and the new proposal would be two additional calls to do_readxattrs() in
-do_name() and unpack_to_rootfs(), maybe we could support both.
+The existing enclave format, codified by the silo within Intel that is
+responsible for the existing SDK/PSW, implements a notes section
+stored inside a standard ELF shared library image.  The notes section
+contains a significant amount of metadata that is used to direct the
+instantiation of what will be the initialized enclave image.  Said
+metadata includes a copy of the sigstruct that was generated when the
+enclave was signed, which is the event that triggers metadata
+generation.
 
-Roberto
+All of this means that any enclave that gets loaded effectively
+triggers both LSM and IMA checks.
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+James, if you remember, the paper that we presented in Seattle
+described the initial implementation of an extension to the Linux IMA
+infrastructure that tracks whether or not processes can be 'trusted'.
+That work has gone on to include running the trust modeling and
+disciplining engine inside of a namespace specific SGX enclave.  We
+would be happy to make available execution trajectory logs that
+clearly document IMA and LSM checks being conducted on enclaves.
+
+There is a strong probability that we will be maintaining and
+supporting a modified version of whatever driver that goes upstream.
+In support of this we are putting together a white paper discussing
+security architecture concerns inherent in an SGX driver.  With the
+intent of avoiding LKML verbosity we will post a URL to the paper when
+it is available if there is interest.
+
+The issue of EDMM has already come up, suffice it to say that EDMM
+makes LSM inspection of enclave content, while desirable, largely
+irrelevant from a security perspective.
+
+> James Morris
+
+Best wishes for a productive week.
+
+Dr. Greg
+
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686            EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"If you plugged up your nose and mouth right before you sneezed, would
+ the sneeze go out your ears or would your head explode?  Either way I'm
+ afraid to try."
+                                -- Nick Kean
