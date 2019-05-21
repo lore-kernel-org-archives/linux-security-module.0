@@ -2,99 +2,69 @@ Return-Path: <SRS0=jdUL=TV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D88C04AAF
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 16:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 418D8C04AAF
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 19:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F24592173E
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 16:50:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="pAt/gkOM"
+	by mail.kernel.org (Postfix) with ESMTP id 16B3D217D7
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 19:55:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558468525;
+	bh=u27768RvRmrG6ljslQy4Ulxx7VFqp5XA2XQT7s4BOrI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=JU1G+Q40ngNaDFT5RmHLzp07A/PccmgSISMl1PTPNu++b7JPcJJV9ya1NzcD71oDI
+	 ccxvfaFvjp3cBaIM0JQN8fX0beeBpu7EmlaR037cnNspZhdPy3u0FGdTMFTLia/tbl
+	 KCFtttfZ3d1RqYC+K4u35Nrqagg4JZ145ALEJZh0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbfEUQuJ (ORCPT
+        id S1727708AbfEUTzX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 May 2019 12:50:09 -0400
-Received: from mail-lj1-f172.google.com ([209.85.208.172]:42480 "EHLO
-        mail-lj1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbfEUQuJ (ORCPT
+        Tue, 21 May 2019 15:55:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53618 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727691AbfEUTzW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 May 2019 12:50:09 -0400
-Received: by mail-lj1-f172.google.com with SMTP id 188so2304177ljf.9
-        for <linux-security-module@vger.kernel.org>; Tue, 21 May 2019 09:50:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=i0j6kDnEIeaPX+1KUXPs7si1+pehMqLyQylQVBwbYdQ=;
-        b=pAt/gkOM6HSmPpnHOr2potyfhHapA+fv7YdZ8Mwej7N9YXmb49ctGf7PnHuBSE8a/T
-         iWCJWU7dKfqCPe8fl+PdKkxSpqMHncJT3dckU3T/Ex3cot50U3lYxHEG0sm4hI55PVh1
-         t2ygIqje1rZ7OYpjtPqRDN4Ldgs2G/0nW8a6cHWs0nM7A8S42cEelG7/nyvMR2ldDibH
-         MjQ6kV3sjTmqDrNYOfXSpYBwp7xTGFCz3g705R3mqOSxrtGrWg4CT4X7jGzLrVOru6wD
-         dIiXUHuyl3IQpTtKHF7Wu+ywRlu9Ncce/wJfBBo674DWSRA4I4R37a0pk9azdUTS21NN
-         Y4Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=i0j6kDnEIeaPX+1KUXPs7si1+pehMqLyQylQVBwbYdQ=;
-        b=jTrSzZi6i6e+ax4oAw12uYbJBmaoxYRZQvVEEoO02FRbwPyBye07TULwaEXbTqqnGN
-         fzvVxvsOIqAXmTirrAxwq4CvWneaf/99i1I0AvVI1EYvtMVBY4ZcMcQhG8+supr9SrPX
-         xcaPlYVWkFGx6Q/zmEVUgpuJxogr1f42Qyok2Ysjl8IPzceLavcXBufXWUcvu76IyoEB
-         mkLWimOeUcfjBLD9ASP+J6Bhzqd+g6S2mgIw5/Rh9D/30Cf+E+PY5NnMdedbU8Inprjt
-         viORBR4INSVI76U7ubMrhtLnLcR+cKgXMgOB5v5r1QFJ+uM/ivX0ZDrbu6o5nFHmwnNC
-         ERaQ==
-X-Gm-Message-State: APjAAAVpFOVbLAWDumw3L7agNuXlutRXANzHU3w7X5AwR98sglu09iXg
-        zQPloyVzErhPyOv7v3K2lHla/Ry8DWGbE1llrUJP
-X-Google-Smtp-Source: APXvYqxWgk6A9MlHhUyl+gJsVKB8GP0WXya0zsymp9swKk8LdqPHx9o76G382EqZguQYbQ8YOjZjPhLS1e3m5Ru/d44=
-X-Received: by 2002:a2e:380c:: with SMTP id f12mr5075618lja.53.1558457406870;
- Tue, 21 May 2019 09:50:06 -0700 (PDT)
-MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 21 May 2019 12:49:55 -0400
-Message-ID: <CAHC9VhTvU7kQ7D8OwRPvc0tpjtXVK6FiiT07WuQyjtJ80TeQrQ@mail.gmail.com>
-Subject: [GIT PULL] SELinux fixes for v5.2 (#1)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Tue, 21 May 2019 15:55:22 -0400
+Subject: Re: [GIT PULL] SELinux fixes for v5.2 (#1)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558468522;
+        bh=u27768RvRmrG6ljslQy4Ulxx7VFqp5XA2XQT7s4BOrI=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=a/nRs9YpbrugpES6cewxUZrJmErj+Lc/t1xJZ/IOHAp1Ea+26BLPPfkbT30MNLdvI
+         nGTC+DEpA94ziRKWMrp6HgE4O8B+2Fn4z1YZuutdLDCe6csArAC7vWuQzOJy8aW0qG
+         NTpbp84G6UQ3V4zBYLLI/vqWnH2Rl8qO36BKI2WQ=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAHC9VhTvU7kQ7D8OwRPvc0tpjtXVK6FiiT07WuQyjtJ80TeQrQ@mail.gmail.com>
+References: <CAHC9VhTvU7kQ7D8OwRPvc0tpjtXVK6FiiT07WuQyjtJ80TeQrQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhTvU7kQ7D8OwRPvc0tpjtXVK6FiiT07WuQyjtJ80TeQrQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ tags/selinux-pr-20190521
+X-PR-Tracked-Commit-Id: 05174c95b83f8aca0c47b87115abb7a6387aafa5
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9c7db5004280767566e91a33445bf93aa479ef02
+Message-Id: <155846852224.2650.7566519227438481199.pr-tracker-bot@kernel.org>
+Date:   Tue, 21 May 2019 19:55:22 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+The pull request you sent on Tue, 21 May 2019 12:49:55 -0400:
 
-One small SELinux patch for v5.2 to fix a problem when disconnecting a
-SCTP socket with connect(AF_UNSPEC).  Please merge this fix for v5.2.
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20190521
 
-Thanks,
--Paul
---
-The following changes since commit 35a196bef449b5824033865b963ed9a43fb8c730:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9c7db5004280767566e91a33445bf93aa479ef02
 
- proc: prevent changes to overridden credentials (2019-04-29 09:51:21 -0400)
-
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20190521
-
-for you to fetch changes up to 05174c95b83f8aca0c47b87115abb7a6387aafa5:
-
- selinux: do not report error on connect(AF_UNSPEC)
-   (2019-05-20 21:46:02 -0400)
-
-----------------------------------------------------------------
-selinux/stable-5.2 PR 20190521
-
-----------------------------------------------------------------
-Paolo Abeni (1):
-     selinux: do not report error on connect(AF_UNSPEC)
-
-security/selinux/hooks.c | 10 ++++++++--
-1 file changed, 8 insertions(+), 2 deletions(-)
+Thank you!
 
 -- 
-paul moore
-www.paul-moore.com
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
