@@ -1,99 +1,159 @@
-Return-Path: <SRS0=478F=TU=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=jdUL=TV=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4E0C04AAC
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 22:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2207EC46470
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 00:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BAA020862
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 May 2019 22:48:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E914C21743
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 00:06:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Z5wz8Yrs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eA8VpAZG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbfETWsH (ORCPT
+        id S1726619AbfEUAGu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 May 2019 18:48:07 -0400
-Received: from sonic305-9.consmr.mail.bf2.yahoo.com ([74.6.133.48]:33310 "EHLO
-        sonic305-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725941AbfETWsH (ORCPT
+        Mon, 20 May 2019 20:06:50 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38562 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726370AbfEUAGt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 May 2019 18:48:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1558392485; bh=Zgj+p4WFZhNWb2yJwewxS8unIMB6qSZZhjmRqUgSubU=; h=From:Subject:To:Cc:Date:From:Subject; b=Z5wz8Yrs9vf1o6XI6afIGRfObCGtjgHZpd0mfzzJuu5VE4LzaRT+QFxTodxjNcW+QmXyOzlKmvJoemVNN9+8Uu7XqwBI8XI/W/B2fNy91+0lRWrHXPIIXcYSm0UAGJznM5uwAuPEsYjYW5J/eRzrTIIJLAZdFuOk6QGtjzmSpm+njy4kDrIDsPjjHHTyg+7P1LDYr8J08ywvVuyDNaS7JD6eVXJMObzdEbPbF7lKlTYQOK8aY9/1sje0+ST3HCG/sVoWMI2P0QBeyUiRjhEScELuhlldMg2bSVhZ444P1PZl9YN2gxKDAnLqpjERMthD1FETsKabCCMMbz0OssDPcA==
-X-YMail-OSG: dt2imT8VM1m_K2dbb7Y5Rs3GooQRAWeNuJgmxzy5BwCyZXhrKbUUCgYPXRf4rIS
- S2aGOSi02Y2NblwV2FxtgE5gUxWH_OopPayV4ZAYrpxmOVGlA4oNgqeSXL6TSnrq.YtnFEllZwIF
- lcYCGKI2oxyOB7mfX3LnrQaHX_agmvKkOBz8qncEagzKjfS.0f6byMZNhzCLM4iGMF6ffJDzevjZ
- _vsvzNhuAhOgw7svlLnZns0_wU.JUXFvQXh_SGgWk1OtYQ8MxGDuUWylBkL4BMcdPDrGM1xHwKWf
- d3qqXlYUgA3.6OGLPJw7jYV3mHyIzuh6lfJNfdaDPuo_iOaiNMKvfEFG8eK8EZr405oFKFkFW.gY
- KBQQgXZZjQVdMs_6XT777E2ZgSLrgEBIKZNfUX3xKp7ab_ghXiU2VLUQUZJc75TNCcoC_L7OwkN1
- SbjRFnaI2giLm3wVQKIAdtoSUY_JokH7xqsgLqtwnN41OJctUFIpgcfzSYHT8JP.PpvbhFUtC7wZ
- Snjs6q3GTqp9TUOnNpEgS._3f1dbvJKxj4zm2lfl1m3.Vk_aLqyYE0yYq3laHRpLnVTjmg3RqA.H
- rf7txytMEhbfsP8MftUyQ8_YWN3GgWXvYcfWCvCXGoYoWUcxF_NBbeAnEmPvsRhAohk1G4umVNsy
- lJB17mQOWhw3WvQpkdwTvX6NNbMPnLafX8ukDl4gUlH8aX9fL0tQlL75go2ovJAk8Y10ItqOMFUw
- TTRmnIb_Ezqapu4FHGr9RNMPgRlLUHfYMlvrB4L3GRDic4Z8OnG2zL_D_ZxdZtQztlnSLJecxzHj
- 1REPX0fp04hF1ZHhMcK0NCTC5wfk7vTkcNjgBCZ82NnTUAZ8k9Jy0O9ktxtVoIXMFRCS5wQYpqEp
- htVQAwYdHaLsWtLu1O.aqixOMcjYGucIcKrKA7_Oc868Rrd9Fo28XTedvNKBj.Cxi6jiN1jlisEg
- MWFW1ItVDoqt7XBEbCNGbd4nIxP7WLAqb2XC3uG3kzMSoZ3w6K1lnvO9o5aAc_LzXhmG9sulnCSh
- fpC3Tdjhy8ESfxR7bBomMeOd4qaCx73OCJJyupzBp0OkDtJoeX2ArytqR9362AeitUPzQFqkmQlx
- f4RnqPl2Uv3PuRQVoaZoYi0sUAUNLcSBQP5D8qnT9YdOHzvz.25PAYRoeJJ8._UwDvFcAX98uieU
- 4zJLQwEFLBNijG_GpzjsNbZPnEANNiwE8M.U0QXv2H6._vDHadI8O_jJatgC24E0N05B1K6FtW.2
- Ut0c.cc_PcyvfySolg_0rYKocC0cSfBeL
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Mon, 20 May 2019 22:48:05 +0000
-Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp422.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b1610b935ff02ed2fe28a0e6d5cc8620;
-          Mon, 20 May 2019 22:48:02 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH] Smack: Restore the smackfsdef mount option
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dhowells@redhat.com
-Cc:     jose.bollo@iot.bzh, casey@schaufler-ca.com,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Message-ID: <1ebab7e7-f7ee-b910-9cc8-5d826eee8e97@schaufler-ca.com>
-Date:   Mon, 20 May 2019 15:48:03 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Mon, 20 May 2019 20:06:49 -0400
+Received: by mail-pl1-f193.google.com with SMTP id f97so7466513plb.5;
+        Mon, 20 May 2019 17:06:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=LZa++BrYOfKaDAjYx2CGBvGNn51YJo85WGkTuEuNxpQ=;
+        b=eA8VpAZGxR9ZgtFPqco0xH037UTt9tECb93K+cuckwJpP9b5GxzU6LGblkEtz/moKu
+         gMWye9uPKj8vmQNWgiSRlQOil59G7Lu59TJ42Gfwr+X/geGrTEpmrGWycx+WH+8jhUC1
+         slA+KaeC6PrPa4pcSjj9u0pt8YGjLdfYM0i6U+wYNh/KdavsHfAgN/uOzcXXoll0vmaO
+         HOQXdc6vMZKBYniarXKeIIQLKoie7le0ealVOeOXt7vMPpW2ac4a5JPnlmzlaVU0yF5f
+         3KqW2pKCLV+qUWwGTg+/luApbEqt8Bdn4VHKFijfmLgn8i09vwzVl1m2gXLI3aI47qnA
+         sSpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LZa++BrYOfKaDAjYx2CGBvGNn51YJo85WGkTuEuNxpQ=;
+        b=hWdTCxZ4//1qSR/0w0/sCXmRV5Q3SA526igPAQPctV+XKrzPPhF6Tzfucy3ocYa8r5
+         xmo0wWmXdhwsH1NuFbvK85iKUPwOWe7+9pUJGXtz0oaAKWkDcA/Cyz9mRhKEf9GJEj+T
+         NE6nlx9YR2IrQIeWipDQ7Lo11gP07VTeJKOB5CY3oGctsLGGu0TFePdHYd1s1Ub181m6
+         GWvOU4jzkIdKfuQBqqeFyeRy2fiS3qvx2qs4s6QZAokiO2C3y8fJOtVqlaNklimIYux6
+         oKN2yNOkuJsnW409X1SeelOc+YC+lSy8nTnOe18JGUZkbK50zxSA2RjqPJAvvnwQmfhj
+         YuzA==
+X-Gm-Message-State: APjAAAW/A9qHXpPbzE3odc2XQnh4fJbIFPp4TH1Yzuf+x2kVGKBWsnZA
+        OWNZdmgunlM0hh0oAAcd+hnSO4065FECSw==
+X-Google-Smtp-Source: APXvYqznvpaJKk3LUwFJojm3izNi1A7mm57rC7UA90cj+HcReiN2d5/4j27Nw7pKrAIm6rvhGJDYUA==
+X-Received: by 2002:a17:902:b949:: with SMTP id h9mr35567145pls.50.1558397208812;
+        Mon, 20 May 2019 17:06:48 -0700 (PDT)
+Received: from prsriva-Precision-Tower-5810.corp.microsoft.com ([2001:4898:80e8:1:e5e3:4312:180a:c25e])
+        by smtp.gmail.com with ESMTPSA id i16sm5939149pfd.100.2019.05.20.17.06.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 17:06:48 -0700 (PDT)
+From:   Prakhar Srivastava <prsriva02@gmail.com>
+To:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     mjg59@google.com, zohar@linux.ibm.com, roberto.sassu@huawei.com,
+        vgoyal@redhat.com, Prakhar Srivastava <prsriva02@gmail.com>
+Subject: [PATCH v6 0/3] add new ima hook ima_kexec_cmdline to measure kexec boot cmdline args
+Date:   Mon, 20 May 2019 17:06:42 -0700
+Message-Id: <20190521000645.16227-1-prsriva02@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The 5.1 mount system rework changed the smackfsdef mount option
-to smackfsdefault. This fixes the regression by making smackfsdef
-treated the same way as smackfsdefault. The change was made in
-commit c3300aaf95fb4 from Al Viro.
+The motive behind the patch series is to measure the boot cmdline args
+used for soft reboot/kexec case.
 
-Reported-by: Jose Bollo <jose.bollo@iot.bzh>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
-  security/smack/smack_lsm.c | 2 ++
-  1 file changed, 2 insertions(+)
+For secure boot attestation, it is necessary to measure the kernel
+command line and the kernel version. For cold boot, the boot loader
+can be enhanced to measure these parameters.
+(https://mjg59.dreamwidth.org/48897.html)
+However, for attestation across soft reboot boundary, these values 
+also need to be measured during kexec_file_load.
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index b9abcdb36a73..915cf598e164 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -68,6 +68,7 @@ static struct {
-  	int len;
-  	int opt;
-  } smk_mount_opts[] = {
-+	{"smackfsdef", sizeof("smackfsdef") - 1, Opt_fsdefault},
-  	A(fsdefault), A(fsfloor), A(fshat), A(fsroot), A(fstransmute)
-  };
-  #undef A
-@@ -682,6 +683,7 @@ static int smack_fs_context_dup(struct fs_context *fc,
-  }
-  
-  static const struct fs_parameter_spec smack_param_specs[] = {
-+	fsparam_string("fsdef",		Opt_fsdefault),
-  	fsparam_string("fsdefault",	Opt_fsdefault),
-  	fsparam_string("fsfloor",	Opt_fsfloor),
-  	fsparam_string("fshat",		Opt_fshat),
+Currently for Kexec(kexec_file_load)/soft reboot scenario the boot cmdline
+args for the next kernel are not measured. For 
+normal case of boot/hardreboot the cmdline args are measured into the TPM.
+
+The hash of boot command line is calculated and added to the current 
+running kernel's measurement list.  On a soft reboot like kexec, the PCRs
+are not reset to zero.  Refer to commit 94c3aac567a9 ("ima: on soft 
+reboot, restore the measurement list") patch description.
+
+To achive the above the patch series does the following
+  -adds a new ima hook: ima_kexec_cmdline which measures the cmdline args
+   into the ima log, behind a new ima policy entry KEXEC_CMDLINE.
+  -since the cmldine args cannot be appraised, a new template field(buf) is
+   added. The template field contains the buffer passed(cmldine args), which
+   can be used to appraise/attest at a later stage.
+  -call the ima_kexec_cmdline(...) hook from kexec_file_load call.
+
+The ima logs need to carried over to the next kernel, which will be followed
+up by other patchsets for x86_64 and arm64.
+
+Changelog:
+V6:
+  -add a new ima hook and policy to measure the cmdline
+    args(ima_kexec_cmdline)
+  -add a new template field buf to contain the buffer measured.
+  [suggested by Mimi Zohar]
+   add new fields to ima_event_data to store/read buffer data.
+  [suggested by Roberto]
+  -call ima_kexec_cmdline from kexec_file_load path
+
+v5:
+  -add a new ima hook and policy to measure the cmdline
+    args(ima_kexec_cmdline)
+  -add a new template field buf to contain the buffer measured.
+    [suggested by Mimi Zohar]
+  -call ima_kexec_cmdline from kexec_file_load path
+
+v4:
+  - per feedback from LSM community, removed the LSM hook and renamed the
+    IMA policy to KEXEC_CMDLINE
+
+v3: (rebase changes to next-general)
+  - Add policy checks for buffer[suggested by Mimi Zohar]
+  - use the IMA_XATTR to add buffer
+  - Add kexec_cmdline used for kexec file load
+  - Add an LSM hook to allow usage by other LSM.[suggestd by Mimi Zohar]
+
+v2:
+  - Add policy checks for buffer[suggested by Mimi Zohar]
+  - Add an LSM hook to allow usage by other LSM.[suggestd by Mimi Zohar]
+  - use the IMA_XATTR to add buffer instead of sig template
+
+v1:
+  -Add kconfigs to control the ima_buffer_check
+  -measure the cmdline args suffixed with the kernel file name
+  -add the buffer to the template sig field.
+
+Prakhar Srivastava (3):
+  Add a new ima hook ima_kexec_cmdline to measure cmdline args
+  add a new ima template field buf
+  call ima_kexec_cmdline to measure the cmdline args
+
+ Documentation/ABI/testing/ima_policy      |  1 +
+ Documentation/security/IMA-templates.rst  |  2 +-
+ include/linux/ima.h                       |  2 +
+ kernel/kexec_file.c                       |  8 ++-
+ security/integrity/ima/ima.h              |  3 +
+ security/integrity/ima/ima_api.c          |  5 +-
+ security/integrity/ima/ima_init.c         |  2 +-
+ security/integrity/ima/ima_main.c         | 80 +++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c       |  9 +++
+ security/integrity/ima/ima_template.c     |  2 +
+ security/integrity/ima/ima_template_lib.c | 20 ++++++
+ security/integrity/ima/ima_template_lib.h |  4 ++
+ 12 files changed, 131 insertions(+), 7 deletions(-)
+
+-- 
+2.17.1
 
