@@ -2,281 +2,495 @@ Return-Path: <SRS0=jdUL=TV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35864C04AAF
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 00:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A06C04AAF
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 05:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2FFF2177B
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 00:07:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0411D21743
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 05:13:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wxlxe5oo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZpmuPWy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbfEUAGw (ORCPT
+        id S1727815AbfEUFNJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 May 2019 20:06:52 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45941 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfEUAGw (ORCPT
+        Tue, 21 May 2019 01:13:09 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37765 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfEUFNJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 May 2019 20:06:52 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i21so7545314pgi.12;
-        Mon, 20 May 2019 17:06:51 -0700 (PDT)
+        Tue, 21 May 2019 01:13:09 -0400
+Received: by mail-pf1-f195.google.com with SMTP id a23so306503pff.4;
+        Mon, 20 May 2019 22:13:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=U/AtKdH1X5etutLrjMupbicBsqHo7eOYlc1fu2CjeOg=;
-        b=Wxlxe5ooDvuYSuuaz4UPFjxn8yUh3iBe3vONjM43XTHb1v6RTzCxD23y4Dx4q8DljS
-         gfXGBmSCE7fDIWCJQKvMhu+mORKiah/YKrWjoH6Yp6ESNhgd9ev0rpU+5oIzUmZl8O1p
-         xXzywFGHaRPZsDEeecS1KAPbu2LXydQ67kmoeJ2eQWTdGy7K9OxKDvyB+ZYn/n7Wj4dX
-         9V8BLb3B7hA4BWmln3KtOEe898JpIx97NF+SUiaNPX3D6ab91cU41Fqqnf2wlKNzzShb
-         2m85hmR0EVoK+/jS/nvg9OUEVFnj17uHeYAE5pJqjdVXsgevjCVHvqCau/X6i1Lsa0Sm
-         2aNw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oyg3xNfUGpNza90dkf60p72J41RD1yKVXJfHCqu712c=;
+        b=KZpmuPWyMEP+PEkaDeSLi6A6hpqQT00RaekdmCudXa+uhR5L9bS589ksBn31F+HZGl
+         gdGnBk5cZPJMxnD36azUnuqO+OuASrOMTtIWCVr0hcsdlrUA73oVGuwReIPGlcKNTyPp
+         YMyvGenxCiUnVt5YQz0qFwVnLHnNEjZ/7Jqmvo591Wc3OKu+2hlGkHPkdhlMc7zabzn4
+         r1A0LUMEp4IHFw5xnP40Zx0VLG0J0RbmV8SOZbW9v+rh2EecGQPukiEgBeHJvwgdzTCk
+         uJwx0y/Sz/Nji3LqHNX6xXe8p9SmJdygW5tft1aP4PcWICuMrIWe3OhHugacBx8U2opm
+         ZeSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=U/AtKdH1X5etutLrjMupbicBsqHo7eOYlc1fu2CjeOg=;
-        b=PYgSuRGjdOn/XlSTBhWeqMWrrDZnwqKhvx4aFU/asM90NRzu1cfM1OEYEbKbyng/Ns
-         RfRPDOhLe+a5MmzVLeCDA6Pw/D/aoX9LEV963ixhAWRFUYSiMQtndKWScQOzikMgwJot
-         7QuA7BcFPMHpEt1mBCPh+dHnxPzVP587ERbdnAFoWoFk018x1Nf1R19kOwbUDIA6B7Qa
-         5mRkR9bbpqni/a85Ql5D+J3vlxteADXPgHAVhzGjjpL2QG07BtBFw2fF0La5GKJC4sZX
-         vxI4Pp2vheGOgetig7OfBRgRjltl4TLLnzcl7EAT9vaocwTmnP1uXt9mMg/xo6Eg74Mx
-         1W+A==
-X-Gm-Message-State: APjAAAVWZfMxY1oP7dWUHXV/Eei1h3XzLig0McazJCDo9skKBd2JZah6
-        be4R/qADH5PaRowGpH2o+g1eVkFAiW/wqg==
-X-Google-Smtp-Source: APXvYqyNo4YpyKICOFtq2BuyOdLZylHnTR8DKr/rFxHJRd5iL1ZE/eKeu5Q1lo5+ctPfSdpfKHVasA==
-X-Received: by 2002:a62:128a:: with SMTP id 10mr82715681pfs.225.1558397210961;
-        Mon, 20 May 2019 17:06:50 -0700 (PDT)
-Received: from prsriva-Precision-Tower-5810.corp.microsoft.com ([2001:4898:80e8:1:e5e3:4312:180a:c25e])
-        by smtp.gmail.com with ESMTPSA id i16sm5939149pfd.100.2019.05.20.17.06.50
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oyg3xNfUGpNza90dkf60p72J41RD1yKVXJfHCqu712c=;
+        b=BEhmSdCh+6jTzsk8/ulPWuLpfhTc11lUXuTVyE6KtW0KrKyd7x+j+3J5D0RpvWsKuW
+         bEZr2OYMtsfdby2S5kHKRUo9wyqgAn3NTiAwvYK/Hgwb4DTlWGbNHeJ0pqddTviIeU01
+         kr/px4S7n00HVSVqQksC6YqyIynUwxc9xx7Z2EZ5GYrvict7nah6HXkUjkB0eJ4DCazX
+         csAzqoqdgQB9RRgbkMlXaNFdmfDmEkYmzjodfVsGLg7fmp6VldxN7Nbx5bI5qcqHIQIC
+         ij4VYiuzRIhX4wk8vZolwc4TnNv9DAYj2hjAXVf0QDG8Gc6MomGFiUrvjZVsR+G+TLlX
+         3j8g==
+X-Gm-Message-State: APjAAAXW8Q4cWkbmhKM1Ek3hMlwli39b6FdQaFAUgd5YwspSo4wmZFQh
+        phd4MTgvcAtH/lNHmErIvgk=
+X-Google-Smtp-Source: APXvYqwcrzpFcAufo00OncLBlSFg0/TYaV81QeVeDU2jlAjdkhlMs+XuThoq/CAwMwuFdypoVJgbBg==
+X-Received: by 2002:a63:1f22:: with SMTP id f34mr18155714pgf.248.1558415587370;
+        Mon, 20 May 2019 22:13:07 -0700 (PDT)
+Received: from 8c8590bceeee.ant.amazon.com ([54.240.193.129])
+        by smtp.gmail.com with ESMTPSA id c129sm25599429pfg.178.2019.05.20.22.13.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 17:06:50 -0700 (PDT)
-From:   Prakhar Srivastava <prsriva02@gmail.com>
-To:     linux-integrity@vger.kernel.org,
+        Mon, 20 May 2019 22:13:06 -0700 (PDT)
+Subject: Re: [RFC 1/1] Add dm verity root hash pkcs7 sig validation.
+To:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     mjg59@google.com, zohar@linux.ibm.com, roberto.sassu@huawei.com,
-        vgoyal@redhat.com, Prakhar Srivastava <prsriva02@gmail.com>
-Subject: [PATCH v6 1/3] Add a new ima hook ima_kexec_cmdline to measure cmdline args
-Date:   Mon, 20 May 2019 17:06:43 -0700
-Message-Id: <20190521000645.16227-2-prsriva02@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190521000645.16227-1-prsriva02@gmail.com>
-References: <20190521000645.16227-1-prsriva02@gmail.com>
+Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
+        jmorris@namei.org
+References: <20190520215422.23939-1-jaskarankhurana@linux.microsoft.com>
+ <20190520215422.23939-2-jaskarankhurana@linux.microsoft.com>
+From:   "Singh, Balbir" <bsingharora@gmail.com>
+Message-ID: <23988242-4b4b-1fc0-8724-ba927324392b@gmail.com>
+Date:   Tue, 21 May 2019 15:12:59 +1000
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190520215422.23939-2-jaskarankhurana@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Currently during kexec_file_load(soft reboot) the cmdline args
-passed are not measured and the PCR values are not reset.
-This results in the new kernel to assume a secure boot was
-followed. The boot args used to launch the new kernel need to be
-measured and carried over to the next kernel to be used for
-attestation. IMA supports only measuring files, no functionality
-exists to measure a buffer(kexec cmdline).
 
-This change adds a new functionality to measure buffers
-process_buffer_measurement which uses the hash of the buffer
-instead of file hash to add an entry in the ima log.
-A new ima hook ima_kexec_cmdline is also defined which calls
-into process_buffer_measurement to add the kexec_cmdline args
-to the log.
 
-A new policy KEXEC_CMDLINE is also defined to control measuring the
-kexec_cmdline buffer.
-This patch only adds IMA_MEASURE as a supported functionality.
+On 5/21/19 7:54 AM, Jaskaran Khurana wrote:
+> Adds in-kernel pkcs7 signature checking for the roothash of
+> the dm-verity hash tree.
+> 
+> The verification is to support cases where the roothash is not secured by
+> Trusted Boot, UEFI Secureboot or similar technologies.
+> One of the use cases for this is for dm-verity volumes mounted after boot,
+> the root hash provided during the creation of the dm-verity volume has to
+> be secure and thus in-kernel validation implemented here will be used
+> before we trust the root hash and allow the block device to be created.
+> 
+The first patch was your cover letter, I'd suggest name it that way in
+the subject.
 
-- A new ima hook ima_kexec_cmdline is defined to be called by the
-kexec code.
-- A new function process_buffer_measurement is defined to measure
-the buffer hash into the ima log.
-- A new func policy KEXEC_CMDLINE is defined to control the measurement.
+> The signature being provided for verification must verify the root hash and 
+> must be trusted by the builtin keyring for verification to succeed.
+> 
+> Adds DM_VERITY_VERIFY_ROOTHASH_SIG: roothash verification
+> against the roothash signature file *if* specified, if signature file is
+> specified verification must succeed prior to creation of device mapper 
+> block device.
+> 
+> Adds DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE: roothash signature *must* be
+> specified for all dm verity volumes and verification must succeed prior
+> to creation of device mapper block device.
+> 
+> Signed-off-by: Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+> ---
+>  drivers/md/Kconfig                |  23 ++++++
+>  drivers/md/Makefile               |   2 +-
+>  drivers/md/dm-verity-target.c     |  44 ++++++++--
+>  drivers/md/dm-verity-verify-sig.c | 129 ++++++++++++++++++++++++++++++
+>  drivers/md/dm-verity-verify-sig.h |  32 ++++++++
+>  5 files changed, 222 insertions(+), 8 deletions(-)
+>  create mode 100644 drivers/md/dm-verity-verify-sig.c
+>  create mode 100644 drivers/md/dm-verity-verify-sig.h
+> 
+> diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
+> index db269a348b20..da4115753f25 100644
+> --- a/drivers/md/Kconfig
+> +++ b/drivers/md/Kconfig
+> @@ -489,6 +489,29 @@ config DM_VERITY
+>  
+>  	  If unsure, say N.
+>  
+> +config DM_VERITY_VERIFY_ROOTHASH_SIG
+> +	def_bool n
+> +	bool "Verity data device root hash signature verification support"
+> +	depends on DM_VERITY
+> +	select SYSTEM_DATA_VERIFICATION
+> +	  help
+> +	  The device mapper target created by DM-VERITY can be validated if the
+> +	  pre-generated tree of cryptographic checksums passed has a pkcs#7
+> +	  signature file that can validate the roothash of the tree.
+> +
+> +	  If unsure, say N.
+> +
+> +config DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE
+> +	def_bool n
+> +	bool "Forces all dm verity data device root hash should be signed"
+> +	depends on DM_VERITY_VERIFY_ROOTHASH_SIG
+> +	  help
+> +	  The device mapper target created by DM-VERITY will succeed only if the
+> +	  pre-generated tree of cryptographic checksums passed also has a pkcs#7
+> +	  signature file that can validate the roothash of the tree.
+> +
+> +	  If unsure, say N.
+> +
+>  config DM_VERITY_FEC
+>  	bool "Verity forward error correction support"
+>  	depends on DM_VERITY
+> diff --git a/drivers/md/Makefile b/drivers/md/Makefile
+> index be7a6eb92abc..8a8c142bcfe1 100644
+> --- a/drivers/md/Makefile
+> +++ b/drivers/md/Makefile
+> @@ -61,7 +61,7 @@ obj-$(CONFIG_DM_LOG_USERSPACE)	+= dm-log-userspace.o
+>  obj-$(CONFIG_DM_ZERO)		+= dm-zero.o
+>  obj-$(CONFIG_DM_RAID)	+= dm-raid.o
+>  obj-$(CONFIG_DM_THIN_PROVISIONING)	+= dm-thin-pool.o
+> -obj-$(CONFIG_DM_VERITY)		+= dm-verity.o
+> +obj-$(CONFIG_DM_VERITY)		+= dm-verity.o dm-verity-verify-sig.o
+>  obj-$(CONFIG_DM_CACHE)		+= dm-cache.o
+>  obj-$(CONFIG_DM_CACHE_SMQ)	+= dm-cache-smq.o
+>  obj-$(CONFIG_DM_ERA)		+= dm-era.o
+> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+> index f4c31ffaa88e..53aebfa8bc38 100644
+> --- a/drivers/md/dm-verity-target.c
+> +++ b/drivers/md/dm-verity-target.c
+> @@ -16,7 +16,7 @@
+>  
+>  #include "dm-verity.h"
+>  #include "dm-verity-fec.h"
+> -
+> +#include "dm-verity-verify-sig.h"
+>  #include <linux/module.h>
+>  #include <linux/reboot.h>
+>  
+> @@ -34,7 +34,11 @@
+>  #define DM_VERITY_OPT_IGN_ZEROES	"ignore_zero_blocks"
+>  #define DM_VERITY_OPT_AT_MOST_ONCE	"check_at_most_once"
+>  
+> -#define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC)
+> +#define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC + \
+> +					 DM_VERITY_ROOT_HASH_VERIFICATION_OPTS)
+> +
+> +#define DM_VERITY_MANDATORY_ARGS        10
+> +
+>  
+>  static unsigned dm_verity_prefetch_cluster = DM_VERITY_DEFAULT_PREFETCH_SIZE;
+>  
+> @@ -855,7 +859,8 @@ static int verity_alloc_zero_digest(struct dm_verity *v)
+>  	return r;
+>  }
+>  
+> -static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
+> +static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
+> +				 struct dm_verity_sig_opts *verify_args)
+>  {
+>  	int r;
+>  	unsigned argc;
+> @@ -904,6 +909,15 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
+>  			if (r)
+>  				return r;
+>  			continue;
+> +		} else if (verity_verify_is_sig_opt_arg(arg_name)) {
+> +			r = verity_verify_sig_parse_opt_args(as, v,
+> +							     verify_args,
+> +							     &argc, arg_name);
+> +			if (r) {
+> +				ti->error = "Could not parse the sig args";
+> +				return r;
+> +			}
+> +			continue;
+>  		}
+>  
+>  		ti->error = "Unrecognized verity feature request";
+> @@ -930,6 +944,7 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
+>  static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  {
+>  	struct dm_verity *v;
+> +	struct dm_verity_sig_opts verify_args = {0};
+>  	struct dm_arg_set as;
+>  	unsigned int num;
+>  	unsigned long long num_ll;
+> @@ -937,6 +952,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  	int i;
+>  	sector_t hash_position;
+>  	char dummy;
+> +	char *root_hash_digest_to_validate = NULL;
+>  
+>  	v = kzalloc(sizeof(struct dm_verity), GFP_KERNEL);
+>  	if (!v) {
+> @@ -956,7 +972,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  		goto bad;
+>  	}
+>  
+> -	if (argc < 10) {
+> +	if (argc < DM_VERITY_MANDATORY_ARGS) {
+>  		ti->error = "Not enough arguments";
+>  		r = -EINVAL;
+>  		goto bad;
+> @@ -1070,6 +1086,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  		r = -EINVAL;
+>  		goto bad;
+>  	}
+> +	root_hash_digest_to_validate = argv[8];
+>  
+>  	if (strcmp(argv[9], "-")) {
+>  		v->salt_size = strlen(argv[9]) / 2;
+> @@ -1087,19 +1104,28 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  		}
+>  	}
+>  
+> -	argv += 10;
+> -	argc -= 10;
+> +	argv += DM_VERITY_MANDATORY_ARGS;
+> +	argc -= DM_VERITY_MANDATORY_ARGS;
 
-Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
----
- Documentation/ABI/testing/ima_policy |  1 +
- include/linux/ima.h                  |  2 +
- security/integrity/ima/ima.h         |  1 +
- security/integrity/ima/ima_api.c     |  1 +
- security/integrity/ima/ima_main.c    | 77 ++++++++++++++++++++++++++++
- security/integrity/ima/ima_policy.c  |  9 ++++
- 6 files changed, 91 insertions(+)
+This cleanup should be in a separate patch in the series
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 74c6702de74e..62e7cd687e9c 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -29,6 +29,7 @@ Description:
- 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
-+				[KEXEC_CMDLINE]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
- 			       [[^]MAY_EXEC]
- 			fsmagic:= hex value
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index dc12fbcf484c..2e2c77280be8 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -26,6 +26,7 @@ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
- extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 			      enum kernel_read_file_id id);
- extern void ima_post_path_mknod(struct dentry *dentry);
-+extern void ima_kexec_cmdline(const void *buf, int size);
- 
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
-@@ -92,6 +93,7 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
- 	return;
- }
- 
-+static inline void ima_kexec_cmdline(const void *buf, int size) {}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index d213e835c498..226a26d8de09 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -184,6 +184,7 @@ static inline unsigned long ima_hash_key(u8 *digest)
- 	hook(KEXEC_KERNEL_CHECK)	\
- 	hook(KEXEC_INITRAMFS_CHECK)	\
- 	hook(POLICY_CHECK)		\
-+	hook(KEXEC_CMDLINE)		\
- 	hook(MAX_CHECK)
- #define __ima_hook_enumify(ENUM)	ENUM,
- 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index c7505fb122d4..800d965232e5 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -169,6 +169,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-  *	subj,obj, and type: are LSM specific.
-  *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
-+ *	| KEXEC_CMDLINE
-  *	mask: contains the permission mask
-  *	fsmagic: hex value
-  *
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 357edd140c09..a88c28918a63 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -576,6 +576,83 @@ int ima_load_data(enum kernel_load_data_id id)
- 	return 0;
- }
- 
-+/*
-+ * process_buffer_measurement - Measure the buffer to ima log.
-+ * @buf: pointer to the buffer that needs to be added to the log.
-+ * @size: size of buffer(in bytes).
-+ * @eventname: event name to be used for the buffer entry.
-+ * @cred: a pointer to a credentials structure for user validation.
-+ * @secid: the secid of the task to be validated.
-+ *
-+ * Based on policy, the buffer is measured into the ima log.
-+ */
-+static void process_buffer_measurement(const void *buf, int size,
-+				const char *eventname, const struct cred *cred,
-+				u32 secid)
-+{
-+	int ret = 0;
-+	struct ima_template_entry *entry = NULL;
-+	struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
-+	struct ima_event_data event_data = {iint, NULL, NULL,
-+						NULL, 0, NULL};
-+	struct {
-+		struct ima_digest_data hdr;
-+		char digest[IMA_MAX_DIGEST_SIZE];
-+	} hash;
-+	int violation = 0;
-+	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
-+	int action = 0;
-+
-+	action = ima_get_action(NULL, cred, secid, 0, KEXEC_CMDLINE, &pcr);
-+	if (!(action & IMA_MEASURE))
-+		goto out;
-+
-+	memset(iint, 0, sizeof(*iint));
-+	memset(&hash, 0, sizeof(hash));
-+
-+	event_data.filename = eventname;
-+
-+	iint->ima_hash = &hash.hdr;
-+	iint->ima_hash->algo = ima_hash_algo;
-+	iint->ima_hash->length = hash_digest_size[ima_hash_algo];
-+
-+	ret = ima_calc_buffer_hash(buf, size, iint->ima_hash);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = ima_alloc_init_template(&event_data, &entry);
-+	if (ret < 0)
-+		goto out;
-+
-+	if (action & IMA_MEASURE)
-+		ret = ima_store_template(entry, violation, NULL, buf, pcr);
-+
-+	if (ret < 0) {
-+		ima_free_template_entry(entry);
-+	}
-+
-+out:
-+	return;
-+}
-+
-+/**
-+ * ima_kexec_cmdline - measure kexec cmdline boot args
-+ * @buf: pointer to buffer
-+ * @size: size of buffer
-+ *
-+ * Buffers can only be measured, not appraised.
-+ */
-+void ima_kexec_cmdline(const void *buf, int size)
-+{
-+	u32 secid;
-+
-+	if (buf && size != 0) {
-+		security_task_getsecid(current, &secid);
-+		process_buffer_measurement(buf, size, "kexec-cmdline",
-+				current_cred(), secid);
-+	}
-+}
-+
- static int __init init_ima(void)
- {
- 	int error;
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index e0cc323f948f..413e5921b248 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -291,6 +291,13 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- {
- 	int i;
- 
-+	/* only incase of KEXEC_CMDLINE, inode is NULL */
-+	if (func == KEXEC_CMDLINE) {
-+		if ((rule->flags & IMA_FUNC) &&
-+			(rule->func == func) && (!inode))
-+			return true;
-+		return false;
-+	}
- 	if ((rule->flags & IMA_FUNC) &&
- 	    (rule->func != func && func != POST_SETATTR))
- 		return false;
-@@ -869,6 +876,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = KEXEC_INITRAMFS_CHECK;
- 			else if (strcmp(args[0].from, "POLICY_CHECK") == 0)
- 				entry->func = POLICY_CHECK;
-+			else if (strcmp(args[0].from, "KEXEC_CMDLINE") == 0)
-+				entry->func = KEXEC_CMDLINE;
- 			else
- 				result = -EINVAL;
- 			if (!result)
--- 
-2.17.1
+>  
+>  	/* Optional parameters */
+>  	if (argc) {
+>  		as.argc = argc;
+>  		as.argv = argv;
+>  
+> -		r = verity_parse_opt_args(&as, v);
+> +		r = verity_parse_opt_args(&as, v, &verify_args);
+>  		if (r < 0)
+>  			goto bad;
+>  	}
+>  
+> +	/* Root hash signature is  a optional parameter*/
+> +	r = verity_verify_root_hash(root_hash_digest_to_validate,
+> +				    strlen(root_hash_digest_to_validate),
+> +				    verify_args.sig,
+> +				    verify_args.sig_size);
+> +	if (r < 0) {
+> +		ti->error = "Root hash verification failed";
+> +		goto bad;
+> +	}
+>  	v->hash_per_block_bits =
+>  		__fls((1 << v->hash_dev_block_bits) / v->digest_size);
+>  
+> @@ -1165,9 +1191,13 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  	ti->per_io_data_size = roundup(ti->per_io_data_size,
+>  				       __alignof__(struct dm_verity_io));
+>  
+> +	verity_verify_sig_opts_cleanup(&verify_args);
+> +
+>  	return 0;
+>  
+>  bad:
+> +
+> +	verity_verify_sig_opts_cleanup(&verify_args);
+>  	verity_dtr(ti);
+>  
+>  	return r;
+> diff --git a/drivers/md/dm-verity-verify-sig.c b/drivers/md/dm-verity-verify-sig.c
+> new file mode 100644
+> index 000000000000..491c84eb58ef
+> --- /dev/null
+> +++ b/drivers/md/dm-verity-verify-sig.c
+> @@ -0,0 +1,129 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2019 Microsoft Corporation.
+> + *
+> + * Author:  Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
+> + *
+> + * This file is released under the GPLv2.
+> + */
+> +#include <linux/device-mapper.h>
+> +#include <linux/verification.h>
+> +#include "dm-verity.h"
+> +#include "dm-verity-verify-sig.h"
+> +
+> +#define DM_VERITY_VERIFY_ERR(s) DM_VERITY_ROOT_HASH_VERIFICATION " " s
+> +
+> +bool verity_verify_is_sig_opt_arg(const char *arg_name)
+> +{
+> +	return (!strcasecmp(arg_name,
+> +			    DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG));
+> +}
+> +EXPORT_SYMBOL_GPL(verity_verify_is_sig_opt_arg);
+> +
+> +int verity_verify_sig_parse_opt_args(struct dm_arg_set *as,
+> +				     struct dm_verity *v,
+> +				     struct dm_verity_sig_opts *sig_opts,
+> +				     unsigned int *argc,
+> +				     const char *arg_name)
+> +{
+> +	const char *sig_size;
+> +	const char *sig_buf;
+> +	char dummy;
+> +	struct dm_target *ti = v->ti;
+> +	int r = 0;
+> +
+> +	if (*argc < DM_VERITY_ROOT_HASH_VERIFICATION_OPTS - 1) {
+> +		ti->error = DM_VERITY_VERIFY_ERR("sig values not specified");
 
+Can you can sig values to Signature values for readability
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	sig_size = dm_shift_arg(as);
+> +	(*argc)--;
+> +
+> +	if (strcasecmp(arg_name, DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG) ||
+> +	    sscanf(sig_size, "%u%c",
+> +		   &sig_opts->sig_size, &dummy) != 1) {
+> +		ti->error = DM_VERITY_VERIFY_ERR("invalid signature size");
+
+Not sure why this is the best way to verifify the signature size
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	sig_buf = dm_shift_arg(as);
+> +	(*argc)--;
+> +
+> +	if (strlen(sig_buf) != sig_opts->sig_size * 2) {
+> +		ti->error = DM_VERITY_VERIFY_ERR("sig buffer, size: mismatch");
+> +		return -EINVAL;
+> +	}
+
+Can you explain the sig_opts->sig_size * 2 magic with a comment?
+
+> +
+> +	sig_opts->sig =	kmalloc(sig_opts->sig_size, GFP_KERNEL);
+> +	if (!sig_opts->sig) {
+> +		r = -ENOMEM;
+> +		goto end;
+
+Good to check for NULL, but GFP_KERNEL will OOM if allocations fail
+
+> +	}
+> +
+> +	r = hex2bin(sig_opts->sig, sig_buf, sig_opts->sig_size);
+> +
+> +	if (r < 0) {
+> +		ti->error = DM_VERITY_VERIFY_ERR("invalid roothash sig buf");
+> +		r = -EINVAL;
+> +		goto end;
+> +	}
+> +
+> +end:
+> +	if (r < 0)
+> +		verity_verify_sig_opts_cleanup(sig_opts);
+> +	return r;
+> +}
+> +EXPORT_SYMBOL_GPL(verity_verify_sig_parse_opt_args);
+> +
+> +#ifdef CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG
+> +/*
+> + * verify_verify_roothash - Verify the root hash of the verity hash device
+> + *			     using builtin trusted keys.
+> + *
+> + * @root_hash: For verity, the roothash/data to be verified.
+> + * @root_hash_len: Size of the roothash/data to be verified.
+> + * @sig_data: The trusted signature that verifies the roothash/data.
+> + * @sig_len: Size of the signature.
+> + *
+> + */
+> +int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
+> +			    const void *sig_data, size_t sig_len)
+> +{
+> +	int r;
+
+ret?
+
+> +
+> +	if (!root_hash || root_hash_len == 0)
+> +		return -EINVAL;
+> +
+> +	if (!sig_data  || sig_len == 0) {
+> +		if (IS_ENABLED(CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE))
+> +			return -EINVAL;
+> +		else
+> +			return 0;
+> +	}
+> +
+> +	r = verify_pkcs7_signature(root_hash, root_hash_len, sig_data, sig_len,
+> +				   NULL, VERIFYING_UNSPECIFIED_SIGNATURE, NULL,
+> +				   NULL);
+> +	if (r < 0)
+> +		goto end;
+> +
+> +end:
+
+goto end makes no sense if r is right down here, have you missed some code here?
+
+Otherwise you can just remove the 4 lines above.
+
+> +	return r;
+> +}
+> +#else
+> +int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
+> +			    const void *sig_data, size_t sig_len)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +EXPORT_SYMBOL_GPL(verity_verify_root_hash);
+> +
+> +void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
+> +{
+> +	kfree(sig_opts->sig);
+> +	sig_opts->sig = NULL;
+> +	sig_opts->sig_size = 0;
+> +}
+> +EXPORT_SYMBOL_GPL(verity_verify_sig_opts_cleanup);
+> diff --git a/drivers/md/dm-verity-verify-sig.h b/drivers/md/dm-verity-verify-sig.h
+> new file mode 100644
+> index 000000000000..411808624d7e
+> --- /dev/null
+> +++ b/drivers/md/dm-verity-verify-sig.h
+> @@ -0,0 +1,32 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2019 Microsoft Corporation.
+> + *
+> + * Author:  Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
+> + *
+> + * This file is released under the GPLv2.
+> + */
+> +#ifndef DM_VERITY_SIG_VERIFICATION_H
+> +#define DM_VERITY_SIG_VERIFICATION_H
+> +
+> +#define DM_VERITY_ROOT_HASH_VERIFICATION	 "DM Verity Sig Verification"
+> +#define DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG "root_hash_sig"
+> +#define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS    3
+> +
+> +struct dm_verity_sig_opts {
+> +	unsigned int sig_size;
+> +	u8 *sig;
+> +};
+> +
+> +int verity_verify_root_hash(const void *data, size_t data_len,
+> +			    const void *sig_data, size_t sig_len);
+> +
+> +bool verity_verify_is_sig_opt_arg(const char *arg_name);
+> +
+> +int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
+> +				     struct dm_verity_sig_opts *sig_opts,
+> +				     unsigned int *argc, const char *arg_name);
+> +
+> +void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts);
+> +
+> +#endif /* DM_VERITY_SIG_VERIFICATION_H */
+
+Balbir Singh.
+> 
