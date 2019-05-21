@@ -2,114 +2,99 @@ Return-Path: <SRS0=jdUL=TV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A84C04AAF
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 15:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D88C04AAF
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 16:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0535F208C3
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 15:51:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F24592173E
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 16:50:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="pAt/gkOM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbfEUPvl (ORCPT
+        id S1727817AbfEUQuJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 May 2019 11:51:41 -0400
-Received: from mga02.intel.com ([134.134.136.20]:55893 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727941AbfEUPvl (ORCPT
+        Tue, 21 May 2019 12:50:09 -0400
+Received: from mail-lj1-f172.google.com ([209.85.208.172]:42480 "EHLO
+        mail-lj1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728175AbfEUQuJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 May 2019 11:51:41 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 08:51:40 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga005.jf.intel.com with ESMTP; 21 May 2019 08:51:40 -0700
-Date:   Tue, 21 May 2019 08:51:40 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190521155140.GE22089@linux.intel.com>
-References: <20190514104323.GA7591@linux.intel.com>
- <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
- <20190514204527.GC1977@linux.intel.com>
- <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com>
- <20190515013031.GF1977@linux.intel.com>
- <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
- <20190517000331.GD11204@linux.intel.com>
- <CALCETrWxw7xALE0kmiYBzomaSMAeXEVq-7rX7xeqPtDPeDQiCA@mail.gmail.com>
- <20190520114105.GD27805@linux.intel.com>
- <20190521151836.GA4843@linux.intel.com>
+        Tue, 21 May 2019 12:50:09 -0400
+Received: by mail-lj1-f172.google.com with SMTP id 188so2304177ljf.9
+        for <linux-security-module@vger.kernel.org>; Tue, 21 May 2019 09:50:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=i0j6kDnEIeaPX+1KUXPs7si1+pehMqLyQylQVBwbYdQ=;
+        b=pAt/gkOM6HSmPpnHOr2potyfhHapA+fv7YdZ8Mwej7N9YXmb49ctGf7PnHuBSE8a/T
+         iWCJWU7dKfqCPe8fl+PdKkxSpqMHncJT3dckU3T/Ex3cot50U3lYxHEG0sm4hI55PVh1
+         t2ygIqje1rZ7OYpjtPqRDN4Ldgs2G/0nW8a6cHWs0nM7A8S42cEelG7/nyvMR2ldDibH
+         MjQ6kV3sjTmqDrNYOfXSpYBwp7xTGFCz3g705R3mqOSxrtGrWg4CT4X7jGzLrVOru6wD
+         dIiXUHuyl3IQpTtKHF7Wu+ywRlu9Ncce/wJfBBo674DWSRA4I4R37a0pk9azdUTS21NN
+         Y4Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=i0j6kDnEIeaPX+1KUXPs7si1+pehMqLyQylQVBwbYdQ=;
+        b=jTrSzZi6i6e+ax4oAw12uYbJBmaoxYRZQvVEEoO02FRbwPyBye07TULwaEXbTqqnGN
+         fzvVxvsOIqAXmTirrAxwq4CvWneaf/99i1I0AvVI1EYvtMVBY4ZcMcQhG8+supr9SrPX
+         xcaPlYVWkFGx6Q/zmEVUgpuJxogr1f42Qyok2Ysjl8IPzceLavcXBufXWUcvu76IyoEB
+         mkLWimOeUcfjBLD9ASP+J6Bhzqd+g6S2mgIw5/Rh9D/30Cf+E+PY5NnMdedbU8Inprjt
+         viORBR4INSVI76U7ubMrhtLnLcR+cKgXMgOB5v5r1QFJ+uM/ivX0ZDrbu6o5nFHmwnNC
+         ERaQ==
+X-Gm-Message-State: APjAAAVpFOVbLAWDumw3L7agNuXlutRXANzHU3w7X5AwR98sglu09iXg
+        zQPloyVzErhPyOv7v3K2lHla/Ry8DWGbE1llrUJP
+X-Google-Smtp-Source: APXvYqxWgk6A9MlHhUyl+gJsVKB8GP0WXya0zsymp9swKk8LdqPHx9o76G382EqZguQYbQ8YOjZjPhLS1e3m5Ru/d44=
+X-Received: by 2002:a2e:380c:: with SMTP id f12mr5075618lja.53.1558457406870;
+ Tue, 21 May 2019 09:50:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521151836.GA4843@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 21 May 2019 12:49:55 -0400
+Message-ID: <CAHC9VhTvU7kQ7D8OwRPvc0tpjtXVK6FiiT07WuQyjtJ80TeQrQ@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v5.2 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 21, 2019 at 06:19:37PM +0300, Jarkko Sakkinen wrote:
-> On Mon, May 20, 2019 at 02:41:05PM +0300, Jarkko Sakkinen wrote:
-> > On Thu, May 16, 2019 at 05:26:15PM -0700, Andy Lutomirski wrote:
-> > > Is userspace actually requred to mmap() the enclave prior to EADDing things?
-> > 
-> > Nope, not since v20. Here is what I wrote about API to the kernel
-> > documentation:
-> > 
-> > "The enclave life-cycle starts by opening `/dev/sgx/enclave`. After this
-> > there is already a data structure inside kernel tracking the enclave
-> > that is initially uncreated. After this a set of ioctl's can be used to
-> > create, populate and initialize the enclave.
-> > 
-> > You can close (if you want) the fd after you've mmap()'d. As long as the
-> > file is open the enclave stays alive so you might want to do that after
-> > you don't need it anymore. Even munmap() won't destruct the enclave if
-> > the file is open.  Neither will closing the fd as long as you have
-> > mmap() done over the fd (even if it does not across the range defined in
-> > SECS)."
-> > 
-> > Enclave can be created and initialized without doing a single mmap()
-> > call.
-> 
-> We could even disallow mmap() before EINIT done. The way enclave
-> management internally works right now is quite robust and completely
-> detached from requiring process address space for anything.
+Hi Linus,
 
-Except that mmap() is more or less required to guarantee that ELRANGE
-established by ECREATE is available.  And we want to disallow mmap() as
-soon as the first EADD is done so that userspace can't remap the enclave's
-VMAs via munmap()->mmap() and gain execute permissions to pages that were
-EADD'd as NX.
+One small SELinux patch for v5.2 to fix a problem when disconnecting a
+SCTP socket with connect(AF_UNSPEC).  Please merge this fix for v5.2.
 
-Actually, conceptually it's probably more intuitive to disallow mmap() at
-ECREATE, i.e. the act of creating an enclave pins the associated virtual
-address range until the enclave is destroyed.
+Thanks,
+-Paul
+--
+The following changes since commit 35a196bef449b5824033865b963ed9a43fb8c730:
+
+ proc: prevent changes to overridden credentials (2019-04-29 09:51:21 -0400)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20190521
+
+for you to fetch changes up to 05174c95b83f8aca0c47b87115abb7a6387aafa5:
+
+ selinux: do not report error on connect(AF_UNSPEC)
+   (2019-05-20 21:46:02 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.2 PR 20190521
+
+----------------------------------------------------------------
+Paolo Abeni (1):
+     selinux: do not report error on connect(AF_UNSPEC)
+
+security/selinux/hooks.c | 10 ++++++++--
+1 file changed, 8 insertions(+), 2 deletions(-)
+
+-- 
+paul moore
+www.paul-moore.com
