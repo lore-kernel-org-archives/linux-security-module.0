@@ -2,148 +2,107 @@ Return-Path: <SRS0=jdUL=TV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B96C04AAF
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 14:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD009C072AD
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 15:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6710D21773
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 14:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558448746;
-	bh=sT+ird8U2IVxZAdPDlPBppZmecuzFmpVzfknLrIu0CU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NYCu7a6E26w3Y0qjvKGk6VCGi26VkyadfggIj6WZO++jI7LO6bknq8exs5dNaMLSf
-	 DMfibySWITMab0PS6tbG1dgggRF/hdJWwv0S/J6Wresdpz6u6YPECN7ibj8l6iq/oP
-	 dvr8lDACyb5pLEEUo2vyUBaF29f5ASPL4s6UUyF4=
+	by mail.kernel.org (Postfix) with ESMTP id 8D9C12173E
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 15:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbfEUOZp (ORCPT
+        id S1727976AbfEUPTy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 May 2019 10:25:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35630 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727812AbfEUOZp (ORCPT
+        Tue, 21 May 2019 11:19:54 -0400
+Received: from mga04.intel.com ([192.55.52.120]:23051 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727534AbfEUPTy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 May 2019 10:25:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7E995AE91;
-        Tue, 21 May 2019 14:25:43 +0000 (UTC)
-Date:   Tue, 21 May 2019 16:25:41 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Tue, 21 May 2019 11:19:54 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 08:19:53 -0700
+X-ExtLoop1: 1
+Received: from hupe-mobl.ger.corp.intel.com (HELO localhost) ([10.252.46.220])
+  by orsmga002.jf.intel.com with ESMTP; 21 May 2019 08:19:38 -0700
+Date:   Tue, 21 May 2019 18:19:37 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] gfp: mm: introduce __GFP_NO_AUTOINIT
-Message-ID: <20190521142541.GW32329@dhcp22.suse.cz>
-References: <20190514143537.10435-1-glider@google.com>
- <20190514143537.10435-4-glider@google.com>
- <20190517125916.GF1825@dhcp22.suse.cz>
- <CAG_fn=VG6vrCdpEv0g73M-Au4wW07w8g0uydEiHA96QOfcCVhA@mail.gmail.com>
- <20190517132542.GJ6836@dhcp22.suse.cz>
- <CAG_fn=Ve88z2ezFjV6CthufMUhJ-ePNMT2=3m6J3nHWh9iSgsg@mail.gmail.com>
- <20190517140108.GK6836@dhcp22.suse.cz>
- <201905170925.6FD47DDFFF@keescook>
- <20190517171105.GT6836@dhcp22.suse.cz>
- <CAG_fn=W9Y7=RZREi5S8z-sAMg2GfPsWqrHo+UawXWiRbhrNd0Q@mail.gmail.com>
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190521151836.GA4843@linux.intel.com>
+References: <20190513102926.GD8743@linux.intel.com>
+ <20190514104323.GA7591@linux.intel.com>
+ <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
+ <20190514204527.GC1977@linux.intel.com>
+ <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com>
+ <20190515013031.GF1977@linux.intel.com>
+ <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
+ <20190517000331.GD11204@linux.intel.com>
+ <CALCETrWxw7xALE0kmiYBzomaSMAeXEVq-7rX7xeqPtDPeDQiCA@mail.gmail.com>
+ <20190520114105.GD27805@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG_fn=W9Y7=RZREi5S8z-sAMg2GfPsWqrHo+UawXWiRbhrNd0Q@mail.gmail.com>
+In-Reply-To: <20190520114105.GD27805@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue 21-05-19 16:18:37, Alexander Potapenko wrote:
-> On Fri, May 17, 2019 at 7:11 PM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Fri 17-05-19 09:27:54, Kees Cook wrote:
-> > > On Fri, May 17, 2019 at 04:01:08PM +0200, Michal Hocko wrote:
-> > > > On Fri 17-05-19 15:37:14, Alexander Potapenko wrote:
-> > > > > > > > Freeing a memory is an opt-in feature and the slab allocator can already
-> > > > > > > > tell many (with constructor or GFP_ZERO) do not need it.
-> > > > > > > Sorry, I didn't understand this piece. Could you please elaborate?
-> > > > > >
-> > > > > > The allocator can assume that caches with a constructor will initialize
-> > > > > > the object so additional zeroying is not needed. GFP_ZERO should be self
-> > > > > > explanatory.
-> > > > > Ah, I see. We already do that, see the want_init_on_alloc()
-> > > > > implementation here: https://patchwork.kernel.org/patch/10943087/
-> > > > > > > > So can we go without this gfp thing and see whether somebody actually
-> > > > > > > > finds a performance problem with the feature enabled and think about
-> > > > > > > > what can we do about it rather than add this maint. nightmare from the
-> > > > > > > > very beginning?
-> > > > > > >
-> > > > > > > There were two reasons to introduce this flag initially.
-> > > > > > > The first was double initialization of pages allocated for SLUB.
-> > > > > >
-> > > > > > Could you elaborate please?
-> > > > > When the kernel allocates an object from SLUB, and SLUB happens to be
-> > > > > short on free pages, it requests some from the page allocator.
-> > > > > Those pages are initialized by the page allocator
-> > > >
-> > > > ... when the feature is enabled ...
-> > > >
-> > > > > and split into objects. Finally SLUB initializes one of the available
-> > > > > objects and returns it back to the kernel.
-> > > > > Therefore the object is initialized twice for the first time (when it
-> > > > > comes directly from the page allocator).
-> > > > > This cost is however amortized by SLUB reusing the object after it's been freed.
-> > > >
-> > > > OK, I see what you mean now. Is there any way to special case the page
-> > > > allocation for this feature? E.g. your implementation tries to make this
-> > > > zeroying special but why cannot you simply do this
-> > > >
-> > > >
-> > > > struct page *
-> > > > ____alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
-> > > >                                                     nodemask_t *nodemask)
-> > > > {
-> > > >     //current implementation
-> > > > }
-> > > >
-> > > > struct page *
-> > > > __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
-> > > >                                                     nodemask_t *nodemask)
-> > > > {
-> > > >     if (your_feature_enabled)
-> > > >             gfp_mask |= __GFP_ZERO;
-> > > >     return ____alloc_pages_nodemask(gfp_mask, order, preferred_nid,
-> > > >                                     nodemask);
-> > > > }
-> > > >
-> > > > and use ____alloc_pages_nodemask from the slab or other internal
-> > > > allocators?
-> Given that calling alloc_pages() with __GFP_NO_AUTOINIT doesn't
-> visibly improve the chosen benchmarks,
-> and the next patch in the series ("net: apply __GFP_NO_AUTOINIT to
-> AF_UNIX sk_buff allocations") only improves hackbench,
-> shall we maybe drop both patches altogether?
+On Mon, May 20, 2019 at 02:41:05PM +0300, Jarkko Sakkinen wrote:
+> On Thu, May 16, 2019 at 05:26:15PM -0700, Andy Lutomirski wrote:
+> > Is userspace actually requred to mmap() the enclave prior to EADDing things?
+> 
+> Nope, not since v20. Here is what I wrote about API to the kernel
+> documentation:
+> 
+> "The enclave life-cycle starts by opening `/dev/sgx/enclave`. After this
+> there is already a data structure inside kernel tracking the enclave
+> that is initially uncreated. After this a set of ioctl's can be used to
+> create, populate and initialize the enclave.
+> 
+> You can close (if you want) the fd after you've mmap()'d. As long as the
+> file is open the enclave stays alive so you might want to do that after
+> you don't need it anymore. Even munmap() won't destruct the enclave if
+> the file is open.  Neither will closing the fd as long as you have
+> mmap() done over the fd (even if it does not across the range defined in
+> SECS)."
+> 
+> Enclave can be created and initialized without doing a single mmap()
+> call.
 
-Ohh, by all means. I was suggesting the same few emails ago. The above
-is just a hint on how to implement the feature on the page allocator
-level rather than hooking into the prep_new_page and add another branch
-to zero memory.
--- 
-Michal Hocko
-SUSE Labs
+We could even disallow mmap() before EINIT done. The way enclave
+management internally works right now is quite robust and completely
+detached from requiring process address space for anything.
+
+/Jarkko
