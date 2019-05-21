@@ -2,135 +2,199 @@ Return-Path: <SRS0=jdUL=TV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0B5C04E87
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 07:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2AAC072B3
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 09:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC5321019
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 07:38:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFA9E21743
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 May 2019 09:27:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqw8oc68"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oSrZMjgc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbfEUHii (ORCPT
+        id S1727458AbfEUJ1H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 May 2019 03:38:38 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46978 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbfEUHii (ORCPT
+        Tue, 21 May 2019 05:27:07 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:51988 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727452AbfEUJ1H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 May 2019 03:38:38 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r7so17270170wrr.13;
-        Tue, 21 May 2019 00:38:37 -0700 (PDT)
+        Tue, 21 May 2019 05:27:07 -0400
+Received: by mail-it1-f194.google.com with SMTP id m3so3808193itl.1
+        for <linux-security-module@vger.kernel.org>; Tue, 21 May 2019 02:27:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5ryJbbZodXACWTO9xzLjJVVDfVukY2SjZqE/RR5ZRyY=;
-        b=nqw8oc680iMAXhEvqTRlU54E1joqR2AvVBhvZfLCL7BBx/cJuYXEsr2tIKWi9s/noe
-         OyAh63/DLuZBsMo4BQnTIiH7d2J3BTTStDZ11VOlWi6H4zlhecsZStdaOK9Y/gUzRgcj
-         7SLMARSMr3T9KqOGhrDNMx8/4OdVO6LE2S1HO/maHyEHUbEHu9/H6GWOkYa6upqiwApD
-         Ys5KRsRW9HudhzP/+KX9j1ouXQsqo0IdByIvhVy2ZWMEtNnWtMiPZA/xxFeFKc56E5zH
-         4RbOk04KtUI/edTwJzfndt6RAb47JGe5IUqvSXD3ZKeEIlLc0NeynN1bNwcoj9tjOb4x
-         xXbw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ePk/LAdsqK2QuSF3FET//AcaRKkYpEyvxNQW6KJ/bws=;
+        b=oSrZMjgc40gkhwPG8kTuosCy4j5ESU04gGMKEkf0GdmeFvHK4617JT9UO0kpDMR5gR
+         uOOnaRMEo13PaYAcntSMUfDsO1tftEMx2SVH5dtzwRZ6vgOQwW0dr9gzzaB+ujwg7opd
+         EPsT8G/RATkTcL1c7CiIhGloBHzUHmXsJDqGH3EQpqcRSaCVptPNybSR1iHnJ/mx8mc0
+         8cTMvG0bjaeLH4g0Q70Mkv8lduNWi0dpP5bZde1ZDfkWa387tqtnscASrXXL6f3EJLYp
+         m0CkwcY5hKt2oJ3XDt9Y+DI5948LulMyWhWGXZiF3SEzx3gpL2tmcsTVHMETUZL+D9FD
+         A+aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5ryJbbZodXACWTO9xzLjJVVDfVukY2SjZqE/RR5ZRyY=;
-        b=rIk/juNHOGO4R6U4lq4A/nw9k3zT15uuE8dvfRE26lmIzylSfIUFjMeIHdbWvO6qwA
-         bK5ggfGExwXI5k2JiThIni+2lFenQxvBFCgUgXQIvOO+HjadmmmMyMz58Z/AxZOUBl/v
-         DTuB830xGjnAc5p8GXBelQETnQWwdHhybnsyRYRX6ztP9dXDs8mb6pgx0pxnMFNJmoWy
-         ako96+pfiB+wOspdqIe7QFi1ZhF6+IKNcRFT+NqNnd+tX9GEYDa2amUI8p+EQkVLX5jP
-         9PTBisJEfGEZ9xL1tejn9ZOUrtnVOhAxWHQuPjkyc56hr3LO6CsRYsN7xJMtoIVp22df
-         UfVQ==
-X-Gm-Message-State: APjAAAXYhszrq01JE45z7uDkgLpfHRnEtB2Wn7uaL7N+/tBtFSCp5R8x
-        EQHvFahiqyCBOmT0Ka4fPr/ML6cnJG4=
-X-Google-Smtp-Source: APXvYqwfLIm49NnDDXdp9jn68Vl7JSM+PaLLfYbbHu9fobHWezVc5/071lrqi5iSH9Bh8drGE7n0mA==
-X-Received: by 2002:a5d:4002:: with SMTP id n2mr13890891wrp.187.1558424316584;
-        Tue, 21 May 2019 00:38:36 -0700 (PDT)
-Received: from [10.43.17.31] (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id a10sm23974617wrm.94.2019.05.21.00.38.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 00:38:36 -0700 (PDT)
-Subject: Re: [RFC 1/1] Add dm verity root hash pkcs7 sig validation.
-To:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        jmorris@namei.org
-References: <20190520215422.23939-1-jaskarankhurana@linux.microsoft.com>
- <20190520215422.23939-2-jaskarankhurana@linux.microsoft.com>
-From:   Milan Broz <gmazyland@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <7e922983-7716-e215-a29b-3154f7afb493@gmail.com>
-Date:   Tue, 21 May 2019 09:38:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ePk/LAdsqK2QuSF3FET//AcaRKkYpEyvxNQW6KJ/bws=;
+        b=mm6fdOhMJVMB87UtiQvW1X7WZ4aIJn3ZoOC0hgmfk6b2ii5v92/KyEkFzdbx4NgPFV
+         VVK7ZEY909m1iNtAzQeYotO+zKj0HsMnIOJwRZuCOOFfrUq/uNDGjK3SA7//oWM4npy0
+         euFjUVx0TW94ENRuHOo34DpnIKrdc95nGaEqB5rQQz1wQGL40le/yrh1F4OG9bkEWuAV
+         ubtcm8oAK/EIen5xcPRPBGrarTfXFCLBshmbHmaUDJxkWIeVLQ+hjNFy/LFQpNUoSu11
+         2SvZLFHRUShm6KIVxoaEAgvDPEZBCtAfR0BuBPTAoonL7ox/YaHPghQW+EAqg7uEb26X
+         ul1A==
+X-Gm-Message-State: APjAAAXMxh3yyT3HNnC+VTdIxs93kQWyIZ1cpXSt4AHTV9aLdAjtXgUF
+        2ygcHz5ruR2oRMltxuLU+HZnTOFYdt70bQFkXROojA==
+X-Google-Smtp-Source: APXvYqym/rMUjcND+RN86l3Cp2nFHg4D9twsmW0gO/li4PAykqhcdAZnjz9F3PvZW+/H3Q4HNsIBGYqgQRX9KjbyFoo=
+X-Received: by 2002:a02:b047:: with SMTP id q7mr8721430jah.2.1558430826102;
+ Tue, 21 May 2019 02:27:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190520215422.23939-2-jaskarankhurana@linux.microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190520205501.177637-1-matthewgarrett@google.com> <20190520205501.177637-5-matthewgarrett@google.com>
+In-Reply-To: <20190520205501.177637-5-matthewgarrett@google.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 21 May 2019 10:26:54 +0100
+Message-ID: <CAKv+Gu8R==HfdkN_DMZs85QGfJPrNoxvkiSOEq7GbJ3tRSNVHw@mail.gmail.com>
+Subject: Re: [PATCH V7 4/4] efi: Attempt to get the TCG2 event log in the boot stub
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        =?UTF-8?Q?Peter_H=C3=BCwe?= <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thiebaud Weksteen <tweek@google.com>,
+        Bartosz Szczepanek <bsz@semihalf.com>,
+        Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 20/05/2019 23:54, Jaskaran Khurana wrote:
-> Adds in-kernel pkcs7 signature checking for the roothash of
-> the dm-verity hash tree.
-> 
-> The verification is to support cases where the roothash is not secured by
-> Trusted Boot, UEFI Secureboot or similar technologies.
-> One of the use cases for this is for dm-verity volumes mounted after boot,
-> the root hash provided during the creation of the dm-verity volume has to
-> be secure and thus in-kernel validation implemented here will be used
-> before we trust the root hash and allow the block device to be created.
-> 
-> The signature being provided for verification must verify the root hash and 
-> must be trusted by the builtin keyring for verification to succeed.
-> 
-> Adds DM_VERITY_VERIFY_ROOTHASH_SIG: roothash verification
-> against the roothash signature file *if* specified, if signature file is
-> specified verification must succeed prior to creation of device mapper 
-> block device.
-> 
-> Adds DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE: roothash signature *must* be
-> specified for all dm verity volumes and verification must succeed prior
-> to creation of device mapper block device.
+On Mon, 20 May 2019 at 21:55, Matthew Garrett <matthewgarrett@google.com> wrote:
+>
+> From: Matthew Garrett <mjg59@google.com>
+>
+> Right now we only attempt to obtain the SHA1-only event log. The
+> protocol also supports a crypto agile log format, which contains digests
+> for all algorithms in use. Attempt to obtain this first, and fall back
+> to obtaining the older format if the system doesn't support it. This is
+> lightly complicated by the event sizes being variable (as we don't know
+> in advance which algorithms are in use), and the interface giving us
+> back a pointer to the start of the final entry rather than a pointer to
+> the end of the log - as a result, we need to parse the final entry to
+> figure out its length in order to know how much data to copy up to the
+> OS.
+>
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
 
-I am not sure this is a good idea. If I understand it correctly, this will
-block creating another dm-verity mappings without PKCS7 signature, and these
-are used in many other environments and applications that could possibly
-run on that system later.
+Provided that this gets a tested-by from Bartosz,
 
-(But I have no idea how to solve it better though :-)
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-...
-
-> +	/* Root hash signature is  a optional parameter*/
-> +	r = verity_verify_root_hash(root_hash_digest_to_validate,
-> +				    strlen(root_hash_digest_to_validate),
-> +				    verify_args.sig,
-> +				    verify_args.sig_size);
-> +	if (r < 0) {
-> +		ti->error = "Root hash verification failed";
-> +		goto bad;
-> +	}
-
-You are sending the PKCS7 signature as a (quite large) binary blob inside the mapping table.
-
-I am not sure if it is possible here (I guess so), but why not put this it kernel keyring
-and then just reference it from mapping table?
-(We use kernel keyring in libcryptsetup already for dm-crypt.)
-
-It will also solve an issue in userspace patch, when you are reading the signature
-file too late (devices can be suspended in that moment, so I would prefer to download
-sig file to keyring in advance, and then just reference it in mapping table).
-
-(I guess you will send merge request for veritysetup userspace part later.)
-
-Milan
+> ---
+>  drivers/firmware/efi/libstub/tpm.c | 50 ++++++++++++++++++++----------
+>  1 file changed, 33 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+> index 5bd04f75d8d6..6b3b507a54eb 100644
+> --- a/drivers/firmware/efi/libstub/tpm.c
+> +++ b/drivers/firmware/efi/libstub/tpm.c
+> @@ -57,7 +57,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
+>
+>  #endif
+>
+> -static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+> +void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+>  {
+>         efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
+>         efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
+> @@ -67,6 +67,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>         unsigned long first_entry_addr, last_entry_addr;
+>         size_t log_size, last_entry_size;
+>         efi_bool_t truncated;
+> +       int version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
+>         void *tcg2_protocol = NULL;
+>
+>         status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
+> @@ -74,14 +75,20 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>         if (status != EFI_SUCCESS)
+>                 return;
+>
+> -       status = efi_call_proto(efi_tcg2_protocol, get_event_log, tcg2_protocol,
+> -                               EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
+> -                               &log_location, &log_last_entry, &truncated);
+> -       if (status != EFI_SUCCESS)
+> -               return;
+> +       status = efi_call_proto(efi_tcg2_protocol, get_event_log,
+> +                               tcg2_protocol, version, &log_location,
+> +                               &log_last_entry, &truncated);
+> +
+> +       if (status != EFI_SUCCESS || !log_location) {
+> +               version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+> +               status = efi_call_proto(efi_tcg2_protocol, get_event_log,
+> +                                       tcg2_protocol, version, &log_location,
+> +                                       &log_last_entry, &truncated);
+> +               if (status != EFI_SUCCESS || !log_location)
+> +                       return;
+> +
+> +       }
+>
+> -       if (!log_location)
+> -               return;
+>         first_entry_addr = (unsigned long) log_location;
+>
+>         /*
+> @@ -96,8 +103,23 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>                  * We need to calculate its size to deduce the full size of
+>                  * the logs.
+>                  */
+> -               last_entry_size = sizeof(struct tcpa_event) +
+> -                       ((struct tcpa_event *) last_entry_addr)->event_size;
+> +               if (version == EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
+> +                       /*
+> +                        * The TCG2 log format has variable length entries,
+> +                        * and the information to decode the hash algorithms
+> +                        * back into a size is contained in the first entry -
+> +                        * pass a pointer to the final entry (to calculate its
+> +                        * size) and the first entry (so we know how long each
+> +                        * digest is)
+> +                        */
+> +                       last_entry_size =
+> +                               __calc_tpm2_event_size((void *)last_entry_addr,
+> +                                                   (void *)(long)log_location,
+> +                                                   false);
+> +               } else {
+> +                       last_entry_size = sizeof(struct tcpa_event) +
+> +                          ((struct tcpa_event *) last_entry_addr)->event_size;
+> +               }
+>                 log_size = log_last_entry - log_location + last_entry_size;
+>         }
+>
+> @@ -114,7 +136,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>
+>         memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+>         log_tbl->size = log_size;
+> -       log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+> +       log_tbl->version = version;
+>         memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
+>
+>         status = efi_call_early(install_configuration_table,
+> @@ -126,9 +148,3 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>  err_free:
+>         efi_call_early(free_pool, log_tbl);
+>  }
+> -
+> -void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+> -{
+> -       /* Only try to retrieve the logs in 1.2 format. */
+> -       efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
+> -}
+> --
+> 2.21.0.1020.gf2820cf01a-goog
+>
