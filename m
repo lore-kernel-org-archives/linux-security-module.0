@@ -2,236 +2,116 @@ Return-Path: <SRS0=vdt1=TW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0FC9C282DE
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 22:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 163C6C282CE
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 22:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8400F20881
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 22:43:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558564983;
-	bh=OOvk4jhd4RJaf/SM5z16pjS8vJ3csmmntOLya71ImTY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=VVNmeUMXmXmLXaGvHEA7kdoRAKpCxAsK6ZFbAW9RBb4bNyqS7Rr0ErhyVWx4KqX4U
-	 xyxitDYP+WwIOsV+4Fqn65tW3oXOMpHi8ySTQNQZpEDK6W5uMg4MFnXCzOJ6HJXf4a
-	 NynZwFAQNUYglKiHwZCet1jB8ofRBH1P226cYLHw=
+	by mail.kernel.org (Postfix) with ESMTP id BF18020881
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 22:46:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbfEVWnC (ORCPT
+        id S1727365AbfEVWqF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 May 2019 18:43:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58208 "EHLO mail.kernel.org"
+        Wed, 22 May 2019 18:46:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60350 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728050AbfEVWnB (ORCPT
+        id S1727121AbfEVWqF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 May 2019 18:43:01 -0400
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 22 May 2019 18:46:05 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE89D21874
-        for <linux-security-module@vger.kernel.org>; Wed, 22 May 2019 22:42:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558564980;
-        bh=OOvk4jhd4RJaf/SM5z16pjS8vJ3csmmntOLya71ImTY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fkg4CzRt3KfZIIuwZhzbASPWvQne1uPmtkXgLmrH+CuFZiOEi0zLUesjMgrKV+ora
-         88HzrAaito+YpfExzVyeervxBjvfQAK10ve1IiDm6qcCvmuw+Y0q2xdQXcej1zFFpV
-         umLRTRjkuW63RJy2VgP3ARN7C7MQfYfiO48A6VvQ=
-Received: by mail-wm1-f48.google.com with SMTP id f204so3805259wme.0
-        for <linux-security-module@vger.kernel.org>; Wed, 22 May 2019 15:42:59 -0700 (PDT)
-X-Gm-Message-State: APjAAAVLomzwVAmEYVV7IWhiWqf9zXKdMxnB1PUzvo+duQhjtSkmPVC5
-        j1GJn1UDV01UDuspSDDVPXUc5Zgr5cGqGS+UkYK+ng==
-X-Google-Smtp-Source: APXvYqzYdSH+GPYlXRlgnwW11c6pqXd9fEL34pkzWbjIju7c8aUW1zezZ1OS5qIiYrcgg2q8tcuDWDAEMZ3zzBaU0WE=
-X-Received: by 2002:a1c:4107:: with SMTP id o7mr9456931wma.122.1558564978244;
- Wed, 22 May 2019 15:42:58 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E4E03058838;
+        Wed, 22 May 2019 22:46:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-142.rdu2.redhat.com [10.10.121.142])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B8516604CD;
+        Wed, 22 May 2019 22:46:03 +0000 (UTC)
+Subject: [PATCH 0/6] keys: request_key() improvements(vspace)s
+From:   David Howells <dhowells@redhat.com>
+To:     keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 22 May 2019 23:46:02 +0100
+Message-ID: <155856516286.11737.11196637682919902718.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <20190515013031.GF1977@linux.intel.com> <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
- <20190517000331.GD11204@linux.intel.com> <CALCETrWxw7xALE0kmiYBzomaSMAeXEVq-7rX7xeqPtDPeDQiCA@mail.gmail.com>
- <20190520114105.GD27805@linux.intel.com> <20190521151836.GA4843@linux.intel.com>
- <20190521155140.GE22089@linux.intel.com> <20190522132022.GC31176@linux.intel.com>
- <20190522132227.GD31176@linux.intel.com> <0e183cce-c4b4-0e10-dbb6-bd81bea58b66@tycho.nsa.gov>
- <20190522153836.GA24833@linux.intel.com>
-In-Reply-To: <20190522153836.GA24833@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 22 May 2019 15:42:45 -0700
-X-Gmail-Original-Message-ID: <CALCETrUS8xyF1JJmQs18BGTDhPRXf+s81BkMZCZwmY73r7M+zg@mail.gmail.com>
-Message-ID: <CALCETrUS8xyF1JJmQs18BGTDhPRXf+s81BkMZCZwmY73r7M+zg@mail.gmail.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 22 May 2019 22:46:05 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 22, 2019 at 8:38 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Wed, May 22, 2019 at 09:56:30AM -0400, Stephen Smalley wrote:
-> > On 5/22/19 9:22 AM, Jarkko Sakkinen wrote:
-> > >On Wed, May 22, 2019 at 04:20:22PM +0300, Jarkko Sakkinen wrote:
-> > >>On Tue, May 21, 2019 at 08:51:40AM -0700, Sean Christopherson wrote:
-> > >>>Except that mmap() is more or less required to guarantee that ELRANGE
-> > >>>established by ECREATE is available.  And we want to disallow mmap() as
-> > >>>soon as the first EADD is done so that userspace can't remap the enclave's
-> > >>>VMAs via munmap()->mmap() and gain execute permissions to pages that were
-> > >>>EADD'd as NX.
-> > >>
-> > >>We don't want to guarantee such thing and it is not guaranteed. It does
-> > >>not fit at all to the multi process work done. Enclaves are detached
-> > >>from any particular process addresse spaces. It is responsibility of
-> > >>process to open windows to them.
-> > >>
-> > >>That would be completely against work that we've done lately.
-> > >
-> > >Example use case: you have a process that just constructs an enclave
-> > >and sends it to another process or processes for use. The constructor
-> > >process could have basically anything on that range. This was the key
-> > >goal of the fd based enclave work.
-> >
-> > What exactly happens in the constructor versus the recipient processes?
-> > Which process performs each of the necessary open(), mmap(), and ioctl()
-> > calls for setting up the enclave?  Can you provide a high level overview of
-> > the sequence of userspace calls by the constructor and by the recipient
-> > similar to what Sean showed earlier for just a single process?
->
-> Hmm, what we had talked about was allowing the SGX ioctls to work without
-> an associated VMA, with the end goal of letting userspace restrict access
-> to /dev/sgx/enclave.   Very roughly...
->
-> Enclave Owner:
->
->   connect(builder, ...);
->   send(builder, "/home/sean/path/to/my/enclave");
->
->   recv(builder, &enclave_fd);
->
->   for_each_chunk {
->           mmap(enclave_addr + offset, size, ..., MAP_SHARED, enclave_fd, 0);
->   }
->
->
-> Enclave Builder:
->
->   recv(sock, &enclave_path);
->
->   source_fd = open(enclave_path, O_RDONLY);
->   for_each_chunk {
->           <hand waving - mmap()/mprotect() the enclave file into regular memory>
->   }
->
->   enclave_fd = open("/dev/sgx/enclave", O_RDWR);
->
->   ioctl(enclave_fd, ENCLAVE_CREATE, ...);
->   for_each_chunk {
->       struct sgx_enclave_add ioctlargs = {
->           .offset = chunk.offset,
->           .source = chunk.addr,
->           .size   = chunk.size,
->           .type   = chunk.type, /* SGX specific metadata */
->       }
->       ioctl(fd, ENCLAVE_ADD, &ioctlargs); /* modifies enclave's VMAs */
->   }
->   ioctl(enclave_fd, ENCLAVE_INIT, ...);
->
->   write(sock, enclave_fd);
->
->
-> But the above flow is flawed because there'a catch-22: ENCLAVE_ECREATE
-> takes the virtual address of the enclave, but in the above flow that's
-> not established until "mmap(..., enclave_fd)".  And because an enclave's
-> virtual range needs to be naturally aligned (hardware requirements), the
-> enclave owner would need to do something like:
->
->   source_fd = open("/home/sean/path/to/my/enclave", O_RDONLY);
->   size = <parse size from source_fd>
->
->   enclave_range = mmap(NULL, size*2, PROT_READ, ???, NULL, 0);
->   enclave_addr = (enclave_range + (size - 1)) & ~(size - 1);
->
->   connect(builder, ...);
->   send(builder, {"/home/sean/path/to/my/enclave", enclave_addr});
->
->   recv(builder, &enclave_fd);
->
->   munmap(enclave_range);
->
->   for_each_chunk {
->       addr = mmap(enclave_addr + c.offset, c.size, ..., MAP_SHARED, enclave_fd, 0);
->       if (addr != enclave_addr + c.offset)
->            exit(1);
->   }
->
-> And that straight up doesn't work with the v20 driver because mmap() with
-> the enclave_fd will run through sgx_get_unmapped_area(), which also does
-> the natural alignment adjustments (the idea being that mmap() is mapping
-> the entire enclave).  E.g. mmap() will map the wrong address if the offset
-> of a chunk is less than its size due to the driver adjusting the address.
 
-That presumably needs to change.
+Here's a fix and some improvements for request_key() intended for the next
+merge window:
 
-Are we entirely missing an API to allocate a naturally aligned VA
-range?  That's kind of annoying.
+ (1) Fix the lack of a Link permission check on a key found by request_key(),
+     thereby enabling request_key() to link keys that don't grant this
+     permission to the target keyring (which must still grant Write
+     permission).
 
->
-> Eliminating sgx_get_unmapped_area() means userspace is once again on the
-> hook for naturally aligning the enclave, which is less than desirable.
->
-> Looking back at the original API discussions around a builder process[1],
-> we never fleshed out the end-to-end flow.  While having a builder process
-> *sounds* reasonable, in practice it adds a lot of complexity without
-> providing much in the way of added security.  E.g. in addition to the
-> above mmap() issues, since the order of EADDs affects the enclave
-> measurement, the enclave owner would need to communicate the exact steps
-> to build the enclave, or the builder would need a priori knowledge of the
-> enclave format.
->
-> Userspace can still restrict access to /dev/sgx/enclave, e.g. by having a
-> daemon that requires additional credentials to obtain a new enclave_fd.
-> So AFAICT, the only benefit to having a dedicated builder is that it can
-> do its own whitelisting of enclaves, but since we're trending towards
-> supporting whitelisting enclaves in the kernel, e.g. via sigstruct,
-> whitelisting in userspace purely in userspace also provides marginal value.
->
-> TL;DR: Requiring VMA backing to build an enclave seems reasonable and sane.
+     Note that the key must be in the caller's keyrings already to be found.
 
-This isn't necessarily a problem, but we pretty much have to use
-mprotect() then.
+ (2) Invalidate used request_key authentication keys rather than revoking
+     them, so that they get cleaned up immediately rather than hanging around
+     till the expiry time is passed.
 
-Maybe the semantics could just be that mmap() on the SGX device gives
-natural alignment, but that there is no actual constraint enforced by
-the driver as to whether mmap() happens before or after ECREATE.
-After all, it's *ugly* for user code to reserve its address range with
-an awkward giant mmap(), there's nothing fundamentally wrong with it.
+ (3) Move the RCU locks outwards from the keyring search functions so that a
+     request_key_rcu() can be provided.  This can be called in RCU mode, so it
+     can't sleep and can't upcall - but it can be called from LOOKUP_RCU
+     pathwalk mode.
 
-As far as I know from this whole discussion, we still haven't come up
-with any credible way to avoid tracking, per enclave page, whether
-that page came from unmodified PROT_EXEC memory.
+ (4) Cache the latest positive result of request_key*() temporarily in
+     task_struct so that filesystems that make a lot of request_key() calls
+     during pathwalk can take advantage of it to avoid having to redo the
+     searching.
+
+     It is assumed that the key just found is unlikely to be superseded
+     between steps in an RCU pathwalk.
+
+     Note that the cleanup of the cache is done on TIF_NOTIFY_RESUME, just
+     before userspace resumes, and on exit.
+
+I've included, for illustration, two patches to the in-kernel AFS filesystem
+to make them use this.
+
+The patches can be found on the following branch:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-request
+
+and this depends on keys-misc.  Note that the AFS patches aren't on this branch.
+
+David
+---
+David Howells (6):
+      keys: Fix request_key() lack of Link perm check on found key
+      keys: Invalidate used request_key authentication keys
+      keys: Move the RCU locks outwards from the keyring search functions
+      keys: Cache result of request_key*() temporarily in task_struct
+      afs: Provide an RCU-capable key lookup
+      afs: Support RCU pathwalk
+
+
+ Documentation/security/keys/core.rst        |    8 ++
+ Documentation/security/keys/request-key.rst |   11 +++
+ fs/afs/dir.c                                |   54 ++++++++++++++
+ fs/afs/internal.h                           |    1 
+ fs/afs/security.c                           |  102 +++++++++++++++++++++++----
+ include/keys/request_key_auth-type.h        |    1 
+ include/linux/key.h                         |    3 +
+ include/linux/sched.h                       |    5 +
+ include/linux/tracehook.h                   |    5 +
+ kernel/cred.c                               |    9 ++
+ security/keys/internal.h                    |    6 +-
+ security/keys/key.c                         |    4 +
+ security/keys/keyring.c                     |   16 ++--
+ security/keys/proc.c                        |    4 +
+ security/keys/process_keys.c                |   41 +++++------
+ security/keys/request_key.c                 |   97 +++++++++++++++++++++++++-
+ security/keys/request_key_auth.c            |   60 ++++++++++------
+ 17 files changed, 346 insertions(+), 81 deletions(-)
+
