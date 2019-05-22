@@ -2,206 +2,95 @@ Return-Path: <SRS0=vdt1=TW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF8AC282CE
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 17:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77560C282CE
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 17:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 922C4204EC
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 17:22:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EB30204EC
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 17:22:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HavaLqMq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730046AbfEVRWj (ORCPT
+        id S1729770AbfEVRWq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 May 2019 13:22:39 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32961 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727365AbfEVRWj (ORCPT
+        Wed, 22 May 2019 13:22:46 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41867 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727365AbfEVRWq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 May 2019 13:22:39 -0400
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 05CF417966E92720806F;
-        Wed, 22 May 2019 18:22:37 +0100 (IST)
-Received: from [10.204.65.201] (10.204.65.201) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 22 May
- 2019 18:22:31 +0100
-Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-To:     <hpa@zytor.com>, Arvind Sankar <nivedita@alum.mit.edu>
-CC:     <viro@zeniv.linux.org.uk>, <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
-        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
-        <takondra@cisco.com>, <kamensky@cisco.com>, <arnd@arndb.de>,
-        <rob@landley.net>, <james.w.mcmechan@gmail.com>,
-        <niveditas98@gmail.com>
-References: <20190517165519.11507-1-roberto.sassu@huawei.com>
- <20190517165519.11507-3-roberto.sassu@huawei.com>
- <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
- <20190517210219.GA5998@rani.riverdale.lan>
- <d48f35a1-aab1-2f20-2e91-5e81a84b107f@zytor.com>
- <20190517221731.GA11358@rani.riverdale.lan>
- <7bdca169-7a01-8c55-40e4-a832e876a0e5@huawei.com>
- <9C5B9F98-2067-43D3-B149-57613F38DCD4@zytor.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <2ceb1f01-88fb-d383-daee-e38348a2f075@huawei.com>
-Date:   Wed, 22 May 2019 19:22:37 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 22 May 2019 13:22:46 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f12so1385033plt.8
+        for <linux-security-module@vger.kernel.org>; Wed, 22 May 2019 10:22:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JYjbC7hdX1qPhVPxWx241ZqaXBcur6NUwVbERe4GTis=;
+        b=HavaLqMq659vRLmLKr9/odEDzscgAqvrRMpt76u1RjvLNt7XEB7gTiJ569H4/N0Qd1
+         Sm7b5Uauewp7skm7m/6LsBgTWtewvJF8JqLhfgKxnPY+CnzmKMeDISaLJ5T7hekv6b+k
+         B6Cbjz+k+HwWbKUws2MgY3Bvv2mDE9vNzD3bk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JYjbC7hdX1qPhVPxWx241ZqaXBcur6NUwVbERe4GTis=;
+        b=LC8uPbJUJQGNQkmoMOVC59lxGf/G53DkejIsTnqw2B3iUklXIN2Z/SQqOQ49LPrd2d
+         mT7lL77pbzQLZpl5mGH/R5XHcEZ37pnKmmbDEawuoGWK3Kj8FEjJweJeNSuaf9ylGJBV
+         vx+szKN32KoVo7YZe2kWmcsu9HgiuLAlerKLNuSdXZwgGi7eweooNPW5vANZdD0NpWW6
+         bafwZEC2WOhLbzLYtU6JZfIQeLemgTDZq+QECcOpKsP/3mnObN3LRYm9esxomiCgNRYx
+         rqkdBB5hNnEIdA2YrtcyZX9YnA8xx5mx8flhIyBfn78W9EZFluYRuwXa8okq3lFSbfN3
+         0SNw==
+X-Gm-Message-State: APjAAAU0xlfaC3vTSW3vaJuurLUdbAwRsR/os0xdOXBAIDoNwmNLIIP5
+        q/8W83lzVmXnjsNhE1QUp0PpDA==
+X-Google-Smtp-Source: APXvYqwnJ4c281AuY2vDRkOCmVt4gMISqMQwDad425rHf/Bi2XTxah814hhJF2oMVDFGZP0AlE0BkQ==
+X-Received: by 2002:a17:902:b095:: with SMTP id p21mr40185400plr.270.1558545765865;
+        Wed, 22 May 2019 10:22:45 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:9e10:971c:f11c:a814])
+        by smtp.gmail.com with ESMTPSA id j5sm32912825pfa.15.2019.05.22.10.22.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 May 2019 10:22:45 -0700 (PDT)
+From:   Micah Morton <mortonm@chromium.org>
+To:     jmorris@namei.org, linux-security-module@vger.kernel.org
+Cc:     Micah Morton <mortonm@chromium.org>
+Subject: [PATCH] LSM: Update MAINTAINERS file for SafeSetID LSM.
+Date:   Wed, 22 May 2019 10:22:41 -0700
+Message-Id: <20190522172241.192669-1-mortonm@chromium.org>
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 MIME-Version: 1.0
-In-Reply-To: <9C5B9F98-2067-43D3-B149-57613F38DCD4@zytor.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.201]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/22/2019 6:17 PM, hpa@zytor.com wrote:
-> On May 20, 2019 2:39:46 AM PDT, Roberto Sassu <roberto.sassu@huawei.com> wrote:
->> On 5/18/2019 12:17 AM, Arvind Sankar wrote:
->>> On Fri, May 17, 2019 at 02:47:31PM -0700, H. Peter Anvin wrote:
->>>> On 5/17/19 2:02 PM, Arvind Sankar wrote:
->>>>> On Fri, May 17, 2019 at 01:18:11PM -0700, hpa@zytor.com wrote:
->>>>>>
->>>>>> Ok... I just realized this does not work for a modular initramfs,
->> composed at load time from multiple files, which is a very real
->> problem. Should be easy enough to deal with: instead of one large file,
->> use one companion file per source file, perhaps something like
->> filename..xattrs (suggesting double dots to make it less likely to
->> conflict with a "real" file.) No leading dot, as it makes it more
->> likely that archivers will sort them before the file proper.
->>>>> This version of the patch was changed from the previous one exactly
->> to deal with this case --
->>>>> it allows for the bootloader to load multiple initramfs archives,
->> each
->>>>> with its own .xattr-list file, and to have that work properly.
->>>>> Could you elaborate on the issue that you see?
->>>>>
->>>>
->>>> Well, for one thing, how do you define "cpio archive", each with its
->> own
->>>> .xattr-list file? Second, that would seem to depend on the ordering,
->> no,
->>>> in which case you depend critically on .xattr-list file following
->> the
->>>> files, which most archivers won't do.
->>>>
->>>> Either way it seems cleaner to have this per file; especially if/as
->> it
->>>> can be done without actually mucking up the format.
->>>>
->>>> I need to run, but I'll post a more detailed explanation of what I
->> did
->>>> in a little bit.
->>>>
->>>> 	-hpa
->>>>
->>> Not sure what you mean by how do I define it? Each cpio archive will
->>> contain its own .xattr-list file with signatures for the files within
->>> it, that was the idea.
->>>
->>> You need to review the code more closely I think -- it does not
->> depend
->>> on the .xattr-list file following the files to which it applies.
->>>
->>> The code first extracts .xattr-list as though it was a regular file.
->> If
->>> a later dupe shows up (presumably from a second archive, although the
->>> patch will actually allow a second one in the same archive), it will
->>> then process the existing .xattr-list file and apply the attributes
->>> listed within it. It then will proceed to read the second one and
->>> overwrite the first one with it (this is the normal behaviour in the
->>> kernel cpio parser). At the end once all the archives have been
->>> extracted, if there is an .xattr-list file in the rootfs it will be
->>> parsed (it would've been the last one encountered, which hasn't been
->>> parsed yet, just extracted).
->>>
->>> Regarding the idea to use the high 16 bits of the mode field in
->>> the header that's another possibility. It would just require
->> additional
->>> support in the program that actually creates the archive though,
->> which
->>> the current patch doesn't.
->>
->> Yes, for adding signatures for a subset of files, no changes to the ram
->> disk generator are necessary. Everything is done by a custom module. To
->> support a generic use case, it would be necessary to modify the
->> generator to execute getfattr and the awk script after files have been
->> placed in the temporary directory.
->>
->> If I understood the new proposal correctly, it would be task for cpio
->> to
->> read file metadata after the content and create a new record for each
->> file with mode 0x18000, type of metadata encoded in the file name and
->> metadata as file content. I don't know how easy it would be to modify
->> cpio. Probably the amount of changes would be reasonable.
->>
->> The kernel will behave in a similar way. It will call do_readxattrs()
->> in
->> do_copy() for each file. Since the only difference between the current
->> and the new proposal would be two additional calls to do_readxattrs()
->> in
->> do_name() and unpack_to_rootfs(), maybe we could support both.
->>
->> Roberto
-> 
-> The nice thing with explicit metadata is that it doesn't have to contain the filename per se, and each file is self-contained. There is a reason why each cpio header starts with the magic number: each cpio record is formally independent and can be processed in isolation.  The TRAILER!!! thing is a huge wart in the format, although in practice TRAILER!!! always has a mode of 0 and so can be distinguished from an actual file.
-> 
-> The use of mode 0x18000 for metadata allows for optional backwards compatibility for extraction; for encoding this can be handled with very simple postprocessing.
-> 
-> So my suggestion would be to have mode 0x18000 indicate extended file metadata, with the filename of the form:
-> 
-> optional_filename!XXXXX!
-> 
-> ... where XXXXX indicates the type of metadata (e.g. !XATTR!). The optional_filename prefix allows an unaware decoder to extract to a well-defined name; simple postprocessing would be able to either remove (for size) or add (for compatibility) this prefix. It would be an error for this prefix, if present, to not match the name of the previous file.
+This is in preparation for SafeSetID to be maintained in its own tree,
+rather than going via the security tree.
 
-Actually, I defined '..metadata..' as special name to indicate that the
-file contains metadata. Then, the content of the file is a set of:
+Signed-off-by: Micah Morton <mortonm@chromium.org>
+---
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-struct metadata_hdr {
-         char c_size[8];     /* total size including c_size field */
-         char c_version;     /* header version */
-         char c_type;        /* metadata type */
-         char c_metadata[];  /* metadata */
-} __packed;
-
-init/initramfs.c now has a specific parser for c_type. Currently, I
-implemented a parser for xattrs, which expects data in the format:
-
-<xattr #N name>\0<xattr #N value>
-
-I checked if it is possible to use bit 17:16 to identify files with
-metadata, but both the cpio and the kernel use unsigned short.
-
-I already modified gen_init_cpio and cpio. I modify at run-time the list
-of files to be included in the image by adding a temporary file, that
-each time is set with the xattrs of the previously processed file.
-
-The output of cpio -t looks like:
-
---
-.
-..metadata..
-bin
-..metadata..
-dev
-..metadata..
-dev/console
-..metadata..
---
-
-Would it be ok? If you prefer that I add the format to the file name or
-you/anyone has a comment about this proposal, please let me know so that
-I make the changes before sending a new version of the patch set.
-
-Thanks
-
-Roberto
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3e5a5d263f29..0fcd34e64fa7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13561,6 +13561,12 @@ F:	drivers/media/common/saa7146/
+ F:	drivers/media/pci/saa7146/
+ F:	include/media/drv-intf/saa7146*
+ 
++SAFESETID SECURITY MODULE
++M:	Micah Morton <mortonm@chromium.org>
++S:	Supported
++F:	security/safesetid/
++F:	Documentation/admin-guide/LSM/SafeSetID.rst
++
+ SAMSUNG AUDIO (ASoC) DRIVERS
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ M:	Sangbeom Kim <sbkim73@samsung.com>
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+2.21.0.1020.gf2820cf01a-goog
+
