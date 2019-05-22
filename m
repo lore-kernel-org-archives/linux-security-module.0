@@ -2,201 +2,183 @@ Return-Path: <SRS0=vdt1=TW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EF4C282CE
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 15:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BAF9C282CE
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 16:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D200620881
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 15:38:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36FA720868
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 May 2019 16:17:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="uiMj7ouD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729430AbfEVPii (ORCPT
+        id S1729986AbfEVQRv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 May 2019 11:38:38 -0400
-Received: from mga03.intel.com ([134.134.136.65]:48153 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728466AbfEVPii (ORCPT
+        Wed, 22 May 2019 12:17:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48639 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728638AbfEVQRu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 May 2019 11:38:38 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 May 2019 08:38:37 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga001.jf.intel.com with ESMTP; 22 May 2019 08:38:36 -0700
-Date:   Wed, 22 May 2019 08:38:36 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190522153836.GA24833@linux.intel.com>
-References: <20190515013031.GF1977@linux.intel.com>
- <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
- <20190517000331.GD11204@linux.intel.com>
- <CALCETrWxw7xALE0kmiYBzomaSMAeXEVq-7rX7xeqPtDPeDQiCA@mail.gmail.com>
- <20190520114105.GD27805@linux.intel.com>
- <20190521151836.GA4843@linux.intel.com>
- <20190521155140.GE22089@linux.intel.com>
- <20190522132022.GC31176@linux.intel.com>
- <20190522132227.GD31176@linux.intel.com>
- <0e183cce-c4b4-0e10-dbb6-bd81bea58b66@tycho.nsa.gov>
+        Wed, 22 May 2019 12:17:50 -0400
+Received: from [IPv6:2607:fb90:3635:972:9c5a:d1ae:8e8f:2fe7] ([IPv6:2607:fb90:3635:972:9c5a:d1ae:8e8f:2fe7])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x4MGHSn03691732
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Wed, 22 May 2019 09:17:30 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x4MGHSn03691732
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1558541852;
+        bh=B44ya3o9B6nqq6f/Jtd+b4WU9Xx+2DYOyzI8sYcDzls=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=uiMj7ouDv0CJJx/tuZx6jO74+sdp1REU90ooSB5Z2URjHChSQMIkPIXIgJMaLqcHa
+         bgEb0yw6vbjDRwDz/Zr6gDDaS+dL3mG1tPZRFlc022fMDsV52ZkgTF1ddn0xI3z4Em
+         HuOBuls8ENM4Tcuc7zIgk48oTAtnymU9JL0g09dmlanScR1N1Gz1kpJ5cDziwPUff0
+         mfjYAwaA8ljFJzgZOFWvwzAtpRjKvEfVBrDqv/QKMMt6KYfHWtAD2Cvqt038kxD+WO
+         0nGzFStMwoRl+WNfWH7w8+nXamRR8ZYWrNivWRM6y53fGfep7+6iEaik56YK0htho6
+         oOVdD/InCq6wA==
+Date:   Wed, 22 May 2019 09:17:24 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <7bdca169-7a01-8c55-40e4-a832e876a0e5@huawei.com>
+References: <20190517165519.11507-1-roberto.sassu@huawei.com> <20190517165519.11507-3-roberto.sassu@huawei.com> <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com> <20190517210219.GA5998@rani.riverdale.lan> <d48f35a1-aab1-2f20-2e91-5e81a84b107f@zytor.com> <20190517221731.GA11358@rani.riverdale.lan> <7bdca169-7a01-8c55-40e4-a832e876a0e5@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e183cce-c4b4-0e10-dbb6-bd81bea58b66@tycho.nsa.gov>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>
+CC:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com, arnd@arndb.de,
+        rob@landley.net, james.w.mcmechan@gmail.com, niveditas98@gmail.com
+From:   hpa@zytor.com
+Message-ID: <9C5B9F98-2067-43D3-B149-57613F38DCD4@zytor.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 22, 2019 at 09:56:30AM -0400, Stephen Smalley wrote:
-> On 5/22/19 9:22 AM, Jarkko Sakkinen wrote:
-> >On Wed, May 22, 2019 at 04:20:22PM +0300, Jarkko Sakkinen wrote:
-> >>On Tue, May 21, 2019 at 08:51:40AM -0700, Sean Christopherson wrote:
-> >>>Except that mmap() is more or less required to guarantee that ELRANGE
-> >>>established by ECREATE is available.  And we want to disallow mmap() as
-> >>>soon as the first EADD is done so that userspace can't remap the enclave's
-> >>>VMAs via munmap()->mmap() and gain execute permissions to pages that were
-> >>>EADD'd as NX.
-> >>
-> >>We don't want to guarantee such thing and it is not guaranteed. It does
-> >>not fit at all to the multi process work done. Enclaves are detached
-> >>from any particular process addresse spaces. It is responsibility of
-> >>process to open windows to them.
-> >>
-> >>That would be completely against work that we've done lately.
-> >
-> >Example use case: you have a process that just constructs an enclave
-> >and sends it to another process or processes for use. The constructor
-> >process could have basically anything on that range. This was the key
-> >goal of the fd based enclave work.
-> 
-> What exactly happens in the constructor versus the recipient processes?
-> Which process performs each of the necessary open(), mmap(), and ioctl()
-> calls for setting up the enclave?  Can you provide a high level overview of
-> the sequence of userspace calls by the constructor and by the recipient
-> similar to what Sean showed earlier for just a single process?
+On May 20, 2019 2:39:46 AM PDT, Roberto Sassu <roberto=2Esassu@huawei=2Ecom=
+> wrote:
+>On 5/18/2019 12:17 AM, Arvind Sankar wrote:
+>> On Fri, May 17, 2019 at 02:47:31PM -0700, H=2E Peter Anvin wrote:
+>>> On 5/17/19 2:02 PM, Arvind Sankar wrote:
+>>>> On Fri, May 17, 2019 at 01:18:11PM -0700, hpa@zytor=2Ecom wrote:
+>>>>>
+>>>>> Ok=2E=2E=2E I just realized this does not work for a modular initram=
+fs,
+>composed at load time from multiple files, which is a very real
+>problem=2E Should be easy enough to deal with: instead of one large file,
+>use one companion file per source file, perhaps something like
+>filename=2E=2Exattrs (suggesting double dots to make it less likely to
+>conflict with a "real" file=2E) No leading dot, as it makes it more
+>likely that archivers will sort them before the file proper=2E
+>>>> This version of the patch was changed from the previous one exactly
+>to deal with this case --
+>>>> it allows for the bootloader to load multiple initramfs archives,
+>each
+>>>> with its own =2Exattr-list file, and to have that work properly=2E
+>>>> Could you elaborate on the issue that you see?
+>>>>
+>>>
+>>> Well, for one thing, how do you define "cpio archive", each with its
+>own
+>>> =2Exattr-list file? Second, that would seem to depend on the ordering,
+>no,
+>>> in which case you depend critically on =2Exattr-list file following
+>the
+>>> files, which most archivers won't do=2E
+>>>
+>>> Either way it seems cleaner to have this per file; especially if/as
+>it
+>>> can be done without actually mucking up the format=2E
+>>>
+>>> I need to run, but I'll post a more detailed explanation of what I
+>did
+>>> in a little bit=2E
+>>>
+>>> 	-hpa
+>>>
+>> Not sure what you mean by how do I define it? Each cpio archive will
+>> contain its own =2Exattr-list file with signatures for the files within
+>> it, that was the idea=2E
+>>=20
+>> You need to review the code more closely I think -- it does not
+>depend
+>> on the =2Exattr-list file following the files to which it applies=2E
+>>=20
+>> The code first extracts =2Exattr-list as though it was a regular file=
+=2E
+>If
+>> a later dupe shows up (presumably from a second archive, although the
+>> patch will actually allow a second one in the same archive), it will
+>> then process the existing =2Exattr-list file and apply the attributes
+>> listed within it=2E It then will proceed to read the second one and
+>> overwrite the first one with it (this is the normal behaviour in the
+>> kernel cpio parser)=2E At the end once all the archives have been
+>> extracted, if there is an =2Exattr-list file in the rootfs it will be
+>> parsed (it would've been the last one encountered, which hasn't been
+>> parsed yet, just extracted)=2E
+>>=20
+>> Regarding the idea to use the high 16 bits of the mode field in
+>> the header that's another possibility=2E It would just require
+>additional
+>> support in the program that actually creates the archive though,
+>which
+>> the current patch doesn't=2E
+>
+>Yes, for adding signatures for a subset of files, no changes to the ram
+>disk generator are necessary=2E Everything is done by a custom module=2E =
+To
+>support a generic use case, it would be necessary to modify the
+>generator to execute getfattr and the awk script after files have been
+>placed in the temporary directory=2E
+>
+>If I understood the new proposal correctly, it would be task for cpio
+>to
+>read file metadata after the content and create a new record for each
+>file with mode 0x18000, type of metadata encoded in the file name and
+>metadata as file content=2E I don't know how easy it would be to modify
+>cpio=2E Probably the amount of changes would be reasonable=2E
+>
+>The kernel will behave in a similar way=2E It will call do_readxattrs()
+>in
+>do_copy() for each file=2E Since the only difference between the current
+>and the new proposal would be two additional calls to do_readxattrs()
+>in
+>do_name() and unpack_to_rootfs(), maybe we could support both=2E
+>
+>Roberto
 
-Hmm, what we had talked about was allowing the SGX ioctls to work without
-an associated VMA, with the end goal of letting userspace restrict access
-to /dev/sgx/enclave.   Very roughly...
+The nice thing with explicit metadata is that it doesn't have to contain t=
+he filename per se, and each file is self-contained=2E There is a reason wh=
+y each cpio header starts with the magic number: each cpio record is formal=
+ly independent and can be processed in isolation=2E  The TRAILER!!! thing i=
+s a huge wart in the format, although in practice TRAILER!!! always has a m=
+ode of 0 and so can be distinguished from an actual file=2E
 
-Enclave Owner:
+The use of mode 0x18000 for metadata allows for optional backwards compati=
+bility for extraction; for encoding this can be handled with very simple po=
+stprocessing=2E
 
-  connect(builder, ...);
-  send(builder, "/home/sean/path/to/my/enclave");
+So my suggestion would be to have mode 0x18000 indicate extended file meta=
+data, with the filename of the form:
 
-  recv(builder, &enclave_fd);
+optional_filename!XXXXX!
 
-  for_each_chunk {
-          mmap(enclave_addr + offset, size, ..., MAP_SHARED, enclave_fd, 0);
-  }
-  
+=2E=2E=2E where XXXXX indicates the type of metadata (e=2Eg=2E !XATTR!)=2E=
+ The optional_filename prefix allows an unaware decoder to extract to a wel=
+l-defined name; simple postprocessing would be able to either remove (for s=
+ize) or add (for compatibility) this prefix=2E It would be an error for thi=
+s prefix, if present, to not match the name of the previous file=2E
 
-Enclave Builder:
-
-  recv(sock, &enclave_path);
-
-  source_fd = open(enclave_path, O_RDONLY);
-  for_each_chunk {
-          <hand waving - mmap()/mprotect() the enclave file into regular memory>
-  }
-
-  enclave_fd = open("/dev/sgx/enclave", O_RDWR);
-
-  ioctl(enclave_fd, ENCLAVE_CREATE, ...);
-  for_each_chunk {
-      struct sgx_enclave_add ioctlargs = {
-          .offset = chunk.offset,
-          .source = chunk.addr,
-          .size   = chunk.size,
-          .type   = chunk.type, /* SGX specific metadata */
-      }
-      ioctl(fd, ENCLAVE_ADD, &ioctlargs); /* modifies enclave's VMAs */
-  }
-  ioctl(enclave_fd, ENCLAVE_INIT, ...);
-
-  write(sock, enclave_fd);
+I do agree that the delayed processing of an =2Exattr-list as you describe=
+ ought to work even with a modular initramfs=2E
 
 
-But the above flow is flawed because there'a catch-22: ENCLAVE_ECREATE
-takes the virtual address of the enclave, but in the above flow that's
-not established until "mmap(..., enclave_fd)".  And because an enclave's
-virtual range needs to be naturally aligned (hardware requirements), the
-enclave owner would need to do something like:
-
-  source_fd = open("/home/sean/path/to/my/enclave", O_RDONLY);
-  size = <parse size from source_fd>
-  
-  enclave_range = mmap(NULL, size*2, PROT_READ, ???, NULL, 0);
-  enclave_addr = (enclave_range + (size - 1)) & ~(size - 1);
-
-  connect(builder, ...);
-  send(builder, {"/home/sean/path/to/my/enclave", enclave_addr});
-
-  recv(builder, &enclave_fd);
-
-  munmap(enclave_range);
-
-  for_each_chunk {
-      addr = mmap(enclave_addr + c.offset, c.size, ..., MAP_SHARED, enclave_fd, 0);
-      if (addr != enclave_addr + c.offset)
-           exit(1);
-  } 
-
-And that straight up doesn't work with the v20 driver because mmap() with
-the enclave_fd will run through sgx_get_unmapped_area(), which also does
-the natural alignment adjustments (the idea being that mmap() is mapping
-the entire enclave).  E.g. mmap() will map the wrong address if the offset
-of a chunk is less than its size due to the driver adjusting the address.
-
-Eliminating sgx_get_unmapped_area() means userspace is once again on the
-hook for naturally aligning the enclave, which is less than desirable.
-
-Looking back at the original API discussions around a builder process[1],
-we never fleshed out the end-to-end flow.  While having a builder process
-*sounds* reasonable, in practice it adds a lot of complexity without
-providing much in the way of added security.  E.g. in addition to the
-above mmap() issues, since the order of EADDs affects the enclave
-measurement, the enclave owner would need to communicate the exact steps
-to build the enclave, or the builder would need a priori knowledge of the
-enclave format.
-
-Userspace can still restrict access to /dev/sgx/enclave, e.g. by having a
-daemon that requires additional credentials to obtain a new enclave_fd.
-So AFAICT, the only benefit to having a dedicated builder is that it can
-do its own whitelisting of enclaves, but since we're trending towards
-supporting whitelisting enclaves in the kernel, e.g. via sigstruct,
-whitelisting in userspace purely in userspace also provides marginal value.
-
-TL;DR: Requiring VMA backing to build an enclave seems reasonable and sane.
-
-[1] https://lkml.kernel.org/r/CALCETrX+KisMCbptrnPSO79-YF4E3nR1XHt+a7hCs1GXsxAbtw@mail.gmail.com
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
