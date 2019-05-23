@@ -2,157 +2,318 @@ Return-Path: <SRS0=z3Bq=TX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46076C282DD
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 15:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A49BC282DE
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 15:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24ED82175B
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 15:18:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F2222175B
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 15:18:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730916AbfEWPR5 (ORCPT
+        id S1730929AbfEWPSP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 May 2019 11:17:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51684 "EHLO mx1.redhat.com"
+        Thu, 23 May 2019 11:18:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:25833 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730756AbfEWPR5 (ORCPT
+        id S1730804AbfEWPSO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 May 2019 11:17:57 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        Thu, 23 May 2019 11:18:14 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7AFBB63162;
-        Thu, 23 May 2019 15:17:51 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5BA47300502A;
+        Thu, 23 May 2019 15:18:14 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-142.rdu2.redhat.com [10.10.121.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A9CDA1001E82;
-        Thu, 23 May 2019 15:17:48 +0000 (UTC)
-Subject: [PATCH 0/9] keys: Namespacing [ver #3]
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B055168406;
+        Thu, 23 May 2019 15:18:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 3/9] keys: Add a 'recurse' flag for keyring searches [ver #3]
 From:   David Howells <dhowells@redhat.com>
 To:     ebiederm@xmission.com
-Cc:     linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
-        Jann Horn <jannh@google.com>, dhowells@redhat.com,
-        dwalsh@redhat.com, vgoyal@redhat.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+Cc:     dhowells@redhat.com, dwalsh@redhat.com, vgoyal@redhat.com,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 23 May 2019 16:17:47 +0100
-Message-ID: <155862466770.15244.16038372267332150004.stgit@warthog.procyon.org.uk>
+Date:   Thu, 23 May 2019 16:18:11 +0100
+Message-ID: <155862469195.15244.16929005379654737431.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155862466770.15244.16038372267332150004.stgit@warthog.procyon.org.uk>
+References: <155862466770.15244.16038372267332150004.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 23 May 2019 15:17:56 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 23 May 2019 15:18:14 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Add a 'recurse' flag for keyring searches so that the flag can be omitted
+and recursion disabled, thereby allowing just the nominated keyring to be
+searched and none of the children.
 
-Here are some patches to make keys and keyrings more namespace aware.  Note
-that the branch is dependent on security/next-general.
-
-Firstly some miscellaneous patches to make the process easier:
-
- (1) Simplify key index_key handling so that the word-sized chunks
-     assoc_array requires don't have to be shifted about, making it easier
-     to add more bits into the key.
-
- (2) Cache the hash value in the key so that we don't have to calculate on
-     every key we examine during a search (it involves a bunch of
-     multiplications).
-
- (3) Allow keying_search() to search non-recursively.
-
-Then the main patches:
-
- (4) Make it so that keyring names are per-user_namespace from the point of
-     view of KEYCTL_JOIN_SESSION_KEYRING so that they're not accessible
-     cross-user_namespace.
-
- (5) Move the user and user-session keyrings to the user_namespace rather
-     than the user_struct.  This prevents them propagating directly across
-     user_namespaces boundaries (ie. the KEY_SPEC_* flags will only pick
-     from the current user_namespace).
-
- (6) Make it possible to include the target namespace in which the key shall
-     operate in the index_key.  This will allow the possibility of multiple
-     keys with the same description, but different target domains to be held
-     in the same keyring.
-
- (7) Make it so that keys are implicitly invalidated by removal of a domain
-     tag, causing them to be garbage collected.
-
- (8) Institute a network namespace domain tag that allows keys to be
-     differentiated by the network namespace in which they operate.  New keys
-     that are of a type marked 'KEY_TYPE_NET_DOMAIN' are assigned the network
-     domain in force when they are created.
-
- (9) Make it so that the desired network namespace can be handed down into the
-     request_key() mechanism.  This allows AFS, NFS, etc. to request keys
-     specific to the network namespace of the superblock.
-
-     This also means that the keys in the DNS record cache are thenceforth
-     namespaced, provided network filesystems pass the appropriate network
-     namespace down into dns_query().
-
-     For DNS, AFS and NFS are good; CIFS and Ceph are not.  Other cache
-     keyrings, such as idmapper keyrings, also need to set the domain tag -
-     for which they need access to the network namespace of the superblock.
-
-The patches can be found on the following branch:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-namespace
-
-David
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
-David Howells (9):
-      keys: Simplify key description management
-      keys: Cache the hash value to avoid lots of recalculation
-      keys: Add a 'recurse' flag for keyring searches
-      keys: Namespace keyring names
-      keys: Move the user and user-session keyrings to the user_namespace
-      keys: Include target namespace in match criteria
-      keys: Garbage collect keys for which the domain has been removed
-      keys: Network namespace domain tag
-      keys: Pass the network namespace into request_key mechanism
 
+ Documentation/security/keys/core.rst     |   10 ++++++----
+ certs/blacklist.c                        |    2 +-
+ crypto/asymmetric_keys/asymmetric_type.c |    2 +-
+ include/linux/key.h                      |    3 ++-
+ lib/digsig.c                             |    2 +-
+ net/rxrpc/security.c                     |    2 +-
+ security/integrity/digsig_asymmetric.c   |    4 ++--
+ security/keys/internal.h                 |    1 +
+ security/keys/keyctl.c                   |    2 +-
+ security/keys/keyring.c                  |   12 ++++++++++--
+ security/keys/proc.c                     |    3 ++-
+ security/keys/process_keys.c             |    3 ++-
+ security/keys/request_key.c              |    3 ++-
+ security/keys/request_key_auth.c         |    3 ++-
+ 14 files changed, 34 insertions(+), 18 deletions(-)
 
- Documentation/security/keys/core.rst        |   38 +++-
- Documentation/security/keys/request-key.rst |   29 ++-
- certs/blacklist.c                           |    2 
- crypto/asymmetric_keys/asymmetric_type.c    |    2 
- fs/afs/addr_list.c                          |    4 
- fs/afs/dynroot.c                            |    8 +
- fs/cifs/dns_resolve.c                       |    3 
- fs/nfs/dns_resolve.c                        |    3 
- fs/nfs/nfs4idmap.c                          |    2 
- include/linux/dns_resolver.h                |    3 
- include/linux/key-type.h                    |    3 
- include/linux/key.h                         |   81 ++++++++
- include/linux/sched/user.h                  |   14 -
- include/linux/user_namespace.h              |   12 +
- include/net/net_namespace.h                 |    3 
- kernel/user.c                               |    8 -
- kernel/user_namespace.c                     |    9 -
- lib/digsig.c                                |    2 
- net/ceph/messenger.c                        |    3 
- net/core/net_namespace.c                    |   19 ++
- net/dns_resolver/dns_key.c                  |    1 
- net/dns_resolver/dns_query.c                |    7 +
- net/rxrpc/key.c                             |    6 -
- net/rxrpc/security.c                        |    2 
- security/integrity/digsig_asymmetric.c      |    4 
- security/keys/gc.c                          |    2 
- security/keys/internal.h                    |   10 +
- security/keys/key.c                         |    5 -
- security/keys/keyctl.c                      |    4 
- security/keys/keyring.c                     |  263 +++++++++++++++------------
- security/keys/persistent.c                  |   10 +
- security/keys/proc.c                        |    3 
- security/keys/process_keys.c                |  262 +++++++++++++++++----------
- security/keys/request_key.c                 |   62 ++++--
- security/keys/request_key_auth.c            |    3 
- 35 files changed, 583 insertions(+), 309 deletions(-)
+diff --git a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
+index a0e245f9576f..ae930ae9d590 100644
+--- a/Documentation/security/keys/core.rst
++++ b/Documentation/security/keys/core.rst
+@@ -1162,11 +1162,13 @@ payload contents" for more information.
+ 
+ 	key_ref_t keyring_search(key_ref_t keyring_ref,
+ 				 const struct key_type *type,
+-				 const char *description)
++				 const char *description,
++				 bool recurse)
+ 
+-    This searches the keyring tree specified for a matching key. Error ENOKEY
+-    is returned upon failure (use IS_ERR/PTR_ERR to determine). If successful,
+-    the returned key will need to be released.
++    This searches the specified keyring only (recurse == false) or keyring tree
++    (recurse == true) specified for a matching key. Error ENOKEY is returned
++    upon failure (use IS_ERR/PTR_ERR to determine). If successful, the returned
++    key will need to be released.
+ 
+     The possession attribute from the keyring reference is used to control
+     access through the permissions mask and is propagated to the returned key
+diff --git a/certs/blacklist.c b/certs/blacklist.c
+index 3a507b9e2568..181cb7fa9540 100644
+--- a/certs/blacklist.c
++++ b/certs/blacklist.c
+@@ -128,7 +128,7 @@ int is_hash_blacklisted(const u8 *hash, size_t hash_len, const char *type)
+ 	*p = 0;
+ 
+ 	kref = keyring_search(make_key_ref(blacklist_keyring, true),
+-			      &key_type_blacklist, buffer);
++			      &key_type_blacklist, buffer, false);
+ 	if (!IS_ERR(kref)) {
+ 		key_ref_put(kref);
+ 		ret = -EKEYREJECTED;
+diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
+index 69a0788a7de5..084027ef3121 100644
+--- a/crypto/asymmetric_keys/asymmetric_type.c
++++ b/crypto/asymmetric_keys/asymmetric_type.c
+@@ -87,7 +87,7 @@ struct key *find_asymmetric_key(struct key *keyring,
+ 	pr_debug("Look up: \"%s\"\n", req);
+ 
+ 	ref = keyring_search(make_key_ref(keyring, 1),
+-			     &key_type_asymmetric, req);
++			     &key_type_asymmetric, req, true);
+ 	if (IS_ERR(ref))
+ 		pr_debug("Request for key '%s' err %ld\n", req, PTR_ERR(ref));
+ 	kfree(req);
+diff --git a/include/linux/key.h b/include/linux/key.h
+index fb2debcacea0..ff102731b3db 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -341,7 +341,8 @@ extern int keyring_clear(struct key *keyring);
+ 
+ extern key_ref_t keyring_search(key_ref_t keyring,
+ 				struct key_type *type,
+-				const char *description);
++				const char *description,
++				bool recurse);
+ 
+ extern int keyring_add_key(struct key *keyring,
+ 			   struct key *key);
+diff --git a/lib/digsig.c b/lib/digsig.c
+index 3b0a579bdcdf..3782af401c68 100644
+--- a/lib/digsig.c
++++ b/lib/digsig.c
+@@ -221,7 +221,7 @@ int digsig_verify(struct key *keyring, const char *sig, int siglen,
+ 		/* search in specific keyring */
+ 		key_ref_t kref;
+ 		kref = keyring_search(make_key_ref(keyring, 1UL),
+-						&key_type_user, name);
++				      &key_type_user, name, true);
+ 		if (IS_ERR(kref))
+ 			key = ERR_CAST(kref);
+ 		else
+diff --git a/net/rxrpc/security.c b/net/rxrpc/security.c
+index c4479afe8ae7..2cfc7125bc41 100644
+--- a/net/rxrpc/security.c
++++ b/net/rxrpc/security.c
+@@ -148,7 +148,7 @@ int rxrpc_init_server_conn_security(struct rxrpc_connection *conn)
+ 
+ 	/* look through the service's keyring */
+ 	kref = keyring_search(make_key_ref(rx->securities, 1UL),
+-			      &key_type_rxrpc_s, kdesc);
++			      &key_type_rxrpc_s, kdesc, true);
+ 	if (IS_ERR(kref)) {
+ 		read_unlock(&local->services_lock);
+ 		_leave(" = %ld [search]", PTR_ERR(kref));
+diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+index 99080871eb9f..358f614811e8 100644
+--- a/security/integrity/digsig_asymmetric.c
++++ b/security/integrity/digsig_asymmetric.c
+@@ -39,7 +39,7 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
+ 		key_ref_t kref;
+ 
+ 		kref = keyring_search(make_key_ref(key, 1),
+-				     &key_type_asymmetric, name);
++				      &key_type_asymmetric, name, true);
+ 		if (!IS_ERR(kref)) {
+ 			pr_err("Key '%s' is in ima_blacklist_keyring\n", name);
+ 			return ERR_PTR(-EKEYREJECTED);
+@@ -51,7 +51,7 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
+ 		key_ref_t kref;
+ 
+ 		kref = keyring_search(make_key_ref(keyring, 1),
+-				      &key_type_asymmetric, name);
++				      &key_type_asymmetric, name, true);
+ 		if (IS_ERR(kref))
+ 			key = ERR_CAST(kref);
+ 		else
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index b7a20929e803..876c8b9ed0f8 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -123,6 +123,7 @@ struct keyring_search_context {
+ #define KEYRING_SEARCH_NO_CHECK_PERM	0x0008	/* Don't check permissions */
+ #define KEYRING_SEARCH_DETECT_TOO_DEEP	0x0010	/* Give an error on excessive depth */
+ #define KEYRING_SEARCH_SKIP_EXPIRED	0x0020	/* Ignore expired keys (intention to replace) */
++#define KEYRING_SEARCH_RECURSE		0x0040	/* Search child keyrings also */
+ 
+ 	int (*iterator)(const void *object, void *iterator_data);
+ 
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 46188cda177e..2265cb7411f5 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -753,7 +753,7 @@ long keyctl_keyring_search(key_serial_t ringid,
+ 	}
+ 
+ 	/* do the search */
+-	key_ref = keyring_search(keyring_ref, ktype, description);
++	key_ref = keyring_search(keyring_ref, ktype, description, true);
+ 	if (IS_ERR(key_ref)) {
+ 		ret = PTR_ERR(key_ref);
+ 
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 13841b00ed6f..72b5576bf631 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -685,6 +685,9 @@ static bool search_nested_keyrings(struct key *keyring,
+ 	 * Non-keyrings avoid the leftmost branch of the root entirely (root
+ 	 * slots 1-15).
+ 	 */
++	if (!(ctx->flags & KEYRING_SEARCH_RECURSE))
++		goto not_this_keyring;
++
+ 	ptr = READ_ONCE(keyring->keys.root);
+ 	if (!ptr)
+ 		goto not_this_keyring;
+@@ -885,13 +888,15 @@ key_ref_t keyring_search_rcu(key_ref_t keyring_ref,
+  * @keyring: The root of the keyring tree to be searched.
+  * @type: The type of keyring we want to find.
+  * @description: The name of the keyring we want to find.
++ * @recurse: True to search the children of @keyring also
+  *
+  * As keyring_search_rcu() above, but using the current task's credentials and
+  * type's default matching function and preferred search method.
+  */
+ key_ref_t keyring_search(key_ref_t keyring,
+ 			 struct key_type *type,
+-			 const char *description)
++			 const char *description,
++			 bool recurse)
+ {
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= type,
+@@ -906,6 +911,8 @@ key_ref_t keyring_search(key_ref_t keyring,
+ 	key_ref_t key;
+ 	int ret;
+ 
++	if (recurse)
++		ctx.flags |= KEYRING_SEARCH_RECURSE;
+ 	if (type->match_preparse) {
+ 		ret = type->match_preparse(&ctx.match_data);
+ 		if (ret < 0)
+@@ -1176,7 +1183,8 @@ static int keyring_detect_cycle(struct key *A, struct key *B)
+ 		.flags			= (KEYRING_SEARCH_NO_STATE_CHECK |
+ 					   KEYRING_SEARCH_NO_UPDATE_TIME |
+ 					   KEYRING_SEARCH_NO_CHECK_PERM |
+-					   KEYRING_SEARCH_DETECT_TOO_DEEP),
++					   KEYRING_SEARCH_DETECT_TOO_DEEP |
++					   KEYRING_SEARCH_RECURSE),
+ 	};
+ 
+ 	rcu_read_lock();
+diff --git a/security/keys/proc.c b/security/keys/proc.c
+index f081dceae3b9..b4f5ba56b9cb 100644
+--- a/security/keys/proc.c
++++ b/security/keys/proc.c
+@@ -170,7 +170,8 @@ static int proc_keys_show(struct seq_file *m, void *v)
+ 		.match_data.cmp		= lookup_user_key_possessed,
+ 		.match_data.raw_data	= key,
+ 		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
+-		.flags			= KEYRING_SEARCH_NO_STATE_CHECK,
++		.flags			= (KEYRING_SEARCH_NO_STATE_CHECK |
++					   KEYRING_SEARCH_RECURSE),
+ 	};
+ 
+ 	key_ref = make_key_ref(key, 0);
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index fb31b408e294..639945ed3d9b 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -531,7 +531,8 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
+ 	struct keyring_search_context ctx = {
+ 		.match_data.cmp		= lookup_user_key_possessed,
+ 		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
+-		.flags			= KEYRING_SEARCH_NO_STATE_CHECK,
++		.flags			= (KEYRING_SEARCH_NO_STATE_CHECK |
++					   KEYRING_SEARCH_RECURSE),
+ 	};
+ 	struct request_key_auth *rka;
+ 	struct key *key;
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index 9e65312574dc..8fb5049bcc0d 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -564,7 +564,8 @@ struct key *request_key_and_link(struct key_type *type,
+ 		.match_data.raw_data	= description,
+ 		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
+ 		.flags			= (KEYRING_SEARCH_DO_STATE_CHECK |
+-					   KEYRING_SEARCH_SKIP_EXPIRED),
++					   KEYRING_SEARCH_SKIP_EXPIRED |
++					   KEYRING_SEARCH_RECURSE),
+ 	};
+ 	struct key *key;
+ 	key_ref_t key_ref;
+diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+index 99ed7a8a273d..f613987e8a63 100644
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -252,7 +252,8 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+ 		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
+-		.flags			= KEYRING_SEARCH_DO_STATE_CHECK,
++		.flags			= (KEYRING_SEARCH_DO_STATE_CHECK |
++					   KEYRING_SEARCH_RECURSE),
+ 	};
+ 	struct key *authkey;
+ 	key_ref_t authkey_ref;
 
