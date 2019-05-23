@@ -2,211 +2,292 @@ Return-Path: <SRS0=z3Bq=TX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8F5C282DD
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 14:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1805C282DD
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 15:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F62520863
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 14:17:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76CDF20665
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 15:18:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730668AbfEWORy (ORCPT
+        id S1731041AbfEWPSA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 May 2019 10:17:54 -0400
-Received: from mga05.intel.com ([192.55.52.43]:38831 "EHLO mga05.intel.com"
+        Thu, 23 May 2019 11:18:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47852 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730323AbfEWORy (ORCPT
+        id S1730756AbfEWPR7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 May 2019 10:17:54 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 May 2019 07:17:53 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga003.jf.intel.com with ESMTP; 23 May 2019 07:17:52 -0700
-Date:   Thu, 23 May 2019 07:17:52 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190523141752.GA12078@linux.intel.com>
-References: <20190520114105.GD27805@linux.intel.com>
- <20190521151836.GA4843@linux.intel.com>
- <20190521155140.GE22089@linux.intel.com>
- <20190522132022.GC31176@linux.intel.com>
- <20190522132227.GD31176@linux.intel.com>
- <0e183cce-c4b4-0e10-dbb6-bd81bea58b66@tycho.nsa.gov>
- <20190522153836.GA24833@linux.intel.com>
- <CALCETrUS8xyF1JJmQs18BGTDhPRXf+s81BkMZCZwmY73r7M+zg@mail.gmail.com>
- <20190523023517.GA31950@linux.intel.com>
- <20190523102628.GC10955@linux.intel.com>
+        Thu, 23 May 2019 11:17:59 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1CA0C309704F;
+        Thu, 23 May 2019 15:17:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-142.rdu2.redhat.com [10.10.121.142])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F6455B681;
+        Thu, 23 May 2019 15:17:57 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/9] keys: Simplify key description management [ver #3]
+From:   David Howells <dhowells@redhat.com>
+To:     ebiederm@xmission.com
+Cc:     dhowells@redhat.com, dwalsh@redhat.com, vgoyal@redhat.com,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 23 May 2019 16:17:56 +0100
+Message-ID: <155862467670.15244.284468414828214045.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155862466770.15244.16038372267332150004.stgit@warthog.procyon.org.uk>
+References: <155862466770.15244.16038372267332150004.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190523102628.GC10955@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 23 May 2019 15:17:59 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 23, 2019 at 01:26:28PM +0300, Jarkko Sakkinen wrote:
-> On Wed, May 22, 2019 at 07:35:17PM -0700, Sean Christopherson wrote:
-> > But actually, there's no need to disallow mmap() after ECREATE since the
-> > LSM checks also apply to mmap(), e.g. FILE__EXECUTE would be needed to
-> > mmap() any enclave pages PROT_EXEC.  I guess my past self thought mmap()
-> > bypassed LSM checks?  The real problem is that mmap()'ng an existing
-> > enclave would require FILE__WRITE and FILE__EXECUTE, which puts us back
-> > at square one.
-> 
-> I'm lost with the constraints we want to set.
+Simplify key description management by cramming the word containing the
+length with the first few chars of the description also.  This simplifies
+the code that generates the index-key used by assoc_array.  It should speed
+up key searching a bit too.
 
-As is today, SELinux policies would require enclave loaders to have
-FILE__WRITE and FILE__EXECUTE permissions on /dev/sgx/enclave.  Presumably
-other LSMs have similar requirements.  Requiring all processes to have
-FILE__{WRITE,EXECUTE} permissions means the permissions don't add much
-value, e.g. they can't be used to distinguish between an enclave that is
-being loaded from an unmodified file and an enclave that is being
-generated on the fly, e.g. Graphene.
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-Looking back at Andy's mail, he was talking about requiring FILE__EXECUTE
-to run an enclave, so perhaps it's only FILE__WRITE that we're trying to
-special case.
+ include/linux/key.h        |   14 ++++++++-
+ security/keys/internal.h   |    6 ++++
+ security/keys/key.c        |    2 +
+ security/keys/keyring.c    |   70 +++++++++++++-------------------------------
+ security/keys/persistent.c |    1 +
+ 5 files changed, 43 insertions(+), 50 deletions(-)
 
-> We can still support fork() if we take a step back from v20 and require
-> the mmap(). Given the recent comments, I'd guess that is the best
-> compromise i.e. multiple processes can still share an enclave within
-> the limitations of ancestor hierarchy. Is this the constraint we agree
-> now upon? Some emails are a bit contradicting in this sense.
-> 
-> > Tracking permissions per enclave page isn't difficult, it's the new SGX
-> > specific LSM hooks and mprotect() interactions that I want to avoid.
-> > 
-> > Jumping back to mmap(), AIUI the fundamental issue is that we want to
-> > allow building/running an enclave without FILE__WRITE and FILE__EXECUTE,
-> > otherwise FILE__WRITE and FILE__EXECUTE become meaningless.  Assuming I'm
-> > not off in the weeds, that means we really just need to special case
-> > mmap() on enclaves so it can map enclave memory using the verified page
-> > permissions so as not to run afoul of LSM checks.  All other behaviors,
-> > e.g. mprotect(), can reuse the existing LSM checks for shared mappings.
-> > 
-> > So, what if we snapshot the permissions for each enclave page at EADD,
-> > and then special case mmap() to propagate flags from the snapshot to the
-> > VMA?  More or less the same idea as doing mprotect_fixup() using the
-> > source VMA during EADD.  We could define the EADD semantics to match
-> > this as well, e.g. only propagate the flags from the source VMA to the
-> > enclave VMA if the EADD range is fully mapped with PROT_NONE.  This would
-> > allow the enclave builder concept, albeit with funky semantics, and
-> > wouldn't require new LSM hooks.
-> 
-> Dropped off here completely. What if the mmap() is done before any of
-> the EADD operations?
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 4cd5669184f3..86ccc2d010f6 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -86,9 +86,20 @@ struct keyring_list;
+ struct keyring_name;
+ 
+ struct keyring_index_key {
++	union {
++		struct {
++#ifdef __LITTLE_ENDIAN /* Put desc_len at the LSB of x */
++			u8	desc_len;
++			char	desc[sizeof(long) - 1];	/* First few chars of description */
++#else
++			char	desc[sizeof(long) - 1];	/* First few chars of description */
++			u8	desc_len;
++#endif
++		};
++		unsigned long x;
++	};
+ 	struct key_type		*type;
+ 	const char		*description;
+-	size_t			desc_len;
+ };
+ 
+ union key_payload {
+@@ -202,6 +213,7 @@ struct key {
+ 	union {
+ 		struct keyring_index_key index_key;
+ 		struct {
++			unsigned long	len_desc;
+ 			struct key_type	*type;		/* type of key */
+ 			char		*description;
+ 		};
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index fd75b051d02a..de4fbf6afd89 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -90,6 +90,12 @@ extern struct mutex key_construction_mutex;
+ extern wait_queue_head_t request_key_conswq;
+ 
+ 
++static inline void key_set_index_key(struct keyring_index_key *index_key)
++{
++	size_t n = min_t(size_t, index_key->desc_len, sizeof(index_key->desc));
++	memcpy(index_key->desc, index_key->description, n);
++}
++
+ extern struct key_type *key_type_lookup(const char *type);
+ extern void key_type_put(struct key_type *ktype);
+ 
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 00c7dbfc6a77..010d57859446 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -285,6 +285,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 	key->index_key.description = kmemdup(desc, desclen + 1, GFP_KERNEL);
+ 	if (!key->index_key.description)
+ 		goto no_memory_3;
++	key_set_index_key(&key->index_key);
+ 
+ 	refcount_set(&key->usage, 1);
+ 	init_rwsem(&key->sem);
+@@ -859,6 +860,7 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
+ 			goto error_free_prep;
+ 	}
+ 	index_key.desc_len = strlen(index_key.description);
++	key_set_index_key(&index_key);
+ 
+ 	ret = __key_link_begin(keyring, 0, &index_key, &edit);
+ 	if (ret < 0) {
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index e862bd8dd6af..95fb1d90a22c 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -179,9 +179,9 @@ static unsigned long hash_key_type_and_desc(const struct keyring_index_key *inde
+ 	int n, desc_len = index_key->desc_len;
+ 
+ 	type = (unsigned long)index_key->type;
+-
+ 	acc = mult_64x32_and_fold(type, desc_len + 13);
+ 	acc = mult_64x32_and_fold(acc, 9207);
++
+ 	for (;;) {
+ 		n = desc_len;
+ 		if (n <= 0)
+@@ -215,23 +215,13 @@ static unsigned long hash_key_type_and_desc(const struct keyring_index_key *inde
+ /*
+  * Build the next index key chunk.
+  *
+- * On 32-bit systems the index key is laid out as:
+- *
+- *	0	4	5	9...
+- *	hash	desclen	typeptr	desc[]
+- *
+- * On 64-bit systems:
+- *
+- *	0	8	9	17...
+- *	hash	desclen	typeptr	desc[]
+- *
+  * We return it one word-sized chunk at a time.
+  */
+ static unsigned long keyring_get_key_chunk(const void *data, int level)
+ {
+ 	const struct keyring_index_key *index_key = data;
+ 	unsigned long chunk = 0;
+-	long offset = 0;
++	const u8 *d;
+ 	int desc_len = index_key->desc_len, n = sizeof(chunk);
+ 
+ 	level /= ASSOC_ARRAY_KEY_CHUNK_SIZE;
+@@ -239,33 +229,23 @@ static unsigned long keyring_get_key_chunk(const void *data, int level)
+ 	case 0:
+ 		return hash_key_type_and_desc(index_key);
+ 	case 1:
+-		return ((unsigned long)index_key->type << 8) | desc_len;
++		return index_key->x;
+ 	case 2:
+-		if (desc_len == 0)
+-			return (u8)((unsigned long)index_key->type >>
+-				    (ASSOC_ARRAY_KEY_CHUNK_SIZE - 8));
+-		n--;
+-		offset = 1;
+-		/* fall through */
++		return (unsigned long)index_key->type;
+ 	default:
+-		offset += sizeof(chunk) - 1;
+-		offset += (level - 3) * sizeof(chunk);
+-		if (offset >= desc_len)
++		level -= 3;
++		if (desc_len <= sizeof(index_key->desc))
+ 			return 0;
+-		desc_len -= offset;
++
++		d = index_key->description + sizeof(index_key->desc);
++		d += level * sizeof(long);
++		desc_len -= sizeof(index_key->desc);
+ 		if (desc_len > n)
+ 			desc_len = n;
+-		offset += desc_len;
+ 		do {
+ 			chunk <<= 8;
+-			chunk |= ((u8*)index_key->description)[--offset];
++			chunk |= *d++;
+ 		} while (--desc_len > 0);
+-
+-		if (level == 2) {
+-			chunk <<= 8;
+-			chunk |= (u8)((unsigned long)index_key->type >>
+-				      (ASSOC_ARRAY_KEY_CHUNK_SIZE - 8));
+-		}
+ 		return chunk;
+ 	}
+ }
+@@ -304,39 +284,28 @@ static int keyring_diff_objects(const void *object, const void *data)
+ 	seg_b = hash_key_type_and_desc(b);
+ 	if ((seg_a ^ seg_b) != 0)
+ 		goto differ;
++	level += ASSOC_ARRAY_KEY_CHUNK_SIZE / 8;
+ 
+ 	/* The number of bits contributed by the hash is controlled by a
+ 	 * constant in the assoc_array headers.  Everything else thereafter we
+ 	 * can deal with as being machine word-size dependent.
+ 	 */
+-	level += ASSOC_ARRAY_KEY_CHUNK_SIZE / 8;
+-	seg_a = a->desc_len;
+-	seg_b = b->desc_len;
++	seg_a = a->x;
++	seg_b = b->x;
+ 	if ((seg_a ^ seg_b) != 0)
+ 		goto differ;
++	level += sizeof(unsigned long);
+ 
+ 	/* The next bit may not work on big endian */
+-	level++;
+ 	seg_a = (unsigned long)a->type;
+ 	seg_b = (unsigned long)b->type;
+ 	if ((seg_a ^ seg_b) != 0)
+ 		goto differ;
+-
+ 	level += sizeof(unsigned long);
+-	if (a->desc_len == 0)
+-		goto same;
+ 
+-	i = 0;
+-	if (((unsigned long)a->description | (unsigned long)b->description) &
+-	    (sizeof(unsigned long) - 1)) {
+-		do {
+-			seg_a = *(unsigned long *)(a->description + i);
+-			seg_b = *(unsigned long *)(b->description + i);
+-			if ((seg_a ^ seg_b) != 0)
+-				goto differ_plus_i;
+-			i += sizeof(unsigned long);
+-		} while (i < (a->desc_len & (sizeof(unsigned long) - 1)));
+-	}
++	i = sizeof(a->desc);
++	if (a->desc_len <= i)
++		goto same;
+ 
+ 	for (; i < a->desc_len; i++) {
+ 		seg_a = *(unsigned char *)(a->description + i);
+@@ -662,6 +631,9 @@ static bool search_nested_keyrings(struct key *keyring,
+ 	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
+ 	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
+ 
++	if (ctx->index_key.description)
++		key_set_index_key(&ctx->index_key);
++
+ 	/* Check to see if this top-level keyring is what we are looking for
+ 	 * and whether it is valid or not.
+ 	 */
+diff --git a/security/keys/persistent.c b/security/keys/persistent.c
+index d0cb5b32eff7..fc29ec59efa7 100644
+--- a/security/keys/persistent.c
++++ b/security/keys/persistent.c
+@@ -87,6 +87,7 @@ static long key_get_persistent(struct user_namespace *ns, kuid_t uid,
+ 	index_key.type = &key_type_keyring;
+ 	index_key.description = buf;
+ 	index_key.desc_len = sprintf(buf, "_persistent.%u", from_kuid(ns, uid));
++	key_set_index_key(&index_key);
+ 
+ 	if (ns->persistent_keyring_register) {
+ 		reg_ref = make_key_ref(ns->persistent_keyring_register, true);
 
-Three options I can think of, in descending order of magic required:
-
-  1. Do nothing.  Userspace would essentially be required to mmap() the
-     enclave after EINIT, which is ugly but not breaking since userspace
-     could mmap() the enclave with a placeholder VMA prior to building
-     the enclave, and then a series of mmap() to establish its "real"
-     mapping.
-
-  2. Propagate the permissions from EADD to the VMAs of the current mm
-     if the entire EADD range is mapped and the mapping is PROT_NONE.
-
-  3. Propagate the permissions from EADD to the VMAs of all mm structs
-     that have mapped some piece of the enclave, following the matching
-     rules from #2.
-
-> > E.g. something like this:
-> > 
-> > static inline void sgx_mmap_update_prot_flags(struct vm_area_struct *vma,
-> > 					      struct sgx_encl *encl)
-> > {
-> > 	struct radix_tree_iter iter;
-> > 	struct sgx_encl_page *entry;
-> > 	unsigned long addr;
-> > 	vm_flags_t flags;
-> > 	void **slot;
-> > 
-> > 	/*
-> > 	 * SGX special: if userspace is requesting PROT_NONE and pages have
-> > 	 * been added to the enclave, then propagate the flags snapshot from
-> > 	 * the enclave to the VMA.  Do this if and only if all overlapped
-> > 	 * pages are defined and have identical permissions.  Stuffing the
-> > 	 * VMA on PROT_NONE allows userspace to map EPC pages without being
-> > 	 * incorrectly rejected by LSMs due to insufficient permissions (the
-> > 	 * snapshottted flags have alaredy been vetted).
-> > 	 */
-> > 	if (vma->vm_flags & (VM_READ|VM_WRITE|VM_EXEC))
-> > 		return;
-> > 
-> > 	flags = 0;
-> > 
-> > 	for (addr = vma->vm_start; addr < vma->vm_end; addr += PAGE_SIZE) {
-> > 		entry = radix_tree_lookup(&encl->page_tree, addr >> PAGE_SHIFT);
-> > 
-> > 		if (!entry && flags)
-> > 			return;
-> > 		if (!flags && entry) {
-> > 			if (addr == vma->vm_start) {
-> > 				flags = entry->vm_flags;
-> > 				continue;
-> > 			}
-> > 			return;
-> > 		}
-> > 		if (entry && flags && entry->vm_flags != flags)
-> > 			return;
-> > 
-> > 	}
-> > 	vma->vm_flags |= flags;
-> > }
-> 
-> This looks flakky and error prone. You'd better have some "shadow VMAs"
-> and check that you have such matching size of the VMA you try to mmap()
-> and check flags from that.
-> 
-> Who would call this function anyhow and when?
-> 
-> Would be better to first agree on constraints. I have zero idea within
-> which kind of enviroment this snippet would live e.g.
-> 
-> - mmap() (before, after?)
-> - multi process constraint (only fork or full on versatility)
-
-This would be called from sgx_mmap(), i.e. mmap().  Sorry that wasn't at
-all clear.  The idea is to inherit the protections from the enclave pages
-if mmap() was passed PROT_NONE, but do so in a paranoid way.
-
-I don't think multi-process contraints would be required.  This would
-allow an individual process to inherit the pre-verified protections.
-Other process(es) could map the enclave page with different protections,
-but doing so would require the appropriate FILE__* permissions for the
-other process(es).
