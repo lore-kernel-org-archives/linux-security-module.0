@@ -2,362 +2,211 @@ Return-Path: <SRS0=z3Bq=TX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2961C282E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 14:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8F5C282DD
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 14:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B90E2175B
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 14:09:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HxdHAURk"
+	by mail.kernel.org (Postfix) with ESMTP id 2F62520863
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 14:17:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730495AbfEWOJN (ORCPT
+        id S1730668AbfEWORy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 May 2019 10:09:13 -0400
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:48560 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730323AbfEWOJM (ORCPT
+        Thu, 23 May 2019 10:17:54 -0400
+Received: from mga05.intel.com ([192.55.52.43]:38831 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730323AbfEWORy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 May 2019 10:09:12 -0400
-Received: by mail-qk1-f201.google.com with SMTP id w184so5516778qka.15
-        for <linux-security-module@vger.kernel.org>; Thu, 23 May 2019 07:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=GrPd0Ehzkwgs8flG0McuJvkTnr/DIjfrIhDeOSvXnoY=;
-        b=HxdHAURkSl4n27A0yrQIRU1ITTYPBWK1In1KGlmB43xzTe8tfXSa/dWul7q4I/3UzU
-         zAXTkoEFSDGlQlwPxRKEPIsS4gx1GWROBjhSdaDe+osjq2IOHCxE8AK8vVLls9jsiCni
-         Ah0o+mZ5lkt/KWNdF1YGyCq0Tn9kR2BizpDzBrgZFEG+PKOtey/cz+kMH+/+NJpItHf2
-         vzgiCe1wjnIMjaRo26wo/zwzLMMxV+51y6MNX1nzooG5KC1QggYgSZIVxhYV85G0/IFG
-         eyM/9zRs+5DIGCsdt23RjOyg9gSR0BPyH9rKZ0GdAzhvalKjcPMUFbug9urWslsi51qX
-         M31w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=GrPd0Ehzkwgs8flG0McuJvkTnr/DIjfrIhDeOSvXnoY=;
-        b=gKPQMFkrXH7cCECXbP29FK/8TqR6plmJNaK4L2Rb0kGHjwNoERW3vh6fXi93yrx5Iz
-         jjaVCdgZePVejt9W18+SJFNDCqIxXvmVbfSaWFDMF+hRb9EasBho2p3QuA3j/6oqn7zE
-         2D39yPqOUgyvP3g5kYDMgQVhhdX0d1hP8GO/7c6QXZ+AdAhmX6+MIegFm2UQWqYWBWYq
-         GOt0TbStVlJ9BKqw263W7apMY/lYIQCL2kgKEP42eT2hzSI0GC7IKW3EwPtqMTPRqyG9
-         tCRkEye8kkV8uF26j43ui9clqS5Atqd6/VxQya9VP4JBZG+b0yHL+b4N2uz0NFTMH7Vn
-         radA==
-X-Gm-Message-State: APjAAAUgp1pKz14PImi+gIY83IRK71xbPCTR2FDaKQ1HRIdI6Llk2s6r
-        WzZ9xCv24jHbMMpaC5+VxqIamlU1KwA=
-X-Google-Smtp-Source: APXvYqwTc2z+TMaFN0UPPlnm9rius4RP7zoq7ED5Y5T2qgqHTis5h9UUibnhY+/7LWm7HuiK8P97MvS3qoo=
-X-Received: by 2002:a0c:95d5:: with SMTP id t21mr70859708qvt.215.1558620551451;
- Thu, 23 May 2019 07:09:11 -0700 (PDT)
-Date:   Thu, 23 May 2019 16:08:44 +0200
-In-Reply-To: <20190523140844.132150-1-glider@google.com>
-Message-Id: <20190523140844.132150-4-glider@google.com>
-Mime-Version: 1.0
-References: <20190523140844.132150-1-glider@google.com>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [PATCH v4 3/3] lib: introduce test_meminit module
-From:   Alexander Potapenko <glider@google.com>
-To:     akpm@linux-foundation.org, cl@linux.com, keescook@chromium.org
-Cc:     kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>, Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 23 May 2019 10:17:54 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 May 2019 07:17:53 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga003.jf.intel.com with ESMTP; 23 May 2019 07:17:52 -0700
+Date:   Thu, 23 May 2019 07:17:52 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190523141752.GA12078@linux.intel.com>
+References: <20190520114105.GD27805@linux.intel.com>
+ <20190521151836.GA4843@linux.intel.com>
+ <20190521155140.GE22089@linux.intel.com>
+ <20190522132022.GC31176@linux.intel.com>
+ <20190522132227.GD31176@linux.intel.com>
+ <0e183cce-c4b4-0e10-dbb6-bd81bea58b66@tycho.nsa.gov>
+ <20190522153836.GA24833@linux.intel.com>
+ <CALCETrUS8xyF1JJmQs18BGTDhPRXf+s81BkMZCZwmY73r7M+zg@mail.gmail.com>
+ <20190523023517.GA31950@linux.intel.com>
+ <20190523102628.GC10955@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190523102628.GC10955@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add tests for heap and pagealloc initialization.
-These can be used to check init_on_alloc and init_on_free implementations
-as well as other approaches to initialization.
+On Thu, May 23, 2019 at 01:26:28PM +0300, Jarkko Sakkinen wrote:
+> On Wed, May 22, 2019 at 07:35:17PM -0700, Sean Christopherson wrote:
+> > But actually, there's no need to disallow mmap() after ECREATE since the
+> > LSM checks also apply to mmap(), e.g. FILE__EXECUTE would be needed to
+> > mmap() any enclave pages PROT_EXEC.  I guess my past self thought mmap()
+> > bypassed LSM checks?  The real problem is that mmap()'ng an existing
+> > enclave would require FILE__WRITE and FILE__EXECUTE, which puts us back
+> > at square one.
+> 
+> I'm lost with the constraints we want to set.
 
-Expected test output in the case the kernel provides heap initialization
-(e.g. when running with either init_on_alloc=1 or init_on_free=1):
+As is today, SELinux policies would require enclave loaders to have
+FILE__WRITE and FILE__EXECUTE permissions on /dev/sgx/enclave.  Presumably
+other LSMs have similar requirements.  Requiring all processes to have
+FILE__{WRITE,EXECUTE} permissions means the permissions don't add much
+value, e.g. they can't be used to distinguish between an enclave that is
+being loaded from an unmodified file and an enclave that is being
+generated on the fly, e.g. Graphene.
 
-  test_meminit: all 10 tests in test_pages passed
-  test_meminit: all 40 tests in test_kvmalloc passed
-  test_meminit: all 20 tests in test_kmemcache passed
-  test_meminit: all 70 tests passed!
+Looking back at Andy's mail, he was talking about requiring FILE__EXECUTE
+to run an enclave, so perhaps it's only FILE__WRITE that we're trying to
+special case.
 
-Signed-off-by: Alexander Potapenko <glider@google.com>
-To: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Kostya Serebryany <kcc@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Sandeep Patil <sspatil@android.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: linux-mm@kvack.org
-Cc: linux-security-module@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com
----
- v3:
-  - added example test output to the description
-  - fixed a missing include spotted by kbuild test robot <lkp@intel.com>
-  - added a missing MODULE_LICENSE
-  - call do_kmem_cache_size() with size >= sizeof(void*) to unbreak
-  debug builds
----
- lib/Kconfig.debug  |   8 ++
- lib/Makefile       |   1 +
- lib/test_meminit.c | 208 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 217 insertions(+)
- create mode 100644 lib/test_meminit.c
+> We can still support fork() if we take a step back from v20 and require
+> the mmap(). Given the recent comments, I'd guess that is the best
+> compromise i.e. multiple processes can still share an enclave within
+> the limitations of ancestor hierarchy. Is this the constraint we agree
+> now upon? Some emails are a bit contradicting in this sense.
+> 
+> > Tracking permissions per enclave page isn't difficult, it's the new SGX
+> > specific LSM hooks and mprotect() interactions that I want to avoid.
+> > 
+> > Jumping back to mmap(), AIUI the fundamental issue is that we want to
+> > allow building/running an enclave without FILE__WRITE and FILE__EXECUTE,
+> > otherwise FILE__WRITE and FILE__EXECUTE become meaningless.  Assuming I'm
+> > not off in the weeds, that means we really just need to special case
+> > mmap() on enclaves so it can map enclave memory using the verified page
+> > permissions so as not to run afoul of LSM checks.  All other behaviors,
+> > e.g. mprotect(), can reuse the existing LSM checks for shared mappings.
+> > 
+> > So, what if we snapshot the permissions for each enclave page at EADD,
+> > and then special case mmap() to propagate flags from the snapshot to the
+> > VMA?  More or less the same idea as doing mprotect_fixup() using the
+> > source VMA during EADD.  We could define the EADD semantics to match
+> > this as well, e.g. only propagate the flags from the source VMA to the
+> > enclave VMA if the EADD range is fully mapped with PROT_NONE.  This would
+> > allow the enclave builder concept, albeit with funky semantics, and
+> > wouldn't require new LSM hooks.
+> 
+> Dropped off here completely. What if the mmap() is done before any of
+> the EADD operations?
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index fdfa173651eb..036e8ef03831 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2043,6 +2043,14 @@ config TEST_STACKINIT
- 
- 	  If unsure, say N.
- 
-+config TEST_MEMINIT
-+	tristate "Test level of heap/page initialization"
-+	help
-+	  Test if the kernel is zero-initializing heap and page allocations.
-+	  This can be useful to test init_on_alloc and init_on_free features.
-+
-+	  If unsure, say N.
-+
- endif # RUNTIME_TESTING_MENU
- 
- config MEMTEST
-diff --git a/lib/Makefile b/lib/Makefile
-index fb7697031a79..05980c802500 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -91,6 +91,7 @@ obj-$(CONFIG_TEST_DEBUG_VIRTUAL) += test_debug_virtual.o
- obj-$(CONFIG_TEST_MEMCAT_P) += test_memcat_p.o
- obj-$(CONFIG_TEST_OBJAGG) += test_objagg.o
- obj-$(CONFIG_TEST_STACKINIT) += test_stackinit.o
-+obj-$(CONFIG_TEST_MEMINIT) += test_meminit.o
- 
- obj-$(CONFIG_TEST_LIVEPATCH) += livepatch/
- 
-diff --git a/lib/test_meminit.c b/lib/test_meminit.c
-new file mode 100644
-index 000000000000..d46e2b8c8e8e
---- /dev/null
-+++ b/lib/test_meminit.c
-@@ -0,0 +1,208 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Test cases for SL[AOU]B/page initialization at alloc/free time.
-+ */
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/string.h>
-+#include <linux/vmalloc.h>
-+
-+#define GARBAGE_INT (0x09A7BA9E)
-+#define GARBAGE_BYTE (0x9E)
-+
-+#define REPORT_FAILURES_IN_FN() \
-+	do {	\
-+		if (failures)	\
-+			pr_info("%s failed %d out of %d times\n",	\
-+				__func__, failures, num_tests);		\
-+		else		\
-+			pr_info("all %d tests in %s passed\n",		\
-+				num_tests, __func__);			\
-+	} while (0)
-+
-+/* Calculate the number of uninitialized bytes in the buffer. */
-+static int count_nonzero_bytes(void *ptr, size_t size)
-+{
-+	int i, ret = 0;
-+	unsigned char *p = (unsigned char *)ptr;
-+
-+	for (i = 0; i < size; i++)
-+		if (p[i])
-+			ret++;
-+	return ret;
-+}
-+
-+static void fill_with_garbage(void *ptr, size_t size)
-+{
-+	unsigned int *p = (unsigned int *)ptr;
-+	int i = 0;
-+
-+	while (size >= sizeof(*p)) {
-+		p[i] = GARBAGE_INT;
-+		i++;
-+		size -= sizeof(*p);
-+	}
-+	if (size)
-+		memset(&p[i], GARBAGE_BYTE, size);
-+}
-+
-+static int __init do_alloc_pages_order(int order, int *total_failures)
-+{
-+	struct page *page;
-+	void *buf;
-+	size_t size = PAGE_SIZE << order;
-+
-+	page = alloc_pages(GFP_KERNEL, order);
-+	buf = page_address(page);
-+	fill_with_garbage(buf, size);
-+	__free_pages(page, order);
-+
-+	page = alloc_pages(GFP_KERNEL, order);
-+	buf = page_address(page);
-+	if (count_nonzero_bytes(buf, size))
-+		(*total_failures)++;
-+	fill_with_garbage(buf, size);
-+	__free_pages(page, order);
-+	return 1;
-+}
-+
-+static int __init test_pages(int *total_failures)
-+{
-+	int failures = 0, num_tests = 0;
-+	int i;
-+
-+	for (i = 0; i < 10; i++)
-+		num_tests += do_alloc_pages_order(i, &failures);
-+
-+	REPORT_FAILURES_IN_FN();
-+	*total_failures += failures;
-+	return num_tests;
-+}
-+
-+static int __init do_kmalloc_size(size_t size, int *total_failures)
-+{
-+	void *buf;
-+
-+	buf = kmalloc(size, GFP_KERNEL);
-+	fill_with_garbage(buf, size);
-+	kfree(buf);
-+
-+	buf = kmalloc(size, GFP_KERNEL);
-+	if (count_nonzero_bytes(buf, size))
-+		(*total_failures)++;
-+	fill_with_garbage(buf, size);
-+	kfree(buf);
-+	return 1;
-+}
-+
-+static int __init do_vmalloc_size(size_t size, int *total_failures)
-+{
-+	void *buf;
-+
-+	buf = vmalloc(size);
-+	fill_with_garbage(buf, size);
-+	vfree(buf);
-+
-+	buf = vmalloc(size);
-+	if (count_nonzero_bytes(buf, size))
-+		(*total_failures)++;
-+	fill_with_garbage(buf, size);
-+	vfree(buf);
-+	return 1;
-+}
-+
-+static int __init test_kvmalloc(int *total_failures)
-+{
-+	int failures = 0, num_tests = 0;
-+	int i, size;
-+
-+	for (i = 0; i < 20; i++) {
-+		size = 1 << i;
-+		num_tests += do_kmalloc_size(size, &failures);
-+		num_tests += do_vmalloc_size(size, &failures);
-+	}
-+
-+	REPORT_FAILURES_IN_FN();
-+	*total_failures += failures;
-+	return num_tests;
-+}
-+
-+#define CTOR_BYTES 4
-+/* Initialize the first 4 bytes of the object. */
-+void some_ctor(void *obj)
-+{
-+	memset(obj, 'A', CTOR_BYTES);
-+}
-+
-+static int __init do_kmem_cache_size(size_t size, bool want_ctor,
-+				     int *total_failures)
-+{
-+	struct kmem_cache *c;
-+	void *buf;
-+	int iter, bytes = 0;
-+	int fail = 0;
-+
-+	c = kmem_cache_create("test_cache", size, 1, 0,
-+			      want_ctor ? some_ctor : NULL);
-+	for (iter = 0; iter < 10; iter++) {
-+		buf = kmem_cache_alloc(c, GFP_KERNEL);
-+		if (!want_ctor || iter == 0)
-+			bytes = count_nonzero_bytes(buf, size);
-+		if (want_ctor) {
-+			/*
-+			 * Newly initialized memory must be initialized using
-+			 * the constructor.
-+			 */
-+			if (iter == 0 && bytes < CTOR_BYTES)
-+				fail = 1;
-+		} else {
-+			if (bytes)
-+				fail = 1;
-+		}
-+		fill_with_garbage(buf, size);
-+		kmem_cache_free(c, buf);
-+	}
-+	kmem_cache_destroy(c);
-+
-+	*total_failures += fail;
-+	return 1;
-+}
-+
-+static int __init test_kmemcache(int *total_failures)
-+{
-+	int failures = 0, num_tests = 0;
-+	int i, size;
-+
-+	for (i = 0; i < 10; i++) {
-+		size = 8 << i;
-+		num_tests += do_kmem_cache_size(size, false, &failures);
-+		num_tests += do_kmem_cache_size(size, true, &failures);
-+	}
-+	REPORT_FAILURES_IN_FN();
-+	*total_failures += failures;
-+	return num_tests;
-+}
-+
-+static int __init test_meminit_init(void)
-+{
-+	int failures = 0, num_tests = 0;
-+
-+	num_tests += test_pages(&failures);
-+	num_tests += test_kvmalloc(&failures);
-+	num_tests += test_kmemcache(&failures);
-+
-+	if (failures == 0)
-+		pr_info("all %d tests passed!\n", num_tests);
-+	else
-+		pr_info("failures: %d out of %d\n", failures, num_tests);
-+
-+	return failures ? -EINVAL : 0;
-+}
-+module_init(test_meminit_init);
-+
-+MODULE_LICENSE("GPL");
--- 
-2.21.0.1020.gf2820cf01a-goog
+Three options I can think of, in descending order of magic required:
 
+  1. Do nothing.  Userspace would essentially be required to mmap() the
+     enclave after EINIT, which is ugly but not breaking since userspace
+     could mmap() the enclave with a placeholder VMA prior to building
+     the enclave, and then a series of mmap() to establish its "real"
+     mapping.
+
+  2. Propagate the permissions from EADD to the VMAs of the current mm
+     if the entire EADD range is mapped and the mapping is PROT_NONE.
+
+  3. Propagate the permissions from EADD to the VMAs of all mm structs
+     that have mapped some piece of the enclave, following the matching
+     rules from #2.
+
+> > E.g. something like this:
+> > 
+> > static inline void sgx_mmap_update_prot_flags(struct vm_area_struct *vma,
+> > 					      struct sgx_encl *encl)
+> > {
+> > 	struct radix_tree_iter iter;
+> > 	struct sgx_encl_page *entry;
+> > 	unsigned long addr;
+> > 	vm_flags_t flags;
+> > 	void **slot;
+> > 
+> > 	/*
+> > 	 * SGX special: if userspace is requesting PROT_NONE and pages have
+> > 	 * been added to the enclave, then propagate the flags snapshot from
+> > 	 * the enclave to the VMA.  Do this if and only if all overlapped
+> > 	 * pages are defined and have identical permissions.  Stuffing the
+> > 	 * VMA on PROT_NONE allows userspace to map EPC pages without being
+> > 	 * incorrectly rejected by LSMs due to insufficient permissions (the
+> > 	 * snapshottted flags have alaredy been vetted).
+> > 	 */
+> > 	if (vma->vm_flags & (VM_READ|VM_WRITE|VM_EXEC))
+> > 		return;
+> > 
+> > 	flags = 0;
+> > 
+> > 	for (addr = vma->vm_start; addr < vma->vm_end; addr += PAGE_SIZE) {
+> > 		entry = radix_tree_lookup(&encl->page_tree, addr >> PAGE_SHIFT);
+> > 
+> > 		if (!entry && flags)
+> > 			return;
+> > 		if (!flags && entry) {
+> > 			if (addr == vma->vm_start) {
+> > 				flags = entry->vm_flags;
+> > 				continue;
+> > 			}
+> > 			return;
+> > 		}
+> > 		if (entry && flags && entry->vm_flags != flags)
+> > 			return;
+> > 
+> > 	}
+> > 	vma->vm_flags |= flags;
+> > }
+> 
+> This looks flakky and error prone. You'd better have some "shadow VMAs"
+> and check that you have such matching size of the VMA you try to mmap()
+> and check flags from that.
+> 
+> Who would call this function anyhow and when?
+> 
+> Would be better to first agree on constraints. I have zero idea within
+> which kind of enviroment this snippet would live e.g.
+> 
+> - mmap() (before, after?)
+> - multi process constraint (only fork or full on versatility)
+
+This would be called from sgx_mmap(), i.e. mmap().  Sorry that wasn't at
+all clear.  The idea is to inherit the protections from the enclave pages
+if mmap() was passed PROT_NONE, but do so in a paranoid way.
+
+I don't think multi-process contraints would be required.  This would
+allow an individual process to inherit the pre-verified protections.
+Other process(es) could map the enclave page with different protections,
+but doing so would require the appropriate FILE__* permissions for the
+other process(es).
