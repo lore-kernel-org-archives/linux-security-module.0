@@ -2,361 +2,459 @@ Return-Path: <SRS0=z3Bq=TX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_MED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBDFC282DD
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 12:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A97C282DE
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 13:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D816E21019
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 12:42:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c4PTxt6G"
+	by mail.kernel.org (Postfix) with ESMTP id 3CA4020881
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 May 2019 13:41:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730553AbfEWMmk (ORCPT
+        id S1730601AbfEWNlt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 May 2019 08:42:40 -0400
-Received: from mail-yw1-f73.google.com ([209.85.161.73]:52294 "EHLO
-        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729361AbfEWMmk (ORCPT
+        Thu, 23 May 2019 09:41:49 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32966 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729698AbfEWNlt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 May 2019 08:42:40 -0400
-Received: by mail-yw1-f73.google.com with SMTP id b189so5144281ywa.19
-        for <linux-security-module@vger.kernel.org>; Thu, 23 May 2019 05:42:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=GrPd0Ehzkwgs8flG0McuJvkTnr/DIjfrIhDeOSvXnoY=;
-        b=c4PTxt6GbbkKh29sih5enoKVGyMiYVYDStyGmFdx5QefGnvHTake1qlrYrHoHEQrCE
-         ++1kksetXbRrLBsUzGoBPVIMAAMNahTmjf785FIERAu9VEACDN6Dz1mlWOxOGpbeA7pb
-         j/fU9z5gy2GIxuhbsTrOsbsC5W7GBJTGTn7dwa9/LCuRdsWwyAmoyq3PDyg5GU2ug5s+
-         HLYCxfheuLXUX4xre/bvMAurMTrcffJpEMMKp+j6Wtq8qnswrfxvwcbQ75DKYA0YMApY
-         vroFWYFkyIu9Htfdesto2WrVrIfrGq7SCiUXYBDLUYAih13Eo2rIPWIc+nwn32ib129k
-         jpNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=GrPd0Ehzkwgs8flG0McuJvkTnr/DIjfrIhDeOSvXnoY=;
-        b=Hfo4Dech/p8M+7jQr0PEX2kIoif7yFRQE7nm1jJRzjvuFR0sNMa4pk0KCOzRY9khn4
-         BQLLxbV5pYzFsg+pq2MXLIdG158z01b3tgSm8OhDUEKI/ilZUfZch8lkTJywsFBGEn0N
-         EZUoka8YZIkmgcJyXLd+mx5m3KgmskZJ98Z1nakm0V27PtRelvzmoSvX+3lrPfhTEKeA
-         LD1jZZz0iUKYI4O713EQa4c+FozG06HUepHH0JZlMC2czR/mJDCSx27lhL3IL20420UN
-         gxfAHYe0YBAlZJr+YiOT+Oul7VR+0+unzcb4HAqNfDzT8qIB7wRi9WHz/WG3g8erJqVU
-         c3aw==
-X-Gm-Message-State: APjAAAVudeWCtz/kNu7XOWDJQf3SrQOBKrBJKPG//JJlwqXUgQlx34tX
-        KZOEA2zri/8qYv2KBk/khk8eqgwLcaU=
-X-Google-Smtp-Source: APXvYqx6+4Lx9KEyyCmocn+ERDYmrBvW59FCcdrGthGBmVTyeg7hNq7ggY14xUbi5JovTOJdj/wBvcGas8A=
-X-Received: by 2002:a5b:888:: with SMTP id e8mr12252456ybq.505.1558615359109;
- Thu, 23 May 2019 05:42:39 -0700 (PDT)
-Date:   Thu, 23 May 2019 14:42:16 +0200
-In-Reply-To: <20190523124216.40208-1-glider@google.com>
-Message-Id: <20190523124216.40208-4-glider@google.com>
-Mime-Version: 1.0
-References: <20190523124216.40208-1-glider@google.com>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [PATCH 3/3] lib: introduce test_meminit module
-From:   Alexander Potapenko <glider@google.com>
-To:     akpm@linux-foundation.org, cl@linux.com, keescook@chromium.org
-Cc:     kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>, Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 23 May 2019 09:41:49 -0400
+Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 6F7EF4F3DADC617547CA;
+        Thu, 23 May 2019 14:41:46 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.46) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 23 May 2019 14:41:34 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
+        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
+        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
+        <kamensky@cisco.com>, <hpa@zytor.com>, <arnd@arndb.de>,
+        <rob@landley.net>, <james.w.mcmechan@gmail.com>,
+        <niveditas98@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [USER][PATCH] cpio: add option to add file metadata in copy-out mode
+Date:   Thu, 23 May 2019 15:38:24 +0200
+Message-ID: <20190523133824.710-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add tests for heap and pagealloc initialization.
-These can be used to check init_on_alloc and init_on_free implementations
-as well as other approaches to initialization.
+This patch adds the -e <type> option to include file metadata in the image.
+At the moment, only the xattr type is supported.
 
-Expected test output in the case the kernel provides heap initialization
-(e.g. when running with either init_on_alloc=1 or init_on_free=1):
+If the xattr type is selected, the patch includes an additional file for
+each file passed to stdin, with special name 'METADATA!!!'. The additional
+file might contain multiple metadata records. The format of each record is:
 
-  test_meminit: all 10 tests in test_pages passed
-  test_meminit: all 40 tests in test_kvmalloc passed
-  test_meminit: all 20 tests in test_kmemcache passed
-  test_meminit: all 70 tests passed!
+<metadata len (ASCII, 8 chars)><version><type><metadata>
 
-Signed-off-by: Alexander Potapenko <glider@google.com>
-To: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Kostya Serebryany <kcc@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Sandeep Patil <sspatil@android.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: linux-mm@kvack.org
-Cc: linux-security-module@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com
+The format of metadata for the xattr type is:
+
+<xattr name>\0<xattr value>
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- v3:
-  - added example test output to the description
-  - fixed a missing include spotted by kbuild test robot <lkp@intel.com>
-  - added a missing MODULE_LICENSE
-  - call do_kmem_cache_size() with size >= sizeof(void*) to unbreak
-  debug builds
----
- lib/Kconfig.debug  |   8 ++
- lib/Makefile       |   1 +
- lib/test_meminit.c | 208 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 217 insertions(+)
- create mode 100644 lib/test_meminit.c
+ doc/cpio.texi   |   3 ++
+ src/copyout.c   | 136 ++++++++++++++++++++++++++++++++++++++++++++++--
+ src/dstring.c   |  26 +++++++--
+ src/dstring.h   |   1 +
+ src/extern.h    |   2 +
+ src/global.c    |   2 +
+ src/initramfs.h |  21 ++++++++
+ src/main.c      |  22 ++++++++
+ 8 files changed, 206 insertions(+), 7 deletions(-)
+ create mode 100644 src/initramfs.h
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index fdfa173651eb..036e8ef03831 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2043,6 +2043,14 @@ config TEST_STACKINIT
+diff --git a/doc/cpio.texi b/doc/cpio.texi
+index e667b48..d7b311f 100644
+--- a/doc/cpio.texi
++++ b/doc/cpio.texi
+@@ -275,6 +275,9 @@ Set the I/O block size to the given @var{number} of bytes.
+ @item -D @var{dir}
+ @itemx --directory=@var{dir}
+ Change to directory @var{dir}
++@item -e @var{type}
++@itemx --file-metadata=@var{type}
++Include in the image file metadata with the specified type.
+ @item --force-local
+ Treat the archive file as local, even if its name contains colons.
+ @item -F [[@var{user}@@]@var{host}:]@var{archive-file}
+diff --git a/src/copyout.c b/src/copyout.c
+index 7532dac..f0e512a 100644
+--- a/src/copyout.c
++++ b/src/copyout.c
+@@ -22,6 +22,7 @@
+ #include <stdio.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <sys/xattr.h>
+ #include "filetypes.h"
+ #include "cpiohdr.h"
+ #include "dstring.h"
+@@ -578,6 +579,92 @@ assign_string (char **pvar, char *value)
+   *pvar = p;
+ }
  
- 	  If unsure, say N.
- 
-+config TEST_MEMINIT
-+	tristate "Test level of heap/page initialization"
-+	help
-+	  Test if the kernel is zero-initializing heap and page allocations.
-+	  This can be useful to test init_on_alloc and init_on_free features.
++static int
++write_xattrs (int metadata_fd, char *path)
++{
++  struct metadata_hdr hdr = { .c_version = 1, .c_type = TYPE_XATTR };
++  char str[sizeof(hdr.c_size) + 1];
++  char *xattr_list, *list_ptr, *xattr_value;
++  ssize_t list_len, name_len, value_len, len;
++  int ret = -EINVAL;
 +
-+	  If unsure, say N.
++  if (metadata_fd < 0)
++    return 0;
 +
- endif # RUNTIME_TESTING_MENU
++  list_len = llistxattr(path, NULL, 0);
++  if (list_len <= 0)
++    return -ENOENT;
++
++  list_ptr = xattr_list = malloc(list_len);
++  if (!list_ptr) {
++    error (0, 0, _("out of memory"));
++    return ret;
++  }
++
++  len = llistxattr(path, xattr_list, list_len);
++  if (len != list_len)
++    goto out;
++
++  if (ftruncate(metadata_fd, 0))
++    goto out;
++
++  lseek(metadata_fd, 0, SEEK_SET);
++
++  while (list_ptr < xattr_list + list_len) {
++    name_len = strlen(list_ptr);
++
++    value_len = lgetxattr(path, list_ptr, NULL, 0);
++    if (value_len < 0) {
++      error (0, 0, _("cannot get xattrs"));
++      break;
++    }
++
++    if (value_len) {
++      xattr_value = malloc(value_len);
++      if (!xattr_value) {
++	error (0, 0, _("out of memory"));
++	break;
++      }
++    } else {
++      xattr_value = NULL;
++    }
++
++    len = lgetxattr(path, list_ptr, xattr_value, value_len);
++    if (len != value_len)
++      break;
++
++    snprintf(str, sizeof(str), "%.8lx",
++	     sizeof(hdr) + name_len + 1 + value_len);
++
++    memcpy(hdr.c_size, str, sizeof(hdr.c_size));
++
++    if (write(metadata_fd, &hdr, sizeof(hdr)) != sizeof(hdr))
++      break;
++
++    if (write(metadata_fd, list_ptr, name_len + 1) != name_len + 1)
++      break;
++
++    if (write(metadata_fd, xattr_value, value_len) != value_len)
++      break;
++
++    if (fsync(metadata_fd))
++      break;
++
++    list_ptr += name_len + 1;
++    free(xattr_value);
++    xattr_value = NULL;
++  }
++
++  free(xattr_value);
++out:
++  free(xattr_list);
++
++  if (list_ptr != xattr_list + list_len)
++    return ret;
++
++  return 0;
++}
++
+ /* Read a list of file names from the standard input
+    and write a cpio collection on the standard output.
+    The format of the header depends on the compatibility (-c) flag.  */
+@@ -591,6 +678,8 @@ process_copy_out ()
+   int in_file_des;		/* Source file descriptor.  */
+   int out_file_des;		/* Output file descriptor.  */
+   char *orig_file_name = NULL;
++  char template[] = "/tmp/cpio-metadata-XXXXXX";
++  int ret, metadata_fd, metadata = 0, old_metadata;
  
- config MEMTEST
-diff --git a/lib/Makefile b/lib/Makefile
-index fb7697031a79..05980c802500 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -91,6 +91,7 @@ obj-$(CONFIG_TEST_DEBUG_VIRTUAL) += test_debug_virtual.o
- obj-$(CONFIG_TEST_MEMCAT_P) += test_memcat_p.o
- obj-$(CONFIG_TEST_OBJAGG) += test_objagg.o
- obj-$(CONFIG_TEST_STACKINIT) += test_stackinit.o
-+obj-$(CONFIG_TEST_MEMINIT) += test_meminit.o
+   /* Initialize the copy out.  */
+   ds_init (&input_name, 128);
+@@ -623,9 +712,36 @@ process_copy_out ()
+       prepare_append (out_file_des);
+     }
  
- obj-$(CONFIG_TEST_LIVEPATCH) += livepatch/
++  /* Create a temporary file to store file metadata */
++  if (metadata_type != TYPE_NONE) {
++    metadata_fd = mkstemp(template);
++    if (metadata_fd < 0) {
++      error (0, 0, _("cannot create temporary file"));
++      return;
++    }
++  }
++
+   /* Copy files with names read from stdin.  */
+-  while (ds_fgetstr (stdin, &input_name, name_end) != NULL)
++  while ((metadata_type != TYPE_NONE && metadata) ||
++	 ds_fgetstr (stdin, &input_name, name_end) != NULL)
+     {
++      old_metadata = metadata;
++
++      if (metadata) {
++	metadata = 0;
++
++        if (metadata_type != TYPE_XATTR) {
++	  error (0, 0, _("metadata type not supported"));
++	  continue;
++	}
++
++	ret = write_xattrs(metadata_fd, orig_file_name);
++	if (ret < 0)
++	  continue;
++
++	ds_sgetstr (template, &input_name, name_end);
++      }
++
+       /* Check for blank line.  */
+       if (input_name.ds_string[0] == 0)
+ 	{
+@@ -655,8 +771,15 @@ process_copy_out ()
+ 		    }
+ 		}
+ 	    }
+-	  
+-	  assign_string (&orig_file_name, input_name.ds_string);
++
++	  if (old_metadata) {
++	    assign_string (&orig_file_name, template);
++	    ds_sgetstr (METADATA_FILENAME, &input_name, name_end);
++	    file_hdr.c_mode |= 0x10000;
++	  } else {
++	    assign_string (&orig_file_name, input_name.ds_string);
++	  }
++
+ 	  cpio_safer_name_suffix (input_name.ds_string, false,
+ 				  !no_abs_paths_flag, true);
+ #ifndef HPUX_CDF
+@@ -844,6 +967,8 @@ process_copy_out ()
+ 	    fprintf (stderr, "%s\n", orig_file_name);
+ 	  if (dot_flag)
+ 	    fputc ('.', stderr);
++	  if (metadata_type != TYPE_NONE && !old_metadata)
++	    metadata = 1;
+ 	}
+     }
  
-diff --git a/lib/test_meminit.c b/lib/test_meminit.c
+@@ -882,6 +1007,11 @@ process_copy_out ()
+ 	       ngettext ("%lu block\n", "%lu blocks\n",
+ 			 (unsigned long) blocks), (unsigned long) blocks);
+     }
++
++  if (metadata_type != TYPE_NONE) {
++    close(metadata_fd);
++    unlink(template);
++  }
+ }
+ 
+ 
+diff --git a/src/dstring.c b/src/dstring.c
+index ddad4c8..fe3cfaf 100644
+--- a/src/dstring.c
++++ b/src/dstring.c
+@@ -60,8 +60,8 @@ ds_resize (dynamic_string *string, int size)
+    Return NULL if end of file is detected.  Otherwise,
+    Return a pointer to the null-terminated string in S.  */
+ 
+-char *
+-ds_fgetstr (FILE *f, dynamic_string *s, char eos)
++static char *
++ds_fgetstr_common (FILE *f, char *input_string, dynamic_string *s, char eos)
+ {
+   int insize;			/* Amount needed for line.  */
+   int strsize;			/* Amount allocated for S.  */
+@@ -72,7 +72,10 @@ ds_fgetstr (FILE *f, dynamic_string *s, char eos)
+   strsize = s->ds_length;
+ 
+   /* Read the input string.  */
+-  next_ch = getc (f);
++  if (input_string)
++    next_ch = *input_string++;
++  else
++    next_ch = getc (f);
+   while (next_ch != eos && next_ch != EOF)
+     {
+       if (insize >= strsize - 1)
+@@ -81,7 +84,10 @@ ds_fgetstr (FILE *f, dynamic_string *s, char eos)
+ 	  strsize = s->ds_length;
+ 	}
+       s->ds_string[insize++] = next_ch;
+-      next_ch = getc (f);
++      if (input_string)
++	next_ch = *input_string++;
++      else
++	next_ch = getc (f);
+     }
+   s->ds_string[insize++] = '\0';
+ 
+@@ -91,6 +97,12 @@ ds_fgetstr (FILE *f, dynamic_string *s, char eos)
+     return s->ds_string;
+ }
+ 
++char *
++ds_fgetstr (FILE *f, dynamic_string *s, char eos)
++{
++  return ds_fgetstr_common (f, NULL, s, eos);
++}
++
+ char *
+ ds_fgets (FILE *f, dynamic_string *s)
+ {
+@@ -102,3 +114,9 @@ ds_fgetname (FILE *f, dynamic_string *s)
+ {
+   return ds_fgetstr (f, s, '\0');
+ }
++
++char *
++ds_sgetstr (char *input_string, dynamic_string *s, char eos)
++{
++  return ds_fgetstr_common (NULL, input_string, s, eos);
++}
+diff --git a/src/dstring.h b/src/dstring.h
+index b5135fe..f5f95ec 100644
+--- a/src/dstring.h
++++ b/src/dstring.h
+@@ -49,3 +49,4 @@ void ds_resize (dynamic_string *string, int size);
+ char *ds_fgetname (FILE *f, dynamic_string *s);
+ char *ds_fgets (FILE *f, dynamic_string *s);
+ char *ds_fgetstr (FILE *f, dynamic_string *s, char eos);
++char *ds_sgetstr (char *input_string, dynamic_string *s, char eos);
+diff --git a/src/extern.h b/src/extern.h
+index 6fa2089..4c34404 100644
+--- a/src/extern.h
++++ b/src/extern.h
+@@ -19,6 +19,7 @@
+ 
+ #include "paxlib.h"
+ #include "quotearg.h"
++#include "initramfs.h"
+ #include "quote.h"
+ 
+ enum archive_format
+@@ -99,6 +100,7 @@ extern char output_is_seekable;
+ extern int (*xstat) ();
+ extern void (*copy_function) ();
+ extern char *change_directory_option;
++extern enum metadata_types metadata_type;
+ 
+ 
+ /* copyin.c */
+diff --git a/src/global.c b/src/global.c
+index fb3abe9..0c40be0 100644
+--- a/src/global.c
++++ b/src/global.c
+@@ -199,3 +199,5 @@ char *change_directory_option;
+ int renumber_inodes_option;
+ int ignore_devno_option;
+ 
++/* include file metadata into the image */
++enum metadata_types metadata_type = TYPE_NONE;
+diff --git a/src/initramfs.h b/src/initramfs.h
 new file mode 100644
-index 000000000000..d46e2b8c8e8e
+index 0000000..d13fc39
 --- /dev/null
-+++ b/lib/test_meminit.c
-@@ -0,0 +1,208 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/src/initramfs.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
 +/*
-+ * Test cases for SL[AOU]B/page initialization at alloc/free time.
++ * include/linux/initramfs.h
++ *
++ * Include file for file metadata in the initial ram disk.
 + */
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++#ifndef _LINUX_INITRAMFS_H
++#define _LINUX_INITRAMFS_H
 +
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/string.h>
-+#include <linux/vmalloc.h>
++#define METADATA_FILENAME "METADATA!!!"
 +
-+#define GARBAGE_INT (0x09A7BA9E)
-+#define GARBAGE_BYTE (0x9E)
++enum metadata_types { TYPE_NONE, TYPE_XATTR, TYPE__LAST };
 +
-+#define REPORT_FAILURES_IN_FN() \
-+	do {	\
-+		if (failures)	\
-+			pr_info("%s failed %d out of %d times\n",	\
-+				__func__, failures, num_tests);		\
-+		else		\
-+			pr_info("all %d tests in %s passed\n",		\
-+				num_tests, __func__);			\
-+	} while (0)
++struct metadata_hdr {
++	char c_size[8];     /* total size including c_size field */
++	char c_version;     /* header version */
++	char c_type;        /* metadata type */
++	char c_metadata[];  /* metadata */
++} __attribute__((packed));
 +
-+/* Calculate the number of uninitialized bytes in the buffer. */
-+static int count_nonzero_bytes(void *ptr, size_t size)
++#endif /*_LINUX_INITRAMFS_H*/
+diff --git a/src/main.c b/src/main.c
+index c68aba9..af1fa52 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -200,6 +200,8 @@ static struct argp_option options[] = {
+   {"device-independent", DEVICE_INDEPENDENT_OPTION, NULL, 0,
+    N_("Create device-independent (reproducible) archives") },
+   {"reproducible", 0, NULL, OPTION_ALIAS },
++  {"file-metadata", 'e', N_("TYPE"), 0,
++   N_("Include file metadata"), GRID+1 },
+ #undef GRID
+   
+   /* ********** */
+@@ -293,6 +295,22 @@ warn_control (char *arg)
+   return 1;
+ }
+ 
++static enum metadata_types
++parse_metadata_type(char *arg)
 +{
-+	int i, ret = 0;
-+	unsigned char *p = (unsigned char *)ptr;
++  static char *metadata_type_str[TYPE__LAST] = {
++    [TYPE_NONE] = "none",
++    [TYPE_XATTR] = "xattr",
++  };
++  int i;
 +
-+	for (i = 0; i < size; i++)
-+		if (p[i])
-+			ret++;
-+	return ret;
++  for (i = 0; i < TYPE__LAST; i++)
++    if (!strcmp (metadata_type_str[i], arg))
++      return i;
++
++  return TYPE_NONE;
 +}
 +
-+static void fill_with_garbage(void *ptr, size_t size)
-+{
-+	unsigned int *p = (unsigned int *)ptr;
-+	int i = 0;
+ static error_t
+ parse_opt (int key, char *arg, struct argp_state *state)
+ {
+@@ -354,6 +372,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
+       copy_matching_files = false;
+       break;
+ 
++    case 'e':		/* Metadata type.  */
++      metadata_type = parse_metadata_type(arg);
++      break;
 +
-+	while (size >= sizeof(*p)) {
-+		p[i] = GARBAGE_INT;
-+		i++;
-+		size -= sizeof(*p);
-+	}
-+	if (size)
-+		memset(&p[i], GARBAGE_BYTE, size);
-+}
-+
-+static int __init do_alloc_pages_order(int order, int *total_failures)
-+{
-+	struct page *page;
-+	void *buf;
-+	size_t size = PAGE_SIZE << order;
-+
-+	page = alloc_pages(GFP_KERNEL, order);
-+	buf = page_address(page);
-+	fill_with_garbage(buf, size);
-+	__free_pages(page, order);
-+
-+	page = alloc_pages(GFP_KERNEL, order);
-+	buf = page_address(page);
-+	if (count_nonzero_bytes(buf, size))
-+		(*total_failures)++;
-+	fill_with_garbage(buf, size);
-+	__free_pages(page, order);
-+	return 1;
-+}
-+
-+static int __init test_pages(int *total_failures)
-+{
-+	int failures = 0, num_tests = 0;
-+	int i;
-+
-+	for (i = 0; i < 10; i++)
-+		num_tests += do_alloc_pages_order(i, &failures);
-+
-+	REPORT_FAILURES_IN_FN();
-+	*total_failures += failures;
-+	return num_tests;
-+}
-+
-+static int __init do_kmalloc_size(size_t size, int *total_failures)
-+{
-+	void *buf;
-+
-+	buf = kmalloc(size, GFP_KERNEL);
-+	fill_with_garbage(buf, size);
-+	kfree(buf);
-+
-+	buf = kmalloc(size, GFP_KERNEL);
-+	if (count_nonzero_bytes(buf, size))
-+		(*total_failures)++;
-+	fill_with_garbage(buf, size);
-+	kfree(buf);
-+	return 1;
-+}
-+
-+static int __init do_vmalloc_size(size_t size, int *total_failures)
-+{
-+	void *buf;
-+
-+	buf = vmalloc(size);
-+	fill_with_garbage(buf, size);
-+	vfree(buf);
-+
-+	buf = vmalloc(size);
-+	if (count_nonzero_bytes(buf, size))
-+		(*total_failures)++;
-+	fill_with_garbage(buf, size);
-+	vfree(buf);
-+	return 1;
-+}
-+
-+static int __init test_kvmalloc(int *total_failures)
-+{
-+	int failures = 0, num_tests = 0;
-+	int i, size;
-+
-+	for (i = 0; i < 20; i++) {
-+		size = 1 << i;
-+		num_tests += do_kmalloc_size(size, &failures);
-+		num_tests += do_vmalloc_size(size, &failures);
-+	}
-+
-+	REPORT_FAILURES_IN_FN();
-+	*total_failures += failures;
-+	return num_tests;
-+}
-+
-+#define CTOR_BYTES 4
-+/* Initialize the first 4 bytes of the object. */
-+void some_ctor(void *obj)
-+{
-+	memset(obj, 'A', CTOR_BYTES);
-+}
-+
-+static int __init do_kmem_cache_size(size_t size, bool want_ctor,
-+				     int *total_failures)
-+{
-+	struct kmem_cache *c;
-+	void *buf;
-+	int iter, bytes = 0;
-+	int fail = 0;
-+
-+	c = kmem_cache_create("test_cache", size, 1, 0,
-+			      want_ctor ? some_ctor : NULL);
-+	for (iter = 0; iter < 10; iter++) {
-+		buf = kmem_cache_alloc(c, GFP_KERNEL);
-+		if (!want_ctor || iter == 0)
-+			bytes = count_nonzero_bytes(buf, size);
-+		if (want_ctor) {
-+			/*
-+			 * Newly initialized memory must be initialized using
-+			 * the constructor.
-+			 */
-+			if (iter == 0 && bytes < CTOR_BYTES)
-+				fail = 1;
-+		} else {
-+			if (bytes)
-+				fail = 1;
-+		}
-+		fill_with_garbage(buf, size);
-+		kmem_cache_free(c, buf);
-+	}
-+	kmem_cache_destroy(c);
-+
-+	*total_failures += fail;
-+	return 1;
-+}
-+
-+static int __init test_kmemcache(int *total_failures)
-+{
-+	int failures = 0, num_tests = 0;
-+	int i, size;
-+
-+	for (i = 0; i < 10; i++) {
-+		size = 8 << i;
-+		num_tests += do_kmem_cache_size(size, false, &failures);
-+		num_tests += do_kmem_cache_size(size, true, &failures);
-+	}
-+	REPORT_FAILURES_IN_FN();
-+	*total_failures += failures;
-+	return num_tests;
-+}
-+
-+static int __init test_meminit_init(void)
-+{
-+	int failures = 0, num_tests = 0;
-+
-+	num_tests += test_pages(&failures);
-+	num_tests += test_kvmalloc(&failures);
-+	num_tests += test_kmemcache(&failures);
-+
-+	if (failures == 0)
-+		pr_info("all %d tests passed!\n", num_tests);
-+	else
-+		pr_info("failures: %d out of %d\n", failures, num_tests);
-+
-+	return failures ? -EINVAL : 0;
-+}
-+module_init(test_meminit_init);
-+
-+MODULE_LICENSE("GPL");
+     case 'E':		/* Pattern file name.  */
+       pattern_file_name = arg;
+       break;
 -- 
-2.21.0.1020.gf2820cf01a-goog
+2.17.1
 
