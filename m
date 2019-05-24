@@ -2,409 +2,279 @@ Return-Path: <SRS0=sk88=TY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BE8C282E1
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 23:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFC4C46460
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 23:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D4C22184E
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 23:10:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ADD8217F9
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 23:42:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="H+YEoYZ5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732210AbfEXXKU (ORCPT
+        id S1725996AbfEXXmH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 May 2019 19:10:20 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:56398 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbfEXXKR (ORCPT
+        Fri, 24 May 2019 19:42:07 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34053 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfEXXmG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 May 2019 19:10:17 -0400
-Received: from jaskaran-Intel-Server-Board-S1200V3RPS-UEFI-Development-Kit.corp.microsoft.com (unknown [131.107.160.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2B08720B7194;
-        Fri, 24 May 2019 16:04:27 -0700 (PDT)
-From:   Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
-To:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        jmorris@namei.org, scottsh@microsoft.com
-Subject: [PATCH 1/1 v2] Add dm verity root hash pkcs7 sig validation.
-Date:   Fri, 24 May 2019 16:04:11 -0700
-Message-Id: <20190524230411.9238-2-jaskarankhurana@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190524230411.9238-1-jaskarankhurana@linux.microsoft.com>
-References: <20190524230411.9238-1-jaskarankhurana@linux.microsoft.com>
+        Fri, 24 May 2019 19:42:06 -0400
+Received: by mail-pf1-f194.google.com with SMTP id n19so6202193pfa.1
+        for <linux-security-module@vger.kernel.org>; Fri, 24 May 2019 16:42:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=2WVyrwyoR+Miiyf53lPdpTDFqJtRFdKUz05NfzTWxQk=;
+        b=H+YEoYZ5/bL+lZ3PN1AOE2ZrYyGPfFiEqkbUvCO2YrFErto3JeP6+D56wdPa+nXNnc
+         twQMX1JBpW80lFrmq8PGCyYvGMQkpEIdC4k+CeMvpPynTzEozIb0HDS7pQXb8iLrYQWI
+         86Z0vEXrJmsOhjfT2A+ryc2oSlmUq8NVuchIa9+6+kfz0spjQAoPeM/nDQxXVylAaLs6
+         52GZFp+bWbU6fM4r9ytbpHAd4E+n5fRIawGtLuj3VU0EnHeFgK2Qz0afcE/bcaS3KYog
+         zriV2VOs1Ab4ceGEzVVf9Ia01ejsnETeb1M7c9i4ieHXAZj+t4yYDsGo88GrNeqJ/XW9
+         kBMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=2WVyrwyoR+Miiyf53lPdpTDFqJtRFdKUz05NfzTWxQk=;
+        b=MzqrE2EIxQADC/Uz2dCLuLCan0d7ykFwvAhOZ4v/xTfO2oXva5Ol7dZkSi6vTbvgD6
+         3n/DBLHgwmDvKjWpTN8qSerM4vR0KVzefkStWsrticbQ0/ZNv0pMs16W3JAAYKmeWfzU
+         wBdX04aVQyq5I1EtVg4HGvbmb4m2WOetTrL24F82dAhDk87B2ysTDx91JydG8eudUoyG
+         lSybeIFqHs3GnGu6wPzSOj/s3gWYexqJbIaFwCMyDzoCrvQZ94zuCoatJP3daZeTOdmo
+         V4RbRc7Kuh72YMqDN8KcvnsxrHbPSYHyqRU3yKWeiqlrzoP/FGbo6Yz0++scZr3mrn6o
+         J8NA==
+X-Gm-Message-State: APjAAAUmXQ4fLejPoWJEVxdcdcoAlsHLPbW+1658MEwhzxQb//rRHdB/
+        fbO21HvpJnjSah3tEcGwxaxp+g==
+X-Google-Smtp-Source: APXvYqzGDIUfGSUjlwrYLOEcA/mL7phVDD2lSgoP5FutrUmtvK03CiHGMdyhZUjZA/SPWtvLIBE6yg==
+X-Received: by 2002:a62:e117:: with SMTP id q23mr116579179pfh.60.1558741325678;
+        Fri, 24 May 2019 16:42:05 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b01d:ffa2:d9bd:516:12f0:5e2d? ([2600:1010:b01d:ffa2:d9bd:516:12f0:5e2d])
+        by smtp.gmail.com with ESMTPSA id e10sm6420074pfm.137.2019.05.24.16.42.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 16:42:03 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16E227)
+In-Reply-To: <20190524224107.GJ365@linux.intel.com>
+Date:   Fri, 24 May 2019 16:42:01 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <683B5E3D-AFB6-4B45-8D39-B00847312209@amacapital.net>
+References: <20190523234044.GC12078@linux.intel.com> <CALCETrV4DVEfW6EJ6DnQGGYDJAiA5M1QcuYJTiroumOM+D6Jjg@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F654E8956@ORSMSX116.amr.corp.intel.com> <dda0912b-cb15-3c07-d368-345159e995f7@tycho.nsa.gov> <20190524174243.GA365@linux.intel.com> <20190524175458.GB365@linux.intel.com> <960B34DE67B9E140824F1DCDEC400C0F654E8E1D@ORSMSX116.amr.corp.intel.com> <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com> <20190524200333.GF365@linux.intel.com> <CALCETrUyAAhnQ+RUeN1L41TKj-vcD2CNt-FJ9siO=Zo6gvH1Aw@mail.gmail.com> <20190524224107.GJ365@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The verification is to support cases where the roothash is not secured by
-Trusted Boot, UEFI Secureboot or similar technologies.
-One of the use cases for this is for dm-verity volumes mounted after boot,
-the root hash provided during the creation of the dm-verity volume has to
-be secure and thus in-kernel validation implemented here will be used
-before we trust the root hash and allow the block device to be created.
 
-The signature being provided for verification must verify the root hash and
-must be trusted by the builtin keyring for verification to succeed.
 
-The hash is added as a key of type "user" and the description is passed to
-the kernel so it can look it up and use it for verification.
+> On May 24, 2019, at 3:41 PM, Sean Christopherson <sean.j.christopherson@in=
+tel.com> wrote:
+>=20
+>> On Fri, May 24, 2019 at 02:27:34PM -0700, Andy Lutomirski wrote:
+>> On Fri, May 24, 2019 at 1:03 PM Sean Christopherson
+>> <sean.j.christopherson@intel.com> wrote:
+>>>=20
+>>>> On Fri, May 24, 2019 at 12:37:44PM -0700, Andy Lutomirski wrote:
+>>>>> On Fri, May 24, 2019 at 11:34 AM Xing, Cedric <cedric.xing@intel.com> w=
+rote:
+>>>>>=20
+>>>>> If "initial permissions" for enclaves are less restrictive than shared=
 
-Adds DM_VERITY_VERIFY_ROOTHASH_SIG: roothash verification
-against the roothash signature file *if* specified, if signature file is
-specified verification must succeed prior to creation of device mapper
-block device.
+>>>>> objects, then it'd become a backdoor for circumventing LSM when enclav=
+e
+>>>>> whitelisting is *not* in place. For example, an adversary may load a p=
+age,
+>>>>> which would otherwise never be executable, as an executable page in EP=
+C.
+>>>>>=20
+>>>>> In the case a RWX page is needed, the calling process has to have a RW=
+X
+>>>>> page serving as the source for EADD so PROCESS__EXECMEM will have been=
 
-Adds DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE: roothash signature *must* be
-specified for all dm verity volumes and verification must succeed prior
-to creation of device mapper block device.
+>>>>> checked. For SGX2, changing an EPC page to RWX is subject to FILE__EXE=
+CMEM
+>>>>> on /dev/sgx/enclave, which I see as a security benefit because it only=
 
-Signed-off-by: Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
----
- drivers/md/Kconfig                |  23 +++++
- drivers/md/Makefile               |   2 +-
- drivers/md/dm-verity-target.c     |  34 +++++++-
- drivers/md/dm-verity-verify-sig.c | 137 ++++++++++++++++++++++++++++++
- drivers/md/dm-verity-verify-sig.h |  31 +++++++
- 5 files changed, 222 insertions(+), 5 deletions(-)
- create mode 100644 drivers/md/dm-verity-verify-sig.c
- create mode 100644 drivers/md/dm-verity-verify-sig.h
+>>>>> affects the enclave but not the whole process hosting it.
+>>>>=20
+>>>> So the permission would be like FILE__EXECMOD on the source enclave
+>>>> page, because it would be mapped MAP_ANONYMOUS, PROT_WRITE?
+>>>> MAP_SHARED, PROT_WRITE isn't going to work because that means you can
+>>>> modify the file.
+>>>=20
+>>> Was this in response to Cedric's comment, or to my comment?
+>>=20
+>> Yours.  I think that requiring source pages to be actually mapped W is
+>> not such a great idea.
+>=20
+> I wasn't requiring source pages to be mapped W.  At least I didn't intend
+> to require W.  What I was trying to say is that SGX could trigger an
+> EXECMEM check if userspace attempted to EADD or EAUG an enclave page with
+> RWX permissions, e.g.:
+>=20
+>  if ((SECINFO.PERMS & RWX) =3D=3D RWX) {
+>      ret =3D security_mmap_file(NULL, RWX, ???);
+>      if (ret)
+>          return ret;
+>  }
+>=20
+> But that's a moot point if we add security_enclave_load() or whatever.
+>=20
+>>=20
+>>>=20
+>>>> I'm starting to think that looking at the source VMA permission bits
+>>>> or source PTE permission bits is putting a bit too much policy into
+>>>> the driver as opposed to the LSM.  How about delegating the whole
+>>>> thing to an LSM hook?  The EADD operation would invoke a new hook,
+>>>> something like:
+>>>>=20
+>>>> int security_enclave_load_bytes(void *source_addr, struct
+>>>> vm_area_struct *source_vma, loff_t source_offset, unsigned int
+>>>> maxperm);
+>>>>=20
+>>>> Then you don't have to muck with mapping anything PROT_EXEC.  Instead
+>>>> you load from a mapping of a file and the LSM applies whatever policy
+>>>> it feels appropriate.  If the first pass gets something wrong, the
+>>>> application or library authors can take it up with the SELinux folks
+>>>> without breaking the whole ABI :)
+>>>>=20
+>>>> (I'm proposing passing in the source_vma because this hook would be
+>>>> called with mmap_sem held for read to avoid a TOCTOU race.)
+>>>>=20
+>>>> If we go this route, the only substantial change to the existing
+>>>> driver that's needed for an initial upstream merge is the maxperm
+>>>> mechanism and whatever hopefully minimal API changes are needed to
+>>>> allow users to conveniently set up the mappings.  And we don't need to
+>>>> worry about how to hack around mprotect() calling into the LSM,
+>>>> because the LSM will actually be aware of SGX and can just do the
+>>>> right thing.
+>>>=20
+>>> This doesn't address restricting which processes can run which enclaves,=
 
-diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-index db269a348b20..da4115753f25 100644
---- a/drivers/md/Kconfig
-+++ b/drivers/md/Kconfig
-@@ -489,6 +489,29 @@ config DM_VERITY
- 
- 	  If unsure, say N.
- 
-+config DM_VERITY_VERIFY_ROOTHASH_SIG
-+	def_bool n
-+	bool "Verity data device root hash signature verification support"
-+	depends on DM_VERITY
-+	select SYSTEM_DATA_VERIFICATION
-+	  help
-+	  The device mapper target created by DM-VERITY can be validated if the
-+	  pre-generated tree of cryptographic checksums passed has a pkcs#7
-+	  signature file that can validate the roothash of the tree.
-+
-+	  If unsure, say N.
-+
-+config DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE
-+	def_bool n
-+	bool "Forces all dm verity data device root hash should be signed"
-+	depends on DM_VERITY_VERIFY_ROOTHASH_SIG
-+	  help
-+	  The device mapper target created by DM-VERITY will succeed only if the
-+	  pre-generated tree of cryptographic checksums passed also has a pkcs#7
-+	  signature file that can validate the roothash of the tree.
-+
-+	  If unsure, say N.
-+
- config DM_VERITY_FEC
- 	bool "Verity forward error correction support"
- 	depends on DM_VERITY
-diff --git a/drivers/md/Makefile b/drivers/md/Makefile
-index be7a6eb92abc..8a8c142bcfe1 100644
---- a/drivers/md/Makefile
-+++ b/drivers/md/Makefile
-@@ -61,7 +61,7 @@ obj-$(CONFIG_DM_LOG_USERSPACE)	+= dm-log-userspace.o
- obj-$(CONFIG_DM_ZERO)		+= dm-zero.o
- obj-$(CONFIG_DM_RAID)	+= dm-raid.o
- obj-$(CONFIG_DM_THIN_PROVISIONING)	+= dm-thin-pool.o
--obj-$(CONFIG_DM_VERITY)		+= dm-verity.o
-+obj-$(CONFIG_DM_VERITY)		+= dm-verity.o dm-verity-verify-sig.o
- obj-$(CONFIG_DM_CACHE)		+= dm-cache.o
- obj-$(CONFIG_DM_CACHE_SMQ)	+= dm-cache-smq.o
- obj-$(CONFIG_DM_ERA)		+= dm-era.o
-diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-index f4c31ffaa88e..56276669ac20 100644
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -16,7 +16,7 @@
- 
- #include "dm-verity.h"
- #include "dm-verity-fec.h"
--
-+#include "dm-verity-verify-sig.h"
- #include <linux/module.h>
- #include <linux/reboot.h>
- 
-@@ -34,7 +34,8 @@
- #define DM_VERITY_OPT_IGN_ZEROES	"ignore_zero_blocks"
- #define DM_VERITY_OPT_AT_MOST_ONCE	"check_at_most_once"
- 
--#define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC)
-+#define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC + \
-+					 DM_VERITY_ROOT_HASH_VERIFICATION_OPTS)
- 
- static unsigned dm_verity_prefetch_cluster = DM_VERITY_DEFAULT_PREFETCH_SIZE;
- 
-@@ -855,7 +856,8 @@ static int verity_alloc_zero_digest(struct dm_verity *v)
- 	return r;
- }
- 
--static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
-+static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
-+				 struct dm_verity_sig_opts *verify_args)
- {
- 	int r;
- 	unsigned argc;
-@@ -904,6 +906,14 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
- 			if (r)
- 				return r;
- 			continue;
-+		} else if (verity_verify_is_sig_opt_arg(arg_name)) {
-+			r = verity_verify_sig_parse_opt_args(as, v,
-+							     verify_args,
-+							     &argc, arg_name);
-+			if (r)
-+				return r;
-+			continue;
-+
- 		}
- 
- 		ti->error = "Unrecognized verity feature request";
-@@ -930,6 +940,7 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
- static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- {
- 	struct dm_verity *v;
-+	struct dm_verity_sig_opts verify_args = {0};
- 	struct dm_arg_set as;
- 	unsigned int num;
- 	unsigned long long num_ll;
-@@ -937,6 +948,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 	int i;
- 	sector_t hash_position;
- 	char dummy;
-+	char *root_hash_digest_to_validate = NULL;
- 
- 	v = kzalloc(sizeof(struct dm_verity), GFP_KERNEL);
- 	if (!v) {
-@@ -1070,6 +1082,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 		r = -EINVAL;
- 		goto bad;
- 	}
-+	root_hash_digest_to_validate = argv[8];
- 
- 	if (strcmp(argv[9], "-")) {
- 		v->salt_size = strlen(argv[9]) / 2;
-@@ -1095,11 +1108,20 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 		as.argc = argc;
- 		as.argv = argv;
- 
--		r = verity_parse_opt_args(&as, v);
-+		r = verity_parse_opt_args(&as, v, &verify_args);
- 		if (r < 0)
- 			goto bad;
- 	}
- 
-+	/* Root hash signature is  a optional parameter*/
-+	r = verity_verify_root_hash(root_hash_digest_to_validate,
-+				    strlen(root_hash_digest_to_validate),
-+				    verify_args.sig,
-+				    verify_args.sig_size);
-+	if (r < 0) {
-+		ti->error = "Root hash verification failed";
-+		goto bad;
-+	}
- 	v->hash_per_block_bits =
- 		__fls((1 << v->hash_dev_block_bits) / v->digest_size);
- 
-@@ -1165,9 +1187,13 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 	ti->per_io_data_size = roundup(ti->per_io_data_size,
- 				       __alignof__(struct dm_verity_io));
- 
-+	verity_verify_sig_opts_cleanup(&verify_args);
-+
- 	return 0;
- 
- bad:
-+
-+	verity_verify_sig_opts_cleanup(&verify_args);
- 	verity_dtr(ti);
- 
- 	return r;
-diff --git a/drivers/md/dm-verity-verify-sig.c b/drivers/md/dm-verity-verify-sig.c
-new file mode 100644
-index 000000000000..ba87c9342d55
---- /dev/null
-+++ b/drivers/md/dm-verity-verify-sig.c
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 Microsoft Corporation.
-+ *
-+ * Author:  Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
-+ *
-+ * This file is released under the GPLv2.
-+ */
-+#include <linux/device-mapper.h>
-+#include <linux/verification.h>
-+#include <keys/user-type.h>
-+#include "dm-verity.h"
-+#include "dm-verity-verify-sig.h"
-+
-+#define DM_VERITY_VERIFY_ERR(s) DM_VERITY_ROOT_HASH_VERIFICATION " " s
-+
-+
-+bool verity_verify_is_sig_opt_arg(const char *arg_name)
-+{
-+	return (!strcasecmp(arg_name,
-+			    DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG_KEY));
-+}
-+EXPORT_SYMBOL_GPL(verity_verify_is_sig_opt_arg);
-+
-+static int verity_verify_get_sig_from_key(const char *key_desc,
-+					struct dm_verity_sig_opts *sig_opts)
-+{
-+	struct key *key;
-+	const struct user_key_payload *ukp;
-+	int ret = 0;
-+
-+	key = request_key(&key_type_user,
-+			key_desc, NULL);
-+	if (IS_ERR(key))
-+		return PTR_ERR(key);
-+
-+	down_read(&key->sem);
-+
-+	ukp = user_key_payload_locked(key);
-+	if (!ukp) {
-+		ret = -EKEYREVOKED;
-+		goto end;
-+	}
-+
-+	sig_opts->sig = kmalloc(ukp->datalen, GFP_KERNEL);
-+	if (!sig_opts->sig) {
-+		ret = -ENOMEM;
-+		goto end;
-+	}
-+	sig_opts->sig_size = ukp->datalen;
-+
-+	memcpy(sig_opts->sig, ukp->data, sig_opts->sig_size);
-+
-+end:
-+	up_read(&key->sem);
-+	key_put(key);
-+
-+	return ret;
-+}
-+
-+int verity_verify_sig_parse_opt_args(struct dm_arg_set *as,
-+				     struct dm_verity *v,
-+				     struct dm_verity_sig_opts *sig_opts,
-+				     unsigned int *argc,
-+				     const char *arg_name)
-+{
-+	struct dm_target *ti = v->ti;
-+	int ret = 0;
-+	const char *sig_key = NULL;
-+
-+	if (!*argc) {
-+		ti->error = DM_VERITY_VERIFY_ERR("Signature key not specified");
-+		return -EINVAL;
-+	}
-+
-+	sig_key = dm_shift_arg(as);
-+	(*argc)--;
-+
-+	if (!IS_ENABLED(CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG))
-+		return 0;
-+
-+	ret = verity_verify_get_sig_from_key(sig_key, sig_opts);
-+	if (ret < 0)
-+		ti->error = DM_VERITY_VERIFY_ERR("Invalid key specified");
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(verity_verify_sig_parse_opt_args);
-+
-+#ifdef CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG
-+/*
-+ * verify_verify_roothash - Verify the root hash of the verity hash device
-+ *			     using builtin trusted keys.
-+ *
-+ * @root_hash: For verity, the roothash/data to be verified.
-+ * @root_hash_len: Size of the roothash/data to be verified.
-+ * @sig_data: The trusted signature that verifies the roothash/data.
-+ * @sig_len: Size of the signature.
-+ *
-+ */
-+int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
-+			    const void *sig_data, size_t sig_len)
-+{
-+	int ret;
-+
-+	if (!root_hash || root_hash_len == 0)
-+		return -EINVAL;
-+
-+	if (!sig_data  || sig_len == 0) {
-+		if (IS_ENABLED(CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE))
-+			return -EINVAL;
-+		else
-+			return 0;
-+	}
-+
-+	ret = verify_pkcs7_signature(root_hash, root_hash_len, sig_data,
-+				sig_len, NULL, VERIFYING_UNSPECIFIED_SIGNATURE,
-+				NULL, NULL);
-+
-+	return ret;
-+}
-+#else
-+int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
-+			    const void *sig_data, size_t sig_len)
-+{
-+	return 0;
-+}
-+#endif
-+EXPORT_SYMBOL_GPL(verity_verify_root_hash);
-+
-+void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
-+{
-+	kfree(sig_opts->sig);
-+	sig_opts->sig = NULL;
-+	sig_opts->sig_size = 0;
-+}
-+EXPORT_SYMBOL_GPL(verity_verify_sig_opts_cleanup);
-diff --git a/drivers/md/dm-verity-verify-sig.h b/drivers/md/dm-verity-verify-sig.h
-new file mode 100644
-index 000000000000..4cdb5eeb90d4
---- /dev/null
-+++ b/drivers/md/dm-verity-verify-sig.h
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 Microsoft Corporation.
-+ *
-+ * Author:  Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
-+ *
-+ * This file is released under the GPLv2.
-+ */
-+#ifndef DM_VERITY_SIG_VERIFICATION_H
-+#define DM_VERITY_SIG_VERIFICATION_H
-+
-+#define DM_VERITY_ROOT_HASH_VERIFICATION "DM Verity Sig Verification"
-+#define DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG_KEY "root_hash_sig_key_desc"
-+#define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 2
-+
-+struct dm_verity_sig_opts {
-+	unsigned int sig_size;
-+	u8 *sig;
-+};
-+int verity_verify_root_hash(const void *data, size_t data_len,
-+			    const void *sig_data, size_t sig_len);
-+
-+bool verity_verify_is_sig_opt_arg(const char *arg_name);
-+
-+int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
-+				    struct dm_verity_sig_opts *sig_opts,
-+				    unsigned int *argc, const char *arg_name);
-+
-+void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts);
-+
-+#endif /* DM_VERITY_SIG_VERIFICATION_H */
--- 
-2.17.1
+>>> it only allows restricting the build flow.  Or are you suggesting this
+>>> be done in addition to whitelisting sigstructs?
+>>=20
+>> In addition.
+>>=20
+>> But I named the function badly and gave it a bad signature, which
+>> confused you.  Let's try again:
+>>=20
+>> int security_enclave_load_from_memory(const struct vm_area_struct
+>> *source, unsigned int maxperm);
+>=20
+> I prefer security_enclave_load(), "from_memory" seems redundant at best.
 
+Fine with me.
+
+>=20
+>> Maybe some really fancy future LSM would also want loff_t
+>> source_offset, but it's probably not terribly useful.  This same
+>> callback would be used for EAUG.
+>>=20
+>> Following up on your discussion with Cedric about sigstruct, the other
+>> callback would be something like:
+>>=20
+>> int security_enclave_init(struct file *sigstruct_file);
+>>=20
+>> The main issue I see is that we also want to control the enclave's
+>> ability to have RWX pages or to change a W page to X.  We might also
+>> want:
+>>=20
+>> int security_enclave_load_zeros(unsigned int maxperm);
+>=20
+> What's the use case for this?  @maxperm will always be at least RW in
+> this case, otherwise the page is useless to the enclave, and if the
+> enclave can write the page, the fact that it started as zeros is
+> irrelevant.
+
+This is how EAUG could ask if RWX is okay. If an enclave is internally doing=
+ dynamic loading, the it will need a heap page with maxperm =3D RWX.  (If it=
+=E2=80=99s well designed, it will make it RW and then RX, either by changing=
+ SECINFO or by asking the host to mprotect() it, but it still needs the over=
+all RWX mask.).
+
+Also, do real SGX1 enclave formats have BSS? If so, then either we need an i=
+octl or load zeros or user code is going to load from /dev/zero or just from=
+ the heap, but the LSM is going to play better with an ioctl, I suspect :)
+
+>=20
+>> An enclave that's going to modify its own code will need memory with
+>> maxperm =3D RWX or WX.
+>>=20
+>> But this is a bit awkward if the LSM's decision depends on the
+>> sigstruct.  We could get fancy and require that the sigstruct be
+>> supplied before any EADD operations so that the maxperm decisions can
+>> depend on the sigstruct.
+>>=20
+>> Am I making more sense now?
+>=20
+> Yep.  Requiring .sigstruct at ECREATE would be trivial.  If we wanted
+> flexibility we could do:
+>=20
+>   int security_enclave_load(struct file *file, struct vm_area_struct *vma,=
+
+>                             unsigned long prot);
+>=20
+> And for ultimate flexibility we could pass both .sigstruct and the file
+> pointer for /dev/sgx/enclave, but that seems a bit ridiculous.
+
+I agree.
+
+>=20
+> Passing both would allow tying EXECMOD to /dev/sgx/enclave as Cedric
+> wanted (without having to play games and pass /dev/sgx/enclave to
+> security_enclave_load()), but I don't think there's anything fundamentally=
+
+> broken with using .sigstruct for EXECMOD.  It requires more verbose
+> labeling, but that's not a bad thing.
+
+The benefit of putting it on .sigstruct is that it can be per-enclave.
+
+As I understand it from Fedora packaging, the way this works on distros is g=
+enerally that a package will include some files and their associated labels,=
+ and, if the package needs EXECMOD, then the files are labeled with EXECMOD a=
+nd the author of the relevant code might get a dirty look.
+
+This could translate to the author of an exclave that needs RWX regions gett=
+ing a dirty look without leaking this permission into other enclaves.
+
+(In my opinion, the dirty looks are actually the best security benefit of th=
+e entire concept of LSMs making RWX difficult.  A sufficiently creative atta=
+cker can almost always bypass W^X restrictions once they=E2=80=99ve pwned yo=
+u, but W^X makes it harder to pwn you in the first place, and SELinux makes i=
+t really obvious when packaging a program that doesn=E2=80=99t respect W^X. =
+ The upshot is that a lot of programs got fixed.)=
