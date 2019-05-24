@@ -2,114 +2,58 @@ Return-Path: <SRS0=sk88=TY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C5FC282E3
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 19:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6470EC072B5
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 19:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E0EE21881
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 19:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558726259;
-	bh=++eJML+V7at8ynu0Gghi2KtbxEtQiKNCqvYyHJW4D1g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=DszP2JLyvKf4vBUZGwFHzGttiOo+26jZK7q9qKfSSLqO1VJVwi7l/eW+rVr2T8SAA
-	 Ao2MEXEfaKe7TnhDYGEf9uj2JbRVwysgFi6A9Dwzl8jK70HJJA1lMfVoNl8SCW2Dhb
-	 gGSIkM8FrWLd5QERC2zS6EmR+Qeih72uboyAJKxM=
+	by mail.kernel.org (Postfix) with ESMTP id 418B9217F9
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 19:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732105AbfEXTa6 (ORCPT
+        id S1729918AbfEXTgk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 May 2019 15:30:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47516 "EHLO mail.kernel.org"
+        Fri, 24 May 2019 15:36:40 -0400
+Received: from namei.org ([65.99.196.166]:34308 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732098AbfEXTa6 (ORCPT
+        id S1729597AbfEXTgk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 May 2019 15:30:58 -0400
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA26C2189D
-        for <linux-security-module@vger.kernel.org>; Fri, 24 May 2019 19:30:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558726257;
-        bh=++eJML+V7at8ynu0Gghi2KtbxEtQiKNCqvYyHJW4D1g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gpba4nvhqX6NHqtFJ0DX/6Shq7xMP0QKoNvfrDVV3xkDOBWCDw5N6YSWROb4D5Zsd
-         YGWK6QSvX2KpgKTRZlio6xCZ0RViGeRa53/YyUp+E/Tfon1Xxt61VpzWYYHwEKOXug
-         46je9P+s2sQxCc9G30mS5qMHz5KhkDO05Ar9qt2c=
-Received: by mail-wm1-f54.google.com with SMTP id i3so10445433wml.4
-        for <linux-security-module@vger.kernel.org>; Fri, 24 May 2019 12:30:57 -0700 (PDT)
-X-Gm-Message-State: APjAAAU44vQ8X6Sd9T/yULVilVJVghhEuxQGWY5+tAzA0Gyi0J5lZfAy
-        iTh4MYrTv+OLzu4bdHokyUdYm3YXgeLi/R/ZJWdBog==
-X-Google-Smtp-Source: APXvYqyLb4T/bZMdmeEdv3r/4ynyWFeM04ByJvHBR7hqFkVePfmxiSgk3D8BRYB56wOHtSETPWa/diJlf770zautMsU=
-X-Received: by 2002:a1c:1d4:: with SMTP id 203mr1051004wmb.76.1558726256158;
- Fri, 24 May 2019 12:30:56 -0700 (PDT)
+        Fri, 24 May 2019 15:36:40 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x4OJaWYL008551;
+        Fri, 24 May 2019 19:36:32 GMT
+Date:   Sat, 25 May 2019 05:36:32 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: Stacking patches for 5.3
+In-Reply-To: <1106985e-1620-75b2-d6bf-c2c95d9a0fbb@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1905250536020.7233@namei.org>
+References: <1106985e-1620-75b2-d6bf-c2c95d9a0fbb@schaufler-ca.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190523102628.GC10955@linux.intel.com> <20190523141752.GA12078@linux.intel.com>
- <CALCETrUzx3LPAKCLFf75P-XshAkRcr+JLET3LA_kHDs9MA11FA@mail.gmail.com>
- <20190523234044.GC12078@linux.intel.com> <CALCETrV4DVEfW6EJ6DnQGGYDJAiA5M1QcuYJTiroumOM+D6Jjg@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E8956@ORSMSX116.amr.corp.intel.com>
- <dda0912b-cb15-3c07-d368-345159e995f7@tycho.nsa.gov> <20190524174243.GA365@linux.intel.com>
- <20190524175458.GB365@linux.intel.com> <960B34DE67B9E140824F1DCDEC400C0F654E8E1D@ORSMSX116.amr.corp.intel.com>
- <20190524191344.GD365@linux.intel.com>
-In-Reply-To: <20190524191344.GD365@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 24 May 2019 12:30:44 -0700
-X-Gmail-Original-Message-ID: <CALCETrVp+r_wz=sOwLC8oW2P54r=sudBtV+J-Ycq_JE2QxwxEQ@mail.gmail.com>
-Message-ID: <CALCETrVp+r_wz=sOwLC8oW2P54r=sudBtV+J-Ycq_JE2QxwxEQ@mail.gmail.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 24, 2019 at 12:13 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Fri, May 24, 2019 at 11:34:32AM -0700, Xing, Cedric wrote:
-> > > From: linux-sgx-owner@vger.kernel.org [mailto:linux-sgx-
-> > > owner@vger.kernel.org] On Behalf Of Sean Christopherson
-> > > Sent: Friday, May 24, 2019 10:55 AM
+On Fri, 24 May 2019, Casey Schaufler wrote:
 
-> I don't see a fundamental difference between having RWX in an enclave and
-> RWX in normal memory, either way the process can execute arbitrary code,
-> i.e. PROCESS__EXECMEM is appropriate.  Yes, an enclave will #UD on certain
-> instructions, but that's easily sidestepped by having a trampoline in the
-> host (marked RX) and piping arbitrary code into the enclave.  Or using
-> EEXIT to do a bit of ROP.
+> I have a set of 59 patches for the nest round of LSM stacking.
+> They are all really small. Kees has expressed a preference for
+> small patches. I think that the collapsed set of about 10 would
+> make more sense. Which would the community as a whole prefer?
+> The patches are not much different from what has been presented
+> already.
 
-There's a difference, albeit a somewhat weak one, if sigstructs are
-whitelisted.  FILE__EXECMOD on
-either /dev/sgx/enclave or on the sigstruct is not an entirely crazy
-way to express this.
+I agree with Kees, smaller patches are easier to review.
+
+-- 
+James Morris
+<jmorris@namei.org>
+
