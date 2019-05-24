@@ -2,113 +2,121 @@ Return-Path: <SRS0=sk88=TY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9848CC46470
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 17:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E7CC072B5
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 18:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 793AA2175B
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 17:56:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDD4C21773
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 18:09:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbfEXR4s (ORCPT
+        id S1727157AbfEXSJy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 May 2019 13:56:48 -0400
-Received: from mga14.intel.com ([192.55.52.115]:33046 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728222AbfEXR4s (ORCPT
+        Fri, 24 May 2019 14:09:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37432 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727066AbfEXSJy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 May 2019 13:56:48 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 10:56:48 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga001.jf.intel.com with ESMTP; 24 May 2019 10:56:45 -0700
-Date:   Fri, 24 May 2019 10:56:47 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190524175647.GC365@linux.intel.com>
-References: <20190523023517.GA31950@linux.intel.com>
- <20190523102628.GC10955@linux.intel.com>
- <20190523141752.GA12078@linux.intel.com>
- <CALCETrUzx3LPAKCLFf75P-XshAkRcr+JLET3LA_kHDs9MA11FA@mail.gmail.com>
- <20190523234044.GC12078@linux.intel.com>
- <CALCETrV4DVEfW6EJ6DnQGGYDJAiA5M1QcuYJTiroumOM+D6Jjg@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E8956@ORSMSX116.amr.corp.intel.com>
- <dda0912b-cb15-3c07-d368-345159e995f7@tycho.nsa.gov>
- <20190524174243.GA365@linux.intel.com>
- <56EA6C7C-F69E-42EB-9CFB-CD0300549298@amacapital.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Fri, 24 May 2019 14:09:54 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4OI2d4t010161
+        for <linux-security-module@vger.kernel.org>; Fri, 24 May 2019 14:09:53 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2spjjms3jv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 24 May 2019 14:09:52 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 24 May 2019 19:09:50 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 24 May 2019 19:09:47 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4OI9kK952297748
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 May 2019 18:09:46 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D556F4C052;
+        Fri, 24 May 2019 18:09:46 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 053724C046;
+        Fri, 24 May 2019 18:09:46 +0000 (GMT)
+Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 24 May 2019 18:09:45 +0000 (GMT)
+Subject: Re: Re:
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     mjg59@google.com, vgoyal@redhat.com
+Date:   Fri, 24 May 2019 14:09:45 -0400
+In-Reply-To: <cb0eb785-9050-738e-c1bf-8e769fe096fa@huawei.com>
+References: <20190521000645.16227-1-prsriva02@gmail.com>
+         <20190521000645.16227-3-prsriva02@gmail.com>
+         <1558710722.3977.68.camel@linux.ibm.com>
+         <a7acac28-156e-80d1-b759-cb0c59f73169@huawei.com>
+         <cb0eb785-9050-738e-c1bf-8e769fe096fa@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <56EA6C7C-F69E-42EB-9CFB-CD0300549298@amacapital.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19052418-0028-0000-0000-000003711A8B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19052418-0029-0000-0000-00002430D182
+Message-Id: <1558721385.3977.84.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-24_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=984 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905240117
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 24, 2019 at 10:54:34AM -0700, Andy Lutomirski wrote:
+> >> As mentioned, the first patch description should include a shell
+> >> command for verifying the digest in the kexec boot command line
+> >> measurement list record against /proc/cmdline.  This patch description
+> >> should include a shell command showing how to verify the digest based
+> >> on the new field.  Should the new field in the ascii measurement list
+> >> be displayed as a string, not hex?
+> > 
+> > We should define a new type. If the type is DATA_FMT_STRING, spaces are
+> > replaced with '_'.
 > 
-> > On May 24, 2019, at 10:42 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> > 
-> > Hmm, I've been thinking more about pulling permissions from the source
-> > page.  Conceptually I'm not sure we need to meet the same requirements as
-> > non-enclave DSOs while the enclave is being built, i.e. do we really need
-> > to force userspace to fully map the enclave in normal memory?
-> > 
-> > Consider the Graphene scenario where it's building an enclave on the fly.
-> > Pulling permissions from the source VMAs means Graphene has to map the
-> > code pages of the enclave with X.  This means Graphene will need EXEDMOD
-> > (or EXECMEM if Graphene isn't careful).  In a non-SGX scenario this makes
-> > perfect sense since there is no way to verify the end result of RW->RX.
-> > 
-> > But for SGX, assuming enclaves are whitelisted by their sigstruct (checked
-> > at EINIT) and because page permissions affect sigstruct.MRENCLAVE, it *is*
-> > possible to verify the resulting RX contents.  E.g. for the purposes of
-> > LSMs, can't we use the .sigstruct file as a proxy for the enclave and
-> > require FILE__EXECUTE on the .sigstruct inode to map/run the enclave?
-> 
-> I think it’s sound for some but not all use cases. I would imagine that a lot
-> of users won’t restrict sigstruct at all — the “use this as a sigstruct”
-> permission will be granted to everything and maybe even to memfd. But even
-> users like that might want to force their enclaves to be hardened such that
-> writable pages are never executable, in which case Graphene may need an
-> exception to run.
+> Or better. Leave it as hex, otherwise there would be a parsing problem
+> if there are spaces in the data for a field.
 
-Heh, I belatedly had the same thought.  See my follow-up about EXECMEM.
+After making a few changes, the measurement list contains the
+following kexec-cmdline data:
 
-> But maybe I’m nuts.
+10 edc32d1e3a5ba7272280a395b6fb56a5ef7c78c3 ima-buf
+sha256:4f43b7db850e
+88c49dfeffd4b1eb4f021d78033dfb05b07e45eec8d0b45275 
+kexec-cmdline
+726f6f
+743d2f6465762f7364613420726f2072642e6c756b732e757569643d6c756b73
+2d6637
+3633643737632d653236622d343431642d613734652d62363633636334643832
+656120
+696d615f706f6c6963793d7463627c61707072616973655f746362
+
+There's probably a better shell command, but the following works to
+verify the digest locally against the /proc/cmdline:
+
+$ echo -n -e `cat /proc/cmdline | sed 's/^.*root=/root=/'` | sha256sum
+4f43b7db850e88c49dfeffd4b1eb4f021d78033dfb05b07e45eec8d0b4527f65  -
+
+If we leave the "buf" field as ascii-hex, what would the shell command
+look like when verifying the digest based on the "buf" field?
+
+Mimi
+
