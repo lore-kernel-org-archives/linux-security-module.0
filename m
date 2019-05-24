@@ -2,73 +2,114 @@ Return-Path: <SRS0=sk88=TY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AA4C072B5
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 19:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C5FC282E3
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 19:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D8DA217F9
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 19:26:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="B6SlWXHo"
+	by mail.kernel.org (Postfix) with ESMTP id 5E0EE21881
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 May 2019 19:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558726259;
+	bh=++eJML+V7at8ynu0Gghi2KtbxEtQiKNCqvYyHJW4D1g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=DszP2JLyvKf4vBUZGwFHzGttiOo+26jZK7q9qKfSSLqO1VJVwi7l/eW+rVr2T8SAA
+	 Ao2MEXEfaKe7TnhDYGEf9uj2JbRVwysgFi6A9Dwzl8jK70HJJA1lMfVoNl8SCW2Dhb
+	 gGSIkM8FrWLd5QERC2zS6EmR+Qeih72uboyAJKxM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729597AbfEXT0e (ORCPT
+        id S1732105AbfEXTa6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 May 2019 15:26:34 -0400
-Received: from sonic305-8.consmr.mail.bf2.yahoo.com ([74.6.133.47]:45029 "EHLO
-        sonic305-8.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729017AbfEXT0e (ORCPT
+        Fri, 24 May 2019 15:30:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47516 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732098AbfEXTa6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 May 2019 15:26:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1558725992; bh=BckPA1g7a2t/YsHIxiGxkc28qYZ9HyCw2S6mC7Yvo7I=; h=To:Cc:From:Subject:Date:From:Subject; b=B6SlWXHoVgdxjz9urW0DEvRsxqh38NFApPRvrqVZylhn/UmW+w6aMbz+CK3HG/rmXWHpGAxUc158djq31CdJL2xg6p6sARc8xCVuZo9VlA3c2sG96jjY+pjxLFnjPY9F10RTWEUabruX4MnwBijjlg2Qgm2dvoQkOBCieQHmIHJ/GYdqjVisPZBTbvFVLoImrT32bDje1WS2Lg6EQOIJ3VPepa9ca+OXQG41bsAxJ0FK3mDGIj98sAWgYu1JY2lwUtEF2agAVeoq/G1SDvcbFGWSL7PckE7+nIvIupH9b0Q04DN1demyVopgUFwS9Wg3EEEIKLAJIA5gkVsGYushjw==
-X-YMail-OSG: ZsJhB4EVM1kdXjqBE95isscD9rFzw6YCO0VoZipRxzTAs2oq3IMCBRKJvwXzgJR
- rKAkKz.wTnLQhcNhWiYP00AxyBwoDwxZpd9fkSW.x0UhC_YaodLiGTscOf0qwCfk9N1JuKpns0mn
- ViIR7wgEzki0nM124DgPtazroWkz05M1DtLoffpF1aNALqdTvwXE_UIv8MIIMtX3vWQcBcY3mVFp
- gHBj0r2rNb2bD.6vBq2p6tGhoxbTvEG5Hf8MECjrY6_oGQRW1AJZn70WoSBZMRyZfhMPPEUai157
- M3blqN9BhIjKm427LIcvkNzWRbey20XVP5djOstR28qbmkIfD68esAhW31kMRdcipealSr1QmmRR
- jryR5m.Hmf6oWQEHe9cmYzCz5qnAzNBF2wUYGfCHlS7YEeuLzFkPzmYD_0SlnAQRxdMpJJz2gZPA
- a1gKdsbVXXCAvkDylj8xDOsOEPd5IUpZ0T8NibndsJci5.IOgkwJaM.xyHBDs9DS3kP9sSKR4wKr
- 2j3vZbkasKEZLlEapYrKXJEpYXWwaVLZ97FGmME4eNabTSWGpAschrJCboIlzxT.VActf.zYU4Ux
- 61tN0_cYf.ExQaPhfsh_yU6eYx4vjlEe0oyzhYR8PTtVYijsT2euqVEJMYh0ZRZ8_Vg1YMBs7meQ
- .PWqkDliMnqEmkvMHXslpEqyPvmA_obd2_VKBq1F5oLCQlwLoZ1S_hmPMCo0dFfuNzpoacB0w9qw
- pqh5nwFtHLALHeoJVxSUEoNB8TdMAurW0GfBzkBVPtBSGoILG5SYp_XaExxkBPY.wi_7w6Hz.mY9
- _nbJv048OtNY8lOaZ3_LVneRS0MFFCnC8nNFzME5ChItbIwnFKAR0r_GtotHe5m1cvkdZzilT9Ox
- d3.a1usJKMQHPmlrjMKO8tWuV7Zy.M38LWSL_AAGActCXeIc8uUNtRinVMfGMz0Hb4zZCfdClo.7
- gvHuddKhwkBco5QqgLAMNTnKgpCGMaNMXlXmT3jw86ertVrbAPpTuiCeuvuwDK6WwhVY.AfwCtvO
- mJjVZ_10u2u6m_aHUGUQNlcbRKKvoiMzt.sL.67yRoQTFfmRjwjK8nRlq3Hrf7O7O1QafJhS.Zp0
- Tw6l6xwxq6JBZxS9MAZSjWlcvoSL_zoyUmHGwnCfdPYJB9e5pjSGK7ZlA_rc.ig93Tu_KGbcMCwS
- BUgeQdfjqfNIgJDOmJxcwLeVimrROlm5ntcZPFiQGXKppJLFQ4FPn6VXivvCGKvoZb83e9OReYn2
- HfSRmRg--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Fri, 24 May 2019 19:26:32 +0000
-Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp403.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 262e9d838a6ec46eab94aefe18b59859;
-          Fri, 24 May 2019 19:26:31 +0000 (UTC)
-To:     Linux Security Module list <linux-security-module@vger.kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>, casey@schaufler-ca.com
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: Stacking patches for 5.3
-Openpgp: preference=signencrypt
-Message-ID: <1106985e-1620-75b2-d6bf-c2c95d9a0fbb@schaufler-ca.com>
-Date:   Fri, 24 May 2019 12:26:30 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 24 May 2019 15:30:58 -0400
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA26C2189D
+        for <linux-security-module@vger.kernel.org>; Fri, 24 May 2019 19:30:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558726257;
+        bh=++eJML+V7at8ynu0Gghi2KtbxEtQiKNCqvYyHJW4D1g=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gpba4nvhqX6NHqtFJ0DX/6Shq7xMP0QKoNvfrDVV3xkDOBWCDw5N6YSWROb4D5Zsd
+         YGWK6QSvX2KpgKTRZlio6xCZ0RViGeRa53/YyUp+E/Tfon1Xxt61VpzWYYHwEKOXug
+         46je9P+s2sQxCc9G30mS5qMHz5KhkDO05Ar9qt2c=
+Received: by mail-wm1-f54.google.com with SMTP id i3so10445433wml.4
+        for <linux-security-module@vger.kernel.org>; Fri, 24 May 2019 12:30:57 -0700 (PDT)
+X-Gm-Message-State: APjAAAU44vQ8X6Sd9T/yULVilVJVghhEuxQGWY5+tAzA0Gyi0J5lZfAy
+        iTh4MYrTv+OLzu4bdHokyUdYm3YXgeLi/R/ZJWdBog==
+X-Google-Smtp-Source: APXvYqyLb4T/bZMdmeEdv3r/4ynyWFeM04ByJvHBR7hqFkVePfmxiSgk3D8BRYB56wOHtSETPWa/diJlf770zautMsU=
+X-Received: by 2002:a1c:1d4:: with SMTP id 203mr1051004wmb.76.1558726256158;
+ Fri, 24 May 2019 12:30:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20190523102628.GC10955@linux.intel.com> <20190523141752.GA12078@linux.intel.com>
+ <CALCETrUzx3LPAKCLFf75P-XshAkRcr+JLET3LA_kHDs9MA11FA@mail.gmail.com>
+ <20190523234044.GC12078@linux.intel.com> <CALCETrV4DVEfW6EJ6DnQGGYDJAiA5M1QcuYJTiroumOM+D6Jjg@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E8956@ORSMSX116.amr.corp.intel.com>
+ <dda0912b-cb15-3c07-d368-345159e995f7@tycho.nsa.gov> <20190524174243.GA365@linux.intel.com>
+ <20190524175458.GB365@linux.intel.com> <960B34DE67B9E140824F1DCDEC400C0F654E8E1D@ORSMSX116.amr.corp.intel.com>
+ <20190524191344.GD365@linux.intel.com>
+In-Reply-To: <20190524191344.GD365@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 24 May 2019 12:30:44 -0700
+X-Gmail-Original-Message-ID: <CALCETrVp+r_wz=sOwLC8oW2P54r=sudBtV+J-Ycq_JE2QxwxEQ@mail.gmail.com>
+Message-ID: <CALCETrVp+r_wz=sOwLC8oW2P54r=sudBtV+J-Ycq_JE2QxwxEQ@mail.gmail.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I have a set of 59 patches for the nest round of LSM stacking.
-They are all really small. Kees has expressed a preference for
-small patches. I think that the collapsed set of about 10 would
-make more sense. Which would the community as a whole prefer?
-The patches are not much different from what has been presented
-already.
+On Fri, May 24, 2019 at 12:13 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Fri, May 24, 2019 at 11:34:32AM -0700, Xing, Cedric wrote:
+> > > From: linux-sgx-owner@vger.kernel.org [mailto:linux-sgx-
+> > > owner@vger.kernel.org] On Behalf Of Sean Christopherson
+> > > Sent: Friday, May 24, 2019 10:55 AM
 
+> I don't see a fundamental difference between having RWX in an enclave and
+> RWX in normal memory, either way the process can execute arbitrary code,
+> i.e. PROCESS__EXECMEM is appropriate.  Yes, an enclave will #UD on certain
+> instructions, but that's easily sidestepped by having a trampoline in the
+> host (marked RX) and piping arbitrary code into the enclave.  Or using
+> EEXIT to do a bit of ROP.
+
+There's a difference, albeit a somewhat weak one, if sigstructs are
+whitelisted.  FILE__EXECMOD on
+either /dev/sgx/enclave or on the sigstruct is not an entirely crazy
+way to express this.
