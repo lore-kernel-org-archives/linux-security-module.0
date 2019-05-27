@@ -2,81 +2,71 @@ Return-Path: <SRS0=wtQI=T3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA8FC04AB3
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 May 2019 14:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC702C04AB3
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 May 2019 17:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 711E521721
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 May 2019 14:31:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D38CE20883
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 May 2019 17:52:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbfE0ObY (ORCPT
+        id S1726598AbfE0Rwg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 May 2019 10:31:24 -0400
-Received: from mga12.intel.com ([192.55.52.136]:49805 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726191AbfE0ObY (ORCPT
+        Mon, 27 May 2019 13:52:36 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50979 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbfE0Rwg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 May 2019 10:31:24 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 May 2019 07:31:24 -0700
-X-ExtLoop1: 1
-Received: from pgomulkx-mobl.ger.corp.intel.com (HELO localhost) ([10.251.94.230])
-  by orsmga002.jf.intel.com with ESMTP; 27 May 2019 07:31:18 -0700
-Date:   Mon, 27 May 2019 17:31:03 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Morris <jmorris@namei.org>
-Cc:     Matthew Garrett <matthewgarrett@google.com>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com, bsz@semihalf.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH V7 0/4] Add support for crypto agile logs
-Message-ID: <20190527143103.GA20497@linux.intel.com>
-References: <20190520205501.177637-1-matthewgarrett@google.com>
- <20190523121449.GA9997@linux.intel.com>
- <20190523122610.GA12327@linux.intel.com>
- <alpine.LRH.2.21.1905240252440.31508@namei.org>
- <20190524103846.GA11695@linux.intel.com>
- <alpine.LRH.2.21.1905250506320.7233@namei.org>
+        Mon, 27 May 2019 13:52:36 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hVJnS-0001iE-Qa; Mon, 27 May 2019 17:52:30 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] smack: remove redundant assignment to variable m
+Date:   Mon, 27 May 2019 18:52:26 +0100
+Message-Id: <20190527175226.17191-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.1905250506320.7233@namei.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, May 25, 2019 at 05:22:34AM +1000, James Morris wrote:
-> On Fri, 24 May 2019, Jarkko Sakkinen wrote:
-> 
-> > I'm referring to these:
-> > 
-> > https://lore.kernel.org/linux-integrity/20190329115544.GA27351@linux.intel.com/
-> > 
-> > I got response from you that those were applied and there is another
-> > response in that thread that they are being sent to Linus. That is why I
-> > haven't done anything since. Most of them are critical fixes to v5.1
-> > changes.
-> 
-> These are in Linus' tree.  
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a556810d8e06aa2da8bbe22da3d105eb5a0d0c7d
-> 
-> I initially queued them in the next-tpm branch, but forgot to drop them 
-> from there after sending them to Linus as a v5.1 fix. Linus was not happy 
-> to see them again in the v5.2 merge window.
-> 
-> Apologies for the confusion.
+From: Colin Ian King <colin.king@canonical.com>
 
-OK, just to confirm, my next PR will go straight to Linus?
+Variable m is assigned a value that is never read and m is later
+reassigned in for-loop.  This the assignment is redundant and can
+be mored.
 
-/Jarkko
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/smack/smackfs.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index 47f73a0dabb1..b66adafeb5fa 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -1174,7 +1174,6 @@ static ssize_t smk_write_net4addr(struct file *file, const char __user *buf,
+ 			rc = -EINVAL;
+ 			goto free_out;
+ 		}
+-		m = BEBITS;
+ 		masks = 32;
+ 	}
+ 	if (masks > BEBITS) {
+-- 
+2.20.1
+
