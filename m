@@ -2,73 +2,142 @@ Return-Path: <SRS0=jOYs=T4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDBEC04AB6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 12:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 407D8C04AB6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 14:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B68A208C3
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 12:23:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EED2206E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 14:10:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfE1MXR (ORCPT
+        id S1726564AbfE1OKS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 08:23:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53002 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726580AbfE1MXR (ORCPT
+        Tue, 28 May 2019 10:10:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53058 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726553AbfE1OKS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 08:23:17 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4ED3A81132;
-        Tue, 28 May 2019 12:23:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-125-65.rdu2.redhat.com [10.10.125.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 330067C0B5;
-        Tue, 28 May 2019 12:23:07 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <1ebab7e7-f7ee-b910-9cc8-5d826eee8e97@schaufler-ca.com>
-References: <1ebab7e7-f7ee-b910-9cc8-5d826eee8e97@schaufler-ca.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, jose.bollo@iot.bzh,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] Smack: Restore the smackfsdef mount option
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <11439.1559046181.1@warthog.procyon.org.uk>
-Date:   Tue, 28 May 2019 13:23:01 +0100
-Message-ID: <11440.1559046181@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 28 May 2019 12:23:17 +0000 (UTC)
+        Tue, 28 May 2019 10:10:18 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4SE9wVk103998
+        for <linux-security-module@vger.kernel.org>; Tue, 28 May 2019 10:10:17 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ss5nqjda1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Tue, 28 May 2019 10:10:14 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 28 May 2019 15:09:39 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 28 May 2019 15:09:34 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4SE9XAf34406474
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 May 2019 14:09:33 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 606A0AE053;
+        Tue, 28 May 2019 14:09:33 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4FED4AE051;
+        Tue, 28 May 2019 14:09:31 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.109.224])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 28 May 2019 14:09:31 +0000 (GMT)
+Subject: Re: [PATCH v10 12/12] ima: Store the measurement again when
+ appraising a modsig
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
+Date:   Tue, 28 May 2019 10:09:20 -0400
+In-Reply-To: <20190418035120.2354-13-bauerman@linux.ibm.com>
+References: <20190418035120.2354-1-bauerman@linux.ibm.com>
+         <20190418035120.2354-13-bauerman@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19052814-4275-0000-0000-0000033962A2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19052814-4276-0000-0000-000038490AD0
+Message-Id: <1559052560.4090.14.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-28_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905280092
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+Hi Thiago,
 
-> The change was made in commit c3300aaf95fb4 from Al Viro.
+On Thu, 2019-04-18 at 00:51 -0300, Thiago Jung Bauermann wrote:
+> If the IMA template contains the "modsig" or "d-modsig" field, then the
+> modsig should be added to the measurement list when the file is appraised.
+> 
+> And that is what normally happens, but if a measurement rule caused a file
+> containing a modsig to be measured before a different rule causes it to be
+> appraised, the resulting measurement entry will not contain the modsig
+> because it is only fetched during appraisal. When the appraisal rule
+> triggers, it won't store a new measurement containing the modsig because
+> the file was already measured.
+> 
+> We need to detect that situation and store an additional measurement with
+> the modsig. This is done by adding an IMA_MEASURE action flag if we read a
+> modsig and the IMA template contains a modsig field.
 
-This should be in a "Fixes:" tag?
+With the new per policy rule "template" support being added, this
+patch needs to be modified so that the per policy "template" format is
+checked.  ima_template_has_modsig() should be called with the
+template_desc being used.
 
-> +	fsparam_string("fsdef",		Opt_fsdefault),
->  	fsparam_string("fsdefault",	Opt_fsdefault),
->  	fsparam_string("fsfloor",	Opt_fsfloor),
->  	fsparam_string("fshat",		Opt_fshat),
+thanks,
 
-Would it be better to delete the "fsdefault" line?
+Mimi
 
-Also, should all of these be prefixed with "smack"?  So:
 
-  	fsparam_string("smackfsdef",	Opt_fsdefault),
-  	fsparam_string("smackfsfloor",	Opt_fsfloor),
-  	fsparam_string("smackfshat",	Opt_fshat),	
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 8e6475854351..f91ed4189f98 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -282,9 +282,17 @@ static int process_measurement(struct file *file, const struct cred *cred,
+>  		/* read 'security.ima' */
+>  		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
+>  
+> -		/* Read the appended modsig if allowed by the policy. */
+> -		if (iint->flags & IMA_MODSIG_ALLOWED)
+> -			ima_read_modsig(func, buf, size, &modsig);
+> +		/*
+> +		 * Read the appended modsig, if allowed by the policy, and allow
+> +		 * an additional measurement list entry, if needed, based on the
+> +		 * template format.
+> +		 */
+> +		if (iint->flags & IMA_MODSIG_ALLOWED) {
+> +			rc = ima_read_modsig(func, buf, size, &modsig);
+> +
+> +			if (!rc && ima_template_has_modsig())
+> +				action |= IMA_MEASURE;
+> +		}
+> 
 
-David
