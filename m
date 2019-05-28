@@ -3,130 +3,173 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FE7C04AB6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D06C04AB6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC6D5204FD
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:05:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A9EA20717
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:06:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfE1TFr (ORCPT
+        id S1727482AbfE1TGI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 15:05:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51180 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfE1TFr (ORCPT
+        Tue, 28 May 2019 15:06:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52168 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726452AbfE1TGI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 15:05:47 -0400
-Received: from static-50-53-34-51.bvtn.or.frontiernet.net ([50.53.34.51] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1hVhPs-0003DX-Gn; Tue, 28 May 2019 19:05:44 +0000
-Subject: Re: [PATCH] apparmor: enforce nullbyte at end of tag string
-To:     Jann Horn <jannh@google.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190528153226.248785-1-jannh@google.com>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <25ad5770-2ab3-10d0-8d51-62d7c5f9aeda@canonical.com>
-Date:   Tue, 28 May 2019 12:05:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 28 May 2019 15:06:08 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4SJ62ur073276
+        for <linux-security-module@vger.kernel.org>; Tue, 28 May 2019 15:06:06 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ss8w3mpsh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Tue, 28 May 2019 15:06:04 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Tue, 28 May 2019 20:03:30 +0100
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 28 May 2019 20:03:25 +0100
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4SJ3OtQ34996472
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 May 2019 19:03:24 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1F409AC059;
+        Tue, 28 May 2019 19:03:24 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8FD62AC064;
+        Tue, 28 May 2019 19:03:20 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.218.160])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Tue, 28 May 2019 19:03:20 +0000 (GMT)
+References: <20190418035120.2354-1-bauerman@linux.ibm.com> <20190418035120.2354-2-bauerman@linux.ibm.com> <1557416528.10635.62.camel@linux.ibm.com>
+User-agent: mu4e 1.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>
+Subject: Re: [PATCH v10 01/12] MODSIGN: Export module signature definitions
+In-reply-to: <1557416528.10635.62.camel@linux.ibm.com>
+Date:   Tue, 28 May 2019 16:03:15 -0300
 MIME-Version: 1.0
-In-Reply-To: <20190528153226.248785-1-jannh@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 19052819-0064-0000-0000-000003E60CE6
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011176; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01209913; UDB=6.00635630; IPR=6.00990943;
+ MB=3.00027089; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-28 19:03:29
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19052819-0065-0000-0000-00003DA623F4
+Message-Id: <875zpu766k.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-28_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905280119
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/28/19 8:32 AM, Jann Horn wrote:
-> A packed AppArmor policy contains null-terminated tag strings that are read
-> by unpack_nameX(). However, unpack_nameX() uses string functions on them
-> without ensuring that they are actually null-terminated, potentially
-> leading to out-of-bounds accesses.
-> 
-> Make sure that the tag string is null-terminated before passing it to
-> strcmp().
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jann Horn <jannh@google.com>
 
-gah! yes!
+Mimi Zohar <zohar@linux.ibm.com> writes:
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+> On Thu, 2019-04-18 at 00:51 -0300, Thiago Jung Bauermann wrote:
+>> IMA will use the module_signature format for append signatures, so export
+>> the relevant definitions and factor out the code which verifies that the
+>> appended signature trailer is valid.
+>> 
+>> Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
+>> and be able to use mod_check_sig() without having to depend on either
+>> CONFIG_MODULE_SIG or CONFIG_MODULES.
+>> 
+>> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+>> Cc: Jessica Yu <jeyu@kernel.org>
+>
+> Just a couple minor questions/comments below.
+>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
+Thanks for your review and your comments!
 
-> ---
-> Warning: The existence of this bug has not been verified at runtime, and
-> the patch is compile-tested only. I noticed this while browsing through
-> the code, but didn't want to spend the time necessary to figure out how
-> to actually test this at runtime.
-> 
-> 
->  security/apparmor/policy_unpack.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index f6c2bcb2ab14..33041c4fb69f 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -276,7 +276,7 @@ static bool unpack_nameX(struct aa_ext *e, enum aa_code code, const char *name)
->  		char *tag = NULL;
->  		size_t size = unpack_u16_chunk(e, &tag);
->  		/* if a name is specified it must match. otherwise skip tag */
-> -		if (name && (!size || strcmp(name, tag)))
-> +		if (name && (!size || tag[size-1] != '\0' || strcmp(name, tag)))
->  			goto fail;
->  	} else if (name) {
->  		/* if a name is specified and there is no name tag fail */
-> 
+>> diff --git a/init/Kconfig b/init/Kconfig
+>> index 4592bf7997c0..a71019553ee1 100644
+>> --- a/init/Kconfig
+>> +++ b/init/Kconfig
+>> @@ -1906,7 +1906,7 @@ config MODULE_SRCVERSION_ALL
+>>  config MODULE_SIG
+>>  	bool "Module signature verification"
+>>  	depends on MODULES
+>> -	select SYSTEM_DATA_VERIFICATION
+>> +	select MODULE_SIG_FORMAT
+>>  	help
+>>  	  Check modules for valid signatures upon load: the signature
+>>  	  is simply appended to the module. For more information see
+>> @@ -2036,6 +2036,10 @@ config TRIM_UNUSED_KSYMS
+>>  
+>>  endif # MODULES
+>>  
+>> +config MODULE_SIG_FORMAT
+>> +	def_bool n
+>> +	select SYSTEM_DATA_VERIFICATION
+>
+> Normally Kconfigs, in the same file, are defined before they are used.
+>  I'm not sure if that is required or just a convention.
+
+I think it's a convention, because it seemed to work in the current way.
+For the next version I moved the config MODULE_SIG_FORMAT definition to
+just before "menuconfig MODULES"
+
+>> diff --git a/kernel/module_signature.c b/kernel/module_signature.c
+>> new file mode 100644
+>> index 000000000000..6d5e59f27f55
+>> --- /dev/null
+>> +++ b/kernel/module_signature.c
+>> @@ -0,0 +1,45 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/*
+>> + * Module signature checker
+>> + *
+>> + * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
+>> + * Written by David Howells (dhowells@redhat.com)
+>> + */
+>> +
+>> +#include <linux/errno.h>
+>> +#include <linux/printk.h>
+>> +#include <linux/module_signature.h>
+>> +#include <asm/byteorder.h>
+>> +
+>> +/**
+>> + * mod_check_sig - check that the given signature is sane
+>> + *
+>> + * @ms:		Signature to check.
+>> + * @file_len:	Size of the file to which @ms is appended.
+>
+> "name" is missing.
+
+Fixed.
+
+-- 
+Thiago Jung Bauermann
+IBM Linux Technology Center
 
