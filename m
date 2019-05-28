@@ -2,53 +2,86 @@ Return-Path: <SRS0=jOYs=T4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C321C04AB6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 18:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B985CC04AB6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 18:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F5A920883
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 18:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E3D420989
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 18:54:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbfE1SoJ (ORCPT
+        id S1726481AbfE1Syd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 14:44:09 -0400
-Received: from namei.org ([65.99.196.166]:34832 "EHLO namei.org"
+        Tue, 28 May 2019 14:54:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48174 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727235AbfE1SoI (ORCPT
+        id S1726463AbfE1Syd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 14:44:08 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x4SIi7UK030824;
-        Tue, 28 May 2019 18:44:07 GMT
-Date:   Wed, 29 May 2019 04:44:07 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Micah Morton <mortonm@chromium.org>
-cc:     linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] LSM: Fix formatting errors in SafeSetID LSM docs
-In-Reply-To: <20190528155844.171547-1-mortonm@chromium.org>
-Message-ID: <alpine.LRH.2.21.1905290443580.27221@namei.org>
-References: <20190528155844.171547-1-mortonm@chromium.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Tue, 28 May 2019 14:54:33 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B13EFF9E8B;
+        Tue, 28 May 2019 18:54:27 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EE6785D6A9;
+        Tue, 28 May 2019 18:54:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <43e3de52-13d7-8089-11cf-a384662401aa@schaufler-ca.com>
+References: <43e3de52-13d7-8089-11cf-a384662401aa@schaufler-ca.com> <9191ef31-a022-cdc4-9bed-ff225e4179bb@schaufler-ca.com> <1ebab7e7-f7ee-b910-9cc8-5d826eee8e97@schaufler-ca.com> <11440.1559046181@warthog.procyon.org.uk> <9330.1559060541@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, jose.bollo@iot.bzh,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] Smack: Restore the smackfsdef mount option
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <9985.1559069658.1@warthog.procyon.org.uk>
+Date:   Tue, 28 May 2019 19:54:18 +0100
+Message-ID: <9986.1559069658@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 28 May 2019 18:54:32 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 28 May 2019, Micah Morton wrote:
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-> This fixes the unintended occurrences of ??? in the text.
+> > Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >
+> >>> Also, should all of these be prefixed with "smack"?  So:
+> >>>
+> >>>   	fsparam_string("smackfsdef",	Opt_fsdefault),
+> >>>   	fsparam_string("smackfsfloor",	Opt_fsfloor),
+> >>>   	fsparam_string("smackfshat",	Opt_fshat),	
+> >> No. smack_fs_parameters takes care of that.
+> > It does?  *Blink*.
 > 
-> Signed-off-by: Micah Morton <mortonm@chromium.org>
+> Well, something does. I can't say that I 100% understand all
+> of how the new mount code handles the mount options. Y'all made
+> sweeping changes, and the code works the way it used to except
+> for the awkward change from smackfsdef to smackfsdefault. It
+> took no small amount of head scratching and experimentation to
+> convince myself that the fix I proposed was correct.
 
+Ah...  I suspect the issue is that smack_sb_eat_lsm_opts() strips the prefix
+for an unconverted filesystem, but smack_fs_context_parse_param() doesn't
+(which it shouldn't).
 
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+Can you try grabbing my mount-api-viro branch from:
 
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
 
--- 
-James Morris
-<jmorris@namei.org>
+and testing setting smack options on a tmpfs filesystem?
 
+You might need to try modifying samples/vfs/test-fsmount.c to make it mount a
+trmpfs filesystem through the new mount UAPI.
+
+David
