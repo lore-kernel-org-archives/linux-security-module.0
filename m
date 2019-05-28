@@ -2,253 +2,211 @@ Return-Path: <SRS0=jOYs=T4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 511C4C072B1
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 21:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD3BC04AB6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 22:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29BB521670
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 21:41:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C36C7208CB
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 22:28:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfE1VlJ (ORCPT
+        id S1726925AbfE1W2i convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 17:41:09 -0400
-Received: from mga03.intel.com ([134.134.136.65]:54923 "EHLO mga03.intel.com"
+        Tue, 28 May 2019 18:28:38 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33678 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726492AbfE1VlJ (ORCPT
+        id S1726497AbfE1W2i (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 17:41:09 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 14:41:08 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga003.jf.intel.com with ESMTP; 28 May 2019 14:41:07 -0700
-Date:   Tue, 28 May 2019 14:41:07 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190528214107.GD13158@linux.intel.com>
-References: <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com>
- <20190524200333.GF365@linux.intel.com>
- <CALCETrUyAAhnQ+RUeN1L41TKj-vcD2CNt-FJ9siO=Zo6gvH1Aw@mail.gmail.com>
- <20190524224107.GJ365@linux.intel.com>
- <683B5E3D-AFB6-4B45-8D39-B00847312209@amacapital.net>
- <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
- <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
- <20190528202407.GB13158@linux.intel.com>
- <CALCETrWTXCb1jru1G5G3sOp5AV8iYUtrffiSxE-5gotXtrZD-g@mail.gmail.com>
+        Tue, 28 May 2019 18:28:38 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 54E98307D925;
+        Tue, 28 May 2019 22:28:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3FCBD100203C;
+        Tue, 28 May 2019 22:28:36 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAG48ez3L5KzKyKMxUTaaB=r1E1ZXh=m6e9+CwYcXfRnUSjDvWA@mail.gmail.com>
+References: <CAG48ez3L5KzKyKMxUTaaB=r1E1ZXh=m6e9+CwYcXfRnUSjDvWA@mail.gmail.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
+To:     Jann Horn <jannh@google.com>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        raven@themaw.net, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring buffer
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrWTXCb1jru1G5G3sOp5AV8iYUtrffiSxE-5gotXtrZD-g@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <11465.1559082515.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Tue, 28 May 2019 23:28:35 +0100
+Message-ID: <11466.1559082515@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 28 May 2019 22:28:38 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 28, 2019 at 01:48:02PM -0700, Andy Lutomirski wrote:
-> On Tue, May 28, 2019 at 1:24 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >
-> > Actually, I think we do have everything we need from an LSM perspective.
-> > LSMs just need to understand that sgx_enclave_load() with a NULL vma
-> > implies a transition from RW.  For example, SELinux would interpret
-> > sgx_enclave_load(NULL, RX) as requiring FILE__EXECMOD.
+Jann Horn <jannh@google.com> wrote:
+
+> I don't see you setting any special properties on the VMA that would
+> prevent userspace from extending its size via mremap() - no
+> VM_DONTEXPAND or VM_PFNMAP. So I think you might get an out-of-bounds
+> access here?
+
+Should I just set VM_DONTEXPAND in watch_queue_mmap()?  Like so:
+
+	vma->vm_flags |= VM_DONTEXPAND;
+
+> > +static void watch_queue_map_pages(struct vm_fault *vmf,
+> > +                                 pgoff_t start_pgoff, pgoff_t end_pgoff)
+> ...
 > 
-> You lost me here.  What operation triggers this callback?  And
-> wouldn't sgx_enclave_load(NULL, RX) sometimes be a transition from RO
-> or just some fresh executable zero bytes?
+> Same as above.
 
-An explicit ioctl() after EACCEPTCOPY to update the allowed permissions.
-For all intents and purposes, the EAUG'd page must start RW.  Maybe a
-better way to phrase it is that at some point the page must be writable
-to have any value whatsover.  EACCEPTCOPY explicitly requires the page to
-be at least RW.  EACCEPT technically doesn't require RW, but a RO or RX
-zero page is useless.  Userspace could still EACCEPT with RO or RX, but
-SGX would assume a minimum of RW for the purposes of the LSM check.
+Same solution as above?  Or do I need ot check start/end_pgoff too?
 
-> > As Cedric mentioned earlier, the host process doesn't necessarily know
-> > which pages will end up RW vs RX, i.e. sgx_enclave_load(NULL, RX)
-> > already has to be invoked at runtime, and when that happens, the kernel
-> > can take the opportunity to change the VMAs from MAY_RW to MAY_RX.
-> >
-> > For simplicity in the kernel and clarity in userspace, it makes sense to
-> > require an explicit ioctl() to add the to-be-EAUG'd range.  That just
-> > leaves us wanting an ioctl() to set the post-EACCEPT{COPY} permissions.
-> >
-> > E.g.:
-> >
-> >     ioctl(<prefix>_ADD_REGION, { NULL }) /* NULL == EAUG, MAY_RW */
-> >
-> >     mprotect(addr, size, RW);
-> >     ...
-> >
-> >     EACCEPTCOPY -> EAUG /* page fault handler */
-> >
-> >     ioctl(<prefix>_ACTIVATE_REGION, { addr, size, RX}) /* MAY_RX */
-> >
-> >     mprotect(addr, size, RX);
+> > +static int watch_queue_mmap(struct file *file, struct vm_area_struct *vma)
+> > +{
+> > +       struct watch_queue *wqueue = file->private_data;
+> > +
+> > +       if (vma->vm_pgoff != 0 ||
+> > +           vma->vm_end - vma->vm_start > wqueue->nr_pages * PAGE_SIZE ||
+> > +           !(pgprot_val(vma->vm_page_prot) & pgprot_val(PAGE_SHARED)))
+> > +               return -EINVAL;
 > 
-> In the maxperm model, this mprotect() will fail unless MAXPERM
-> contains RX, which could only happen if MAXPERM=RWX.  So, regardless
-> of how it's actually mapped to SELinux policy, MAXPERM=RWX is
-> functionally like EXECMOD and actual RWX PTEs are functionally like
-> EXECMEM.
+> This thing should probably have locking against concurrent
+> watch_queue_set_size()?
 
-Yep, same idea, except in the proposed flow ACTIVATE_REGION.
+Yeah.
 
-> >     ...
-> >
-> > And making ACTIVATE_REGION a single-shot per page eliminates the need for
-> > the MAXPERMS concept (see below).
-> >
-> > > If we keep only one MAXPERM, wouldn't this be the current behavior of
-> > > mmap()/mprotect()?
-> > >
-> > > To be a bit more clear, system admin sets MAXPERM upper bound in the form of
-> > > FILE__{READ|WRITE|EXECUTE|EXECMOD} of /dev/sgx/enclave. Then for a
-> > > process/enclave, if what it requires falls below what's allowed on
-> > > /dev/sgx/enclave, then everything will just work. Otherwise, it fails in the
-> > > form of -EPERM returned from mmap()/mprotect(). Please note that MAXPERM here
-> > > applies to "runtime" permissions, while "initial" permissions are taken care
-> > > of by security_enclave_{load|init}. "initial" permissions could be more
-> > > permissive than "runtime" permissions, e.g., RX is still required for initial
-> > > code pages even though system admins could disable dynamically loaded code
-> > > pages by *not* giving FILE__{EXECUTE|EXECMOD}. Therefore, the "initial"
-> > > mapping would still have to be done by the driver (to bypass LSM), either via
-> > > a new ioctl or as part of IOC_EINIT.
-> >
-> > Aha!
-> >
-> > Starting with Cedric's assertion that initial permissions can be taken
-> > directly from SECINFO:
-> >
-> >   - Initial permissions for *EADD* pages are explicitly handled via
-> >     sgx_enclave_load() with the exact SECINFO permissions.
-> >
-> >   - Initial permissions for *EAUG* are unconditionally RW.  EACCEPTCOPY
-> >     requires the target EPC page to be RW, and EACCEPT with RO is useless.
-> >
-> >   - Runtime permissions break down as follows:
-> >       R   - N/A, subset of RW (EAUG)
-> >       W   - N/A, subset of RW (EAUG) and x86 paging can't do W
-> >       X   - N/A, subset of RX (x86 paging can't do XO)
+	static int watch_queue_mmap(struct file *file,
+				    struct vm_area_struct *vma)
+	{
+		struct watch_queue *wqueue = file->private_data;
+		struct inode *inode = file_inode(file);
+		u8 nr_pages;
+
+		inode_lock(inode);
+		nr_pages = wqueue->nr_pages;
+		inode_unlock(inode);
+
+		if (nr_pages == 0 ||
+		...
+			return -EINVAL;
+
+> > +       smp_store_release(&buf->meta.head, len);
 > 
-> Sure it can!  You just have a hypervisor that maps a PA bit to EPT
-> no-read.  Then you can use that PA bit to suppress read.  Also, Linux
-> already abuses PKRU to simulate XO, although that won't work for
-> enclaves.
+> Why is this an smp_store_release()? The entire buffer should not be visible to
+> userspace before this setup is complete, right?
 
-Heh, I intentionally said "x86 paging" to rule out EPT :-)  I'm pretty
-sure it's a moot point though, I have a hard time believing an LSM will
-allow RW->X and not RW->RX.
+Yes - if I put the above locking in the mmap handler.  OTOH, it's a one-off
+barrier...
 
-> >       RW  - Handled by EAUG LSM hook (uses RW unconditionally)
-> >       WX  - N/A, subset of RWX (x86 paging can't do WX)
-> >       RX  - Handled by ACTIVATE_REGION
-> >       RWX - Handled by ACTIVATE_REGION
-> >
-> > In other words, if we define the SGX -> LSM calls as follows (minus the
-> > file pointer and other params for brevity):
-> >
-> >   - <prefix>_ACTIVATE_REGION(vma, perms) -> sgx_enclave_load(NULL, perms)
-> >
-> >   - <prefix>_ADD_REGION(vma) -> sgx_enclave_load(vma, SECINFO.perms)
-> >
-> >   - <prefix>_ADD_REGION(NULL) -> sgx_enclave_load(NULL, RW)
-> >
-> > then SGX and LSMs have all the information and hooks needed.  The catch
-> > is that the LSM semantics of sgx_enclave_load(..., RW) would need to be
-> > different than normal shared memory, e.g. FILE__WRITE should *not* be
-> > required, but that's ok since it's an SGX specific hook.  And if for some
-> > reason an LSM wanted to gate access to EAUG *without* FILE__EXECMOD, it'd
-> > have the necessary information to do so.
-> >
-> > The userspace changes are fairly minimal:
-> >
-> >   - For SGX1, use PROT_NONE for the initial mmap() and refactor ADD_PAGE
-> >     to ADD_REGION.
-> >
-> >   - For SGX2, do an explicit ADD_REGION on the ranges to be EAUG'd, and an
-> >     ACTIVATE_REGION to make a region RX or R (no extra ioctl() required to
-> >     keep RW permissions).
-> >
-> > Because ACTIVATE_REGION can only be done once per page, to do *abitrary*
-> > mprotect() transitions, userspace would need to set the added/activated
-> > permissions to be a superset of the transitions, e.g. RW -> RX would
-> > require RWX, but that's a non-issue.
-> >
+> > +               if (wqueue->buffer)
+> > +                       return -EBUSY;
 > 
-> I may be misunderstanding or just be biased to my own proposal, but
-> this seems potentially more complicated and less flexible than the
-> MAXPERM model.  One of the main things that made me come up with
-> MAXPERM is that I wanted to avoid any complicated PTE/VMA modification
-> or runtime changes.  So, with MAXPERM, we still need to track the
-> MAXPERM bits per page, but we don't ever need to *change* them or to
-> worry about what is or is not mapped anywhere at any given time.  With
-> ACTIVATE_REGION, don't we need to make sure that we don't have a
-> second VMA pointing at the same pages?  Or am I just confused?
+> The preceding check occurs without any locks held and therefore has no
+> reliable effect. It should probably be moved below the
+> inode_lock(...).
 
-In theory, it's still your MAXPERM model, but with the unnecessary states
-removed and the others enforced/handled by the natural SGX transitions
-instead of explictly in ioctls.  Underneath the hood the SGX driver would
-still need to track the MAXPERM.
+Yeah, it can race.  I'll move it into watch_queue_set_size().
 
-With SGX1, SECINFO == MAXPERM.  With SGX2, ACTIVATE_REGION == MAXPERM,
-with the implication that the previous state is always RW.
-
-> >   - For SGX1 it's a nop since it's impossible to change the EPCM
-> >     permissions, i.e. the page would need to be RWX regardless.
+> > +static void free_watch(struct rcu_head *rcu)
+> > +{
+> > +       struct watch *watch = container_of(rcu, struct watch, rcu);
+> > +
+> > +       put_watch_queue(rcu_access_pointer(watch->queue));
 > 
-> I may still be missing something, but, for SGX1, it's possible at
-> least in principle for the enclave to request, via ocall or similar,
-> that the untrusted runtime do mprotect().  It's not even such a bad
-> idea.  Honestly, enclaves *shouldn't* have anything actually writable
-> and executable at once because the enclaves don't want to be easily
-> exploited.
+> This should be rcu_dereference_protected(..., 1).
 
-Yes, but the *EPCM* permissions are immutable.  So if an enclave wants
-to do RW->RX it has to intialize its pages to RWX.  And because the
-untrusted runtime is, ahem, untrusted, the enclave cannot rely on
-userspace to never map its pages RWX.  In other words, from a enclave
-security perspective, an SGX1 enclave+runtime that uses RW->RX is no
-different than an enclave that uses RWX.  Using your earlier terminology,
-an SGX1 enclave *should* get a dirty looks if maps a page RWX in the EPCM,
-even if it only intends RW->RX behavior.
+That shouldn't be necessary.  rcu_access_pointer()'s description says:
 
-> >   - For SGX2, userspace can suck it up and request RWX to do completely
-> >     arbitrary transitions (working as intended), or the kernel can support
-> >     trimming (removing) pages from an enclave, which would allow userspace
-> >     to do "arbitrary" transitions by first removing the page.
+ * It is also permissible to use rcu_access_pointer() when read-side
+ * access to the pointer was removed at least one grace period ago, as
+ * is the case in the context of the RCU callback that is freeing up
+ * the data, ...
+
+It's in an rcu callback function, so accessing the __rcu pointers in the RCU'd
+struct should be fine with rcu_access_pointer().
+
+> > +       /* We don't need the watch list lock for the next bit as RCU is
+> > +        * protecting everything from being deallocated.
+> 
+> Does "everything" mean "the wqueue" or more than that?
+
+Actually, just 'wqueue' and its buffer.  'watch' is held by us once we've
+dequeued it as we now own the ref 'wlist' had on it.  'wlist' and 'wq' must be
+pinned by the caller.
+
+> > +                       if (release) {
+> > +                               if (wlist->release_watch) {
+> > +                                       rcu_read_unlock();
+> > +                                       /* This might need to call dput(), so
+> > +                                        * we have to drop all the locks.
+> > +                                        */
+> > +                                       wlist->release_watch(wlist, watch);
+> 
+> How are you holding a reference to `wlist` here? You got the reference through
+> rcu_dereference(), you've dropped the RCU read lock, and I don't see anything
+> that stabilizes the reference.
+
+The watch record must hold a ref on the watched object if the watch_list has a
+->release_watch() method.  In the code snippet above, the watch record now
+belongs to us because we unlinked it under the wlist->lock some lines prior.
+
+However, you raise a good point, and I think the thing to do is to cache
+->release_watch from it and not pass wlist into (*release_watch)().  We don't
+need to concern ourselves with cleaning up *wlist as it will be cleaned up
+when the target object is removed.
+
+Keyrings don't have a ->release_watch method and neither does the block-layer
+notification stuff.
+
+> > +       if (wqueue->pages && wqueue->pages[0])
+> > +               WARN_ON(page_ref_count(wqueue->pages[0]) != 1);
+> 
+> Is there a reason why there couldn't still be references to the pages
+> from get_user_pages()/get_user_pages_fast()?
+
+I'm not sure.  I'm not sure what to do if there are.  What do you suggest?
+
+> > +       n->info &= (WATCH_INFO_LENGTH | WATCH_INFO_TYPE_FLAGS | WATCH_INFO_ID);
+> 
+> Should the non-atomic modification of n->info
+
+n's an unpublished copy of some userspace data that's local to the function
+instance.  There shouldn't be any way to race with it at this point.
+
+> (and perhaps also the
+> following uses of ->debug) be protected by some lock?
+> 
+> > +       if (post_one_notification(wqueue, n, file->f_cred))
+> > +               wqueue->debug = 0;
+> > +       else
+> > +               wqueue->debug++;
+> > +       ret = len;
+> > +       if (wqueue->debug > 20)
+> > +               ret = -EIO;
+
+It's for debugging purposes, so the non-atomiticity doesn't matter.  I'll
+#undef the symbol to disable the code.
+
+> > +#define IOC_WATCH_QUEUE_SET_SIZE       _IO('s', 0x01)  /* Set the size in pages */
+> > +#define IOC_WATCH_QUEUE_SET_FILTER     _IO('s', 0x02)  /* Set the filter */
+> 
+> Should these ioctl numbers be registered in
+> Documentation/ioctl/ioctl-number.txt?
+
+Quite possibly.  I'm not sure where's best to actually allocate it.  I picked
+'s' out of the air.
+
+David
