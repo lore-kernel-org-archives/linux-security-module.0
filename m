@@ -2,155 +2,156 @@ Return-Path: <SRS0=jOYs=T4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CAEC04AB6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC58C04AB6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 20:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DDC220883
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:57:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BzRo3jzt"
+	by mail.kernel.org (Postfix) with ESMTP id CCB23206C1
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 20:06:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726619AbfE1T5U (ORCPT
+        id S1726827AbfE1UGd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 15:57:20 -0400
-Received: from sonic305-8.consmr.mail.bf2.yahoo.com ([74.6.133.47]:41075 "EHLO
-        sonic305-8.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726453AbfE1T5U (ORCPT
+        Tue, 28 May 2019 16:06:33 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34136 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726619AbfE1UGc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 15:57:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559073438; bh=e/v51RnL9xf5ubCXEIKeys53WKHwDxTPFQTT7gRApYg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=BzRo3jztIFiFuKAwl9fRhPg3jAycn0bTKv5FWHWOtb9hV75QiKqwVOMeq1kFMNR5vDMoADKpN+TtVXNEIi+YA1iB1bZ8775nAkWShw4kBXMGR5Vb3qVCJeYFl4d2dEnAgNq7ZTaLt2wB7XFz/9kaGR/ZH7FtyE8MkYxK2zhR2XsbIQVaa/dXxM6cauaNWg5tgnEpz/v4bSTs35pQHLBsJm7E4lyM0yuEkBfOpdZau7q3h2UP+G60haqlK/NPD9wul0OyRdlcvm2XaUbxnmtTQl6ZJfAPgtnC8CfI4Gcl//ngS9W2TRovgrj2n1jPrc8hTCYkI5fJq/WJpStRaolBtg==
-X-YMail-OSG: S1fP1h4VM1mSGEkDlbxKAEe_FGEMKAtMqkbUYF8.HjO5mxKYbmZphG.xKGOOeLf
- 1Sz596GcvYe1.VqJ0sI6f5Bg.F5UUj87y5cqpCOYhvEfUM8vge75KsHHP4yK2TP3S_7j8KAFkjo.
- YUukUnMMeOrA39onJCjLTAbyojW3ZNHmWC0fZb2yibSwbIMfMlmrULY1eINTXCLQkRDAYOlneBrH
- lQugVzZFpEzdnClLyeZUYwBks1oM_xRwQQfcG82GrYRTEjfgeb.SxtgKWskbLjQ0ZsluCZTyt_yU
- ef1RWw0aObdJdJ385sj_rRuY2ydtZB6oLug5wvBNnS.tUHgqO3K1G3Hr2seu_GoI0epOK4.0OEG3
- xwnM2.y3wTfRb6YFXryEKfllq8SXxvDJXZ2O5kdYNrfIqj_bIkioVfe1OPpOeDuxvMF5xIstwnnf
- lJgAR6JIRreOJZ6rjB2KswEXCxXD7uaG5qZ5.mud3xcw8NyLWJXJLZW6mQ9CWpdIoR3yEV21VMck
- dSXsI4mnY8w2wfj1ngQhICjI0lqFFgLgTXqpYRD13NzX0iEqCh9XaBlhS59mv3lS7ozhukUoNyMx
- 2UJRCyzPyRHSPFbrs6guwf6lvQTQCzUK6mOttAz639TAZDrrR.wEF41krcm5VpgZptwfWQVgJeeR
- AvF6xVAxfQEt4oMGLKAVdvBOW.h7JQZp4wA9uluOB7eTjhgdmDR8Y9cXmc9O1lSX4EVJv31WwP9e
- tJ7_iWnwy4DvEZV9BLmuA1AqrtX1C6TE.Ub.aphzxoPzDWr72nQz38WHB1mhrMuBfrRvbnGMS0If
- J9JQ9zDKDTtTws9s1kZeZjA.hZamjV8MtIDIqFLVHzlwS4P4BZoODn6sKi8_sgfMnewm7qcldzYv
- 6y.DpfDzt6av8JDZs01IP2VZ_VkQfTMOFjL6fmzj1XhrG6EN.O2j.x9Mkhjre0UlMT.fPCJPZF6i
- _A6S6IDCPOmnhle35hB97hn9zajtFWUpgF48rPbEd70RcLOL18yVE8iMeN6eqMAb9GVtD4z7y8K3
- REnIwqWsl3IBgh20oCXZCjkslWO.F1Zmk.X32UxvmlBHqdUeDA1eGEWYkoPpm3M9iiZxFNhJcYRD
- kEsZzMXDep1wgOnTFW2c4G8l0fQYIxm9ccWCk5GR5QJgb_hw0d3EWtuIQW1adqkSSSH4oTWYbetk
- htvITi_YRH5QvOZmrLIFOhm7zPbeh6qVQpc7K2KIOY6x27xUEASKU8br7pe8VzJbTbvUOZB56P5J
- V3BXenh56F_UGW_SP05vyieUiRGKRn5d1lSCnOmyrQ32lQTmbipFAEyF4JwSSo_JeXXSgciDazWw
- -
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Tue, 28 May 2019 19:57:18 +0000
-Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp415.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 561ee678e4732a1eca71b27bfdaf5a23;
-          Tue, 28 May 2019 19:57:17 +0000 (UTC)
-Subject: Re: [PATCH] Smack: Restore the smackfsdef mount option
-To:     David Howells <dhowells@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, jose.bollo@iot.bzh,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-References: <43e3de52-13d7-8089-11cf-a384662401aa@schaufler-ca.com>
- <9191ef31-a022-cdc4-9bed-ff225e4179bb@schaufler-ca.com>
- <1ebab7e7-f7ee-b910-9cc8-5d826eee8e97@schaufler-ca.com>
- <11440.1559046181@warthog.procyon.org.uk>
- <9330.1559060541@warthog.procyon.org.uk>
- <9986.1559069658@warthog.procyon.org.uk>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <26777166-5e0d-adfd-e59f-bcee7f18841a@schaufler-ca.com>
-Date:   Tue, 28 May 2019 12:57:16 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <9986.1559069658@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Tue, 28 May 2019 16:06:32 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4SK29jQ101130
+        for <linux-security-module@vger.kernel.org>; Tue, 28 May 2019 16:06:31 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ssb2yspge-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Tue, 28 May 2019 16:06:31 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 28 May 2019 21:06:29 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 28 May 2019 21:06:22 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4SK6L2u48431204
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 May 2019 20:06:22 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C525D42047;
+        Tue, 28 May 2019 20:06:21 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AF4F942042;
+        Tue, 28 May 2019 20:06:19 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.111.38])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 28 May 2019 20:06:19 +0000 (GMT)
+Subject: Re: [PATCH v10 09/12] ima: Implement support for module-style
+ appended signatures
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
+Date:   Tue, 28 May 2019 16:06:09 -0400
+In-Reply-To: <87zhn65qor.fsf@morokweng.localdomain>
+References: <20190418035120.2354-1-bauerman@linux.ibm.com>
+         <20190418035120.2354-10-bauerman@linux.ibm.com>
+         <1557442868.10635.87.camel@linux.ibm.com>
+         <87zhn65qor.fsf@morokweng.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19052820-0020-0000-0000-00000341594A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19052820-0021-0000-0000-00002194571A
+Message-Id: <1559073969.4139.38.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-28_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905280125
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/28/2019 11:54 AM, David Howells wrote:
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
->
->>> Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>
->>>>> Also, should all of these be prefixed with "smack"?  So:
->>>>>
->>>>>   	fsparam_string("smackfsdef",	Opt_fsdefault),
->>>>>   	fsparam_string("smackfsfloor",	Opt_fsfloor),
->>>>>   	fsparam_string("smackfshat",	Opt_fshat),	
->>>> No. smack_fs_parameters takes care of that.
->>> It does?  *Blink*.
->> Well, something does. I can't say that I 100% understand all
->> of how the new mount code handles the mount options. Y'all made
->> sweeping changes, and the code works the way it used to except
->> for the awkward change from smackfsdef to smackfsdefault. It
->> took no small amount of head scratching and experimentation to
->> convince myself that the fix I proposed was correct.
-> Ah...  I suspect the issue is that smack_sb_eat_lsm_opts() strips the prefix
-> for an unconverted filesystem, but smack_fs_context_parse_param() doesn't
-> (which it shouldn't).
->
-> Can you try grabbing my mount-api-viro branch from:
->
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
->
-> and testing setting smack options on a tmpfs filesystem?
+On Tue, 2019-05-28 at 16:23 -0300, Thiago Jung Bauermann wrote:
+> Mimi Zohar <zohar@linux.ibm.com> writes:
+> 
+> > Hi Thiago,
+> >
+> >> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> >> index fca7a3f23321..a7a20a8c15c1 100644
+> >> --- a/security/integrity/ima/ima_policy.c
+> >> +++ b/security/integrity/ima/ima_policy.c
+> >> @@ -1144,6 +1144,12 @@ void ima_delete_rules(void)
+> >>  	}
+> >>  }
+> >>
+> >> +#define __ima_hook_stringify(str)	(#str),
+> >> +
+> >> +const char *const func_tokens[] = {
+> >> +	__ima_hooks(__ima_hook_stringify)
+> >> +};
+> >> +
+> >>  #ifdef	CONFIG_IMA_READ_POLICY
+> >>  enum {
+> >>  	mask_exec = 0, mask_write, mask_read, mask_append
+> >> @@ -1156,12 +1162,6 @@ static const char *const mask_tokens[] = {
+> >>  	"MAY_APPEND"
+> >>  };
+> >>
+> >> -#define __ima_hook_stringify(str)	(#str),
+> >> -
+> >> -static const char *const func_tokens[] = {
+> >> -	__ima_hooks(__ima_hook_stringify)
+> >> -};
+> >> -
+> >>  void *ima_policy_start(struct seq_file *m, loff_t *pos)
+> >>  {
+> >>  	loff_t l = *pos;
+> >
+> > Is moving this something left over from previous versions or there is
+> > a need for this change?
+> 
+> Well, it's not a strong need, but it's still relevant in the current
+> version. I use func_tokens in ima_read_modsig() in order to be able to
+> mention the hook name in mod_check_sig()'s error message:
+> 
+> In ima_read_modsig():
+> 
+> 	rc = mod_check_sig(sig, buf_len, func_tokens[func]);
+> 
+> And in mod_check_sig():
+> 
+> 		pr_err("%s: Module is not signed with expected PKCS#7 message\n",
+> 		       name);
+> 
+> If you think it's not worth it to expose func_tokens, I can make
+> ima_read_modsig() pass a more generic const string such as "IMA modsig"
+> for example.
 
-My fedora system won't boot because smackfsdef isn't recognized. :(
-I will put in my fix and retry.
+This is fine.  I somehow missed moving func_tokens[] outside of the
+ifdef was in order to make it independent of "CONFIG_IMA_READ_POLICY".
 
->
-> You might need to try modifying samples/vfs/test-fsmount.c to make it mount a
-> trmpfs filesystem through the new mount UAPI.
->
-> David
+thanks,
+
+Mimi
+
