@@ -2,143 +2,172 @@ Return-Path: <SRS0=jOYs=T4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E99EC282E3
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B16CC04AB6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 840C320717
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:27:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBF5F208CB
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:43:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qmJfh4Ne"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfE1T1g (ORCPT
+        id S1726802AbfE1TnU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 15:27:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44762 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727841AbfE1T1f (ORCPT
+        Tue, 28 May 2019 15:43:20 -0400
+Received: from sonic305-8.consmr.mail.bf2.yahoo.com ([74.6.133.47]:41010 "EHLO
+        sonic305-8.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726795AbfE1TnT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 15:27:35 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4SJPK5e133167
-        for <linux-security-module@vger.kernel.org>; Tue, 28 May 2019 15:27:34 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ss9cdmmfw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 28 May 2019 15:27:34 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Tue, 28 May 2019 20:27:33 +0100
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 28 May 2019 20:27:28 +0100
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4SJRRNP22282730
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 May 2019 19:27:27 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C0A6BE053;
-        Tue, 28 May 2019 19:27:27 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D76FDBE058;
-        Tue, 28 May 2019 19:27:22 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.218.160])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Tue, 28 May 2019 19:27:22 +0000 (GMT)
-References: <20190418035120.2354-1-bauerman@linux.ibm.com> <20190418035120.2354-10-bauerman@linux.ibm.com> <1557835765.4139.9.camel@linux.ibm.com>
-User-agent: mu4e 1.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH v10 09/12] ima: Implement support for module-style appended signatures
-In-reply-to: <1557835765.4139.9.camel@linux.ibm.com>
-Date:   Tue, 28 May 2019 16:27:17 -0300
+        Tue, 28 May 2019 15:43:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559072598; bh=w6k0dD47tzu5UpmkfuOe6IsbXwYp8rlq/74I9ihZD1E=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=qmJfh4NelmAJ/u8p5Sl54E+JmqVU+GdSIBHnoFDiD9GohDNIYVJTYu7KKBG4C7mkBLeFQUkXODla7pNxsMciBYcwq1t863wFOzLBL85xR2aioUtToSH7LK2q3xY9Q2uqvA9foPQ2yDqXux/ollt7CfrWiMvGZGYKT/rEt+DGRHHeHl/kFSC7N2NznGBqPRsq5ynsZEkImTwGD2Q+KgcCejBlZhnDnhvg1kxyDAtZcPjMmgJAoWUgMlBBJNHXRi9AJ3XnpPD9ecz84WA5SRDZkdXQjQ9Cau7PR6KImnBNQrOVF7nN2AHqIdGBrodnqq8Nna3WEuCcRxr7oSlJKj6P/A==
+X-YMail-OSG: xxzWLUAVM1knO05hrAqfD.pFhLyJ5wdTfzdCut8NM7hYut8pXxAjscP3PCK1JHC
+ pAJeOk0EId1MIDbLepT3OOvUWRhRswWXvZrBiLW2YpcNDtae2mtKC4GDbkzd9x5qMlSZKqVk1cHe
+ 79MgUNT6zlsrcNzoyLyfjKEizibPmmRyZIEMKQnRCpox57pP4Khc8.eORhJdhmHP1AJHpwqayz57
+ hr81BcVzbp2VqhKO2ptHE0cFrbQnKTz1lWhNTTjqqsMe0SEko36VHemcuXtv96kABFRZi5.hoF7g
+ vI6rIx7EMCeutuHjqba_.yZ85SZO24BqVptOrzYJt6n7w8OOmwR2UeuUi1PGpEU04iI0VjExb2_9
+ 2m_XqcuqAcgpIYKEyvK9z63VQm2YKqb9KF_BCpkeFftMBMimAMJABIfyn_3mRpbgYEMq6AVsghZG
+ OArnS8Jcupl5wsXU1TBC9W.Gz16fmYuJ50PsbNfOn_Y3xst_6ykX_7BnLiiqNJ9ekqVqOW6ziG2k
+ fnNoNTttFqCp2eanmfC1U9zu_2kteKaVQNE9Vy9l46T9m5Laiq.8KKzJcypgF1uFAS0UmdZJ5Lf5
+ WHbynHRRTKTh13ye6j1zniPyBei8grYIjzxmU.AbixHd83AkKZArOI0XrZLhLF0N4RiBjXmsICGp
+ FDe1P6Gm6391fkgmne0EraGUiKyjFMrwjzcHWYi4oa0MWRmdfF1WAkwmG_FWCzCycBJT9XoL9th9
+ pqLGMSlLS_latLbCKyH43XQSVpnD93xVe.FFXwvoJbHfbdkzfHdJWOhL8vHhvReR3jnvgfYMSQ8w
+ UBhIc9Z7OJ7EUPPTgOnKTV85NbhFbZAk5DPbWeSNcEneb3hP53rIfqpJ_9so8dnYjip4PEr1ptzt
+ ZNw52nFoEV.FKc9i3hp9yFh2rYhogrgER6PJe1xHdDF4Xd2YcvB313nj1JvMcJW2kyL1CFR5n03F
+ D74z3FJOeeGlShqbR.Ime1ehmL4ihQxmNHh8eMB.VQhygyT6cKAwaXvdQntp24pQbOtmSWwalx2S
+ 2ZCjnbj7Z8WDu2sldbhn3EdEkQv4InPJ8JLgSKfut7v57hOQ6rsUyrTwh6pwXmHNije9ZAqaTtHh
+ zTZEzHIhkwP2qry1EJoIODoPgpqjj6ikWNLyNByV5TX1FcLabvlQ7dSaRWvnBkQMSdvZLoWn8eBq
+ vNCbExVG9uhAMN53QTUiLMQMnU_HLqB0QTvCY9CaIYOBUWEtUkS7j6BC2r4d9ZD9JWLV37orIsZY
+ Mhjt7puqhKZsye0cU.6qoNGB1nhMRIEpl4yAxxYMnvSYi6Ec3hnlg
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Tue, 28 May 2019 19:43:18 +0000
+Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
+          by smtp423.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 0a1548a9f042941d1415b405d9e7b868;
+          Tue, 28 May 2019 19:43:14 +0000 (UTC)
+Subject: Re: [PULL] Smack: Restore the smackfsdef mount option
+To:     David Howells <dhowells@redhat.com>
+Cc:     James Morris <jmorris@namei.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>, casey@schaufler-ca.com
+References: <6889f4f9-4ae0-8a92-a2fc-04151ad8ed9f@schaufler-ca.com>
+ <10710.1559070135@warthog.procyon.org.uk>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <6e061326-5feb-5471-c0c0-a364af5e82c3@schaufler-ca.com>
+Date:   Tue, 28 May 2019 12:43:12 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19052819-0004-0000-0000-000015154B13
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011176; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01209921; UDB=6.00635635; IPR=6.00990951;
- MB=3.00027089; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-28 19:27:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052819-0005-0000-0000-00008BD76A03
-Message-Id: <87y32q5qi2.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-28_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905280121
+In-Reply-To: <10710.1559070135@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-Mimi Zohar <zohar@linux.ibm.com> writes:
-
-> Hi Thiago,
+On 5/28/2019 12:02 PM, David Howells wrote:
+> Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> On Thu, 2019-04-18 at 00:51 -0300, Thiago Jung Bauermann wrote:
->> 
->> @@ -326,6 +356,10 @@ int ima_appraise_measurement(enum ima_hooks func,
->> case INTEGRITY_UNKNOWN:
->> break;
->> case INTEGRITY_NOXATTRS:/* No EVM protected xattrs. */
->> +/* It's fine not to have xattrs when using a modsig. */
->> +if (try_modsig)
->> +break;
->> +/* fall through */
->> case INTEGRITY_NOLABEL:/* No security.evm xattr. */
->> cause = "missing-HMAC";
->> goto out;
->> @@ -340,6 +374,14 @@ int ima_appraise_measurement(enum ima_hooks func,
->> rc = xattr_verify(func, iint, xattr_value, xattr_len, &status,
->>  &cause);
->> 
->> +/*
->> + * If we have a modsig and either no imasig or the imasig's key isn't
->> + * known, then try verifying the modsig.
->> + */
->> +if (status != INTEGRITY_PASS && try_modsig &&
->> + (!xattr_value || rc == -ENOKEY))
->> +rc = modsig_verify(func, modsig, &status, &cause);
+>> James, this is a repair for a regression introduced in 5.1.
+>> It should be pulled for 5.2 and added to 5.1.
+>>
+>> The following changes since commit 619ae03e922b65a1a5d4269ceae1e9e13a0=
+58d6b:
+>>
+>>   Smack: Fix kbuild reported build error (2019-04-30 14:13:32 -0700)
+>>
+>> are available in the git repository at:
+>>
+>>   https://github.com/cschaufler/next-smack.git smack-for-5.2-b
+>>
+>> for you to fetch changes up to a5765ce797070d046dc53ccceeb0ed304cb918e=
+b:
+>>
+>>   Smack: Restore the smackfsdef mount option (2019-05-28 10:22:04 -070=
+0)
+> Can you hold this for the moment, please?
+
+OK ...
+
+> Note that there appears to be another problem by inspection of the code=
+=2E  I
+> think that smack_sb_eat_lsm_opts() strips the "smack" prefix off of the=
+
+> options, whereas smack_fs_context_parse_param() does not.
 >
-> EVM protects other security xattrs, not just security.ima, if they
-> exist. As a result, evm_verifyxattr() could pass based on the other
-> security xattrs.
+> This means that there's no need to do this:
+>
+> 	 static const struct fs_parameter_spec smack_param_specs[] =3D {
+> 	+	fsparam_string("fsdef",		Opt_fsdefault),
+> 		fsparam_string("fsdefault",	Opt_fsdefault),
+> 		fsparam_string("fsfloor",	Opt_fsfloor),
+> 		fsparam_string("fshat",		Opt_fshat),
+>
+> but that all the option names in that table *do* need prefixing with "s=
+mack".
 
-Indeed! It doesn't make sense to test for status != INTEGRITY_PASS here.
-Not sure what I was thinking. Thanks for spotting it. With your other
-comments about this if clause, this code now reads:
+I'm not sure I follow the logic, because "mount -o smackfsdefault=3DPop"
+does what I would expect it to.
 
-	/*
-	 * If we have a modsig and either no imasig or the imasig's key isn't
-	 * known, then try verifying the modsig.
-	 */
-	if (try_modsig &&
-	    (!xattr_value || xattr_value->type == IMA_XATTR_DIGEST_NG ||
-	     rc == -ENOKEY))
-		rc = modsig_verify(func, modsig, &status, &cause);
+> The way you enter the LSM is going to depend on whether
+> generic_parse_monolithic() is called.  You're only going to enter this =
+way if
+> mount(2) is the syscall of entry and the filesystem doesn't override th=
+e
+> ->parse_monolithic() option (none in the upstream kernel).
 
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+So you're saying that the code works for the mount(2) case,
+but won't work for some other case? Are you planning a fix?
+Will that fix include restoration of smackfsdef?
+
+> David
 
