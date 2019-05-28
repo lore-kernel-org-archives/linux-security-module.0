@@ -2,59 +2,63 @@ Return-Path: <SRS0=jOYs=T4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B16CC04AB6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CAEC04AB6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBF5F208CB
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DDC220883
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:57:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qmJfh4Ne"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BzRo3jzt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbfE1TnU (ORCPT
+        id S1726619AbfE1T5U (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 15:43:20 -0400
-Received: from sonic305-8.consmr.mail.bf2.yahoo.com ([74.6.133.47]:41010 "EHLO
+        Tue, 28 May 2019 15:57:20 -0400
+Received: from sonic305-8.consmr.mail.bf2.yahoo.com ([74.6.133.47]:41075 "EHLO
         sonic305-8.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726795AbfE1TnT (ORCPT
+        by vger.kernel.org with ESMTP id S1726453AbfE1T5U (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 15:43:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559072598; bh=w6k0dD47tzu5UpmkfuOe6IsbXwYp8rlq/74I9ihZD1E=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=qmJfh4NelmAJ/u8p5Sl54E+JmqVU+GdSIBHnoFDiD9GohDNIYVJTYu7KKBG4C7mkBLeFQUkXODla7pNxsMciBYcwq1t863wFOzLBL85xR2aioUtToSH7LK2q3xY9Q2uqvA9foPQ2yDqXux/ollt7CfrWiMvGZGYKT/rEt+DGRHHeHl/kFSC7N2NznGBqPRsq5ynsZEkImTwGD2Q+KgcCejBlZhnDnhvg1kxyDAtZcPjMmgJAoWUgMlBBJNHXRi9AJ3XnpPD9ecz84WA5SRDZkdXQjQ9Cau7PR6KImnBNQrOVF7nN2AHqIdGBrodnqq8Nna3WEuCcRxr7oSlJKj6P/A==
-X-YMail-OSG: xxzWLUAVM1knO05hrAqfD.pFhLyJ5wdTfzdCut8NM7hYut8pXxAjscP3PCK1JHC
- pAJeOk0EId1MIDbLepT3OOvUWRhRswWXvZrBiLW2YpcNDtae2mtKC4GDbkzd9x5qMlSZKqVk1cHe
- 79MgUNT6zlsrcNzoyLyfjKEizibPmmRyZIEMKQnRCpox57pP4Khc8.eORhJdhmHP1AJHpwqayz57
- hr81BcVzbp2VqhKO2ptHE0cFrbQnKTz1lWhNTTjqqsMe0SEko36VHemcuXtv96kABFRZi5.hoF7g
- vI6rIx7EMCeutuHjqba_.yZ85SZO24BqVptOrzYJt6n7w8OOmwR2UeuUi1PGpEU04iI0VjExb2_9
- 2m_XqcuqAcgpIYKEyvK9z63VQm2YKqb9KF_BCpkeFftMBMimAMJABIfyn_3mRpbgYEMq6AVsghZG
- OArnS8Jcupl5wsXU1TBC9W.Gz16fmYuJ50PsbNfOn_Y3xst_6ykX_7BnLiiqNJ9ekqVqOW6ziG2k
- fnNoNTttFqCp2eanmfC1U9zu_2kteKaVQNE9Vy9l46T9m5Laiq.8KKzJcypgF1uFAS0UmdZJ5Lf5
- WHbynHRRTKTh13ye6j1zniPyBei8grYIjzxmU.AbixHd83AkKZArOI0XrZLhLF0N4RiBjXmsICGp
- FDe1P6Gm6391fkgmne0EraGUiKyjFMrwjzcHWYi4oa0MWRmdfF1WAkwmG_FWCzCycBJT9XoL9th9
- pqLGMSlLS_latLbCKyH43XQSVpnD93xVe.FFXwvoJbHfbdkzfHdJWOhL8vHhvReR3jnvgfYMSQ8w
- UBhIc9Z7OJ7EUPPTgOnKTV85NbhFbZAk5DPbWeSNcEneb3hP53rIfqpJ_9so8dnYjip4PEr1ptzt
- ZNw52nFoEV.FKc9i3hp9yFh2rYhogrgER6PJe1xHdDF4Xd2YcvB313nj1JvMcJW2kyL1CFR5n03F
- D74z3FJOeeGlShqbR.Ime1ehmL4ihQxmNHh8eMB.VQhygyT6cKAwaXvdQntp24pQbOtmSWwalx2S
- 2ZCjnbj7Z8WDu2sldbhn3EdEkQv4InPJ8JLgSKfut7v57hOQ6rsUyrTwh6pwXmHNije9ZAqaTtHh
- zTZEzHIhkwP2qry1EJoIODoPgpqjj6ikWNLyNByV5TX1FcLabvlQ7dSaRWvnBkQMSdvZLoWn8eBq
- vNCbExVG9uhAMN53QTUiLMQMnU_HLqB0QTvCY9CaIYOBUWEtUkS7j6BC2r4d9ZD9JWLV37orIsZY
- Mhjt7puqhKZsye0cU.6qoNGB1nhMRIEpl4yAxxYMnvSYi6Ec3hnlg
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Tue, 28 May 2019 19:43:18 +0000
+        Tue, 28 May 2019 15:57:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559073438; bh=e/v51RnL9xf5ubCXEIKeys53WKHwDxTPFQTT7gRApYg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=BzRo3jztIFiFuKAwl9fRhPg3jAycn0bTKv5FWHWOtb9hV75QiKqwVOMeq1kFMNR5vDMoADKpN+TtVXNEIi+YA1iB1bZ8775nAkWShw4kBXMGR5Vb3qVCJeYFl4d2dEnAgNq7ZTaLt2wB7XFz/9kaGR/ZH7FtyE8MkYxK2zhR2XsbIQVaa/dXxM6cauaNWg5tgnEpz/v4bSTs35pQHLBsJm7E4lyM0yuEkBfOpdZau7q3h2UP+G60haqlK/NPD9wul0OyRdlcvm2XaUbxnmtTQl6ZJfAPgtnC8CfI4Gcl//ngS9W2TRovgrj2n1jPrc8hTCYkI5fJq/WJpStRaolBtg==
+X-YMail-OSG: S1fP1h4VM1mSGEkDlbxKAEe_FGEMKAtMqkbUYF8.HjO5mxKYbmZphG.xKGOOeLf
+ 1Sz596GcvYe1.VqJ0sI6f5Bg.F5UUj87y5cqpCOYhvEfUM8vge75KsHHP4yK2TP3S_7j8KAFkjo.
+ YUukUnMMeOrA39onJCjLTAbyojW3ZNHmWC0fZb2yibSwbIMfMlmrULY1eINTXCLQkRDAYOlneBrH
+ lQugVzZFpEzdnClLyeZUYwBks1oM_xRwQQfcG82GrYRTEjfgeb.SxtgKWskbLjQ0ZsluCZTyt_yU
+ ef1RWw0aObdJdJ385sj_rRuY2ydtZB6oLug5wvBNnS.tUHgqO3K1G3Hr2seu_GoI0epOK4.0OEG3
+ xwnM2.y3wTfRb6YFXryEKfllq8SXxvDJXZ2O5kdYNrfIqj_bIkioVfe1OPpOeDuxvMF5xIstwnnf
+ lJgAR6JIRreOJZ6rjB2KswEXCxXD7uaG5qZ5.mud3xcw8NyLWJXJLZW6mQ9CWpdIoR3yEV21VMck
+ dSXsI4mnY8w2wfj1ngQhICjI0lqFFgLgTXqpYRD13NzX0iEqCh9XaBlhS59mv3lS7ozhukUoNyMx
+ 2UJRCyzPyRHSPFbrs6guwf6lvQTQCzUK6mOttAz639TAZDrrR.wEF41krcm5VpgZptwfWQVgJeeR
+ AvF6xVAxfQEt4oMGLKAVdvBOW.h7JQZp4wA9uluOB7eTjhgdmDR8Y9cXmc9O1lSX4EVJv31WwP9e
+ tJ7_iWnwy4DvEZV9BLmuA1AqrtX1C6TE.Ub.aphzxoPzDWr72nQz38WHB1mhrMuBfrRvbnGMS0If
+ J9JQ9zDKDTtTws9s1kZeZjA.hZamjV8MtIDIqFLVHzlwS4P4BZoODn6sKi8_sgfMnewm7qcldzYv
+ 6y.DpfDzt6av8JDZs01IP2VZ_VkQfTMOFjL6fmzj1XhrG6EN.O2j.x9Mkhjre0UlMT.fPCJPZF6i
+ _A6S6IDCPOmnhle35hB97hn9zajtFWUpgF48rPbEd70RcLOL18yVE8iMeN6eqMAb9GVtD4z7y8K3
+ REnIwqWsl3IBgh20oCXZCjkslWO.F1Zmk.X32UxvmlBHqdUeDA1eGEWYkoPpm3M9iiZxFNhJcYRD
+ kEsZzMXDep1wgOnTFW2c4G8l0fQYIxm9ccWCk5GR5QJgb_hw0d3EWtuIQW1adqkSSSH4oTWYbetk
+ htvITi_YRH5QvOZmrLIFOhm7zPbeh6qVQpc7K2KIOY6x27xUEASKU8br7pe8VzJbTbvUOZB56P5J
+ V3BXenh56F_UGW_SP05vyieUiRGKRn5d1lSCnOmyrQ32lQTmbipFAEyF4JwSSo_JeXXSgciDazWw
+ -
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Tue, 28 May 2019 19:57:18 +0000
 Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp423.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 0a1548a9f042941d1415b405d9e7b868;
-          Tue, 28 May 2019 19:43:14 +0000 (UTC)
-Subject: Re: [PULL] Smack: Restore the smackfsdef mount option
+          by smtp415.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 561ee678e4732a1eca71b27bfdaf5a23;
+          Tue, 28 May 2019 19:57:17 +0000 (UTC)
+Subject: Re: [PATCH] Smack: Restore the smackfsdef mount option
 To:     David Howells <dhowells@redhat.com>
-Cc:     James Morris <jmorris@namei.org>,
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, jose.bollo@iot.bzh,
         Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>, casey@schaufler-ca.com
-References: <6889f4f9-4ae0-8a92-a2fc-04151ad8ed9f@schaufler-ca.com>
- <10710.1559070135@warthog.procyon.org.uk>
+        <linux-security-module@vger.kernel.org>
+References: <43e3de52-13d7-8089-11cf-a384662401aa@schaufler-ca.com>
+ <9191ef31-a022-cdc4-9bed-ff225e4179bb@schaufler-ca.com>
+ <1ebab7e7-f7ee-b910-9cc8-5d826eee8e97@schaufler-ca.com>
+ <11440.1559046181@warthog.procyon.org.uk>
+ <9330.1559060541@warthog.procyon.org.uk>
+ <9986.1559069658@warthog.procyon.org.uk>
 From:   Casey Schaufler <casey@schaufler-ca.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=casey@schaufler-ca.com; keydata=
@@ -101,73 +105,52 @@ Autocrypt: addr=casey@schaufler-ca.com; keydata=
  wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
  v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
  abzjfg==
-Message-ID: <6e061326-5feb-5471-c0c0-a364af5e82c3@schaufler-ca.com>
-Date:   Tue, 28 May 2019 12:43:12 -0700
+Message-ID: <26777166-5e0d-adfd-e59f-bcee7f18841a@schaufler-ca.com>
+Date:   Tue, 28 May 2019 12:57:16 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <10710.1559070135@warthog.procyon.org.uk>
+In-Reply-To: <9986.1559069658@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/28/2019 12:02 PM, David Howells wrote:
+On 5/28/2019 11:54 AM, David Howells wrote:
 > Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
->> James, this is a repair for a regression introduced in 5.1.
->> It should be pulled for 5.2 and added to 5.1.
->>
->> The following changes since commit 619ae03e922b65a1a5d4269ceae1e9e13a0=
-58d6b:
->>
->>   Smack: Fix kbuild reported build error (2019-04-30 14:13:32 -0700)
->>
->> are available in the git repository at:
->>
->>   https://github.com/cschaufler/next-smack.git smack-for-5.2-b
->>
->> for you to fetch changes up to a5765ce797070d046dc53ccceeb0ed304cb918e=
-b:
->>
->>   Smack: Restore the smackfsdef mount option (2019-05-28 10:22:04 -070=
-0)
-> Can you hold this for the moment, please?
-
-OK ...
-
-> Note that there appears to be another problem by inspection of the code=
-=2E  I
-> think that smack_sb_eat_lsm_opts() strips the "smack" prefix off of the=
-
-> options, whereas smack_fs_context_parse_param() does not.
+>>> Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>
+>>>>> Also, should all of these be prefixed with "smack"?  So:
+>>>>>
+>>>>>   	fsparam_string("smackfsdef",	Opt_fsdefault),
+>>>>>   	fsparam_string("smackfsfloor",	Opt_fsfloor),
+>>>>>   	fsparam_string("smackfshat",	Opt_fshat),	
+>>>> No. smack_fs_parameters takes care of that.
+>>> It does?  *Blink*.
+>> Well, something does. I can't say that I 100% understand all
+>> of how the new mount code handles the mount options. Y'all made
+>> sweeping changes, and the code works the way it used to except
+>> for the awkward change from smackfsdef to smackfsdefault. It
+>> took no small amount of head scratching and experimentation to
+>> convince myself that the fix I proposed was correct.
+> Ah...  I suspect the issue is that smack_sb_eat_lsm_opts() strips the prefix
+> for an unconverted filesystem, but smack_fs_context_parse_param() doesn't
+> (which it shouldn't).
 >
-> This means that there's no need to do this:
+> Can you try grabbing my mount-api-viro branch from:
 >
-> 	 static const struct fs_parameter_spec smack_param_specs[] =3D {
-> 	+	fsparam_string("fsdef",		Opt_fsdefault),
-> 		fsparam_string("fsdefault",	Opt_fsdefault),
-> 		fsparam_string("fsfloor",	Opt_fsfloor),
-> 		fsparam_string("fshat",		Opt_fshat),
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
 >
-> but that all the option names in that table *do* need prefixing with "s=
-mack".
+> and testing setting smack options on a tmpfs filesystem?
 
-I'm not sure I follow the logic, because "mount -o smackfsdefault=3DPop"
-does what I would expect it to.
+My fedora system won't boot because smackfsdef isn't recognized. :(
+I will put in my fix and retry.
 
-> The way you enter the LSM is going to depend on whether
-> generic_parse_monolithic() is called.  You're only going to enter this =
-way if
-> mount(2) is the syscall of entry and the filesystem doesn't override th=
-e
-> ->parse_monolithic() option (none in the upstream kernel).
-
-So you're saying that the code works for the mount(2) case,
-but won't work for some other case? Are you planning a fix?
-Will that fix include restoration of smackfsdef?
-
+>
+> You might need to try modifying samples/vfs/test-fsmount.c to make it mount a
+> trmpfs filesystem through the new mount UAPI.
+>
 > David
-
