@@ -2,195 +2,90 @@ Return-Path: <SRS0=jOYs=T4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94822C04AB6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 05:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 109D7C04AB6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 07:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D71C20883
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 05:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E37AC208CB
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 07:39:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726305AbfE1FsL (ORCPT
+        id S1727671AbfE1HjV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 01:48:11 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:46686 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbfE1FsH (ORCPT
+        Tue, 28 May 2019 03:39:21 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:58174 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbfE1HjU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 01:48:07 -0400
-Received: by mail-io1-f72.google.com with SMTP id s83so10191935iod.13
-        for <linux-security-module@vger.kernel.org>; Mon, 27 May 2019 22:48:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=nUKhwxbNxZ9sD3FLYrCIiC9v9dylgsFF4TAhQyd8XCg=;
-        b=n3l8OKoolPrFW0rKQbW2K+sCvoVFEDNffR1E0cCRqX8F7uwTILxxe/xdSPBvTcy2KT
-         zjJrWotRCRsHwnwptfRhhFz0M9txu7ujKNG3CxhGi5ZUyKNemqgSdf0k/0WDKkrwf0Ca
-         kC8oVpPTli/gYfdKV2jR+XjRV6jNaKHH9ZWfMZz1iYtbKJ/6Dmfnfy99Ffiyf4dNWm84
-         83HWT1Rkpb39qUYJwhYwUziESl+FtLexxmd7LRcroiuqpRPHMhYxt0qeE/+71xVzfc/L
-         130CBGf3mlUgBCHwHqnuRejlr+O0GZQa9vOqNqMbZ37lODQKzgDS7XPCOmAGL2BUxEzn
-         c1MQ==
-X-Gm-Message-State: APjAAAWRBNX/pA6eMgWeSOzWXUNTmo9LrynFCUDa6fQkYWHku78JLUvN
-        RuBun+lqGLUKWx2WXvKIjyfdi9ysI46cnwzRO308omvmSOfD
-X-Google-Smtp-Source: APXvYqyJLrD7DYVNWJiTDYYbtuxXsWJsrNoyzwRM7gay6qwYJMO2ZRox0siuScV6dA6z25GQJgdwFdMoO4qgBQnxkPV1kLB8/7ui
-MIME-Version: 1.0
-X-Received: by 2002:a24:4d1:: with SMTP id 200mr1755606itb.92.1559022485918;
- Mon, 27 May 2019 22:48:05 -0700 (PDT)
-Date:   Mon, 27 May 2019 22:48:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000785e9d0589ec359a@google.com>
-Subject: KASAN: invalid-free in tomoyo_realpath_from_path
-From:   syzbot <syzbot+9742b1c6c7aedf18beda@syzkaller.appspotmail.com>
-To:     jmorris@namei.org, linux-kernel@vger.kernel.org,
+        Tue, 28 May 2019 03:39:20 -0400
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4S7cwc5064960;
+        Tue, 28 May 2019 16:38:58 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Tue, 28 May 2019 16:38:58 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4S7crXl064921
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 28 May 2019 16:38:58 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: KASAN: invalid-free in tomoyo_realpath_from_path
+To:     syzbot <syzbot+9742b1c6c7aedf18beda@syzkaller.appspotmail.com>
+References: <000000000000785e9d0589ec359a@google.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     jmorris@namei.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        serge@hallyn.com, syzkaller-bugs@googlegroups.com,
+        takedakn@nttdata.co.jp
+Message-ID: <fb152725-1694-3412-9757-902f550f07f1@i-love.sakura.ne.jp>
+Date:   Tue, 28 May 2019 16:38:50 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <000000000000785e9d0589ec359a@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Well, I don't think this is a TOMOYO's problem.
 
-syzbot found the following crash on:
+On 2019/05/28 14:48, syzbot wrote:
+> CPU: 1 PID: 11697 Comm: syz-executor.3 Not tainted 5.2.0-rc1+ #2
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+(...snipped...)
+>  kfree+0xcf/0x220 mm/slab.c:3755
+>  tomoyo_realpath_from_path+0x1de/0x7a0 security/tomoyo/realpath.c:319
+(...snipped...)
+> Allocated by task 11696:
+(...snipped...)
+>  kmalloc include/linux/slab.h:552 [inline]
+>  tomoyo_realpath_from_path+0xcd/0x7a0 security/tomoyo/realpath.c:277
+(...snipped...)
+> 
+> Freed by task 11696:
+(...snipped...)
+>  kfree+0xcf/0x220 mm/slab.c:3755
+>  tomoyo_realpath_from_path+0x1de/0x7a0 security/tomoyo/realpath.c:319
 
-HEAD commit:    f4aa8012 cxgb4: Make t4_get_tp_e2c_map static
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=173328baa00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d137eb988ffd93c3
-dashboard link: https://syzkaller.appspot.com/bug?extid=9742b1c6c7aedf18beda
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Since the "buf" variable is a local variable, it cannot be shared between
+two threads. Since "buf" is assigned as
 
-Unfortunately, I don't have any reproducer for this crash yet.
+  buf = kmalloc(buf_len, GFP_NOFS);
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9742b1c6c7aedf18beda@syzkaller.appspotmail.com
+and nobody else is reassigning "buf",
 
-==================================================================
-BUG: KASAN: double-free or invalid-free in  
-tomoyo_realpath_from_path+0x1de/0x7a0 security/tomoyo/realpath.c:319
+  kfree(buf);
 
-CPU: 1 PID: 11697 Comm: syz-executor.3 Not tainted 5.2.0-rc1+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:188
-  kasan_report_invalid_free+0x65/0xa0 mm/kasan/report.c:279
-  __kasan_slab_free+0x13a/0x150 mm/kasan/common.c:430
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
-  __cache_free mm/slab.c:3432 [inline]
-  kfree+0xcf/0x220 mm/slab.c:3755
-  tomoyo_realpath_from_path+0x1de/0x7a0 security/tomoyo/realpath.c:319
-  tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
-  tomoyo_check_open_permission+0x2a8/0x3f0 security/tomoyo/file.c:771
-  tomoyo_file_open security/tomoyo/tomoyo.c:319 [inline]
-  tomoyo_file_open+0xa9/0xd0 security/tomoyo/tomoyo.c:314
-  security_file_open+0x71/0x300 security/security.c:1458
-  do_dentry_open+0x373/0x1250 fs/open.c:765
-  vfs_open+0xa0/0xd0 fs/open.c:887
-  do_last fs/namei.c:3416 [inline]
-  path_openat+0x10e9/0x46d0 fs/namei.c:3533
-  do_filp_open+0x1a1/0x280 fs/namei.c:3563
-  do_sys_open+0x3fe/0x5d0 fs/open.c:1070
-  __do_sys_open fs/open.c:1088 [inline]
-  __se_sys_open fs/open.c:1083 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1083
-  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4571f0
-Code: 31 c0 e9 45 ff ff ff 0f 1f 00 80 3f 00 0f 84 f7 00 00 00 55 53 b9 02  
-00 00 00 be 00 08 09 00 89 c8 48 81 ec 98 00 00 00 0f 05 <48> 3d 00 f0 ff  
-ff 48 89 c3 0f 87 e9 00 00 00 85 db 0f 88 2f 01 00
-RSP: 002b:00007ffee56b06a0 EFLAGS: 00000206 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00000000000cb440 RCX: 00000000004571f0
-RDX: 000000000000000c RSI: 0000000000090800 RDI: 00007ffee56b1880
-RBP: 0000000000000002 R08: 0000000000000001 R09: 0000555557133940
-R10: 0000000000000000 R11: 0000000000000206 R12: 00007ffee56b1880
-R13: 00007ffee56b1870 R14: 0000000000000000 R15: 00007ffee56b1880
+can't become an invalid free.
 
-Allocated by task 11696:
-  save_stack+0x23/0x90 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  __kasan_kmalloc mm/kasan/common.c:489 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:462
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:503
-  __do_kmalloc mm/slab.c:3660 [inline]
-  __kmalloc+0x15c/0x740 mm/slab.c:3669
-  kmalloc include/linux/slab.h:552 [inline]
-  tomoyo_realpath_from_path+0xcd/0x7a0 security/tomoyo/realpath.c:277
-  tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
-  tomoyo_check_open_permission+0x2a8/0x3f0 security/tomoyo/file.c:771
-  tomoyo_file_open security/tomoyo/tomoyo.c:319 [inline]
-  tomoyo_file_open+0xa9/0xd0 security/tomoyo/tomoyo.c:314
-  security_file_open+0x71/0x300 security/security.c:1458
-  do_dentry_open+0x373/0x1250 fs/open.c:765
-  vfs_open+0xa0/0xd0 fs/open.c:887
-  do_last fs/namei.c:3416 [inline]
-  path_openat+0x10e9/0x46d0 fs/namei.c:3533
-  do_filp_open+0x1a1/0x280 fs/namei.c:3563
-  do_sys_open+0x3fe/0x5d0 fs/open.c:1070
-  __do_sys_open fs/open.c:1088 [inline]
-  __se_sys_open fs/open.c:1083 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1083
-  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Let's wait for a reproducer...
 
-Freed by task 11696:
-  save_stack+0x23/0x90 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:451
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
-  __cache_free mm/slab.c:3432 [inline]
-  kfree+0xcf/0x220 mm/slab.c:3755
-  tomoyo_realpath_from_path+0x1de/0x7a0 security/tomoyo/realpath.c:319
-  tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
-  tomoyo_check_open_permission+0x2a8/0x3f0 security/tomoyo/file.c:771
-  tomoyo_file_open security/tomoyo/tomoyo.c:319 [inline]
-  tomoyo_file_open+0xa9/0xd0 security/tomoyo/tomoyo.c:314
-  security_file_open+0x71/0x300 security/security.c:1458
-  do_dentry_open+0x373/0x1250 fs/open.c:765
-  vfs_open+0xa0/0xd0 fs/open.c:887
-  do_last fs/namei.c:3416 [inline]
-  path_openat+0x10e9/0x46d0 fs/namei.c:3533
-  do_filp_open+0x1a1/0x280 fs/namei.c:3563
-  do_sys_open+0x3fe/0x5d0 fs/open.c:1070
-  __do_sys_open fs/open.c:1088 [inline]
-  __se_sys_open fs/open.c:1083 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1083
-  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff88808b756780
-  which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 1792 bytes inside of
-  4096-byte region [ffff88808b756780, ffff88808b757780)
-The buggy address belongs to the page:
-page:ffffea00022dd580 refcount:1 mapcount:0 mapping:ffff8880aa400dc0  
-index:0x0 compound_mapcount: 0
-flags: 0x1fffc0000010200(slab|head)
-raw: 01fffc0000010200 ffffea0002924e08 ffffea00027a6588 ffff8880aa400dc0
-raw: 0000000000000000 ffff88808b756780 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88808b756d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88808b756e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff88808b756e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-                    ^
-  ffff88808b756f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff88808b756f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
