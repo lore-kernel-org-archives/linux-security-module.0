@@ -2,86 +2,94 @@ Return-Path: <SRS0=jOYs=T4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B985CC04AB6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 18:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1C4C04AB6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E3D420989
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 18:54:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDDBF20B7C
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 19:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfE1Syd (ORCPT
+        id S1727147AbfE1TCS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 14:54:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48174 "EHLO mx1.redhat.com"
+        Tue, 28 May 2019 15:02:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33534 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbfE1Syd (ORCPT
+        id S1726961AbfE1TCR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 14:54:33 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        Tue, 28 May 2019 15:02:17 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B13EFF9E8B;
-        Tue, 28 May 2019 18:54:27 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 92379821EF;
+        Tue, 28 May 2019 19:02:17 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EE6785D6A9;
-        Tue, 28 May 2019 18:54:24 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3152C1001DD8;
+        Tue, 28 May 2019 19:02:16 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <43e3de52-13d7-8089-11cf-a384662401aa@schaufler-ca.com>
-References: <43e3de52-13d7-8089-11cf-a384662401aa@schaufler-ca.com> <9191ef31-a022-cdc4-9bed-ff225e4179bb@schaufler-ca.com> <1ebab7e7-f7ee-b910-9cc8-5d826eee8e97@schaufler-ca.com> <11440.1559046181@warthog.procyon.org.uk> <9330.1559060541@warthog.procyon.org.uk>
+In-Reply-To: <6889f4f9-4ae0-8a92-a2fc-04151ad8ed9f@schaufler-ca.com>
+References: <6889f4f9-4ae0-8a92-a2fc-04151ad8ed9f@schaufler-ca.com>
 To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, jose.bollo@iot.bzh,
+Cc:     dhowells@redhat.com, James Morris <jmorris@namei.org>,
         Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] Smack: Restore the smackfsdef mount option
+        <linux-security-module@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PULL] Smack: Restore the smackfsdef mount option
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <9985.1559069658.1@warthog.procyon.org.uk>
-Date:   Tue, 28 May 2019 19:54:18 +0100
-Message-ID: <9986.1559069658@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 28 May 2019 18:54:32 +0000 (UTC)
+Content-ID: <10709.1559070135.1@warthog.procyon.org.uk>
+Date:   Tue, 28 May 2019 20:02:15 +0100
+Message-ID: <10710.1559070135@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 28 May 2019 19:02:17 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-> > Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >
-> >>> Also, should all of these be prefixed with "smack"?  So:
-> >>>
-> >>>   	fsparam_string("smackfsdef",	Opt_fsdefault),
-> >>>   	fsparam_string("smackfsfloor",	Opt_fsfloor),
-> >>>   	fsparam_string("smackfshat",	Opt_fshat),	
-> >> No. smack_fs_parameters takes care of that.
-> > It does?  *Blink*.
+> James, this is a repair for a regression introduced in 5.1.
+> It should be pulled for 5.2 and added to 5.1.
 > 
-> Well, something does. I can't say that I 100% understand all
-> of how the new mount code handles the mount options. Y'all made
-> sweeping changes, and the code works the way it used to except
-> for the awkward change from smackfsdef to smackfsdefault. It
-> took no small amount of head scratching and experimentation to
-> convince myself that the fix I proposed was correct.
+> The following changes since commit 619ae03e922b65a1a5d4269ceae1e9e13a058d6b:
+> 
+>   Smack: Fix kbuild reported build error (2019-04-30 14:13:32 -0700)
+> 
+> are available in the git repository at:
+> 
+>   https://github.com/cschaufler/next-smack.git smack-for-5.2-b
+> 
+> for you to fetch changes up to a5765ce797070d046dc53ccceeb0ed304cb918eb:
+> 
+>   Smack: Restore the smackfsdef mount option (2019-05-28 10:22:04 -0700)
 
-Ah...  I suspect the issue is that smack_sb_eat_lsm_opts() strips the prefix
-for an unconverted filesystem, but smack_fs_context_parse_param() doesn't
-(which it shouldn't).
+Can you hold this for the moment, please?
 
-Can you try grabbing my mount-api-viro branch from:
+Note that there appears to be another problem by inspection of the code.  I
+think that smack_sb_eat_lsm_opts() strips the "smack" prefix off of the
+options, whereas smack_fs_context_parse_param() does not.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+This means that there's no need to do this:
 
-and testing setting smack options on a tmpfs filesystem?
+	 static const struct fs_parameter_spec smack_param_specs[] = {
+	+	fsparam_string("fsdef",		Opt_fsdefault),
+		fsparam_string("fsdefault",	Opt_fsdefault),
+		fsparam_string("fsfloor",	Opt_fsfloor),
+		fsparam_string("fshat",		Opt_fshat),
 
-You might need to try modifying samples/vfs/test-fsmount.c to make it mount a
-trmpfs filesystem through the new mount UAPI.
+but that all the option names in that table *do* need prefixing with "smack".
+
+The way you enter the LSM is going to depend on whether
+generic_parse_monolithic() is called.  You're only going to enter this way if
+mount(2) is the syscall of entry and the filesystem doesn't override the
+->parse_monolithic() option (none in the upstream kernel).
 
 David
