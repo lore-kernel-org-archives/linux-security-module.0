@@ -2,423 +2,140 @@ Return-Path: <SRS0=jOYs=T4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3470AC04AB6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 16:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2772C04AB6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 16:41:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB7DB21726
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 16:28:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559060886;
-	bh=6B2pq+78kXu0WXQynMCezCt7AZSWLg+JakQA6Cpehlw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ah2/rM/8hr1JtSTkZyk4Z3Porxl7FLFb9szsZbSjnFHd2tVeuOz8lBGO4VzZTeTaF
-	 uj61pCkDmzPAcN7VsKBwLmtDN9i6Oep4N2w971jVXz5cGFt1YAh2S3tOQAa7bmKani
-	 mlmm+bjwQwMdb8tO6ZTKqDdjYL6dfPqccJiSBRv4=
+	by mail.kernel.org (Postfix) with ESMTP id A669F2166E
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 16:41:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Cq5788+C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbfE1Q2A (ORCPT
+        id S1726512AbfE1QlM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 12:28:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726492AbfE1Q17 (ORCPT
+        Tue, 28 May 2019 12:41:12 -0400
+Received: from sonic302-8.consmr.mail.bf2.yahoo.com ([74.6.135.47]:35649 "EHLO
+        sonic302-8.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726452AbfE1QlM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 12:27:59 -0400
-Received: from localhost (unknown [8.46.75.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DDE72166E;
-        Tue, 28 May 2019 16:27:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559060877;
-        bh=6B2pq+78kXu0WXQynMCezCt7AZSWLg+JakQA6Cpehlw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qmkiq6DdRvM7qLor8h/Ld22TsJ9EScRxDowMi/GvB6IcFgxnr7bUvdpYRmOft4RC3
-         a7EHCfPmgwbiPnYVmXyvopGZFXFzpWU/L1ifUF8rj6XlIDetMGg1PsRhbtUTpchvUJ
-         hJ/cHCrbywdyC/Ga2w3litaHfmAChitJ48EmF/o8=
-Date:   Tue, 28 May 2019 18:26:03 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
+        Tue, 28 May 2019 12:41:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559061670; bh=ajKr6nr0/uLLqTGpOOZTJrU/GouJeyHARG94FDFyjyo=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Cq5788+CBUn2PJspJgngQGlLRnhcQ+NjD3IYFD8tWNi6OcXfQqwOZ/60k+1Fs5D75rf5TjGZexOlg/Eqspeyf8bDILLjOL3/1cQlopIikfbOzMPC/a3EkkwKF46tkizBfvByGfLknSycIDueTKLxAbK0G8r8pgXkCXNUgLRjBb1V3xS7Ns8Vd7sC6IIar8v4NewNLYjPhMWIAUhDxxBoGPSwfyI4r8H1HagCkBzB6oBi+FYnQ9FqF5S0eK4gqfolhW/gJMLCuAMuCDCfYOzlfWWNASFHsbPhphFH66PhrkC1fLHKchf9pZHFJWktMSaoS68d1Jnb2UYonpVx9n/bdw==
+X-YMail-OSG: 8yzf4B8VM1lSTT1WTKqU.2YGwIUPDIRtIpZgGyRBxWBwQ8YL4McTadIQZfjZBj7
+ KRcQD8v.6VaFZ.U4yzJ3Ulm0jX7w_JQI7THx23xU2C5PpC4UyH7lDywKgewmCG7FmoVE8KHmP3qw
+ OdTvpF7UOxrwu5_mT4pu3s8Tfxvt0WaxJE65a.8AkXuv2jNjuRVZ9rVgYiX_3rQZ4mYO66eA11uY
+ vytbuzXejd1Ii2KURxduqUQrUB8u4cEoct07u8DCQ7CwVrqjVfu3Qgrs27kBmurSq8U5qBJpHXTw
+ N9G.7IxNC3.lIJ07k1U7qwHKYlI.MV3lHaZ7grwgLYqlWCm0pggkLxYQ9ZHfkcYJdXoelNMRHTge
+ gnWnDnm7ut3U6cE7OXb9.U4LPrEvXE1hmaXbD9UET0JW.4f9svRIkaS.oMDzju90BNQiFbBwYWsV
+ 6bUFKuUQiTC5avKmmkdcHyavIJwi78UgFAjTh9jnotY62tsv2_kRQwDYkpwGlJCfqW6t8O8H4tSU
+ Q0408smeGMd6H8XbV0qoQjdDlSzjXo3_9JjiXxFXr1VOvHDlw3Rmpj9pqUAsah7EVoxfYya__CWa
+ tquNEtDCjN8z3S8pFrHxxuOeq2Jv70WzEIK6_GEe6crTRzzvktZBD.9PWELLQ2HxWoN7D87kGa9A
+ d1oEFj.id1.ib9EHFWXbp25A4v4FLTPolCP_vzAl4E.FwwjcDcAswflKg77iFx_OhVi8BioG3sn0
+ ujo8hPRrD4x.TptGJMGSgmBi8E18oYIYzJBqe_xEYQdkgNz1hzKSf.rk3akNcZoCAT7s8myYAfrc
+ DS4hKBYJ22LtNEzwngLiBOWqt8TL52C60hOwCozMPgpeLbrnoNQWNP_UZUkuhX.Q_x4FqioRwzAs
+ VNBUEKP5IfzQGt.8W.sWCvwOs3twVkjgKPHKxh60BGMgUXwGeTrgCofob_qAP03KayrbnnNXZWM1
+ LJFNyZ6ypxPl1S09PfEcKUgm3C4PtyK.I13ScmN2iKnYMjlizE4vBhmsQehvPN3I_7H38ZYxuq3G
+ WTl2qb6zB3zYZBGTfd4p6wvkTw84VkKCJG2W2Uvu67AZWTnPKQfGVk06VtsSCLjpWxorNpv2DaMJ
+ c47vAh2u3TsfzJavXe0vKsPKX4oInH7xpH6GNGVlbZJhffHl9H0WPK1Qdh35G4jXx97tGM1_cWBW
+ cSM815q5UufQxrEin3Jlt47bnVX_uU7O97VS1YvsgLKzhGiBKDC_kP70kTnmWbCUYEjaBKDTxd_t
+ sAVCfuMJaRB9zzh307IiVuunX17GsbHsGlQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.bf2.yahoo.com with HTTP; Tue, 28 May 2019 16:41:10 +0000
+Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
+          by smtp423.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d423e2f5b6f809050d4d6eccdb67e317;
+          Tue, 28 May 2019 16:41:09 +0000 (UTC)
+Subject: Re: [PATCH] Smack: Restore the smackfsdef mount option
 To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
- ring buffer
-Message-ID: <20190528162603.GA24097@kroah.com>
-References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, jose.bollo@iot.bzh,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, casey@schaufler-ca.com
+References: <9191ef31-a022-cdc4-9bed-ff225e4179bb@schaufler-ca.com>
+ <1ebab7e7-f7ee-b910-9cc8-5d826eee8e97@schaufler-ca.com>
+ <11440.1559046181@warthog.procyon.org.uk>
+ <9330.1559060541@warthog.procyon.org.uk>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <43e3de52-13d7-8089-11cf-a384662401aa@schaufler-ca.com>
+Date:   Tue, 28 May 2019 09:41:10 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <9330.1559060541@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 28, 2019 at 05:01:55PM +0100, David Howells wrote:
-> Implement a misc device that implements a general notification queue as a
-> ring buffer that can be mmap()'d from userspace.
+On 5/28/2019 9:22 AM, David Howells wrote:
+> Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+>>> Also, should all of these be prefixed with "smack"?  So:
+>>>
+>>>   	fsparam_string("smackfsdef",	Opt_fsdefault),
+>>>   	fsparam_string("smackfsfloor",	Opt_fsfloor),
+>>>   	fsparam_string("smackfshat",	Opt_fshat),=09
+>> No. smack_fs_parameters takes care of that.
+> It does?  *Blink*.
 
-"general" but just for filesystems, right?  :(
+Well, something does. I can't say that I 100% understand all
+of how the new mount code handles the mount options. Y'all made
+sweeping changes, and the code works the way it used to except
+for the awkward change from smackfsdef to smackfsdefault. It
+took no small amount of head scratching and experimentation to
+convince myself that the fix I proposed was correct.
 
-> Each entry has a 1-slot header that describes it:
-> 
-> 	struct watch_notification {
-> 		__u32	type:24;
-> 		__u32	subtype:8;
-> 		__u32	info;
-> 	};
+>
+> smack_fs_parameters.name is just for decorating messages, if that's wha=
+t
+> you're looking at.
+>
+> David
 
-This doesn't match the structure definition in the documentation, so
-something is out of sync.
-
-> The type indicates the source (eg. mount tree changes, superblock events,
-> keyring changes, block layer events) and the subtype indicates the event
-> type (eg. mount, unmount; EIO, EDQUOT; link, unlink).  The info field
-> indicates a number of things, including the entry length, an ID assigned to
-> a watchpoint contributing to this buffer, type-specific flags and meta
-> flags, such as an overrun indicator.
-> 
-> Supplementary data, such as the key ID that generated an event, are
-> attached in additional slots.
-
-I'm all for a "generic" event system for the kernel (heck, Solaris has
-had one for decades), but it keeps getting shot down every time it comes
-up.  What is different about this one?
-
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -4,6 +4,19 @@
->  
->  menu "Misc devices"
->  
-> +config WATCH_QUEUE
-> +	bool "Mappable notification queue"
-> +	default n
-
-Nit, not needed.
-
-> +	depends on MMU
-> +	help
-> +	  This is a general notification queue for the kernel to pass events to
-> +	  userspace through a mmap()'able ring buffer.  It can be used in
-> +	  conjunction with watches for mount topology change notifications,
-> +	  superblock change notifications and key/keyring change notifications.
-> +
-> +	  Note that in theory this should work fine with NOMMU, but I'm not
-> +	  sure how to make that work.
-> +
->  config SENSORS_LIS3LV02D
->  	tristate
->  	depends on INPUT
-> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> index b9affcdaa3d6..bf16acd9f8cc 100644
-> --- a/drivers/misc/Makefile
-> +++ b/drivers/misc/Makefile
-> @@ -3,6 +3,7 @@
->  # Makefile for misc devices that really don't fit anywhere else.
->  #
->  
-> +obj-$(CONFIG_WATCH_QUEUE)	+= watch_queue.o
->  obj-$(CONFIG_IBM_ASM)		+= ibmasm/
->  obj-$(CONFIG_IBMVMC)		+= ibmvmc.o
->  obj-$(CONFIG_AD525X_DPOT)	+= ad525x_dpot.o
-> diff --git a/drivers/misc/watch_queue.c b/drivers/misc/watch_queue.c
-> new file mode 100644
-> index 000000000000..39a09ea15d97
-> --- /dev/null
-> +++ b/drivers/misc/watch_queue.c
-> @@ -0,0 +1,877 @@
-> +/* User-mappable watch queue
-> + *
-> + * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-
-You didn't touch the code this year?
-
-> + * Written by David Howells (dhowells@redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-
-Please drop the boiler plate text and use a SPDX tag, checkpatch should
-have caught this.  I don't want to have to go and change it again.
-
-> + *
-> + * See Documentation/watch_queue.rst
-> + */
-> +
-> +#define pr_fmt(fmt) "watchq: " fmt
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/sched.h>
-> +#include <linux/slab.h>
-> +#include <linux/printk.h>
-> +#include <linux/miscdevice.h>
-> +#include <linux/fs.h>
-> +#include <linux/mm.h>
-> +#include <linux/pagemap.h>
-> +#include <linux/poll.h>
-> +#include <linux/uaccess.h>
-> +#include <linux/vmalloc.h>
-> +#include <linux/file.h>
-> +#include <linux/security.h>
-> +#include <linux/cred.h>
-> +#include <linux/watch_queue.h>
-> +
-> +#define DEBUG_WITH_WRITE /* Allow use of write() to record notifications */
-
-debugging code left in?
-
-> +
-> +MODULE_DESCRIPTION("Watch queue");
-> +MODULE_AUTHOR("Red Hat, Inc.");
-> +MODULE_LICENSE("GPL");
-> +
-> +struct watch_type_filter {
-> +	enum watch_notification_type type;
-> +	__u32		subtype_filter[1];	/* Bitmask of subtypes to filter on */
-> +	__u32		info_filter;		/* Filter on watch_notification::info */
-> +	__u32		info_mask;		/* Mask of relevant bits in info_filter */
-> +};
-> +
-> +struct watch_filter {
-> +	union {
-> +		struct rcu_head	rcu;
-> +		unsigned long	type_filter[2];	/* Bitmask of accepted types */
-> +	};
-> +	u32		nr_filters;		/* Number of filters */
-> +	struct watch_type_filter filters[];
-> +};
-> +
-> +struct watch_queue {
-> +	struct rcu_head		rcu;
-> +	struct address_space	mapping;
-> +	const struct cred	*cred;		/* Creds of the owner of the queue */
-> +	struct watch_filter __rcu *filter;
-> +	wait_queue_head_t	waiters;
-> +	struct hlist_head	watches;	/* Contributory watches */
-> +	refcount_t		usage;
-
-Usage of what, this structure?  Or something else?
-
-> +	spinlock_t		lock;
-> +	bool			defunct;	/* T when queues closed */
-> +	u8			nr_pages;	/* Size of pages[] */
-> +	u8			flag_next;	/* Flag to apply to next item */
-> +#ifdef DEBUG_WITH_WRITE
-> +	u8			debug;
-> +#endif
-> +	u32			size;
-> +	struct watch_queue_buffer *buffer;	/* Pointer to first record */
-> +
-> +	/* The mappable pages.  The zeroth page holds the ring pointers. */
-> +	struct page		**pages;
-> +};
-
-
-> +EXPORT_SYMBOL(__post_watch_notification);
-
-_GPL for new apis?  (I have to ask...)
-
-> +static long watch_queue_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> +{
-> +	struct watch_queue *wqueue = file->private_data;
-> +	struct inode *inode = file_inode(file);
-> +	long ret;
-> +
-> +	switch (cmd) {
-> +	case IOC_WATCH_QUEUE_SET_SIZE:
-> +		if (wqueue->buffer)
-> +			return -EBUSY;
-> +		inode_lock(inode);
-> +		ret = watch_queue_set_size(wqueue, arg);
-> +		inode_unlock(inode);
-> +		return ret;
-> +
-> +	case IOC_WATCH_QUEUE_SET_FILTER:
-> +		inode_lock(inode);
-> +		ret = watch_queue_set_filter(
-> +			inode, wqueue,
-> +			(struct watch_notification_filter __user *)arg);
-> +		inode_unlock(inode);
-> +		return ret;
-> +
-> +	default:
-> +		return -EOPNOTSUPP;
-
--ENOTTY is the correct "not a valid ioctl" error value, right?
-
-> +	}
-> +}
-
-> +/**
-> + * put_watch_queue - Dispose of a ref on a watchqueue.
-> + * @wqueue: The watch queue to unref.
-> + */
-> +void put_watch_queue(struct watch_queue *wqueue)
-> +{
-> +	if (refcount_dec_and_test(&wqueue->usage))
-> +		kfree_rcu(wqueue, rcu);
-
-Why not just use a kref?
-
-> +}
-> +EXPORT_SYMBOL(put_watch_queue);
-
-
-> +int add_watch_to_object(struct watch *watch, struct watch_list *wlist)
-> +{
-> +	struct watch_queue *wqueue = rcu_access_pointer(watch->queue);
-> +	struct watch *w;
-> +
-> +	hlist_for_each_entry(w, &wlist->watchers, list_node) {
-> +		if (watch->id == w->id)
-> +			return -EBUSY;
-> +	}
-> +
-> +	rcu_assign_pointer(watch->watch_list, wlist);
-> +
-> +	spin_lock_bh(&wqueue->lock);
-> +	refcount_inc(&wqueue->usage);
-> +	hlist_add_head(&watch->queue_node, &wqueue->watches);
-> +	spin_unlock_bh(&wqueue->lock);
-> +
-> +	hlist_add_head(&watch->list_node, &wlist->watchers);
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(add_watch_to_object);
-
-Naming nit, shouldn't the "prefix" all be the same for these new
-functions?
-
-watch_queue_add_object()?  watch_queue_put()?  And so on?
-
-> +static int __init watch_queue_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = misc_register(&watch_queue_dev);
-> +	if (ret < 0)
-> +		pr_err("Failed to register %d\n", ret);
-> +	return ret;
-> +}
-> +fs_initcall(watch_queue_init);
-> +
-> +static void __exit watch_queue_exit(void)
-> +{
-> +	misc_deregister(&watch_queue_dev);
-> +}
-> +module_exit(watch_queue_exit);
-
-module_misc_device()?
-
-
-> --- /dev/null
-> +++ b/include/linux/watch_queue.h
-> @@ -0,0 +1,86 @@
-> +/* User-mappable watch queue
-> + *
-> + * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-
-Again, SPDX headers please.
-
-> --- /dev/null
-> +++ b/include/uapi/linux/watch_queue.h
-> @@ -0,0 +1,82 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-
-Yeah!!!
-
-No copyright?  :(
-
-> +#ifndef _UAPI_LINUX_WATCH_QUEUE_H
-> +#define _UAPI_LINUX_WATCH_QUEUE_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/ioctl.h>
-> +
-> +#define IOC_WATCH_QUEUE_SET_SIZE	_IO('s', 0x01)	/* Set the size in pages */
-> +#define IOC_WATCH_QUEUE_SET_FILTER	_IO('s', 0x02)	/* Set the filter */
-> +
-> +enum watch_notification_type {
-> +	WATCH_TYPE_META		= 0,	/* Special record */
-> +	WATCH_TYPE_MOUNT_NOTIFY	= 1,	/* Mount notification record */
-> +	WATCH_TYPE_SB_NOTIFY	= 2,	/* Superblock notification */
-> +	WATCH_TYPE_KEY_NOTIFY	= 3,	/* Key/keyring change notification */
-> +	WATCH_TYPE_BLOCK_NOTIFY	= 4,	/* Block layer notifications */
-> +#define WATCH_TYPE___NR 5
-> +};
-> +
-> +enum watch_meta_notification_subtype {
-> +	WATCH_META_SKIP_NOTIFICATION	= 0,	/* Just skip this record */
-> +	WATCH_META_REMOVAL_NOTIFICATION	= 1,	/* Watched object was removed */
-> +};
-> +
-> +/*
-> + * Notification record
-> + */
-> +struct watch_notification {
-> +	__u32			type:24;	/* enum watch_notification_type */
-> +	__u32			subtype:8;	/* Type-specific subtype (filterable) */
-> +	__u32			info;
-> +#define WATCH_INFO_OVERRUN	0x00000001	/* Event(s) lost due to overrun */
-> +#define WATCH_INFO_ENOMEM	0x00000002	/* Event(s) lost due to ENOMEM */
-> +#define WATCH_INFO_RECURSIVE	0x00000004	/* Change was recursive */
-> +#define WATCH_INFO_LENGTH	0x000001f8	/* Length of record / sizeof(watch_notification) */
-> +#define WATCH_INFO_IN_SUBTREE	0x00000200	/* Change was not at watched root */
-> +#define WATCH_INFO_TYPE_FLAGS	0x00ff0000	/* Type-specific flags */
-> +#define WATCH_INFO_FLAG_0	0x00010000
-> +#define WATCH_INFO_FLAG_1	0x00020000
-> +#define WATCH_INFO_FLAG_2	0x00040000
-> +#define WATCH_INFO_FLAG_3	0x00080000
-> +#define WATCH_INFO_FLAG_4	0x00100000
-> +#define WATCH_INFO_FLAG_5	0x00200000
-> +#define WATCH_INFO_FLAG_6	0x00400000
-> +#define WATCH_INFO_FLAG_7	0x00800000
-> +#define WATCH_INFO_ID		0xff000000	/* ID of watchpoint */
-> +};
-> +
-> +#define WATCH_LENGTH_SHIFT	3
-> +
-> +struct watch_queue_buffer {
-> +	union {
-> +		/* The first few entries are special, containing the
-> +		 * ring management variables.
-> +		 */
-> +		struct {
-> +			struct watch_notification watch; /* WATCH_TYPE_SKIP */
-> +			volatile __u32	head;		/* Ring head index */
-> +			volatile __u32	tail;		/* Ring tail index */
-
-A uapi structure that has volatile in it?  Are you _SURE_ this is
-correct?
-
-That feels wrong to me...  This is not a backing-hardware register, it's
-"just memory" and slapping volatile on it shouldn't be the correct
-solution for telling the compiler to not to optimize away reads/flushes,
-right?  You need a proper memory access type primitive for that to work
-correctly everywhere I thought.
-
-We only have 2 users of volatile in include/uapi, one for WMI structures
-that are backed by firmware (seems correct), and one for DRM which I
-have no idea how it works as it claims to be a lock.  Why is this new
-addition the correct way to do this that no other ring-buffer that was
-mmapped has needed to?
-
-thanks,
-
-greg k-h
