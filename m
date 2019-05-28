@@ -2,266 +2,91 @@ Return-Path: <SRS0=jOYs=T4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D99BC04AB6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 20:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B30C04AB6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 20:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CA76206C1
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 20:06:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mj3P8erc"
+	by mail.kernel.org (Postfix) with ESMTP id 1DDD720B7C
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 May 2019 20:18:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbfE1UGv (ORCPT
+        id S1727229AbfE1USx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 16:06:51 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43166 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbfE1UGv (ORCPT
+        Tue, 28 May 2019 16:18:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40827 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727075AbfE1USx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 16:06:51 -0400
-Received: by mail-ot1-f68.google.com with SMTP id i8so18983824oth.10
-        for <linux-security-module@vger.kernel.org>; Tue, 28 May 2019 13:06:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sAY+X/6OjvH2/kHzEFaQYM5a3NfoJCjKak4WUy8WxOg=;
-        b=mj3P8erc0d0J3qLuw81fmgBFRlYrDPpRlBWngBWwxfTjQLcEOuHasUrkeJiKgfTjg5
-         2ihuUJHu/IhG+P2YZXmBHnC9MnJXCVgKQ9BAu8qMhaUQSP4yCiMELuVtZ5X+gznhfuM4
-         v+iIvpHEHXha38/WuIY4cNU+nuFxW5oe8bpP4SRzjJ0E0+nz+L9s1upgsalq6lolvGK6
-         Lc02/3qWhL+arRMo1/y0figgjb27vsMUr7Z7RIRU6pCpcWGW1dTN31k4aZ1rN3eI0HOx
-         r+6bdabT+52797NZz8WLndOLD0Z4GFB/qVhoS465X1dHMaYCleB6Pby3H+oDG58E9Vvh
-         24Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sAY+X/6OjvH2/kHzEFaQYM5a3NfoJCjKak4WUy8WxOg=;
-        b=Lu59QE2uhzG1qMYf0yEJMvKvTalsoEHu1Yo/QVC8JhYCOUAGLqj6xajM3/iUpIK/dJ
-         LLDu3btBeOYgdlxx1fXbiKEmth/xX2x4wrwK36AMdkfRhPTn90dfvnrDNKoWswZmceZz
-         tI1aqMSwhbLQ2Wzdd0AIbe+rZ+ROzu+cjaaD+/Nea7h0Rgzp/KG+coBlMKfozfSPT7Mg
-         fsR265bsOR12UgmzENMaFsE+bsSAuxIUD4GRl06fzaucdFS8a43BVgbQcirioNcEPIB2
-         IFUB04e1JBXKbPBADhwjX9k3yjqLsYhPw6N9xRvGYcSrdH6emuu9KYQ3nAlWJ2qOLcYo
-         sETQ==
-X-Gm-Message-State: APjAAAURBg8YGeKD0NZXTIYzrUt1PxFhP5NAj+Y4eZsgHmvZ78LDfogr
-        VFvhn7SCGEVG04vNv2bwWFWsQyKkC/w+/Y8+nITblA==
-X-Google-Smtp-Source: APXvYqw396edgjyJozSsCzajednRbbmIaB7gUQWyUQC+jR8mr25BB7Za7gjwtsrkkqmu/81ioRnRS6do1sBdvZD+Mmo=
-X-Received: by 2002:a9d:7347:: with SMTP id l7mr46665645otk.183.1559074010231;
- Tue, 28 May 2019 13:06:50 -0700 (PDT)
+        Tue, 28 May 2019 16:18:53 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3A0ED9FFC5;
+        Tue, 28 May 2019 20:18:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C803D60C47;
+        Tue, 28 May 2019 20:18:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <6e061326-5feb-5471-c0c0-a364af5e82c3@schaufler-ca.com>
+References: <6e061326-5feb-5471-c0c0-a364af5e82c3@schaufler-ca.com> <6889f4f9-4ae0-8a92-a2fc-04151ad8ed9f@schaufler-ca.com> <10710.1559070135@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, James Morris <jmorris@namei.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PULL] Smack: Restore the smackfsdef mount option
 MIME-Version: 1.0
-References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905933492.7587.6968545866041839538.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155905933492.7587.6968545866041839538.stgit@warthog.procyon.org.uk>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 28 May 2019 22:06:23 +0200
-Message-ID: <CAG48ez2rRh2_Kq_EGJs5k-ZBNffGs_Q=vkQdinorBgo58tbGpg@mail.gmail.com>
-Subject: Re: [PATCH 3/7] vfs: Add a mount-notification facility
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <15804.1559074726.1@warthog.procyon.org.uk>
+Date:   Tue, 28 May 2019 21:18:46 +0100
+Message-ID: <15805.1559074726@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 28 May 2019 20:18:53 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 28, 2019 at 6:05 PM David Howells <dhowells@redhat.com> wrote:
-> Add a mount notification facility whereby notifications about changes in
-> mount topology and configuration can be received.  Note that this only
-> covers vfsmount topology changes and not superblock events.  A separate
-> facility will be added for that.
-[...]
-> @@ -172,4 +167,18 @@ static inline void notify_mount(struct mount *changed,
->                                 u32 info_flags)
->  {
->         atomic_inc(&changed->mnt_notify_counter);
-> +
-> +#ifdef CONFIG_MOUNT_NOTIFICATIONS
-> +       {
-> +               struct mount_notification n = {
-> +                       .watch.type     = WATCH_TYPE_MOUNT_NOTIFY,
-> +                       .watch.subtype  = subtype,
-> +                       .watch.info     = info_flags | sizeof(n),
-> +                       .triggered_on   = changed->mnt_id,
-> +                       .changed_mount  = aux ? aux->mnt_id : 0,
-> +               };
-> +
-> +               post_mount_notification(changed, &n);
-> +       }
-> +#endif
->  }
-[...]
-> +void post_mount_notification(struct mount *changed,
-> +                            struct mount_notification *notify)
-> +{
-> +       const struct cred *cred = current_cred();
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-This current_cred() looks bogus to me. Can't mount topology changes
-come from all sorts of places? For example, umount_mnt() from
-umount_tree() from dissolve_on_fput() from __fput(), which could
-happen pretty much anywhere depending on where the last reference gets
-dropped?
+> > 	 static const struct fs_parameter_spec smack_param_specs[] = {
+> > 	+	fsparam_string("fsdef",		Opt_fsdefault),
+> > 		fsparam_string("fsdefault",	Opt_fsdefault),
+> > 		fsparam_string("fsfloor",	Opt_fsfloor),
+> > 		fsparam_string("fshat",		Opt_fshat),
+> >
+> > but that all the option names in that table *do* need prefixing with
+> > "smack".
 
-> +       struct path cursor;
-> +       struct mount *mnt;
-> +       unsigned seq;
-> +
-> +       seq = 0;
-> +       rcu_read_lock();
-> +restart:
-> +       cursor.mnt = &changed->mnt;
-> +       cursor.dentry = changed->mnt.mnt_root;
-> +       mnt = real_mount(cursor.mnt);
-> +       notify->watch.info &= ~WATCH_INFO_IN_SUBTREE;
-> +
-> +       read_seqbegin_or_lock(&rename_lock, &seq);
-> +       for (;;) {
-> +               if (mnt->mnt_watchers &&
-> +                   !hlist_empty(&mnt->mnt_watchers->watchers)) {
-> +                       if (cursor.dentry->d_flags & DCACHE_MOUNT_WATCH)
-> +                               post_watch_notification(mnt->mnt_watchers,
-> +                                                       &notify->watch, cred,
-> +                                                       (unsigned long)cursor.dentry);
-> +               } else {
-> +                       cursor.dentry = mnt->mnt.mnt_root;
-> +               }
-> +               notify->watch.info |= WATCH_INFO_IN_SUBTREE;
-> +
-> +               if (cursor.dentry == cursor.mnt->mnt_root ||
-> +                   IS_ROOT(cursor.dentry)) {
-> +                       struct mount *parent = READ_ONCE(mnt->mnt_parent);
-> +
-> +                       /* Escaped? */
-> +                       if (cursor.dentry != cursor.mnt->mnt_root)
-> +                               break;
-> +
-> +                       /* Global root? */
-> +                       if (mnt != parent) {
-> +                               cursor.dentry = READ_ONCE(mnt->mnt_mountpoint);
-> +                               mnt = parent;
-> +                               cursor.mnt = &mnt->mnt;
-> +                               continue;
-> +                       }
-> +                       break;
+Actually, you're right, we do need to add that *and* prefix it with "smack".
 
-(nit: this would look clearer if you inverted the condition and wrote
-it as "if (mnt == parent) break;", then you also wouldn't need that
-"continue" or the braces)
+> I'm not sure I follow the logic, because "mount -o smackfsdefault=Pop"
+> does what I would expect it to.
 
-> +               }
-> +
-> +               cursor.dentry = cursor.dentry->d_parent;
-> +       }
-> +
-> +       if (need_seqretry(&rename_lock, seq)) {
-> +               seq = 1;
-> +               goto restart;
-> +       }
-> +
-> +       done_seqretry(&rename_lock, seq);
-> +       rcu_read_unlock();
-> +}
-[...]
-> +SYSCALL_DEFINE5(mount_notify,
-> +               int, dfd,
-> +               const char __user *, filename,
-> +               unsigned int, at_flags,
-> +               int, watch_fd,
-> +               int, watch_id)
-> +{
-> +       struct watch_queue *wqueue;
-> +       struct watch_list *wlist = NULL;
-> +       struct watch *watch;
-> +       struct mount *m;
-> +       struct path path;
-> +       int ret;
-> +
-> +       if (watch_id < -1 || watch_id > 0xff)
-> +               return -EINVAL;
-> +
-> +       ret = user_path_at(dfd, filename, at_flags, &path);
+Yes, I'm sure it does - for the cases you're testing - but it's filesystem and
+syscall dependent.  None of the filesystems currently ported to the mount API
+upstream override ->parse_monolithic(), but that changes with nfs, shmem and
+coda and will change with cifs too.
 
-The third argument of user_path_at() contains kernel-private lookup
-flags, I'm pretty sure userspace isn't supposed to be able to control
-these directly.
+It also changes if you use fsconfig() to supply the options because that goes
+through a different LSM hook (it uses fs_context_parse_param rather than
+sb_eat_lsm_opts).
 
-> +       if (ret)
-> +               return ret;
-> +
-> +       wqueue = get_watch_queue(watch_fd);
-> +       if (IS_ERR(wqueue))
-> +               goto err_path;
-> +
-> +       m = real_mount(path.mnt);
-> +
-> +       if (watch_id >= 0) {
-> +               if (!m->mnt_watchers) {
-> +                       wlist = kzalloc(sizeof(*wlist), GFP_KERNEL);
-> +                       if (!wlist)
-> +                               goto err_wqueue;
-> +                       INIT_HLIST_HEAD(&wlist->watchers);
-> +                       spin_lock_init(&wlist->lock);
-> +                       wlist->release_watch = release_mount_watch;
-> +               }
-> +
-> +               watch = kzalloc(sizeof(*watch), GFP_KERNEL);
-> +               if (!watch)
-> +                       goto err_wlist;
-> +
-> +               init_watch(watch, wqueue);
-> +               watch->id               = (unsigned long)path.dentry;
-> +               watch->private          = path.mnt;
-> +               watch->info_id          = (u32)watch_id << 24;
-> +
-> +               down_write(&m->mnt.mnt_sb->s_umount);
-> +               if (!m->mnt_watchers) {
-> +                       m->mnt_watchers = wlist;
-> +                       wlist = NULL;
-> +               }
-> +
-> +               ret = add_watch_to_object(watch, m->mnt_watchers);
-> +               if (ret == 0) {
-> +                       spin_lock(&path.dentry->d_lock);
-> +                       path.dentry->d_flags |= DCACHE_MOUNT_WATCH;
-> +                       spin_unlock(&path.dentry->d_lock);
-> +                       path_get(&path);
+> > The way you enter the LSM is going to depend on whether
+> > generic_parse_monolithic() is called.  You're only going to enter this way
+> > if mount(2) is the syscall of entry and the filesystem doesn't override
+> > the ->parse_monolithic() option (none in the upstream kernel).
+> 
+> So you're saying that the code works for the mount(2) case,
+> but won't work for some other case? Are you planning a fix?
+> Will that fix include restoration of smackfsdef?
 
-So... the watches on a mountpoint create references back to the
-mountpoint? Is your plan that umount_tree() breaks the loop by getting
-rid of the watches?
+I can do a fix, but testing it is a pain.
 
-If so: Is there anything that prevents installing new watches after
-umount_tree()? Because I don't see anything.
-
-It might make sense to redesign this stuff so that watches don't hold
-references on the object being watched.
-
-> +               }
-> +               up_write(&m->mnt.mnt_sb->s_umount);
-> +               if (ret < 0)
-> +                       kfree(watch);
-> +       } else if (m->mnt_watchers) {
-> +               down_write(&m->mnt.mnt_sb->s_umount);
-> +               ret = remove_watch_from_object(m->mnt_watchers, wqueue,
-> +                                              (unsigned long)path.dentry,
-> +                                              false);
-> +               up_write(&m->mnt.mnt_sb->s_umount);
-> +       } else {
-> +               ret = -EBADSLT;
-> +       }
-> +
-> +err_wlist:
-> +       kfree(wlist);
-> +err_wqueue:
-> +       put_watch_queue(wqueue);
-> +err_path:
-> +       path_put(&path);
-> +       return ret;
-> +}
+David
