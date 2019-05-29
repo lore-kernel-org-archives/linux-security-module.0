@@ -2,202 +2,204 @@ Return-Path: <SRS0=daWi=T5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F0CC28CC0
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 23:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C78C28CC0
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 23:25:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 353982432C
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 23:24:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34C672433B
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 23:25:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559172267;
-	bh=N/MK8d5OwfB7eOrfUINQIf+KPUGEYonI6XQQYVsXhjo=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=ya6hHaKj9A8Ablsls4hM/eLEH8a38A153qELT8ps3gsgIyF/hhdW5rU6yN5JllYen
-	 oyRhAfGjApDuJKCXeZEJ3R+w9ElyvenUoaD8qfGTSwpk8Ul37wgjRnMxONlH3nntiC
-	 xXF0+qf6tN4+OR/xqqgDz3kJsgFgOF7haTKk8yQ8=
+	s=default; t=1559172316;
+	bh=6Wrg1PLfo/XeAKhQDRCgkyPmVbLyF5cm9P6UJzKZ3fA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jVCyR6cpVNiJ8dk2wXbno9ha5yEYrTfhQPkHcebsHTTk3uwsLvX//hDEJo4fBvCSN
+	 +YOJ5U23I7shDZ1bkXjT06ibY979suAeCrf0FWFTMkL/pfRlLmAvqQQ4mD3aYlsamc
+	 tQLF4G9qv98L7YkINdiEXLEefpsPKsP6HXUcQKho=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfE2XY0 (ORCPT
+        id S1727028AbfE2XZK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 May 2019 19:24:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49236 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbfE2XYD (ORCPT
+        Wed, 29 May 2019 19:25:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726635AbfE2XZE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 May 2019 19:24:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=StJ6LM8sQHkYI5UThzShneAjra5wi5bo/RYRsdxPQsA=; b=V2B9Vgs83dRLjIuQnd2C2vgYZ
-        +JgyOXeO1GKHOK9c4tRnNUqThik6tzysID2WPnKRr+36Nqy1H2ECRX9ShWnHkjcDarRRE36sMjLp8
-        rMBiNxdP14bOP1wi/jaweQN4P3parh4up8rfOPsYIJGMzClSMcNhqm2YUZ7FfQaCciCjPJlpLJJ9c
-        aeXT61eHnnOWKaxRn+HXRc3LwC2Y8Shpt7KozKcXuJxu6PITTqtbQgKa7rv4JBRtqJqIYr0SPtFcn
-        /5RDAzsKEfsB7oXgNPBlX7TDbPq/0Xg+hPhZkg4J+5oeanlc8QNxz2G9sF0j0yZAp7oTlogcPh66P
-        SAaTMxt+g==;
-Received: from 177.132.232.81.dynamic.adsl.gvt.net.br ([177.132.232.81] helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hW7vL-0005Rx-II; Wed, 29 May 2019 23:23:59 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hW7vI-0007wg-Fn; Wed, 29 May 2019 20:23:56 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        xen-devel@lists.xenproject.org, linux-kselftest@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, devel@driverdev.osuosl.org,
-        keyrings@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-integrity@vger.kernel.org, linux-mtd@lists.infradead.org,
-        patches@opensource.cirrus.com, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, alsa-devel@alsa-project.org,
-        devel@acpica.org, virtualization@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-pci@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-security-module@vger.kernel.org, linux-i2c@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org
-Subject: [PATCH 00/22] Some documentation fixes
-Date:   Wed, 29 May 2019 20:23:31 -0300
-Message-Id: <cover.1559171394.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
+        Wed, 29 May 2019 19:25:04 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87B0624344;
+        Wed, 29 May 2019 23:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559172303;
+        bh=6Wrg1PLfo/XeAKhQDRCgkyPmVbLyF5cm9P6UJzKZ3fA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z5E8o+JEox0yVJSsC13ZezPRTNOayVjO6TcDo7juFv4p58oCL2fzzSyEd5zHBAvcK
+         Ku9GrzXIOkuHZcSUhrtJeEUM3dDCkEYdHMFXrT69R/HRwHrpxPdPNogFJh31vFls17
+         NtYD8XkICphtv2NUHotpHREkAG/P3/9i13ROz3AI=
+Date:   Wed, 29 May 2019 16:25:01 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] keys: Add a keyctl to move a key between keyrings
+Message-ID: <20190529232500.GA131466@gmail.com>
+References: <155856408314.10428.17035328117829912815.stgit@warthog.procyon.org.uk>
+ <155856412507.10428.15987388402707639951.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155856412507.10428.15987388402707639951.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fix several warnings and broken links.
+On Wed, May 22, 2019 at 11:28:45PM +0100, David Howells wrote:
+> Add a keyctl to atomically move a link to a key from one keyring to
+> another.  The key must exist in "from" keyring and a flag can be given to
+> cause the operation to fail if there's a matching key already in the "to"
+> keyring.
+> 
+> This can be done with:
+> 
+> 	keyctl(KEYCTL_MOVE,
+> 	       key_serial_t key,
+> 	       key_serial_t from_keyring,
+> 	       key_serial_t to_keyring,
+> 	       unsigned int flags);
+> 
+> The key being moved must grant Link permission and both keyrings must grant
+> Write permission.
+> 
+> flags should be 0 or KEYCTL_MOVE_EXCL, with the latter preventing
+> displacement of a matching key from the "to" keyring.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-This series was generated against linux-next, but was rebased to be applied at
-docs-next. It should apply cleanly on either tree.
+This shows up after a few seconds of syzkaller fuzzing with a description of
+KEYCTL_MOVE added:
 
-There's a git tree with all of them applied on the top of docs/docs-next
-at:
+WARNING: possible circular locking dependency detected
+5.2.0-rc1 #5 Not tainted
+------------------------------------------------------
+syz-executor.28/27700 is trying to acquire lock:
+00000000049888d8 (keyring_serialise_link_sem){+.+.}, at: __key_link_begin+0x1c2/0x2d0 security/keys/keyring.c:1231
 
-https://git.linuxtv.org/mchehab/experimental.git/log/?h=fix_doc_links_v2
+but task is already holding lock:
+00000000b171310c (&type->lock_class/1){+.+.}, at: __key_link_begin+0xa4/0x2d0 security/keys/keyring.c:1222
 
-
-Mauro Carvalho Chehab (21):
-  ABI: sysfs-devices-system-cpu: point to the right docs
-  isdn: mISDN: remove a bogus reference to a non-existing doc
-  dt: fix broken references to nand.txt
-  docs: zh_CN: get rid of basic_profiling.txt
-  doc: it_IT: fix reference to magic-number.rst
-  docs: mm: numaperf.rst: get rid of a build warning
-  docs: bpf: get rid of two warnings
-  docs: mark orphan documents as such
-  docs: amd-memory-encryption.rst get rid of warnings
-  gpu: amdgpu: fix broken amdgpu_dma_buf.c references
-  gpu: i915.rst: Fix references to renamed files
-  docs: zh_CN: avoid duplicate citation references
-  docs: vm: hmm.rst: fix some warnings
-  docs: it: license-rules.rst: get rid of warnings
-  docs: gpio: driver.rst: fix a bad tag
-  docs: soundwire: locking: fix tags for a code-block
-  docs: security: trusted-encrypted.rst: fix code-block tag
-  docs: security: core.rst: Fix several warnings
-  docs: net: dpio-driver.rst: fix two codeblock warnings
-  docs: net: sja1105.rst: fix table format
-  docs: fix broken documentation links
-
-Otto Sabart (1):
-  mfd: madera: Fix bad reference to pinctrl.txt file
-
- .../ABI/testing/sysfs-devices-system-cpu      |  3 +-
- Documentation/accelerators/ocxl.rst           |  2 +
- Documentation/acpi/dsd/leds.txt               |  2 +-
- .../admin-guide/kernel-parameters.rst         |  6 +-
- .../admin-guide/kernel-parameters.txt         | 16 ++---
- Documentation/admin-guide/mm/numaperf.rst     |  5 +-
- Documentation/admin-guide/ras.rst             |  2 +-
- Documentation/arm/stm32/overview.rst          |  2 +
- .../arm/stm32/stm32f429-overview.rst          |  2 +
- .../arm/stm32/stm32f746-overview.rst          |  2 +
- .../arm/stm32/stm32f769-overview.rst          |  2 +
- .../arm/stm32/stm32h743-overview.rst          |  2 +
- .../arm/stm32/stm32mp157-overview.rst         |  2 +
- Documentation/bpf/btf.rst                     |  2 +
- .../bindings/mtd/amlogic,meson-nand.txt       |  2 +-
- .../devicetree/bindings/mtd/gpmc-nand.txt     |  2 +-
- .../devicetree/bindings/mtd/marvell-nand.txt  |  2 +-
- .../devicetree/bindings/mtd/tango-nand.txt    |  2 +-
- .../devicetree/bindings/net/fsl-enetc.txt     |  7 +-
- .../bindings/pci/amlogic,meson-pcie.txt       |  2 +-
- .../regulator/qcom,rpmh-regulator.txt         |  2 +-
- .../devicetree/booting-without-of.txt         |  2 +-
- Documentation/driver-api/gpio/board.rst       |  2 +-
- Documentation/driver-api/gpio/consumer.rst    |  2 +-
- Documentation/driver-api/gpio/driver.rst      |  2 +-
- .../driver-api/soundwire/locking.rst          |  4 +-
- .../firmware-guide/acpi/enumeration.rst       |  2 +-
- .../firmware-guide/acpi/method-tracing.rst    |  2 +-
- Documentation/gpu/amdgpu.rst                  |  4 +-
- Documentation/gpu/i915.rst                    |  6 +-
- Documentation/gpu/msm-crash-dump.rst          |  2 +
- Documentation/i2c/instantiating-devices       |  2 +-
- Documentation/interconnect/interconnect.rst   |  2 +
- Documentation/laptops/lg-laptop.rst           |  2 +
- .../freescale/dpaa2/dpio-driver.rst           |  4 +-
- Documentation/networking/dsa/sja1105.rst      |  6 +-
- Documentation/powerpc/isa-versions.rst        |  2 +
- Documentation/security/keys/core.rst          | 16 +++--
- .../security/keys/trusted-encrypted.rst       |  4 +-
- Documentation/sysctl/kernel.txt               |  4 +-
- .../translations/it_IT/process/howto.rst      |  2 +-
- .../it_IT/process/license-rules.rst           | 28 ++++----
- .../it_IT/process/magic-number.rst            |  2 +-
- .../it_IT/process/stable-kernel-rules.rst     |  4 +-
- .../translations/zh_CN/basic_profiling.txt    | 71 -------------------
- .../translations/zh_CN/process/4.Coding.rst   |  2 +-
- .../zh_CN/process/management-style.rst        |  4 +-
- .../zh_CN/process/programming-language.rst    | 28 ++++----
- .../virtual/kvm/amd-memory-encryption.rst     |  5 ++
- Documentation/virtual/kvm/vcpu-requests.rst   |  2 +
- Documentation/vm/hmm.rst                      |  9 ++-
- Documentation/x86/x86_64/5level-paging.rst    |  2 +-
- Documentation/x86/x86_64/boot-options.rst     |  4 +-
- .../x86/x86_64/fake-numa-for-cpusets.rst      |  2 +-
- MAINTAINERS                                   |  6 +-
- arch/arm/Kconfig                              |  2 +-
- arch/arm64/kernel/kexec_image.c               |  2 +-
- arch/powerpc/Kconfig                          |  2 +-
- arch/x86/Kconfig                              | 16 ++---
- arch/x86/Kconfig.debug                        |  2 +-
- arch/x86/boot/header.S                        |  2 +-
- arch/x86/entry/entry_64.S                     |  2 +-
- arch/x86/include/asm/bootparam_utils.h        |  2 +-
- arch/x86/include/asm/page_64_types.h          |  2 +-
- arch/x86/include/asm/pgtable_64_types.h       |  2 +-
- arch/x86/kernel/cpu/microcode/amd.c           |  2 +-
- arch/x86/kernel/kexec-bzimage64.c             |  2 +-
- arch/x86/kernel/pci-dma.c                     |  2 +-
- arch/x86/mm/tlb.c                             |  2 +-
- arch/x86/platform/pvh/enlighten.c             |  2 +-
- drivers/acpi/Kconfig                          | 10 +--
- drivers/isdn/mISDN/dsp_core.c                 |  2 -
- drivers/net/ethernet/faraday/ftgmac100.c      |  2 +-
- .../fieldbus/Documentation/fieldbus_dev.txt   |  4 +-
- drivers/vhost/vhost.c                         |  2 +-
- include/acpi/acpi_drivers.h                   |  2 +-
- include/linux/fs_context.h                    |  2 +-
- include/linux/lsm_hooks.h                     |  2 +-
- include/linux/mfd/madera/pdata.h              |  3 +-
- mm/Kconfig                                    |  2 +-
- security/Kconfig                              |  2 +-
- tools/include/linux/err.h                     |  2 +-
- .../Documentation/stack-validation.txt        |  4 +-
- tools/testing/selftests/x86/protection_keys.c |  2 +-
- 84 files changed, 183 insertions(+), 212 deletions(-)
- delete mode 100644 Documentation/translations/zh_CN/basic_profiling.txt
-
--- 
-2.21.0
+which lock already depends on the new lock.
 
 
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&type->lock_class/1){+.+.}:
+       lock_acquire+0x106/0x330 kernel/locking/lockdep.c:4302
+       down_write_nested+0x3c/0xa0 kernel/locking/rwsem.c:177
+       __key_unlink_begin+0x6c/0x110 security/keys/keyring.c:1398
+       key_move+0x3ad/0x470 security/keys/keyring.c:1538
+       keyctl_keyring_move+0xb6/0x120 security/keys/keyctl.c:610
+       __do_sys_keyctl security/keys/keyctl.c:1823 [inline]
+       __se_sys_keyctl+0x8e/0x2c0 security/keys/keyctl.c:1685
+       __x64_sys_keyctl+0xbe/0x150 security/keys/keyctl.c:1685
+       do_syscall_64+0x9e/0x4b0 arch/x86/entry/common.c:301
+       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (keyring_serialise_link_sem){+.+.}:
+       check_prevs_add kernel/locking/lockdep.c:2417 [inline]
+       validate_chain kernel/locking/lockdep.c:2799 [inline]
+       __lock_acquire+0x38a4/0x3c30 kernel/locking/lockdep.c:3792
+       lock_acquire+0x106/0x330 kernel/locking/lockdep.c:4302
+       down_write+0x38/0xa0 kernel/locking/rwsem.c:66
+       __key_link_begin+0x1c2/0x2d0 security/keys/keyring.c:1231
+       key_move+0xf0/0x470 security/keys/keyring.c:1529
+       keyctl_keyring_move+0xb6/0x120 security/keys/keyctl.c:610
+       __do_sys_keyctl security/keys/keyctl.c:1823 [inline]
+       __se_sys_keyctl+0x8e/0x2c0 security/keys/keyctl.c:1685
+       __x64_sys_keyctl+0xbe/0x150 security/keys/keyctl.c:1685
+       do_syscall_64+0x9e/0x4b0 arch/x86/entry/common.c:301
+       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&type->lock_class/1);
+                               lock(keyring_serialise_link_sem);
+                               lock(&type->lock_class/1);
+  lock(keyring_serialise_link_sem);
+
+ *** DEADLOCK ***
+
+2 locks held by syz-executor.28/27700:
+ #0: 000000002a03f208 (&type->lock_class){++++}, at: __key_unlink_begin+0x6c/0x110 security/keys/keyring.c:1398
+ #1: 00000000b171310c (&type->lock_class/1){+.+.}, at: __key_link_begin+0xa4/0x2d0 security/keys/keyring.c:1222
+
+stack backtrace:
+CPU: 8 PID: 27700 Comm: syz-executor.28 Not tainted 5.2.0-rc1 #5
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xb1/0x118 lib/dump_stack.c:113
+ print_circular_bug+0x4a4/0x4b5 kernel/locking/lockdep.c:1564
+ check_prev_add+0xd1f/0x1af7 kernel/locking/lockdep.c:2309
+ check_prevs_add kernel/locking/lockdep.c:2417 [inline]
+ validate_chain kernel/locking/lockdep.c:2799 [inline]
+ __lock_acquire+0x38a4/0x3c30 kernel/locking/lockdep.c:3792
+ lock_acquire+0x106/0x330 kernel/locking/lockdep.c:4302
+ down_write+0x38/0xa0 kernel/locking/rwsem.c:66
+ __key_link_begin+0x1c2/0x2d0 security/keys/keyring.c:1231
+ key_move+0xf0/0x470 security/keys/keyring.c:1529
+ keyctl_keyring_move+0xb6/0x120 security/keys/keyctl.c:610
+ __do_sys_keyctl security/keys/keyctl.c:1823 [inline]
+ __se_sys_keyctl+0x8e/0x2c0 security/keys/keyctl.c:1685
+ __x64_sys_keyctl+0xbe/0x150 security/keys/keyctl.c:1685
+ do_syscall_64+0x9e/0x4b0 arch/x86/entry/common.c:301
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x458a09
+Code: dd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 ab b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9d53755c88 EFLAGS: 00000246 ORIG_RAX: 00000000000000fa
+RAX: ffffffffffffffda RBX: 000000000071bf00 RCX: 0000000000458a09
+RDX: 000000001f62d16e RSI: 000000002490e642 RDI: 000000000000001e
+RBP: 00007f9d53755ca0 R08: 0000000000000000 R09: 0000000000000000
+R10: 000000001afbc80a R11: 0000000000000246 R12: 00007f9d537566d4
+R13: 00000000004ac12c R14: 00000000006ebd68 R15: 0000000000000003
+FAULT_INJECTION: forcing a failure.
+name failslab, interval 1, probability 0, space 0, times 0
+CPU: 8 PID: 27700 Comm: syz-executor.28 Not tainted 5.2.0-rc1 #5
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xb1/0x118 lib/dump_stack.c:113
+ fail_dump lib/fault-inject.c:51 [inline]
+ should_fail+0x61e/0x720 lib/fault-inject.c:143
+ __should_failslab+0xec/0x120 mm/failslab.c:32
+ should_failslab+0x9/0x14 mm/slab_common.c:1610
+ slab_pre_alloc_hook mm/slab.h:420 [inline]
+ slab_alloc mm/slab.c:3312 [inline]
+ kmem_cache_alloc_trace+0x146/0x2a0 mm/slab.c:3553
+ kmalloc include/linux/slab.h:547 [inline]
+ kzalloc include/linux/slab.h:742 [inline]
+ assoc_array_insert+0xcc/0x440 lib/assoc_array.c:985
+ __key_link_begin+0x120/0x2d0 security/keys/keyring.c:1236
+ key_move+0xf0/0x470 security/keys/keyring.c:1529
+ keyctl_keyring_move+0xb6/0x120 security/keys/keyctl.c:610
+ __do_sys_keyctl security/keys/keyctl.c:1823 [inline]
+ __se_sys_keyctl+0x8e/0x2c0 security/keys/keyctl.c:1685
+ __x64_sys_keyctl+0xbe/0x150 security/keys/keyctl.c:1685
+ do_syscall_64+0x9e/0x4b0 arch/x86/entry/common.c:301
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x458a09
+Code: dd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 ab b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9d53755c88 EFLAGS: 00000246 ORIG_RAX: 00000000000000fa
+RAX: ffffffffffffffda RBX: 000000000071bf00 RCX: 0000000000458a09
+RDX: 000000001f62d16e RSI: 000000002490e642 RDI: 000000000000001e
+RBP: 00007f9d53755ca0 R08: 0000000000000000 R09: 0000000000000000
+R10: 000000001afbc80a R11: 0000000000000246 R12: 00007f9d537566d4
+R13: 00000000004ac12c R14: 00000000006ebd68 R15: 0000000000000003
