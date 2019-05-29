@@ -2,111 +2,113 @@ Return-Path: <SRS0=daWi=T5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 251E3C28CC0
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 17:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F4AC28CC0
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 17:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E684723F0D
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 17:13:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="RJWFuUbm"
+	by mail.kernel.org (Postfix) with ESMTP id 68E5F23F25
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 17:17:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbfE2RN6 (ORCPT
+        id S1726099AbfE2RRu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 May 2019 13:13:58 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35896 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbfE2RN6 (ORCPT
+        Wed, 29 May 2019 13:17:50 -0400
+Received: from gateway20.websitewelcome.com ([192.185.59.4]:23512 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725917AbfE2RRu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 May 2019 13:13:58 -0400
-Received: by mail-pg1-f193.google.com with SMTP id a3so279981pgb.3
-        for <linux-security-module@vger.kernel.org>; Wed, 29 May 2019 10:13:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=+4Eck+CFhCFREBdh4WIXuLZ5kettic1ax4lTFdn88wA=;
-        b=RJWFuUbmbLU9gIBz85ery+5ZrcHRD50gf+QgLi0fsnsFBkSZVVTge0BZRDH214wxlM
-         xR1FFryYZcnL06XkYs3karxylMDI4ZPBxg4hGX0q+kFpGJhWNTcoqbhTjFqwHfWg+0Sh
-         iXq39rEwL79hjOaWNzhZg2UvhqlbHp9V5TGHA46JMpBQT/gKJOQtlUPu6V8LOlAfSTsf
-         TQq70k4ixv5h06DmUpLIrTdS2Xnr//ws3EImfTsBmxGxj7guv7T9fFPcIrWPGl03Byh+
-         LO4lVCRSICVNoPsP+tTwipnXTg3fYfDIrhTt5EpOw7O+6K9Vafqci5ZdOdTBtWGgCc4t
-         43Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=+4Eck+CFhCFREBdh4WIXuLZ5kettic1ax4lTFdn88wA=;
-        b=FnTHXJTtmFiCSSjaJuV6EJ33/4pbzJulZSxIxGODLQIqSjdBymbsLsHYQrKx/iI9Rf
-         aRTMX9sLQw78kEonFVAvvDez4K9OK/W2ZnMGD8mt6bLXJBOPQj1BWmVui6QdypjrMOq9
-         +sTDA6hO4pSDUzLA0U4adYvIzWJD8mrFcbJRqpfr3UbIWa8k3XD/B8fD9oOhG8wXTin8
-         QDwT9pamE9I33gFSOxaxFG975NLLtahbxvR46LgDZm0Y/8Ny9QWHg+R+vfm1LV/Sy3TJ
-         RiKgS7NeSJMH0cdCmiYYF4tTZaWIk4s2vdKBIuVJkBdN51TJWbiD2fuf5dmJgk3q713N
-         1HVA==
-X-Gm-Message-State: APjAAAXyvvHYYeax+lFAEuWmNZserKdbciZ4E6hAwVoJl1KTGc1ZhpRs
-        QqkgIHqNMkKiDWtdZkGf/6pugA==
-X-Google-Smtp-Source: APXvYqyqmVMGLdTKYRRZzhmdhFCtL1BSUXhR/WZs8Ia9RHc7j0jqYo6Fp8wxiPWFhDb0CF4Dl70TNw==
-X-Received: by 2002:a62:ab10:: with SMTP id p16mr117966777pff.222.1559150037283;
-        Wed, 29 May 2019 10:13:57 -0700 (PDT)
-Received: from ?IPv6:2600:100f:b10c:ace6:b862:4204:5f4a:fe22? ([2600:100f:b10c:ace6:b862:4204:5f4a:fe22])
-        by smtp.gmail.com with ESMTPSA id y10sm204418pfm.68.2019.05.29.10.13.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 10:13:56 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 3/7] vfs: Add a mount-notification facility
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16E227)
-In-Reply-To: <312a138c-e5b2-4bfb-b50b-40c82c55773f@schaufler-ca.com>
-Date:   Wed, 29 May 2019 10:13:54 -0700
-Cc:     David Howells <dhowells@redhat.com>, Jann Horn <jannh@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4552118F-BE9B-4905-BF0F-A53DC13D5A82@amacapital.net>
-References: <CAG48ez2rRh2_Kq_EGJs5k-ZBNffGs_Q=vkQdinorBgo58tbGpg@mail.gmail.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905933492.7587.6968545866041839538.stgit@warthog.procyon.org.uk> <14347.1559127657@warthog.procyon.org.uk> <312a138c-e5b2-4bfb-b50b-40c82c55773f@schaufler-ca.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
+        Wed, 29 May 2019 13:17:50 -0400
+X-Greylist: delayed 1445 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 May 2019 13:17:50 EDT
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 663F2400C6FD4
+        for <linux-security-module@vger.kernel.org>; Wed, 29 May 2019 10:53:24 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id W1phhRrL6dnCeW1phh6cK0; Wed, 29 May 2019 11:53:45 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.47.159] (port=50894 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hW1pf-002Frw-RX; Wed, 29 May 2019 11:53:44 -0500
+Date:   Wed, 29 May 2019 11:53:43 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ima: use struct_size() in kzalloc()
+Message-ID: <20190529165343.GA2584@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.47.159
+X-Source-L: No
+X-Exim-ID: 1hW1pf-002Frw-RX
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.47.159]:50894
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
+struct foo {
+   int stuff;
+   struct boo entry[];
+};
 
-> On May 29, 2019, at 8:53 AM, Casey Schaufler <casey@schaufler-ca.com> wrot=
-e:
->=20
->> On 5/29/2019 4:00 AM, David Howells wrote:
->> Jann Horn <jannh@google.com> wrote:
->>=20
->>>> +void post_mount_notification(struct mount *changed,
->>>> +                            struct mount_notification *notify)
->>>> +{
->>>> +       const struct cred *cred =3D current_cred();
->>> This current_cred() looks bogus to me. Can't mount topology changes
->>> come from all sorts of places? For example, umount_mnt() from
->>> umount_tree() from dissolve_on_fput() from __fput(), which could
->>> happen pretty much anywhere depending on where the last reference gets
->>> dropped?
->> IIRC, that's what Casey argued is the right thing to do from a security P=
-oV.
->> Casey?
->=20
-> You need to identify the credential of the subject that triggered
-> the event. If it isn't current_cred(), the cred needs to be passed
-> in to post_mount_notification(), or derived by some other means.
+instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
 
-Taking a step back, why do we care who triggered the event?  It seems to me t=
-hat we should care whether the event happened and whether the *receiver* is p=
-ermitted to know that.
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
 
-(And receiver means whoever subscribed, presumably, not whoever called read(=
-) or mmap().)
+instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ security/integrity/ima/ima_template.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index b631b8bc7624..b945dff2ed14 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -281,9 +281,8 @@ static int ima_restore_template_data(struct ima_template_desc *template_desc,
+ 	int ret = 0;
+ 	int i;
+ 
+-	*entry = kzalloc(sizeof(**entry) +
+-		    template_desc->num_fields * sizeof(struct ima_field_data),
+-		    GFP_NOFS);
++	*entry = kzalloc(struct_size(*entry, template_data,
++				     template_desc->num_fields), GFP_NOFS);
+ 	if (!*entry)
+ 		return -ENOMEM;
+ 
+-- 
+2.21.0
 
