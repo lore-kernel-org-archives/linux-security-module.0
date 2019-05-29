@@ -2,423 +2,212 @@ Return-Path: <SRS0=daWi=T5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 419D0C04AB3
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 03:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D27C07542
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 06:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03E5E21721
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 03:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BBB6216FD
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 06:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JpTMAoXX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gSd6RavH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbfE2Dio (ORCPT
+        id S1726102AbfE2Gds (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 May 2019 23:38:44 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:46980 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbfE2Dio (ORCPT
+        Wed, 29 May 2019 02:33:48 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:43629 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbfE2Gdr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 May 2019 23:38:44 -0400
-Received: by mail-qt1-f194.google.com with SMTP id z19so849277qtz.13
-        for <linux-security-module@vger.kernel.org>; Tue, 28 May 2019 20:38:43 -0700 (PDT)
+        Wed, 29 May 2019 02:33:47 -0400
+Received: by mail-yb1-f194.google.com with SMTP id n145so372589ybg.10;
+        Tue, 28 May 2019 23:33:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=zg5iad9+ttaKx7RIvzbdvPSvLP46c3oHIiVSbPrBq1U=;
-        b=JpTMAoXX9MvPMLijRuGJAclskBtActKW/aH4s/6fQCBZsibxfCc/Ai9xjnFoz+ZOwF
-         kjf11mTP/DVeXfHbx3sJ4li2Y7BnGxPXUTws9dkguawzQk/nnDytIlc2Pl4L+oLahS9S
-         0bL9oGcn4R8FyVKSdT81stSyl0l29Cqo/y6eEwkdOi/oJXoivLkTY694lZiziL6OWOCI
-         2UCO+jl6ggX5TM4l27ydIw/b80Nk9AxAYGQkorJkRxpkhVhKN1SW387yNrubXV1PvUXU
-         w/f/NgGV9EqDN62nqChLn8S2MkxSXb3y4/nm2BiNL/KLLEyLzK/ZcPf7cY8WeycCTnyD
-         kiIA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yENNg7cJ89dNJXBOI0oAIdYRt7Ra6atK2tYz8p0gMCg=;
+        b=gSd6RavHCdQA6U4PmK50WU7ujwJFo5fxoJGlDl+i6xOvDAKDtBpghDDm0UIcMJ1ZlU
+         /aFHtGuF1bHEqxQJVd15Budgd3S9h4YJFeiyLo45rxhzARoBSJebbdrzA0YZpTTVqEYb
+         lSF2E9NzXeBFPdV8Lx+IBYhxY511yYJgLeJOOqjg9mmcuWw8GR6BzqMA0kxhJIjhC/7a
+         80JkV/Di3vv9PZtwM/LWYu4EkvfW28oVckVL8hJ8W0KEj1QRFONAs3K5vyC0Z6OVuZmL
+         cO3Art9UkR+Pe6p6QueAGoQSVAJZWkE8ESlqRnuiuYQUG8jRt4SdqwWPcwwnynIV7yxX
+         4yAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=zg5iad9+ttaKx7RIvzbdvPSvLP46c3oHIiVSbPrBq1U=;
-        b=Z+EeOymqosD2ASrvW5O+hhLttRPjXTrBglBwWU6oNN2/VjQ6ffwTdpHvL9cEGiMBcK
-         DkXVsQbraWfMwLlGHLHqXEMjYNtj6J0gmhSRFVt62ZQniE2Wq50dhINn0ufgwDiX2aaL
-         c6LCHgldw18j6hu/3dRnhr5j1D6EC65+0au9r6dYVhikIUgLoW5+XjXAnlLecVl7Ny4w
-         RClEp/9QKhfyi2RxQG2bRiFsksaNTxHuK0TaMu1My4Dsw841TT7UdrEH451NH9o9j3Mh
-         h7lZi0IuOQx72oACwz5r3LsfgvQ/Abfo+u0FmCMxkoego/v24FzRxmYGGpc+i2szqSVe
-         4hqg==
-X-Gm-Message-State: APjAAAVtJ9wZkKCR+re9Uz/wnvN22S1SiK9QMt1u1R+jv570r3flOyJ0
-        np/fsZ+KaDbxLtrZIMnyxKbfErK4gv4W9gyk7svsksIa
-X-Google-Smtp-Source: APXvYqwGicJWLnEQ3Q9LhUZNTj0rqu2+cOJ4lViDnnCeMud/AnAPLHMbtFzEyG8XCWg9vJEHYcimxg+0JNFOj3m/778=
-X-Received: by 2002:ac8:32e9:: with SMTP id a38mr8197087qtb.245.1559101122712;
- Tue, 28 May 2019 20:38:42 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=yENNg7cJ89dNJXBOI0oAIdYRt7Ra6atK2tYz8p0gMCg=;
+        b=p0k8OEzNgbMmJwHut6h3wTLGgZWUCQEujQQ9riWJ1gURsUgoFJqAzFADXNrKkZvLYq
+         tCzVR0KDRz+B7jXNk67rWqasc6F0RAWPhGylEznFkB//XMaaFajQ+KlpPtZsKgBu5BqW
+         7wOVc/qzEUtrF0hu/yokN6HdqMGlZfxSjXZm9QErbrNyMZMRYimZkoAB3SAh+qYaCwkB
+         xs29sTpbUxFadaSGKktoDlibIH1nYtVNt+NYKYigeRwJ18+Rn0hnVTEDxPPsV9ln+8W/
+         AiRx3ms9uqdABcBAD9cRMExzKSjFe75rhRUDW7jtXSgo+zfYKI4Q1Es4R8NOzW1CqTY4
+         FU5w==
+X-Gm-Message-State: APjAAAUizDDwygy6YqyCsbw5RXndhLkMTC+4xo6FgYUOTHg8XzKa45oL
+        2FZvhEBjYyzMALoW9GLw0mTt0OYtZbWqeH2vvaU=
+X-Google-Smtp-Source: APXvYqw6mhDaSRkRnU+dl3Ic5kIIYX8fjw8ZnGYUgNxTD9y/LjYm69ByqIvjP7UucT+m0cDy12RZjAOWaXE0FMJVtOo=
+X-Received: by 2002:a25:8109:: with SMTP id o9mr28076017ybk.132.1559111626228;
+ Tue, 28 May 2019 23:33:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190527110702.3962-1-zyan@redhat.com> <20190527110702.3962-2-zyan@redhat.com>
-In-Reply-To: <20190527110702.3962-2-zyan@redhat.com>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Wed, 29 May 2019 11:38:31 +0800
-Message-ID: <CAAM7YAmePc=13YU77PExAmbpy5dYGBY9JsntkDG2+iXpdSuJZQ@mail.gmail.com>
-Subject: Fwd: [PATCH 2/2] ceph: add selinux support
-To:     LSM List <linux-security-module@vger.kernel.org>
+References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 29 May 2019 09:33:35 +0300
+Message-ID: <CAOQ4uxjC1M7jwjd9zSaSa6UW2dbEjc+ZbFSo7j9F1YHAQxQ8LQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
----------- Forwarded message ---------
-From: Yan, Zheng <zyan@redhat.com>
-Date: Mon, May 27, 2019 at 7:11 PM
-Subject: [PATCH 2/2] ceph: add selinux support
-To: <ceph-devel@vger.kernel.org>
-Cc: <idryomov@redhat.com>, <jlayton@redhat.com>, Yan, Zheng <zyan@redhat.com>
+On Tue, May 28, 2019 at 7:03 PM David Howells <dhowells@redhat.com> wrote:
+>
+>
+> Hi Al,
+>
+> Here's a set of patches to add a general variable-length notification queue
+> concept and to add sources of events for:
+>
+>  (1) Mount topology events, such as mounting, unmounting, mount expiry,
+>      mount reconfiguration.
+>
+>  (2) Superblock events, such as R/W<->R/O changes, quota overrun and I/O
+>      errors (not complete yet).
+>
+>  (3) Block layer events, such as I/O errors.
+>
+>  (4) Key/keyring events, such as creating, linking and removal of keys.
+>
+> One of the reasons for this is so that we can remove the issue of processes
+> having to repeatedly and regularly scan /proc/mounts, which has proven to
+> be a system performance problem.  To further aid this, the fsinfo() syscall
+> on which this patch series depends, provides a way to access superblock and
+> mount information in binary form without the need to parse /proc/mounts.
+>
+>
+> Design decisions:
+>
+>  (1) A misc chardev is used to create and open a ring buffer:
+>
+>         fd = open("/dev/watch_queue", O_RDWR);
+>
+>      which is then configured and mmap'd into userspace:
+>
+>         ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE);
+>         ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
+>         buf = mmap(NULL, BUF_SIZE * page_size, PROT_READ | PROT_WRITE,
+>                    MAP_SHARED, fd, 0);
+>
+>      The fd cannot be read or written (though there is a facility to use
+>      write to inject records for debugging) and userspace just pulls data
+>      directly out of the buffer.
+>
+>  (2) The ring index pointers are stored inside the ring and are thus
+>      accessible to userspace.  Userspace should only update the tail
+>      pointer and never the head pointer or risk breaking the buffer.  The
+>      kernel checks that the pointers appear valid before trying to use
+>      them.  A 'skip' record is maintained around the pointers.
+>
+>  (3) poll() can be used to wait for data to appear in the buffer.
+>
+>  (4) Records in the buffer are binary, typed and have a length so that they
+>      can be of varying size.
+>
+>      This means that multiple heterogeneous sources can share a common
+>      buffer.  Tags may be specified when a watchpoint is created to help
+>      distinguish the sources.
+>
+>  (5) The queue is reusable as there are 16 million types available, of
+>      which I've used 4, so there is scope for others to be used.
+>
+>  (6) Records are filterable as types have up to 256 subtypes that can be
+>      individually filtered.  Other filtration is also available.
+>
+>  (7) Each time the buffer is opened, a new buffer is created - this means
+>      that there's no interference between watchers.
+>
+>  (8) When recording a notification, the kernel will not sleep, but will
+>      rather mark a queue as overrun if there's insufficient space, thereby
+>      avoiding userspace causing the kernel to hang.
+>
+>  (9) The 'watchpoint' should be specific where possible, meaning that you
+>      specify the object that you want to watch.
+>
+> (10) The buffer is created and then watchpoints are attached to it, using
+>      one of:
+>
+>         keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
+>         mount_notify(AT_FDCWD, "/", 0, fd, 0x02);
+>         sb_notify(AT_FDCWD, "/mnt", 0, fd, 0x03);
+>
+>      where in all three cases, fd indicates the queue and the number after
+>      is a tag between 0 and 255.
+>
+> (11) The watch must be removed if either the watch buffer is destroyed or
+>      the watched object is destroyed.
+>
+>
+> Things I want to avoid:
+>
+>  (1) Introducing features that make the core VFS dependent on the network
+>      stack or networking namespaces (ie. usage of netlink).
+>
+>  (2) Dumping all this stuff into dmesg and having a daemon that sits there
+>      parsing the output and distributing it as this then puts the
+>      responsibility for security into userspace and makes handling
+>      namespaces tricky.  Further, dmesg might not exist or might be
+>      inaccessible inside a container.
+>
+>  (3) Letting users see events they shouldn't be able to see.
+>
+>
+> Further things that could be considered:
+>
+>  (1) Adding a keyctl call to allow a watch on a keyring to be extended to
+>      "children" of that keyring, such that the watch is removed from the
+>      child if it is unlinked from the keyring.
+>
+>  (2) Adding global superblock event queue.
+>
+>  (3) Propagating watches to child superblock over automounts.
+>
 
+David,
 
-When creating new file/directory, uses dentry_init_security() to prepare
-selinux context for the new inode, then sends openc/mkdir request to MDS,
-together with selinux xattr.
+I am interested to know how you envision filesystem notifications would
+look with this interface.
 
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
----
- fs/ceph/Kconfig |  12 +++++
- fs/ceph/caps.c  |   1 +
- fs/ceph/dir.c   |  12 +++++
- fs/ceph/file.c  |   3 ++
- fs/ceph/inode.c |   1 +
- fs/ceph/super.h |  19 +++++++
- fs/ceph/xattr.c | 141 ++++++++++++++++++++++++++++++++++++++++++------
- 7 files changed, 172 insertions(+), 17 deletions(-)
+fanotify can certainly benefit from providing a ring buffer interface to read
+events.
 
-diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
-index 52095f473464..5a665c126a7c 100644
---- a/fs/ceph/Kconfig
-+++ b/fs/ceph/Kconfig
-@@ -35,3 +35,15 @@ config CEPH_FS_POSIX_ACL
-          groups beyond the owner/group/world scheme.
+From what I have seen, a common practice of users is to monitor mounts
+(somehow) and place FAN_MARK_MOUNT fanotify watches dynamically.
+It'd be good if those users can use a single watch mechanism/API for
+watching the mount namespace and filesystem events within mounts.
 
-          If you don't know what Access Control Lists are, say N
-+
-+config CEPH_FS_SECURITY_LABEL
-+       bool "CephFS Security Labels"
-+       depends on CEPH_FS && SECURITY
-+       help
-+         Security labels support alternative access control models
-+         implemented by security modules like SELinux. This option
-+         enables an extended attribute handler for file security
-+         labels in the Ceph filesystem.
-+
-+         If you are not using a security module that requires using
-+         extended attributes for file security labels, say N.
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 7754d7679122..50409d9fdc90 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -3156,6 +3156,7 @@ static void handle_cap_grant(struct inode *inode,
-                        ci->i_xattrs.blob = ceph_buffer_get(xattr_buf);
-                        ci->i_xattrs.version = version;
-                        ceph_forget_all_cached_acls(inode);
-+                       ceph_security_invalidate_secctx(inode);
-                }
-        }
+A similar usability concern is with sb_notify and FAN_MARK_FILESYSTEM.
+It provides users with two complete different mechanisms to watch error
+and filesystem events. That is generally not a good thing to have.
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 14d795e5fa73..b282d076dc9e 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -839,6 +839,9 @@ static int ceph_mknod(struct inode *dir, struct
-dentry *dentry,
-        err = ceph_pre_init_acls(dir, &mode, &as_ctx);
-        if (err < 0)
-                goto out;
-+       err = ceph_security_init_secctx(dentry, mode, &as_ctx);
-+       if (err < 0)
-+              goto out;
+I am not asking that you implement fs_notify() before merging sb_notify()
+and I understand that you have a use case for sb_notify().
+I am asking that you show me the path towards a unified API (how a
+typical program would look like), so that we know before merging your
+new API that it could be extended to accommodate fsnotify events
+where the final result will look wholesome to users.
 
-        dout("mknod in dir %p dentry %p mode 0%ho rdev %d\n",
-             dir, dentry, mode, rdev);
-@@ -884,6 +887,7 @@ static int ceph_symlink(struct inode *dir, struct
-dentry *dentry,
-        struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
-        struct ceph_mds_client *mdsc = fsc->mdsc;
-        struct ceph_mds_request *req;
-+       struct ceph_acl_sec_ctx as_ctx = {};
-        int err;
-
-        if (ceph_snap(dir) != CEPH_NOSNAP)
-@@ -894,6 +898,10 @@ static int ceph_symlink(struct inode *dir, struct
-dentry *dentry,
-                goto out;
-        }
-
-+       err = ceph_security_init_secctx(dentry, S_IFLNK | S_IRWXUGO, &as_ctx);
-+       if (err < 0)
-+              goto out;
-+
-        dout("symlink in dir %p dentry %p to '%s'\n", dir, dentry, dest);
-        req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_SYMLINK, USE_AUTH_MDS);
-        if (IS_ERR(req)) {
-@@ -919,6 +927,7 @@ static int ceph_symlink(struct inode *dir, struct
-dentry *dentry,
- out:
-        if (err)
-                d_drop(dentry);
-+       ceph_release_acl_sec_ctx(&as_ctx);
-        return err;
- }
-
-@@ -953,6 +962,9 @@ static int ceph_mkdir(struct inode *dir, struct
-dentry *dentry, umode_t mode)
-        err = ceph_pre_init_acls(dir, &mode, &as_ctx);
-        if (err < 0)
-                goto out;
-+       err = ceph_security_init_secctx(dentry, mode, &as_ctx);
-+       if (err < 0)
-+              goto out;
-
-        req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
-        if (IS_ERR(req)) {
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 5975345753d7..a7080783fe20 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -453,6 +453,9 @@ int ceph_atomic_open(struct inode *dir, struct
-dentry *dentry,
-                err = ceph_pre_init_acls(dir, &mode, &as_ctx);
-                if (err < 0)
-                        return err;
-+               err = ceph_security_init_secctx(dentry, mode, &as_ctx);
-+               if (err < 0)
-+                       goto out_ctx;
-        }
-
-        /* do the open */
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 30d0cdc21035..125ac54b5841 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -891,6 +891,7 @@ static int fill_inode(struct inode *inode, struct
-page *locked_page,
-                               iinfo->xattr_data, iinfo->xattr_len);
-                ci->i_xattrs.version = le64_to_cpu(info->xattr_version);
-                ceph_forget_all_cached_acls(inode);
-+               ceph_security_invalidate_secctx(inode);
-                xattr_blob = NULL;
-        }
-
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index d7520ccf27e9..9c82d213a5ab 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -932,6 +932,10 @@ struct ceph_acl_sec_ctx {
- #ifdef CONFIG_CEPH_FS_POSIX_ACL
-        void *default_acl;
-        void *acl;
-+#endif
-+#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
-+       void *sec_ctx;
-+       u32 sec_ctxlen;
- #endif
-        struct ceph_pagelist *pagelist;
- };
-@@ -950,6 +954,21 @@ static inline bool
-ceph_security_xattr_wanted(struct inode *in)
- }
- #endif
-
-+#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
-+extern int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
-+                                    struct ceph_acl_sec_ctx *ctx);
-+extern void ceph_security_invalidate_secctx(struct inode *inode);
-+#else
-+static inline int ceph_security_init_secctx(struct dentry *dentry,
-umode_t mode,
-+                                           struct ceph_acl_sec_ctx *ctx)
-+{
-+       return 0;
-+}
-+static inline void ceph_security_invalidate_secctx(struct inode *inode)
-+{
-+}
-+#endif
-+
- void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx);
-
- /* acl.c */
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 518a5beed58c..fea70696f375 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -8,6 +8,7 @@
- #include <linux/ceph/decode.h>
-
- #include <linux/xattr.h>
-+#include <linux/security.h>
- #include <linux/posix_acl_xattr.h>
- #include <linux/slab.h>
-
-@@ -17,26 +18,9 @@
- static int __remove_xattr(struct ceph_inode_info *ci,
-                          struct ceph_inode_xattr *xattr);
-
--static const struct xattr_handler ceph_other_xattr_handler;
--
--/*
-- * List of handlers for synthetic system.* attributes. Other
-- * attributes are handled directly.
-- */
--const struct xattr_handler *ceph_xattr_handlers[] = {
--#ifdef CONFIG_CEPH_FS_POSIX_ACL
--       &posix_acl_access_xattr_handler,
--       &posix_acl_default_xattr_handler,
--#endif
--       &ceph_other_xattr_handler,
--       NULL,
--};
--
- static bool ceph_is_valid_xattr(const char *name)
- {
-        return !strncmp(name, XATTR_CEPH_PREFIX, XATTR_CEPH_PREFIX_LEN) ||
--              !strncmp(name, XATTR_SECURITY_PREFIX,
--                       XATTR_SECURITY_PREFIX_LEN) ||
-               !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN) ||
-               !strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN);
- }
-@@ -1196,6 +1180,110 @@ bool ceph_security_xattr_deadlock(struct inode *in)
-        spin_unlock(&ci->i_ceph_lock);
-        return ret;
- }
-+
-+#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
-+int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
-+                          struct ceph_acl_sec_ctx *as_ctx)
-+{
-+       struct ceph_pagelist *pagelist = as_ctx->pagelist;
-+       const char *name;
-+       size_t name_len;
-+       int err;
-+
-+       err = security_dentry_init_security(dentry, mode, &dentry->d_name,
-+                                           &as_ctx->sec_ctx,
-+                                           &as_ctx->sec_ctxlen);
-+       if (err < 0) {
-+               err = 0; /* do nothing */
-+               goto out;
-+       }
-+
-+       err = -ENOMEM;
-+       if (!pagelist) {
-+               pagelist = ceph_pagelist_alloc(GFP_KERNEL);
-+               if (!pagelist)
-+                       goto out;
-+               err = ceph_pagelist_reserve(pagelist, PAGE_SIZE);
-+               if (err)
-+                       goto out;
-+               ceph_pagelist_encode_32(pagelist, 1);
-+       }
-+
-+       /*
-+        * FIXME: Make security_dentry_init_security() generic. Currently
-+        * It only supports single security module and only selinux has
-+        * dentry_init_security hook.
-+        */
-+       name = XATTR_NAME_SELINUX;
-+       name_len = strlen(name);
-+       err = ceph_pagelist_reserve(pagelist,
-+                                   4 * 2 + name_len + as_ctx->sec_ctxlen);
-+       if (err)
-+               goto out;
-+
-+       if (as_ctx->pagelist) {
-+               /* update count of KV pairs */
-+               BUG_ON(pagelist->length <= sizeof(__le32));
-+               if (list_is_singular(&pagelist->head)) {
-+                       le32_add_cpu((__le32*)pagelist->mapped_tail, 1);
-+               } else {
-+                       struct page *page = list_first_entry(&pagelist->head,
-+                                                            struct page, lru);
-+                       void *addr = kmap_atomic(page);
-+                       le32_add_cpu((__le32*)addr, 1);
-+                       kunmap_atomic(addr);
-+               }
-+       } else {
-+               as_ctx->pagelist = pagelist;
-+       }
-+
-+       ceph_pagelist_encode_32(pagelist, name_len);
-+       ceph_pagelist_append(pagelist, name, name_len);
-+
-+       ceph_pagelist_encode_32(pagelist, as_ctx->sec_ctxlen);
-+       ceph_pagelist_append(pagelist, as_ctx->sec_ctx, as_ctx->sec_ctxlen);
-+
-+       err = 0;
-+out:
-+       if (pagelist && !as_ctx->pagelist)
-+               ceph_pagelist_release(pagelist);
-+       return err;
-+}
-+
-+void ceph_security_invalidate_secctx(struct inode *inode)
-+{
-+       security_inode_invalidate_secctx(inode);
-+}
-+
-+static int ceph_xattr_set_security_label(const struct xattr_handler *handler,
-+                                   struct dentry *unused, struct inode *inode,
-+                                   const char *key, const void *buf,
-+                                   size_t buflen, int flags)
-+{
-+       if (security_ismaclabel(key)) {
-+               const char *name = xattr_full_name(handler, key);
-+               return __ceph_setxattr(inode, name, buf, buflen, flags);
-+       }
-+       return  -EOPNOTSUPP;
-+}
-+
-+static int ceph_xattr_get_security_label(const struct xattr_handler *handler,
-+                                   struct dentry *unused, struct inode *inode,
-+                                   const char *key, void *buf, size_t buflen)
-+{
-+        if (security_ismaclabel(key)) {
-+               const char *name = xattr_full_name(handler, key);
-+               return __ceph_getxattr(inode, name, buf, buflen);
-+       }
-+       return  -EOPNOTSUPP;
-+}
-+
-+static const struct xattr_handler ceph_security_label_handler = {
-+        .prefix = XATTR_SECURITY_PREFIX,
-+        .get    = ceph_xattr_get_security_label,
-+        .set    = ceph_xattr_set_security_label,
-+};
-+#endif
- #endif
-
- void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
-@@ -1203,7 +1291,26 @@ void ceph_release_acl_sec_ctx(struct
-ceph_acl_sec_ctx *as_ctx)
- #ifdef CONFIG_CEPH_FS_POSIX_ACL
-        posix_acl_release(as_ctx->acl);
-        posix_acl_release(as_ctx->default_acl);
-+#endif
-+#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
-+       security_release_secctx(as_ctx->sec_ctx, as_ctx->sec_ctxlen);
- #endif
-        if (as_ctx->pagelist)
-                ceph_pagelist_release(as_ctx->pagelist);
- }
-+
-+/*
-+ * List of handlers for synthetic system.* attributes. Other
-+ * attributes are handled directly.
-+ */
-+const struct xattr_handler *ceph_xattr_handlers[] = {
-+#ifdef CONFIG_CEPH_FS_POSIX_ACL
-+       &posix_acl_access_xattr_handler,
-+       &posix_acl_default_xattr_handler,
-+#endif
-+#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
-+       &ceph_security_label_handler,
-+#endif
-+       &ceph_other_xattr_handler,
-+       NULL,
-+};
---
-2.17.2
+Thanks,
+Amir.
