@@ -2,120 +2,74 @@ Return-Path: <SRS0=daWi=T5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5061EC28CC0
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 12:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 869E1C28CC2
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 13:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3380D208CB
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 12:58:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AD3C2189D
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 13:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbfE2M6s (ORCPT
+        id S1726889AbfE2Neg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 May 2019 08:58:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40474 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbfE2M6s (ORCPT
+        Wed, 29 May 2019 09:34:36 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32971 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726104AbfE2Neg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 May 2019 08:58:48 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D63E9C07188B;
-        Wed, 29 May 2019 12:58:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0CA8C5D9D6;
-        Wed, 29 May 2019 12:58:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAG48ez2o1egR13FDd3=CgdXP_MbBsZM4SX=+aqvR6eheWddhFg@mail.gmail.com>
-References: <CAG48ez2o1egR13FDd3=CgdXP_MbBsZM4SX=+aqvR6eheWddhFg@mail.gmail.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905934373.7587.10824503964531598726.stgit@warthog.procyon.org.uk>
-To:     Jann Horn <jannh@google.com>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        raven@themaw.net, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/7] vfs: Add superblock notifications
+        Wed, 29 May 2019 09:34:36 -0400
+Received: from lhreml709-cah.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id C4463E5CB010485960B9;
+        Wed, 29 May 2019 14:34:34 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.32) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 29 May 2019 14:34:24 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2 0/3] ima/evm fixes for v5.2
+Date:   Wed, 29 May 2019 15:30:32 +0200
+Message-ID: <20190529133035.28724-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <24576.1559134719.1@warthog.procyon.org.uk>
-Date:   Wed, 29 May 2019 13:58:39 +0100
-Message-ID: <24577.1559134719@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 29 May 2019 12:58:48 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Jann Horn <jannh@google.com> wrote:
+Changelog
 
-> It might make sense to require that the path points to the root inode
-> of the superblock? That way you wouldn't be able to do this on a bind
-> mount that exposes part of a shared filesystem to a container.
+v1:
+- remove patch 2/4 (evm: reset status in evm_inode_post_setattr()); file
+  attributes cannot be set if the signature is portable and immutable
+- patch 3/4: add __ro_after_init to ima_appraise_req_evm variable
+  declaration
+- patch 3/4: remove ima_appraise_req_evm kernel option and introduce
+  'enforce-evm' and 'log-evm' as possible values for ima_appraise=
+- remove patch 4/4 (ima: only audit failed appraisal verifications)
+- add new patch (ima: show rules with IMA_INMASK correctly)
 
-Why prevent that?  It doesn't prevent the container denizen from watching a
-bind mount that exposes the root of a shared filesystem into a container.
 
-It probably makes sense to permit the LSM to rule on whether a watch may be
-emplaced, however.
+Roberto Sassu (3):
+  evm: check hash algorithm passed to init_desc()
+  ima: don't ignore INTEGRITY_UNKNOWN EVM status
+  ima: show rules with IMA_INMASK correctly
 
-> > +                       ret = add_watch_to_object(watch, s->s_watchers);
-> > +                       if (ret == 0) {
-> > +                               spin_lock(&sb_lock);
-> > +                               s->s_count++;
-> > +                               spin_unlock(&sb_lock);
-> 
-> Why do watches hold references on the superblock they're watching?
+ .../admin-guide/kernel-parameters.txt         |  3 ++-
+ security/integrity/evm/evm_crypto.c           |  3 +++
+ security/integrity/ima/ima_appraise.c         |  8 +++++++
+ security/integrity/ima/ima_policy.c           | 21 +++++++++++--------
+ 4 files changed, 25 insertions(+), 10 deletions(-)
 
-Fair point.  It was necessary at one point, but I don't think it is now.  I'll
-see if I can remove it.  Note that it doesn't stop a superblock from being
-unmounted and destroyed.
+-- 
+2.17.1
 
-> > +                       }
-> > +               }
-> > +               up_write(&s->s_umount);
-> > +               if (ret < 0)
-> > +                       kfree(watch);
-> > +       } else if (s->s_watchers) {
-> 
-> This should probably have something like a READ_ONCE() for clarity?
-
-Note that I think I'll rearrange this to:
-
-	} else {
-		ret = -EBADSLT;
-		if (s->s_watchers) {
-			down_write(&s->s_umount);
-			ret = remove_watch_from_object(s->s_watchers, wqueue,
-						       s->s_unique_id, false);
-			up_write(&s->s_umount);
-		}
-	}
-
-I'm not sure READ_ONCE() is necessary, since s_watchers can only be
-instantiated once and the watch list then persists until the superblock is
-deactivated.  Furthermore, by the time deactivate_locked_super() is called, we
-can't be calling sb_notify() on it as it's become inaccessible.
-
-So if we see s->s_watchers as non-NULL, we should not see anything different
-inside the lock.  In fact, I should be able to rewrite the above to:
-
-	} else {
-		ret = -EBADSLT;
-		wlist = s->s_watchers;
-		if (wlist) {
-			down_write(&s->s_umount);
-			ret = remove_watch_from_object(wlist, wqueue,
-						       s->s_unique_id, false);
-			up_write(&s->s_umount);
-		}
-	}
-
-David
