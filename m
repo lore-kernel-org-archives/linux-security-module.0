@@ -2,118 +2,95 @@ Return-Path: <SRS0=RYp/=T6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5867C28CC2
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 17:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4B1C28CC0
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 17:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB50025E5D
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 17:25:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5933325E5D
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 17:25:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726280AbfE3RZT (ORCPT
+        id S1726674AbfE3RZ3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 May 2019 13:25:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33128 "EHLO mx1.redhat.com"
+        Thu, 30 May 2019 13:25:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50268 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfE3RZT (ORCPT
+        id S1725961AbfE3RZ3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 May 2019 13:25:19 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        Thu, 30 May 2019 13:25:29 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4E814E3E00;
-        Thu, 30 May 2019 17:25:14 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id DD1432E95BE;
+        Thu, 30 May 2019 17:25:28 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C7B3660BE1;
-        Thu, 30 May 2019 17:25:11 +0000 (UTC)
-Subject: [PATCH 00/10] keys: Miscellany [ver #2]
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B33917A40E;
+        Thu, 30 May 2019 17:25:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 02/10] keys: sparse: Fix incorrect RCU accesses [ver #2]
 From:   David Howells <dhowells@redhat.com>
 To:     keyrings@vger.kernel.org
-Cc:     Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        dhowells@redhat.com, linux-security-module@vger.kernel.org,
+Cc:     James Morris <jamorris@linux.microsoft.com>, dhowells@redhat.com,
+        linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, ebiggers@kernel.org
-Date:   Thu, 30 May 2019 18:25:11 +0100
-Message-ID: <155923711088.949.14909672457214372214.stgit@warthog.procyon.org.uk>
+Date:   Thu, 30 May 2019 18:25:26 +0100
+Message-ID: <155923712685.949.15444189913653209060.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155923711088.949.14909672457214372214.stgit@warthog.procyon.org.uk>
+References: <155923711088.949.14909672457214372214.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 30 May 2019 17:25:19 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 30 May 2019 17:25:28 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Fix a pair of accesses that should be using RCU protection.
 
-Here are some miscellaneous keyrings fixes and improvements intended for
-the next merge window:
+rcu_dereference_protected() is needed to access task_struct::real_parent.
 
- (1) Fix a bunch of warnings from sparse, including missing RCU bits and
-     kdoc-function argument mismatches
+current_cred() should be used to access current->cred.
 
- (2) Implement a keyctl to allow a key to be moved from one keyring to
-     another, with the option of prohibiting key replacement in the
-     destination keyring.
-
- (3) Grant Link permission to possessors of request_key_auth tokens so that
-     upcall servicing daemons can more easily arrange things such that only
-     the necessary auth key is passed to the actual service program, and
-     not all the auth keys a daemon might possesss.
-
- (4) Improvement in lookup_user_key().
-
- (5) Implement a keyctl to allow keyrings subsystem capabilities to be
-     queried.
-
-The patches can be found on the following branch:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-misc
-
-The keyutils next branch has commits to make available, document and test
-the move-key and capabilities code:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/log/?h=next
-
-Changes:
-
- (*) Fixed lock ordering bug in KEYCTL_MOVE.
-
- (*) Added improvement patch from Eric.
-
- (*) Added capabilities patch.
-
-David
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 ---
-David Howells (9):
-      keys: sparse: Fix key_fs[ug]id_changed()
-      keys: sparse: Fix incorrect RCU accesses
-      keys: sparse: Fix kdoc mismatches
-      keys: Change keyring_serialise_link_sem to a mutex
-      keys: Break bits out of key_unlink()
-      keys: Hoist locking out of __key_link_begin()
-      keys: Add a keyctl to move a key between keyrings
-      keys: Grant Link permission to possessers of request_key auth keys
-      keys: Add capability-checking keyctl function
 
-Eric Biggers (1):
-      KEYS: reuse keyring_index_key::desc_len in lookup_user_key()
+ security/keys/keyctl.c           |    3 ++-
+ security/keys/request_key_auth.c |    2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-
- Documentation/security/keys/core.rst |   21 +++
- include/linux/key.h                  |   13 +-
- include/uapi/linux/keyctl.h          |   17 ++
- kernel/cred.c                        |    4 
- security/keys/compat.c               |    6 +
- security/keys/internal.h             |    7 +
- security/keys/key.c                  |   23 ++-
- security/keys/keyctl.c               |   92 +++++++++++
- security/keys/keyring.c              |  275 +++++++++++++++++++++++++++-------
- security/keys/process_keys.c         |   26 +--
- security/keys/request_key.c          |    7 +
- security/keys/request_key_auth.c     |    4 
- 12 files changed, 413 insertions(+), 82 deletions(-)
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 3e4053a217c3..0f947bcbad46 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -1524,7 +1524,8 @@ long keyctl_session_to_parent(void)
+ 
+ 	ret = -EPERM;
+ 	oldwork = NULL;
+-	parent = me->real_parent;
++	parent = rcu_dereference_protected(me->real_parent,
++					   lockdep_is_held(&tasklist_lock));
+ 
+ 	/* the parent mustn't be init and mustn't be a kernel thread */
+ 	if (parent->pid <= 1 || !parent->mm)
+diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+index bda6201c6c45..572c7a60473a 100644
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -152,7 +152,7 @@ struct key *request_key_auth_new(struct key *target, const char *op,
+ 				 struct key *dest_keyring)
+ {
+ 	struct request_key_auth *rka, *irka;
+-	const struct cred *cred = current->cred;
++	const struct cred *cred = current_cred();
+ 	struct key *authkey = NULL;
+ 	char desc[20];
+ 	int ret = -ENOMEM;
 
