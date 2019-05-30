@@ -1,209 +1,290 @@
-Return-Path: <SRS0=daWi=T5=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=RYp/=T6=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD84C28CC0
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 23:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7E3C28CC2
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 05:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79A1D24395
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 May 2019 23:56:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Vtwj4hE3"
+	by mail.kernel.org (Postfix) with ESMTP id C177A26076
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 05:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbfE2X4y (ORCPT
+        id S1726275AbfE3FiJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 May 2019 19:56:54 -0400
-Received: from sonic305-9.consmr.mail.bf2.yahoo.com ([74.6.133.48]:34713 "EHLO
-        sonic305-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726686AbfE2X4x (ORCPT
+        Thu, 30 May 2019 01:38:09 -0400
+Received: from mga09.intel.com ([134.134.136.24]:58205 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725961AbfE3FiJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 May 2019 19:56:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559174212; bh=aXNvbCL9CgLpyiwMXk+9kSv/VwIr+hk+tW0kB/4ZuWM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Vtwj4hE30D/hMre72EdOBscRUBPsCt48nlJn3dzlfTrGh5ND2G8mQTE5KWK4bN1BlroZIBIWXwDJyzztZ89GyZgeKl5+hkpgPpJp9cyeTZC7Wrf/KNhv+Jy0CQxs9JgyTWtPZN/TCkPp6elkf6bQ+2Kk1+If87rpAmECdViOF3DT76ICeZNa8N5nzAVukmMS5CkkB8fJNklpatgvacKI3hi3aKyYDTEj96V7YBoLxxQmHA3jz0t9UP+GhR/oWKr88itc2l1v9FBF3Y2tpmBwQ69S0HWYBdZLDdJyEolpPBaZAwvRl0sAJRPyuFxxboEfV/zSXFs3aWxlZajuZhBqIA==
-X-YMail-OSG: lLkia2oVM1nhhMHX7jD_9U_HdHfGpeYEmz02VjVOYiulnTHSWXD.XpHHOB9xySS
- I7n2ASbYJXrqvSPImosTI1ZBeR.W3O1kvIVAmiutvuu.nj5fTGPIIzHRzSR0.jPDQMzv5dkyns.s
- CPrDsUiQerL8MAmPvzwJL1d._pxmN00q6A.tkdlnskkN3F1v.y07PHqfDja48y.Vnypks8VySNFY
- im18dlNj.n95C_GjmbUqvKu9yDbG61KkSLUx.35bbUIIMyYX7hl8qDrV3amqmOo2n5yjrj2MfkPo
- 2XazyLxuOLnJ8p1shmsKZCZDR8LkzW6xUWi8aLjcPSSu.XS8X5RkHuRVv1WByFmQOw.jbVWpeGxF
- ehRRTG.iTJrpdAofrLQb40LjL00N3pxM3RbGCrHlom0UP6iNQvWpf_rKcHF.mGCQMGZQSH4oHK_R
- U4zHaLTf2JPrLZ3UUnTVNvMbEgW9VjnQFRI7zYF9d.Auw0pAOrLwgPNCSryeSJNlbKEniWa3Qp4S
- U831B1qFDvGhHTms_qnO8D_qVQsr.QptF15PP56.wamhmtIxysMRbpJOXlzgl2kt7ONlDPem.m_1
- sdCG07Ar_N2c7qq867n8uyOPcq0IUebi2j.fmBncU.IP8clW367I3SVdjfvHTZY2RDqQDln1FHzg
- QkVrDHM5X1x.vEjo1EosHm5ep5XDX8l7m4OJgJABzN7gVkb24H0JSRX06DhVBR3zQRK7aMsT8gyu
- M6Titk.NqCdSg9LDTDNRjlKduPynwH9kk0bd9pi1d4Mn5SfoCU3q4KDPgHaFjS1vArzgT.zKE320
- GMXdsPp2xl.30tr64pIpZH.1_XkpBK7zYCiVCub.iDWwO6juBTeWjEEpN8jmtulkxibee.TXy_jT
- Q.d82D7dATuZ7XIyIkJEADGwxSWwQlevd7gSLC_PqPp_H2XIA2WcoFfxWn7Lz5OL48V.b1ajDPuO
- jJktjck_1__2SmZHLEizwRRu5LG4Gr4CWftYaQ57i.69CBYzfFbvKmJDWuCLmHoXZLTF0I9mmoyK
- cr0qwo47aC1GTtxAE4R3KDvihqMp28yabM9rvhu8UjefD4k0J2VF2c8rLv8rtKHZK9tqgBfthFQk
- d3AJN3JQDXT1aSl4hjfIVdE4Gm1.dV.ttXnM3EeNnevOxzHcgrkRlPgiF4xkXrQvE0PF19MMNurs
- _wSpkEJyY0byYAg5GZ3tZR4q6.1YL3dWWgHWsbbeBFrjUausp3ahr1CiyeKCHsVJ0qnqaTN8eXjt
- yO67H8YSoa2Z.m692Itca8qnHwvk9bgVK
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Wed, 29 May 2019 23:56:52 +0000
-Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp429.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ae0153f1394f9169644b35f1cd7f33ef;
-          Wed, 29 May 2019 23:56:49 +0000 (UTC)
-Subject: Re: [PATCH 3/7] vfs: Add a mount-notification facility
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     David Howells <dhowells@redhat.com>, Jann Horn <jannh@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        casey@schaufler-ca.com
-References: <CAG48ez2rRh2_Kq_EGJs5k-ZBNffGs_Q=vkQdinorBgo58tbGpg@mail.gmail.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905933492.7587.6968545866041839538.stgit@warthog.procyon.org.uk>
- <14347.1559127657@warthog.procyon.org.uk>
- <312a138c-e5b2-4bfb-b50b-40c82c55773f@schaufler-ca.com>
- <4552118F-BE9B-4905-BF0F-A53DC13D5A82@amacapital.net>
- <058f227c-71ab-a6f4-00bf-b8782b3b2956@schaufler-ca.com>
- <2FF92095-E5B1-4811-A7F8-B7D4C32F86DD@amacapital.net>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <35a3b0f9-f227-2cd7-eb87-9b3d5816c67d@schaufler-ca.com>
-Date:   Wed, 29 May 2019 16:56:47 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <2FF92095-E5B1-4811-A7F8-B7D4C32F86DD@amacapital.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        Thu, 30 May 2019 01:38:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 22:38:08 -0700
+X-ExtLoop1: 1
+Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
+  by FMSMGA003.fm.intel.com with ESMTP; 29 May 2019 22:38:07 -0700
+Received: from orsmsx162.amr.corp.intel.com (10.22.240.85) by
+ ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 29 May 2019 22:38:07 -0700
+Received: from orsmsx116.amr.corp.intel.com ([169.254.7.165]) by
+ ORSMSX162.amr.corp.intel.com ([169.254.3.190]) with mapi id 14.03.0415.000;
+ Wed, 29 May 2019 22:38:07 -0700
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "Andy Lutomirski" <luto@kernel.org>
+CC:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: RE: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Thread-Topic: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Thread-Index: AQHVC0vUmIXibKT8TUm/EUnHn2XAfqZu5q2AgAAGWoCABXOKgIABz2SAgAAI9ACAAWgPAIAAAJWAgAAJhACAAByGAIAAdoKAgABA+ICAAIOmAIAAQKcAgAAWeICAAIbLAIAAGyYA///WAeCAARtHgIAAIeCAgAADbAD//5AmcIAAjJAAgAAHN4CAABd5AIAAFI2AgAARBICAAPo7MIAArTmA///E0eAAlLibAAAA1a8AAAHamoAAMz8G0A==
+Date:   Thu, 30 May 2019 05:38:06 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F654EB439@ORSMSX116.amr.corp.intel.com>
+References: <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com>
+ <20190524200333.GF365@linux.intel.com>
+ <CALCETrUyAAhnQ+RUeN1L41TKj-vcD2CNt-FJ9siO=Zo6gvH1Aw@mail.gmail.com>
+ <20190524224107.GJ365@linux.intel.com>
+ <683B5E3D-AFB6-4B45-8D39-B00847312209@amacapital.net>
+ <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
+ <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
+ <20190528202407.GB13158@linux.intel.com>
+ <CALCETrWTXCb1jru1G5G3sOp5AV8iYUtrffiSxE-5gotXtrZD-g@mail.gmail.com>
+ <20190528214107.GD13158@linux.intel.com>
+In-Reply-To: <20190528214107.GD13158@linux.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWUyNTI4ODktOThjYS00OTNjLTljODMtZmQwNDMwMGUyYWM3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZ2hUUHhiTnF3UGNSYks4eEZ1Q3RNWHlBcXl1eldrcHJmZlZ2WU9lVWVMeGhjcUExdmZaa0VqODk4XC9kN0c0R08ifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/29/2019 4:12 PM, Andy Lutomirski wrote:
->
->> On May 29, 2019, at 10:46 AM, Casey Schaufler <casey@schaufler-ca.com>=
- wrote:
->>
->>> On 5/29/2019 10:13 AM, Andy Lutomirski wrote:
->>>
->>>>> On May 29, 2019, at 8:53 AM, Casey Schaufler <casey@schaufler-ca.co=
-m> wrote:
->>>>>
->>>>> On 5/29/2019 4:00 AM, David Howells wrote:
->>>>> Jann Horn <jannh@google.com> wrote:
->>>>>
->>>>>>> +void post_mount_notification(struct mount *changed,
->>>>>>> +                            struct mount_notification *notify)
->>>>>>> +{
->>>>>>> +       const struct cred *cred =3D current_cred();
->>>>>> This current_cred() looks bogus to me. Can't mount topology change=
-s
->>>>>> come from all sorts of places? For example, umount_mnt() from
->>>>>> umount_tree() from dissolve_on_fput() from __fput(), which could
->>>>>> happen pretty much anywhere depending on where the last reference =
-gets
->>>>>> dropped?
->>>>> IIRC, that's what Casey argued is the right thing to do from a secu=
-rity PoV.
->>>>> Casey?
->>>> You need to identify the credential of the subject that triggered
->>>> the event. If it isn't current_cred(), the cred needs to be passed
->>>> in to post_mount_notification(), or derived by some other means.
->>> Taking a step back, why do we care who triggered the event?  It seems=
- to me that we should care whether the event happened and whether the *re=
-ceiver* is permitted to know that.
->> There are two filesystems, "dot" and "dash". I am not allowed
->> to communicate with Fred on the system, and all precautions have
->> been taken to ensure I cannot. Fred asks for notifications on
->> all mount activity. I perform actions that result in notifications
->> on "dot" and "dash". Fred receives notifications and interprets
->> them using Morse code. This is not OK. If Wilma, who *is* allowed
->> to communicate with Fred, does the same actions, he should be
->> allowed to get the messages via Morse.
-> Under this scenario, Fred should not be allowed to enable these watches=
-=2E If you give yourself and Fred unconstrained access to the same FS, th=
-en can communicate.
+> From: Christopherson, Sean J
+> Sent: Tuesday, May 28, 2019 2:41 PM
+> 
+> On Tue, May 28, 2019 at 01:48:02PM -0700, Andy Lutomirski wrote:
+> > On Tue, May 28, 2019 at 1:24 PM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > >
+> > > Actually, I think we do have everything we need from an LSM perspective.
+> > > LSMs just need to understand that sgx_enclave_load() with a NULL vma
+> > > implies a transition from RW.  For example, SELinux would interpret
+> > > sgx_enclave_load(NULL, RX) as requiring FILE__EXECMOD.
+> >
+> > You lost me here.  What operation triggers this callback?  And
+> > wouldn't sgx_enclave_load(NULL, RX) sometimes be a transition from RO
+> > or just some fresh executable zero bytes?
+> 
+> An explicit ioctl() after EACCEPTCOPY to update the allowed permissions.
+> For all intents and purposes, the EAUG'd page must start RW.  Maybe a better way to phrase
+> it is that at some point the page must be writable to have any value whatsover.
+> EACCEPTCOPY explicitly requires the page to be at least RW.  EACCEPT technically doesn't
+> require RW, but a RO or RX zero page is useless.  Userspace could still EACCEPT with RO or
+> RX, but SGX would assume a minimum of RW for the purposes of the LSM check.
 
-How are you going to determine at the time Fred tries to enable the watch=
-es
-that I am going to do something that will trigger them? I'm not saying it=
- isn't
-possible, I'm curious how you would propose doing it. If you deny Fred th=
-e ability
-to set watches because it is possible for me to trigger them, he can't us=
-e them
-to get information from Wilma, either.
+Why is an explicit ioctl() necessary after EACCEPTCOPY? Or why is mprotect() not sufficient?
 
->
->> Other security modelers may disagree. The models they produce
->> are going to be *very* complicated and will introduce agents and
->> intermediate objects to justify Fred's reception of an event as
->> a read operation.
-> I disagree. They=E2=80=99ll model the watch as something to prevent if =
-they want to restrict communication.
+I tend to agree on Andy's MAXPERM model where MAXPERM never changes once established.
 
-Sorry, but that isn't sufficiently detailed to be meaningful.
-
->>> (And receiver means whoever subscribed, presumably, not whoever calle=
-d read() or mmap().)
->> The receiver is the process that gets the event. There may
->> be more than one receiver, and the receivers may have different
->> credentials. Each needs to be checked separately.
-> I think it=E2=80=99s a bit crazy to have the same event queue with two =
-readers who read different things.
-
-Look at killpg(3).
-
-The process that creates the event has to be involved in the
-access decision. Otherwise you have an uncontrolled data channel.
-When the receiver reads the event queue it knows nothing about the
-sender, and hence cannot make the decision unless the credential of
-the sender is kept with the event message, and used when the
-receiver tries to access it. I don't think that wold work well with
-the mechanism as designed.
-=C2=A0
+> 
+> > > As Cedric mentioned earlier, the host process doesn't necessarily
+> > > know which pages will end up RW vs RX, i.e. sgx_enclave_load(NULL,
+> > > RX) already has to be invoked at runtime, and when that happens, the
+> > > kernel can take the opportunity to change the VMAs from MAY_RW to MAY_RX.
+> > >
+> > > For simplicity in the kernel and clarity in userspace, it makes
+> > > sense to require an explicit ioctl() to add the to-be-EAUG'd range.
+> > > That just leaves us wanting an ioctl() to set the post-EACCEPT{COPY} permissions.
+> > >
+> > > E.g.:
+> > >
+> > >     ioctl(<prefix>_ADD_REGION, { NULL }) /* NULL == EAUG, MAY_RW */
+> > >
+> > >     mprotect(addr, size, RW);
+> > >     ...
+> > >
+> > >     EACCEPTCOPY -> EAUG /* page fault handler */
+> > >
+> > >     ioctl(<prefix>_ACTIVATE_REGION, { addr, size, RX}) /* MAY_RX */
+> > >
+> > >     mprotect(addr, size, RX);
+> >
+> > In the maxperm model, this mprotect() will fail unless MAXPERM
+> > contains RX, which could only happen if MAXPERM=RWX.  So, regardless
+> > of how it's actually mapped to SELinux policy, MAXPERM=RWX is
+> > functionally like EXECMOD and actual RWX PTEs are functionally like
+> > EXECMEM.
+> 
+> Yep, same idea, except in the proposed flow ACTIVATE_REGION.
 
 
+> 
+> > >     ...
+> > >
+> > > And making ACTIVATE_REGION a single-shot per page eliminates the
+> > > need for the MAXPERMS concept (see below).
+> > >
+> > > > If we keep only one MAXPERM, wouldn't this be the current behavior
+> > > > of mmap()/mprotect()?
+> > > >
+> > > > To be a bit more clear, system admin sets MAXPERM upper bound in
+> > > > the form of FILE__{READ|WRITE|EXECUTE|EXECMOD} of
+> > > > /dev/sgx/enclave. Then for a process/enclave, if what it requires
+> > > > falls below what's allowed on /dev/sgx/enclave, then everything
+> > > > will just work. Otherwise, it fails in the form of -EPERM returned
+> > > > from mmap()/mprotect(). Please note that MAXPERM here applies to
+> > > > "runtime" permissions, while "initial" permissions are taken care
+> > > > of by security_enclave_{load|init}. "initial" permissions could be
+> > > > more permissive than "runtime" permissions, e.g., RX is still
+> > > > required for initial code pages even though system admins could disable dynamically
+> loaded code pages by *not* giving FILE__{EXECUTE|EXECMOD}. Therefore, the "initial"
+> > > > mapping would still have to be done by the driver (to bypass LSM),
+> > > > either via a new ioctl or as part of IOC_EINIT.
+> > >
+> > > Aha!
+> > >
+> > > Starting with Cedric's assertion that initial permissions can be
+> > > taken directly from SECINFO:
+> > >
+> > >   - Initial permissions for *EADD* pages are explicitly handled via
+> > >     sgx_enclave_load() with the exact SECINFO permissions.
+> > >
+> > >   - Initial permissions for *EAUG* are unconditionally RW.  EACCEPTCOPY
+> > >     requires the target EPC page to be RW, and EACCEPT with RO is useless.
+> > >
+> > >   - Runtime permissions break down as follows:
+> > >       R   - N/A, subset of RW (EAUG)
+> > >       W   - N/A, subset of RW (EAUG) and x86 paging can't do W
+> > >       X   - N/A, subset of RX (x86 paging can't do XO)
+> >
+> > Sure it can!  You just have a hypervisor that maps a PA bit to EPT
+> > no-read.  Then you can use that PA bit to suppress read.  Also, Linux
+> > already abuses PKRU to simulate XO, although that won't work for
+> > enclaves.
+> 
+> Heh, I intentionally said "x86 paging" to rule out EPT :-)  I'm pretty sure it's a moot
+> point though, I have a hard time believing an LSM will allow RW->X and not RW->RX.
+> 
+> > >       RW  - Handled by EAUG LSM hook (uses RW unconditionally)
+> > >       WX  - N/A, subset of RWX (x86 paging can't do WX)
+> > >       RX  - Handled by ACTIVATE_REGION
+> > >       RWX - Handled by ACTIVATE_REGION
+> > >
+> > > In other words, if we define the SGX -> LSM calls as follows (minus
+> > > the file pointer and other params for brevity):
+> > >
+> > >   - <prefix>_ACTIVATE_REGION(vma, perms) -> sgx_enclave_load(NULL,
+> > > perms)
+
+I'm not sure on what security_enclave_load()'s decision would be based.
+
+> > >
+> > >   - <prefix>_ADD_REGION(vma) -> sgx_enclave_load(vma, SECINFO.perms)
+> > >
+> > >   - <prefix>_ADD_REGION(NULL) -> sgx_enclave_load(NULL, RW)
+> > >
+> > > then SGX and LSMs have all the information and hooks needed.  The
+> > > catch is that the LSM semantics of sgx_enclave_load(..., RW) would
+> > > need to be different than normal shared memory, e.g. FILE__WRITE
+> > > should *not* be required, but that's ok since it's an SGX specific
+> > > hook.  And if for some reason an LSM wanted to gate access to EAUG
+> > > *without* FILE__EXECMOD, it'd have the necessary information to do so.
+> > >
+> > > The userspace changes are fairly minimal:
+> > >
+> > >   - For SGX1, use PROT_NONE for the initial mmap() and refactor ADD_PAGE
+> > >     to ADD_REGION.
+> > >
+> > >   - For SGX2, do an explicit ADD_REGION on the ranges to be EAUG'd, and an
+> > >     ACTIVATE_REGION to make a region RX or R (no extra ioctl() required to
+> > >     keep RW permissions).
+> > >
+> > > Because ACTIVATE_REGION can only be done once per page, to do
+> > > *abitrary*
+> > > mprotect() transitions, userspace would need to set the
+> > > added/activated permissions to be a superset of the transitions,
+> > > e.g. RW -> RX would require RWX, but that's a non-issue.
+> > >
+> >
+> > I may be misunderstanding or just be biased to my own proposal, but
+> > this seems potentially more complicated and less flexible than the
+> > MAXPERM model.  One of the main things that made me come up with
+> > MAXPERM is that I wanted to avoid any complicated PTE/VMA modification
+> > or runtime changes.  So, with MAXPERM, we still need to track the
+> > MAXPERM bits per page, but we don't ever need to *change* them or to
+> > worry about what is or is not mapped anywhere at any given time.  With
+> > ACTIVATE_REGION, don't we need to make sure that we don't have a
+> > second VMA pointing at the same pages?  Or am I just confused?
+> 
+> In theory, it's still your MAXPERM model, but with the unnecessary states removed and the
+> others enforced/handled by the natural SGX transitions instead of explictly in ioctls.
+> Underneath the hood the SGX driver would still need to track the MAXPERM.
+
+What are the "unnecessary states" removed? 
+
+I'm not sure understand the proposal fully. The whole thing looks to me like the driver is undertaking things that should/would otherwise be done by mmap()/mprotect() syscalls. It also imposes unnecessary restrictions on user mode code, such as mmap(PROT_NONE), ACTIVATE_REGION can be called only once, etc. What'd happen if ACTIVATE_REGION is called with a range spanning multiple/partial VMAs? What'd happen if an enclave was unmapped than mapped again? I'd say the proposal is unintuitive at least.
+
+In theory, if the driver can keep track of MAXPERM for all pages within an enclave, then it could fail mmap() if the requested prot conflicts with any page's MAXPERM within that range. Otherwise, MAXPERM could be copied into VM_MAY* flags then mprotect() will just follow through. Wouldn't that be a much simpler and more intuitive approach?
+
+> 
+> With SGX1, SECINFO == MAXPERM.  With SGX2, ACTIVATE_REGION == MAXPERM, with the
+> implication that the previous state is always RW.
+> 
+> > >   - For SGX1 it's a nop since it's impossible to change the EPCM
+> > >     permissions, i.e. the page would need to be RWX regardless.
+> >
+> > I may still be missing something, but, for SGX1, it's possible at
+> > least in principle for the enclave to request, via ocall or similar,
+> > that the untrusted runtime do mprotect().  It's not even such a bad
+> > idea.  Honestly, enclaves *shouldn't* have anything actually writable
+> > and executable at once because the enclaves don't want to be easily
+> > exploited.
+> 
+> Yes, but the *EPCM* permissions are immutable.  So if an enclave wants to do RW->RX it has
+> to intialize its pages to RWX.  And because the untrusted runtime is, ahem, untrusted, the
+> enclave cannot rely on userspace to never map its pages RWX.  In other words, from a
+> enclave security perspective, an SGX1 enclave+runtime that uses RW->RX is no different
+> than an enclave that uses RWX.  Using your earlier terminology, an SGX1 enclave *should*
+> get a dirty looks if maps a page RWX in the EPCM, even if it only intends RW->RX behavior.
+> 
+> > >   - For SGX2, userspace can suck it up and request RWX to do completely
+> > >     arbitrary transitions (working as intended), or the kernel can support
+> > >     trimming (removing) pages from an enclave, which would allow userspace
+> > >     to do "arbitrary" transitions by first removing the page.
