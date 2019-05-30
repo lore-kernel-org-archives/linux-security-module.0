@@ -2,184 +2,228 @@ Return-Path: <SRS0=RYp/=T6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CE9C28CC0
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 17:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F19AFC28CC0
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 18:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D529625E65
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 17:26:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB82E25EF6
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 18:01:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfE3R02 (ORCPT
+        id S1726518AbfE3SBO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 May 2019 13:26:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60360 "EHLO mx1.redhat.com"
+        Thu, 30 May 2019 14:01:14 -0400
+Received: from mga05.intel.com ([192.55.52.43]:6657 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726538AbfE3R02 (ORCPT
+        id S1726125AbfE3SBN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 May 2019 13:26:28 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7FBB7305D799;
-        Thu, 30 May 2019 17:26:27 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 452387E304;
-        Thu, 30 May 2019 17:26:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 10/10] keys: Add capability-checking keyctl function [ver #2]
-From:   David Howells <dhowells@redhat.com>
-To:     keyrings@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ebiggers@kernel.org
-Date:   Thu, 30 May 2019 18:26:25 +0100
-Message-ID: <155923718546.949.13039266815245271686.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155923711088.949.14909672457214372214.stgit@warthog.procyon.org.uk>
-References: <155923711088.949.14909672457214372214.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Thu, 30 May 2019 14:01:13 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 11:01:11 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga006.jf.intel.com with ESMTP; 30 May 2019 11:01:10 -0700
+Date:   Thu, 30 May 2019 11:01:10 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190530180110.GB23930@linux.intel.com>
+References: <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
+ <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
+ <20190528202407.GB13158@linux.intel.com>
+ <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
+ <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
+ <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
+ <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+ <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
+ <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 30 May 2019 17:26:27 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a keyctl function that requests a set of capability bits to find out
-what features are supported.
+On Thu, May 30, 2019 at 09:14:10AM -0700, Andy Lutomirski wrote:
+> On Thu, May 30, 2019 at 8:04 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> >
+> > On 5/30/19 10:31 AM, Andy Lutomirski wrote:
+> > > Hi all-
+> > >
+> > > After an offline discussion with Sean yesterday, here are some updates
+> > > to the user API parts of my proposal.
+> > >
+> > > Unfortunately, Sean convinced me that MAXPERM doesn't work the way I
+> > > described it because, for SGX2, the enclave loader won't know at load
+> > > time whether a given EAUG-ed page will ever be executed.  So here's an
+> > > update.
+> > >
+> > > First, here are the requrements as I see them, where EXECUTE, EXECMOD,
+> > > and EXECMEM could be substituted with other rules at the LSM's
+> > > discretion:
+> > >
+> > >   - You can create a WX or RWX mapping if and only if you have EXECMEM.
+> > >
+> > >   - To create an X mapping of an enclave page that has ever been W, you
+> > > need EXECMOD.
+> >
+> > EXECMOD to what file? The enclave file from which the page's content
+> > originated, the sigstruct file, or /dev/sgx/enclave?
+> 
+> I leave that decision to you :)  The user should need permission to do
+> an execmod thing on an enclave, however that wants to be encoded.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+But that decision dictates how the SGX API handles sigstruct.  If LSMs
+want to associate EXECMOD with sigstruct, then SGX needs to take sigstruct
+early and hold a reference to the file for the lifetime of the enclave.
+And if we're going to do that, the whole approach of inheriting
+permissions from source VMAs becomes unnecessary complexity.
 
- include/uapi/linux/keyctl.h |   14 ++++++++++++++
- security/keys/compat.c      |    3 +++
- security/keys/internal.h    |    2 ++
- security/keys/keyctl.c      |   37 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 56 insertions(+)
+> >
+> > >   - To create an X mapping of an enclave page that came from EADD, you
+> > > need EXECUTE on the source file.  Optionally, we could also permit
+> > > this if you have EXECMOD.
+> >
+> > What is the "source file" i.e. the target of the check?  Enclave file,
+> > sigstruct file, or /dev/sgx/enclave?
+> 
+> Enclave file -- that is, the file backing the vma from which the data is loaded.
 
-diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index fd9fb11b312b..aa4972163442 100644
---- a/include/uapi/linux/keyctl.h
-+++ b/include/uapi/linux/keyctl.h
-@@ -68,6 +68,7 @@
- #define KEYCTL_PKEY_VERIFY		28	/* Verify a public key signature */
- #define KEYCTL_RESTRICT_KEYRING		29	/* Restrict keys allowed to link to a keyring */
- #define KEYCTL_MOVE			30	/* Move keys between keyrings */
-+#define KEYCTL_CAPABILITIES		31	/* Find capabilities of keyrings subsystem */
- 
- /* keyctl structures */
- struct keyctl_dh_params {
-@@ -115,4 +116,17 @@ struct keyctl_pkey_params {
- 
- #define KEYCTL_MOVE_EXCL	0x00000001 /* Do not displace from the to-keyring */
- 
-+/*
-+ * Capabilities flags.  The capabilities list is an array of 32-bit integers;
-+ * each integer can carry up to 32 flags.
-+ */
-+#define KEYCTL_CAPS0_CAPABILITIES	0x00000001 /* KEYCTL_CAPABILITIES supported */
-+#define KEYCTL_CAPS0_PERSISTENT_KEYRINGS 0x00000002 /* Persistent keyrings enabled */
-+#define KEYCTL_CAPS0_DIFFIE_HELLMAN	0x00000004 /* Diffie-Hellman computation enabled */
-+#define KEYCTL_CAPS0_PUBLIC_KEY		0x00000008 /* Public key ops enabled */
-+#define KEYCTL_CAPS0_BIG_KEY		0x00000010 /* big_key-type enabled */
-+#define KEYCTL_CAPS0_INVALIDATE		0x00000020 /* KEYCTL_INVALIDATE supported */
-+#define KEYCTL_CAPS0_RESTRICT_KEYRING	0x00000040 /* KEYCTL_RESTRICT_KEYRING supported */
-+#define KEYCTL_CAPS0_MOVE		0x00000080 /* KEYCTL_MOVE supported */
-+
- #endif /*  _LINUX_KEYCTL_H */
-diff --git a/security/keys/compat.c b/security/keys/compat.c
-index b326bc4f84d7..a53e30da20c5 100644
---- a/security/keys/compat.c
-+++ b/security/keys/compat.c
-@@ -162,6 +162,9 @@ COMPAT_SYSCALL_DEFINE5(keyctl, u32, option,
- 	case KEYCTL_MOVE:
- 		return keyctl_keyring_move(arg2, arg3, arg4, arg5);
- 
-+	case KEYCTL_CAPABILITIES:
-+		return keyctl_capabilities(compat_ptr(arg2), arg3);
-+
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index b54a58c025ae..884fd796f668 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -329,6 +329,8 @@ static inline long keyctl_pkey_e_d_s(int op,
- }
- #endif
- 
-+extern long keyctl_capabilities(unsigned int __user *_buffer, size_t buflen);
-+
- /*
-  * Debugging key validation
-  */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index bbfe7d92d41c..b3db363e0b25 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -30,6 +30,18 @@
- 
- #define KEY_MAX_DESC_SIZE 4096
- 
-+static const u32 keyrings_capabilities[1] = {
-+	[0] = (KEYCTL_CAPS0_CAPABILITIES |
-+	       (IS_ENABLED(CONFIG_PERSISTENT_KEYRINGS)	? KEYCTL_CAPS0_PERSISTENT_KEYRINGS : 0) |
-+	       (IS_ENABLED(CONFIG_KEY_DH_OPERATIONS)	? KEYCTL_CAPS0_DIFFIE_HELLMAN : 0) |
-+	       (IS_ENABLED(CONFIG_ASYMMETRIC_KEY_TYPE)	? KEYCTL_CAPS0_PUBLIC_KEY : 0) |
-+	       (IS_ENABLED(CONFIG_BIG_KEYS)		? KEYCTL_CAPS0_BIG_KEY : 0) |
-+	       KEYCTL_CAPS0_INVALIDATE |
-+	       KEYCTL_CAPS0_RESTRICT_KEYRING |
-+	       KEYCTL_CAPS0_MOVE
-+	       ),
-+};
-+
- static int key_get_type_from_user(char *type,
- 				  const char __user *_type,
- 				  unsigned len)
-@@ -1678,6 +1690,28 @@ long keyctl_restrict_keyring(key_serial_t id, const char __user *_type,
- 	return ret;
- }
- 
-+/*
-+ * Get keyrings subsystem capabilities.
-+ */
-+long keyctl_capabilities(unsigned int __user *_buffer, size_t buflen)
-+{
-+	size_t size = buflen;
-+
-+	if (size == 0)
-+		return sizeof(keyrings_capabilities);
-+	if (size & 3)
-+		return -EINVAL;
-+	if (size > sizeof(keyrings_capabilities))
-+		size = sizeof(keyrings_capabilities);
-+	if (copy_to_user(_buffer, keyrings_capabilities, size) != 0)
-+		return -EFAULT;
-+	if (size < buflen &&
-+	    clear_user(_buffer + size, buflen - size) != 0)
-+		return -EFAULT;
-+
-+	return sizeof(keyrings_capabilities);
-+}
-+
- /*
-  * The key control system call
-  */
-@@ -1824,6 +1858,9 @@ SYSCALL_DEFINE5(keyctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 					   (key_serial_t)arg4,
- 					   (unsigned int)arg5);
- 
-+	case KEYCTL_CAPABILITIES:
-+		return keyctl_capabilities((unsigned int __user *)arg2, (size_t)arg3);
-+
- 	default:
- 		return -EOPNOTSUPP;
- 	}
+It wasn't explicitly called out in Andy's proposal(s), but the idea is
+that the SGX driver would effectively inherit permissions from the source
+VMA (EADD needs a source for the initial value of the encave page).
 
+I have two gripes with that approach:
+
+  - Requires enclave builder to mark enclave pages executable in the
+    non-enclave VMAs, which may unnecessarily require EXECMOD on the
+    source file, or even worse, EXECMEM, and potentially increases the
+    attack surface since the file must be executable.
+
+  - Is completely unnecessary if the enclave holds a reference to the
+    sigstruct file, as LSMs can easily apply labels to the sigstruct,
+    e.g. EXECUTE on the sigstruct instead of EXECUTE on the source file.
+
+
+After the bajillion mails we've generated, AIUI we've come up with two
+concepts that are viable: inheriting permissions from the source VMA
+vs. using sigstruct as a proxy for the enclave.  Andy's proposals rely on
+the inheritance concept.  The proposal below is based on the sigstruct
+proxy concept.
+
+For those not familiar with SGX details, sigstruct can be used as a proxy
+because hardware enforces that the measurement stored in the sigstruct
+exactly matches the measurement generated by the enclave build process,
+e.g. adding a page as RX instead of R will change the measurement.
+
+Core Concepts:
+  - FILE_{READ,WRITE,EXEC} on /dev/sgx/enclave effectively gates access to
+    EPC.  All real world enclaves will need all three permissions.
+  - sigstruct is the proxy for enclave from an LSM perspective, e.g.
+    SELinux can define ENCLAVE__EXECUTE and ENCLAVE__EXECMOD and apply
+    them to the sigstruct file.
+  - Take sigstruct at ECREATE so that ADD_REGION immediately followed by
+    mprotect() works as expected (because SGX.mprotect() needs sigstruct
+    to pass to security_enclave_mprotect(), see below).
+  - SGX driver takes a reference to the backing sigstruct file if it
+    exists so that the file can be provided to LSMs during mprotect().
+  - Optional: SGX driver *requires* sigstruct to be backed by file, purely
+    to enforce userspace infrastructure is in place for LSM support.
+
+W^X handling:
+  - mmap() to /dev/sgx/enclave only allowed with PROT_NONE, i.e. force
+    userspace through mprotect() to simplify the kernel implementation.
+  - Add vm_ops mprotect() ops hook (I'll refer to SGX's implementation
+    as SGX.mprotect())
+  - Take explicit ALLOW_WRITE at ADD_REGION, a.k.a. EADD
+  - ADD_REGION also used to describe EAUG region (tentatively for SGX2).
+  - Track "can be written at some point in time (past or future)" as
+    ALLOW_WRITE (to avoid confusiong with MAY_WRITE).  A priori knowledge
+    of writability avoids having to track/coordinate PROT_WRITE across
+    VMAs and MMs.
+  - SGX.mprotect() returns -EPERM if PROT_WRITE && !ALLOW_WRITE.
+  - Add security_enclave_mprotect() LSM hook, called by SGX.mprotect(),
+    e.g. int security_enclave_mprotect(struct file *sigstruct,
+                                       unsigned long prot,
+                                       bool allow_write)
+  - Intention is that EXECMOD is required if PROT_EXEC and ALLOW_WRITE.
+
+Enclave {white,black}listing:
+  - Optional/Future: add security_enclave_create(), invoked during
+    SGX ECREATE ioctl(), e.g.
+       int security_enclave_create(struct vm_area_struct *sigstruct)
+
+  - If this LSM hook is implemented, having sigstruct at ECREATE
+    allows LSMs to determine whether or not the enclave is allowed to
+    execute before allocating EPC for the enclave, e.g. unwanted enclaves
+    can't DoS wanted enclaves.
+
+LSM implementation possibilities:
+
+  - Define ENCLAVE__EXECUTE and ENCLAVE__EXECMOD, require them on the
+    process.  Does not require sigstruct to be backed by file, but cannot
+    achieve per-enclave granularity.  
+
+  - Define ENCLAVE__EXECUTE and ENCLAVE__EXECMOD, require them on the
+    sigstruct, i.e. force sigstruct to reside in filesystem.  Allows
+    per-enclave granularity.
+
+  - Reuse FILE__EXECUTE and FILE__EXECMOD on sigstruct.  Likely has
+    implications that may or may not be concerning, e.g. the sigstruct
+    file itself is weirdly executable.
+
+  - Adding ENCLAVE__EXECUTE and ENCLAVE__EXECMOD means the sigstruct,
+    which may be emdedded in the same file as the enclave, does *not*
+    require FILE__EXECUTE or FILE__EXECMOD, e.g. can be read-only.
+
+  - LSMs can (will?) require ENCLAVE__EXECUTE and ENCLAVE__EXECMOD to
+    effectively map an enclave, even if the process acquired the enclave
+    via SCM_RIGHTS (enclaves are tracked by fds).  This is good or bad
+    depending on your perspective.
+
+Userspace changes:
+
+  - EADD ioctl adds flags param to take ALLOW_WRITE
+
+  - ECREATE ioctl takes sigstruct instead of EINIT
+
+  - Initial mmap() must be PROT_NONE.
+
+  - sigstruct likely needs to reside in a file (this may not affect
+    some userspace implementations).
