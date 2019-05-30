@@ -2,135 +2,154 @@ Return-Path: <SRS0=RYp/=T6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7C4C28CC3
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 17:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E77C28CC0
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 17:25:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 440C025E47
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 17:21:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4815425E5D
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 17:25:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725961AbfE3RVw (ORCPT
+        id S1726590AbfE3RZW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 May 2019 13:21:52 -0400
-Received: from mga12.intel.com ([192.55.52.136]:15132 "EHLO mga12.intel.com"
+        Thu, 30 May 2019 13:25:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42860 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbfE3RVw (ORCPT
+        id S1725961AbfE3RZV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 May 2019 13:21:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 10:21:51 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga004.jf.intel.com with ESMTP; 30 May 2019 10:21:51 -0700
-Date:   Thu, 30 May 2019 10:21:51 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190530172150.GA23930@linux.intel.com>
-References: <CALCETrUyAAhnQ+RUeN1L41TKj-vcD2CNt-FJ9siO=Zo6gvH1Aw@mail.gmail.com>
- <20190524224107.GJ365@linux.intel.com>
- <683B5E3D-AFB6-4B45-8D39-B00847312209@amacapital.net>
- <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
- <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
- <20190528202407.GB13158@linux.intel.com>
- <CALCETrWTXCb1jru1G5G3sOp5AV8iYUtrffiSxE-5gotXtrZD-g@mail.gmail.com>
- <20190528214107.GD13158@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F654EB439@ORSMSX116.amr.corp.intel.com>
+        Thu, 30 May 2019 13:25:21 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9AAD030A6986;
+        Thu, 30 May 2019 17:25:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4AB1938E3A;
+        Thu, 30 May 2019 17:25:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 01/10] keys: sparse: Fix key_fs[ug]id_changed() [ver #2]
+From:   David Howells <dhowells@redhat.com>
+To:     keyrings@vger.kernel.org
+Cc:     James Morris <jamorris@linux.microsoft.com>, dhowells@redhat.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ebiggers@kernel.org
+Date:   Thu, 30 May 2019 18:25:19 +0100
+Message-ID: <155923711951.949.17453975846850465292.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155923711088.949.14909672457214372214.stgit@warthog.procyon.org.uk>
+References: <155923711088.949.14909672457214372214.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F654EB439@ORSMSX116.amr.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 30 May 2019 17:25:21 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 29, 2019 at 10:38:06PM -0700, Xing, Cedric wrote:
-> > From: Christopherson, Sean J
-> > Sent: Tuesday, May 28, 2019 2:41 PM
-> > 
-> > On Tue, May 28, 2019 at 01:48:02PM -0700, Andy Lutomirski wrote:
-> > > On Tue, May 28, 2019 at 1:24 PM Sean Christopherson
-> > > <sean.j.christopherson@intel.com> wrote:
-> > > >
-> > > > Actually, I think we do have everything we need from an LSM perspective.
-> > > > LSMs just need to understand that sgx_enclave_load() with a NULL vma
-> > > > implies a transition from RW.  For example, SELinux would interpret
-> > > > sgx_enclave_load(NULL, RX) as requiring FILE__EXECMOD.
-> > >
-> > > You lost me here.  What operation triggers this callback?  And
-> > > wouldn't sgx_enclave_load(NULL, RX) sometimes be a transition from RO
-> > > or just some fresh executable zero bytes?
-> > 
-> > An explicit ioctl() after EACCEPTCOPY to update the allowed permissions.
-> > For all intents and purposes, the EAUG'd page must start RW.  Maybe a better way to phrase
-> > it is that at some point the page must be writable to have any value whatsover.
-> > EACCEPTCOPY explicitly requires the page to be at least RW.  EACCEPT technically doesn't
-> > require RW, but a RO or RX zero page is useless.  Userspace could still EACCEPT with RO or
-> > RX, but SGX would assume a minimum of RW for the purposes of the LSM check.
-> 
-> Why is an explicit ioctl() necessary after EACCEPTCOPY? Or why is mprotect() not sufficient?
+Sparse warnings are incurred by key_fs[ug]id_changed() due to unprotected
+accesses of tsk->cred, which is marked __rcu.
 
-Ignore this, I was trying to avoid having to add a vm_ops mprotect(),
-which Andy pointed out was silly.
+Fix this by passing the new cred struct to these functions from
+commit_creds() rather than the task pointer.
 
-> > In theory, it's still your MAXPERM model, but with the unnecessary states removed and the
-> > others enforced/handled by the natural SGX transitions instead of explictly in ioctls.
-> > Underneath the hood the SGX driver would still need to track the MAXPERM.
-> 
-> What are the "unnecessary states" removed? 
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+---
 
-Andy proposed taking full RWX in MAXPERMs, but really we only need "can
-writes ever happen to this page", as that allows the SGX driver to avoid
-having to track if a page has been mapped PROT_WRITE by any VMA in any
-process.
+ include/linux/key.h          |    8 ++++----
+ kernel/cred.c                |    4 ++--
+ security/keys/process_keys.c |   22 ++++++++++------------
+ 3 files changed, 16 insertions(+), 18 deletions(-)
 
-> I'm not sure understand the proposal fully. The whole thing looks to me like
-> the driver is undertaking things that should/would otherwise be done by
-> mmap()/mprotect() syscalls. It also imposes unnecessary restrictions on user
-> mode code, such as mmap(PROT_NONE), ACTIVATE_REGION can be called only once,
-> etc. What'd happen if ACTIVATE_REGION is called with a range spanning
-> multiple/partial VMAs? What'd happen if an enclave was unmapped than mapped
-> again? I'd say the proposal is unintuitive at least.
-> 
-> In theory, if the driver can keep track of MAXPERM for all pages within an
-> enclave, then it could fail mmap() if the requested prot conflicts with any
-> page's MAXPERM within that range. Otherwise, MAXPERM could be copied into
-> VM_MAY* flags then mprotect() will just follow through. Wouldn't that be a
-> much simpler and more intuitive approach?
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 7099985e35a9..1f09aad1c98c 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -402,8 +402,8 @@ extern struct ctl_table key_sysctls[];
+  * the userspace interface
+  */
+ extern int install_thread_keyring_to_cred(struct cred *cred);
+-extern void key_fsuid_changed(struct task_struct *tsk);
+-extern void key_fsgid_changed(struct task_struct *tsk);
++extern void key_fsuid_changed(struct cred *new_cred);
++extern void key_fsgid_changed(struct cred *new_cred);
+ extern void key_init(void);
+ 
+ #else /* CONFIG_KEYS */
+@@ -418,8 +418,8 @@ extern void key_init(void);
+ #define make_key_ref(k, p)		NULL
+ #define key_ref_to_ptr(k)		NULL
+ #define is_key_possessed(k)		0
+-#define key_fsuid_changed(t)		do { } while(0)
+-#define key_fsgid_changed(t)		do { } while(0)
++#define key_fsuid_changed(c)		do { } while(0)
++#define key_fsgid_changed(c)		do { } while(0)
+ #define key_init()			do { } while(0)
+ 
+ #endif /* CONFIG_KEYS */
+diff --git a/kernel/cred.c b/kernel/cred.c
+index 45d77284aed0..3bd40de9e192 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -455,9 +455,9 @@ int commit_creds(struct cred *new)
+ 
+ 	/* alter the thread keyring */
+ 	if (!uid_eq(new->fsuid, old->fsuid))
+-		key_fsuid_changed(task);
++		key_fsuid_changed(new);
+ 	if (!gid_eq(new->fsgid, old->fsgid))
+-		key_fsgid_changed(task);
++		key_fsgid_changed(new);
+ 
+ 	/* do it
+ 	 * RLIMIT_NPROC limits on user->processes have already been checked
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index f05f7125a7d5..ba5d3172cafe 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -293,28 +293,26 @@ static int install_session_keyring(struct key *keyring)
+ /*
+  * Handle the fsuid changing.
+  */
+-void key_fsuid_changed(struct task_struct *tsk)
++void key_fsuid_changed(struct cred *new_cred)
+ {
+ 	/* update the ownership of the thread keyring */
+-	BUG_ON(!tsk->cred);
+-	if (tsk->cred->thread_keyring) {
+-		down_write(&tsk->cred->thread_keyring->sem);
+-		tsk->cred->thread_keyring->uid = tsk->cred->fsuid;
+-		up_write(&tsk->cred->thread_keyring->sem);
++	if (new_cred->thread_keyring) {
++		down_write(&new_cred->thread_keyring->sem);
++		new_cred->thread_keyring->uid = new_cred->fsuid;
++		up_write(&new_cred->thread_keyring->sem);
+ 	}
+ }
+ 
+ /*
+  * Handle the fsgid changing.
+  */
+-void key_fsgid_changed(struct task_struct *tsk)
++void key_fsgid_changed(struct cred *new_cred)
+ {
+ 	/* update the ownership of the thread keyring */
+-	BUG_ON(!tsk->cred);
+-	if (tsk->cred->thread_keyring) {
+-		down_write(&tsk->cred->thread_keyring->sem);
+-		tsk->cred->thread_keyring->gid = tsk->cred->fsgid;
+-		up_write(&tsk->cred->thread_keyring->sem);
++	if (new_cred->thread_keyring) {
++		down_write(&new_cred->thread_keyring->sem);
++		new_cred->thread_keyring->gid = new_cred->fsgid;
++		up_write(&new_cred->thread_keyring->sem);
+ 	}
+ }
+ 
 
-Ignore all this, again I was trying to avoid hooking mprotect().
