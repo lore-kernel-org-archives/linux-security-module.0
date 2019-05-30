@@ -2,160 +2,152 @@ Return-Path: <SRS0=RYp/=T6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62022C28CC0
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 18:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 318E8C28CC2
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 19:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3808425F2C
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 18:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08DAB260B7
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 19:21:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559239973;
-	bh=9Ww7NltoWCg41xFzNFQ69I91y7QKfpdhx0v/2M6wxXo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xziE9LnII1x7Vtpzd06/odcbq/FQBYr2O0A5sxIYkQEpl1LxQqTD79UuBAemJfAML
-	 b+SzH1JFAtsbjcqr0WQ+KQ3/DtOKYZtFpHsOMDPWPKyKWeapnPEhA3mSBYhtYkJVg5
-	 FP3uoz1BEroVCwgkV+qTOKC/65uqL740UFsskMWs=
+	s=default; t=1559244062;
+	bh=Odh5mJR7Qgs8tP+o4xgz7GTPiNe9Lb/ibVAyREXQGqQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=13apUt4KgzqtCVMcWJpqDEAiDxH/7/h6g+9bYOWETDNYvaqaS1tQiRk6/dX8Jyp9K
+	 i8q/rE59HXeBtqnLcLCPJSLVrw1hKX5ZUW77xlskvCVu87kEanVOonlXs29RIc8tVt
+	 Vc9JKXGOONIcIw30pIan+dAJfkU5BwoSQzSXBkCg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbfE3SMw (ORCPT
+        id S1726031AbfE3TVA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 May 2019 14:12:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60058 "EHLO mail.kernel.org"
+        Thu, 30 May 2019 15:21:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfE3SMw (ORCPT
+        id S1726080AbfE3TVA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 May 2019 14:12:52 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 30 May 2019 15:21:00 -0400
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0209E25D83;
-        Thu, 30 May 2019 18:12:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF5A2260D0
+        for <linux-security-module@vger.kernel.org>; Thu, 30 May 2019 19:20:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559239971;
-        bh=9Ww7NltoWCg41xFzNFQ69I91y7QKfpdhx0v/2M6wxXo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=y3ozm1WdSv+jrAziwx4V/Fxqobr8rzP8zUSQNFCn3jHuuGfQqwyxO5M+/XJGry4Yp
-         qHBjLXyRFlv+yp1lgrkxckPI4FjxdQJ56IsaZuiU9IfjGgusm9ff9fkngIUZDTo3Vn
-         MFQ/38BweZX0pKZjP51uivtCJN7sLltr7/ovcjnc=
-Date:   Thu, 30 May 2019 11:12:49 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     keyrings@vger.kernel.org,
-        Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/10] keys: Miscellany [ver #2]
-Message-ID: <20190530181248.GC70051@gmail.com>
-References: <155923711088.949.14909672457214372214.stgit@warthog.procyon.org.uk>
+        s=default; t=1559244059;
+        bh=Odh5mJR7Qgs8tP+o4xgz7GTPiNe9Lb/ibVAyREXQGqQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=k1VTA2qU/RD8Hs7QLYGbUetg3lfpgX8214GkgLedrTURhqCoR0r7gjkRxDYxxEonb
+         gTc8bbpVFJ7fgrtdK662jLwj7iXrBIGIuLY91PlWLaVSKxh9ozJOy21jpK7qOpAcQg
+         6IAmBphU87+WYP27EHkPfBt4ShDmO/Guk3AeZ7dk=
+Received: by mail-wr1-f45.google.com with SMTP id l17so4896601wrm.10
+        for <linux-security-module@vger.kernel.org>; Thu, 30 May 2019 12:20:58 -0700 (PDT)
+X-Gm-Message-State: APjAAAUFRvW2+MJnK9Z5+ODlXtvQDTLQEkGG716FsTlKpNPs5nK4VoqN
+        R9rix1uLP581VpBRBVFnm+Kyar3eECfrwptNUM9tjg==
+X-Google-Smtp-Source: APXvYqy73ZMq0qQmmQ/+vAioP4b3Sl7JgF5MBuyujqDcT8diOwfoebNcCtYnbTp7wfhGb0A0cPCz00xyeb2Lc9Xg3WE=
+X-Received: by 2002:a5d:6207:: with SMTP id y7mr3442998wru.265.1559244057293;
+ Thu, 30 May 2019 12:20:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155923711088.949.14909672457214372214.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
+ <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
+ <20190528202407.GB13158@linux.intel.com> <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
+ <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
+ <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov> <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+ <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov> <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
+ <20190530180110.GB23930@linux.intel.com>
+In-Reply-To: <20190530180110.GB23930@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 30 May 2019 12:20:45 -0700
+X-Gmail-Original-Message-ID: <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
+Message-ID: <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 30, 2019 at 06:25:11PM +0100, David Howells wrote:
-> 
-> Here are some miscellaneous keyrings fixes and improvements intended for
-> the next merge window:
-> 
->  (1) Fix a bunch of warnings from sparse, including missing RCU bits and
->      kdoc-function argument mismatches
-> 
->  (2) Implement a keyctl to allow a key to be moved from one keyring to
->      another, with the option of prohibiting key replacement in the
->      destination keyring.
-> 
->  (3) Grant Link permission to possessors of request_key_auth tokens so that
->      upcall servicing daemons can more easily arrange things such that only
->      the necessary auth key is passed to the actual service program, and
->      not all the auth keys a daemon might possesss.
-> 
->  (4) Improvement in lookup_user_key().
-> 
->  (5) Implement a keyctl to allow keyrings subsystem capabilities to be
->      queried.
-> 
-> The patches can be found on the following branch:
-> 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-misc
-> 
+On Thu, May 30, 2019 at 11:01 AM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Thu, May 30, 2019 at 09:14:10AM -0700, Andy Lutomirski wrote:
+> > On Thu, May 30, 2019 at 8:04 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > >
+> > > On 5/30/19 10:31 AM, Andy Lutomirski wrote:
+> > > > Hi all-
+> > > >
+> > > > After an offline discussion with Sean yesterday, here are some updates
+> > > > to the user API parts of my proposal.
+> > > >
+> > > > Unfortunately, Sean convinced me that MAXPERM doesn't work the way I
+> > > > described it because, for SGX2, the enclave loader won't know at load
+> > > > time whether a given EAUG-ed page will ever be executed.  So here's an
+> > > > update.
+> > > >
+> > > > First, here are the requrements as I see them, where EXECUTE, EXECMOD,
+> > > > and EXECMEM could be substituted with other rules at the LSM's
+> > > > discretion:
+> > > >
+> > > >   - You can create a WX or RWX mapping if and only if you have EXECMEM.
+> > > >
+> > > >   - To create an X mapping of an enclave page that has ever been W, you
+> > > > need EXECMOD.
+> > >
+> > > EXECMOD to what file? The enclave file from which the page's content
+> > > originated, the sigstruct file, or /dev/sgx/enclave?
+> >
+> > I leave that decision to you :)  The user should need permission to do
+> > an execmod thing on an enclave, however that wants to be encoded.
+>
+> But that decision dictates how the SGX API handles sigstruct.  If LSMs
+> want to associate EXECMOD with sigstruct, then SGX needs to take sigstruct
+> early and hold a reference to the file for the lifetime of the enclave.
+> And if we're going to do that, the whole approach of inheriting
+> permissions from source VMAs becomes unnecessary complexity.
+>
+> > >
+> > > >   - To create an X mapping of an enclave page that came from EADD, you
+> > > > need EXECUTE on the source file.  Optionally, we could also permit
+> > > > this if you have EXECMOD.
+> > >
+> > > What is the "source file" i.e. the target of the check?  Enclave file,
+> > > sigstruct file, or /dev/sgx/enclave?
+> >
+> > Enclave file -- that is, the file backing the vma from which the data is loaded.
+>
+> It wasn't explicitly called out in Andy's proposal(s), but the idea is
+> that the SGX driver would effectively inherit permissions from the source
+> VMA (EADD needs a source for the initial value of the encave page).
 
-syzkaller still manages to crash something in the keys subsystem really quickly
-when I run it on that branch (commit 35036b7e765b6):
-
-RAX: ffffffffffffffda RBX: 000000000071bf00 RCX: 0000000000458a09
-RDX: 0000000020001800 RSI: 00000000200017c0 RDI: 0000000020001780
-RBP: 00007f784d775ca0 R08: fffffffffffffffd R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000246 R12: 00007f784d7766d4
-R13: 00000000004a63d9 R14: 00000000006e33f8 R15: 0000000000000003
-BUG: unable to handle page fault for address: ffffeba31fffffd0
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 0 P4D 0 
-Oops: 0000 [#1] SMP KASAN
-CPU: 5 PID: 10320 Comm: syz-executor.3 Not tainted 5.2.0-rc1-00010-g35036b7e765b6 #3
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-RIP: 0010:__read_once_size include/linux/compiler.h:194 [inline]
-RIP: 0010:compound_head include/linux/page-flags.h:172 [inline]
-RIP: 0010:virt_to_head_page include/linux/mm.h:720 [inline]
-RIP: 0010:virt_to_cache mm/slab.c:376 [inline]
-RIP: 0010:kfree+0x7f/0x1d0 mm/slab.c:3751
-Code: 7f 77 00 00 48 01 d0 48 89 df 48 c1 e8 0c 48 8d 14 c5 00 00 00 00 48 29 c2 48 89 d0 48 ba 00 00 00 00 00 ea ff ff 48 8d 04 c2 <48> 8b 50 08 48 8d 4a ff 83 e2 01 48 0f 45 c1 4c 8b 68 18 49 63 75
-RSP: 0018:ffff88800a7f7bf0 EFLAGS: 00010016
-RAX: ffffeba31fffffc8 RBX: 0000003ffffffffc RCX: 0000000000000000
-RDX: ffffea0000000000 RSI: 0000000000000000 RDI: 0000003ffffffffc
-RBP: ffff88800a7f7c10 R08: ffffffff83bf24c0 R09: ffffed100da2e448
-R10: 0000000000000001 R11: ffffed100da2e447 R12: 0000000000000202
-R13: ffffffff824c2d76 R14: dffffc0000000000 R15: ffff88800f1cf000
-FS:  00007f784d776700(0000) GS:ffff88806d140000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffeba31fffffd0 CR3: 000000006932d004 CR4: 0000000000760ee0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
-Call Trace:
- assoc_array_cancel_edit+0x56/0xa0 lib/assoc_array.c:1428
- __key_link_end+0x7e/0x170 security/keys/keyring.c:1360
- key_create_or_update+0x868/0xbb0 security/keys/key.c:943
- __do_sys_add_key security/keys/keyctl.c:134 [inline]
- __se_sys_add_key+0x134/0x380 security/keys/keyctl.c:74
- __x64_sys_add_key+0xbe/0x150 security/keys/keyctl.c:74
- do_syscall_64+0x9e/0x4e0 arch/x86/entry/common.c:301
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x458a09
-Code: dd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 ab b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f784d775c88 EFLAGS: 00000246 ORIG_RAX: 00000000000000f8
-RAX: ffffffffffffffda RBX: 000000000071bf00 RCX: 0000000000458a09
-RDX: 0000000020001800 RSI: 00000000200017c0 RDI: 0000000020001780
-RBP: 00007f784d775ca0 R08: fffffffffffffffd R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000246 R12: 00007f784d7766d4
-R13: 00000000004a63d9 R14: 00000000006e33f8 R15: 0000000000000003
-Modules linked in:
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-CR2: ffffeba31fffffd0
----[ end trace 01d64df35f47d1f5 ]---
-RIP: 0010:__read_once_size include/linux/compiler.h:194 [inline]
-RIP: 0010:compound_head include/linux/page-flags.h:172 [inline]
-RIP: 0010:virt_to_head_page include/linux/mm.h:720 [inline]
-RIP: 0010:virt_to_cache mm/slab.c:376 [inline]
-RIP: 0010:kfree+0x7f/0x1d0 mm/slab.c:3751
-Code: 7f 77 00 00 48 01 d0 48 89 df 48 c1 e8 0c 48 8d 14 c5 00 00 00 00 48 29 c2 48 89 d0 48 ba 00 00 00 00 00 ea ff ff 48 8d 04 c2 <48> 8b 50 08 48 8d 4a ff 83 e2 01 48 0f 45 c1 4c 8b 68 18 49 63 75
-RSP: 0018:ffff88800a7f7bf0 EFLAGS: 00010016
-RAX: ffffeba31fffffc8 RBX: 0000003ffffffffc RCX: 0000000000000000
-RDX: ffffea0000000000 RSI: 0000000000000000 RDI: 0000003ffffffffc
-RBP: ffff88800a7f7c10 R08: ffffffff83bf24c0 R09: ffffed100da2e448
-R10: 0000000000000001 R11: ffffed100da2e447 R12: 0000000000000202
-R13: ffffffff824c2d76 R14: dffffc0000000000 R15: ffff88800f1cf000
-FS:  00007f784d776700(0000) GS:ffff88806d140000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffeba31fffffd0 CR3: 000000006932d004 CR4: 0000000000760ee0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
+I actually meant for it to *not* work like this.  I don't want the
+source VMA to have to be VM_EXEC.  I think the LSM should just check
+permissions on ->vm_file.
