@@ -2,118 +2,61 @@ Return-Path: <SRS0=RYp/=T6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE42C28CC3
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 22:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E89DC28CC0
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 22:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF18826265
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 22:03:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70BF32626C
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 22:04:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfE3WDg (ORCPT
+        id S1726430AbfE3WD4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 May 2019 18:03:36 -0400
-Received: from mga04.intel.com ([192.55.52.120]:42231 "EHLO mga04.intel.com"
+        Thu, 30 May 2019 18:03:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43080 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726308AbfE3WDf (ORCPT
+        id S1726386AbfE3WDz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 May 2019 18:03:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 14:36:02 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga008.fm.intel.com with ESMTP; 30 May 2019 14:36:01 -0700
-Date:   Thu, 30 May 2019 14:36:01 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        William Roberts <bill.c.roberts@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190530213601.GC27551@linux.intel.com>
-References: <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
- <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
- <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
- <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
- <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
- <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
- <20190530180110.GB23930@linux.intel.com>
- <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
- <20190530211645.GB27551@linux.intel.com>
- <CALCETrVAoDppmdJzkpwagt3q64M-QpNajXbKGR1yQdqyofeANQ@mail.gmail.com>
+        Thu, 30 May 2019 18:03:55 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5DFC9307D910;
+        Thu, 30 May 2019 22:03:50 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 21C7960C5F;
+        Thu, 30 May 2019 22:03:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190530181248.GC70051@gmail.com>
+References: <20190530181248.GC70051@gmail.com> <155923711088.949.14909672457214372214.stgit@warthog.procyon.org.uk>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     dhowells@redhat.com, keyrings@vger.kernel.org,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/10] keys: Miscellany [ver #2]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrVAoDppmdJzkpwagt3q64M-QpNajXbKGR1yQdqyofeANQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <24107.1559253828.1@warthog.procyon.org.uk>
+Date:   Thu, 30 May 2019 23:03:48 +0100
+Message-ID: <24108.1559253828@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 30 May 2019 22:03:55 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 30, 2019 at 02:23:07PM -0700, Andy Lutomirski wrote:
-> On Thu, May 30, 2019 at 2:16 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >
-> > On Thu, May 30, 2019 at 12:20:45PM -0700, Andy Lutomirski wrote:
-> > > On Thu, May 30, 2019 at 11:01 AM Sean Christopherson
-> > > <sean.j.christopherson@intel.com> wrote:
-> > > >
-> > > > On Thu, May 30, 2019 at 09:14:10AM -0700, Andy Lutomirski wrote:
-> > > > > Enclave file -- that is, the file backing the vma from which the data is loaded.
-> > > >
-> > > > It wasn't explicitly called out in Andy's proposal(s), but the idea is
-> > > > that the SGX driver would effectively inherit permissions from the source
-> > > > VMA (EADD needs a source for the initial value of the encave page).
-> > >
-> > > I actually meant for it to *not* work like this.  I don't want the
-> > > source VMA to have to be VM_EXEC.  I think the LSM should just check
-> > > permissions on ->vm_file.
-> >
-> > But if ->vm_file is NULL, i.e. the enclave is not backed by a file,
-> > then PROCESS__EXECMEM is required (or more likely, ENCLAVE__EXECMEM).
-> >
-> 
-> If ->vm_file is NULL, then I think some privilege is needed.  I
-> suppose the policy could have a new lesser permission EXECUNTRUSTED
-> which is like EXECMOD but you can't modify it.  I'm not convinced this
-> is particular important.
+Eric Biggers <ebiggers@kernel.org> wrote:
 
-Assuming MRENCLAVE generated by Graphene or any other hosting scheme are
-stable[1], then avoiding EXEC<whatever> means the user can effectively
-whitelist what enclaves are runnable by Graphene, even if the kernel
-doesn't implement security_enclave_create/init().
+> syzkaller still manages to crash something in the keys subsystem really
+> quickly when I run it on that branch (commit 35036b7e765b6):
 
-I agree that it probably isn't all that important, it's more of a "why
-not" argument, i.e. what is gained by not using sigstruct as a proxy?
+I've pushed a new version that should fix that, thanks.
 
-[1] What in the world is being attested if MRENCLAVE isn't stable?
+David
