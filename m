@@ -2,105 +2,112 @@ Return-Path: <SRS0=RYp/=T6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B91E7C28CC2
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 11:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2063AC28CC3
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 11:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BDDA257AC
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 11:00:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03863241C7
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 May 2019 11:53:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbfE3LAa (ORCPT
+        id S1726806AbfE3Lx5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 May 2019 07:00:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50354 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726359AbfE3LA3 (ORCPT
+        Thu, 30 May 2019 07:53:57 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44506 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726992AbfE3Lx5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 May 2019 07:00:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8A629AEB8;
-        Thu, 30 May 2019 11:00:27 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 928B31E3C08; Thu, 30 May 2019 13:00:24 +0200 (CEST)
-Date:   Thu, 30 May 2019 13:00:24 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
-Message-ID: <20190530110024.GB29237@quack2.suse.cz>
-References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <CAOQ4uxjC1M7jwjd9zSaSa6UW2dbEjc+ZbFSo7j9F1YHAQxQ8LQ@mail.gmail.com>
- <20190529142504.GC32147@quack2.suse.cz>
- <CAOQ4uxjLzURf8c1UH_xCJKkuD2es8i-=P-ZNM=t3aFcZLMwXEg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjLzURf8c1UH_xCJKkuD2es8i-=P-ZNM=t3aFcZLMwXEg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 30 May 2019 07:53:57 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UBqhMQ148204
+        for <linux-security-module@vger.kernel.org>; Thu, 30 May 2019 07:53:55 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ste409h2c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 30 May 2019 07:53:55 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 30 May 2019 12:53:53 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 30 May 2019 12:53:50 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UBrnTI44499030
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 May 2019 11:53:49 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3B872A405F;
+        Thu, 30 May 2019 11:53:49 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0B2E8A4055;
+        Thu, 30 May 2019 11:53:48 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.80.109])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 30 May 2019 11:53:47 +0000 (GMT)
+Subject: Re: [PATCH v2 1/3] evm: check hash algorithm passed to init_desc()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        dmitry.kasatkin@huawei.com, mjg59@google.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        stable@vger.kernel.org
+Date:   Thu, 30 May 2019 07:53:37 -0400
+In-Reply-To: <20190529133035.28724-2-roberto.sassu@huawei.com>
+References: <20190529133035.28724-1-roberto.sassu@huawei.com>
+         <20190529133035.28724-2-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19053011-0012-0000-0000-00000320F03F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19053011-0013-0000-0000-00002159BF13
+Message-Id: <1559217217.4008.3.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905300090
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed 29-05-19 18:53:21, Amir Goldstein wrote:
-> > > David,
-> > >
-> > > I am interested to know how you envision filesystem notifications would
-> > > look with this interface.
-> > >
-> > > fanotify can certainly benefit from providing a ring buffer interface to read
-> > > events.
-> > >
-> > > From what I have seen, a common practice of users is to monitor mounts
-> > > (somehow) and place FAN_MARK_MOUNT fanotify watches dynamically.
-> > > It'd be good if those users can use a single watch mechanism/API for
-> > > watching the mount namespace and filesystem events within mounts.
-> > >
-> > > A similar usability concern is with sb_notify and FAN_MARK_FILESYSTEM.
-> > > It provides users with two complete different mechanisms to watch error
-> > > and filesystem events. That is generally not a good thing to have.
-> > >
-> > > I am not asking that you implement fs_notify() before merging sb_notify()
-> > > and I understand that you have a use case for sb_notify().
-> > > I am asking that you show me the path towards a unified API (how a
-> > > typical program would look like), so that we know before merging your
-> > > new API that it could be extended to accommodate fsnotify events
-> > > where the final result will look wholesome to users.
-> >
-> > Are you sure we want to combine notification about file changes etc. with
-> > administrator-type notifications about the filesystem? To me these two
-> > sound like rather different (although sometimes related) things.
-> >
+On Wed, 2019-05-29 at 15:30 +0200, Roberto Sassu wrote:
+> This patch prevents memory access beyond the evm_tfm array by checking the
+> validity of the index (hash algorithm) passed to init_desc(). The hash
+> algorithm can be arbitrarily set if the security.ima xattr type is not
+> EVM_XATTR_HMAC.
 > 
-> Well I am sure that ring buffer for fanotify events would be useful, so
-> seeing that David is proposing a generic notification mechanism, I wanted
-> to know how that mechanism could best share infrastructure with fsnotify.
-> 
-> But apart from that I foresee the questions from users about why the
-> mount notification API and filesystem events API do not have better
-> integration.
-> 
-> The way I see it, the notification queue can serve several classes
-> of notifications and fsnotify could be one of those classes
-> (at least FAN_CLASS_NOTIF fits nicely to the model).
+> Fixes: 5feeb61183dde ("evm: Allow non-SHA1 digital signatures")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Cc: stable@vger.kernel.org
 
-I agree that for some type of fsnotify uses a ring buffer would make sense.
-But for others - such as permission events or unlimited queues - you cannot
-really use the ring buffer and I don't like the idea of having different
-ways of passing fsnotify events to userspace based on notification group
-type...
+Thanks, queued.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> ---
+>  security/integrity/evm/evm_crypto.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index e11564eb645b..82a38e801ee4 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -89,6 +89,9 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+>  		tfm = &hmac_tfm;
+>  		algo = evm_hmac;
+>  	} else {
+> +		if (hash_algo >= HASH_ALGO__LAST)
+> +			return ERR_PTR(-EINVAL);
+> +
+>  		tfm = &evm_tfm[hash_algo];
+>  		algo = hash_algo_name[hash_algo];
+>  	}
+
