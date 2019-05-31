@@ -2,110 +2,118 @@ Return-Path: <SRS0=N7Ha=T7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0F2C04AB6
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 08:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC091C04AB6
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 10:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F61C246BE
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 08:47:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oLrLydqE"
+	by mail.kernel.org (Postfix) with ESMTP id BA914267A9
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 10:46:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfEaIrX (ORCPT
+        id S1726518AbfEaKqb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 31 May 2019 04:47:23 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58674 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfEaIrX (ORCPT
+        Fri, 31 May 2019 06:46:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44632 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfEaKqb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 31 May 2019 04:47:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bOMlPYuwhgNbgzcW47Xzr7NLkqTLvvZFQzwh9Q0CgQ0=; b=oLrLydqEYkud8wnFoaqc9lIXF
-        HGHM28f+TVN8TeRcewuei7Mcw5lGYTzy2Rx6epTJDzc3urw5N/6Kq+tnjPgQSVAlSLDspniCQ5QBg
-        SDULeC//qqu3DLv5JTOcAKzx6Zxks2E9qg3/sBmYp2KeYDDYtrjLl0dJsOkJ/eSCIgtSrdc2uMZSI
-        pS8Z3FMlDMidlUyLDDNFdJz5SebER8isgaZjADqbUDCi/eptpU3U+7CwBH9nbN1LMU/uewFD5ioy1
-        It/OotQLeY9DmPDyLLRItNsIYUvnyn35xP5U5ER3PzSk6eTukrsH5UZcaqn/qgODJwFXcZ4dXtg2C
-        b+OJmkpOQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWdC1-0002qV-63; Fri, 31 May 2019 08:47:17 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9109F201B8CFE; Fri, 31 May 2019 10:47:14 +0200 (CEST)
-Date:   Fri, 31 May 2019 10:47:14 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, viro@zeniv.linux.org.uk,
-        raven@themaw.net, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-block@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
- ring buffer
-Message-ID: <20190531084714.GL2677@hirez.programming.kicks-ass.net>
-References: <20190528231218.GA28384@kroah.com>
- <20190528162603.GA24097@kroah.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
- <4031.1559064620@warthog.procyon.org.uk>
- <31936.1559146000@warthog.procyon.org.uk>
+        Fri, 31 May 2019 06:46:31 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hWf3N-0003fL-Rn; Fri, 31 May 2019 10:46:29 +0000
+To:     Ke Wu <mikewu@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject: re: security/loadpin: Allow to exclude specific file types
+Message-ID: <73fac64c-fe49-4738-49a4-0afe668eed94@canonical.com>
+Date:   Fri, 31 May 2019 11:46:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <31936.1559146000@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 29, 2019 at 05:06:40PM +0100, David Howells wrote:
+Hi,
 
-> Looking at the perf ring buffer, there appears to be a missing barrier in
-> perf_aux_output_end():
-> 
-> 	rb->user_page->aux_head = rb->aux_head;
-> 
-> should be:
-> 
-> 	smp_store_release(&rb->user_page->aux_head, rb->aux_head);
+Static analysis with Coverity on linux-next has found a potential issue
+with the following commit:
 
-I've answered that in another email; the aux bit is 'magic'.
+commit 1633a4f04cc171fc638deb5c95af96032d3c591b
+Author: Ke Wu <mikewu@google.com>
+Date:   Thu May 30 12:22:08 2019 -0700
 
-> It should also be using smp_load_acquire().  See
-> Documentation/core-api/circular-buffers.rst
+    security/loadpin: Allow to exclude specific file types
 
-We use the control dependency instead, as described in the comment of
-perf_output_put_handle():
 
-	 *   kernel				user
-	 *
-	 *   if (LOAD ->data_tail) {		LOAD ->data_head
-	 *			(A)		smp_rmb()	(C)
-	 *	STORE $data			LOAD $data
-	 *	smp_wmb()	(B)		smp_mb()	(D)
-	 *	STORE ->data_head		STORE ->data_tail
-	 *   }
-	 *
-	 * Where A pairs with D, and B pairs with C.
-	 *
-	 * In our case (A) is a control dependency that separates the load of
-	 * the ->data_tail and the stores of $data. In case ->data_tail
-	 * indicates there is no room in the buffer to store $data we do not.
-	 *
-	 * D needs to be a full barrier since it separates the data READ
-	 * from the tail WRITE.
-	 *
-	 * For B a WMB is sufficient since it separates two WRITEs, and for C
-	 * an RMB is sufficient since it separates two READs.
+209                for (j = 0; j < ARRAY_SIZE(kernel_read_file_str); j++) {
+210                        if (strcmp(cur, kernel_read_file_str[j]) == 0) {
+211                                pr_info("excluding: %s\n",
+212                                        kernel_read_file_str[j]);
 
-Userspace can choose to use smp_load_acquire() over the first smp_rmb()
-if that is efficient for the architecture (for w ahole bunch of archs
-load-acquire would end up using mb() while rmb() is adequate and
-cheaper).
+CID 81977 (#1 of 1): Out-of-bounds write
+overrun-local: Overrunning array ignore_read_file_id of 8 4-byte
+elements at element index 8 (byte offset 35) using index j (which
+evaluates to 8).
+
+213                                ignore_read_file_id[j] = 1;
+
+According to Coverity ignore_read_file_id is an array of 8 integers.
+However, ARRAY_SIZE(kernel_read_file_str) is 9, so we have an out of
+bounds write on ignore_read_file[j] when j is 8.
+
+Colin
