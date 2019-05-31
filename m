@@ -2,48 +2,42 @@ Return-Path: <SRS0=N7Ha=T7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B54EC04AB6
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 16:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E73C04AB6
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 17:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3475326C60
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 16:45:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E7kQkfZH"
+	by mail.kernel.org (Postfix) with ESMTP id 7AA1F23AFC
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 17:12:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbfEaQpH (ORCPT
+        id S1726892AbfEaRMw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 31 May 2019 12:45:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41948 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfEaQpH (ORCPT
+        Fri, 31 May 2019 13:12:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37760 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726558AbfEaRMv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 31 May 2019 12:45:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kWlXD8DiGcPRvC35zTm87cBBCSSsFkc29ZuXEbkqGVk=; b=E7kQkfZHgd8Xhu0FahwHyMpg5
-        V3rEtjoLJ3K9R4uoncA6Hex5gD8HOVuW7fVxbtdnIqyfv8W/h+05KnWJBg4vEKPRe2ymP3ySMITTe
-        ixeyxsQmEDk7ZL4SYsPhLh0YihzKKEhtCm/WT5wgoDmN0fh1RghSDBWMAye5x0mUZAwBsAoTYuGAY
-        Z9VFIGkIDNokycSy82VgJisRCfDA50kqxwNtaNZLL5GhRla8oD9tR3ZSVr+ETnDPQj7Z4gDMat87o
-        PPgb+VPA/Vnh79iL++6flNyNB0V08ayFnXyxdC5HHjU1AWvBHkzDjczpYsUEZb6q0WmsvsoqSEH2I
-        nHFV3dpDw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWke6-00080M-73; Fri, 31 May 2019 16:44:46 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2CB6B201CF1CB; Fri, 31 May 2019 18:44:44 +0200 (CEST)
-Date:   Fri, 31 May 2019 18:44:44 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jann Horn <jannh@google.com>, Greg KH <gregkh@linuxfoundation.org>,
+        Fri, 31 May 2019 13:12:51 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1C2FA85365;
+        Fri, 31 May 2019 17:12:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B5C958CA2;
+        Fri, 31 May 2019 17:12:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190531164444.GD2606@hirez.programming.kicks-ass.net>
+References: <20190531164444.GD2606@hirez.programming.kicks-ass.net> <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com> <20190528162603.GA24097@kroah.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk> <4031.1559064620@warthog.procyon.org.uk> <20190528231218.GA28384@kroah.com> <31936.1559146000@warthog.procyon.org.uk> <16193.1559163763@warthog.procyon.org.uk> <21942.1559304135@warthog.procyon.org.uk> <606.1559312412@warthog.procyon.org.uk>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     dhowells@redhat.com, Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
@@ -52,49 +46,54 @@ Cc:     Jann Horn <jannh@google.com>, Greg KH <gregkh@linuxfoundation.org>,
         kernel list <linux-kernel@vger.kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
- ring buffer
-Message-ID: <20190531164444.GD2606@hirez.programming.kicks-ass.net>
-References: <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com>
- <20190528162603.GA24097@kroah.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
- <4031.1559064620@warthog.procyon.org.uk>
- <20190528231218.GA28384@kroah.com>
- <31936.1559146000@warthog.procyon.org.uk>
- <16193.1559163763@warthog.procyon.org.uk>
- <21942.1559304135@warthog.procyon.org.uk>
- <606.1559312412@warthog.procyon.org.uk>
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring buffer
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <606.1559312412@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <15400.1559322762.1@warthog.procyon.org.uk>
+Date:   Fri, 31 May 2019 18:12:42 +0100
+Message-ID: <15401.1559322762@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 31 May 2019 17:12:51 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 31, 2019 at 03:20:12PM +0100, David Howells wrote:
-> Peter Zijlstra <peterz@infradead.org> wrote:
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-> > (and it has already been established that refcount_t doesn't work for
-> > usage count scenarios)
+> > > (and it has already been established that refcount_t doesn't work for
+> > > usage count scenarios)
+> > 
+> > ?
+> > 
+> > Does that mean struct kref doesn't either?
 > 
-> ?
+> Indeed, since kref is just a pointless wrapper around refcount_t it does
+> not either.
 > 
-> Does that mean struct kref doesn't either?
+> The main distinction between a reference count and a usage count is that
+> 0 means different things. For a refcount 0 means dead. For a usage count
+> 0 is merely unused but valid.
 
-Indeed, since kref is just a pointless wrapper around refcount_t it does
-not either.
+Ah - I consider the terms interchangeable.
 
-The main distinction between a reference count and a usage count is that
-0 means different things. For a refcount 0 means dead. For a usage count
-0 is merely unused but valid.
+Take Documentation/filesystems/vfs.txt for instance:
 
-Incrementing a 0 refcount is a serious bug -- use-after-free (and hence
-refcount_t will refuse this and splat), for a usage count this is no
-problem.
+  dget: open a new handle for an existing dentry (this just increments
+	the usage count)
 
-Now, it is sort-of possible to merge the two, by basically stating
-something like: usage = refcount - 1. But that can get tricky and people
-have not really liked the result much for the few times I tried.
+  dput: close a handle for a dentry (decrements the usage count). ...
+
+  ...
+
+  d_lookup: look up a dentry given its parent and path name component
+	It looks up the child of that given name from the dcache
+	hash table. If it is found, the reference count is incremented
+	and the dentry is returned. The caller must use dput()
+	to free the dentry when it finishes using it.
+
+Here we interchange the terms.
+
+Or https://www.kernel.org/doc/gorman/html/understand/understand013.html
+which seems to interchange the terms in reference to struct page.
+
+David
