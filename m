@@ -2,215 +2,126 @@ Return-Path: <SRS0=N7Ha=T7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5056EC28CC3
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 14:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBE2C04AB6
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 14:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29B6526A06
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 14:04:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DsDJ/R5s"
+	by mail.kernel.org (Postfix) with ESMTP id 72E0526A54
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 14:20:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbfEaOEP (ORCPT
+        id S1726676AbfEaOUT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 31 May 2019 10:04:15 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46941 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbfEaOEP (ORCPT
+        Fri, 31 May 2019 10:20:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47652 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfEaOUT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 31 May 2019 10:04:15 -0400
-Received: by mail-lf1-f65.google.com with SMTP id l26so7974616lfh.13;
-        Fri, 31 May 2019 07:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NbiFOXPIgLQl8X4RPOXyYI26kwMW4SPGkalTFBiRZ70=;
-        b=DsDJ/R5syVbbBzUegwP9YPJCreqBZD4YX6TDNd2S1lE+3vnZkJ+L3BwzzMbCOm6Y9u
-         GxTayoeoJIU4SG3p8edN2dwYKuKLU7b3JedDnvp5advMX/y+Hy78LyIMApCxsTpz1z0h
-         gVZqZCtSP51XD+s+6quoOXY3nrQm/1CHqUeXC9khCAkf1iOSc7KENq1RvHhku8vbGZIo
-         DuSTsHEMzMGniXiisWit+QIcXyJm8l0AKawQwnec0HjXXbPvxIGVgNVCX2TOmZsVU9rI
-         XW3Ai4/0Kg9cUUPtInjvrgioxTSrt8Uxx3f6ptm+SIBsxZloXrybEqWpRkbatZvc5t/N
-         GFAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=NbiFOXPIgLQl8X4RPOXyYI26kwMW4SPGkalTFBiRZ70=;
-        b=fOEk4PUaGJ9YDqZCB30/T43QI7oJQ/GzlSE8FN5IMylw0qdxliYNWLPa35vXgRwuL/
-         3iloqU9PNThj57jjZsPgU5dErIDcLI9C+2Gcx/Bnm8jgatqryKjcZB3fbInsYgi0BCc8
-         AnamG5kXD2eDD28eBE7UjuonJy56KrG5agBVqhjgkAKthwcOutVp8kaVdjZB3bQSBEuD
-         H8K1XxlQQIzxZScxIh2LqoD/yx4tUAG2Y6/OrmAtg8mx5VS7eGQmFQUJT3Lj0cOzfLj+
-         YXpU2Rbd6kEuWa27l2XDoXPYwt46EHKnD9RIk6pXbp/dU6sDFyYjU3Z/81aV5lwlzCzr
-         KMig==
-X-Gm-Message-State: APjAAAWPAkPLo3IWJGAEnPZ/WDzpeYmxgDcV5iRFharVElMRR0HQwOFe
-        cisUXzX12C0Cz9UgCfhUX0pPGeT7uoY=
-X-Google-Smtp-Source: APXvYqxBCKqkK0/ycIl6x26U+uJ74w4gr3ePPAhUqv9OuTLs3y2WzkKqv/jkbOG/+uPUfrj56/+nYw==
-X-Received: by 2002:ac2:5621:: with SMTP id b1mr5460421lff.27.1559311452507;
-        Fri, 31 May 2019 07:04:12 -0700 (PDT)
-Received: from localhost.localdomain (mobile-user-c1d2e5-213.dhcp.inet.fi. [193.210.229.213])
-        by smtp.gmail.com with ESMTPSA id d15sm670412lfq.76.2019.05.31.07.04.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 May 2019 07:04:11 -0700 (PDT)
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-To:     sds@tycho.nsa.gov, zohar@linux.ibm.com, paul@paul-moore.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Janne Karhunen <janne.karhunen@gmail.com>
-Subject: [PATCH 2/2] ima: use the lsm policy update notifier
-Date:   Fri, 31 May 2019 17:02:37 +0300
-Message-Id: <20190531140237.9199-2-janne.karhunen@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190531140237.9199-1-janne.karhunen@gmail.com>
-References: <20190531140237.9199-1-janne.karhunen@gmail.com>
+        Fri, 31 May 2019 10:20:19 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DD64BB5C01;
+        Fri, 31 May 2019 14:20:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2128E7C5AD;
+        Fri, 31 May 2019 14:20:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190531132620.GC2606@hirez.programming.kicks-ass.net>
+References: <20190531132620.GC2606@hirez.programming.kicks-ass.net> <20190531111445.GO2677@hirez.programming.kicks-ass.net> <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com> <20190528162603.GA24097@kroah.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk> <4031.1559064620@warthog.procyon.org.uk> <20190528231218.GA28384@kroah.com> <31936.1559146000@warthog.procyon.org.uk> <16193.1559163763@warthog.procyon.org.uk> <21942.1559304135@warthog.procyon.org.uk>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     dhowells@redhat.com, Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring buffer
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <605.1559312411.1@warthog.procyon.org.uk>
+Date:   Fri, 31 May 2019 15:20:12 +0100
+Message-ID: <606.1559312412@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 31 May 2019 14:20:19 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Don't do lazy policy updates while running the rule matching,
-run the updates as they happen.
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Depends on commit cda44589be1c ("LSM: switch to blocking policy update notifiers")
+> Is it not the responsibility of the task that affects the 1->0
+> transition to actually free the memory?
+> 
+> That is, I'm expecting the '...' in both cases above the include the
+> actual freeing of the object. If this is not the case, then @usage is
+> not a reference count.
 
-Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
----
- security/integrity/ima/ima.h        |  2 ++
- security/integrity/ima/ima_main.c   |  8 ++++++
- security/integrity/ima/ima_policy.c | 44 +++++++++++++++++++++--------
- 3 files changed, 42 insertions(+), 12 deletions(-)
+Yes.  The '...' does the freeing.  It seemed unnecessary to include the code
+ellipsised there since it's not the point of the discussion, but if you want
+the full function:
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index d213e835c498..2203451862d4 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -154,6 +154,8 @@ unsigned long ima_get_binary_runtime_size(void);
- int ima_init_template(void);
- void ima_init_template_list(void);
- int __init ima_init_digests(void);
-+int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-+			  void *lsm_data);
- 
- /*
-  * used to protect h_table and sha_table
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 357edd140c09..f9629c5e1aee 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -43,6 +43,10 @@ int ima_appraise;
- int ima_hash_algo = HASH_ALGO_SHA1;
- static int hash_setup_done;
- 
-+static struct notifier_block ima_lsm_policy_notifier = {
-+	.notifier_call = ima_lsm_policy_change,
-+};
-+
- static int __init hash_setup(char *str)
- {
- 	struct ima_template_desc *template_desc = ima_template_desc_current();
-@@ -593,6 +597,10 @@ static int __init init_ima(void)
- 		error = ima_init();
- 	}
- 
-+	error = register_lsm_notifier(&ima_lsm_policy_notifier);
-+	if (error)
-+		pr_warn("Couldn't register LSM notifier, error %d\n", error);
-+
- 	if (!error)
- 		ima_update_policy_flag();
- 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index e0cc323f948f..4201a21ff42f 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -252,12 +252,14 @@ __setup("ima_appraise_tcb", default_appraise_policy_setup);
- /*
-  * The LSM policy can be reloaded, leaving the IMA LSM based rules referring
-  * to the old, stale LSM policy.  Update the IMA LSM based rules to reflect
-- * the reloaded LSM policy.  We assume the rules still exist; and BUG_ON() if
-- * they don't.
-+ * the reloaded LSM policy.
-  */
- static void ima_lsm_update_rules(void)
- {
- 	struct ima_rule_entry *entry;
-+	void *rule_new;
-+	char *lsm_new;
-+	char *lsm_old;
- 	int result;
- 	int i;
- 
-@@ -265,15 +267,39 @@ static void ima_lsm_update_rules(void)
- 		for (i = 0; i < MAX_LSM_RULES; i++) {
- 			if (!entry->lsm[i].rule)
- 				continue;
-+
-+			lsm_old = entry->lsm[i].args_p;
-+			lsm_new = kstrdup(lsm_old, GFP_KERNEL);
-+			if (unlikely(!lsm_new))
-+				return;
-+
- 			result = security_filter_rule_init(entry->lsm[i].type,
- 							   Audit_equal,
--							   entry->lsm[i].args_p,
--							   &entry->lsm[i].rule);
--			BUG_ON(!entry->lsm[i].rule);
-+							   lsm_new,
-+							   &rule_new);
-+			if (result == -EINVAL)
-+				pr_warn("ima: rule for LSM \'%d\' is invalid\n",
-+					entry->lsm[i].type);
-+
-+			entry->lsm[i].rule = rule_new;
-+			entry->lsm[i].args_p = lsm_new;
-+			synchronize_rcu();
-+
-+			kfree(lsm_old);
- 		}
- 	}
- }
- 
-+int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-+			  void *lsm_data)
-+{
-+	if (event != LSM_POLICY_CHANGE)
-+		return NOTIFY_DONE;
-+
-+	ima_lsm_update_rules();
-+	return NOTIFY_OK;
-+}
-+
- /**
-  * ima_match_rules - determine whether an inode matches the measure rule.
-  * @rule: a pointer to a rule
-@@ -327,11 +353,10 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 	for (i = 0; i < MAX_LSM_RULES; i++) {
- 		int rc = 0;
- 		u32 osid;
--		int retried = 0;
- 
- 		if (!rule->lsm[i].rule)
- 			continue;
--retry:
-+
- 		switch (i) {
- 		case LSM_OBJ_USER:
- 		case LSM_OBJ_ROLE:
-@@ -352,11 +377,6 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 		default:
- 			break;
- 		}
--		if ((rc < 0) && (!retried)) {
--			retried = 1;
--			ima_lsm_update_rules();
--			goto retry;
--		}
- 		if (!rc)
- 			return false;
- 	}
--- 
-2.17.1
+	void afs_put_call(struct afs_call *call)
+	{
+		struct afs_net *net = call->net;
+		int n = atomic_dec_return(&call->usage);
+		int o = atomic_read(&net->nr_outstanding_calls);
 
+		trace_afs_call(call, afs_call_trace_put, n + 1, o,
+			       __builtin_return_address(0));
+
+		ASSERTCMP(n, >=, 0);
+		if (n == 0) {
+			ASSERT(!work_pending(&call->async_work));
+			ASSERT(call->type->name != NULL);
+
+			if (call->rxcall) {
+				rxrpc_kernel_end_call(net->socket, call->rxcall);
+				call->rxcall = NULL;
+			}
+			if (call->type->destructor)
+				call->type->destructor(call);
+
+			afs_put_server(call->net, call->server);
+			afs_put_cb_interest(call->net, call->cbi);
+			afs_put_addrlist(call->alist);
+			kfree(call->request);
+
+			trace_afs_call(call, afs_call_trace_free, 0, o,
+				       __builtin_return_address(0));
+			kfree(call);
+
+			o = atomic_dec_return(&net->nr_outstanding_calls);
+			if (o == 0)
+				wake_up_var(&net->nr_outstanding_calls);
+		}
+	}
+
+You can see the kfree(call) in there.
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> (and it has already been established that refcount_t doesn't work for
+> usage count scenarios)
+
+?
+
+Does that mean struct kref doesn't either?
+
+> Aside from that, is the problem that refcount_dec_and_test() returns a
+> boolean (true - last put, false - not last) instead of the refcount
+> value? This does indeed make it hard to print the exact count value for
+> the event.
+
+That is the problem, yes - well, one of them: refcount_inc() doesn't either.
+
+David
