@@ -2,120 +2,99 @@ Return-Path: <SRS0=N7Ha=T7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FFBC04AB6
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 15:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B54EC04AB6
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 16:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A35D246A8
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 15:59:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3475326C60
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 16:45:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E7kQkfZH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbfEaP7E (ORCPT
+        id S1727020AbfEaQpH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 31 May 2019 11:59:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36576 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726563AbfEaP7E (ORCPT
+        Fri, 31 May 2019 12:45:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41948 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfEaQpH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 31 May 2019 11:59:04 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4VFtjBm107055
-        for <linux-security-module@vger.kernel.org>; Fri, 31 May 2019 11:59:03 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2su7bfr3pb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 31 May 2019 11:59:03 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 31 May 2019 16:59:01 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 31 May 2019 16:58:58 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4VFwvWP47317246
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 31 May 2019 15:58:57 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 43EA54204C;
-        Fri, 31 May 2019 15:58:57 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 918214204D;
-        Fri, 31 May 2019 15:58:56 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.80.109])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 31 May 2019 15:58:56 +0000 (GMT)
-Subject: [GIT PULL] integrity subsystem fixes for v5.2
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
+        Fri, 31 May 2019 12:45:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kWlXD8DiGcPRvC35zTm87cBBCSSsFkc29ZuXEbkqGVk=; b=E7kQkfZHgd8Xhu0FahwHyMpg5
+        V3rEtjoLJ3K9R4uoncA6Hex5gD8HOVuW7fVxbtdnIqyfv8W/h+05KnWJBg4vEKPRe2ymP3ySMITTe
+        ixeyxsQmEDk7ZL4SYsPhLh0YihzKKEhtCm/WT5wgoDmN0fh1RghSDBWMAye5x0mUZAwBsAoTYuGAY
+        Z9VFIGkIDNokycSy82VgJisRCfDA50kqxwNtaNZLL5GhRla8oD9tR3ZSVr+ETnDPQj7Z4gDMat87o
+        PPgb+VPA/Vnh79iL++6flNyNB0V08ayFnXyxdC5HHjU1AWvBHkzDjczpYsUEZb6q0WmsvsoqSEH2I
+        nHFV3dpDw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hWke6-00080M-73; Fri, 31 May 2019 16:44:46 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2CB6B201CF1CB; Fri, 31 May 2019 18:44:44 +0200 (CEST)
+Date:   Fri, 31 May 2019 18:44:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jann Horn <jannh@google.com>, Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Fri, 31 May 2019 11:58:45 -0400
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19053115-4275-0000-0000-0000033AAF0C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19053115-4276-0000-0000-0000384AB4C7
-Message-Id: <1559318325.4280.13.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-31_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905310099
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
+ ring buffer
+Message-ID: <20190531164444.GD2606@hirez.programming.kicks-ass.net>
+References: <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com>
+ <20190528162603.GA24097@kroah.com>
+ <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+ <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
+ <4031.1559064620@warthog.procyon.org.uk>
+ <20190528231218.GA28384@kroah.com>
+ <31936.1559146000@warthog.procyon.org.uk>
+ <16193.1559163763@warthog.procyon.org.uk>
+ <21942.1559304135@warthog.procyon.org.uk>
+ <606.1559312412@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <606.1559312412@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On Fri, May 31, 2019 at 03:20:12PM +0100, David Howells wrote:
+> Peter Zijlstra <peterz@infradead.org> wrote:
 
-Included in this pull request are four bug fixes, which are not
-specific to 5.2.  The first two are related to the architecture
-specific IMA policy support.  The other two patches, one is related to
-EVM signatures, based on additional hash algorithms, and the other is
-related to displaying the IMA policy.
- 
-At least Scott's patch should have been included in the last open
-window, but I sent the v5.2 pull request a bit earlier than normal.
+> > (and it has already been established that refcount_t doesn't work for
+> > usage count scenarios)
+> 
+> ?
+> 
+> Does that mean struct kref doesn't either?
 
-thanks,
+Indeed, since kref is just a pointless wrapper around refcount_t it does
+not either.
 
-Mimi
+The main distinction between a reference count and a usage count is that
+0 means different things. For a refcount 0 means dead. For a usage count
+0 is merely unused but valid.
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+Incrementing a 0 refcount is a serious bug -- use-after-free (and hence
+refcount_t will refuse this and splat), for a usage count this is no
+problem.
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-fixes-for-5.2-rc
-
-for you to fetch changes up to 8cdc23a3d9ec0944000ad43bad588e36afdc38cd:
-
-  ima: show rules with IMA_INMASK correctly (2019-05-29 23:18:25 -0400)
-
-----------------------------------------------------------------
-Petr Vorel (1):
-      ima: fix wrong signed policy requirement when not appraising
-
-Roberto Sassu (2):
-      evm: check hash algorithm passed to init_desc()
-      ima: show rules with IMA_INMASK correctly
-
-Scott Wood (1):
-      x86/ima: Check EFI_RUNTIME_SERVICES before using
-
- arch/x86/kernel/ima_arch.c          |  5 +++++
- security/integrity/evm/evm_crypto.c |  3 +++
- security/integrity/ima/ima_policy.c | 28 ++++++++++++++++------------
- 3 files changed, 24 insertions(+), 12 deletions(-)
-
+Now, it is sort-of possible to merge the two, by basically stating
+something like: usage = refcount - 1. But that can get tricky and people
+have not really liked the result much for the few times I tried.
