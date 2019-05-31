@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1266C28CC2
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6348EC28CC3
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:14:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5F9D26FE4
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:14:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37C2A26FE4
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:14:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ccmxFVpC"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="IStbCO8b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbfEaXO2 (ORCPT
+        id S1726674AbfEaXOl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 31 May 2019 19:14:28 -0400
-Received: from sonic303-9.consmr.mail.bf2.yahoo.com ([74.6.131.48]:46217 "EHLO
-        sonic303-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726541AbfEaXO1 (ORCPT
+        Fri, 31 May 2019 19:14:41 -0400
+Received: from sonic302-9.consmr.mail.bf2.yahoo.com ([74.6.135.48]:39994 "EHLO
+        sonic302-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726589AbfEaXOl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 31 May 2019 19:14:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559344466; bh=+QxXCb9k4EN0+MlvBQu1WP28VNVY6EbCswDSvfqvDU8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=ccmxFVpCB2X5fZTdglzjgqc+Ta9QU/awanROgc/gF7BHwN6SlOpfSRXhj+rVU10UqEeRr707tOog0w8HPBoV/s52hyLf0eWcT92XoM+IhnepIChaOTDuhZeB09220loAYoqptI2eGYtIpwlHDPvh2ZN3j7HnztyPD1Hzsdt+EVS/dBjzONIn6BeQOPe51inbN5yItvxn1+E+d4r75IJcsPWzesNdTsn77pZL0aze92HQ1MN2r6cO1R/kYG2lf+wZmkkWrY3Lyqw1SZ0eEETl7lMItet3XFwjnCKxy26z9OaLpy57b3vdK+ja/uVndLkw5nuCYjaVJPc0T9PRgMivMg==
-X-YMail-OSG: ZBn.6KkVM1kT1Ybk6yzFOXpo8qjplVJbfaRpNXcY8c66dkfwG43I6n2f9BUDnsm
- p20GI4AqTvEXJnDx7q3S.6kSRUBZTzMwsT1UrfVSu0pN6sB.KhfXADaPA3n4EkRtyKvmpKDdakL_
- zpPpLFNfHsbzXGF5HPk2iVdpsUMTmAz81chcvJ42mvDgmixAr1T2NW11tqGS.i2iORL9RrbCqJLG
- 20QA25.2VqqOEXAwh50Sjn3xrDP9vJp7R7e.bvLnuGQaIVSa5bc3Exb0QuS9MV64R8VkIVOFSZtU
- OlcGfKHwsEknlxQRhagEbdSQSNDYuVyjWxHvv6pS8ELaTtGTKD4zDDpzEg0_g7Uj3QaSxQzgjcNc
- T339gnQXne_E5sc3CPd06AKItBWh2KbVTBjfUkJpi_QrwZBSdpcca8Nmx9QfnLC10F1G5FGfByaR
- aOoW47Rfc1s76qFfhfo5aQq4BUkQc.IOeIqXWnHxdnznD48kIjXHvzl74NxoJ38d0zH6nCSFNRFm
- XeUJuxoXAHtL.lK6ndd.Y2KXjcwBVwl35PXiMw6JEgFwO.9yj_bR37i0VOgtEj5mox_Z4M_LRIiA
- HRVxV7biK9F4sMgORD2O7CE2M5V8C75zlwJDtaB3t9aazYniC80K2bSWRi9SSZB3xE95RAT29Kx8
- SukhljbgCvU9xRnsfxB3EAQA8.LaRGiSUFI6H6rXiL3dgcIzDfvSCXIlxv0MhJ94YXt7sG2ERnrm
- v825kjSwSD2KF46NqzP2XGiO1yupF_iQ8PjVKYTGsJjb6dJZV4sIuBfXpItCsW_Q5A8FKYZsE5MK
- qpMxOm3dbJYFjxmCTgeh9A2PGEoj9YLPGkUox57u5jIGmvjiioPHmHWSLGFn1Hqq0ErEjyqY0AmO
- GIOsl.SMj_4XQFT5htZK7ShWz2BJ9C3pO0F8OO7deQ90K3k9mAQdzXIi9wEGH1YSTqeHt6oVALme
- qY36U2iKW5ZzqNr6PeYRF77EzInX9mwqDOqgi8kqfmPLD8SeGNLTUkjMLfpsJSlVH2fq39JjSkMi
- fX0YnSMC96hkAA2Zxoog6rq6tUnOHI1VfKlwODf8USgsrplMCXRGh1lpmWR49vWfuPZLb0adOC2u
- YYM0TxhlB5cywH_9Cx3eXZ_QRDvrj8qmtLxRHtavGJq..CvwNI3yt7.ol12S0J56HG3Y7LRTtpRV
- AAePfR_yddFLWIuwHAo7YRulox3u.GxtSim7P2jV6pDVZcDETx2og6.H9dbuhKLd6vICadwdqWjk
- fKgOx1zqhyQsPaatqePRZTspRCoIyrNLP88fAV7KX4WkF.E_HMlTHD.08
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Fri, 31 May 2019 23:14:26 +0000
+        Fri, 31 May 2019 19:14:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559344480; bh=n7o8QGFhmUAYfuuVtS2cjj7dSkuQxOxyGbWYP+SBOLg=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=IStbCO8bdnEF/XKvB2atYwP/fVraaxtTrR/UpnVpTbrE//RJh4DSiNrKEopQLz2ZDfXhV5HZz7dc9HzxWOIvdYtLOiT/9YdRUNCX1wS1peNCKbWhUqLFJI7YHh3LxqUAd1uLwZumVVAHlKh52612ooXLXPvU/wShpXl2EzHwMQ7XIBNfKucBZQ3N3mjCN6TCfFniBGROPhDwCM/skGvcB1zso5E5glwyZepsouKFAmjdmttiOLyDTEbaC/lVtAY10C9x6Lj90YBG52PlVLCqqjs1Bvg/q8WEdhutPkPB5PnHtCZ82tjNPWEz1xjYFglhwLe8tMKoi30FNHzEakba0Q==
+X-YMail-OSG: YIF4_fwVM1kUCVz17cTqD8HXQ5tm9gS6P1jyEX1dDogKja5Du2dhVOFfDi_XUCg
+ bUYRREeWYng_FH89uJHAXNP8X.etXFNQnCJqklRRaTC3DwgVpKHUbwmcILyw6kD12JzH_UGeSzBm
+ Gl7tXWByxRQcarKh6q2MzDBs.mGvbu1h8rZ3gub15d..StgUiWKJm_KSehhum_BO4.YhqH7PYFuz
+ .5FtCzhHkvHZuT.6t1YwHqRX5YrRvpY_4JAt7ioKcJRrDDsHPhfbA8kFY7gCKcMF7Zs9kIuDguqQ
+ kMtJTXYwN4DVChaHIFsYKDdjHKwLdQVHZgbgWs5Maw7aqLWykbTm0u9G1O3kx0ZGUl41NSVv6G4.
+ 9m6mID9qXj_kesD_wNXDyuvdOk5Mc0kZagc0HURxkVbH8_HtluiJA5UQhlKhWxL9MsuMUKWVBWVS
+ .d6lxDfPT63xC8pl5tIt2GFw7QpRDZS4xatxtlyvf9zKHRQxziCozj8Nsp76Bj8zTU_8brYfDnJu
+ w8Rcx96S9Zu_oe3uwiN9oGTSnrxieOcAMSDQFI5rHeG71rsBVr1jrWi_KvCzbu2i9BtiV0Mf4_d3
+ NR8Qe3Hyxa.62pQOWzgH37pNhZEFjBo71DuOTfTth1XjCkkQkkmUJQ7EzUN4YWYk0M1wcPDJdwX8
+ DcyBFLXxIcK2n2vz6zCIZHZHLWivLy_BpGpcEPkSsNgIw39ctVvKlrzxD8yv.8dWKctoADouOQxT
+ pF0sBEuGttekbJUNJBnQWt0W3lvewojVytvfqzv7HWJaQKzzIGZLlg2NS_y8GX1TuN6jwBSxsvpG
+ qUTlJ51ZJjGPYwsXkAvtAncnOF2lV_NmQ9FZGibntt86epNdbIel1A_4C0OV9c47hEg4qp41HRtB
+ .ulbXFCf8Cm7X0W5G.xOZwRTfJggolRQtfkDEI_pvZ90efnBh9psCcXOIzViR79LcCto2Ixu0E.R
+ bYGgGeSABfgcW5vya9xQYiCfzb6N.sotRoPBQmf_prQ.cWKeLpnko.461IZf0VfV_XKH5MeX0Ovy
+ uwZIurq5f_aSRzSZQSZV7Ueh2lPu_ZKTK3al5FQKpNHZ8G9lDd5QE3pcPnDJHlXUYIw09kuD2X4z
+ KOlVxtkarr.lRc_4kQrH4VQE_BnGYgaKH7QdlruxHhXCEEr3qJ8LlZnJHo_meuyqEEtECVw0tzZI
+ KZTrybAKrANJqvlimCPSsxD13qlJxoDLlbeqZC0rEc7qYvKFX.lsavsnfyUyh9cu5zuy3P6cIY4D
+ BoKBpTQiPouH_JJevP1KOI6WTGptX1iTwK6nnL6GwXIHZ7KzDUIjDHc2v
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.bf2.yahoo.com with HTTP; Fri, 31 May 2019 23:14:40 +0000
 Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([73.223.4.185])
-          by smtp404.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 93f12d8cf3f8020e3b32ef1a52c7253a;
-          Fri, 31 May 2019 23:14:23 +0000 (UTC)
+          by smtp418.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 0d7978b7ccfb88ed7fd120b8f1db518f;
+          Fri, 31 May 2019 23:14:39 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     casey@schaufler-ca.com, keescook@chromium.org,
         john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
         paul@paul-moore.com, sds@tycho.nsa.gov
-Subject: [PATCH 26/58] NET: Change the UNIXCB from a secid to an lsm_export
-Date:   Fri, 31 May 2019 16:09:48 -0700
-Message-Id: <20190531231020.628-27-casey@schaufler-ca.com>
+Subject: [PATCH 28/58] NET: Remove scaffolding on new secmarks
+Date:   Fri, 31 May 2019 16:09:50 -0700
+Message-Id: <20190531231020.628-29-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190531231020.628-1-casey@schaufler-ca.com>
 References: <20190531231020.628-1-casey@schaufler-ca.com>
@@ -62,84 +62,36 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Store a lsm_export structure in the UDS control information
-instead of a single secid.
+Replace the lsm_export scaffolding in nft_meta.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/security.h | 16 ++++++++++++++++
- include/net/af_unix.h    |  2 +-
- net/unix/af_unix.c       |  9 +++------
- 3 files changed, 20 insertions(+), 7 deletions(-)
+ net/netfilter/nft_meta.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index e76d7a9dbe50..9d8115b3d679 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -100,6 +100,22 @@ static inline bool lsm_export_any(struct lsm_export *l)
- 		((l->flags & LSM_EXPORT_APPARMOR) && l->apparmor));
- }
+diff --git a/net/netfilter/nft_meta.c b/net/netfilter/nft_meta.c
+index 598bea8e4799..a1d3dab5bc25 100644
+--- a/net/netfilter/nft_meta.c
++++ b/net/netfilter/nft_meta.c
+@@ -580,11 +580,17 @@ static int nft_secmark_compute_secid(struct nft_secmark *priv)
+ 	u32 tmp_secid = 0;
+ 	int err;
  
-+static inline bool lsm_export_equal(struct lsm_export *l, struct lsm_export *m)
-+{
-+	if (l->flags != m->flags || l->flags == LSM_EXPORT_NONE)
-+		return false;
-+	if (l->flags & LSM_EXPORT_SELINUX &&
-+	    (l->selinux != m->selinux || l->selinux == 0))
-+		return false;
-+	if (l->flags & LSM_EXPORT_SMACK &&
-+	    (l->smack != m->smack || l->smack == 0))
-+		return false;
-+	if (l->flags & LSM_EXPORT_APPARMOR &&
-+	    (l->apparmor != m->apparmor || l->apparmor == 0))
-+		return false;
-+	return true;
-+}
++	lsm_export_init(&le);
+ 	err = security_secctx_to_secid(priv->ctx, strlen(priv->ctx), &le);
+ 	if (err)
+ 		return err;
+ 
+-	lsm_export_secid(&le, &tmp_secid);
++	/* Use the "best" secid */
++	if (le.selinux)
++		tmp_secid = le.selinux;
++	else
++		tmp_secid = le.smack;
 +
- /**
-  * lsm_export_secid - pull the useful secid out of a lsm_export
-  * @data: the containing data structure
-diff --git a/include/net/af_unix.h b/include/net/af_unix.h
-index 3426d6dacc45..c1612d4b191c 100644
---- a/include/net/af_unix.h
-+++ b/include/net/af_unix.h
-@@ -36,7 +36,7 @@ struct unix_skb_parms {
- 	kgid_t			gid;
- 	struct scm_fp_list	*fp;		/* Passed files		*/
- #ifdef CONFIG_SECURITY_NETWORK
--	u32			secid;		/* Security ID		*/
-+	struct lsm_export	le;		/* LSM data		*/
- #endif
- 	u32			consumed;
- } __randomize_layout;
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 4d4107927ba2..222929693867 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -143,20 +143,17 @@ static struct hlist_head *unix_sockets_unbound(void *addr)
- #ifdef CONFIG_SECURITY_NETWORK
- static void unix_get_secdata(struct scm_cookie *scm, struct sk_buff *skb)
- {
--	lsm_export_secid(&scm->le, &(UNIXCB(skb).secid));
-+	UNIXCB(skb).le = scm->le;
- }
+ 	if (!tmp_secid)
+ 		return -ENOENT;
  
- static inline void unix_set_secdata(struct scm_cookie *scm, struct sk_buff *skb)
- {
--	lsm_export_to_all(&scm->le, UNIXCB(skb).secid);
-+	scm->le = UNIXCB(skb).le;
- }
- 
- static inline bool unix_secdata_eq(struct scm_cookie *scm, struct sk_buff *skb)
- {
--	u32 best_secid;
--
--	lsm_export_secid(&scm->le, &best_secid);
--	return (best_secid == UNIXCB(skb).secid);
-+	return lsm_export_equal(&scm->le, &(UNIXCB(skb).le));
- }
- #else
- static inline void unix_get_secdata(struct scm_cookie *scm, struct sk_buff *skb)
 -- 
 2.19.1
 
