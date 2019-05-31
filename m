@@ -2,126 +2,111 @@ Return-Path: <SRS0=N7Ha=T7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBE2C04AB6
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 14:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6C6C04AB6
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 14:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E0526A54
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 14:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91F5126AD5
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 14:44:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GnGxjK5/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfEaOUT (ORCPT
+        id S1726559AbfEaOoV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 31 May 2019 10:20:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47652 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfEaOUT (ORCPT
+        Fri, 31 May 2019 10:44:21 -0400
+Received: from mail-pg1-f180.google.com ([209.85.215.180]:45623 "EHLO
+        mail-pg1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfEaOoU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 31 May 2019 10:20:19 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DD64BB5C01;
-        Fri, 31 May 2019 14:20:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2128E7C5AD;
-        Fri, 31 May 2019 14:20:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190531132620.GC2606@hirez.programming.kicks-ass.net>
-References: <20190531132620.GC2606@hirez.programming.kicks-ass.net> <20190531111445.GO2677@hirez.programming.kicks-ass.net> <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com> <20190528162603.GA24097@kroah.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk> <4031.1559064620@warthog.procyon.org.uk> <20190528231218.GA28384@kroah.com> <31936.1559146000@warthog.procyon.org.uk> <16193.1559163763@warthog.procyon.org.uk> <21942.1559304135@warthog.procyon.org.uk>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     dhowells@redhat.com, Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring buffer
+        Fri, 31 May 2019 10:44:20 -0400
+Received: by mail-pg1-f180.google.com with SMTP id w34so4151380pga.12
+        for <linux-security-module@vger.kernel.org>; Fri, 31 May 2019 07:44:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=RHQnLjVCuzDq+CHZRvfpRZb5hKNSCy3a2JeU2KJM6Fg=;
+        b=GnGxjK5/JnD6DgvQAMsuBHSEk5MAcm6dRUlszPuN0RiGCbl8cpi/e0k67tEdBCTjXG
+         B2plt6FDeG3nEhKDdjaH4YwCkZfVMi2ssOoSz1/br7M9oyiBu/vHOMMSWnh3C49RDdNk
+         Hx4qv5rFEqiDBOVpo/q6gcjNco/xflvfRzZ9o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RHQnLjVCuzDq+CHZRvfpRZb5hKNSCy3a2JeU2KJM6Fg=;
+        b=PeSAR9oBXK3L5WhV5Kf+rimNK+67TYgs5BMZWvzZ4Lpz3fwXeVq6V/mTpUgfInKKaL
+         vRHuPcZEwA3cC6livqHnepac5iVOxYPUaZB1qDD0MDPJFnhMoiE9Kn9BgGn4HomhQWHR
+         Z+BkErgCnI6RLIG2trrATjmQqiJPlEcN7ypWGXTX3ujEWViI+uqqS7FngBOXrDGJcuVj
+         OPN1cUUA4AyeNi3dNtz0EYEZ0TbtHzJWvAZpcb6nwRvx52y0Wk4CLJibtQfe4erGghIu
+         QlUmdRWwdkWXiJGlgwUiDgIeFjaEJNTa6OiyuMloUS5sr1lp6ylGq2WOj1UwbWX43y6g
+         N/oA==
+X-Gm-Message-State: APjAAAUuBAwTIO2J9V3N3OREzCwMm1E32cbjIs0J3Xb4LjDNvKq1SqGC
+        Z6yEXXsyeRsVNP1GQv+lfWGqew==
+X-Google-Smtp-Source: APXvYqzIRqdfdxaq/26x0YLlSNSrYfyqBhnbawPfi+9f2Ik6dZkOl6eY+rdzVTfWtukHyzOkP33o/w==
+X-Received: by 2002:aa7:9a1d:: with SMTP id w29mr10358364pfj.81.1559313859909;
+        Fri, 31 May 2019 07:44:19 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id l13sm5847079pjq.20.2019.05.31.07.44.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 May 2019 07:44:18 -0700 (PDT)
+Date:   Fri, 31 May 2019 07:44:17 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Ke Wu <mikewu@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: security/loadpin: Allow to exclude specific file types
+Message-ID: <201905310740.522B3A7C1@keescook>
+References: <73fac64c-fe49-4738-49a4-0afe668eed94@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <605.1559312411.1@warthog.procyon.org.uk>
-Date:   Fri, 31 May 2019 15:20:12 +0100
-Message-ID: <606.1559312412@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 31 May 2019 14:20:19 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <73fac64c-fe49-4738-49a4-0afe668eed94@canonical.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> Is it not the responsibility of the task that affects the 1->0
-> transition to actually free the memory?
+On Fri, May 31, 2019 at 11:46:29AM +0100, Colin Ian King wrote:
+> Hi,
 > 
-> That is, I'm expecting the '...' in both cases above the include the
-> actual freeing of the object. If this is not the case, then @usage is
-> not a reference count.
+> Static analysis with Coverity on linux-next has found a potential issue
+> with the following commit:
+> 
+> commit 1633a4f04cc171fc638deb5c95af96032d3c591b
+> Author: Ke Wu <mikewu@google.com>
+> Date:   Thu May 30 12:22:08 2019 -0700
+> 
+>     security/loadpin: Allow to exclude specific file types
+> 
+> 
+> 209                for (j = 0; j < ARRAY_SIZE(kernel_read_file_str); j++) {
+> 210                        if (strcmp(cur, kernel_read_file_str[j]) == 0) {
+> 211                                pr_info("excluding: %s\n",
+> 212                                        kernel_read_file_str[j]);
+> 
+> CID 81977 (#1 of 1): Out-of-bounds write
+> overrun-local: Overrunning array ignore_read_file_id of 8 4-byte
+> elements at element index 8 (byte offset 35) using index j (which
+> evaluates to 8).
+> 
+> 213                                ignore_read_file_id[j] = 1;
+> 
+> According to Coverity ignore_read_file_id is an array of 8 integers.
+> However, ARRAY_SIZE(kernel_read_file_str) is 9, so we have an out of
+> bounds write on ignore_read_file[j] when j is 8.
 
-Yes.  The '...' does the freeing.  It seemed unnecessary to include the code
-ellipsised there since it's not the point of the discussion, but if you want
-the full function:
+What am I missing? This doesn't fail the build:
 
-	void afs_put_call(struct afs_call *call)
-	{
-		struct afs_net *net = call->net;
-		int n = atomic_dec_return(&call->usage);
-		int o = atomic_read(&net->nr_outstanding_calls);
++       BUILD_BUG_ON(ARRAY_SIZE(exclude_read_files) !=
++                    ARRAY_SIZE(ignore_read_file_id));
 
-		trace_afs_call(call, afs_call_trace_put, n + 1, o,
-			       __builtin_return_address(0));
+They have the same number of elements.
 
-		ASSERTCMP(n, >=, 0);
-		if (n == 0) {
-			ASSERT(!work_pending(&call->async_work));
-			ASSERT(call->type->name != NULL);
-
-			if (call->rxcall) {
-				rxrpc_kernel_end_call(net->socket, call->rxcall);
-				call->rxcall = NULL;
-			}
-			if (call->type->destructor)
-				call->type->destructor(call);
-
-			afs_put_server(call->net, call->server);
-			afs_put_cb_interest(call->net, call->cbi);
-			afs_put_addrlist(call->alist);
-			kfree(call->request);
-
-			trace_afs_call(call, afs_call_trace_free, 0, o,
-				       __builtin_return_address(0));
-			kfree(call);
-
-			o = atomic_dec_return(&net->nr_outstanding_calls);
-			if (o == 0)
-				wake_up_var(&net->nr_outstanding_calls);
-		}
-	}
-
-You can see the kfree(call) in there.
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> (and it has already been established that refcount_t doesn't work for
-> usage count scenarios)
-
-?
-
-Does that mean struct kref doesn't either?
-
-> Aside from that, is the problem that refcount_dec_and_test() returns a
-> boolean (true - last put, false - not last) instead of the refcount
-> value? This does indeed make it hard to print the exact count value for
-> the event.
-
-That is the problem, yes - well, one of them: refcount_inc() doesn't either.
-
-David
+-- 
+Kees Cook
