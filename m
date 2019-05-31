@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA3EC28CC2
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5CFC28CC3
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51020259B8
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:33:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66C8B26550
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:33:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Z4FcWqSO"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="CSfN4CeB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfEaXd1 (ORCPT
+        id S1726867AbfEaXdg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 31 May 2019 19:33:27 -0400
-Received: from sonic316-13.consmr.mail.gq1.yahoo.com ([98.137.69.37]:42448
+        Fri, 31 May 2019 19:33:36 -0400
+Received: from sonic316-13.consmr.mail.gq1.yahoo.com ([98.137.69.37]:36277
         "EHLO sonic316-13.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726934AbfEaXd0 (ORCPT
+        by vger.kernel.org with ESMTP id S1726816AbfEaXdg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 31 May 2019 19:33:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559345605; bh=kBs6xavdKLksOJrpeyZAKYy1l7B4qvl4+o1ibk1YtLg=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=Z4FcWqSOXurB8gTtxBUDQ/UeIHcoJxAy7Tterw6u4en/qVKBNswWGeEDQCW5rv23SKVI7q3alnjNcmTCnqsl6mQUXYAKLyftImRmtSr+IVSfMHTTsutmqnkl0Zbe2GOL71JKmGJWnwVrua5QZq+0A1ZAO8mpjpnOyjwonHTb1KXK8vZHMuvIbF8r8GW7CGAg5S3fank24UxCipU6atkG/XwNTITK/bgaAPh5c9jU5kvRwKl7P/fuxz/kY5aYu6/KQxiH3nCl4Xzg7Xeu/QugiskOEPPPBEN/q/4JrJtTJPRW7cRRmHWOuZXGBMIrF4L8MjBBh9W8xEv6VGSRXJJWtw==
-X-YMail-OSG: _4iZfT0VM1nAg0H5aU2yYbYCxMkE2le0ZZKwHY4MuMV0EBwA3wnvyGU2c1lI8hZ
- JbZL5Tgy5T_aGrT4Mk5ZY0st4VarVBDZvj235KVyex4dPiXwMPBMBYzW2iOhRLBbJFi2BBnLszuA
- fk7CFcSVTVT40KufuXYJQINuoqSlDCBOtAKd3W006kEbtFqauCw1hGtYQxAruZX6ePFIwnmDIIE8
- r_n7vLvFUx0VIfPZzOh81Eew8.tGYoCyrCEqah656wpRBHqB1qUTWqBKzasgMCs1U4GDvbRGsyB8
- oRips1cEzHljLrBDb06LtJNHKlMxcxZwlJb5.IsdAwaOcaJ3jUcaFrHmUduAYH6uobs4r1QASuKT
- V7rmJ5zT7PKyB9LySjKGaNgECTW56VeEoXULCIhHwxcp3l1UV4dc0LmpkaYjMA8chlWenOR1fUuj
- Pd1tfXL3IpfzAbZvVJE99oMEFoIbf4kRjLmObEsO9JQK8zd9jkIgIZKkhrsHEbgcNCbgV74lrXA3
- 6YQBNBKlqMpB1aW99ALO0LXETKPm1rQhWHvV7nOECbYGl3UcMM.FdrTwmFwV2AYIL0SRkCSo2qn3
- aA8.wykZUlSUQKYRrcbYpkmXEM8FHSjsVy87S5npZj_2q.zLQljosOm8JB3CUFU9_FUIhFywuLLv
- W7f0RBWUz.W5eGjjtpVa5tmxxlUAVawN8Q9Av7YRUesgm1dVJ701176_U2.ABBmBo7IQqEIKGojH
- hOOLgUGSbzvV5lhOSu.DnXv4gnTOdO.IdrEydmqyUj_3tbFr.EQzNKuCrmUqmsQsZZ3NfiijKt6J
- fNf93VOYOuJBIw.zZcAJVCB9S.ysuAaf2zKmU4lUFTuAFY9osZx8a9p6q_XMQGMCz9vDv93JhQ_j
- 7tnFx7WbGlseu86.V_g5ThSdygkT.NPYxMA.H5Y0OetXlH1HGdpLPaC9bTQaANkMi5Cak9.2c003
- DYZS6hwCXMqY_i2HDFzvXcTIuzcLRk2goceIiYTfqHoo5MX8jf4aEUU7hxLh8CS9mm9qH3vRNaMm
- ccEp.pmBTlqG.tKK3xhIa7TeL30RWHKukn626Wc.4mcofY58h8CB9TIY1KbHU2cjCwXpMd0ITZFH
- 8W2kdC7RYylMCl4JyikV2OzbXxaj3g4IS8CaJhvun85c3n5VfXNkkF0IQFN6xwtPUkHIhgN.I4oI
- 9liD_..Dfp5nHDJ0HlvO6TK0jtJt_iqfa4yJH5.xmyiUNJcamLnnoYydJuxw9deX7Hz10f0oHjVc
- a1RKR6cfTIKhjGVc8XTHfwfZQqn8IOz3uMQ.nl0AXALlDJTHppw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Fri, 31 May 2019 23:33:25 +0000
+        Fri, 31 May 2019 19:33:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559345615; bh=kPEVpSTXbzStzk2RRdBr0uzp0UqHYw8ZEJtQ2z8HYS0=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=CSfN4CeBPzEMzyo+r88CnDPR/fp+CdfVgkwo9LVZc7hWYwYTdGTveJxGa9OGx//1fCSK3HphLtvYmUN4TM1/pYkM996LDh8GWVXEpf5LTXgaRHgpJg4TGBGgKvXk/YXUfZH4C/QFZBpSckJZ6+xhRdB4JfoeScL9zMsxMqICFGFqaU+uchWweDBRjhp2sD1mwfQFCwDoMs/lZSnqjj1mohzcm+A3T7MBNtkcxFS24FYO2vtU79TQh9PTv1ymNCJi/TnJlBGKVegUIzPhecxOF74fiApI2VqBb5jbiV+Pzi9uXSOKCOy71eYXPm18qsQY1EWgag1IvCI4POVt1iBZtQ==
+X-YMail-OSG: AFk426cVM1m0qzDNDgAAQtSgNOHiQGCYSj9qjH3FQAow0jqP9R2YZYl01tKZzpr
+ WP2xCnYnCw4XWep7qIvpCLb8ArCcN5fPBLbFiPAgDTafy4nMJpxYPcgpXGUk6jtl8giakWcAEPb6
+ EOXHWbNiE5.lJGsinyh9KAdXRVqNFnJDFseWO9cC4aeB16av5tXnAJPM94LVyMmMZvqV0RzT.h24
+ 2nY3VjpvXsv3lbO1obdLJFGNw5O51kWkRX5Jlw4TmmgA6yLiTzHHtRBiv6q4qABb4e_x3h8eUfcJ
+ 7NaQRGqgtjWdz_3rWKL_D50t3SQOYj7qpliH8pje_tVdjf3G1gMp67Fp.7MT42x6td7snqEHlWxo
+ e7DVPXf4clTt4edqn3JFL57xoEZ2YVxWqUy1w4IoUqBvWoNNIUSKUj7YBUONdq_AiHqnzQBG3IyY
+ YhJVRElV4qoT1.9RHKVE2UwSDILb1h8yKk7Uqi5jH4NgJTMUd.CGBKBQ21RCp2Ga6EGDHX.iDMmy
+ Q.viLa399neATLey9eieHUTfDWnP5vOkMNIFOv4psn4AKiEQgTHJuiFDrghPo1iiMQwATGhJTaF8
+ 42Pz.m2vk78GZJR6S8d2QUO3JJ5zxhkfF_s_NGjxjAGfmbqmxM9BUgzYbeMdKwUNTzm328u3DAam
+ a0XACbgKi_ndrzcVH_1lFpXRhD5QjQOdc1KEgONItO5PJppRv2.NVE0nCiCD_ZTwpCjDEJJ7LMVN
+ LEe8.H7lRua7ONSsfHw7wMcD0GovjwpsoAWfe_i2O0VwDlW3zZveWh6Y22m5cBjF0388Y8trKtm7
+ ugvBfu_GDUa9Wsb41Y4obyno0N7NeJK9b.L5ypIu9g15hF3gGCZWHF_UrKVf04E1O9FbBLcAptIv
+ 5Rj9j4APsRO881P9Y2tgpGnSLXJXScL0K5mK.bfXDuBkvvuf912tic.zwbyeYmFYcceQbzi4Wh0g
+ iEycwrKOisIubDSlt6p.CLNPoPUrJahlbLjxF44utxSW8lG7iGterzMP3Wo4cv9qCpif08hHVDVQ
+ 7cqvL3LvGnIdWyG.uINlLsWnm5ApjT6KMg6AXeCuxhoOjcni1Sw.WaO8tlLigf90ezQ5Grri5OJy
+ WwO6Vc.YlR5gEUXHx6ILeopdAd4wYOh9LFtWY5T3KY0gAZc5naABjcFyYey.GF.8mbj3kTUJgxZ1
+ YXZM_Mz2qqSh0jKbGcmOPKY0zYnLAbNpsQjOgnBGmBWVUHGjJdk_dtNaxX4FrO_dd8Fhri._cUps
+ wUWse.Wid1.UDhkejcZGYC.oeWdBHw7gPxoWrkVp2fiuFxQmzsWBB0kI-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Fri, 31 May 2019 23:33:35 +0000
 Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([73.223.4.185])
-          by smtp423.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 2cf64f3b08f75107892893faae290b67;
-          Fri, 31 May 2019 23:33:20 +0000 (UTC)
+          by smtp404.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ddbbc57c2db67044df9793aa98e74179;
+          Fri, 31 May 2019 23:33:34 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     casey@schaufler-ca.com, keescook@chromium.org,
         john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
         paul@paul-moore.com, sds@tycho.nsa.gov
-Subject: [PATCH 13/58] LSM: Use lsm_export in security_audit_rule_match
-Date:   Fri, 31 May 2019 16:31:04 -0700
-Message-Id: <20190531233149.715-14-casey@schaufler-ca.com>
+Subject: [PATCH 14/58] LSM: Use lsm_export in security_kernel_act_as
+Date:   Fri, 31 May 2019 16:31:05 -0700
+Message-Id: <20190531233149.715-15-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190531233149.715-1-casey@schaufler-ca.com>
 References: <20190531233149.715-1-casey@schaufler-ca.com>
@@ -62,264 +62,124 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Convert security_audit_rule_match to use the lsm_export structure
-instead of a u32 secid. There is some scaffolding involved that
-will be removed when the related data is updated.
+From: Casey Schaufler <cschaufler@schaufler-ca.com>
+
+Convert security_kernel_act_as to use the lsm_export structure
+instead of a u32 secid. There is some scaffolding involved
+that will be removed when the related data is updated.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/security.h            | 46 +++++++++++++++++++++++++--
- kernel/auditfilter.c                |  4 ++-
- kernel/auditsc.c                    | 13 +++++---
- security/integrity/ima/ima_policy.c |  7 +++--
- security/security.c                 | 48 ++---------------------------
- 5 files changed, 63 insertions(+), 55 deletions(-)
+ include/linux/cred.h     |  3 ++-
+ include/linux/security.h |  5 +++--
+ kernel/cred.c            | 10 ++++++----
+ security/security.c      |  8 ++------
+ 4 files changed, 13 insertions(+), 13 deletions(-)
 
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index efb6edf32de7..9305298eca17 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -22,6 +22,7 @@
+ 
+ struct cred;
+ struct inode;
++struct lsm_export;
+ 
+ /*
+  * COW Supplementary groups list
+@@ -165,7 +166,7 @@ extern const struct cred *override_creds(const struct cred *);
+ extern void revert_creds(const struct cred *);
+ extern struct cred *prepare_kernel_cred(struct task_struct *);
+ extern int change_create_files_as(struct cred *, struct inode *);
+-extern int set_security_override(struct cred *, u32);
++extern int set_security_override(struct cred *, struct lsm_export *);
+ extern int set_security_override_from_ctx(struct cred *, const char *);
+ extern int set_create_files_as(struct cred *, struct inode *);
+ extern int cred_fscmp(const struct cred *, const struct cred *);
 diff --git a/include/linux/security.h b/include/linux/security.h
-index fb19f41d630b..ea2c6c4e88db 100644
+index ea2c6c4e88db..7369cdc3a681 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -93,6 +93,45 @@ static inline void lsm_export_init(struct lsm_export *l)
- 	memset(l, 0, sizeof(*l));
+@@ -378,7 +378,7 @@ void security_cred_free(struct cred *cred);
+ int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp);
+ void security_transfer_creds(struct cred *new, const struct cred *old);
+ void security_cred_getsecid(const struct cred *c, u32 *secid);
+-int security_kernel_act_as(struct cred *new, u32 secid);
++int security_kernel_act_as(struct cred *new, struct lsm_export *l);
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+ int security_kernel_module_request(char *kmod_name);
+ int security_kernel_load_data(enum kernel_load_data_id id);
+@@ -961,7 +961,8 @@ static inline void security_transfer_creds(struct cred *new,
+ {
  }
  
-+/**
-+ * lsm_export_secid - pull the useful secid out of a lsm_export
-+ * @data: the containing data structure
-+ * @secid: where to put the one that matters.
-+ *
-+ * Shim that will disappear when all lsm_export conversions are done.
-+ */
-+static inline void lsm_export_secid(struct lsm_export *data, u32 *secid)
-+{
-+	switch (data->flags) {
-+	case LSM_EXPORT_NONE:
-+		*secid = 0;
-+		break;
-+	case LSM_EXPORT_SELINUX:
-+		*secid = data->selinux;
-+		break;
-+	case LSM_EXPORT_SMACK:
-+		*secid = data->smack;
-+		break;
-+	case LSM_EXPORT_APPARMOR:
-+		*secid = data->apparmor;
-+		break;
-+	default:
-+		pr_warn("%s flags=0x%u - not a valid set\n", __func__,
-+			data->flags);
-+		*secid = 0;
-+		break;
-+	}
-+}
-+
-+static inline void lsm_export_to_all(struct lsm_export *data, u32 secid)
-+{
-+	data->selinux = secid;
-+	data->smack = secid;
-+	data->apparmor = secid;
-+	data->flags = LSM_EXPORT_SELINUX | LSM_EXPORT_SMACK |
-+		      LSM_EXPORT_APPARMOR;
-+}
-+
- /* These functions are in security/commoncap.c */
- extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
- 		       int cap, unsigned int opts);
-@@ -1712,7 +1751,8 @@ static inline int security_key_getsecurity(struct key *key, char **_buffer)
- #ifdef CONFIG_SECURITY
- int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
- int security_audit_rule_known(struct audit_krule *krule);
--int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
-+int security_audit_rule_match(struct lsm_export *l, u32 field, u32 op,
-+			      void *lsmrule);
- void security_audit_rule_free(void *lsmrule);
- 
- #else
-@@ -1728,8 +1768,8 @@ static inline int security_audit_rule_known(struct audit_krule *krule)
- 	return 0;
- }
- 
--static inline int security_audit_rule_match(u32 secid, u32 field, u32 op,
--					    void *lsmrule)
-+static inline int security_audit_rule_match(struct lsm_export *l, u32 field,
-+					    u32 op, void *lsmrule)
+-static inline int security_kernel_act_as(struct cred *cred, u32 secid)
++static inline int security_kernel_act_as(struct cred *cred,
++					 struct lsm_export *l)
  {
  	return 0;
  }
-diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-index 63f8b3f26fab..15771102919d 100644
---- a/kernel/auditfilter.c
-+++ b/kernel/auditfilter.c
-@@ -1324,6 +1324,7 @@ int audit_filter(int msgtype, unsigned int listtype)
- 			struct audit_field *f = &e->rule.fields[i];
- 			pid_t pid;
- 			u32 sid;
-+			struct lsm_export le;
+diff --git a/kernel/cred.c b/kernel/cred.c
+index 45d77284aed0..40a3fde22667 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -701,14 +701,14 @@ EXPORT_SYMBOL(prepare_kernel_cred);
+ /**
+  * set_security_override - Set the security ID in a set of credentials
+  * @new: The credentials to alter
+- * @secid: The LSM security ID to set
++ * @l: The LSM security information to set
+  *
+  * Set the LSM security ID in a set of credentials so that the subjective
+  * security is overridden when an alternative set of credentials is used.
+  */
+-int set_security_override(struct cred *new, u32 secid)
++int set_security_override(struct cred *new, struct lsm_export *l)
+ {
+-	return security_kernel_act_as(new, secid);
++	return security_kernel_act_as(new, l);
+ }
+ EXPORT_SYMBOL(set_security_override);
  
- 			switch (f->type) {
- 			case AUDIT_PID:
-@@ -1354,7 +1355,8 @@ int audit_filter(int msgtype, unsigned int listtype)
- 			case AUDIT_SUBJ_CLR:
- 				if (f->lsm_rule) {
- 					security_task_getsecid(current, &sid);
--					result = security_audit_rule_match(sid,
-+					lsm_export_to_all(&le, sid);
-+					result = security_audit_rule_match(&le,
- 						   f->type, f->op, f->lsm_rule);
- 				}
- 				break;
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index d1eab1d4a930..822ba35e4e64 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -445,6 +445,7 @@ static int audit_filter_rules(struct task_struct *tsk,
- 	const struct cred *cred;
- 	int i, need_sid = 1;
- 	u32 sid;
+@@ -724,6 +724,7 @@ EXPORT_SYMBOL(set_security_override);
+  */
+ int set_security_override_from_ctx(struct cred *new, const char *secctx)
+ {
 +	struct lsm_export le;
- 	unsigned int sessionid;
+ 	u32 secid;
+ 	int ret;
  
- 	cred = rcu_dereference_check(tsk->cred, tsk == current || task_creation);
-@@ -630,7 +631,8 @@ static int audit_filter_rules(struct task_struct *tsk,
- 					security_task_getsecid(tsk, &sid);
- 					need_sid = 0;
- 				}
--				result = security_audit_rule_match(sid, f->type,
-+				lsm_export_to_all(&le, sid);
-+				result = security_audit_rule_match(&le, f->type,
- 								   f->op,
- 								   f->lsm_rule);
- 			}
-@@ -645,15 +647,17 @@ static int audit_filter_rules(struct task_struct *tsk,
- 			if (f->lsm_rule) {
- 				/* Find files that match */
- 				if (name) {
-+					lsm_export_to_all(&le, name->osid);
- 					result = security_audit_rule_match(
--								name->osid,
-+								&le,
- 								f->type,
- 								f->op,
- 								f->lsm_rule);
- 				} else if (ctx) {
- 					list_for_each_entry(n, &ctx->names_list, list) {
-+						lsm_export_to_all(&le, n->osid);
- 						if (security_audit_rule_match(
--								n->osid,
-+								&le,
- 								f->type,
- 								f->op,
- 								f->lsm_rule)) {
-@@ -665,7 +669,8 @@ static int audit_filter_rules(struct task_struct *tsk,
- 				/* Find ipc objects that match */
- 				if (!ctx || ctx->type != AUDIT_IPC)
- 					break;
--				if (security_audit_rule_match(ctx->ipc.osid,
-+				lsm_export_to_all(&le, ctx->ipc.osid);
-+				if (security_audit_rule_match(&le,
- 							      f->type, f->op,
- 							      f->lsm_rule))
- 					++result;
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index e0cc323f948f..090ef8ceb116 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -327,6 +327,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 	for (i = 0; i < MAX_LSM_RULES; i++) {
- 		int rc = 0;
- 		u32 osid;
-+		struct lsm_export le;
- 		int retried = 0;
+@@ -731,7 +732,8 @@ int set_security_override_from_ctx(struct cred *new, const char *secctx)
+ 	if (ret < 0)
+ 		return ret;
  
- 		if (!rule->lsm[i].rule)
-@@ -337,7 +338,8 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 		case LSM_OBJ_ROLE:
- 		case LSM_OBJ_TYPE:
- 			security_inode_getsecid(inode, &osid);
--			rc = security_filter_rule_match(osid,
-+			lsm_export_to_all(&le, osid);
-+			rc = security_filter_rule_match(&le,
- 							rule->lsm[i].type,
- 							Audit_equal,
- 							rule->lsm[i].rule);
-@@ -345,7 +347,8 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 		case LSM_SUBJ_USER:
- 		case LSM_SUBJ_ROLE:
- 		case LSM_SUBJ_TYPE:
--			rc = security_filter_rule_match(secid,
-+			lsm_export_to_all(&le, secid);
-+			rc = security_filter_rule_match(&le,
- 							rule->lsm[i].type,
- 							Audit_equal,
- 							rule->lsm[i].rule);
+-	return set_security_override(new, secid);
++	lsm_export_to_all(&le, secid);
++	return set_security_override(new, &le);
+ }
+ EXPORT_SYMBOL(set_security_override_from_ctx);
+ 
 diff --git a/security/security.c b/security/security.c
-index 1645ebe06715..1e819ecf26ff 100644
+index 1e819ecf26ff..edaaaef54239 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -712,45 +712,6 @@ int lsm_superblock_alloc(struct super_block *sb)
- 	RC;							\
- })
- 
--/**
-- * lsm_export_secid - pull the useful secid out of a lsm_export
-- * @data: the containing data structure
-- * @secid: where to put the one that matters.
-- *
-- * Shim that will disappear when all lsm_export conversions are done.
-- */
--static inline void lsm_export_secid(struct lsm_export *data, u32 *secid)
--{
--	switch (data->flags) {
--	case LSM_EXPORT_NONE:
--		*secid = 0;
--		break;
--	case LSM_EXPORT_SELINUX:
--		*secid = data->selinux;
--		break;
--	case LSM_EXPORT_SMACK:
--		*secid = data->smack;
--		break;
--	case LSM_EXPORT_APPARMOR:
--		*secid = data->apparmor;
--		break;
--	default:
--		pr_warn("%s flags=0x%u - not a valid set\n", __func__,
--			data->flags);
--		*secid = 0;
--		break;
--	}
--}
--
--static inline void lsm_export_to_all(struct lsm_export *data, u32 secid)
--{
--	data->selinux = secid;
--	data->smack = secid;
--	data->apparmor = secid;
--	data->flags = LSM_EXPORT_SELINUX | LSM_EXPORT_SMACK |
--		      LSM_EXPORT_APPARMOR;
--}
--
- /* Security operations */
- 
- int security_binder_set_context_mgr(struct task_struct *mgr)
-@@ -2482,14 +2443,11 @@ void security_audit_rule_free(void *lsmrule)
- 	call_void_hook(audit_rule_free, lsmrule);
+@@ -1615,13 +1615,9 @@ void security_cred_getsecid(const struct cred *c, u32 *secid)
  }
+ EXPORT_SYMBOL(security_cred_getsecid);
  
--int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
-+int security_audit_rule_match(struct lsm_export *l, u32 field, u32 op,
-+			      void *lsmrule)
+-int security_kernel_act_as(struct cred *new, u32 secid)
++int security_kernel_act_as(struct cred *new, struct lsm_export *l)
  {
--	int rc;
 -	struct lsm_export data = { .flags = LSM_EXPORT_NONE };
- 
--	rc = call_int_hook(audit_rule_match, 0, &data, field, op, lsmrule);
--	lsm_export_secid(&data, &secid);
--	return rc;
-+	return call_int_hook(audit_rule_match, 0, l, field, op, lsmrule);
+-
+-	lsm_export_to_all(&data, secid);
+-
+-	return call_int_hook(kernel_act_as, 0, new, &data);
++	return call_int_hook(kernel_act_as, 0, new, l);
  }
- #endif /* CONFIG_AUDIT */
  
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode)
 -- 
 2.19.1
 
