@@ -2,297 +2,221 @@ Return-Path: <SRS0=N7Ha=T7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26149C28CC2
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3198EC28CC4
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F22CF259B8
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:33:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F4086259B8
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 23:33:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sx1lDWUu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfEaXch (ORCPT
+        id S1727040AbfEaXdW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 31 May 2019 19:32:37 -0400
-Received: from mga07.intel.com ([134.134.136.100]:59345 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfEaXcd (ORCPT
+        Fri, 31 May 2019 19:33:22 -0400
+Received: from sonic316-13.consmr.mail.gq1.yahoo.com ([98.137.69.37]:42536
+        "EHLO sonic316-13.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726934AbfEaXdV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 31 May 2019 19:32:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 May 2019 16:32:30 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.36])
-  by orsmga008.jf.intel.com with ESMTP; 31 May 2019 16:32:30 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
-        Shay Katz-zamir <shay.katz-zamir@intel.com>,
-        Haitao Huang <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kai Svahn <kai.svahn@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Kai Huang <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        William Roberts <william.c.roberts@intel.com>,
-        Philip Tricca <philip.b.tricca@intel.com>
-Subject: [RFC PATCH 3/9] x86/sgx: Allow userspace to add multiple pages in single ioctl()
-Date:   Fri, 31 May 2019 16:31:53 -0700
-Message-Id: <20190531233159.30992-4-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190531233159.30992-1-sean.j.christopherson@intel.com>
-References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 31 May 2019 19:33:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559345600; bh=xCs5ko0ljATg/F1vIduV+zjbu+Bg+Z+duHwS3Dwapdk=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=sx1lDWUu6S9kQT7njt4SZzMg/jYbdLPKcsUh8NxmqYP9O0AJYqCLgaGCR4MsRVAIQPNKui02XGR3H+mWDrGIcyhMeGD2B/EHGBo2ZKFMsbAPO1pr9jcMZAWxw5P7XC++ejGM2uwcNWXhjXVX3lTMuJgtFk83BU6efyHDGES1A2askYmcBs+DPCiDEYimYxUAlq4zRIEmActr/9Nc+O8rsicBF931aDLnkVuk5yi7/UJ/rn6Rkm4idm2UB0uXFoowxGqQkQBZOGLXn6izcvtAUYOSC/1b1pNgoBhJPgQM39XvCSz6uhZoEP35Df8DLfd0yRU88FDpTIGmogR26p6Hew==
+X-YMail-OSG: F_MvfPMVM1kj3kuBDrppsvsMqWuDJoYDKUG8wOlYBovKYmn4ZUsVvAl4h5Zaegj
+ pize8_37Ro5meKo3npIlykkzLOwZmwPwe5NkroXntQbQBjZMSONQ1sFxC5iHHA_yOSgp2GtR0RTa
+ FKQGH2F8SXMUanoBgUfUCkleARgbHdjhMHpEhMBWlsZ1OH3pa_hB8MYifnTr3p8cEUwxQj7AU.Hr
+ a.t44GAJzA4sAO67hLFJHrBzooppI2N1.HE6AlvfOTku8LGDwpN.XRc.8ENtdUyjd.RmcIAFUOIc
+ PF7EQK9_q_C7uBEKwbmzjY1vYtl5sdyusrJuPXZ5E0QHFyThb.1T1O.VCj9T08O0KibAiJP5dWIF
+ _hWoVAgD2jFQ8f5aZW3H1LNIlvuqhQR6wcRqqqYUjjNzNasu1ZLr2wcdZ13Ifrm1hnKmURSVSTd1
+ 3XUsjDi131vTnpcIY2dam1r221eUK3g2Jn683oCBz_ZDsYQcMbjCv5LfSuNrWLGqpYSxpHCJlHui
+ 3xrYNThLlWy82Tf86TVD7v7h1UlP_D10ftBL_0XdLpay080Qk8PNAuy_wB76uBRKruxCgtimfFXT
+ dXYrSsvDNhZoeCRb42nu3yHYtg9LbU73kUAzOo5IZnFFWS_XvPUPWo8_Z7hmHtykKfC2Fu_kRdHF
+ 2rqAjXLBrW26TKMzj6U7qDMYA_5h7LxNsq7Gqnd20LZil8Njpbb8XQNQOImPbpL828hc6BpWQhmi
+ _VRUn_7ohoPIS6rHL1zIdZywwPztwP4BCCA__Pp_0z2hzAAxrhm9YQVgl.yk3W3VgRAiiAynwMvS
+ B5XJRtKpYQQl2X6TaMFB80jpigVF4tm3HCed9fhTJHeFJQDqKC9PXNwxFOqQ5pAftfj9br0Rsw5o
+ hMHgHkKfaez2oaVpzKQ4eZdNSLJ50KdPGUChUpztwr6ZFtOA5KlB64tESrvC4sSLSsIdoL0WxLhy
+ 4Z9TK3VQIF358PQqCq1lpBkOLoOewYYu.BnWMqDgf_ZphiUIEVtH_LxOEdfwxLc0FZ1Nhp2PZ1SG
+ XWklmgBQdxJA3ssczuvmrX81Nj3nVRpFFLNEmXF5Xk6Sn6qN.thsUCILJrbhGukx37YQE82gU7PK
+ 3SOgLUbGtPaJaNlaMnkM7X2lwA95fkJ8knsk8U25OSQCeWZCrRFQxOHxUCe0i.S1GYgbHza.2qFk
+ .tjaNqqEc9kzBDQ_EL8JTG0_VSocz1N23LUU4NhDkFIxjaXmmdCN3HWXZIwaRW3W81K3Y8ARE5xo
+ Ic15UqwdThhh.OtnJBdJh7Mzt4BzMSUJFzZFG5.dzNpCsH18SNLpW0g--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Fri, 31 May 2019 23:33:20 +0000
+Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([73.223.4.185])
+          by smtp423.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 2cf64f3b08f75107892893faae290b67;
+          Fri, 31 May 2019 23:33:20 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     casey@schaufler-ca.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com, sds@tycho.nsa.gov
+Subject: [PATCH 12/58] LSM: Use lsm_export in the secctx_to_secid hooks
+Date:   Fri, 31 May 2019 16:31:03 -0700
+Message-Id: <20190531233149.715-13-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20190531233149.715-1-casey@schaufler-ca.com>
+References: <20190531233149.715-1-casey@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-...to improve performance when building enclaves by reducing the number
-of user<->system transitions.  Rather than provide arbitrary batching,
-e.g. with per-page SECINFO and mrmask, take advantage of the fact that
-any sane enclave will have large swaths of pages with identical
-properties, e.g. code vs. data sections.
+Convert the secctx_to_secid hooks to use the lsm_export
+structure instead of a u32 secid. There is some scaffolding
+involved that will be removed when security_secctx_to_secid()
+is updated.
 
-For simplicity and stability in the initial implementation, loop over
-the existing add page flow instead of taking a more agressive approach,
-which would require tracking transitions between VMAs and holding
-mmap_sem for an extended duration.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- arch/x86/include/uapi/asm/sgx.h        |  21 ++---
- arch/x86/kernel/cpu/sgx/driver/ioctl.c | 104 +++++++++++++++----------
- 2 files changed, 74 insertions(+), 51 deletions(-)
+ include/linux/lsm_hooks.h         |  7 ++++---
+ security/apparmor/include/secid.h |  3 ++-
+ security/apparmor/secid.c         |  9 +++++----
+ security/security.c               |  8 ++++++--
+ security/selinux/hooks.c          | 12 +++++++++---
+ security/smack/smack_lsm.c        |  7 ++++---
+ 6 files changed, 30 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 9ed690a38c70..4a12d6abbcb7 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -12,8 +12,8 @@
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 433d98dcb928..0837c214cc17 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1324,8 +1324,8 @@
+  *	context.
+  *	@seclen pointer which contains the length of the data
+  * @secctx_to_secid:
+- *	Convert security context to secid.
+- *	@secid contains the pointer to the generated security ID.
++ *	Convert security context to exported lsm data.
++ *	@l contains the pointer to the generated security data.
+  *	@secdata contains the security context.
+  *
+  * @release_secctx:
+@@ -1666,7 +1666,8 @@ union security_list_options {
+ 	int (*ismaclabel)(const char *name);
+ 	int (*secid_to_secctx)(struct lsm_export *l, char **secdata,
+ 				u32 *seclen);
+-	int (*secctx_to_secid)(const char *secdata, u32 seclen, u32 *secid);
++	int (*secctx_to_secid)(const char *secdata, u32 seclen,
++				struct lsm_export *l);
+ 	void (*release_secctx)(char *secdata, u32 seclen);
  
- #define SGX_IOC_ENCLAVE_CREATE \
- 	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
--#define SGX_IOC_ENCLAVE_ADD_PAGE \
--	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
-+#define SGX_IOC_ENCLAVE_ADD_PAGES \
-+	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
- #define SGX_IOC_ENCLAVE_INIT \
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
- #define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
-@@ -32,21 +32,22 @@ struct sgx_enclave_create  {
- };
+ 	void (*inode_invalidate_secctx)(struct inode *inode);
+diff --git a/security/apparmor/include/secid.h b/security/apparmor/include/secid.h
+index 03369183f512..5381eff03d4f 100644
+--- a/security/apparmor/include/secid.h
++++ b/security/apparmor/include/secid.h
+@@ -27,7 +27,8 @@ struct aa_label;
  
- /**
-- * struct sgx_enclave_add_page - parameter structure for the
-- *                               %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
-- * @addr:	address within the ELRANGE
-- * @src:	address for the page data
-- * @secinfo:	address for the SECINFO data
-- * @mrmask:	bitmask for the measured 256 byte chunks
-+ * struct sgx_enclave_add_pages - parameter structure for the
-+ *                                %SGX_IOC_ENCLAVE_ADD_PAGES ioctl
-+ * @addr:	start address within the ELRANGE
-+ * @src:	start address for the pages' data
-+ * @secinfo:	address for the SECINFO data (common to all pages)
-+ * @nr_pages:	number of pages (must be virtually contiguous)
-+ * @mrmask:	bitmask for the measured 256 byte chunks (common to all pages)
+ struct aa_label *aa_secid_to_label(struct lsm_export *l);
+ int apparmor_secid_to_secctx(struct lsm_export *l, char **secdata, u32 *seclen);
+-int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
++int apparmor_secctx_to_secid(const char *secdata, u32 seclen,
++			     struct lsm_export *l);
+ void apparmor_release_secctx(char *secdata, u32 seclen);
+ 
+ 
+diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+index ab4dc165e43e..69d98a89db75 100644
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -75,9 +75,9 @@ struct aa_label *aa_secid_to_label(struct lsm_export *l)
+ 	return label;
+ }
+ 
+-static inline void aa_import_secid(struct lsm_export *l, u32 secid)
++static inline void aa_export_secid(struct lsm_export *l, u32 secid)
+ {
+-	l->flags = LSM_EXPORT_APPARMOR;
++	l->flags |= LSM_EXPORT_APPARMOR;
+ 	l->apparmor = secid;
+ }
+ 
+@@ -111,7 +111,8 @@ int apparmor_secid_to_secctx(struct lsm_export *l, char **secdata, u32 *seclen)
+ 	return 0;
+ }
+ 
+-int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
++int apparmor_secctx_to_secid(const char *secdata, u32 seclen,
++			     struct lsm_export *l)
+ {
+ 	struct aa_label *label;
+ 
+@@ -119,7 +120,7 @@ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+ 				    seclen, GFP_KERNEL, false, false);
+ 	if (IS_ERR(label))
+ 		return PTR_ERR(label);
+-	*secid = label->secid;
++	aa_export_secid(l, label->secid);
+ 
+ 	return 0;
+ }
+diff --git a/security/security.c b/security/security.c
+index adf4cb768665..1645ebe06715 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2012,8 +2012,12 @@ EXPORT_SYMBOL(security_secid_to_secctx);
+ 
+ int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+ {
+-	*secid = 0;
+-	return call_int_hook(secctx_to_secid, 0, secdata, seclen, secid);
++	struct lsm_export data = { .flags = LSM_EXPORT_NONE };
++	int rc;
++
++	rc = call_int_hook(secctx_to_secid, 0, secdata, seclen, &data);
++	lsm_export_secid(&data, secid);
++	return rc;
+ }
+ EXPORT_SYMBOL(security_secctx_to_secid);
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 16d902158e8a..7dd333f133db 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6311,10 +6311,16 @@ static int selinux_secid_to_secctx(struct lsm_export *l, char **secdata,
+ 				       secdata, seclen);
+ }
+ 
+-static int selinux_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
++static int selinux_secctx_to_secid(const char *secdata, u32 seclen,
++				   struct lsm_export *l)
+ {
+-	return security_context_to_sid(&selinux_state, secdata, seclen,
+-				       secid, GFP_KERNEL);
++	u32 secid;
++	int rc;
++
++	rc = security_context_to_sid(&selinux_state, secdata, seclen,
++				     &secid, GFP_KERNEL);
++	selinux_export_secid(l, secid);
++	return rc;
+ }
+ 
+ static void selinux_release_secctx(char *secdata, u32 seclen)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 809af981f14c..ecd636e5c75c 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4456,14 +4456,15 @@ static int smack_secid_to_secctx(struct lsm_export *l, char **secdata,
+  *
+  * Exists for audit and networking code.
   */
--struct sgx_enclave_add_page {
-+struct sgx_enclave_add_pages {
- 	__u64	addr;
- 	__u64	src;
- 	__u64	secinfo;
-+	__u32	nr_pages;
- 	__u16	mrmask;
- } __attribute__((__packed__));
+-static int smack_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
++static int smack_secctx_to_secid(const char *secdata, u32 seclen,
++				 struct lsm_export *l)
+ {
+ 	struct smack_known *skp = smk_find_entry(secdata);
  
--
- /**
-  * struct sgx_enclave_init - parameter structure for the
-  *                           %SGX_IOC_ENCLAVE_INIT ioctl
-diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-index a27ec26a9350..6acfcbdeca9a 100644
---- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-@@ -487,10 +487,9 @@ static int sgx_validate_tcs(struct sgx_encl *encl, struct sgx_tcs *tcs)
+ 	if (skp)
+-		*secid = skp->smk_secid;
++		smack_export_secid(l, skp->smk_secid);
+ 	else
+-		*secid = 0;
++		smack_export_secid(l, 0);
  	return 0;
  }
  
--static int __sgx_encl_add_page(struct sgx_encl *encl,
-+static int sgx_encl_queue_page(struct sgx_encl *encl,
- 			       struct sgx_encl_page *encl_page,
--			       void *data,
--			       struct sgx_secinfo *secinfo,
-+			       void *data, struct sgx_secinfo *secinfo,
- 			       unsigned int mrmask)
- {
- 	unsigned long page_index = sgx_encl_get_index(encl, encl_page);
-@@ -529,9 +528,9 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
- 	return 0;
- }
- 
--static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
--			     void *data, struct sgx_secinfo *secinfo,
--			     unsigned int mrmask)
-+static int __sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
-+			       void *data, struct sgx_secinfo *secinfo,
-+			       unsigned int mrmask)
- {
- 	u64 page_type = secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK;
- 	struct sgx_encl_page *encl_page;
-@@ -563,7 +562,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
- 		goto out;
- 	}
- 
--	ret = __sgx_encl_add_page(encl, encl_page, data, secinfo, mrmask);
-+	ret = sgx_encl_queue_page(encl, encl_page, data, secinfo, mrmask);
- 	if (ret) {
- 		radix_tree_delete(&encl_page->encl->page_tree,
- 				  PFN_DOWN(encl_page->desc));
-@@ -575,56 +574,79 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
- 	return ret;
- }
- 
--/**
-- * sgx_ioc_enclave_add_page - handler for %SGX_IOC_ENCLAVE_ADD_PAGE
-- *
-- * @filep:	open file to /dev/sgx
-- * @cmd:	the command value
-- * @arg:	pointer to an &sgx_enclave_add_page instance
-- *
-- * Add a page to an uninitialized enclave (EADD), and optionally extend the
-- * enclave's measurement with the contents of the page (EEXTEND).  EADD and
-- * EEXTEND are done asynchronously via worker threads.  A successful
-- * sgx_ioc_enclave_add_page() only indicates the page has been added to the
-- * work queue, it does not guarantee adding the page to the enclave will
-- * succeed.
-- *
-- * Return:
-- *   0 on success,
-- *   -errno otherwise
-- */
--static long sgx_ioc_enclave_add_page(struct file *filep, unsigned int cmd,
--				     unsigned long arg)
-+static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
-+			     unsigned long src, struct sgx_secinfo *secinfo,
-+			     unsigned int mrmask)
- {
--	struct sgx_enclave_add_page *addp = (void *)arg;
--	struct sgx_encl *encl = filep->private_data;
--	struct sgx_secinfo secinfo;
- 	struct page *data_page;
- 	void *data;
- 	int ret;
- 
--	if (copy_from_user(&secinfo, (void __user *)addp->secinfo,
--			   sizeof(secinfo)))
--		return -EFAULT;
--
- 	data_page = alloc_page(GFP_HIGHUSER);
- 	if (!data_page)
- 		return -ENOMEM;
- 
- 	data = kmap(data_page);
- 
--	if (copy_from_user((void *)data, (void __user *)addp->src, PAGE_SIZE)) {
-+	if (copy_from_user((void *)data, (void __user *)src, PAGE_SIZE)) {
- 		ret = -EFAULT;
- 		goto out;
- 	}
- 
--	ret = sgx_encl_add_page(encl, addp->addr, data, &secinfo, addp->mrmask);
--	if (ret)
--		goto out;
--
-+	ret = __sgx_encl_add_page(encl, addr, data, secinfo, mrmask);
- out:
- 	kunmap(data_page);
- 	__free_page(data_page);
-+
-+	return ret;
-+}
-+
-+/**
-+ * sgx_ioc_enclave_add_pages - handler for %SGX_IOC_ENCLAVE_ADD_PAGES
-+ *
-+ * @filep:	open file to /dev/sgx
-+ * @cmd:	the command value
-+ * @arg:	pointer to an &sgx_enclave_add_page instance
-+ *
-+ * Add a range of pages to an uninitialized enclave (EADD), and optionally
-+ * extend the enclave's measurement with the contents of the page (EEXTEND).
-+ * The range of pages must be virtually contiguous.  The SECINFO and
-+ * measurement maskare applied to all pages, i.e. pages with different
-+ * properties must be added in separate calls.
-+ *
-+ * EADD and EEXTEND are done asynchronously via worker threads.  A successful
-+ * sgx_ioc_enclave_add_page() only indicates the pages have been added to the
-+ * work queue, it does not guarantee adding the pages to the enclave will
-+ * succeed.
-+ *
-+ * Return:
-+ *   0 on success,
-+ *   -errno otherwise
-+ */
-+static long sgx_ioc_enclave_add_pages(struct file *filep, unsigned int cmd,
-+				      unsigned long arg)
-+{
-+	struct sgx_enclave_add_pages *addp = (void *)arg;
-+	struct sgx_encl *encl = filep->private_data;
-+	struct sgx_secinfo secinfo;
-+	unsigned int i;
-+	int ret;
-+
-+	if (copy_from_user(&secinfo, (void __user *)addp->secinfo,
-+			   sizeof(secinfo)))
-+		return -EFAULT;
-+
-+	for (i = 0, ret = 0; i < addp->nr_pages && !ret; i++) {
-+		if (signal_pending(current))
-+			return -ERESTARTSYS;
-+
-+		if (need_resched())
-+			cond_resched();
-+
-+		ret = sgx_encl_add_page(encl, addp->addr + i*PAGE_SIZE,
-+					addp->src + i*PAGE_SIZE,
-+					&secinfo, addp->mrmask);
-+	}
- 	return ret;
- }
- 
-@@ -823,8 +845,8 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_CREATE:
- 		handler = sgx_ioc_enclave_create;
- 		break;
--	case SGX_IOC_ENCLAVE_ADD_PAGE:
--		handler = sgx_ioc_enclave_add_page;
-+	case SGX_IOC_ENCLAVE_ADD_PAGES:
-+		handler = sgx_ioc_enclave_add_pages;
- 		break;
- 	case SGX_IOC_ENCLAVE_INIT:
- 		handler = sgx_ioc_enclave_init;
 -- 
-2.21.0
+2.19.1
 
