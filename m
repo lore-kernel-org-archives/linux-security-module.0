@@ -2,137 +2,118 @@ Return-Path: <SRS0=N7Ha=T7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FBDC04AB6
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 13:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C10C28CC3
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 14:03:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BEC126963
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 13:26:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43B71248E4
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 May 2019 14:03:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oMieT2ho"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hIf7q2os"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726581AbfEaN0r (ORCPT
+        id S1726718AbfEaODj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 31 May 2019 09:26:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:60612 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbfEaN0q (ORCPT
+        Fri, 31 May 2019 10:03:39 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36351 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbfEaODi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 31 May 2019 09:26:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8n09TENg//rbgbzsGXRPd289l+d2UZWCH+fGg2NaHa4=; b=oMieT2howrG7WS9bOvNKdCmiR
-        jX6TmxtTHoTJ6p19NQ7BG0HE7FY04HsI5/nyRw+Aq42dtfLxVH85f/Oo1wrKHZiXHSYILXb6bYx6K
-        yhA1rgynmCx8lfqGcZssXNV6HHnn7atgrynyvL/+8MltoPvEPtws/8cz6hOIaknzrE3S4stP3RQCA
-        +MPBd2PAi7l2iU3fhSRgYTaCLKkRqUgtXi6eiRPa1g0WJHp8m2WPOXwF9+0/y9HLU+804TTCeG+yR
-        KtRFcgaXX9U1NowGmovnO8AyDivrrgn/IpW9UKTGwPivpjuRU9V2uX1aDiIUIutXoeABwDttquviR
-        2s09w9mqg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWhY5-0007pO-9M; Fri, 31 May 2019 13:26:21 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 158FF201822CC; Fri, 31 May 2019 15:26:20 +0200 (CEST)
-Date:   Fri, 31 May 2019 15:26:20 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jann Horn <jannh@google.com>, Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
- ring buffer
-Message-ID: <20190531132620.GC2606@hirez.programming.kicks-ass.net>
-References: <20190531111445.GO2677@hirez.programming.kicks-ass.net>
- <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com>
- <20190528162603.GA24097@kroah.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
- <4031.1559064620@warthog.procyon.org.uk>
- <20190528231218.GA28384@kroah.com>
- <31936.1559146000@warthog.procyon.org.uk>
- <16193.1559163763@warthog.procyon.org.uk>
- <21942.1559304135@warthog.procyon.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21942.1559304135@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 31 May 2019 10:03:38 -0400
+Received: by mail-lf1-f65.google.com with SMTP id q26so8012616lfc.3;
+        Fri, 31 May 2019 07:03:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=PRisEFiAzs0UBk9yhEwg6SHyV1hVyDK73ysonpeTsxE=;
+        b=hIf7q2osecUnb+VDqvVy0e1Jvx4wqFrUOCxrsclnLXX26wlAjy0a7gcb4i3ujUZeIh
+         eCPRF+cbxXIW7hFZiS4rOxueKTS4Fl+cbX2izE7xMlvOCYJ7e/2NxhsOGEbVKYvXXc7k
+         jTf3c3C0VRpjxi1h3YWFg9FLtdJxR7h415ic28KHczvFqNu7sTqNOeK73jH8aytM3dKK
+         mjGVush5Be69cYQUiZL5xzH0syBPLej9Y9iehk9ItAVygat6bzzyEgi7mdjbo7SAODvj
+         iMEPDj//lbT4Imd1mV7+NJ36sWa806wxGx55yA4CwOU6uc0QZlPfHBGfUbhSQGOKQVls
+         T9gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PRisEFiAzs0UBk9yhEwg6SHyV1hVyDK73ysonpeTsxE=;
+        b=kL4ynptWYGP+CTQmrM+wztyOmybZE4/Ss8EwzcCKppV93mnGrr73Aqcr1asxHp1aG1
+         4j7URXtC7MOVGUhJKe3PKlJ/yi2IzDo/0H4mmDAMugLr7CYSlVmbPZ4rDf6TLAgXvz7d
+         bofPszqqteL50wfv6cdH0xdeMrNnVLYkftWIYxx72REkS7QKrHbe9HaO9R2ownqB2Vs3
+         G/q5zRaQAWK626fo77xMr0vi5/EqW28nuj6JvxUPM/NYMHqQanB8nyD8pqiTdopUggNN
+         wfjiVfj0bOU281EILb9uSfh5s1US+3798Gq50WKm8KRwtUIjnwMawPkSjiEnWEdXmdwk
+         y6hg==
+X-Gm-Message-State: APjAAAWvTM4DhrlM0tXokokecr/GrLpXOYs2yR9AsGCj9YV5QyUOW68R
+        T/RpG1vgammZ7v+eTzHWzhckf4bzbkg=
+X-Google-Smtp-Source: APXvYqyz6dRCdp0U6mfFInrNeB7yoKVKeuEGCJ0ME7oUjv3Ey2VX8RExx84uDZyXTO29uiuZwpYvgg==
+X-Received: by 2002:a19:6b04:: with SMTP id d4mr5579063lfa.57.1559311416504;
+        Fri, 31 May 2019 07:03:36 -0700 (PDT)
+Received: from localhost.localdomain (mobile-user-c1d2e5-213.dhcp.inet.fi. [193.210.229.213])
+        by smtp.gmail.com with ESMTPSA id d15sm670412lfq.76.2019.05.31.07.03.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 May 2019 07:03:35 -0700 (PDT)
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+To:     sds@tycho.nsa.gov, zohar@linux.ibm.com, paul@paul-moore.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Janne Karhunen <janne.karhunen@gmail.com>
+Subject: [PATCH 1/2] LSM: switch to blocking policy update notifiers
+Date:   Fri, 31 May 2019 17:02:36 +0300
+Message-Id: <20190531140237.9199-1-janne.karhunen@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 31, 2019 at 01:02:15PM +0100, David Howells wrote:
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > Can you re-iterate the exact problem? I konw we talked about this in the
-> > past, but I seem to have misplaced those memories :/
-> 
-> Take this for example:
-> 
-> 	void afs_put_call(struct afs_call *call)
-> 	{
-> 		struct afs_net *net = call->net;
-> 		int n = atomic_dec_return(&call->usage);
-> 		int o = atomic_read(&net->nr_outstanding_calls);
-> 
-> 		trace_afs_call(call, afs_call_trace_put, n + 1, o,
-> 			       __builtin_return_address(0));
-> 
-> 		ASSERTCMP(n, >=, 0);
-> 		if (n == 0) {
-> 			...
-> 		}
-> 	}
-> 
-> I am printing the usage count in the afs_call tracepoint so that I can use it
-> to debug refcount bugs.  If I do it like this:
-> 
-> 	void afs_put_call(struct afs_call *call)
-> 	{
-> 		int n = refcount_read(&call->usage);
-> 		int o = atomic_read(&net->nr_outstanding_calls);
-> 
-> 		trace_afs_call(call, afs_call_trace_put, n, o,
-> 			       __builtin_return_address(0));
-> 
-> 		if (refcount_dec_and_test(&call->usage)) {
-> 			...
-> 		}
-> 	}
-> 
-> then there's a temporal gap between the usage count being read and the actual
-> atomic decrement in which another CPU can alter the count.  This can be
-> exacerbated by an interrupt occurring, a softirq occurring or someone enabling
-> the tracepoint.
-> 
-> I can't do the tracepoint after the decrement if refcount_dec_and_test()
-> returns false unless I save all the values from the object that I might need
-> as the object could be destroyed any time from that point on.
+Atomic policy updaters are not very useful as they cannot
+usually perform the policy updates on their own. Since it
+seems that there is no strict need for the atomicity,
+switch to the blocking variant.
 
-Is it not the responsibility of the task that affects the 1->0
-transition to actually free the memory?
+Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
+---
+ security/security.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-That is, I'm expecting the '...' in both cases above the include the
-actual freeing of the object. If this is not the case, then @usage is
-not a reference count.
+diff --git a/security/security.c b/security/security.c
+index 23cbb1a295a3..c5e69ce81521 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -39,7 +39,7 @@
+ #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
+ 
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+-static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
++static BLOCKING_NOTIFIER_HEAD(lsm_notifier_chain);
+ 
+ static struct kmem_cache *lsm_file_cache;
+ static struct kmem_cache *lsm_inode_cache;
+@@ -432,19 +432,19 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+ 
+ int call_lsm_notifier(enum lsm_event event, void *data)
+ {
+-	return atomic_notifier_call_chain(&lsm_notifier_chain, event, data);
++	return blocking_notifier_call_chain(&lsm_notifier_chain, event, data);
+ }
+ EXPORT_SYMBOL(call_lsm_notifier);
+ 
+ int register_lsm_notifier(struct notifier_block *nb)
+ {
+-	return atomic_notifier_chain_register(&lsm_notifier_chain, nb);
++	return blocking_notifier_chain_register(&lsm_notifier_chain, nb);
+ }
+ EXPORT_SYMBOL(register_lsm_notifier);
+ 
+ int unregister_lsm_notifier(struct notifier_block *nb)
+ {
+-	return atomic_notifier_chain_unregister(&lsm_notifier_chain, nb);
++	return blocking_notifier_chain_unregister(&lsm_notifier_chain, nb);
+ }
+ EXPORT_SYMBOL(unregister_lsm_notifier);
+ 
+-- 
+2.17.1
 
-(and it has already been established that refcount_t doesn't work for
-usage count scenarios)
-
-Aside from that, is the problem that refcount_dec_and_test() returns a
-boolean (true - last put, false - not last) instead of the refcount
-value? This does indeed make it hard to print the exact count value for
-the event.
