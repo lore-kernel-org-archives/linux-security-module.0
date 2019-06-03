@@ -2,89 +2,124 @@ Return-Path: <SRS0=tuDa=UC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_DR,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0ADEC04AB6
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 06:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE533C28CC7
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 09:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96A5827C6B
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 06:58:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ApIxlwg4"
+	by mail.kernel.org (Postfix) with ESMTP id B22BC27F21
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 09:15:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfFCG6S (ORCPT
+        id S1728838AbfFCJN1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jun 2019 02:58:18 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43978 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbfFCG6S (ORCPT
+        Mon, 3 Jun 2019 05:13:27 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:34382 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727961AbfFCJN1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jun 2019 02:58:18 -0400
-Received: by mail-lf1-f65.google.com with SMTP id d7so3142828lfb.10;
-        Sun, 02 Jun 2019 23:58:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OQVCYEhO9HM2/zq5Azh8dUDE7ptzD3NHiflaZgm2jxI=;
-        b=ApIxlwg4fCLJGjlEs7ObDs5LEYZWm6uH9++wtJb/58kUrxpiHrggHEzNJB1NEv90hx
-         p0RMDI/ifxE17d64cdPGXm3vFbc3dPX4CVWj+gcUsSGnHWkipG9678wQ/YYuHevgGmi8
-         RRxEQf6NgbY5hFcHocZ7GjJQtm1Uef0aK7O1Br+3WXWvJjQTAoy1LeOyX+AxxQMl+QuA
-         3q01vOb6xTS6Mhhh4VSj+iemeOgifgTGWzD6Z0TmWUwLm0E4B97tHS1vOCMDgVu1Bi/F
-         3GcsNCXl2mL/DIknr4E1jSNXD3/3DoZCAdRwTMiF4hrERtnohzAKG3mXmpU7xiAnPgYu
-         6uVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OQVCYEhO9HM2/zq5Azh8dUDE7ptzD3NHiflaZgm2jxI=;
-        b=JoYWEQhb1Ib9ZigtEUnnWHoaHUPWvDEx810Cuug4cNr1n+cOvEWYqB2npjKpXr8HbU
-         i/T/N+Rg4Yvy13XQQQARW2aDbLk9eBmrJhXaMmP8sDWk82b9BvWBZy5KzkyCgy289YY9
-         opEZ9+B2TjWFnBziQ/vlNPrDLx8Il6aiwNyUvwnOV/YR5qt0/hq8ES6ovcaoYuaiVicW
-         epqio3A/2kDhqfc8ut/IWLQIz+7zNq0GytikuaoNIbf97vxlbqxwjpEzab3FjjxOgYWN
-         opuLz2fX7mTkVXpaKHjSo9Uo7cBI+DMRaB+bECY6M2e7b6hNrwHc2scC2l3H6q9EEORO
-         ed+w==
-X-Gm-Message-State: APjAAAU/o18AtTIH9tyGoUSl7afF7od9RYBZXBJHF2XN4d5U6hLb8uwd
-        Swt5kZdzhCyZPNVyff4d/UB+TeynlZLg8WWZ5Mzz5eZu
-X-Google-Smtp-Source: APXvYqxfVrx08HEgWPkBwcIal5QFOQNu1bW+VPdR2IudRWJSLh1ZLfIx4i033Nex0e0rnaRgOeW8JGP97KcuaoueI4E=
-X-Received: by 2002:ac2:434c:: with SMTP id o12mr12721266lfl.128.1559545096087;
- Sun, 02 Jun 2019 23:58:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190531140237.9199-1-janne.karhunen@gmail.com>
- <20190531140237.9199-2-janne.karhunen@gmail.com> <7a0f17c6-5332-fd48-2727-1f1e2649d356@tycho.nsa.gov>
-In-Reply-To: <7a0f17c6-5332-fd48-2727-1f1e2649d356@tycho.nsa.gov>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Mon, 3 Jun 2019 09:58:05 +0300
-Message-ID: <CAE=Ncraup2xo+WeOkcQukuDs86=+_0GiL65O5ffoytKsgbA1oQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ima: use the lsm policy update notifier
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 3 Jun 2019 05:13:27 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x539C8O2013972;
+        Mon, 3 Jun 2019 04:12:08 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x539C6Fb013971;
+        Mon, 3 Jun 2019 04:12:06 -0500
+Date:   Mon, 3 Jun 2019 04:12:06 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190603091206.GA13614@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com> <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov> <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com> <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov> <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com> <20190530180110.GB23930@linux.intel.com> <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com> <20190530211645.GB27551@linux.intel.com> <CALCETrVAoDppmdJzkpwagt3q64M-QpNajXbKGR1yQdqyofeANQ@mail.gmail.com> <20190530213601.GC27551@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530213601.GC27551@linux.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 03 Jun 2019 04:12:08 -0500 (CDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 31, 2019 at 9:35 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+On Thu, May 30, 2019 at 02:36:01PM -0700, Sean Christopherson wrote:
 
-> > +                     entry->lsm[i].rule = rule_new;
+Good morning, I hope everyone had a pleasant weekend.
+
+> Assuming MRENCLAVE generated by Graphene or any other hosting scheme
+> are stable[1], then avoiding EXEC<whatever> means the user can
+> effectively whitelist what enclaves are runnable by Graphene, even
+> if the kernel doesn't implement security_enclave_create/init().
 >
-> Doesn't this still leak the old entry->lsm[i].rule?
+> I agree that it probably isn't all that important, it's more of a
+> "why not" argument, i.e. what is gained by not using sigstruct as a
+> proxy?
+>
+> [1] What in the world is being attested if MRENCLAVE isn't stable?
 
-Argh, clearly got a wrong understanding from different part of the
-code. Will fix.
+The cryptographic identity of the entity that signed the enclave and
+generated the SIGSTRUCT.
 
+At the risk of being the monotone in the choir, any relevant SGX
+security controls require verifying the identity of whoever signed the
+identity characteristics (SIGSTRUCT) of the image that initiates the
+execution of an SGX TEE.  Other then verifying the initial execution
+image, the MRENCLAVE value isn't all that relevant.
 
-> Also, I don't think you can just mutate entry like this under RCU.
+This issue is further evidenced by the fact that sealing data to an
+enclave uses the MRSIGNER variant of ENCLU[EGETKEY] key derivation.
 
-Yeah, it's definitely not the politically correct way of doing it.
-Let's rework the entire list then, I will post another draft. It will
-become somewhat more intrusive :-(
+The current work on LSM controls seems to focus on the identity of the
+entity that is requesting the image to be loaded rather then who
+actually signed, and presumably authored, the code.  As I have
+previously noted, with SGX2/EDMM, a platform owner may not even have
+any visibility into the code that an SGX TEE may ultimately load and
+execute.
 
+Any security relevant LSM control in this space has to focus on
+providing the platform owner the ability to take action based on the
+contents of the SIGSTRUCT of the initiating image.  In addition to the
+identity of who is requesting the image to be loaded.
 
---
-Janne
+Have a good week.
+
+Dr. Greg
+
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"Experience is something you don't get until just after you need it."
+                                -- Olivier
