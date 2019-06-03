@@ -2,206 +2,112 @@ Return-Path: <SRS0=tuDa=UC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80873C04AB5
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 18:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C177C04AB5
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 18:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 611C526D90
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 18:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B951D26D62
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 18:31:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="lE/gBTu5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbfFCSa7 convert rfc822-to-8bit (ORCPT
+        id S1726609AbfFCSb4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jun 2019 14:30:59 -0400
-Received: from mga11.intel.com ([192.55.52.93]:52844 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726055AbfFCSa7 (ORCPT
+        Mon, 3 Jun 2019 14:31:56 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34594 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbfFCSb4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jun 2019 14:30:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 11:30:56 -0700
-X-ExtLoop1: 1
-Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
-  by fmsmga006.fm.intel.com with ESMTP; 03 Jun 2019 11:30:55 -0700
-Received: from orsmsx121.amr.corp.intel.com (10.22.225.226) by
- ORSMSX104.amr.corp.intel.com (10.22.225.131) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 3 Jun 2019 11:30:55 -0700
-Received: from orsmsx116.amr.corp.intel.com ([169.254.7.165]) by
- ORSMSX121.amr.corp.intel.com ([169.254.10.64]) with mapi id 14.03.0415.000;
- Mon, 3 Jun 2019 11:30:55 -0700
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-CC:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: RE: [RFC PATCH 0/9] security: x86/sgx: SGX vs. LSM
-Thread-Topic: [RFC PATCH 0/9] security: x86/sgx: SGX vs. LSM
-Thread-Index: AQHVGAkeu//pWDttTk+JsIicrUDwLaaG/FIQgAOo7oD//5fa8A==
-Date:   Mon, 3 Jun 2019 18:30:54 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F654ED042@ORSMSX116.amr.corp.intel.com>
-References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F654EC5FD@ORSMSX116.amr.corp.intel.com>
- <20190603171549.GE13384@linux.intel.com>
-In-Reply-To: <20190603171549.GE13384@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWFjMzI5YmEtNDY0My00MGEzLWFjZjktMjAyODQwYmJjZGFmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiME9ubWtHN2FDV0pWS2NKKzVKaGpJYTUzVE5ySG5tSlhtUFVsKzl5YWZ5dFVaMWxUMWtaR2RSMktPVGdEVkh1ZSJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 3 Jun 2019 14:31:56 -0400
+Received: by mail-oi1-f195.google.com with SMTP id u64so13636319oib.1
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Jun 2019 11:31:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JB7G7a3obPccO07RyvNY8mElks92DaU5NY5QKwWTZvQ=;
+        b=lE/gBTu5gNk+nG3gMkLC5L1qqMeFZke1tNjNI5xgMMMUPlBG3ZAzppxMiEuBOtKiMI
+         Y6xOk9eUEgPGAqGCVGFZpHU68PsLFNawXTBrG55HWus8sEfa/pbs2FkPH3l9y2eEvDvI
+         iGvFo6MBYyAPDhEBFQ/4NNauvhmdicFzBSZLXBRHikKFhbpLDxXobG2dm7zdUMcMLlR4
+         bLxdEBF7g9pTfKNAUVZBPWJPnMha7n3pUfVeRzY2e9a5BSDSaj0E6B5Lem8uEQQeVdh+
+         wXJNvLH9D4lzgEpF3Pu7V+6V4lfAyFJbr7/0knZSFvSon08cblLXIUE+SrdvBuzGJp3y
+         AyZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JB7G7a3obPccO07RyvNY8mElks92DaU5NY5QKwWTZvQ=;
+        b=m1v58PQfeho0F+qnO51RuDwm7UrYWjP3K31pE5UfJn10xZFfZ/pPlw98Z4Q4TDxdYl
+         P68y3qmZ6bR7sJSCG4EEVuhgxQgtbyVojtX3ggJkTazmnhPgnxMtCeq0yZTOq6Sj0wLc
+         qnWRwpYQujhH9OHTvW6QJ/davT9A1Md0oJOW20OoZwlDQfQggVJX2b+NPWxS3P/TgeyQ
+         WVAsrJgKhF/bc7wwcwsQHypGS0gRyph0TppWqzB3JsHLCapX47dnYf7bQSYIKAnKeklP
+         QZ8gH9ZFD7UgbcPV0eXwbBkU9HVsG4T2pBT9pskdeWJugB3Bk1TRvqlAGm9M68tBT8lY
+         kc8A==
+X-Gm-Message-State: APjAAAUd8RsDwdvEiddR04GMpkqyXI4rFxZ8jhUiwfazXWKA7DsyDtPy
+        XEb2GECFrJ/izTb7u0crBz3+xQ==
+X-Google-Smtp-Source: APXvYqx/JQHKW1RVtJywUChZiZhbYIWjyWjyP52wifJ5hVzfHkQZ9dKculi7hqOvLpAffmvtGewfWA==
+X-Received: by 2002:aca:c382:: with SMTP id t124mr1900442oif.9.1559586715364;
+        Mon, 03 Jun 2019 11:31:55 -0700 (PDT)
+Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
+        by smtp.googlemail.com with ESMTPSA id b127sm6172046oih.43.2019.06.03.11.31.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Jun 2019 11:31:54 -0700 (PDT)
+Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk
+Cc:     linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bug-cpio@gnu.org,
+        zohar@linux.vnet.ibm.com, silviu.vlasceanu@huawei.com,
+        dmitry.kasatkin@huawei.com, takondra@cisco.com, kamensky@cisco.com,
+        hpa@zytor.com, arnd@arndb.de, james.w.mcmechan@gmail.com,
+        niveditas98@gmail.com
+References: <20190523121803.21638-1-roberto.sassu@huawei.com>
+ <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
+Date:   Mon, 3 Jun 2019 13:32:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: Christopherson, Sean J
-> Sent: Monday, June 03, 2019 10:16 AM
+On 6/3/19 4:31 AM, Roberto Sassu wrote:
+>> This patch set aims at solving the following use case: appraise files from
+>> the initial ram disk. To do that, IMA checks the signature/hash from the
+>> security.ima xattr. Unfortunately, this use case cannot be implemented
+>> currently, as the CPIO format does not support xattrs.
+>>
+>> This proposal consists in including file metadata as additional files named
+>> METADATA!!!, for each file added to the ram disk. The CPIO parser in the
+>> kernel recognizes these special files from the file name, and calls the
+>> appropriate parser to add metadata to the previously extracted file. It has
+>> been proposed to use bit 17:16 of the file mode as a way to recognize files
+>> with metadata, but both the kernel and the cpio tool declare the file mode
+>> as unsigned short.
+>
+> Any opinion on this patch set?
 > 
-> On Sun, Jun 02, 2019 at 12:29:35AM -0700, Xing, Cedric wrote:
-> > Hi Sean,
-> >
-> > Generally I agree with your direction but think ALLOW_* flags are
-> > completely internal to LSM because they can be both produced and
-> > consumed inside an LSM module. So spilling them into SGX driver and
-> > also user mode code makes the solution ugly and in some cases
-> > impractical because not every enclave host process has a priori
-> > knowledge on whether or not an enclave page would be EMODPE'd at
-> runtime.
+> Thanks
 > 
-> In this case, the host process should tag *all* pages it *might* convert
-> to executable as ALLOW_EXEC.  LSMs can (and should/will) be written in
-> such a way that denying ALLOW_EXEC is fatal to the enclave if and only
-> if the enclave actually attempts mprotect(PROT_EXEC).
+> Roberto
 
-What if those pages contain self-modifying code but the host doesn't know ahead of time? Would it require ALLOW_WRITE|ALLOW_EXEC at EADD? Then would it prevent those pages to start with PROT_EXEC?
+Sorry, I've had the window open since you posted it but haven't gotten around to
+it. I'll try to build it later today.
 
-Anyway, my point is that it is unnecessary even if it works.
+It does look interesting, and I have no objections to the basic approach. I
+should be able to add support to toybox cpio over a weekend once I've got the
+kernel doing it to test against.
 
-> 
-> Take the SELinux path for example.  The only scenario in which
-> PROT_WRITE is cleared from @allowed_prot is if the page *starts* with
-> PROT_EXEC.
-> If PROT_EXEC is denied on a page that starts RW, e.g. an EAUG'd page,
-> then PROT_EXEC will be cleared from @allowed_prot.
-> 
-> As Stephen pointed out, auditing the denials on @allowed_prot means the
-> log will contain false positives of a sort.  But this is more of a noise
-> issue than true false positives.  E.g. there are three possible outcomes
-> for the enclave.
-> 
->   - The enclave does not do EMODPE[PROT_EXEC] in any scenario, ever.
->     Requesting ALLOW_EXEC is either a straightforward a userspace bug or
->     a poorly written generic enclave loader.
-> 
->   - The enclave conditionally performs EMODPE[PROT_EXEC].  In this case
->     the denial is a true false positive.
-> 
->   - The enclave does EMODPE[PROT_EXEC] and its host userspace then fails
->     on mprotect(PROT_EXEC), i.e. the LSM denial is working as intended.
->     The audit log will be noisy, but viewed as a whole the denials
-> aren't
->     false positives.
-
-What I was talking about was EMODPE[PROT_WRITE] on an RX page.
-
-> 
-> The potential for noisy audit logs and/or false positives is unfortunate,
-> but it's (by far) the lesser of many evils.
-> 
-> > Theoretically speaking, what you really need is a per page flag (let's
-> > name it WRITTEN?) indicating whether a page has ever been written to
-> > (or more precisely, granted PROT_WRITE), which will be used to decide
-> > whether to grant PROT_EXEC when requested in future. Given the fact
-> > that all mprotect() goes through LSM and mmap() is limited to
-> > PROT_NONE, it's easy for LSM to capture that flag by itself instead of
-> asking user mode code to provide it.
-> >
-> > That said, here is the summary of what I think is a better approach.
-> > * In hook security_file_alloc(), if @file is an enclave, allocate some
-> data
-> >   structure to store for every page, the WRITTEN flag as described
-> above.
-> >   WRITTEN is cleared initially for all pages.
-> 
-> This would effectively require *every* LSM to duplicate the SGX driver's
-> functionality, e.g. track per-page metadata, implement locking to
-> prevent races between multiple mm structs, etc...
-
-Architecturally we shouldn't dictate how LSM makes decisions. ALLOW_* are no difference than PROCESS__* or FILE__* flags, which are just artifacts to assist particular LSMs in decision making. They are never considered part of the LSM interface, even if other LSMs than SELinux may adopt the same/similar approach.
-
-If code duplication is what you are worrying about, you can put them in a library, or implement/export them in some new file (maybe security/enclave.c?) as utility functions. But spilling them into user mode is what I think is unacceptable.
-
-> 
-> >   Open: Given a file of type struct file *, how to tell if it is an
-> enclave (i.e. /dev/sgx/enclave)?
-> > * In hook security_mmap_file(), if @file is an enclave, make sure
-> @prot can
-> >   only be PROT_NONE. This is to force all protection changes to go
-> through
-> >   security_file_mprotect().
-> > * In the newly introduced hook security_enclave_load(), set WRITTEN
-> for pages
-> >   that are requested PROT_WRITE.
-> 
-> How would an LSM associate a page with a specific enclave?  vma->vm_file
-> will point always point at /dev/sgx/enclave.  vma->vm_mm is useless
-> because we're allowing multiple processes to map a single enclave, not
-> to mention that by mm would require holding a reference to the mm.
-
-Each open("/dev/sgx/enclave") syscall creates a *new* instance of struct file to uniquely identify one enclave instance. What I mean is @vma->vm_file, not @vma->vm_file->f_path or @vma->vm_file->f_inode.
-
-> 
-> > * In hook security_file_mprotect(), if @vma->vm_file is an enclave,
-> look up
-> >   and use WRITTEN flags for all pages within @vma, along with other
-> global
-> >   flags (e.g. PROCESS__EXECMEM/FILE__EXECMOD in the case of SELinux)
-> to decide
-> >   on allowing/rejecting @prot.
-> 
-> vma->vm_file will always be /dev/sgx/enclave at this point, which means
-> LSMs don't have the necessary anchor back to the source file, e.g. to
-> enforce FILE__EXECUTE.  The noexec file system case is also unaddressed.
-
-vma->vm_file identifies an enclave instance uniquely. FILE__EXECUTE is checked by security_enclave_load() using @source_vma->vm_file. Once a page has been EADD'ed, whether to allow RW->RX depends on .sigstruct file (more precisely, the file backing SIGSTRUCT), whose FILE__* attributes could be cached in vma->vm_file->f_security by security_enclave_init().
- 
-The noexec case should be addressed in IOC_ADD_PAGES by testing @source_vma->vm_flags & VM_MAYEXEC.
-
-> 
-> > * In hook security_file_free(), if @file is an  enclave, free storage
-> >   allocated for WRITTEN flags.
+Rob
