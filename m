@@ -2,124 +2,143 @@ Return-Path: <SRS0=tuDa=UC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_DR,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE533C28CC7
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 09:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E68C04AB6
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 09:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B22BC27F21
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 09:15:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 296A627FE2
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 09:25:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OMLIbGGF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728838AbfFCJN1 (ORCPT
+        id S1727486AbfFCJZC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jun 2019 05:13:27 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:34382 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727961AbfFCJN1 (ORCPT
+        Mon, 3 Jun 2019 05:25:02 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:45396 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbfFCJZC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:13:27 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x539C8O2013972;
-        Mon, 3 Jun 2019 04:12:08 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x539C6Fb013971;
-        Mon, 3 Jun 2019 04:12:06 -0500
-Date:   Mon, 3 Jun 2019 04:12:06 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        William Roberts <bill.c.roberts@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
+        Mon, 3 Jun 2019 05:25:02 -0400
+Received: by mail-ua1-f65.google.com with SMTP id v18so214605uad.12
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Jun 2019 02:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=w8FJ04SPncA3GGt4qcZJVbuvO4+vsSKpHoksXqQuYUI=;
+        b=OMLIbGGF4iqU/3IBxXXOo51Z1Gh2iX+jT/XJanv3y/0Mlanl8zJA2fHTPptaNqwAy/
+         wCPISvYJLg8glT89EOkSCGrUEwLbQNGSsPQB3xP0gjI7Qnoj9v/0iNfgM4mS6UVs1cdI
+         ASiojU2tdAvCieLPAYfFUbKUwAx39XfYmeDORSJzdkuJ3vkYOm8FZf+sap+UctIi5Inl
+         AgNqY79mVOQvJbxNLvSndWErvOsmI5+gxjsaG/j0cl6rh4ldiKUw56A3oejSuCOFbFTv
+         5Lkaj44XlpdgfkLJZbb89pa8zO7s4vqoneWdvi7fIrUzKI7kgDAV+syf1sGfWPpsVjG/
+         PAzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=w8FJ04SPncA3GGt4qcZJVbuvO4+vsSKpHoksXqQuYUI=;
+        b=NF15hZafgb4ewBOQY/3nvHOGf3W32lbYD6AtrfEJ241QJI38JBHWf6ZTflhwqP75mg
+         G83usTOLmkpfugtkZxyGxr6zs3UAGmEHN+7vpDiAegCZhHjBU3wvgIijI/ziURwDxGi6
+         6QZ37IFSPjlLo31hifyAtsN2E5yowbBrZ/chu6jvMB+9m1fXSob8s45W/gHDyEUGmRCu
+         WDf0WbItQU/x5a/dPVOJwVHV06pXuVQ0t33a7+tAGDSSmMQvT2165vBRRsJwY4XELVHg
+         qDi9wGOA0r3L3MPUpurqSZ8H+D7XTg8PgFTBnUMQVqMpMnEag5Lf5fO8ooJUpYuonjTG
+         nxnQ==
+X-Gm-Message-State: APjAAAUGxdLcy5i/FnkxrySx5Rix7F1ouwXxSztyzkacvBrxOK3fAgjH
+        6ymMy4KQ3dCaMa4wpiKtfmIE39fSQ5fTi5zxH3pkNQ==
+X-Google-Smtp-Source: APXvYqyh6QlCEo0EU+R0uj2OfHoB0V/HJYqXE1klW7h8DXFh/JtB716lws+dopD6Xp86RJPH8UG3RqT+AAiUP3DAyxA=
+X-Received: by 2002:ab0:c11:: with SMTP id a17mr8422532uak.3.1559553901030;
+ Mon, 03 Jun 2019 02:25:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190529123812.43089-1-glider@google.com> <20190529123812.43089-3-glider@google.com>
+ <20190531181832.e7c3888870ce9e50db9f69e6@linux-foundation.org>
+In-Reply-To: <20190531181832.e7c3888870ce9e50db9f69e6@linux-foundation.org>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Mon, 3 Jun 2019 11:24:49 +0200
+Message-ID: <CAG_fn=XBq-ipvZng3hEiGwyQH2rRNFbN_Cj0r+5VoJqou0vovA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] mm: init: report memory auto-initialization
+ features at boot time
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Sandeep Patil <sspatil@android.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190603091206.GA13614@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com> <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov> <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com> <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov> <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com> <20190530180110.GB23930@linux.intel.com> <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com> <20190530211645.GB27551@linux.intel.com> <CALCETrVAoDppmdJzkpwagt3q64M-QpNajXbKGR1yQdqyofeANQ@mail.gmail.com> <20190530213601.GC27551@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530213601.GC27551@linux.intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 03 Jun 2019 04:12:08 -0500 (CDT)
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Marco Elver <elver@google.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 30, 2019 at 02:36:01PM -0700, Sean Christopherson wrote:
-
-Good morning, I hope everyone had a pleasant weekend.
-
-> Assuming MRENCLAVE generated by Graphene or any other hosting scheme
-> are stable[1], then avoiding EXEC<whatever> means the user can
-> effectively whitelist what enclaves are runnable by Graphene, even
-> if the kernel doesn't implement security_enclave_create/init().
+On Sat, Jun 1, 2019 at 3:18 AM Andrew Morton <akpm@linux-foundation.org> wr=
+ote:
 >
-> I agree that it probably isn't all that important, it's more of a
-> "why not" argument, i.e. what is gained by not using sigstruct as a
-> proxy?
+> On Wed, 29 May 2019 14:38:11 +0200 Alexander Potapenko <glider@google.com=
+> wrote:
 >
-> [1] What in the world is being attested if MRENCLAVE isn't stable?
+> > Print the currently enabled stack and heap initialization modes.
+> >
+> > The possible options for stack are:
+> >  - "all" for CONFIG_INIT_STACK_ALL;
+> >  - "byref_all" for CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL;
+> >  - "byref" for CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF;
+> >  - "__user" for CONFIG_GCC_PLUGIN_STRUCTLEAK_USER;
+> >  - "off" otherwise.
+> >
+> > Depending on the values of init_on_alloc and init_on_free boottime
+> > options we also report "heap alloc" and "heap free" as "on"/"off".
+>
+> Why?
+>
+> Please fully describe the benefit to users so that others can judge the
+> desirability of the patch.  And so they can review it effectively, etc.
+I'm going to update the description with the following passage:
 
-The cryptographic identity of the entity that signed the enclave and
-generated the SIGSTRUCT.
+    Print the currently enabled stack and heap initialization modes.
 
-At the risk of being the monotone in the choir, any relevant SGX
-security controls require verifying the identity of whoever signed the
-identity characteristics (SIGSTRUCT) of the image that initiates the
-execution of an SGX TEE.  Other then verifying the initial execution
-image, the MRENCLAVE value isn't all that relevant.
+    Stack initialization is enabled by a config flag, while heap
+    initialization is configured at boot time with defaults being set
+    in the config. It's more convenient for the user to have all informatio=
+n
+    about these hardening measures in one place.
 
-This issue is further evidenced by the fact that sealing data to an
-enclave uses the MRSIGNER variant of ENCLU[EGETKEY] key derivation.
+Does this make sense?
+> Always!
+>
+> > In the init_on_free mode initializing pages at boot time may take some
+> > time, so print a notice about that as well.
+>
+> How much time?
+I've seen pauses up to 1 second, not actually sure they're worth a
+separate line in the log.
+Kees, how long were the delays in your case?
 
-The current work on LSM controls seems to focus on the identity of the
-entity that is requesting the image to be loaded rather then who
-actually signed, and presumably authored, the code.  As I have
-previously noted, with SGX2/EDMM, a platform owner may not even have
-any visibility into the code that an SGX TEE may ultimately load and
-execute.
 
-Any security relevant LSM control in this space has to focus on
-providing the platform owner the ability to take action based on the
-contents of the SIGSTRUCT of the initiating image.  In addition to the
-identity of who is requesting the image to be loaded.
 
-Have a good week.
+--=20
+Alexander Potapenko
+Software Engineer
 
-Dr. Greg
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
 
-As always,
-Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-4206 N. 19th Ave.           Specializing in information infra-structure
-Fargo, ND  58102            development.
-PH: 701-281-1686
-FAX: 701-281-3949           EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"Experience is something you don't get until just after you need it."
-                                -- Olivier
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
