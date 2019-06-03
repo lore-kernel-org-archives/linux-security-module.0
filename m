@@ -2,78 +2,91 @@ Return-Path: <SRS0=tuDa=UC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4555C28CC6
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 22:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F06C46470
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 22:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DC92261A9
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 22:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B2AE26741
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 22:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbfFCWEB (ORCPT
+        id S1726269AbfFCWFq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jun 2019 18:04:01 -0400
-Received: from mail-it1-f199.google.com ([209.85.166.199]:52222 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfFCWEB (ORCPT
+        Mon, 3 Jun 2019 18:05:46 -0400
+Received: from mga05.intel.com ([192.55.52.43]:46272 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726281AbfFCWFj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:04:01 -0400
-Received: by mail-it1-f199.google.com with SMTP id g1so16304994itd.1
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Jun 2019 15:04:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=J4fvUgW1EwHf5GdkMvLmBkbktAv6wzecd5S4Jz43ikQ=;
-        b=kPeP9jVEW3jIe5zh0c/WJsw0FM6VNBBwHHJbQ9PMnxUtcr+y7o5TmC1BidQOljIFII
-         qQNI+tT01cNKtHbULfYbUvTMV9KP1H5kSZDkgUMHXMo1fF5T5Lb7F2e2WFi5eILcx9xK
-         03uBBxkGdl1XyTxpnXRNKEdx19tGI+XP+oXSkfovzR7ZRXRi4IMbaUNgCS3odadeIMBv
-         Q/cVQygJZgWBVGLiaVZgzazPCYJz3BHIrY2qosFz/TczSUsE6Yxbn1jehilQTsQa0FGJ
-         FOdaIIlcBkvXq10zT9UL4NnX5a4RyCWfoq6V5vIjXFNQrHpUzil9GKT9qj74J6FP/NQN
-         5uHg==
-X-Gm-Message-State: APjAAAW02PeUPl0WGlpGxdawMU87ZXKUtmZRtig6Ai4KoOMjSY34dlxR
-        o4rRFTOK2ZD2hF2JvZrQF1oLMVu5MGBb6BajpOxz9FSx+VrD
-X-Google-Smtp-Source: APXvYqy092dyuRmUAcZWsDzruOze1nu2JQlB3MegZ3Kb0WH/yI/h42We3X9lAKWA1LcM4A9vfuDNs1zplvdSKP5p/7RrqdxuebqJ
+        Mon, 3 Jun 2019 18:05:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 13:48:04 -0700
+X-ExtLoop1: 1
+Received: from jgaire-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.169])
+  by orsmga001.jf.intel.com with ESMTP; 03 Jun 2019 13:47:50 -0700
+Date:   Mon, 3 Jun 2019 23:47:49 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190603204749.GD4894@linux.intel.com>
+References: <683B5E3D-AFB6-4B45-8D39-B00847312209@amacapital.net>
+ <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
+ <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
+ <20190528202407.GB13158@linux.intel.com>
+ <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
+ <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
+ <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
+ <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+ <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
 MIME-Version: 1.0
-X-Received: by 2002:a24:3ce:: with SMTP id e197mr19185899ite.143.1559599440698;
- Mon, 03 Jun 2019 15:04:00 -0700 (PDT)
-Date:   Mon, 03 Jun 2019 15:04:00 -0700
-In-Reply-To: <000000000000fa91e1058a358cd5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a7a51a058a728a6c@google.com>
-Subject: Re: possible deadlock in __do_page_fault (2)
-From:   syzbot <syzbot+606e524a3ca9617cf8c0@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, hdanton@sina.com, jmorris@namei.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu, zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-syzbot has bisected this bug to:
+On Thu, May 30, 2019 at 11:04:24AM -0400, Stephen Smalley wrote:
+> Does this occur for both setting initial permissions and runtime permissions
+> or just runtime? Both userspace- and driver-initiated mmap/mprotect
+> operations or just userspace-initiated ones?  Does the driver use interfaces
+> that call the mmap/mprotect hooks or lower level functions?
 
-commit 69d61f577d147b396be0991b2ac6f65057f7d445
-Author: Mimi Zohar <zohar@linux.ibm.com>
-Date:   Wed Apr 3 21:47:46 2019 +0000
+The driver never initiates mmap() or mprotect().
 
-     ima: verify mprotect change is consistent with mmap policy
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16461c5aa00000
-start commit:   3c09c195 Add linux-next specific files for 20190531
-git tree:       linux-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=15461c5aa00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11461c5aa00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6cfb24468280cd5c
-dashboard link: https://syzkaller.appspot.com/bug?extid=606e524a3ca9617cf8c0
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10572ca6a00000
-
-Reported-by: syzbot+606e524a3ca9617cf8c0@syzkaller.appspotmail.com
-Fixes: 69d61f577d14 ("ima: verify mprotect change is consistent with mmap  
-policy")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+/Jarkko
