@@ -2,134 +2,89 @@ Return-Path: <SRS0=tuDa=UC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9914C46460
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 15:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C97C04AB5
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 16:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99ADD27645
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 15:57:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Y9F5pclK"
+	by mail.kernel.org (Postfix) with ESMTP id 84D5923F32
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 16:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbfFCP5w (ORCPT
+        id S1728486AbfFCQam (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jun 2019 11:57:52 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40744 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbfFCP5w (ORCPT
+        Mon, 3 Jun 2019 12:30:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38008 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728228AbfFCQam (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:57:52 -0400
-Received: by mail-lf1-f66.google.com with SMTP id a9so12602923lff.7
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Jun 2019 08:57:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dUIziqCaWwis11FMwxs4RVtYQ55XI7b2gVYUu/408e4=;
-        b=Y9F5pclKlBDwBsGlUcTkFo2gE0Lxa9w08Yi6C3Mbtmu/srmp1rs9zU93TrlT9tgQfK
-         w1ylShU+Ekv0VietSgqGx05CQtDkHwJOghI4QVY1lsw3x6VspFDaorn0ZQDEkytyQJ4m
-         C7Awrm7vc+GExhX+DrlE4GlGbcPuNCJS58WFf8fWwsSRrNhQ4ZOC6FHBouceunr/SkGT
-         LUXSnwrkPkw4p4+CzVuH1bzwMI3/tDtsG3n4Cz3aGamKcKzR5Vuw2O25bnPA6nuWy6Fc
-         AtQZbjcyBkoAmfms8Qe6xJa32tiH32IbgjqMTi5KzCJqYFgkgTKSzw4Tgle403rRmy0e
-         eioQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dUIziqCaWwis11FMwxs4RVtYQ55XI7b2gVYUu/408e4=;
-        b=qOvic7VJAQcBRqlQg71HLtqR2Krxa9I28wZy5ZNIwXe6IA5Tey9qPYFraJYfdmWA7V
-         2dasn7qF/IRCisAUsC69LL1EV0vZ16lq9vO4vMmltxKmlhyAiMeil9Y6R7VkKh6ssZLe
-         rLkRTA2ACNWKFp/skOOxkeJb3lKCwccbZlAKRw4dhlGld/XWarT2KpYcRFFiopfO2P5H
-         jGzsNPlF0jLhoVc54jldW+Q+HEa30kUFvMdukmzgkubUa7IYObYihZi4GGsKV8Pu2DKj
-         8QIb6KZFyMVFPO/8IT0Br5rFiH1VLqq1EZKwYc5m94obALsFNFT6vdVnAcjTrh6WkLbL
-         U1ZQ==
-X-Gm-Message-State: APjAAAU8jxdApE44X2Gw1Si+UkY+sZ+ARaPnyfIQBCYRItGFnd9ctOuW
-        Zj8LGk5c2FPsMBQWud97gcwEmDZNuvjWVw5gylmfKOU=
-X-Google-Smtp-Source: APXvYqyIjVbFfm6bTAY+PP8RHZbzsFMuXP1lJL7n3NHTAvCY8HdOf04hV+rUc65GZ60suBUkENcT3xTGX2zIASzg8DA=
-X-Received: by 2002:ac2:410a:: with SMTP id b10mr13586267lfi.175.1559577470486;
- Mon, 03 Jun 2019 08:57:50 -0700 (PDT)
+        Mon, 3 Jun 2019 12:30:42 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7579081E05;
+        Mon,  3 Jun 2019 16:30:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E09DC5D9C6;
+        Mon,  3 Jun 2019 16:30:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <c95dd6cd-5530-6b70-68f6-4038edd72352@schaufler-ca.com>
+References: <c95dd6cd-5530-6b70-68f6-4038edd72352@schaufler-ca.com> <CAG48ez2rRh2_Kq_EGJs5k-ZBNffGs_Q=vkQdinorBgo58tbGpg@mail.gmail.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905933492.7587.6968545866041839538.stgit@warthog.procyon.org.uk> <14347.1559127657@warthog.procyon.org.uk> <312a138c-e5b2-4bfb-b50b-40c82c55773f@schaufler-ca.com> <CAG48ez2KMrTBFzO9p8GvduXruz+FNLPyhc2YivHePsgViEoT1g@mail.gmail.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, Jann Horn <jannh@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 3/7] vfs: Add a mount-notification facility
 MIME-Version: 1.0
-References: <20190531140237.9199-1-janne.karhunen@gmail.com>
-In-Reply-To: <20190531140237.9199-1-janne.karhunen@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 3 Jun 2019 11:57:38 -0400
-Message-ID: <CAHC9VhSJ9GnUqU4cj-OzWinGndgLOHrhtmeayLG2f3iow1Tptg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] LSM: switch to blocking policy update notifiers
-To:     Janne Karhunen <janne.karhunen@gmail.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <19413.1559579426.1@warthog.procyon.org.uk>
+Date:   Mon, 03 Jun 2019 17:30:26 +0100
+Message-ID: <19414.1559579426@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 03 Jun 2019 16:30:41 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 31, 2019 at 10:03 AM Janne Karhunen
-<janne.karhunen@gmail.com> wrote:
-> Atomic policy updaters are not very useful as they cannot
-> usually perform the policy updates on their own. Since it
-> seems that there is no strict need for the atomicity,
-> switch to the blocking variant.
->
-> Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
-> ---
->  security/security.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/security/security.c b/security/security.c
-> index 23cbb1a295a3..c5e69ce81521 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -39,7 +39,7 @@
->  #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
->
->  struct security_hook_heads security_hook_heads __lsm_ro_after_init;
-> -static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
-> +static BLOCKING_NOTIFIER_HEAD(lsm_notifier_chain);
->
->  static struct kmem_cache *lsm_file_cache;
->  static struct kmem_cache *lsm_inode_cache;
-> @@ -432,19 +432,19 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
->
->  int call_lsm_notifier(enum lsm_event event, void *data)
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-As I mentioned in the other thread, I would like to see "blocking", or
-similar, added to the lsm_notifier functions with this change.  It
-makes it easier if/when we need to add both atomic and blocking
-variants, as well as making it much more clear which version is being
-used (helpful even now with just one variant).
+> >> should be used. Someone or something caused the event. It can
+> >> be important who it was.
+> > The kernel's normal security model means that you should be able to
+> > e.g. accept FDs that random processes send you and perform
+> > read()/write() calls on them without acting as a subject in any
+> > security checks; let alone close().
+> 
+> Passed file descriptors are an anomaly in the security model
+> that (in this developer's opinion) should have never been
+> included. More than one of the "B" level UNIX systems disabled
+> them outright. 
 
-For example: call_lsm_notifier() -> call_lsm_blocking_notifier(),
-register_lsm_notifier() -> register_lsm_blocking_notifier().
+Considering further on this, I think the only way to implement what you're
+suggesting is to add a field to struct file to record the last fputter's creds
+as the procedure of fputting is offloaded to a workqueue.
 
->  {
-> -       return atomic_notifier_call_chain(&lsm_notifier_chain, event, data);
-> +       return blocking_notifier_call_chain(&lsm_notifier_chain, event, data);
->  }
->  EXPORT_SYMBOL(call_lsm_notifier);
->
->  int register_lsm_notifier(struct notifier_block *nb)
->  {
-> -       return atomic_notifier_chain_register(&lsm_notifier_chain, nb);
-> +       return blocking_notifier_chain_register(&lsm_notifier_chain, nb);
->  }
->  EXPORT_SYMBOL(register_lsm_notifier);
->
->  int unregister_lsm_notifier(struct notifier_block *nb)
->  {
-> -       return atomic_notifier_chain_unregister(&lsm_notifier_chain, nb);
-> +       return blocking_notifier_chain_unregister(&lsm_notifier_chain, nb);
->  }
->  EXPORT_SYMBOL(unregister_lsm_notifier);
->
-> --
-> 2.17.1
->
+Note that's last fputter, not the last closer, as we don't track the number of
+open fds linked to a file struct.
 
+In the case of AF_UNIX sockets that contain in-the-process-of-being-passed fds
+at the time of closure, this is further complicated by the socket fput being
+achieved in the work item - thereby adding layers of indirection.
 
--- 
-paul moore
-www.paul-moore.com
+It might be possible to replace f_cred rather than adding a new field, but
+that might get used somewhere after that point.
+
+Note also that fsnotify_close() doesn't appear to use the last fputter's path
+since it's not available if called from deferred fput.
+
+David
