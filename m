@@ -2,116 +2,137 @@ Return-Path: <SRS0=tuDa=UC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 176D9C46460
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 21:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53438C04AB5
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 21:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E43FD206BA
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 21:47:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559598447;
-	bh=n9SyFEz1scq0F+hulkDOofWavK0RVDUzt5KbFhVJxXU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=AIZfaUFCBzR8Sv50n0y/esI8/6b1pQABmTth5ZwPZfE3bjoBDk6HM1M4GrvYrP679
-	 o8P8XKQsMJSO5kyi/Qt06gICsdw0RdXJJEfwmiUDe0qoWrRg1K+D6FJl1nj7Igq+AD
-	 6DZGCbMN8wnA6yqab9mJpnQf9R/BrHUryOIu2Suk=
+	by mail.kernel.org (Postfix) with ESMTP id 2840626CF5
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 21:50:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="YWqY1U0g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfFCVr0 (ORCPT
+        id S1726653AbfFCVuu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jun 2019 17:47:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36780 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726049AbfFCVrZ (ORCPT
+        Mon, 3 Jun 2019 17:50:50 -0400
+Received: from sonic302-9.consmr.mail.bf2.yahoo.com ([74.6.135.48]:45828 "EHLO
+        sonic302-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726652AbfFCVut (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jun 2019 17:47:25 -0400
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F05A24700
-        for <linux-security-module@vger.kernel.org>; Mon,  3 Jun 2019 21:37:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559597851;
-        bh=n9SyFEz1scq0F+hulkDOofWavK0RVDUzt5KbFhVJxXU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Wl+zxf1zXrXTscPd69no8f3com+w7DM1Ij9JSl6nzJEwn21nR1/vkX/KVRgO+NKi5
-         HqAYbd2/RvghdNstiyg9ha1DYR41NNpT/hot0tEZcFGgwBDLilwmu/lIQ6aGvQ7kRp
-         XYe9TujRyGiqLtBNWH6Yz4U1SacrGQimo6MS5eD0=
-Received: by mail-wm1-f48.google.com with SMTP id z23so12588845wma.4
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Jun 2019 14:37:30 -0700 (PDT)
-X-Gm-Message-State: APjAAAWwOxmH2ydNghHguBPPAzTXLH04w7lU+gjkZt7RIIjyQaBUdIBB
-        L7IeFaqfpVJqIFtuUyLmd3OfWHE6NrDDXnQTxtRwHw==
-X-Google-Smtp-Source: APXvYqxdUr7TDIteSerX6UkuNzjBgbrWWlCpsdbDlcFwObi9TtMlsj3g3nDpINh3WF26sC6Rc/305H4m02M04UFf+ic=
-X-Received: by 2002:a1c:9a53:: with SMTP id c80mr9098862wme.173.1559597849219;
- Mon, 03 Jun 2019 14:37:29 -0700 (PDT)
+        Mon, 3 Jun 2019 17:50:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559598649; bh=VhpqopIotudNuCiLKYtTB/ElDm9HB0G0nVPd3S5kTaE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=YWqY1U0gQpf8Ln4u/mRoJP2mctY+WC6farf2jIe0vRG7VJimM9aeFWxtTILRuDlP5sq4CUyE65fihRjEDo2SPlO2/CnXfh74+nc0heIHATEGPaYMC7+6cLxc9t4IdaVNtG3qE0MINMRsHPjLWTmjMBMU84hf5hwDah/s3Qihux3rz8C2AxAIrTQJvAAPTxfTxpdURszejuW0Ya4zgjKDbzSt8c1zoFCn8zKRAvGGqKHyY8yRaCN+VUmdMGNxjSWFWOhkTmvgJAqtbrFtyYoBdOzcuwrhcuNgZXsotHbQ2Ar4K6hoXhaiZtOsSYVfjjC5KMwCFg5m/7CI5go/2scrwA==
+X-YMail-OSG: Lc26mNIVM1noavuX5n_RtsofjV41Db_Ii2wtvB5qh8rksUZJovRNZlxtFetFtQa
+ hWcH8eQMuQo2WVU1LUYObpJDtSmRxbyIpFhBqNt9QBWJThZm3nxZmrAaNdUaoK1SnFpzlx__n1Jj
+ 4Go1xiCk_YYXx_3s1DXjVJro8Aol0uotQQTA9_hSQ1H4hSZIQmWHcwSCiBfYLDFz_4JBq_x8g5Fn
+ aflmefKWEBqmtBrej2IHR74cgRfT_V3JM9Ji4tgOd.aSVXyw_mkmKYiFM684bPuKlVkwMXRRmdAj
+ _ozwU2VUJxLFLv7f4DO6MU5pL6nb3gZyS8dpN2twnwXStzai03yhrUK9_rD2m01a0JXkMEvIY.aE
+ vyNtoZTRqPaYuIrZLxOCaDHmr8BrQi4UA3YbJBLdjvfR.kkEJCQB8YCJH5NCDIsDorMr_STPs70x
+ a7qUFBJHZ4zzvdbXLdX5wbS9vJiOU1d_6.Tv5AQifHq_.0v7RDw38.Udqh.zjics8pahTr9Urmi4
+ Us.VX2ve2gnSe4mrblh7j4udEJe.hVRaHa099SnB8mw0wkjkMBDGaU4HGIyhQxKy1spJZ1vbnRTj
+ oDJUTYtzhpVBax1_EBrXKLxaoeaBREKQT25MpmBffIhZw5tsjJkzgw_yvPnMlv555ilCMWlnOWxU
+ 0zbWDdY2f3NrWMnF.l_4qGgR0xdVl0kkGP4BdwI81vVF8qQJZKUjSAbcempTcZqP.f_YvIxSSzwC
+ dbysT2WMo5ltD950AKWw1r58hdZjAH_85Ml.EmTpsda546jUo9chCD94ibLpm0B1_77C4ELxY5vt
+ dyJreuEV8.vQQc2v7wsz8vu8hzB0VvSvS1tmQy0mTyo4HYqirE9y242DeixBKsxMaprb4s.dAnTO
+ kggvlLv0zsfHSd8xDbWtMH5hUo_A2bTB7vDzPRJweeMyyoL1pJCzDJfIZua.QvzpDWfIA1JF_Fxi
+ UHEhJomKM2qOev.1vxAxfIajgFnqrLxJgxxKUzuFSH9T8Nksf6ge058MPQFLjzCwUxqABdhj8a.8
+ Rb8kGz47uwNLSHS0p2mpdqcYXkrt8ACUsO_67j_HRiACY33OxdVzC9rGr5n_zqacsNWTmSuaDgwH
+ kZp1ssHk2Eisk3u1RmPADN0mZo7kSa6kXXIuZy32mFJ.HKx5Phznf4p4w5uM1nQTbpgNIAz2h3OS
+ MPO_f_Gx8y33mNjvlp6SvAIC1jB9Eppx.47C5KvisXX1CEX6214SHtBMvH9KzNLXldR8svcd9_wU
+ pNPeObqAtkA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.bf2.yahoo.com with HTTP; Mon, 3 Jun 2019 21:50:49 +0000
+Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
+          by smtp415.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3fe81df611a3b892f9504b6653dc7653;
+          Mon, 03 Jun 2019 21:40:44 +0000 (UTC)
+Subject: Re: [PATCH 25/58] IMA: Clean out lsm_export scaffolding
+To:     Kees Cook <keescook@chromium.org>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com, sds@tycho.nsa.gov, casey@schaufler-ca.com
+References: <20190531231020.628-1-casey@schaufler-ca.com>
+ <20190531231020.628-26-casey@schaufler-ca.com>
+ <201906011905.75B11DC86@keescook>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ mQINBFzV9HABEAC/mmv3jeJyF7lR7QhILYg1+PeBLIMZv7KCzBSc/4ZZipoWdmr77Lel/RxQ
+ 1PrNx0UaM5r6Hj9lJmJ9eg4s/TUBSP67mTx+tsZ1RhG78/WFf9aBe8MSXxY5cu7IUwo0J/CG
+ vdSqACKyYPV5eoTJmnMxalu8/oVUHyPnKF3eMGgE0mKOFBUMsb2pLS/enE4QyxhcZ26jeeS6
+ 3BaqDl1aTXGowM5BHyn7s9LEU38x/y2ffdqBjd3au2YOlvZ+XUkzoclSVfSR29bomZVVyhMB
+ h1jTmX4Ac9QjpwsxihT8KNGvOM5CeCjQyWcW/g8LfWTzOVF9lzbx6IfEZDDoDem4+ZiPsAXC
+ SWKBKil3npdbgb8MARPes2DpuhVm8yfkJEQQmuLYv8GPiJbwHQVLZGQAPBZSAc7IidD2zbf9
+ XAw1/SJGe1poxOMfuSBsfKxv9ba2i8hUR+PH7gWwkMQaQ97B1yXYxVEkpG8Y4MfE5Vd3bjJU
+ kvQ/tOBUCw5zwyIRC9+7zr1zYi/3hk+OG8OryZ5kpILBNCo+aePeAJ44znrySarUqS69tuXd
+ a3lMPHUJJpUpIwSKQ5UuYYkWlWwENEWSefpakFAIwY4YIBkzoJ/t+XJHE1HTaJnRk6SWpeDf
+ CreF3+LouP4njyeLEjVIMzaEpwROsw++BX5i5vTXJB+4UApTAQARAQABtChDYXNleSBTY2hh
+ dWZsZXIgPGNhc2V5QHNjaGF1Zmxlci1jYS5jb20+iQJUBBMBCAA+FiEEC+9tH1YyUwIQzUIe
+ OKUVfIxDyBEFAlzV9HACGwMFCRLMAwAFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQOKUV
+ fIxDyBG6ag/6AiRl8yof47YOEVHlrmewbpnlBTaYNfJ5cZflNRKRX6t4bp1B2YV1whlDTpiL
+ vNOwFkh+ZE0eI5M4x8Gw2Oiok+4Q5liA9PHTozQYF+Ia+qdL5EehfbLGoEBqklpGvG3h8JsO
+ 7SvONJuFDgvab/U/UriDYycJwzwKZuhVtK9EMpnTtUDyP3DY+Q8h7MWsniNBLVXnh4yBIEJg
+ SSgDn3COpZoFTPGKE+rIzioo/GJe8CTa2g+ZggJiY/myWTS3quG0FMvwvNYvZ4I2g6uxSl7n
+ bZVqAZgqwoTAv1HSXIAn9muwZUJL03qo25PFi2gQmX15BgJKQcV5RL0GHFHRThDS3IyadOgK
+ P2j78P8SddTN73EmsG5OoyzwZAxXfck9A512BfVESqapHurRu2qvMoUkQaW/2yCeRQwGTsFj
+ /rr0lnOBkyC6wCmPSKXe3dT2mnD5KnCkjn7KxLqexKt4itGjJz4/ynD/qh+gL7IPbifrQtVH
+ JI7cr0fI6Tl8V6efurk5RjtELsAlSR6fKV7hClfeDEgLpigHXGyVOsynXLr59uE+g/+InVic
+ jKueTq7LzFd0BiduXGO5HbGyRKw4MG5DNQvC//85EWmFUnDlD3WHz7Hicg95D+2IjD2ZVXJy
+ x3LTfKWdC8bU8am1fi+d6tVEFAe/KbUfe+stXkgmfB7pxqW5Ag0EXNX0cAEQAPIEYtPebJzT
+ wHpKLu1/j4jQcke06Kmu5RNuj1pEje7kX5IKzQSs+CPH0NbSNGvrA4dNGcuDUTNHgb5Be9hF
+ zVqRCEvF2j7BFbrGe9jqMBWHuWheQM8RRoa2UMwQ704mRvKr4sNPh01nKT52ASbWpBPYG3/t
+ WbYaqfgtRmCxBnqdOx5mBJIBh9Q38i63DjQgdNcsTx2qS7HFuFyNef5LCf3jogcbmZGxG/b7
+ yF4OwmGsVc8ufvlKo5A9Wm+tnRjLr/9Mn9vl5Xa/tQDoPxz26+aWz7j1in7UFzAarcvqzsdM
+ Em6S7uT+qy5jcqyuipuenDKYF/yNOVSNnsiFyQTFqCPCpFihOnuaWqfmdeUOQHCSo8fD4aRF
+ emsuxqcsq0Jp2ODq73DOTsdFxX2ESXYoFt3Oy7QmIxeEgiHBzdKU2bruIB5OVaZ4zWF+jusM
+ Uh+jh+44w9DZkDNjxRAA5CxPlmBIn1OOYt1tsphrHg1cH1fDLK/pDjsJZkiH8EIjhckOtGSb
+ aoUUMMJ85nVhN1EbU/A3DkWCVFEA//Vu1+BckbSbJKE7Hl6WdW19BXOZ7v3jo1q6lWwcFYth
+ esJfk3ZPPJXuBokrFH8kqnEQ9W2QgrjDX3et2WwZFLOoOCItWxT0/1QO4ikcef/E7HXQf/ij
+ Dxf9HG2o5hOlMIAkJq/uLNMvABEBAAGJAjwEGAEIACYWIQQL720fVjJTAhDNQh44pRV8jEPI
+ EQUCXNX0cAIbDAUJEswDAAAKCRA4pRV8jEPIEWkzEACKFUnpp+wIVHpckMfBqN8BE5dUbWJc
+ GyQ7wXWajLtlPdw1nNw0Wrv+ob2RCT7qQlUo6GRLcvj9Fn5tR4hBvR6D3m8aR0AGHbcC62cq
+ I7LjaSDP5j/em4oVL2SMgNTrXgE2w33JMGjAx9oBzkxmKUqprhJomPwmfDHMJ0t7y39Da724
+ oLPTkQDpJL1kuraM9TC5NyLe1+MyIxqM/8NujoJbWeQUgGjn9uxQAil7o/xSCjrWCP3kZDID
+ vd5ZaHpdl8e1mTExQoKr4EWgaMjmD/a3hZ/j3KfTVNpM2cLfD/QwTMaC2fkK8ExMsz+rUl1H
+ icmcmpptCwOSgwSpPY1Zfio6HvEJp7gmDwMgozMfwQuT9oxyFTxn1X3rn1IoYQF3P8gsziY5
+ qtTxy2RrgqQFm/hr8gM78RhP54UPltIE96VywviFzDZehMvuwzW//fxysIoK97Y/KBZZOQs+
+ /T+Bw80Pwk/dqQ8UmIt2ffHEgwCTbkSm711BejapWCfklxkMZDp16mkxSt2qZovboVjXnfuq
+ wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
+ v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
+ abzjfg==
+Message-ID: <ca667eb3-bf5a-4031-43bd-4b7178af233b@schaufler-ca.com>
+Date:   Mon, 3 Jun 2019 14:40:43 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
- <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
- <20190528202407.GB13158@linux.intel.com> <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
- <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
- <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov> <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
- <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov> <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
- <20190603205405.GE4894@linux.intel.com>
-In-Reply-To: <20190603205405.GE4894@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 3 Jun 2019 14:37:17 -0700
-X-Gmail-Original-Message-ID: <CALCETrVS15kAsD9mko9sreyZ8uciiOfOpnMabcQr4_3jE-npNA@mail.gmail.com>
-Message-ID: <CALCETrVS15kAsD9mko9sreyZ8uciiOfOpnMabcQr4_3jE-npNA@mail.gmail.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        William Roberts <bill.c.roberts@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <201906011905.75B11DC86@keescook>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 3, 2019 at 1:54 PM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Thu, May 30, 2019 at 09:14:10AM -0700, Andy Lutomirski wrote:
-> > > What is the "source file" i.e. the target of the check?  Enclave file,
-> > > sigstruct file, or /dev/sgx/enclave?
-> >
-> > Enclave file -- that is, the file backing the vma from which the data
-> > is loaded.
->
-> Wonder why KVM gets away without having this given that enclaves are
-> lot alike VMs.
->
+On 6/1/2019 7:06 PM, Kees Cook wrote:
+> On Fri, May 31, 2019 at 04:09:47PM -0700, Casey Schaufler wrote:
+>> +++ b/security/integrity/ima/ima_api.c
+>> @@ -159,7 +159,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+>>   * ima_get_action - appraise & measure decision based on policy.
+>>   * @inode: pointer to inode to measure
+>>   * @cred: pointer to credentials structure to validate
+>> - * @secid: secid of the task being validated
+>> + * @l: LAM data of the task being validated
+>>   * @mask: contains the permission mask (MAY_READ, MAY_WRITE, MAY_EXEC,
+>>   *        MAY_APPEND)
+>>   * @func: caller identifier
+> Call this "l" just hurts me. Why shouldn't it still be secid?
 
-I would argue it's because access to /dev/kvm means you can execute
-whatever you code you want in a VM.  I don't see how this is
-avoidable. On the other hand, it would be nice for SGX to not imply
-this same sort of "execute anything" right, especially since, unlike
-KVM, SGX is not a sandbox.
+Changing the type while leaving the name alone, or
+changed slightly (e.g. secids instead of secid) makes
+tracking down unchanged uses much harder. How about
+lsme, or export?
+
+> Also typo: LAM -> LSM.
+
+That too.
+
