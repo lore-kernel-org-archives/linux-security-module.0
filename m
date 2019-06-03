@@ -2,97 +2,56 @@ Return-Path: <SRS0=tuDa=UC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D81C46460
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 22:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF8FC04AB5
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 22:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4910025EE6
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 22:30:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D75F626AAD
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 22:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbfFCWaT (ORCPT
+        id S1726101AbfFCWnF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jun 2019 18:30:19 -0400
-Received: from mga04.intel.com ([192.55.52.120]:8672 "EHLO mga04.intel.com"
+        Mon, 3 Jun 2019 18:43:05 -0400
+Received: from namei.org ([65.99.196.166]:36574 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbfFCWaT (ORCPT
+        id S1726097AbfFCWnF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:30:19 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 14:08:36 -0700
-X-ExtLoop1: 1
-Received: from jgaire-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.169])
-  by fmsmga005.fm.intel.com with ESMTP; 03 Jun 2019 14:08:26 -0700
-Date:   Tue, 4 Jun 2019 00:08:25 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        William Roberts <bill.c.roberts@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190603210825.GG4894@linux.intel.com>
-References: <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
- <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
- <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
- <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
- <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
- <20190530180110.GB23930@linux.intel.com>
- <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
- <20190530211645.GB27551@linux.intel.com>
- <CALCETrVAoDppmdJzkpwagt3q64M-QpNajXbKGR1yQdqyofeANQ@mail.gmail.com>
- <20190530213601.GC27551@linux.intel.com>
+        Mon, 3 Jun 2019 18:43:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x53MgpIv017414;
+        Mon, 3 Jun 2019 22:42:51 GMT
+Date:   Tue, 4 Jun 2019 08:42:51 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     David Howells <dhowells@redhat.com>
+cc:     viro@zeniv.linux.org.uk, stable@vger.kernel.org,
+        Jose Bollo <jose.bollo@iot.bzh>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        torvalds@linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Smack: Restore the smackfsdef mount option and add
+ missing prefixes
+In-Reply-To: <17467.1559300202@warthog.procyon.org.uk>
+Message-ID: <alpine.LRH.2.21.1906040842110.13657@namei.org>
+References: <155930001303.17253.2447519598157285098.stgit@warthog.procyon.org.uk> <17467.1559300202@warthog.procyon.org.uk>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530213601.GC27551@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 30, 2019 at 02:36:01PM -0700, Sean Christopherson wrote:
-> Assuming MRENCLAVE generated by Graphene or any other hosting scheme are
-> stable[1], then avoiding EXEC<whatever> means the user can effectively
-> whitelist what enclaves are runnable by Graphene, even if the kernel
-> doesn't implement security_enclave_create/init().
-> 
-> I agree that it probably isn't all that important, it's more of a "why
-> not" argument, i.e. what is gained by not using sigstruct as a proxy?
-> 
-> [1] What in the world is being attested if MRENCLAVE isn't stable?
+On Fri, 31 May 2019, David Howells wrote:
 
-If I've understood correctly, Graphene uses a single loader enclave
-that loads the executable in.
+> Should this go via Al's tree, James's tree, Casey's tree or directly to Linus?
 
-/Jarkko
+If it's specific to one LSM (as this is), via Casey, who can decide to 
+forward to Al or Linus.
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
