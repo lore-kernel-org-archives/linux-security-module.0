@@ -2,143 +2,126 @@ Return-Path: <SRS0=tuDa=UC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E68C04AB6
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 09:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EDEC04AB6
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 09:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 296A627FE2
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 09:25:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OMLIbGGF"
+	by mail.kernel.org (Postfix) with ESMTP id C7A9E27FE5
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jun 2019 09:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbfFCJZC (ORCPT
+        id S1727161AbfFCJZQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jun 2019 05:25:02 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:45396 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbfFCJZC (ORCPT
+        Mon, 3 Jun 2019 05:25:16 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32977 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726684AbfFCJZQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:25:02 -0400
-Received: by mail-ua1-f65.google.com with SMTP id v18so214605uad.12
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Jun 2019 02:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=w8FJ04SPncA3GGt4qcZJVbuvO4+vsSKpHoksXqQuYUI=;
-        b=OMLIbGGF4iqU/3IBxXXOo51Z1Gh2iX+jT/XJanv3y/0Mlanl8zJA2fHTPptaNqwAy/
-         wCPISvYJLg8glT89EOkSCGrUEwLbQNGSsPQB3xP0gjI7Qnoj9v/0iNfgM4mS6UVs1cdI
-         ASiojU2tdAvCieLPAYfFUbKUwAx39XfYmeDORSJzdkuJ3vkYOm8FZf+sap+UctIi5Inl
-         AgNqY79mVOQvJbxNLvSndWErvOsmI5+gxjsaG/j0cl6rh4ldiKUw56A3oejSuCOFbFTv
-         5Lkaj44XlpdgfkLJZbb89pa8zO7s4vqoneWdvi7fIrUzKI7kgDAV+syf1sGfWPpsVjG/
-         PAzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=w8FJ04SPncA3GGt4qcZJVbuvO4+vsSKpHoksXqQuYUI=;
-        b=NF15hZafgb4ewBOQY/3nvHOGf3W32lbYD6AtrfEJ241QJI38JBHWf6ZTflhwqP75mg
-         G83usTOLmkpfugtkZxyGxr6zs3UAGmEHN+7vpDiAegCZhHjBU3wvgIijI/ziURwDxGi6
-         6QZ37IFSPjlLo31hifyAtsN2E5yowbBrZ/chu6jvMB+9m1fXSob8s45W/gHDyEUGmRCu
-         WDf0WbItQU/x5a/dPVOJwVHV06pXuVQ0t33a7+tAGDSSmMQvT2165vBRRsJwY4XELVHg
-         qDi9wGOA0r3L3MPUpurqSZ8H+D7XTg8PgFTBnUMQVqMpMnEag5Lf5fO8ooJUpYuonjTG
-         nxnQ==
-X-Gm-Message-State: APjAAAUGxdLcy5i/FnkxrySx5Rix7F1ouwXxSztyzkacvBrxOK3fAgjH
-        6ymMy4KQ3dCaMa4wpiKtfmIE39fSQ5fTi5zxH3pkNQ==
-X-Google-Smtp-Source: APXvYqyh6QlCEo0EU+R0uj2OfHoB0V/HJYqXE1klW7h8DXFh/JtB716lws+dopD6Xp86RJPH8UG3RqT+AAiUP3DAyxA=
-X-Received: by 2002:ab0:c11:: with SMTP id a17mr8422532uak.3.1559553901030;
- Mon, 03 Jun 2019 02:25:01 -0700 (PDT)
+        Mon, 3 Jun 2019 05:25:16 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id DAD2985DF29930B44972;
+        Mon,  3 Jun 2019 10:25:13 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 3 Jun
+ 2019 10:25:06 +0100
+Subject: Re: [PATCH v2 2/3] ima: don't ignore INTEGRITY_UNKNOWN EVM status
+To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>, <stable@vger.kernel.org>
+References: <20190529133035.28724-1-roberto.sassu@huawei.com>
+ <20190529133035.28724-3-roberto.sassu@huawei.com>
+ <1559217621.4008.7.camel@linux.ibm.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <e6b31aa9-0319-1805-bdfc-3ddde5884494@huawei.com>
+Date:   Mon, 3 Jun 2019 11:25:13 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20190529123812.43089-1-glider@google.com> <20190529123812.43089-3-glider@google.com>
- <20190531181832.e7c3888870ce9e50db9f69e6@linux-foundation.org>
-In-Reply-To: <20190531181832.e7c3888870ce9e50db9f69e6@linux-foundation.org>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Mon, 3 Jun 2019 11:24:49 +0200
-Message-ID: <CAG_fn=XBq-ipvZng3hEiGwyQH2rRNFbN_Cj0r+5VoJqou0vovA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] mm: init: report memory auto-initialization
- features at boot time
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sandeep Patil <sspatil@android.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Marco Elver <elver@google.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1559217621.4008.7.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jun 1, 2019 at 3:18 AM Andrew Morton <akpm@linux-foundation.org> wr=
-ote:
->
-> On Wed, 29 May 2019 14:38:11 +0200 Alexander Potapenko <glider@google.com=
-> wrote:
->
-> > Print the currently enabled stack and heap initialization modes.
-> >
-> > The possible options for stack are:
-> >  - "all" for CONFIG_INIT_STACK_ALL;
-> >  - "byref_all" for CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL;
-> >  - "byref" for CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF;
-> >  - "__user" for CONFIG_GCC_PLUGIN_STRUCTLEAK_USER;
-> >  - "off" otherwise.
-> >
-> > Depending on the values of init_on_alloc and init_on_free boottime
-> > options we also report "heap alloc" and "heap free" as "on"/"off".
->
-> Why?
->
-> Please fully describe the benefit to users so that others can judge the
-> desirability of the patch.  And so they can review it effectively, etc.
-I'm going to update the description with the following passage:
+On 5/30/2019 2:00 PM, Mimi Zohar wrote:
+> On Wed, 2019-05-29 at 15:30 +0200, Roberto Sassu wrote:
+>> Currently, ima_appraise_measurement() ignores the EVM status when
+>> evm_verifyxattr() returns INTEGRITY_UNKNOWN. If a file has a valid
+>> security.ima xattr with type IMA_XATTR_DIGEST or IMA_XATTR_DIGEST_NG,
+>> ima_appraise_measurement() returns INTEGRITY_PASS regardless of the EVM
+>> status. The problem is that the EVM status is overwritten with the
+>>> appraisal statu
+> 
+> Roberto, your framing of this problem is harsh and misleading.  IMA
+> and EVM are intentionally independent of each other and can be
+> configured independently of each other.  The intersection of the two
+> is the call to evm_verifyxattr().  INTEGRITY_UNKNOWN is returned for a
+> number of reasons - when EVM is not configured, the EVM hmac key has
+> not yet been loaded, the protected security attribute is unknown, or
+> the file is not in policy.
+> 
+> This patch does not differentiate between any of the above cases,
+> requiring mutable files to always be protected by EVM, when specified
+> as an "ima_appraise=" option on the boot command line.
+> 
+> IMA could be extended to require EVM on a per IMA policy rule basis.
+> Instead of framing allowing IMA file hashes without EVM as a bug that
+> has existed from the very beginning, now that IMA/EVM have matured and
+> is being used, you could frame it as extending IMA or hardening.
 
-    Print the currently enabled stack and heap initialization modes.
+I'm seeing it from the perspective of an administrator that manages an
+already hardened system, and expects that the system only grants access
+to files with a valid signature/HMAC. That system would not enforce this
+behavior if EVM keys are removed and the digest in security.ima is set
+to the actual file digest.
 
-    Stack initialization is enabled by a config flag, while heap
-    initialization is configured at boot time with defaults being set
-    in the config. It's more convenient for the user to have all informatio=
-n
-    about these hardening measures in one place.
-
-Does this make sense?
-> Always!
->
-> > In the init_on_free mode initializing pages at boot time may take some
-> > time, so print a notice about that as well.
->
-> How much time?
-I've seen pauses up to 1 second, not actually sure they're worth a
-separate line in the log.
-Kees, how long were the delays in your case?
+Framing it as a bug rather than an extension would in my opinion help to
+convince people about the necessity to switch to the safe mode, if their
+system is already hardened.
 
 
+>> This patch mitigates the issue by selecting signature verification as the
+>> only method allowed for appraisal when EVM is not initialized. Since the
+>> new behavior might break user space, it must be turned on by adding the
+>> '-evm' suffix to the value of the ima_appraise= kernel option.
+>>
+>> Fixes: 2fe5d6def1672 ("ima: integrity appraisal extension")
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> Cc: stable@vger.kernel.org
+>> ---
+>>   Documentation/admin-guide/kernel-parameters.txt | 3 ++-
+>>   security/integrity/ima/ima_appraise.c           | 8 ++++++++
+>>   2 files changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index 138f6664b2e2..d84a2e612b93 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -1585,7 +1585,8 @@
+>>   			Set number of hash buckets for inode cache.
+>>   
+>>   	ima_appraise=	[IMA] appraise integrity measurements
+>> -			Format: { "off" | "enforce" | "fix" | "log" }
+>> +			Format: { "off" | "enforce" | "fix" | "log" |
+>> +				  "enforce-evm" | "log-evm" }
+> 
+> Is it necessary to define both "enforce-evm" and "log-evm"?  Perhaps
+> defining "require-evm" is sufficient.
 
---=20
-Alexander Potapenko
-Software Engineer
+ima_appraise= accepts as values modes of operation. I consider the -evm
+suffix as a modifier of already defined modes.
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
+Roberto
 
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
