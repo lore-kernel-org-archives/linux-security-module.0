@@ -2,183 +2,139 @@ Return-Path: <SRS0=5Pje=UD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F987C46470
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 01:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7894AC04AB5
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 03:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83C542609C
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 01:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 472D72425F
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 03:14:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O7cjrefY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbfFDBgv (ORCPT
+        id S1726327AbfFDDOJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jun 2019 21:36:51 -0400
-Received: from mga02.intel.com ([134.134.136.20]:1742 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726033AbfFDBgv (ORCPT
+        Mon, 3 Jun 2019 23:14:09 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42615 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726136AbfFDDOJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jun 2019 21:36:51 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 18:36:50 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga005.jf.intel.com with ESMTP; 03 Jun 2019 18:36:50 -0700
-Date:   Mon, 3 Jun 2019 18:36:50 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH 0/9] security: x86/sgx: SGX vs. LSM
-Message-ID: <20190604013650.GC24521@linux.intel.com>
-References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F654EC5FD@ORSMSX116.amr.corp.intel.com>
- <20190603171549.GE13384@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F654ED042@ORSMSX116.amr.corp.intel.com>
+        Mon, 3 Jun 2019 23:14:09 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q10so1554808pff.9
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Jun 2019 20:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=c5HP5Me6K1D1zdUUO0f7kzVFOIQyYSbiNswjCmfwwdM=;
+        b=O7cjrefYDb8qdY6xHlr7GQJ9p1Q5FyScv3e2w+vscGV9dmLj3ZLW9f5Pf+78Vl8cuW
+         0jy0uX2DCPP14kq0gZIICMmiy5PCkk1FdQ8qsJt5mI6MDzj6VECvJfWif7Wo3c2QjgSS
+         u7igduXfvXL5/BBTot/FruOSt3YvXQO0ax1VM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=c5HP5Me6K1D1zdUUO0f7kzVFOIQyYSbiNswjCmfwwdM=;
+        b=UEvjToiMwQUZO81wJZUdvGUFh8E/1ldhuhEIqYkU1CrAvpvSXe/n9S0CtqT8lW/H2H
+         pd+TbBNxPUfxPOEdaNCEQzY7buzv+YvD/EHF4YINNJKWdN6OVWQHANBFScnQpzEC/LEv
+         EJ0X4F9sLCyCo61x/uiJxtfpDSVhWPIdhK7peM0g/RYYGcRflH58W6fyPcSazuKV2sEt
+         gAbmeqAWQvPsBcYeQ5KsSOHT97mKyGzs6q96pehnHPYagLmRVdi8oyNTdJHYSEB6MlPv
+         ID5FwNFn7RjOBgPlrkjnyfKplh/SULvXDub35R16A6yjsRMKP/fonoxjT3ZOJ4ul5DAr
+         z4cQ==
+X-Gm-Message-State: APjAAAVERPvT5Z5A3vEH/07dVVz3ExXJAY2pYaAz2Q/i6m7IdTvsEDIl
+        MsZ96CsIngbxf5sQPIkuIq0KHw==
+X-Google-Smtp-Source: APXvYqyr65yqSMgjUZyLKXrBeCQLIR7WRh1PgCOxNwDSym495N0oGFV/Y355onNEh2hWQW9f50Nt2g==
+X-Received: by 2002:a17:90a:35c:: with SMTP id 28mr33030091pjf.110.1559618048938;
+        Mon, 03 Jun 2019 20:14:08 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id v4sm3118023pfb.14.2019.06.03.20.14.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 20:14:07 -0700 (PDT)
+Date:   Mon, 3 Jun 2019 20:14:06 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Sandeep Patil <sspatil@android.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Marco Elver <elver@google.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v5 2/3] mm: init: report memory auto-initialization
+ features at boot time
+Message-ID: <201906032010.8E630B7@keescook>
+References: <20190529123812.43089-1-glider@google.com>
+ <20190529123812.43089-3-glider@google.com>
+ <20190531181832.e7c3888870ce9e50db9f69e6@linux-foundation.org>
+ <CAG_fn=XBq-ipvZng3hEiGwyQH2rRNFbN_Cj0r+5VoJqou0vovA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F654ED042@ORSMSX116.amr.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAG_fn=XBq-ipvZng3hEiGwyQH2rRNFbN_Cj0r+5VoJqou0vovA@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 03, 2019 at 11:30:54AM -0700, Xing, Cedric wrote:
-> > From: Christopherson, Sean J
-> > Sent: Monday, June 03, 2019 10:16 AM
-> > 
-> > On Sun, Jun 02, 2019 at 12:29:35AM -0700, Xing, Cedric wrote:
-> > > Hi Sean,
+On Mon, Jun 03, 2019 at 11:24:49AM +0200, Alexander Potapenko wrote:
+> On Sat, Jun 1, 2019 at 3:18 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > On Wed, 29 May 2019 14:38:11 +0200 Alexander Potapenko <glider@google.com> wrote:
+> >
+> > > Print the currently enabled stack and heap initialization modes.
 > > >
-> > > Generally I agree with your direction but think ALLOW_* flags are
-> > > completely internal to LSM because they can be both produced and
-> > > consumed inside an LSM module. So spilling them into SGX driver and
-> > > also user mode code makes the solution ugly and in some cases
-> > > impractical because not every enclave host process has a priori
-> > > knowledge on whether or not an enclave page would be EMODPE'd at
-> > runtime.
-> > 
-> > In this case, the host process should tag *all* pages it *might* convert
-> > to executable as ALLOW_EXEC.  LSMs can (and should/will) be written in
-> > such a way that denying ALLOW_EXEC is fatal to the enclave if and only
-> > if the enclave actually attempts mprotect(PROT_EXEC).
-> 
-> What if those pages contain self-modifying code but the host doesn't know
-> ahead of time? Would it require ALLOW_WRITE|ALLOW_EXEC at EADD? Then would it
-> prevent those pages to start with PROT_EXEC?
-
-Without ALLOW_WRITE+ALLOW_EXEC, the enclave would build and launch, but
-fail at mprotect(..., PROT_WRITE), e.g. when it attempted to gain write
-access to do self-modifying code.  And it would would fail irrespective of
-LSM restrictions.
-
-> Anyway, my point is that it is unnecessary even if it works.
-
-Unnecessary in an ideal world, yes.  Realistically, it's the least bad
-option.
-
-> > Take the SELinux path for example.  The only scenario in which
-> > PROT_WRITE is cleared from @allowed_prot is if the page *starts* with
-> > PROT_EXEC.
-> > If PROT_EXEC is denied on a page that starts RW, e.g. an EAUG'd page,
-> > then PROT_EXEC will be cleared from @allowed_prot.
-> > 
-> > As Stephen pointed out, auditing the denials on @allowed_prot means the
-> > log will contain false positives of a sort.  But this is more of a noise
-> > issue than true false positives.  E.g. there are three possible outcomes
-> > for the enclave.
-> > 
-> >   - The enclave does not do EMODPE[PROT_EXEC] in any scenario, ever.
-> >     Requesting ALLOW_EXEC is either a straightforward a userspace bug or
-> >     a poorly written generic enclave loader.
-> > 
-> >   - The enclave conditionally performs EMODPE[PROT_EXEC].  In this case
-> >     the denial is a true false positive.
-> > 
-> >   - The enclave does EMODPE[PROT_EXEC] and its host userspace then fails
-> >     on mprotect(PROT_EXEC), i.e. the LSM denial is working as intended.
-> >     The audit log will be noisy, but viewed as a whole the denials
-> > aren't
-> >     false positives.
-> 
-> What I was talking about was EMODPE[PROT_WRITE] on an RX page.
-
-As above, mprotect(..., PROT_WRITE) would fail without ALLOW_WRITE.
-
-> > The potential for noisy audit logs and/or false positives is unfortunate,
-> > but it's (by far) the lesser of many evils.
-> > 
-> > > Theoretically speaking, what you really need is a per page flag (let's
-> > > name it WRITTEN?) indicating whether a page has ever been written to
-> > > (or more precisely, granted PROT_WRITE), which will be used to decide
-> > > whether to grant PROT_EXEC when requested in future. Given the fact
-> > > that all mprotect() goes through LSM and mmap() is limited to
-> > > PROT_NONE, it's easy for LSM to capture that flag by itself instead of
-> > asking user mode code to provide it.
+> > > The possible options for stack are:
+> > >  - "all" for CONFIG_INIT_STACK_ALL;
+> > >  - "byref_all" for CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL;
+> > >  - "byref" for CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF;
+> > >  - "__user" for CONFIG_GCC_PLUGIN_STRUCTLEAK_USER;
+> > >  - "off" otherwise.
 > > >
-> > > That said, here is the summary of what I think is a better approach.
-> > > * In hook security_file_alloc(), if @file is an enclave, allocate some
-> > data
-> > >   structure to store for every page, the WRITTEN flag as described
-> > above.
-> > >   WRITTEN is cleared initially for all pages.
-> > 
-> > This would effectively require *every* LSM to duplicate the SGX driver's
-> > functionality, e.g. track per-page metadata, implement locking to
-> > prevent races between multiple mm structs, etc...
+> > > Depending on the values of init_on_alloc and init_on_free boottime
+> > > options we also report "heap alloc" and "heap free" as "on"/"off".
+> >
+> > Why?
+> >
+> > Please fully describe the benefit to users so that others can judge the
+> > desirability of the patch.  And so they can review it effectively, etc.
+> I'm going to update the description with the following passage:
 > 
-> Architecturally we shouldn't dictate how LSM makes decisions. ALLOW_* are no
-> difference than PROCESS__* or FILE__* flags, which are just artifacts to
-> assist particular LSMs in decision making. They are never considered part of
-> the LSM interface, even if other LSMs than SELinux may adopt the same/similar
-> approach.
+>     Print the currently enabled stack and heap initialization modes.
+> 
+>     Stack initialization is enabled by a config flag, while heap
+>     initialization is configured at boot time with defaults being set
+>     in the config. It's more convenient for the user to have all information
+>     about these hardening measures in one place.
+> 
+> Does this make sense?
+> > Always!
+> >
+> > > In the init_on_free mode initializing pages at boot time may take some
+> > > time, so print a notice about that as well.
+> >
+> > How much time?
+> I've seen pauses up to 1 second, not actually sure they're worth a
+> separate line in the log.
+> Kees, how long were the delays in your case?
 
-No, the flags are tracked and managed by SGX.  We are not dictating LSM
-behavior in any way, e.g. an LSM could completely ignore @allowed_prot and
-nothing would break.
+I didn't measure it, but I think it was something like 0.5 second per GB.
+I noticed because normally boot flashes by. With init_on_free it pauses
+for no apparent reason, which is why I suggested the note. (I mean *I*
+knew why it was pausing, but it might surprise someone who sets
+init_on_free=1 without really thinking about what's about to happen at
+boot.)
 
-> If code duplication is what you are worrying about, you can put them in a
-> library, or implement/export them in some new file (maybe
-> security/enclave.c?) as utility functions.
-
-Code duplication is the least of my concerns.  Tracking file pointers
-would require a global list/tree of some form, along with a locking and/or
-RCU scheme to protect accesses to that container.  Another lock would be
-needed to prevent races between mprotect() calls from different processes.
-
-> But spilling them into user mode is what I think is unacceptable.
-
-Why is it unacceptable?  There's effectively no cost to userspace for SGX1.
-The ALLOW_* flags only come into play in the event of a noexec or LSM
-restriction, i.e. worst case scenario an enclave that wants to do arbitrary
-self-modifying code can declare RWX on everything.
+-- 
+Kees Cook
