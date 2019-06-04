@@ -2,195 +2,86 @@ Return-Path: <SRS0=5Pje=UD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16417C28CC6
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EE2C282CE
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4A6F20717
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:37:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559680645;
-	bh=cFvISWqZtenk/itmER7f+dDnKlLEKMgxPk2A4pPepQo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=0aMdhz9eHslq/QL+DvM5Jryj4JJI1SD8rV/fVKevAdgs9UA0mTcObs2YVww4SG5xE
-	 enpTV0+pj0eb1G07kSSXWp8oKP5Ps/WnSW20e5bBh1ey+Awh50FeJxCsg3KKCPrHAD
-	 UdMre+L+ACycm6t5pgYaIxvnhYcZXweoa7Hh4NO0=
+	by mail.kernel.org (Postfix) with ESMTP id A6D5F207E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:39:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbfFDUhY (ORCPT
+        id S1726568AbfFDUjt convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jun 2019 16:37:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33728 "EHLO mail.kernel.org"
+        Tue, 4 Jun 2019 16:39:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60664 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726527AbfFDUhY (ORCPT
+        id S1726033AbfFDUjt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jun 2019 16:37:24 -0400
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 4 Jun 2019 16:39:49 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0849E21655
-        for <linux-security-module@vger.kernel.org>; Tue,  4 Jun 2019 20:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559680163;
-        bh=cFvISWqZtenk/itmER7f+dDnKlLEKMgxPk2A4pPepQo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2HRcWilzppDkhdZc4TaBjrV5UIkT55QL43VjaSXEiVplRVpcAxBwNkDcNug+37B+Y
-         t9fbgeUJZIdsTchPZypFGwlhJLgpyuR/aNqVnzXAOqtuoX8oEoU5j1y8GrjbLYqYJn
-         ogGs6TSf8PXi12+IZT5rOfJH6kFTruNBQ6p9qQWM=
-Received: by mail-wr1-f46.google.com with SMTP id m3so1373190wrv.2
-        for <linux-security-module@vger.kernel.org>; Tue, 04 Jun 2019 13:29:22 -0700 (PDT)
-X-Gm-Message-State: APjAAAXhmSO0kpmZZWl68TPFYPDRfUdPWyU9Cl9pEEbOIn4JvFzSFvet
-        gb5WOeakrS+LAVQQURBTWHYN0WGvdhro2hDkC7OX1Q==
-X-Google-Smtp-Source: APXvYqzggKbEmevf1hAGqsqkg6nyK2jhLYRBA68/pK6t43ULfTO2FFzNf9MvZev2j4Pu6QQWtmJouUP2ZUsabFVGcpo=
-X-Received: by 2002:adf:f2c8:: with SMTP id d8mr92723wrp.221.1559680161582;
- Tue, 04 Jun 2019 13:29:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190531233159.30992-1-sean.j.christopherson@intel.com> <20190531233159.30992-9-sean.j.christopherson@intel.com>
-In-Reply-To: <20190531233159.30992-9-sean.j.christopherson@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 4 Jun 2019 13:29:10 -0700
-X-Gmail-Original-Message-ID: <CALCETrXf3ujAn6uOwWMU8SRZOvBRb8ALvo_LQvwxc899mrakwQ@mail.gmail.com>
-Message-ID: <CALCETrXf3ujAn6uOwWMU8SRZOvBRb8ALvo_LQvwxc899mrakwQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 8/9] LSM: x86/sgx: Introduce ->enclave_load() hook for
- Intel SGX
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
+        by mx1.redhat.com (Postfix) with ESMTPS id 946E83001461;
+        Tue,  4 Jun 2019 20:39:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D0C619C69;
+        Tue,  4 Jun 2019 20:39:39 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
+References: <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com> <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
         LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
-        Shay Katz-zamir <shay.katz-zamir@intel.com>,
-        Haitao Huang <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kai Svahn <kai.svahn@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Kai Huang <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        William Roberts <william.c.roberts@intel.com>,
-        Philip Tricca <philip.b.tricca@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1206.1559680778.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Tue, 04 Jun 2019 21:39:38 +0100
+Message-ID: <1207.1559680778@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 04 Jun 2019 20:39:48 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 31, 2019 at 4:32 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> enclave_load() is roughly analogous to the existing file_mprotect().
->
-> Due to the nature of SGX and its Enclave Page Cache (EPC), all enclave
-> VMAs are backed by a single file, i.e. /dev/sgx/enclave, that must be
-> MAP_SHARED.  Furthermore, all enclaves need read, write and execute
-> VMAs.  As a result, file_mprotect() does not provide any meaningful
-> security for enclaves since an LSM can only deny/grant access to the
-> EPC as a whole.
->
-> security_enclave_load() is called when SGX is first loading an enclave
-> page, i.e. copying a page from normal memory into the EPC.  The notable
-> difference from file_mprotect() is the allowed_prot parameter, which
-> is essentially an SGX-specific version of a VMA's MAY_{READ,WRITE,EXEC}
-> flags.  The purpose of allowed_prot is to enable checks such as
-> SELinux's FILE__EXECMOD permission without having to track and update
-> VMAs across multiple mm structs, i.e. SGX can ensure userspace doesn't
-> overstep its bounds simply by restricting an enclave VMA's protections
-> by vetting what is maximally allowed during build time.
->
-> An alternative to the allowed_prot approach would be to use an enclave's
-> SIGSTRUCT (a smallish structure that can uniquely identify an enclave)
-> as a proxy for the enclave.  For example, SGX could take and hold a
-> reference to the file containing the SIGSTRUCT (if it's in a file) and
-> call security_enclave_load() during mprotect().  While the SIGSTRUCT
-> approach would provide better precision, the actual value added was
-> deemed to be negligible.  On the other hand, pinning a file for the
-> lifetime of the enclave is ugly, and essentially caching LSM policies
-> in each page's allowed_prot avoids having to make an extra LSM upcall
-> during mprotect().
->
-> Note, extensive discussion yielded no sane alternative to some form of
-> SGX specific LSM hook[1].
->
-> [1] https://lkml.kernel.org/r/CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/driver/ioctl.c | 14 +++++++++-----
->  include/linux/lsm_hooks.h              | 16 ++++++++++++++++
->  include/linux/security.h               |  2 ++
->  security/security.c                    |  8 ++++++++
->  4 files changed, 35 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> index 5f71be7cbb01..260417ecbcff 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> @@ -8,6 +8,7 @@
->  #include <linux/highmem.h>
->  #include <linux/ratelimit.h>
->  #include <linux/sched/signal.h>
-> +#include <linux/security.h>
->  #include <linux/shmem_fs.h>
->  #include <linux/slab.h>
->  #include <linux/suspend.h>
-> @@ -580,21 +581,24 @@ static int sgx_encl_page_protect(unsigned long src, unsigned long prot,
->                                  unsigned long *allowed_prot)
->  {
->         struct vm_area_struct *vma;
-> +       int ret = 0;
->
-> -       if (!(*allowed_prot & VM_EXEC))
-> +       if (!(*allowed_prot & VM_EXEC) && !IS_ENABLED(CONFIG_SECURITY))
->                 goto do_check;
->
->         down_read(&current->mm->mmap_sem);
->         vma = find_vma(current->mm, src);
->         if (!vma || (vma->vm_file && path_noexec(&vma->vm_file->f_path)))
->                 *allowed_prot &= ~VM_EXEC;
-> +#ifdef CONFIG_SECURITY
-> +       ret = security_enclave_load(vma, prot, allowed_prot);
-> +#endif
->         up_read(&current->mm->mmap_sem);
->
->  do_check:
-> -       if (prot & ~*allowed_prot)
-> -               return -EACCES;
-> -
-> -       return 0;
-> +       if (!ret && (prot & ~*allowed_prot))
-> +               ret = -EACCES;
-> +       return ret;
->  }
->
->  static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 47f58cfb6a19..0562775424a0 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -1446,6 +1446,14 @@
->   * @bpf_prog_free_security:
->   *     Clean up the security information stored inside bpf prog.
->   *
-> + * Security hooks for Intel SGX enclaves.
-> + *
-> + * @enclave_load:
-> + *     On success, returns 0 and optionally adjusts @allowed_prot
-> + *     @vma: the source memory region of the enclave page being loaded.
-> + *     @prot: the initial protection of the enclave page.
+Andy Lutomirski <luto@kernel.org> wrote:
 
-What do you mean "initial"?  The page is always mapped PROT_NONE when
-this is called, right?  I feel like I must be missing something here.
+> > Here's a set of patches to add a general variable-length notification queue
+> > concept and to add sources of events for:
+> 
+> I asked before and didn't see a response, so I'll ask again.  Why are you
+> paying any attention at all to the creds that generate an event?
+
+Casey responded to you.  It's one of his requirements.
+
+I'm not sure of the need, and I particularly don't like trying to make
+indirect destruction events (mount destruction keyed on fput, for instance)
+carry the creds of the triggerer.  Indeed, the trigger can come from all sorts
+of places - including af_unix queue destruction, someone poking around in
+procfs, a variety of processes fputting simultaneously.  Only one of them can
+win, and the LSM needs to handle *all* the possibilities.
+
+However, the LSMs (or at least SELinux) ignore f_cred and use current_cred()
+when checking permissions.  See selinux_revalidate_file_permission() for
+example - it uses current_cred() not file->f_cred to re-evaluate the perms,
+and the fd might be shared between a number of processes with different creds.
+
+> This seems like the wrong approach.  If an LSM wants to prevent covert
+> communication from, say, mount actions, then it shouldn't allow the
+> watch to be set up in the first place.
+
+Yeah, I can agree to that.  Casey?
+
+David
