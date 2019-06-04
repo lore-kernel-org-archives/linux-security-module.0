@@ -2,134 +2,267 @@ Return-Path: <SRS0=5Pje=UD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC630C28CC6
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 16:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BF4C282CE
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 16:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B166820883
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 16:30:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0524523CBD
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 16:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbfFDQaw (ORCPT
+        id S1727588AbfFDQfO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jun 2019 12:30:52 -0400
-Received: from mga05.intel.com ([192.55.52.43]:37305 "EHLO mga05.intel.com"
+        Tue, 4 Jun 2019 12:35:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41896 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728043AbfFDQaw (ORCPT
+        id S1727451AbfFDQfO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:30:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 09:30:51 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga007.fm.intel.com with ESMTP; 04 Jun 2019 09:30:50 -0700
-Date:   Tue, 4 Jun 2019 09:30:50 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH 0/9] security: x86/sgx: SGX vs. LSM
-Message-ID: <20190604163050.GA32350@linux.intel.com>
-References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F654EC5FD@ORSMSX116.amr.corp.intel.com>
- <20190603171549.GE13384@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F654ED042@ORSMSX116.amr.corp.intel.com>
- <10a49f97-b3be-ed09-2821-68157f01aebe@tycho.nsa.gov>
+        Tue, 4 Jun 2019 12:35:14 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1B79D30C1AFD;
+        Tue,  4 Jun 2019 16:35:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B7AC35D705;
+        Tue,  4 Jun 2019 16:35:00 +0000 (UTC)
+Subject: [RFC][PATCH 0/8] Mount, FS,
+ Block and Keyrings notifications [ver #2]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, dhowells@redhat.com,
+        raven@themaw.net, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-block@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 04 Jun 2019 17:34:59 +0100
+Message-ID: <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <10a49f97-b3be-ed09-2821-68157f01aebe@tycho.nsa.gov>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 04 Jun 2019 16:35:13 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 04, 2019 at 11:33:44AM -0400, Stephen Smalley wrote:
-> The RFC series seemed to dispense with the use of the sigstruct file and
-> just used the source file throughout IIUC.  That allowed for reuse of
-> FILE__* permissions without ambiguity rather than introducing separate
-> ENCLAVE__* permissions or using /dev/sgx/enclave inode as the target of all
-> checks.
 
-Drat, I meant to explicitly call that out in the cover letter.  Yes, the
-concept of using sigstruct as a proxy was dropped for this RFC.  The
-primary motivation was to avoid having to take a hold a reference to the
-sigstruct file for the lifetime of the enclave, and in general so that
-userspace isn't forced to put sigstruct into a file.
+Hi Al,
 
-> Regardless, IIUC, your approach requires that we always check FILE__EXECMOD,
-> and FILE__EXECUTE up front during security_enclave_load() irrespective of
-> prot so that we can save the result in the f_security for later use by the
-> mprotect hook.
+Here's a set of patches to add a general variable-length notification queue
+concept and to add sources of events for:
 
-Correct, this approach requires up front checks.
+ (1) Mount topology events, such as mounting, unmounting, mount expiry,
+     mount reconfiguration.
 
-> This may generate many spurious audit messages for cases
-> where PROT_EXEC will never be requested, and users will be prone to just
-> always allowing it since they cannot tell when it was actually needed.
+ (2) Superblock events, such as R/W<->R/O changes, quota overrun and I/O
+     errors (not complete yet).
 
-Userspace will be able to understand when PROT_EXEC is actually needed
-as mprotect() will (eventually) fail.  Of course that assumes userspace
-is being intelligent and isn't blindly declaring permissions they don't
-need, e.g. declaring RWX on all pages even though the enclave never
-actually maps a RWX or RW->RX page.
+ (3) Block layer events, such as I/O errors.
 
-One thought for handling this in a more user friendly fashion would be
-to immediately return -EACCES instead of modifying @allowed_prot.  An
-enclave that truly needs the permission would fail immediately.
+ (4) Key/keyring events, such as creating, linking and removal of keys.
 
-An enclave loader that wants/needs to speculatively declare PROT_EXEC,
-e.g. because the exact requirements of the enclave are unknown, could
-handle -EACCESS gracefully by retrying the SGX ioctl() with different
-@allowed_prot, e.g.:
+One of the reasons for this is so that we can remove the issue of processes
+having to repeatedly and regularly scan /proc/mounts, which has proven to
+be a system performance problem.  To further aid this, the fsinfo() syscall
+on which this patch series depends, provides a way to access superblock and
+mount information in binary form without the need to parse /proc/mounts.
 
-  region.flags = SGX_ALLOW_READ | SGX_ALLOW_WRITE | SGX_ALLOW_EXEC;
 
-  ret = ioctl(fd, SGX_IOC_ENCLAVE_ADD_REGION, &region);
-  if (ret && errno == EACCES && !(prot & PROT_EXEC)) {
-      region.flags &= ~SGX_ALLOW_EXEC;
-      ret = ioctl(fd, SGX_IOC_ENCLAVE_ADD_REGION, &region);
-  }
+LSM support is included:
 
-This type of enclave loader would still generate spurious audit messages,
-but the spurious messages would be limited to enclave loaders that are
-deliberately probing the allowed permissions.
+ (1) The creds of the process that did the fput() that reduced the refcount
+     to zero are cached in the file struct.
 
-> >The noexec case should be addressed in IOC_ADD_PAGES by testing
-> >@source_vma->vm_flags & VM_MAYEXEC.
-> >
-> >>
-> >>>* In hook security_file_free(), if @file is an  enclave, free storage
-> >>>   allocated for WRITTEN flags.
-> 
+ (2) __fput() overrides the current creds with the creds from (1) whilst
+     doing the cleanup, thereby making sure that the creds seen by the
+     destruction notification generated by mntput() appears to come from
+     the last fputter.
+
+ (3) security_post_notification() is called for each queue that we might
+     want to post a notification into, thereby allowing the LSM to prevent
+     covert communications.
+
+ (?) Do I need to add security_set_watch(), say, to rule on whether a watch
+     may be set in the first place?  I might need to add a variant per
+     watch-type.
+
+ (?) Do I really need to keep track of the process creds in which an
+     implicit object destruction happened?  For example, imagine you create
+     an fd with fsopen()/fsmount().  It is marked to dissolve the mount it
+     refers to on close unless move_mount() clears that flag.  Now, imagine
+     someone looking at that fd through procfs at the same time as you exit
+     due to an error.  The LSM sees the destruction notification come from
+     the looker if they happen to do their fput() after yours.
+
+
+Design decisions:
+
+ (1) A misc chardev is used to create and open a ring buffer:
+
+	fd = open("/dev/watch_queue", O_RDWR);
+
+     which is then configured and mmap'd into userspace:
+
+	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE);
+	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
+	buf = mmap(NULL, BUF_SIZE * page_size, PROT_READ | PROT_WRITE,
+		   MAP_SHARED, fd, 0);
+
+     The fd cannot be read or written (though there is a facility to use
+     write to inject records for debugging) and userspace just pulls data
+     directly out of the buffer.
+
+ (2) The ring index pointers are stored inside the ring and are thus
+     accessible to userspace.  Userspace should only update the tail
+     pointer and never the head pointer or risk breaking the buffer.  The
+     kernel checks that the pointers appear valid before trying to use
+     them.  A 'skip' record is maintained around the pointers.
+
+ (3) poll() can be used to wait for data to appear in the buffer.
+
+ (4) Records in the buffer are binary, typed and have a length so that they
+     can be of varying size.
+
+     This means that multiple heterogeneous sources can share a common
+     buffer.  Tags may be specified when a watchpoint is created to help
+     distinguish the sources.
+
+ (5) The queue is reusable as there are 16 million types available, of
+     which I've used 4, so there is scope for others to be used.
+
+ (6) Records are filterable as types have up to 256 subtypes that can be
+     individually filtered.  Other filtration is also available.
+
+ (7) Each time the buffer is opened, a new buffer is created - this means
+     that there's no interference between watchers.
+
+ (8) When recording a notification, the kernel will not sleep, but will
+     rather mark a queue as overrun if there's insufficient space, thereby
+     avoiding userspace causing the kernel to hang.
+
+ (9) The 'watchpoint' should be specific where possible, meaning that you
+     specify the object that you want to watch.
+
+(10) The buffer is created and then watchpoints are attached to it, using
+     one of:
+
+	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
+	mount_notify(AT_FDCWD, "/", 0, fd, 0x02);
+	sb_notify(AT_FDCWD, "/mnt", 0, fd, 0x03);
+
+     where in all three cases, fd indicates the queue and the number after
+     is a tag between 0 and 255.
+
+(11) The watch must be removed if either the watch buffer is destroyed or
+     the watched object is destroyed.
+
+
+Things I want to avoid:
+
+ (1) Introducing features that make the core VFS dependent on the network
+     stack or networking namespaces (ie. usage of netlink).
+
+ (2) Dumping all this stuff into dmesg and having a daemon that sits there
+     parsing the output and distributing it as this then puts the
+     responsibility for security into userspace and makes handling
+     namespaces tricky.  Further, dmesg might not exist or might be
+     inaccessible inside a container.
+
+ (3) Letting users see events they shouldn't be able to see.
+
+
+Further things that could be considered:
+
+ (1) Adding a keyctl call to allow a watch on a keyring to be extended to
+     "children" of that keyring, such that the watch is removed from the
+     child if it is unlinked from the keyring.
+
+ (2) Adding global superblock event queue.
+
+ (3) Propagating watches to child superblock over automounts.
+
+
+The patches can be found here also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
+
+Changes:
+
+ v2: I've fixed various issues raised by Jann Horn and GregKH and moved to
+     krefs for refcounting.  I've added some security features to try and
+     give Casey Schaufler the LSM control he wants.
+
+David
+---
+David Howells (8):
+      security: Override creds in __fput() with last fputter's creds
+      General notification queue with user mmap()'able ring buffer
+      keys: Add a notification facility
+      vfs: Add a mount-notification facility
+      vfs: Add superblock notifications
+      fsinfo: Export superblock notification counter
+      block: Add block layer notifications
+      Add sample notification program
+
+
+ Documentation/security/keys/core.rst   |   58 ++
+ Documentation/watch_queue.rst          |  328 ++++++++++++
+ arch/x86/entry/syscalls/syscall_32.tbl |    3 
+ arch/x86/entry/syscalls/syscall_64.tbl |    3 
+ block/Kconfig                          |    9 
+ block/Makefile                         |    1 
+ block/blk-core.c                       |   29 +
+ block/blk-notify.c                     |   83 +++
+ drivers/misc/Kconfig                   |   13 
+ drivers/misc/Makefile                  |    1 
+ drivers/misc/watch_queue.c             |  895 ++++++++++++++++++++++++++++++++
+ fs/Kconfig                             |   21 +
+ fs/Makefile                            |    1 
+ fs/file_table.c                        |   12 
+ fs/fsinfo.c                            |   12 
+ fs/mount.h                             |   33 +
+ fs/mount_notify.c                      |  186 +++++++
+ fs/namespace.c                         |    9 
+ fs/super.c                             |  117 ++++
+ include/linux/blkdev.h                 |   10 
+ include/linux/dcache.h                 |    1 
+ include/linux/fs.h                     |   79 +++
+ include/linux/key.h                    |    4 
+ include/linux/lsm_hooks.h              |   15 +
+ include/linux/security.h               |   14 +
+ include/linux/syscalls.h               |    5 
+ include/linux/watch_queue.h            |   87 +++
+ include/uapi/linux/fsinfo.h            |   10 
+ include/uapi/linux/keyctl.h            |    1 
+ include/uapi/linux/watch_queue.h       |  185 +++++++
+ kernel/sys_ni.c                        |    7 
+ mm/interval_tree.c                     |    2 
+ mm/memory.c                            |    1 
+ samples/Kconfig                        |    6 
+ samples/Makefile                       |    1 
+ samples/vfs/test-fsinfo.c              |   13 
+ samples/watch_queue/Makefile           |    9 
+ samples/watch_queue/watch_test.c       |  284 ++++++++++
+ security/keys/Kconfig                  |   10 
+ security/keys/compat.c                 |    2 
+ security/keys/gc.c                     |    5 
+ security/keys/internal.h               |   30 +
+ security/keys/key.c                    |   37 +
+ security/keys/keyctl.c                 |   89 +++
+ security/keys/keyring.c                |   17 -
+ security/keys/request_key.c            |    4 
+ security/security.c                    |    9 
+ 47 files changed, 2713 insertions(+), 38 deletions(-)
+ create mode 100644 Documentation/watch_queue.rst
+ create mode 100644 block/blk-notify.c
+ create mode 100644 drivers/misc/watch_queue.c
+ create mode 100644 fs/mount_notify.c
+ create mode 100644 include/linux/watch_queue.h
+ create mode 100644 include/uapi/linux/watch_queue.h
+ create mode 100644 samples/watch_queue/Makefile
+ create mode 100644 samples/watch_queue/watch_test.c
+
