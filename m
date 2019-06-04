@@ -2,100 +2,100 @@ Return-Path: <SRS0=5Pje=UD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BC7C28CC6
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 08:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 702D9C282CE
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 11:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBB0E24998
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 08:57:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="rfb3INXu";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="xUN9j1yb"
+	by mail.kernel.org (Postfix) with ESMTP id 5072924B70
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 11:15:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfFDI5Y (ORCPT
+        id S1727513AbfFDLPl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jun 2019 04:57:24 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48840 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726927AbfFDI5Y (ORCPT
+        Tue, 4 Jun 2019 07:15:41 -0400
+Received: from mga11.intel.com ([192.55.52.93]:64072 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727323AbfFDLPl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jun 2019 04:57:24 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1ABE08EE1D8;
-        Tue,  4 Jun 2019 01:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1559638644;
-        bh=wI/8+wiijGgOqLSYHFzdmNaGRkSygv9a+oR+A5uQbEQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=rfb3INXuVy4qOBudIOjCKyAXVMI684m+PxHEGeKwMGmp8gEHXGZRA6JyeEUZ9c0/H
-         e5CXWketma7GjLRupwrcYJuK0Nxl5pnqMZPaALWCUjCi1h3sMe7r/PfGIwTfBtzB5W
-         b2aD8n3OoevNwekKzuL3YRh6eZ3F2lB83HOGoqEI=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id vVbUH0cOyB66; Tue,  4 Jun 2019 01:57:23 -0700 (PDT)
-Received: from jarvis.guest.haifa.ibm.com (unknown [195.110.41.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 8921B8EE101;
-        Tue,  4 Jun 2019 01:57:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1559638643;
-        bh=wI/8+wiijGgOqLSYHFzdmNaGRkSygv9a+oR+A5uQbEQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=xUN9j1ybZGq/0Fl2pBKJHXRrazk9uYYwC16X//yILiBdGZMFtElgxzDbIW10F1dGI
-         EPTJZ1M2kM6L9rgoiph1CxRKJoIr2ylDIAJE3kej12ObHS2hd/gghg2HghWz8WO5bW
-         WhQt5hGy8hYOjB3EkU8u9iFo2QeiMmgNL4x3WP4Q=
-Message-ID: <1559638637.3410.3.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 2/3] ima: don't ignore INTEGRITY_UNKNOWN EVM status
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@huawei.com,
-        mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Date:   Tue, 04 Jun 2019 11:57:17 +0300
-In-Reply-To: <b38d75b1-873a-1630-0148-41c49571531a@huawei.com>
-References: <20190529133035.28724-1-roberto.sassu@huawei.com>
-         <20190529133035.28724-3-roberto.sassu@huawei.com>
-         <1559217621.4008.7.camel@linux.ibm.com>
-         <e6b31aa9-0319-1805-bdfc-3ddde5884494@huawei.com>
-         <1559569401.5052.17.camel@HansenPartnership.com>
-         <3667fbd4-b6ed-6a76-9ff4-84ec3c2dda12@huawei.com>
-         <1559572305.5052.19.camel@HansenPartnership.com>
-         <b38d75b1-873a-1630-0148-41c49571531a@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 4 Jun 2019 07:15:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 04:15:40 -0700
+X-ExtLoop1: 1
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Jun 2019 04:15:33 -0700
+Date:   Tue, 4 Jun 2019 14:15:33 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH 0/9] security: x86/sgx: SGX vs. LSM
+Message-ID: <20190604111533.GA15393@linux.intel.com>
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2019-06-03 at 16:44 +0200, Roberto Sassu wrote:
-> On 6/3/2019 4:31 PM, James Bottomley wrote:
-> > On Mon, 2019-06-03 at 16:29 +0200, Roberto Sassu wrote:
-[...]
-> > > How would you prevent root in the container from updating
-> > > security.ima?
-> > 
-> > We don't.  We only guarantee immutability for unprivileged
-> > containers, so root can't be inside.
-> 
-> Ok.
-> 
-> Regarding the new behavior, this must be explicitly enabled by adding
-> ima_appraise=enforce-evm or log-evm to the kernel command line.
-> Otherwise, the current behavior is preserved with this patch. Would
-> this be ok?
+On Fri, May 31, 2019 at 04:31:50PM -0700, Sean Christopherson wrote:
+> This series is the result of a rather absurd amount of discussion over
+> how to get SGX to play nice with LSM policies, without having to resort
+> to evil shenanigans or put undue burden on userspace.  The discussion
+> definitely wandered into completely insane territory at times, but I
+> think/hope we ended up with something reasonable.
 
-Sure, as long as it's an opt-in flag, meaning the behaviour of my
-kernels on physical cloud systems doesn't change as I upgrade them, I'm
-fine with that.
+By definition this is a broken series because it does not apply to
+mainline. Even RFC series should at least apply. Would be better idea to
+discuss design ideas and use snippets instead. Now you have to take
+original v20 and apply to these patches to evaluate anything.
 
-James
+> The basic gist of the approach is to require userspace to declare what
+> protections are maximally allowed for any given page, e.g. add a flags
+> field for loading enclave pages that takes ALLOW_{READ,WRITE,EXEC}.  LSMs
+> can then adjust the allowed protections, e.g. clear ALLOW_EXEC to prevent
+> ever mapping the page with PROT_EXEC.  SGX enforces the allowed perms
+> via a new mprotect() vm_ops hook, e.g. like regular mprotect() uses
+> MAY_{READ,WRITE,EXEC}.
 
+mprotect() does not use MAY_{READ,WRITE,EXEC} constants. It uses
+VM_MAY{READ,WRITE,EXEC,SHARED} constants.
+
+What are ALLOW_{READ,WRITE,EXEC} and how they are used? What does the
+hook do and why it is in vm_ops and not in file_operations? Are they
+arguments to the ioctl or internal variables that are set based on
+SECINFO?
+
+/Jarkko
