@@ -2,135 +2,166 @@ Return-Path: <SRS0=5Pje=UD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCD3C28CC3
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 12:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01EBDC282CE
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 14:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0BE724B5B
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 12:33:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C991120874
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 14:51:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1559659910;
+	bh=5ctEf83W1rzW6eB+79+i8bY5zg2vYEZv2TuztgDU1RY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=NsBIXEPE4VctzT4Ks5UblTNvP/qazMW695FK0qsv2Za/LTEr7kQZuiFndarZA5nkQ
+	 FW8i6uyBCkQ4YRdOa3nC54aMvZiTscl+dpuMyvAMw9P87GYFJtrQnIPUbxNp2Cy3Ky
+	 65mXERLqKOvIonNaEimLLdfA2WRK7SmE0nVnAgwY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbfFDMdT (ORCPT
+        id S1727665AbfFDOvu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jun 2019 08:33:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38278 "EHLO mx1.redhat.com"
+        Tue, 4 Jun 2019 10:51:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727403AbfFDMdS (ORCPT
+        id S1727422AbfFDOvu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:33:18 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 4 Jun 2019 10:51:50 -0400
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A7E3B8E3C6;
-        Tue,  4 Jun 2019 12:33:12 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D87DB648D6;
-        Tue,  4 Jun 2019 12:33:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAOQ4uxjLzURf8c1UH_xCJKkuD2es8i-=P-ZNM=t3aFcZLMwXEg@mail.gmail.com>
-References: <CAOQ4uxjLzURf8c1UH_xCJKkuD2es8i-=P-ZNM=t3aFcZLMwXEg@mail.gmail.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <CAOQ4uxjC1M7jwjd9zSaSa6UW2dbEjc+ZbFSo7j9F1YHAQxQ8LQ@mail.gmail.com> <20190529142504.GC32147@quack2.suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     dhowells@redhat.com, Jan Kara <jack@suse.cz>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
+        by mail.kernel.org (Postfix) with ESMTPSA id 6502C2166E
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Jun 2019 14:51:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559659909;
+        bh=5ctEf83W1rzW6eB+79+i8bY5zg2vYEZv2TuztgDU1RY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Z5muKAvqiH60dr+oNPEC5AgAynLm9WObA1y/7r3P5vBrYOMRVlNWOziGBm96tx8jy
+         33EdItZ/kx1zx2ArVzadldXmio1CnXaZVB+cf5KkQBUyoV+JBNsoC/Zc17ggxYccHH
+         rsc7CH3kNqzgv6bujbnoiS28SXtUqo/CVBeSFWsI=
+Received: by mail-wr1-f46.google.com with SMTP id n4so10902365wrw.13
+        for <linux-security-module@vger.kernel.org>; Tue, 04 Jun 2019 07:51:49 -0700 (PDT)
+X-Gm-Message-State: APjAAAUdBzXmgfEzGN2yfdSoOxcF5fxvxqFqgt9LJqfuJ5Bj0WJl4k15
+        BMjuK77e/6Zz9q2naaHympl8RN4VKVuEUXKjuWLcOQ==
+X-Google-Smtp-Source: APXvYqwSuFe0LRPOuT6rqk2lttgw4kckoPd0dgTaQOVZmyVeGTJe31yqRs0TFMt3H2on2lXIznmhTkbDYf/W+odaTKU=
+X-Received: by 2002:adf:fe90:: with SMTP id l16mr6870186wrr.221.1559659907969;
+ Tue, 04 Jun 2019 07:51:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <16166.1559651581.1@warthog.procyon.org.uk>
-Date:   Tue, 04 Jun 2019 13:33:01 +0100
-Message-ID: <16167.1559651581@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 04 Jun 2019 12:33:17 +0000 (UTC)
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com> <20190531233159.30992-5-sean.j.christopherson@intel.com>
+In-Reply-To: <20190531233159.30992-5-sean.j.christopherson@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 4 Jun 2019 07:51:36 -0700
+X-Gmail-Original-Message-ID: <CALCETrWjZBp4Br2Lo03aBu9_PhH0Cr4Az_ywLADo-rztu4Y67Q@mail.gmail.com>
+Message-ID: <CALCETrWjZBp4Br2Lo03aBu9_PhH0Cr4Az_ywLADo-rztu4Y67Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/9] mm: Introduce vm_ops->mprotect()
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Amir Goldstein <amir73il@gmail.com> wrote:
-
-> Well I am sure that ring buffer for fanotify events would be useful, so
-> seeing that David is proposing a generic notification mechanism, I wanted
-> to know how that mechanism could best share infrastructure with fsnotify.
+On Fri, May 31, 2019 at 4:32 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
 >
-> But apart from that I foresee the questions from users about why the
-> mount notification API and filesystem events API do not have better
-> integration.
+> SGX will use the mprotect() hook to prevent userspace from circumventing
+> various security checks, i.e. Linux Security Modules.
 >
-> The way I see it, the notification queue can serve several classes
-> of notifications and fsnotify could be one of those classes
-> (at least FAN_CLASS_NOTIF fits nicely to the model).
+> Enclaves are built by copying data from normal memory into the Enclave
+> Page Cache (EPC).  Due to the nature of SGX, the EPC is represented by a
+> single file that must be MAP_SHARED, i.e. mprotect() only ever sees a
+> single MAP_SHARED vm_file.  Furthermore, all enclaves will need read,
+> write and execute pages in the EPC.
+>
+> As a result, LSM policies cannot be meaningfully applied, e.g. an LSM
+> can deny access to the EPC as a whole, but can't deny PROT_EXEC on page
+> that originated in a non-EXECUTE file (which is long gone by the time
+> mprotect() is called).
+>
+> By hooking mprotect(), SGX can make explicit LSM upcalls while an
+> enclave is being built, i.e. when the kernel has a handle to origin of
+> each enclave page, and enforce the result of the LSM policy whenever
+> userspace maps the enclave page in the future.
+>
+> Alternatively, SGX could play games with MAY_{READ,WRITE,EXEC}, but
+> that approach is quite ugly, e.g. would require userspace to call an
+> SGX ioctl() prior to using mprotect() to extend a page's protections.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  include/linux/mm.h |  2 ++
+>  mm/mprotect.c      | 15 +++++++++++----
+>  2 files changed, 13 insertions(+), 4 deletions(-)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 0e8834ac32b7..50a42364a885 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -458,6 +458,8 @@ struct vm_operations_struct {
+>         void (*close)(struct vm_area_struct * area);
+>         int (*split)(struct vm_area_struct * area, unsigned long addr);
+>         int (*mremap)(struct vm_area_struct * area);
+> +       int (*mprotect)(struct vm_area_struct * area, unsigned long start,
+> +                       unsigned long end, unsigned long prot);
+>         vm_fault_t (*fault)(struct vm_fault *vmf);
+>         vm_fault_t (*huge_fault)(struct vm_fault *vmf,
+>                         enum page_entry_size pe_size);
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index bf38dfbbb4b4..e466ca5e4fe0 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -547,13 +547,20 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
+>                         goto out;
+>                 }
+>
+> -               error = security_file_mprotect(vma, reqprot, prot);
+> -               if (error)
+> -                       goto out;
+> -
+>                 tmp = vma->vm_end;
+>                 if (tmp > end)
+>                         tmp = end;
+> +
+> +               if (vma->vm_ops && vma->vm_ops->mprotect) {
+> +                       error = vma->vm_ops->mprotect(vma, nstart, tmp, prot);
+> +                       if (error)
+> +                               goto out;
+> +               }
+> +
+> +               error = security_file_mprotect(vma, reqprot, prot);
+> +               if (error)
+> +                       goto out;
+> +
 
-It could be done; the main thing that concerns me is that the buffer is of
-limited capacity.
+I think that, if you're going to do it like this, you need to call it
+mprotect_and_check_security or something.  Or you could just add
+.may_mprotect, which is allowed to fail but, on success, falls through
+to call security_file_mprotect and mprotect_fixup().
 
-However, I could take this:
-
-	struct fanotify_event_metadata {
-		__u32 event_len;
-		__u8 vers;
-		__u8 reserved;
-		__u16 metadata_len;
-		__aligned_u64 mask;
-		__s32 fd;
-		__s32 pid;
-	};
-
-and map it to:
-
-	struct fanotify_notification {
-		struct watch_notification watch; /* WATCH_TYPE_FANOTIFY */
-		__aligned_u64	mask;
-		__u16		metadata_len;
-		__u8		vers;
-		__u8		reserved;
-		__u32		reserved2;
-		__s32		fd;
-		__s32		pid;
-	};
-
-and some of the watch::info bit could be used:
-
-	n->watch.info & WATCH_INFO_OVERRUN	watch queue overran
-	n->watch.info & WATCH_INFO_LENGTH	event_len
-	n->watch.info & WATCH_INFO_RECURSIVE	FAN_EVENT_ON_CHILD
-	n->watch.info & WATCH_INFO_FLAG_0	FAN_*_PERM
-	n->watch.info & WATCH_INFO_FLAG_1	FAN_Q_OVERFLOW
-	n->watch.info & WATCH_INFO_FLAG_2	FAN_ON_DIR
-	n->subtype				ffs(n->mask)
-
-Ideally, I'd dispense with metadata_len, vers, reserved* and set the version
-when setting the watch.
-
-	fanotify_watch(int watchfd, unsigned int flags, u64 *mask,
-		       int dirfd, const char *pathname, unsigned int at_flags);
-
-We might also want to extend the watch_filter to allow you to, say, filter on
-the first __u64 after the watch member so that you could filter on specific
-events:
-
-	struct watch_notification_type_filter {
-		__u32	type;
-		__u32	info_filter;
-		__u32	info_mask;
-		__u32	subtype_filter[8];
-		__u64	payload_mask[1];
-		__u64	payload_set[1];
-	};
-
-So, in this case, it would require:
-
-	n->mask & wf->payload_mask[0] == wf->payload_set[0]
-
-to be true to record the message.
-
-David
+--Andy
