@@ -2,107 +2,120 @@ Return-Path: <SRS0=5Pje=UD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2116C28CC3
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BC1C282CE
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B65822070D
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:08:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8DAA20859
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:16:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1559679382;
+	bh=UUD8js2GAwr4II2RKampxullfYCdUCEzAhpMSNle0/Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=kZx1WpfzU80hzQI/E8fIUNg7+GPZcThqBfRcH6RWlOWdCytsk+mRWbAtCyEfAi5Ve
+	 Rk3sMIcbZjL/keUnKkh7AM3Bvwv6AbYzeHT7hRXua4ybKAxcmzYHHRRErDNf8hzsqw
+	 1iZ+zpxMtTQYpwuzlW+Cl72p+oId38GSEi7T3XCU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbfFDUI5 (ORCPT
+        id S1726352AbfFDUQV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jun 2019 16:08:57 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59102 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726303AbfFDUIy (ORCPT
+        Tue, 4 Jun 2019 16:16:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52222 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726211AbfFDUQS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jun 2019 16:08:54 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x54K7qae101969
-        for <linux-security-module@vger.kernel.org>; Tue, 4 Jun 2019 16:08:53 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sww18x424-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 04 Jun 2019 16:08:53 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 4 Jun 2019 21:08:51 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 4 Jun 2019 21:08:48 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x54K8l4Y47448096
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 4 Jun 2019 20:08:47 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7DDFEA4040;
-        Tue,  4 Jun 2019 20:08:47 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6F0A2A4057;
-        Tue,  4 Jun 2019 20:08:46 +0000 (GMT)
-Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  4 Jun 2019 20:08:46 +0000 (GMT)
-Subject: Re: possible deadlock in __do_page_fault (2)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     syzbot <syzbot+606e524a3ca9617cf8c0@syzkaller.appspotmail.com>,
-        adilger.kernel@dilger.ca, hdanton@sina.com, jmorris@namei.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Date:   Tue, 04 Jun 2019 16:08:45 -0400
-In-Reply-To: <000000000000a7a51a058a728a6c@google.com>
-References: <000000000000a7a51a058a728a6c@google.com>
+        Tue, 4 Jun 2019 16:16:18 -0400
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 176D220863
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Jun 2019 20:16:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559679377;
+        bh=UUD8js2GAwr4II2RKampxullfYCdUCEzAhpMSNle0/Y=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RGzP2rSxHLkPNvO6s5zF9RmhMr7ron36rvZeXufXGabhAl0HSmZSVK6VEGGL94SxR
+         JSGRwOIr5m3QWD+LmSqNETKHpFBN+ZXFxG9AvOUE4/QVjjDZ8s6FBraiWEYrwtUWL8
+         DezGQaioxI4qhrTSbuv0eYVn7NjF5biPe7ZXpPBo=
+Received: by mail-wm1-f45.google.com with SMTP id f10so50141wmb.1
+        for <linux-security-module@vger.kernel.org>; Tue, 04 Jun 2019 13:16:17 -0700 (PDT)
+X-Gm-Message-State: APjAAAXzBYnpgrAEsDlK4DchGr/y6cQPG6Noh2JDYPaJctt0ZEsu5Nol
+        3iItfuljEd/TYaZ0VmA9zTccmQ7xidd+dsT/Ajq8cw==
+X-Google-Smtp-Source: APXvYqxKLARYLnWrB9GjRsqdH0CB/G7w6TKwEtytC9EXxuJZ2IVSsZsrGcb61zvu/E7Rk143AaRVLPJumcYr3E2cHZg=
+X-Received: by 2002:a1c:6242:: with SMTP id w63mr15836829wmb.161.1559679375566;
+ Tue, 04 Jun 2019 13:16:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+ <20190531233159.30992-3-sean.j.christopherson@intel.com> <20190604114951.GC30594@linux.intel.com>
+In-Reply-To: <20190604114951.GC30594@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 4 Jun 2019 13:16:04 -0700
+X-Gmail-Original-Message-ID: <CALCETrVe0jhAWAFmx+NFEjJcijSJv2LDVC7cUXi0w99kNKjh_g@mail.gmail.com>
+Message-ID: <CALCETrVe0jhAWAFmx+NFEjJcijSJv2LDVC7cUXi0w99kNKjh_g@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/9] x86/sgx: Do not naturally align MAP_FIXED address
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19060420-4275-0000-0000-0000033CE1D0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19060420-4276-0000-0000-0000384CF220
-Message-Id: <1559678925.4237.2.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-04_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=742 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906040127
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2019-06-03 at 15:04 -0700, syzbot wrote:
-> syzbot has bisected this bug to:
-> 
-> commit 69d61f577d147b396be0991b2ac6f65057f7d445
-> Author: Mimi Zohar <zohar@linux.ibm.com>
-> Date:   Wed Apr 3 21:47:46 2019 +0000
-> 
->      ima: verify mprotect change is consistent with mmap policy
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16461c5aa00000
-> start commit:   3c09c195 Add linux-next specific files for 20190531
-> git tree:       linux-next
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=15461c5aa00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11461c5aa00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6cfb24468280cd5c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=606e524a3ca9617cf8c0
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10572ca6a00000
-> 
-> Reported-by: syzbot+606e524a3ca9617cf8c0@syzkaller.appspotmail.com
-> Fixes: 69d61f577d14 ("ima: verify mprotect change is consistent with mmap  
-> policy")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On Tue, Jun 4, 2019 at 4:50 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Fri, May 31, 2019 at 04:31:52PM -0700, Sean Christopherson wrote:
+> > SGX enclaves have an associated Enclave Linear Range (ELRANGE) that is
+> > tracked and enforced by the CPU using a base+mask approach, similar to
+> > how hardware range registers such as the variable MTRRs.  As a result,
+> > the ELRANGE must be naturally sized and aligned.
+> >
+> > To reduce boilerplate code that would be needed in every userspace
+> > enclave loader, the SGX driver naturally aligns the mmap() address and
+> > also requires the range to be naturally sized.  Unfortunately, SGX fails
+> > to grant a waiver to the MAP_FIXED case, e.g. incorrectly rejects mmap()
+> > if userspace is attempting to map a small slice of an existing enclave.
+> >
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+>
+> Why you want to allow mmap() to be called multiple times? mmap() could
+> be allowed only once with PROT_NONE and denied afterwards. Is this for
+> sending fd to another process that would map already existing enclave?
+>
+> I don't see any checks for whether the is enclave underneath. Also, I
+> think that in all cases mmap() callback should allow only PROT_NONE
+> as permissions for clarity even if it could called multiple times.
+>
 
-Thank you for the report.
-
-Mimi
-
+What's the advantage to only allowing PROT_NONE?  The idea here is to
+allow a PROT_NONE map followed by some replacemets that overlay it for
+the individual segments.  Admittedly, mprotect() can do the same
+thing, but disallowing mmap() seems at least a bit surprising.
