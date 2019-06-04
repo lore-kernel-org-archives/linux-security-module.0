@@ -3,85 +3,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EE2C282CE
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5845C28CC6
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6D5F207E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:39:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C914A20848
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 20:42:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbfFDUjt convert rfc822-to-8bit (ORCPT
+        id S1726352AbfFDUm3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jun 2019 16:39:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60664 "EHLO mx1.redhat.com"
+        Tue, 4 Jun 2019 16:42:29 -0400
+Received: from namei.org ([65.99.196.166]:36780 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726033AbfFDUjt (ORCPT
+        id S1726033AbfFDUm2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jun 2019 16:39:49 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 946E83001461;
-        Tue,  4 Jun 2019 20:39:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D0C619C69;
-        Tue,  4 Jun 2019 20:39:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
-References: <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com> <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
+        Tue, 4 Jun 2019 16:42:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x54KgCIO031551;
+        Tue, 4 Jun 2019 20:42:12 GMT
+Date:   Wed, 5 Jun 2019 06:42:12 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     Stephen Smalley <sds@tycho.nsa.gov>, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
+Subject: Re: [PATCH 00/58] LSM: Module stacking for AppArmor
+In-Reply-To: <a493956a-8a2f-6239-e5fe-09030640c397@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1906050638550.31292@namei.org>
+References: <20190602165101.25079-1-casey@schaufler-ca.com> <f71388e9-a4c5-8935-137b-8eb50be7f833@tycho.nsa.gov> <66a87b0b-b6f4-74ff-2e51-afc8e2d30de1@schaufler-ca.com> <2a9049a7-6259-5ae0-2790-0aaf337c51a4@tycho.nsa.gov>
+ <a493956a-8a2f-6239-e5fe-09030640c397@schaufler-ca.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1206.1559680778.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Tue, 04 Jun 2019 21:39:38 +0100
-Message-ID: <1207.1559680778@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 04 Jun 2019 20:39:48 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Andy Lutomirski <luto@kernel.org> wrote:
+On Tue, 4 Jun 2019, Casey Schaufler wrote:
 
-> > Here's a set of patches to add a general variable-length notification queue
-> > concept and to add sources of events for:
+> > It isn't free so there should be a cost/benefit analysis.
 > 
-> I asked before and didn't see a response, so I'll ask again.  Why are you
-> paying any attention at all to the creds that generate an event?
+> Some benchmarking is definitely in order, but most
+> of what's you're calling out as downside is hypothetical
+> or based on assumption. 
 
-Casey responded to you.  It's one of his requirements.
+When you're proposing changes such as these, which make fundamental and 
+far-reaching changes, the burden is on you to present the cost/benefit 
+analysis.
 
-I'm not sure of the need, and I particularly don't like trying to make
-indirect destruction events (mount destruction keyed on fput, for instance)
-carry the creds of the triggerer.  Indeed, the trigger can come from all sorts
-of places - including af_unix queue destruction, someone poking around in
-procfs, a variety of processes fputting simultaneously.  Only one of them can
-win, and the LSM needs to handle *all* the possibilities.
+You can't just say "Here are some changes and here are the benefits, and 
+any possible costs are merely hypothetical".
 
-However, the LSMs (or at least SELinux) ignore f_cred and use current_cred()
-when checking permissions.  See selinux_revalidate_file_permission() for
-example - it uses current_cred() not file->f_cred to re-evaluate the perms,
-and the fd might be shared between a number of processes with different creds.
 
-> This seems like the wrong approach.  If an LSM wants to prevent covert
-> communication from, say, mount actions, then it shouldn't allow the
-> watch to be set up in the first place.
+-- 
+James Morris
+<jmorris@namei.org>
 
-Yeah, I can agree to that.  Casey?
-
-David
