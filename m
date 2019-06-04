@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CC5C28CC6
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 21:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E46C282CE
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 21:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25E752070B
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 21:11:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 640EC2070B
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jun 2019 21:19:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bUNqTZBs"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FoqQVUgP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbfFDVLw (ORCPT
+        id S1726490AbfFDVTO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jun 2019 17:11:52 -0400
-Received: from sonic309-27.consmr.mail.gq1.yahoo.com ([98.137.65.153]:41256
-        "EHLO sonic309-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726399AbfFDVLv (ORCPT
+        Tue, 4 Jun 2019 17:19:14 -0400
+Received: from sonic310-27.consmr.mail.gq1.yahoo.com ([98.137.69.153]:37749
+        "EHLO sonic310-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726477AbfFDVTO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jun 2019 17:11:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559682711; bh=rIePoQB7SfoXEtKT+Ykbw4tlwyh2+weCxD1TWpXWU/c=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=bUNqTZBshgF6lT2ZVGKEVPunsAMpq5+svvqycwgdRizvoFNDcMTjzq8O8BzRgWTy20oKaeKLCbOGDHNjwrLy80H+r7EDQ+kRgCWNkA/iFAAzZu+/nVHvsZctgenjAfal4onefIbkptu2SUUNI8HxYaGSVCWjapatN9dOYmHtwJZ5Bp6AUzbo+R5HMTA+aW7DLnuYnh2G4F9yXtBh0iY0ihXehWMRKq6weOaCymsiRYW+pcUBNM6awBGTvh3p9mLNFDjkDmWWVo8u62+52bXhpd4GaNzQiaMnwQbrQ2L9JcQOOmm+Bc8B0I1xu3iwkQKjcwfg0G80RwiauPpoH4v0GQ==
-X-YMail-OSG: bECyNgYVM1m1qz1rZ5_tSVQtdUXUh55m1CyhbxS.3Xc0MUkAPWDot8hT0_j.5Cc
- joS1KBruJIc_X5e_jEU6hNJ.qSDDbwfSzMW9swkznzXAbo.acChmA14CnCZQEWslaoDGD7xNC_F4
- mCljYqz_OtRck9PZXw7hvFABWR8V_m.4Wvt0UTcIexC5AsCRYB7F5J.8JpbWq8yiCpMfpKGg8AVc
- l2V9inOFhhv74sO8Uh4JryZHGnajGSAO8TnrimPg4n1wKQ1yc_TD7FMjO.N1uB7GOLBmlt2r3GtU
- 3LdTAM3Tx_7vX3fNmcdt8P9pH8dvFwxSDWuOKwM7DK0Z.kmc9tRkpH8v3kqldXFsihy7vmlXoQUU
- yg1TgYqypAnCRjR3gK6Fsr9yE9xk1mNwNcXafU9ZHLQ79Fd1kxUS0lPKT9YLCtZIjtJb2qv_jvdB
- hZUOdzp.efFPJytC0256TjCZeQ5LHW58DiNWCujiV9S3HtfwUWtdbHJs3fbDwq5pxTrLYAlouidw
- ocDrVpJZN4k7FRHq2j0DYLHAEEbxsRczZClzrGX5jxt4AoW5UGBcfvHXQC21WkkuHoeZkE5OvOt8
- vMzdvhfld8iGr8TjDQbjQdEdJbzseRHPUwNlcg6zpPGeHr463OOGmFSzgRHUmIPvrI5I93Hl0znb
- 8_qEflCOEbT2ZlPhlPylK5R1dzxI2fw1am.ngJq3axlgi..p.j32f6UHUy_L.YMdKjOzO9tgHuc3
- esc0pQaFqbzBCiu1kVjM0fOh.N0nk9uwOhjYT3TVCeA_07aDRdQ6O.1EnDW44JjE1tLplzKqW_3E
- yRk3D6HhnHjAcVh_X6buY5Udc91GZn0dL2eU90VGiKSMN5.mDSJVPgiiOXdR_rMyZQivtswiBAWV
- ScBCv_6jmYkbezFq8f2VW80FsSmcaGkUJhHH7iiLDT_rTxCxuAvLbll_Q_zPyG0TEL1r.zi8fyV8
- oAYzKtufldOj3yhVo5buNU.41QaetVG6c8qt40p2Y2Z7Z1oz2sU.d2zzkRwCkU11c9_JqASVLjEL
- tYIgIw7OJYeOXJl5DhXD0OYP4m0oumbkf_aVhQtjZm4UuouzDD7OQIeYRvOEdLuYtu7nY9f90I1t
- 8TI4SYJCtOiQS3W6JrGbxKFgIqCtsZcIyJFqPXFGuhyvljYzqFs.UntcTp519S92VYfqPLgv6rRU
- PdoMhX.eSz_aMuF8d.TsZgLwI72fG1cycruTmx2QMYBHSabcqmDGXRQeMGyihDgNNAR.cuS4CxDM
- ndMgn6AN2SGDbBOIE5pAI3m7_PFE8f7sUEQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Tue, 4 Jun 2019 21:11:51 +0000
+        Tue, 4 Jun 2019 17:19:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559683153; bh=SL7mQ0GIubjs5kQG+Um9pNJVzd8c3aLxxQeWuVDzLTs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=FoqQVUgPjcy7ek2o/2feD2idQs5JBvmmy+JNiyvezpniNjcijGy+UrLn1rw1q6YGUu1Yvj7RNMRpkh8Rn1nKMVGSx0u9GJO+Q9fh7zji7LVybgEVZcFX5res6ORutRSosQb3N++zGUx5Rmy/2/hevhDd16aOBI/5apONB189GztQ8GJ/T7WyxYVSbGl2oTf2Qj+KiCK+NuTtliDQBH40X2q92MpXkglK9vvlGjjrSAm0pMnAM0REhIG01D6GR7dXvbrx0+rw2IKOyrRyxTwHkValmgfHiyN6BvtavaNpNAXU1zfa4KnHhCttDVeGzXtlTcwG/8qjtcW5lMhBWcpVjQ==
+X-YMail-OSG: UlT6ilEVM1lwY6MVGsNFaZN2dKP7erh_k80XRabQE6wdaIJp7PdKJ3LNw5MenUW
+ iWw6CNvxYlueeEJWFuBs7fKlAO00vpTCmE4w5tilMuhcuZyE6d8K1gOcwPCpiXfIwyE.4avBOKeU
+ iQwEpCWFoOCsog7RcObVphd1q2GkWDjQ2S5OyjnE_wgFzeIqbb8ql_WRMJBKyr2Lkytrr2fTzV1z
+ q8z6t1v_jrT1AymQSntVMPJwWl1kqx3VXd.xERdMJNdbzkCrnDjwglPhbmC6AUnH58B.u_BK0gy.
+ eWK1jQPO.IKdO3Re.oH0NkHqj0AIHqRDJqpK1F1JDXt.av4Y1mJNATTPb8Su97m1Vkb5uTYAxzhO
+ oRNfbEe_pXYeNZDnf9xiauZ.FMcGf8.sM775mKQ6BJgjwr1POH_s34piCmdcwJeE6CSyFex.J8l0
+ DPT.B8iZX7zCILvR_rCXq.t5.25IyAlaBjxw1dIdlYT_2k_zmrPcS6Ws_UltIcoFU25kxLwxdOx8
+ R7Tql6e6QY6_SGnyVku1U8c5hmk9HXg_m4tqRZ3NdT7KU.g1VLfMvXbAIIrrz3jsb9QFpwq.vZcC
+ t7rAtXpZkWpXyJdEKYnZCfXwdQ2_2TzZr2cV5LwyQXjkiec8OzqT4rtxE_DQ2y3PBGVWyjLJCOma
+ ZpBhNjwhpNg6n7Kw12kC_x7xgGWhawwLcBSEDgKiaW.9ecYLZjXoDxhg0qM3NPj3w.eksMRFz2tk
+ D6A2tqeVzJlD.74hezS_nvmmTAFUikN8ZMkq_RrOu7wG21gGOxgFVCrAoCwXAps7bAk_6StVyV_X
+ kb1SkHfwClT_P8aRD8pa8fck8AsBgrnXgjuoMyhvnucdqfHwEKcVAbCyMJwECkF9p5FtOraN6t2l
+ 9.k8gj6SwF2s8l8L9WH5TBR88IIQ_.HvztWC7hO3iB_xrn9rnbwC22fPQlZu9_hqUp6nsiXaoN5z
+ 7HqSRHIscg8.gH.5FghiP2Im3uGBfHYcDUUeVsymJEWNNiKD9b8WINmBsGz2dG.bA7qBJ3o9VSbL
+ A_zOok3ZQ7dwm_0fAgTZ66u9XKASQs_urhqedTd47y.vP5xGTRQHknl3IUKRn7n.Jhddg8QI80NA
+ YlXnXaGcSeOxVKF01AdVIwe_7OxlQeDEhd2fT7JuUJA6CFPuxrgGbkZAuMUiGHrWxkjk2fu8ROLb
+ cTLpfN99g13k2baUw6wEk4S77kQ9Gm7_eDjmD7z06nZJbgExzEsG4sn7cDuS9z6VoXYEmepgK2MH
+ eAFS7VexxdVBRcUoLhA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.gq1.yahoo.com with HTTP; Tue, 4 Jun 2019 21:19:13 +0000
 Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp419.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID e29402de8ce9ac532fdb1db0d6288519;
-          Tue, 04 Jun 2019 21:11:46 +0000 (UTC)
-Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver
- #2]
-To:     David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, casey@schaufler-ca.com
-References: <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
- <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
- <1207.1559680778@warthog.procyon.org.uk>
+          by smtp401.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 6fdcf74cc65cf5e52c1454d7ff8deb05;
+          Tue, 04 Jun 2019 21:19:12 +0000 (UTC)
+Subject: Re: [PATCH 00/58] LSM: Module stacking for AppArmor
+To:     James Morris <jmorris@namei.org>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        casey@schaufler-ca.com
+References: <20190602165101.25079-1-casey@schaufler-ca.com>
+ <f71388e9-a4c5-8935-137b-8eb50be7f833@tycho.nsa.gov>
+ <66a87b0b-b6f4-74ff-2e51-afc8e2d30de1@schaufler-ca.com>
+ <2a9049a7-6259-5ae0-2790-0aaf337c51a4@tycho.nsa.gov>
+ <a493956a-8a2f-6239-e5fe-09030640c397@schaufler-ca.com>
+ <alpine.LRH.2.21.1906050638550.31292@namei.org>
 From:   Casey Schaufler <casey@schaufler-ca.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=casey@schaufler-ca.com; keydata=
@@ -104,12 +104,12 @@ Autocrypt: addr=casey@schaufler-ca.com; keydata=
  wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
  v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
  abzjfg==
-Message-ID: <3ca991d1-4056-c45b-dbae-9976fb5d81e0@schaufler-ca.com>
-Date:   Tue, 4 Jun 2019 14:11:45 -0700
+Message-ID: <5c89bf57-b136-31b0-6059-6c7fa04744c7@schaufler-ca.com>
+Date:   Tue, 4 Jun 2019 14:19:11 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <1207.1559680778@warthog.procyon.org.uk>
+In-Reply-To: <alpine.LRH.2.21.1906050638550.31292@namei.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
@@ -117,56 +117,28 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/4/2019 1:39 PM, David Howells wrote:
-> Andy Lutomirski <luto@kernel.org> wrote:
+On 6/4/2019 1:42 PM, James Morris wrote:
+> On Tue, 4 Jun 2019, Casey Schaufler wrote:
 >
->>> Here's a set of patches to add a general variable-length notification=
- queue
->>> concept and to add sources of events for:
->> I asked before and didn't see a response, so I'll ask again.  Why are =
-you
->> paying any attention at all to the creds that generate an event?
-> Casey responded to you.  It's one of his requirements.
+>>> It isn't free so there should be a cost/benefit analysis.
+>> Some benchmarking is definitely in order, but most
+>> of what's you're calling out as downside is hypothetical
+>> or based on assumption.=20
+> When you're proposing changes such as these, which make fundamental and=
+=20
+> far-reaching changes, the burden is on you to present the cost/benefit =
 
-Process A takes an action. As a result of that action,
-an event is written to Process B's event buffer. This isn't
-a covert channel, it's a direct access, just like sending
-a signal. Process A is the subject and the event buffer,
-which is part of Process B, is the object.
+> analysis.
 
+Granted. There has been substantial conversation about it
+over the years, but I have not done well including it in
+this discussion.
 
-> I'm not sure of the need, and I particularly don't like trying to make
-> indirect destruction events (mount destruction keyed on fput, for insta=
-nce)
-> carry the creds of the triggerer.  Indeed, the trigger can come from al=
-l sorts
-> of places - including af_unix queue destruction, someone poking around =
-in
-> procfs, a variety of processes fputting simultaneously.  Only one of th=
-em can
-> win, and the LSM needs to handle *all* the possibilities.
+> You can't just say "Here are some changes and here are the benefits, an=
+d=20
+> any possible costs are merely hypothetical".
 
-Yes, it's a hairy problem. It was a significant factor in the
-demise of kdbus.
-
-> However, the LSMs (or at least SELinux) ignore f_cred and use current_c=
-red()
-> when checking permissions.  See selinux_revalidate_file_permission() fo=
-r
-> example - it uses current_cred() not file->f_cred to re-evaluate the pe=
-rms,
-> and the fd might be shared between a number of processes with different=
- creds.
->
->> This seems like the wrong approach.  If an LSM wants to prevent covert=
-
->> communication from, say, mount actions, then it shouldn't allow the
->> watch to be set up in the first place.
-> Yeah, I can agree to that.  Casey?
-
-Back to your earlier point, you don't know where the
-event is coming from when you create the event watch.
-If you enforce a watch time, what are you going to check?
-Isn't this going to be considered too restrictive?
+Of course. Nonetheless, no evidence for performance impact has
+been provided, while it has been asserted.
 
 
