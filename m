@@ -3,120 +3,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82788C282DE
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 08:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB8AC28CC5
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 11:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DD2D206B8
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 08:41:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB05F2075B
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 11:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfFEIlo (ORCPT
+        id S1727338AbfFELKw convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jun 2019 04:41:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33614 "EHLO mx1.redhat.com"
+        Wed, 5 Jun 2019 07:10:52 -0400
+Received: from mga14.intel.com ([192.55.52.115]:43361 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbfFEIlo (ORCPT
+        id S1727154AbfFELKv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jun 2019 04:41:44 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0AB11B9AD5;
-        Wed,  5 Jun 2019 08:41:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BEF6160576;
-        Wed,  5 Jun 2019 08:41:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com>
-References: <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com> <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk> <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com, Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        Wed, 5 Jun 2019 07:10:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 04:10:50 -0700
+X-ExtLoop1: 1
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by orsmga007.jf.intel.com with ESMTP; 05 Jun 2019 04:10:49 -0700
+Received: from fmsmsx112.amr.corp.intel.com (10.18.116.6) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 5 Jun 2019 04:10:49 -0700
+Received: from HASMSX109.ger.corp.intel.com (10.184.198.21) by
+ FMSMSX112.amr.corp.intel.com (10.18.116.6) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 5 Jun 2019 04:10:48 -0700
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.66]) by
+ hasmsx109.ger.corp.intel.com ([169.254.3.53]) with mapi id 14.03.0415.000;
+ Wed, 5 Jun 2019 14:10:46 +0300
+From:   "Ayoun, Serge" <serge.ayoun@intel.com>
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+CC:     Andy Lutomirski <luto@kernel.org>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
         LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
-MIME-Version: 1.0
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>
+Subject: RE: [RFC PATCH 6/9] x86/sgx: Require userspace to provide allowed
+ prots to ADD_PAGES
+Thread-Topic: [RFC PATCH 6/9] x86/sgx: Require userspace to provide allowed
+ prots to ADD_PAGES
+Thread-Index: AQHVGAkkmG7HFOrZhE6WGVzca6YfCqaM7RtA
+Date:   Wed, 5 Jun 2019 11:10:44 +0000
+Message-ID: <88B7642769729B409B4A93D7C5E0C5E7C64475FB@hasmsx108.ger.corp.intel.com>
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+ <20190531233159.30992-7-sean.j.christopherson@intel.com>
+In-Reply-To: <20190531233159.30992-7-sean.j.christopherson@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWY0NjBiOTctZTkxMy00Nzg1LTk4OTgtMmQ1NTAwYTZmZDU0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZndTM0lNaWlzSTNSU3hoc3M5TlNjc2xyXC94cVBuaTFseGdTQ01SeUYzQXlUMHBnOHJkQjhTMGdERTYzZ2tFdkQifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.184.70.11]
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <20191.1559724094.1@warthog.procyon.org.uk>
-Date:   Wed, 05 Jun 2019 09:41:34 +0100
-Message-ID: <20192.1559724094@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 05 Jun 2019 08:41:44 +0000 (UTC)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+> From: Christopherson, Sean J
+> Sent: Saturday, June 01, 2019 02:32
+> 
+>  /**
+>   * struct sgx_enclave_add_pages - parameter structure for the
+>   *                                %SGX_IOC_ENCLAVE_ADD_PAGES ioctl
+> @@ -39,6 +44,7 @@ struct sgx_enclave_create  {
+>   * @secinfo:	address for the SECINFO data (common to all pages)
+>   * @nr_pages:	number of pages (must be virtually contiguous)
+>   * @mrmask:	bitmask for the measured 256 byte chunks (common to all
+> pages)
+> + * @flags:	flags, e.g. SGX_ALLOW_{READ,WRITE,EXEC} (common to all
+> pages)
+>   */
+>  struct sgx_enclave_add_pages {
+>  	__u64	addr;
+> @@ -46,7 +52,8 @@ struct sgx_enclave_add_pages {
+>  	__u64	secinfo;
+>  	__u32	nr_pages;
+>  	__u16	mrmask;
+> -} __attribute__((__packed__));
+> +	__u16	flags;
+> +};
 
-> I will try to explain the problem once again. If process A
-> sends a signal (writes information) to process B the kernel
-> checks that either process A has the same UID as process B
-> or that process A has privilege to override that policy.
-> Process B is passive in this access control decision, while
-> process A is active. In the event delivery case, process A
-> does something (e.g. modifies a keyring) that generates an
-> event, which is then sent to process B's event buffer.
+You are adding a flags member. The secinfo structure has already a flags member in it.
+Why do you need both - they are both coming from user mode. What kind of scenario would
+require having different values. Seems confusing.
 
-I think this might be the core sticking point here.  It looks like two
-different situations:
+---------------------------------------------------------------------
+Intel Israel (74) Limited
 
- (1) A explicitly sends event to B (eg. signalling, sendmsg, etc.)
+This e-mail and any attachments may contain confidential material for
+the sole use of the intended recipient(s). Any review or distribution
+by others is strictly prohibited. If you are not the intended
+recipient, please contact the sender and delete all copies.
 
- (2) A implicitly and unknowingly sends event to B as a side effect of some
-     other action (eg. B has a watch for the event A did).
-
-The LSM treats them as the same: that is B must have MAC authorisation to send
-a message to A.
-
-But there are problems with not sending the event:
-
- (1) B's internal state is then corrupt (or, at least, unknowingly invalid).
-
- (2) B can potentially figure out that the event happened by other means.
-
-
-I've implemented four event sources so far:
-
- (1) Keys/keyrings.  You can only get events on a key you have View permission
-     on and the other process has to have write access to it, so I think this
-     is good enough.
-
- (2) Block layer.  Currently this will only get you hardware error events,
-     which is probably safe.  I'm not sure you can manipulate those without
-     permission to directly access the device files.
-
- (3) Superblock.  This is trickier since it can see events that can be
-     manufactured (R/W <-> R/O remounting, EDQUOT) as well as events that
-     can't without hardware control (EIO, network link loss, RF kill).
-
- (4) Mount topology.  This is the trickiest since it allows you to see events
-     beyond the point at which you placed your watch (in essence, you place a
-     subtree watch).
-
-     The question is what permission checking should I do?  Ideally, I'd
-     emulate a pathwalk between the watchpoint and the eventing object to see
-     if the owner of the watchpoint could reach it.
-
-     I'd need to do a reverse walk, calling inode_permission(MAY_NOT_BLOCK)
-     for each directory between the eventing object and the watchpoint to see
-     if one rejects it - but some filesystems have a permission check that
-     can't be called in this state.
-
-     It would also be necessary to do this separately for each watchpoint in
-     the parental chain.
-
-     Further, each permissions check would generate an audit event and could
-     generate FAN_ACCESS and/or FAN_ACCESS_PERM fanotify events - which could
-     be a problem if fanotify is also trying to post those events to the same
-     watch queue.
-
-David
