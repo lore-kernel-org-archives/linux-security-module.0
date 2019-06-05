@@ -3,185 +3,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0685CC28D18
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 21:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86EEDC28D18
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 21:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD9652075C
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 21:06:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F3B420684
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 21:43:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfFEVGT convert rfc822-to-8bit (ORCPT
+        id S1726543AbfFEVni (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jun 2019 17:06:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35222 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726528AbfFEVGS (ORCPT
+        Wed, 5 Jun 2019 17:43:38 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34734 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfFEVni (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jun 2019 17:06:18 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 062F9C1EB1FB;
-        Wed,  5 Jun 2019 21:06:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D9356838D;
-        Wed,  5 Jun 2019 21:06:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <f19dcdb4-f934-34c2-f625-95c2c928d576@schaufler-ca.com>
-References: <f19dcdb4-f934-34c2-f625-95c2c928d576@schaufler-ca.com> <e4c19d1b-9827-5949-ecb8-6c3cb4648f58@schaufler-ca.com> <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com> <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk> <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com> <20192.1559724094@warthog.procyon.org.uk> <18357.1559753807@warthog.procyon.org.uk>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     dhowells@redhat.com, Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Rational model for UID based controls
+        Wed, 5 Jun 2019 17:43:38 -0400
+Received: from static-50-53-54-166.bvtn.or.frontiernet.net ([50.53.54.166] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1hYdgy-00028I-Ul; Wed, 05 Jun 2019 21:43:33 +0000
+Subject: Re: [PATCH 00/58] LSM: Module stacking for AppArmor
+To:     James Morris <jmorris@namei.org>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, keescook@chromium.org,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
+References: <20190602165101.25079-1-casey@schaufler-ca.com>
+ <f71388e9-a4c5-8935-137b-8eb50be7f833@tycho.nsa.gov>
+ <42fcfaf2-43a9-642e-2e19-282087c3cdb2@canonical.com>
+ <alpine.LRH.2.21.1906051305370.17052@namei.org>
+ <d86c6f89-39c5-bcf6-6491-96963d1113d3@canonical.com>
+ <alpine.LRH.2.21.1906060653060.20895@namei.org>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <c27ef338-e8fc-cf60-41ed-3d74352add3d@canonical.com>
+Date:   Wed, 5 Jun 2019 14:43:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <5392.1559768763.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 05 Jun 2019 22:06:03 +0100
-Message-ID: <5393.1559768763@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 05 Jun 2019 21:06:18 +0000 (UTC)
+In-Reply-To: <alpine.LRH.2.21.1906060653060.20895@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
-
-> Right. You're mixing the kind of things that can generate events,
-> and that makes having a single policy difficult.
-
-Whilst that's true, the notifications are clearly marked as to type, so it
-should be possible to select different policies for different notification
-types.
-
-Question for you: what does the LSM *actually* need?  There are a bunch of
-things available, some of which may be the same thing:
-
- (1) The creds of the process that created a watch_queue (ie. opened
-     /dev/watch_queue).
-
- (2) The creds of the process that set a watch (ie. called sb_notify,
-     KEYCTL_NOTIFY, ...);
-
- (3) The creds of the process that tripped the event (which might be the
-     system).
-
- (4) The security attributes of the object on which the watch was set (uid,
-     gid, mode, labels).
-
- (5) The security attributes of the object on which the event was tripped.
-
- (6) The security attributes of all the objects between the object in (5) and
-     the object in (4), assuming we work from (5) towards (4) if the two
-     aren't coincident (WATCH_INFO_RECURSIVE).
-
-At the moment, when post_one_notification() wants to write a notification into
-a queue, it calls security_post_notification() to ask if it should be allowed
-to do so.  This is passed (1) and (3) above plus the notification record.
-
-The only problem I really have is that for a destruction message you want to
-get the creds of who did the last put on an object and caused it to be
-destroyed - I think everything else probably gets the right creds, even if
-they aren't even in the same namespaces (mount propagation, yuck).
-
-However, that one is a biggie because close()/exit() must propagate it to
-deferred-fput, which must propagate it to af_unix-cleanup, and thence back to
-deferred-fput and thence to implicit unmount (dissolve_on_fput()[*]).
-
-[*] Though it should be noted that if this happens, the subtree cannot be
-    attached to the root of a namespace.
-
-> > In any case, that's what I was referring to when I said I might need to call
-> > inode_permission().  But UIDs don't exist for all filesystems, for example,
-> > and there are no UIDs on superblocks, mount objects or hardware events.
+On 6/5/19 1:53 PM, James Morris wrote:
+> On Tue, 4 Jun 2019, John Johansen wrote:
 > 
-> If you open() or stat() a file on those filesystems the UID
-> used in the access control comes from somewhere. Setting a watch
-> on things with UIDs should use the access mode on the file,
-> just like any other filesystem operation.
-
-Another question for you: Do I need to let the LSM pass judgement on a watch
-that a process is trying to set?  I think I probably do.  This would require
-separate hooks for different object types:
-
-	int security_watch_key(struct watch *watch, struct key *key);
-	int security_watch_sb(struct watch *watch, struct path *path);
-	int security_watch_mount(struct watch *watch, struct path *path);
-	int security_watch_devices(struct watch *watch);
-
-so that the LSM can see the object the watch is being placed on (the last has
-a global queue, so there is no object).  
-
-Further, do I need to put a "void *security" pointer in struct watch and
-indicate to the LSM the object bring watched?  The watch could then be passed
-to security_post_notification() instead of the watch queue creds (which I
-could then dispense with).
-
-	security_post_notification(const struct watch *watch,
-				   const struct cred *trigger_cred,
-				   struct watch_notification *n);
-
-
-Also, should I let the LSM audit/edit the filter set by
-IOC_WATCH_QUEUE_SET_FILTER?  Userspace can't retrieve the filter, so the LSM
-could edit it to exclude certain things.  That might be a bit too complicated,
-though.
-
-> Things like superblocks are sticker because we don't generally
-> think of them as objects. If you can do statfs(), you should be
-> able to set a watch on the filesystem metadata.
+>> Yes, on Ubuntu & suse you can lauch lxd system containers with the
+>> container having a system policy bounding the container, and the container
+>> having its own apparmor policy namespace. So it loads and has its own
+>> policy that is enforced.
+>>
+>> This allows for us to run older versions of ubuntu (say 16.04) on an
+>> 18.04 host, and have the 16.04 policy behave just as if it was the host.
 > 
-> How would you specify a watch for a hardware event? If you say
-> you have to open /dev/mumble to sent a watch for mumbles, you're
-> good there, too.
-
-That's not how that works at the moment.  There's a global watch list for
-device events.  I've repurposed it to carry any device's events - so it will
-carry blockdev events (I/O errors only at the moment) and usb events
-(add/remove device, add/remove bus, reset device at the moment).
-
-> > Now, I could see that you ignore UIDs on things like keys and
-> > hardware-triggered events, but how does this interact with things like mount
-> > watches that see directories that have UIDs?
-> >
-> > Are you advocating making it such that process B can only see events
-> > triggered by process A if they have the same UID, for example?
+> How well does the LSM stacking scale to 100s or more containers?
 > 
-> It's always seemed arbitrary to me that you can't open your process up to
-> get signals from other users. What about putting mode bits on your ring
-> buffer? By default you could only accept your own events, but you could do a
-> rb_chmod(0222) and let all events through.
 
-Ummm...  This mechanism is pretty much about events generated by others.
-Depend on what you mean by 'you' and 'your own events', it might be considered
-that you would know what events you were directly causing and wouldn't need a
-notification system for it.
+Actually really well,
 
-> Subject to LSM addition restrictions, of course. That would require the cred
-> of the process that triggered the event or a system cred for "hardware"
-> events.  If you don't like mode bits you could use an ACL for fine
-> granularity or a single "let'em all in" bit for coarse.
+The cost isn't really based on how many containers but how many LSMs
+are registered and how nested we are.
 
-I'm not entirely sure how an ACL would help.  If someone creates a watch
-queue, sets an ACL with only a "let everything in" ACE, we're back to the
-situation we're in now.
+How we are currently handling it is apparmor is registered once, and
+it is responsible for looping on its bounding. So for tasks that are
+not in the container there is no additional cost.
 
-As I understand it, the issue you have is stopping them getting events that
-they're willing to accept that you think they shouldn't be allowed.
+For tasks in the first container, there is an extra cost of enforcing
+the extra layer of apparmor policy loaded in the container. If you do
+container in container there are two extra levels of apparmor policy.
 
-> I'm not against access, I'm against uncontrolled access in conflict with
-> basic system policy.
+This does rely on apparmor doing its own namespacing and bounding. LSM
+stacking just allows us to start doing this with apparmor containers
+on smack and selinux based systems.
 
-David
+
+>> This approach won't be an option for the 19.10 release and we will be
+>> needing the full patchset. I should be able to provide some benchmark
+>> and testing data soon.
+> 
+> Great.
+> 
+
