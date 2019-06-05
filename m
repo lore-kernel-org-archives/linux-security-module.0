@@ -2,218 +2,149 @@ Return-Path: <SRS0=3lle=UE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2180CC28CC6
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 19:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0663C28CC5
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 19:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F31C62075C
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 19:16:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="IBsNr2pT"
+	by mail.kernel.org (Postfix) with ESMTP id C88D4206C3
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 19:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1559762930;
+	bh=da4vdqyz2Yme7cA4V1MHlD7iuvel2OX6wiT4hesZ8Gs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gdkc9r7bPI3asoTBUrZW2+9/gvsRSJTkhpDImQYlSUcL5ZUtMhltzE8BzjEN5+nPY
+	 MhMWBuOZII9hJqwe4XnTAmeCZhYb5Fs/Tucce+I0aZcF4H5MmTMdT3kExn1112CEJq
+	 XkIvyYlgamMPDMAf2mjaNQ8Wu8GfYrWxXzS19rv8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfFETQF (ORCPT
+        id S1726600AbfFET2q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jun 2019 15:16:05 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36699 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726707AbfFETQE (ORCPT
+        Wed, 5 Jun 2019 15:28:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38852 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726280AbfFET2q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jun 2019 15:16:04 -0400
-Received: by mail-lj1-f194.google.com with SMTP id i21so9626435ljj.3
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Jun 2019 12:16:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s5gCap6cvNBSPEAIzOt2bO96t9rWvciwXUye4o9D03k=;
-        b=IBsNr2pTPqpb15MKtmctTQEybXfKnOz88q6JcU58yYUvkTOG+is2ABSdCvR7ujkp5J
-         wlmadsutiiN/Fmga8NNLbJKg1nW+nGpbMmd50TeynYuxiWmPXhXOlDYFl2UTqn5apmiM
-         qSrya/tTKrHp7KQk7l58NGUIGy7kYEinvqrBbZzHW+AP82XxgbrHIMzmWp230gMMh+4y
-         zJ17eBxXDjHMWygjFMilb3Ep3Uxzh5NPYvDG3W5UAdjtqUtVQ3+c63RU59rXL8R464C2
-         jpTlVk24vzq7PfFfHh2qmHxQTRkRP6iW0VomraSXVEky0rzSDxXb8Rbf8gam/jn3ZjKF
-         amZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s5gCap6cvNBSPEAIzOt2bO96t9rWvciwXUye4o9D03k=;
-        b=tquKUX/U0UwPmklAublx0wXG8tINqjkZ9T4NKUKVqZV9DLs/z/RH1Ome+X9DAdSWxz
-         XABgfFxT75PAg6QUw+M+SWQcSuUZ18Pq8H2XRg0ydDS+aRmPXJ1YaAFzA5XjRMZPcgzl
-         IxWESLs9o9zZfCBhsrcQ23EhAU0qH3vabS0T479FYioIp8ym0NNs+UhQfIUED7O3NVxB
-         ZM/VtI8IWdPCG3wCPz8j9ejVN+uXyEDutqGXwr9p9r1XCFihbrHp9icyEJ1/enZv3cAR
-         xMoHBvlZUj2VNxNmOd0m0hCx3fLhcof34r6CAmaPP5nOFJfup2MFQw2FtBzdYvVqBLQZ
-         xd4w==
-X-Gm-Message-State: APjAAAVaXXkW1LM7amVZTdy+t0KBTOMm/7/9Wt0Oi3+kSj6pJ7lJdxSN
-        /WAswqi59VYfMEgymNQ0JkCyoKygEQAFjkypTO/i
-X-Google-Smtp-Source: APXvYqzY1c1xTWbVXcNXwoQb7xOiIrytND3ntvsa8td3QEp+gtia/TrlfuuXCIMmWEwLIn8jd+PjocUAjuw+SWHXlZc=
-X-Received: by 2002:a2e:3e14:: with SMTP id l20mr22411482lja.40.1559762162428;
- Wed, 05 Jun 2019 12:16:02 -0700 (PDT)
+        Wed, 5 Jun 2019 15:28:46 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CF99206BB;
+        Wed,  5 Jun 2019 19:28:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559762925;
+        bh=da4vdqyz2Yme7cA4V1MHlD7iuvel2OX6wiT4hesZ8Gs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BnCNWFWZc6WFQpPgq8oWAUJhMFZQWWwmZwy5J37GOO0asHCDGGNyy2OZaScErfCAd
+         +Kpnw5dKlic3ZZPGfuxQ6El1DlNkO5k3ONonLuBknkpHtA+P3W4J7CYNSqJB2Gch3z
+         DBBQPGMWJnTImFLSHJRIibNQIF4Q9Wobgc/MPfow=
+Date:   Wed, 5 Jun 2019 21:28:42 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications
+ [ver #2]
+Message-ID: <20190605192842.GA9590@kroah.com>
+References: <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com>
+ <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
+ <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
+ <20192.1559724094@warthog.procyon.org.uk>
+ <e4c19d1b-9827-5949-ecb8-6c3cb4648f58@schaufler-ca.com>
+ <CALCETrVSBwHEm-1pgBXxth07PZ0XF6FD+7E25=WbiS7jxUe83A@mail.gmail.com>
+ <9a9406ba-eda4-e3ec-2100-9f7cf1d5c130@schaufler-ca.com>
+ <15CBE0B8-2797-433B-B9D7-B059FD1B9266@amacapital.net>
+ <5dae2a59-1b91-7b35-7578-481d03c677bc@tycho.nsa.gov>
 MIME-Version: 1.0
-References: <20190605083606.4209-1-janne.karhunen@gmail.com>
-In-Reply-To: <20190605083606.4209-1-janne.karhunen@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 5 Jun 2019 15:15:51 -0400
-Message-ID: <CAHC9VhT6ws9WaodE2n+-LPmyZXVs=2qZSUDccUDyb_1Lc2MMjQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] LSM: switch to blocking policy update notifiers
-To:     Janne Karhunen <janne.karhunen@gmail.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5dae2a59-1b91-7b35-7578-481d03c677bc@tycho.nsa.gov>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 5, 2019 at 4:36 AM Janne Karhunen <janne.karhunen@gmail.com> wrote:
->
-> Atomic policy updaters are not very useful as they cannot
-> usually perform the policy updates on their own. Since it
-> seems that there is no strict need for the atomicity,
-> switch to the blocking variant. While doing so, rename
-> the functions accordingly.
->
-> Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
-> ---
->  drivers/infiniband/core/device.c |  6 +++---
->  include/linux/security.h         |  6 +++---
->  security/security.c              | 23 +++++++++++++----------
->  security/selinux/hooks.c         |  2 +-
->  security/selinux/selinuxfs.c     |  2 +-
->  5 files changed, 21 insertions(+), 18 deletions(-)
+On Wed, Jun 05, 2019 at 02:25:33PM -0400, Stephen Smalley wrote:
+> On 6/5/19 1:47 PM, Andy Lutomirski wrote:
+> > 
+> > > On Jun 5, 2019, at 10:01 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > 
+> > > > On 6/5/2019 9:04 AM, Andy Lutomirski wrote:
+> > > > > On Wed, Jun 5, 2019 at 7:51 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > > > > On 6/5/2019 1:41 AM, David Howells wrote:
+> > > > > > Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > > > > 
+> > > > > > > I will try to explain the problem once again. If process A
+> > > > > > > sends a signal (writes information) to process B the kernel
+> > > > > > > checks that either process A has the same UID as process B
+> > > > > > > or that process A has privilege to override that policy.
+> > > > > > > Process B is passive in this access control decision, while
+> > > > > > > process A is active. In the event delivery case, process A
+> > > > > > > does something (e.g. modifies a keyring) that generates an
+> > > > > > > event, which is then sent to process B's event buffer.
+> > > > > > I think this might be the core sticking point here.  It looks like two
+> > > > > > different situations:
+> > > > > > 
+> > > > > > (1) A explicitly sends event to B (eg. signalling, sendmsg, etc.)
+> > > > > > 
+> > > > > > (2) A implicitly and unknowingly sends event to B as a side effect of some
+> > > > > >      other action (eg. B has a watch for the event A did).
+> > > > > > 
+> > > > > > The LSM treats them as the same: that is B must have MAC authorisation to send
+> > > > > > a message to A.
+> > > > > YES!
+> > > > > 
+> > > > > Threat is about what you can do, not what you intend to do.
+> > > > > 
+> > > > > And it would be really great if you put some thought into what
+> > > > > a rational model would be for UID based controls, too.
+> > > > > 
+> > > > > > But there are problems with not sending the event:
+> > > > > > 
+> > > > > > (1) B's internal state is then corrupt (or, at least, unknowingly invalid).
+> > > > > Then B is a badly written program.
+> > > > Either I'm misunderstanding you or I strongly disagree.
+> > > 
+> > > A program needs to be aware of the conditions under
+> > > which it gets event, *including the possibility that
+> > > it may not get an event that it's not allowed*. Do you
+> > > regularly write programs that go into corrupt states
+> > > if an open() fails? Or where read() returns less than
+> > > the amount of data you ask for?
+> > 
+> > I do not regularly write programs that handle read() omitting data in the middle of a TCP stream.  I also don’t write programs that wait for processes to die and need to handle the case where a child is dead, waitid() can see it, but SIGCHLD wasn’t sent because “security”.
+> > 
+> > > 
+> > > >   If B has
+> > > > authority to detect a certain action, and A has authority to perform
+> > > > that action, then refusing to notify B because B is somehow missing
+> > > > some special authorization to be notified by A is nuts.
+> > > 
+> > > You are hand-waving the notion of authority. You are assuming
+> > > that if A can read X and B can read X that A can write B.
+> > 
+> > No, read it again please. I’m assuming that if A can *write* X and B can read X then A can send information to B.
+> 
+> I guess the questions here are:
+> 
+> 1) How do we handle recursive notification support, since we can't check
+> that B can read everything below a given directory easily?  Perhaps we can
+> argue that if I have watch permission to / then that implies visibility to
+> everything below it but that is rather broad.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+How do you handle fanotify today which I think can do this?
 
-> diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-> index 78dc07c6ac4b..61c0c93a2e73 100644
-> --- a/drivers/infiniband/core/device.c
-> +++ b/drivers/infiniband/core/device.c
-> @@ -2499,7 +2499,7 @@ static int __init ib_core_init(void)
->                 goto err_mad;
->         }
->
-> -       ret = register_lsm_notifier(&ibdev_lsm_nb);
-> +       ret = register_blocking_lsm_notifier(&ibdev_lsm_nb);
->         if (ret) {
->                 pr_warn("Couldn't register LSM notifier. ret %d\n", ret);
->                 goto err_sa;
-> @@ -2518,7 +2518,7 @@ static int __init ib_core_init(void)
->         return 0;
->
->  err_compat:
-> -       unregister_lsm_notifier(&ibdev_lsm_nb);
-> +       unregister_blocking_lsm_notifier(&ibdev_lsm_nb);
->  err_sa:
->         ib_sa_cleanup();
->  err_mad:
-> @@ -2544,7 +2544,7 @@ static void __exit ib_core_cleanup(void)
->         nldev_exit();
->         rdma_nl_unregister(RDMA_NL_LS);
->         unregister_pernet_device(&rdma_dev_net_ops);
-> -       unregister_lsm_notifier(&ibdev_lsm_nb);
-> +       unregister_blocking_lsm_notifier(&ibdev_lsm_nb);
->         ib_sa_cleanup();
->         ib_mad_cleanup();
->         addr_cleanup();
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 659071c2e57c..fc655fbe44ad 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -189,9 +189,9 @@ static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
->
->  #ifdef CONFIG_SECURITY
->
-> -int call_lsm_notifier(enum lsm_event event, void *data);
-> -int register_lsm_notifier(struct notifier_block *nb);
-> -int unregister_lsm_notifier(struct notifier_block *nb);
-> +int call_blocking_lsm_notifier(enum lsm_event event, void *data);
-> +int register_blocking_lsm_notifier(struct notifier_block *nb);
-> +int unregister_blocking_lsm_notifier(struct notifier_block *nb);
->
->  /* prototypes */
->  extern int security_init(void);
-> diff --git a/security/security.c b/security/security.c
-> index c01a88f65ad8..6bfc7636ddb7 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -39,7 +39,7 @@
->  #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
->
->  struct security_hook_heads security_hook_heads __lsm_ro_after_init;
-> -static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
-> +static BLOCKING_NOTIFIER_HEAD(blocking_lsm_notifier_chain);
->
->  static struct kmem_cache *lsm_file_cache;
->  static struct kmem_cache *lsm_inode_cache;
-> @@ -430,23 +430,26 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
->                 panic("%s - Cannot get early memory.\n", __func__);
->  }
->
-> -int call_lsm_notifier(enum lsm_event event, void *data)
-> +int call_blocking_lsm_notifier(enum lsm_event event, void *data)
->  {
-> -       return atomic_notifier_call_chain(&lsm_notifier_chain, event, data);
-> +       return blocking_notifier_call_chain(&blocking_lsm_notifier_chain,
-> +                                           event, data);
->  }
-> -EXPORT_SYMBOL(call_lsm_notifier);
-> +EXPORT_SYMBOL(call_blocking_lsm_notifier);
->
-> -int register_lsm_notifier(struct notifier_block *nb)
-> +int register_blocking_lsm_notifier(struct notifier_block *nb)
->  {
-> -       return atomic_notifier_chain_register(&lsm_notifier_chain, nb);
-> +       return blocking_notifier_chain_register(&blocking_lsm_notifier_chain,
-> +                                               nb);
->  }
-> -EXPORT_SYMBOL(register_lsm_notifier);
-> +EXPORT_SYMBOL(register_blocking_lsm_notifier);
->
-> -int unregister_lsm_notifier(struct notifier_block *nb)
-> +int unregister_blocking_lsm_notifier(struct notifier_block *nb)
->  {
-> -       return atomic_notifier_chain_unregister(&lsm_notifier_chain, nb);
-> +       return blocking_notifier_chain_unregister(&blocking_lsm_notifier_chain,
-> +                                                 nb);
->  }
-> -EXPORT_SYMBOL(unregister_lsm_notifier);
-> +EXPORT_SYMBOL(unregister_blocking_lsm_notifier);
->
->  /**
->   * lsm_cred_alloc - allocate a composite cred blob
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index c61787b15f27..c1e37018c8eb 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -197,7 +197,7 @@ static int selinux_lsm_notifier_avc_callback(u32 event)
->  {
->         if (event == AVC_CALLBACK_RESET) {
->                 sel_ib_pkey_flush();
-> -               call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
-> +               call_blocking_lsm_notifier(LSM_POLICY_CHANGE, NULL);
->         }
->
->         return 0;
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index 145ee62f205a..1e2e3e4b5fdb 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -180,7 +180,7 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
->                 selnl_notify_setenforce(new_value);
->                 selinux_status_update_setenforce(state, new_value);
->                 if (!new_value)
-> -                       call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
-> +                       call_blocking_lsm_notifier(LSM_POLICY_CHANGE, NULL);
->         }
->         length = count;
->  out:
-> --
-> 2.17.1
->
+thanks,
 
--- 
-paul moore
-www.paul-moore.com
+greg k-h
