@@ -2,290 +2,121 @@ Return-Path: <SRS0=3lle=UE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A6AC46460
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 08:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82788C282DE
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 08:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 834542075B
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 08:36:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="btfdArMi"
+	by mail.kernel.org (Postfix) with ESMTP id 4DD2D206B8
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 08:41:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfFEIgy (ORCPT
+        id S1726924AbfFEIlo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jun 2019 04:36:54 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35051 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbfFEIgx (ORCPT
+        Wed, 5 Jun 2019 04:41:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33614 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726636AbfFEIlo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jun 2019 04:36:53 -0400
-Received: by mail-lf1-f65.google.com with SMTP id a25so18472176lfg.2;
-        Wed, 05 Jun 2019 01:36:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yAY2x4M2ZvsX6SGgora+JblNOtjrwOO5ndy8yz8Qmbo=;
-        b=btfdArMixbJhY0rY55lpebP2t5pQVRlneqmBJA+qulOEK2S9fIZLAAqmt+Ln/5a5/R
-         f1lTFe8gvrImCn/mSemvyL4DnlBREwrZ/dn71rb8gzTO3Mu/dx8FIvN4p7oF9nm5CT39
-         hLLp688CR7tZaxE1GqYCE+4WpyiqVgH2KPaSiB3TiWcwqf4x7We95z0EuGxvLCxzsP/J
-         0KkNmhdqr4XK6EU8m9pt5Es2UyQlVuugA6XbATZZwJ5c0XfdIUJZcZ9JPO9hx/u6Eb9X
-         WHHr6OPfLvbe/R/cDmOQ46EI2zmeHM/M/BCqcVj/iIYis0GqFX7zvjiP4LK3AaMWeCYi
-         2H7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yAY2x4M2ZvsX6SGgora+JblNOtjrwOO5ndy8yz8Qmbo=;
-        b=tmcHM01X6zo+Ld/PfroUrkbePdKh9LNcrso/xvNV/z4jcve3BYXgAJo5+tLJnCh6w+
-         NxnvWaO+6NJYAA3tQnXsrdmqRM4ZHGBiormj1rKz1H3O08hV2oAUnxTUTN20VTsYwsEq
-         VrxWnsQ7SBRNTKzVjQr4ogKBaVE0R5bt2e+5FK6oZexQ+2AhH38G4TR54ETnYjQtW6nX
-         lgYg65fJUy8QByX6rVK/ZV8u0HBTmAUObRyRjEwobw37hXfzTFaFkenQwLrlDgYDv2eM
-         i7cAhRE1+DY5P23CFzPFRyCk+x30g6S2XaRmGRSYvGnMT0mVD62VjGpe46YdhH8QGT1y
-         sDRQ==
-X-Gm-Message-State: APjAAAWqGb02gPC0p/0n4/x/sAdXbpsD5Sp/Vk5wk0JmCwu0onEzRkaT
-        IPpDo4tqfJoQXSV2c0qVWVFg8iHfkro=
-X-Google-Smtp-Source: APXvYqxRG47fyEfSM1m6YuO3gyrNyVx9PH54Z9AZVprfYBL7Q0cyFuPJZb7lRV1Zl0i+xjSeo5E6Ww==
-X-Received: by 2002:a19:521a:: with SMTP id m26mr4683740lfb.134.1559723811337;
-        Wed, 05 Jun 2019 01:36:51 -0700 (PDT)
-Received: from localhost.localdomain (mobile-user-c1d2e6-229.dhcp.inet.fi. [193.210.230.229])
-        by smtp.gmail.com with ESMTPSA id t21sm1392637ljg.60.2019.06.05.01.36.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 01:36:50 -0700 (PDT)
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-To:     sds@tycho.nsa.gov, zohar@linux.ibm.com, paul@paul-moore.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Janne Karhunen <janne.karhunen@gmail.com>
-Subject: [PATCH 2/2] ima: use the lsm policy update notifier
-Date:   Wed,  5 Jun 2019 11:36:06 +0300
-Message-Id: <20190605083606.4209-2-janne.karhunen@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190605083606.4209-1-janne.karhunen@gmail.com>
-References: <20190605083606.4209-1-janne.karhunen@gmail.com>
+        Wed, 5 Jun 2019 04:41:44 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0AB11B9AD5;
+        Wed,  5 Jun 2019 08:41:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BEF6160576;
+        Wed,  5 Jun 2019 08:41:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com>
+References: <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com> <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk> <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <20191.1559724094.1@warthog.procyon.org.uk>
+Date:   Wed, 05 Jun 2019 09:41:34 +0100
+Message-ID: <20192.1559724094@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 05 Jun 2019 08:41:44 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Don't do lazy policy updates while running the rule matching,
-run the updates as they happen.
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Depends on commit 2d1d5cee66d1 ("LSM: switch to blocking policy update notifiers")
+> I will try to explain the problem once again. If process A
+> sends a signal (writes information) to process B the kernel
+> checks that either process A has the same UID as process B
+> or that process A has privilege to override that policy.
+> Process B is passive in this access control decision, while
+> process A is active. In the event delivery case, process A
+> does something (e.g. modifies a keyring) that generates an
+> event, which is then sent to process B's event buffer.
 
-Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
----
- security/integrity/ima/ima.h        |   2 +
- security/integrity/ima/ima_main.c   |   8 ++
- security/integrity/ima/ima_policy.c | 124 +++++++++++++++++++++++-----
- 3 files changed, 114 insertions(+), 20 deletions(-)
+I think this might be the core sticking point here.  It looks like two
+different situations:
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index d213e835c498..2203451862d4 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -154,6 +154,8 @@ unsigned long ima_get_binary_runtime_size(void);
- int ima_init_template(void);
- void ima_init_template_list(void);
- int __init ima_init_digests(void);
-+int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-+			  void *lsm_data);
- 
- /*
-  * used to protect h_table and sha_table
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index f16353b5097e..9e3ea8a3f2db 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -43,6 +43,10 @@ int ima_appraise;
- int ima_hash_algo = HASH_ALGO_SHA1;
- static int hash_setup_done;
- 
-+static struct notifier_block ima_lsm_policy_notifier = {
-+	.notifier_call = ima_lsm_policy_change,
-+};
-+
- static int __init hash_setup(char *str)
- {
- 	struct ima_template_desc *template_desc = ima_template_desc_current();
-@@ -621,6 +625,10 @@ static int __init init_ima(void)
- 		error = ima_init();
- 	}
- 
-+	error = register_blocking_lsm_notifier(&ima_lsm_policy_notifier);
-+	if (error)
-+		pr_warn("Couldn't register LSM notifier, error %d\n", error);
-+
- 	if (!error)
- 		ima_update_policy_flag();
- 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 1cc822a59054..7129dc4cd396 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -249,31 +249,121 @@ static int __init default_appraise_policy_setup(char *str)
- }
- __setup("ima_appraise_tcb", default_appraise_policy_setup);
- 
-+static void ima_lsm_free_rule(struct ima_rule_entry *entry)
-+{
-+	int i;
-+
-+	for (i = 0; i < MAX_LSM_RULES; i++) {
-+		kfree(entry->lsm[i].rule);
-+		kfree(entry->lsm[i].args_p);
-+	}
-+	kfree(entry->fsname);
-+	kfree(entry);
-+}
-+
-+
-+static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
-+{
-+	struct ima_rule_entry *nentry;
-+	int i, result;
-+
-+	nentry = kmalloc(sizeof(*nentry), GFP_KERNEL);
-+	if (!nentry)
-+		return NULL;
-+
-+	memcpy(nentry, entry, sizeof(*nentry));
-+	nentry->fsname = NULL;
-+	for (i = 0; i < MAX_LSM_RULES; i++) {
-+		nentry->lsm[i].rule = NULL;
-+		nentry->lsm[i].args_p = NULL;
-+	}
-+
-+	if (entry->fsname) {
-+		nentry->fsname = kstrdup(entry->fsname, GFP_KERNEL);
-+		if (!nentry->fsname)
-+			goto out_err;
-+	}
-+	for (i = 0; i < MAX_LSM_RULES; i++) {
-+		if (!entry->lsm[i].rule)
-+			continue;
-+
-+		nentry->lsm[i].type = entry->lsm[i].type;
-+		nentry->lsm[i].args_p = kstrdup(entry->lsm[i].args_p,
-+						GFP_KERNEL);
-+		if (!nentry->lsm[i].args_p)
-+			goto out_err;
-+
-+		result = security_filter_rule_init(nentry->lsm[i].type,
-+						   Audit_equal,
-+						   nentry->lsm[i].args_p,
-+						   &nentry->lsm[i].rule);
-+		if (result == -EINVAL)
-+			pr_warn("ima: rule for LSM \'%d\' is invalid\n",
-+				entry->lsm[i].type);
-+
-+	}
-+	return nentry;
-+
-+out_err:
-+	ima_lsm_free_rule(nentry);
-+	return NULL;
-+}
-+
-+static int ima_lsm_update_rule(struct ima_rule_entry *entry)
-+{
-+	struct ima_rule_entry *nentry;
-+
-+	nentry = ima_lsm_copy_rule(entry);
-+	if (!nentry)
-+		return -ENOMEM;
-+
-+	list_replace_rcu(&entry->list, &nentry->list);
-+	synchronize_rcu();
-+	ima_lsm_free_rule(entry);
-+
-+	return 0;
-+}
-+
- /*
-  * The LSM policy can be reloaded, leaving the IMA LSM based rules referring
-  * to the old, stale LSM policy.  Update the IMA LSM based rules to reflect
-- * the reloaded LSM policy.  We assume the rules still exist; and BUG_ON() if
-- * they don't.
-+ * the reloaded LSM policy.
-  */
- static void ima_lsm_update_rules(void)
- {
--	struct ima_rule_entry *entry;
--	int result;
--	int i;
-+	struct ima_rule_entry *entry, *e;
-+	int i, result, needs_update;
- 
--	list_for_each_entry(entry, &ima_policy_rules, list) {
-+	list_for_each_entry_safe(entry, e, &ima_policy_rules, list) {
-+		needs_update = 0;
- 		for (i = 0; i < MAX_LSM_RULES; i++) {
--			if (!entry->lsm[i].rule)
--				continue;
--			result = security_filter_rule_init(entry->lsm[i].type,
--							   Audit_equal,
--							   entry->lsm[i].args_p,
--							   &entry->lsm[i].rule);
--			BUG_ON(!entry->lsm[i].rule);
-+			if (entry->lsm[i].rule) {
-+				needs_update = 1;
-+				break;
-+			}
-+		}
-+		if (!needs_update)
-+			continue;
-+
-+		result = ima_lsm_update_rule(entry);
-+		if (result) {
-+			pr_err("ima: lsm rule update error %d\n",
-+				result);
-+			return;
- 		}
- 	}
- }
- 
-+int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-+			  void *lsm_data)
-+{
-+	if (event != LSM_POLICY_CHANGE)
-+		return NOTIFY_DONE;
-+
-+	ima_lsm_update_rules();
-+	return NOTIFY_OK;
-+}
-+
- /**
-  * ima_match_rules - determine whether an inode matches the measure rule.
-  * @rule: a pointer to a rule
-@@ -327,11 +417,10 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 	for (i = 0; i < MAX_LSM_RULES; i++) {
- 		int rc = 0;
- 		u32 osid;
--		int retried = 0;
- 
- 		if (!rule->lsm[i].rule)
- 			continue;
--retry:
-+
- 		switch (i) {
- 		case LSM_OBJ_USER:
- 		case LSM_OBJ_ROLE:
-@@ -352,11 +441,6 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 		default:
- 			break;
- 		}
--		if ((rc < 0) && (!retried)) {
--			retried = 1;
--			ima_lsm_update_rules();
--			goto retry;
--		}
- 		if (!rc)
- 			return false;
- 	}
--- 
-2.17.1
+ (1) A explicitly sends event to B (eg. signalling, sendmsg, etc.)
 
+ (2) A implicitly and unknowingly sends event to B as a side effect of some
+     other action (eg. B has a watch for the event A did).
+
+The LSM treats them as the same: that is B must have MAC authorisation to send
+a message to A.
+
+But there are problems with not sending the event:
+
+ (1) B's internal state is then corrupt (or, at least, unknowingly invalid).
+
+ (2) B can potentially figure out that the event happened by other means.
+
+
+I've implemented four event sources so far:
+
+ (1) Keys/keyrings.  You can only get events on a key you have View permission
+     on and the other process has to have write access to it, so I think this
+     is good enough.
+
+ (2) Block layer.  Currently this will only get you hardware error events,
+     which is probably safe.  I'm not sure you can manipulate those without
+     permission to directly access the device files.
+
+ (3) Superblock.  This is trickier since it can see events that can be
+     manufactured (R/W <-> R/O remounting, EDQUOT) as well as events that
+     can't without hardware control (EIO, network link loss, RF kill).
+
+ (4) Mount topology.  This is the trickiest since it allows you to see events
+     beyond the point at which you placed your watch (in essence, you place a
+     subtree watch).
+
+     The question is what permission checking should I do?  Ideally, I'd
+     emulate a pathwalk between the watchpoint and the eventing object to see
+     if the owner of the watchpoint could reach it.
+
+     I'd need to do a reverse walk, calling inode_permission(MAY_NOT_BLOCK)
+     for each directory between the eventing object and the watchpoint to see
+     if one rejects it - but some filesystems have a permission check that
+     can't be called in this state.
+
+     It would also be necessary to do this separately for each watchpoint in
+     the parental chain.
+
+     Further, each permissions check would generate an audit event and could
+     generate FAN_ACCESS and/or FAN_ACCESS_PERM fanotify events - which could
+     be a problem if fanotify is also trying to post those events to the same
+     watch queue.
+
+David
