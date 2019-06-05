@@ -2,92 +2,80 @@ Return-Path: <SRS0=3lle=UE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5EEC46460
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 16:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F73C28CC5
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 16:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 978F620874
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 16:52:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNqdJI8S"
+	by mail.kernel.org (Postfix) with ESMTP id 28D7B2075B
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jun 2019 16:57:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbfFEQwL (ORCPT
+        id S1728866AbfFEQ5C (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jun 2019 12:52:11 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42132 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728570AbfFEQwL (ORCPT
+        Wed, 5 Jun 2019 12:57:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59712 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728753AbfFEQ5C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jun 2019 12:52:11 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y13so19614845lfh.9;
-        Wed, 05 Jun 2019 09:52:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LH15AqeLqaBd2TWfCSVA4eDJSVkVNn2oogp0202LHvA=;
-        b=VNqdJI8SwhyNZBnkM2X4vI7XiurscvjailP9vtfn+gLWzAzab4kv5VCTufHc9UBt2u
-         ATPrkri+GOapZ7+1GEo915AlqYZg0GPfKGrZDr42fs5dbZ//uZoTljpYM8tziGXWsDmq
-         QU1hm3Fwnc6JAwpxAJIVgncOSJN4ZTjrJKeZI7+YEsG0BJLctw2ZjhYaI90DjN99Zd/t
-         rEnBRRD+O+NQxY7+sQaBxru3ehqwWZ0facJbjd+kpzWG/WdydDYK/5ACWykPxMorEfS4
-         jF+FHcWlRI37B26PHtU7ZmkByS5Z1Duz3JWE6qTg9zq0hMCLojzGJ5+NbuyuWqRCRS3I
-         RwZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LH15AqeLqaBd2TWfCSVA4eDJSVkVNn2oogp0202LHvA=;
-        b=B02Ea3WHuBaTae5jSx5Cu6JLSmHsAW51GC+VNJO4tEEaYEmYaXepAgUDkEFw1EZnsI
-         3Q3Q2XtZdV+L8Ftfy8gdjj7weKJ0t0Tq6geP91S8rqPvBIztNZFGMcTb/fKJx4VJIIUa
-         UY42ktDm20p7zxJsy2uQCsrbLwqr/gWb/IhNNT9VjYadYBC1OWNOqy+Q0vp4paFYwCIq
-         76F5EizylprOzASk9VaWM9X9h8K7ZDoqLIZvchgGUPz8Fk7HGdYrmApQI70XD6PzJbP2
-         Jljj5EG/eKMc8Yo8ujoFSJeswgXHiiCPXw3Tyvm+c5TzuSB/DlKh9BqhHeZsqxp3XFTI
-         jWGw==
-X-Gm-Message-State: APjAAAX719ZOdzAPdxbH1yW8lbGrVhrokGc81Ek7WB7P+wBCdY9Y3Paf
-        6/6euzMUqr5rEOhp15evTfveJnvY6UNyIxQoYiY=
-X-Google-Smtp-Source: APXvYqxjQc3UNUjEqNVbke0vJMD5o0gHLAvbeE06J8slceoYHcWrUkTuhFMcl454FBRxfFSXKXqCxsyImXwPNPdlcG0=
-X-Received: by 2002:a19:48c3:: with SMTP id v186mr20796361lfa.42.1559753529628;
- Wed, 05 Jun 2019 09:52:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190605083606.4209-1-janne.karhunen@gmail.com> <9121835b-d6ac-c9d5-349a-1ef7024c6192@schaufler-ca.com>
-In-Reply-To: <9121835b-d6ac-c9d5-349a-1ef7024c6192@schaufler-ca.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Wed, 5 Jun 2019 19:51:58 +0300
-Message-ID: <CAE=NcrahPmzmB-xJwxzXqaPGtJY+ijbxV4wXz7K=y-ocw4Cmwg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] LSM: switch to blocking policy update notifiers
+        Wed, 5 Jun 2019 12:57:02 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CCF5730833B2;
+        Wed,  5 Jun 2019 16:56:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E1CF1019606;
+        Wed,  5 Jun 2019 16:56:53 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <e4c19d1b-9827-5949-ecb8-6c3cb4648f58@schaufler-ca.com>
+References: <e4c19d1b-9827-5949-ecb8-6c3cb4648f58@schaufler-ca.com> <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com> <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk> <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com> <20192.1559724094@warthog.procyon.org.uk>
 To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     dhowells@redhat.com, Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Rational model for UID based controls
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <18356.1559753807.1@warthog.procyon.org.uk>
+Date:   Wed, 05 Jun 2019 17:56:47 +0100
+Message-ID: <18357.1559753807@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 05 Jun 2019 16:57:02 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 5, 2019 at 6:23 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-> > -int call_lsm_notifier(enum lsm_event event, void *data);
-> > -int register_lsm_notifier(struct notifier_block *nb);
-> > -int unregister_lsm_notifier(struct notifier_block *nb);
-> > +int call_blocking_lsm_notifier(enum lsm_event event, void *data);
-> > +int register_blocking_lsm_notifier(struct notifier_block *nb);
-> > +int unregister_blocking_lsm_notifier(struct notifier_block *nb);
->
-> Why is it important to change the names of these hooks?
-> It's not like you had call_atomic_lsm_notifier() before.
-> It seems like a lot of unnecessary code churn.
+> YES!
 
-Paul was thinking there will eventually be two sets of notifiers
-(atomic and blocking) and this creates the clear separation. That's
-probably true, but it does indeed create a pretty big change that it
-is not really needed yet. I'm fine either way.
+I'm trying to decide if that's fervour or irritation at this point ;-)
 
+> And it would be really great if you put some thought into what
+> a rational model would be for UID based controls, too.
 
---
-Janne
+I have put some thought into it, but I don't see a single rational model.  It
+depends very much on the situation.
+
+In any case, that's what I was referring to when I said I might need to call
+inode_permission().  But UIDs don't exist for all filesystems, for example,
+and there are no UIDs on superblocks, mount objects or hardware events.
+
+Now, I could see that you ignore UIDs on things like keys and
+hardware-triggered events, but how does this interact with things like mount
+watches that see directories that have UIDs?
+
+Are you advocating making it such that process B can only see events triggered
+by process A if they have the same UID, for example?
+
+David
