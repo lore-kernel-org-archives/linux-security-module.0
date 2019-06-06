@@ -3,128 +3,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4B6C28EB8
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 22:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A54B6C04AB5
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 22:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E05820673
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 22:31:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C7052083E
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 22:38:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbfFFWbz (ORCPT
+        id S1727415AbfFFWiY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jun 2019 18:31:55 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48316 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726711AbfFFWby (ORCPT
+        Thu, 6 Jun 2019 18:38:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37018 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726538AbfFFWiX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jun 2019 18:31:54 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56MVoHm090332
-        for <linux-security-module@vger.kernel.org>; Thu, 6 Jun 2019 18:31:53 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sy8xbf1f7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 06 Jun 2019 18:31:50 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 6 Jun 2019 23:28:09 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Jun 2019 23:28:07 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x56MS65m52822164
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Jun 2019 22:28:06 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2EBE1A4053;
-        Thu,  6 Jun 2019 22:28:06 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 724D1A404D;
-        Thu,  6 Jun 2019 22:28:05 +0000 (GMT)
-Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Jun 2019 22:28:05 +0000 (GMT)
-Subject: Re: [PATCH 2/2] ima: use the lsm policy update notifier
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Janne Karhunen <janne.karhunen@gmail.com>, sds@tycho.nsa.gov,
-        paul@paul-moore.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Thu, 06 Jun 2019 18:28:04 -0400
-In-Reply-To: <1559858345.4278.163.camel@linux.ibm.com>
-References: <20190605083606.4209-1-janne.karhunen@gmail.com>
-         <20190605083606.4209-2-janne.karhunen@gmail.com>
-         <1559858345.4278.163.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19060622-0012-0000-0000-00000325FF5C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19060622-0013-0000-0000-0000215EE8AB
-Message-Id: <1559860084.4278.173.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906060152
+        Thu, 6 Jun 2019 18:38:23 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C91BE128B5;
+        Thu,  6 Jun 2019 22:38:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B67827840D;
+        Thu,  6 Jun 2019 22:38:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <AD7898AE-B92C-4DE6-B895-7116FEDB3091@amacapital.net>
+References: <AD7898AE-B92C-4DE6-B895-7116FEDB3091@amacapital.net> <CALCETrVuNRPgEzv-XY4M9m6sEsCiRHxPenN_MpcMYc1h26vVwQ@mail.gmail.com> <b91710d8-cd2d-6b93-8619-130b9d15983d@tycho.nsa.gov> <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk> <3813.1559827003@warthog.procyon.org.uk> <8382af23-548c-f162-0e82-11e308049735@tycho.nsa.gov> <0eb007c5-b4a0-9384-d915-37b0e5a158bf@schaufler-ca.com> <c82052e5-ca11-67b5-965e-8f828081f31c@tycho.nsa.gov> <07e92045-2d80-8573-4d36-643deeaff9ec@schaufler-ca.com> <23611.1559855827@warthog.procyon.org.uk>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     dhowells@redhat.com, Andy Lutomirski <luto@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>, raven@themaw.net,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: [RFC][PATCH 00/10] Mount, FS, Block and Keyrings notifications [ver #3]
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Date:   Thu, 06 Jun 2019 23:38:01 +0100
+Message-ID: <30567.1559860681@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 06 Jun 2019 22:38:23 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Janne,
+Andy Lutomirski <luto@amacapital.net> wrote:
 
-One more comment below ...
+> I mean: are there cases where some action generates a notification but does
+> not otherwise have an effect visible to the users who can receive the
+> notification. It looks like the answer is probably “no”, which is good.
 
-> > +
-> > +static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
-> > +{
-> > +	struct ima_rule_entry *nentry;
-> > +	int i, result;
-> > +
-> > +	nentry = kmalloc(sizeof(*nentry), GFP_KERNEL);
-> > +	if (!nentry)
-> > +		return NULL;
-> > +
-> > +	memcpy(nentry, entry, sizeof(*nentry));
-> > +	nentry->fsname = NULL;
-> > +	for (i = 0; i < MAX_LSM_RULES; i++) {
-> > +		nentry->lsm[i].rule = NULL;
-> > +		nentry->lsm[i].args_p = NULL;
-> > +	}
+mount_notify().  You can get a notification that someone altered the mount
+topology (eg. by mounting something).  A process receiving a notification
+could then use fsinfo(), say, to reread the mount topology tree, find out
+where the new mount is and wander over there to have a look - assuming they
+have the permissions for pathwalk to succeed.
 
-I don't think this loop is necessary.  Either use kzalloc() or move
-the initialization to inside the loop below.
-
-> > +
-> > +	if (entry->fsname) {
-> > +		nentry->fsname = kstrdup(entry->fsname, GFP_KERNEL);
-> > +		if (!nentry->fsname)
-> > +			goto out_err;
-> > +	}
-> > +	for (i = 0; i < MAX_LSM_RULES; i++) {
-> > +		if (!entry->lsm[i].rule)
-> > +			continue;
-
-To here.
-
-> > +
-> > +		nentry->lsm[i].type = entry->lsm[i].type;
-> > +		nentry->lsm[i].args_p = kstrdup(entry->lsm[i].args_p,
-> > +						GFP_KERNEL);
-> > +		if (!nentry->lsm[i].args_p)
-> > +			goto out_err;
-
-If the memory allocation fails, then nentry will be freed anyway.
-
-thanks,
-
-Mimid
-
+David
