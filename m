@@ -3,144 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922A3C28EB4
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 19:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A4DC28EB4
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 20:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF38206BB
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 19:54:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559850893;
-	bh=CwGMuE+WEe/QCirkYuKg8095g413T6AAKaG29fZ0SGQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=UAbZqJVspAyHU66Mvdu3LMSNpPEgHaNX7i3/ia624HjIKBk9ZMExhMqrXN+qaA3R+
-	 OInF0TN+zjYZ6kIPJpmfRC/OLftINQqxjziaN0foZUz6azJtEAWj4b34Q+VXk5BmJI
-	 AUIOcQTsl+77fzcuuHcz/xxxRMPrD2Ngp8cGf6e0=
+	by mail.kernel.org (Postfix) with ESMTP id F3BE9208CA
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 20:53:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h58DufOa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbfFFTyw (ORCPT
+        id S1726715AbfFFUxw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jun 2019 15:54:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727944AbfFFTyw (ORCPT
+        Thu, 6 Jun 2019 16:53:52 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33313 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfFFUxw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jun 2019 15:54:52 -0400
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87C492146F
-        for <linux-security-module@vger.kernel.org>; Thu,  6 Jun 2019 19:54:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559850891;
-        bh=CwGMuE+WEe/QCirkYuKg8095g413T6AAKaG29fZ0SGQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=eQwvwcju3KjnhZ83Kd4AaOrth9m4z53DeQp6LenCs72nKfO38LO/vJA0nqcu6QMbU
-         IyPfe96L/vuzq7/JfV6upFI4P0etLFkwpz5qGPi/yaOXQubr8y2/C6sq3/jpxnxEym
-         ChcrDS8gGZxAFu/JAu4djfMGvCRA3Sr95xzJmlqw=
-Received: by mail-wr1-f49.google.com with SMTP id p11so3667252wre.7
-        for <linux-security-module@vger.kernel.org>; Thu, 06 Jun 2019 12:54:51 -0700 (PDT)
-X-Gm-Message-State: APjAAAUXP15s2zOGhWSZl2pv0/3PQyaUO/ufFrmWhxaBKZYIegCuv/l+
-        xLIy8xY3HY4Zqgh48BtEipXhb6lsp+FyUlODoQZZBA==
-X-Google-Smtp-Source: APXvYqyekhKavJMx5MB3Z2AxY4A/CobI1nxE7fayLLS4V4kYzZ+R4ThNtJeafKr4gLEMwMxes/0kV7JtVkKhH1VwAnQ=
-X-Received: by 2002:a5d:6207:: with SMTP id y7mr12434458wru.265.1559850890024;
- Thu, 06 Jun 2019 12:54:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <b91710d8-cd2d-6b93-8619-130b9d15983d@tycho.nsa.gov>
- <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk>
- <3813.1559827003@warthog.procyon.org.uk> <8382af23-548c-f162-0e82-11e308049735@tycho.nsa.gov>
- <0eb007c5-b4a0-9384-d915-37b0e5a158bf@schaufler-ca.com> <c82052e5-ca11-67b5-965e-8f828081f31c@tycho.nsa.gov>
- <07e92045-2d80-8573-4d36-643deeaff9ec@schaufler-ca.com>
-In-Reply-To: <07e92045-2d80-8573-4d36-643deeaff9ec@schaufler-ca.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 6 Jun 2019 12:54:38 -0700
-X-Gmail-Original-Message-ID: <CALCETrVuNRPgEzv-XY4M9m6sEsCiRHxPenN_MpcMYc1h26vVwQ@mail.gmail.com>
-Message-ID: <CALCETrVuNRPgEzv-XY4M9m6sEsCiRHxPenN_MpcMYc1h26vVwQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH 00/10] Mount, FS, Block and Keyrings notifications
- [ver #3]
+        Thu, 6 Jun 2019 16:53:52 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g21so1402005plq.0
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Jun 2019 13:53:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=GDh4x9nn5FphHEoxgu7T7zZCh4Ruw+RsygHDv/0DLDA=;
+        b=h58DufOaV8U71szs11xZaxKosh69vvIP8WRtrCPGE/BNXAvJ0dP6I6HICiSuwjrRbI
+         XgTWjFEG+xdwo9XbjQZ5qmfm/izmBwzPe8w9eB6Hs+YjqFZpAU0gx4wql+sOvDz3wKwo
+         yAtjXfFpAKY6iS2iGaFmAM2yQYa78Jnfi4LK0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=GDh4x9nn5FphHEoxgu7T7zZCh4Ruw+RsygHDv/0DLDA=;
+        b=bPadCcyhN81/GX3bW2RBfRSNCDp8g/xjdGKltmI7kBmqmj9zdDAOfMfi7XuDbfXZid
+         yWYnH1RQe1HdsQagni4bYosTRxpKxBkp/ZWh/G1bnXfWdLFtFBrtKk6JNk3Fd/59Cgba
+         CAbyOx3ZBKdUf0prnixmh4ETYkqHtFhRCbgz1fYoEbq6ChZtEG0juKtIq90r7K+T5D5f
+         Sh9q++dPVsQeDFTr1HT2U7KoUJRg324bMCDEcPyD2iJeFrgFNX+8xYLe9BaHIPU/IOvk
+         DURb7r+e3N+qOCVJd28Gz87N9Dg8AQA5YwsgwCpHFRVvRt8Cw6AAjZuRsAkgrqgkYUBw
+         ra6A==
+X-Gm-Message-State: APjAAAXeO4DsYFxD/RggssU6WA9J/xfrCE0MqQTp6cYTpDMdE5Glr5Gx
+        qePr2SZ5CJ+abPWGbSB6wtOgXg==
+X-Google-Smtp-Source: APXvYqwv35cOEhL/OhIWRYrUmtG1iz3glBmPub+5l9te2aqVcRgCEax71tYFu1PS6zcJeRdV8kbpzQ==
+X-Received: by 2002:a17:902:8609:: with SMTP id f9mr48709900plo.252.1559854431685;
+        Thu, 06 Jun 2019 13:53:51 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id r77sm54630pgr.93.2019.06.06.13.53.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Jun 2019 13:53:49 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 13:53:48 -0700
+From:   Kees Cook <keescook@chromium.org>
 To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com, sds@tycho.nsa.gov
+Subject: Re: [PATCH 22/58] Audit: Change audit_sig_sid to audit_sig_lsm
+Message-ID: <201906061351.B12D10D5D@keescook>
+References: <20190531231020.628-1-casey@schaufler-ca.com>
+ <20190531231020.628-23-casey@schaufler-ca.com>
+ <201906011900.143B72A@keescook>
+ <79cc3300-450f-5263-9b81-3186f84010f5@schaufler-ca.com>
+ <201906061138.BFE4CFEE@keescook>
+ <dbafd99d-aab7-c497-fbe9-fe467b0c237a@schaufler-ca.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dbafd99d-aab7-c497-fbe9-fe467b0c237a@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 6, 2019 at 11:56 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 6/6/2019 10:16 AM, Stephen Smalley wrote:
-> > On 6/6/19 12:43 PM, Casey Schaufler wrote:
-> >> ...
-> >> I don't agree. That is, I don't believe it is sufficient.
-> >> There is no guarantee that being able to set a watch on an
-> >> object implies that every process that can trigger the event
-> >> can send it to you.
-> >>
-> >>     Watcher has Smack label W
-> >>     Triggerer has Smack label T
-> >>     Watched object has Smack label O
-> >>
-> >>     Relevant Smack rules are
-> >>
-> >>     W O rw
-> >>     T O rw
-> >>
-> >> The watcher will be able to set the watch,
-> >> the triggerer will be able to trigger the event,
-> >> but there is nothing that would allow the watcher
-> >> to receive the event. This is not a case of watcher
-> >> reading the watched object, as the event is delivered
-> >> without any action by watcher.
+On Thu, Jun 06, 2019 at 12:17:42PM -0700, Casey Schaufler wrote:
+> On 6/6/2019 11:41 AM, Kees Cook wrote:
+> > On Mon, Jun 03, 2019 at 03:23:07PM -0700, Casey Schaufler wrote:
+> >> Maybe lsm_export_is_interesting()?
+> >> I'd love to discover there's a convention I could adhere to.
+> > I'd agree "lsm_data" seems meaningless. lsm_export does seem a better
+> > name, though it has the "export is also a verb" issue. Would "lsm_context"
+> > or "lsm_ctx"?
+> > be better?
 > >
-> > You are allowing arbitrary information flow between T and W above.  Who cares about notifications?
->
-> I do. If Watched object is /dev/null no data flow is possible.
-> There are many objects on a modern Linux system for which this
-> is true. Even if it's "just a file" the existence of one path
-> for data to flow does not justify ignoring the rules for other
-> data paths.
+> > then we get lsm_ctx_is_interesting() and lsm_ctx_to_secid() ?
+> 
+> Fiddling around with this led me to think "struct lsmdata"
+> would work, although maybe "struct lsmblob", in keeping with
+> the notion it is opaque. Leaving out the "_" helps with the
+> verb issue, I think. I think ctx or context is right out, as
+> secctx is the string representation, and it would really confuse
+> things.
 
-Aha!
+Ah yeah, good point on "context". Does "blob" conflict with the existing
+"blob" stuff? If it's always going to be u32 data, do we want it to be
+lsm_u32 ? Or, since it's a multiplexor, lsmmux ?
 
-Even ignoring security, writes to things like /dev/null should
-probably not trigger notifications to people who are watching
-/dev/null.  (There are probably lots of things like this: /dev/zero,
-/dev/urandom, etc.)  David, are there any notification types that have
-this issue in your patchset?  If so, is there a straightforward way to
-fix it?  Generically, it seems like maybe writes to device nodes
-shouldn't trigger notifications since, despite the fact that different
-openers of a device node share an inode, there isn't necessarily any
-connection between them.
 
-Casey, if this is fixed in general, do you have another case where the
-right to write and the right to read do not imply the right to
-communicate?
-
-> An analogy is that two processes with different UIDs can open a file,
-> but still can't signal each other.
-
-What do you mean "signal"?  If two processes with different UIDs can
-open the same file for read and write, then they can communicate with
-each other in many ways.  For example, one can write to the file and
-the other can read it.  One can take locks and the other can read the
-lock state.  They can both map it and use any number of memory access
-side channels to communicate.  But, of course, they can't send each
-other signals with kill().
-
-If, however, one of these processes is using some fancy mechanism
-(inotify, dnotify, kqueue, fanotify, whatever) to watch the file, and
-the other one writes it, then it seems inconsistent to lie to the
-watching process and say that the file wasn't written because some
-security policy has decided to allow the write, allow the read, but
-suppress this particular notification.  Hence my request for a real
-example: when would it make sense to do this?
+-- 
+Kees Cook
