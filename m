@@ -2,98 +2,104 @@ Return-Path: <SRS0=Ewgb=UF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C25C28EB4
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A636C04AB5
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F1D12083E
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:31:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559835118;
-	bh=auxbwT7fReJRZ8phkETElOOGx98Nm3DMKGuBNzqK4tM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=F42FgjbNpE5FoZdqCp2wU6cP4wBQxYIaY8Ln7ncDiMcB242Re9jFrNs/5yrZEbEX6
-	 bAWL07fpVgl+pWJ9NyCh1nfIzlbXiBISB2kRIDyBZRkiSMsp6hGQNOi3Ylrq4CvRzW
-	 xfE8EXM9geRRycmVzXYoqH4BCoV50R4lNlyLD4R4=
+	by mail.kernel.org (Postfix) with ESMTP id 0AFB020665
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:37:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbfFFPbx (ORCPT
+        id S1729222AbfFFPhj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jun 2019 11:31:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46738 "EHLO mail.kernel.org"
+        Thu, 6 Jun 2019 11:37:39 -0400
+Received: from mga18.intel.com ([134.134.136.126]:14081 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729045AbfFFPbx (ORCPT
+        id S1729173AbfFFPhi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:31:53 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB9A520684;
-        Thu,  6 Jun 2019 15:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559835112;
-        bh=auxbwT7fReJRZ8phkETElOOGx98Nm3DMKGuBNzqK4tM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Sls1Ac8ft0yHOcjrqT/Sogzn929Pqs6//tyMW7eH5G0zrT8QLdNQhIS85jv6VxDzz
-         MHZqpcHha72lL1p3LiRLsHd6UO8jnT++nCFM6pgYXW18Vppu62GMNhI2WeA7tVfexV
-         UEPrGRlzojOutRXk5dBStG/hmW9kjs1A9pfGreoY=
-Date:   Thu, 6 Jun 2019 17:31:50 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
-        linux-usb@vger.kernel.org, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/10] usb: Add USB subsystem notifications [ver #3]
-Message-ID: <20190606153150.GB28997@kroah.com>
-References: <20190606143306.GA11294@kroah.com>
- <Pine.LNX.4.44L0.1906061051310.1641-100000@iolanthe.rowland.org>
+        Thu, 6 Jun 2019 11:37:38 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 08:37:37 -0700
+X-ExtLoop1: 1
+Received: from harend-mobl.ger.corp.intel.com (HELO localhost) ([10.252.33.8])
+  by fmsmga008.fm.intel.com with ESMTP; 06 Jun 2019 08:37:24 -0700
+Date:   Thu, 6 Jun 2019 18:37:23 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH 2/9] x86/sgx: Do not naturally align MAP_FIXED address
+Message-ID: <20190606153710.GB25112@linux.intel.com>
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+ <20190531233159.30992-3-sean.j.christopherson@intel.com>
+ <20190604114951.GC30594@linux.intel.com>
+ <CALCETrVe0jhAWAFmx+NFEjJcijSJv2LDVC7cUXi0w99kNKjh_g@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654EDBDE@ORSMSX116.amr.corp.intel.com>
+ <20190605151653.GK11331@linux.intel.com>
+ <5A85C1D7-A159-437E-B42A-3F4254E07305@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1906061051310.1641-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5A85C1D7-A159-437E-B42A-3F4254E07305@amacapital.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 06, 2019 at 10:55:24AM -0400, Alan Stern wrote:
-> On Thu, 6 Jun 2019, Greg Kroah-Hartman wrote:
+On Wed, Jun 05, 2019 at 01:14:04PM -0700, Andy Lutomirski wrote:
 > 
-> > On Thu, Jun 06, 2019 at 10:24:18AM -0400, Alan Stern wrote:
-> > > On Thu, 6 Jun 2019, David Howells wrote:
-> > > 
-> > > > Add a USB subsystem notification mechanism whereby notifications about
-> > > > hardware events such as device connection, disconnection, reset and I/O
-> > > > errors, can be reported to a monitoring process asynchronously.
-> > > 
-> > > USB I/O errors covers an awfully large and vague field.  Do we really
-> > > want to include them?  I'm doubtful.
+> 
+> > On Jun 5, 2019, at 8:17 AM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
 > > 
-> > See the other patch on the linux-usb list that wanted to start adding
-> > KOBJ_CHANGE notifications about USB "i/o errors".
+> >> On Tue, Jun 04, 2019 at 10:10:22PM +0000, Xing, Cedric wrote:
+> >> A bit off topic here. This mmap()/mprotect() discussion reminds me a
+> >> question (guess for Jarkko): Now that vma->vm_file->private_data keeps
+> >> a pointer to the enclave, why do we store it again in vma->vm_private?
+> >> It isn't a big deal but non-NULL vm_private does prevent mprotect()
+> >> from merging adjacent VMAs. 
+> > 
+> > Same semantics as with a regular mmap i.e. you can close the file and
+> > still use the mapping.
+> > 
+> > 
 > 
-> That patch wanted to add notifications only for enumeration failures
-> (assuming you're talking about the patch from Eugeniu Rosca), not I/O
-> errors in general.
+> The file should be properly refcounted — vm_file should not go away while it’s mapped.
 
-Yes, sorry, I was thinking that as a "I/O failed in enumeration" :)
+Right, makes sense. It is easy one to change essentially just removing
+internal refcount from sgx_encl and using file for the same. I'll update
+this to my tree along with the changes to remove LKM/ACPI bits ASAP.
 
-> > So for "severe" issues, yes, we should do this, but perhaps not for all
-> > of the "normal" things we see when a device is yanked out of the system
-> > and the like.
-> 
-> Then what counts as a "severe" issue?  Anything besides enumeration 
-> failure?
-
-Not that I can think of at the moment, other than the other recently
-added KOBJ_CHANGE issue.  I'm sure we have other "hard failure" issues
-in the USB stack that people will want exposed over time.
-
-thanks,
-
-greg k-h
+/Jarkko
