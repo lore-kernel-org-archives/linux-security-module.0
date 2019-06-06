@@ -2,130 +2,104 @@ Return-Path: <SRS0=Ewgb=UF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE90C28EB3
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 11:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF92C28EB9
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 11:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9B1E2070B
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 11:30:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A13B206E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 11:44:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbfFFLak (ORCPT
+        id S1727391AbfFFLoS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jun 2019 07:30:40 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32989 "EHLO huawei.com"
+        Thu, 6 Jun 2019 07:44:18 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32990 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727296AbfFFLak (ORCPT
+        id S1727157AbfFFLoS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jun 2019 07:30:40 -0400
-Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id A3EEDA022841E334D138;
-        Thu,  6 Jun 2019 12:30:38 +0100 (IST)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
- by smtpsuk.huawei.com (10.201.108.46) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 6 Jun 2019 12:30:30 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
+        Thu, 6 Jun 2019 07:44:18 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id B9CDA6C53C31372D7D72;
+        Thu,  6 Jun 2019 12:44:15 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 6 Jun
+ 2019 12:43:51 +0100
+Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
 To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
         <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <stable@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v3 2/2] ima: add enforce-evm and log-evm modes to strictly check EVM status
-Date:   Thu, 6 Jun 2019 13:26:20 +0200
-Message-ID: <20190606112620.26488-3-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190606112620.26488-1-roberto.sassu@huawei.com>
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
 References: <20190606112620.26488-1-roberto.sassu@huawei.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <3711f387-3aef-9fbb-1bb4-dded6807b033@huawei.com>
+Date:   Thu, 6 Jun 2019 13:43:58 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.154]
+In-Reply-To: <20190606112620.26488-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
 X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA and EVM have been designed as two independent subsystems: the first for
-checking the integrity of file data; the second for checking file metadata.
-Making them independent allows users to adopt them incrementally.
+On 6/6/2019 1:26 PM, Roberto Sassu wrote:
+> Previous versions included the patch 'ima: don't ignore INTEGRITY_UNKNOWN
+> EVM status'. However, I realized that this patch cannot be accepted alone
+> because IMA-Appraisal would deny access to new files created during the
+> boot. With the current behavior, those files are accessible because they
+> have a valid security.ima (not protected by EVM) created after the first
+> write.
+> 
+> A solution for this problem is to initialize EVM very early with a random
+> key. Access to created files will be granted, even with the strict
+> appraisal, because after the first write those files will have both
+> security.ima and security.evm (HMAC calculated with the random key).
+> 
+> Strict appraisal will work only if it is done with signatures until the
+> persistent HMAC key is loaded.
 
-The point of intersection is in IMA-Appraisal, which calls
-evm_verifyxattr() to ensure that security.ima wasn't modified during an
-offline attack. The design choice, to ensure incremental adoption, was to
-continue appraisal verification if evm_verifyxattr() returns
-INTEGRITY_UNKNOWN. This value is returned when EVM is not enabled in the
-kernel configuration, or if the HMAC key has not been loaded yet.
+Changelog
 
-Although this choice appears legitimate, it might not be suitable for
-hardened systems, where the administrator expects that access is denied if
-there is any error. An attacker could intentionally delete the EVM keys
-from the system and set the file digest in security.ima to the actual file
-digest so that the final appraisal status is INTEGRITY_PASS.
+v2:
+- remove patch 1/3 (evm: check hash algorithm passed to init_desc());
+   already accepted
+- remove patch 3/3 (ima: show rules with IMA_INMASK correctly);
+   already accepted
+- add new patch (evm: add option to set a random HMAC key at early boot)
+- patch 2/3: modify patch description
 
-This patch allows such hardened systems to strictly enforce an access
-control policy based on the validity of signatures/HMACs, by introducing
-two new values for the ima_appraise= kernel option: enforce-evm and
-log-evm.
+v1:
+- remove patch 2/4 (evm: reset status in evm_inode_post_setattr()); file
+   attributes cannot be set if the signature is portable and immutable
+- patch 3/4: add __ro_after_init to ima_appraise_req_evm variable
+   declaration
+- patch 3/4: remove ima_appraise_req_evm kernel option and introduce
+   'enforce-evm' and 'log-evm' as possible values for ima_appraise=
+- remove patch 4/4 (ima: only audit failed appraisal verifications)
+- add new patch (ima: show rules with IMA_INMASK correctly)
 
-Fixes: 2fe5d6def1672 ("ima: integrity appraisal extension")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Cc: stable@vger.kernel.org
----
- Documentation/admin-guide/kernel-parameters.txt | 3 ++-
- security/integrity/ima/ima_appraise.c           | 8 ++++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index fe5cde58c11b..0585194ca736 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1587,7 +1587,8 @@
- 			Set number of hash buckets for inode cache.
- 
- 	ima_appraise=	[IMA] appraise integrity measurements
--			Format: { "off" | "enforce" | "fix" | "log" }
-+			Format: { "off" | "enforce" | "fix" | "log" |
-+				  "enforce-evm" | "log-evm" }
- 			default: "enforce"
- 
- 	ima_appraise_tcb [IMA] Deprecated.  Use ima_policy= instead.
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 5fb7127bbe68..afef06e10fb9 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -18,6 +18,7 @@
- 
- #include "ima.h"
- 
-+static bool ima_appraise_req_evm __ro_after_init;
- static int __init default_appraise_setup(char *str)
- {
- #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
-@@ -28,6 +29,9 @@ static int __init default_appraise_setup(char *str)
- 	else if (strncmp(str, "fix", 3) == 0)
- 		ima_appraise = IMA_APPRAISE_FIX;
- #endif
-+	if (strcmp(str, "enforce-evm") == 0 ||
-+	    strcmp(str, "log-evm") == 0)
-+		ima_appraise_req_evm = true;
- 	return 1;
- }
- 
-@@ -245,7 +249,11 @@ int ima_appraise_measurement(enum ima_hooks func,
- 	switch (status) {
- 	case INTEGRITY_PASS:
- 	case INTEGRITY_PASS_IMMUTABLE:
-+		break;
- 	case INTEGRITY_UNKNOWN:
-+		if (ima_appraise_req_evm &&
-+		    xattr_value->type != EVM_IMA_XATTR_DIGSIG)
-+			goto out;
- 		break;
- 	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
- 	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+> Roberto Sassu (2):
+>    evm: add option to set a random HMAC key at early boot
+>    ima: add enforce-evm and log-evm modes to strictly check EVM status
+> 
+>   .../admin-guide/kernel-parameters.txt         | 11 ++--
+>   security/integrity/evm/evm.h                  | 10 +++-
+>   security/integrity/evm/evm_crypto.c           | 57 ++++++++++++++++---
+>   security/integrity/evm/evm_main.c             | 41 ++++++++++---
+>   security/integrity/ima/ima_appraise.c         |  8 +++
+>   security/integrity/integrity.h                |  1 +
+>   6 files changed, 106 insertions(+), 22 deletions(-)
+> 
+
 -- 
-2.17.1
-
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
