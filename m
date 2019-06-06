@@ -2,179 +2,163 @@ Return-Path: <SRS0=Ewgb=UF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03ECBC04AB5
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 19:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F2DC28EB4
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 19:11:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC0D420872
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 19:09:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 616B12089E
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 19:11:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ptIZ7O3D"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NtsdxQmp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbfFFTJU (ORCPT
+        id S1728812AbfFFTLr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jun 2019 15:09:20 -0400
-Received: from sonic309-27.consmr.mail.gq1.yahoo.com ([98.137.65.153]:41236
-        "EHLO sonic309-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727961AbfFFTJT (ORCPT
+        Thu, 6 Jun 2019 15:11:47 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42861 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728774AbfFFTLr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jun 2019 15:09:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559848158; bh=KPinPwVYIStvQmTsZ8fVXryXE8chlEpKVcNaTLUqBkk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=ptIZ7O3DcCuP6w96YCf4TBwwelJOiWXKMueXaWyXXS5Hq4SYnr+yqA27IH0WbMQoPfbRbUAYQs6alr5jVMqntnHFO0+yYMLbtHu07P99vBJBR/ZbfP/q9g/AKfkOdYByqCRzi+YL7ZJCWcaOAIEP7aXHhA+KDM4seVJqvsWL4U6YdwfiAFzsG7yKAAHLbLvLFtIXtgAOEmLhSo7X254jAXTBVLDORGqw7jcx9cMvHyg+LgwOfgJEhz6RBLYq9HcoWq5RwT9x3qkQ5xp1LGAcf5td6F5w5rSU1teFRtvLCtzee7HmPQeoel+4MeK+9HKpsCKhfyBWCLA8zx5soQhZ9w==
-X-YMail-OSG: hwHY0p4VM1kwRqNYlfVs6s8UA1io1Qfjq69S3APVqgYmJdqbzWmf7qM_wuOVZb0
- 44B5oxy_HtlaNFHz1uTJf25C.0moouu50bDEYxg10avFv2azcLT5bO5NUW5OB.7OuBR3w7_Hvj1A
- qRg3JQPakoyrYycrPfyDrpK2jBhxa2Mdf3vI1UQGdWpt6zyg1YDdBr_cw0QZ4Ycor4QVTJWG4INZ
- KCPv4gPoKYY6XYoR3PusfzS66bJlVp3kcjYoAd_GOEcD8a4jxnw0dkJD3MZE_vu36MPjSMDBVbX.
- 3NI8PTxJCV2tvu.v89yCWsiHuXhXDNl2A9TSOZlNEWsPz38IOJNXg4E2ZZLofdgqdcAAQhJg6Blm
- Se8VrP0PeDPtyklbpBV.Rm0xbDt3YbU7duji7YUvhWcJJrNWmEeFk6.fMCjeuKlNRSZls6KmGc0n
- eA.xZmw9ke9PqoPJ46MkZvUOQBBjhHiTbtvcIMOsWtXXQyfpu3yMCzCjNN9.nZazEHY3I6NCBW9Q
- v9KjC5tcfmQzzFOR3dWxL.WUhU7h.c9VomQfQgDtola0.PJobrTTeuUs.F2WZN5ONR7Demk4b9Rd
- K8XJUV0RjdcpPpcCVMrLwC.IzIlM4Pw_ko6TeA8mTH_gvceK_S4WUgnw1GlZACwnTPTP5dPLZ1V2
- BUxvg704FI_grQNcp7zt5Astvviru298J3zooXyAQQ7kADqT0ygNTtkECAolkQk7dJDgb8byXr0a
- kqGxMasgw8.De0uWywq6vWLnb0t91_rXwEZr17HHGAMhtBDk0R7Ri03asoPYZKATX2d4Y778N7H8
- 6EaJ4m8z8TB9ulLUSLa_.ztDkP6Lszm3_ihfLVrD8kp.q8Od.xl99cvIM2MyLj2GDDPdWv_lXGCH
- 1eBPljjZGzXWQHP4VxUcrDfDX2V6pfgGfXySasOB9ZYxN0M2KcpH.yy.CS31YvIcy1_4FPMcxy9J
- LIOJRrDOLIMcSP_55W0mMNvXFTbrF7gWQQ01eYcm.l2.TSh9KZOT5l2OAo_VgT2N2btyTh1sX.Bd
- _7gEkXyp6CFX9W_bT5PeCNVkjUOW2O54CFrvVfd0LW_Gu2wiVocWlWw._qFwB9Iv4.kTi_Fbu3Hn
- .j9mF9JRzytmZ91owEN15vId6q6qPWt7sUkDLojxv16KscbX6Qr7R51Ii6bX1trZZJi2uiRlXjs0
- G1i12exe9mz4FcI3AZza6l2YZfzpacHYfYwUmSjk04_fOIX.Z3QBy36o0qKVPGoKEC1sWVf5Uq8p
- AVaeu2iyQUIXNvUVMcQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Thu, 6 Jun 2019 19:09:18 +0000
-Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp416.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b9532036bed4f2064fc104d314331dec;
-          Thu, 06 Jun 2019 19:09:13 +0000 (UTC)
-Subject: Re: [PATCH 01/10] security: Override creds in __fput() with last
- fputter's creds [ver #3]
-To:     Andy Lutomirski <luto@kernel.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
-References: <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk>
- <155981413016.17513.10540579988392555403.stgit@warthog.procyon.org.uk>
- <176F8189-3BE9-4B8C-A4D5-8915436338FB@amacapital.net>
- <11031.1559833574@warthog.procyon.org.uk>
- <CALCETrUukxNNhbBAifxz1EADzLOvYKoh9oqqZFJteU+MMhh1ig@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <e434a62a-d92a-c6e2-cda1-309ac99d4d5c@schaufler-ca.com>
-Date:   Thu, 6 Jun 2019 12:09:06 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 6 Jun 2019 15:11:47 -0400
+Received: by mail-pg1-f196.google.com with SMTP id e6so1871347pgd.9
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Jun 2019 12:11:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=38gGdRoJJh5s3XL5GqQH4QpahGYeo/J9ALAU4Xq5gsQ=;
+        b=NtsdxQmpdlHUHDoM7ezeJJyCJ/EN01ialtZnizMUCACrot9iMvpaK+UQtg3SB7Gv6u
+         rLcEGazRzihgJzWKhTOB3tMkxKFsucOLsvOUvcx79SNaDExFkn2Cb8j4VWFHKwZ8lCpz
+         KzBu4eCwAMz/IlGAER9yLA/hBvDwYVxbLX5m4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=38gGdRoJJh5s3XL5GqQH4QpahGYeo/J9ALAU4Xq5gsQ=;
+        b=SALqV/gN41qmZ5/qm48aR1zR+7kTpZpPY5UFPhRkTRGw4rus+GcFLxTB9JJdt7VQOt
+         aAGbByGWIhLNmHOm69K6avISKuXqalfEiZB12dwy3mScNappxjermAJjZRZbmejvpRUQ
+         n4RZSyPrL0/PrHyQ31sQehcA/1x3c4WbGBQJANTtKEaHzqqlxKT3IFxoIjDFJcKH+zFE
+         THqBq9lTV2coLs0pIHG8DSgw6jC8wo60guWRBHMNkUbEtHCTFziTN7eS31iZsW7HE8Gr
+         0rec6+oAfiC4xmcO9nzG0LKp761Fl09fzJPiE5lYLAmdOEYw0UJMLYCNAXCzzLVO82Rf
+         c0Zw==
+X-Gm-Message-State: APjAAAXI+a0ctzFN55zs2znRPRiVHuIm7nIY2ex5c3bmYStcd/XWuSrX
+        0makaoXeTYR6F5W4wrhQInkEug==
+X-Google-Smtp-Source: APXvYqyqcyBaI4c88/M86lczjphItrLGwoaGkPepujAbKlUA79L0wkiNPkvudTtBAuRyIv4BvSkimw==
+X-Received: by 2002:a63:2ad2:: with SMTP id q201mr99011pgq.94.1559848306401;
+        Thu, 06 Jun 2019 12:11:46 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d21sm2900892pfr.162.2019.06.06.12.11.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Jun 2019 12:11:45 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 12:11:44 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com, Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: [PATCH 05/58] LSM: Use lsm_export in the inode_getsecid hooks
+Message-ID: <201906061141.77FE9A9@keescook>
+References: <20190531231020.628-1-casey@schaufler-ca.com>
+ <20190531231020.628-6-casey@schaufler-ca.com>
+ <201906011845.96774A4@keescook>
+ <46c5cbbb-b703-403f-96dd-d90f49d74e5e@schaufler-ca.com>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrUukxNNhbBAifxz1EADzLOvYKoh9oqqZFJteU+MMhh1ig@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <46c5cbbb-b703-403f-96dd-d90f49d74e5e@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/6/2019 10:18 AM, Andy Lutomirski wrote:
-> On Thu, Jun 6, 2019 at 8:06 AM David Howells <dhowells@redhat.com> wrot=
-e:
->> Andy Lutomirski <luto@amacapital.net> wrote:
->>
->>>> So that the LSM can see the credentials of the last process to do an=
- fput()
->>>> on a file object when the file object is being dismantled, do the fo=
-llowing
->>>> steps:
->>>>
->>> I still maintain that this is a giant design error.
->> Yes, I know.  This was primarily a post so that Greg could play with t=
-he USB
->> notifications stuff I added.  The LSM support isn't resolved and is un=
-changed.
->>
->>> Can someone at least come up with a single valid use case that isn't
->>> entirely full of bugs?
->> "Entirely full of bugs"?
-> I can say "hey, I have this policy that the person who triggered an
-> event needs such-and-such permission, otherwise the event gets
-> suppressed".  But this isn't a full use case, and it's buggy.  It's
-> not a full use case because I haven't specified what my actual goal is
-> and why this particular policy achieves my goals.  And it's entirely
-> full of bugs because, as this patch so nicely illustrates, it's not
-> well defined who triggered the event.  For example, if I exec a setuid
-> process, who triggers the close?  What if I send the fd to systemd
-> over a socket and immediately close my copy before systemd gets (and
-> ignores) the message?  Or if I send it to Wayland, or to any other
-> process?
->
-> A file is closed when everyone is done with it.  Trying to figure out
-> who the last intentional user of the file was seems little better than
-> random guessing.  Defining a security policy based on it seems like a
-> poor idea.
->
->> How would you propose I deal with Casey's requirement?  I'm getting th=
-e
->> feeling you're going to nak it if I try to fulfil that and he's going =
-to nak
->> it if I don't.
->>
-> Casey, I think you need to state your requirement in a way that's well
-> defined, and I think you need to make a compelling case that your
-> requirement is indeed worth dictating the design of parts of the
-> kernel outside LSM.
+On Mon, Jun 03, 2019 at 05:29:45PM -0700, Casey Schaufler wrote:
+> On 6/1/2019 6:57 PM, Kees Cook wrote:
+> > On Fri, May 31, 2019 at 04:09:27PM -0700, Casey Schaufler wrote:
+> >> Convert the inode_getsecid hooks to use the lsm_export
+> >> structure instead of a u32 secid. There is some scaffolding
+> >> involved that will be removed when security_inode_getsecid()
+> >> is updated.
+> > So, there are like 20 patches that all have basically identical subject
+> > and changelog, but some evolve the API in subtle ways. For example,
+> > in this patch, there is no mention of adding lsm_export_init(). I would
+> > expect all the lsm_export infrastructure and support functions to be
+> > introduced in patch 4 where struct lsm_export is initially introduced.
+> 
+> Fair enough. I didn't introduce helpers until they were used.
+> I hoped to avoid the "what is this for?" question that can
+> come up when you add functions that aren't used.
 
-Err, no, I don't believe so. There's a whole lot more
-going on in this discussion than just what's going on
-within the LSMs. Using examples from the LSMs makes it
-easier, because their policies are better defined than
-the "legacy" policies are. The most important part of the
-discussion is about ensuring that the event mechanism
-doesn't circumvent the legacy policies. Yes, I understand
-that you don't know what that means, or has to do with
-anything.
+True, but since we know a giant set of changes is coming, I think it's
+okay. As long there's kerndoc on the helpers, it should be clear what
+they're for. And the commit log can include the context for why the
+helpers exist. "In later patches, we'll replace secids with lsm_context,
+so we need to use foo to do bar etc"
 
+> > Instead, various helper functions are scattered through these patches
+> > and I'm left struggling to figure out where things are actually
+> > changing.
+> 
+> I think it's possible that the patches may be too small
+> to contain enough context for them to be sensible. It may
+> make things more obvious if I combined
+> 
+> [PATCH 05/58] LSM: Use lsm_export in the inode_getsecid hooks
+> [PATCH 20/58] LSM: Use lsm_export in security_inode_getsecid
+> 
+> into a single patch. That would reduce the amount of scaffolding
+> that has to get set up and torn down.
 
+Yeah, that's fine. If you have to do a lot of work to split up a pair of
+patches, I think that's fine to combine them. What I usually want to see
+is a split of separable changes. Like, adding all the helpers: I can
+look at those individually as I read the patch. Then the next patch
+might swap a whole logical set of things like putting lsm_context into
+the LSMs, but leaving all the interfaces alone. Then fixing the high
+level things that use secids, etc.
+
+But, really, the cover letter should cover the evolutionary steps the
+series takes: that should serve as a guide for everything trying to
+follow your thinking.
+
+> The inconsistency is comes from my use of "lsm_export" for
+> the name of the LSM data structure. This is something you've
+> commented on elsewhere. The underscore makes the function name
+> look like it has an lsm_ prefix, rather than just being the
+> name of the structure. If I changed "struct lsm_export" to
+> "struct lsmdata" the names:
+> 
+> lsm_lsmdata_to_secid() and smack_secid_to_lsmdata()
+> would be more consistent.
+
+Right. Having a distinct verb in the helper name should solve all my
+confusion. :)
+
+lsm_context_to_secid() secid_to_lsm_context() smack_secid_to_lsm_export()
+etc
+
+> > Which brings me to another thing I find awkward here: I feel like an LSM
+> > shouldn't need to do anything with this object: it should be opaque to
+> > the LSM. The LSM infrastructure knows which LSM it has called into. Why
+> > isn't this just like the other blobs?
+> 
+> There's a lot more rework required if the lsm_export has to be
+> life-cycle managed. The audit code, for example, passes them about,
+> copying, storing and dropping them without a care. I'm not completely
+> opposed to taking that on, but it's essentially a rewrite of the
+> audit LSM handling. The SO_PEERSEC handling probably has issues as
+> well. I think netlabel would be OK, but there's stuff going on elsewhere
+> in the networking stack that isn't going to like anything it has to
+> worry about allocating and/or freeing.
+
+I didn't mean life-cycle managed, but rather "opaque" to LSM. I just now
+tried to construct an example, and have decided it's too crazy. :) The
+benefits of your current system are that they are trivially able to be
+put on the stack since they're a fixed size. The down side is that each
+LSM must manage its own flags, etc. I will ponder alternatives after I
+see the next version of your series.
+
+-- 
+Kees Cook
