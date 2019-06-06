@@ -2,138 +2,222 @@ Return-Path: <SRS0=Ewgb=UF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AAEEC28CC5
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 02:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE660C28CC6
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 02:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7934720717
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 02:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9832220866
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 02:12:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfFFCI7 (ORCPT
+        id S1726805AbfFFCL6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jun 2019 22:08:59 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:59224 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbfFFCI6 (ORCPT
+        Wed, 5 Jun 2019 22:11:58 -0400
+Received: from mga17.intel.com ([192.55.52.151]:61631 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726736AbfFFCLw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jun 2019 22:08:58 -0400
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5628UTB064831;
-        Thu, 6 Jun 2019 11:08:30 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
- Thu, 06 Jun 2019 11:08:30 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5628TDc064823;
-        Thu, 6 Jun 2019 11:08:30 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x5628T0g064822;
-        Thu, 6 Jun 2019 11:08:29 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201906060208.x5628T0g064822@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: KASAN: use-after-free Read in =?ISO-2022-JP?B?dG9tb3lvX3JlYWxwYXRo?=
- =?ISO-2022-JP?B?X2Zyb21fcGF0aA==?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc:     syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
+        Wed, 5 Jun 2019 22:11:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 19:11:50 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.36])
+  by orsmga004.jf.intel.com with ESMTP; 05 Jun 2019 19:11:49 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: [RFC PATCH v2 4/5] LSM: x86/sgx: Introduce ->enclave_load() hook for Intel SGX
+Date:   Wed,  5 Jun 2019 19:11:44 -0700
+Message-Id: <20190606021145.12604-5-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-Date:   Thu, 06 Jun 2019 11:08:29 +0900
-References: <0000000000004f43fa058a97f4d3@google.com>
-In-Reply-To: <0000000000004f43fa058a97f4d3@google.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Here is a reproducer.
+enclave_load() is roughly analogous to the existing file_mprotect().
 
-The problem is that TOMOYO is accessing already freed socket from security_file_open()
-which later fails with -ENXIO (because we can't get file descriptor of sockets via
-/proc/pid/fd/n interface), and the file descriptor is getting released before
-security_file_open() completes because we do not raise "struct file"->f_count of
-the file which is accessible via /proc/pid/fd/n interface. We can avoid this problem
-if we can avoid calling security_file_open() which after all fails with -ENXIO.
-How should we handle this race? Let LSM modules check if security_file_open() was
-called on a socket?
+Due to the nature of SGX and its Enclave Page Cache (EPC), all enclave
+VMAs are backed by a single file, i.e. /dev/sgx/enclave, that must be
+MAP_SHARED.  Furthermore, all enclaves need read, write and execute
+VMAs.  As a result, the existing/standard call to file_mprotect() does
+not provide any meaningful security for enclaves since an LSM can only
+deny/grant access to the EPC as a whole.
 
-----------------------------------------
-diff --git a/fs/open.c b/fs/open.c
-index b5b80469b93d..995ffcb37128 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -765,6 +765,12 @@ static int do_dentry_open(struct file *f,
- 	error = security_file_open(f);
- 	if (error)
- 		goto cleanup_all;
-+	if (!strcmp(current->comm, "a.out") &&
-+	    f->f_path.dentry->d_sb->s_magic == SOCKFS_MAGIC) {
-+		printk("Start open(socket) delay\n");
-+		schedule_timeout_killable(HZ * 5);
-+		printk("End open(socket) delay\n");
-+	}
+security_enclave_load() is called when SGX is first loading an enclave
+page, i.e. copying a page from normal memory into the EPC.  Although
+the prototype for enclave_load() is similar to file_mprotect(), e.g.
+SGX could theoretically use file_mprotect() and set reqprot=prot, a
+separate hook is desirable as the semantics of an enclave's protection
+bits are different than those of vmas, e.g. an enclave page tracks the
+maximal set of protections, whereas file_mprotect() operates on the
+actual protections being provided.  In other words, LSMs will likely
+want to implement different policies for enclave page protections.
+
+Note, extensive discussion yielded no sane alternative to some form of
+SGX specific LSM hook[1].
+
+[1] https://lkml.kernel.org/r/CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c | 12 ++++++------
+ include/linux/lsm_hooks.h              | 13 +++++++++++++
+ include/linux/security.h               | 12 ++++++++++++
+ security/security.c                    |  7 +++++++
+ 4 files changed, 38 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+index 44b2d73de7c3..29c0df672250 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+@@ -8,6 +8,7 @@
+ #include <linux/highmem.h>
+ #include <linux/ratelimit.h>
+ #include <linux/sched/signal.h>
++#include <linux/security.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/slab.h>
+ #include <linux/suspend.h>
+@@ -582,9 +583,6 @@ static int sgx_encl_page_copy(void *dst, unsigned long src, unsigned long prot)
+ 	struct vm_area_struct *vma;
+ 	int ret;
  
- 	error = break_lease(locks_inode(f), f->f_flags);
- 	if (error)
-----------------------------------------
+-	if (!(prot & VM_EXEC))
+-		return 0;
+-
+ 	/* Hold mmap_sem across copy_from_user() to avoid a TOCTOU race. */
+ 	down_read(&current->mm->mmap_sem);
+ 
+@@ -599,15 +597,17 @@ static int sgx_encl_page_copy(void *dst, unsigned long src, unsigned long prot)
+ 	 * but with some future proofing against other cases that may deny
+ 	 * execute permissions.
+ 	 */
+-	if (!(vma->vm_flags & VM_MAYEXEC)) {
++	if ((prot & VM_EXEC) && !(vma->vm_flags & VM_MAYEXEC)) {
+ 		ret = -EACCES;
+ 		goto out;
+ 	}
+ 
++	ret = security_enclave_load(vma, prot);
++	if (ret)
++		goto out;
++
+ 	if (copy_from_user(dst, (void __user *)src, PAGE_SIZE))
+ 		ret = -EFAULT;
+-	else
+-		ret = 0;
+ 
+ out:
+ 	up_read(&current->mm->mmap_sem);
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 47f58cfb6a19..c6f47a7eef70 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1446,6 +1446,12 @@
+  * @bpf_prog_free_security:
+  *	Clean up the security information stored inside bpf prog.
+  *
++ * Security hooks for Intel SGX enclaves.
++ *
++ * @enclave_load:
++ *	@vma: the source memory region of the enclave page being loaded.
++ *	@prot: the (maximal) protections of the enclave page.
++ *	Return 0 if permission is granted.
+  */
+ union security_list_options {
+ 	int (*binder_set_context_mgr)(struct task_struct *mgr);
+@@ -1807,6 +1813,10 @@ union security_list_options {
+ 	int (*bpf_prog_alloc_security)(struct bpf_prog_aux *aux);
+ 	void (*bpf_prog_free_security)(struct bpf_prog_aux *aux);
+ #endif /* CONFIG_BPF_SYSCALL */
++
++#ifdef CONFIG_INTEL_SGX
++	int (*enclave_load)(struct vm_area_struct *vma, unsigned long prot);
++#endif /* CONFIG_INTEL_SGX */
+ };
+ 
+ struct security_hook_heads {
+@@ -2046,6 +2056,9 @@ struct security_hook_heads {
+ 	struct hlist_head bpf_prog_alloc_security;
+ 	struct hlist_head bpf_prog_free_security;
+ #endif /* CONFIG_BPF_SYSCALL */
++#ifdef CONFIG_INTEL_SGX
++	struct hlist_head enclave_load;
++#endif /* CONFIG_INTEL_SGX */
+ } __randomize_layout;
+ 
+ /*
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 659071c2e57c..0b6d1eb7368b 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1829,5 +1829,17 @@ static inline void security_bpf_prog_free(struct bpf_prog_aux *aux)
+ #endif /* CONFIG_SECURITY */
+ #endif /* CONFIG_BPF_SYSCALL */
+ 
++#ifdef CONFIG_INTEL_SGX
++#ifdef CONFIG_SECURITY
++int security_enclave_load(struct vm_area_struct *vma, unsigned long prot);
++#else
++static inline int security_enclave_load(struct vm_area_struct *vma,
++					unsigned long prot)
++{
++	return 0;
++}
++#endif /* CONFIG_SECURITY */
++#endif /* CONFIG_INTEL_SGX */
++
+ #endif /* ! __LINUX_SECURITY_H */
+ 
+diff --git a/security/security.c b/security/security.c
+index 613a5c00e602..c6f7f26969b2 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2359,3 +2359,10 @@ void security_bpf_prog_free(struct bpf_prog_aux *aux)
+ 	call_void_hook(bpf_prog_free_security, aux);
+ }
+ #endif /* CONFIG_BPF_SYSCALL */
++
++#ifdef CONFIG_INTEL_SGX
++int security_enclave_load(struct vm_area_struct *vma, unsigned long prot)
++{
++	return call_int_hook(enclave_load, 0, vma, prot);
++}
++#endif /* CONFIG_INTEL_SGX */
+-- 
+2.21.0
 
-----------------------------------------
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/socket.h>
-
-int main(int argc, char *argv[])
-{
-	pid_t pid = getpid();
-	int fd = socket(AF_ISDN, SOCK_RAW, 0);
-	char buffer[128] = { };
-	if (fork() == 0) {
-		close(fd);
-		snprintf(buffer, sizeof(buffer) - 1, "/proc/%u/fd/%u", pid, fd);
-		open(buffer, 3);
-		_exit(0);
-	}
-	sleep(2);
-	close(fd);
-	return 0;
-}
-----------------------------------------
-
-----------------------------------------
-getpid()                                = 32504
-socket(AF_ISDN, SOCK_RAW, 0)            = 3
-clone(strace: Process 32505 attached
-child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7efea30dda10) = 32505
-[pid 32504] rt_sigprocmask(SIG_BLOCK, [CHLD],  <unfinished ...>
-[pid 32505] close(3 <unfinished ...>
-[pid 32504] <... rt_sigprocmask resumed> [], 8) = 0
-[pid 32505] <... close resumed> )       = 0
-[pid 32504] rt_sigaction(SIGCHLD, NULL, {SIG_DFL, [], 0}, 8) = 0
-[pid 32505] open("/proc/32504/fd/3", O_ACCMODE <unfinished ...>
-[pid 32504] rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
-[pid 32504] nanosleep({2, 0}, 0x7ffd3c608150) = 0
-[pid 32504] close(3)                    = 0
-[pid 32504] exit_group(0)               = ?
-[pid 32504] +++ exited with 0 +++
-<... open resumed> )                    = -1 ENXIO (No such device or address)
-exit_group(0)                           = ?
-----------------------------------------
-
-----------------------------------------
-[   95.109628] Start open(socket) delay
-[   97.113150] base_sock_release(00000000506a3239) sk=00000000016d0ceb
-[  100.142235] End open(socket) delay
-----------------------------------------
