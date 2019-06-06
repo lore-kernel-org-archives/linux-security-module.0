@@ -2,88 +2,130 @@ Return-Path: <SRS0=Ewgb=UF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A51C28EB4
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 18:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE8BC04AB5
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 18:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F43C20872
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 18:41:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E016220872
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 18:51:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fBsZ4xdk"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="VRyzhkBv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfFFSlI (ORCPT
+        id S1729839AbfFFSvJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jun 2019 14:41:08 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42951 "EHLO
+        Thu, 6 Jun 2019 14:51:09 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36417 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbfFFSlI (ORCPT
+        with ESMTP id S1729843AbfFFSvE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jun 2019 14:41:08 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e6so1828493pgd.9
-        for <linux-security-module@vger.kernel.org>; Thu, 06 Jun 2019 11:41:08 -0700 (PDT)
+        Thu, 6 Jun 2019 14:51:04 -0400
+Received: by mail-pg1-f196.google.com with SMTP id a3so1858751pgb.3
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Jun 2019 11:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=I1RvIZcBBHiwbVvIBr1arRbehHK0nHXrZapIdaMQSVw=;
-        b=fBsZ4xdkUbk63np1kkziFwGHZcxQN3084zNS+EzhJfrEbMl1syCE5L+INFtlaO/7Ut
-         5rgZvVNiZBcdLeSlwIZn5KfuOq0WX1z6nsRSSGQobOiixAm0Rv1N9ToTpwRbWwF7W/B1
-         qjIihINcHjPyKB24/ebmEc2kcUiJ5NgdwY89U=
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vyH/zzUIJOyZ406UEvU+R6XaFldSrQouo2bVvFNJxzs=;
+        b=VRyzhkBvBnfDIRuAExLdUvUe//j+40drJjj5Y4J6jfg2b+zgc/ZF0D5KFfqRdmb9XD
+         oIvlhoh3t2680hBGfxcTbgJ/LC8Wr/ol8CdMBUxJ5RpEAOGZwG2GFiP0+p5xG0mNgh1m
+         wuc2LhZLUHtXEHnqETKLHsM3LVaoGY50Z1gUSqOai2oXB0QiPNuSQS2jc2pO5bHzklX4
+         /p5W6YWdAB1I8YBndGyzJXHLf71B4+EiFKXGoQQDwpUedInYUuC+KGw9Nn8uEd74WlDg
+         RnlUv/cFUeDYzPoHZWFOImPY8quUPG/mlJPTNX9mhh9YYjv6KHEYb5cL3sPqeoh8xbNB
+         YocQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=I1RvIZcBBHiwbVvIBr1arRbehHK0nHXrZapIdaMQSVw=;
-        b=SEhW6XBfDgLTL2in3uSBA/9xEdSMHDJ0sPO7DvOA2zjV56/gcfDry1JXDLNfi3Klkg
-         D4HYBNbWH661d8S4F6z4Ug3yy4b7eY0cJq5G6T+YFYMg5T2E9JpyF1Sj2mb9e8q4rrDQ
-         TCgvDtJICGztVXwhjgjlajFUAGc0Kh8jSOURVz4L/HlK3H+fzfiqBc2Q4IgL+Gk5feJw
-         HLIQQwSPWeB2u8Ns8p3VRz8Yw5QWmgPQRPcK8+lUYShGNPhWJ/CriR4MfvjqTbBXi0k3
-         BPV2+SHBCkNZ/4aH+OeU8CPZocpauH7RQWC0ziFFOzpl240DWZq0YMd4yepnejMZ9U6G
-         nfIQ==
-X-Gm-Message-State: APjAAAXWo7Y/rN2CQe8X4taENOklxN/sZd+6C7nASUpba1+WlH7QbanC
-        NCsuwWUgIpMk2150h8oEts2kCQ==
-X-Google-Smtp-Source: APXvYqwofJQtEfqLSrwKixcn6znXLSy3/RVIbp0hIpDtGOvNUeKKwWrdAnOryxAMInS2c0PZIkEsCg==
-X-Received: by 2002:a17:90a:8d0d:: with SMTP id c13mr1167224pjo.137.1559846467669;
-        Thu, 06 Jun 2019 11:41:07 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e12sm3488737pfd.84.2019.06.06.11.41.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 11:41:06 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 11:41:05 -0700
-From:   Kees Cook <keescook@chromium.org>
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vyH/zzUIJOyZ406UEvU+R6XaFldSrQouo2bVvFNJxzs=;
+        b=FTuSYEWWgB7ckwBJB7rEI15Ty6EOA/dHA74PVOKiF9CfEALv9sCIMPdZnCOLZ7mYFc
+         ACSFyJ8uu+OJivX3iPMWVfZ3Udh3Pa5dncOPXjVVgfAixiIXSH/kjWq/nxtu+zo0VWe/
+         mMfXRZa4yNgILXFFrN3gNXY5RM3KmzNFUrJzzkYGrQULFrog6xxXDNKuAVsrHsYJWux+
+         9Ew3d4xAwazY2uK8UYJtds9Pg3lCrrqrOcjDxK2e/PQiJ9e8BpQ1ExNnwv7LTe0RAJSH
+         KOcTCCaaNtZVafUx2JWO4zxheN2entntWqLW3IULfXe6S+BpIz6utGEwXq63/KnZk2k2
+         AXTA==
+X-Gm-Message-State: APjAAAXpFByIZ1iUI4A8XXYOfgSsUBEEHYmM9OAL+gl2WS38bPJyDVb2
+        OfRRY5wqR3OATG3gf4hjkQ5bAA==
+X-Google-Smtp-Source: APXvYqzmdyohsfaZb8gxQfYI50Yq72TPLfhG8iUfN0sGNNPM5UPGJBQMF/zPBOOprsFqvOgWBnUsuQ==
+X-Received: by 2002:a17:90a:2506:: with SMTP id j6mr1307940pje.129.1559847064075;
+        Thu, 06 Jun 2019 11:51:04 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b02c:95e1:658b:ab88:7a44:1879? ([2600:1010:b02c:95e1:658b:ab88:7a44:1879])
+        by smtp.gmail.com with ESMTPSA id a25sm3003410pfn.1.2019.06.06.11.51.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 11:51:03 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC][PATCH 00/10] Mount, FS, Block and Keyrings notifications [ver #3]
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16F203)
+In-Reply-To: <7afe1a85-bf19-b5b4-fdf3-69d9be475dab@schaufler-ca.com>
+Date:   Thu, 6 Jun 2019 11:51:01 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>, raven@themaw.net,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E7472FA4-886E-4325-87EA-9812D08CC2D3@amacapital.net>
+References: <b91710d8-cd2d-6b93-8619-130b9d15983d@tycho.nsa.gov> <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk> <3813.1559827003@warthog.procyon.org.uk> <8382af23-548c-f162-0e82-11e308049735@tycho.nsa.gov> <0eb007c5-b4a0-9384-d915-37b0e5a158bf@schaufler-ca.com> <CALCETrWn_C8oReKXGMXiJDOGoYWMs+jg2DWa5ZipKAceyXkx5w@mail.gmail.com> <7afe1a85-bf19-b5b4-fdf3-69d9be475dab@schaufler-ca.com>
 To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, sds@tycho.nsa.gov
-Subject: Re: [PATCH 22/58] Audit: Change audit_sig_sid to audit_sig_lsm
-Message-ID: <201906061138.BFE4CFEE@keescook>
-References: <20190531231020.628-1-casey@schaufler-ca.com>
- <20190531231020.628-23-casey@schaufler-ca.com>
- <201906011900.143B72A@keescook>
- <79cc3300-450f-5263-9b81-3186f84010f5@schaufler-ca.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <79cc3300-450f-5263-9b81-3186f84010f5@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 03, 2019 at 03:23:07PM -0700, Casey Schaufler wrote:
-> Maybe lsm_export_is_interesting()?
-> I'd love to discover there's a convention I could adhere to.
 
-I'd agree "lsm_data" seems meaningless. lsm_export does seem a better
-name, though it has the "export is also a verb" issue. Would "lsm_context"
-or "lsm_ctx"?
-be better?
 
-then we get lsm_ctx_is_interesting() and lsm_ctx_to_secid() ?
+> On Jun 6, 2019, at 11:33 AM, Casey Schaufler <casey@schaufler-ca.com> wrot=
+e:
+>=20
+>> On 6/6/2019 10:11 AM, Andy Lutomirski wrote:
+>>> On Thu, Jun 6, 2019 at 9:43 AM Casey Schaufler <casey@schaufler-ca.com> w=
+rote:
+>>> ...
+>>> I don't agree. That is, I don't believe it is sufficient.
+>>> There is no guarantee that being able to set a watch on an
+>>> object implies that every process that can trigger the event
+>>> can send it to you.
+>>>=20
+>>>        Watcher has Smack label W
+>>>        Triggerer has Smack label T
+>>>        Watched object has Smack label O
+>>>=20
+>>>        Relevant Smack rules are
+>>>=20
+>>>        W O rw
+>>>        T O rw
+>>>=20
+>>> The watcher will be able to set the watch,
+>>> the triggerer will be able to trigger the event,
+>>> but there is nothing that would allow the watcher
+>>> to receive the event. This is not a case of watcher
+>>> reading the watched object, as the event is delivered
+>>> without any action by watcher.
+>> I think this is an example of a bogus policy that should not be
+>> supported by the kernel.
+>=20
+> At this point it's pretty hard for me to care much what
+> you think. You don't seem to have any insight into the
+> implications of the features you're advocating, or their
+> potential consequences.
+>=20
+>=20
 
--- 
-Kees Cook
+Can you try to spell it out, then?  A mostly or fully worked out example mig=
+ht help.
+
+As Stephen said, it looks like you are considering cases where there is alre=
+ady a full communication channel between two processes, and you=E2=80=99re c=
+oncerned that this new mechanism might add a side channel too.  If this is w=
+rong, can you explain how?=
