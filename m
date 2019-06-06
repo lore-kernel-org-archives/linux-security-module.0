@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6970EC04AB5
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 09:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 482AEC28D1A
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 09:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC6B20693
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 09:42:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1704F20868
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 09:42:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbfFFJme (ORCPT
+        id S1728140AbfFFJmx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jun 2019 05:42:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34978 "EHLO mx1.redhat.com"
+        Thu, 6 Jun 2019 05:42:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54222 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728096AbfFFJmd (ORCPT
+        id S1727891AbfFFJmw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jun 2019 05:42:33 -0400
+        Thu, 6 Jun 2019 05:42:52 -0400
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 66555C1EB213;
-        Thu,  6 Jun 2019 09:42:32 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id ECCD230C3192;
+        Thu,  6 Jun 2019 09:42:51 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 493C0619E6;
-        Thu,  6 Jun 2019 09:42:29 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EC1CB65F47;
+        Thu,  6 Jun 2019 09:42:49 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 03/10] keys: Add a notification facility [ver #3]
+Subject: [PATCH 05/10] vfs: Add superblock notifications [ver #3]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, raven@themaw.net,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-block@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 06 Jun 2019 10:42:28 +0100
-Message-ID: <155981414848.17513.4362961034917232779.stgit@warthog.procyon.org.uk>
+Date:   Thu, 06 Jun 2019 10:42:49 +0100
+Message-ID: <155981416919.17513.7715903175984222836.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk>
 References: <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
@@ -48,13 +48,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 06 Jun 2019 09:42:32 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 06 Jun 2019 09:42:52 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a key/keyring change notification facility whereby notifications about
-changes in key and keyring content and attributes can be received.
+Add a superblock event notification facility whereby notifications about
+superblock events, such as I/O errors (EIO), quota limits being hit
+(EDQUOT) and running out of space (ENOSPC) can be reported to a monitoring
+process asynchronously.  Note that this does not cover vfsmount topology
+changes.  mount_notify() is used for that.
 
 Firstly, an event queue needs to be created:
 
@@ -67,481 +70,212 @@ then a notification can be set up to report notifications via that queue:
 		.nr_filters = 1,
 		.filters = {
 			[0] = {
-				.type = WATCH_TYPE_KEY_NOTIFY,
+				.type = WATCH_TYPE_SB_NOTIFY,
 				.subtype_filter[0] = UINT_MAX,
 			},
 		},
 	};
 	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
-	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
+	sb_notify(AT_FDCWD, "/home/dhowells", 0, fd, 0x03);
 
-After that, records will be placed into the queue when events occur in
-which keys are changed in some way.  Records are of the following format:
+In this case, it would let me monitor my own homedir for events.  After
+setting the watch, records will be placed into the queue when, for example,
+as superblock switches between read-write and read-only.  Records are of
+the following format:
 
-	struct key_notification {
+	struct superblock_notification {
 		struct watch_notification watch;
-		__u32	key_id;
-		__u32	aux;
+		__u64	sb_id;
 	} *n;
 
 Where:
 
-	n->watch.type will be WATCH_TYPE_KEY_NOTIFY.
+	n->watch.type will be WATCH_TYPE_SB_NOTIFY.
 
 	n->watch.subtype will indicate the type of event, such as
-	NOTIFY_KEY_REVOKED.
+	NOTIFY_SUPERBLOCK_READONLY.
 
 	n->watch.info & WATCH_INFO_LENGTH will indicate the length of the
 	record.
 
-	n->watch.info & WATCH_INFO_ID will be the second argument to
-	keyctl_watch_key(), shifted.
+	n->watch.info & WATCH_INFO_ID will be the fifth argument to
+	sb_notify(), shifted.
 
-	n->key will be the ID of the affected key.
+	n->watch.info & WATCH_INFO_FLAG_0 will be used for
+	NOTIFY_SUPERBLOCK_READONLY, being set if the superblock becomes
+	R/O, and being cleared otherwise.
 
-	n->aux will hold subtype-dependent information, such as the key
-	being linked into the keyring specified by n->key in the case of
-	NOTIFY_KEY_LINKED.
+	n->sb_id will be the ID of the superblock, as can be retrieved with
+	the fsinfo() syscall, as part of the fsinfo_sb_notifications
+	attribute in the the watch_id field.
 
 Note that it is permissible for event records to be of variable length -
 or, at least, the length may be dependent on the subtype.  Note also that
 the queue can be shared between multiple notifications of various types.
 
+[*] QUESTION: Does this want to be per-sb, per-mount_namespace,
+    per-some-new-notify-ns or per-system?  Or do multiple options make
+    sense?
+
+[*] QUESTION: I've done it this way so that anyone could theoretically
+    monitor the superblock of any filesystem they can pathwalk to, but do
+    we need other security controls?
+
+[*] QUESTION: Should the LSM be able to filter the events a queue can
+    receive?  For instance the opener of the queue would grant that queue
+    subject creds (by ->f_cred) that could be used to govern what events
+    could be seen, assuming the target superblock to have some object
+    creds, based on, say, the mounter.
+
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- Documentation/security/keys/core.rst |   58 ++++++++++++++++++++++
- include/linux/key.h                  |    4 ++
- include/uapi/linux/keyctl.h          |    1 
- include/uapi/linux/watch_queue.h     |   25 ++++++++++
- security/keys/Kconfig                |   10 ++++
- security/keys/compat.c               |    2 +
- security/keys/gc.c                   |    5 ++
- security/keys/internal.h             |   30 +++++++++++-
- security/keys/key.c                  |   37 +++++++++-----
- security/keys/keyctl.c               |   88 +++++++++++++++++++++++++++++++++-
- security/keys/keyring.c              |   17 +++++--
- security/keys/request_key.c          |    4 +-
- 12 files changed, 257 insertions(+), 24 deletions(-)
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 
+ fs/Kconfig                             |   12 +++
+ fs/super.c                             |  115 ++++++++++++++++++++++++++++++++
+ include/linux/fs.h                     |   77 +++++++++++++++++++++
+ include/linux/syscalls.h               |    2 +
+ include/uapi/linux/watch_queue.h       |   26 +++++++
+ kernel/sys_ni.c                        |    3 +
+ 8 files changed, 237 insertions(+)
 
-diff --git a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
-index 9521c4207f01..05ef58c753f3 100644
---- a/Documentation/security/keys/core.rst
-+++ b/Documentation/security/keys/core.rst
-@@ -808,6 +808,7 @@ The keyctl syscall functions are:
-      A process must have search permission on the key for this function to be
-      successful.
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index a8416a9a0ccb..429416ce60e1 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -440,3 +440,4 @@
+ 433	i386	fspick			sys_fspick			__ia32_sys_fspick
+ 434	i386	fsinfo			sys_fsinfo			__ia32_sys_fsinfo
+ 435	i386	mount_notify		sys_mount_notify		__ia32_sys_mount_notify
++436	i386	sb_notify		sys_sb_notify			__ia32_sys_sb_notify
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index ea052a94eb97..4ae146e472db 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -357,6 +357,7 @@
+ 433	common	fspick			__x64_sys_fspick
+ 434	common	fsinfo			__x64_sys_fsinfo
+ 435	common	mount_notify		__x64_sys_mount_notify
++436	common	sb_notify		__x64_sys_sb_notify
  
-+
-   *  Compute a Diffie-Hellman shared secret or public key::
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/fs/Kconfig b/fs/Kconfig
+index a26bbe27a791..fc0fa4b35f3c 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -130,6 +130,18 @@ config MOUNT_NOTIFICATIONS
+ 	  device to handle the notification buffer and provides the
+ 	  mount_notify() system call to enable/disable watchpoints.
  
- 	long keyctl(KEYCTL_DH_COMPUTE, struct keyctl_dh_params *params,
-@@ -1001,6 +1002,63 @@ The keyctl syscall functions are:
-      written into the output buffer.  Verification returns 0 on success.
- 
- 
-+  *  Watch a key or keyring for changes::
-+
-+	long keyctl(KEYCTL_WATCH_KEY, key_serial_t key, int queue_fd,
-+		    const struct watch_notification_filter *filter);
-+
-+     This will set or remove a watch for changes on the specified key or
-+     keyring.
-+
-+     "key" is the ID of the key to be watched.
-+
-+     "queue_fd" is a file descriptor referring to an open "/dev/watch_queue"
-+     which manages the buffer into which notifications will be delivered.
-+
-+     "filter" is either NULL to remove a watch or a filter specification to
-+     indicate what events are required from the key.
-+
-+     See Documentation/watch_queue.rst for more information.
-+
-+     Note that only one watch may be emplaced for any particular { key,
-+     queue_fd } combination.
-+
-+     Notification records look like::
-+
-+	struct key_notification {
-+		struct watch_notification watch;
-+		__u32	key_id;
-+		__u32	aux;
-+	};
-+
-+     In this, watch::type will be "WATCH_TYPE_KEY_NOTIFY" and subtype will be
-+     one of::
-+
-+	NOTIFY_KEY_INSTANTIATED
-+	NOTIFY_KEY_UPDATED
-+	NOTIFY_KEY_LINKED
-+	NOTIFY_KEY_UNLINKED
-+	NOTIFY_KEY_CLEARED
-+	NOTIFY_KEY_REVOKED
-+	NOTIFY_KEY_INVALIDATED
-+	NOTIFY_KEY_SETATTR
-+
-+     Where these indicate a key being instantiated/rejected, updated, a link
-+     being made in a keyring, a link being removed from a keyring, a keyring
-+     being cleared, a key being revoked, a key being invalidated or a key
-+     having one of its attributes changed (user, group, perm, timeout,
-+     restriction).
-+
-+     If a watched key is deleted, a basic watch_notification will be issued
-+     with "type" set to WATCH_TYPE_META and "subtype" set to
-+     watch_meta_removal_notification.  The watchpoint ID will be set in the
-+     "info" field.
-+
-+     This needs to be configured by enabling:
-+
-+	"Provide key/keyring change notifications" (KEY_NOTIFICATIONS)
-+
-+
- Kernel Services
- ===============
- 
-diff --git a/include/linux/key.h b/include/linux/key.h
-index 7099985e35a9..f1c43852c0c6 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -159,6 +159,9 @@ struct key {
- 		struct list_head graveyard_link;
- 		struct rb_node	serial_node;
- 	};
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+	struct watch_list	*watchers;	/* Entities watching this key for changes */
-+#endif
- 	struct rw_semaphore	sem;		/* change vs change sem */
- 	struct key_user		*user;		/* owner of this key */
- 	void			*security;	/* security data for this key */
-@@ -193,6 +196,7 @@ struct key {
- #define KEY_FLAG_ROOT_CAN_INVAL	7	/* set if key can be invalidated by root without permission */
- #define KEY_FLAG_KEEP		8	/* set if key should not be removed */
- #define KEY_FLAG_UID_KEYRING	9	/* set if key is a user or user session keyring */
-+#define KEY_FLAG_SET_WATCH_PROXY 10	/* Set if watch_proxy should be set on added keys */
- 
- 	/* the key type and key description string
- 	 * - the desc is used to match a key against search criteria
-diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index f45ee0f69c0c..e9e7da849619 100644
---- a/include/uapi/linux/keyctl.h
-+++ b/include/uapi/linux/keyctl.h
-@@ -67,6 +67,7 @@
- #define KEYCTL_PKEY_SIGN		27	/* Create a public key signature */
- #define KEYCTL_PKEY_VERIFY		28	/* Verify a public key signature */
- #define KEYCTL_RESTRICT_KEYRING		29	/* Restrict keys allowed to link to a keyring */
-+#define KEYCTL_WATCH_KEY		30	/* Watch a key or ring of keys for changes */
- 
- /* keyctl structures */
- struct keyctl_dh_params {
-diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
-index 0e3e5672aa09..32177bcf85f1 100644
---- a/include/uapi/linux/watch_queue.h
-+++ b/include/uapi/linux/watch_queue.h
-@@ -80,4 +80,29 @@ struct watch_notification_filter {
- 	struct watch_notification_type_filter filters[];
- };
- 
-+/*
-+ * Type of key/keyring change notification.
-+ */
-+enum key_notification_subtype {
-+	NOTIFY_KEY_INSTANTIATED	= 0, /* Key was instantiated (aux is error code) */
-+	NOTIFY_KEY_UPDATED	= 1, /* Key was updated */
-+	NOTIFY_KEY_LINKED	= 2, /* Key (aux) was added to watched keyring */
-+	NOTIFY_KEY_UNLINKED	= 3, /* Key (aux) was removed from watched keyring */
-+	NOTIFY_KEY_CLEARED	= 4, /* Keyring was cleared */
-+	NOTIFY_KEY_REVOKED	= 5, /* Key was revoked */
-+	NOTIFY_KEY_INVALIDATED	= 6, /* Key was invalidated */
-+	NOTIFY_KEY_SETATTR	= 7, /* Key's attributes got changed */
-+};
-+
-+/*
-+ * Key/keyring notification record.
-+ * - watch.type = WATCH_TYPE_KEY_NOTIFY
-+ * - watch.subtype = enum key_notification_type
-+ */
-+struct key_notification {
-+	struct watch_notification watch;
-+	__u32	key_id;		/* The key/keyring affected */
-+	__u32	aux;		/* Per-type auxiliary data */
-+};
-+
- #endif /* _UAPI_LINUX_WATCH_QUEUE_H */
-diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-index 6462e6654ccf..fbe064fa0a17 100644
---- a/security/keys/Kconfig
-+++ b/security/keys/Kconfig
-@@ -101,3 +101,13 @@ config KEY_DH_OPERATIONS
- 	 in the kernel.
- 
- 	 If you are unsure as to whether this is required, answer N.
-+
-+config KEY_NOTIFICATIONS
-+	bool "Provide key/keyring change notifications"
-+	depends on KEYS
++config SB_NOTIFICATIONS
++	bool "Superblock event notifications"
 +	select WATCH_QUEUE
 +	help
-+	  This option provides support for getting change notifications on keys
-+	  and keyrings on which the caller has View permission.  This makes use
-+	  of the /dev/watch_queue misc device to handle the notification
-+	  buffer and provides KEYCTL_WATCH_KEY to enable/disable watches.
-diff --git a/security/keys/compat.c b/security/keys/compat.c
-index 9482df601dc3..021d8e1c9233 100644
---- a/security/keys/compat.c
-+++ b/security/keys/compat.c
-@@ -158,6 +158,8 @@ COMPAT_SYSCALL_DEFINE5(keyctl, u32, option,
- 	case KEYCTL_PKEY_VERIFY:
- 		return keyctl_pkey_verify(compat_ptr(arg2), compat_ptr(arg3),
- 					  compat_ptr(arg4), compat_ptr(arg5));
-+	case KEYCTL_WATCH_KEY:
-+		return keyctl_watch_key(arg2, arg3, arg4);
++	  This option provides support for receiving superblock event
++	  notifications.  This makes use of the /dev/watch_queue misc device to
++	  handle the notification buffer and provides the sb_notify() system
++	  call to enable/disable watches.
++
++	  Events can include things like changing between R/W and R/O, EIO
++	  generation, ENOSPC generation and EDQUOT generation.
++
+ source "fs/quota/Kconfig"
  
- 	default:
- 		return -EOPNOTSUPP;
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index 634e96b380e8..b685b9a85a9e 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -135,6 +135,11 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
- 		kdebug("- %u", key->serial);
- 		key_check(key);
+ source "fs/autofs/Kconfig"
+diff --git a/fs/super.c b/fs/super.c
+index 61819e8e5469..cddf23f1d648 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -36,6 +36,8 @@
+ #include <linux/lockdep.h>
+ #include <linux/user_namespace.h>
+ #include <linux/fs_context.h>
++#include <linux/syscalls.h>
++#include <linux/namei.h>
+ #include <uapi/linux/mount.h>
+ #include "internal.h"
  
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+		remove_watch_list(key->watchers);
-+		key->watchers = NULL;
+@@ -350,6 +352,10 @@ void deactivate_locked_super(struct super_block *s)
+ {
+ 	struct file_system_type *fs = s->s_type;
+ 	if (atomic_dec_and_test(&s->s_active)) {
++#ifdef CONFIG_SB_NOTIFICATIONS
++		if (s->s_watchers)
++			remove_watch_list(s->s_watchers);
 +#endif
-+
- 		/* Throw away the key data if the key is instantiated */
- 		if (state == KEY_IS_POSITIVE && key->type->destroy)
- 			key->type->destroy(key);
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 8f533c81aa8d..a7ac0f823ade 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -19,6 +19,7 @@
- #include <linux/task_work.h>
- #include <linux/keyctl.h>
- #include <linux/refcount.h>
-+#include <linux/watch_queue.h>
- #include <linux/compat.h>
+ 		cleancache_invalidate_fs(s);
+ 		unregister_shrinker(&s->s_shrink);
+ 		fs->kill_sb(s);
+@@ -990,6 +996,8 @@ int reconfigure_super(struct fs_context *fc)
+ 	/* Needs to be ordered wrt mnt_is_readonly() */
+ 	smp_wmb();
+ 	sb->s_readonly_remount = 0;
++	notify_sb(sb, NOTIFY_SUPERBLOCK_READONLY,
++		  remount_ro ? WATCH_INFO_FLAG_0 : 0);
  
- struct iovec;
-@@ -97,7 +98,8 @@ extern int __key_link_begin(struct key *keyring,
- 			    const struct keyring_index_key *index_key,
- 			    struct assoc_array_edit **_edit);
- extern int __key_link_check_live_key(struct key *keyring, struct key *key);
--extern void __key_link(struct key *key, struct assoc_array_edit **_edit);
-+extern void __key_link(struct key *keyring, struct key *key,
-+		       struct assoc_array_edit **_edit);
- extern void __key_link_end(struct key *keyring,
- 			   const struct keyring_index_key *index_key,
- 			   struct assoc_array_edit *edit);
-@@ -178,6 +180,23 @@ extern int key_task_permission(const key_ref_t key_ref,
- 			       const struct cred *cred,
- 			       key_perm_t perm);
- 
-+static inline void notify_key(struct key *key,
-+			      enum key_notification_subtype subtype, u32 aux)
-+{
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+	struct key_notification n = {
-+		.watch.type	= WATCH_TYPE_KEY_NOTIFY,
-+		.watch.subtype	= subtype,
-+		.watch.info	= sizeof(n),
-+		.key_id		= key_serial(key),
-+		.aux		= aux,
-+	};
-+
-+	post_watch_notification(key->watchers, &n.watch, current_cred(),
-+				n.key_id);
-+#endif
-+}
-+
- /*
-  * Check to see whether permission is granted to use a key in the desired way.
-  */
-@@ -324,6 +343,15 @@ static inline long keyctl_pkey_e_d_s(int op,
+ 	/*
+ 	 * Some filesystems modify their metadata via some other path than the
+@@ -1808,3 +1816,110 @@ int thaw_super(struct super_block *sb)
+ 	return thaw_super_locked(sb);
  }
- #endif
- 
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+extern long keyctl_watch_key(key_serial_t, int, int);
-+#else
-+static inline long keyctl_watch_key(key_serial_t key_id, int watch_fd, int watch_id)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
+ EXPORT_SYMBOL(thaw_super);
 +
- /*
-  * Debugging key validation
-  */
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 696f1c092c50..9d9f94992470 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -412,6 +412,7 @@ static void mark_key_instantiated(struct key *key, int reject_error)
- 	 */
- 	smp_store_release(&key->state,
- 			  (reject_error < 0) ? reject_error : KEY_IS_POSITIVE);
-+	notify_key(key, NOTIFY_KEY_INSTANTIATED, reject_error);
- }
- 
- /*
-@@ -454,7 +455,7 @@ static int __key_instantiate_and_link(struct key *key,
- 				if (test_bit(KEY_FLAG_KEEP, &keyring->flags))
- 					set_bit(KEY_FLAG_KEEP, &key->flags);
- 
--				__key_link(key, _edit);
-+				__key_link(keyring, key, _edit);
- 			}
- 
- 			/* disable the authorisation key */
-@@ -603,7 +604,7 @@ int key_reject_and_link(struct key *key,
- 
- 		/* and link it into the destination keyring */
- 		if (keyring && link_ret == 0)
--			__key_link(key, &edit);
-+			__key_link(keyring, key, &edit);
- 
- 		/* disable the authorisation key */
- 		if (authkey)
-@@ -756,9 +757,11 @@ static inline key_ref_t __key_update(key_ref_t key_ref,
- 	down_write(&key->sem);
- 
- 	ret = key->type->update(key, prep);
--	if (ret == 0)
-+	if (ret == 0) {
- 		/* Updating a negative key positively instantiates it */
- 		mark_key_instantiated(key, 0);
-+		notify_key(key, NOTIFY_KEY_UPDATED, 0);
-+	}
- 
- 	up_write(&key->sem);
- 
-@@ -999,9 +1002,11 @@ int key_update(key_ref_t key_ref, const void *payload, size_t plen)
- 	down_write(&key->sem);
- 
- 	ret = key->type->update(key, &prep);
--	if (ret == 0)
-+	if (ret == 0) {
- 		/* Updating a negative key positively instantiates it */
- 		mark_key_instantiated(key, 0);
-+		notify_key(key, NOTIFY_KEY_UPDATED, 0);
-+	}
- 
- 	up_write(&key->sem);
- 
-@@ -1033,15 +1038,17 @@ void key_revoke(struct key *key)
- 	 *   instantiated
- 	 */
- 	down_write_nested(&key->sem, 1);
--	if (!test_and_set_bit(KEY_FLAG_REVOKED, &key->flags) &&
--	    key->type->revoke)
--		key->type->revoke(key);
--
--	/* set the death time to no more than the expiry time */
--	time = ktime_get_real_seconds();
--	if (key->revoked_at == 0 || key->revoked_at > time) {
--		key->revoked_at = time;
--		key_schedule_gc(key->revoked_at + key_gc_delay);
-+	if (!test_and_set_bit(KEY_FLAG_REVOKED, &key->flags)) {
-+		notify_key(key, NOTIFY_KEY_REVOKED, 0);
-+		if (key->type->revoke)
-+			key->type->revoke(key);
-+
-+		/* set the death time to no more than the expiry time */
-+		time = ktime_get_real_seconds();
-+		if (key->revoked_at == 0 || key->revoked_at > time) {
-+			key->revoked_at = time;
-+			key_schedule_gc(key->revoked_at + key_gc_delay);
-+		}
- 	}
- 
- 	up_write(&key->sem);
-@@ -1063,8 +1070,10 @@ void key_invalidate(struct key *key)
- 
- 	if (!test_bit(KEY_FLAG_INVALIDATED, &key->flags)) {
- 		down_write_nested(&key->sem, 1);
--		if (!test_and_set_bit(KEY_FLAG_INVALIDATED, &key->flags))
-+		if (!test_and_set_bit(KEY_FLAG_INVALIDATED, &key->flags)) {
-+			notify_key(key, NOTIFY_KEY_INVALIDATED, 0);
- 			key_schedule_gc_links();
-+		}
- 		up_write(&key->sem);
- 	}
- }
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 3e4053a217c3..df909544db47 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -914,6 +914,7 @@ long keyctl_chown_key(key_serial_t id, uid_t user, gid_t group)
- 	if (group != (gid_t) -1)
- 		key->gid = gid;
- 
-+	notify_key(key, NOTIFY_KEY_SETATTR, 0);
- 	ret = 0;
- 
- error_put:
-@@ -964,6 +965,7 @@ long keyctl_setperm_key(key_serial_t id, key_perm_t perm)
- 	/* if we're not the sysadmin, we can only change a key that we own */
- 	if (capable(CAP_SYS_ADMIN) || uid_eq(key->uid, current_fsuid())) {
- 		key->perm = perm;
-+		notify_key(key, NOTIFY_KEY_SETATTR, 0);
- 		ret = 0;
- 	}
- 
-@@ -1355,10 +1357,12 @@ long keyctl_set_timeout(key_serial_t id, unsigned timeout)
- okay:
- 	key = key_ref_to_ptr(key_ref);
- 	ret = 0;
--	if (test_bit(KEY_FLAG_KEEP, &key->flags))
-+	if (test_bit(KEY_FLAG_KEEP, &key->flags)) {
- 		ret = -EPERM;
--	else
-+	} else {
- 		key_set_timeout(key, timeout);
-+		notify_key(key, NOTIFY_KEY_SETATTR, 0);
-+	}
- 	key_put(key);
- 
- error:
-@@ -1631,6 +1635,83 @@ long keyctl_restrict_keyring(key_serial_t id, const char __user *_type,
- 	return ret;
- }
- 
-+#ifdef CONFIG_KEY_NOTIFICATIONS
++#ifdef CONFIG_SB_NOTIFICATIONS
 +/*
-+ * Watch for changes to a key.
-+ *
-+ * The caller must have View permission to watch a key or keyring.
++ * Post superblock notifications.
 + */
-+long keyctl_watch_key(key_serial_t id, int watch_queue_fd, int watch_id)
++void post_sb_notification(struct super_block *s, struct superblock_notification *n)
++{
++	post_watch_notification(s->s_watchers, &n->watch, current_cred(),
++				s->s_unique_id);
++}
++
++/**
++ * sys_sb_notify - Watch for superblock events.
++ * @dfd: Base directory to pathwalk from or fd referring to superblock.
++ * @filename: Path to superblock to place the watch upon
++ * @at_flags: Pathwalk control flags
++ * @watch_fd: The watch queue to send notifications to.
++ * @watch_id: The watch ID to be placed in the notification (-1 to remove watch)
++ */
++SYSCALL_DEFINE5(sb_notify,
++		int, dfd,
++		const char __user *, filename,
++		unsigned int, at_flags,
++		int, watch_fd,
++		int, watch_id)
 +{
 +	struct watch_queue *wqueue;
++	struct super_block *s;
 +	struct watch_list *wlist = NULL;
 +	struct watch *watch;
-+	struct key *key;
-+	key_ref_t key_ref;
-+	long ret = -ENOMEM;
++	struct path path;
++	unsigned int lookup_flags =
++		LOOKUP_DIRECTORY | LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT;
++	int ret;
 +
 +	if (watch_id < -1 || watch_id > 0xff)
 +		return -EINVAL;
++	if ((at_flags & ~(AT_NO_AUTOMOUNT | AT_EMPTY_PATH)) != 0)
++		return -EINVAL;
++	if (at_flags & AT_NO_AUTOMOUNT)
++		lookup_flags &= ~LOOKUP_AUTOMOUNT;
++	if (at_flags & AT_EMPTY_PATH)
++		lookup_flags |= LOOKUP_EMPTY;
 +
-+	key_ref = lookup_user_key(id, KEY_LOOKUP_CREATE, KEY_NEED_VIEW);
-+	if (IS_ERR(key_ref))
-+		return PTR_ERR(key_ref);
-+	key = key_ref_to_ptr(key_ref);
++	ret = user_path_at(dfd, filename, at_flags, &path);
++	if (ret)
++		return ret;
 +
-+	wqueue = get_watch_queue(watch_queue_fd);
-+	if (IS_ERR(wqueue)) {
-+		ret = PTR_ERR(wqueue);
-+		goto err_key;
-+	}
++	wqueue = get_watch_queue(watch_fd);
++	if (IS_ERR(wqueue))
++		goto err_path;
 +
++	s = path.dentry->d_sb;
 +	if (watch_id >= 0) {
-+		if (!key->watchers) {
++		if (!s->s_watchers) {
 +			wlist = kzalloc(sizeof(*wlist), GFP_KERNEL);
 +			if (!wlist)
 +				goto err_wqueue;
@@ -553,28 +287,35 @@ index 3e4053a217c3..df909544db47 100644
 +			goto err_wlist;
 +
 +		init_watch(watch, wqueue);
-+		watch->id	= key->serial;
-+		watch->info_id	= (u32)watch_id << 24;
++		watch->id		= s->s_unique_id;
++		watch->private		= s;
++		watch->info_id		= (u32)watch_id << 24;
 +
-+		down_write(&key->sem);
-+		if (!key->watchers) {
-+			key->watchers = wlist;
-+			wlist = NULL;
++		down_write(&s->s_umount);
++		ret = -EIO;
++		if (atomic_read(&s->s_active)) {
++			if (!s->s_watchers) {
++				s->s_watchers = wlist;
++				wlist = NULL;
++			}
++
++			ret = add_watch_to_object(watch, s->s_watchers);
++			if (ret == 0) {
++				spin_lock(&sb_lock);
++				s->s_count++;
++				spin_unlock(&sb_lock);
++			}
 +		}
-+
-+		ret = add_watch_to_object(watch, key->watchers);
-+		up_write(&key->sem);
-+
++		up_write(&s->s_umount);
 +		if (ret < 0)
 +			kfree(watch);
 +	} else {
 +		ret = -EBADSLT;
-+		if (key->watchers) {
-+			down_write(&key->sem);
-+			ret = remove_watch_from_object(key->watchers,
-+						       wqueue, key_serial(key),
-+						       false);
-+			up_write(&key->sem);
++		if (READ_ONCE(s->s_watchers)) {
++			down_write(&s->s_umount);
++			ret = remove_watch_from_object(s->s_watchers, wqueue,
++						       s->s_unique_id, false);
++			up_write(&s->s_umount);
 +		}
 +	}
 +
@@ -582,116 +323,171 @@ index 3e4053a217c3..df909544db47 100644
 +	kfree(wlist);
 +err_wqueue:
 +	put_watch_queue(wqueue);
-+err_key:
-+	key_put(key);
++err_path:
++	path_put(&path);
 +	return ret;
 +}
-+#endif /* CONFIG_KEY_NOTIFICATIONS */
++#endif
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index db05738b1951..02ba4bfb9cc3 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -40,6 +40,7 @@
+ #include <linux/fs_types.h>
+ #include <linux/build_bug.h>
+ #include <linux/stddef.h>
++#include <linux/watch_queue.h>
+ 
+ #include <asm/byteorder.h>
+ #include <uapi/linux/fs.h>
+@@ -1531,6 +1532,10 @@ struct super_block {
+ 
+ 	/* Superblock event notifications */
+ 	u64			s_unique_id;
 +
- /*
-  * The key control system call
-  */
-@@ -1771,6 +1852,9 @@ SYSCALL_DEFINE5(keyctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 			(const void __user *)arg4,
- 			(const void __user *)arg5);
++#ifdef CONFIG_SB_NOTIFICATIONS
++	struct watch_list	*s_watchers;
++#endif
+ } __randomize_layout;
  
-+	case KEYCTL_WATCH_KEY:
-+		return keyctl_watch_key((key_serial_t)arg2, (int)arg3, (int)arg4);
-+
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index e14f09e3a4b0..f0f9ab3c5587 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -1018,12 +1018,14 @@ int keyring_restrict(key_ref_t keyring_ref, const char *type,
- 	down_write(&keyring->sem);
- 	down_write(&keyring_serialise_restrict_sem);
- 
--	if (keyring->restrict_link)
-+	if (keyring->restrict_link) {
- 		ret = -EEXIST;
--	else if (keyring_detect_restriction_cycle(keyring, restrict_link))
-+	} else if (keyring_detect_restriction_cycle(keyring, restrict_link)) {
- 		ret = -EDEADLK;
--	else
-+	} else {
- 		keyring->restrict_link = restrict_link;
-+		notify_key(keyring, NOTIFY_KEY_SETATTR, 0);
-+	}
- 
- 	up_write(&keyring_serialise_restrict_sem);
- 	up_write(&keyring->sem);
-@@ -1286,12 +1288,14 @@ int __key_link_check_live_key(struct key *keyring, struct key *key)
-  * holds at most one link to any given key of a particular type+description
-  * combination.
-  */
--void __key_link(struct key *key, struct assoc_array_edit **_edit)
-+void __key_link(struct key *keyring, struct key *key,
-+		struct assoc_array_edit **_edit)
- {
- 	__key_get(key);
- 	assoc_array_insert_set_object(*_edit, keyring_key_to_ptr(key));
- 	assoc_array_apply_edit(*_edit);
- 	*_edit = NULL;
-+	notify_key(keyring, NOTIFY_KEY_LINKED, key_serial(key));
+ /* Helper functions so that in most cases filesystems will
+@@ -3531,4 +3536,76 @@ static inline struct sock *io_uring_get_socket(struct file *file)
  }
+ #endif
+ 
++extern void post_sb_notification(struct super_block *, struct superblock_notification *);
++
++/**
++ * notify_sb: Post simple superblock notification.
++ * @s: The superblock the notification is about.
++ * @subtype: The type of notification.
++ * @info: WATCH_INFO_FLAG_* flags to be set in the record.
++ */
++static inline void notify_sb(struct super_block *s,
++			     enum superblock_notification_type subtype,
++			     u32 info)
++{
++#ifdef CONFIG_SB_NOTIFICATIONS
++	if (unlikely(s->s_watchers)) {
++		struct superblock_notification n = {
++			.watch.type	= WATCH_TYPE_SB_NOTIFY,
++			.watch.subtype	= subtype,
++			.watch.info	= sizeof(n) | info,
++			.sb_id		= s->s_unique_id,
++		};
++
++		post_sb_notification(s, &n);
++	}
++			     
++#endif
++}
++
++/**
++ * notify_sb_error: Post superblock error notification.
++ * @s: The superblock the notification is about.
++ * @error: The error number to be recorded.
++ */
++static inline int notify_sb_error(struct super_block *s, int error)
++{
++#ifdef CONFIG_SB_NOTIFICATIONS
++	if (unlikely(s->s_watchers)) {
++		struct superblock_error_notification n = {
++			.s.watch.type	= WATCH_TYPE_SB_NOTIFY,
++			.s.watch.subtype = NOTIFY_SUPERBLOCK_ERROR,
++			.s.watch.info	= sizeof(n),
++			.s.sb_id	= s->s_unique_id,
++			.error_number	= error,
++			.error_cookie	= 0,
++		};
++
++		post_sb_notification(s, &n.s);
++	}
++#endif
++	return error;
++}
++
++/**
++ * notify_sb_EDQUOT: Post superblock quota overrun notification.
++ * @s: The superblock the notification is about.
++ */
++static inline int notify_sb_EQDUOT(struct super_block *s)
++{
++#ifdef CONFIG_SB_NOTIFICATIONS
++	if (unlikely(s->s_watchers)) {
++		struct superblock_notification n = {
++			.watch.type	= WATCH_TYPE_SB_NOTIFY,
++			.watch.subtype	= NOTIFY_SUPERBLOCK_EDQUOT,
++			.watch.info	= sizeof(n),
++			.sb_id		= s->s_unique_id,
++		};
++
++		post_sb_notification(s, &n);
++	}
++#endif
++	return -EDQUOT;
++}
++
+ #endif /* _LINUX_FS_H */
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 7c2b66175f3c..204a6dbcc34a 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1003,6 +1003,8 @@ asmlinkage long sys_fsinfo(int dfd, const char __user *path,
+ 			   void __user *buffer, size_t buf_size);
+ asmlinkage long sys_mount_notify(int dfd, const char __user *path,
+ 				 unsigned int at_flags, int watch_fd, int watch_id);
++asmlinkage long sys_sb_notify(int dfd, const char __user *path,
++			      unsigned int at_flags, int watch_fd, int watch_id);
  
  /*
-@@ -1369,7 +1373,7 @@ int key_link(struct key *keyring, struct key *key)
- 		if (ret == 0)
- 			ret = __key_link_check_live_key(keyring, key);
- 		if (ret == 0)
--			__key_link(key, &edit);
-+			__key_link(keyring, key, &edit);
- 		__key_link_end(keyring, &key->index_key, edit);
- 	}
+  * Architecture-specific system calls
+diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
+index cf3c0c03a747..66b0da7cf888 100644
+--- a/include/uapi/linux/watch_queue.h
++++ b/include/uapi/linux/watch_queue.h
+@@ -129,4 +129,30 @@ struct mount_notification {
+ 	__u32	changed_mount;		/* The mount that got changed */
+ };
  
-@@ -1398,6 +1402,7 @@ EXPORT_SYMBOL(key_link);
- int key_unlink(struct key *keyring, struct key *key)
- {
- 	struct assoc_array_edit *edit;
-+	key_serial_t target = key_serial(key);
- 	int ret;
++/*
++ * Type of superblock notification.
++ */
++enum superblock_notification_type {
++	NOTIFY_SUPERBLOCK_READONLY	= 0, /* Filesystem toggled between R/O and R/W */
++	NOTIFY_SUPERBLOCK_ERROR		= 1, /* Error in filesystem or blockdev */
++	NOTIFY_SUPERBLOCK_EDQUOT	= 2, /* EDQUOT notification */
++	NOTIFY_SUPERBLOCK_NETWORK	= 3, /* Network status change */
++};
++
++/*
++ * Superblock notification record.
++ * - watch.type = WATCH_TYPE_MOUNT_NOTIFY
++ * - watch.subtype = enum superblock_notification_subtype
++ */
++struct superblock_notification {
++	struct watch_notification watch; /* WATCH_TYPE_SB_NOTIFY */
++	__u64	sb_id;			/* 64-bit superblock ID [fsinfo_ids::f_sb_id] */
++};
++
++struct superblock_error_notification {
++	struct superblock_notification s; /* subtype = notify_superblock_error */
++	__u32	error_number;
++	__u32	error_cookie;
++};
++
+ #endif /* _UAPI_LINUX_WATCH_QUEUE_H */
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index 97b025e7863c..565d1e3d1bed 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -108,6 +108,9 @@ COND_SYSCALL(quotactl);
  
- 	key_check(keyring);
-@@ -1419,6 +1424,7 @@ int key_unlink(struct key *keyring, struct key *key)
- 		goto error;
+ /* fs/read_write.c */
  
- 	assoc_array_apply_edit(edit);
-+	notify_key(keyring, NOTIFY_KEY_UNLINKED, target);
- 	key_payload_reserve(keyring, keyring->datalen - KEYQUOTA_LINK_BYTES);
- 	ret = 0;
++/* fs/sb_notify.c */
++COND_SYSCALL(sb_notify);
++
+ /* fs/sendfile.c */
  
-@@ -1452,6 +1458,7 @@ int keyring_clear(struct key *keyring)
- 	} else {
- 		if (edit)
- 			assoc_array_apply_edit(edit);
-+		notify_key(keyring, NOTIFY_KEY_CLEARED, 0);
- 		key_payload_reserve(keyring, 0);
- 		ret = 0;
- 	}
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 75d87f9e0f49..5f474d0e8620 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -387,7 +387,7 @@ static int construct_alloc_key(struct keyring_search_context *ctx,
- 		goto key_already_present;
- 
- 	if (dest_keyring)
--		__key_link(key, &edit);
-+		__key_link(dest_keyring, key, &edit);
- 
- 	mutex_unlock(&key_construction_mutex);
- 	if (dest_keyring)
-@@ -406,7 +406,7 @@ static int construct_alloc_key(struct keyring_search_context *ctx,
- 	if (dest_keyring) {
- 		ret = __key_link_check_live_key(dest_keyring, key);
- 		if (ret == 0)
--			__key_link(key, &edit);
-+			__key_link(dest_keyring, key, &edit);
- 		__key_link_end(dest_keyring, &ctx->index_key, edit);
- 		if (ret < 0)
- 			goto link_check_failed;
+ /* fs/select.c */
 
