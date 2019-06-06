@@ -2,123 +2,291 @@ Return-Path: <SRS0=Ewgb=UF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 539B2C04AB5
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 05:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D1AFC28D1E
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 09:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3206920717
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 05:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F171A20693
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 09:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726238AbfFFFVF (ORCPT
+        id S1728070AbfFFJmX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jun 2019 01:21:05 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52220 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfFFFVF (ORCPT
+        Thu, 6 Jun 2019 05:42:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60470 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727857AbfFFJmW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jun 2019 01:21:05 -0400
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x565KdJh017988;
-        Thu, 6 Jun 2019 14:20:39 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
- Thu, 06 Jun 2019 14:20:39 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x565KdJL017984;
-        Thu, 6 Jun 2019 14:20:39 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x565Kd8j017983;
-        Thu, 6 Jun 2019 14:20:39 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: KASAN: use-after-free Read in =?ISO-2022-JP?B?dG9tb3lvX3JlYWxwYXRo?=
- =?ISO-2022-JP?B?X2Zyb21fcGF0aA==?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc:     syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
+        Thu, 6 Jun 2019 05:42:22 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E6E7E307C941;
+        Thu,  6 Jun 2019 09:42:04 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C5262A2E9;
+        Thu,  6 Jun 2019 09:42:00 +0000 (UTC)
+Subject: [RFC][PATCH 00/10] Mount, FS,
+ Block and Keyrings notifications [ver #3]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-usb@vger.kernel.org, dhowells@redhat.com, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 06 Jun 2019 10:41:59 +0100
+Message-ID: <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Date:   Thu, 06 Jun 2019 14:20:39 +0900
-References: <0000000000004f43fa058a97f4d3@google.com> 
-Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 06 Jun 2019 09:42:22 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Tetsuo Handa wrote:
-> The problem is that TOMOYO is accessing already freed socket from security_file_open()
-> which later fails with -ENXIO (because we can't get file descriptor of sockets via
-> /proc/pid/fd/n interface), and the file descriptor is getting released before
-> security_file_open() completes because we do not raise "struct file"->f_count of
-> the file which is accessible via /proc/pid/fd/n interface. We can avoid this problem
-> if we can avoid calling security_file_open() which after all fails with -ENXIO.
-> How should we handle this race? Let LSM modules check if security_file_open() was
-> called on a socket?
 
-Well, just refusing security_file_open() is not sufficient, for open(O_PATH) allows installing
-file descriptor where SOCKET_I(inode)->sk can change at any moment, and TOMOYO cannot tell
-whether it is safe to access SOCKET_I(inode)->sk from security_inode_getattr().
+Hi Al,
 
-But refusing open(O_PATH) as well might break userspace programs. Oh, no...
+Here's a set of patches to add a general variable-length notification queue
+concept and to add sources of events for:
 
-----------------------------------------
-diff --git a/fs/open.c b/fs/open.c
-index b5b80469b93d..ea69668e2cd8 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -728,6 +728,16 @@ static int do_dentry_open(struct file *f,
- 	/* Ensure that we skip any errors that predate opening of the file */
- 	f->f_wb_err = filemap_sample_wb_err(f->f_mapping);
- 
-+	/*
-+	 * Sockets must not be opened via /proc/pid/fd/n, even with O_PATH,
-+	 * for SOCKET_I(inode)->sk can be kfree()d at any moment after a file
-+	 * descriptor obtained by opening /proc/pid/fd/n was installed.
-+	 */
-+	if (unlikely(S_ISSOCK(inode->i_mode))) {
-+		error = (f->f_flags & O_PATH) ? -ENOENT : -ENXIO;
-+		goto cleanup_file;
-+	}
-+
- 	if (unlikely(f->f_flags & O_PATH)) {
- 		f->f_mode = FMODE_PATH | FMODE_OPENED;
- 		f->f_op = &empty_fops;
-----------------------------------------
+ (1) Mount topology events, such as mounting, unmounting, mount expiry,
+     mount reconfiguration.
 
-----------------------------------------
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/socket.h>
+ (2) Superblock events, such as R/W<->R/O changes, quota overrun and I/O
+     errors (not complete yet).
 
-int main(int argc, char *argv[])
-{
-        pid_t pid = getpid();
-        int fd = socket(AF_INET, SOCK_STREAM, 0);
-        char buffer[128] = { };
-        if (fork() == 0) {
-                struct stat buf = { };
-                close(fd);
-                snprintf(buffer, sizeof(buffer) - 1, "/proc/%u/fd/%u", pid, fd);
-                fd = open(buffer, __O_PATH);
-                sleep(5);
-                fstat(fd, &buf);
-                _exit(0);
-        }
-        sleep(2);
-        close(fd);
-        return 0;
-}
-----------------------------------------
+ (3) Key/keyring events, such as creating, linking and removal of keys.
+
+ (4) General device events (single common queue) including:
+
+     - Block layer events, such as device errors
+
+     - USB subsystem events, such as device/bus attach/remove, device
+       reset, device errors.
+
+One of the reasons for this is so that we can remove the issue of processes
+having to repeatedly and regularly scan /proc/mounts, which has proven to
+be a system performance problem.  To further aid this, the fsinfo() syscall
+on which this patch series depends, provides a way to access superblock and
+mount information in binary form without the need to parse /proc/mounts.
+
+
+LSM support is included, but controversial:
+
+ (1) The creds of the process that did the fput() that reduced the refcount
+     to zero are cached in the file struct.
+
+ (2) __fput() overrides the current creds with the creds from (1) whilst
+     doing the cleanup, thereby making sure that the creds seen by the
+     destruction notification generated by mntput() appears to come from
+     the last fputter.
+
+ (3) security_post_notification() is called for each queue that we might
+     want to post a notification into, thereby allowing the LSM to prevent
+     covert communications.
+
+ (?) Do I need to add security_set_watch(), say, to rule on whether a watch
+     may be set in the first place?  I might need to add a variant per
+     watch-type.
+
+ (?) Do I really need to keep track of the process creds in which an
+     implicit object destruction happened?  For example, imagine you create
+     an fd with fsopen()/fsmount().  It is marked to dissolve the mount it
+     refers to on close unless move_mount() clears that flag.  Now, imagine
+     someone looking at that fd through procfs at the same time as you exit
+     due to an error.  The LSM sees the destruction notification come from
+     the looker if they happen to do their fput() after yours.
+
+
+Design decisions:
+
+ (1) A misc chardev is used to create and open a ring buffer:
+
+	fd = open("/dev/watch_queue", O_RDWR);
+
+     which is then configured and mmap'd into userspace:
+
+	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE);
+	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
+	buf = mmap(NULL, BUF_SIZE * page_size, PROT_READ | PROT_WRITE,
+		   MAP_SHARED, fd, 0);
+
+     The fd cannot be read or written (though there is a facility to use
+     write to inject records for debugging) and userspace just pulls data
+     directly out of the buffer.
+
+ (2) The ring index pointers are stored inside the ring and are thus
+     accessible to userspace.  Userspace should only update the tail
+     pointer and never the head pointer or risk breaking the buffer.  The
+     kernel checks that the pointers appear valid before trying to use
+     them.  A 'skip' record is maintained around the pointers.
+
+ (3) poll() can be used to wait for data to appear in the buffer.
+
+ (4) Records in the buffer are binary, typed and have a length so that they
+     can be of varying size.
+
+     This means that multiple heterogeneous sources can share a common
+     buffer.  Tags may be specified when a watchpoint is created to help
+     distinguish the sources.
+
+ (5) The queue is reusable as there are 16 million types available, of
+     which I've used 4, so there is scope for others to be used.
+
+ (6) Records are filterable as types have up to 256 subtypes that can be
+     individually filtered.  Other filtration is also available.
+
+ (7) Each time the buffer is opened, a new buffer is created - this means
+     that there's no interference between watchers.
+
+ (8) When recording a notification, the kernel will not sleep, but will
+     rather mark a queue as overrun if there's insufficient space, thereby
+     avoiding userspace causing the kernel to hang.
+
+ (9) The 'watchpoint' should be specific where possible, meaning that you
+     specify the object that you want to watch.
+
+(10) The buffer is created and then watchpoints are attached to it, using
+     one of:
+
+	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
+	mount_notify(AT_FDCWD, "/", 0, fd, 0x02);
+	sb_notify(AT_FDCWD, "/mnt", 0, fd, 0x03);
+
+     where in all three cases, fd indicates the queue and the number after
+     is a tag between 0 and 255.
+
+(11) The watch must be removed if either the watch buffer is destroyed or
+     the watched object is destroyed.
+
+
+Things I want to avoid:
+
+ (1) Introducing features that make the core VFS dependent on the network
+     stack or networking namespaces (ie. usage of netlink).
+
+ (2) Dumping all this stuff into dmesg and having a daemon that sits there
+     parsing the output and distributing it as this then puts the
+     responsibility for security into userspace and makes handling
+     namespaces tricky.  Further, dmesg might not exist or might be
+     inaccessible inside a container.
+
+ (3) Letting users see events they shouldn't be able to see.
+
+
+Further things that could be considered:
+
+ (1) Adding a keyctl call to allow a watch on a keyring to be extended to
+     "children" of that keyring, such that the watch is removed from the
+     child if it is unlinked from the keyring.
+
+ (2) Adding global superblock event queue.
+
+ (3) Propagating watches to child superblock over automounts.
+
+
+The patches can be found here also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
+
+Changes:
+
+ v3: I've added a USB notification source and reformulated the block
+     notification source so that there's now a common watch list, for which
+     the system call is now device_notify().
+
+     I've assigned a pair of unused ioctl numbers in the 'W' series to the
+     ioctls added by this series.
+
+     I've also added a description of the kernel API to the documentation.
+
+ v2: I've fixed various issues raised by Jann Horn and GregKH and moved to
+     krefs for refcounting.  I've added some security features to try and
+     give Casey Schaufler the LSM control he wants.
+
+David
+---
+David Howells (10):
+      security: Override creds in __fput() with last fputter's creds
+      General notification queue with user mmap()'able ring buffer
+      keys: Add a notification facility
+      vfs: Add a mount-notification facility
+      vfs: Add superblock notifications
+      fsinfo: Export superblock notification counter
+      Add a general, global device notification watch list
+      block: Add block layer notifications
+      usb: Add USB subsystem notifications
+      Add sample notification program
+
+
+ Documentation/ioctl/ioctl-number.txt   |    1 
+ Documentation/security/keys/core.rst   |   58 ++
+ Documentation/watch_queue.rst          |  492 ++++++++++++++++++
+ arch/x86/entry/syscalls/syscall_32.tbl |    3 
+ arch/x86/entry/syscalls/syscall_64.tbl |    3 
+ block/Kconfig                          |    9 
+ block/blk-core.c                       |   29 +
+ drivers/base/Kconfig                   |    9 
+ drivers/base/Makefile                  |    1 
+ drivers/base/notify.c                  |   82 +++
+ drivers/misc/Kconfig                   |   13 
+ drivers/misc/Makefile                  |    1 
+ drivers/misc/watch_queue.c             |  889 ++++++++++++++++++++++++++++++++
+ drivers/usb/core/Kconfig               |   10 
+ drivers/usb/core/devio.c               |   55 ++
+ drivers/usb/core/hub.c                 |    3 
+ fs/Kconfig                             |   21 +
+ fs/Makefile                            |    1 
+ fs/file_table.c                        |   12 
+ fs/fsinfo.c                            |   12 
+ fs/mount.h                             |   33 +
+ fs/mount_notify.c                      |  180 ++++++
+ fs/namespace.c                         |    9 
+ fs/super.c                             |  116 ++++
+ include/linux/blkdev.h                 |   15 +
+ include/linux/dcache.h                 |    1 
+ include/linux/device.h                 |    7 
+ include/linux/fs.h                     |   79 +++
+ include/linux/key.h                    |    4 
+ include/linux/lsm_hooks.h              |   15 +
+ include/linux/security.h               |   14 +
+ include/linux/syscalls.h               |    5 
+ include/linux/usb.h                    |   19 +
+ include/linux/watch_queue.h            |   87 +++
+ include/uapi/linux/fsinfo.h            |   10 
+ include/uapi/linux/keyctl.h            |    1 
+ include/uapi/linux/watch_queue.h       |  213 ++++++++
+ kernel/sys_ni.c                        |    7 
+ mm/interval_tree.c                     |    2 
+ mm/memory.c                            |    1 
+ samples/Kconfig                        |    6 
+ samples/Makefile                       |    1 
+ samples/vfs/test-fsinfo.c              |   13 
+ samples/watch_queue/Makefile           |    9 
+ samples/watch_queue/watch_test.c       |  310 +++++++++++
+ security/keys/Kconfig                  |   10 
+ security/keys/compat.c                 |    2 
+ security/keys/gc.c                     |    5 
+ security/keys/internal.h               |   30 +
+ security/keys/key.c                    |   37 +
+ security/keys/keyctl.c                 |   88 +++
+ security/keys/keyring.c                |   17 -
+ security/keys/request_key.c            |    4 
+ security/security.c                    |    9 
+ 54 files changed, 3025 insertions(+), 38 deletions(-)
+ create mode 100644 Documentation/watch_queue.rst
+ create mode 100644 drivers/base/notify.c
+ create mode 100644 drivers/misc/watch_queue.c
+ create mode 100644 fs/mount_notify.c
+ create mode 100644 include/linux/watch_queue.h
+ create mode 100644 include/uapi/linux/watch_queue.h
+ create mode 100644 samples/watch_queue/Makefile
+ create mode 100644 samples/watch_queue/watch_test.c
+
