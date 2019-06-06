@@ -3,76 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B521AC04AB5
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1ABC04AB5
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB552083D
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:06:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8B9D20684
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:23:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbfFFPGU convert rfc822-to-8bit (ORCPT
+        id S1729015AbfFFPXA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jun 2019 11:06:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38322 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727309AbfFFPGU (ORCPT
+        Thu, 6 Jun 2019 11:23:00 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32991 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727309AbfFFPXA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:06:20 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0269B3086200;
-        Thu,  6 Jun 2019 15:06:20 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C86F810ABD60;
-        Thu,  6 Jun 2019 15:06:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <176F8189-3BE9-4B8C-A4D5-8915436338FB@amacapital.net>
-References: <176F8189-3BE9-4B8C-A4D5-8915436338FB@amacapital.net> <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk> <155981413016.17513.10540579988392555403.stgit@warthog.procyon.org.uk>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] security: Override creds in __fput() with last fputter's creds [ver #3]
+        Thu, 6 Jun 2019 11:23:00 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 2DBB8E100CBDDB9E06CD;
+        Thu,  6 Jun 2019 16:22:58 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 6 Jun
+ 2019 16:22:48 +0100
+Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
+To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <stable@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20190606112620.26488-1-roberto.sassu@huawei.com>
+ <3711f387-3aef-9fbb-1bb4-dded6807b033@huawei.com>
+ <1559832596.4278.124.camel@linux.ibm.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <e5bc45e0-dd61-c2ef-ba51-2bccb7a07676@huawei.com>
+Date:   Thu, 6 Jun 2019 17:22:56 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <11030.1559833574.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Thu, 06 Jun 2019 16:06:14 +0100
-Message-ID: <11031.1559833574@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 06 Jun 2019 15:06:20 +0000 (UTC)
+In-Reply-To: <1559832596.4278.124.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Andy Lutomirski <luto@amacapital.net> wrote:
-
-> > So that the LSM can see the credentials of the last process to do an fput()
-> > on a file object when the file object is being dismantled, do the following
-> > steps:
-> > 
+On 6/6/2019 4:49 PM, Mimi Zohar wrote:
+> On Thu, 2019-06-06 at 13:43 +0200, Roberto Sassu wrote:
+>> On 6/6/2019 1:26 PM, Roberto Sassu wrote:
+>>> Previous versions included the patch 'ima: don't ignore INTEGRITY_UNKNOWN
+>>> EVM status'. However, I realized that this patch cannot be accepted alone
+>>> because IMA-Appraisal would deny access to new files created during the
+>>> boot. With the current behavior, those files are accessible because they
+>>> have a valid security.ima (not protected by EVM) created after the first
+>>> write.
+>>>
+>>> A solution for this problem is to initialize EVM very early with a random
+>>> key. Access to created files will be granted, even with the strict
+>>> appraisal, because after the first write those files will have both
+>>> security.ima and security.evm (HMAC calculated with the random key).
+>>>
+>>> Strict appraisal will work only if it is done with signatures until the
+>>> persistent HMAC key is loaded.
+>>
+>> Changelog
+>>
+>> v2:
+>> - remove patch 1/3 (evm: check hash algorithm passed to init_desc());
+>>     already accepted
+>> - remove patch 3/3 (ima: show rules with IMA_INMASK correctly);
+>>     already accepted
+>> - add new patch (evm: add option to set a random HMAC key at early boot)
+>> - patch 2/3: modify patch description
 > 
-> I still maintain that this is a giant design error.
+> Roberto, as I tried explaining previously, this feature is not a
+> simple bug fix.  These patches, if upstreamed, will be upstreamed the
+> normal way, during an open window.  Whether they are classified as a
+> bug fix has yet to be decided.
 
-Yes, I know.  This was primarily a post so that Greg could play with the USB
-notifications stuff I added.  The LSM support isn't resolved and is unchanged.
+Sorry, I understood that I can claim that there is a bug. I provided a
+motivation in patch 2/2.
 
-> Can someone at least come up with a single valid use case that isn't
-> entirely full of bugs?
 
-"Entirely full of bugs"?
+> Please stop Cc'ing stable.  If I don't Cc stable before sending the pull request, then Greg and Sasha have been really good about deciding which patches should be backported.  (Please refer to the comment on "Cc'ing stable" in section "5) Select the recipients for your patch" in Documentation/process/submitting-patches.rst.)
+> 
+> I'll review these patches, but in the future please use an appropriate patch set cover letter title in the subject line.
 
-How would you propose I deal with Casey's requirement?  I'm getting the
-feeling you're going to nak it if I try to fulfil that and he's going to nak
-it if I don't.
+Ok.
 
-David
+Thanks
+
+Roberto
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
