@@ -2,103 +2,98 @@ Return-Path: <SRS0=Ewgb=UF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1ABC04AB5
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C25C28EB4
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8B9D20684
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F1D12083E
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 15:31:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1559835118;
+	bh=auxbwT7fReJRZ8phkETElOOGx98Nm3DMKGuBNzqK4tM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=F42FgjbNpE5FoZdqCp2wU6cP4wBQxYIaY8Ln7ncDiMcB242Re9jFrNs/5yrZEbEX6
+	 bAWL07fpVgl+pWJ9NyCh1nfIzlbXiBISB2kRIDyBZRkiSMsp6hGQNOi3Ylrq4CvRzW
+	 xfE8EXM9geRRycmVzXYoqH4BCoV50R4lNlyLD4R4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729015AbfFFPXA (ORCPT
+        id S1729342AbfFFPbx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jun 2019 11:23:00 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32991 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727309AbfFFPXA (ORCPT
+        Thu, 6 Jun 2019 11:31:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46738 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729045AbfFFPbx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:23:00 -0400
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 2DBB8E100CBDDB9E06CD;
-        Thu,  6 Jun 2019 16:22:58 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 6 Jun
- 2019 16:22:48 +0100
-Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
-To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
-        <mjg59@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <stable@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20190606112620.26488-1-roberto.sassu@huawei.com>
- <3711f387-3aef-9fbb-1bb4-dded6807b033@huawei.com>
- <1559832596.4278.124.camel@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <e5bc45e0-dd61-c2ef-ba51-2bccb7a07676@huawei.com>
-Date:   Thu, 6 Jun 2019 17:22:56 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 6 Jun 2019 11:31:53 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB9A520684;
+        Thu,  6 Jun 2019 15:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559835112;
+        bh=auxbwT7fReJRZ8phkETElOOGx98Nm3DMKGuBNzqK4tM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Sls1Ac8ft0yHOcjrqT/Sogzn929Pqs6//tyMW7eH5G0zrT8QLdNQhIS85jv6VxDzz
+         MHZqpcHha72lL1p3LiRLsHd6UO8jnT++nCFM6pgYXW18Vppu62GMNhI2WeA7tVfexV
+         UEPrGRlzojOutRXk5dBStG/hmW9kjs1A9pfGreoY=
+Date:   Thu, 6 Jun 2019 17:31:50 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        linux-usb@vger.kernel.org, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/10] usb: Add USB subsystem notifications [ver #3]
+Message-ID: <20190606153150.GB28997@kroah.com>
+References: <20190606143306.GA11294@kroah.com>
+ <Pine.LNX.4.44L0.1906061051310.1641-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <1559832596.4278.124.camel@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1906061051310.1641-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/6/2019 4:49 PM, Mimi Zohar wrote:
-> On Thu, 2019-06-06 at 13:43 +0200, Roberto Sassu wrote:
->> On 6/6/2019 1:26 PM, Roberto Sassu wrote:
->>> Previous versions included the patch 'ima: don't ignore INTEGRITY_UNKNOWN
->>> EVM status'. However, I realized that this patch cannot be accepted alone
->>> because IMA-Appraisal would deny access to new files created during the
->>> boot. With the current behavior, those files are accessible because they
->>> have a valid security.ima (not protected by EVM) created after the first
->>> write.
->>>
->>> A solution for this problem is to initialize EVM very early with a random
->>> key. Access to created files will be granted, even with the strict
->>> appraisal, because after the first write those files will have both
->>> security.ima and security.evm (HMAC calculated with the random key).
->>>
->>> Strict appraisal will work only if it is done with signatures until the
->>> persistent HMAC key is loaded.
->>
->> Changelog
->>
->> v2:
->> - remove patch 1/3 (evm: check hash algorithm passed to init_desc());
->>     already accepted
->> - remove patch 3/3 (ima: show rules with IMA_INMASK correctly);
->>     already accepted
->> - add new patch (evm: add option to set a random HMAC key at early boot)
->> - patch 2/3: modify patch description
+On Thu, Jun 06, 2019 at 10:55:24AM -0400, Alan Stern wrote:
+> On Thu, 6 Jun 2019, Greg Kroah-Hartman wrote:
 > 
-> Roberto, as I tried explaining previously, this feature is not a
-> simple bug fix.  These patches, if upstreamed, will be upstreamed the
-> normal way, during an open window.  Whether they are classified as a
-> bug fix has yet to be decided.
-
-Sorry, I understood that I can claim that there is a bug. I provided a
-motivation in patch 2/2.
-
-
-> Please stop Cc'ing stable.  If I don't Cc stable before sending the pull request, then Greg and Sasha have been really good about deciding which patches should be backported.  (Please refer to the comment on "Cc'ing stable" in section "5) Select the recipients for your patch" in Documentation/process/submitting-patches.rst.)
+> > On Thu, Jun 06, 2019 at 10:24:18AM -0400, Alan Stern wrote:
+> > > On Thu, 6 Jun 2019, David Howells wrote:
+> > > 
+> > > > Add a USB subsystem notification mechanism whereby notifications about
+> > > > hardware events such as device connection, disconnection, reset and I/O
+> > > > errors, can be reported to a monitoring process asynchronously.
+> > > 
+> > > USB I/O errors covers an awfully large and vague field.  Do we really
+> > > want to include them?  I'm doubtful.
+> > 
+> > See the other patch on the linux-usb list that wanted to start adding
+> > KOBJ_CHANGE notifications about USB "i/o errors".
 > 
-> I'll review these patches, but in the future please use an appropriate patch set cover letter title in the subject line.
+> That patch wanted to add notifications only for enumeration failures
+> (assuming you're talking about the patch from Eugeniu Rosca), not I/O
+> errors in general.
 
-Ok.
+Yes, sorry, I was thinking that as a "I/O failed in enumeration" :)
 
-Thanks
+> > So for "severe" issues, yes, we should do this, but perhaps not for all
+> > of the "normal" things we see when a device is yanked out of the system
+> > and the like.
+> 
+> Then what counts as a "severe" issue?  Anything besides enumeration 
+> failure?
 
-Roberto
+Not that I can think of at the moment, other than the other recently
+added KOBJ_CHANGE issue.  I'm sure we have other "hard failure" issues
+in the USB stack that people will want exposed over time.
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+thanks,
+
+greg k-h
