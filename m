@@ -2,77 +2,86 @@ Return-Path: <SRS0=Ewgb=UF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6689C04AB5
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 22:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F18BC46460
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 22:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C76F42089E
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 22:52:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CA75208C0
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jun 2019 22:53:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S1f8aQJ6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbfFFWwy convert rfc822-to-8bit (ORCPT
+        id S1726976AbfFFWxp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jun 2019 18:52:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58754 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726352AbfFFWwy (ORCPT
+        Thu, 6 Jun 2019 18:53:45 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44410 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbfFFWxp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jun 2019 18:52:54 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0889F30821DF;
-        Thu,  6 Jun 2019 22:52:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B61CD78569;
-        Thu,  6 Jun 2019 22:52:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190606212140.GA25664@vmlxhi-102.adit-jv.com>
-References: <20190606212140.GA25664@vmlxhi-102.adit-jv.com> <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk> <155981421379.17513.13158528501056454772.stgit@warthog.procyon.org.uk>
-To:     Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH 10/10] Add sample notification program [ver #3]
+        Thu, 6 Jun 2019 18:53:45 -0400
+Received: by mail-pl1-f195.google.com with SMTP id c5so14897pll.11
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Jun 2019 15:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=q9tPuqXSnLLqDLK9V1P0M5vhpLVYOBP8IPwaJBuXaxE=;
+        b=S1f8aQJ6Rh0k4EEU00w4NdE3m5Uhc2QKSDfNJjfAJwS6NdpH4PuH+zQ9CsJBCE2ZBV
+         mTFCVBykaMIO93rk4Jc+hFnoQZU5qYoy7oQf11iMgj94DLgZAcsd1lWVCDzlg3xb8d0W
+         jbmdE+hTRSfFVNrKMtp4vUG2jbYEqobgH25Oc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=q9tPuqXSnLLqDLK9V1P0M5vhpLVYOBP8IPwaJBuXaxE=;
+        b=ffY9D2dwFWKBASjQyQRrS5PzWhdRC6OHEUPe6g0UZujazgWNuQlbdz4Y7iQIHo/aRs
+         jQjmZsrcTGOdOCFK1e3f1EQXykPVHqhlM8uDxRanPgmHnMaiUPHYtbwAqyRrLrVF7Z5q
+         iOjMv6u8dUCQtHZzlGqRl16zH5hSFd04ecxIBeRGrakbLYsflXkd9rERgPwoctFSNTsC
+         Tin1rhXLBtfRqiMKD0aefeqlPPhcqyNnFO2O3xULPZCdxHJohFdbZuULYjDFL7ICHidb
+         K0kHHVX7lQ8QGJAd1Astpc0QlaX5q13v8WuW3SUfek2SZ+IXc/1Y2Dzz5xFTif2IogNp
+         9k/Q==
+X-Gm-Message-State: APjAAAVhmgjde2loYhJOO/BVNu/eSiD+2/z8IVmUyEF6V/WyB52umXUV
+        cJXuXpkg9Caz1t9kfWpp5QTi9g==
+X-Google-Smtp-Source: APXvYqwl49yrDs6w/vlkudCMHeZXfti4PypjiqEguhgK96oOW05IDR+W3joYb29gLc4fMFwb9bKg2Q==
+X-Received: by 2002:a17:902:24c:: with SMTP id 70mr52416459plc.2.1559861624700;
+        Thu, 06 Jun 2019 15:53:44 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b15sm202339pff.31.2019.06.06.15.53.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Jun 2019 15:53:43 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 15:53:42 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com, sds@tycho.nsa.gov
+Subject: Re: [PATCH 22/58] Audit: Change audit_sig_sid to audit_sig_lsm
+Message-ID: <201906061553.A3BF62257@keescook>
+References: <20190531231020.628-1-casey@schaufler-ca.com>
+ <20190531231020.628-23-casey@schaufler-ca.com>
+ <201906011900.143B72A@keescook>
+ <79cc3300-450f-5263-9b81-3186f84010f5@schaufler-ca.com>
+ <201906061138.BFE4CFEE@keescook>
+ <dbafd99d-aab7-c497-fbe9-fe467b0c237a@schaufler-ca.com>
+ <201906061351.B12D10D5D@keescook>
+ <5010ae20-ce00-be1e-0c2b-7568282b6b39@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <31574.1559861570.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Thu, 06 Jun 2019 23:52:50 +0100
-Message-ID: <31575.1559861570@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 06 Jun 2019 22:52:54 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5010ae20-ce00-be1e-0c2b-7568282b6b39@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Eugeniu Rosca <erosca@de.adit-jv.com> wrote:
+On Thu, Jun 06, 2019 at 02:06:44PM -0700, Casey Schaufler wrote:
+> I'd rather describe what's in it than how it's used.
 
-> How about arm64? Do you intend to enable cross-compilation?
+Yeah, good point. :)
 
-There's no guarantee that a cross-compiler can actually build userspace apps,
-though I haven't intended to encode anything against that in the Makefile.
-
-> > +			asm ("lfence" : : : "memory" );
-> [..]
-> > +			asm("mfence" ::: "memory");
-> 
-> FWIW, trying to cross-compile it returned:
-> 
-> aarch64-linux-gnu-gcc -I../../usr/include -I../../include  watch_test.c   -o watch_test
-> /tmp/ccDXYynm.s: Assembler messages:
-> /tmp/ccDXYynm.s:471: Error: unknown mnemonic `lfence' -- `lfence'
-> /tmp/ccDXYynm.s:568: Error: unknown mnemonic `mfence' -- `mfence'
-
-Yeah.  I need to use C-standard __atomic_* stuff.
-
-David
+-- 
+Kees Cook
