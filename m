@@ -2,524 +2,315 @@ Return-Path: <SRS0=9TCU=UG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=DATE_IN_PAST_12_24,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FD9C28CC3
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jun 2019 08:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E8BC468BD
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jun 2019 13:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A1832089E
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jun 2019 08:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D137212F5
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jun 2019 13:09:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jkpOfi4n"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nonadev.net header.i=@nonadev.net header.b="0YB+dJPl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfFGIzs (ORCPT
+        id S1728536AbfFGNJ4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Jun 2019 04:55:48 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:46018 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbfFGIzs (ORCPT
+        Fri, 7 Jun 2019 09:09:56 -0400
+Received: from edna.lautre.net ([80.67.160.88]:42518 "EHLO edna.lautre.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727566AbfFGNJ4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Jun 2019 04:55:48 -0400
-Received: by mail-qt1-f201.google.com with SMTP id g14so1254555qta.12
-        for <linux-security-module@vger.kernel.org>; Fri, 07 Jun 2019 01:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=M+tMoyKxyBmCiZ50qgzoES0Jlvpfav0QYsjG0XEBtto=;
-        b=jkpOfi4ncHdpmJWxxrjJMFkyM6Qwj0heVKuXt12XtDostMZOIs3w5M0NmeYGpZrI+2
-         1TTOPbfvIIzibYeYcT8LVgCml+4T+g9RR3vfV1u7wUCEJx/YKn/YO1eOnikFUi3/0dxx
-         2vHM2Y19NpaPw+YdigPYfTJg3bQanNggERyN6Vu0AhhrO8wq2m+EtFfQmvY24tjsGDnR
-         m3LqxyXZ6wRW7iS7MfqsSaz0cTnZqy7/CgFPCD7sLJK3GZ2BEoyAVlwEfjQASjOF8EXM
-         H9BoNi3CplK14AziReQ+jW2WhXV0XngHz/313Ti54WaWxdkURJBK5SUKhXtZjSHMweyt
-         m1uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=M+tMoyKxyBmCiZ50qgzoES0Jlvpfav0QYsjG0XEBtto=;
-        b=NmzffPnRDnWp9I3st0kHiH21Yj4BovW6Khq2H/5GwlbCW+6LfTU8AFwm8dRnwmuXJW
-         C1FOnuZ/uzKDZ1QNMWOyNzLdSf+WMCkLH7KWI8lPDmuZ3VdpYReHAzSlzPaP4I0D/dxR
-         wK0EbhcOWDrenpcPTUt0zseNkH1O+egWILcZYMmBk/T0ag4uUHFCroh9kI3S58UWLgyl
-         FVdYeLvQjfnqZJfAaaA9fLtB7JFUz2tA2jsKDgDoz+q55wHO823yw9O6bq6ZlkQ3H3Zu
-         FS/S8cuNxlRqCfyTnb+r8Wvq3RQnAXuo0U2lSf1AlckYQdxaekYL68Hf1VLULXNsTxXD
-         I+Ug==
-X-Gm-Message-State: APjAAAWWew9jRcWwyAWd6gsxQUJNdc9KkL3fWHdyPvwxYb55MP9z9YAi
-        iHwFDKFEzGdydzgjM4fs3Dt+cOBk9nc=
-X-Google-Smtp-Source: APXvYqz1UChbORPwg/DdBiTfImvoOwJkNeWBemS96Z/2yDIcLrcObCeLF/+ere+kYaQg7ozw7ojn/bdPVxE=
-X-Received: by 2002:a05:620a:624:: with SMTP id 4mr43032082qkv.15.1559897746806;
- Fri, 07 Jun 2019 01:55:46 -0700 (PDT)
-Date:   Thu,  6 Jun 2019 18:48:45 +0200
-In-Reply-To: <20190606164845.179427-1-glider@google.com>
-Message-Id: <20190606164845.179427-4-glider@google.com>
-Mime-Version: 1.0
-References: <20190606164845.179427-1-glider@google.com>
-X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
-Subject: [PATCH v6 3/3] lib: introduce test_meminit module
-From:   Alexander Potapenko <glider@google.com>
-To:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>
-Cc:     Alexander Potapenko <glider@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Jann Horn <jannh@google.com>, Marco Elver <elver@google.com>,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 7 Jun 2019 09:09:56 -0400
+X-Greylist: delayed 363 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jun 2019 09:09:54 EDT
+Received: from d-jobol.iot.bzh (por56-1-78-229-206-229.fbx.proxad.net [78.229.206.229])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by edna.lautre.net (Postfix) with ESMTPSA id F2F6C102A0D;
+        Fri,  7 Jun 2019 15:03:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=nonadev.net;
+        s=alternc; t=1559912628;
+        bh=GdebRi4P2ZP3wq8vWoou05N7ahplbq5AFRqxRpfusA8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=0YB+dJPlb7kQq7mf5jm3vp3XWSmriwK8oJALewuKbDnk8fPh3vgaiohnQtqF+VDHk
+         I9KGzYnW4f+UNChR85fKDARf+qhBAFezx5C2hrPUCTu9Whh3aUvIgrQpYeS7ePxl2i
+         OPG2Z0ZpGcdGnfGC8uqMx+FfRXwaG1cyCDtAsWDk=
+Date:   Fri, 7 Jun 2019 15:03:45 +0200
+From:   =?UTF-8?B?Sm9zw6k=?= Bollo <jobol@nonadev.net>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>, casey.schaufler@intel.com,
+        jmorris@namei.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com
+Subject: Re: [PATCH 00/58] LSM: Module stacking for AppArmor
+Message-ID: <20190607150345.295c87c8@d-jobol.iot.bzh>
+In-Reply-To: <66a87b0b-b6f4-74ff-2e51-afc8e2d30de1@schaufler-ca.com>
+References: <20190602165101.25079-1-casey@schaufler-ca.com>
+        <f71388e9-a4c5-8935-137b-8eb50be7f833@tycho.nsa.gov>
+        <66a87b0b-b6f4-74ff-2e51-afc8e2d30de1@schaufler-ca.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add tests for heap and pagealloc initialization.
-These can be used to check init_on_alloc and init_on_free implementations
-as well as other approaches to initialization.
+On Tue, 4 Jun 2019 09:14:42 -0700
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Expected test output in the case the kernel provides heap initialization
-(e.g. when running with either init_on_alloc=1 or init_on_free=1):
+> On 6/4/2019 5:29 AM, Stephen Smalley wrote:
+> > On 6/2/19 12:50 PM, Casey Schaufler wrote: =20
+> >> This patchset provides the changes required for
+> >> the AppArmor security module to stack safely with any other. =20
+> >
+> > Please explain the motivation =20
+>=20
+> I'll add some explanation for the next revision.
+> It won't be anything that I haven't posted many times
+> before, but you're right that it belongs in the log.
+>=20
+> > - why do we want to allow AppArmor to stack with other modules, =20
+>=20
+> First, is there a reason not to? Sure, you can confuse
+> administrators by implementing complex security policies,
+> but there are lots of ways to do that already.
+>=20
+> AppArmor provides a different security model than SELinux,
+> TOMOYO or Smack. Smack is better at system component
+> separation, while AppArmor is better at application isolation.
+> It's a win to use each to its strength rather than trying to
+> stretch either to the edge of what it can do.
+>=20
+> > who would use it, =20
 
-  test_meminit: all 10 tests in test_pages passed
-  test_meminit: all 40 tests in test_kvmalloc passed
-  test_meminit: all 60 tests in test_kmemcache passed
-  test_meminit: all 10 tests in test_rcu_persistent passed
-  test_meminit: all 120 tests passed!
+Hi all,
 
-Signed-off-by: Alexander Potapenko <glider@google.com>
-To: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Kostya Serebryany <kcc@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Sandeep Patil <sspatil@android.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Marco Elver <elver@google.com>
-Cc: linux-mm@kvack.org
-Cc: linux-security-module@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com
----
- v3:
-  - added example test output to the description
-  - fixed a missing include spotted by kbuild test robot <lkp@intel.com>
-  - added a missing MODULE_LICENSE
-  - call do_kmem_cache_size() with size >= sizeof(void*) to unbreak
-  debug builds
- v5:
-  - added tests for RCU slabs and __GFP_ZERO
----
- lib/Kconfig.debug  |   8 +
- lib/Makefile       |   1 +
- lib/test_meminit.c | 362 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 371 insertions(+)
- create mode 100644 lib/test_meminit.c
+I would like to expose a potential use of interest for me: being able
+to have containers running Smack on Ubuntu or Fedora platforms.
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index cbdfae379896..085711f14abf 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2040,6 +2040,14 @@ config TEST_STACKINIT
- 
- 	  If unsure, say N.
- 
-+config TEST_MEMINIT
-+	tristate "Test heap/page initialization"
-+	help
-+	  Test if the kernel is zero-initializing heap and page allocations.
-+	  This can be useful to test init_on_alloc and init_on_free features.
-+
-+	  If unsure, say N.
-+
- endif # RUNTIME_TESTING_MENU
- 
- config MEMTEST
-diff --git a/lib/Makefile b/lib/Makefile
-index fb7697031a79..05980c802500 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -91,6 +91,7 @@ obj-$(CONFIG_TEST_DEBUG_VIRTUAL) += test_debug_virtual.o
- obj-$(CONFIG_TEST_MEMCAT_P) += test_memcat_p.o
- obj-$(CONFIG_TEST_OBJAGG) += test_objagg.o
- obj-$(CONFIG_TEST_STACKINIT) += test_stackinit.o
-+obj-$(CONFIG_TEST_MEMINIT) += test_meminit.o
- 
- obj-$(CONFIG_TEST_LIVEPATCH) += livepatch/
- 
-diff --git a/lib/test_meminit.c b/lib/test_meminit.c
-new file mode 100644
-index 000000000000..ed7efec1387b
---- /dev/null
-+++ b/lib/test_meminit.c
-@@ -0,0 +1,362 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Test cases for SL[AOU]B/page initialization at alloc/free time.
-+ */
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/string.h>
-+#include <linux/vmalloc.h>
-+
-+#define GARBAGE_INT (0x09A7BA9E)
-+#define GARBAGE_BYTE (0x9E)
-+
-+#define REPORT_FAILURES_IN_FN() \
-+	do {	\
-+		if (failures)	\
-+			pr_info("%s failed %d out of %d times\n",	\
-+				__func__, failures, num_tests);		\
-+		else		\
-+			pr_info("all %d tests in %s passed\n",		\
-+				num_tests, __func__);			\
-+	} while (0)
-+
-+/* Calculate the number of uninitialized bytes in the buffer. */
-+static int __init count_nonzero_bytes(void *ptr, size_t size)
-+{
-+	int i, ret = 0;
-+	unsigned char *p = (unsigned char *)ptr;
-+
-+	for (i = 0; i < size; i++)
-+		if (p[i])
-+			ret++;
-+	return ret;
-+}
-+
-+/* Fill a buffer with garbage, skipping |skip| first bytes. */
-+static void __init fill_with_garbage_skip(void *ptr, size_t size, size_t skip)
-+{
-+	unsigned int *p = (unsigned int *)ptr;
-+	int i = 0;
-+
-+	if (skip) {
-+		WARN_ON(skip > size);
-+		p += skip;
-+	}
-+	while (size >= sizeof(*p)) {
-+		p[i] = GARBAGE_INT;
-+		i++;
-+		size -= sizeof(*p);
-+	}
-+	if (size)
-+		memset(&p[i], GARBAGE_BYTE, size);
-+}
-+
-+static void __init fill_with_garbage(void *ptr, size_t size)
-+{
-+	fill_with_garbage_skip(ptr, size, 0);
-+}
-+
-+static int __init do_alloc_pages_order(int order, int *total_failures)
-+{
-+	struct page *page;
-+	void *buf;
-+	size_t size = PAGE_SIZE << order;
-+
-+	page = alloc_pages(GFP_KERNEL, order);
-+	buf = page_address(page);
-+	fill_with_garbage(buf, size);
-+	__free_pages(page, order);
-+
-+	page = alloc_pages(GFP_KERNEL, order);
-+	buf = page_address(page);
-+	if (count_nonzero_bytes(buf, size))
-+		(*total_failures)++;
-+	fill_with_garbage(buf, size);
-+	__free_pages(page, order);
-+	return 1;
-+}
-+
-+/* Test the page allocator by calling alloc_pages with different orders. */
-+static int __init test_pages(int *total_failures)
-+{
-+	int failures = 0, num_tests = 0;
-+	int i;
-+
-+	for (i = 0; i < 10; i++)
-+		num_tests += do_alloc_pages_order(i, &failures);
-+
-+	REPORT_FAILURES_IN_FN();
-+	*total_failures += failures;
-+	return num_tests;
-+}
-+
-+/* Test kmalloc() with given parameters. */
-+static int __init do_kmalloc_size(size_t size, int *total_failures)
-+{
-+	void *buf;
-+
-+	buf = kmalloc(size, GFP_KERNEL);
-+	fill_with_garbage(buf, size);
-+	kfree(buf);
-+
-+	buf = kmalloc(size, GFP_KERNEL);
-+	if (count_nonzero_bytes(buf, size))
-+		(*total_failures)++;
-+	fill_with_garbage(buf, size);
-+	kfree(buf);
-+	return 1;
-+}
-+
-+/* Test vmalloc() with given parameters. */
-+static int __init do_vmalloc_size(size_t size, int *total_failures)
-+{
-+	void *buf;
-+
-+	buf = vmalloc(size);
-+	fill_with_garbage(buf, size);
-+	vfree(buf);
-+
-+	buf = vmalloc(size);
-+	if (count_nonzero_bytes(buf, size))
-+		(*total_failures)++;
-+	fill_with_garbage(buf, size);
-+	vfree(buf);
-+	return 1;
-+}
-+
-+/* Test kmalloc()/vmalloc() by allocating objects of different sizes. */
-+static int __init test_kvmalloc(int *total_failures)
-+{
-+	int failures = 0, num_tests = 0;
-+	int i, size;
-+
-+	for (i = 0; i < 20; i++) {
-+		size = 1 << i;
-+		num_tests += do_kmalloc_size(size, &failures);
-+		num_tests += do_vmalloc_size(size, &failures);
-+	}
-+
-+	REPORT_FAILURES_IN_FN();
-+	*total_failures += failures;
-+	return num_tests;
-+}
-+
-+#define CTOR_BYTES (sizeof(unsigned int))
-+#define CTOR_PATTERN (0x41414141)
-+/* Initialize the first 4 bytes of the object. */
-+static void test_ctor(void *obj)
-+{
-+	*(unsigned int *)obj = CTOR_PATTERN;
-+}
-+
-+/*
-+ * Check the invariants for the buffer allocated from a slab cache.
-+ * If the cache has a test constructor, the first 4 bytes of the object must
-+ * always remain equal to CTOR_PATTERN.
-+ * If the cache isn't an RCU-typesafe one, or if the allocation is done with
-+ * __GFP_ZERO, then the object contents must be zeroed after allocation.
-+ * If the cache is an RCU-typesafe one, the object contents must never be
-+ * zeroed after the first use. This is checked by memcmp() in
-+ * do_kmem_cache_size().
-+ */
-+static bool __init check_buf(void *buf, int size, bool want_ctor,
-+			     bool want_rcu, bool want_zero)
-+{
-+	int bytes;
-+	bool fail = false;
-+
-+	bytes = count_nonzero_bytes(buf, size);
-+	WARN_ON(want_ctor && want_zero);
-+	if (want_zero)
-+		return bytes;
-+	if (want_ctor) {
-+		if (*(unsigned int *)buf != CTOR_PATTERN)
-+			fail = 1;
-+	} else {
-+		if (bytes)
-+			fail = !want_rcu;
-+	}
-+	return fail;
-+}
-+
-+/*
-+ * Test kmem_cache with given parameters:
-+ *  want_ctor - use a constructor;
-+ *  want_rcu - use SLAB_TYPESAFE_BY_RCU;
-+ *  want_zero - use __GFP_ZERO.
-+ */
-+static int __init do_kmem_cache_size(size_t size, bool want_ctor,
-+				     bool want_rcu, bool want_zero,
-+				     int *total_failures)
-+{
-+	struct kmem_cache *c;
-+	int iter;
-+	bool fail = false;
-+	gfp_t alloc_mask = GFP_KERNEL | (want_zero ? __GFP_ZERO : 0);
-+	void *buf, *buf_copy;
-+
-+	c = kmem_cache_create("test_cache", size, 1,
-+			      want_rcu ? SLAB_TYPESAFE_BY_RCU : 0,
-+			      want_ctor ? test_ctor : NULL);
-+	for (iter = 0; iter < 10; iter++) {
-+		buf = kmem_cache_alloc(c, alloc_mask);
-+		/* Check that buf is zeroed, if it must be. */
-+		fail = check_buf(buf, size, want_ctor, want_rcu, want_zero);
-+		fill_with_garbage_skip(buf, size, want_ctor ? CTOR_BYTES : 0);
-+		/*
-+		 * If this is an RCU cache, use a critical section to ensure we
-+		 * can touch objects after they're freed.
-+		 */
-+		if (want_rcu) {
-+			rcu_read_lock();
-+			/*
-+			 * Copy the buffer to check that it's not wiped on
-+			 * free().
-+			 */
-+			buf_copy = kmalloc(size, GFP_KERNEL);
-+			if (buf_copy)
-+				memcpy(buf_copy, buf, size);
-+		}
-+		kmem_cache_free(c, buf);
-+		if (want_rcu) {
-+			/*
-+			 * Check that |buf| is intact after kmem_cache_free().
-+			 * |want_zero| is false, because we wrote garbage to
-+			 * the buffer already.
-+			 */
-+			fail |= check_buf(buf, size, want_ctor, want_rcu,
-+					  false);
-+			if (buf_copy) {
-+				fail |= (bool)memcmp(buf, buf_copy, size);
-+				kfree(buf_copy);
-+			}
-+			rcu_read_unlock();
-+		}
-+	}
-+	kmem_cache_destroy(c);
-+
-+	*total_failures += fail;
-+	return 1;
-+}
-+
-+/*
-+ * Check that the data written to an RCU-allocated object survives
-+ * reallocation.
-+ */
-+static int __init do_kmem_cache_rcu_persistent(int size, int *total_failures)
-+{
-+	struct kmem_cache *c;
-+	void *buf, *buf_contents, *saved_ptr;
-+	void **used_objects;
-+	int i, iter, maxiter = 1024;
-+	bool fail = false;
-+
-+	c = kmem_cache_create("test_cache", size, size, SLAB_TYPESAFE_BY_RCU,
-+			      NULL);
-+	buf = kmem_cache_alloc(c, GFP_KERNEL);
-+	saved_ptr = buf;
-+	fill_with_garbage(buf, size);
-+	buf_contents = kmalloc(size, GFP_KERNEL);
-+	if (!buf_contents)
-+		goto out;
-+	used_objects = kmalloc_array(maxiter, sizeof(void *), GFP_KERNEL);
-+	if (!used_objects) {
-+		kfree(buf_contents);
-+		goto out;
-+	}
-+	memcpy(buf_contents, buf, size);
-+	kmem_cache_free(c, buf);
-+	/*
-+	 * Run for a fixed number of iterations. If we never hit saved_ptr,
-+	 * assume the test passes.
-+	 */
-+	for (iter = 0; iter < maxiter; iter++) {
-+		buf = kmem_cache_alloc(c, GFP_KERNEL);
-+		used_objects[iter] = buf;
-+		if (buf == saved_ptr) {
-+			fail = memcmp(buf_contents, buf, size);
-+			for (i = 0; i <= iter; i++)
-+				kmem_cache_free(c, used_objects[i]);
-+			goto free_out;
-+		}
-+	}
-+
-+free_out:
-+	kmem_cache_destroy(c);
-+	kfree(buf_contents);
-+	kfree(used_objects);
-+out:
-+	*total_failures += fail;
-+	return 1;
-+}
-+
-+/*
-+ * Test kmem_cache allocation by creating caches of different sizes, with and
-+ * without constructors, with and without SLAB_TYPESAFE_BY_RCU.
-+ */
-+static int __init test_kmemcache(int *total_failures)
-+{
-+	int failures = 0, num_tests = 0;
-+	int i, flags, size;
-+	bool ctor, rcu, zero;
-+
-+	for (i = 0; i < 10; i++) {
-+		size = 8 << i;
-+		for (flags = 0; flags < 8; flags++) {
-+			ctor = flags & 1;
-+			rcu = flags & 2;
-+			zero = flags & 4;
-+			if (ctor & zero)
-+				continue;
-+			num_tests += do_kmem_cache_size(size, ctor, rcu, zero,
-+							&failures);
-+		}
-+	}
-+	REPORT_FAILURES_IN_FN();
-+	*total_failures += failures;
-+	return num_tests;
-+}
-+
-+/* Test the behavior of SLAB_TYPESAFE_BY_RCU caches of different sizes. */
-+static int __init test_rcu_persistent(int *total_failures)
-+{
-+	int failures = 0, num_tests = 0;
-+	int i, size;
-+
-+	for (i = 0; i < 10; i++) {
-+		size = 8 << i;
-+		num_tests += do_kmem_cache_rcu_persistent(size, &failures);
-+	}
-+	REPORT_FAILURES_IN_FN();
-+	*total_failures += failures;
-+	return num_tests;
-+}
-+
-+/*
-+ * Run the tests. Each test function returns the number of executed tests and
-+ * updates |failures| with the number of failed tests.
-+ */
-+static int __init test_meminit_init(void)
-+{
-+	int failures = 0, num_tests = 0;
-+
-+	num_tests += test_pages(&failures);
-+	num_tests += test_kvmalloc(&failures);
-+	num_tests += test_kmemcache(&failures);
-+	num_tests += test_rcu_persistent(&failures);
-+
-+	if (failures == 0)
-+		pr_info("all %d tests passed!\n", num_tests);
-+	else
-+		pr_info("failures: %d out of %d\n", failures, num_tests);
-+
-+	return failures ? -EINVAL : 0;
-+}
-+module_init(test_meminit_init);
-+
-+MODULE_LICENSE("GPL");
--- 
-2.22.0.rc1.311.g5d7573a151-goog
+But it could also be interesting for running a container having fedora
+on ubuntu or suse or the opposite.
+
+How it will work? Will it work? Ask Casey.
+
+just my 2 pennies
+Jos=C3=A9 Bollo
+
+> Can't name names, but there have been multiple requests.
+>=20
+> > how would it be used, =20
+>=20
+> As mentioned above, Smack for system separation, AppArmor for
+> application isolation.
+>=20
+> > what does it provide that isn't already possible in the absence of
+> > it. =20
+>=20
+> It's not necessary that something be impossible to do any
+> other way. The question should be whether this provides for
+> a better way to achieve the goals, and this does that.
+> If I tried the come up with something that's impossible I
+> would expect the usual "you can do that with SELinux policy"
+> argument. We know we can do things. We want to have the tools
+> to do them better.
+>=20
+> > Also, Ubuntu fully upstreamed all of their changes to AppArmor,
+> > would this still suffice to enable stacking of AppArmor or do they
+> > rely on hooks that are not handled here? =20
+>=20
+> Some amount of merging will likely be required. But that's
+> always going to be true with parallel development tracks.
+> That's why we have git!
+>=20
+> > Please explain the cost of the change - what do we pay in terms of
+> > memory, runtime, or other overheads in order to support this
+> > change? =20
+>=20
+> Do you have particular benchmarks you want to see?
+> When I've supplied numbers in the past they have not
+> been remarked on.
+>=20
+> > =20
+> >>
+> >> A new process attribute identifies which security module
+> >> information should be reported by SO_PEERSEC and the
+> >> /proc/.../attr/current interface. This is provided by
+> >> /proc/.../attr/display. Writing the name of the security
+> >> module desired to this interface will set which LSM hooks
+> >> will be called for this information. The first security
+> >> module providing the hooks will be used by default. =20
+> >
+> > Doesn't this effectively undo making the hooks read-only after
+> > init, at least for the subset involved?=C2=A0 What are the security
+> > implications thereof? =20
+>=20
+> Any mechanism, be it a separate set of hooks, a name used to
+> do list look ups, or an sophisticated hash scheme will have that
+> impact for the processes that use it. This scheme has the best
+> performance profile of the mechanisms I experimented with and
+> avoids all sorts of special cases.
+>=20
+> > =20
+> >> The use of integer based security tokens (secids) is
+> >> generally (but not completely) replaced by a structure
+> >> lsm_export. The lsm_export structure can contain information
+> >> for each of the security modules that export information
+> >> outside the LSM layer.
+> >>
+> >> The LSM interfaces that provide "secctx" text strings
+> >> have been changed to use a structure "lsm_context"
+> >> instead of a pointer/length pair. In some cases the
+> >> interfaces used a "char *" pointer and in others a
+> >> "void *". This was necessary to ensure that the correct
+> >> release mechanism for the text is used. It also makes
+> >> many of the interfaces cleaner.
+> >>
+> >> https://github.com/cschaufler/lsm-stacking.git#stack-5.2-v1-apparmor
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >> =C2=A0 drivers/android/binder.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 25 ++-
+> >> =C2=A0 fs/kernfs/dir.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 +-
+> >> =C2=A0 fs/kernfs/inode.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 31 ++-
+> >> =C2=A0 fs/kernfs/kernfs-internal.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +-
+> >> =C2=A0 fs/nfs/inode.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 13 +-
+> >> =C2=A0 fs/nfs/internal.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0=C2=A0 8 +-
+> >> =C2=A0 fs/nfs/nfs4proc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 17 +-
+> >> =C2=A0 fs/nfs/nfs4xdr.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 16 +-
+> >> =C2=A0 fs/nfsd/nfs4proc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0 8 +-
+> >> =C2=A0 fs/nfsd/nfs4xdr.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 14 +-
+> >> =C2=A0 fs/nfsd/vfs.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 7 +-
+> >> =C2=A0 fs/proc/base.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> >> =C2=A0 include/linux/cred.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 3 +-
+> >> =C2=A0 include/linux/lsm_hooks.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 91 +++++----
+> >> =C2=A0 include/linux/nfs4.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 8 +-
+> >> =C2=A0 include/linux/security.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 133 +++++++++----
+> >> =C2=A0 include/net/af_unix.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+=C2=A0 2 +-
+> >> =C2=A0 include/net/netlabel.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 10 =
++-
+> >> =C2=A0 include/net/scm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 14 +-
+> >> =C2=A0 kernel/audit.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 43 ++--
+> >> =C2=A0 kernel/audit.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 9 +-
+> >> =C2=A0 kernel/auditfilter.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 6 +-
+> >> =C2=A0 kernel/auditsc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 77 ++++----
+> >> =C2=A0 kernel/cred.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 15 +-
+> >> =C2=A0 net/ipv4/cipso_ipv4.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 =
+13 +-
+> >> =C2=A0 net/ipv4/ip_sockglue.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 12 =
++-
+> >> =C2=A0 net/netfilter/nf_conntrack_netlink.c=C2=A0=C2=A0=C2=A0 |=C2=A0 =
+29 ++-
+> >> =C2=A0 net/netfilter/nf_conntrack_standalone.c |=C2=A0 16 +-
+> >> =C2=A0 net/netfilter/nfnetlink_queue.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 38 ++--
+> >> =C2=A0 net/netfilter/nft_meta.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 13 +-
+> >> =C2=A0 net/netfilter/xt_SECMARK.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 14 +-
+> >> =C2=A0 net/netlabel/netlabel_kapi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 5 +-
+> >> =C2=A0 net/netlabel/netlabel_unlabeled.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 101 +++++-----
+> >> =C2=A0 net/netlabel/netlabel_unlabeled.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0 2 +-
+> >> =C2=A0 net/netlabel/netlabel_user.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 13 +-
+> >> =C2=A0 net/netlabel/netlabel_user.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
+> >> =C2=A0 net/unix/af_unix.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0 6 +-
+> >> =C2=A0 security/apparmor/audit.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +-
+> >> =C2=A0 security/apparmor/include/audit.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0 2 +-
+> >> =C2=A0 security/apparmor/include/net.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 +-
+> >> =C2=A0 security/apparmor/include/secid.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0 9 +-
+> >> =C2=A0 security/apparmor/lsm.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 64 +++---
+> >> =C2=A0 security/apparmor/secid.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 42 ++--
+> >> =C2=A0 security/integrity/ima/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 14 +-
+> >> =C2=A0 security/integrity/ima/ima_api.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0=C2=A0 9 +-
+> >> =C2=A0 security/integrity/ima/ima_appraise.c=C2=A0=C2=A0 |=C2=A0=C2=A0=
+ 6 +-
+> >> =C2=A0 security/integrity/ima/ima_main.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0 34 ++--
+> >> =C2=A0 security/integrity/ima/ima_policy.c=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 19 +-
+> >> =C2=A0 security/security.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 338
+> >> +++++++++++++++++++++++++++-----
+> >> security/selinux/hooks.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 259
+> >> ++++++++++++------------ security/selinux/include/audit.h
+> >> |=C2=A0=C2=A0 5 +- security/selinux/include/objsec.h=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 42 +++-
+> >> security/selinux/netlabel.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 25 +--
+> >> security/selinux/ss/services.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 18 +-
+> >> security/smack/smack.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 18 ++
+> >> security/smack/smack_lsm.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 238
+> >> +++++++++++----------- security/smack/smack_netfilter.c=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> >> 8 +- security/smack/smackfs.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 12 +- 58 files
+> >> changed, 1217 insertions(+), 779 deletions(-)=20
+> > =20
 
