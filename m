@@ -3,117 +3,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C0EC2BCA1
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jun 2019 15:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C49DC2BCA1
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jun 2019 15:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C43582133D
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jun 2019 15:26:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C8072089E
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jun 2019 15:31:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729939AbfFGP0Y (ORCPT
+        id S1729834AbfFGPbL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Jun 2019 11:26:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47826 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729840AbfFGP0P (ORCPT
+        Fri, 7 Jun 2019 11:31:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57960 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728071AbfFGPbL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:26:15 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x57FPEE9029322
-        for <linux-security-module@vger.kernel.org>; Fri, 7 Jun 2019 11:26:13 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sytj5r1ry-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 07 Jun 2019 11:26:13 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 7 Jun 2019 16:26:11 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 7 Jun 2019 16:26:09 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x57FQ89940304766
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 7 Jun 2019 15:26:08 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1B397A4062;
-        Fri,  7 Jun 2019 15:26:08 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 066E1A405B;
-        Fri,  7 Jun 2019 15:26:07 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.81.48])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  7 Jun 2019 15:26:06 +0000 (GMT)
-Subject: Re: [PATCH v3 2/2] ima: add enforce-evm and log-evm modes to
- strictly check EVM status
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        dmitry.kasatkin@huawei.com, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Fri, 07 Jun 2019 11:25:56 -0400
-In-Reply-To: <773c3301-7861-f28b-813a-1f2ff657bae8@huawei.com>
-References: <20190606112620.26488-1-roberto.sassu@huawei.com>
-         <20190606112620.26488-3-roberto.sassu@huawei.com>
-         <1559917462.4278.253.camel@linux.ibm.com>
-         <93459fe8-f9b6-fe45-1ca7-2efb8854dc8b@huawei.com>
-         <1559920112.4278.264.camel@linux.ibm.com>
-         <773c3301-7861-f28b-813a-1f2ff657bae8@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19060715-0020-0000-0000-000003481BC5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19060715-0021-0000-0000-0000219B3678
-Message-Id: <1559921156.4278.276.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-07_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906070107
+        Fri, 7 Jun 2019 11:31:11 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C6460C057E37;
+        Fri,  7 Jun 2019 15:31:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DE9345C70A;
+        Fri,  7 Jun 2019 15:30:56 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+In-Reply-To: <20190607151228.GA1872258@magnolia>
+References: <20190607151228.GA1872258@magnolia> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <155991706083.15579.16359443779582362339.stgit@warthog.procyon.org.uk>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/13] uapi: General notification ring definitions [ver #4]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <27688.1559921390.1@warthog.procyon.org.uk>
+From:   David Howells <dhowells@redhat.com>
+Date:   Fri, 07 Jun 2019 16:30:51 +0100
+Message-ID: <27772.1559921451@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 07 Jun 2019 15:31:11 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2019-06-07 at 17:14 +0200, Roberto Sassu wrote:
-> On 6/7/2019 5:08 PM, Mimi Zohar wrote:
-> > On Fri, 2019-06-07 at 16:40 +0200, Roberto Sassu wrote:
-> >>> On Thu, 2019-06-06 at 13:26 +0200, Roberto Sassu wrote:
-> > 
-> >>>> Although this choice appears legitimate, it might not be suitable for
-> >>>> hardened systems, where the administrator expects that access is denied if
-> >>>> there is any error. An attacker could intentionally delete the EVM keys
-> >>>> from the system and set the file digest in security.ima to the actual file
-> >>>> digest so that the final appraisal status is INTEGRITY_PASS.
-> >>>
-> >>> Assuming that the EVM HMAC key is stored in the initramfs, not on some
-> >>> other file system, and the initramfs is signed, INTEGRITY_UNKNOWN
-> >>> would be limited to the rootfs filesystem.
-> >>
-> >> There is another issue. The HMAC key, like the public keys, should be
-> >> loaded when appraisal is disabled. This means that we have to create a
-> >> trusted key at early boot and defer the unsealing.
-> > 
-> > There is no need for IMA to appraise the public key file signature,
-> > since the certificate is signed by a key on the builtin/secondary
-> > trusted keyring.  With CONFIG_IMA_LOAD_X509 enabled, the public key
-> > can be loaded onto the IMA keyring with IMA-appraisal enabled, but
-> > without verifying the file signature.
-> 
-> Yes, but access to the files containing the master key and the EVM key
-> is denied if appraisal is enabled.
+> I'm starting by reading the uapi changes and the sample program...
 
-This is a key loading ordering issue.  Assuming you load the IMA key
-first, you should be able to verify the master and EVM keys.
+If you look in:
 
-Mimi
+  [PATCH 05/13] General notification queue with user mmap()'able ring buffer
 
+you'll find the API document that goes in Documentation/
+
+David
