@@ -2,115 +2,93 @@ Return-Path: <SRS0=UuNM=UI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B61C28EBD
-	for <linux-security-module@archiver.kernel.org>; Sun,  9 Jun 2019 06:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE8CC468BE
+	for <linux-security-module@archiver.kernel.org>; Sun,  9 Jun 2019 17:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF4EC20840
-	for <linux-security-module@archiver.kernel.org>; Sun,  9 Jun 2019 06:43:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9DC3206C3
+	for <linux-security-module@archiver.kernel.org>; Sun,  9 Jun 2019 17:07:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LzAAe+Tk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbfFIGmm (ORCPT
+        id S2389084AbfFIRGv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 9 Jun 2019 02:42:42 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:62795 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbfFIGmm (ORCPT
+        Sun, 9 Jun 2019 13:06:51 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42125 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388593AbfFIRGu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 9 Jun 2019 02:42:42 -0400
-Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x596fQHD002128;
-        Sun, 9 Jun 2019 15:41:26 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
- Sun, 09 Jun 2019 15:41:26 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x596fI6M002079
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sun, 9 Jun 2019 15:41:26 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: [PATCH] tomoyo: Don't check open/getattr permission on sockets.
-To:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc:     syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
-References: <0000000000004f43fa058a97f4d3@google.com>
- <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <1b5722cc-adbc-035d-5ca1-9aa56e70d312@I-love.SAKURA.ne.jp>
-Date:   Sun, 9 Jun 2019 15:41:18 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Sun, 9 Jun 2019 13:06:50 -0400
+Received: by mail-lj1-f195.google.com with SMTP id t28so5790523lje.9;
+        Sun, 09 Jun 2019 10:06:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gGV10idHgx5OoEyeZ70v3PUsySFkt989S84U24GlNss=;
+        b=LzAAe+TkzJPbUtppaHPrh0qxTyQUI3cNCyMFguy/crPom1tlzYEVhEsITRGvJYeBpu
+         iDaxT3B35QLLIHAiayaCkd5OGqrhnjkw2TcQAJwhZggcQnClLYSAdnN2T3WBNA74HitS
+         MGmwsj6Vfh/x7XkOZCaUF6qa1PqabDeiyXqF0nVbKhblgq/pMa9eMEOVizjLF3ZR4LTP
+         YeFLgUaSVeJ0SyVjhUauyM1eLMkK+VS/jjjsAWqLctBzIMsy8bS3Yaft7+WVKIWQwhdA
+         syCFRsEXKxDzecAe15RLwdbhuUc5Ujk+SbC34Ccl3z97YfkL7R6Gr7XCffSDQdrZSqtO
+         RLpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gGV10idHgx5OoEyeZ70v3PUsySFkt989S84U24GlNss=;
+        b=NBYOyrMGm4lCuymCRC3UGSlVJZzkYZeB2YV0doDJegg3xiUqhcBgzNyDr/GP7N13ix
+         SbfSknZap3r7WUYQ7bfovuiegIfeliwlYUbPYURay6ayVdIQ0GVcvAYFhlM53wb2+Zfh
+         OIc1KtfbP50lkCU4YwUVTajqEqZCnBSfwDBBsCA9fwQBehJmW7IIhU8IaqB4Y/BXm0/W
+         YHQ3BlJefly6V/mUln2/HFtYd83dMbLbmCX7f2Yv6iTdHnpHoiVN+R8XEFgGmSrqmF5G
+         TOXJuU7R7+Pv8/oyTV7dGU7ahF7xm8MweJ8SVuujnu+EBB7J3aS0Ci2HQXvnZls68ioA
+         sHMg==
+X-Gm-Message-State: APjAAAX8bjmTB86K8MkVvHI0ItMVahwtBR5oLQRhB5YIp0uAfrIsfXRz
+        HdNol5T6twOjxXk2KKikRjFKn728Ow4UV6oW5k8=
+X-Google-Smtp-Source: APXvYqwmYT6l3NGefpOw6K8jgYeDCFp0F9kke0M/LXAw5jD/n5BHG/ZJ6OJ9zMeOZML9jwSEoR1Bm+fE68AsfHTc3Ls=
+X-Received: by 2002:a2e:3a05:: with SMTP id h5mr23150927lja.114.1560100008157;
+ Sun, 09 Jun 2019 10:06:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190605083606.4209-1-janne.karhunen@gmail.com>
+ <9121835b-d6ac-c9d5-349a-1ef7024c6192@schaufler-ca.com> <CAE=NcrahPmzmB-xJwxzXqaPGtJY+ijbxV4wXz7K=y-ocw4Cmwg@mail.gmail.com>
+ <1edfbd72-f492-db17-8717-a8cfe30d9654@schaufler-ca.com> <CAHC9VhTzwPoxYPxYWn15ZQQwM6Q3wGJSRybb-zu_ZDA1xU6ziQ@mail.gmail.com>
+ <alpine.LRH.2.21.1906071043160.21512@namei.org> <CAHC9VhSrjVmnsAuXDmHVmsyDaEF10nsvdxq7VsfCsh=NfaOMQg@mail.gmail.com>
+ <alpine.LRH.2.21.1906080748010.24873@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1906080748010.24873@namei.org>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Sun, 9 Jun 2019 20:06:37 +0300
+Message-ID: <CAE=NcrYrBPZEkB==+n_PB539kwL7awRVuohWUpfTKCXAgKK0kA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] LSM: switch to blocking policy update notifiers
+To:     James Morris <jmorris@namei.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-syzbot is reporting that use of SOCKET_I()->sk from open() can result in
-use after free problem [1], for socket's inode is still reachable via
-/proc/pid/fd/n despite destruction of SOCKET_I()->sk already completed.
+On Sat, Jun 8, 2019 at 12:48 AM James Morris <jmorris@namei.org> wrote:
 
-But there is no point with calling security_file_open() on sockets
-because open("/proc/pid/fd/n", !O_PATH) on sockets fails with -ENXIO.
+> > simple fact that we started with one type of notifier for the LSM, and
+> > we are now switching to the other (and getting lucky that it is safe
+> > to do so for the existing callers) seems to lend some weight to the
+> > argument we may need both and adding "block"/"blocking"/etc. to the
+> > name has value.
+>
+> Fair enough.
 
-There is some point with calling security_inode_getattr() on sockets
-because stat("/proc/pid/fd/n") and fstat(open("/proc/pid/fd/n", O_PATH))
-are valid. If we want to access "struct sock"->sk_{family,type,protocol}
-fields, we will need to use security_socket_post_create() hook and
-security_inode_free() hook in order to remember these fields because
-security_sk_free() hook is called before the inode is destructed. But
-since information which can be protected by checking
-security_inode_getattr() on sockets is trivial, let's not be bothered by
-"struct inode"->i_security management.
-
-There is point with calling security_file_ioctl() on sockets. Since
-ioctl(open("/proc/pid/fd/n", O_PATH)) is invalid, security_file_ioctl()
-on sockets should remain safe.
-
-[1] https://syzkaller.appspot.com/bug?id=73d590010454403d55164cca23bd0565b1eb3b74
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>
----
- security/tomoyo/tomoyo.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 716c92e..9661b86 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -126,6 +126,9 @@ static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
-  */
- static int tomoyo_inode_getattr(const struct path *path)
- {
-+	/* It is not safe to call tomoyo_get_socket_name(). */
-+	if (path->dentry->d_inode && S_ISSOCK(path->dentry->d_inode->i_mode))
-+		return 0;
- 	return tomoyo_path_perm(TOMOYO_TYPE_GETATTR, path, NULL);
- }
- 
-@@ -316,6 +319,10 @@ static int tomoyo_file_open(struct file *f)
- 	/* Don't check read permission here if called from do_execve(). */
- 	if (current->in_execve)
- 		return 0;
-+	/* Sockets can't be opened by open(). */
-+	if (f->f_path.dentry->d_inode &&
-+	    S_ISSOCK(f->f_path.dentry->d_inode->i_mode))
-+		return 0;
- 	return tomoyo_check_open_permission(tomoyo_domain(), &f->f_path,
- 					    f->f_flags);
- }
--- 
-1.8.3.1
+Ok, I take this to mean we have an agreement to go with this variant.
+I will post the fixes to the Mimi's findings on top of this one
+tomorrow.
 
 
+--
+Janne
