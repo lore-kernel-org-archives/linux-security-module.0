@@ -1,94 +1,105 @@
-Return-Path: <SRS0=UuNM=UI=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=W9Cr=UJ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE8CC468BE
-	for <linux-security-module@archiver.kernel.org>; Sun,  9 Jun 2019 17:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3F4C468C1
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 07:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9DC3206C3
-	for <linux-security-module@archiver.kernel.org>; Sun,  9 Jun 2019 17:07:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LzAAe+Tk"
+	by mail.kernel.org (Postfix) with ESMTP id CF8C3206E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 07:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389084AbfFIRGv (ORCPT
+        id S2387714AbfFJHDK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 9 Jun 2019 13:06:51 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42125 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388593AbfFIRGu (ORCPT
+        Mon, 10 Jun 2019 03:03:10 -0400
+Received: from mga04.intel.com ([192.55.52.120]:3981 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387582AbfFJHDK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:06:50 -0400
-Received: by mail-lj1-f195.google.com with SMTP id t28so5790523lje.9;
-        Sun, 09 Jun 2019 10:06:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gGV10idHgx5OoEyeZ70v3PUsySFkt989S84U24GlNss=;
-        b=LzAAe+TkzJPbUtppaHPrh0qxTyQUI3cNCyMFguy/crPom1tlzYEVhEsITRGvJYeBpu
-         iDaxT3B35QLLIHAiayaCkd5OGqrhnjkw2TcQAJwhZggcQnClLYSAdnN2T3WBNA74HitS
-         MGmwsj6Vfh/x7XkOZCaUF6qa1PqabDeiyXqF0nVbKhblgq/pMa9eMEOVizjLF3ZR4LTP
-         YeFLgUaSVeJ0SyVjhUauyM1eLMkK+VS/jjjsAWqLctBzIMsy8bS3Yaft7+WVKIWQwhdA
-         syCFRsEXKxDzecAe15RLwdbhuUc5Ujk+SbC34Ccl3z97YfkL7R6Gr7XCffSDQdrZSqtO
-         RLpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gGV10idHgx5OoEyeZ70v3PUsySFkt989S84U24GlNss=;
-        b=NBYOyrMGm4lCuymCRC3UGSlVJZzkYZeB2YV0doDJegg3xiUqhcBgzNyDr/GP7N13ix
-         SbfSknZap3r7WUYQ7bfovuiegIfeliwlYUbPYURay6ayVdIQ0GVcvAYFhlM53wb2+Zfh
-         OIc1KtfbP50lkCU4YwUVTajqEqZCnBSfwDBBsCA9fwQBehJmW7IIhU8IaqB4Y/BXm0/W
-         YHQ3BlJefly6V/mUln2/HFtYd83dMbLbmCX7f2Yv6iTdHnpHoiVN+R8XEFgGmSrqmF5G
-         TOXJuU7R7+Pv8/oyTV7dGU7ahF7xm8MweJ8SVuujnu+EBB7J3aS0Ci2HQXvnZls68ioA
-         sHMg==
-X-Gm-Message-State: APjAAAX8bjmTB86K8MkVvHI0ItMVahwtBR5oLQRhB5YIp0uAfrIsfXRz
-        HdNol5T6twOjxXk2KKikRjFKn728Ow4UV6oW5k8=
-X-Google-Smtp-Source: APXvYqwmYT6l3NGefpOw6K8jgYeDCFp0F9kke0M/LXAw5jD/n5BHG/ZJ6OJ9zMeOZML9jwSEoR1Bm+fE68AsfHTc3Ls=
-X-Received: by 2002:a2e:3a05:: with SMTP id h5mr23150927lja.114.1560100008157;
- Sun, 09 Jun 2019 10:06:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190605083606.4209-1-janne.karhunen@gmail.com>
- <9121835b-d6ac-c9d5-349a-1ef7024c6192@schaufler-ca.com> <CAE=NcrahPmzmB-xJwxzXqaPGtJY+ijbxV4wXz7K=y-ocw4Cmwg@mail.gmail.com>
- <1edfbd72-f492-db17-8717-a8cfe30d9654@schaufler-ca.com> <CAHC9VhTzwPoxYPxYWn15ZQQwM6Q3wGJSRybb-zu_ZDA1xU6ziQ@mail.gmail.com>
- <alpine.LRH.2.21.1906071043160.21512@namei.org> <CAHC9VhSrjVmnsAuXDmHVmsyDaEF10nsvdxq7VsfCsh=NfaOMQg@mail.gmail.com>
- <alpine.LRH.2.21.1906080748010.24873@namei.org>
-In-Reply-To: <alpine.LRH.2.21.1906080748010.24873@namei.org>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Sun, 9 Jun 2019 20:06:37 +0300
-Message-ID: <CAE=NcrYrBPZEkB==+n_PB539kwL7awRVuohWUpfTKCXAgKK0kA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] LSM: switch to blocking policy update notifiers
-To:     James Morris <jmorris@namei.org>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 10 Jun 2019 03:03:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 00:03:09 -0700
+X-ExtLoop1: 1
+Received: from bxing-mobl.amr.corp.intel.com (HELO ubt18m.amr.corp.intel.com) ([10.255.90.159])
+  by fmsmga001.fm.intel.com with ESMTP; 10 Jun 2019 00:03:08 -0700
+From:   Cedric Xing <cedric.xing@intel.com>
+To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
+Cc:     Cedric Xing <cedric.xing@intel.com>,
+        jarkko.sakkinen@linux.intel.com, luto@kernel.org,
+        sds@tycho.nsa.gov, jmorris@namei.org, serge@hallyn.com,
+        paul@paul-moore.com, eparis@parisplace.org, jethro@fortanix.com,
+        dave.hansen@intel.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        nhorman@redhat.com, pmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, kai.svahn@intel.com,
+        bp@alien8.de, josh@joshtriplett.org, kai.huang@intel.com,
+        rientjes@google.com, william.c.roberts@intel.com,
+        philip.b.tricca@intel.com
+Subject: [RFC PATCH v1 0/3] security/x86/sgx: SGX specific LSM hooks
+Date:   Mon, 10 Jun 2019 00:03:03 -0700
+Message-Id: <cover.1560131039.git.cedric.xing@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jun 8, 2019 at 12:48 AM James Morris <jmorris@namei.org> wrote:
+This series intends to make the new SGX subsystem and the existing LSM
+architecture work together smoothly so that, say, SGX cannot be abused to work
+around restrictions set forth by LSM. This series applies on top of Jarkko
+Sakkinen's SGX series v20 (https://lkml.org/lkml/2019/4/17/344), where abundant
+details of this SGX/LSM problem could be found.
 
-> > simple fact that we started with one type of notifier for the LSM, and
-> > we are now switching to the other (and getting lucky that it is safe
-> > to do so for the existing callers) seems to lend some weight to the
-> > argument we may need both and adding "block"/"blocking"/etc. to the
-> > name has value.
->
-> Fair enough.
+This series is an alternative to Sean Christopherson's recent RFC series
+(https://lkml.org/lkml/2019/6/5/1070) that was trying to solve the same
+problem. The key problem is for LSM to determine the "maximal (most permissive)
+protection" allowed for individual enclave pages. Sean's approach is to take
+that from user mode code as a parameter of the EADD ioctl, validate it with LSM
+ahead of time, and then enforce it inside the SGX subsystem. The major
+disadvantage IMHO is that a priori knowledge of "maximal protection" is needed,
+but it isn't always available in certain use cases. In fact, it is an unusual
+approach to take "maximal protection" from user code, as what SELinux is doing
+today is to determine "maximal protection" of a vma using attributes associated
+with vma->vm_file instead. When it comes to enclaves, vma->vm_file always
+points /dev/sgx/enclave, so what's missing is a new way for LSM modules to
+remember origins of enclave pages so that they don't solely depend on
+vma->vm_file to determine "maximal protection".
 
-Ok, I take this to mean we have an agreement to go with this variant.
-I will post the fixes to the Mimi's findings on top of this one
-tomorrow.
+This series takes advantage of the fact that enclave pages cannot be remapped
+(to different linear address), therefore the pair of { vma->vm_file,
+linear_address } can be used to uniquely identify an enclave page. Then by
+notifying LSM on creation of every enclave page (via a new LSM hook -
+security_enclave_load), LSM modules would be able to track origin and
+protection changes of every page, hence be able to judge correctly upon
+mmap/mprotect requests.
 
+Cedric Xing (3):
+  LSM/x86/sgx: Add SGX specific LSM hooks
+  LSM/x86/sgx: Implement SGX specific hooks in SELinux
+  LSM/x86/sgx: Call new LSM hooks from SGX subsystem
 
---
-Janne
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c |  72 +++++-
+ arch/x86/kernel/cpu/sgx/driver/main.c  |  12 +-
+ include/linux/lsm_hooks.h              |  33 +++
+ include/linux/security.h               |  26 +++
+ security/security.c                    |  21 ++
+ security/selinux/Makefile              |   2 +
+ security/selinux/hooks.c               |  77 ++++++-
+ security/selinux/include/intel_sgx.h   |  18 ++
+ security/selinux/include/objsec.h      |   3 +
+ security/selinux/intel_sgx.c           | 292 +++++++++++++++++++++++++
+ 10 files changed, 545 insertions(+), 11 deletions(-)
+ create mode 100644 security/selinux/include/intel_sgx.h
+ create mode 100644 security/selinux/intel_sgx.c
+
+-- 
+2.17.1
+
