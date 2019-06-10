@@ -2,160 +2,141 @@ Return-Path: <SRS0=W9Cr=UJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B852EC28D16
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 10:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1ED7C31E41
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 15:06:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C2452085A
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 10:20:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C58582085A
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 15:06:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389193AbfFJKUY (ORCPT
+        id S2391059AbfFJPGS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Jun 2019 06:20:24 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36550 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388708AbfFJKUY (ORCPT
+        Mon, 10 Jun 2019 11:06:18 -0400
+Received: from mga01.intel.com ([192.55.52.88]:38253 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389368AbfFJPGS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Jun 2019 06:20:24 -0400
-Received: by mail-ot1-f67.google.com with SMTP id r6so3502323oti.3
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2019 03:20:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OgSu+RcyF05gzutIFikMSZWvKrevwvmXF1eWvD0Yj/Q=;
-        b=Kkn81YVA73N4GoC2r8jaJs31/M0mhzuLGQ59IYzzwpx76SjARdteLl0sTUchZpjkKn
-         OnMvfIfny4RyBLfzRFPpcSM6rc2pbW3bJvW9mTSMiLbWM8nfPWNppo0+08XmcyqvDfAq
-         SSklQ0SIDnbMA6HfmKxctvYlFjcT1JbUIHFBh5iocx2QtXvdBCyZdjmK+g7VLuy9/jIY
-         8nPEXzYzoLJpK4VplWDR3TxzYgYrnOwLg4XLNK2AiOxwIDZJQKNKrm+eIV3Q05+2OCzP
-         fXEf+2DcP7FEw4GfVnkWRyTzladi0o0tuFhoOEfqXeOr15/Qh/zcih0VfuqyGfqvac+O
-         ZqFA==
-X-Gm-Message-State: APjAAAW/rIHaXlhQvTO81gGxFB7mMDNmTbYvccA77lpp/Bged/AA61NX
-        pSYCpboUgDFngzn6t7fkwdLxXZx8l7Mg0f+Q3aPZAbvYP85g6g==
-X-Google-Smtp-Source: APXvYqw9jyUJEnRpyEgpHRmm9Z8RwZ9lkQLvqAltCXZQs9FqKAY5Xd+YP1REENwwbcGHbOehU+5bfLdTmNCYxLQUW0M=
-X-Received: by 2002:a9d:6c54:: with SMTP id g20mr7405767otq.66.1560162023325;
- Mon, 10 Jun 2019 03:20:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190602165101.25079-1-casey@schaufler-ca.com> <20190602165101.25079-36-casey@schaufler-ca.com>
-In-Reply-To: <20190602165101.25079-36-casey@schaufler-ca.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Mon, 10 Jun 2019 12:20:12 +0200
-Message-ID: <CAFqZXNuDLKSnnJcH+G09CfypqQ2MtKJbU3Rt+kZc9-KmpK17uA@mail.gmail.com>
-Subject: Re: [PATCH 35/58] LSM: Limit calls to certain module hooks
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>, selinux@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        penguin-kernel@i-love.sakura.ne.jp,
+        Mon, 10 Jun 2019 11:06:18 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 08:06:17 -0700
+X-ExtLoop1: 1
+Received: from agusev-mobl.ger.corp.intel.com (HELO localhost) ([10.249.46.248])
+  by fmsmga006.fm.intel.com with ESMTP; 10 Jun 2019 08:06:05 -0700
+Date:   Mon, 10 Jun 2019 18:06:00 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
         Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Content-Type: text/plain; charset="UTF-8"
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v2 1/5] mm: Introduce vm_ops->may_mprotect()
+Message-ID: <20190610150600.GA3752@linux.intel.com>
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+ <20190606021145.12604-2-sean.j.christopherson@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606021145.12604-2-sean.j.christopherson@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey,
+On Wed, Jun 05, 2019 at 07:11:41PM -0700, Sean Christopherson wrote:
+> SGX will use the may_mprotect() hook to prevent userspace from
+> circumventing various security checks, e.g. Linux Security Modules.
+> Naming it may_mprotect() instead of simply mprotect() is intended to
+> reflect the hook's purpose as a way to gate mprotect() as opposed to
+> a wholesale replacement.
 
-On Sun, Jun 2, 2019 at 6:53 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> LSM hooks dealing with security context strings should
-> only be called for one security module. Add call macros
-> that invoke a single module hook and us in for those cases.
->
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+"This commit adds may_mprotect() to struct vm_operations_struct, which
+can be used to ask from the owner of a VMA if mprotect() is allowed."
+
+This would be more appropriate statement because that is what the code
+change aims for precisely. I did not even understand what you meant by
+gating in this context. I would leave SGX and LSM's (and especially
+"various security checks", which means abssolutely nothing) out of the
+first paragraph completely.
+
+> Enclaves are built by copying data from normal memory into the Enclave
+> Page Cache (EPC).  Due to the nature of SGX, the EPC is represented by a
+> single file that must be MAP_SHARED, i.e. mprotect() only ever sees a
+> MAP_SHARED vm_file that references single file path.  Furthermore, all
+> enclaves will need read, write and execute pages in the EPC.
+
+I would just say that "Due to the fact that EPC is delivered as IO
+memory from the preboot firmware, it can be only mapped as MAP_SHARED".
+It is what it is.
+
+> As a result, LSM policies cannot be meaningfully applied, e.g. an LSM
+> can deny access to the EPC as a whole, but can't deny PROT_EXEC on page
+> that originated in a non-EXECUTE file (which is long gone by the time
+> mprotect() is called).
+
+I have hard time following what is paragraph is trying to say.
+
+> By hooking mprotect(), SGX can make explicit LSM upcalls while an
+> enclave is being built, i.e. when the kernel has a handle to origin of
+> each enclave page, and enforce the result of the LSM policy whenever
+> userspace maps the enclave page in the future.
+
+"LSM policy whenever calls mprotect()"? I'm no sure why you mean by
+mapping here and if there is any need to talk about future. Isn't this
+needed now?
+
+> Alternatively, SGX could play games with MAY_{READ,WRITE,EXEC}, but
+> that approach is quite ugly, e.g. would require userspace to call an
+> SGX ioctl() prior to using mprotect() to extend a page's protections.
+
+Instead of talking "playing games" I would state what could be done with
+VM_MAY{READ,WRITE,EXEC} and why it is bad. Leaves questions otherwise.
+
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > ---
->  security/security.c | 32 ++++++++++++++++++++++++++++----
->  1 file changed, 28 insertions(+), 4 deletions(-)
->
-> diff --git a/security/security.c b/security/security.c
-> index 69983ad68233..365970f2501d 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -698,6 +698,16 @@ int lsm_superblock_alloc(struct super_block *sb)
->                         P->hook.FUNC(__VA_ARGS__);              \
->         } while (0)
->
-> +#define call_one_void_hook(FUNC, ...)                          \
-> +       do {                                                    \
-> +               struct security_hook_list *P;                   \
-> +                                                               \
-> +               hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
-> +                       P->hook.FUNC(__VA_ARGS__);              \
-> +                       break;                                  \
-> +               }                                               \
-> +       } while (0)
-> +
->  #define call_int_hook(FUNC, IRC, ...) ({                       \
->         int RC = IRC;                                           \
->         do {                                                    \
-> @@ -712,6 +722,19 @@ int lsm_superblock_alloc(struct super_block *sb)
->         RC;                                                     \
->  })
->
-> +#define call_one_int_hook(FUNC, IRC, ...) ({                   \
-> +       int RC = IRC;                                           \
-> +       do {                                                    \
-> +               struct security_hook_list *P;                   \
-> +                                                               \
-> +               hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
-> +                       RC = P->hook.FUNC(__VA_ARGS__);         \
-> +                       break;                                  \
-> +               }                                               \
-> +       } while (0);                                            \
-> +       RC;                                                     \
-> +})
-> +
->  /* Security operations */
->
->  int security_binder_set_context_mgr(struct task_struct *mgr)
-> @@ -1951,7 +1974,8 @@ EXPORT_SYMBOL(security_ismaclabel);
->
->  int security_secid_to_secctx(struct lsm_export *l, char **secdata, u32 *seclen)
->  {
-> -       return call_int_hook(secid_to_secctx, -EOPNOTSUPP, l, secdata, seclen);
-> +       return call_one_int_hook(secid_to_secctx, -EOPNOTSUPP, l, secdata,
-> +                                seclen);
->  }
->  EXPORT_SYMBOL(security_secid_to_secctx);
->
-> @@ -1959,13 +1983,13 @@ int security_secctx_to_secid(const char *secdata, u32 seclen,
->                              struct lsm_export *l)
->  {
->         lsm_export_init(l);
-> -       return call_int_hook(secctx_to_secid, 0, secdata, seclen, l);
-> +       return call_one_int_hook(secctx_to_secid, 0, secdata, seclen, l);
->  }
->  EXPORT_SYMBOL(security_secctx_to_secid);
->
->  void security_release_secctx(char *secdata, u32 seclen)
->  {
-> -       call_void_hook(release_secctx, secdata, seclen);
-> +       call_one_void_hook(release_secctx, secdata, seclen);
->  }
->  EXPORT_SYMBOL(security_release_secctx);
->
-> @@ -2090,7 +2114,7 @@ EXPORT_SYMBOL(security_sock_rcv_skb);
->  int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
->                                       int __user *optlen, unsigned len)
->  {
-> -       return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
-> +       return call_one_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
->                                 optval, optlen, len);
->  }
->
-> --
-> 2.19.1
->
+>  include/linux/mm.h |  2 ++
+>  mm/mprotect.c      | 15 +++++++++++----
+>  2 files changed, 13 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 0e8834ac32b7..a697996040ac 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -458,6 +458,8 @@ struct vm_operations_struct {
+>  	void (*close)(struct vm_area_struct * area);
+>  	int (*split)(struct vm_area_struct * area, unsigned long addr);
+>  	int (*mremap)(struct vm_area_struct * area);
+> +	int (*may_mprotect)(struct vm_area_struct * area, unsigned long start,
+> +			    unsigned long end, unsigned long prot);
 
-Shouldn't dentry_init_security() use call_one_int_hook() as well? It
-also returns a context string.
+Could be just boolean.
 
-Thanks,
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Software Engineer, Security Technologies
-Red Hat, Inc.
+/Jarkko
