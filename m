@@ -2,109 +2,235 @@ Return-Path: <SRS0=W9Cr=UJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C461C43218
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 18:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C36C4321A
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 18:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54AE220820
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 18:17:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1C7E2082E
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 18:22:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="CWrMCQpE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbfFJSRq (ORCPT
+        id S2387710AbfFJSWS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Jun 2019 14:17:46 -0400
-Received: from mga14.intel.com ([192.55.52.115]:45636 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726214AbfFJSRq (ORCPT
+        Mon, 10 Jun 2019 14:22:18 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38889 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387501AbfFJSWR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Jun 2019 14:17:46 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 11:17:45 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by FMSMGA003.fm.intel.com with ESMTP; 10 Jun 2019 11:17:44 -0700
-Date:   Mon, 10 Jun 2019 11:17:44 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        Mon, 10 Jun 2019 14:22:17 -0400
+Received: by mail-pg1-f193.google.com with SMTP id v11so5463132pgl.5
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2019 11:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=QY6i0yhlosYKBzQSKH6aCBy2mSO5xg+k21z4/T/g/QU=;
+        b=CWrMCQpEHfiGDH0/APPguYvej1X08PVZNfvMJvyD21ZEb3eivAPQzuJ8tMNj9FYVca
+         jql6TF1mR9e/BXtgpx/0lzJODxMFkITGUR41xdyHsLIfqch+LeMsbWN6NTv+5wuIWO5w
+         k/dR+pBTAAG82Or6u+B72UnwccZfrBi5DcRsbNOYJG2T8j+OXK5OPjgqSIL9e2LlYKMm
+         E6jBgwWnOtQ1n28ITAzOc9zWCcVIXOkz/DmXY2lcbUsRKz5yMVS59ue8TFiNaZ72DAS/
+         mey4HI5P1ReXAsJ8bNndgX98pMZXNuvfQyLKjH8LS31IW3AfyzhvNold+rai1GTNyc8r
+         ysHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=QY6i0yhlosYKBzQSKH6aCBy2mSO5xg+k21z4/T/g/QU=;
+        b=GjNLgYPxrrHv9CY1gJjjWOJHZYHEc4APf2ahVNnxH70IeDZaML64tkkOXMeRjCeM3W
+         8WpbzxOcxRWuAK/rzuw2ze8JtoAjo4bmZfdlzdmxi6F5C1Wciwu7A38oY6dbM6P/cqD2
+         +4ZReOZNzT1N452pFWBnAnNng0Dv4ecRczGv3w/Og/nzB/E6E50iM0hXbjPTztX2XOTF
+         EBb90umMwDpC989FsT9WgGgMqf5F/j4/3fnDnfT0pvptDkORUwYvFRCKanKaYkKC7p4R
+         NaAlr6bCg8VYt/3d7fdpsk8UI2R4tvcYURT7r6UcakKGoxEvkcAdDWskQVBdQpTXKdOf
+         qH1A==
+X-Gm-Message-State: APjAAAX03z/84ABxF5Q2reXs5kGfMbZVyR3kl4kY6kexQLy5Op2Ay+3f
+        4epRycZ5RATpuisvzuvbY8JDYQ==
+X-Google-Smtp-Source: APXvYqxGA1nZyul0VfHAaNroAGuQ2k9Yaas0jtGOC35rwVfjQ8fqFhDRbECVetl1ZMn+hm+FtIhQTw==
+X-Received: by 2002:a17:90a:a410:: with SMTP id y16mr22740984pjp.62.1560190936876;
+        Mon, 10 Jun 2019 11:22:16 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b007:4b59:4135:ea27:71a0:a536? ([2600:1010:b007:4b59:4135:ea27:71a0:a536])
+        by smtp.gmail.com with ESMTPSA id d35sm10598703pgm.31.2019.06.10.11.22.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 11:22:15 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC][PATCH 00/13] Mount, FS, Block and Keyrings notifications [ver #4]
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16F203)
+In-Reply-To: <dac74580-5b48-86e4-8222-cac29a9f541d@schaufler-ca.com>
+Date:   Mon, 10 Jun 2019 11:22:13 -0700
 Cc:     Andy Lutomirski <luto@kernel.org>,
-        Cedric Xing <cedric.xing@intel.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        USB list <linux-usb@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
-        Shay Katz-zamir <shay.katz-zamir@intel.com>,
-        Haitao Huang <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kai Svahn <kai.svahn@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Kai Huang <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        William Roberts <william.c.roberts@intel.com>,
-        Philip Tricca <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH v2 2/5] x86/sgx: Require userspace to define enclave
- pages' protection bits
-Message-ID: <20190610181744.GH15995@linux.intel.com>
-References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
- <20190606021145.12604-3-sean.j.christopherson@intel.com>
- <20190610152717.GB3752@linux.intel.com>
- <20190610161532.GC15995@linux.intel.com>
- <20190610174506.GB13732@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190610174506.GB13732@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        raven@themaw.net, Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E0925E1F-E5F2-4457-8704-47B6E64FE3F3@amacapital.net>
+References: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <be966d9c-e38d-7a30-8d80-fad5f25ab230@tycho.nsa.gov> <0cf7a49d-85f6-fba9-62ec-a378e0b76adf@schaufler-ca.com> <CALCETrX5O18q2=dUeC=hEtK2=t5KQpGBy9XveHxFw36OqkbNOg@mail.gmail.com> <dac74580-5b48-86e4-8222-cac29a9f541d@schaufler-ca.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 10, 2019 at 08:45:06PM +0300, Jarkko Sakkinen wrote:
-> On Mon, Jun 10, 2019 at 09:15:33AM -0700, Sean Christopherson wrote:
-> > > 'flags' should would renamed as 'secinfo_flags_mask' even if the name is
-> > > longish. It would use the same values as the SECINFO flags. The field in
-> > > struct sgx_encl_page should have the same name. That would express
-> > > exactly relation between SECINFO and the new field. I would have never
-> > > asked on last iteration why SECINFO is not enough with a better naming.
-> > 
-> > No, these flags do not impact the EPCM protections in any way.  Userspace
-> > can extend the EPCM protections without going through the kernel.  The
-> > protection flags for an enclave page impact VMA/PTE protection bits.
-> > 
-> > IMO, it is best to treat the EPCM as being completely separate from the
-> > kernel's EPC management.
-> 
-> It is a clumsy API if permissions are not taken in the same format for
-> everything. There is no reason not to do it. The way mprotect() callback
-> just interprets the field is as VMA permissions.
 
-They are two entirely different things.  The explicit protection bits are
-consumed by the kernel, while SECINFO.flags is consumed by the CPU.  The
-intent is to have the protection flags be analogous to mprotect(), the
-fact that they have a similar/identical format to SECINFO is irrelevant.
+> On Jun 10, 2019, at 11:01 AM, Casey Schaufler <casey@schaufler-ca.com> wro=
+te:
+>=20
+>> On 6/10/2019 9:42 AM, Andy Lutomirski wrote:
+>>> On Mon, Jun 10, 2019 at 9:34 AM Casey Schaufler <casey@schaufler-ca.com>=
+ wrote:
+>>>> On 6/10/2019 8:21 AM, Stephen Smalley wrote:
+>>>>> On 6/7/19 10:17 AM, David Howells wrote:
+>>>>> Hi Al,
+>>>>>=20
+>>>>> Here's a set of patches to add a general variable-length notification q=
+ueue
+>>>>> concept and to add sources of events for:
+>>>>>=20
+>>>>>  (1) Mount topology events, such as mounting, unmounting, mount expiry=
+,
+>>>>>      mount reconfiguration.
+>>>>>=20
+>>>>>  (2) Superblock events, such as R/W<->R/O changes, quota overrun and I=
+/O
+>>>>>      errors (not complete yet).
+>>>>>=20
+>>>>>  (3) Key/keyring events, such as creating, linking and removal of keys=
+.
+>>>>>=20
+>>>>>  (4) General device events (single common queue) including:
+>>>>>=20
+>>>>>      - Block layer events, such as device errors
+>>>>>=20
+>>>>>      - USB subsystem events, such as device/bus attach/remove, device
+>>>>>        reset, device errors.
+>>>>>=20
+>>>>> One of the reasons for this is so that we can remove the issue of proc=
+esses
+>>>>> having to repeatedly and regularly scan /proc/mounts, which has proven=
+ to
+>>>>> be a system performance problem.  To further aid this, the fsinfo() sy=
+scall
+>>>>> on which this patch series depends, provides a way to access superbloc=
+k and
+>>>>> mount information in binary form without the need to parse /proc/mount=
+s.
+>>>>>=20
+>>>>>=20
+>>>>> LSM support is included, but controversial:
+>>>>>=20
+>>>>>  (1) The creds of the process that did the fput() that reduced the ref=
+count
+>>>>>      to zero are cached in the file struct.
+>>>>>=20
+>>>>>  (2) __fput() overrides the current creds with the creds from (1) whil=
+st
+>>>>>      doing the cleanup, thereby making sure that the creds seen by the=
 
-Calling the field secinfo_flags_mask is straight up wrong on SGX2, as 
-userspace can use EMODPE to set SECINFO after the page is added.  It's
-also wrong on SGX1 when adding TCS pages since SECINFO.RWX bits for TCS
-pages are forced to zero by hardware.
+>>>>>      destruction notification generated by mntput() appears to come fr=
+om
+>>>>>      the last fputter.
+>>>>>=20
+>>>>>  (3) security_post_notification() is called for each queue that we mig=
+ht
+>>>>>      want to post a notification into, thereby allowing the LSM to pre=
+vent
+>>>>>      covert communications.
+>>>>>=20
+>>>>>  (?) Do I need to add security_set_watch(), say, to rule on whether a w=
+atch
+>>>>>      may be set in the first place?  I might need to add a variant per=
 
-> It would also be more future-proof just to have a mask covering all bits
-> of the SECINFO flags field.
+>>>>>      watch-type.
+>>>>>=20
+>>>>>  (?) Do I really need to keep track of the process creds in which an
+>>>>>      implicit object destruction happened?  For example, imagine you c=
+reate
+>>>>>      an fd with fsopen()/fsmount().  It is marked to dissolve the moun=
+t it
+>>>>>      refers to on close unless move_mount() clears that flag.  Now, im=
+agine
+>>>>>      someone looking at that fd through procfs at the same time as you=
+ exit
+>>>>>      due to an error.  The LSM sees the destruction notification come f=
+rom
+>>>>>      the looker if they happen to do their fput() after yours.
+>>>> I remain unconvinced that (1), (2), (3), and the final (?) above are a g=
+ood idea.
+>>>>=20
+>>>> For SELinux, I would expect that one would implement a collection of pe=
+r watch-type WATCH permission checks on the target object (or to some well-d=
+efined object label like the kernel SID if there is no object) that allow re=
+ceipt of all notifications of that watch-type for objects related to the tar=
+get object, where "related to" is defined per watch-type.
+>>>>=20
+>>>> I wouldn't expect SELinux to implement security_post_notification() at a=
+ll.  I can't see how one can construct a meaningful, stable policy for it.  I=
+'d argue that the triggering process is not posting the notification; the ke=
+rnel is posting the notification and the watcher has been authorized to rece=
+ive it.
+>>> I cannot agree. There is an explicit action by a subject that results
+>>> in information being delivered to an object. Just like a signal or a
+>>> UDP packet delivery. Smack handles this kind of thing just fine. The
+>>> internal mechanism that results in the access is irrelevant from
+>>> this viewpoint. I can understand how a mechanism like SELinux that
+>>> works on finer granularity might view it differently.
+>> I think you really need to give an example of a coherent policy that
+>> needs this.
+>=20
+> I keep telling you, and you keep ignoring what I say.
+>=20
+>>  As it stands, your analogy seems confusing.
+>=20
+> It's pretty simple. I have given both the abstract
+> and examples.
 
-This simply doesn't work, e.g. the PENDING, MODIFIED and PR flags in the
-SECINFO are read-only from a software perspective.
+You gave the /dev/null example, which is inapplicable to this patchset.
+
+>=20
+>>  If someone
+>> changes the system clock, we don't restrict who is allowed to be
+>> notified (via, for example, TFD_TIMER_CANCEL_ON_SET) that the clock
+>> was changed based on who changed the clock.
+>=20
+> That's right. The system clock is not an object that
+> unprivileged processes can modify. In fact, it is not
+> an object at all. If you care to look, you will see that
+> Smack does nothing with the clock.
+
+And this is different from the mount tree how?
+
+>=20
+>>  Similarly, if someone
+>> tries to receive a packet on a socket, we check whether they have the
+>> right to receive on that socket (from the endpoint in question) and,
+>> if the sender is local, whether the sender can send to that socket.
+>> We do not check whether the sender can send to the receiver.
+>=20
+> Bzzzt! Smack sure does.
+
+This seems dubious. I=E2=80=99m still trying to get you to explain to a non-=
+Smack person why this makes sense.
+
+>=20
+>> The signal example is inapplicable.
+>=20
+> =46rom a modeling viewpoint the actions are identical.
+
+This seems incorrect to me and, I think, to most everyone else reading this.=
+ Can you explain?
+
+In SELinux-ese, when you write to a file, the subject is the writer and the o=
+bject is the file.  When you send a signal to a process, the object is the t=
+arget process.=
