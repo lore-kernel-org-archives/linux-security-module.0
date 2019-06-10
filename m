@@ -1,94 +1,161 @@
 Return-Path: <SRS0=W9Cr=UJ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1EBAC4321A
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 19:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDEBFC43218
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 19:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A75F20859
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 19:06:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC0C6206E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 19:15:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560193586;
-	bh=raeylV3VoaIg61MFgkPBLaPp7VUmGTWBluotgx9RhnE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=K2fTUT2juZ8wqwkV+6Q8yJXJpgbNuxboaBexjprlFBuzWMbY+YqtYhrY0Xsy5f9dk
-	 Q2IUCn/uMDPUQD7yrLqccAYYqNawWSD+Ayx3cyntKeiy6HVf6KsTeYMB39hEcC+3BM
-	 SP3ilTDLPhXByGtJYSS/Mb3qkqJp8ymBdRm7ntmk=
+	s=default; t=1560194144;
+	bh=bwqpF3I6lO7fWvagsxvA4v6sU5wPG0JemCNLZlDlq8Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=KhvNvdydu3iCpL76TkShxoChpwD/fdslS1UsVhvBvj231/mdV6N66rQzG0wq50obQ
+	 pVDfQCcoPWuZCTmYEdLqfmk/VFWFp7Ez4KxwqHov8uQUqy/XGn6/46st9PP1yPyjL8
+	 L5qizU/q5RCz5cfL7nF8yiB/AHFmUPRn9BoFNsr0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388680AbfFJTG0 (ORCPT
+        id S2389658AbfFJTPk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Jun 2019 15:06:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58548 "EHLO mail.kernel.org"
+        Mon, 10 Jun 2019 15:15:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388544AbfFJTGZ (ORCPT
+        id S2389212AbfFJTPj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Jun 2019 15:06:25 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 10 Jun 2019 15:15:39 -0400
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED769207E0;
-        Mon, 10 Jun 2019 19:06:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE19A21743
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2019 19:15:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560193585;
-        bh=raeylV3VoaIg61MFgkPBLaPp7VUmGTWBluotgx9RhnE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=hZuAZErpG5I85Y9L/RNGXXEDk5onpPpwOSJKSirowqjMIPKqJlD768Zm1eUWZgUE2
-         NYRdIIGy4ViqvgbSIQTIYlrH30SU2uh0YSp8ajgL+e9GXqvfrvrY4+tN8R6HoxVtmw
-         15Ksnd1IWZb+Hb+5+elM5sjb2UvKllviGdYxY6Ow=
-Date:   Mon, 10 Jun 2019 12:06:23 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     syzbot <syzbot+e1374b2ec8f6a25ab2e5@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
-        dan.j.williams@intel.com, ira.weiny@intel.com, jack@suse.cz,
-        jhubbard@nvidia.com, jmorris@namei.org, keith.busch@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org, richard.weiyang@gmail.com,
-        rppt@linux.ibm.com, serge@hallyn.com, sfr@canb.auug.org.au,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Subject: [IMA] Re: possible deadlock in get_user_pages_unlocked (2)
-Message-ID: <20190610190622.GI63833@gmail.com>
+        s=default; t=1560194139;
+        bh=bwqpF3I6lO7fWvagsxvA4v6sU5wPG0JemCNLZlDlq8Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Xe13SfBQ9jVPup9P6gfDqODjAROjYF3feQ8rc1jxRgFzRjx0SSAYAA8Jr62rJv6fa
+         TWmlfY7NjWTQp+eMeBZuaoImCepyydT+2ygKG9WIsgbUZPpJ+RYh78sAgh3UvRojnV
+         wbQM5WgAh/dC0yeqr26jVvR8zt2xgUM4Szj4xvIQ=
+Received: by mail-wr1-f50.google.com with SMTP id c2so10319734wrm.8
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2019 12:15:38 -0700 (PDT)
+X-Gm-Message-State: APjAAAV/BZaioKt1fVDSYl0jBYu53ZeOCJN63aTMgcG0e1afWDx0MNSH
+        7d95QSp780D2APp3E1vE2scMbXiyEudSSpig5Rllkg==
+X-Google-Smtp-Source: APXvYqypfa4skx8hkgphvRTlO10XR3vZ0R1oIgntdrw7LesWhWM3R3rndKtbU7gLtSJsZ4estO+TO7D8oT+MoCFoMvU=
+X-Received: by 2002:a5d:6207:: with SMTP id y7mr26919319wru.265.1560194137485;
+ Mon, 10 Jun 2019 12:15:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000001d42b5058a895703@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+ <20190606021145.12604-3-sean.j.christopherson@intel.com> <960B34DE67B9E140824F1DCDEC400C0F65500E13@ORSMSX116.amr.corp.intel.com>
+In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F65500E13@ORSMSX116.amr.corp.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 10 Jun 2019 12:15:25 -0700
+X-Gmail-Original-Message-ID: <CALCETrWv9FYDtiHMfnfH==jE00tt7F22t-zcnP+XjfRCQgLr7A@mail.gmail.com>
+Message-ID: <CALCETrWv9FYDtiHMfnfH==jE00tt7F22t-zcnP+XjfRCQgLr7A@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/5] x86/sgx: Require userspace to define enclave
+ pages' protection bits
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 04, 2019 at 06:16:00PM -0700, syzbot wrote:
-> syzbot has bisected this bug to:
-> 
-> commit 69d61f577d147b396be0991b2ac6f65057f7d445
-> Author: Mimi Zohar <zohar@linux.ibm.com>
-> Date:   Wed Apr 3 21:47:46 2019 +0000
-> 
->     ima: verify mprotect change is consistent with mmap policy
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1055a2f2a00000
-> start commit:   56b697c6 Add linux-next specific files for 20190604
-> git tree:       linux-next
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=1255a2f2a00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1455a2f2a00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4248d6bc70076f7d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e1374b2ec8f6a25ab2e5
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165757eea00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10dd3e86a00000
-> 
-> Reported-by: syzbot+e1374b2ec8f6a25ab2e5@syzkaller.appspotmail.com
-> Fixes: 69d61f577d14 ("ima: verify mprotect change is consistent with mmap
-> policy")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> 
+On Mon, Jun 10, 2019 at 11:29 AM Xing, Cedric <cedric.xing@intel.com> wrote:
+>
+> > From: Christopherson, Sean J
+> > Sent: Wednesday, June 05, 2019 7:12 PM
+> >
+> > +/**
+> > + * sgx_map_allowed - check vma protections against the associated
+> > enclave page
+> > + * @encl:    an enclave
+> > + * @start:   start address of the mapping (inclusive)
+> > + * @end:     end address of the mapping (exclusive)
+> > + * @prot:    protection bits of the mapping
+> > + *
+> > + * Verify a userspace mapping to an enclave page would not violate the
+> > +security
+> > + * requirements of the *kernel*.  Note, this is in no way related to
+> > +the
+> > + * page protections enforced by hardware via the EPCM.  The EPCM
+> > +protections
+> > + * can be directly extended by the enclave, i.e. cannot be relied upon
+> > +by the
+> > + * kernel for security guarantees of any kind.
+> > + *
+> > + * Return:
+> > + *   0 on success,
+> > + *   -EACCES if the mapping is disallowed
+> > + */
+> > +int sgx_map_allowed(struct sgx_encl *encl, unsigned long start,
+> > +                 unsigned long end, unsigned long prot) {
+> > +     struct sgx_encl_page *page;
+> > +     unsigned long addr;
+> > +
+> > +     prot &= (VM_READ | VM_WRITE | VM_EXEC);
+> > +     if (!prot || !encl)
+> > +             return 0;
+> > +
+> > +     mutex_lock(&encl->lock);
+> > +
+> > +     for (addr = start; addr < end; addr += PAGE_SIZE) {
+> > +             page = radix_tree_lookup(&encl->page_tree, addr >>
+> > PAGE_SHIFT);
+> > +
+> > +             /*
+> > +              * Do not allow R|W|X to a non-existent page, or protections
+> > +              * beyond those of the existing enclave page.
+> > +              */
+> > +             if (!page || (prot & ~page->prot))
+> > +                     return -EACCES;
+>
+> In SGX2, pages will be "mapped" before being populated.
+>
+> Here's a brief summary for those who don't have enough background on how new EPC pages could be added to a running enclave in SGX2:
+>   - There are 2 new instructions - EACCEPT and EAUG.
+>   - EAUG is used by SGX module to add (augment) a new page to an existing enclave. The newly added page is *inaccessible* until the enclave *accepts* it.
+>   - EACCEPT is the instruction for an enclave to accept a new page.
+>
+> And the s/w flow for an enclave to request new EPC pages is expected to be something like the following:
+>   - The enclave issues EACCEPT at the linear address that it would like a new page.
+>   - EACCEPT results in #PF, as there's no page at the linear address above.
+>   - SGX module is notified about the #PF, in form of its vma->vm_ops->fault() being called by kernel.
+>   - SGX module EAUGs a new EPC page at the fault address, and resumes the enclave.
+>   - EACCEPT is reattempted, and succeeds at this time.
 
-Hi Mimi, it seems your change to call ima_file_mmap() from
-security_file_mprotect() violates the locking order by taking i_rwsem while
-mmap_sem is held.
-
-- Eric
+This seems like an odd workflow.  Shouldn't the #PF return back to
+untrusted userspace so that the untrusted user code can make its own
+decision as to whether it wants to EAUG a page there as opposed to,
+say, killing the enclave or waiting to keep resource usage under
+control?
