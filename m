@@ -2,122 +2,208 @@ Return-Path: <SRS0=W9Cr=UJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF90C43218
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 19:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6B8C43218
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 19:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03F232082E
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 19:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B8D6206E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jun 2019 19:53:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560196414;
+	bh=wOihLllZn9jb+HP18QFES48hPN0FStRExpBhK0fzcWc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=0jGHxlEFbmKW3jMay/svMNxsBKoqZtQP86nKrP0YkfzHCat+xuopCtPiH3vikA85R
+	 PT9UhPn2g63WPjzlmoYZs8/pic8PRBrCrY8kSxh4nbSZfLQLPpCBQABJ+AI7jHtvKx
+	 muMA6WGnm2Cy/f5CE7m4hM/aQspDKJ1G5JxQHmSI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389170AbfFJTtm (ORCPT
+        id S2389339AbfFJTxd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Jun 2019 15:49:42 -0400
-Received: from mga02.intel.com ([134.134.136.20]:1644 "EHLO mga02.intel.com"
+        Mon, 10 Jun 2019 15:53:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388901AbfFJTtm (ORCPT
+        id S2389093AbfFJTx2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Jun 2019 15:49:42 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 12:49:41 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga008.jf.intel.com with ESMTP; 10 Jun 2019 12:49:41 -0700
-Date:   Mon, 10 Jun 2019 12:49:41 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH v2 1/5] mm: Introduce vm_ops->may_mprotect()
-Message-ID: <20190610194941.GK15995@linux.intel.com>
-References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
- <20190606021145.12604-2-sean.j.christopherson@intel.com>
- <20190610150600.GA3752@linux.intel.com>
- <20190610155549.GB15995@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F654FFD59@ORSMSX116.amr.corp.intel.com>
+        Mon, 10 Jun 2019 15:53:28 -0400
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E2852085A
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2019 19:53:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560196407;
+        bh=wOihLllZn9jb+HP18QFES48hPN0FStRExpBhK0fzcWc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=uAFo3TEMkLIhsip7s70tLqYegboY8gx4x/AFMwOE/1EV8+gh+Qz6VXsvzhUyEopLq
+         +3VyxpS1eU7uOSfZrvSP/pTKxzyroqF3Hx9xHOOCBXy5SdOAn6sXZCiuLldV+Ojp4W
+         MtATR0O33RIzYknn7ST2vlYr9R159z1eD9/lH5/o=
+Received: by mail-wr1-f43.google.com with SMTP id v14so10424351wrr.4
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2019 12:53:27 -0700 (PDT)
+X-Gm-Message-State: APjAAAUEf4ssTMtEIwLvF1hl8dUdzK+qnDjNRtylXqlpvpQIQ+uJaoZr
+        sndhV4CXeBPkizfic/i0qrfZwGxO167ndaMF8CDByQ==
+X-Google-Smtp-Source: APXvYqw8aF5NWUK70L17npsUmtHiDuIYCLGXM6hmXrPcXPm1SKMwo7rg5etzLGFCyPVps+0OodMqTTJ25zkC5G2Qcfo=
+X-Received: by 2002:a5d:6207:: with SMTP id y7mr27028791wru.265.1560196405847;
+ Mon, 10 Jun 2019 12:53:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F654FFD59@ORSMSX116.amr.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
+ <be966d9c-e38d-7a30-8d80-fad5f25ab230@tycho.nsa.gov> <0cf7a49d-85f6-fba9-62ec-a378e0b76adf@schaufler-ca.com>
+ <CALCETrX5O18q2=dUeC=hEtK2=t5KQpGBy9XveHxFw36OqkbNOg@mail.gmail.com>
+ <dac74580-5b48-86e4-8222-cac29a9f541d@schaufler-ca.com> <E0925E1F-E5F2-4457-8704-47B6E64FE3F3@amacapital.net>
+ <4b7d02b2-2434-8a7c-66cc-7dbebc37efbc@schaufler-ca.com>
+In-Reply-To: <4b7d02b2-2434-8a7c-66cc-7dbebc37efbc@schaufler-ca.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 10 Jun 2019 12:53:14 -0700
+X-Gmail-Original-Message-ID: <CALCETrU+PKVbrKQJoXj9x_5y+vTZENMczHqyM_Xb85ca5YDZuA@mail.gmail.com>
+Message-ID: <CALCETrU+PKVbrKQJoXj9x_5y+vTZENMczHqyM_Xb85ca5YDZuA@mail.gmail.com>
+Subject: Re: [RFC][PATCH 00/13] Mount, FS, Block and Keyrings notifications
+ [ver #4]
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        USB list <linux-usb@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        raven@themaw.net, Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 10, 2019 at 10:47:52AM -0700, Xing, Cedric wrote:
-> > From: Christopherson, Sean J
-> > Sent: Monday, June 10, 2019 8:56 AM
-> > 
-> > > > As a result, LSM policies cannot be meaningfully applied, e.g. an
-> > > > LSM can deny access to the EPC as a whole, but can't deny PROT_EXEC
-> > > > on page that originated in a non-EXECUTE file (which is long gone by
-> > > > the time
-> > > > mprotect() is called).
-> > >
-> > > I have hard time following what is paragraph is trying to say.
-> > >
-> > > > By hooking mprotect(), SGX can make explicit LSM upcalls while an
-> > > > enclave is being built, i.e. when the kernel has a handle to origin
-> > > > of each enclave page, and enforce the result of the LSM policy
-> > > > whenever userspace maps the enclave page in the future.
-> > >
-> > > "LSM policy whenever calls mprotect()"? I'm no sure why you mean by
-> > > mapping here and if there is any need to talk about future. Isn't this
-> > > needed now?
-> > 
-> > Future is referring to the timeline of a running kernel, not the future
-> > of the kernel code.
-> > 
-> > Rather than trying to explain all of the above with words, I'll provide
-> > code examples to show how ->may_protect() will be used by SGX and why it
-> > is the preferred solution.
-> 
-> The LSM concept is to separate security policy enforcement from the rest of
-> the kernel. For modules, the "official" way is to use VM_MAY* flags to limit
-> allowable permissions, while LSM uses security_file_mprotect().
-> I guess that's why we didn't have .may_mprotect() in the first place.
+On Mon, Jun 10, 2019 at 12:34 PM Casey Schaufler <casey@schaufler-ca.com> w=
+rote:
+> >>> I think you really need to give an example of a coherent policy that
+> >>> needs this.
+> >> I keep telling you, and you keep ignoring what I say.
+> >>
+> >>>  As it stands, your analogy seems confusing.
+> >> It's pretty simple. I have given both the abstract
+> >> and examples.
+> > You gave the /dev/null example, which is inapplicable to this patchset.
+>
+> That addressed an explicit objection, and pointed out
+> an exception to a generality you had asserted, which was
+> not true. It's also a red herring regarding the current
+> discussion.
 
-Heh, so I've typed up about five different responses to this comment.  In
-doing so, I think I've convinced myself that ->may_mprotect() is
-unnecessary.  Rther than hook mprotect(), simply update the VM_MAY* flags
-during mmap(), with all bits cleared if there isn't an associated enclave
-page.  IIRC, the need to add ->may_protect() came about when we were
-exploring more dynamic interplay between SGX and LSMs.
+This argument is pointless.
 
-> What you are doing is enforcing some security policy outside of LSM, which
-> is dirty from architecture perspective.
+Please humor me and just give me an example.  If you think you have
+already done so, feel free to repeat yourself.  If you have no
+example, then please just say so.
 
-No, the enclave page protections are enforced regardless of LSM policy,
-and in v2 those protections are immutable.  Yes, the explicit enclave
-page protection bits are being added primarily for LSMs, but they don't
-impact functionality other than at the security_enclave_load() touchpoint.
+>
+> >>>  If someone
+> >>> changes the system clock, we don't restrict who is allowed to be
+> >>> notified (via, for example, TFD_TIMER_CANCEL_ON_SET) that the clock
+> >>> was changed based on who changed the clock.
+> >> That's right. The system clock is not an object that
+> >> unprivileged processes can modify. In fact, it is not
+> >> an object at all. If you care to look, you will see that
+> >> Smack does nothing with the clock.
+> > And this is different from the mount tree how?
+>
+> The mount tree can be modified by unprivileged users.
+> If nothing that unprivileged users can do to the mount
+> tree can trigger a notification you are correct, the
+> mount tree is very like the system clock. Is that the
+> case?
+
+The mount tree can't be modified by unprivileged users, unless a
+privileged user very carefully configured it as such.  An unprivileged
+user can create a new userns and a new mount ns, but then they're
+modifying a whole different mount tree.
+
+>
+> >>>  Similarly, if someone
+> >>> tries to receive a packet on a socket, we check whether they have the
+> >>> right to receive on that socket (from the endpoint in question) and,
+> >>> if the sender is local, whether the sender can send to that socket.
+> >>> We do not check whether the sender can send to the receiver.
+> >> Bzzzt! Smack sure does.
+> > This seems dubious. I=E2=80=99m still trying to get you to explain to a=
+ non-Smack person why this makes sense.
+>
+> Process A sends a packet to process B.
+> If A has access to TopSecret data and B is not
+> allowed to see TopSecret data, the delivery should
+> be prevented. Is that nonsensical?
+
+It makes sense.  As I see it, the way that a sensible policy should do
+this is by making sure that there are no sockets, pipes, etc that
+Process A can write and that Process B can read.
+
+If you really want to prevent a malicious process with TopSecret data
+from sending it to a different process, then you can't use Linux on
+x86 or ARM.  Maybe that will be fixed some day, but you're going to
+need to use an extremely tight sandbox to make this work.
+
+>
+> >>> The signal example is inapplicable.
+> >> From a modeling viewpoint the actions are identical.
+> > This seems incorrect to me
+>
+> What would be correct then? Some convoluted combination
+> of system entities that aren't owned or controlled by
+> any mechanism?
+>
+
+POSIX signal restrictions aren't there to prevent two processes from
+communicating.  They're there to prevent the sender from manipulating
+or crashing the receiver without appropriate privilege.
+
+
+> >  and, I think, to most everyone else reading this.
+>
+> That's quite the assertion. You may even be correct.
+>
+> >  Can you explain?
+> >
+> > In SELinux-ese, when you write to a file, the subject is the writer and=
+ the object is the file.  When you send a signal to a process, the object i=
+s the target process.
+>
+> YES!!!!!!!!!!!!
+>
+> And when a process triggers a notification it is the subject
+> and the watching process is the object!
+>
+> Subject =3D=3D active entity
+> Object  =3D=3D passive entity
+>
+> Triggering an event is, like calling kill(), an action!
+>
+
+And here is where I disagree with your interpretation.  Triggering an
+event is a side effect of writing to the file.  There are *two*
+security relevant actions, not one, and they are:
+
+First, the write:
+
+Subject =3D=3D the writer
+Action =3D=3D write
+Object =3D=3D the file
+
+Then the event, which could be modeled in a couple of ways:
+
+Subject =3D=3D the file
+Action =3D=3D notify
+Object =3D=3D the recipient
+
+or
+
+Subject =3D=3D the recipient
+Action =3D=3D watch
+Object =3D=3D the file
+
+By conflating these two actions into one, you've made the modeling
+very hard, and you start running into all these nasty questions like
+"who actually closed this open file"
