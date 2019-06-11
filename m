@@ -2,144 +2,120 @@ Return-Path: <SRS0=dgP1=UK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E7AC0650E
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 18:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E894C0650E
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 19:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D9C721744
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 18:49:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSB2gUM+"
+	by mail.kernel.org (Postfix) with ESMTP id 3B97021881
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 19:03:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560279819;
+	bh=cb4/dALfHRRtn6DS4HnGVSfPUKhRnIT/ZtIWLvfB6b4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=AgZ+HLW+bxvXmk0fAdXGccmTqV8XwFcpn3QjsZc9EVFj0pysGVQnepWAK+4Nlk/0f
+	 CZE46Bl4c0GgX9aC1CJpZHscZe55Upt5Q6eLcYHutb33pmxI0IoFhtq5gnSlZggB/7
+	 d7A2w1JCCAEzlNW182uv6GFSR47gn2ZBvYyDFxbg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392070AbfFKStK (ORCPT
+        id S2388229AbfFKTDi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Jun 2019 14:49:10 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37647 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389470AbfFKStK (ORCPT
+        Tue, 11 Jun 2019 15:03:38 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44563 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392561AbfFKTDh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Jun 2019 14:49:10 -0400
-Received: by mail-ot1-f67.google.com with SMTP id r10so12937223otd.4;
-        Tue, 11 Jun 2019 11:49:10 -0700 (PDT)
+        Tue, 11 Jun 2019 15:03:37 -0400
+Received: by mail-pf1-f196.google.com with SMTP id t16so7999645pfe.11;
+        Tue, 11 Jun 2019 12:03:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dz7olQKnFjj7omxNegzsPSUMtfyoczAclzprO/pRrIY=;
-        b=iSB2gUM+ptPC8s0fS0yg8bC2jBrbkuG0brKiZ4ngrjTHi+relJzZSSVPJM7dV94t4l
-         gU3KxxHGPU01Yx9AGtudkpc9rU439Z9qNm3rbjoR5B/7iJeXRxqHwfcr5IZ5SzddM02Z
-         KFRpUqromvZR6N5vo4caAUKNaf/cIIjAM5oIYD3ofGrEBW3cvf0nloSJTi5gamBihAiv
-         FzelkkfRr6VNAb86okmqCnZj+o+BTjCDQj5h9tZYGKgI0cXtUrf8gfFpchkWy7HNq+iw
-         Cyuqx6i0a88zbJDV9n7NKk+saN6/gz2eWAgEsIJEic7/Fsq1u7zC5GPzYX4zGn3XlKfY
-         OUyw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TINH5Zv9sdfI5yGkKfukd7zEs5gc5SFmFE6Rm33jogw=;
+        b=sTbvzg1IBs2bb8cjreY5cBasSaH+2pFI5pjQ35wagL+18kPnXLznCC9TyL/tH+M4hP
+         q8EzAGJHmuFs3cTKR1D9zefrPRRKJAU8/AOrhIRoejq49CWhnsGswe/IoyW+3pLcVrZA
+         idoBHD6D/SGQjCHVkxMcAuSa0qZ0UYf6PuryCCl6KxGiUpZO9zLoZB/vD1r7/EDrA+xH
+         AVkmXuIzCTP0+FrXVOmES1ohd6KLAjLFxCArXYNa/4QqLSZCec9i31IIvqj3lneR3rck
+         uR0BMYPVVBv3BGDTkrSUVMI/X2O/9KCPcGFl11pf9di+5Ug8qf/qOIO7Nn2RveaTofno
+         9dig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dz7olQKnFjj7omxNegzsPSUMtfyoczAclzprO/pRrIY=;
-        b=OL5iXDPyZkqwlIa9GsGDeQFXHEYsC7gyK3YBuH8brfM+r4a0QeiFTzWyH7W5fGgYf3
-         +9h3GtbTieRqNZGSmSBwahxWNi0xckovOunBMdeosDkPNIspmegnqKRc4W7PQW5XmRIT
-         clxKc9orK/6dJS5KF6v0WFC5KeVSHZhtDGc/OJgMvMyM2KBb8Ym0pw4Xq30jJFvC38Bt
-         scJfTgN0LZDFJKBazyYCSIqNxXGryNu15JY7yIMh7Q2bUfK243WdAbOcQHbXtxFCjIxH
-         fYlSlkiq5DX/FffVX8ZQMtsvVC7rPGvc2zzAjtEVqW+WSz9OGRhc2xDAxqOJBu55htCe
-         VYdQ==
-X-Gm-Message-State: APjAAAWouTOPTmlq3Yo5scWq1UpHpT+A6+fbenATqG3lO+gJK/OqdM9b
-        5QyMRxXdxnwz9NL+MdMP6MFXnGewIBDH28LButcEAQ==
-X-Google-Smtp-Source: APXvYqzkhILMzkowVhwzSSm9im2xIoXr2H9SzdfAW6Yt/vy3tjIAvRSX0L7L/0gRotVLYOYkXaULmE+GUytAFw0YSBc=
-X-Received: by 2002:a9d:7245:: with SMTP id a5mr36283933otk.232.1560278949767;
- Tue, 11 Jun 2019 11:49:09 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TINH5Zv9sdfI5yGkKfukd7zEs5gc5SFmFE6Rm33jogw=;
+        b=kJdY8QEZIURUZo4HI1IMAJ31YHhLhQOT0JyIu/z4oYMmnbIh1Ilp/5D9gBJ2+bbLqB
+         5Q22m9UZxg/2wjx18KoAlemA0HzDVaq3nVT+9VyDgdSYq1SK5N7ebdKeg+Rt1lMZzobi
+         hGcB+RMX6DktW7sarEbF71v5XQAxCVDAH8yz5fQK69APpzVbgkbK/ZA1O6BNM9zoRs6+
+         0hcoCcEr1vSsYC71cLuW5tIRcPV5oDbmICNsHFaZ0bez9YuMImM5ODYQz4uKJyzSb+ag
+         r5jSLR6nG3BjIJuDbVMpdpvVAzkhAyUntQu9wtLj+V1Fh3ZBp5SWZ7sANUrMk91gklD7
+         gzrA==
+X-Gm-Message-State: APjAAAVS0gNjm+B+VuYHMOfqp2tgCNkDmwHjfOTQ+qEzcxJQyzMSOBVO
+        WBXvuDv6lyEDMAXDFqdXWXg=
+X-Google-Smtp-Source: APXvYqyurkJYg+ONU24NoQH+aOpKIHaCcBkqNsSi7eK6I99H2KHZq5aZwOzTKoSX9JiYUzkROPsUWw==
+X-Received: by 2002:a62:6d47:: with SMTP id i68mr82880905pfc.189.1560279816496;
+        Tue, 11 Jun 2019 12:03:36 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::2:1677])
+        by smtp.gmail.com with ESMTPSA id y22sm12843821pgj.38.2019.06.11.12.03.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 12:03:35 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 12:03:32 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 05/33] docs: cgroup-v1: convert docs to ReST and
+ rename to *.rst
+Message-ID: <20190611190332.GI3341036@devbig004.ftw2.facebook.com>
+References: <cover.1560045490.git.mchehab+samsung@kernel.org>
+ <79865a4248ce5b042106e5ec69bb493292a8d392.1560045490.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-References: <20190607002330.2999-1-prsriva02@gmail.com> <1560267426.4464.173.camel@linux.ibm.com>
-In-Reply-To: <1560267426.4464.173.camel@linux.ibm.com>
-From:   prakhar srivastava <prsriva02@gmail.com>
-Date:   Tue, 11 Jun 2019 11:48:58 -0700
-Message-ID: <CAEFn8q+RgSnJaWAJT+xN-CZWCsaOVqrPunT3icd_ua2bpkp_SQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/3] add new ima hook ima_kexec_cmdline to measure
- kexec boot cmdline args
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>, vgoyal@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79865a4248ce5b042106e5ec69bb493292a8d392.1560045490.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 11, 2019 at 8:37 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> Hi Prakhar,
->
-> The patch/patch set title in the Subject line should not explain "how"
-> you add a new feature.  In this case an appropriate patch set title
-> would be, "Add support for measuring the boot command line".
->  Similarly, the first patch in this patch set could be named "Define a
-> new IMA hook to measure the boot command line arguments".
->
-> On Thu, 2019-06-06 at 17:23 -0700, Prakhar Srivastava wrote:
-> > The motive behind the patch series is to measure the boot cmdline args
-> > used for soft reboot/kexec case.
->
-> When mentoring, I suggest starting out with a simple status statement
-> (eg. "The kexec boot command line arguments are not currently being
-> measured."), followed by the problem statement in the first paragraph.
->
-> >
-> > For secure boot attestation, it is necessary to measure the kernel
->
-> Secure boot enforces local file data integrity.  The term here should
-> be "trusted boot attestation".
->
-> > command line and the kernel version.
->
-> The original version of this patch set included the kernel version.
-> This version is just measuring the boot command line arguments.
->
-Sorry missed it while updating the cover letter.
-<snip>
+On Sat, Jun 08, 2019 at 11:26:55PM -0300, Mauro Carvalho Chehab wrote:
+> Convert the cgroup-v1 files to ReST format, in order to
+> allow a later addition to the admin-guide.
+> 
+> The conversion is actually:
+>   - add blank lines and identation in order to identify paragraphs;
+>   - fix tables markups;
+>   - add some lists markups;
+>   - mark literal blocks;
+>   - adjust title markups.
+> 
+> At its new index.rst, let's add a :orphan: while this is not linked to
+> the main index.rst file, in order to avoid build warnings.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-> > The ima logs need to be carried over to the next kernel, which will be followed
-> > up by other patchsets for x86_64 and arm64.
-> >
-> > The kexec cmdline hash
->
-> ^stored in the "d-ng" field of the template data
->
-I will add another template-name for ima-buf
-> > can be verified using
->
-> > sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
-> >   grep  kexec-cmdline | cut -d' ' -f 6 | xxd -r -p | sha256sum
->
-> Until per policy template field rule support is added, a template name
-> needs to be defined.  Please define "ima-buf" as:
-> {.name = "ima-buf", .fmt = "d-ng|n-ng|buf"}
->
-> I'm still seeing some scripts/checkpatch "WARNING: line over 80
-> characters".  scripts/Lindent should provide the correct way of
-> formatting these lines.
->
-> Some people feel that references to Lindent should be removed, but I
-> tend to agree with the Documentation/hwmon/submitting-patches.rst
-> comment pertaining to scripts/Lindent.
->
-> "* Running your patch or driver file(s) through checkpatch does not
-> mean its formatting is clean. If unsure about formatting in your new
-> driver, run it through Lindent. Lindent is not perfect, and you may
-> have to do some minor cleanup, but it is a good start."
->
-I will double check fix the issues.
-> Examples of where the line formatting is off is the call to
-> ima_get_action() in process_buffer_measurement() and the call to
-> process_buffer_measurement() in ima_kexec_cmdline().
->
-Thanks,
-Prakhar Srivastava
-> thanks,
->
-> Mimi
-<snip>
+Acked-by: Tejun Heo <tj@kernel.org>
+
+Please feel free to route with the rest of the series.  If you want
+the patch to be routed through the cgroup tree, please let me know.
+
+Thanks.
+
+-- 
+tejun
