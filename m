@@ -2,72 +2,78 @@ Return-Path: <SRS0=dgP1=UK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FBB9C43218
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 13:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874AFC4321A
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 13:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BFB520896
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 13:48:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F658206BB
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 13:53:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389298AbfFKNsj (ORCPT
+        id S2391332AbfFKNxE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Jun 2019 09:48:39 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:18549 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387866AbfFKNsi (ORCPT
+        Tue, 11 Jun 2019 09:53:04 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:35680 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1729010AbfFKNxE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Jun 2019 09:48:38 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id AF7B39DEFC9E36BF9118;
-        Tue, 11 Jun 2019 21:48:36 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Tue, 11 Jun 2019
- 21:48:29 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <serge@hallyn.com>, <jmorris@namei.org>
-CC:     <linux-kernel@vger.kernel.org>,
+        Tue, 11 Jun 2019 09:53:04 -0400
+Received: (qmail 1733 invoked by uid 2102); 11 Jun 2019 09:53:03 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 11 Jun 2019 09:53:03 -0400
+Date:   Tue, 11 Jun 2019 09:53:03 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>
+cc:     Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Howells <dhowells@redhat.com>, <viro@zeniv.linux.org.uk>,
+        <linux-usb@vger.kernel.org>, <raven@themaw.net>,
+        <linux-fsdevel@vger.kernel.org>, <linux-api@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <keyrings@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] security: Make capability_hooks static
-Date:   Tue, 11 Jun 2019 21:48:15 +0800
-Message-ID: <20190611134815.16612-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/10] usb: Add USB subsystem notifications [ver #3]
+In-Reply-To: <875zpcfxfk.fsf@linux.intel.com>
+Message-ID: <Pine.LNX.4.44L0.1906110950440.1535-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fix sparse warning:
+On Tue, 11 Jun 2019, Felipe Balbi wrote:
 
-security/commoncap.c:1347:27: warning:
- symbol 'capability_hooks' was not declared. Should it be static?
+> >> >> > So for "severe" issues, yes, we should do this, but perhaps not for all
+> >> >> > of the "normal" things we see when a device is yanked out of the system
+> >> >> > and the like.
+> >> >> 
+> >> >> Then what counts as a "severe" issue?  Anything besides enumeration 
+> >> >> failure?
+> >> >
+> >> > Not that I can think of at the moment, other than the other recently
+> >> > added KOBJ_CHANGE issue.  I'm sure we have other "hard failure" issues
+> >> > in the USB stack that people will want exposed over time.
+> >> 
+> >> From an XHCI standpoint, Transaction Errors might be one thing. They
+> >> happen rarely and are a strong indication that the bus itself is
+> >> bad. Either bad cable, misbehaving PHYs, improper power management, etc.
+> >
+> > Don't you also get transaction errors if the user unplugs a device in 
+> > the middle of a transfer?  That's not the sort of thing we want to sent 
+> > notifications about.
+> 
+> Mathias, do we get Transaction Error if user removes cable during a
+> transfer? I thought we would just get Port Status Change with CC bit
+> cleared, no?
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- security/commoncap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Even if xHCI doesn't give Transaction Errors when a cable is unplugged 
+during a transfer, other host controllers do.  Sometimes quite a lot -- 
+they continue to occur until the kernel polls the parent hub's 
+interrupt ep and learns that the port is disconnected, which can take 
+up to 250 ms.
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index c0b9664..3150bed 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1339,7 +1339,7 @@ int cap_mmap_file(struct file *file, unsigned long reqprot,
- 
- #ifdef CONFIG_SECURITY
- 
--struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
-+static struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(capable, cap_capable),
- 	LSM_HOOK_INIT(settime, cap_settime),
- 	LSM_HOOK_INIT(ptrace_access_check, cap_ptrace_access_check),
--- 
-2.7.4
-
+Alan Stern
 
