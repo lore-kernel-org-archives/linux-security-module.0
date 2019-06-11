@@ -2,226 +2,239 @@ Return-Path: <SRS0=dgP1=UK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 063FCC46477
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 15:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE54C4321A
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 15:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3572214AF
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 15:37:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E65B212F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jun 2019 15:59:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="MHVS6Jn4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388863AbfFKPhZ (ORCPT
+        id S2391371AbfFKP7O (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Jun 2019 11:37:25 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57700 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390339AbfFKPhZ (ORCPT
+        Tue, 11 Jun 2019 11:59:14 -0400
+Received: from ucol19pa11.eemsg.mail.mil ([214.24.24.84]:2984 "EHLO
+        UCOL19PA11.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388492AbfFKP7O (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Jun 2019 11:37:25 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5BFVnvR080499
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2019 11:37:24 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t2ecptr7g-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2019 11:37:24 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 11 Jun 2019 16:37:21 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Jun 2019 16:37:19 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5BFbId730212220
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Jun 2019 15:37:18 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A18B6A4051;
-        Tue, 11 Jun 2019 15:37:18 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CCB81A405E;
-        Tue, 11 Jun 2019 15:37:17 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.81.78])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Jun 2019 15:37:17 +0000 (GMT)
-Subject: Re: [PATCH v7 0/3] add new ima hook ima_kexec_cmdline to measure
- kexec boot cmdline args
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     roberto.sassu@huawei.com, vgoyal@redhat.com
-Date:   Tue, 11 Jun 2019 11:37:06 -0400
-In-Reply-To: <20190607002330.2999-1-prsriva02@gmail.com>
-References: <20190607002330.2999-1-prsriva02@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061115-0016-0000-0000-000002882983
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061115-0017-0000-0000-000032E558E5
-Message-Id: <1560267426.4464.173.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906110101
+        Tue, 11 Jun 2019 11:59:14 -0400
+X-EEMSG-check-017: 684741867|UCOL19PA11_EEMSG_MP9.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.63,362,1557187200"; 
+   d="scan'208";a="684741867"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by UCOL19PA11.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 11 Jun 2019 15:57:56 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1560268676; x=1591804676;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=ZoRzzwnUupnCbxMXe+I2jJc705um28RURpHG4yHU9FI=;
+  b=MHVS6Jn4gzTO7Igiz4EthK3bZyjvmzsyOlifP2p0pm7TTcmciKGbz3LK
+   8Baby3kt83WL97T0PkcfGf9PLCiQq8c4VV88YBmwdq8I9Pz1Ydow0oroH
+   tqz60g/AMCrfofWYXG3eA0To++wYpiqCEvQ943xTS025und9ro3eIuryp
+   WdrGdpXGS+gTcOvw/ArTb9g3iEtf6VmOA1YFQGjo4+ZpiPvi290KE4D4J
+   IBaqfdS7As3I0c/Z/UzokkxHJ/A3jmnWWunuw5BcDhgVtURgHlc6NeHgV
+   23ySv+xH8e1rp8a2+kv5HSCMLI5Z2GzwYhY42vw4LSdwg4CNIAn34Rsx8
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.63,362,1557187200"; 
+   d="scan'208";a="24617617"
+IronPort-PHdr: =?us-ascii?q?9a23=3ASlbgChyiyE8UgPTXCy+O+j09IxM/srCxBDY+r6?=
+ =?us-ascii?q?Qd0ukSLfad9pjvdHbS+e9qxAeQG9mCsrQd1red7P+ocFdDyK7JiGoFfp1IWk?=
+ =?us-ascii?q?1NouQttCtkPvS4D1bmJuXhdS0wEZcKflZk+3amLRodQ56mNBXdrXKo8DEdBA?=
+ =?us-ascii?q?j0OxZrKeTpAI7SiNm82/yv95HJbAhEmSexbalvIBi2rQjducsbjIl/Iast1x?=
+ =?us-ascii?q?XFpWdFdf5Lzm1yP1KTmBj85sa0/JF99ilbpuws+c1dX6jkZqo0VbNXAigoPG?=
+ =?us-ascii?q?Az/83rqALMTRCT6XsGU2UZiQRHDg7Y5xznRJjxsy/6tu1g2CmGOMD9UL45VS?=
+ =?us-ascii?q?i+46ptVRTlkzkMOSIn/27Li8xwlKNbrwynpxxj2I7ffYWZOONjcq/BYd8WQG?=
+ =?us-ascii?q?xMUchLVyxFH4iycY0BAeQcNupctoXwp18DoR64CAKxBu3g1yVIi2fr06Mk3e?=
+ =?us-ascii?q?QvEQLI0gIuEN0BsnvbsNr7ObwOUe231qTE0SnPYv1U1Dr79YPGcgohofaJXb?=
+ =?us-ascii?q?9obMTR1VcgFxvFjlqOr4zuIi6b1uEXvGif6+pvS+KugHMgpgFqvzev3dwhip?=
+ =?us-ascii?q?XJh40JylDE8j91wIAuJdKiUkJ7btmkEIVJuiycKoB4QdsiTnl1tCs1xbAKo5?=
+ =?us-ascii?q?62cDUQxJg5yBPTdeaLf5WO7xn+TuieOy14i2hgeL+nghay9lWvxfPkW8mv1V?=
+ =?us-ascii?q?ZKsjJFkt7RtnARzxDT6taISv96/kq5xTaAzRrT6uBZIUAvj6bbN54gzaIwlp?=
+ =?us-ascii?q?oUq0jDGDP5mF7qg6OMc0Uk++yo5/zmYrXguJCcK5d5hhzxP6khgMCyAfk0Ph?=
+ =?us-ascii?q?IQU2WU5+iwzqDv8VX8QLpQj/02lqfZsIrdJcQevqO5GBJa0p045hajDzapzN?=
+ =?us-ascii?q?QYnX4dIFJDYxKIlZLlO17JIPDmFfu/mUijkC93x/DaOb3sGojCLnjEkLbvY7?=
+ =?us-ascii?q?l970pcyBEowNBF+Z1bF7EBL+jvWkPrqNPYCRo5ORSuw+n7ENV9yp8eWWWXD6?=
+ =?us-ascii?q?CFKqzSqkGH5+I0LumXeIAVuCzyK+Ur5/7qk3A5g0YRcrWz0pcNdH+4GfFmKV?=
+ =?us-ascii?q?2DYXXwmtcBDXsKvg0mQezulV2CTTlTam2xX60i/DE7DpypDYPZSoCqmryB0z?=
+ =?us-ascii?q?+xHodKaWBeFlCMDXDoep2aW/cNciKSJdRskz0aWrinSo8hywuitAv7y7phM+?=
+ =?us-ascii?q?rV9TcUtZX51Nh6/eHTiBIy/yRuD8uBy2GNU310nmQQSj8y3aB/p1F9y1ia3a?=
+ =?us-ascii?q?hlmPxXDsde5+1GUggkL57Q1e96BM7oWgLHYNiJTEyqQtK8ATE+Vtgx2cMBY1?=
+ =?us-ascii?q?5hG9W+iRDOxy6qA74Tl7yWC50467nc0GbtKMZg0XbG1bUhjlk/TstKMm2pm7?=
+ =?us-ascii?q?N/9wzNCIPSjUWZmLildb4G0C7O6miD12yOs19cUAJqVqXFR38fbFPMrdvl/k?=
+ =?us-ascii?q?PCU6OuCbM/PwtFyM6CLLZKa9LwgVVIX/fsJcrRY3yvlGe0HhuI2LyMY5Twe2?=
+ =?us-ascii?q?kH3yXSFlIEkwYN8naCLwQ+AT2ho23GBjx0CV3ve1/s8fV5qH6jSk80zgeKb1?=
+ =?us-ascii?q?Bu1ras+R4am+acS/UN0bIAoyohtTp0E0in397MCNqPuRBhfKNCbtM5+ltH0n?=
+ =?us-ascii?q?jZtwMudqCneoxrmF8SOyRwoE7q0w4/XolAltcnqHcx5BB/JaKRzBVKcDbOmd?=
+ =?us-ascii?q?jbM6baOyHJ9xCmdqDS10uWhN2f4aoewO8zq1z+sgWkDA8p+jNs1NwDlzO14J?=
+ =?us-ascii?q?nbRC4PTZX0U1ws9Bky87XHfi4V5I7O03Bod66uvWmR9cguAb4e1hu4f9pZeJ?=
+ =?us-ascii?q?iBHQv2HtxSU9OiM8Q2ilOpaVQCJ+kU+6kqaZD1P8Ca0bKmab4z1Amtin5Ktc?=
+ =?us-ascii?q?UkjxOB?=
+X-IPAS-Result: =?us-ascii?q?A2BDBwBWzv9c/wHyM5BmHAEBAQQBAQcEAQGBZYFnKoE8M?=
+ =?us-ascii?q?oQ9kz8BAQEBAQEGgQgtiVGRCwkBAQEBAQEBAQE0AQIBAYRAAoJ+IzgTAQMBA?=
+ =?us-ascii?q?QEEAQEBAQMBAWwogjopAYJmAQEBAQIBIwQRPwIFCwsOCgICJgICVwYBDAgBA?=
+ =?us-ascii?q?YJTDD+BdwUPqVZ+M4VHgyqBRoEMKItdF3iBB4ERJ4JrPoQugyCCWASLSohEh?=
+ =?us-ascii?q?0mNWgmCEoIbkSQGG4IliwSJeY0WmE0hgVgrCAIYCCEPgyiCGheOPCMDgTYBA?=
+ =?us-ascii?q?Y9cAQE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 11 Jun 2019 15:57:56 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x5BFvs7B007485;
+        Tue, 11 Jun 2019 11:57:55 -0400
+Subject: Re: What do LSMs *actually* need for checks on notifications?
+To:     David Howells <dhowells@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
+ <31009.1560262869@warthog.procyon.org.uk>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <05ddc1e6-78ba-b60e-73b1-ffe86de2f2f8@tycho.nsa.gov>
+Date:   Tue, 11 Jun 2019 11:57:54 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <31009.1560262869@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Prakhar,
+On 6/11/19 10:21 AM, David Howells wrote:
+> To see if we can try and make progress on this, can we try and come at this
+> from another angle: what do LSMs *actually* need to do this?  And I grant that
+> each LSM might require different things.
 
-The patch/patch set title in the Subject line should not explain "how"
-you add a new feature.  In this case an appropriate patch set title
-would be, "Add support for measuring the boot command line".
- Similarly, the first patch in this patch set could be named "Define a
-new IMA hook to measure the boot command line arguments".
-
-On Thu, 2019-06-06 at 17:23 -0700, Prakhar Srivastava wrote:
-> The motive behind the patch series is to measure the boot cmdline args
-> used for soft reboot/kexec case.
-
-When mentoring, I suggest starting out with a simple status statement
-(eg. "The kexec boot command line arguments are not currently being
-measured."), followed by the problem statement in the first paragraph.
+I think part of the problem here is that the discussion is too abstract 
+and not dealing with the specifics of the notifications in question. 
+Those details matter.
 
 > 
-> For secure boot attestation, it is necessary to measure the kernel
-
-Secure boot enforces local file data integrity.  The term here should
-be "trusted boot attestation".
-
-> command line and the kernel version. 
-
-The original version of this patch set included the kernel version.  
-This version is just measuring the boot command line arguments.
-
-> For cold boot, the boot loader
-> can be enhanced to measure these parameters.
-> (https://mjg59.dreamwidth.org/48897.html)
-> However, for attestation across soft reboot boundary, these values 
-> also need to be measured during kexec_file_load.
+> -~-
 > 
-> Currently for Kexec(kexec_file_load)/soft reboot scenario the boot cmdline
-> args for the next kernel are not measured. For 
-> normal case of boot/hardreboot the cmdline args are measured into the TPM.
-> The hash of boot command line is calculated and added to the current 
-> running kernel's measurement list.
-> On a soft reboot like kexec, no cmdline arguments measurement takes place.
+> [A] There are a bunch of things available, some of which may be coincident,
+> depending on the context:
 > 
-> To achive the above the patch series does the following
->   -adds a new ima hook: ima_kexec_cmdline which measures the cmdline args
->    into the ima log, behind a new ima policy entry KEXEC_CMDLINE.
->   -since the cmldine args cannot be appraised, a new template field(buf) is
->    added. The template field contains the buffer passed(cmldine args), which
->    can be used to appraise/attest at a later stage.
->   -call the ima_kexec_cmdline(...) hook from kexec_file_load call.
-> 
-> The ima logs need to be carried over to the next kernel, which will be followed
-> up by other patchsets for x86_64 and arm64.
-> 
-> The kexec cmdline hash
+>   (1) The creds of the process that created a watch_queue (ie. opened
+>       /dev/watch_queue).
 
-^stored in the "d-ng" field of the template data
+These will be used when checking permissions to open /dev/watch_queue.
 
-> can be verified using
+>   (2) The creds of the process that set a watch (ie. called watch_sb,
+>       KEYCTL_NOTIFY, ...);
 
-> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements | 
->   grep  kexec-cmdline | cut -d' ' -f 6 | xxd -r -p | sha256sum
+These will be used when checking permissions to set a watch.
 
-Until per policy template field rule support is added, a template name
-needs to be defined.  Please define "ima-buf" as:
-{.name = "ima-buf", .fmt = "d-ng|n-ng|buf"}
+>   (3) The creds of the process that tripped the event (which might be the
+>       system).
 
-I'm still seeing some scripts/checkpatch "WARNING: line over 80
-characters".  scripts/Lindent should provide the correct way of
-formatting these lines.
+These will be used when checking permission to perform whatever 
+operation tripped the event (if the event is triggered by a userspace 
+operation).
 
-Some people feel that references to Lindent should be removed, but I
-tend to agree with the Documentation/hwmon/submitting-patches.rst
-comment pertaining to scripts/Lindent.
+>   (4) The security attributes of the object on which the watch was set (uid,
+>       gid, mode, labels).
 
-"* Running your patch or driver file(s) through checkpatch does not
-mean its formatting is clean. If unsure about formatting in your new
-driver, run it through Lindent. Lindent is not perfect, and you may
-have to do some minor cleanup, but it is a good start."
+These will be used when checking permissions to set the watch.
 
-Examples of where the line formatting is off is the call to
-ima_get_action() in process_buffer_measurement() and the call to
-process_buffer_measurement() in ima_kexec_cmdline().
+>   (5) The security attributes of the object on which the event was tripped.
 
-thanks,
+These will be used when checking permission to perform whatever 
+operation tripped the event.
 
-Mimi
+>   (6) The security attributes of all the objects between the object in (5) and
+>       the object in (4), assuming we work from (5) towards (4) if the two
+>       aren't coincident (WATCH_INFO_RECURSIVE).
+
+Does this apply to anything other than mount notifications?  And for 
+mount notifications, isn't the notification actually for a change to the 
+mount namespace, not a change to any file?  Hence, the real "object" for 
+events that trigger mount notifications is the mount namespace, right? 
+The watched path is just a way of identifying a subtree of the mount 
+namespace for notifications - it isn't the real object being watched.
+
+> At the moment, when post_one_notification() wants to write a notification into
+> a queue, it calls security_post_notification() to ask if it should be allowed
+> to do so.  This is passed (1) and (3) above plus the notification record.
+
+Not convinced we need this.
+
+> [B] There are a number of places I can usefully potentially add hooks:
+> 
+>   (a) The point at which a watch queue is created (ie. /dev/watch_queue is
+>       opened).
+
+Already covered by existing hooks on opening files.
+
+>   (b) The point at which a watch is set (ie. watch_sb).
+
+Yes, this requires a hook and corresponding check.
+
+>   (c) The point at which a notification is generated (ie. an automount point is
+>       tripped).
+
+Preferably covered by existing hooks on object accesses that would 
+generate notifications.
+
+>   (d) The point at which a notification is delivered (ie. we write the message
+>       into the queue).
+
+Preferably not needed.
+
+>   (e) All the points at which we walk over an object in a chain from (c) to
+>       find the watch on which we can effect (d) (eg. we walk rootwards from a
+>       mountpoint to find watches on a branch in the mount topology).
+
+Not necessary if the real object of mount notifications is the mount 
+namespace and if we do not support recursive notifications on e.g. 
+directories or some other object where the two can truly diverge.
+
+> [C] Problems that need to be resolved:
+> 
+>   (x) Do I need to put a security pointer in struct watch for the active LSM to
+>       fill in?  If so, I presume this would need passing to
+>       security_post_notification().
+
+I don't see why or where it would get used.
+
+>   (y) What checks should be done on object destruction after final put and what
+>       contexts need to be supplied?
+
+IMHO, no.
 
 > 
-> Changelog:
-> V7:
->   - rebased to next-queued-testing
->   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/log/?h=next-queued-testing
+>       This one is made all the harder because the creds that are in force when
+>       close(), exit(), exec(), dup2(), etc. close a file descriptor might need
+>       to be propagated to deferred-fput, which must in turn propagate them to
+>       af_unix-cleanup, and thence back to deferred-fput and thence to implicit
+>       unmount (dissolve_on_fput()[*]).
 > 
-> V6:
->   -add a new ima hook and policy to measure the cmdline
->     args(ima_kexec_cmdline)
->   -add a new template field buf to contain the buffer measured.
->   [suggested by Mimi Zohar]
->    add new fields to ima_event_data to store/read buffer data.
->   [suggested by Roberto]
->   -call ima_kexec_cmdline from kexec_file_load path
+>       [*] Though it should be noted that if this happens, the subtree cannot be
+>       	 attached to the root of a namespace.
 > 
-> v5:
->   -add a new ima hook and policy to measure the cmdline
->     args(ima_kexec_cmdline)
->   -add a new template field buf to contain the buffer measured.
->     [suggested by Mimi Zohar]
->   -call ima_kexec_cmdline from kexec_file_load path
+>       Further, if several processes are sharing a file object, it's not
+>       predictable as to which process the final notification will come from.
 > 
-> v4:
->   - per feedback from LSM community, removed the LSM hook and renamed the
->     IMA policy to KEXEC_CMDLINE
+>   (z) Do intermediate objects, say in a mount topology notification, actually
+>       need to be checked against the watcher's creds?  For a mount topology
+>       notification, would this require calling inode_permission() for each
+>       intervening directory?
+
+I don't think so, because the real object is the mount namespace, not 
+the individual directories.
+
 > 
-> v3: (rebase changes to next-general)
->   - Add policy checks for buffer[suggested by Mimi Zohar]
->   - use the IMA_XATTR to add buffer
->   - Add kexec_cmdline used for kexec file load
->   - Add an LSM hook to allow usage by other LSM.[suggestd by Mimi Zohar]
-> 
-> v2:
->   - Add policy checks for buffer[suggested by Mimi Zohar]
->   - Add an LSM hook to allow usage by other LSM.[suggestd by Mimi Zohar]
->   - use the IMA_XATTR to add buffer instead of sig template
-> 
-> v1:
->   -Add kconfigs to control the ima_buffer_check
->   -measure the cmdline args suffixed with the kernel file name
->   -add the buffer to the template sig field.
-> 
-> Prakhar Srivastava (3):
->   Add a new ima hook ima_kexec_cmdline to measure cmdline args
->   add a new ima template field buf
->   call ima_kexec_cmdline to measure the cmdline args
-> 
->  Documentation/ABI/testing/ima_policy      |  1 +
->  Documentation/security/IMA-templates.rst  |  2 +-
->  include/linux/ima.h                       |  2 +
->  kernel/kexec_file.c                       |  8 ++-
->  security/integrity/ima/ima.h              |  3 +
->  security/integrity/ima/ima_api.c          |  5 +-
->  security/integrity/ima/ima_init.c         |  2 +-
->  security/integrity/ima/ima_main.c         | 80 +++++++++++++++++++++++
->  security/integrity/ima/ima_policy.c       |  9 +++
->  security/integrity/ima/ima_template.c     |  2 +
->  security/integrity/ima/ima_template_lib.c | 20 ++++++
->  security/integrity/ima/ima_template_lib.h |  4 ++
->  12 files changed, 131 insertions(+), 7 deletions(-)
-> 
+>       Doing that might be impractical as it would probably have to be done
+>       outside of of the RCU read lock and the filesystem ->permission() hooks
+>       might want to sleep (to touch disk or talk to a server).
+
 
