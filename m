@@ -2,88 +2,193 @@ Return-Path: <SRS0=c21G=UL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_DR,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2799C31E46
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 08:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDB9C31E48
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 09:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D802720866
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 08:55:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51E4E206E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 09:34:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437428AbfFLIz0 convert rfc822-to-8bit (ORCPT
+        id S2408845AbfFLJeH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jun 2019 04:55:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60220 "EHLO mx1.redhat.com"
+        Wed, 12 Jun 2019 05:34:07 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:35126 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437421AbfFLIzZ (ORCPT
+        id S2408577AbfFLJeH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jun 2019 04:55:25 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A2ADC30832C8;
-        Wed, 12 Jun 2019 08:55:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 714AE46;
-        Wed, 12 Jun 2019 08:55:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <cf3f4865-b6d7-7303-0212-960439e0c119@tycho.nsa.gov>
-References: <cf3f4865-b6d7-7303-0212-960439e0c119@tycho.nsa.gov> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <be966d9c-e38d-7a30-8d80-fad5f25ab230@tycho.nsa.gov> <0cf7a49d-85f6-fba9-62ec-a378e0b76adf@schaufler-ca.com> <CALCETrX5O18q2=dUeC=hEtK2=t5KQpGBy9XveHxFw36OqkbNOg@mail.gmail.com> <dac74580-5b48-86e4-8222-cac29a9f541d@schaufler-ca.com> <E0925E1F-E5F2-4457-8704-47B6E64FE3F3@amacapital.net> <4b7d02b2-2434-8a7c-66cc-7dbebc37efbc@schaufler-ca.com> <CALCETrU+PKVbrKQJoXj9x_5y+vTZENMczHqyM_Xb85ca5YDZuA@mail.gmail.com> <25d88489-9850-f092-205e-0a4fc292f41b@schaufler-ca.com> <97BA9EB5-4E62-4E3A-BD97-CEC34F16FCFF@amacapital.net>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     dhowells@redhat.com, Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        USB list <linux-usb@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        raven@themaw.net, Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>
-Subject: Re: [RFC][PATCH 00/13] Mount, FS, Block and Keyrings notifications [ver #4]
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <12979.1560329702.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 12 Jun 2019 09:55:02 +0100
-Message-ID: <12980.1560329702@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 12 Jun 2019 08:55:25 +0000 (UTC)
+        Wed, 12 Jun 2019 05:34:07 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x5C9WOWI024604;
+        Wed, 12 Jun 2019 04:32:24 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x5C9WLgm024603;
+        Wed, 12 Jun 2019 04:32:21 -0500
+Date:   Wed, 12 Jun 2019 04:32:21 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Cedric Xing <cedric.xing@intel.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        jarkko.sakkinen@linux.intel.com, luto@kernel.org,
+        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
+        eparis@parisplace.org, jethro@fortanix.com, dave.hansen@intel.com,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, nhorman@redhat.com,
+        pmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, kai.svahn@intel.com,
+        bp@alien8.de, josh@joshtriplett.org, kai.huang@intel.com,
+        rientjes@google.com, william.c.roberts@intel.com,
+        philip.b.tricca@intel.com
+Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in SELinux
+Message-ID: <20190612093221.GA24188@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <cover.1560131039.git.cedric.xing@intel.com> <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com> <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov> <20190611220243.GB3416@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611220243.GB3416@linux.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 12 Jun 2019 04:32:24 -0500 (CDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Stephen Smalley <sds@tycho.nsa.gov> wrote:
+On Tue, Jun 11, 2019 at 03:02:43PM -0700, Sean Christopherson wrote:
 
-> 2) If notifications can be triggered by read-like operations (as in fanotify,
-> for example), then a "read" can be turned into a "write" flow through a
-> notification.
+Good morning, I hope the week is proceeding well for everyone.
 
-I don't think any of the things can be classed as "read-like" operations.  At
-the moment, there are the following groups:
+> On Tue, Jun 11, 2019 at 09:40:25AM -0400, Stephen Smalley wrote:
+> > I haven't looked at this code closely, but it feels like a lot of
+> > SGX-specific logic embedded into SELinux that will have to be repeated or
+> > reused for every security module.  Does SGX not track this state itself?
 
- (1) Addition of objects (eg. key_link, mount).
+> SGX does track equivalent state.
+> 
+> There are three proposals on the table (I think):
+> 
+>   1. Require userspace to explicitly specificy (maximal) enclave page
+>      permissions at build time.  The enclave page permissions are provided
+>      to, and checked by, LSMs at enclave build time.
+> 
+>      Pros: Low-complexity kernel implementation, straightforward auditing
+>      Cons: Sullies the SGX UAPI to some extent, may increase complexity of
+>            SGX2 enclave loaders.
+> 
+>   2. Pre-check LSM permissions and dynamically track mappings to enclave
+>      pages, e.g. add an SGX mprotect() hook to restrict W->X and WX
+>      based on the pre-checked permissions.
+> 
+>      Pros: Does not impact SGX UAPI, medium kernel complexity
+>      Cons: Auditing is complex/weird, requires taking enclave-specific
+>            lock during mprotect() to query/update tracking.
+> 
+>   3. Implement LSM hooks in SGX to allow LSMs to track enclave regions
+>      from cradle to grave, but otherwise defer everything to LSMs.
+> 
+>      Pros: Does not impact SGX UAPI, maximum flexibility, precise auditing
+>      Cons: Most complex and "heaviest" kernel implementation of the three,
+>            pushes more SGX details into LSMs.
+> 
+> My RFC series[1] implements #1.  My understanding is that Andy (Lutomirski)
+> prefers #2.  Cedric's RFC series implements #3.
+> 
+> Perhaps the easiest way to make forward progress is to rule out the
+> options we absolutely *don't* want by focusing on the potentially blocking
+> issue with each option:
+>
+>   #1 - SGX UAPI funkiness
+> 
+>   #2 - Auditing complexity, potential enclave lock contention
+> 
+>   #3 - Pushing SGX details into LSMs and complexity of kernel implementation
 
- (2) Modifications to things (eg. keyctl_write, remount).
+At the risk of repeating myself, I believe the issue that has not
+received full clarity is that, for a security relevant solution, there
+has to be two separate aspects of LSM coverage for SGX.  I believe
+that a high level review of the requirements may assist in selection
+of a course of action for the driver.
 
- (3) Removal of objects (eg. key_unlink, unmount, fput+FMODE_NEED_UNMOUNT).
+The first aspect of LSM control has been covered extensively and that
+is the notion of implementing control over the ability of a user
+identity to request some cohort of page privileges.  The cohort of
+obvious concern is the ability of a page to possess both WRITE and
+EXECUTE privileges at sometime during its lifetime.
 
- (4) I/O or hardware errors (eg. USB device add/remove, EDQUOT, ENOSPC).
+Given that SGX2 support is the ultimate and necesary goal for this
+driver, the selected proposal should be the one that gives the most
+simplistic application of this policy.  As I have noted previously,
+once SGX2 becomes available, the only relevant security control that
+can be realized with this type of LSM support is whether or not the
+platform owner wishes to limit access by a user identity to the
+ability to dynamically load code in enclave context.
 
-I have not currently defined any access events.
+With SGX2 we will, by necessity, have to admit the notion that a
+platform owner will not have any effective visibility into code that
+is loaded and executed, since it can come in over a secured network
+connection in an enclave security context.  This advocates for the
+simplest approach possible to providing some type of regulation to any
+form of WX page access.
 
-I've been looking at the possibility of having epoll generate events this way,
-but that's not as straightforward as I'd hoped and fanotify could potentially
-use it also, but in both those cases, the process is already getting the
-events currently by watching for them using synchronous waiting syscalls.
-Instead this would generate an event to say it had happened.
+Current state of the art, and there doesn't appear to be a reason to
+change this, is to package an enclave in the form of an ELF shared
+library.  It seems straight forward to inherit and act on page
+privileges from the privileges specified on the ELF sections that are
+loaded.  Loaders will have a file descriptor available so an mmap of
+the incoming page with the specified privileges should trigger the
+required LSM interventions and tie them to a specific enclave.
 
-David
+The current enclave 'standard' also uses layout metadata, stored in a
+special .notes section of the shared image, to direct a loader with
+respect to construction of the enclave stack, heap, TCS and other
+miscellaneous regions not directly coded by the ELF TEXT sections.  It
+seems straight forward to extend this paradigm to declare region(s) of
+an enclave that are eligible to be generated at runtime (EAUG'ed) with
+the RWX protections needed to support dynamically loaded code.
+
+If an enclave wishes to support this functionality, it would seem
+straight forward to require an enclave to provide a single zero page
+which the loader will mmap with those protections in order to trigger
+the desired LSM checks against that specific enclave.
+
+The simplest driver approach that achieves the desired introspection
+of permissions in the described framework will implement as much LSM
+security as is possible with SGX technology and with minimal
+disruption to the existing SGX software eco-system.
+
+This leaves the second aspect of LSM security and that is the ability
+to inspect and act on the initialized characteristics of the enclave.
+This is the aspect of SGX LSM functionality that has not been clearly
+called out.
+
+All that is needed here is an LSM hook that gets handed a pointer to
+the signature structure (SIGSTRUCT) that is passed to the EINIT ioctl.
+If the SIGSTRUCT does not match the proposed enclave image that the
+processor has computed secondary to the enclave image creation process
+the enclave will not initialize, so all that is needed is for an LSM
+to be allowed to interpret and act on the characteristics defined in
+that structure before the enclave is actually initialized.
+
+As we have now collectively demonstrated, it is easy to get lost in
+minutia with respect to all of this.  I believe if we can focus on a
+solution that implements what I have discussed above we will achieve
+as much as can be achieved with respect to platform security for SGX
+systems.
+
+Best wishes for a productive remainder of the week.
+
+Dr. Greg
+
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686            EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"Nullum magnum ingenium sine mixtura dementiae fuit."
+        (There is no great genius without some touch of madness.)
+                                -- Seneca
