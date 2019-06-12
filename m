@@ -6,111 +6,132 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 763DEC46477
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 16:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4FEC31E46
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 17:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5980821721
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 16:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3A1A215EA
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 17:41:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408899AbfFLQdD (ORCPT
+        id S1728180AbfFLRl3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jun 2019 12:33:03 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33004 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2408886AbfFLQdD (ORCPT
+        Wed, 12 Jun 2019 13:41:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57954 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725878AbfFLRl3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jun 2019 12:33:03 -0400
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id F20C6200662B4E236A65;
-        Wed, 12 Jun 2019 17:33:00 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 12 Jun
- 2019 17:32:52 +0100
-Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
-To:     Janne Karhunen <janne.karhunen@gmail.com>
-CC:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
-        <mjg59@google.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
-References: <20190606112620.26488-1-roberto.sassu@huawei.com>
- <CAE=NcraYOw9B3RFu3_DbJs9nPT87AtQEptC7zF4kAu4FP8YhxA@mail.gmail.com>
- <d9efe3c7-20dd-bbb0-40d8-40f69cba5b88@huawei.com>
- <CAE=NcraHqzST=SZNcrSgpv5EqfyUfpCCb7iQ0Oh6uohL3yiCdw@mail.gmail.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <c13c6b4f-1302-35fb-f077-00b7f84fea08@huawei.com>
-Date:   Wed, 12 Jun 2019 18:33:01 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 12 Jun 2019 13:41:29 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1899231628E2;
+        Wed, 12 Jun 2019 17:41:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 058825D9CA;
+        Wed, 12 Jun 2019 17:41:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com>
+References: <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <31009.1560262869@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, Stephen Smalley <sds@tycho.nsa.gov>,
+        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: What do LSMs *actually* need for checks on notifications?
 MIME-Version: 1.0
-In-Reply-To: <CAE=NcraHqzST=SZNcrSgpv5EqfyUfpCCb7iQ0Oh6uohL3yiCdw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <14575.1560361278.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 12 Jun 2019 18:41:18 +0100
+Message-ID: <14576.1560361278@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 12 Jun 2019 17:41:28 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/12/2019 3:38 PM, Janne Karhunen wrote:
-> On Wed, Jun 12, 2019 at 4:11 PM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+Casey Schaufler <casey@schaufler-ca.com> wrote:
+
+> >  (4) The security attributes of the object on which the watch was set (uid,
+> >      gid, mode, labels).
 > 
->>> - after initialization
->>>     - deny reading|writing anything without security.ima
->>>     - deny reading|writing anything invalid
->>>     - allow everything else
->>>
->>> The logic is pretty handy as it even creates additional layer of
->>> security around the early initialization files as they become
->>> unreadable after use.
->>
->> What if they should be legitimately used after the HMAC key is unsealed
->> and before switching to the persistent root file system?
+> Smack needs this to set a watch on the named object (file, key, ...).
+> I am going to say that if you can't access an object you can't watch it.
+
+So for the things I've so far defined:
+
+ (*) Keys/keyrings require View permission, but it could be Read permission
+     instead - though that may get disabled if the key type does not support
+     KEYCTL_READ.
+
+ (*) Mount/superblock watches - I've made these require execute permission on
+     the specified directory.  Could be read permission instead.
+
+ (*) Device events (block/usb) don't require any permissions, but currently
+     only deliver hardware notifications.
+
+> I think that read access is sufficient provided that no one else can
+> see what watches I've created.
+
+You can't find out what watches exist.
+
+> > At the moment, when post_one_notification() wants to write a notification
+> > into a queue, it calls security_post_notification() to ask if it should be
+> > allowed to do so.  This is passed (1) and (3) above plus the notification
+> > record.
 > 
-> Any examples? Log files and such are mostly 'one way' and should
-> probably be whitelisted in the policy?
+> Is "current" (2)? Smack needs (2) for the event delivery access check.
 
-I checked better when the random key would be used to verify files
-created during the boot. If we consider rootfs only, basically it would
-be used for dracut-state.sh.
+(2) was current_cred() when watch_sb(), KEYCTL_NOTIFY, etc. was called, but
+isn't necessarily current_cred() at the point post_one_notification() is
+called.  The latter is called at the point the event is generated and
+current_cred() is the creds of whatever thread that is called in (which may be
+a work_queue thread if it got deferred).
 
-Before I was using a rule to measure digest lists in tmpfs. I had many
-errors due to the fact that appraisal denied access to files in /run.
-The default policy does not appraise files in tmpfs, and also for digest
-lists it is not necessary (now I use: measure/appraise fsname=rootfs).
+At the moment, I'm storing the creds of whoever opened the queue (ie. (1)) and
+using that, but I could cache the creds of whoever created each watch
+(ie. (2)) and pass that to post_one_notification() instead.
 
+However, it should be noted that (1) is the creds of the buffer owner.
 
->>> Now, if we initialize the system with a random key like in your patch,
->>> this logic is to change quite drastically? It sounds to me the
->>> userland may actually break, all the userland initialization files in
->>> the existing ima configurations that do not use digsigs would become
->>> unreadable given that the random key is put in? Remember, those files
->>> can be protected via other means (most commonly signed ramdisk).
->>
->> No, the first patch is about adding the ability to verify files created
->> during each boot. For any other file, EVM returns INTEGRITY_UNKNOWN as
->> before. The second patch changes the behavior, as INTEGRITY_UNKNOWN is
->> considered as an error for the enforce-evm appraisal mode. The second
->> patch aims at making the system more secure, as no file would be
->> accessible unless it is verified.
->>
->> It is true that configurations without digsigs won't work anymore but
->> the alternative is accepting any file until the HMAC key is unsealed.
+> >  (e) All the points at which we walk over an object in a chain from (c) to
+> >      find the watch on which we can effect (d) (eg. we walk rootwards from a
+> >      mountpoint to find watches on a branch in the mount topology).
 > 
-> That's a pretty big change for the userland IMHO. Quite a few
-> configurations out there will break, including mine I believe, so I
-> hope there is a solid reason asking people to change their stuff. I'm
-> fine holding off all writing until it is safe to do so for now..
+> Smack does not require anything beyond existing checks.
 
-The goal of appraisal is to allow access only to files with a valid
-signature or HMAC. With the current behavior, that cannot be guaranteed.
+I'm glad to hear that, as this might be sufficiently impractical as to render
+it unusable with Smack.  Calling i_op->permissions() a lot would suck.
 
-Unfortunately, dracut-state.sh is created very early. It could be
-possible to unseal the key before, but this probably means modifying
-systemd.
+> >  (y) What checks should be done on object destruction after final put and
+> >      what contexts need to be supplied?
+> 
+> Classically there is no such thing as filesystem object deletion.
+> By making it possible to set a watch on that you've inadvertently
+> added a security relevant action to the security model. :o
 
-Roberto
+That wasn't my original intention - I intended fsmount(2) to mount directly as
+mount(2) does, but Al had other ideas.
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Now fsmount(2) produces a file descriptor referring to a new mount object that
+can be mounted into by move_mount(2) before being spliced into the mount
+topology by move_mount(2).  However, if the fd is closed before the last step,
+close() will destroy the mount subtree attached to it (kind of quasi-unmount).
+
+That wouldn't be a problem, except that the fd from fsmount(2) can be used
+anywhere an O_PATH fd can be used - including watch_mount(2), fchdir(2), ...
+Further, FMODE_NEED_UNMOUNT gets cleared if the mount is spliced in at least
+once.
+
+Okay, having tried it you don't get an unmount event (since there's no actual
+unmount), but you do get an event to say that your watch got deleted (if the
+directory on which the watch was placed got removed from the system).
+
+So...  does the "your watch got deleted" message need checking?  In my
+opinion, it shouldn't get discarded because then the watcher doesn't know
+their watch went away.
+
+David
