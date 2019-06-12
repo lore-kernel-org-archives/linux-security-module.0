@@ -2,193 +2,101 @@ Return-Path: <SRS0=c21G=UL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_DR,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDB9C31E48
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 09:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89101C31E48
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 11:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51E4E206E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 09:34:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63F622082C
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 11:28:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Noyrz8/X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408845AbfFLJeH (ORCPT
+        id S1727321AbfFLL2o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jun 2019 05:34:07 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:35126 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408577AbfFLJeH (ORCPT
+        Wed, 12 Jun 2019 07:28:44 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44782 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725771AbfFLL2o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:34:07 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x5C9WOWI024604;
-        Wed, 12 Jun 2019 04:32:24 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x5C9WLgm024603;
-        Wed, 12 Jun 2019 04:32:21 -0500
-Date:   Wed, 12 Jun 2019 04:32:21 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Cedric Xing <cedric.xing@intel.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        jarkko.sakkinen@linux.intel.com, luto@kernel.org,
-        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
-        eparis@parisplace.org, jethro@fortanix.com, dave.hansen@intel.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, nhorman@redhat.com,
-        pmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, kai.svahn@intel.com,
-        bp@alien8.de, josh@joshtriplett.org, kai.huang@intel.com,
-        rientjes@google.com, william.c.roberts@intel.com,
-        philip.b.tricca@intel.com
-Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in SELinux
-Message-ID: <20190612093221.GA24188@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <cover.1560131039.git.cedric.xing@intel.com> <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com> <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov> <20190611220243.GB3416@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611220243.GB3416@linux.intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 12 Jun 2019 04:32:24 -0500 (CDT)
+        Wed, 12 Jun 2019 07:28:44 -0400
+Received: by mail-lf1-f68.google.com with SMTP id r15so11785009lfm.11;
+        Wed, 12 Jun 2019 04:28:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VrcwL5rTg2GfI5vKUhnJW12tJvsV9k169bGdVahLiS0=;
+        b=Noyrz8/XO96gC9BcT8T8ZOWHOGpCOeQJp6N7lwIaTnC3q/lRnCRUcbkQAH0eDZeWGR
+         V2FINggzSTseFJD9cKbOblssOhJG/a1hdQ+/aa4SRgAfqFlW0Pw0MgSpnhiO09r0pSQ5
+         kiyQD6ZREl8Ob4/vu5nMN1qgRPe2pgFJUKh0cfyH9uuzFEAKHjyXoGc0MYUu4Zy6vlRJ
+         mWGyGeegoFbcizy1BMwNJpO0X/MxSAdp0AB95LLvPOTgEbAUYfhpWWciNpLnICZU2wVj
+         uQnzwnGGAi35oYb0dcRuYUDs5hUNbsXYu2ljeIW3RUl8anLNoexCm+bcCtXnPyiNDy7C
+         NEsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VrcwL5rTg2GfI5vKUhnJW12tJvsV9k169bGdVahLiS0=;
+        b=sYvduETEtesu5GHo1pok93bYQaNxmQi1VEZ72pB3MGa2rM/9U8bBjWKeCm+LOqTIoi
+         2/eGT/Vb3EqXLD15KweH3t99JYGPOMFnr3Q/HFN9Ql3K7Ho69Mv2dDGtSEK4G3S1XfLx
+         NOkOzlkkq3ujrIOmDlPyiKFEq0FwcZt3s/TVYzKaXJtjmTrqDKQDp4aghElKb7zBkQsy
+         +27L5Q6PjcmoL2gCDedROOzumjYy9R7j9AyaSZKc+oo0AAt7GABK40MhF365LBcuQZGB
+         kcjjbTdBX3bp0NhwQAfQqKiRpVTuZ/tTv/g1kdk3pA2QlwxeiWOarFFp1DY3dEs3Du52
+         Y/BQ==
+X-Gm-Message-State: APjAAAXKanM02pVV2I0pNUcM4igHq3PEATceXxIr1/FnMTT5EuQdweah
+        0+5kbaoqCcBY2csyWqMcLhvcj50pxXYZNPsu3J2Rgchku2/Mmw==
+X-Google-Smtp-Source: APXvYqxJWaNbobYnzhCfEafyGc2TK8Zbey+O1DAPjYZ4H1tbB3g3/lDvWzR7qbbYbJ6OQ2DE2yLzq0cp7qfW8swB7Mc=
+X-Received: by 2002:a19:8cc:: with SMTP id 195mr5745566lfi.150.1560338922043;
+ Wed, 12 Jun 2019 04:28:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190606112620.26488-1-roberto.sassu@huawei.com>
+In-Reply-To: <20190606112620.26488-1-roberto.sassu@huawei.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Wed, 12 Jun 2019 14:28:30 +0300
+Message-ID: <CAE=NcraYOw9B3RFu3_DbJs9nPT87AtQEptC7zF4kAu4FP8YhxA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@huawei.com,
+        mjg59@google.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, silviu.vlasceanu@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 11, 2019 at 03:02:43PM -0700, Sean Christopherson wrote:
-
-Good morning, I hope the week is proceeding well for everyone.
-
-> On Tue, Jun 11, 2019 at 09:40:25AM -0400, Stephen Smalley wrote:
-> > I haven't looked at this code closely, but it feels like a lot of
-> > SGX-specific logic embedded into SELinux that will have to be repeated or
-> > reused for every security module.  Does SGX not track this state itself?
-
-> SGX does track equivalent state.
-> 
-> There are three proposals on the table (I think):
-> 
->   1. Require userspace to explicitly specificy (maximal) enclave page
->      permissions at build time.  The enclave page permissions are provided
->      to, and checked by, LSMs at enclave build time.
-> 
->      Pros: Low-complexity kernel implementation, straightforward auditing
->      Cons: Sullies the SGX UAPI to some extent, may increase complexity of
->            SGX2 enclave loaders.
-> 
->   2. Pre-check LSM permissions and dynamically track mappings to enclave
->      pages, e.g. add an SGX mprotect() hook to restrict W->X and WX
->      based on the pre-checked permissions.
-> 
->      Pros: Does not impact SGX UAPI, medium kernel complexity
->      Cons: Auditing is complex/weird, requires taking enclave-specific
->            lock during mprotect() to query/update tracking.
-> 
->   3. Implement LSM hooks in SGX to allow LSMs to track enclave regions
->      from cradle to grave, but otherwise defer everything to LSMs.
-> 
->      Pros: Does not impact SGX UAPI, maximum flexibility, precise auditing
->      Cons: Most complex and "heaviest" kernel implementation of the three,
->            pushes more SGX details into LSMs.
-> 
-> My RFC series[1] implements #1.  My understanding is that Andy (Lutomirski)
-> prefers #2.  Cedric's RFC series implements #3.
-> 
-> Perhaps the easiest way to make forward progress is to rule out the
-> options we absolutely *don't* want by focusing on the potentially blocking
-> issue with each option:
+On Thu, Jun 6, 2019 at 3:27 PM Roberto Sassu <roberto.sassu@huawei.com> wrote:
 >
->   #1 - SGX UAPI funkiness
-> 
->   #2 - Auditing complexity, potential enclave lock contention
-> 
->   #3 - Pushing SGX details into LSMs and complexity of kernel implementation
+> Previous versions included the patch 'ima: don't ignore INTEGRITY_UNKNOWN
+> EVM status'. However, I realized that this patch cannot be accepted alone
+> because IMA-Appraisal would deny access to new files created during the
+> boot.
 
-At the risk of repeating myself, I believe the issue that has not
-received full clarity is that, for a security relevant solution, there
-has to be two separate aspects of LSM coverage for SGX.  I believe
-that a high level review of the requirements may assist in selection
-of a course of action for the driver.
+The early initialization logic seems to have been changing, the
+original one as I have understood it:
+- before initialization
+  - allow reading anything without security.ima
+  - deny reading anything with security.ima
+  - allow all writes
+- after initialization
+  - deny reading|writing anything without security.ima
+  - deny reading|writing anything invalid
+  - allow everything else
 
-The first aspect of LSM control has been covered extensively and that
-is the notion of implementing control over the ability of a user
-identity to request some cohort of page privileges.  The cohort of
-obvious concern is the ability of a page to possess both WRITE and
-EXECUTE privileges at sometime during its lifetime.
+The logic is pretty handy as it even creates additional layer of
+security around the early initialization files as they become
+unreadable after use.
 
-Given that SGX2 support is the ultimate and necesary goal for this
-driver, the selected proposal should be the one that gives the most
-simplistic application of this policy.  As I have noted previously,
-once SGX2 becomes available, the only relevant security control that
-can be realized with this type of LSM support is whether or not the
-platform owner wishes to limit access by a user identity to the
-ability to dynamically load code in enclave context.
+Now, if we initialize the system with a random key like in your patch,
+this logic is to change quite drastically? It sounds to me the
+userland may actually break, all the userland initialization files in
+the existing ima configurations that do not use digsigs would become
+unreadable given that the random key is put in? Remember, those files
+can be protected via other means (most commonly signed ramdisk).
 
-With SGX2 we will, by necessity, have to admit the notion that a
-platform owner will not have any effective visibility into code that
-is loaded and executed, since it can come in over a secured network
-connection in an enclave security context.  This advocates for the
-simplest approach possible to providing some type of regulation to any
-form of WX page access.
 
-Current state of the art, and there doesn't appear to be a reason to
-change this, is to package an enclave in the form of an ELF shared
-library.  It seems straight forward to inherit and act on page
-privileges from the privileges specified on the ELF sections that are
-loaded.  Loaders will have a file descriptor available so an mmap of
-the incoming page with the specified privileges should trigger the
-required LSM interventions and tie them to a specific enclave.
-
-The current enclave 'standard' also uses layout metadata, stored in a
-special .notes section of the shared image, to direct a loader with
-respect to construction of the enclave stack, heap, TCS and other
-miscellaneous regions not directly coded by the ELF TEXT sections.  It
-seems straight forward to extend this paradigm to declare region(s) of
-an enclave that are eligible to be generated at runtime (EAUG'ed) with
-the RWX protections needed to support dynamically loaded code.
-
-If an enclave wishes to support this functionality, it would seem
-straight forward to require an enclave to provide a single zero page
-which the loader will mmap with those protections in order to trigger
-the desired LSM checks against that specific enclave.
-
-The simplest driver approach that achieves the desired introspection
-of permissions in the described framework will implement as much LSM
-security as is possible with SGX technology and with minimal
-disruption to the existing SGX software eco-system.
-
-This leaves the second aspect of LSM security and that is the ability
-to inspect and act on the initialized characteristics of the enclave.
-This is the aspect of SGX LSM functionality that has not been clearly
-called out.
-
-All that is needed here is an LSM hook that gets handed a pointer to
-the signature structure (SIGSTRUCT) that is passed to the EINIT ioctl.
-If the SIGSTRUCT does not match the proposed enclave image that the
-processor has computed secondary to the enclave image creation process
-the enclave will not initialize, so all that is needed is for an LSM
-to be allowed to interpret and act on the characteristics defined in
-that structure before the enclave is actually initialized.
-
-As we have now collectively demonstrated, it is easy to get lost in
-minutia with respect to all of this.  I believe if we can focus on a
-solution that implements what I have discussed above we will achieve
-as much as can be achieved with respect to platform security for SGX
-systems.
-
-Best wishes for a productive remainder of the week.
-
-Dr. Greg
-
-As always,
-Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-4206 N. 19th Ave.           Specializing in information infra-structure
-Fargo, ND  58102            development.
-PH: 701-281-1686            EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"Nullum magnum ingenium sine mixtura dementiae fuit."
-        (There is no great genius without some touch of madness.)
-                                -- Seneca
+--
+Janne
