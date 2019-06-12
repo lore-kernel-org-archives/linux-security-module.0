@@ -2,101 +2,119 @@ Return-Path: <SRS0=c21G=UL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56211C31E46
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 18:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B8FC31E46
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 19:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 373982080A
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 18:37:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 137BF215EA
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 19:28:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfFLShA convert rfc822-to-8bit (ORCPT
+        id S1728064AbfFLT0i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jun 2019 14:37:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50952 "EHLO mx1.redhat.com"
+        Wed, 12 Jun 2019 15:26:38 -0400
+Received: from mga14.intel.com ([192.55.52.115]:24089 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726677AbfFLShA (ORCPT
+        id S1728011AbfFLT0g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:37:00 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5350E308795D;
-        Wed, 12 Jun 2019 18:37:00 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 42FE85F9C3;
-        Wed, 12 Jun 2019 18:36:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <0483c310-87c0-17b6-632e-d57b2274a32f@schaufler-ca.com>
-References: <0483c310-87c0-17b6-632e-d57b2274a32f@schaufler-ca.com> <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <31009.1560262869@warthog.procyon.org.uk> <14576.1560361278@warthog.procyon.org.uk>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com, Stephen Smalley <sds@tycho.nsa.gov>,
-        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
-        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: What do LSMs *actually* need for checks on notifications?
+        Wed, 12 Jun 2019 15:26:36 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 12:26:35 -0700
+X-ExtLoop1: 1
+Received: from suygunge-mobl.ger.corp.intel.com (HELO localhost) ([10.252.48.116])
+  by orsmga001.jf.intel.com with ESMTP; 12 Jun 2019 12:26:27 -0700
+Date:   Wed, 12 Jun 2019 22:26:26 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v2 2/5] x86/sgx: Require userspace to define enclave
+ pages' protection bits
+Message-ID: <20190612192626.GD3378@linux.intel.com>
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+ <20190606021145.12604-3-sean.j.christopherson@intel.com>
+ <20190610152717.GB3752@linux.intel.com>
+ <20190610161532.GC15995@linux.intel.com>
+ <20190610174506.GB13732@linux.intel.com>
+ <20190610181744.GH15995@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17321.1560364615.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 12 Jun 2019 19:36:55 +0100
-Message-ID: <17322.1560364615@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 12 Jun 2019 18:37:00 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610181744.GH15995@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
-
-> >  (*) Device events (block/usb) don't require any permissions, but currently
-> >      only deliver hardware notifications.
+On Mon, Jun 10, 2019 at 11:17:44AM -0700, Sean Christopherson wrote:
+> On Mon, Jun 10, 2019 at 08:45:06PM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Jun 10, 2019 at 09:15:33AM -0700, Sean Christopherson wrote:
+> > > > 'flags' should would renamed as 'secinfo_flags_mask' even if the name is
+> > > > longish. It would use the same values as the SECINFO flags. The field in
+> > > > struct sgx_encl_page should have the same name. That would express
+> > > > exactly relation between SECINFO and the new field. I would have never
+> > > > asked on last iteration why SECINFO is not enough with a better naming.
+> > > 
+> > > No, these flags do not impact the EPCM protections in any way.  Userspace
+> > > can extend the EPCM protections without going through the kernel.  The
+> > > protection flags for an enclave page impact VMA/PTE protection bits.
+> > > 
+> > > IMO, it is best to treat the EPCM as being completely separate from the
+> > > kernel's EPC management.
+> > 
+> > It is a clumsy API if permissions are not taken in the same format for
+> > everything. There is no reason not to do it. The way mprotect() callback
+> > just interprets the field is as VMA permissions.
 > 
-> How do you specify what device you want to watch?
-
-It's a general queue.
-
-> Don't you have to access a /dev/something?
-
-Not at the moment.  One problem is that there may not be a /dev/something for
-a device (take a bridge for example), and even if it does, the device driver
-doesn't necessarily have access to the path.  The messages contain the device
-name string as appears in dmesg ("3-7" for a USB device, for example).
-
-I think it would be wise to limit the general queue to hardware events that
-either get triggered by someone physically mucking around with the hardware or
-device errors, such as bad sectors or links going up and down.
-
-> > You can't find out what watches exist.
+> They are two entirely different things.  The explicit protection bits are
+> consumed by the kernel, while SECINFO.flags is consumed by the CPU.  The
+> intent is to have the protection flags be analogous to mprotect(), the
+> fact that they have a similar/identical format to SECINFO is irrelevant.
 > 
-> Not even your own?
+> Calling the field secinfo_flags_mask is straight up wrong on SGX2, as 
+> userspace can use EMODPE to set SECINFO after the page is added.  It's
+> also wrong on SGX1 when adding TCS pages since SECINFO.RWX bits for TCS
+> pages are forced to zero by hardware.
 
-No.
+The new variable tells the limits on which kernel will co-operate with
+the enclave. It is way more descriptive than 'flags'.
 
-> > However, it should be noted that (1) is the creds of the buffer owner.
+> > It would also be more future-proof just to have a mask covering all bits
+> > of the SECINFO flags field.
 > 
-> How are buffers shared? Who besides the buffer creator can use it?
+> This simply doesn't work, e.g. the PENDING, MODIFIED and PR flags in the
+> SECINFO are read-only from a software perspective.
 
-When you open /dev/watch_queue, you get buffers private to that file object; a
-second open of the device, even by the same process, will get different
-buffers.
+It is easy to validate reserved bits from a SECINFO struct.
 
-The buffers are 'attached' to that file and are accessed by calling mmap() on
-the fd; shareability is governed by how shareable the fd and a mapping are
-shareable.
-
-> Can you glean information from the watch being deleted?
-> I wouldn't think so, and it seems like a one-time event
-> from the system, so I don't think an access check would
-> be required.
-
-As you say, it's a one-time message per watch.  The object that got deleted
-would need to be recreated, rewatched and made available to both parties.
-
-David
+/Jarkko
