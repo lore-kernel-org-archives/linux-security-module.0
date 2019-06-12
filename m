@@ -2,288 +2,88 @@ Return-Path: <SRS0=c21G=UL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2849DC31E48
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 07:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2799C31E46
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 08:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFF712063F
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 07:46:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qC4nOHZz"
+	by mail.kernel.org (Postfix) with ESMTP id D802720866
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 08:55:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408432AbfFLHqf (ORCPT
+        id S2437428AbfFLIz0 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jun 2019 03:46:35 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34788 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406508AbfFLHqe (ORCPT
+        Wed, 12 Jun 2019 04:55:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60220 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437421AbfFLIzZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:46:34 -0400
-Received: by mail-lj1-f193.google.com with SMTP id p17so6932735ljg.1;
-        Wed, 12 Jun 2019 00:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=voWdC+EmtQNr66ZM3yr4qbq+boeE2fF1DJk/pbOxntM=;
-        b=qC4nOHZzlq4T87u53EwFQn2FA3x1IRIGkm6ymAxP+mJk+IXdxtKIi/j48SJadoC6Bh
-         0OcHUbfY+E5qK5/HyPHmIgxC10hcGUdETibSLeRlN8PAM+XihK9bZPZdDVBDfZ7534ix
-         hWQjf94UWWn84/I2f5HxeBJBl7n5P2eNq7eZ3LRFOJtaJapwxiFs46D26X9goWSoUlJY
-         o7QqUkifyj/PJdwd7N4En9Fg2mqMmI83YuusIxH8aHaMott1PnvdjVUSCdRxDqbMDujk
-         6ZMKULLj5WDHdwC77LJU9fFHOjWJ6vMJof0zj12+jZF5EVheMrrgItysn8vTcwQhimY5
-         n+wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=voWdC+EmtQNr66ZM3yr4qbq+boeE2fF1DJk/pbOxntM=;
-        b=fN2tuTG9A3M8UDcpAd0rdwl8odUofE7Xho3nWcyx+7da3WCTdHgW5lM7VAsle7UdmH
-         3yjQlr1ACmVR/w2w0cd3J30eg8SlT05lIvYsTaUA3AWV7dkzChsa5IuHX33179phlddV
-         MKWVl5TNXB+korcEZn/hpPLNSkhXrQ4Rz/J0zs98DPU2//PYxShQo2Um3ScEW40o54a3
-         okXk2+qETgx4sx6cDOk+4RRUYDgD3aASsl/k0aTCeQRcPkWjtx0fYjw3S9b68zc2IRbR
-         yIARHwhYiUwBnBgBhv2o8MJB5ebEyfILtilqgwIs4one8LZohQs9spQpR3tfah2DMPdr
-         Gzow==
-X-Gm-Message-State: APjAAAViX/xcsf52TdbFljrODwgi/HLXvcBeyHzTaKaGj/WNY4oXXAxT
-        9TfSy6hPFaIfU+STPx8Yj70=
-X-Google-Smtp-Source: APXvYqwzpHbMBEeW4ZvUXvT2db4ov8mIy4/5/qFTHYMQUCPdCSizUEwnUgJY0HvuUaC8BQy6GE9jbA==
-X-Received: by 2002:a2e:894a:: with SMTP id b10mr11732411ljk.99.1560325592233;
-        Wed, 12 Jun 2019 00:46:32 -0700 (PDT)
-Received: from localhost.localdomain ([193.211.7.147])
-        by smtp.gmail.com with ESMTPSA id h11sm2961610lfm.14.2019.06.12.00.46.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 00:46:31 -0700 (PDT)
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-To:     sds@tycho.nsa.gov, paul@paul-moore.com, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Janne Karhunen <janne.karhunen@gmail.com>
-Subject: [PATCH v2 1/2] ima: use the lsm policy update notifier
-Date:   Wed, 12 Jun 2019 10:44:56 +0300
-Message-Id: <20190612074456.2504-2-janne.karhunen@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190612074456.2504-1-janne.karhunen@gmail.com>
-References: <20190612074456.2504-1-janne.karhunen@gmail.com>
+        Wed, 12 Jun 2019 04:55:25 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A2ADC30832C8;
+        Wed, 12 Jun 2019 08:55:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 714AE46;
+        Wed, 12 Jun 2019 08:55:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <cf3f4865-b6d7-7303-0212-960439e0c119@tycho.nsa.gov>
+References: <cf3f4865-b6d7-7303-0212-960439e0c119@tycho.nsa.gov> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <be966d9c-e38d-7a30-8d80-fad5f25ab230@tycho.nsa.gov> <0cf7a49d-85f6-fba9-62ec-a378e0b76adf@schaufler-ca.com> <CALCETrX5O18q2=dUeC=hEtK2=t5KQpGBy9XveHxFw36OqkbNOg@mail.gmail.com> <dac74580-5b48-86e4-8222-cac29a9f541d@schaufler-ca.com> <E0925E1F-E5F2-4457-8704-47B6E64FE3F3@amacapital.net> <4b7d02b2-2434-8a7c-66cc-7dbebc37efbc@schaufler-ca.com> <CALCETrU+PKVbrKQJoXj9x_5y+vTZENMczHqyM_Xb85ca5YDZuA@mail.gmail.com> <25d88489-9850-f092-205e-0a4fc292f41b@schaufler-ca.com> <97BA9EB5-4E62-4E3A-BD97-CEC34F16FCFF@amacapital.net>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     dhowells@redhat.com, Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        USB list <linux-usb@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        raven@themaw.net, Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: [RFC][PATCH 00/13] Mount, FS, Block and Keyrings notifications [ver #4]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <12979.1560329702.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 12 Jun 2019 09:55:02 +0100
+Message-ID: <12980.1560329702@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 12 Jun 2019 08:55:25 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Don't do lazy policy updates while running the rule matching,
-run the updates as they happen.
+Stephen Smalley <sds@tycho.nsa.gov> wrote:
 
-Depends on commit 141a61ce6c60 ("LSM: switch to blocking policy update notifiers")
+> 2) If notifications can be triggered by read-like operations (as in fanotify,
+> for example), then a "read" can be turned into a "write" flow through a
+> notification.
 
-Changelog v2
-- Rebase to 'next-queued-testing'
-- Use memset to initialize the lsm rule array
-- Don't duplicate elements that are immutable during the rule copy
+I don't think any of the things can be classed as "read-like" operations.  At
+the moment, there are the following groups:
 
-=========
-Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
----
- security/integrity/ima/ima.h        |   2 +
- security/integrity/ima/ima_main.c   |   8 ++
- security/integrity/ima/ima_policy.c | 116 +++++++++++++++++++++++-----
- 3 files changed, 106 insertions(+), 20 deletions(-)
+ (1) Addition of objects (eg. key_link, mount).
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 18b48a6d0b80..579544527246 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -155,6 +155,8 @@ unsigned long ima_get_binary_runtime_size(void);
- int ima_init_template(void);
- void ima_init_template_list(void);
- int __init ima_init_digests(void);
-+int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-+			  void *lsm_data);
- 
- /*
-  * used to protect h_table and sha_table
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index af341a80118f..a7e7e2d7224c 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -43,6 +43,10 @@ int ima_appraise;
- int ima_hash_algo = HASH_ALGO_SHA1;
- static int hash_setup_done;
- 
-+static struct notifier_block ima_lsm_policy_notifier = {
-+	.notifier_call = ima_lsm_policy_change,
-+};
-+
- static int __init hash_setup(char *str)
- {
- 	struct ima_template_desc *template_desc = ima_template_desc_current();
-@@ -622,6 +626,10 @@ static int __init init_ima(void)
- 		error = ima_init();
- 	}
- 
-+	error = register_blocking_lsm_notifier(&ima_lsm_policy_notifier);
-+	if (error)
-+		pr_warn("Couldn't register LSM notifier, error %d\n", error);
-+
- 	if (!error)
- 		ima_update_policy_flag();
- 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index fd9b01881d17..e1550859f870 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -250,31 +250,113 @@ static int __init default_appraise_policy_setup(char *str)
- }
- __setup("ima_appraise_tcb", default_appraise_policy_setup);
- 
-+static void ima_lsm_free_rule(struct ima_rule_entry *entry)
-+{
-+	int i;
-+
-+	for (i = 0; i < MAX_LSM_RULES; i++) {
-+		kfree(entry->lsm[i].rule);
-+		kfree(entry->lsm[i].args_p);
-+	}
-+	kfree(entry);
-+}
-+
-+static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
-+{
-+	struct ima_rule_entry *nentry;
-+	int i, result;
-+
-+	nentry = kmalloc(sizeof(*nentry), GFP_KERNEL);
-+	if (!nentry)
-+		return NULL;
-+
-+	/*
-+	 * Immutable elements are copied over as pointers and data; only
-+	 * lsm rules can change
-+	 */
-+	memcpy(nentry, entry, sizeof(*nentry));
-+	memset(nentry->lsm, 0, FIELD_SIZEOF(struct ima_rule_entry, lsm));
-+
-+	for (i = 0; i < MAX_LSM_RULES; i++) {
-+		if (!entry->lsm[i].rule)
-+			continue;
-+
-+		nentry->lsm[i].type = entry->lsm[i].type;
-+		nentry->lsm[i].args_p = kstrdup(entry->lsm[i].args_p,
-+						GFP_KERNEL);
-+		if (!nentry->lsm[i].args_p)
-+			goto out_err;
-+
-+		result = security_filter_rule_init(nentry->lsm[i].type,
-+						   Audit_equal,
-+						   nentry->lsm[i].args_p,
-+						   &nentry->lsm[i].rule);
-+		if (result == -EINVAL)
-+			pr_warn("ima: rule for LSM \'%d\' is undefined\n",
-+				entry->lsm[i].type);
-+	}
-+	return nentry;
-+
-+out_err:
-+	ima_lsm_free_rule(nentry);
-+	return NULL;
-+}
-+
-+static int ima_lsm_update_rule(struct ima_rule_entry *entry)
-+{
-+	struct ima_rule_entry *nentry;
-+
-+	nentry = ima_lsm_copy_rule(entry);
-+	if (!nentry)
-+		return -ENOMEM;
-+
-+	list_replace_rcu(&entry->list, &nentry->list);
-+	synchronize_rcu();
-+	ima_lsm_free_rule(entry);
-+
-+	return 0;
-+}
-+
- /*
-  * The LSM policy can be reloaded, leaving the IMA LSM based rules referring
-  * to the old, stale LSM policy.  Update the IMA LSM based rules to reflect
-- * the reloaded LSM policy.  We assume the rules still exist; and BUG_ON() if
-- * they don't.
-+ * the reloaded LSM policy.
-  */
- static void ima_lsm_update_rules(void)
- {
--	struct ima_rule_entry *entry;
--	int result;
--	int i;
-+	struct ima_rule_entry *entry, *e;
-+	int i, result, needs_update;
- 
--	list_for_each_entry(entry, &ima_policy_rules, list) {
-+	list_for_each_entry_safe(entry, e, &ima_policy_rules, list) {
-+		needs_update = 0;
- 		for (i = 0; i < MAX_LSM_RULES; i++) {
--			if (!entry->lsm[i].rule)
--				continue;
--			result = security_filter_rule_init(entry->lsm[i].type,
--							   Audit_equal,
--							   entry->lsm[i].args_p,
--							   &entry->lsm[i].rule);
--			BUG_ON(!entry->lsm[i].rule);
-+			if (entry->lsm[i].rule) {
-+				needs_update = 1;
-+				break;
-+			}
-+		}
-+		if (!needs_update)
-+			continue;
-+
-+		result = ima_lsm_update_rule(entry);
-+		if (result) {
-+			pr_err("ima: lsm rule update error %d\n",
-+				result);
-+			return;
- 		}
- 	}
- }
- 
-+int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-+			  void *lsm_data)
-+{
-+	if (event != LSM_POLICY_CHANGE)
-+		return NOTIFY_DONE;
-+
-+	ima_lsm_update_rules();
-+	return NOTIFY_OK;
-+}
-+
- /**
-  * ima_match_rules - determine whether an inode matches the measure rule.
-  * @rule: a pointer to a rule
-@@ -328,11 +410,10 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 	for (i = 0; i < MAX_LSM_RULES; i++) {
- 		int rc = 0;
- 		u32 osid;
--		int retried = 0;
- 
- 		if (!rule->lsm[i].rule)
- 			continue;
--retry:
-+
- 		switch (i) {
- 		case LSM_OBJ_USER:
- 		case LSM_OBJ_ROLE:
-@@ -353,11 +434,6 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 		default:
- 			break;
- 		}
--		if ((rc < 0) && (!retried)) {
--			retried = 1;
--			ima_lsm_update_rules();
--			goto retry;
--		}
- 		if (!rc)
- 			return false;
- 	}
--- 
-2.17.1
+ (2) Modifications to things (eg. keyctl_write, remount).
 
+ (3) Removal of objects (eg. key_unlink, unmount, fput+FMODE_NEED_UNMOUNT).
+
+ (4) I/O or hardware errors (eg. USB device add/remove, EDQUOT, ENOSPC).
+
+I have not currently defined any access events.
+
+I've been looking at the possibility of having epoll generate events this way,
+but that's not as straightforward as I'd hoped and fanotify could potentially
+use it also, but in both those cases, the process is already getting the
+events currently by watching for them using synchronous waiting syscalls.
+Instead this would generate an event to say it had happened.
+
+David
