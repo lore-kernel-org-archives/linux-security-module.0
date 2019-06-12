@@ -2,101 +2,87 @@ Return-Path: <SRS0=c21G=UL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89101C31E48
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 11:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87931C31E47
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 11:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63F622082C
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 11:28:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Noyrz8/X"
+	by mail.kernel.org (Postfix) with ESMTP id 6C4512082C
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 11:43:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbfFLL2o (ORCPT
+        id S1727352AbfFLLnQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jun 2019 07:28:44 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44782 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725771AbfFLL2o (ORCPT
+        Wed, 12 Jun 2019 07:43:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38074 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728601AbfFLLnQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jun 2019 07:28:44 -0400
-Received: by mail-lf1-f68.google.com with SMTP id r15so11785009lfm.11;
-        Wed, 12 Jun 2019 04:28:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VrcwL5rTg2GfI5vKUhnJW12tJvsV9k169bGdVahLiS0=;
-        b=Noyrz8/XO96gC9BcT8T8ZOWHOGpCOeQJp6N7lwIaTnC3q/lRnCRUcbkQAH0eDZeWGR
-         V2FINggzSTseFJD9cKbOblssOhJG/a1hdQ+/aa4SRgAfqFlW0Pw0MgSpnhiO09r0pSQ5
-         kiyQD6ZREl8Ob4/vu5nMN1qgRPe2pgFJUKh0cfyH9uuzFEAKHjyXoGc0MYUu4Zy6vlRJ
-         mWGyGeegoFbcizy1BMwNJpO0X/MxSAdp0AB95LLvPOTgEbAUYfhpWWciNpLnICZU2wVj
-         uQnzwnGGAi35oYb0dcRuYUDs5hUNbsXYu2ljeIW3RUl8anLNoexCm+bcCtXnPyiNDy7C
-         NEsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VrcwL5rTg2GfI5vKUhnJW12tJvsV9k169bGdVahLiS0=;
-        b=sYvduETEtesu5GHo1pok93bYQaNxmQi1VEZ72pB3MGa2rM/9U8bBjWKeCm+LOqTIoi
-         2/eGT/Vb3EqXLD15KweH3t99JYGPOMFnr3Q/HFN9Ql3K7Ho69Mv2dDGtSEK4G3S1XfLx
-         NOkOzlkkq3ujrIOmDlPyiKFEq0FwcZt3s/TVYzKaXJtjmTrqDKQDp4aghElKb7zBkQsy
-         +27L5Q6PjcmoL2gCDedROOzumjYy9R7j9AyaSZKc+oo0AAt7GABK40MhF365LBcuQZGB
-         kcjjbTdBX3bp0NhwQAfQqKiRpVTuZ/tTv/g1kdk3pA2QlwxeiWOarFFp1DY3dEs3Du52
-         Y/BQ==
-X-Gm-Message-State: APjAAAXKanM02pVV2I0pNUcM4igHq3PEATceXxIr1/FnMTT5EuQdweah
-        0+5kbaoqCcBY2csyWqMcLhvcj50pxXYZNPsu3J2Rgchku2/Mmw==
-X-Google-Smtp-Source: APXvYqxJWaNbobYnzhCfEafyGc2TK8Zbey+O1DAPjYZ4H1tbB3g3/lDvWzR7qbbYbJ6OQ2DE2yLzq0cp7qfW8swB7Mc=
-X-Received: by 2002:a19:8cc:: with SMTP id 195mr5745566lfi.150.1560338922043;
- Wed, 12 Jun 2019 04:28:42 -0700 (PDT)
+        Wed, 12 Jun 2019 07:43:16 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C388D7573D;
+        Wed, 12 Jun 2019 11:43:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E2927614C4;
+        Wed, 12 Jun 2019 11:43:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <05ddc1e6-78ba-b60e-73b1-ffe86de2f2f8@tycho.nsa.gov>
+References: <05ddc1e6-78ba-b60e-73b1-ffe86de2f2f8@tycho.nsa.gov> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <31009.1560262869@warthog.procyon.org.uk>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     dhowells@redhat.com, Casey Schaufler <casey@schaufler-ca.com>,
+        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: What do LSMs *actually* need for checks on notifications?
 MIME-Version: 1.0
-References: <20190606112620.26488-1-roberto.sassu@huawei.com>
-In-Reply-To: <20190606112620.26488-1-roberto.sassu@huawei.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Wed, 12 Jun 2019 14:28:30 +0300
-Message-ID: <CAE=NcraYOw9B3RFu3_DbJs9nPT87AtQEptC7zF4kAu4FP8YhxA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@huawei.com,
-        mjg59@google.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, silviu.vlasceanu@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <25044.1560339786.1@warthog.procyon.org.uk>
+Date:   Wed, 12 Jun 2019 12:43:06 +0100
+Message-ID: <25045.1560339786@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 12 Jun 2019 11:43:15 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 6, 2019 at 3:27 PM Roberto Sassu <roberto.sassu@huawei.com> wrote:
->
-> Previous versions included the patch 'ima: don't ignore INTEGRITY_UNKNOWN
-> EVM status'. However, I realized that this patch cannot be accepted alone
-> because IMA-Appraisal would deny access to new files created during the
-> boot.
+Stephen Smalley <sds@tycho.nsa.gov> wrote:
 
-The early initialization logic seems to have been changing, the
-original one as I have understood it:
-- before initialization
-  - allow reading anything without security.ima
-  - deny reading anything with security.ima
-  - allow all writes
-- after initialization
-  - deny reading|writing anything without security.ima
-  - deny reading|writing anything invalid
-  - allow everything else
+> >   (6) The security attributes of all the objects between the object in (5)
+> >       and the object in (4), assuming we work from (5) towards (4) if the
+> >       two aren't coincident (WATCH_INFO_RECURSIVE).
+> 
+> Does this apply to anything other than mount notifications?
 
-The logic is pretty handy as it even creates additional layer of
-security around the early initialization files as they become
-unreadable after use.
+Not at the moment.  I'm considering making it such that you can make a watch
+on a keyring get automatically propagated to keys that get added to the
+keyring (and removed upon unlink) - the idea being that there is no 'single
+parent path' concept for a keyring as there is for a directory.
 
-Now, if we initialize the system with a random key like in your patch,
-this logic is to change quite drastically? It sounds to me the
-userland may actually break, all the userland initialization files in
-the existing ima configurations that do not use digsigs would become
-unreadable given that the random key is put in? Remember, those files
-can be protected via other means (most commonly signed ramdisk).
+I'm also pondering the idea of making it possible to have superblock watches
+automatically propagated to superblocks created by automount points on the
+watched superblock.
 
+> And for mount notifications, isn't the notification actually for a change to
+> the mount namespace, not a change to any file?
 
---
-Janne
+Yes.
+
+> Hence, the real "object" for events that trigger mount notifications is the
+> mount namespace, right?
+
+Um... arguably.  Would that mean that that would need a label from somewhere?
+
+> The watched path is just a way of identifying a subtree of the mount
+> namespace for notifications - it isn't the real object being watched.
+
+I like that argument.
+
+Thanks,
+David
