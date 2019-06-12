@@ -3,140 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6A5C31E48
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 13:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96279C31E46
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 13:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 700F7208CA
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 13:11:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A59F20866
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 13:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439375AbfFLNL2 (ORCPT
+        id S2439204AbfFLNYb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jun 2019 09:11:28 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33003 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2439360AbfFLNL2 (ORCPT
+        Wed, 12 Jun 2019 09:24:31 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38524 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2437667AbfFLNYb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jun 2019 09:11:28 -0400
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id DCF37E5B2385AE93A864;
-        Wed, 12 Jun 2019 14:11:26 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 12 Jun
- 2019 14:11:20 +0100
-Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
-To:     Janne Karhunen <janne.karhunen@gmail.com>
-CC:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
-        <mjg59@google.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
-References: <20190606112620.26488-1-roberto.sassu@huawei.com>
- <CAE=NcraYOw9B3RFu3_DbJs9nPT87AtQEptC7zF4kAu4FP8YhxA@mail.gmail.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <d9efe3c7-20dd-bbb0-40d8-40f69cba5b88@huawei.com>
-Date:   Wed, 12 Jun 2019 15:11:24 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <CAE=NcraYOw9B3RFu3_DbJs9nPT87AtQEptC7zF4kAu4FP8YhxA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+        Wed, 12 Jun 2019 09:24:31 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5CDJ3xm136641
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Jun 2019 09:24:30 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t2ytxfdtf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Jun 2019 09:24:28 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 12 Jun 2019 14:24:20 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Jun 2019 14:24:17 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5CDO9jc35586544
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jun 2019 13:24:09 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2267611C069;
+        Wed, 12 Jun 2019 13:24:16 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F08C811C04A;
+        Wed, 12 Jun 2019 13:24:14 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.109.218])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Jun 2019 13:24:14 +0000 (GMT)
+Subject: Re: [PATCH v2 1/2] ima: use the lsm policy update notifier
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Janne Karhunen <janne.karhunen@gmail.com>, sds@tycho.nsa.gov,
+        paul@paul-moore.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Wed, 12 Jun 2019 09:24:04 -0400
+In-Reply-To: <20190612074456.2504-2-janne.karhunen@gmail.com>
+References: <20190612074456.2504-1-janne.karhunen@gmail.com>
+         <20190612074456.2504-2-janne.karhunen@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+X-TM-AS-GCONF: 00
+x-cbid: 19061213-0028-0000-0000-00000379A8C4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061213-0029-0000-0000-000024399D6A
+Message-Id: <1560345844.4578.15.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-12_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=991 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906120092
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/12/2019 1:28 PM, Janne Karhunen wrote:
-> On Thu, Jun 6, 2019 at 3:27 PM Roberto Sassu <roberto.sassu@huawei.com> wrote:
->>
->> Previous versions included the patch 'ima: don't ignore INTEGRITY_UNKNOWN
->> EVM status'. However, I realized that this patch cannot be accepted alone
->> because IMA-Appraisal would deny access to new files created during the
->> boot.
+On Wed, 2019-06-12 at 10:44 +0300, Janne Karhunen wrote:
+> Don't do lazy policy updates while running the rule matching,
+> run the updates as they happen.
 > 
-> The early initialization logic seems to have been changing, the
-> original one as I have understood it:
-> - before initialization
->    - allow reading anything without security.ima
->    - deny reading anything with security.ima
-
-These two should be probably inverted: deny..., allow...
-
-
->    - allow all writes
-
-Allow writing anything with security.ima
-Allow writing new files
-
-
-> - after initialization
->    - deny reading|writing anything without security.ima
->    - deny reading|writing anything invalid
->    - allow everything else
+> Depends on commit 141a61ce6c60 ("LSM: switch to blocking policy update notifiers")
 > 
-> The logic is pretty handy as it even creates additional layer of
-> security around the early initialization files as they become
-> unreadable after use.
+> Changelog v2
+> - Rebase to 'next-queued-testing'
+> - Use memset to initialize the lsm rule array
+> - Don't duplicate elements that are immutable during the rule copy
+> 
+> =========
+> Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
+> 
 
-What if they should be legitimately used after the HMAC key is unsealed
-and before switching to the persistent root file system?
+Thanks, this looks a lot better.
 
+Mimi
 
-> Now, if we initialize the system with a random key like in your patch,
-> this logic is to change quite drastically? It sounds to me the
-> userland may actually break, all the userland initialization files in
-> the existing ima configurations that do not use digsigs would become
-> unreadable given that the random key is put in? Remember, those files
-> can be protected via other means (most commonly signed ramdisk).
-
-No, the first patch is about adding the ability to verify files created
-during each boot. For any other file, EVM returns INTEGRITY_UNKNOWN as
-before. The second patch changes the behavior, as INTEGRITY_UNKNOWN is
-considered as an error for the enforce-evm appraisal mode. The second
-patch aims at making the system more secure, as no file would be
-accessible unless it is verified.
-
-It is true that configurations without digsigs won't work anymore but
-the alternative is accepting any file until the HMAC key is unsealed.
-
-Signing the ramdisk is for sure a possibility, but IMA would be
-sufficient to provide integrity protection as it checks any file in the
-ram disk.
-
-Unfortunately I found an issue in patch 1/2. These changes should be
-applied:
-
---
-diff --git a/security/integrity/evm/evm_main.c 
-b/security/integrity/evm/evm_main.c
-index faa4a02a3139..f4af595678fe 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -310,10 +310,14 @@ EXPORT_SYMBOL_GPL(evm_verifyxattr);
-  static enum integrity_status evm_verify_current_integrity(struct 
-dentry *dentry)
-  {
-         struct inode *inode = d_backing_inode(dentry);
-+       int rc;
-
-         if (!evm_key_loaded() || !S_ISREG(inode->i_mode) || evm_fixmode)
-                 return 0;
--       return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
-+       rc = evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
-+       if (rc == INTEGRITY_UNKNOWN && !evm_persistent_key_loaded())
-+               return 0;
-+       return rc;
-  }
-
-  /*
---
-
-Roberto
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
