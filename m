@@ -2,136 +2,298 @@ Return-Path: <SRS0=c21G=UL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4FEC31E46
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 17:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC38C31E46
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 17:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3A1A215EA
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 17:41:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33C43215EA
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 17:56:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560362218;
+	bh=IuNSchQTudB8cwBfxxPBa8Mib5QgJ4SApxJmEUm19v4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=nyLsRFaboliLeI2F0wisHpcX298xAz6tFCSR9QXGkJFqQXf3xLw4aZiEpSCmfGokk
+	 FHlwXEb25fBzHw6SWxl/3n5x0ovqmd4tXyicLbu/Ke7hqG0j1cxKi3dUcp+mNxrTwt
+	 ctZ+eS+ldTLcnfG3lKTNNm1asVlRfVwq4lHLrtJ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbfFLRl3 convert rfc822-to-8bit (ORCPT
+        id S2388202AbfFLRxM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jun 2019 13:41:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57954 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725878AbfFLRl3 (ORCPT
+        Wed, 12 Jun 2019 13:53:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40388 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388122AbfFLRxL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jun 2019 13:41:29 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1899231628E2;
-        Wed, 12 Jun 2019 17:41:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 058825D9CA;
-        Wed, 12 Jun 2019 17:41:18 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com>
-References: <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <31009.1560262869@warthog.procyon.org.uk>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com, Stephen Smalley <sds@tycho.nsa.gov>,
-        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
-        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: What do LSMs *actually* need for checks on notifications?
+        Wed, 12 Jun 2019 13:53:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=I4JuIzfBUKUzNhsVN5Ij21Ostvd2xi3sgD9JCY82Obs=; b=Uy/YnzP945rTVuULQmRk4bjreI
+        Zt4OZUdCtWZQ2W3LbDJJp9kzXuuAY7eYMvHBVFL5lSMtjXj3uvLzEnvc57Y4/iG0O4KnM4fQ/RGX7
+        0iEX7D8kBivnici32NUshPCs9skghoA6FY20DI9biYD+kn3o0NZKgtBS1YRxy9ED1qDFcFwfXGkO9
+        bscV903PoVjYnjCgrhWiV+argE3HESuiszTdF9TygMFH6hKghXLlwqwtTRbjyVkMcskmS2GqBHc7M
+        tpIEhy8Avhvs5HXJ3xxn/yGYiRHXw1PD/gDT2RHWdUgbXK/IuwsO/dbT5Y/DFYZCVzxd/24L7mirJ
+        0chrKflw==;
+Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hb7Qs-0002Dh-Qr; Wed, 12 Jun 2019 17:53:11 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hb7Qq-0001gq-ET; Wed, 12 Jun 2019 14:53:08 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v4 16/28] docs: netlabel: convert docs to ReST and rename to *.rst
+Date:   Wed, 12 Jun 2019 14:52:52 -0300
+Message-Id: <873f41ab07225b8f6cef5d13cc19a387227817ec.1560361364.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <cover.1560361364.git.mchehab+samsung@kernel.org>
+References: <cover.1560361364.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <14575.1560361278.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 12 Jun 2019 18:41:18 +0100
-Message-ID: <14576.1560361278@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 12 Jun 2019 17:41:28 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+Convert netlabel documentation to ReST.
 
-> >  (4) The security attributes of the object on which the watch was set (uid,
-> >      gid, mode, labels).
-> 
-> Smack needs this to set a watch on the named object (file, key, ...).
-> I am going to say that if you can't access an object you can't watch it.
+This was trivial: just add proper title markups.
 
-So for the things I've so far defined:
+At its new index.rst, let's add a :orphan: while this is not linked to
+the main index.rst file, in order to avoid build warnings.
 
- (*) Keys/keyrings require View permission, but it could be Read permission
-     instead - though that may get disabled if the key type does not support
-     KEYCTL_READ.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Acked-by: Paul Moore <paul@paul-moore.com>
+---
+ .../{cipso_ipv4.txt => cipso_ipv4.rst}        | 19 +++++++++++------
+ Documentation/netlabel/draft_ietf.rst         |  5 +++++
+ Documentation/netlabel/index.rst              | 21 +++++++++++++++++++
+ .../{introduction.txt => introduction.rst}    | 16 +++++++++-----
+ .../{lsm_interface.txt => lsm_interface.rst}  | 16 +++++++++-----
+ 5 files changed, 61 insertions(+), 16 deletions(-)
+ rename Documentation/netlabel/{cipso_ipv4.txt => cipso_ipv4.rst} (87%)
+ create mode 100644 Documentation/netlabel/draft_ietf.rst
+ create mode 100644 Documentation/netlabel/index.rst
+ rename Documentation/netlabel/{introduction.txt => introduction.rst} (91%)
+ rename Documentation/netlabel/{lsm_interface.txt => lsm_interface.rst} (88%)
 
- (*) Mount/superblock watches - I've made these require execute permission on
-     the specified directory.  Could be read permission instead.
+diff --git a/Documentation/netlabel/cipso_ipv4.txt b/Documentation/netlabel/cipso_ipv4.rst
+similarity index 87%
+rename from Documentation/netlabel/cipso_ipv4.txt
+rename to Documentation/netlabel/cipso_ipv4.rst
+index a6075481fd60..cbd3f3231221 100644
+--- a/Documentation/netlabel/cipso_ipv4.txt
++++ b/Documentation/netlabel/cipso_ipv4.rst
+@@ -1,10 +1,13 @@
++===================================
+ NetLabel CIPSO/IPv4 Protocol Engine
+-==============================================================================
++===================================
++
+ Paul Moore, paul.moore@hp.com
+ 
+ May 17, 2006
+ 
+- * Overview
++Overview
++========
+ 
+ The NetLabel CIPSO/IPv4 protocol engine is based on the IETF Commercial
+ IP Security Option (CIPSO) draft from July 16, 1992.  A copy of this
+@@ -13,7 +16,8 @@ draft can be found in this directory
+ it to an RFC standard it has become a de-facto standard for labeled
+ networking and is used in many trusted operating systems.
+ 
+- * Outbound Packet Processing
++Outbound Packet Processing
++==========================
+ 
+ The CIPSO/IPv4 protocol engine applies the CIPSO IP option to packets by
+ adding the CIPSO label to the socket.  This causes all packets leaving the
+@@ -24,7 +28,8 @@ label by using the NetLabel security module API; if the NetLabel "domain" is
+ configured to use CIPSO for packet labeling then a CIPSO IP option will be
+ generated and attached to the socket.
+ 
+- * Inbound Packet Processing
++Inbound Packet Processing
++=========================
+ 
+ The CIPSO/IPv4 protocol engine validates every CIPSO IP option it finds at the
+ IP layer without any special handling required by the LSM.  However, in order
+@@ -33,7 +38,8 @@ NetLabel security module API to extract the security attributes of the packet.
+ This is typically done at the socket layer using the 'socket_sock_rcv_skb()'
+ LSM hook.
+ 
+- * Label Translation
++Label Translation
++=================
+ 
+ The CIPSO/IPv4 protocol engine contains a mechanism to translate CIPSO security
+ attributes such as sensitivity level and category to values which are
+@@ -42,7 +48,8 @@ Domain Of Interpretation (DOI) definition and are configured through the
+ NetLabel user space communication layer.  Each DOI definition can have a
+ different security attribute mapping table.
+ 
+- * Label Translation Cache
++Label Translation Cache
++=======================
+ 
+ The NetLabel system provides a framework for caching security attribute
+ mappings from the network labels to the corresponding LSM identifiers.  The
+diff --git a/Documentation/netlabel/draft_ietf.rst b/Documentation/netlabel/draft_ietf.rst
+new file mode 100644
+index 000000000000..5ed39ab8234b
+--- /dev/null
++++ b/Documentation/netlabel/draft_ietf.rst
+@@ -0,0 +1,5 @@
++Draft IETF CIPSO IP Security
++----------------------------
++
++ .. include:: draft-ietf-cipso-ipsecurity-01.txt
++    :literal:
+diff --git a/Documentation/netlabel/index.rst b/Documentation/netlabel/index.rst
+new file mode 100644
+index 000000000000..47f1e0e5acd1
+--- /dev/null
++++ b/Documentation/netlabel/index.rst
+@@ -0,0 +1,21 @@
++:orphan:
++
++========
++NetLabel
++========
++
++.. toctree::
++    :maxdepth: 1
++
++    introduction
++    cipso_ipv4
++    lsm_interface
++
++    draft_ietf
++
++.. only::  subproject and html
++
++   Indices
++   =======
++
++   * :ref:`genindex`
+diff --git a/Documentation/netlabel/introduction.txt b/Documentation/netlabel/introduction.rst
+similarity index 91%
+rename from Documentation/netlabel/introduction.txt
+rename to Documentation/netlabel/introduction.rst
+index 3caf77bcff0f..9333bbb0adc1 100644
+--- a/Documentation/netlabel/introduction.txt
++++ b/Documentation/netlabel/introduction.rst
+@@ -1,10 +1,13 @@
++=====================
+ NetLabel Introduction
+-==============================================================================
++=====================
++
+ Paul Moore, paul.moore@hp.com
+ 
+ August 2, 2006
+ 
+- * Overview
++Overview
++========
+ 
+ NetLabel is a mechanism which can be used by kernel security modules to attach
+ security attributes to outgoing network packets generated from user space
+@@ -12,7 +15,8 @@ applications and read security attributes from incoming network packets.  It
+ is composed of three main components, the protocol engines, the communication
+ layer, and the kernel security module API.
+ 
+- * Protocol Engines
++Protocol Engines
++================
+ 
+ The protocol engines are responsible for both applying and retrieving the
+ network packet's security attributes.  If any translation between the network
+@@ -24,7 +28,8 @@ the NetLabel kernel security module API described below.
+ Detailed information about each NetLabel protocol engine can be found in this
+ directory.
+ 
+- * Communication Layer
++Communication Layer
++===================
+ 
+ The communication layer exists to allow NetLabel configuration and monitoring
+ from user space.  The NetLabel communication layer uses a message based
+@@ -33,7 +38,8 @@ formatting of these NetLabel messages as well as the Generic NETLINK family
+ names can be found in the 'net/netlabel/' directory as comments in the
+ header files as well as in 'include/net/netlabel.h'.
+ 
+- * Security Module API
++Security Module API
++===================
+ 
+ The purpose of the NetLabel security module API is to provide a protocol
+ independent interface to the underlying NetLabel protocol engines.  In addition
+diff --git a/Documentation/netlabel/lsm_interface.txt b/Documentation/netlabel/lsm_interface.rst
+similarity index 88%
+rename from Documentation/netlabel/lsm_interface.txt
+rename to Documentation/netlabel/lsm_interface.rst
+index 638c74f7de7f..026fc267f798 100644
+--- a/Documentation/netlabel/lsm_interface.txt
++++ b/Documentation/netlabel/lsm_interface.rst
+@@ -1,10 +1,13 @@
++========================================
+ NetLabel Linux Security Module Interface
+-==============================================================================
++========================================
++
+ Paul Moore, paul.moore@hp.com
+ 
+ May 17, 2006
+ 
+- * Overview
++Overview
++========
+ 
+ NetLabel is a mechanism which can set and retrieve security attributes from
+ network packets.  It is intended to be used by LSM developers who want to make
+@@ -12,7 +15,8 @@ use of a common code base for several different packet labeling protocols.
+ The NetLabel security module API is defined in 'include/net/netlabel.h' but a
+ brief overview is given below.
+ 
+- * NetLabel Security Attributes
++NetLabel Security Attributes
++============================
+ 
+ Since NetLabel supports multiple different packet labeling protocols and LSMs
+ it uses the concept of security attributes to refer to the packet's security
+@@ -24,7 +28,8 @@ configuration.  It is up to the LSM developer to translate the NetLabel
+ security attributes into whatever security identifiers are in use for their
+ particular LSM.
+ 
+- * NetLabel LSM Protocol Operations
++NetLabel LSM Protocol Operations
++================================
+ 
+ These are the functions which allow the LSM developer to manipulate the labels
+ on outgoing packets as well as read the labels on incoming packets.  Functions
+@@ -32,7 +37,8 @@ exist to operate both on sockets as well as the sk_buffs directly.  These high
+ level functions are translated into low level protocol operations based on how
+ the administrator has configured the NetLabel subsystem.
+ 
+- * NetLabel Label Mapping Cache Operations
++NetLabel Label Mapping Cache Operations
++=======================================
+ 
+ Depending on the exact configuration, translation between the network packet
+ label and the internal LSM security identifier can be time consuming.  The
+-- 
+2.21.0
 
- (*) Device events (block/usb) don't require any permissions, but currently
-     only deliver hardware notifications.
-
-> I think that read access is sufficient provided that no one else can
-> see what watches I've created.
-
-You can't find out what watches exist.
-
-> > At the moment, when post_one_notification() wants to write a notification
-> > into a queue, it calls security_post_notification() to ask if it should be
-> > allowed to do so.  This is passed (1) and (3) above plus the notification
-> > record.
-> 
-> Is "current" (2)? Smack needs (2) for the event delivery access check.
-
-(2) was current_cred() when watch_sb(), KEYCTL_NOTIFY, etc. was called, but
-isn't necessarily current_cred() at the point post_one_notification() is
-called.  The latter is called at the point the event is generated and
-current_cred() is the creds of whatever thread that is called in (which may be
-a work_queue thread if it got deferred).
-
-At the moment, I'm storing the creds of whoever opened the queue (ie. (1)) and
-using that, but I could cache the creds of whoever created each watch
-(ie. (2)) and pass that to post_one_notification() instead.
-
-However, it should be noted that (1) is the creds of the buffer owner.
-
-> >  (e) All the points at which we walk over an object in a chain from (c) to
-> >      find the watch on which we can effect (d) (eg. we walk rootwards from a
-> >      mountpoint to find watches on a branch in the mount topology).
-> 
-> Smack does not require anything beyond existing checks.
-
-I'm glad to hear that, as this might be sufficiently impractical as to render
-it unusable with Smack.  Calling i_op->permissions() a lot would suck.
-
-> >  (y) What checks should be done on object destruction after final put and
-> >      what contexts need to be supplied?
-> 
-> Classically there is no such thing as filesystem object deletion.
-> By making it possible to set a watch on that you've inadvertently
-> added a security relevant action to the security model. :o
-
-That wasn't my original intention - I intended fsmount(2) to mount directly as
-mount(2) does, but Al had other ideas.
-
-Now fsmount(2) produces a file descriptor referring to a new mount object that
-can be mounted into by move_mount(2) before being spliced into the mount
-topology by move_mount(2).  However, if the fd is closed before the last step,
-close() will destroy the mount subtree attached to it (kind of quasi-unmount).
-
-That wouldn't be a problem, except that the fd from fsmount(2) can be used
-anywhere an O_PATH fd can be used - including watch_mount(2), fchdir(2), ...
-Further, FMODE_NEED_UNMOUNT gets cleared if the mount is spliced in at least
-once.
-
-Okay, having tried it you don't get an unmount event (since there's no actual
-unmount), but you do get an event to say that your watch got deleted (if the
-directory on which the watch was placed got removed from the system).
-
-So...  does the "your watch got deleted" message need checking?  In my
-opinion, it shouldn't get discarded because then the watcher doesn't know
-their watch went away.
-
-David
