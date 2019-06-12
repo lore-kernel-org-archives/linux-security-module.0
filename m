@@ -2,129 +2,314 @@ Return-Path: <SRS0=c21G=UL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A89EC31E48
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 14:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1B9C31E46
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 14:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA0E208CA
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 14:34:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CAF5208CA
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 14:48:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="W22AUT/i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731680AbfFLOeJ (ORCPT
+        id S1732614AbfFLOs3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jun 2019 10:34:09 -0400
-Received: from mga07.intel.com ([134.134.136.100]:6916 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728048AbfFLOeI (ORCPT
+        Wed, 12 Jun 2019 10:48:29 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33482 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732596AbfFLOsY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jun 2019 10:34:08 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 07:34:07 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga004.fm.intel.com with ESMTP; 12 Jun 2019 07:34:05 -0700
-Date:   Wed, 12 Jun 2019 07:34:05 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>, q@linux.intel.com
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH v2 2/5] x86/sgx: Require userspace to define enclave
- pages' protection bits
-Message-ID: <20190612143405.GC20308@linux.intel.com>
-References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
- <20190606021145.12604-3-sean.j.christopherson@intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F65500E13@ORSMSX116.amr.corp.intel.com>
- <CALCETrWv9FYDtiHMfnfH==jE00tt7F22t-zcnP+XjfRCQgLr7A@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F655010EF@ORSMSX116.amr.corp.intel.com>
- <331B31BF-9892-4FB3-9265-3E37412F80F4@amacapital.net>
+        Wed, 12 Jun 2019 10:48:24 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y17so12362266lfe.0
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Jun 2019 07:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f2yfUh1O6xtSFOnykYthqxzvFKLH7PYK37VBbjd8PEs=;
+        b=W22AUT/iwP/Se+tpsaHDuqiGIC/Iu8AJyRmR9dkDH0d/svPWDPzmrp5a9d86jSMslV
+         lrMn8IqLBgEUxHY3dA3/ILa1MKBLiAhmvdL3vNwWQkIsbVcZo0SHX+AWyf9dELM5Jczf
+         xydRn0b5Mvv8g5S6jySHFZTn+TeEaEXpJa7DABBfvZQQAq3hRi+RuBZcmKByma21km5p
+         pauHVXPxErAaymoSmG0as3TZwMdqnZmA5D5mMRtbOYbXxe9r/46lGccdTFwaOiGmYk2j
+         9ruB6X4s2wdlpBAPX0GNFfvUiPMzQHNG47dLF2nfH/JOsQmecTVPa++g+nEykqmfRuuK
+         0giA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f2yfUh1O6xtSFOnykYthqxzvFKLH7PYK37VBbjd8PEs=;
+        b=A9VSTQUFxi0Bxbuq+zNZlqDv50oRL1ZyKcpyA6JbnwF6xw+/5z3xedEQV1lkv+F57a
+         sThIBaZ6Eu45ThXlN3BqbDzWYg+nOFTdOulb9LfLiLm3Ynj9+eHLA5Cr+DueVdYtJj9c
+         IS9CMuRWrtUL1y/aKiyAdUQm+GAZ/c7+DQ5tlXjkoU0MY5jX7/QNPlZr7ZfDYBbrRz+2
+         vMKlHho/09fCBgojGTC/0a6ugPv3raYCafyt+ftGsCA+TUcDdRG16oeLXwKONVl5z9MY
+         zle6/xaBP5M+z8le27NlHreznhe2tOGmCmkE4EL0ndlUGr7afQnAg0kDR97QVeX9fZ+f
+         BGLw==
+X-Gm-Message-State: APjAAAVZAD+dBo8UwwXbaf5MZn1DAaLkST9GtB/0O1ZvU9PMyiOfFrCC
+        I8t5gratDC0qVmBA/RGOGPtZDJ6OiTLVNFzgyUMa
+X-Google-Smtp-Source: APXvYqzpBS7bekI/fIBvEsHuxDNV0EHnY2eBbkyJCY0LjpU6o3j296IhADIDMfyEZWaqtuPg5kloXXQOqCJVLYxcwOE=
+X-Received: by 2002:a19:230e:: with SMTP id j14mr2013079lfj.13.1560350900633;
+ Wed, 12 Jun 2019 07:48:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <331B31BF-9892-4FB3-9265-3E37412F80F4@amacapital.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <cover.1560045490.git.mchehab+samsung@kernel.org> <6094c48c791a28a0d28f9854e8f198625cc524f4.1560045490.git.mchehab+samsung@kernel.org>
+In-Reply-To: <6094c48c791a28a0d28f9854e8f198625cc524f4.1560045490.git.mchehab+samsung@kernel.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 12 Jun 2019 10:48:09 -0400
+Message-ID: <CAHC9VhTf0yrNuBj2h_P+=55z8c5p5B9Wto_h-yhYKuEzS9535w@mail.gmail.com>
+Subject: Re: [PATCH v3 18/33] docs: netlabel: convert docs to ReST and rename
+ to *.rst
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        netdev@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 11, 2019 at 05:09:28PM -0700, Andy Lutomirski wrote:
-> 
-> On Jun 10, 2019, at 3:28 PM, Xing, Cedric <cedric.xing@intel.com> wrote:
-> 
-> >> From: Andy Lutomirski [mailto:luto@kernel.org]
-> >> Sent: Monday, June 10, 2019 12:15 PM
-> >> This seems like an odd workflow.  Shouldn't the #PF return back to
-> >> untrusted userspace so that the untrusted user code can make its own
-> >> decision as to whether it wants to EAUG a page there as opposed to, say,
-> >> killing the enclave or waiting to keep resource usage under control?
-> > 
-> > This may seem odd to some at the first glance. But if you can think of how
-> > static heap (pre-allocated by EADD before EINIT) works, the load parses the
-> > "metadata" coming with the enclave to decide the address/size of the heap,
-> > EADDs it, and calls it done. In the case of "dynamic" heap (allocated
-> > dynamically by EAUG after EINIT), the same thing applies - the loader
-> > determines the range of the heap, tells the SGX module about it, and calls
-> > it done. Everything else is the between the enclave and the SGX module.
-> > 
-> > In practice, untrusted code usually doesn't know much about enclaves, just
-> > like it doesn't know much about the shared objects loaded into its address
-> > space either. Without the necessary knowledge, untrusted code usually just
-> > does what it is told (via o-calls, or return value from e-calls), without
-> > judging that's right or wrong. 
-> > 
-> > When it comes to #PF like what I described, of course a signal could be
-> > sent to the untrusted code but what would it do then? Usually it'd just
-> > come back asking for a page at the fault address. So we figured it'd be
-> > more efficient to just have the kernel EAUG at #PF. 
-> > 
-> > Please don't get me wrong though, as I'm not dictating what the s/w flow
-> > shall be. It's just going to be a choice offered to user mode. And that
-> > choice was planned to be offered via mprotect() - i.e. a writable vma
-> > causes kernel to EAUG while a non-writable vma will result in a signal
-> > (then the user mode could decide whether to EAUG). The key point is
-> > flexibility - as we want to allow all reasonable s/w flows instead of
-> > dictating one over others. We had similar discussions on vDSO API before.
-> > And I think you accepted my approach because of its flexibility. Am I
-> > right?
-> 
-> As long as user code can turn this off, I have no real objection. But it
-> might make sense to have it be more explicit — have an ioctl set up a range
-> as “EAUG-on-demand”.
+On Sat, Jun 8, 2019 at 10:27 PM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
+>
+> Convert netlabel documentation to ReST.
+>
+> This was trivial: just add proper title markups.
+>
+> At its new index.rst, let's add a :orphan: while this is not linked to
+> the main index.rst file, in order to avoid build warnings.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  .../{cipso_ipv4.txt => cipso_ipv4.rst}        | 19 +++++++++++------
+>  Documentation/netlabel/draft_ietf.rst         |  5 +++++
+>  Documentation/netlabel/index.rst              | 21 +++++++++++++++++++
+>  .../{introduction.txt => introduction.rst}    | 16 +++++++++-----
+>  .../{lsm_interface.txt => lsm_interface.rst}  | 16 +++++++++-----
+>  5 files changed, 61 insertions(+), 16 deletions(-)
+>  rename Documentation/netlabel/{cipso_ipv4.txt => cipso_ipv4.rst} (87%)
+>  create mode 100644 Documentation/netlabel/draft_ietf.rst
+>  create mode 100644 Documentation/netlabel/index.rst
+>  rename Documentation/netlabel/{introduction.txt => introduction.rst} (91%)
+>  rename Documentation/netlabel/{lsm_interface.txt => lsm_interface.rst} (88%)
 
-This was part of the motivation behind changing SGX_IOC_ENCLAVE_ADD_PAGE
-to SGX_IOC_ENCLAVE_ADD_REGION and adding a @flags parameter.  E.g. adding
-support for "EAUG-on-demand" regions would just be a new flag.
+I'm fairly confident I've already acked this at least once, but here
+it is again:
 
-> But this is all currently irrelevant. We can argue about it when the patches
-> show up. :)
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+> diff --git a/Documentation/netlabel/cipso_ipv4.txt b/Documentation/netlabel/cipso_ipv4.rst
+> similarity index 87%
+> rename from Documentation/netlabel/cipso_ipv4.txt
+> rename to Documentation/netlabel/cipso_ipv4.rst
+> index a6075481fd60..cbd3f3231221 100644
+> --- a/Documentation/netlabel/cipso_ipv4.txt
+> +++ b/Documentation/netlabel/cipso_ipv4.rst
+> @@ -1,10 +1,13 @@
+> +===================================
+>  NetLabel CIPSO/IPv4 Protocol Engine
+> -==============================================================================
+> +===================================
+> +
+>  Paul Moore, paul.moore@hp.com
+>
+>  May 17, 2006
+>
+> - * Overview
+> +Overview
+> +========
+>
+>  The NetLabel CIPSO/IPv4 protocol engine is based on the IETF Commercial
+>  IP Security Option (CIPSO) draft from July 16, 1992.  A copy of this
+> @@ -13,7 +16,8 @@ draft can be found in this directory
+>  it to an RFC standard it has become a de-facto standard for labeled
+>  networking and is used in many trusted operating systems.
+>
+> - * Outbound Packet Processing
+> +Outbound Packet Processing
+> +==========================
+>
+>  The CIPSO/IPv4 protocol engine applies the CIPSO IP option to packets by
+>  adding the CIPSO label to the socket.  This causes all packets leaving the
+> @@ -24,7 +28,8 @@ label by using the NetLabel security module API; if the NetLabel "domain" is
+>  configured to use CIPSO for packet labeling then a CIPSO IP option will be
+>  generated and attached to the socket.
+>
+> - * Inbound Packet Processing
+> +Inbound Packet Processing
+> +=========================
+>
+>  The CIPSO/IPv4 protocol engine validates every CIPSO IP option it finds at the
+>  IP layer without any special handling required by the LSM.  However, in order
+> @@ -33,7 +38,8 @@ NetLabel security module API to extract the security attributes of the packet.
+>  This is typically done at the socket layer using the 'socket_sock_rcv_skb()'
+>  LSM hook.
+>
+> - * Label Translation
+> +Label Translation
+> +=================
+>
+>  The CIPSO/IPv4 protocol engine contains a mechanism to translate CIPSO security
+>  attributes such as sensitivity level and category to values which are
+> @@ -42,7 +48,8 @@ Domain Of Interpretation (DOI) definition and are configured through the
+>  NetLabel user space communication layer.  Each DOI definition can have a
+>  different security attribute mapping table.
+>
+> - * Label Translation Cache
+> +Label Translation Cache
+> +=======================
+>
+>  The NetLabel system provides a framework for caching security attribute
+>  mappings from the network labels to the corresponding LSM identifiers.  The
+> diff --git a/Documentation/netlabel/draft_ietf.rst b/Documentation/netlabel/draft_ietf.rst
+> new file mode 100644
+> index 000000000000..5ed39ab8234b
+> --- /dev/null
+> +++ b/Documentation/netlabel/draft_ietf.rst
+> @@ -0,0 +1,5 @@
+> +Draft IETF CIPSO IP Security
+> +----------------------------
+> +
+> + .. include:: draft-ietf-cipso-ipsecurity-01.txt
+> +    :literal:
+> diff --git a/Documentation/netlabel/index.rst b/Documentation/netlabel/index.rst
+> new file mode 100644
+> index 000000000000..47f1e0e5acd1
+> --- /dev/null
+> +++ b/Documentation/netlabel/index.rst
+> @@ -0,0 +1,21 @@
+> +:orphan:
+> +
+> +========
+> +NetLabel
+> +========
+> +
+> +.. toctree::
+> +    :maxdepth: 1
+> +
+> +    introduction
+> +    cipso_ipv4
+> +    lsm_interface
+> +
+> +    draft_ietf
+> +
+> +.. only::  subproject and html
+> +
+> +   Indices
+> +   =======
+> +
+> +   * :ref:`genindex`
+> diff --git a/Documentation/netlabel/introduction.txt b/Documentation/netlabel/introduction.rst
+> similarity index 91%
+> rename from Documentation/netlabel/introduction.txt
+> rename to Documentation/netlabel/introduction.rst
+> index 3caf77bcff0f..9333bbb0adc1 100644
+> --- a/Documentation/netlabel/introduction.txt
+> +++ b/Documentation/netlabel/introduction.rst
+> @@ -1,10 +1,13 @@
+> +=====================
+>  NetLabel Introduction
+> -==============================================================================
+> +=====================
+> +
+>  Paul Moore, paul.moore@hp.com
+>
+>  August 2, 2006
+>
+> - * Overview
+> +Overview
+> +========
+>
+>  NetLabel is a mechanism which can be used by kernel security modules to attach
+>  security attributes to outgoing network packets generated from user space
+> @@ -12,7 +15,8 @@ applications and read security attributes from incoming network packets.  It
+>  is composed of three main components, the protocol engines, the communication
+>  layer, and the kernel security module API.
+>
+> - * Protocol Engines
+> +Protocol Engines
+> +================
+>
+>  The protocol engines are responsible for both applying and retrieving the
+>  network packet's security attributes.  If any translation between the network
+> @@ -24,7 +28,8 @@ the NetLabel kernel security module API described below.
+>  Detailed information about each NetLabel protocol engine can be found in this
+>  directory.
+>
+> - * Communication Layer
+> +Communication Layer
+> +===================
+>
+>  The communication layer exists to allow NetLabel configuration and monitoring
+>  from user space.  The NetLabel communication layer uses a message based
+> @@ -33,7 +38,8 @@ formatting of these NetLabel messages as well as the Generic NETLINK family
+>  names can be found in the 'net/netlabel/' directory as comments in the
+>  header files as well as in 'include/net/netlabel.h'.
+>
+> - * Security Module API
+> +Security Module API
+> +===================
+>
+>  The purpose of the NetLabel security module API is to provide a protocol
+>  independent interface to the underlying NetLabel protocol engines.  In addition
+> diff --git a/Documentation/netlabel/lsm_interface.txt b/Documentation/netlabel/lsm_interface.rst
+> similarity index 88%
+> rename from Documentation/netlabel/lsm_interface.txt
+> rename to Documentation/netlabel/lsm_interface.rst
+> index 638c74f7de7f..026fc267f798 100644
+> --- a/Documentation/netlabel/lsm_interface.txt
+> +++ b/Documentation/netlabel/lsm_interface.rst
+> @@ -1,10 +1,13 @@
+> +========================================
+>  NetLabel Linux Security Module Interface
+> -==============================================================================
+> +========================================
+> +
+>  Paul Moore, paul.moore@hp.com
+>
+>  May 17, 2006
+>
+> - * Overview
+> +Overview
+> +========
+>
+>  NetLabel is a mechanism which can set and retrieve security attributes from
+>  network packets.  It is intended to be used by LSM developers who want to make
+> @@ -12,7 +15,8 @@ use of a common code base for several different packet labeling protocols.
+>  The NetLabel security module API is defined in 'include/net/netlabel.h' but a
+>  brief overview is given below.
+>
+> - * NetLabel Security Attributes
+> +NetLabel Security Attributes
+> +============================
+>
+>  Since NetLabel supports multiple different packet labeling protocols and LSMs
+>  it uses the concept of security attributes to refer to the packet's security
+> @@ -24,7 +28,8 @@ configuration.  It is up to the LSM developer to translate the NetLabel
+>  security attributes into whatever security identifiers are in use for their
+>  particular LSM.
+>
+> - * NetLabel LSM Protocol Operations
+> +NetLabel LSM Protocol Operations
+> +================================
+>
+>  These are the functions which allow the LSM developer to manipulate the labels
+>  on outgoing packets as well as read the labels on incoming packets.  Functions
+> @@ -32,7 +37,8 @@ exist to operate both on sockets as well as the sk_buffs directly.  These high
+>  level functions are translated into low level protocol operations based on how
+>  the administrator has configured the NetLabel subsystem.
+>
+> - * NetLabel Label Mapping Cache Operations
+> +NetLabel Label Mapping Cache Operations
+> +=======================================
+>
+>  Depending on the exact configuration, translation between the network packet
+>  label and the internal LSM security identifier can be time consuming.  The
+> --
+> 2.21.0
+>
+
+
+-- 
+paul moore
+www.paul-moore.com
