@@ -2,96 +2,115 @@ Return-Path: <SRS0=c21G=UL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D08C31E48
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 15:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 763DEC46477
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 16:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E574520B1F
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 15:16:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Q90p5Iy5"
+	by mail.kernel.org (Postfix) with ESMTP id 5980821721
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 16:33:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbfFLPQH (ORCPT
+        id S2408899AbfFLQdD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jun 2019 11:16:07 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44727 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729485AbfFLPQH (ORCPT
+        Wed, 12 Jun 2019 12:33:03 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33004 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2408886AbfFLQdD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jun 2019 11:16:07 -0400
-Received: by mail-lf1-f66.google.com with SMTP id r15so12432809lfm.11
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Jun 2019 08:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YMusDYqalyv6pSFgNwPF4uKK+xbujszHazgInidAJjY=;
-        b=Q90p5Iy5nY+5qK8J0YqslmnGkaZ2iwBDq4pyJAywiMsz2C3QwATrz7NQrLc5pGxWhS
-         qus4894GAdS3fYkeWcUtJiCGmFclvQlmqvBAzIx+HHBrC0KroATQwxpCOcjPMKYRPCZf
-         K2jMa0u60l4MkW07IjX6rS2RVjct7qxBYBZC2CaF873OtUXqQhaetEk5mswWLhCRs5JJ
-         ujnL0lGBnbqS4xjB3gpsUi+6OqFkcz/r+ha4XlxnGYzWod02CJV1PEjVasAZba7uvVc9
-         FZ92PVNUZRJkayLdyozPUvL5qOOtxrklkXQeU0NNI2ezIOoROxFVujhTZmMk6Y0cx0AR
-         GB1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YMusDYqalyv6pSFgNwPF4uKK+xbujszHazgInidAJjY=;
-        b=Sdo8vKo0Y/2D3KwWZumV1mMAklFRHqlwtEe7fc4JDmjxpUSrKiZxDNRyAMrfIXl5EF
-         ONMRsSef4KrqUHckzzzTtcC3cN3KPUMXC63MRWHkkjtfMhDa29i4WNVunFhMFchgDYq7
-         jpYuwHQuArBSbQXYWiPG7YSLRqqX9rAgTJ8ZyNFwsgCBdt0PhY4cVJy4hJxTSLpGUXwK
-         7Y9vJv+xU8yMFPdfQD0gDY3n9GCsKDG6v2AigYRulMQELJGbL2MmXW6lB66kLvqflHjE
-         qMcnX1ECzd5eSF3MHoysaOADKcUUKSe7cljU4ApcKdBbFCmrvQIGc/oRNDjqDu+FXXc3
-         SNBg==
-X-Gm-Message-State: APjAAAXSKqicijiMuG7hFZryT/Pa7T7aNvr/ECeLIdf1iWm66DqGE/sl
-        nrrYXH6/Y7Y0bFAAmq+IyVM2COmKENE86ZnTlurA
-X-Google-Smtp-Source: APXvYqyN6xVD96Jl8RDKNEI6HwNcqB1yanl1Pp+ZZ6oaxLPKOeAYdSl7QnbgMOG4UnWkxhi0P2GplkRuBKmiRCHX95M=
-X-Received: by 2002:a19:7716:: with SMTP id s22mr24175955lfc.64.1560352565001;
- Wed, 12 Jun 2019 08:16:05 -0700 (PDT)
+        Wed, 12 Jun 2019 12:33:03 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id F20C6200662B4E236A65;
+        Wed, 12 Jun 2019 17:33:00 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 12 Jun
+ 2019 17:32:52 +0100
+Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
+To:     Janne Karhunen <janne.karhunen@gmail.com>
+CC:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>
+References: <20190606112620.26488-1-roberto.sassu@huawei.com>
+ <CAE=NcraYOw9B3RFu3_DbJs9nPT87AtQEptC7zF4kAu4FP8YhxA@mail.gmail.com>
+ <d9efe3c7-20dd-bbb0-40d8-40f69cba5b88@huawei.com>
+ <CAE=NcraHqzST=SZNcrSgpv5EqfyUfpCCb7iQ0Oh6uohL3yiCdw@mail.gmail.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <c13c6b4f-1302-35fb-f077-00b7f84fea08@huawei.com>
+Date:   Wed, 12 Jun 2019 18:33:01 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20190612074456.2504-1-janne.karhunen@gmail.com> <1560346093.4578.18.camel@linux.ibm.com>
-In-Reply-To: <1560346093.4578.18.camel@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 12 Jun 2019 11:15:54 -0400
-Message-ID: <CAHC9VhRbO-ua-0Y=17zg97+oopXaj_eYBRzadrgSrG=twSjYRw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] LSM: switch to blocking policy update notifiers
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Janne Karhunen <janne.karhunen@gmail.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAE=NcraHqzST=SZNcrSgpv5EqfyUfpCCb7iQ0Oh6uohL3yiCdw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 12, 2019 at 9:28 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> Hi Paul,
+On 6/12/2019 3:38 PM, Janne Karhunen wrote:
+> On Wed, Jun 12, 2019 at 4:11 PM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+> 
+>>> - after initialization
+>>>     - deny reading|writing anything without security.ima
+>>>     - deny reading|writing anything invalid
+>>>     - allow everything else
+>>>
+>>> The logic is pretty handy as it even creates additional layer of
+>>> security around the early initialization files as they become
+>>> unreadable after use.
+>>
+>> What if they should be legitimately used after the HMAC key is unsealed
+>> and before switching to the persistent root file system?
+> 
+> Any examples? Log files and such are mostly 'one way' and should
+> probably be whitelisted in the policy?
 
-/me waves
+I checked better when the random key would be used to verify files
+created during the boot. If we consider rootfs only, basically it would
+be used for dracut-state.sh.
 
-> On Wed, 2019-06-12 at 10:44 +0300, Janne Karhunen wrote:
-> > Atomic policy updaters are not very useful as they cannot
-> > usually perform the policy updates on their own. Since it
-> > seems that there is no strict need for the atomicity,
-> > switch to the blocking variant. While doing so, rename
-> > the functions accordingly.
-> >
-> > Changelog v2
-> > - Rebase to 'next-queued-testing'
-> >
-> > Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
-> > Acked-by: Paul Moore <paul@paul-moore.com>
->
-> The patches need to be upstreamed together.  Do you have any problems
-> with my upstreaming them via linux-integrity?
+Before I was using a rule to measure digest lists in tmpfs. I had many
+errors due to the fact that appraisal denied access to files in /run.
+The default policy does not appraise files in tmpfs, and also for digest
+lists it is not necessary (now I use: measure/appraise fsname=rootfs).
 
-Nope, I've been operating under the assumption that you would be
-taking both patches via the linux-integrity tree.
+
+>>> Now, if we initialize the system with a random key like in your patch,
+>>> this logic is to change quite drastically? It sounds to me the
+>>> userland may actually break, all the userland initialization files in
+>>> the existing ima configurations that do not use digsigs would become
+>>> unreadable given that the random key is put in? Remember, those files
+>>> can be protected via other means (most commonly signed ramdisk).
+>>
+>> No, the first patch is about adding the ability to verify files created
+>> during each boot. For any other file, EVM returns INTEGRITY_UNKNOWN as
+>> before. The second patch changes the behavior, as INTEGRITY_UNKNOWN is
+>> considered as an error for the enforce-evm appraisal mode. The second
+>> patch aims at making the system more secure, as no file would be
+>> accessible unless it is verified.
+>>
+>> It is true that configurations without digsigs won't work anymore but
+>> the alternative is accepting any file until the HMAC key is unsealed.
+> 
+> That's a pretty big change for the userland IMHO. Quite a few
+> configurations out there will break, including mine I believe, so I
+> hope there is a solid reason asking people to change their stuff. I'm
+> fine holding off all writing until it is safe to do so for now..
+
+The goal of appraisal is to allow access only to files with a valid
+signature or HMAC. With the current behavior, that cannot be guaranteed.
+
+Unfortunately, dracut-state.sh is created very early. It could be
+possible to unseal the key before, but this probably means modifying
+systemd.
+
+Roberto
 
 -- 
-paul moore
-www.paul-moore.com
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
