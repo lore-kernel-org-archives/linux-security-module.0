@@ -4,31 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8C2C31E4A
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 15:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB32C31E49
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 15:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8477620B7C
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 15:17:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 671442054F
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 15:17:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732708AbfFMPR0 (ORCPT
+        id S1732905AbfFMPRx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:17:26 -0400
-Received: from mga05.intel.com ([192.55.52.43]:36291 "EHLO mga05.intel.com"
+        Thu, 13 Jun 2019 11:17:53 -0400
+Received: from mga09.intel.com ([134.134.136.24]:4680 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733088AbfFMPRU (ORCPT
+        id S1732175AbfFMPRv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:17:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        Thu, 13 Jun 2019 11:17:51 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 08:17:19 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 08:17:50 -0700
 X-ExtLoop1: 1
 Received: from bbouchn-mobl.ger.corp.intel.com (HELO localhost) ([10.252.35.22])
-  by orsmga004.jf.intel.com with ESMTP; 13 Jun 2019 08:17:15 -0700
-Date:   Thu, 13 Jun 2019 18:17:14 +0300
+  by orsmga004.jf.intel.com with ESMTP; 13 Jun 2019 08:17:47 -0700
+Date:   Thu, 13 Jun 2019 18:17:46 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sumit Garg <sumit.garg@linaro.org>
 Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
@@ -39,32 +38,38 @@ Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         tee-dev@lists.linaro.org
 Subject: Re: [RFC 1/7] tee: optee: allow kernel pages to register as shm
-Message-ID: <20190613151714.GC18488@linux.intel.com>
+Message-ID: <20190613151746.GD18488@linux.intel.com>
 References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
  <1560421833-27414-2-git-send-email-sumit.garg@linaro.org>
  <20190613151257.GA18488@linux.intel.com>
+ <20190613151714.GC18488@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190613151257.GA18488@linux.intel.com>
+In-Reply-To: <20190613151714.GC18488@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 13, 2019 at 06:12:57PM +0300, Jarkko Sakkinen wrote:
-> On Thu, Jun 13, 2019 at 04:00:27PM +0530, Sumit Garg wrote:
-> > Kernel pages are marked as normal type memory only so allow kernel pages
-> > to be registered as shared memory with OP-TEE.
+On Thu, Jun 13, 2019 at 06:17:14PM +0300, Jarkko Sakkinen wrote:
+> On Thu, Jun 13, 2019 at 06:12:57PM +0300, Jarkko Sakkinen wrote:
+> > On Thu, Jun 13, 2019 at 04:00:27PM +0530, Sumit Garg wrote:
+> > > Kernel pages are marked as normal type memory only so allow kernel pages
+> > > to be registered as shared memory with OP-TEE.
+> > > 
+> > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 > > 
-> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > Just out of pure interest why this was not allowed before?
 > 
-> Just out of pure interest why this was not allowed before?
+> Please spare me and ignore that one :-) Obviouslly because it
+> was not used.
+> 
+> Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Please spare me and ignore that one :-) Obviouslly because it
-was not used.
+Actually,
 
-Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
