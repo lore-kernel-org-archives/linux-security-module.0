@@ -2,98 +2,129 @@ Return-Path: <SRS0=ug0r=UM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB044C31E49
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 738F1C31E49
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90710215EA
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:45:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRV4gxKf"
+	by mail.kernel.org (Postfix) with ESMTP id 4715A20673
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:47:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392722AbfFMQpM (ORCPT
+        id S2393008AbfFMQrO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:45:12 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36109 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730371AbfFMGCJ (ORCPT
+        Thu, 13 Jun 2019 12:47:14 -0400
+Received: from mga03.intel.com ([134.134.136.65]:40156 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392924AbfFMQrK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:02:09 -0400
-Received: by mail-lf1-f67.google.com with SMTP id q26so14082701lfc.3;
-        Wed, 12 Jun 2019 23:02:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E9vz0in6RS8016Qk80W2zWm5aSJZ0kwQGVww14npFtk=;
-        b=CRV4gxKfPLzeYScqoU0Ca+ajA0dg0SDlrpr6b1YHmlNfBA94oYtvM4y2moLJrM97EZ
-         tzk1NbZAKxfjYp1mdPh5z5cDM6U/3SKPRLoj2IpKEOK9LUbj2VP8dpLuD2G6Ao357mmy
-         Bb6f/NTRdMHvhLxWDe7lTdoShBKC88eWXSun1vcGUc8ZHzqeSLym3cJbOKkpqj63Mznx
-         lBB0FVFwMBdoobmzW67x8MGrj996MBo/a+xHpsTpWk8+ocWe7gx9G/JEGmNOBCAd6x3s
-         /yCsT77iw2Go4upeX35AhpEFv5hAAg91+Zbdzcl9f4SP9ofCHkURljd+CWfWuj8GrP6D
-         J1lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E9vz0in6RS8016Qk80W2zWm5aSJZ0kwQGVww14npFtk=;
-        b=qaY7j6Llyv2F1rQ1yndztwEodOu0p6EZqHFc8W0rsOysy/8bRRSV/Q/1RZwOHj/iNe
-         tdVZpIDtBHqg023UC/jkUcNYh2QmZtUF+zs5HTPNZZy0k7zY2om9UZ2Qu3SrJ/SFhyeB
-         PGOpTyFpKDueV1MQgHdrz/do9ZkPNLZFZLlFwfAJQW2iUtMpc4KicOtMNFRU7gausXbv
-         2MqKrds5MyhIdrq3JywNktmXXMFCpl+1WoKpzzi2YRxZS2RyjY2rkH4wNGJpjGNC7UGR
-         umi+JrN8ZImA4STNy9iwoWoIVQaDSUQenj1z1pNm9QoA8vyA7VNvSioAnIgL0HjJug4x
-         V3CQ==
-X-Gm-Message-State: APjAAAVed/xDj+ptUk29bKzg1JrZciGQKw39HzVRBt7WWy89yW5xmcaz
-        3tfasq4T6F4TExGEa6+nrHVWDK70OKtzpTDC91c=
-X-Google-Smtp-Source: APXvYqxjxDnpuGrKLNG+sde6iNS+MpLYpd3Fy4JHmv9BwhTqFLoORkVgVyyxHUWe1BcnS70oSUkyh/8kwIT5f02FEuQ=
-X-Received: by 2002:a19:8cc:: with SMTP id 195mr8530538lfi.150.1560405727256;
- Wed, 12 Jun 2019 23:02:07 -0700 (PDT)
+        Thu, 13 Jun 2019 12:47:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 09:47:09 -0700
+X-ExtLoop1: 1
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by fmsmga001.fm.intel.com with ESMTP; 13 Jun 2019 09:47:08 -0700
+Received: from orsmsx155.amr.corp.intel.com (10.22.240.21) by
+ ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 13 Jun 2019 09:47:07 -0700
+Received: from orsmsx116.amr.corp.intel.com ([169.254.7.166]) by
+ ORSMSX155.amr.corp.intel.com ([169.254.7.68]) with mapi id 14.03.0415.000;
+ Thu, 13 Jun 2019 09:47:07 -0700
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>
+CC:     Andy Lutomirski <luto@kernel.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>
+Subject: RE: [RFC PATCH 2/9] x86/sgx: Do not naturally align MAP_FIXED
+ address
+Thread-Topic: [RFC PATCH 2/9] x86/sgx: Do not naturally align MAP_FIXED
+ address
+Thread-Index: AQHVGAkhOWaRiY3eFUikM4z1CKpVNqaL3IKAgACNcAD//6h8oIABllSAgABS9QCAAUUHgIAK4cIA//+706A=
+Date:   Thu, 13 Jun 2019 16:47:06 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F65503A93@ORSMSX116.amr.corp.intel.com>
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+ <20190531233159.30992-3-sean.j.christopherson@intel.com>
+ <20190604114951.GC30594@linux.intel.com>
+ <CALCETrVe0jhAWAFmx+NFEjJcijSJv2LDVC7cUXi0w99kNKjh_g@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654EDBDE@ORSMSX116.amr.corp.intel.com>
+ <20190605151653.GK11331@linux.intel.com>
+ <5A85C1D7-A159-437E-B42A-3F4254E07305@amacapital.net>
+ <20190606153710.GB25112@linux.intel.com>
+ <20190613134800.GA12791@linux.intel.com>
+In-Reply-To: <20190613134800.GA12791@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzE2M2VhMDctZGU1MS00ZWU3LThhMWQtYjc5ZGQ4ZjgxNTA0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMzh2ZjlrUGRBZ0c5WVlcLzY1QndNQUh6NTlRWFFTYzVoWmpNUnZId0pZS1NHTEVKZTlDUkRjMURcLytvbDJsSkp3In0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190606112620.26488-1-roberto.sassu@huawei.com>
- <CAE=NcraYOw9B3RFu3_DbJs9nPT87AtQEptC7zF4kAu4FP8YhxA@mail.gmail.com>
- <d9efe3c7-20dd-bbb0-40d8-40f69cba5b88@huawei.com> <CAE=NcraHqzST=SZNcrSgpv5EqfyUfpCCb7iQ0Oh6uohL3yiCdw@mail.gmail.com>
- <c13c6b4f-1302-35fb-f077-00b7f84fea08@huawei.com>
-In-Reply-To: <c13c6b4f-1302-35fb-f077-00b7f84fea08@huawei.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Thu, 13 Jun 2019 09:01:55 +0300
-Message-ID: <CAE=NcrZiyWjZUuxdLgA9Bq89Cpt1W6MLAzPkLHVgfOqSo2i1hQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@huawei.com,
-        mjg59@google.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, silviu.vlasceanu@huawei.com
-Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 12, 2019 at 7:33 PM Roberto Sassu <roberto.sassu@huawei.com> wrote:
-
-> > That's a pretty big change for the userland IMHO. Quite a few
-> > configurations out there will break, including mine I believe, so I
-> > hope there is a solid reason asking people to change their stuff. I'm
-> > fine holding off all writing until it is safe to do so for now..
->
-> The goal of appraisal is to allow access only to files with a valid
-> signature or HMAC. With the current behavior, that cannot be guaranteed.
->
-> Unfortunately, dracut-state.sh is created very early. It could be
-> possible to unseal the key before, but this probably means modifying
-> systemd.
-
-Ok, I see the use case. Now, if you pull a urandom key that early on
-during the boot, the state of the system entropy is at all time low,
-and you are not really protecting against any sort of offline attack
-since the file is created during that boot cycle. Is there really use
-for using such key? Wouldn't it be possible to create a new config
-option, say IMA_ALLOW_EARLY_WRITERS, that would hold the NEW_FILE flag
-until the persistent key becomes available? In other words, it would
-start the measuring at the point when the key becomes online?
-
-
---
-Janne
+PiBGcm9tOiBKYXJra28gU2Fra2luZW4gW21haWx0bzpqYXJra28uc2Fra2luZW5AbGludXguaW50
+ZWwuY29tXQ0KPiBTZW50OiBUaHVyc2RheSwgSnVuZSAxMywgMjAxOSA2OjQ4IEFNDQo+IA0KPiBP
+biBUaHUsIEp1biAwNiwgMjAxOSBhdCAwNjozNzoxMFBNICswMzAwLCBKYXJra28gU2Fra2luZW4g
+d3JvdGU6DQo+ID4gT24gV2VkLCBKdW4gMDUsIDIwMTkgYXQgMDE6MTQ6MDRQTSAtMDcwMCwgQW5k
+eSBMdXRvbWlyc2tpIHdyb3RlOg0KPiA+ID4NCj4gPiA+DQo+ID4gPiA+IE9uIEp1biA1LCAyMDE5
+LCBhdCA4OjE3IEFNLCBKYXJra28gU2Fra2luZW4NCj4gPGphcmtrby5zYWtraW5lbkBsaW51eC5p
+bnRlbC5jb20+IHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4gPj4gT24gVHVlLCBKdW4gMDQsIDIwMTkg
+YXQgMTA6MTA6MjJQTSArMDAwMCwgWGluZywgQ2VkcmljIHdyb3RlOg0KPiA+ID4gPj4gQSBiaXQg
+b2ZmIHRvcGljIGhlcmUuIFRoaXMgbW1hcCgpL21wcm90ZWN0KCkgZGlzY3Vzc2lvbiByZW1pbmRz
+DQo+ID4gPiA+PiBtZSBhIHF1ZXN0aW9uIChndWVzcyBmb3IgSmFya2tvKTogTm93IHRoYXQNCj4g
+PiA+ID4+IHZtYS0+dm1fZmlsZS0+cHJpdmF0ZV9kYXRhIGtlZXBzIGEgcG9pbnRlciB0byB0aGUg
+ZW5jbGF2ZSwgd2h5IGRvDQo+IHdlIHN0b3JlIGl0IGFnYWluIGluIHZtYS0+dm1fcHJpdmF0ZT8N
+Cj4gPiA+ID4+IEl0IGlzbid0IGEgYmlnIGRlYWwgYnV0IG5vbi1OVUxMIHZtX3ByaXZhdGUgZG9l
+cyBwcmV2ZW50DQo+ID4gPiA+PiBtcHJvdGVjdCgpIGZyb20gbWVyZ2luZyBhZGphY2VudCBWTUFz
+Lg0KPiA+ID4gPg0KPiA+ID4gPiBTYW1lIHNlbWFudGljcyBhcyB3aXRoIGEgcmVndWxhciBtbWFw
+IGkuZS4geW91IGNhbiBjbG9zZSB0aGUgZmlsZQ0KPiA+ID4gPiBhbmQgc3RpbGwgdXNlIHRoZSBt
+YXBwaW5nLg0KPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4NCj4gPiA+IFRoZSBmaWxlIHNob3VsZCBi
+ZSBwcm9wZXJseSByZWZjb3VudGVkIOKAlCB2bV9maWxlIHNob3VsZCBub3QgZ28gYXdheQ0KPiB3
+aGlsZSBpdOKAmXMgbWFwcGVkLg0KPiANCj4gbW0gYWxyZWFkeSB0YWtlcyBjYXJlIG9mIHRoYXQg
+c28gdm1fZmlsZSBkb2VzIG5vdCBnbyBhd2F5LiBTdGlsbCB3ZSBuZWVkDQo+IGFuIGludGVybmFs
+IHJlZmNvdW50IGZvciBlbmNsYXZlcyB0byBzeW5jaHJvbml6ZSB3aXRoIHRoZSBzd2FwcGVyLiBJ
+bg0KPiBzdW1tYXJ5IG5vdGhpbmcgbmVlZHMgdG8gYmUgZG9uZS4NCg0KSSBkb24ndCBnZXQgdGhp
+cy4gVGhlIHN3YXBwZXIgdGFrZXMgYSByZWFkIGxvY2sgb24gbW0tPm1tYXBfc2VtLCB3aGljaCBs
+b2NrcyB0aGUgdm1hLCB3aGljaCBpbiB0dXJuIHJlZmVyZW5jZSBjb3VudHMgdm1hLT52bV9maWxl
+LiBXaHkgaXMgdGhlIGludGVybmFsIHJlZmNvdW50IHN0aWxsIG5lZWRlZD8gDQoNCj4gDQo+ID4g
+UmlnaHQsIG1ha2VzIHNlbnNlLiBJdCBpcyBlYXN5IG9uZSB0byBjaGFuZ2UgZXNzZW50aWFsbHkg
+anVzdCByZW1vdmluZw0KPiA+IGludGVybmFsIHJlZmNvdW50IGZyb20gc2d4X2VuY2wgYW5kIHVz
+aW5nIGZpbGUgZm9yIHRoZSBzYW1lLiBJJ2xsDQo+ID4gdXBkYXRlIHRoaXMgdG8gbXkgdHJlZSBh
+bG9uZyB3aXRoIHRoZSBjaGFuZ2VzIHRvIHJlbW92ZSBMS00vQUNQSSBiaXRzDQo+IEFTQVAuDQo+
+IA0KPiAvSmFya2tvDQo=
