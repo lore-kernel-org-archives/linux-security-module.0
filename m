@@ -2,123 +2,110 @@ Return-Path: <SRS0=ug0r=UM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D659EC31E45
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 15:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D36C31E45
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 15:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A93622082C
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 15:35:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YkW4wOsm"
+	by mail.kernel.org (Postfix) with ESMTP id BB0F7206BB
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 15:38:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbfFMPfE (ORCPT
+        id S1731946AbfFMPig (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:35:04 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35856 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727931AbfFMKbX (ORCPT
+        Thu, 13 Jun 2019 11:38:36 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36824 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388331AbfFMPig (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:31:23 -0400
-Received: by mail-pl1-f195.google.com with SMTP id d21so7957234plr.3
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Jun 2019 03:31:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=c4lD5Ja/W68zU30yx+ZIDKDyIrqaAIZ94VRiCyeCO0Y=;
-        b=YkW4wOsmtRXKF39IQeQs8ZdcwD+6X2M5iCF/r6jKCp49Ml1bgkwnn9qLqERse4MXnS
-         JvE/JUr1cR6fI4sYp9RHlrto71AB7k+bS6GVAtsKrhT2Wmz0R/Nn7NUSf9qGlSMRGqGX
-         VFRL05138Hd3JVcXhBoLNfRo+SP5MpLwlqKq3bPblTc9ut7nk6RpFrhz/AS0kQLMdp7W
-         NYPunno5BmFlawT6AG9mFdUyJvmrBka68PEWDGES8yBZtUknvd3nXlEXBJq+d80A2PuT
-         pOlbAZYM12CmFbPUcdVThV/+qdhyEwwMTvqzkqBEoGhYmCw5qx4Uu3CqrowG+fxR70zk
-         EXuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=c4lD5Ja/W68zU30yx+ZIDKDyIrqaAIZ94VRiCyeCO0Y=;
-        b=SjTeYn2GjIT6t/Rf8ekgZh0+AQeSkXnV+4X5EvKG61H1WVPV9g30QhLIebslukeluH
-         PERu8HsFcaiLVXKgkNjCEsdkf/niPL2Pgtq8m6DLTAUn2u2BTKmFamaWOrMttizrRPBP
-         nNNfESo8gimaYPW2zmGKErBIw5ULNjGV0qaF8Aldys0iXaMpUkIIXtTwQgaaRx8zZVZq
-         HWoWn7pPagkxB7zJJZlyDxbjJfXJ91F7HlbEqaUNOs6tVmlyZDITFtu/OANmTSQMqh7N
-         2XPpMVExlqFfLUwh5Ntar1EC4EovrtS8BaZeSVmaxM6OduhZpu+dvxWWg889O/VZ5SLs
-         Tnww==
-X-Gm-Message-State: APjAAAWtyoEAWRCkvohmEYWwzdIQIJpQX/SWP+jcew7SmS2GG5oAzCiA
-        pDBGLyINZEhutDBFxQtiW8JsrA==
-X-Google-Smtp-Source: APXvYqwf629GmUVbhLZnIAU/FAePATiykUd+OC7xErJfaA+0pIRy9XJpSrc4JheBzy9dpn/uP2D0ug==
-X-Received: by 2002:a17:902:106:: with SMTP id 6mr23919253plb.64.1560421882686;
-        Thu, 13 Jun 2019 03:31:22 -0700 (PDT)
-Received: from localhost.localdomain ([117.196.234.139])
-        by smtp.gmail.com with ESMTPSA id a12sm2265078pgq.0.2019.06.13.03.31.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 13 Jun 2019 03:31:21 -0700 (PDT)
-From:   Sumit Garg <sumit.garg@linaro.org>
-To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     jens.wiklander@linaro.org, corbet@lwn.net, dhowells@redhat.com,
-        jejb@linux.ibm.com, jarkko.sakkinen@linux.intel.com,
-        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tee-dev@lists.linaro.org, Sumit Garg <sumit.garg@linaro.org>
-Subject: [RFC 0/7] Introduce TEE based Trusted Keys support
-Date:   Thu, 13 Jun 2019 16:00:26 +0530
-Message-Id: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Thu, 13 Jun 2019 11:38:36 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DFXL5W141846
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Jun 2019 11:38:34 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t3rv6h895-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Jun 2019 11:38:34 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 13 Jun 2019 16:38:32 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Jun 2019 16:38:29 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5DFcS8A38273254
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jun 2019 15:38:28 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C6688A4051;
+        Thu, 13 Jun 2019 15:38:28 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6DF4A405B;
+        Thu, 13 Jun 2019 15:38:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.81.91])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Jun 2019 15:38:27 +0000 (GMT)
+Subject: Re: [PATCH -next] ima: Make arch_policy_entry static
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     YueHaibing <yuehaibing@huawei.com>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Date:   Thu, 13 Jun 2019 11:38:17 -0400
+In-Reply-To: <20190611134032.14656-1-yuehaibing@huawei.com>
+References: <20190611134032.14656-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061315-0012-0000-0000-00000328DFF3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061315-0013-0000-0000-00002161ECE4
+Message-Id: <1560440297.4805.23.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-13_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906130116
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add support for TEE based trusted keys where TEE provides the functionality
-to seal and unseal trusted keys using hardware unique key. Also, this is
-an alternative in case platform doesn't possess a TPM device.
+On Tue, 2019-06-11 at 21:40 +0800, YueHaibing wrote:
+> Fix sparse warning:
+> 
+> security/integrity/ima/ima_policy.c:202:23: warning:
+>  symbol 'arch_policy_entry' was not declared. Should it be static?
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-This series also adds some TEE features like:
+Thanks, this patch has been queued to be upstreamed.
 
-Patch #1, #2 enables support for registered kernel shared memory with TEE.
+Mimi
 
-Patch #3 enables support for private kernel login method required for
-cases like trusted keys where we don't wan't user-space to directly access
-TEE service to retrieve trusted key contents.
-
-Rest of the patches from #4 to #7 adds support for TEE based trusted keys.
-
-This patch-set has been tested with OP-TEE based pseudo TA which can be
-found here [1].
-
-Looking forward to your valuable feedback/suggestions.
-
-[1] https://github.com/OP-TEE/optee_os/pull/3082
-
-Sumit Garg (7):
-  tee: optee: allow kernel pages to register as shm
-  tee: enable support to register kernel memory
-  tee: add private login method for kernel clients
-  KEYS: trusted: Introduce TEE based Trusted Keys
-  KEYS: encrypted: Allow TEE based trusted master keys
-  doc: keys: Document usage of TEE based Trusted Keys
-  MAINTAINERS: Add entry for TEE based Trusted Keys
-
- Documentation/security/keys/tee-trusted.rst      |  93 +++++
- MAINTAINERS                                      |   9 +
- drivers/tee/optee/call.c                         |   7 +
- drivers/tee/tee_core.c                           |   6 +
- drivers/tee/tee_shm.c                            |  16 +-
- include/keys/tee_trusted.h                       |  84 ++++
- include/keys/trusted-type.h                      |   1 +
- include/linux/tee_drv.h                          |   1 +
- include/uapi/linux/tee.h                         |   2 +
- security/keys/Kconfig                            |   3 +
- security/keys/Makefile                           |   3 +
- security/keys/encrypted-keys/masterkey_trusted.c |  10 +-
- security/keys/tee_trusted.c                      | 506 +++++++++++++++++++++++
- 13 files changed, 737 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/security/keys/tee-trusted.rst
- create mode 100644 include/keys/tee_trusted.h
- create mode 100644 security/keys/tee_trusted.c
-
--- 
-2.7.4
+> ---
+>  security/integrity/ima/ima_policy.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 1cc822a..cd1b728 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -199,7 +199,7 @@ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
+>  };
+>  
+>  /* An array of architecture specific rules */
+> -struct ima_rule_entry *arch_policy_entry __ro_after_init;
+> +static struct ima_rule_entry *arch_policy_entry __ro_after_init;
+>  
+>  static LIST_HEAD(ima_default_rules);
+>  static LIST_HEAD(ima_policy_rules);
 
