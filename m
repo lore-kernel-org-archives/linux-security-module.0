@@ -1,107 +1,102 @@
-Return-Path: <SRS0=c21G=UL=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=ug0r=UM=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5858BC31E46
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 20:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA67C31E45
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 15:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29DA4208C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jun 2019 20:59:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6D4220B7C
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 15:00:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="N2HZ4/L5"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SvRYAM6V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389757AbfFLU7T (ORCPT
+        id S1732858AbfFMPAW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jun 2019 16:59:19 -0400
-Received: from mail-lj1-f175.google.com ([209.85.208.175]:39675 "EHLO
-        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389499AbfFLU7T (ORCPT
+        Thu, 13 Jun 2019 11:00:22 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49828 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732590AbfFMOt6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jun 2019 16:59:19 -0400
-Received: by mail-lj1-f175.google.com with SMTP id v18so16361139ljh.6
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Jun 2019 13:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=l3VEyWUIpz19ynNy/N2qHdEiDLqpzuYJDD7NorzZ7xc=;
-        b=N2HZ4/L5uWJ8QNMKDSq0FO7tTwa7rTy4QL45jcK35gfpeeQw2qQZq01cIdQtxhG41D
-         2568TNO1fhu46tbEeVx1JoKSvpG1NG9yKiBzsUnlaQvbSXsi6kG+f2qTAtU1drEbSEiF
-         xcRbsYkmZVCjE/j1Xzk7FxQ8fm+layLakyIpAGLaBKzo1aPTI036n5Lhdb+eYBvzyQl8
-         FxcUURBFsI0JNdOrhm5UA7otbbT2VU9ymTBIkZfejGahJUObQ6EIu5+7f0odQKDyGGJi
-         Odpv5uATkGYtakdyOZfZwZb1ly1DEEjcIt5Lkko583FlfQtaHO+57aosTnFqar5y8tky
-         2RdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=l3VEyWUIpz19ynNy/N2qHdEiDLqpzuYJDD7NorzZ7xc=;
-        b=d4L74WWepfuS+dsn6w6uScJDbLRwwuWMOGwTZn9Zv5Jzq2Of6FqTiWjg//TZiJYvEO
-         2JiPOA6JAntDQmXzqzIJG/UTX6Wr62u2tsBZaTHtibaGNMl6ta0Zly9LDC3pKmFWlF85
-         cqHVCLftVerIcM67wk3RsH1BsMn6hkflChjfHYLcbXB3id2wopWPprzMJ4X2JfeWdoi+
-         zoNLWdtBSHV/ZK+Ez/o9bi5FoaWzAZHmZS8pgpmMKOtjPFnyOvMRtm+D1ESVxDkZpvNh
-         nawRAnFd9C4s68w/cUxyJdodr+InnY9U0Kf6IgNL0I7QBcmAnJ7Oa3qHAZMLU6YMfHfE
-         kYjg==
-X-Gm-Message-State: APjAAAWh/lzEDk5HPc2gUVsh/yZKx650g+wPSlc8EeTvQpmJo39BK6At
-        ny49ZGaQYzgxGQywReiriVAnK0a/8c4uMMoCBA/W
-X-Google-Smtp-Source: APXvYqyQ9xRqxco6pzmg3Kllok/kjb/RUNCEP+XpYPOK05OKF32F7Ru4shBbfMW+WyLGgAMoWcG0oW76u5p69zhqhcw=
-X-Received: by 2002:a2e:9106:: with SMTP id m6mr31118354ljg.164.1560373156513;
- Wed, 12 Jun 2019 13:59:16 -0700 (PDT)
+        Thu, 13 Jun 2019 10:49:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=WMyyxODgsxZ/XkDr48HWA7aTA4P32ySnPu90ZE1usUA=; b=SvRYAM6V25RdXhhsF2XFD/myCy
+        xb90MjFff+RemiPe/zmVRTwQhoIo5cqAF2taZi8MUOejdLT1cBDi4MzIr/OkvNaoWh9WPy78Y9iGa
+        km6RgOwE7MG8qQFY13YKdOYFyn6V6JWac8/2o05TV/mDxP5THfZdU34j/GMH7AaMmOqeVG5aDRGck
+        dbH6tYpypSW4SkNfYadSbfEYCHgblPGISG5mOtez1Wu92EQCQWKUOcaDGfrR2/Ic2uOjlu72PANeR
+        IrYhaIbx5gzo/xLXBtkiC/5kXhTzhv1AERPNvZZ0goFmnYWMrfD555r42SloB+Sv1bvNB2b5jQhg3
+        MQHwsJRQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbR35-0004ea-Lj; Thu, 13 Jun 2019 14:49:55 +0000
+Subject: Re: [PATCH 02/13] uapi: General notification ring definitions [ver
+ #4]
+To:     David Howells <dhowells@redhat.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <6b6f5bb0-1426-239b-ac9f-281e31ddcd04@infradead.org>
+ <20190607151228.GA1872258@magnolia>
+ <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
+ <155991706083.15579.16359443779582362339.stgit@warthog.procyon.org.uk>
+ <29222.1559922719@warthog.procyon.org.uk>
+ <30226.1560432885@warthog.procyon.org.uk>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <575fa290-961f-8dcd-3b76-4608daa5ee0e@infradead.org>
+Date:   Thu, 13 Jun 2019 07:49:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 12 Jun 2019 16:59:05 -0400
-Message-ID: <CAHC9VhT8tYyUt_gtUR-jD-33LMW2RmzSXwP_OgPrh5ujQSiuUA@mail.gmail.com>
-Subject: [GIT PULL] SELinux fixes for v5.2 (#2)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <30226.1560432885@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On 6/13/19 6:34 AM, David Howells wrote:
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+>> What is the problem with inline functions in UAPI headers?
+> 
+> It makes compiler problems more likely; it increases the potential for name
+> collisions with userspace; it makes for more potential problems if the headers
+> are imported into some other language; and it's not easy to fix a bug in one
+> if userspace uses it, just in case fixing the bug breaks userspace.
+> 
+> Further, in this case, the first of Darrick's functions (calculating the
+> length) is probably reasonable, but the second is not.  It should crank the
+> tail pointer and then use that, but that requires 
+> 
+>>>> Also, weird multiline comment style.
+>>>
+>>> Not really.
+>>
+>> Yes really.
+> 
+> No.  It's not weird.  If anything, the default style is less good for several
+> reasons.  I'm going to deal with this separately as I need to generate some
+> stats first.
+> 
+> David
+> 
 
-Three patches for v5.2; one fixes a problem where we weren't correctly
-logging raw SELinux labels, the other two fix problems where we
-weren't properly checking calls to kmemdup().  Please merge for the
-next v5.2-rc release.
+OK, maybe you are objecting to the word "weird."  So the multi-line comment style
+that you used is not the preferred Linux kernel multi-line comment style
+(except in networking code) [Documentation/process/coding-style.rst] that has been
+in effect for 20+ years AFAIK.
 
-Thanks,
--Paul
---
-The following changes since commit 05174c95b83f8aca0c47b87115abb7a6387aafa5:
-
- selinux: do not report error on connect(AF_UNSPEC) (2019-05-20 21:46:02 -0400)
-
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20190612
-
-for you to fetch changes up to fec6375320c6399c708fa9801f8cfbf950fee623:
-
- selinux: fix a missing-check bug in selinux_sb_eat_lsm_opts()
-   (2019-06-12 12:27:26 -0400)
-
-----------------------------------------------------------------
-selinux/stable-5.2 PR 20190612
-
-----------------------------------------------------------------
-Gen Zhang (2):
-     selinux: fix a missing-check bug in selinux_add_mnt_opt( )
-     selinux: fix a missing-check bug in selinux_sb_eat_lsm_opts()
-
-Ondrej Mosnacek (1):
-     selinux: log raw contexts as untrusted strings
-
-security/selinux/avc.c   | 10 ++++++++--
-security/selinux/hooks.c | 39 ++++++++++++++++++++++++++++-----------
-2 files changed, 36 insertions(+), 13 deletions(-)
 
 -- 
-paul moore
-www.paul-moore.com
+~Randy
