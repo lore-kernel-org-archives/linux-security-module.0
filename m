@@ -2,165 +2,170 @@ Return-Path: <SRS0=ug0r=UM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B52A9C31E49
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFF9C31E45
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97A1D21721
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:36:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BA1120644
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:40:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DjxNOGja"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392262AbfFMQgg (ORCPT
+        id S2392840AbfFMQkQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:36:36 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:35228 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730675AbfFMH3B (ORCPT
+        Thu, 13 Jun 2019 12:40:16 -0400
+Received: from sonic314-26.consmr.mail.ne1.yahoo.com ([66.163.189.152]:41312
+        "EHLO sonic314-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392834AbfFMQkQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:29:01 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x5D7PfTQ001652;
-        Thu, 13 Jun 2019 02:25:41 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x5D7PdX1001651;
-        Thu, 13 Jun 2019 02:25:39 -0500
-Date:   Thu, 13 Jun 2019 02:25:39 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Cedric Xing <cedric.xing@intel.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        jarkko.sakkinen@linux.intel.com, luto@kernel.org,
-        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
-        eparis@parisplace.org, jethro@fortanix.com, dave.hansen@intel.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, nhorman@redhat.com,
-        pmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, kai.svahn@intel.com,
-        bp@alien8.de, josh@joshtriplett.org, kai.huang@intel.com,
-        rientjes@google.com, william.c.roberts@intel.com,
-        philip.b.tricca@intel.com
-Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in SELinux
-Message-ID: <20190613072539.GA1499@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <cover.1560131039.git.cedric.xing@intel.com> <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com> <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov> <20190611220243.GB3416@linux.intel.com> <20190612093221.GA24188@wind.enjellic.com> <20190612142557.GB20308@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612142557.GB20308@linux.intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 13 Jun 2019 02:25:42 -0500 (CDT)
+        Thu, 13 Jun 2019 12:40:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1560444014; bh=qhQvElX9cqqhv1EQCDi2FsHJE3Lx6OfUHHqmZGhpaWk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=DjxNOGjaPR+2kmCZlCsqqxEr8gtubLUhk+Hu/g4qLAoWQHApjiuNw5nzHXDvsL6Gp2v2X62Xn14cI+DvBen7JlKwGHduEMCNjKqTNFAD7iEpzuY+OUoWIsL8kqeivhzhcoJbgmV8o+tG+aRt1CUHx9Dv/yPcdV5WSBRgycF+Qsm5qJyWUnx7Hyb7/Mea1YUAqznOmER4te0dLQgAx3I3TwB82edl2daAQuHE0rIB3BUYjLfkaZNszOcVG5xLRKlkpth+QEeMzK6TxjEZsR0CvoPkclhwHp7Aymqc71o9ZpQx9UoT+tesrNfOspXnz5m7kM8HfLrn8gkey/qSd8LHbg==
+X-YMail-OSG: 7MqIT1wVM1mRvXBIyd8i1VIEtUyWmTypwIVZr6pNeaZdahOI6u2QpFrGS2U4Mg2
+ o5lkTtQ6M2gydaRhTMFfW5H5dcsNYgqB2WS9l87MPWXiZ6UZ83Khj5tPbAcFk5LQ4QTfbsmb3q_P
+ bybxHp6Wt3kxAS1daC9nyaiXtdcZMbRFSVsetBL35dIpKNRAGUU0np0_8Wktk4tuaRJmxsbpkItk
+ FLzdfme8noFUJuECmYAXp3g6m0P_xUrQ2prf22SK9WuDm3ZqUXzsmUwfuVMZeHHMJ6sKUrFGd7El
+ 1F5MYo7XLu1TtZu2nEaikBrwjA9cgz2nowD9lzErhi4V1SbcASaRFkNZl5G7X2hIKEzGMYXitsfm
+ Cf4Rk3a5HVNQ3J.32_uUuCzmymkcyLVTBfWpX8kNRjsBpw0A6HsrZQ9Ff.w8uAySo89OWtBCegrm
+ cZ2GqjDQpMtcYOsNo1EDwYn1alcTNOiRLSb66A35R5pHazwRZoOYUjwfJijlK11oYTgqi5NQsZnG
+ sWnYB3d4cBCoFeKnxoW1V_AXs61WoZ49jVdBmW4yufK7mNH0PosaJBkGqay8owOueMT.pgTMD_pw
+ YYPdnFcR3kuPLooGMlIxUzHU.7Wbos06dG6lghS0TtR7bpBpRETlG0wefnqu5DRu2ZWwMKrEanq7
+ kJuaF3AI3cbmVXKLc4WuYtD6A2lwKEUX8edVrpb4QWJrVrys3bb1UxlCCTUX6GdV38EM2DFiyy4_
+ Rj8lFKJruFb_REiRaZl_lKrj4m9T.1AIJBXBqLm7zE9rq4EriYNIEeVtoJlmxeyXX2UKpMeZHmA8
+ Xzz_xompaumneVVKd18xaqFBW4vO.J02We76HLrW5u6JOyZiPStcq7WVzyF9.pV6Vz0pioXH23oH
+ Wk9aVCCYfhOQe2eILhwkwGXSRZ9yEjuTQee.N6hElIaJcnhtgeMbaYSf2gNtqViL5iYm2IWtUWAI
+ _PA26rIgfOlWmBYcND0U6xrPoYO6didYLqwdzi72ZbD48h6cdvlnzq95DK_I64mGgsp4jbKy4rCa
+ zHmFouLe3hzxrJ2OcmgP12mZWvDAHp9N0b2C3b1Km_KHmTsAdWG3iY5SSUK7D3wcnui.2CI0FIzl
+ p7MKQJO9DCl1UjGuagUYpiIUpG9XsR0l8N0iMM.uikgQcSyPza2ucT7utrnGxdgxh2rm4M7Oft1B
+ SnbzdGOCUmzaglGi32kAbcjd6yr0uOJcECCm7d7tAb.fsYnQHqCLD7Y4AmsvUplkREAKg3x3oOyA
+ R3ZeMBwgxUcdOiyRpw4mpnapjhQqPGcU4DbLzSSqQfYCfhA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Thu, 13 Jun 2019 16:40:14 +0000
+Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
+          by smtp424.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a8206ee583332d833244e3bfe406edd8;
+          Thu, 13 Jun 2019 16:40:11 +0000 (UTC)
+Subject: Re: [RFC 0/7] Introduce TEE based Trusted Keys support
+To:     Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     jens.wiklander@linaro.org, corbet@lwn.net, dhowells@redhat.com,
+        jejb@linux.ibm.com, jarkko.sakkinen@linux.intel.com,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tee-dev@lists.linaro.org
+References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <d803283e-5e69-5deb-fe94-3f2e45fb95af@schaufler-ca.com>
+Date:   Thu, 13 Jun 2019 09:40:10 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 12, 2019 at 07:25:57AM -0700, Sean Christopherson wrote:
+On 6/13/2019 3:30 AM, Sumit Garg wrote:
+> Add support for TEE based trusted keys where TEE provides the functionality
+> to seal and unseal trusted keys using hardware unique key. Also, this is
+> an alternative in case platform doesn't possess a TPM device.
+>
+> This series also adds some TEE features like:
 
-Good morning, we hope the week continues to go well for everyone.
+Please expand the acronym TEE on first use. That will
+help people who don't work with it on a daily basis
+understand what you're going on about.
 
-> On Wed, Jun 12, 2019 at 04:32:21AM -0500, Dr. Greg wrote:
-> > With SGX2 we will, by necessity, have to admit the notion that a
-> > platform owner will not have any effective visibility into code that
-> > is loaded and executed, since it can come in over a secured network
-> > connection in an enclave security context.  This advocates for the
-> > simplest approach possible to providing some type of regulation to any
-> > form of WX page access.
-
-> I believe we're all on the same page in the sense that we all want
-> the "simplest approach possible", but there's a sliding scale of
-> complexity between the kernel and userspace.  We can make life
-> simple for userspace at the cost of additional complexity in the
-> kernel, and vice versa.  The disagreement is over where to shove the
-> extra complexity.
-
-Yes, we are certainly cognizant of and sympathetic to the engineering
-tensions involved.
-
-The purpose of our e-mail was to leaven the discussion with the notion
-that the most important question is how much complexity should be
-shoved in either direction.  With respect to SGX as a technology, the
-most important engineering metric is how much effective security is
-actually being achieved.
-
-Given an admission that enclave dynamic memory management (EDMM/SGX2)
-is the goal in all of this, there are only two effective security
-questions to be answered:
-
-1.) Should a corpus of known memory with executable permissions be
-copied into to an enclave.
-
-2.) Should a corpus of executable memory with unknown content be
-available to an enclave.
-
-Given the functionality that SGX implements, both questions ultimately
-devolve to whether or not a platform owner trusts an enclave author.
-Security relevant trust is conveyed through cryptographically mediated
-mechanisms.
-
-The decision has been made to take full hardware mediated
-cryptographic trust off the table for the mainstream Linux
-implementation.  Given that, the most pragmatic engineering solution
-would seem to be to implement the least complex implementation that
-allows a platform owner to answer the two questions above.
-
-See below.
-
-> > Current state of the art, and there doesn't appear to be a reason to
-> > change this, is to package an enclave in the form of an ELF shared
-> > library.  It seems straight forward to inherit and act on page
-> > privileges from the privileges specified on the ELF sections that are
-> > loaded.  Loaders will have a file descriptor available so an mmap of
-> > the incoming page with the specified privileges should trigger the
-> > required LSM interventions and tie them to a specific enclave.
-> > 
-> > The current enclave 'standard' also uses layout metadata, stored in a
-> > special .notes section of the shared image, to direct a loader with
-> > respect to construction of the enclave stack, heap, TCS and other
-> > miscellaneous regions not directly coded by the ELF TEXT sections.  It
-> > seems straight forward to extend this paradigm to declare region(s) of
-> > an enclave that are eligible to be generated at runtime (EAUG'ed) with
-> > the RWX protections needed to support dynamically loaded code.
-> > 
-> > If an enclave wishes to support this functionality, it would seem
-> > straight forward to require an enclave to provide a single zero page
-> > which the loader will mmap with those protections in order to trigger
-> > the desired LSM checks against that specific enclave.
-
-> This is effectively #1, e.g. would require userspace to pre-declare its
-> intent to make regions W->X.
-
-Yes, we understood that when we wrote our original e-mail.
-
-This model effectively allows the two relevant security questions to
-be easily answered and is most consistent with current enclave
-formats, software practices and runtimes.  It is also largely
-consistent with existing LSM practices.
-
-There hasn't been any discussion with respect to backports of this
-driver but we believe it it safe to conclude that the industry is
-going to be at least two years away from any type of realistic
-deployments of this driver.  By that time there will be over a half a
-decade of software deployment of existing API's and enclave formats.
-
-Expecting a 'flag day' to be successful would seem to be contrary to
-all known history of software practice and would thus disadvantage
-Linux as an effective platform for this technology.
-
-Best wishes for a productive remainder of the week to everyone.
-
-Dr. Greg
-
-As always,
-Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-4206 N. 19th Ave.           Specializing in information infra-structure
-Fargo, ND  58102            development.
-PH: 701-281-1686            EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"Sometimes I sing and dance around the house in my underwear,
- doesn't make me Madonna, never will.
-                                -- Cyn
-                                   Working Girl
+>
+> Patch #1, #2 enables support for registered kernel shared memory with TEE.
+>
+> Patch #3 enables support for private kernel login method required for
+> cases like trusted keys where we don't wan't user-space to directly access
+> TEE service to retrieve trusted key contents.
+>
+> Rest of the patches from #4 to #7 adds support for TEE based trusted keys.
+>
+> This patch-set has been tested with OP-TEE based pseudo TA which can be
+> found here [1].
+>
+> Looking forward to your valuable feedback/suggestions.
+>
+> [1] https://github.com/OP-TEE/optee_os/pull/3082
+>
+> Sumit Garg (7):
+>   tee: optee: allow kernel pages to register as shm
+>   tee: enable support to register kernel memory
+>   tee: add private login method for kernel clients
+>   KEYS: trusted: Introduce TEE based Trusted Keys
+>   KEYS: encrypted: Allow TEE based trusted master keys
+>   doc: keys: Document usage of TEE based Trusted Keys
+>   MAINTAINERS: Add entry for TEE based Trusted Keys
+>
+>  Documentation/security/keys/tee-trusted.rst      |  93 +++++
+>  MAINTAINERS                                      |   9 +
+>  drivers/tee/optee/call.c                         |   7 +
+>  drivers/tee/tee_core.c                           |   6 +
+>  drivers/tee/tee_shm.c                            |  16 +-
+>  include/keys/tee_trusted.h                       |  84 ++++
+>  include/keys/trusted-type.h                      |   1 +
+>  include/linux/tee_drv.h                          |   1 +
+>  include/uapi/linux/tee.h                         |   2 +
+>  security/keys/Kconfig                            |   3 +
+>  security/keys/Makefile                           |   3 +
+>  security/keys/encrypted-keys/masterkey_trusted.c |  10 +-
+>  security/keys/tee_trusted.c                      | 506 +++++++++++++++++++++++
+>  13 files changed, 737 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/security/keys/tee-trusted.rst
+>  create mode 100644 include/keys/tee_trusted.h
+>  create mode 100644 security/keys/tee_trusted.c
+>
