@@ -2,39 +2,38 @@ Return-Path: <SRS0=ug0r=UM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F87C31E4A
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 19:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9882C46477
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 19:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA7120896
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 19:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A127420896
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 19:15:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbfFMTLN (ORCPT
+        id S1726917AbfFMTP4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jun 2019 15:11:13 -0400
-Received: from namei.org ([65.99.196.166]:38978 "EHLO namei.org"
+        Thu, 13 Jun 2019 15:15:56 -0400
+Received: from namei.org ([65.99.196.166]:38994 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbfFMTLM (ORCPT
+        id S1725842AbfFMTP4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jun 2019 15:11:12 -0400
+        Thu, 13 Jun 2019 15:15:56 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x5DJAmSG022560;
-        Thu, 13 Jun 2019 19:10:48 GMT
-Date:   Fri, 14 Jun 2019 05:10:48 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x5DJFiQn022778;
+        Thu, 13 Jun 2019 19:15:44 GMT
+Date:   Fri, 14 Jun 2019 05:15:44 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
 To:     Prakhar Srivastava <prsriva02@gmail.com>
 cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
         roberto.sassu@huawei.com, vgoyal@redhat.com
-Subject: Re: [PATCH V8 1/3] Define a new IMA hook to measure the boot command
- line arguments
-In-Reply-To: <20190612221549.28399-2-prsriva02@gmail.com>
-Message-ID: <alpine.LRH.2.21.1906140501300.14107@namei.org>
-References: <20190612221549.28399-1-prsriva02@gmail.com> <20190612221549.28399-2-prsriva02@gmail.com>
+Subject: Re: [PATCH V8 2/3] Define a new ima template field buf
+In-Reply-To: <20190612221549.28399-3-prsriva02@gmail.com>
+Message-ID: <alpine.LRH.2.21.1906140515320.14107@namei.org>
+References: <20190612221549.28399-1-prsriva02@gmail.com> <20190612221549.28399-3-prsriva02@gmail.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -44,28 +43,30 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 On Wed, 12 Jun 2019, Prakhar Srivastava wrote:
 
-> This patch adds support in ima to measure kexec cmdline args
-> during soft reboot(kexec_file_load).
+> A buffer(kexec cmdline args) measured into ima cannot be
+> appraised without already being aware of the buffer contents.
+> Since hashes are non-reversible, raw buffer is needed for
+> validation or regenerating hash for appraisal/attestation.
 > 
-> - A new ima hook ima_kexec_cmdline is defined to be called by the
-> kexec code.
-> - A new function process_buffer_measurement is defined to measure
-> the buffer hash into the ima log.
-> - A new func policy KEXEC_CMDLINE is defined to control the
->  measurement.[Suggested by Mimi]
+> This patch adds support to ima to allow store/read the
+> buffer contents in HEX.
+> 
+> - Add two new fields to ima_event_data to hold the buf and
+> buf_len [Suggested by Roberto]
+> - Add a new temaplte field 'buf' to be used to store/read
+> the buffer data.[Suggested by Mimi]
+> - Updated process_buffer_meaurement to add the buffer to
+> ima_event_data. process_buffer_measurement added in
+> "Define a new IMA hook to measure the boot command line
+>  arguments"
+> - Add a new template policy name ima-buf to represent
+> 'd-ng|n-ng|buf'
 > 
 > Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-> +	struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
-> +	struct ima_event_data event_data = {.iint = iint };
 
-Minor nit: looks like this could be simplified to:
-
-	struct integrity_iint_cache iint = {};
-	struct ima_event_data event_data = {.iint = &iint };
-
-which also saves the later memset. 'hash' can also be initialized with '= 
-{}'.
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
 
 -- 
