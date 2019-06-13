@@ -2,170 +2,91 @@ Return-Path: <SRS0=ug0r=UM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFF9C31E45
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA4EC46477
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BA1120644
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:40:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DjxNOGja"
+	by mail.kernel.org (Postfix) with ESMTP id A5DFA20644
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 16:40:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392840AbfFMQkQ (ORCPT
+        id S1730895AbfFMQkv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:40:16 -0400
-Received: from sonic314-26.consmr.mail.ne1.yahoo.com ([66.163.189.152]:41312
-        "EHLO sonic314-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2392834AbfFMQkQ (ORCPT
+        Thu, 13 Jun 2019 12:40:51 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33005 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730575AbfFMG5J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:40:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1560444014; bh=qhQvElX9cqqhv1EQCDi2FsHJE3Lx6OfUHHqmZGhpaWk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=DjxNOGjaPR+2kmCZlCsqqxEr8gtubLUhk+Hu/g4qLAoWQHApjiuNw5nzHXDvsL6Gp2v2X62Xn14cI+DvBen7JlKwGHduEMCNjKqTNFAD7iEpzuY+OUoWIsL8kqeivhzhcoJbgmV8o+tG+aRt1CUHx9Dv/yPcdV5WSBRgycF+Qsm5qJyWUnx7Hyb7/Mea1YUAqznOmER4te0dLQgAx3I3TwB82edl2daAQuHE0rIB3BUYjLfkaZNszOcVG5xLRKlkpth+QEeMzK6TxjEZsR0CvoPkclhwHp7Aymqc71o9ZpQx9UoT+tesrNfOspXnz5m7kM8HfLrn8gkey/qSd8LHbg==
-X-YMail-OSG: 7MqIT1wVM1mRvXBIyd8i1VIEtUyWmTypwIVZr6pNeaZdahOI6u2QpFrGS2U4Mg2
- o5lkTtQ6M2gydaRhTMFfW5H5dcsNYgqB2WS9l87MPWXiZ6UZ83Khj5tPbAcFk5LQ4QTfbsmb3q_P
- bybxHp6Wt3kxAS1daC9nyaiXtdcZMbRFSVsetBL35dIpKNRAGUU0np0_8Wktk4tuaRJmxsbpkItk
- FLzdfme8noFUJuECmYAXp3g6m0P_xUrQ2prf22SK9WuDm3ZqUXzsmUwfuVMZeHHMJ6sKUrFGd7El
- 1F5MYo7XLu1TtZu2nEaikBrwjA9cgz2nowD9lzErhi4V1SbcASaRFkNZl5G7X2hIKEzGMYXitsfm
- Cf4Rk3a5HVNQ3J.32_uUuCzmymkcyLVTBfWpX8kNRjsBpw0A6HsrZQ9Ff.w8uAySo89OWtBCegrm
- cZ2GqjDQpMtcYOsNo1EDwYn1alcTNOiRLSb66A35R5pHazwRZoOYUjwfJijlK11oYTgqi5NQsZnG
- sWnYB3d4cBCoFeKnxoW1V_AXs61WoZ49jVdBmW4yufK7mNH0PosaJBkGqay8owOueMT.pgTMD_pw
- YYPdnFcR3kuPLooGMlIxUzHU.7Wbos06dG6lghS0TtR7bpBpRETlG0wefnqu5DRu2ZWwMKrEanq7
- kJuaF3AI3cbmVXKLc4WuYtD6A2lwKEUX8edVrpb4QWJrVrys3bb1UxlCCTUX6GdV38EM2DFiyy4_
- Rj8lFKJruFb_REiRaZl_lKrj4m9T.1AIJBXBqLm7zE9rq4EriYNIEeVtoJlmxeyXX2UKpMeZHmA8
- Xzz_xompaumneVVKd18xaqFBW4vO.J02We76HLrW5u6JOyZiPStcq7WVzyF9.pV6Vz0pioXH23oH
- Wk9aVCCYfhOQe2eILhwkwGXSRZ9yEjuTQee.N6hElIaJcnhtgeMbaYSf2gNtqViL5iYm2IWtUWAI
- _PA26rIgfOlWmBYcND0U6xrPoYO6didYLqwdzi72ZbD48h6cdvlnzq95DK_I64mGgsp4jbKy4rCa
- zHmFouLe3hzxrJ2OcmgP12mZWvDAHp9N0b2C3b1Km_KHmTsAdWG3iY5SSUK7D3wcnui.2CI0FIzl
- p7MKQJO9DCl1UjGuagUYpiIUpG9XsR0l8N0iMM.uikgQcSyPza2ucT7utrnGxdgxh2rm4M7Oft1B
- SnbzdGOCUmzaglGi32kAbcjd6yr0uOJcECCm7d7tAb.fsYnQHqCLD7Y4AmsvUplkREAKg3x3oOyA
- R3ZeMBwgxUcdOiyRpw4mpnapjhQqPGcU4DbLzSSqQfYCfhA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Thu, 13 Jun 2019 16:40:14 +0000
-Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp424.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a8206ee583332d833244e3bfe406edd8;
-          Thu, 13 Jun 2019 16:40:11 +0000 (UTC)
-Subject: Re: [RFC 0/7] Introduce TEE based Trusted Keys support
-To:     Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     jens.wiklander@linaro.org, corbet@lwn.net, dhowells@redhat.com,
-        jejb@linux.ibm.com, jarkko.sakkinen@linux.intel.com,
-        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tee-dev@lists.linaro.org
-References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <d803283e-5e69-5deb-fe94-3f2e45fb95af@schaufler-ca.com>
-Date:   Thu, 13 Jun 2019 09:40:10 -0700
+        Thu, 13 Jun 2019 02:57:09 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 81C2BB8CCEE475682587;
+        Thu, 13 Jun 2019 07:57:07 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 13 Jun
+ 2019 07:56:58 +0100
+Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
+To:     Janne Karhunen <janne.karhunen@gmail.com>
+CC:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>
+References: <20190606112620.26488-1-roberto.sassu@huawei.com>
+ <CAE=NcraYOw9B3RFu3_DbJs9nPT87AtQEptC7zF4kAu4FP8YhxA@mail.gmail.com>
+ <d9efe3c7-20dd-bbb0-40d8-40f69cba5b88@huawei.com>
+ <CAE=NcraHqzST=SZNcrSgpv5EqfyUfpCCb7iQ0Oh6uohL3yiCdw@mail.gmail.com>
+ <c13c6b4f-1302-35fb-f077-00b7f84fea08@huawei.com>
+ <CAE=NcrZiyWjZUuxdLgA9Bq89Cpt1W6MLAzPkLHVgfOqSo2i1hQ@mail.gmail.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <144bf319-ea0c-f6b6-5737-0aac34f37186@huawei.com>
+Date:   Thu, 13 Jun 2019 08:57:05 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAE=NcrZiyWjZUuxdLgA9Bq89Cpt1W6MLAzPkLHVgfOqSo2i1hQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/13/2019 3:30 AM, Sumit Garg wrote:
-> Add support for TEE based trusted keys where TEE provides the functionality
-> to seal and unseal trusted keys using hardware unique key. Also, this is
-> an alternative in case platform doesn't possess a TPM device.
->
-> This series also adds some TEE features like:
+On 6/13/2019 8:01 AM, Janne Karhunen wrote:
+> On Wed, Jun 12, 2019 at 7:33 PM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+> 
+>>> That's a pretty big change for the userland IMHO. Quite a few
+>>> configurations out there will break, including mine I believe, so I
+>>> hope there is a solid reason asking people to change their stuff. I'm
+>>> fine holding off all writing until it is safe to do so for now..
+>>
+>> The goal of appraisal is to allow access only to files with a valid
+>> signature or HMAC. With the current behavior, that cannot be guaranteed.
+>>
+>> Unfortunately, dracut-state.sh is created very early. It could be
+>> possible to unseal the key before, but this probably means modifying
+>> systemd.
+> 
+> Ok, I see the use case. Now, if you pull a urandom key that early on
+> during the boot, the state of the system entropy is at all time low,
+> and you are not really protecting against any sort of offline attack
+> since the file is created during that boot cycle. Is there really use
+> for using such key? Wouldn't it be possible to create a new config
+> option, say IMA_ALLOW_EARLY_WRITERS, that would hold the NEW_FILE flag
+> until the persistent key becomes available? In other words, it would
+> start the measuring at the point when the key becomes online?
 
-Please expand the acronym TEE on first use. That will
-help people who don't work with it on a daily basis
-understand what you're going on about.
+I also thought about similar solutions. Another is for example to keep
+the appraisal flags at file close, if security.ima is successfully
+added to the file.
 
->
-> Patch #1, #2 enables support for registered kernel shared memory with TEE.
->
-> Patch #3 enables support for private kernel login method required for
-> cases like trusted keys where we don't wan't user-space to directly access
-> TEE service to retrieve trusted key contents.
->
-> Rest of the patches from #4 to #7 adds support for TEE based trusted keys.
->
-> This patch-set has been tested with OP-TEE based pseudo TA which can be
-> found here [1].
->
-> Looking forward to your valuable feedback/suggestions.
->
-> [1] https://github.com/OP-TEE/optee_os/pull/3082
->
-> Sumit Garg (7):
->   tee: optee: allow kernel pages to register as shm
->   tee: enable support to register kernel memory
->   tee: add private login method for kernel clients
->   KEYS: trusted: Introduce TEE based Trusted Keys
->   KEYS: encrypted: Allow TEE based trusted master keys
->   doc: keys: Document usage of TEE based Trusted Keys
->   MAINTAINERS: Add entry for TEE based Trusted Keys
->
->  Documentation/security/keys/tee-trusted.rst      |  93 +++++
->  MAINTAINERS                                      |   9 +
->  drivers/tee/optee/call.c                         |   7 +
->  drivers/tee/tee_core.c                           |   6 +
->  drivers/tee/tee_shm.c                            |  16 +-
->  include/keys/tee_trusted.h                       |  84 ++++
->  include/keys/trusted-type.h                      |   1 +
->  include/linux/tee_drv.h                          |   1 +
->  include/uapi/linux/tee.h                         |   2 +
->  security/keys/Kconfig                            |   3 +
->  security/keys/Makefile                           |   3 +
->  security/keys/encrypted-keys/masterkey_trusted.c |  10 +-
->  security/keys/tee_trusted.c                      | 506 +++++++++++++++++++++++
->  13 files changed, 737 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/security/keys/tee-trusted.rst
->  create mode 100644 include/keys/tee_trusted.h
->  create mode 100644 security/keys/tee_trusted.c
->
+Initializing EVM with a key is not a trivial change, but it seemed
+better to me as it does not introduce exceptions in the IMA behavior.
+
+Roberto
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
