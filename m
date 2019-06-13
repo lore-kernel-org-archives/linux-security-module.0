@@ -2,131 +2,112 @@ Return-Path: <SRS0=ug0r=UM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 430D6C31E45
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 19:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06920C46477
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 19:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C232147A
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 19:22:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E095E20B7C
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jun 2019 19:48:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbfFMTWU (ORCPT
+        id S1727429AbfFMTse (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jun 2019 15:22:20 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47196 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727076AbfFMTWU (ORCPT
+        Thu, 13 Jun 2019 15:48:34 -0400
+Received: from mga18.intel.com ([134.134.136.126]:56847 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727156AbfFMTse (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jun 2019 15:22:20 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DJLwDD070249
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Jun 2019 15:22:18 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2t3tj6w170-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Jun 2019 15:22:18 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 13 Jun 2019 20:22:16 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Jun 2019 20:22:13 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5DJMCse40698120
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Jun 2019 19:22:12 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7190A4C05A;
-        Thu, 13 Jun 2019 19:22:12 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7E9514C052;
-        Thu, 13 Jun 2019 19:22:11 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.81.91])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Jun 2019 19:22:11 +0000 (GMT)
-Subject: Re: [PATCH V8 1/3] Define a new IMA hook to measure the boot
- command line arguments
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     roberto.sassu@huawei.com, vgoyal@redhat.com
-Date:   Thu, 13 Jun 2019 15:22:00 -0400
-In-Reply-To: <20190612221549.28399-2-prsriva02@gmail.com>
-References: <20190612221549.28399-1-prsriva02@gmail.com>
-         <20190612221549.28399-2-prsriva02@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Thu, 13 Jun 2019 15:48:34 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 12:48:33 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga002.jf.intel.com with ESMTP; 13 Jun 2019 12:48:33 -0700
+Date:   Thu, 13 Jun 2019 12:48:33 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "eparis@parisplace.org" <eparis@parisplace.org>,
+        "jethro@fortanix.com" <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "pmccallum@redhat.com" <pmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
+ SELinux
+Message-ID: <20190613194833.GB18385@linux.intel.com>
+References: <cover.1560131039.git.cedric.xing@intel.com>
+ <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
+ <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
+ <960B34DE67B9E140824F1DCDEC400C0F65502A85@ORSMSX116.amr.corp.intel.com>
+ <b7f3decf-b1d2-01b1-6294-ccf9ba2d5df4@tycho.nsa.gov>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061319-0008-0000-0000-000002F38B78
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061319-0009-0000-0000-000022609300
-Message-Id: <1560453720.4805.46.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-13_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906130143
+In-Reply-To: <b7f3decf-b1d2-01b1-6294-ccf9ba2d5df4@tycho.nsa.gov>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Prakhar,
-
-Patches titles in the subject line need to be prefixed with the
-subsystem, in this case "ima: ".
-
-On Wed, 2019-06-12 at 15:15 -0700, Prakhar Srivastava wrote:
-> This patch adds support in ima to measure kexec cmdline args
-> during soft reboot(kexec_file_load).
-
-Based on the patch title, the word "ima" is redundant.  Patch
-descriptions are suppose to be written in the third person. "This
-patch adds" is unnecessary.  Please review section 3 "Describe your
-changes" in Documentation/process/submitting-patches.rst.
-
+On Thu, Jun 13, 2019 at 02:00:29PM -0400, Stephen Smalley wrote:
+> On 6/11/19 6:55 PM, Xing, Cedric wrote:
+> >You are right that there are SGX specific stuff. More precisely, SGX
+> >enclaves don't have access to anything except memory, so there are only 3
+> >questions that need to be answered for each enclave page: 1) whether X is
+> >allowed; 2) whether W->X is allowed and 3 whether WX is allowed. This
+> >proposal tries to cache the answers to those questions upon creation of each
+> >enclave page, meaning it involves a) figuring out the answers and b)
+> >"remember" them for every page. #b is generic, mostly captured in
+> >intel_sgx.c, and could be shared among all LSM modules; while #a is SELinux
+> >specific. I could move intel_sgx.c up one level in the directory hierarchy
+> >if that's what you'd suggest.
+> >
+> >By "SGX", did you mean the SGX subsystem being upstreamed? It doesn’t track
+> >that state. In practice, there's no way for SGX to track it because there's
+> >no vm_ops->may_mprotect() callback. It doesn't follow the philosophy of
+> >Linux either, as mprotect() doesn't track it for regular memory. And it
+> >doesn't have a use without LSM, so I believe it makes more sense to track it
+> >inside LSM.
 > 
-> - A new ima hook ima_kexec_cmdline is defined to be called by the
-> kexec code.
-> - A new function process_buffer_measurement is defined to measure
-> the buffer hash into the ima log.
-> - A new func policy KEXEC_CMDLINE is defined to control the
->  measurement.[Suggested by Mimi]
-> 
-> Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
+> Yes, the SGX driver/subsystem.  I had the impression from Sean that it does
+> track this kind of per-page state already in some manner, but possibly he
+> means it does under a given proposal and not in the current driver.
 
+Yeah, under a given proposal.  SGX has per-page tracking, adding new flags
+is fairly easy.  Philosophical objections aside, adding .may_mprotect() is
+trivial.
 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index fd9b01881d17..98e351e13557 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -292,6 +292,13 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
->  {
->  	int i;
->  
-> +	/* only incase of KEXEC_CMDLINE, inode is NULL */
-> +	if (func == KEXEC_CMDLINE) {
-> +		if ((rule->flags & IMA_FUNC) &&
-> +			(rule->func == func) && (!inode))
-
-Thank you for fixing the other formatting issues.  Here's another one.
- Is checking !inode needed?
-
-Mimi
-
-> +			return true;
-> +		return false;
-> +	}
->  	if ((rule->flags & IMA_FUNC) &&
->  	    (rule->func != func && func != POST_SETATTR))
->  		return false;
-> 
-
+> Even the #b remembering might end up being SELinux-specific if we also have
+> to remember the original inputs used to compute the answer so that we can
+> audit that information when access is denied later upon mprotect().  At the
+> least we'd need it to save some opaque data and pass it to a callback into
+> SELinux to perform that auditing.
