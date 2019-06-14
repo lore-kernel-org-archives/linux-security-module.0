@@ -2,130 +2,164 @@ Return-Path: <SRS0=4asR=UN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B060FC31E53
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 23:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B843C31E51
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 23:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8458A2184B
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 23:08:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="HNkYrvUL"
+	by mail.kernel.org (Postfix) with ESMTP id 7CE0021848
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 23:20:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726626AbfFNXIR (ORCPT
+        id S1726325AbfFNXUY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Jun 2019 19:08:17 -0400
-Received: from sonic309-22.consmr.mail.bf2.yahoo.com ([74.6.129.196]:33304
-        "EHLO sonic309-22.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725993AbfFNXIR (ORCPT
+        Fri, 14 Jun 2019 19:20:24 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:35396 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725809AbfFNXUX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Jun 2019 19:08:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1560553695; bh=OKi+s+cGxKksz98JVSFiCh7uBDfc1CNpGy2kqM/PdRU=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=HNkYrvUL7VmWSrAJ9qO4p0I1Ghh4lJc7R/Jcd9ZCrQCgFUDj49i2MmQSdq1ALGyl+I/7nz6wCNLndMf7DIXLVDJMlAohNjKijwRtuSAGNXC+tdM9cHuNrh2965kgpLBM386CrhP7nMoIiGylEr5p53WHdTTzTLV64vbDoZX1a3yr2hlGwHQBmFpFoew25hpIDDf8LukUcZd2YZLwhoQqWcDGW4E7qEr8hGsbdFj6E1fWNanQenMzpWMXjRcRGjYzzv+egb1jzVQY9Xf4aF7Cx/dDhVBpixGVIuJky5TyBQQ2kunJ/mUZLDvPG0oB5NO2UrvKgNad8oDLJyas1jpdYA==
-X-YMail-OSG: e6YOzmEVM1mLCV15yMm4P8UUZo_QODMhMEA06RJaZ.Kf5sXQ3L7q1boZVP.tdX7
- cLH60NWUl8UXr1nMUm4xYR0X.lLcZH8.HXirr3YTsn8bvXfKzZszXE7EaZWXa5.PJnImXvwBAtal
- 4.ltfQ9pkoeRv9Z5WpDKBQHyoeQygQ8gtucmEsKF.n00vMNLI_MBx51uEznnHJqVTgPDxR9dzEaZ
- 6pnBBjkGb0DYgi9N5kA3rnyde9cF_ZfUCYpalsGHrsSb0aMaGRP.5fWyWU5NXGGTQQRypnsw8TIt
- ctwjHeMYPwu4C9ZM7hnCIdCfU_ug5ECWgJT_XR1oX0xfJ0HPXoLhvMiIzJKDF4XNP3ZfH2CPyRlz
- C5qYSG9SPhOu2vRv6XBiLY2gRDQcE4nj2EhCSB6g83oH.qS6EMi_p9JMgue4b22O4tqyCvCIEbt3
- Qrs3AhqWnaEqISoFABGK4VM9NAMsT9lOSu1py7fn6JQwLKlvv.3OGWJ5AW4BQcowzy0AkcHEDr3z
- S5ORU_LjBwvApLs_cQhmlWkAe9wKytMynUtSYwZ6.Ibkep3ppt08SptGSoc29dIZofKCat.1e5i2
- hul3nzR3faGH7Lxl4RyF3SCjYffD3tDTAgT8D7PsZJ9BNTxHG6T.TbGc9QterInAlEbAixHjMehk
- i6J_VYdfb8xHTBz_v5PxtzmbR0kJSLVV29qV5ZIyvAhgZZcJl10p6ivSmEKBOt4dqXzEyxiex2Zi
- oAVLDGEHN739Cj.w1fAOPLWQA_uWM6CFGAuGaWCyIM4wb_zc8aksZOl1XpajN9v.ttVzyn4VB4Js
- 5KbgtBtELT7lBvztmSf2cvUZw4pSeFC4ml7_NA2w0HZSOK7ft631F5yZGmZ9VP3kYrqnlLqCN8I6
- ENZab0ShO2vdRFVl79Cq.sJotIDnmOeoavx86oOTQFXuKpVpaDYR0TsT52aXA1IhRY.oIYpiFSoN
- omz9U1xOn4BEAI6mcDvL4VcmZrmXzJPM5YurlphFbjtlRy_hfbo7DWJvrtuoVJKXlLTxyV5ByHHk
- QfNRTW6DV1Blr2EATXTFkeiKPJPDxaeX6FViDXaTZcXILYFobm9aBUBYpEUlReQWCcsBQkDJsBTE
- tntiMyZJ0LP4iAhIKzT6NjeB7hEnR0BzcA_ynBosfwiTlgT2Jy.eYlHb33BK8_Xr.aO306ywNX2j
- 9VODmFKiMUOgn.M4_NItllidV.D.Cuyz_h4PmQFF7Rl_vL2x5jFX96NPLGDiYHkcJWCo.WeaOtwL
- Eu520LZ9bgkfd
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.bf2.yahoo.com with HTTP; Fri, 14 Jun 2019 23:08:15 +0000
-Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp413.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 993d524de2e3f8c69b010f26dc1e813d;
-          Fri, 14 Jun 2019 23:08:13 +0000 (UTC)
-Subject: Re: [PATCH] Smack: Restore the smackfsdef mount option and add
- missing prefixes
-To:     James Morris <jmorris@namei.org>,
-        David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
-Cc:     stable@vger.kernel.org, Jose Bollo <jose.bollo@iot.bzh>,
-        torvalds@linux-foundation.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, casey@schaufler-ca.com
-References: <155930001303.17253.2447519598157285098.stgit@warthog.procyon.org.uk>
- <17467.1559300202@warthog.procyon.org.uk>
- <alpine.LRH.2.21.1906040842110.13657@namei.org>
- <6cfd5113-8473-f962-dee7-e490e6f76f9c@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <cb3749a6-e45b-3e07-27f9-841adf6f4640@schaufler-ca.com>
-Date:   Fri, 14 Jun 2019 16:08:11 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <6cfd5113-8473-f962-dee7-e490e6f76f9c@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Fri, 14 Jun 2019 19:20:23 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x5ENJIrC021982;
+        Fri, 14 Jun 2019 18:19:18 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x5ENJG6h021981;
+        Fri, 14 Jun 2019 18:19:16 -0500
+Date:   Fri, 14 Jun 2019 18:19:16 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Cedric Xing <cedric.xing@intel.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        jarkko.sakkinen@linux.intel.com, luto@kernel.org,
+        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
+        eparis@parisplace.org, jethro@fortanix.com, dave.hansen@intel.com,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, nhorman@redhat.com,
+        pmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, kai.svahn@intel.com,
+        bp@alien8.de, josh@joshtriplett.org, kai.huang@intel.com,
+        rientjes@google.com, william.c.roberts@intel.com,
+        philip.b.tricca@intel.com
+Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in SELinux
+Message-ID: <20190614231916.GA21593@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <cover.1560131039.git.cedric.xing@intel.com> <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com> <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov> <20190611220243.GB3416@linux.intel.com> <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov> <20190614004600.GF18385@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190614004600.GF18385@linux.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 14 Jun 2019 18:19:18 -0500 (CDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/3/2019 4:07 PM, Casey Schaufler wrote:
-> On 6/3/2019 3:42 PM, James Morris wrote:
->> On Fri, 31 May 2019, David Howells wrote:
->>
->>> Should this go via Al's tree, James's tree, Casey's tree or directly to Linus?
->> If it's specific to one LSM (as this is), via Casey, who can decide to 
->> forward to Al or Linus.
-> I would very much appreciate it if Al could send this fix along.
-> I am not fully set up for sending directly to Linus.
+On Thu, Jun 13, 2019 at 05:46:00PM -0700, Sean Christopherson wrote:
 
-Al, are you going to take this, or should I find another way
-to get it in for 5.2?
+Good afternoon, I hope the week is ending well for everyone.
 
+> On Thu, Jun 13, 2019 at 01:02:17PM -0400, Stephen Smalley wrote:
+> > Given the complexity tradeoff, what is the clear motivating
+> > example for why #1 isn't the obvious choice? That the enclave
+> > loader has no way of knowing a priori whether the enclave will
+> > require W->X or WX?  But aren't we better off requiring enclaves
+> > to be explicitly marked as needing such so that we can make a more
+> > informed decision about whether to load them in the first place?
+
+> Andy and/or Cedric, can you please weigh in with a concrete (and
+> practical) use case that will break if we go with #1?  The auditing
+> issues for #2/#3 are complex to say the least...
+
+So we are back to choosing door 1, door 2 or door 3.
+
+That brings us back to our previous e-mail, where we suggested that
+the most fundamental question to answer with the LSM issue is how much
+effective security is being purchased at what complexity cost.
+
+We are practical guys at our company, we direct the development and
+deployment of practical SGX systems, including an independent
+implementation of SGX runtime/attestation/provisioning et.al.  Our
+comments, for whatever they are worth, are meant to reflect the real
+world deployment of this technology.
+
+Lets start big picture.
+
+One of the clients we are consulting with on this technology is
+running well north of 1400 Linux systems.  Every one of which has
+selinux=0 in /proc/cmdline and will do so until approximately the heat
+death of the Universe.
+
+Our AI LSM will use any SGX LSM driver hooks that eventuate from these
+discussions, so we support the notion of the LSM getting a look at
+permissions of executable code.  However, our client isn't unique in
+their configuration choice, so we believe this fact calls the question
+as to how much SGX specific complexity should be injected into the
+LSM.
+
+So, as we noted in our previous e-mail, there are only two relevant
+security questions the LSM needs to answer:
+
+1.) Should a page of memory with executable content be allowed into an
+enclave?
+
+2.) Should an enclave be allowed to possess one or more pages of
+executable memory which will have WX permissions sometime during its
+lifetime?
+
+Sean is suggesting the strategy of an ioctl to call out pages that
+conform to question 2 (EAUG'ed pages).  That doesn't seem like an
+onerous requirement, since all of the current enclave loaders already
+have all of the metadata infrastructure to map/load page ranges.  The
+EAUG WX range would simply be another layout type that gets walked
+over when the enclave image is built.
+
+Given that, we were somewhat surprised to hear Sean say that he had
+been advised that door 1 was a non-starter.  Presumably this was
+because of the need to delineate a specific cohort of pages that will
+be permitted WX.  If that is the case, the question that needs to be
+called, as Stephen alludes to above, is whether or not WX privileges
+should be considered a characterizing feature of the VMA that defines
+an enclave rather then a per page attribute.
+
+Do we realistically believe that an LSM will be implemented that
+reacts differently when the 357th page of WX memory is added as
+opposed to the first?  The operative security question is whether or
+not the platform owner is willing to allow arbitrary executable code,
+that they may have no visibility into, to be executed on their
+platform.
+
+We talk to people that, as a technology, SGX is about building
+'security archipelagos', islands of trusted execution on potentially
+multiple platforms that interact to deliver a service, all of which
+consider their surrounding platforms and the network in between them
+as adversarial.  This model is, by definition, adverserial to the
+notion and function of the LSM.
+
+With respect to SGX dynamic code loading, the future for security
+concious architectures, will be to pull the code from remotely
+attested repository servers over the network.  The only relevant
+security question that can be answered is whether or not a platform
+owner feels comfortable with that model.
+
+Best wishes for a pleasant weekend to everyone.
+
+Dr. Greg
+
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"My spin on the meeting?  I lie somewhere between the individual who
+ feels that we are all going to join hands and march forward carrying
+ the organization into the information age and Dr. Wettstein.  Who
+ feels that they are holding secret meetings at 6 o'clock in the
+ morning plotting strategy on how to replace our system."
+                                -- Paul S. Etzell, M.D.
+                                   Medical Director, Roger Maris Cancer Center
