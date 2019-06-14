@@ -2,88 +2,152 @@ Return-Path: <SRS0=4asR=UN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21067C31E4D
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF759C31E4B
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7214217D6
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:39:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="McY3ahFy"
+	by mail.kernel.org (Postfix) with ESMTP id 80782217D6
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:45:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726238AbfFNRjY (ORCPT
+        id S1726632AbfFNRp6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Jun 2019 13:39:24 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43833 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbfFNRjY (ORCPT
+        Fri, 14 Jun 2019 13:45:58 -0400
+Received: from mga14.intel.com ([192.55.52.115]:53669 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726082AbfFNRp5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:39:24 -0400
-Received: by mail-ot1-f67.google.com with SMTP id i8so3378571oth.10;
-        Fri, 14 Jun 2019 10:39:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Cj2YrBABqIUb4Txe30KGzJW8RcKX3Bp0Oxq3kwUM50w=;
-        b=McY3ahFypbSAMYyRfmmRMV8/iE9xZkOoE+0ZZqDXoByn7wAXTIbeZV6GrfX1ZJmWTD
-         8USK/I2OabMvXToALZJk4XOQxEsxwUdeZTx25Qx1bq+QwQcjGTisCsZed1PBiu4dCb+x
-         9EdZh0cEnPIN2ZFnj0KxY1f2H7HkbAhVO+ZEbtWF4GlVj3srXt7t30EN27OWzlPchBLY
-         rcKf1OWHKSEKroYp3seUHgyy+t3p7A+Tc2ZQQcuJbLjKeMl7HMVY52oyO4ZpdnJxdYiA
-         7TmMuneIbZMRO1zVI2O0MoPvHAqrqFMT80uguqHvQBcd/t4vnZi4UPP5XU2JaRJgTPhK
-         y4UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Cj2YrBABqIUb4Txe30KGzJW8RcKX3Bp0Oxq3kwUM50w=;
-        b=sYSybEotB+3aEyNXhsNJKEwiQKuZvnKtIjGFaYu0CoLpcbELMcU7KoKO13fThfKrpF
-         Ot/87eX0UGfwOD9EX9pSS6wY1I6uTGSerc4oT98fMmPU/1SKJjSTHlM2hW3c0fj8oFPN
-         xcc5hZJUBL4eSrqQ6L03m2sKcjJZhJwwnbXA/fp7sEo5C26tc6zY3g0rkDSG2cwgMxUi
-         zvuSqjLHsLDM8V9RbYoQtRko8y+D101d2f3MUPiWkAbzqJFeO49ee57KfPj/fVNKv7A9
-         IOcd0dzYXKoRv4iwJoE9VBxW8qmJ/P2qwzb0hlsDXRxT2FGkjtKPLVCdumaTRUrYS+Ck
-         tzHg==
-X-Gm-Message-State: APjAAAWCWA93aw0BCvnRtzSgc2pZJqydxUuSASqFwhEoqFW3nY89FRAj
-        DUTVaCXujCveBoP5g15B7lTVVKtWQmfrw0IScBc=
-X-Google-Smtp-Source: APXvYqzDLVyL5bAx97oQdtyfmEVzLY2t0mWNZu08wY0EKWFkCljWotLIqEQM++YaBRCVfEJnNHO6E61CTNlaQKg6V60=
-X-Received: by 2002:a9d:4546:: with SMTP id p6mr10564274oti.34.1560533963424;
- Fri, 14 Jun 2019 10:39:23 -0700 (PDT)
+        Fri, 14 Jun 2019 13:45:57 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 10:45:56 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga008.jf.intel.com with ESMTP; 14 Jun 2019 10:45:56 -0700
+Date:   Fri, 14 Jun 2019 10:45:56 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "eparis@parisplace.org" <eparis@parisplace.org>,
+        "jethro@fortanix.com" <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "pmccallum@redhat.com" <pmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
+ SELinux
+Message-ID: <20190614174556.GJ12191@linux.intel.com>
+References: <cover.1560131039.git.cedric.xing@intel.com>
+ <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
+ <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
+ <20190611220243.GB3416@linux.intel.com>
+ <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov>
+ <20190614004600.GF18385@linux.intel.com>
+ <960B34DE67B9E140824F1DCDEC400C0F65504665@ORSMSX116.amr.corp.intel.com>
 MIME-Version: 1.0
-References: <20190612221549.28399-1-prsriva02@gmail.com> <1560458898.4805.76.camel@linux.ibm.com>
-In-Reply-To: <1560458898.4805.76.camel@linux.ibm.com>
-From:   prakhar srivastava <prsriva02@gmail.com>
-Date:   Fri, 14 Jun 2019 10:39:12 -0700
-Message-ID: <CAEFn8qKjw+OQrxM8Bk1PXxjJ1CjkH0ritSXRx56wZs7xYLhZCg@mail.gmail.com>
-Subject: Re: [PATCH V8 0/3] Add support for measuring the boot command line
- during kexec_file_load
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>, vgoyal@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F65504665@ORSMSX116.amr.corp.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 13, 2019 at 1:48 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> On Wed, 2019-06-12 at 15:15 -0700, Prakhar Srivastava wrote:
->
-> > The kexec cmdline hash is stored in the "d-ng" field of the template data.
-> > and can be verified using
-> > sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
-> >   grep  kexec-cmdline | cut -d' ' -f 6 | xxd -r -p | sha256sum
->
-> This information should also be included in one of the patches.
->
-Noted.
-I will add this to the 2/3 patch, since that the one that adds the template.
-- Thanks,
-Prakhar Srivastava
-> Mimi
->
+On Fri, Jun 14, 2019 at 10:16:55AM -0700, Xing, Cedric wrote:
+> > From: Christopherson, Sean J
+> > Sent: Thursday, June 13, 2019 5:46 PM
+> > 
+> > On Thu, Jun 13, 2019 at 01:02:17PM -0400, Stephen Smalley wrote:
+> > > On 6/11/19 6:02 PM, Sean Christopherson wrote:
+> > > >My RFC series[1] implements #1.  My understanding is that Andy
+> > > >(Lutomirski) prefers #2.  Cedric's RFC series implements #3.
+> > > >
+> > > >Perhaps the easiest way to make forward progress is to rule out the
+> > > >options we absolutely *don't* want by focusing on the potentially
+> > > >blocking issue with each option:
+> > > >
+> > > >   #1 - SGX UAPI funkiness
+> > > >
+> > > >   #2 - Auditing complexity, potential enclave lock contention
+> > > >
+> > > >   #3 - Pushing SGX details into LSMs and complexity of kernel
+> > > > implementation
+> > > >
+> > > >
+> > > >[1]
+> > > >https://lkml.kernel.org/r/20190606021145.12604-1-sean.j.christopherso
+> > > >n@intel.com
+> > >
+> > > Given the complexity tradeoff, what is the clear motivating example
+> > > for why
+> > > #1 isn't the obvious choice? That the enclave loader has no way of
+> > > knowing a priori whether the enclave will require W->X or WX?  But
+> > > aren't we better off requiring enclaves to be explicitly marked as
+> > > needing such so that we can make a more informed decision about
+> > > whether to load them in the first place?
+> > 
+> > Andy and/or Cedric, can you please weigh in with a concrete (and
+> > practical) use case that will break if we go with #1?  The auditing
+> > issues for #2/#3 are complex to say the least...
+> 
+> How does enclave loader provide per-page ALLOW_* flags?
+
+Unchanged from my RFC, i.e. specified at SGX_IOC_ENCLAVE_ADD_PAGE(S).
+
+> And a related question is why they are necessary for enclaves but
+> unnecessary for regular executables or shared objects.
+
+Because at mmap()/mprotect() time we don't have the source file of the
+enclave page to check SELinux's FILE__EXECUTE or AppArmor's AA_EXEC_MMAP.
+
+> What's the story for SGX2 if mmap()'ing non-existing pages is not allowed?
+
+Userspace will need to invoke an ioctl() to tell SGX "this range can be
+EAUG'd".
+
+> 
+> What's the story for auditing?
+
+It happens naturally when security_enclave_load() is called.  Am I
+missing something?
+
+> After everything above has been taken care of properly, will #1 still be
+> simpler than #2/#3?
+
+The state tracking of #2/#3 doesn't scare me, it's purely the auditing.
+Holding an audit message for an indeterminate amount of time is a
+nightmare.
+
+Here's a thought.  What if we simply require FILE__EXECUTE or AA_EXEC_MAP
+to load any enclave page from a file?  Alternatively, we could add an SGX
+specific file policity, e.g. FILE__ENCLAVELOAD and AA_MAY_LOAD_ENCLAVE.
+As in my other email, SELinux's W^X restrictions can be tied to the process,
+i.e. they can be checked at mmap()/mprotect() without throwing a wrench in
+auditing.
