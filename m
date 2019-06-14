@@ -2,95 +2,169 @@ Return-Path: <SRS0=4asR=UN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 192FFC31E4C
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA98C31E4E
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F07F52183E
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2C7521841
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:59:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbfFNRxl (ORCPT
+        id S1726599AbfFNR7N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Jun 2019 13:53:41 -0400
-Received: from mga06.intel.com ([134.134.136.31]:53258 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726701AbfFNRxk (ORCPT
+        Fri, 14 Jun 2019 13:59:13 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33008 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726389AbfFNR7N (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:53:40 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 10:53:39 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga001.jf.intel.com with ESMTP; 14 Jun 2019 10:53:39 -0700
-Date:   Fri, 14 Jun 2019 10:53:39 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-security-module@vger.kernel.org" 
+        Fri, 14 Jun 2019 13:59:13 -0400
+Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 8E24D53F4C2D688BC80F;
+        Fri, 14 Jun 2019 18:59:10 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.43) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 14 Jun 2019 18:59:00 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "eparis@parisplace.org" <eparis@parisplace.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "pmccallum@redhat.com" <pmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "rientjes@google.com" <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
- SELinux
-Message-ID: <20190614175339.GA29126@linux.intel.com>
-References: <cover.1560131039.git.cedric.xing@intel.com>
- <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
- <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
- <20190611220243.GB3416@linux.intel.com>
- <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov>
- <20190614004600.GF18385@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F65504665@ORSMSX116.amr.corp.intel.com>
- <20190614174556.GJ12191@linux.intel.com>
+        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v4 00/14] ima: introduce IMA Digest Lists extension
+Date:   Fri, 14 Jun 2019 19:54:59 +0200
+Message-ID: <20190614175513.27097-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614174556.GJ12191@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 14, 2019 at 10:45:56AM -0700, Sean Christopherson wrote:
-> The state tracking of #2/#3 doesn't scare me, it's purely the auditing.
-> Holding an audit message for an indeterminate amount of time is a
-> nightmare.
-> 
-> Here's a thought.  What if we simply require FILE__EXECUTE or AA_EXEC_MAP
-> to load any enclave page from a file?  Alternatively, we could add an SGX
-> specific file policity, e.g. FILE__ENCLAVELOAD and AA_MAY_LOAD_ENCLAVE.
-> As in my other email, SELinux's W^X restrictions can be tied to the process,
-> i.e. they can be checked at mmap()/mprotect() without throwing a wrench in
-> auditing.
+This patch set introduces a new IMA extension called IMA Digest Lists.
 
-We would also need to require VM_MAYEXEC on all enclave pages, or forego
-enforcing path_noexec() for enclaves.
+At early boot, the extension preloads in kernel memory reference digest
+values, that can be compared with actual file digests when files are
+accessed in the system.
+
+The extension will open for new possibilities: PCR with predictable value,
+that can be used for sealing policies associated to data or TPM keys;
+appraisal based on reference digests already provided by Linux distribution
+vendors in the software packages.
+
+The first objective can be achieved because the PCR values does not depend
+on which and when files are measured: the extension measures digest lists
+sequentially and files whose digest is not in the digest list.
+
+The second objective can be reached because the extension is able to
+extract reference measurements from packages (with a user space tool) and
+use it as a source for appraisal verification as the reference came from
+the security.ima xattr. This approach will also reduce the overhead as only
+one signature is verified for many files (as opposed to one signature for
+each file with the current implementation).
+
+This version of the patch set provides a clear separation between current
+and new functionality. First, the new functionality must be explicitly
+enabled from the kernel command line. Second, results of operations
+performed by the extension can be distinguished from those obtained from
+the existing code: measurement entries created by the extension have a
+different PCR; mutable files appraised with the extension have a different
+security.ima type.
+
+The review of this patch set should start from patch 11 and 12, which
+modify the IMA-Measure and IMA-Appraise submodules to use digest lists.
+Patch 1 to 5 are prerequisites. Patch 6 to 10 adds support for digest
+lists. Finally, patch 13 introduces two new policies to measure/appraise
+rootfs and patch 14 adds the documentation (including a flow chart to
+show how IMA has been modified).
+
+The user space tools to configure digest lists are available at:
+
+https://github.com/euleros/digest-list-tools/releases/tag/v0.3
+
+The patch set applies on top of linux-integrity/next-queued-testing
+(73589972b987).
+
+It is necessary to apply also:
+https://patchwork.kernel.org/cover/10957495/
+
+To use appraisal, it is necessary to use a modified cpio and a modified
+dracut:
+
+https://github.com/euleros/cpio/tree/xattr-v1
+https://github.com/euleros/dracut/tree/digest-lists
+
+For now, please use it only in a testing environment.
+
+
+Changelog
+
+v3:
+- move ima_lookup_loaded_digest() and ima_add_digest_data_entry() from
+  ima_queue.c to ima_digest_list.c
+- remove patch that introduces security.ima_algo
+- add version number and type modifiers to the compact list header
+- remove digest list metadata, all digest lists in the directory are
+  accessed
+- move loading of signing keys to user space
+- add violation for both PCRs if they are selected
+- introduce two new appraisal modes
+
+v2:
+- add support for multiple hash algorithms
+- remove RPM parser from the kernel
+- add support for parsing digest lists in user space
+
+v1:
+- add support for immutable/mutable files
+- add support for appraisal with digest lists
+
+
+Roberto Sassu (14):
+  ima: read hash algorithm from security.ima even if appraisal is not
+    enabled
+  ima: generalize ima_read_policy()
+  ima: generalize ima_write_policy() and raise uploaded data size limit
+  ima: generalize policy file operations
+  ima: use ima_show_htable_value to show violations and hash table data
+  ima: add parser of compact digest list
+  ima: restrict upload of converted digest lists
+  ima: prevent usage of digest lists that are not measured/appraised
+  ima: introduce new securityfs files
+  ima: load parser digests and execute the parser at boot time
+  ima: add support for measurement with digest lists
+  ima: add support for appraisal with digest lists
+  ima: introduce new policies initrd and appraise_initrd
+  ima: add Documentation/security/IMA-digest-lists.txt
+
+ .../admin-guide/kernel-parameters.txt         |  16 +-
+ Documentation/security/IMA-digest-lists.txt   | 226 +++++++++++++
+ include/linux/evm.h                           |   6 +
+ include/linux/fs.h                            |   1 +
+ security/integrity/evm/evm_main.c             |   2 +-
+ security/integrity/iint.c                     |   1 +
+ security/integrity/ima/Kconfig                |  25 ++
+ security/integrity/ima/Makefile               |   1 +
+ security/integrity/ima/ima.h                  |  32 +-
+ security/integrity/ima/ima_api.c              |  43 ++-
+ security/integrity/ima/ima_appraise.c         |  92 +++---
+ security/integrity/ima/ima_digest_list.c      | 309 ++++++++++++++++++
+ security/integrity/ima/ima_digest_list.h      |  69 ++++
+ security/integrity/ima/ima_fs.c               | 224 ++++++++-----
+ security/integrity/ima/ima_init.c             |   2 +-
+ security/integrity/ima/ima_main.c             |  81 ++++-
+ security/integrity/ima/ima_policy.c           |  29 +-
+ security/integrity/integrity.h                |  22 ++
+ 18 files changed, 1018 insertions(+), 163 deletions(-)
+ create mode 100644 Documentation/security/IMA-digest-lists.txt
+ create mode 100644 security/integrity/ima/ima_digest_list.c
+ create mode 100644 security/integrity/ima/ima_digest_list.h
+
+-- 
+2.17.1
+
