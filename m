@@ -2,99 +2,97 @@ Return-Path: <SRS0=4asR=UN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09383C31E4B
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 15:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB17C31E4B
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 15:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC2302168B
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 15:18:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68D142173C
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 15:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725942AbfFNPSk (ORCPT
+        id S1726319AbfFNPgk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Jun 2019 11:18:40 -0400
-Received: from mga18.intel.com ([134.134.136.126]:63789 "EHLO mga18.intel.com"
+        Fri, 14 Jun 2019 11:36:40 -0400
+Received: from mga06.intel.com ([134.134.136.31]:45350 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725851AbfFNPSk (ORCPT
+        id S1725780AbfFNPgk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:18:40 -0400
+        Fri, 14 Jun 2019 11:36:40 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 08:18:39 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 08:36:39 -0700
 X-ExtLoop1: 1
 Received: from mdumitrx-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.32.245])
-  by orsmga005.jf.intel.com with ESMTP; 14 Jun 2019 08:18:29 -0700
-Date:   Fri, 14 Jun 2019 18:18:28 +0300
+  by orsmga005.jf.intel.com with ESMTP; 14 Jun 2019 08:36:30 -0700
+Date:   Fri, 14 Jun 2019 18:36:22 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH 2/9] x86/sgx: Do not naturally align MAP_FIXED address
-Message-ID: <20190614151805.GB11241@linux.intel.com>
-References: <20190531233159.30992-3-sean.j.christopherson@intel.com>
- <20190604114951.GC30594@linux.intel.com>
- <CALCETrVe0jhAWAFmx+NFEjJcijSJv2LDVC7cUXi0w99kNKjh_g@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654EDBDE@ORSMSX116.amr.corp.intel.com>
- <20190605151653.GK11331@linux.intel.com>
- <5A85C1D7-A159-437E-B42A-3F4254E07305@amacapital.net>
- <20190606153710.GB25112@linux.intel.com>
- <20190613134800.GA12791@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F65503A93@ORSMSX116.amr.corp.intel.com>
- <20190613171451.GD5850@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jens Wiklander <jens.wiklander@linaro.org>, corbet@lwn.net,
+        dhowells@redhat.com, jejb@linux.ibm.com, zohar@linux.ibm.com,
+        jmorris@namei.org, serge@hallyn.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tee-dev@lists.linaro.org
+Subject: Re: [RFC 6/7] doc: keys: Document usage of TEE based Trusted Keys
+Message-ID: <20190614153622.GG11241@linux.intel.com>
+References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+ <1560421833-27414-7-git-send-email-sumit.garg@linaro.org>
+ <20190613153414.GG18488@linux.intel.com>
+ <CAFA6WYP7qi_NBRUDBhcEAEzJY-iFvJdXqtCtgQxqAvPSXDjEng@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190613171451.GD5850@linux.intel.com>
+In-Reply-To: <CAFA6WYP7qi_NBRUDBhcEAEzJY-iFvJdXqtCtgQxqAvPSXDjEng@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 13, 2019 at 10:14:51AM -0700, Sean Christopherson wrote:
-> > I don't get this. The swapper takes a read lock on mm->mmap_sem, which locks
-> > the vma, which in turn reference counts vma->vm_file. Why is the internal
-> > refcount still needed? 
+On Fri, Jun 14, 2019 at 11:07:23AM +0530, Sumit Garg wrote:
+> On Thu, 13 Jun 2019 at 21:04, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > On Thu, Jun 13, 2019 at 04:00:32PM +0530, Sumit Garg wrote:
+> > > Provide documentation for usage of TEE based Trusted Keys via existing
+> > > user-space "keyctl" utility. Also, document various use-cases.
+> > >
+> > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> >
+> > Sorry missed this patch. Anyway, I don't think we want multiple trusted
+> > keys subsystems. You have to fix the existing one if you care to get
+> > these changes in. There is no really other way around this.
+> >
 > 
-> mmap_sem is only held when reclaim is touching PTEs, e.g. to test/clear
-> its accessed bit and to zap the PTE.  The liveliness of the enclave needs
-> to be guaranteed for the entire duration of reclaim, e.g. we can't have
-> the enclave disappearing when we go to do EWB.  It's also worth nothing
-> that a single reclaim may operate on more than one mmap_sem, as enclaves
-> can be shared across processes (mm_structs).
+> I understand your point.
+> 
+> When I initially looked at trusted key implementation, it seemed to be
+> tightly coupled to use TPM device. So I implemented a parallel
+> implementation to get initial feedback (functionality-wise) on this
+> new approach.
 
-Anyway, the takeaway I got from this is that encl->refcount does not
-need to be updated for VMAs (sent a patch to linux-sgx that I plan
-merge).
+Yeah, I completely get this. My feedback this is: we can definitely
+consider TEE based trusted keys, and I know that trusted.ko is a mess,
+but still that is the only right long-term path. Think about the
+positive side: if you as a side-effect can make it cleaner and more
+versatile, your patch set will improve the quality of the kernel as a
+whole i.e. you benefit larger audience than just TEE user base :-)
+
+> I will work on abstraction of trusted key apis to use either approach.
+> But is it fine with you if I send if I send a separate RFC patch for
+> abstraction and later once reviewed I will incorporate that patch in
+> this patch-set.
+> 
+> It will be really helpful if you could help to test that abstraction
+> patch with a real TPM device as I doesn't posses one to test.
+
+I can, yes.
 
 /Jarkko
