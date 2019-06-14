@@ -2,293 +2,102 @@ Return-Path: <SRS0=4asR=UN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B83C31E4F
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 18:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 853B8C46477
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 20:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DFBA2073F
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 18:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 659142173C
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 20:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbfFNSFn (ORCPT
+        id S1726219AbfFNUBY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Jun 2019 14:05:43 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33022 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726305AbfFNSFn (ORCPT
+        Fri, 14 Jun 2019 16:01:24 -0400
+Received: from mga02.intel.com ([134.134.136.20]:60894 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726204AbfFNUBY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Jun 2019 14:05:43 -0400
-Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 4C1245C13C2EEB6086AD;
-        Fri, 14 Jun 2019 19:05:41 +0100 (IST)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
- by smtpsuk.huawei.com (10.201.108.43) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Fri, 14 Jun 2019 19:05:32 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
-        <mjg59@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
+        Fri, 14 Jun 2019 16:01:24 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 13:01:23 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga006.jf.intel.com with ESMTP; 14 Jun 2019 13:01:23 -0700
+Date:   Fri, 14 Jun 2019 13:01:23 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 14/14] ima: add Documentation/security/IMA-digest-lists.txt
-Date:   Fri, 14 Jun 2019 19:55:13 +0200
-Message-ID: <20190614175513.27097-15-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190614175513.27097-1-roberto.sassu@huawei.com>
-References: <20190614175513.27097-1-roberto.sassu@huawei.com>
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "eparis@parisplace.org" <eparis@parisplace.org>,
+        "jethro@fortanix.com" <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "pmccallum@redhat.com" <pmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
+ SELinux
+Message-ID: <20190614200123.GA32570@linux.intel.com>
+References: <cover.1560131039.git.cedric.xing@intel.com>
+ <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
+ <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
+ <20190611220243.GB3416@linux.intel.com>
+ <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov>
+ <20190614004600.GF18385@linux.intel.com>
+ <960B34DE67B9E140824F1DCDEC400C0F65504665@ORSMSX116.amr.corp.intel.com>
+ <20190614174556.GJ12191@linux.intel.com>
+ <20190614175339.GA29126@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.154]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190614175339.GA29126@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch adds the documentation of the IMA Digest Lists extension.
+On Fri, Jun 14, 2019 at 10:53:39AM -0700, Sean Christopherson wrote:
+> On Fri, Jun 14, 2019 at 10:45:56AM -0700, Sean Christopherson wrote:
+> > The state tracking of #2/#3 doesn't scare me, it's purely the auditing.
+> > Holding an audit message for an indeterminate amount of time is a
+> > nightmare.
+> > 
+> > Here's a thought.  What if we simply require FILE__EXECUTE or AA_EXEC_MAP
+> > to load any enclave page from a file?  Alternatively, we could add an SGX
+> > specific file policity, e.g. FILE__ENCLAVELOAD and AA_MAY_LOAD_ENCLAVE.
+> > As in my other email, SELinux's W^X restrictions can be tied to the process,
+> > i.e. they can be checked at mmap()/mprotect() without throwing a wrench in
+> > auditing.
+> 
+> We would also need to require VM_MAYEXEC on all enclave pages, or forego
+> enforcing path_noexec() for enclaves.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- Documentation/security/IMA-digest-lists.txt | 226 ++++++++++++++++++++
- 1 file changed, 226 insertions(+)
- create mode 100644 Documentation/security/IMA-digest-lists.txt
-
-diff --git a/Documentation/security/IMA-digest-lists.txt b/Documentation/security/IMA-digest-lists.txt
-new file mode 100644
-index 000000000000..dd9633e21304
---- /dev/null
-+++ b/Documentation/security/IMA-digest-lists.txt
-@@ -0,0 +1,226 @@
-+==========================
-+IMA Digest Lists Extension
-+==========================
-+
-+INTRODUCTION
-+============
-+
-+Integrity Measurement Architecture (IMA) is a security module that performs
-+measurement of files accessed with the execve(), mmap() and open() system
-+calls. File measurements can be used for different purposes. They can be
-+added in a measurement list and sent to a remote verifier for an integrity
-+evaluation. They can be compared to reference values provided by the
-+software vendor and access can be denied if there is a mismatch. File
-+measurements can also be included in system logs for auditing purposes.
-+
-+IMA Digest Lists is an extension providing additional functionality for
-+the IMA submodules. Its main task is to load reference file digests in the
-+kernel memory, and to communicate to IMA submodules (measurement and
-+appraisal) whether the digest of a file being accessed is found in the
-+uploaded digest lists.
-+
-+The IMA-Measure submodule uses the IMA Digest Lists extension to create
-+a new measurement list (with a different PCR, for example 11) which
-+contains the measurement of uploaded digest lists and unknown files. Since
-+the loading of digest lists is sequential, the chosen PCR will have a
-+predictable value for the whole boot cycle and can be used for sealing
-+policies based on the OS software integrity.
-+
-+Both the standard and the new measurement list can be generated at the same
-+time, allowing for implicit attestation based on the usage of a TPM key
-+sealed to the OS, and for explicit attestation when a more precise
-+integrity evaluation is necessary.
-+
-+The IMA-Appraise submodule uses the IMA Digest Lists extension to
-+grant/deny access to the files depending on whether the file digest is
-+found in the uploaded digest lists, instead of checking security.ima.
-+
-+The main advantage of the extension is that reference measurements used for
-+the digest comparison can be extracted from already existing sources (for
-+example RPM headers). Another benefit is that the overhead compared to file
-+signatures is lower as only one signature is verified for all files
-+included in the digest list. A disadvantage is that file metadata are not
-+verified.
-+
-+
-+
-+WORKFLOW
-+========
-+
-+The IMA workflow is modified as follows. The added steps are marked as
-+[NEW].
-+
-+  +------------+
-+  |  IMA hook  |
-+  +------------+
-+        |
-+   +---------+
-+   | collect |
-+   +---------+
-+        |                                           +---------------------+
-++---------------+                       ------------| don't measure [NEW] |
-+| digest lookup |                       | yes       +---------------------+
-+|     [NEW]     |                 -------------- no +---------------------+
-++---------------+           -----/ digest       \---| add to measurement  |
-+        |                   |    \ found? [NEW] /   | list (PCR 11) [NEW] |
-+        |                   |     --------------    +---------------------+
-+  +----------+       +-------------+                +--------------------+
-+  |  switch  |-------| IMA-Measure |----------------| add to measurement |
-+  | (action) |       +-------------+                | list (PCR 10)      |
-+  +----------+                                      +--------------------+
-+        |
-+        |
-+        |       no xattr
-++--------------+     ---------------  yes
-+| IMA-Appraise |----/ filec created \-------------------------------
-++--------------+    \ created [NEW] /                              |
-+  xattr |            ---------------                               |
-+        |                   | no                                   |
-+        |           ------------------  no  --------------  yes  +--------+
-+        |          / EVM initialized? \----/ digest       \------| grant  |
-+        |          \ [NEW]            /    \ found? [NEW] /      | access |
-+        |           ------------------      --------------       +--------+
-+        |                   | yes                 | no
-+        |                   |                     |              +--------+
-+        |           -------------------  no       ---------------| deny   |
-+        |          / digest-nometadata \-------------------------| access |
-+        |          \ mode? [NEW]       /                         +--------+
-+        |           -------------------
-+        |               ^   | yes                                +--------+
-+        |               |   -------------------------------------| grant  |
-+        |               |                                        | access |
-+        |               |                                        +--------+
-+        |               | yes
-+        |           -------------------------  no                +--------+
-+        |----------/ security.ima (new type) \-------------------| deny   |
-+        |          \ present and valid?      /                   | access |
-+        |           -------------------------                    +--------+
-+        |                                                            |
-+        |           --------------------------  no                   |
-+        -----------/ security.ima (cur types) \-----------------------
-+                   \ present and valid?       /
-+                    --------------------------
-+                             | yes                               +--------+
-+                             ------------------------------------| grant  |
-+                                                                 | access |
-+                                                                 +--------+
-+
-+After the file digest is calculated, it is searched in the hash table
-+containing all digests extracted from the uploaded digest lists. Then, if
-+the digest is found, a structure is returned to IMA with information
-+associated to that digest. The structure is returned only to the IMA
-+submodules that processed the digest lists (i.e. the action returned by
-+ima_get_action() was 'measure' or 'appraise').
-+
-+IMA-Measure behavior depends on whether the digest list PCR has been
-+specified in the kernel command line. If the PCR was not specified, the
-+submodule behaves as before. If the PCR was specified, IMA-Measure creates
-+a new measurement with that PCR, only if the file digest is not found in
-+the digest lists. It additionally creates a measurement with the default
-+PCR if '+' is added as a prefix to the PCR.
-+
-+IMA-Appraise behavior depends on whether either the 'digest' or
-+'digest-nometadata' appraisal modes have been specified in the kernel
-+command line. If they were not specified, IMA-Appraise relies solely on the
-+security.ima xattr for verification. If the 'digest' mode was specified,
-+verification succeeds if the file digest is found in the digest lists and
-+EVM is not initialized, as there is no other way to verify file metadata.
-+
-+If the 'digest-nometadata' mode was specified, verification succeeds
-+regardless of the fact that EVM is initialized or not. However, after a
-+write, files for which access was granted without verifying metadata will
-+have a new security.ima type, so that they can be identified also after
-+reboot. Specifying 'digest-nometadata' is required also to access files
-+with the new security.ima type.
-+
-+
-+
-+ARCHITECTURE
-+============
-+
-++--------------+           8) digest lookup
-+| IMA-Appraise |--------------------------------------
-++--------------+                                     |
-+                                                     |
-++-------------+            7) digest lookup          |
-+| IMA-Measure | -------------------------------------|
-++-------------+                                     ||
-+                                                   |||
-++-------------+ 2a/5b) parse compact list +-------------------+
-+| IMA (secfs) | ------------------------> | IMA Digests Lists |
-++-------------+                           +-------------------+
-+   ^        ^                                 |     | 3a/6b add digests
-+   |        |                                 |  +------------+
-+   |        |                                 |  | hash table |
-+   |        |                                 |  +------------+
-+   |        | 4b) upload compact list         |
-+   |        |                                 |                kernel space
-+---|--------|---------------------------------|-------------------------------
-+   |        | 1b) open digest_list_data       |                user space
-+   | +-------------+                          |
-+   | |    Parser   |<--------------------------
-+   | +-------------+   2b) check parser binary, shared libraries
-+   |     ^  ^  ^           and actions (measure/appraise)
-+   |    RPM | ...      3b) read and convert digest list
-+   |     manifest
-+   |
-+1a) upload compact list
-+
-+The main addition to IMA is a new hash table (similar to that used to check
-+for duplicate measurement entries), which contains file digests extracted
-+from the digest lists.
-+
-+File digests can be uploaded to IMA through a new securityfs file named
-+'digest_list_data' and must be sent in a format called compact list. Digest
-+lists can be uploaded directly to the kernel, by specifying their path, or
-+by executing a user space parser.
-+
-+The parser, called upload_digest_lists, converts digest lists from the
-+original format defined by the software vendor (e.g. RPM package header) to
-+the compact list format. It is executed by the kernel even before init,
-+so that the hash table is populated before any file is accessed.
-+
-+Converted digest lists can be uploaded exclusively by the parser. The
-+reason is that digest lists are measured only when they are accessed. If
-+they were uploaded by any process there wouldn't be any guarantee that the
-+converted lists contain the same digests as the original list. IMA checks
-+that the digest of the executable that opened 'digest_list_data' as well as
-+shared libraries supporting new digest list formats have type
-+COMPACT_PARSER.
-+
-+As mentioned above, digest lists cannot be used unconditionally but must
-+have been processed by the IMA submodule willing to use them. This is
-+achieved by keeping track of the process that opens and closes
-+digest_list_data, and checking the actions done by that process. If a file
-+opened by the parser is not being measured, IMA-Measure will not be able
-+to use digest lists until reboot. The same happens for IMA-Appraise.
-+
-+
-+
-+CONFIGURATION
-+=============
-+
-+The first step consists in generating digest lists with the
-+gen_digest_lists tool included in the digest-list-tools package.
-+digest-list-tools can be retrieved at the URL:
-+
-+https://github.com/euleros/digest-list-tools
-+
-+gen_digest_lists can generate digest lists from different sources (for
-+example: RPM package DB and IMA measurement list). By default, it saves
-+generated digest lists in the /etc/ima/digest_lists directory.
-+digest-list-tools includes also two bash scripts setup_ima_digest_lists and
-+setup_digest_lists_demo to simplify the digest list generation for the
-+users.
-+
-+To use the parser at boot, it is also necessary to generate a digest list
-+for it. It is automatically generated by the setup_ima_digest_lists script,
-+or it must be manually generated otherwise. If digest lists are used for
-+appraisal, they must be signed with a key saved to /etc/keys/x509_ima.der
-+and the key must be signed with a key in the primary or secondary kernel
-+keyring.
-+
-+To use digest lists during early boot, it is necessary to regenerate the
-+initial ram disk. Digest lists and the parser will be included in the ram
-+disk by the new dracut/initramfs-tools modules, included in the
-+digest-list-tools package.
--- 
-2.17.1
-
+Scratch that thought.   Tying W^X restrictions to the process only works
+if its done at load time.  E.g. If process A maps a page W and process B
+maps the same page X, then which process needs W^X depends on the order of
+mmap()/mprotect() between the two processes.
