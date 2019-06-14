@@ -2,110 +2,95 @@ Return-Path: <SRS0=4asR=UN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BC3C31E4B
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192FFC31E4C
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF66C2183E
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:52:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="milTqAIR"
+	by mail.kernel.org (Postfix) with ESMTP id F07F52183E
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 17:53:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbfFNRwu (ORCPT
+        id S1726764AbfFNRxl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Jun 2019 13:52:50 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35492 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbfFNRwr (ORCPT
+        Fri, 14 Jun 2019 13:53:41 -0400
+Received: from mga06.intel.com ([134.134.136.31]:53258 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726701AbfFNRxk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:52:47 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j19so3468158otq.2;
-        Fri, 14 Jun 2019 10:52:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZWIf587I0I/IIO3dm5/wm1By4rJHZ+H19lkvJnydh20=;
-        b=milTqAIRSdQkbg+N9Pa3KMpKvZDfQHcxJqP+24UT886LqQASMh+9tLPsoFbHhkmLhM
-         cDxD3zdC3MY2sIYyeHmGdAUsx+NFQ3DMOxErlCmNTGLs4jp3ms2nc7iV4Nud4UChVh7h
-         TQXphH1ZouQfXp6NWtHXjye70r/2+/r0JMHTP17p5y4XqqpzmR8lxUnUQ9yyN+936YhH
-         aiI8aaxRrF9lByfeoFT40ulwJ8loD7sqcBFPxNdEmKA+prvMQmhB8OmTCzJI8WK894ke
-         BbG0hi0dj8xIusdAwL1e3pS7KhE+ur14WbclFJCX78gaF0bPW7tLl3Lhio8wy+6YvRFI
-         50hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZWIf587I0I/IIO3dm5/wm1By4rJHZ+H19lkvJnydh20=;
-        b=jZXlXQtzuBOW+Su7L8RPo21bkgvQqmM8tgcge/4kviWZupeI0yO4YCuzWdz6y8l7Cs
-         xRUfRTFopFVp4zqzMKsNuqXnmsfb6KRE87KtOdYQWxQNeWU10+blDzx5dDzEwd6GOjzB
-         T8ndlsQDj3t/NEhM2OtmmZz6lwaDdV6ABVsljiPwi69WWHP/rlvpwCKKHnE0zc4vRH+8
-         DS/0y7O+oDkXy4IMVTFrlTYADZ/B3KjMAIkYcPG3DMHjg6q4bmhhY6s2yvnuKlsj8Xb8
-         QRjkTadI1ly3CMXE12VnfrXMlWzPfGsGhpprGkRFCeAtmiKCXUA3vzmxaKg6M6BFBpr8
-         ozJQ==
-X-Gm-Message-State: APjAAAXNw7ozXL7sgIW6XxKNFeevI6Iqn+y+kfrqtah+cnqvliHlIQ3J
-        69C3BuXC7hB2Txm3d5TPEpS2I/yhBITOkPis+gToD4Et
-X-Google-Smtp-Source: APXvYqzvCvm1eY5/2Sub7G3piT3spKXBEzftR3A6CCDw+d0ELK+Uz06CI/iqOgvM9+lOQptFqtfBk0NYnRxHxBrpOPg=
-X-Received: by 2002:a9d:5911:: with SMTP id t17mr393254oth.159.1560534766509;
- Fri, 14 Jun 2019 10:52:46 -0700 (PDT)
+        Fri, 14 Jun 2019 13:53:40 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 10:53:39 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga001.jf.intel.com with ESMTP; 14 Jun 2019 10:53:39 -0700
+Date:   Fri, 14 Jun 2019 10:53:39 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "eparis@parisplace.org" <eparis@parisplace.org>,
+        "jethro@fortanix.com" <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "pmccallum@redhat.com" <pmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
+ SELinux
+Message-ID: <20190614175339.GA29126@linux.intel.com>
+References: <cover.1560131039.git.cedric.xing@intel.com>
+ <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
+ <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
+ <20190611220243.GB3416@linux.intel.com>
+ <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov>
+ <20190614004600.GF18385@linux.intel.com>
+ <960B34DE67B9E140824F1DCDEC400C0F65504665@ORSMSX116.amr.corp.intel.com>
+ <20190614174556.GJ12191@linux.intel.com>
 MIME-Version: 1.0
-References: <20190612221549.28399-1-prsriva02@gmail.com> <20190612221549.28399-3-prsriva02@gmail.com>
- <1560455980.4805.57.camel@linux.ibm.com> <1560509860.4171.13.camel@linux.ibm.com>
- <1560521651.4072.7.camel@linux.ibm.com>
-In-Reply-To: <1560521651.4072.7.camel@linux.ibm.com>
-From:   prakhar srivastava <prsriva02@gmail.com>
-Date:   Fri, 14 Jun 2019 10:52:35 -0700
-Message-ID: <CAEFn8qL-Fumt82oZ6-J-dWA29ztLLraJ6iXc7+du=vNtyBQO4g@mail.gmail.com>
-Subject: Re: [PATCH V8 2/3] Define a new ima template field buf
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        thiago Jung Bauermann <bauerman@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190614174556.GJ12191@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 14, 2019 at 7:14 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> > > > diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-> > > > index 993d0f1915ff..c8591406c0e2 100644
-> > > > --- a/security/integrity/ima/ima_init.c
-> > > > +++ b/security/integrity/ima/ima_init.c
-> > > > @@ -50,7 +50,7 @@ static int __init ima_add_boot_aggregate(void)
-> > > >   struct ima_template_entry *entry;
-> > > >   struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
-> > > >   struct ima_event_data event_data = {iint, NULL, boot_aggregate_name,
-> > > > -                                     NULL, 0, NULL};
-> > > > +                                     NULL, 0, NULL, NULL, 0};
-> > >
-> > > here, don't belong in this patch.  It belongs in "IMA: support for per
-> > > policy rule template formats", in case it should ever be backported.
-> > >  Please post this as a separate patch, that will be squashed with
-> > > "IMA: support for per policy rule template formats".
-> >
-> > My mistake.  I should have picked up Thaigo's "ima: Use designated
-> > initializers for struct ima_event_data".  Please drop these changes
-> > instead.
->
-> Sorry for the confusion.  I just pushed out Thiago's patch.
->
-Just to clarify:
-- no split up of patch is needed.
-- only formatting needs to cleaned up.
+On Fri, Jun 14, 2019 at 10:45:56AM -0700, Sean Christopherson wrote:
+> The state tracking of #2/#3 doesn't scare me, it's purely the auditing.
+> Holding an audit message for an indeterminate amount of time is a
+> nightmare.
+> 
+> Here's a thought.  What if we simply require FILE__EXECUTE or AA_EXEC_MAP
+> to load any enclave page from a file?  Alternatively, we could add an SGX
+> specific file policity, e.g. FILE__ENCLAVELOAD and AA_MAY_LOAD_ENCLAVE.
+> As in my other email, SELinux's W^X restrictions can be tied to the process,
+> i.e. they can be checked at mmap()/mprotect() without throwing a wrench in
+> auditing.
 
-Apologies for the formatting issues, my editor switches back to
-tab as 4 chars.
-
-Thanks,
-Prakhar Srivastava
-> thanks,
->
-> Mimi
->
+We would also need to require VM_MAYEXEC on all enclave pages, or forego
+enforcing path_noexec() for enclaves.
