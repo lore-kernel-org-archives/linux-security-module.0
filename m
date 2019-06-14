@@ -2,180 +2,140 @@ Return-Path: <SRS0=4asR=UN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 528E0C31E4C
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 08:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E650CC31E44
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 10:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A22F2080A
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 08:17:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RLrsNPT/"
+	by mail.kernel.org (Postfix) with ESMTP id C2D4B2082C
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jun 2019 10:58:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbfFNIRa (ORCPT
+        id S1726900AbfFNK6A (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Jun 2019 04:17:30 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40504 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbfFNIRa (ORCPT
+        Fri, 14 Jun 2019 06:58:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46312 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727209AbfFNK6A (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Jun 2019 04:17:30 -0400
-Received: by mail-lf1-f66.google.com with SMTP id a9so1098506lff.7
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Jun 2019 01:17:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sYZceYw/PBvRSxvmCoPk9kiBr948sZ4CFzmxWCPNjiY=;
-        b=RLrsNPT/uaaAfFbVFaeqZ6JSPheqCUq74WDZJocy/VXfonejDDi21W3KH/jUcNDYit
-         uFjYoUzJhvbyvDe6ImPVkmAIf0sWV0aajwDBxm1DxLInFjAvbcMbi5RidfsPjVZrMffs
-         Zg+N5N/SfwdpXzQeNbaoZttXLU3LyrWuOVWSUD/HN+icQi3UAq7i4EQoY2e7fRWAKS2G
-         DTsOw5eHbsCdluVPpPOXyDWc9Cz/smTVsS+OkRpIHcajmkoMv6Zwg3xxiKhhxMbLvAUE
-         ADOPKegxUfDNG+Bdd3FC2qU8XzWIx16DnlzPqgQA9ybWXYaKidIR61Rwg9y4sX2RXm2T
-         7/AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sYZceYw/PBvRSxvmCoPk9kiBr948sZ4CFzmxWCPNjiY=;
-        b=diH39eOJheWkVjLWZ8t8uSTQnBCKBfy4iE2YM4wOizLGKFTNjsvCMT7+TN+qRoJqfw
-         2RpJYjp3CcCwYVPMLjp018vTgFTiDNapYxjp4Zamy+Vi79wicwIvA4oyTCikzEMAYtnA
-         TtzUgb+TxY2qAGE7hZS3z0m2dcMJwRf/JtBLAmaIduLguj+FaTfvudMb2cISuXK/TkIo
-         IGSQiBE0lGeMGAuIq2Ycx4D/07XKPH6aBmYoGfiC0KbU++N2j3uS2y0/p2zmbsCJR7QD
-         XN6bXYpXJ7W8WiVrLKCKAtvXctLxDfICXI/O0F2fjUEJfqyV4SrJ6D64cpoXBNcDmjrD
-         yblA==
-X-Gm-Message-State: APjAAAWHO13kbU9yV1B66nt7GoNpTBz6OCU8QJoh7ip8H/oRCNsb7nbp
-        Id3borjSKcrnVZYUKHp0EH3sQJxWiidyYQtrv9LiWw==
-X-Google-Smtp-Source: APXvYqwlbCDwuNlvWWLAMVDCvRG6Cs9rwpyMyT1zYYedGWIAKIWp5RRw1PxqPMLnhghF9xZ+PIVYSTL3bBt2hmIi3WQ=
-X-Received: by 2002:ac2:50c4:: with SMTP id h4mr34300421lfm.61.1560500248037;
- Fri, 14 Jun 2019 01:17:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
- <d803283e-5e69-5deb-fe94-3f2e45fb95af@schaufler-ca.com> <1560470593.4805.109.camel@linux.ibm.com>
-In-Reply-To: <1560470593.4805.109.camel@linux.ibm.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Fri, 14 Jun 2019 13:47:16 +0530
-Message-ID: <CAFA6WYOZOrv5D6261z-bwCP6+6ORzH3PcZz89Sfn=yts0dkvTg@mail.gmail.com>
-Subject: Re: [RFC 0/7] Introduce TEE based Trusted Keys support
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>, keyrings@vger.kernel.org,
+        Fri, 14 Jun 2019 06:58:00 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5EAvBv4129634
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Jun 2019 06:57:58 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t47ugds1h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Jun 2019 06:57:58 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 14 Jun 2019 11:57:56 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Jun 2019 11:57:53 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5EAvq1P34210172
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Jun 2019 10:57:52 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7753A4C04A;
+        Fri, 14 Jun 2019 10:57:52 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8073A4C040;
+        Fri, 14 Jun 2019 10:57:51 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.81.115])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Jun 2019 10:57:51 +0000 (GMT)
+Subject: Re: [PATCH V8 2/3] Define a new ima template field buf
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Prakhar Srivastava <prsriva02@gmail.com>,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jens Wiklander <jens.wiklander@linaro.org>, corbet@lwn.net,
-        dhowells@redhat.com, jejb@linux.ibm.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        jmorris@namei.org, serge@hallyn.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tee-dev@lists.linaro.org
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     roberto.sassu@huawei.com, vgoyal@redhat.com
+Date:   Fri, 14 Jun 2019 06:57:40 -0400
+In-Reply-To: <1560455980.4805.57.camel@linux.ibm.com>
+References: <20190612221549.28399-1-prsriva02@gmail.com>
+         <20190612221549.28399-3-prsriva02@gmail.com>
+         <1560455980.4805.57.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061410-0008-0000-0000-000002F3B999
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061410-0009-0000-0000-00002260C358
+Message-Id: <1560509860.4171.13.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-14_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906140091
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks Mimi for your comments.
+Hi Prakhar,
 
-On Fri, 14 Jun 2019 at 05:33, Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> On Thu, 2019-06-13 at 09:40 -0700, Casey Schaufler wrote:
-> > On 6/13/2019 3:30 AM, Sumit Garg wrote:
-> > > Add support for TEE based trusted keys where TEE provides the functionality
-> > > to seal and unseal trusted keys using hardware unique key. Also, this is
-> > > an alternative in case platform doesn't possess a TPM device.
-> > >
-> > > This series also adds some TEE features like:
-> >
-> > Please expand the acronym TEE on first use. That will
-> > help people who don't work with it on a daily basis
-> > understand what you're going on about.
->
-> Thanks, Casey.
->
-> "[6/7] doc: keys: Document usage of TEE based Trusted Keys" refers to
-> the kernel tee documentation, but that documentation is limited to
-> userspace interaction with the tee.
->
+> > diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> > index ea7d8cbf712f..83ca99d65e4b 100644
+> > --- a/security/integrity/ima/ima_api.c
+> > +++ b/security/integrity/ima/ima_api.c
+> > @@ -140,7 +140,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+> >  	struct ima_template_entry *entry;
+> >  	struct inode *inode = file_inode(file);
+> >  	struct ima_event_data event_data = {iint, file, filename, NULL, 0,
+> > -					    cause};
+> > +					    cause, NULL, 0};
+> 
+> This change here and
+> 
+> >  	int violation = 1;
+> >  	int result;
+> >  
+> > @@ -296,7 +296,7 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+> >  	struct inode *inode = file_inode(file);
+> >  	struct ima_template_entry *entry;
+> >  	struct ima_event_data event_data = {iint, file, filename, xattr_value,
+> > -					    xattr_len, NULL};
+> > +					    xattr_len, NULL, NULL, 0};
+> 
+> here and 
+> 
+> >  	int violation = 0;
+> >  
+> >  	if (iint->measured_pcrs & (0x1 << pcr))
+> > diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> > index 993d0f1915ff..c8591406c0e2 100644
+> > --- a/security/integrity/ima/ima_init.c
+> > +++ b/security/integrity/ima/ima_init.c
+> > @@ -50,7 +50,7 @@ static int __init ima_add_boot_aggregate(void)
+> >  	struct ima_template_entry *entry;
+> >  	struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
+> >  	struct ima_event_data event_data = {iint, NULL, boot_aggregate_name,
+> > -					    NULL, 0, NULL};
+> > +					    NULL, 0, NULL, NULL, 0};
+> 
+> here, don't belong in this patch.  It belongs in "IMA: support for per
+> policy rule template formats", in case it should ever be backported.
+>  Please post this as a separate patch, that will be squashed with
+> "IMA: support for per policy rule template formats".
 
-Thanks for pointing this out. I will update documentation to include
-TEE bus approach and communication apis for kernel clients.
+Might mistake.  I should have picked up Thaigo's "ima: Use designated
+initializers for struct ima_event_data".  Please drop these changes
+instead.
 
-BTW, the interface is similar as with user-space. Only difference is
-instead of IOCTL's from user-space, there are wrapper apis to
-communicate with TEE.
+thanks,
 
-Also, in case someone is interested to learn about TEE technology,
-this webinar [1] could be one of starting points.
+Mimi
 
-> A trusted key is a random number generated and sealed(encrypted) by
-> the TPM, so that only the TPM may unseal it.  The sealing key never
-> leaves the TPM.  The sealed, trusted key may be exported to userspace.
+> 
+> >  	int result = -ENOMEM;
+> >  	int violation = 0;
+> >  	struct {
+> 
 
-Understood.
-
->  In the tee case, can the "sealing" key ever leave the tee?
-
-No, the "sealing" key never leaves TEE. Its basically a Hardware
-Unique Key (HUK) tied to a particular SoC.
-
->  Can the
-> sealed, trusted key, exported to userspace, be unsealed by the tee?
-
-You mean using user-space interface to TEE? If yes, then answer is
-"no" as user-space can't communicate with this TEE service as its
-accessible to kernel clients only (see patch [2]).
-
-In case you meant loading exported trusted key blob via "keyctl", then
-"yes" this driver can unseal the trusted key. Have a look at examples
-I have listed in documentation patch [3]. Also, this approach works
-well across power cycles too.
-
->  Are the tee security protections similar to those of the TPM?  How do
-> they compare?
->
-
-Let me try to compare both environments. Regarding TEE, I will refer
-to OP-TEE [4] as one of its implementation.
-
-TPM:
-
-1. External hardware.
-2. Sealing key resides inside TPM.
-3. Communicates via SPI, I2C etc.
-
-OP-TEE:
-
-1. On chip, trusted execution environment enforced via ARM TrustZone.
-2. Sealing key is unique to a particular SoC provided by secure fuses,
-secure crypto engine etc.
-3. Communicates via Secure Monitor Calls (SMCs [5]).
-
-[1] https://globalplatform.org/resource-publication/webinar-an-introduction-to-tee-technology/
-[2] [RFC 3/7] tee: add private login method for kernel clients
-[3] [RFC 6/7] doc: keys: Document usage of TEE based Trusted Keys
-[4] https://optee.readthedocs.io/general/about.html
-[5] http://infocenter.arm.com/help/topic/com.arm.doc.den0028b/ARM_DEN0028B_SMC_Calling_Convention.pdf
-
-
--Sumit
-
-> Mimi
->
-> >
-> > >
-> > > Patch #1, #2 enables support for registered kernel shared memory with TEE.
-> > >
-> > > Patch #3 enables support for private kernel login method required for
-> > > cases like trusted keys where we don't wan't user-space to directly access
-> > > TEE service to retrieve trusted key contents.
-> > >
-> > > Rest of the patches from #4 to #7 adds support for TEE based trusted keys.
-> > >
-> > > This patch-set has been tested with OP-TEE based pseudo TA which can be
-> > > found here [1].
-> > >
-> > > Looking forward to your valuable feedback/suggestions.
->
