@@ -5,66 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EACC31E5D
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D4DC31E5B
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B19C20863
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:36:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 140EC2084D
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:37:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n1VQgB0q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iGNTNPGS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbfFQSfy (ORCPT
+        id S1726443AbfFQShv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:35:54 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42830 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfFQSfx (ORCPT
+        Mon, 17 Jun 2019 14:37:51 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44980 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbfFQShv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:35:53 -0400
-Received: by mail-pg1-f194.google.com with SMTP id l19so6265117pgh.9;
-        Mon, 17 Jun 2019 11:35:53 -0700 (PDT)
+        Mon, 17 Jun 2019 14:37:51 -0400
+Received: by mail-pl1-f196.google.com with SMTP id t7so4449185plr.11;
+        Mon, 17 Jun 2019 11:37:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
         bh=g4OHwdYbt/r9QOgUFQk/+P05Y1e0rv2+F/B2pG+BHiA=;
-        b=n1VQgB0qSmniG9bW4z1aM2XigFjOYjy8Q/v+Xt7OGT5WsFv49rRtK+LIQZCXFf5PUL
-         Mz1AOBN6QP/SeYXrFr3ruSd4leAyR06cEGkRu54SOc5+mnLv7guK+HlDud+l0dqdqemP
-         Q/9KZCXJjXoR05F2pkQD+WnXrEEmtnMi3k01Eh4DFQRKdDdGNOWO3gL1thdB5AKlMMC6
-         59GcnTUXLDuxjVLl/ST/EQdkWD2B31ctHb/MuXHtfY4GxtwTuHT3Xyrcl2hHBk3+xsOQ
-         TFDvzu4iYV4jgcisN4PoxoOEdb+KhsYXuZWOXfB2Sv1c5SuLXxUQHeQSTEpaeybzzo3L
-         KrtA==
+        b=iGNTNPGSOgtvFH/gdtfFHCgrCEao9MyKk/SilMJoxxKExyimgQb+BEg+9w4yLGFIb1
+         3ZECqBHf/b3mfL6okhY7EktJdKhpdBoTwbTUUw7rg3rRYpWqrDn7tUVe9ubwY8ViQJTz
+         3tJxsmdc1Aja3O/TVMMfM9QgdK4FJI1v5NvMZjfhR5l8Tsu0p5pAyQMQKYhGl+36onw/
+         GwX9XyHV3Mr3MwPZpva7eDbTzjbWC4GSDsOmjulOwsuFP39ZlPXr6ScmtHdEEfrhFTao
+         NaYBnFqKO4qIWqvERBw5r6hWKNwQJpx4Vm2uWw2QWWEG8mnz2SyFTWSHB48n4DUsz0o7
+         iXOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
         bh=g4OHwdYbt/r9QOgUFQk/+P05Y1e0rv2+F/B2pG+BHiA=;
-        b=uB2cw5Mi8J0mm7wHF3LffviuWVpdOnASLgB+p5QKaHmTXKOZ4KY3J9twzRDKD7e/nw
-         QNIT0JSqnrJkCh54exjKmUNp7MLIfJnkG38PjUE0Agnv5aWLxWNbo8W4cduWohz0NLAx
-         uwH7wbuX7mkUs2CNFlVM6asbkMF3DbMvyOi9ulHioZLA2y0go91y8iGpFRfiJR42LnL0
-         9u/UBiaK6rjddOcJgCQYVcC689CYOqPuFHCMpp0sJd+PTXOBSNkcoyjzpykVbBGGJOd5
-         njbhg42OwRusMJ2uSicUem/1kmMgDvZBgmJ9vXUK3MIm1JZWRCn7ycKBfBvyS/ehnnf7
-         96qQ==
-X-Gm-Message-State: APjAAAVp5CTPEFFvU4upXIzr+fM2Q6ie2UOlzocX6n3L4jmnJxvp5mft
-        KGCRztJug9CuKp6mBzmy0nXm6jWR
-X-Google-Smtp-Source: APXvYqytfaetTceUnS7W/w3y7vHsWdLRxCzeScx7MF5YJQOIC+muYYF5cBst0J8RH9oYuqhXNER7Bg==
-X-Received: by 2002:a62:3605:: with SMTP id d5mr116180113pfa.28.1560796551197;
-        Mon, 17 Jun 2019 11:35:51 -0700 (PDT)
+        b=MwIAa2kP8y0omIAF/MJrHfMpi92UYNQfo92iDeFKwHYnJ9qlvxHJ/i72lnUlOucKZB
+         UgKaRbBtgclySYAzDe+b96IGS7Wi8BKm1plfA0vnG/7eDFM/wDtacN80h8WseBYi/p+w
+         hy3HtiDudaHSHmkEuoGQKl4EXfpBLafQpK+GZy6foUBEK624I/ocis4X79dS9PDqs716
+         lZF84G54APAOzbd+UvijKy1h0vtXF55emCa6GHxzyfEkafzquvRkCn0RK5z53J2B3FYf
+         6O7HvBOHlsNtz8L+GPqB9DxjFgMLmMKMyfC4wgar2aJwKwCWUi17tzafHYCrA65keSqp
+         eXDg==
+X-Gm-Message-State: APjAAAXrssxmBOtlUOSMX1MGerTfxSmk/WyPz0J+l7WGLqINZQr3bCz6
+        sODDncyDGitfpginUhJ0Tceo5VL9
+X-Google-Smtp-Source: APXvYqzScM+RDnyzesVs86Qc4NlCbVdlwq1/7jteA+j3W3d9g1CMR7R3tx27w1WqgkmcVy/avETPtQ==
+X-Received: by 2002:a17:902:9b81:: with SMTP id y1mr86162012plp.194.1560796670075;
+        Mon, 17 Jun 2019 11:37:50 -0700 (PDT)
 Received: from localhost.localdomain ([167.220.56.169])
-        by smtp.gmail.com with ESMTPSA id f186sm16552946pfb.5.2019.06.17.11.35.50
+        by smtp.gmail.com with ESMTPSA id f17sm13104817pgv.16.2019.06.17.11.37.49
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 11:35:50 -0700 (PDT)
+        Mon, 17 Jun 2019 11:37:49 -0700 (PDT)
 From:   Prakhar Srivastava <prsriva02@gmail.com>
 To:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     zohar@linux.ibm.com, roberto.sassu@huawei.com,
         Prakhar Srivastava <prsriva02@gmail.com>
 Subject: [PATCH V8 0/3] Add support for measuring the boot command line during kexec_file_load
-Date:   Mon, 17 Jun 2019 11:35:04 -0700
-Message-Id: <20190617183507.14160-1-prsriva02@gmail.com>
+Date:   Mon, 17 Jun 2019 11:37:35 -0700
+Message-Id: <20190617183738.14484-1-prsriva02@gmail.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
