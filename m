@@ -1,188 +1,183 @@
-Return-Path: <SRS0=hNvM=UP=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=04rW=UQ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D63C31E54
-	for <linux-security-module@archiver.kernel.org>; Sun, 16 Jun 2019 22:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E71C31E54
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 06:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F5152084B
-	for <linux-security-module@archiver.kernel.org>; Sun, 16 Jun 2019 22:16:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560723412;
-	bh=oLx5pniqxG/jELRH2iyGmtPEYVhozT1h6R4yt+A9/zc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=WRzNhqMUhwLS73V0rmAsj5MwTty+E2BfxMVwgNhujIfQpS/2mjWWUrwdMLpE6o/i6
-	 egRb1F2SpYczQb/blK/wOEVMFHa/36T9BKEfJKpLgmv4kR3o60AtlGJxk3OZW2b9PG
-	 GdQb8ahWbfpmMvAyUb6FlNdc0OOhT1HnTo2pJmaQ=
+	by mail.kernel.org (Postfix) with ESMTP id 65AB221855
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 06:56:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbfFPWQv (ORCPT
+        id S1726129AbfFQG47 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 16 Jun 2019 18:16:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727209AbfFPWQr (ORCPT
+        Mon, 17 Jun 2019 02:56:59 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33023 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725793AbfFQG46 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 16 Jun 2019 18:16:47 -0400
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D29B420866
-        for <linux-security-module@vger.kernel.org>; Sun, 16 Jun 2019 22:16:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560723406;
-        bh=oLx5pniqxG/jELRH2iyGmtPEYVhozT1h6R4yt+A9/zc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=T+y0s0KCYKjJALEZNyPoXM5/rZcyVy81hMNXsvjs1JoQof8fTSG2t6O2B7gnYh6KE
-         Ut3jaYPJDUcKaTX1rbCTyjBJQzV6v1GsdVNZFCMI6jwt1PJAwgesmrRBSXBw8W+XGl
-         JQp8pKioMJXgvb/P4BcsGhh4AEUfQXu3hbDQGi98=
-Received: by mail-wm1-f41.google.com with SMTP id c6so7117902wml.0
-        for <linux-security-module@vger.kernel.org>; Sun, 16 Jun 2019 15:16:45 -0700 (PDT)
-X-Gm-Message-State: APjAAAVBD4pH0eeU4JIcwHZHp0OP8+DOznw7VsnOWLOZ+nZysnikXmrR
-        HDyHs8UGdBX/s86glxRCx3xSOUouIMOo8+dM7lQwSg==
-X-Google-Smtp-Source: APXvYqyLNC6Yg329xWtpRh6aEChlgRxAAqzoyltmGU+X5FI8weBu+KOZvAoY8R4ojMAgdUlfKbzzFc86TSOLGIg1qZA=
-X-Received: by 2002:a1c:9a53:: with SMTP id c80mr15207022wme.173.1560723404414;
- Sun, 16 Jun 2019 15:16:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1560131039.git.cedric.xing@intel.com> <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
- <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov> <20190611220243.GB3416@linux.intel.com>
- <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov> <20190614004600.GF18385@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F65504665@ORSMSX116.amr.corp.intel.com>
-In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F65504665@ORSMSX116.amr.corp.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 16 Jun 2019 15:16:32 -0700
-X-Gmail-Original-Message-ID: <CALCETrUaNCmO9Ne38ifnkfKTaZttTYCXPpLuHfR_NaGUwBNdSQ@mail.gmail.com>
-Message-ID: <CALCETrUaNCmO9Ne38ifnkfKTaZttTYCXPpLuHfR_NaGUwBNdSQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in SELinux
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-security-module@vger.kernel.org" 
+        Mon, 17 Jun 2019 02:56:58 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id B16C3488195E49602C2C;
+        Mon, 17 Jun 2019 07:56:56 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 17 Jun
+ 2019 07:56:49 +0100
+Subject: Re: [PATCH v4 00/14] ima: introduce IMA Digest Lists extension
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "eparis@parisplace.org" <eparis@parisplace.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "pmccallum@redhat.com" <pmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "rientjes@google.com" <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20190614175513.27097-1-roberto.sassu@huawei.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <9029dd14-1077-ec89-ddc2-e677e16ad314@huawei.com>
+Date:   Mon, 17 Jun 2019 08:56:53 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20190614175513.27097-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 14, 2019 at 10:16 AM Xing, Cedric <cedric.xing@intel.com> wrote:
->
-> > From: Christopherson, Sean J
-> > Sent: Thursday, June 13, 2019 5:46 PM
-> >
-> > On Thu, Jun 13, 2019 at 01:02:17PM -0400, Stephen Smalley wrote:
-> > > On 6/11/19 6:02 PM, Sean Christopherson wrote:
-> > > >On Tue, Jun 11, 2019 at 09:40:25AM -0400, Stephen Smalley wrote:
-> > > >>I haven't looked at this code closely, but it feels like a lot of
-> > > >>SGX-specific logic embedded into SELinux that will have to be
-> > > >>repeated or reused for every security module.  Does SGX not track
-> > this state itself?
-> > > >
-> > > >SGX does track equivalent state.
-> > > >
-> > > >There are three proposals on the table (I think):
-> > > >
-> > > >   1. Require userspace to explicitly specificy (maximal) enclave
-> > page
-> > > >      permissions at build time.  The enclave page permissions are
-> > provided
-> > > >      to, and checked by, LSMs at enclave build time.
-> > > >
-> > > >      Pros: Low-complexity kernel implementation, straightforward
-> > auditing
-> > > >      Cons: Sullies the SGX UAPI to some extent, may increase
-> > complexity of
-> > > >            SGX2 enclave loaders.
-> > > >
-> > > >   2. Pre-check LSM permissions and dynamically track mappings to
-> > enclave
-> > > >      pages, e.g. add an SGX mprotect() hook to restrict W->X and WX
-> > > >      based on the pre-checked permissions.
-> > > >
-> > > >      Pros: Does not impact SGX UAPI, medium kernel complexity
-> > > >      Cons: Auditing is complex/weird, requires taking enclave-
-> > specific
-> > > >            lock during mprotect() to query/update tracking.
-> > > >
-> > > >   3. Implement LSM hooks in SGX to allow LSMs to track enclave
-> > regions
-> > > >      from cradle to grave, but otherwise defer everything to LSMs.
-> > > >
-> > > >      Pros: Does not impact SGX UAPI, maximum flexibility, precise
-> > auditing
-> > > >      Cons: Most complex and "heaviest" kernel implementation of the
-> > three,
-> > > >            pushes more SGX details into LSMs.
-> > > >
-> > > >My RFC series[1] implements #1.  My understanding is that Andy
-> > > >(Lutomirski) prefers #2.  Cedric's RFC series implements #3.
-> > > >
-> > > >Perhaps the easiest way to make forward progress is to rule out the
-> > > >options we absolutely *don't* want by focusing on the potentially
-> > > >blocking issue with each option:
-> > > >
-> > > >   #1 - SGX UAPI funkiness
-> > > >
-> > > >   #2 - Auditing complexity, potential enclave lock contention
-> > > >
-> > > >   #3 - Pushing SGX details into LSMs and complexity of kernel
-> > > > implementation
-> > > >
-> > > >
-> > > >[1]
-> > > >https://lkml.kernel.org/r/20190606021145.12604-1-sean.j.christopherso
-> > > >n@intel.com
-> > >
-> > > Given the complexity tradeoff, what is the clear motivating example
-> > > for why
-> > > #1 isn't the obvious choice? That the enclave loader has no way of
-> > > knowing a priori whether the enclave will require W->X or WX?  But
-> > > aren't we better off requiring enclaves to be explicitly marked as
-> > > needing such so that we can make a more informed decision about
-> > > whether to load them in the first place?
-> >
-> > Andy and/or Cedric, can you please weigh in with a concrete (and
-> > practical) use case that will break if we go with #1?  The auditing
-> > issues for #2/#3 are complex to say the least...
->
-> How does enclave loader provide per-page ALLOW_* flags? And a related question is why they are necessary for enclaves but unnecessary for regular executables or shared objects.
->
-> What's the story for SGX2 if mmap()'ing non-existing pages is not allowed?
->
+On 6/14/2019 7:54 PM, Roberto Sassu wrote:
+> This patch set introduces a new IMA extension called IMA Digest Lists.
+> 
+> At early boot, the extension preloads in kernel memory reference digest
+> values, that can be compared with actual file digests when files are
+> accessed in the system.
+> 
+> The extension will open for new possibilities: PCR with predictable value,
+> that can be used for sealing policies associated to data or TPM keys;
+> appraisal based on reference digests already provided by Linux distribution
+> vendors in the software packages.
+> 
+> The first objective can be achieved because the PCR values does not depend
+> on which and when files are measured: the extension measures digest lists
+> sequentially and files whose digest is not in the digest list.
+> 
+> The second objective can be reached because the extension is able to
+> extract reference measurements from packages (with a user space tool) and
+> use it as a source for appraisal verification as the reference came from
+> the security.ima xattr. This approach will also reduce the overhead as only
+> one signature is verified for many files (as opposed to one signature for
+> each file with the current implementation).
+> 
+> This version of the patch set provides a clear separation between current
+> and new functionality. First, the new functionality must be explicitly
+> enabled from the kernel command line. Second, results of operations
+> performed by the extension can be distinguished from those obtained from
+> the existing code: measurement entries created by the extension have a
+> different PCR; mutable files appraised with the extension have a different
+> security.ima type.
+> 
+> The review of this patch set should start from patch 11 and 12, which
+> modify the IMA-Measure and IMA-Appraise submodules to use digest lists.
+> Patch 1 to 5 are prerequisites. Patch 6 to 10 adds support for digest
+> lists. Finally, patch 13 introduces two new policies to measure/appraise
+> rootfs and patch 14 adds the documentation (including a flow chart to
+> show how IMA has been modified).
+> 
+> The user space tools to configure digest lists are available at:
+> 
+> https://github.com/euleros/digest-list-tools/releases/tag/v0.3
+> 
+> The patch set applies on top of linux-integrity/next-queued-testing
+> (73589972b987).
+> 
+> It is necessary to apply also:
+> https://patchwork.kernel.org/cover/10957495/
 
-I think it just works.  Either you can't mmap() the page until you
-have explicitly EAUG-ed it, or you add a new ioctl() that is
-effectively "EAUG lazily".  The latter would declare that address and
-request that it get allocated and EAUGed when faulted, but it wouldn't
-actually do the EAUG.
+Another dependency is:
 
---Andy
+https://patchwork.kernel.org/cover/10979341/
+
+Roberto
+
+
+> To use appraisal, it is necessary to use a modified cpio and a modified
+> dracut:
+> 
+> https://github.com/euleros/cpio/tree/xattr-v1
+> https://github.com/euleros/dracut/tree/digest-lists
+> 
+> For now, please use it only in a testing environment.
+> 
+> 
+> Changelog
+> 
+> v3:
+> - move ima_lookup_loaded_digest() and ima_add_digest_data_entry() from
+>    ima_queue.c to ima_digest_list.c
+> - remove patch that introduces security.ima_algo
+> - add version number and type modifiers to the compact list header
+> - remove digest list metadata, all digest lists in the directory are
+>    accessed
+> - move loading of signing keys to user space
+> - add violation for both PCRs if they are selected
+> - introduce two new appraisal modes
+> 
+> v2:
+> - add support for multiple hash algorithms
+> - remove RPM parser from the kernel
+> - add support for parsing digest lists in user space
+> 
+> v1:
+> - add support for immutable/mutable files
+> - add support for appraisal with digest lists
+> 
+> 
+> Roberto Sassu (14):
+>    ima: read hash algorithm from security.ima even if appraisal is not
+>      enabled
+>    ima: generalize ima_read_policy()
+>    ima: generalize ima_write_policy() and raise uploaded data size limit
+>    ima: generalize policy file operations
+>    ima: use ima_show_htable_value to show violations and hash table data
+>    ima: add parser of compact digest list
+>    ima: restrict upload of converted digest lists
+>    ima: prevent usage of digest lists that are not measured/appraised
+>    ima: introduce new securityfs files
+>    ima: load parser digests and execute the parser at boot time
+>    ima: add support for measurement with digest lists
+>    ima: add support for appraisal with digest lists
+>    ima: introduce new policies initrd and appraise_initrd
+>    ima: add Documentation/security/IMA-digest-lists.txt
+> 
+>   .../admin-guide/kernel-parameters.txt         |  16 +-
+>   Documentation/security/IMA-digest-lists.txt   | 226 +++++++++++++
+>   include/linux/evm.h                           |   6 +
+>   include/linux/fs.h                            |   1 +
+>   security/integrity/evm/evm_main.c             |   2 +-
+>   security/integrity/iint.c                     |   1 +
+>   security/integrity/ima/Kconfig                |  25 ++
+>   security/integrity/ima/Makefile               |   1 +
+>   security/integrity/ima/ima.h                  |  32 +-
+>   security/integrity/ima/ima_api.c              |  43 ++-
+>   security/integrity/ima/ima_appraise.c         |  92 +++---
+>   security/integrity/ima/ima_digest_list.c      | 309 ++++++++++++++++++
+>   security/integrity/ima/ima_digest_list.h      |  69 ++++
+>   security/integrity/ima/ima_fs.c               | 224 ++++++++-----
+>   security/integrity/ima/ima_init.c             |   2 +-
+>   security/integrity/ima/ima_main.c             |  81 ++++-
+>   security/integrity/ima/ima_policy.c           |  29 +-
+>   security/integrity/integrity.h                |  22 ++
+>   18 files changed, 1018 insertions(+), 163 deletions(-)
+>   create mode 100644 Documentation/security/IMA-digest-lists.txt
+>   create mode 100644 security/integrity/ima/ima_digest_list.c
+>   create mode 100644 security/integrity/ima/ima_digest_list.h
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
