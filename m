@@ -2,182 +2,84 @@ Return-Path: <SRS0=04rW=UQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E71C31E54
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 06:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83798C31E44
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 07:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65AB221855
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 06:56:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6154B21995
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 07:45:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbfFQG47 (ORCPT
+        id S1725826AbfFQHpF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jun 2019 02:56:59 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33023 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725793AbfFQG46 (ORCPT
+        Mon, 17 Jun 2019 03:45:05 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:48538 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbfFQHpF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jun 2019 02:56:58 -0400
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id B16C3488195E49602C2C;
-        Mon, 17 Jun 2019 07:56:56 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 17 Jun
- 2019 07:56:49 +0100
-Subject: Re: [PATCH v4 00/14] ima: introduce IMA Digest Lists extension
-To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
-        <mjg59@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20190614175513.27097-1-roberto.sassu@huawei.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <9029dd14-1077-ec89-ddc2-e677e16ad314@huawei.com>
-Date:   Mon, 17 Jun 2019 08:56:53 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190614175513.27097-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+        Mon, 17 Jun 2019 03:45:05 -0400
+Received: from ramsan ([84.194.111.163])
+        by albert.telenet-ops.be with bizsmtp
+        id Rjkv2000S3XaVaC06jkvPh; Mon, 17 Jun 2019 09:45:03 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hcmJy-0000To-Bl; Mon, 17 Jun 2019 09:44:54 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hcmJy-0003Ms-AA; Mon, 17 Jun 2019 09:44:54 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Nayna Jain <nayna@linux.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] integrity: Fix __integrity_init_keyring() section mismatch
+Date:   Mon, 17 Jun 2019 09:44:52 +0200
+Message-Id: <20190617074452.12901-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/14/2019 7:54 PM, Roberto Sassu wrote:
-> This patch set introduces a new IMA extension called IMA Digest Lists.
-> 
-> At early boot, the extension preloads in kernel memory reference digest
-> values, that can be compared with actual file digests when files are
-> accessed in the system.
-> 
-> The extension will open for new possibilities: PCR with predictable value,
-> that can be used for sealing policies associated to data or TPM keys;
-> appraisal based on reference digests already provided by Linux distribution
-> vendors in the software packages.
-> 
-> The first objective can be achieved because the PCR values does not depend
-> on which and when files are measured: the extension measures digest lists
-> sequentially and files whose digest is not in the digest list.
-> 
-> The second objective can be reached because the extension is able to
-> extract reference measurements from packages (with a user space tool) and
-> use it as a source for appraisal verification as the reference came from
-> the security.ima xattr. This approach will also reduce the overhead as only
-> one signature is verified for many files (as opposed to one signature for
-> each file with the current implementation).
-> 
-> This version of the patch set provides a clear separation between current
-> and new functionality. First, the new functionality must be explicitly
-> enabled from the kernel command line. Second, results of operations
-> performed by the extension can be distinguished from those obtained from
-> the existing code: measurement entries created by the extension have a
-> different PCR; mutable files appraised with the extension have a different
-> security.ima type.
-> 
-> The review of this patch set should start from patch 11 and 12, which
-> modify the IMA-Measure and IMA-Appraise submodules to use digest lists.
-> Patch 1 to 5 are prerequisites. Patch 6 to 10 adds support for digest
-> lists. Finally, patch 13 introduces two new policies to measure/appraise
-> rootfs and patch 14 adds the documentation (including a flow chart to
-> show how IMA has been modified).
-> 
-> The user space tools to configure digest lists are available at:
-> 
-> https://github.com/euleros/digest-list-tools/releases/tag/v0.3
-> 
-> The patch set applies on top of linux-integrity/next-queued-testing
-> (73589972b987).
-> 
-> It is necessary to apply also:
-> https://patchwork.kernel.org/cover/10957495/
+With gcc-4.6.3:
 
-Another dependency is:
+    WARNING: vmlinux.o(.text.unlikely+0x24c64): Section mismatch in reference from the function __integrity_init_keyring() to the function .init.text:set_platform_trusted_keys()
+    The function __integrity_init_keyring() references
+    the function __init set_platform_trusted_keys().
+    This is often because __integrity_init_keyring lacks a __init
+    annotation or the annotation of set_platform_trusted_keys is wrong.
 
-https://patchwork.kernel.org/cover/10979341/
+Indeed, if the compiler decides not to inline __integrity_init_keyring(),
+a warning is issued.
 
-Roberto
+Fix this by adding the missing __init annotation.
 
+Fixes: 9dc92c45177ab70e ("integrity: Define a trusted platform keyring")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ security/integrity/digsig.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> To use appraisal, it is necessary to use a modified cpio and a modified
-> dracut:
-> 
-> https://github.com/euleros/cpio/tree/xattr-v1
-> https://github.com/euleros/dracut/tree/digest-lists
-> 
-> For now, please use it only in a testing environment.
-> 
-> 
-> Changelog
-> 
-> v3:
-> - move ima_lookup_loaded_digest() and ima_add_digest_data_entry() from
->    ima_queue.c to ima_digest_list.c
-> - remove patch that introduces security.ima_algo
-> - add version number and type modifiers to the compact list header
-> - remove digest list metadata, all digest lists in the directory are
->    accessed
-> - move loading of signing keys to user space
-> - add violation for both PCRs if they are selected
-> - introduce two new appraisal modes
-> 
-> v2:
-> - add support for multiple hash algorithms
-> - remove RPM parser from the kernel
-> - add support for parsing digest lists in user space
-> 
-> v1:
-> - add support for immutable/mutable files
-> - add support for appraisal with digest lists
-> 
-> 
-> Roberto Sassu (14):
->    ima: read hash algorithm from security.ima even if appraisal is not
->      enabled
->    ima: generalize ima_read_policy()
->    ima: generalize ima_write_policy() and raise uploaded data size limit
->    ima: generalize policy file operations
->    ima: use ima_show_htable_value to show violations and hash table data
->    ima: add parser of compact digest list
->    ima: restrict upload of converted digest lists
->    ima: prevent usage of digest lists that are not measured/appraised
->    ima: introduce new securityfs files
->    ima: load parser digests and execute the parser at boot time
->    ima: add support for measurement with digest lists
->    ima: add support for appraisal with digest lists
->    ima: introduce new policies initrd and appraise_initrd
->    ima: add Documentation/security/IMA-digest-lists.txt
-> 
->   .../admin-guide/kernel-parameters.txt         |  16 +-
->   Documentation/security/IMA-digest-lists.txt   | 226 +++++++++++++
->   include/linux/evm.h                           |   6 +
->   include/linux/fs.h                            |   1 +
->   security/integrity/evm/evm_main.c             |   2 +-
->   security/integrity/iint.c                     |   1 +
->   security/integrity/ima/Kconfig                |  25 ++
->   security/integrity/ima/Makefile               |   1 +
->   security/integrity/ima/ima.h                  |  32 +-
->   security/integrity/ima/ima_api.c              |  43 ++-
->   security/integrity/ima/ima_appraise.c         |  92 +++---
->   security/integrity/ima/ima_digest_list.c      | 309 ++++++++++++++++++
->   security/integrity/ima/ima_digest_list.h      |  69 ++++
->   security/integrity/ima/ima_fs.c               | 224 ++++++++-----
->   security/integrity/ima/ima_init.c             |   2 +-
->   security/integrity/ima/ima_main.c             |  81 ++++-
->   security/integrity/ima/ima_policy.c           |  29 +-
->   security/integrity/integrity.h                |  22 ++
->   18 files changed, 1018 insertions(+), 163 deletions(-)
->   create mode 100644 Documentation/security/IMA-digest-lists.txt
->   create mode 100644 security/integrity/ima/ima_digest_list.c
->   create mode 100644 security/integrity/ima/ima_digest_list.h
-> 
-
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index 4582bc26770a34a7..868ade3e89702ba7 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -69,8 +69,9 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int __integrity_init_keyring(const unsigned int id, key_perm_t perm,
+-				    struct key_restriction *restriction)
++static int __init __integrity_init_keyring(const unsigned int id,
++					   key_perm_t perm,
++					   struct key_restriction *restriction)
+ {
+ 	const struct cred *cred = current_cred();
+ 	int err = 0;
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+2.17.1
+
