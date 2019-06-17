@@ -2,143 +2,120 @@ Return-Path: <SRS0=04rW=UQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C72D4C31E5B
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 15:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF751C31E5B
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 16:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A90E0208C4
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 15:56:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9B87208C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 16:25:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NrVMIU4F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbfFQP4M (ORCPT
+        id S1726962AbfFQQZQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jun 2019 11:56:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49500 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726047AbfFQP4M (ORCPT
+        Mon, 17 Jun 2019 12:25:16 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35502 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbfFQQZQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:56:12 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HFqSjp007270
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 11:56:11 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t6dhe95j3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 11:56:10 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 17 Jun 2019 16:56:08 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Jun 2019 16:56:05 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HFu4qB49152140
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Jun 2019 15:56:04 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E82F611C05B;
-        Mon, 17 Jun 2019 15:56:03 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C03EA11C04A;
-        Mon, 17 Jun 2019 15:56:02 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.81.90])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Jun 2019 15:56:02 +0000 (GMT)
-Subject: Re: [PATCH] ima: dynamically allocate shash_desc
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 17 Jun 2019 11:55:51 -0400
-In-Reply-To: <20190617115838.2397872-1-arnd@arndb.de>
-References: <20190617115838.2397872-1-arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061715-0012-0000-0000-00000329E361
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061715-0013-0000-0000-00002162FBD7
-Message-Id: <1560786951.4072.103.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906170141
+        Mon, 17 Jun 2019 12:25:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PXluhcTCTbRu7MWWqjlNoU2J2WlclfBp1+lbYvichwE=; b=NrVMIU4FjkXaOiq8EBdBsisYX
+        RPTIEzflV5zzQh/U2sftmMWhHn06EA8gVxhHQI09wAKbG1YY/aylBwEQE3x3HBwdn0p4zMqAk5Mo8
+        Mvga3SN32GaMtRhAnUBUhndqL+MxsHwNGkAS3M0CB357M+Invewv0tSVMt+X2l3KOM45BTbbhqnDt
+        1+++Y1sYLNcIANFQDfBUusVnW+IoqYMTzumlNSNAxUdtCv1NiresC8d9lLN1vOGTCgavANJXprh0g
+        Ycsi9s+FlfSM4Wn38hFtg0KP3TV8Cxgna/sKWsWO2eGeM2ZxuvI/tX2zz3ee6gP63a/gt8MV8ySJJ
+        snbxbH0mw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hcuRE-0000rQ-MP; Mon, 17 Jun 2019 16:24:56 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 366F52076F712; Mon, 17 Jun 2019 18:24:55 +0200 (CEST)
+Date:   Mon, 17 Jun 2019 18:24:55 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jann Horn <jannh@google.com>, Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
+ ring buffer
+Message-ID: <20190617162455.GL3436@hirez.programming.kicks-ass.net>
+References: <20190528162603.GA24097@kroah.com>
+ <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+ <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
+ <4031.1559064620@warthog.procyon.org.uk>
+ <20190528231218.GA28384@kroah.com>
+ <31936.1559146000@warthog.procyon.org.uk>
+ <16193.1559163763@warthog.procyon.org.uk>
+ <21942.1559304135@warthog.procyon.org.uk>
+ <606.1559312412@warthog.procyon.org.uk>
+ <15401.1559322762@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <15401.1559322762@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2019-06-17 at 13:20 +0200, Arnd Bergmann wrote:
-> On 32-bit ARM, we get a warning about excessive stack usage when
-> building with clang.
+On Fri, May 31, 2019 at 06:12:42PM +0100, David Howells wrote:
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> security/integrity/ima/ima_crypto.c:504:5: error: stack frame size
-> of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-
-> Wframe-larger-than=]
-
-I'm definitely not seeing this.  Is this problem a result of non
-upstreamed patches?  For sha1, currently the only possible hash
-algorithm, I'm seeing 664.
-
-Mimi
-
+> > > > (and it has already been established that refcount_t doesn't work for
+> > > > usage count scenarios)
+> > > 
+> > > ?
+> > > 
+> > > Does that mean struct kref doesn't either?
+> > 
+> > Indeed, since kref is just a pointless wrapper around refcount_t it does
+> > not either.
+> > 
+> > The main distinction between a reference count and a usage count is that
+> > 0 means different things. For a refcount 0 means dead. For a usage count
+> > 0 is merely unused but valid.
 > 
-> Using kmalloc to get the descriptor reduces this to 320 bytes.
+> Ah - I consider the terms interchangeable.
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  security/integrity/ima/ima_crypto.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
+> Take Documentation/filesystems/vfs.txt for instance:
 > 
-> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-> index d4c7b8e1b083..8a66bab4c435 100644
-> --- a/security/integrity/ima/ima_crypto.c
-> +++ b/security/integrity/ima/ima_crypto.c
-> @@ -461,16 +461,21 @@ static int ima_calc_field_array_hash_tfm(struct ima_field_data *field_data,
->  					 struct ima_digest_data *hash,
->  					 struct crypto_shash *tfm)
->  {
-> -	SHASH_DESC_ON_STACK(shash, tfm);
-> +	struct shash_desc *shash;
->  	int rc, i;
->  
-> +	shash = kmalloc(sizeof(struct shash_desc) + crypto_shash_descsize(tfm),
-> +			GFP_KERNEL);
-> +	if (!shash)
-> +		return -ENOMEM;
-> +
->  	shash->tfm = tfm;
->  
->  	hash->length = crypto_shash_digestsize(tfm);
->  
->  	rc = crypto_shash_init(shash);
->  	if (rc != 0)
-> -		return rc;
-> +		goto out;
->  
->  	for (i = 0; i < num_fields; i++) {
->  		u8 buffer[IMA_EVENT_NAME_LEN_MAX + 1] = { 0 };
-> @@ -497,7 +502,8 @@ static int ima_calc_field_array_hash_tfm(struct ima_field_data *field_data,
->  
->  	if (!rc)
->  		rc = crypto_shash_final(shash, hash->digest);
-> -
-> +out:
-> +	kfree(shash);
->  	return rc;
->  }
->  
+>   dget: open a new handle for an existing dentry (this just increments
+> 	the usage count)
+> 
+>   dput: close a handle for a dentry (decrements the usage count). ...
+> 
+>   ...
+> 
+>   d_lookup: look up a dentry given its parent and path name component
+> 	It looks up the child of that given name from the dcache
+> 	hash table. If it is found, the reference count is incremented
+> 	and the dentry is returned. The caller must use dput()
+> 	to free the dentry when it finishes using it.
+> 
+> Here we interchange the terms.
+> 
+> Or https://www.kernel.org/doc/gorman/html/understand/understand013.html
+> which seems to interchange the terms in reference to struct page.
 
+Right, but we have two distinct set of semantics, I figured it makes
+sense to have two different names for them. Do you have an alternative
+naming scheme we could use?
+
+Or should we better document our distinction between reference and usage
+count?
