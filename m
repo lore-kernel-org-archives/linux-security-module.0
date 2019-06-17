@@ -2,99 +2,112 @@ Return-Path: <SRS0=04rW=UQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3621C31E59
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 13:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AF2C31E50
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 14:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC31F206B7
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 13:31:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ENOJaDIc"
+	by mail.kernel.org (Postfix) with ESMTP id D8C5D2084A
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 14:05:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727717AbfFQNb0 (ORCPT
+        id S1725906AbfFQOFH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jun 2019 09:31:26 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52359 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbfFQNb0 (ORCPT
+        Mon, 17 Jun 2019 10:05:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57518 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728176AbfFQOFE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:31:26 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s3so9297363wms.2;
-        Mon, 17 Jun 2019 06:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TK/taqnh4uTdUXYrgyPWRNDtNYlU83EQagbd52Vya7Q=;
-        b=ENOJaDIcKIyM2ugEwPbDz5yXeyQ4yLGFt0UoLTW/SfFBEE1GI2WZm4B05Cd7QL89vm
-         i0uC0fZ45h8c9+AtE188tELX/cImyDiX8JOdrOjRAPst2wYL72WdZkzlsLKHDbKwO88A
-         fBFmMZpUnBGo/OcqPiFLq31dtZ7vEz5ltwwm5fW1BBQoxHLdm68UDAUY0eWDPuCJUMO6
-         7HRMfUWEw3KrXVWJwrHfxbWhDffWtoEfx2r//PsTOBcWzfEFH4v6yI6qU44K4tN05rq5
-         SPtgc4Ts8aT7Zs16DyZAZzSzKhli314JMqBmSk3V1umqS0zyyySyltYGB4IxrHJrp70g
-         7cgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TK/taqnh4uTdUXYrgyPWRNDtNYlU83EQagbd52Vya7Q=;
-        b=ERJf3MjkwqXu3lyNHDZGXS21aN6FzW2T1u9voYJoCUw7R0JmHFXRdKRdaJWW0SAANN
-         KZLoEhXuQCmOEs1c+W8ATnDrVZ9b1KLee0LfrWEQSyxF93Y73073coDz7np+WA4ulRGy
-         GhQABTAxTiPYMuOD7u1rBnbROvFbp75jpEdbuD5gATVekIerbKmmGgHq0+n8kXGkgDnP
-         QORMBsEsioOMtlALc97PI3kY51aPnE7rVIPJ5zM8Xo3+uI4okus6sZLPWTu1RBxViOHi
-         CxrwiveEjYGJLG9cnMsh/3EaQSWnOxiYacc4prusne69RXQbgCz2Tz9SwJcTcGxp5S5m
-         bcdQ==
-X-Gm-Message-State: APjAAAU2ovnyxBO+cUCHkpal4xIa3rMSP7zvqrr7pTKDOJb/1CiZQPjg
-        L+aZuJ/dFevy554l5jbOZ6Q=
-X-Google-Smtp-Source: APXvYqzEgy4mPVF+JIAdiL5lPe21YfSxEYStzjxJIEXrMdKSlb4M+1ecnl0Nvbc2TqZFJIsyNWZttw==
-X-Received: by 2002:a1c:700b:: with SMTP id l11mr18910782wmc.106.1560778283508;
-        Mon, 17 Jun 2019 06:31:23 -0700 (PDT)
-Received: from [172.22.36.64] (redhat-nat.vtp.fi.muni.cz. [78.128.215.6])
-        by smtp.gmail.com with ESMTPSA id q12sm8027900wrp.50.2019.06.17.06.31.22
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 06:31:23 -0700 (PDT)
-Subject: Re: [RFC PATCH v4 1/1] Add dm verity root hash pkcs7 sig validation.
-To:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        jmorris@namei.org, scottsh@microsoft.com, ebiggers@google.com,
-        mpatocka@redhat.com
-References: <20190613010610.4364-1-jaskarankhurana@linux.microsoft.com>
- <20190613010610.4364-2-jaskarankhurana@linux.microsoft.com>
-From:   Milan Broz <gmazyland@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <ab346931-1d1b-bd2f-8314-ee4779bd44bf@gmail.com>
-Date:   Mon, 17 Jun 2019 15:31:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Mon, 17 Jun 2019 10:05:04 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HE2Zmq075474
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 10:05:03 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t6brv1vc0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 10:05:02 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Mon, 17 Jun 2019 15:05:01 +0100
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Jun 2019 15:04:58 +0100
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HE4v4Y20119844
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 14:04:57 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4B00E78063;
+        Mon, 17 Jun 2019 14:04:57 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3852478064;
+        Mon, 17 Jun 2019 14:04:56 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.85.160.209])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Jun 2019 14:04:55 +0000 (GMT)
+Subject: Re: [PATCH] integrity: Fix __integrity_init_keyring() section
+ mismatch
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Nayna Jain <nayna@linux.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190617074452.12901-1-geert@linux-m68k.org>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Date:   Mon, 17 Jun 2019 10:04:55 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190613010610.4364-2-jaskarankhurana@linux.microsoft.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190617074452.12901-1-geert@linux-m68k.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061714-8235-0000-0000-00000EA93BDE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011278; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01219285; UDB=6.00641324; IPR=6.01000426;
+ MB=3.00027344; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-17 14:05:00
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061714-8236-0000-0000-0000460CBB70
+Message-Id: <1f2d599b-77dd-18eb-3e99-e93cc79cfddf@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=828 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906170128
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 13/06/2019 03:06, Jaskaran Khurana wrote:
-...
 
-> Adds DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE: roothash signature *must* be
-> specified for all dm verity volumes and verification must succeed prior
-> to creation of device mapper block device.
 
-I had a quick discussion about this and one suggestion was
-to add dm-verity kernel module parameter instead of a new config option.
+On 06/17/2019 03:44 AM, Geert Uytterhoeven wrote:
+> With gcc-4.6.3:
+>
+>      WARNING: vmlinux.o(.text.unlikely+0x24c64): Section mismatch in reference from the function __integrity_init_keyring() to the function .init.text:set_platform_trusted_keys()
+>      The function __integrity_init_keyring() references
+>      the function __init set_platform_trusted_keys().
+>      This is often because __integrity_init_keyring lacks a __init
+>      annotation or the annotation of set_platform_trusted_keys is wrong.
+>
+> Indeed, if the compiler decides not to inline __integrity_init_keyring(),
+> a warning is issued.
+>
+> Fix this by adding the missing __init annotation.
+>
+> Fixes: 9dc92c45177ab70e ("integrity: Define a trusted platform keyring")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-The idea is that if you can control kernel boot commandline, you can add it
-there with the same effect (expecting that root device is on dm-verity as well).
+Thanks for fixing it.
 
-Isn't this better option or it is not going to work for you?
+Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
 
-Milan
+Thanks & Regards,
+          - Nayna
+
