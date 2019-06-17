@@ -2,112 +2,147 @@ Return-Path: <SRS0=04rW=UQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AF2C31E50
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 14:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BA5C31E5D
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 15:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8C5D2084A
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 14:05:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EE33208C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 15:10:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k9NH+beY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725906AbfFQOFH (ORCPT
+        id S1728413AbfFQPK6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jun 2019 10:05:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57518 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728176AbfFQOFE (ORCPT
+        Mon, 17 Jun 2019 11:10:58 -0400
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:39977 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfFQPK5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:05:04 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HE2Zmq075474
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 10:05:03 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2t6brv1vc0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 10:05:02 -0400
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Mon, 17 Jun 2019 15:05:01 +0100
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Jun 2019 15:04:58 +0100
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HE4v4Y20119844
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Jun 2019 14:04:57 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4B00E78063;
-        Mon, 17 Jun 2019 14:04:57 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3852478064;
-        Mon, 17 Jun 2019 14:04:56 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.85.160.209])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Jun 2019 14:04:55 +0000 (GMT)
-Subject: Re: [PATCH] integrity: Fix __integrity_init_keyring() section
- mismatch
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Nayna Jain <nayna@linux.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        Mon, 17 Jun 2019 11:10:57 -0400
+Received: by mail-qt1-f201.google.com with SMTP id z6so9496776qtj.7
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 08:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=AhzC1dqcXRssy7fdMkEhLgspqOslOvHdcVPRsk5zXZU=;
+        b=k9NH+beY5eMjDnOaINDvVrgGcEx78KmzHeEJfkQN6Y9SX45KinI1QUz8a2DhSnPwty
+         5kjZ5RuuasqO5gIcAhgkZUnJ5GT0kppbEhM9rHxo2vvxQJfsWk6uJ4QrX+Ea29xmQPeD
+         8IsCVrYuEabNYcOitK3k+G1bBip5g5n1lG48JTDn/EqwzSUI5z4Uorhrr88udI3d+o6j
+         RHT5IKO45+CRt1jDmPgvxO/tI9sYeKgKoAmcXlnkwutt1ZNFR12l5mPkKMTD0nu4F7YS
+         SatuKTASkGkk2OrjCE5YEdnhVkD2b7xX5FLEHPbTJVQQpwuOyfkmjlwOpBT95MleK+pU
+         LE6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=AhzC1dqcXRssy7fdMkEhLgspqOslOvHdcVPRsk5zXZU=;
+        b=hfuK3gQyyjmJvms4J+3pdo/fMowVYwZJYMgndGRTWB0SKcLy0n8llnWR6nPka9BDK6
+         dJWEUDmIL+K00kikwG6oVh2y/kqc8GUYbfOU/m3uf6h3J4QmudoGgInqJvOYQm+jvBK4
+         UDycvKLOhXHxqeJ+5y940IXJCDaY8xq4Z4WTJVe7zabdR1u0lDfNobcg2Vp3oY5LwfWV
+         lWOrHDWD8fJ0oZKLHhmMIc+xcgRK3QqmWp8Elg8Ms3OgtT4HRj6fL+8eYUEdmwRPjZj7
+         6FnwK5OjvEei+wKykQ/DkFJH4vYN+TN9uszA7yyDCTDADkqcHBAXfqWaEFTWWY/le73S
+         oRdw==
+X-Gm-Message-State: APjAAAV/jbydxVLpA/8fVEknFO78uHg0JFFInq8jbNPhkgdGahqCcsaa
+        UntO9WKF0Y8eU5YOdg4NZuXBboyjdQM=
+X-Google-Smtp-Source: APXvYqzSP5di/cDRVpILC8IiiOlVU005dHmsxZFgo+MqF+Qnmu099tvbtAFfTxug3VjFm5DpzWKfL/u7hSk=
+X-Received: by 2002:ac8:2a69:: with SMTP id l38mr27804097qtl.212.1560784256777;
+ Mon, 17 Jun 2019 08:10:56 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 17:10:48 +0200
+Message-Id: <20190617151050.92663-1-glider@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v7 0/3] add init_on_alloc/init_on_free boot options
+From:   Alexander Potapenko <glider@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Hocko <mhocko@kernel.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190617074452.12901-1-geert@linux-m68k.org>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Date:   Mon, 17 Jun 2019 10:04:55 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190617074452.12901-1-geert@linux-m68k.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19061714-8235-0000-0000-00000EA93BDE
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011278; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01219285; UDB=6.00641324; IPR=6.01000426;
- MB=3.00027344; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-17 14:05:00
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061714-8236-0000-0000-0000460CBB70
-Message-Id: <1f2d599b-77dd-18eb-3e99-e93cc79cfddf@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=828 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906170128
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marco Elver <elver@google.com>, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Provide init_on_alloc and init_on_free boot options.
 
+These are aimed at preventing possible information leaks and making the
+control-flow bugs that depend on uninitialized values more deterministic.
 
-On 06/17/2019 03:44 AM, Geert Uytterhoeven wrote:
-> With gcc-4.6.3:
->
->      WARNING: vmlinux.o(.text.unlikely+0x24c64): Section mismatch in reference from the function __integrity_init_keyring() to the function .init.text:set_platform_trusted_keys()
->      The function __integrity_init_keyring() references
->      the function __init set_platform_trusted_keys().
->      This is often because __integrity_init_keyring lacks a __init
->      annotation or the annotation of set_platform_trusted_keys is wrong.
->
-> Indeed, if the compiler decides not to inline __integrity_init_keyring(),
-> a warning is issued.
->
-> Fix this by adding the missing __init annotation.
->
-> Fixes: 9dc92c45177ab70e ("integrity: Define a trusted platform keyring")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Enabling either of the options guarantees that the memory returned by the
+page allocator and SL[AU]B is initialized with zeroes.
+SLOB allocator isn't supported at the moment, as its emulation of kmem
+caches complicates handling of SLAB_TYPESAFE_BY_RCU caches correctly.
 
-Thanks for fixing it.
+Enabling init_on_free also guarantees that pages and heap objects are
+initialized right after they're freed, so it won't be possible to access
+stale data by using a dangling pointer.
 
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+As suggested by Michal Hocko, right now we don't let the heap users to
+disable initialization for certain allocations. There's not enough
+evidence that doing so can speed up real-life cases, and introducing
+ways to opt-out may result in things going out of control.
 
-Thanks & Regards,
-          - Nayna
+To: Andrew Morton <akpm@linux-foundation.org>
+To: Christoph Lameter <cl@linux.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Kostya Serebryany <kcc@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Sandeep Patil <sspatil@android.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jann Horn <jannh@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Marco Elver <elver@google.com>
+Cc: linux-mm@kvack.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com
+
+Alexander Potapenko (2):
+  mm: security: introduce init_on_alloc=1 and init_on_free=1 boot
+    options
+  mm: init: report memory auto-initialization features at boot time
+
+ .../admin-guide/kernel-parameters.txt         |  9 +++
+ drivers/infiniband/core/uverbs_ioctl.c        |  2 +-
+ include/linux/mm.h                            | 22 +++++++
+ init/main.c                                   | 24 +++++++
+ kernel/kexec_core.c                           |  2 +-
+ mm/dmapool.c                                  |  2 +-
+ mm/page_alloc.c                               | 63 ++++++++++++++++---
+ mm/slab.c                                     | 16 ++++-
+ mm/slab.h                                     | 19 ++++++
+ mm/slub.c                                     | 33 ++++++++--
+ net/core/sock.c                               |  2 +-
+ security/Kconfig.hardening                    | 29 +++++++++
+ 12 files changed, 204 insertions(+), 19 deletions(-)
+---
+ v3: dropped __GFP_NO_AUTOINIT patches
+ v5: dropped support for SLOB allocator, handle SLAB_TYPESAFE_BY_RCU
+ v6: changed wording in boot-time message
+ v7: dropped the test_meminit.c patch (picked by Andrew Morton already),
+     minor wording changes
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
