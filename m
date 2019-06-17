@@ -2,153 +2,103 @@ Return-Path: <SRS0=04rW=UQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDDBC31E5D
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 17:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1643C31E5B
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9710A2084D
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 17:08:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560791325;
-	bh=5R6xDskFo1W1bXui/OcZCdDdAlnmmhG5gfSqm8uvSoE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=p4BfjDgNVWC0P7TnyUHBz9MfIBngt68dPQXIw2tiTxUW+wiFRuH1l2VZCSXBi25jm
-	 0Np2YS7s5QU52RF1ifjOgQBqzRH6JwQFtRL6RmokFGtwsAEtGeWdaFmK7WPZbJXkPN
-	 5P9rvmDnD72wlvycEMkBb0y/2bV0MIujzWX5YbhU=
+	by mail.kernel.org (Postfix) with ESMTP id B1166208C0
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:07:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbfFQRIp (ORCPT
+        id S1726538AbfFQSHh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jun 2019 13:08:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52300 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728047AbfFQRIl (ORCPT
+        Mon, 17 Jun 2019 14:07:37 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19666 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726427AbfFQSHh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jun 2019 13:08:41 -0400
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB10E208C0
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 17:08:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560791320;
-        bh=5R6xDskFo1W1bXui/OcZCdDdAlnmmhG5gfSqm8uvSoE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=xYdijfmfTphWyPXH20r+WsQV/8bkdrpNf5ibbWfFWcolh4o7lgLLyHNhUoOcMFVw8
-         +WYXkUoR55tMro4HvvFV1GRH5zTPG3gIVxqy74/sPuKECJfSLHHxgnUluE5iRUKpj/
-         NRTZo4RmfdcET+NZD2Qm2k1y2o3YBjTLJ4ayCuCA=
-Received: by mail-wr1-f45.google.com with SMTP id d18so10814952wrs.5
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 10:08:39 -0700 (PDT)
-X-Gm-Message-State: APjAAAVUwEbRF0DuArP+ravMRkhzGr0MtVTB3p2DU5RWpFYPn6c+WvnI
-        tJ8n3LZHe6d/un30wucbnQk11nV4C4xPjaKuMCGnQA==
-X-Google-Smtp-Source: APXvYqwJHAurY7hvHw2/82bN4jOKbE4ziYeXFj4WJqCoYJI/jl9Qcr06/LypPNy+GyRTR0MD+ZEmtD8+BcxUgcL5e8E=
-X-Received: by 2002:adf:f28a:: with SMTP id k10mr10588715wro.343.1560791317691;
- Mon, 17 Jun 2019 10:08:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1560131039.git.cedric.xing@intel.com> <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
- <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov> <20190611220243.GB3416@linux.intel.com>
- <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov> <20190614004600.GF18385@linux.intel.com>
- <20190614153840.GC12191@linux.intel.com> <CALCETrXcOQkvMHdh5DgdQ6JAgzsZCNFVEtnQz-5RbNr4vsadDQ@mail.gmail.com>
- <20190617164915.GA25085@linux.intel.com>
-In-Reply-To: <20190617164915.GA25085@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 17 Jun 2019 10:08:26 -0700
-X-Gmail-Original-Message-ID: <CALCETrW9Mt70UY3NWGQq3rpxCxSpR4GfsBgt0jTib3bNDMTXkw@mail.gmail.com>
-Message-ID: <CALCETrW9Mt70UY3NWGQq3rpxCxSpR4GfsBgt0jTib3bNDMTXkw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in SELinux
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Cedric Xing <cedric.xing@intel.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mon, 17 Jun 2019 14:07:37 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HI7YoA018491
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 14:07:35 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t6dnhdthc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 14:07:35 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 17 Jun 2019 19:07:23 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Jun 2019 19:07:19 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HI7ImH53543130
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 18:07:18 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A32CFA4053;
+        Mon, 17 Jun 2019 18:07:18 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B031A4059;
+        Mon, 17 Jun 2019 18:07:17 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.81.90])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Jun 2019 18:07:17 +0000 (GMT)
+Subject: Re: [PATCH] ima: dynamically allocate shash_desc
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
-        pmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        Philip Tricca <philip.b.tricca@intel.com>
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 17 Jun 2019 14:07:06 -0400
+In-Reply-To: <1560786951.4072.103.camel@linux.ibm.com>
+References: <20190617115838.2397872-1-arnd@arndb.de>
+         <1560786951.4072.103.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061718-0008-0000-0000-000002F48A92
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061718-0009-0000-0000-000022619DAC
+Message-Id: <1560794826.4072.169.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906170162
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 17, 2019 at 9:49 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Sun, Jun 16, 2019 at 03:14:51PM -0700, Andy Lutomirski wrote:
-> > On Fri, Jun 14, 2019 at 8:38 AM Sean Christopherson
-> > <sean.j.christopherson@intel.com> wrote:
-> > > > Andy and/or Cedric, can you please weigh in with a concrete (and practical)
-> > > > use case that will break if we go with #1?  The auditing issues for #2/#3
-> > > > are complex to say the least...
-> >
-> > The most significant issue I see is the following.  Consider two
-> > cases. First, an SGX2 enclave that dynamically allocates memory but
-> > doesn't execute code from dynamic memory.  Second, an SGX2 enclave
-> > that *does* execute code from dynamic memory.  In #1, the untrusted
-> > stack needs to decide whether to ALLOW_EXEC when the memory is
-> > allocated, which means that it either needs to assume the worst or it
-> > needs to know at allocation time whether the enclave ever intends to
-> > change the permission to X.
->
-> I'm just not convinced that folks running enclaves that can't communicate
-> their basic functionality will care one whit about SELinux restrictions,
-> i.e. will happily give EXECMOD even if it's not strictly necessary.
+On Mon, 2019-06-17 at 11:55 -0400, Mimi Zohar wrote:
+> On Mon, 2019-06-17 at 13:20 +0200, Arnd Bergmann wrote:
+> > On 32-bit ARM, we get a warning about excessive stack usage when
+> > building with clang.
+> > 
+> > security/integrity/ima/ima_crypto.c:504:5: error: stack frame size
+> > of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-
+> > Wframe-larger-than=]
+> 
+> I'm definitely not seeing this.  Is this problem a result of non
+> upstreamed patches?  For sha1, currently the only possible hash
+> algorithm, I'm seeing 664.
 
-At least when permissions are learned, if there's no ALLOW_EXEC for
-EAUG, then EXECMOD won't get learned if there's no eventual attempt to
-execute the memory.
+Every time a measurement is added to the measurement list, the memory
+would be allocated/freed.  The frequency of new measurements is policy
+dependent.  For performance reasons, I'd prefer if the allocation
+remains on the stack.
 
->
-> > I suppose there's a middle ground.  The driver could use model #1 for
-> > driver-filled pages and model #2 for dynamic pages.  I haven't tried
-> > to fully work it out, but I think there would be the ALLOW_READ /
-> > ALLOW_WRITE / ALLOW_EXEC flag for EADD-ed pages but, for EAUG-ed
-> > pages, there would be a different policy.  This might be as simple as
-> > internally having four flags instead of three:
-> >
-> > ALLOW_READ, ALLOW_WRITE, ALLOW_EXEC: as before
-> >
-> > ALLOW_EXEC_COND: set implicitly by the driver for EAUG.
-> >
-> > As in #1, if you try to mmap or protect a page with neither ALLOW_EXEC
-> > variant, it fails (-EACCES, perhaps).  But, if you try to mmap or
-> > mprotect an ALLOW_EXEC_COND page with PROT_EXEC, you ask LSM for
-> > permission.  There is no fancy DIRTY tracking here, since it's
-> > reasonable to just act as though *every* ALLOW_EXEC_COND page is
-> > dirty.  There is no real auditing issue here, since LSM can just log
-> > what permission is missing.
-> >
-> > Does this seem sensible?  It might give us the best of #1 and #2.
->
-> It would work and is easy to implement *if* SELinux ties permissions to
-> the process, as the SIGSTRUCT vma/file won't be available at
-> EAUG+mprotect().  I already have a set of patches to that effect, I'll
-> send 'em out in a bit.
+Mimi
 
-I'm okay with that.
-
->
-> FWIW, we still need to differentiate W->X from WX on SGX1, i.e. declaring
-> ALLOW_WRITE + ALLOW_EXEC shouldn't imply WX.  This is also addressed in
-> the forthcoming updated RFC.
-
-Sounds good.
