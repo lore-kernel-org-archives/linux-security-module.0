@@ -2,195 +2,143 @@ Return-Path: <SRS0=04rW=UQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D021C46477
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 15:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72D4C31E5B
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 15:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65746208CB
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 15:11:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p3ae0HY/"
+	by mail.kernel.org (Postfix) with ESMTP id A90E0208C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 15:56:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728447AbfFQPLH (ORCPT
+        id S1728368AbfFQP4M (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jun 2019 11:11:07 -0400
-Received: from mail-qt1-f202.google.com ([209.85.160.202]:44924 "EHLO
-        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726215AbfFQPLG (ORCPT
+        Mon, 17 Jun 2019 11:56:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49500 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726047AbfFQP4M (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:11:06 -0400
-Received: by mail-qt1-f202.google.com with SMTP id x10so9502422qti.11
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 08:11:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=J2xlT5BkG4PHe/4/nJk7BmFqwoJl9sRtUfXxrBXjMCQ=;
-        b=p3ae0HY/O3HHcM6wSMM9Tz76pUtauWYXmpaYWMuj4cFJ05HA65ucJNAlfWzvMGlmaS
-         lxOyugNBCdTPBRgvKdpVxDPPMXLwju022Pe2+adIc0cy/7WN15Piv/GRhyXgOlK1N9zO
-         Qt2SUknDwSdhIbbMc5QJx9l8NVVrJY3o1UR5JRK4IgEsJvZln9vb6KepjjdnvNbApfcs
-         9jLqp/1MVZVCrmLGqeLqmR5Z+Lsh9JlA14qkOfLbd3vfbUIUl6HfJLDZnERhBTPjT9L6
-         HBY80N8ck39V/TG1wmfxgzmwWsr1L0U03y9/v2GIsZIlHX+iQS46D3BFyn2y3Orggm40
-         ws8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=J2xlT5BkG4PHe/4/nJk7BmFqwoJl9sRtUfXxrBXjMCQ=;
-        b=WnZHFw1AE2ufu8kWqPHYEMYY67BNzbxjYIirgzD1q8Gx9v5sRYtEdt2PBwnxJemuMG
-         Hvvuw4Xg7eGwewohGgeKPU+6SYAI5BJVpvmu32arsvAjc5lN5b6vzmpIhwUVSs1HGnyS
-         1vabRMdr7iWuAUSPOq/aAk5LJDLnUR4nMg68JnAZJyqs7WCsIYlQLzdPH8k2EVRdKnNE
-         Y8XkzBXLXP/t/X7AP8ya2XMz/Q00dBHQYZRHnU127KeUnBR6nYkn3Rsk+917A6ZOxCo2
-         iCpw1ix1Uw+EZKnZqr/j2sfbSA1CoVyLsDMXUUiJXIblAqFujtb7Ll+a9zqDMWYMZM/t
-         OKPQ==
-X-Gm-Message-State: APjAAAVRFuOoWUJhylZL/lvNEEPC1C2qDWOgNBATyoyh5RYJBYD9SfOq
-        Eu1p5zUiQu9D2GylkZh485EpBPhVDVk=
-X-Google-Smtp-Source: APXvYqwW8bb+vtL/Lysm9EpPCmcTXzOQ2ut1uDpyQmfhMuaCptVMX9tFM6WT2buC0hsqYxHSzW//c6xIsSk=
-X-Received: by 2002:ac8:394b:: with SMTP id t11mr73550464qtb.286.1560784265391;
- Mon, 17 Jun 2019 08:11:05 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 17:10:50 +0200
-In-Reply-To: <20190617151050.92663-1-glider@google.com>
-Message-Id: <20190617151050.92663-3-glider@google.com>
-Mime-Version: 1.0
-References: <20190617151050.92663-1-glider@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v7 2/2] mm: init: report memory auto-initialization features
- at boot time
-From:   Alexander Potapenko <glider@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>
-Cc:     Alexander Potapenko <glider@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sandeep Patil <sspatil@android.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Marco Elver <elver@google.com>,
-        Kaiwan N Billimoria <kaiwan@kaiwantech.com>,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org
+        Mon, 17 Jun 2019 11:56:12 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HFqSjp007270
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 11:56:11 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t6dhe95j3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 11:56:10 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 17 Jun 2019 16:56:08 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Jun 2019 16:56:05 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HFu4qB49152140
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 15:56:04 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E82F611C05B;
+        Mon, 17 Jun 2019 15:56:03 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C03EA11C04A;
+        Mon, 17 Jun 2019 15:56:02 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.81.90])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Jun 2019 15:56:02 +0000 (GMT)
+Subject: Re: [PATCH] ima: dynamically allocate shash_desc
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 17 Jun 2019 11:55:51 -0400
+In-Reply-To: <20190617115838.2397872-1-arnd@arndb.de>
+References: <20190617115838.2397872-1-arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061715-0012-0000-0000-00000329E361
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061715-0013-0000-0000-00002162FBD7
+Message-Id: <1560786951.4072.103.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906170141
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Print the currently enabled stack and heap initialization modes.
+On Mon, 2019-06-17 at 13:20 +0200, Arnd Bergmann wrote:
+> On 32-bit ARM, we get a warning about excessive stack usage when
+> building with clang.
+> 
+> security/integrity/ima/ima_crypto.c:504:5: error: stack frame size
+> of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-
+> Wframe-larger-than=]
 
-Stack initialization is enabled by a config flag, while heap
-initialization is configured at boot time with defaults being set
-in the config. It's more convenient for the user to have all information
-about these hardening measures in one place at boot, so the user can
-reason about the expected behavior of the running system.
+I'm definitely not seeing this.  Is this problem a result of non
+upstreamed patches?  For sha1, currently the only possible hash
+algorithm, I'm seeing 664.
 
-The possible options for stack are:
- - "all" for CONFIG_INIT_STACK_ALL;
- - "byref_all" for CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL;
- - "byref" for CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF;
- - "__user" for CONFIG_GCC_PLUGIN_STRUCTLEAK_USER;
- - "off" otherwise.
+Mimi
 
-Depending on the values of init_on_alloc and init_on_free boottime
-options we also report "heap alloc" and "heap free" as "on"/"off".
-
-In the init_on_free mode initializing pages at boot time may take a
-while, so print a notice about that as well. This depends on how much
-memory is installed, the memory bandwidth, etc.
-On a relatively modern x86 system, it takes about 0.75s/GB to wipe all
-memory:
-
-  [    0.418722] mem auto-init: stack:byref_all, heap alloc:off, heap free:on
-  [    0.419765] mem auto-init: clearing system memory may take some time...
-  [   12.376605] Memory: 16408564K/16776672K available (14339K kernel code, 1397K rwdata, 3756K rodata, 1636K init, 11460K bss, 368108K reserved, 0K cma-reserved)
-
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Suggested-by: Kees Cook <keescook@chromium.org>
-Acked-by: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kostya Serebryany <kcc@google.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Sandeep Patil <sspatil@android.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: Marco Elver <elver@google.com>
-Cc: Kaiwan N Billimoria <kaiwan@kaiwantech.com>
-Cc: kernel-hardening@lists.openwall.com
-Cc: linux-mm@kvack.org
-Cc: linux-security-module@vger.kernel.org
----
- v6:
- - update patch description, fixed message about clearing memory
- v7:
- - rebase the patch, add the Acked-by: tag;
- - more description updates as suggested by Kees;
- - make report_meminit() static.
----
- init/main.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/init/main.c b/init/main.c
-index 66a196c5e4c3..ff5803b0841c 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -520,6 +520,29 @@ static inline void initcall_debug_enable(void)
- }
- #endif
- 
-+/* Report memory auto-initialization states for this boot. */
-+static void __init report_meminit(void)
-+{
-+	const char *stack;
-+
-+	if (IS_ENABLED(CONFIG_INIT_STACK_ALL))
-+		stack = "all";
-+	else if (IS_ENABLED(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL))
-+		stack = "byref_all";
-+	else if (IS_ENABLED(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF))
-+		stack = "byref";
-+	else if (IS_ENABLED(CONFIG_GCC_PLUGIN_STRUCTLEAK_USER))
-+		stack = "__user";
-+	else
-+		stack = "off";
-+
-+	pr_info("mem auto-init: stack:%s, heap alloc:%s, heap free:%s\n",
-+		stack, want_init_on_alloc(GFP_KERNEL) ? "on" : "off",
-+		want_init_on_free() ? "on" : "off");
-+	if (want_init_on_free())
-+		pr_info("mem auto-init: clearing system memory may take some time...\n");
-+}
-+
- /*
-  * Set up kernel memory allocators
-  */
-@@ -530,6 +553,7 @@ static void __init mm_init(void)
- 	 * bigger than MAX_ORDER unless SPARSEMEM.
- 	 */
- 	page_ext_init_flatmem();
-+	report_meminit();
- 	mem_init();
- 	kmem_cache_init();
- 	pgtable_init();
--- 
-2.22.0.410.gd8fdbe21b5-goog
+> 
+> Using kmalloc to get the descriptor reduces this to 320 bytes.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  security/integrity/ima/ima_crypto.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> index d4c7b8e1b083..8a66bab4c435 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -461,16 +461,21 @@ static int ima_calc_field_array_hash_tfm(struct ima_field_data *field_data,
+>  					 struct ima_digest_data *hash,
+>  					 struct crypto_shash *tfm)
+>  {
+> -	SHASH_DESC_ON_STACK(shash, tfm);
+> +	struct shash_desc *shash;
+>  	int rc, i;
+>  
+> +	shash = kmalloc(sizeof(struct shash_desc) + crypto_shash_descsize(tfm),
+> +			GFP_KERNEL);
+> +	if (!shash)
+> +		return -ENOMEM;
+> +
+>  	shash->tfm = tfm;
+>  
+>  	hash->length = crypto_shash_digestsize(tfm);
+>  
+>  	rc = crypto_shash_init(shash);
+>  	if (rc != 0)
+> -		return rc;
+> +		goto out;
+>  
+>  	for (i = 0; i < num_fields; i++) {
+>  		u8 buffer[IMA_EVENT_NAME_LEN_MAX + 1] = { 0 };
+> @@ -497,7 +502,8 @@ static int ima_calc_field_array_hash_tfm(struct ima_field_data *field_data,
+>  
+>  	if (!rc)
+>  		rc = crypto_shash_final(shash, hash->digest);
+> -
+> +out:
+> +	kfree(shash);
+>  	return rc;
+>  }
+>  
 
