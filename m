@@ -2,103 +2,68 @@ Return-Path: <SRS0=04rW=UQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1643C31E5B
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7DCC31E5C
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:11:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1166208C0
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:07:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7B3B208C0
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:11:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfFQSHh (ORCPT
+        id S1727666AbfFQSLV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:07:37 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19666 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726427AbfFQSHh (ORCPT
+        Mon, 17 Jun 2019 14:11:21 -0400
+Received: from namei.org ([65.99.196.166]:39700 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727523AbfFQSLU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:07:37 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HI7YoA018491
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 14:07:35 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2t6dnhdthc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2019 14:07:35 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 17 Jun 2019 19:07:23 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Jun 2019 19:07:19 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HI7ImH53543130
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Jun 2019 18:07:18 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A32CFA4053;
-        Mon, 17 Jun 2019 18:07:18 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B031A4059;
-        Mon, 17 Jun 2019 18:07:17 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.81.90])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Jun 2019 18:07:17 +0000 (GMT)
-Subject: Re: [PATCH] ima: dynamically allocate shash_desc
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
+        Mon, 17 Jun 2019 14:11:20 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x5HIB5hc026662;
+        Mon, 17 Jun 2019 18:11:05 GMT
+Date:   Mon, 17 Jun 2019 11:11:05 -0700 (PDT)
+From:   James Morris <jmorris@namei.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+cc:     Nayna Jain <nayna@linux.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 17 Jun 2019 14:07:06 -0400
-In-Reply-To: <1560786951.4072.103.camel@linux.ibm.com>
-References: <20190617115838.2397872-1-arnd@arndb.de>
-         <1560786951.4072.103.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061718-0008-0000-0000-000002F48A92
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061718-0009-0000-0000-000022619DAC
-Message-Id: <1560794826.4072.169.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906170162
+Subject: Re: [PATCH] integrity: Fix __integrity_init_keyring() section
+ mismatch
+In-Reply-To: <20190617074452.12901-1-geert@linux-m68k.org>
+Message-ID: <alpine.LRH.2.21.1906171110550.25545@namei.org>
+References: <20190617074452.12901-1-geert@linux-m68k.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2019-06-17 at 11:55 -0400, Mimi Zohar wrote:
-> On Mon, 2019-06-17 at 13:20 +0200, Arnd Bergmann wrote:
-> > On 32-bit ARM, we get a warning about excessive stack usage when
-> > building with clang.
-> > 
-> > security/integrity/ima/ima_crypto.c:504:5: error: stack frame size
-> > of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-
-> > Wframe-larger-than=]
+On Mon, 17 Jun 2019, Geert Uytterhoeven wrote:
+
+> With gcc-4.6.3:
 > 
-> I'm definitely not seeing this.  Is this problem a result of non
-> upstreamed patches?  For sha1, currently the only possible hash
-> algorithm, I'm seeing 664.
+>     WARNING: vmlinux.o(.text.unlikely+0x24c64): Section mismatch in reference from the function __integrity_init_keyring() to the function .init.text:set_platform_trusted_keys()
+>     The function __integrity_init_keyring() references
+>     the function __init set_platform_trusted_keys().
+>     This is often because __integrity_init_keyring lacks a __init
+>     annotation or the annotation of set_platform_trusted_keys is wrong.
+> 
+> Indeed, if the compiler decides not to inline __integrity_init_keyring(),
+> a warning is issued.
+> 
+> Fix this by adding the missing __init annotation.
+> 
+> Fixes: 9dc92c45177ab70e ("integrity: Define a trusted platform keyring")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Every time a measurement is added to the measurement list, the memory
-would be allocated/freed.  The frequency of new measurements is policy
-dependent.  For performance reasons, I'd prefer if the allocation
-remains on the stack.
 
-Mimi
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+
+
+-- 
+James Morris
+<jmorris@namei.org>
 
