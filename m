@@ -2,120 +2,101 @@ Return-Path: <SRS0=04rW=UQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF751C31E5B
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 16:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1757EC468B0
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 16:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9B87208C4
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 16:25:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NrVMIU4F"
+	by mail.kernel.org (Postfix) with ESMTP id EF7D0208CB
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 16:39:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfFQQZQ (ORCPT
+        id S1727678AbfFQQi6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jun 2019 12:25:16 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35502 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbfFQQZQ (ORCPT
+        Mon, 17 Jun 2019 12:38:58 -0400
+Received: from mga09.intel.com ([134.134.136.24]:41077 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725863AbfFQQi4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:25:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PXluhcTCTbRu7MWWqjlNoU2J2WlclfBp1+lbYvichwE=; b=NrVMIU4FjkXaOiq8EBdBsisYX
-        RPTIEzflV5zzQh/U2sftmMWhHn06EA8gVxhHQI09wAKbG1YY/aylBwEQE3x3HBwdn0p4zMqAk5Mo8
-        Mvga3SN32GaMtRhAnUBUhndqL+MxsHwNGkAS3M0CB357M+Invewv0tSVMt+X2l3KOM45BTbbhqnDt
-        1+++Y1sYLNcIANFQDfBUusVnW+IoqYMTzumlNSNAxUdtCv1NiresC8d9lLN1vOGTCgavANJXprh0g
-        Ycsi9s+FlfSM4Wn38hFtg0KP3TV8Cxgna/sKWsWO2eGeM2ZxuvI/tX2zz3ee6gP63a/gt8MV8ySJJ
-        snbxbH0mw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hcuRE-0000rQ-MP; Mon, 17 Jun 2019 16:24:56 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 366F52076F712; Mon, 17 Jun 2019 18:24:55 +0200 (CEST)
-Date:   Mon, 17 Jun 2019 18:24:55 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jann Horn <jannh@google.com>, Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
- ring buffer
-Message-ID: <20190617162455.GL3436@hirez.programming.kicks-ass.net>
-References: <20190528162603.GA24097@kroah.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
- <4031.1559064620@warthog.procyon.org.uk>
- <20190528231218.GA28384@kroah.com>
- <31936.1559146000@warthog.procyon.org.uk>
- <16193.1559163763@warthog.procyon.org.uk>
- <21942.1559304135@warthog.procyon.org.uk>
- <606.1559312412@warthog.procyon.org.uk>
- <15401.1559322762@warthog.procyon.org.uk>
+        Mon, 17 Jun 2019 12:38:56 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 09:38:55 -0700
+X-ExtLoop1: 1
+Received: from rameshr1-mobl.gar.corp.intel.com (HELO localhost) ([10.252.60.156])
+  by fmsmga005.fm.intel.com with ESMTP; 17 Jun 2019 09:38:44 -0700
+Date:   Mon, 17 Jun 2019 19:38:47 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v2 5/5] security/selinux: Add enclave_load()
+ implementation
+Message-ID: <20190617163655.GA8710@linux.intel.com>
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+ <20190606021145.12604-6-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <15401.1559322762@warthog.procyon.org.uk>
+In-Reply-To: <20190606021145.12604-6-sean.j.christopherson@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 31, 2019 at 06:12:42PM +0100, David Howells wrote:
-> Peter Zijlstra <peterz@infradead.org> wrote:
+On Wed, Jun 05, 2019 at 07:11:45PM -0700, Sean Christopherson wrote:
+> The goal of selinux_enclave_load() is to provide a facsimile of the
+> existing selinux_file_mprotect() and file_map_prot_check() policies,
+> but tailored to the unique properties of SGX.
 > 
-> > > > (and it has already been established that refcount_t doesn't work for
-> > > > usage count scenarios)
-> > > 
-> > > ?
-> > > 
-> > > Does that mean struct kref doesn't either?
-> > 
-> > Indeed, since kref is just a pointless wrapper around refcount_t it does
-> > not either.
-> > 
-> > The main distinction between a reference count and a usage count is that
-> > 0 means different things. For a refcount 0 means dead. For a usage count
-> > 0 is merely unused but valid.
+> For example, an enclave page is technically backed by a MAP_SHARED file,
+> but the "file" is essentially shared memory that is never persisted
+> anywhere and also requires execute permissions (for some pages).
 > 
-> Ah - I consider the terms interchangeable.
+> The basic concept is to require appropriate execute permissions on the
+> source of the enclave for pages that are requesting PROT_EXEC, e.g. if
+> an enclave page is being loaded from a regular file, require
+> FILE__EXECUTE and/or FILE__EXECMOND, and if it's coming from an
+> anonymous/private mapping, require PROCESS__EXECMEM since the process
+> is essentially executing from the mapping, albeit in a roundabout way.
 > 
-> Take Documentation/filesystems/vfs.txt for instance:
+> Note, FILE__READ and FILE__WRITE are intentionally not required even if
+> the source page is backed by a regular file.  Writes to the enclave page
+> are contained to the EPC, i.e. never hit the original file, and read
+> permissions have already been vetted (or the VMA doesn't have PROT_READ,
+> in which case loading the page into the enclave will fail).
 > 
->   dget: open a new handle for an existing dentry (this just increments
-> 	the usage count)
-> 
->   dput: close a handle for a dentry (decrements the usage count). ...
-> 
->   ...
-> 
->   d_lookup: look up a dentry given its parent and path name component
-> 	It looks up the child of that given name from the dcache
-> 	hash table. If it is found, the reference count is incremented
-> 	and the dentry is returned. The caller must use dput()
-> 	to free the dentry when it finishes using it.
-> 
-> Here we interchange the terms.
-> 
-> Or https://www.kernel.org/doc/gorman/html/understand/understand013.html
-> which seems to interchange the terms in reference to struct page.
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Right, but we have two distinct set of semantics, I figured it makes
-sense to have two different names for them. Do you have an alternative
-naming scheme we could use?
+In the end of the day, the main problem with this patch is that the
+existing LSM hooks are generic. I don't we can have specific hooks
+for proprietary hardware.
 
-Or should we better document our distinction between reference and usage
-count?
+/Jarkko
