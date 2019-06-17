@@ -2,265 +2,88 @@ Return-Path: <SRS0=04rW=UQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F156C31E5D
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 908E2C31E5B
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 20:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73ED4208C4
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 18:38:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/GKRLN8"
+	by mail.kernel.org (Postfix) with ESMTP id 631162085A
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jun 2019 20:08:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfFQShx (ORCPT
+        id S1728926AbfFQUIW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:37:53 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44376 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbfFQShw (ORCPT
+        Mon, 17 Jun 2019 16:08:22 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39616 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfFQUIU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:37:52 -0400
-Received: by mail-pf1-f193.google.com with SMTP id t16so6132168pfe.11;
-        Mon, 17 Jun 2019 11:37:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iingJn35PfXiFELQGwi9zLNPjCZgv0Bhfrzd1uEUrgA=;
-        b=g/GKRLN8CI1MOivVNS73mS5WWZB3FHDwnzZIsi1xO1vaQzwonvS2q0+YPkgdwlv1Tb
-         dUy/GU/JBAV1XQbJx+Pvv5H5XZT2aX4BBe/VoLdH4iDb6Es0PnaoVcxuwVgsWWbmDnZO
-         VP4rHkLiC3T7lxTHerkvP0aOfIqgoRU143OT6kUCs7fm9ORu1fN5ofw7VIGyplkGWeZ+
-         v67WsuoYz/mBZMyaTk/gnSO1aA5B/1YA/Mu1KX6uYftlTouIjkwfjcO++ukC1hv9Boqy
-         RUMUuwxvMweeMAv1BzFgpUfFYwF1MxwyGYn2oy5GRyaBVs2Ye3rvuzbnqCBfcAsFR0tF
-         WJZQ==
+        Mon, 17 Jun 2019 16:08:20 -0400
+Received: by mail-qt1-f195.google.com with SMTP id i34so7097299qta.6;
+        Mon, 17 Jun 2019 13:08:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iingJn35PfXiFELQGwi9zLNPjCZgv0Bhfrzd1uEUrgA=;
-        b=Qz+qonJE1C++tv7OKZ3MjcJ5XWCa0lihgTST1EAgDHIvf2iSUFboMm8YiITZlJlm3l
-         lPO7L6YnYLGHKqVF4C8YqvBG6vTvSFDkDGurQ1NjynuTt1aS+trS0LYUxTVPP1/i2QpG
-         MwGNFGuLoiCvi6KIky8aE6k730SCt32PnACn62b+fbN+EU6eK2vMOvrpxb9lO+J5L2VT
-         trq0c4j9ubhqz0G0AO+yRbdKA1mtxixwuB89k/8RGGq3jwi63ElroVHvwltBDqeCkgo6
-         tXX2wm3fFFCsOoAeuX+VaRdSI3seV+FTpheRIJq6gZBGaBZxyqpsObBJMkZeJlJlsWIG
-         P3qg==
-X-Gm-Message-State: APjAAAXd+lcjJvTW0k8sQ82gRK7lc5kgHPxewDVzEUafwdAxxROkkvjT
-        mbI3WeCArljUaaE9OHlNW+QU06tG
-X-Google-Smtp-Source: APXvYqy6tiM86DwpjA9UqK99vHR7eVZNqdTpGnhondAUf3BFQCayeikZGi9GVIT5dfhXSkAV7PNTWw==
-X-Received: by 2002:aa7:8dd2:: with SMTP id j18mr45416193pfr.88.1560796670993;
-        Mon, 17 Jun 2019 11:37:50 -0700 (PDT)
-Received: from localhost.localdomain ([167.220.56.169])
-        by smtp.gmail.com with ESMTPSA id f17sm13104817pgv.16.2019.06.17.11.37.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 11:37:50 -0700 (PDT)
-From:   Prakhar Srivastava <prsriva02@gmail.com>
-To:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     zohar@linux.ibm.com, roberto.sassu@huawei.com,
-        Prakhar Srivastava <prsriva02@gmail.com>
-Subject: [PATCH V9 1/3] IMA:Define a new hook to measure the kexec boot command line arguments
-Date:   Mon, 17 Jun 2019 11:37:36 -0700
-Message-Id: <20190617183738.14484-2-prsriva02@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190617183738.14484-1-prsriva02@gmail.com>
-References: <20190617183738.14484-1-prsriva02@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zmogzjeNfdvyQHIHPql3oMPQQB85wlj8S3ap4Uhkqn8=;
+        b=XsFyt+CT9YA6cKZgB5FzO7KCsMonBolkQ0HF5RYA++rqoEoi/De5is9wPZT/tX1wpc
+         8PMXFD38FNjfEDNsdMx+6yOD6M0qkLSPouFqD+TKj6NvYZNkFm/zncKFoZ8+hJb2pjHj
+         NNTx2zwSV6/cEhZeGv5tgAwncJVY96FfH/L7+6bUV+kiBfS4MxYDxrN8CIkSB3RA0PQM
+         UlMf1f1LX+D/MX0H6O37ofVuB/3cmrkMHIBCDMcMrWZ/6oCDHejw53xKT2uOOUUZyg4V
+         3ps1ODQLukMlf6siHdIkrbjVaYYHOSZ/a7Ew/phRiQhVUcLODc9qjCXfZsZ1O21pVkY6
+         aJOA==
+X-Gm-Message-State: APjAAAUvS21xsZZy1s6rSKH3FVzV9WQVW1pp4p56uyDVgTYLnMYXOo8O
+        +4LVb294H7G85UBFna2UM9bbX9BTAVaAo/JjcwA=
+X-Google-Smtp-Source: APXvYqx/EkSHtqxjK+IK19lRpttkWTjepWnFxOKVDYNVPZwMKEsgt97sUiKYUHDMpSqx8lo70kw5hKq/+zvLn7YNsDs=
+X-Received: by 2002:ac8:3485:: with SMTP id w5mr18793022qtb.142.1560802099413;
+ Mon, 17 Jun 2019 13:08:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190617115838.2397872-1-arnd@arndb.de> <1560786951.4072.103.camel@linux.ibm.com>
+ <1560794826.4072.169.camel@linux.ibm.com>
+In-Reply-To: <1560794826.4072.169.camel@linux.ibm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 17 Jun 2019 22:08:02 +0200
+Message-ID: <CAK8P3a1Q2JG3KBYNYgWg0_XtGUufNc6zuqcUBqiGSaBRp+au-w@mail.gmail.com>
+Subject: Re: [PATCH] ima: dynamically allocate shash_desc
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Currently during soft reboot(kexec_file_load) boot command line
-arguments are not measured. Define hooks needed to measure kexec
-command line arguments during soft reboot(kexec_file_load).
+On Mon, Jun 17, 2019 at 8:08 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Mon, 2019-06-17 at 11:55 -0400, Mimi Zohar wrote:
+> > On Mon, 2019-06-17 at 13:20 +0200, Arnd Bergmann wrote:
+> > > On 32-bit ARM, we get a warning about excessive stack usage when
+> > > building with clang.
+> > >
+> > > security/integrity/ima/ima_crypto.c:504:5: error: stack frame size
+> > > of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-
+> > > Wframe-larger-than=]
+> >
+> > I'm definitely not seeing this.  Is this problem a result of non
+> > upstreamed patches?  For sha1, currently the only possible hash
+> > algorithm, I'm seeing 664.
 
-- A new ima hook ima_kexec_cmdline is defined to be called by the
-kexec code.
-- A new function process_buffer_measurement is defined to measure
-the buffer hash into the IMA measurement list.
-- A new func policy KEXEC_CMDLINE is defined to control the
- measurement.[Suggested by Mimi]
+You won't see it with gcc, only with clang in some randconfig builds,
+I suppose only when KASAN is enabled.
 
-Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
----
- Documentation/ABI/testing/ima_policy |  1 +
- include/linux/ima.h                  |  2 +
- security/integrity/ima/ima.h         |  1 +
- security/integrity/ima/ima_api.c     |  1 +
- security/integrity/ima/ima_main.c    | 74 ++++++++++++++++++++++++++++
- security/integrity/ima/ima_policy.c  |  7 +++
- 6 files changed, 86 insertions(+)
+> Every time a measurement is added to the measurement list, the memory
+> would be allocated/freed.  The frequency of new measurements is policy
+> dependent.  For performance reasons, I'd prefer if the allocation
+> remains on the stack.
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index b383c1763610..fc376a323908 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -28,6 +28,7 @@ Description:
- 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
-+				[KEXEC_CMDLINE]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
- 			       [[^]MAY_EXEC]
- 			fsmagic:= hex value
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index fd9f7cf4cdf5..b42f5a006042 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -26,6 +26,7 @@ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
- extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 			      enum kernel_read_file_id id);
- extern void ima_post_path_mknod(struct dentry *dentry);
-+extern void ima_kexec_cmdline(const void *buf, int size);
- 
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
-@@ -92,6 +93,7 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
- 	return;
- }
- 
-+static inline void ima_kexec_cmdline(const void *buf, int size) {}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 18b48a6d0b80..a4ad1270bffa 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -185,6 +185,7 @@ static inline unsigned long ima_hash_key(u8 *digest)
- 	hook(KEXEC_KERNEL_CHECK)	\
- 	hook(KEXEC_INITRAMFS_CHECK)	\
- 	hook(POLICY_CHECK)		\
-+	hook(KEXEC_CMDLINE)		\
- 	hook(MAX_CHECK)
- #define __ima_hook_enumify(ENUM)	ENUM,
- 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 78eb11c7ac07..ea7d8cbf712f 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -176,6 +176,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-  *	subj,obj, and type: are LSM specific.
-  *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
-+ *	| KEXEC_CMDLINE
-  *	mask: contains the permission mask
-  *	fsmagic: hex value
-  *
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index af341a80118f..1e233417a7af 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -605,6 +605,80 @@ int ima_load_data(enum kernel_load_data_id id)
- 	return 0;
- }
- 
-+/*
-+ * process_buffer_measurement - Measure the buffer to ima log.
-+ * @buf: pointer to the buffer that needs to be added to the log.
-+ * @size: size of buffer(in bytes).
-+ * @eventname: event name to be used for the buffer entry.
-+ * @cred: a pointer to a credentials structure for user validation.
-+ * @secid: the secid of the task to be validated.
-+ *
-+ * Based on policy, the buffer is measured into the ima log.
-+ */
-+static void process_buffer_measurement(const void *buf, int size,
-+				       const char *eventname,
-+				       const struct cred *cred, u32 secid)
-+{
-+	int ret = 0;
-+	struct ima_template_entry *entry = NULL;
-+	struct integrity_iint_cache iint = {};
-+	struct ima_event_data event_data = {.iint = &iint };
-+	struct ima_template_desc *template_desc = NULL;
-+	struct {
-+		struct ima_digest_data hdr;
-+		char digest[IMA_MAX_DIGEST_SIZE];
-+	} hash = {};
-+	int violation = 0;
-+	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
-+	int action = 0;
-+
-+	action = ima_get_action(NULL, cred, secid, 0, KEXEC_CMDLINE, &pcr,
-+				&template_desc);
-+	if (!(action & IMA_MEASURE))
-+		goto out;
-+
-+	event_data.filename = eventname;
-+
-+	iint.ima_hash = &hash.hdr;
-+	iint.ima_hash->algo = ima_hash_algo;
-+	iint.ima_hash->length = hash_digest_size[ima_hash_algo];
-+
-+	ret = ima_calc_buffer_hash(buf, size, iint.ima_hash);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = ima_alloc_init_template(&event_data, &entry, template_desc);
-+	if (ret < 0)
-+		goto out;
-+
-+	if (action & IMA_MEASURE)
-+		ret = ima_store_template(entry, violation, NULL, buf, pcr);
-+
-+	if (ret < 0)
-+		ima_free_template_entry(entry);
-+
-+out:
-+	return;
-+}
-+
-+/**
-+ * ima_kexec_cmdline - measure kexec cmdline boot args
-+ * @buf: pointer to buffer
-+ * @size: size of buffer
-+ *
-+ * Buffers can only be measured, not appraised.
-+ */
-+void ima_kexec_cmdline(const void *buf, int size)
-+{
-+	u32 secid;
-+
-+	if (buf && size != 0) {
-+		security_task_getsecid(current, &secid);
-+		process_buffer_measurement(buf, size, "kexec-cmdline",
-+					   current_cred(), secid);
-+	}
-+}
-+
- static int __init init_ima(void)
- {
- 	int error;
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index fd9b01881d17..4e8bb7eecd08 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -292,6 +292,11 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- {
- 	int i;
- 
-+	if (func == KEXEC_CMDLINE) {
-+		if ((rule->flags & IMA_FUNC) && (rule->func == func))
-+			return true;
-+		return false;
-+	}
- 	if ((rule->flags & IMA_FUNC) &&
- 	    (rule->func != func && func != POST_SETATTR))
- 		return false;
-@@ -880,6 +885,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = KEXEC_INITRAMFS_CHECK;
- 			else if (strcmp(args[0].from, "POLICY_CHECK") == 0)
- 				entry->func = POLICY_CHECK;
-+			else if (strcmp(args[0].from, "KEXEC_CMDLINE") == 0)
-+				entry->func = KEXEC_CMDLINE;
- 			else
- 				result = -EINVAL;
- 			if (!result)
--- 
-2.19.1
+Is there a way to preallocate the shash_desc instead? That would
+avoid the overhead.
 
+        Arnd
