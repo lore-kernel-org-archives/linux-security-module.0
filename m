@@ -2,123 +2,166 @@ Return-Path: <SRS0=MF6I=UR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_DR,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A6DC31E51
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jun 2019 13:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3631BC31E5B
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jun 2019 15:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93A012084B
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jun 2019 13:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07A6620873
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jun 2019 15:42:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729161AbfFRNzr (ORCPT
+        id S1729720AbfFRPmA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jun 2019 09:55:47 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:11610 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726047AbfFRNzq (ORCPT
+        Tue, 18 Jun 2019 11:42:00 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:35716 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729349AbfFRPmA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jun 2019 09:55:46 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5IDqa2d141748
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2019 09:55:45 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t6xjk7kqw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2019 09:55:45 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 18 Jun 2019 14:55:40 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Jun 2019 14:55:36 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5IDtaKP49086586
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Jun 2019 13:55:36 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E8B35A4054;
-        Tue, 18 Jun 2019 13:55:35 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F244DA405B;
-        Tue, 18 Jun 2019 13:55:34 +0000 (GMT)
-Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 18 Jun 2019 13:55:34 +0000 (GMT)
-Subject: Re: [PATCH] ima: dynamically allocate shash_desc
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Tue, 18 Jun 2019 11:42:00 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x5IFegEV006176;
+        Tue, 18 Jun 2019 10:40:42 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x5IFeepQ006175;
+        Tue, 18 Jun 2019 10:40:40 -0500
+Date:   Tue, 18 Jun 2019 10:40:40 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Cedric Xing <cedric.xing@intel.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        selinux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-In-Reply-To: <CAK8P3a1Q2JG3KBYNYgWg0_XtGUufNc6zuqcUBqiGSaBRp+au-w@mail.gmail.com>
-References: <20190617115838.2397872-1-arnd@arndb.de>
-         <1560786951.4072.103.camel@linux.ibm.com>
-         <1560794826.4072.169.camel@linux.ibm.com>
-         <CAK8P3a1Q2JG3KBYNYgWg0_XtGUufNc6zuqcUBqiGSaBRp+au-w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Tue, 18 Jun 2019 08:44:38 -0400
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        pmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in SELinux
+Message-ID: <20190618154040.GA4603@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <cover.1560131039.git.cedric.xing@intel.com> <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com> <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov> <20190611220243.GB3416@linux.intel.com> <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov> <20190614004600.GF18385@linux.intel.com> <20190614153840.GC12191@linux.intel.com> <CALCETrXcOQkvMHdh5DgdQ6JAgzsZCNFVEtnQz-5RbNr4vsadDQ@mail.gmail.com> <20190617164915.GA25085@linux.intel.com>
 Mime-Version: 1.0
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061813-0008-0000-0000-000002F4CB64
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061813-0009-0000-0000-00002261E300
-Message-Id: <1560861878.9530.17.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-18_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906180113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617164915.GA25085@linux.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 18 Jun 2019 10:40:42 -0500 (CDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2019-06-17 at 22:08 +0200, Arnd Bergmann wrote:
-> On Mon, Jun 17, 2019 at 8:08 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > On Mon, 2019-06-17 at 11:55 -0400, Mimi Zohar wrote:
-> > > On Mon, 2019-06-17 at 13:20 +0200, Arnd Bergmann wrote:
-> > > > On 32-bit ARM, we get a warning about excessive stack usage when
-> > > > building with clang.
-> > > >
-> > > > security/integrity/ima/ima_crypto.c:504:5: error: stack frame size
-> > > > of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-
-> > > > Wframe-larger-than=]
-> > >
-> > > I'm definitely not seeing this.  Is this problem a result of non
-> > > upstreamed patches?  For sha1, currently the only possible hash
-> > > algorithm, I'm seeing 664.
-> 
-> You won't see it with gcc, only with clang in some randconfig builds,
-> I suppose only when KASAN is enabled.
-> 
-> > Every time a measurement is added to the measurement list, the memory
-> > would be allocated/freed.  The frequency of new measurements is policy
-> > dependent.  For performance reasons, I'd prefer if the allocation
-> > remains on the stack.
-> 
-> Is there a way to preallocate the shash_desc instead? That would
-> avoid the overhead.
+On Mon, Jun 17, 2019 at 09:49:15AM -0700, Sean Christopherson wrote:
 
-There are 3 other SHASH_DESC_ON_STACK definitions in just
-ima_crypto.c, with a total of ~55 other places in the kernel.  Before
-fixing this particular function, I'd like to know if the "excessive
-stack usage" warning is limited to ima_calc_field_array_hash_tfm().
- If so, what is so special about its usage of SHASH_DESC_ON_STACK?
+Good morning to everyone.
 
-thanks,
+> On Sun, Jun 16, 2019 at 03:14:51PM -0700, Andy Lutomirski wrote:
+> > The most significant issue I see is the following.  Consider two
+> > cases. First, an SGX2 enclave that dynamically allocates memory but
+> > doesn't execute code from dynamic memory.  Second, an SGX2 enclave
+> > that *does* execute code from dynamic memory.  In #1, the untrusted
+> > stack needs to decide whether to ALLOW_EXEC when the memory is
+> > allocated, which means that it either needs to assume the worst or it
+> > needs to know at allocation time whether the enclave ever intends to
+> > change the permission to X.
 
-Mimi
+> I'm just not convinced that folks running enclaves that can't
+> communicate their basic functionality will care one whit about
+> SELinux restrictions, i.e. will happily give EXECMOD even if it's
+> not strictly necessary.
 
+Hence the comments in my mail from last Friday.
+
+It seems to us that the path forward is to require the enclave
+author/signer to express their intent to implement executable dynamic
+memory, see below.
+
+> > I suppose there's a middle ground.  The driver could use model #1 for
+> > driver-filled pages and model #2 for dynamic pages.  I haven't tried
+> > to fully work it out, but I think there would be the ALLOW_READ /
+> > ALLOW_WRITE / ALLOW_EXEC flag for EADD-ed pages but, for EAUG-ed
+> > pages, there would be a different policy.  This might be as simple as
+> > internally having four flags instead of three:
+> > 
+> > ALLOW_READ, ALLOW_WRITE, ALLOW_EXEC: as before
+> > 
+> > ALLOW_EXEC_COND: set implicitly by the driver for EAUG.
+> > 
+> > As in #1, if you try to mmap or protect a page with neither ALLOW_EXEC
+> > variant, it fails (-EACCES, perhaps).  But, if you try to mmap or
+> > mprotect an ALLOW_EXEC_COND page with PROT_EXEC, you ask LSM for
+> > permission.  There is no fancy DIRTY tracking here, since it's
+> > reasonable to just act as though *every* ALLOW_EXEC_COND page is
+> > dirty.  There is no real auditing issue here, since LSM can just log
+> > what permission is missing.
+> > 
+> > Does this seem sensible?  It might give us the best of #1 and #2.
+
+> It would work and is easy to implement *if* SELinux ties permissions
+> to the process, as the SIGSTRUCT vma/file won't be available at
+> EAUG+mprotect().  I already have a set of patches to that effect,
+> I'll send 'em out in a bit.
+
+The VMA that is crafted from the enclave file is going to exist for
+the life of the enclave.  If the intent to use executable dynamic
+memory is specified when the enclave image is being built, or as a
+component of enclave initialization, the driver is in a position to
+log/deny a request to EAUG+mprotect whenever it occurs.  The sensitive
+criteria would seem to be any request for dynamically allocated memory
+with executable status.
+
+The potential security impact of dynamically executable content is
+something that is dependent on the enclave author rather then the
+context of execution that is requesting pages to be allocated for such
+purposes.  There is going to be an LSM hook to evaluate the SIGSTRUCT
+at the time of EINIT, so all of the necessary information is there to
+make a decision on whether or not to flag the VMA as being allowed to
+support dynamically executable content.
+
+It doesn't seem like an onerous requirement for this information to be
+specified in the enclave metadata.  For optimum security, one could
+perhaps argue that the ability to implement dynamic memory should have
+been a specifiable attribute of the enclave, similar to the debug,
+launch and provisioning attributes.
+
+As we have indicated in the past, once the enclave is initialized with
+permissions for dynamically executable content, the platform is
+completely dependent on the security intentions of the author of the
+enclave.  Given that, the notion of enduring significant LSM
+complexity does not seem to be justified.
+
+Which opens up another set of security implications to discuss but we will let
+those lie for the moment.
+
+Have a good day.
+
+Dr. Greg
+
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686            EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"More people are killed every year by pigs than by sharks, which shows
+ you how good we are at evaluating risk."
+                                -- Bruce Schneier
+                                   Beyond Fear
