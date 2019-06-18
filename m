@@ -2,132 +2,123 @@ Return-Path: <SRS0=MF6I=UR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C62C6C31E51
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jun 2019 09:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A6DC31E51
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jun 2019 13:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A47332070B
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jun 2019 09:47:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93A012084B
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jun 2019 13:55:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbfFRJrv (ORCPT
+        id S1729161AbfFRNzr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jun 2019 05:47:51 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:34129 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729113AbfFRJrv (ORCPT
+        Tue, 18 Jun 2019 09:55:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:11610 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726047AbfFRNzq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jun 2019 05:47:51 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MvazO-1iVYJd1CNC-00sfaV; Tue, 18 Jun 2019 11:47:35 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-        Alexander Popov <alex.popov@linux.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Tue, 18 Jun 2019 09:55:46 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5IDqa2d141748
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2019 09:55:45 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t6xjk7kqw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2019 09:55:45 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 18 Jun 2019 14:55:40 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 18 Jun 2019 14:55:36 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5IDtaKP49086586
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jun 2019 13:55:36 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E8B35A4054;
+        Tue, 18 Jun 2019 13:55:35 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F244DA405B;
+        Tue, 18 Jun 2019 13:55:34 +0000 (GMT)
+Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 18 Jun 2019 13:55:34 +0000 (GMT)
+Subject: Re: [PATCH] ima: dynamically allocate shash_desc
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] structleak: disable BYREF_ALL in combination with KASAN_STACK
-Date:   Tue, 18 Jun 2019 11:47:13 +0200
-Message-Id: <20190618094731.3677294-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAK8P3a1Q2JG3KBYNYgWg0_XtGUufNc6zuqcUBqiGSaBRp+au-w@mail.gmail.com>
+References: <20190617115838.2397872-1-arnd@arndb.de>
+         <1560786951.4072.103.camel@linux.ibm.com>
+         <1560794826.4072.169.camel@linux.ibm.com>
+         <CAK8P3a1Q2JG3KBYNYgWg0_XtGUufNc6zuqcUBqiGSaBRp+au-w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Tue, 18 Jun 2019 08:44:38 -0400
+Mime-Version: 1.0
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:peaZfmlkgECAGz9riypsIjV4ic/JP7FXX72Osd9/Mq+xyvBdsCS
- QBR6nMT1ohGbRCit/XsDuRwE9m62UtxQb8P0hVuaqx/phcvYootks744nTD7mnuahBKuDRd
- nlFPtsir0LRT4s7DskzMEeyJxjArgwMxWUyRsgRPXJRek+d2c5rWM1qoz78m39pnj+BpCM6
- +yskDQBig2i7wcwA6yOBg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:mt0pBl9Irk8=:bYl9+u5Pgnw4rI3NpDMYHT
- i53Q/NuCg7Ndw7pN9sP3ZPFD5oeob8tWcVRjg+sNsM7RJ5b9tSeQixOT4O5MYt/D3k3OxKKFR
- CsMMgCj6iveTYDoMsmni/ibnZEv82LWgLycDF/VppP+KZDUEtaLbGUL1zO2KSr9QbWPN8aFc+
- lRLUI9FmI141/v+985lLmm3oOfEgVbmyl/+U0etuXukfVHrJ2YAISq96Nax93pejvbGmN/R6E
- gMxHU1tztk8Bz8A9z+LMq1SuiZ+fCaWyUv7cz//JBCwF0A7R3amDs1oofWWmGIhZ2woS7knzk
- s2PUnpiym4S4dWsQXv4Nm1q7zRzXDtGcHuwqhdfls7EcfffVnoBSejJk958zKoe9Usl3xWCK1
- /VC9gy9fE8Lu+nU5LxlteBelIwC5h1mcq3slnIylUnNW+FfZ01OCbNerLhuiMZrsRfuOG3j9R
- oySFqVKdqDDE77EVHlxUtZAKaY7H5C/Y74EzN7nfv/c3E2mHSdN7IZHpEbZztPDEqa72lY1Ko
- 8jW/nWO+ZzsizP7A//X5ToG2yMsjuCd3Bx4XEbTmCGpgAREI2JI637qz53t4QPAkoNsjSDSKs
- GVIY8zbeF2JUvFkqt5Xx1omS8tFFZKlzcdalZOoMjwUo0ntoXLnDbOtPirWOLhizc1pqZri7Z
- ZnGvPtxhuCnVqCQk9ESm64GpMnDxt0gfXVzKqAu1fYwaMqXdZQAOAw2Jq18zIJuTgzkyl+5Vm
- qNG0l247NeNjdJmxBsYCKJm7kUZFWaEYg7MCEg==
+X-TM-AS-GCONF: 00
+x-cbid: 19061813-0008-0000-0000-000002F4CB64
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061813-0009-0000-0000-00002261E300
+Message-Id: <1560861878.9530.17.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-18_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906180113
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The combination of KASAN_STACK and GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
-leads to much larger kernel stack usage, as seen from the warnings
-about functions that now exceed the 2048 byte limit:
+On Mon, 2019-06-17 at 22:08 +0200, Arnd Bergmann wrote:
+> On Mon, Jun 17, 2019 at 8:08 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >
+> > On Mon, 2019-06-17 at 11:55 -0400, Mimi Zohar wrote:
+> > > On Mon, 2019-06-17 at 13:20 +0200, Arnd Bergmann wrote:
+> > > > On 32-bit ARM, we get a warning about excessive stack usage when
+> > > > building with clang.
+> > > >
+> > > > security/integrity/ima/ima_crypto.c:504:5: error: stack frame size
+> > > > of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-
+> > > > Wframe-larger-than=]
+> > >
+> > > I'm definitely not seeing this.  Is this problem a result of non
+> > > upstreamed patches?  For sha1, currently the only possible hash
+> > > algorithm, I'm seeing 664.
+> 
+> You won't see it with gcc, only with clang in some randconfig builds,
+> I suppose only when KASAN is enabled.
+> 
+> > Every time a measurement is added to the measurement list, the memory
+> > would be allocated/freed.  The frequency of new measurements is policy
+> > dependent.  For performance reasons, I'd prefer if the allocation
+> > remains on the stack.
+> 
+> Is there a way to preallocate the shash_desc instead? That would
+> avoid the overhead.
 
-drivers/media/i2c/tvp5150.c:253:1: error: the frame size of 3936 bytes is larger than 2048 bytes
-fs/ocfs2/dlm/dlmrecovery.c:737:1: error: the frame size of 2088 bytes is larger than 2048 bytes
-fs/ocfs2/aops.c:1892:1: error: the frame size of 2088 bytes is larger than 2048 bytes
-fs/ocfs2/namei.c:1677:1: error: the frame size of 2584 bytes is larger than 2048 bytes
-fs/ocfs2/super.c:1186:1: error: the frame size of 2640 bytes is larger than 2048 bytes
-fs/ocfs2/xattr.c:3678:1: error: the frame size of 2176 bytes is larger than 2048 bytes
-net/bridge/br_netlink.c:1505:1: error: the frame size of 2448 bytes is larger than 2048 bytes
-net/ieee802154/nl802154.c:548:1: error: the frame size of 2232 bytes is larger than 2048 bytes
-net/wireless/nl80211.c:1726:1: error: the frame size of 2224 bytes is larger than 2048 bytes
-net/wireless/nl80211.c:6472:1: error: the frame size of 2112 bytes is larger than 2048 bytes
-net/wireless/nl80211.c:2357:1: error: the frame size of 4584 bytes is larger than 2048 bytes
-net/wireless/nl80211.c:5108:1: error: the frame size of 2760 bytes is larger than 2048 bytes
-drivers/media/tuners/r820t.c:1327:1: error: the frame size of 2816 bytes is larger than 2048 bytes
+There are 3 other SHASH_DESC_ON_STACK definitions in just
+ima_crypto.c, with a total of ~55 other places in the kernel.  Before
+fixing this particular function, I'd like to know if the "excessive
+stack usage" warning is limited to ima_calc_field_array_hash_tfm().
+ If so, what is so special about its usage of SHASH_DESC_ON_STACK?
 
-The warnings are distracting, and risking a kernel stack overflow is
-generally not beneficial to performance, so it may be best to disallow
-that particular combination. This can be done by turning off either
-one. I picked the dependency in GCC_PLUGIN_STRUCTLEAK_BYREF_ALL, as
-this option is designed to make uninitialized stack usage less harmful
-when enabled on its own, but it also prevents KASAN from detecting those
-cases in which it was in fact needed.
+thanks,
 
-KASAN_STACK is currently implied by KASAN on gcc, but could be made a
-user selectable option if we want to allow combining (non-stack) KASAN
-wtih GCC_PLUGIN_STRUCTLEAK_BYREF_ALL.
-
-Note that it woult be possible to specifically address the files that
-print the warning, but presumably the overall stack usage is still
-significantly higher than in other configurations, so this would not
-address the full problem.
-
-I could not test this with CONFIG_INIT_STACK_ALL, which may or may not
-suffer from a similar problem.
-
-Fixes: 81a56f6dcd20 ("gcc-plugins: structleak: Generalize to all variable types")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- security/Kconfig.hardening | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-index c6cb2d9b2905..e742d1006a4b 100644
---- a/security/Kconfig.hardening
-+++ b/security/Kconfig.hardening
-@@ -73,6 +73,7 @@ choice
- 	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
- 		bool "zero-init anything passed by reference (very strong)"
- 		depends on GCC_PLUGINS
-+		depends on !(KASAN && KASAN_STACK=1)
- 		select GCC_PLUGIN_STRUCTLEAK
- 		help
- 		  Zero-initialize any stack variables that may be passed
-@@ -80,6 +81,10 @@ choice
- 		  initialized. This is intended to eliminate all classes
- 		  of uninitialized stack variable exploits and information
- 		  exposures.
-+		  As a side-effect, this keeps a lot of variables on the
-+		  stack that can otherwise be optimized out, so combining
-+		  this with CONFIG_KASAN_STACK can lead to a stack overflow
-+		  and is disallowed.
- 
- 	config INIT_STACK_ALL
- 		bool "0xAA-init everything on the stack (strongest)"
--- 
-2.20.0
+Mimi
 
