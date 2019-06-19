@@ -2,70 +2,158 @@ Return-Path: <SRS0=8rI9=US=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B911C31E5D
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 19:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A07C31E5B
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 19:10:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09C1A214AF
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 19:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560970818;
-	bh=Mva4RFv1M0/5OCyHMcVJ2gu2vox17gPlwwMFPCzMWws=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=SF+pZDuPwO9hIo96j1zbNiYV75/Dd0hnqlBfom3ptiHcY6hEwr0fuqyv7nbVT/QqW
-	 1p0l86oYfw3r6O71OQ8R/M2Db/ynz3dLhxg+IYUpOHTy0WImPZrfxLMKY5f2WZClwD
-	 A3Nc8G/L9+Kpd2y9soRzIcyOinesiYbWSn1EqT8Y=
+	by mail.kernel.org (Postfix) with ESMTP id B6BD121721
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 19:10:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbfFSTAI (ORCPT
+        id S1730405AbfFSTKz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Jun 2019 15:00:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726482AbfFSTAI (ORCPT
+        Wed, 19 Jun 2019 15:10:55 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:36214 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbfFSTKy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Jun 2019 15:00:08 -0400
-Subject: Re: [GIT PULL] apparmor bug fixes for v5.3-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560970807;
-        bh=Mva4RFv1M0/5OCyHMcVJ2gu2vox17gPlwwMFPCzMWws=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=QUccs7EgTevSBjKGRnVbe4FoVMhsgKUq2XUMREW1ehEGzpCdBtR7SQ8JLXGx8oLVJ
-         YkEKycGwwTbpp/lEheY/ML005sNhNDaLwaJhtrrP/JBrf1hy0iwXexno/3lu0xh7oC
-         L2hrUOrymArBb+RwpR8SJRM9UBkan0+5Pqd2WRPw=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <cfc8f629-4ffa-e64e-f23f-2f4cffca4f18@canonical.com>
-References: <cfc8f629-4ffa-e64e-f23f-2f4cffca4f18@canonical.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cfc8f629-4ffa-e64e-f23f-2f4cffca4f18@canonical.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor
- tags/apparmor-pr-2019-06-18
-X-PR-Tracked-Commit-Id: 156e42996bd84eccb6acf319f19ce0cb140d00e3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c3c0d546d73ad53c85789154872b8c92d1f96ba1
-Message-Id: <156097080700.11094.10794040979648534918.pr-tracker-bot@kernel.org>
-Date:   Wed, 19 Jun 2019 19:00:07 +0000
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
+        Wed, 19 Jun 2019 15:10:54 -0400
+Received: from jaskaran-Intel-Server-Board-S1200V3RPS-UEFI-Development-Kit.corp.microsoft.com (unknown [131.107.160.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 27B2620B7194;
+        Wed, 19 Jun 2019 12:10:53 -0700 (PDT)
+From:   Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+To:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
+        jmorris@namei.org, scottsh@microsoft.com, ebiggers@google.com,
+        mpatocka@redhat.com, gmazyland@gmail.com
+Subject: [RFC PATCH v5 0/1] Add dm verity root hash pkcs7 sig validation. 
+Date:   Wed, 19 Jun 2019 12:10:47 -0700
+Message-Id: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Tue, 18 Jun 2019 18:44:31 -0700:
+This patch set adds in-kernel pkcs7 signature checking for the roothash of
+the dm-verity hash tree.
+The verification is to support cases where the roothash is not secured by
+Trusted Boot, UEFI Secureboot or similar technologies.
+One of the use cases for this is for dm-verity volumes mounted after boot,
+the root hash provided during the creation of the dm-verity volume has to
+be secure and thus in-kernel validation implemented here will be used
+before we trust the root hash and allow the block device to be created.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2019-06-18
+Why we are doing validation in the Kernel?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c3c0d546d73ad53c85789154872b8c92d1f96ba1
+The reason is to still be secure in cases where the attacker is able to
+compromise the user mode application in which case the user mode validation
+could not have been trusted.
+The root hash signature validation in the kernel along with existing
+dm-verity implementation gives a higher level of confidence in the
+executable code or the protected data. Before allowing the creation of
+the device mapper block device the kernel code will check that the detached
+pkcs7 signature passed to it validates the roothash and the signature is
+trusted by builtin keys set at kernel creation. The kernel should be
+secured using Verified boot, UEFI Secure Boot or similar technologies so we
+can trust it.
 
-Thank you!
+What about attacker mounting non dm-verity volumes to run executable
+code?
+
+This verification can be used to have a security architecture where a LSM
+can enforce this verification for all the volumes and by doing this it can
+ensure that all executable code runs from signed and trusted dm-verity
+volumes.
+
+Further patches will be posted that build on this and enforce this
+verification based on policy for all the volumes on the system.
+
+How are these changes tested?
+
+To generate and sign the roothash, dump the roothash returned by 
+veritysetup format in a text file, say roothash.txt and then sign using
+the openssl command:
+
+openssl smime -sign -nocerts -noattr -binary -in <roothash.txt> 
+-inkey <keyfile> -signer <certfile> -outform der -out <out_sigfile>
+
+To pass the roothash signature to dm-verity, veritysetup part of cryptsetup
+library was modified to take a optional root-hash-sig parameter.
+
+Commandline used to test the changes:
+
+Use the signature file from above step as a parameter to veritysetup.
+
+veritysetup open  <data_device> <name> <hash_device> <root_hash>
+ --root-hash-sig=<root_hash_pkcs7_detached_sig>
+
+The changes for veritysetup are in a topic branch for now at:
+https://github.com/jaskarankhurana/veritysetup/tree/veritysetup_add_sig
+
+Set kernel commandline dm_verity.verify_sig=1 or 2 for check/force
+dm-verity to do root hash signature validation.
+
+Changelog:
+
+v5 (since previous):
+  - Code review feedback given by Milan Broz.
+  - Remove the Kconfig for root hash verification and instead add a
+    commandline parameter(dm_verity.verify_sig) that determines whether to
+    check or enforce root hash signature validation.
+  - Fixed a small issue when dm-verity was built sepaerately as a module.
+  - Added the openssl commandline that can be used to sign the roothash
+    in the cover letter.
+
+v4:
+  - Code review feedback given by Milan Broz.
+  - Add documentation about the root hash signature parameter.
+  - Bump up the dm-verity target version.
+  - Provided way to sign and test with veritysetup in cover letter.
+
+v3:
+  - Code review feedback given by Sasha Levin.
+  - Removed EXPORT_SYMBOL_GPL since this was not required.
+  - Removed "This file is released under the GPLv2" since we have SPDX
+    identifier.
+  - Inside verity_verify_root_hash changed EINVAL to ENOKEY when the key
+    descriptor is not specified but due to force option being set it is
+    expected.
+  - Moved CONFIG check to inside verity_verify_get_sig_from_key.
+     (Did not move the sig_opts_cleanup to inside verity_dtr as the
+     sig_opts do not need to be allocated for the entire duration the block
+     device is active unlike the verity structure, note verity_dtr is
+     called      only if verity_ctr fails or after the lifetime of the
+     block device.)
+
+v2:
+  - Code review feedback to pass the signature binary blob as a key that
+    can be looked up in the kernel and be used to verify the roothash.
+    [Suggested by Milan Broz]
+  - Made the code related change suggested in review of v1.
+    [Suggested by Balbir Singh]
+
+v1:
+  - Add kconfigs to control dm-verity root has signature verification and
+    use the signature if specified to verify the root hash.
+
+
+Jaskaran Khurana (1):
+  Adds in-kernel pkcs7 sig check dmverity roothash
+
+ Documentation/device-mapper/verity.txt |   7 ++
+ drivers/md/Kconfig                     |   1 +
+ drivers/md/Makefile                    |   2 +-
+ drivers/md/dm-verity-target.c          |  36 ++++++-
+ drivers/md/dm-verity-verify-sig.c      | 139 +++++++++++++++++++++++++
+ drivers/md/dm-verity-verify-sig.h      |  37 +++++++
+ 6 files changed, 216 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/md/dm-verity-verify-sig.c
+ create mode 100644 drivers/md/dm-verity-verify-sig.h
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.17.1
+
