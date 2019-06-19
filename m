@@ -2,129 +2,317 @@ Return-Path: <SRS0=8rI9=US=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E394C31E5B
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 01:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A110DC31E5F
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 04:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53D8220863
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 01:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AC9B21479
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 04:33:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eEwpusmF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbfFSBog (ORCPT
+        id S1725866AbfFSEdR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jun 2019 21:44:36 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36236 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbfFSBog (ORCPT
+        Wed, 19 Jun 2019 00:33:17 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35061 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbfFSEdR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jun 2019 21:44:36 -0400
-Received: from static-50-53-32-19.bvtn.or.frontiernet.net ([50.53.32.19] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1hdPeM-0008H4-8e; Wed, 19 Jun 2019 01:44:34 +0000
-From:   John Johansen <john.johansen@canonical.com>
-Subject: [GIT PULL] apparmor bug fixes for v5.3-rc6
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKLM <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- xsFNBE5mrPoBEADAk19PsgVgBKkImmR2isPQ6o7KJhTTKjJdwVbkWSnNn+o6Up5knKP1f49E
- BQlceWg1yp/NwbR8ad+eSEO/uma/K+PqWvBptKC9SWD97FG4uB4/caomLEU97sLQMtnvGWdx
- rxVRGM4anzWYMgzz5TZmIiVTZ43Ou5VpaS1Vz1ZSxP3h/xKNZr/TcW5WQai8u3PWVnbkjhSZ
- PHv1BghN69qxEPomrJBm1gmtx3ZiVmFXluwTmTgJOkpFol7nbJ0ilnYHrA7SX3CtR1upeUpM
- a/WIanVO96WdTjHHIa43fbhmQube4txS3FcQLOJVqQsx6lE9B7qAppm9hQ10qPWwdfPy/+0W
- 6AWtNu5ASiGVCInWzl2HBqYd/Zll93zUq+NIoCn8sDAM9iH+wtaGDcJywIGIn+edKNtK72AM
- gChTg/j1ZoWH6ZeWPjuUfubVzZto1FMoGJ/SF4MmdQG1iQNtf4sFZbEgXuy9cGi2bomF0zvy
- BJSANpxlKNBDYKzN6Kz09HUAkjlFMNgomL/cjqgABtAx59L+dVIZfaF281pIcUZzwvh5+JoG
- eOW5uBSMbE7L38nszooykIJ5XrAchkJxNfz7k+FnQeKEkNzEd2LWc3QF4BQZYRT6PHHga3Rg
- ykW5+1wTMqJILdmtaPbXrF3FvnV0LRPcv4xKx7B3fGm7ygdoowARAQABzR1Kb2huIEpvaGFu
- c2VuIDxqb2huQGpqbXgubmV0PsLBegQTAQoAJAIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIX
- gAUCTo0YVwIZAQAKCRAFLzZwGNXD2LxJD/9TJZCpwlncTgYeraEMeDfkWv8c1IsM1j0AmE4V
- tL+fE780ZVP9gkjgkdYSxt7ecETPTKMaZSisrl1RwqU0oogXdXQSpxrGH01icu/2n0jcYSqY
- KggPxy78BGs2LZq4XPfJTZmHZGnXGq/eDr/mSnj0aavBJmMZ6jbiPz6yHtBYPZ9fdo8btczw
- P41YeWoIu26/8II6f0Xm3VC5oAa8v7Rd+RWZa8TMwlhzHExxel3jtI7IzzOsnmE9/8Dm0ARD
- 5iTLCXwR1cwI/J9BF/S1Xv8PN1huT3ItCNdatgp8zqoJkgPVjmvyL64Q3fEkYbfHOWsaba9/
- kAVtBNz9RTFh7IHDfECVaToujBd7BtPqr+qIjWFadJD3I5eLCVJvVrrolrCATlFtN3YkQs6J
- n1AiIVIU3bHR8Gjevgz5Ll6SCGHgRrkyRpnSYaU/uLgn37N6AYxi/QAL+by3CyEFLjzWAEvy
- Q8bq3Iucn7JEbhS/J//dUqLoeUf8tsGi00zmrITZYeFYARhQMtsfizIrVDtz1iPf/ZMp5gRB
- niyjpXn131cm3M3gv6HrQsAGnn8AJru8GDi5XJYIco/1+x/qEiN2nClaAOpbhzN2eUvPDY5W
- 0q3bA/Zp2mfG52vbRI+tQ0Br1Hd/vsntUHO903mMZep2NzN3BZ5qEvPvG4rW5Zq2DpybWc7B
- TQROZqz6ARAAoqw6kkBhWyM1fvgamAVjeZ6nKEfnRWbkC94L1EsJLup3Wb2X0ABNOHSkbSD4
- pAuC2tKF/EGBt5CP7QdVKRGcQzAd6b2c1Idy9RLw6w4gi+nn/d1Pm1kkYhkSi5zWaIg0m5RQ
- Uk+El8zkf5tcE/1N0Z5OK2JhjwFu5bX0a0l4cFGWVQEciVMDKRtxMjEtk3SxFalm6ZdQ2pp2
- 822clnq4zZ9mWu1d2waxiz+b5Ia4weDYa7n41URcBEUbJAgnicJkJtCTwyIxIW2KnVyOrjvk
- QzIBvaP0FdP2vvZoPMdlCIzOlIkPLgxE0IWueTXeBJhNs01pb8bLqmTIMlu4LvBELA/veiaj
- j5s8y542H/aHsfBf4MQUhHxO/BZV7h06KSUfIaY7OgAgKuGNB3UiaIUS5+a9gnEOQLDxKRy/
- a7Q1v9S+Nvx+7j8iH3jkQJhxT6ZBhZGRx0gkH3T+F0nNDm5NaJUsaswgJrqFZkUGd2Mrm1qn
- KwXiAt8SIcENdq33R0KKKRC80Xgwj8Jn30vXLSG+NO1GH0UMcAxMwy/pvk6LU5JGjZR73J5U
- LVhH4MLbDggD3mPaiG8+fotTrJUPqqhg9hyUEPpYG7sqt74Xn79+CEZcjLHzyl6vAFE2W0kx
- lLtQtUZUHO36afFv8qGpO3ZqPvjBUuatXF6tvUQCwf3H6XMAEQEAAcLBXwQYAQoACQUCTmas
- +gIbDAAKCRAFLzZwGNXD2D/XD/0ddM/4ai1b+Tl1jznKajX3kG+MeEYeI4f40vco3rOLrnRG
- FOcbyyfVF69MKepie4OwoI1jcTU0ADecnbWnDNHpr0SczxBMro3bnrLhsmvjunTYIvssBZtB
- 4aVJjuLILPUlnhFqa7fbVq0ZQjbiV/rt2jBENdm9pbJZ6GjnpYIcAbPCCa/ffL4/SQRSYHXo
- hGiiS4y5jBTmK5ltfewLOw02fkexH+IJFrrGBXDSg6n2Sgxnn++NF34fXcm9piaw3mKsICm+
- 0hdNh4afGZ6IWV8PG2teooVDp4dYih++xX/XS8zBCc1O9w4nzlP2gKzlqSWbhiWpifRJBFa4
- WtAeJTdXYd37j/BI4RWWhnyw7aAPNGj33ytGHNUf6Ro2/jtj4tF1y/QFXqjJG/wGjpdtRfbt
- UjqLHIsvfPNNJq/958p74ndACidlWSHzj+Op26KpbFnmwNO0psiUsnhvHFwPO/vAbl3RsR5+
- 0Ro+hvs2cEmQuv9r/bDlCfpzp2t3cK+rhxUqisOx8DZfz1BnkaoCRFbvvvk+7L/fomPntGPk
- qJciYE8TGHkZw1hOku+4OoM2GB5nEDlj+2TF/jLQ+EipX9PkPJYvxfRlC6dK8PKKfX9KdfmA
- IcgHfnV1jSn+8yH2djBPtKiqW0J69aIsyx7iV/03paPCjJh7Xq9vAzydN5U/UA==
-Organization: Canonical
-Message-ID: <cfc8f629-4ffa-e64e-f23f-2f4cffca4f18@canonical.com>
-Date:   Tue, 18 Jun 2019 18:44:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 19 Jun 2019 00:33:17 -0400
+Received: by mail-pl1-f195.google.com with SMTP id p1so6650143plo.2
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2019 21:33:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8zErfkhG4VIHcuXdoC+0+X9WxjZtYHXAWzmAt37MQQA=;
+        b=eEwpusmFDsy0y6BIYyhmhm340qp5siYNyzoz5/BqCeCA+MGsB2KGpdW7KM3uC1ynFc
+         8NG/2NZoq90jItyVzmmaEtiL02IXBPHYvZXt0bNNR4Fqr2VvmbKVtCQPrYAXNh9ExOL8
+         112uqau8n5ZvegdjM1Q9a8ahteF4H8I7w2P2U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8zErfkhG4VIHcuXdoC+0+X9WxjZtYHXAWzmAt37MQQA=;
+        b=gUzSnbeyM7+AW1r7oeQcwuR99fiD4Pciahw5oE12wo/haxpuCMyXV146SCOZ2GUGSU
+         YhZVtr7qjxmnvRvqRqcFlONJedfSzy+g4tYKPWlBEUDZb28VyISGkorwvq7vrlJluUyQ
+         lB0n2kkhoB3pJKhigA7S9xxJWhlNBZIKiESRLHhE3EvwyFpmx/ss4gJqSTKdcAfUgdAQ
+         5Tf+jZRYx7Vh79XTeAVLLOG8wZ6DTijZWAyXfFIwTq1d8FS+Gx+3Etpn796r1s4saBE8
+         TA7ggfoy3KWnTp0YoohnudK5eDaEw04dEDHrPKLaDFkq1NBvi6Kuhy3hYTA6zhyoOsTd
+         ytyA==
+X-Gm-Message-State: APjAAAXJrkQj3NYeVb2HNflZBKpcwyD5SkhDOb1T0Tmt7zeo4xHWDB/L
+        g64tVd6SjiF4jR4b3ZEKSBYHFw==
+X-Google-Smtp-Source: APXvYqzLYrPL2birJIf8z+J7AINko3mqRUpgKqCiYVW876aLiwcb/1rCurdRjbCs4bFXt8O6tQH+Vw==
+X-Received: by 2002:a17:902:22e:: with SMTP id 43mr112627315plc.272.1560918796505;
+        Tue, 18 Jun 2019 21:33:16 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id l1sm15844192pgi.91.2019.06.18.21.33.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Jun 2019 21:33:15 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 21:33:14 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com, sds@tycho.nsa.gov
+Subject: Re: [PATCH v2 15/25] LSM: Specify which LSM to display
+Message-ID: <201906182127.073A9D7@keescook>
+References: <20190618230551.7475-1-casey@schaufler-ca.com>
+ <20190618230551.7475-16-casey@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190618230551.7475-16-casey@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On Tue, Jun 18, 2019 at 04:05:41PM -0700, Casey Schaufler wrote:
+> Create a new entry "display" in /proc/.../attr for controlling
+> which LSM security information is displayed for a process.
+> The name of an active LSM that supplies hooks for human readable
+> data may be written to "display" to set the value. The name of
+> the LSM currently in use can be read from "display".
+> At this point there can only be one LSM capable of display
+> active.
+> 
+> This affects /proc/.../attr/current and SO_PEERSEC.
 
-Can you please pull the following bug fixes for apparmor
+What happened to creating /proc/$pid/lsm/$lsm_name/current for "modern"
+LSM libraries to start using (instead of possibly fighting over the
+/proc/$pid/attr/display)? (Obviously "display" is needed for "old"
+libraries, and I'm fine with it.)
 
-Thanks!
+Similarly, is there something that can be done for SO_PEERSEC that
+doesn't require using "display" for "modern" libraries?
 
-- John
+-Kees
 
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  fs/proc/base.c      |   1 +
+>  security/security.c | 108 +++++++++++++++++++++++++++++++++++---------
+>  2 files changed, 88 insertions(+), 21 deletions(-)
+> 
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index ddef482f1334..7bf70e041315 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -2618,6 +2618,7 @@ static const struct pid_entry attr_dir_stuff[] = {
+>  	ATTR(NULL, "fscreate",		0666),
+>  	ATTR(NULL, "keycreate",		0666),
+>  	ATTR(NULL, "sockcreate",	0666),
+> +	ATTR(NULL, "display",		0666),
+>  #ifdef CONFIG_SECURITY_SMACK
+>  	DIR("smack",			0555,
+>  	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
+> diff --git a/security/security.c b/security/security.c
+> index 46f6cf21d33c..9cfdc664239e 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -46,7 +46,9 @@ static struct kmem_cache *lsm_file_cache;
+>  static struct kmem_cache *lsm_inode_cache;
+>  
+>  char *lsm_names;
+> -static struct lsm_blob_sizes blob_sizes __lsm_ro_after_init;
+> +static struct lsm_blob_sizes blob_sizes __lsm_ro_after_init = {
+> +	.lbs_task = sizeof(int),
+> +};
+>  
+>  /* Boot-time LSM user choice */
+>  static __initdata const char *chosen_lsm_order;
+> @@ -578,6 +580,8 @@ int lsm_inode_alloc(struct inode *inode)
+>   */
+>  static int lsm_task_alloc(struct task_struct *task)
+>  {
+> +	int *display;
+> +
+>  	if (blob_sizes.lbs_task == 0) {
+>  		task->security = NULL;
+>  		return 0;
+> @@ -586,6 +590,10 @@ static int lsm_task_alloc(struct task_struct *task)
+>  	task->security = kzalloc(blob_sizes.lbs_task, GFP_KERNEL);
+>  	if (task->security == NULL)
+>  		return -ENOMEM;
+> +
+> +	display = task->security;
+> +	*display = LSMDATA_INVALID;
+> +
+>  	return 0;
+>  }
+>  
+> @@ -1574,14 +1582,27 @@ int security_file_open(struct file *file)
+>  
+>  int security_task_alloc(struct task_struct *task, unsigned long clone_flags)
+>  {
+> +	int *odisplay = current->security;
+> +	int *ndisplay;
+>  	int rc = lsm_task_alloc(task);
+>  
+> -	if (rc)
+> +	if (unlikely(rc))
+>  		return rc;
+> +
+>  	rc = call_int_hook(task_alloc, 0, task, clone_flags);
+> -	if (unlikely(rc))
+> +	if (unlikely(rc)) {
+>  		security_task_free(task);
+> -	return rc;
+> +		return rc;
+> +	}
+> +
+> +	ndisplay = task->security;
+> +	if (ndisplay == NULL)
+> +		return 0;
+> +
+> +	if (odisplay != NULL)
+> +		*ndisplay = *odisplay;
+> +
+> +	return 0;
+>  }
+>  
+>  void security_task_free(struct task_struct *task)
+> @@ -1967,10 +1988,28 @@ int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
+>  				char **value)
+>  {
+>  	struct security_hook_list *hp;
+> +	int *display = current->security;
+> +
+> +	if (!strcmp(name, "display")) {
+> +		hlist_for_each_entry(hp, &security_hook_heads.secid_to_secctx,
+> +				     list) {
+> +			if (*display == LSMDATA_INVALID ||
+> +			    hp->slot == *display) {
+> +				*value = kstrdup(hp->lsm, GFP_KERNEL);
+> +				if (*value)
+> +					return strlen(hp->lsm);
+> +				return -ENOMEM;
+> +			}
+> +		}
+> +		return -EINVAL;
+> +	}
+>  
+>  	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
+>  		if (lsm != NULL && strcmp(lsm, hp->lsm))
+>  			continue;
+> +		if (lsm == NULL && *display != LSMDATA_INVALID &&
+> +		    *display != hp->slot)
+> +			continue;
+>  		return hp->hook.getprocattr(p, name, value);
+>  	}
+>  	return -EINVAL;
+> @@ -1980,10 +2019,27 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
+>  			 size_t size)
+>  {
+>  	struct security_hook_list *hp;
+> +	int *display = current->security;
+> +	int len;
+> +
+> +	if (!strcmp(name, "display")) {
+> +		hlist_for_each_entry(hp, &security_hook_heads.secid_to_secctx,
+> +				     list) {
+> +			len = strlen(hp->lsm);
+> +			if (size >= len && !strncmp(value, hp->lsm, len)) {
+> +				*display = hp->slot;
+> +				return size;
+> +			}
+> +		}
+> +		return -EINVAL;
+> +	}
+>  
+>  	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
+>  		if (lsm != NULL && strcmp(lsm, hp->lsm))
+>  			continue;
+> +		if (lsm == NULL && *display != LSMDATA_INVALID &&
+> +		    *display != hp->slot)
+> +			continue;
+>  		return hp->hook.setprocattr(name, value, size);
+>  	}
+>  	return -EINVAL;
+> @@ -2002,38 +2058,41 @@ EXPORT_SYMBOL(security_ismaclabel);
+>  
+>  int security_secid_to_secctx(struct lsmblob *l, char **secdata, u32 *seclen)
+>  {
+> +	int *display = current->security;
+>  	struct security_hook_list *hp;
+> -	int rc;
+>  
+> -	hlist_for_each_entry(hp, &security_hook_heads.secid_to_secctx, list) {
+> -		rc = hp->hook.secid_to_secctx(l->secid[hp->slot],
+> -					      secdata, seclen);
+> -		if (rc != 0)
+> -			return rc;
+> -	}
+> +	hlist_for_each_entry(hp, &security_hook_heads.secid_to_secctx, list)
+> +		if (*display == LSMDATA_INVALID || *display == hp->slot)
+> +			return hp->hook.secid_to_secctx(l->secid[hp->slot],
+> +							secdata, seclen);
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(security_secid_to_secctx);
+>  
+>  int security_secctx_to_secid(const char *secdata, u32 seclen, struct lsmblob *l)
+>  {
+> +	int *display = current->security;
+>  	struct security_hook_list *hp;
+> -	int rc;
+>  
+>  	lsmblob_init(l, 0);
+> -	hlist_for_each_entry(hp, &security_hook_heads.secctx_to_secid, list) {
+> -		rc = hp->hook.secctx_to_secid(secdata, seclen,
+> -					      &l->secid[hp->slot]);
+> -		if (rc != 0)
+> -			return rc;
+> -	}
+> +	hlist_for_each_entry(hp, &security_hook_heads.secctx_to_secid, list)
+> +		if (*display == LSMDATA_INVALID || *display == hp->slot)
+> +			return hp->hook.secctx_to_secid(secdata, seclen,
+> +							&l->secid[hp->slot]);
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(security_secctx_to_secid);
+>  
+>  void security_release_secctx(char *secdata, u32 seclen)
+>  {
+> -	call_void_hook(release_secctx, secdata, seclen);
+> +	int *display = current->security;
+> +	struct security_hook_list *hp;
+> +
+> +	hlist_for_each_entry(hp, &security_hook_heads.release_secctx, list)
+> +		if (*display == LSMDATA_INVALID || *display == hp->slot) {
+> +			hp->hook.release_secctx(secdata, seclen);
+> +			return;
+> +		}
+>  }
+>  EXPORT_SYMBOL(security_release_secctx);
+>  
+> @@ -2158,8 +2217,15 @@ EXPORT_SYMBOL(security_sock_rcv_skb);
+>  int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+>  				      int __user *optlen, unsigned len)
+>  {
+> -	return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
+> -				optval, optlen, len);
+> +	int *display = current->security;
+> +	struct security_hook_list *hp;
+> +
+> +	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeersec_stream,
+> +			     list)
+> +		if (*display == LSMDATA_INVALID || *display == hp->slot)
+> +			return hp->hook.socket_getpeersec_stream(sock, optval,
+> +								 optlen, len);
+> +	return -ENOPROTOOPT;
+>  }
+>  
+>  int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb,
+> -- 
+> 2.20.1
+> 
 
-The following changes since commit 9e0babf2c06c73cda2c0cd37a1653d823adb40ec:
-
-  Linux 5.2-rc5 (2019-06-16 08:49:45 -1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2019-06-18
-
-for you to fetch changes up to 156e42996bd84eccb6acf319f19ce0cb140d00e3:
-
-  apparmor: reset pos on failure to unpack for various functions (2019-06-18 16:04:16 -0700)
-
-----------------------------------------------------------------
-+ Bug Fixes
-  - Fix PROFILE_MEDIATES for untrusted input
-  - enforce nullbyte at end of tag string
-  - reset pos on failure to unpack for various functions
-
-----------------------------------------------------------------
-Jann Horn (1):
-      apparmor: enforce nullbyte at end of tag string
-
-John Johansen (1):
-      apparmor: fix PROFILE_MEDIATES for untrusted input
-
-Mike Salvatore (1):
-      apparmor: reset pos on failure to unpack for various functions
-
- security/apparmor/include/policy.h | 11 ++++++++-
- security/apparmor/policy_unpack.c  | 49 +++++++++++++++++++++++++++++++-------
- 2 files changed, 50 insertions(+), 10 deletions(-)
+-- 
+Kees Cook
