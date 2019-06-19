@@ -2,117 +2,124 @@ Return-Path: <SRS0=8rI9=US=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1FEC31E5E
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 06:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C7BC31E49
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 13:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58FC72084A
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 06:17:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J9evPVU2"
+	by mail.kernel.org (Postfix) with ESMTP id 153AA2166E
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 13:18:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726195AbfFSGRV (ORCPT
+        id S1730345AbfFSNSv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Jun 2019 02:17:21 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37932 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfFSGRV (ORCPT
+        Wed, 19 Jun 2019 09:18:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60698 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726518AbfFSNSv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Jun 2019 02:17:21 -0400
-Received: by mail-pg1-f194.google.com with SMTP id v11so9040800pgl.5
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2019 23:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=5oPRT5pitIyaqpJWQ5QrGCsyZLShQdR3t45xDGgGjmQ=;
-        b=J9evPVU2y0FiXdfTVU+l5Eno4oKXzaT8QJjdcPpV8pl0LzS95VccIq2hxsRdWNOF6l
-         PwPt+hE9gNct6l7c0TJeN/1MqeBZFXDgkTM98kqJZSrATwXph0+nixyur4JtiMVdE2gz
-         J0lykMWgJpaFs74QqQoHSgBw5P8y+IxEIk0AQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=5oPRT5pitIyaqpJWQ5QrGCsyZLShQdR3t45xDGgGjmQ=;
-        b=D0NXDOYn8w1DgoWnllbiop9Zp/O3QeUlttOTPLtK7JDCbWuJ3dIn0hkvt18lVBMdBp
-         mRtgcvKoOkfZiI+mDDnS7A/aEoJzgTGREVYBLPvxKK1jqb6dZKMpkjEFWVVQZXmASyy3
-         G+9/14Mb2j/2cGPAnvX2sphwTLYgqeiX4mRhm0oclz5BdF4U3b/9YKa2GKOE+5xisO9L
-         qxNHaw44hytPTpwDXlecgZaJxPpTMhA4pZA6fLysx5BPcQ/EF+zy/NEVyOYxDf1HR+Yn
-         R7kQNtnlA5XR8/F5u6hTZlhFEn5WzANtdkyv8A0ayy0kNtFG7zEAWPYKEK/u4TaRBVxJ
-         7emw==
-X-Gm-Message-State: APjAAAUMjDMLHU7CAUQvyBz0DTzjGMSCi/BRdMhUE44Is+RzMsopIttb
-        x2bEoTGvX5X9dYhuHzc72lxUhQ==
-X-Google-Smtp-Source: APXvYqwZ5C29RjH9uVd/m3ixPDRzbfQSb7W8Xz+TrnZaDk/Nr2GOh5RSl6qllovLMNcEuPOsTfcVfQ==
-X-Received: by 2002:a62:6344:: with SMTP id x65mr19556573pfb.111.1560925040983;
-        Tue, 18 Jun 2019 23:17:20 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e127sm17854310pfe.98.2019.06.18.23.17.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Jun 2019 23:17:20 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 23:17:19 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, sds@tycho.nsa.gov
-Subject: Re: [PATCH v2 04/25] LSM: Create and manage the lsmblob data
- structure.
-Message-ID: <201906182316.341036E@keescook>
-References: <20190618230551.7475-1-casey@schaufler-ca.com>
- <20190618230551.7475-5-casey@schaufler-ca.com>
- <201906182147.0A592CBB62@keescook>
+        Wed, 19 Jun 2019 09:18:51 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E85E2309C390;
+        Wed, 19 Jun 2019 13:18:45 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 59FB55C220;
+        Wed, 19 Jun 2019 13:18:41 +0000 (UTC)
+Subject: [PATCH 00/10] keys: Miscellany [ver #3]
+From:   David Howells <dhowells@redhat.com>
+To:     keyrings@vger.kernel.org, ebiggers@kernel.org
+Cc:     Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        dhowells@redhat.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 19 Jun 2019 14:18:40 +0100
+Message-ID: <156095032052.9363.8954337545422131435.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201906182147.0A592CBB62@keescook>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 19 Jun 2019 13:18:51 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 18, 2019 at 09:52:44PM -0700, Kees Cook wrote:
-> On Tue, Jun 18, 2019 at 04:05:30PM -0700, Casey Schaufler wrote:
-> > When more than one security module is exporting data to
-> > audit and networking sub-systems a single 32 bit integer
-> > is no longer sufficient to represent the data. Add a
-> > structure to be used instead.
-> > 
-> > The lsmblob structure is currently an array of
-> > u32 "secids". There is an entry for each of the
-> > security modules built into the system that would
-> > use secids if active. The system assigns the module
-> > a "slot" when it registers hooks. If modules are
-> > compiled in but not registered there will be unused
-> > slots.
-> > 
-> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > ---
-> >  include/linux/lsm_hooks.h |  1 +
-> >  include/linux/security.h  | 62 +++++++++++++++++++++++++++++++++++++++
-> >  security/security.c       | 31 ++++++++++++++++++++
-> >  3 files changed, 94 insertions(+)
-> > 
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index 3fe39abccc8f..4d1ddf1a2aa6 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -2038,6 +2038,7 @@ struct security_hook_list {
-> >  	struct hlist_head		*head;
-> >  	union security_list_options	hook;
-> >  	char				*lsm;
-> > +	int				slot;
-> >  } __randomize_layout;
-> 
-> Hm, this feels redundant (as does the existing "char *lsm") now that we
-> have lsm_info. The place for assigned-at-init value is blob_sizes, which
-> hangs off of lsm_info (as does the LSM char *)...
 
-Hm, nevermind. lsm_info is __initdata. I will ponder a way to refactor
-this in the future. For now, just leave slot in here with char *lsm.
+Here are some miscellaneous keyrings fixes and improvements intended for
+the next merge window:
 
--- 
-Kees Cook
+ (1) Fix a bunch of warnings from sparse, including missing RCU bits and
+     kdoc-function argument mismatches
+
+ (2) Implement a keyctl to allow a key to be moved from one keyring to
+     another, with the option of prohibiting key replacement in the
+     destination keyring.
+
+ (3) Grant Link permission to possessors of request_key_auth tokens so that
+     upcall servicing daemons can more easily arrange things such that only
+     the necessary auth key is passed to the actual service program, and
+     not all the auth keys a daemon might possesss.
+
+ (4) Improvement in lookup_user_key().
+
+ (5) Implement a keyctl to allow keyrings subsystem capabilities to be
+     queried.
+
+The patches can be found on the following branch:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-misc
+
+The keyutils next branch has commits to make available, document and test
+the move-key and capabilities code:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/log/?h=next
+
+Changes:
+
+V3:
+
+ (*) Made the capabilities array unsigned char[] rather than unsigned int[].
+
+V2:
+
+ (*) Fixed lock ordering bug in KEYCTL_MOVE.
+
+ (*) Added improvement patch from Eric.
+
+ (*) Added capabilities patch.
+
+David
+---
+David Howells (9):
+      keys: sparse: Fix key_fs[ug]id_changed()
+      keys: sparse: Fix incorrect RCU accesses
+      keys: sparse: Fix kdoc mismatches
+      keys: Change keyring_serialise_link_sem to a mutex
+      keys: Break bits out of key_unlink()
+      keys: Hoist locking out of __key_link_begin()
+      keys: Add a keyctl to move a key between keyrings
+      keys: Grant Link permission to possessers of request_key auth keys
+      keys: Add capability-checking keyctl function
+
+Eric Biggers (1):
+      keys: Reuse keyring_index_key::desc_len in lookup_user_key()
+
+
+ Documentation/security/keys/core.rst |   21 +++
+ include/linux/key.h                  |   13 +-
+ include/uapi/linux/keyctl.h          |   17 ++
+ kernel/cred.c                        |    4 
+ security/keys/compat.c               |    6 +
+ security/keys/internal.h             |    7 +
+ security/keys/key.c                  |   27 +++
+ security/keys/keyctl.c               |   90 +++++++++++
+ security/keys/keyring.c              |  278 ++++++++++++++++++++++++++++------
+ security/keys/process_keys.c         |   26 +--
+ security/keys/request_key.c          |    9 +
+ security/keys/request_key_auth.c     |    4 
+ 12 files changed, 418 insertions(+), 84 deletions(-)
+
