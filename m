@@ -2,182 +2,155 @@ Return-Path: <SRS0=8rI9=US=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C773CC31E49
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 13:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B094C31E5E
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 15:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A67612166E
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 13:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E11DF21883
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jun 2019 15:07:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729287AbfFSNUP (ORCPT
+        id S1730298AbfFSPHW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Jun 2019 09:20:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37198 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726330AbfFSNUP (ORCPT
+        Wed, 19 Jun 2019 11:07:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:22142 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729908AbfFSPHV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Jun 2019 09:20:15 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 020AC19CF7B;
-        Wed, 19 Jun 2019 13:20:15 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BA78E1001DD1;
-        Wed, 19 Jun 2019 13:20:13 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 10/10] keys: Add capability-checking keyctl function [ver #3]
-From:   David Howells <dhowells@redhat.com>
-To:     keyrings@vger.kernel.org, ebiggers@kernel.org
-Cc:     dhowells@redhat.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 19 Jun 2019 14:20:12 +0100
-Message-ID: <156095041274.9363.11713800194055313640.stgit@warthog.procyon.org.uk>
-In-Reply-To: <156095032052.9363.8954337545422131435.stgit@warthog.procyon.org.uk>
-References: <156095032052.9363.8954337545422131435.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 19 Jun 2019 13:20:15 +0000 (UTC)
+        Wed, 19 Jun 2019 11:07:21 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5JF40MW133823
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Jun 2019 11:07:20 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t7ncaq78b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Jun 2019 11:07:19 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 19 Jun 2019 16:07:17 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 19 Jun 2019 16:07:15 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5JF7E0l34537948
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Jun 2019 15:07:14 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 846BE52052;
+        Wed, 19 Jun 2019 15:07:14 +0000 (GMT)
+Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E0C7E52050;
+        Wed, 19 Jun 2019 15:07:13 +0000 (GMT)
+Subject: Re: [PATCH 2/3] IMA:Define a new template field buf
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     roberto.sassu@huawei.com
+In-Reply-To: <20190617183507.14160-3-prsriva02@gmail.com>
+References: <20190617183507.14160-1-prsriva02@gmail.com>
+         <20190617183507.14160-3-prsriva02@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 19 Jun 2019 09:54:26 -0400
+Mime-Version: 1.0
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061915-0028-0000-0000-0000037BB7E0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061915-0029-0000-0000-0000243BC627
+Message-Id: <1560952466.3975.40.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-19_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906190122
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a keyctl function that requests a set of capability bits to find out
-what features are supported.
+On Mon, 2019-06-17 at 11:35 -0700, Prakhar Srivastava wrote:
+> A buffer(kexec boot command line arguments) measured into IMA
+> measuremnt list cannot be appraised, without already being
+> aware of the buffer contents. Since hashes are non-reversible,
+> raw buffer is needed for validation or regenerating hash for
+> appraisal/attestation.
+> 
+> Add support to store/read the buffer contents in HEX.
+> The kexec cmdline hash is stored in the "d-ng" field of the
+> template data,it can be verified using
+> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
+>   grep  kexec-cmdline | cut -d' ' -f 6 | xxd -r -p | sha256sum
+> 
+> - Add two new fields to ima_event_data to hold the buf and
+> buf_len [Suggested by Roberto]
+> - Add a new temaplte field 'buf' to be used to store/read
+> the buffer data.[Suggested by Mimi]
+> - Updated process_buffer_meaurement to add the buffer to
+> ima_event_data. process_buffer_measurement added in
+> "Define a new IMA hook to measure the boot command line
+>  arguments"
+> - Add a new template policy name ima-buf to represent
+> 'd-ng|n-ng|buf'
+> 
+> Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Thanks, looking much better.
 
- include/uapi/linux/keyctl.h |   14 ++++++++++++++
- security/keys/compat.c      |    3 +++
- security/keys/internal.h    |    2 ++
- security/keys/keyctl.c      |   35 +++++++++++++++++++++++++++++++++++
- 4 files changed, 54 insertions(+)
+>  
+>  /* IMA template field data definition */
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> index ea7d8cbf712f..83ca99d65e4b 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -140,7 +140,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+>  	struct ima_template_entry *entry;
+>  	struct inode *inode = file_inode(file);
+>  	struct ima_event_data event_data = {iint, file, filename, NULL, 0,
+> -					    cause};
+> +					    cause, NULL, 0};
+>  	int violation = 1;
+>  	int result;
+>  
+> @@ -296,7 +296,7 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+>  	struct inode *inode = file_inode(file);
+>  	struct ima_template_entry *entry;
+>  	struct ima_event_data event_data = {iint, file, filename, xattr_value,
+> -					    xattr_len, NULL};
+> +					    xattr_len, NULL, NULL, 0};
+>  	int violation = 0;
+>  
+>  	if (iint->measured_pcrs & (0x1 << pcr))
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> index 993d0f1915ff..c8591406c0e2 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -50,7 +50,7 @@ static int __init ima_add_boot_aggregate(void)
+>  	struct ima_template_entry *entry;
+>  	struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
+>  	struct ima_event_data event_data = {iint, NULL, boot_aggregate_name,
+> -					    NULL, 0, NULL};
+> +					    NULL, 0, NULL, NULL, 0};
+>  	int result = -ENOMEM;
+>  	int violation = 0;
+>  	struct {
+> 
 
-diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index fd9fb11b312b..551b5814f53e 100644
---- a/include/uapi/linux/keyctl.h
-+++ b/include/uapi/linux/keyctl.h
-@@ -68,6 +68,7 @@
- #define KEYCTL_PKEY_VERIFY		28	/* Verify a public key signature */
- #define KEYCTL_RESTRICT_KEYRING		29	/* Restrict keys allowed to link to a keyring */
- #define KEYCTL_MOVE			30	/* Move keys between keyrings */
-+#define KEYCTL_CAPABILITIES		31	/* Find capabilities of keyrings subsystem */
- 
- /* keyctl structures */
- struct keyctl_dh_params {
-@@ -115,4 +116,17 @@ struct keyctl_pkey_params {
- 
- #define KEYCTL_MOVE_EXCL	0x00000001 /* Do not displace from the to-keyring */
- 
-+/*
-+ * Capabilities flags.  The capabilities list is an array of 8-bit integers;
-+ * each integer can carry up to 8 flags.
-+ */
-+#define KEYCTL_CAPS0_CAPABILITIES	0x01 /* KEYCTL_CAPABILITIES supported */
-+#define KEYCTL_CAPS0_PERSISTENT_KEYRINGS 0x02 /* Persistent keyrings enabled */
-+#define KEYCTL_CAPS0_DIFFIE_HELLMAN	0x04 /* Diffie-Hellman computation enabled */
-+#define KEYCTL_CAPS0_PUBLIC_KEY		0x08 /* Public key ops enabled */
-+#define KEYCTL_CAPS0_BIG_KEY		0x10 /* big_key-type enabled */
-+#define KEYCTL_CAPS0_INVALIDATE		0x20 /* KEYCTL_INVALIDATE supported */
-+#define KEYCTL_CAPS0_RESTRICT_KEYRING	0x40 /* KEYCTL_RESTRICT_KEYRING supported */
-+#define KEYCTL_CAPS0_MOVE		0x80 /* KEYCTL_MOVE supported */
-+
- #endif /*  _LINUX_KEYCTL_H */
-diff --git a/security/keys/compat.c b/security/keys/compat.c
-index b326bc4f84d7..a53e30da20c5 100644
---- a/security/keys/compat.c
-+++ b/security/keys/compat.c
-@@ -162,6 +162,9 @@ COMPAT_SYSCALL_DEFINE5(keyctl, u32, option,
- 	case KEYCTL_MOVE:
- 		return keyctl_keyring_move(arg2, arg3, arg4, arg5);
- 
-+	case KEYCTL_CAPABILITIES:
-+		return keyctl_capabilities(compat_ptr(arg2), arg3);
-+
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index b54a58c025ae..d04bff631227 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -329,6 +329,8 @@ static inline long keyctl_pkey_e_d_s(int op,
- }
- #endif
- 
-+extern long keyctl_capabilities(unsigned char __user *_buffer, size_t buflen);
-+
- /*
-  * Debugging key validation
-  */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index bbfe7d92d41c..9f418e66f067 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -30,6 +30,18 @@
- 
- #define KEY_MAX_DESC_SIZE 4096
- 
-+static const unsigned char keyrings_capabilities[1] = {
-+	[0] = (KEYCTL_CAPS0_CAPABILITIES |
-+	       (IS_ENABLED(CONFIG_PERSISTENT_KEYRINGS)	? KEYCTL_CAPS0_PERSISTENT_KEYRINGS : 0) |
-+	       (IS_ENABLED(CONFIG_KEY_DH_OPERATIONS)	? KEYCTL_CAPS0_DIFFIE_HELLMAN : 0) |
-+	       (IS_ENABLED(CONFIG_ASYMMETRIC_KEY_TYPE)	? KEYCTL_CAPS0_PUBLIC_KEY : 0) |
-+	       (IS_ENABLED(CONFIG_BIG_KEYS)		? KEYCTL_CAPS0_BIG_KEY : 0) |
-+	       KEYCTL_CAPS0_INVALIDATE |
-+	       KEYCTL_CAPS0_RESTRICT_KEYRING |
-+	       KEYCTL_CAPS0_MOVE
-+	       ),
-+};
-+
- static int key_get_type_from_user(char *type,
- 				  const char __user *_type,
- 				  unsigned len)
-@@ -1678,6 +1690,26 @@ long keyctl_restrict_keyring(key_serial_t id, const char __user *_type,
- 	return ret;
- }
- 
-+/*
-+ * Get keyrings subsystem capabilities.
-+ */
-+long keyctl_capabilities(unsigned char __user *_buffer, size_t buflen)
-+{
-+	size_t size = buflen;
-+
-+	if (size > 0) {
-+		if (size > sizeof(keyrings_capabilities))
-+			size = sizeof(keyrings_capabilities);
-+		if (copy_to_user(_buffer, keyrings_capabilities, size) != 0)
-+			return -EFAULT;
-+		if (size < buflen &&
-+		    clear_user(_buffer + size, buflen - size) != 0)
-+			return -EFAULT;
-+	}
-+
-+	return sizeof(keyrings_capabilities);
-+}
-+
- /*
-  * The key control system call
-  */
-@@ -1824,6 +1856,9 @@ SYSCALL_DEFINE5(keyctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 					   (key_serial_t)arg4,
- 					   (unsigned int)arg5);
- 
-+	case KEYCTL_CAPABILITIES:
-+		return keyctl_capabilities((unsigned char __user *)arg2, (size_t)arg3);
-+
- 	default:
- 		return -EOPNOTSUPP;
- 	}
+These changes shouldn't be necessary.  Please rebase these patches on
+top of the latest next-queued-testing branch (git remote update).  "IMA: support for per
+policy rule template formats" is still changing. 
+
+Minor nit.  When re-posting the patches please update the patch titles
+so that there is a space between the subsystem name and the patch
+title (eg. "ima: define ...").
+
+Mimi
 
