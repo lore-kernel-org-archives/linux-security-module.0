@@ -4,85 +4,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AC9C48BE3
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jun 2019 17:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B44C43613
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jun 2019 17:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B458E206BA
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jun 2019 17:33:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCFCC206BA
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jun 2019 17:35:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H1MX5dYz"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NUMqYmFw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfFTRd1 (ORCPT
+        id S1726562AbfFTRf7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Jun 2019 13:33:27 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36072 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbfFTRd1 (ORCPT
+        Thu, 20 Jun 2019 13:35:59 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33711 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfFTRf7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:33:27 -0400
-Received: by mail-pl1-f193.google.com with SMTP id k8so1675396plt.3
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2019 10:33:27 -0700 (PDT)
+        Thu, 20 Jun 2019 13:35:59 -0400
+Received: by mail-pg1-f196.google.com with SMTP id m4so1339968pgk.0
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2019 10:35:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to;
-        bh=ejsb9xT7nqTS0o41g7yLkIa9uZIzX6Xwz+a1I5H+q6I=;
-        b=H1MX5dYzZA+IVjBwuX0pEJGyf4dgBIuxGzAqKfkE+fsVNBcn+FvMW7OY8SSpVwc65I
-         pN8FXlrGk5Z9EFpUmVLD+e7RyikifrFlfVruXNr5mARtI2OkWKgHdQTZH/TTSRs0gkki
-         MTiQREmn0s63xsCjPCBuuhBNK3OGr12yye3FE=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Y//CKAUCmu4Z+CNgNicaVzKkv82IaCbCxrJa7F0wZn4=;
+        b=NUMqYmFwkS8LkBdwNC20JWMzkawUchAYdEs+GIDQku+8JYDBs4GvrjFoeC5g9ptLB5
+         6iDEHv//HyfEmC5eWmq/MRx0SWCEZ5mvOkbHQvhTphicSrniBya/z8l+GY/YvzCKxgYy
+         4uSTgSW5ItQ0Slt9KpB8W7gwtPv0WmGfiEtOU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=ejsb9xT7nqTS0o41g7yLkIa9uZIzX6Xwz+a1I5H+q6I=;
-        b=Xc9Kx3dCCpJ3VnRsaIlFWXgBDIB4FipgciypnO5SpzGBlF6d24JzXXvcN8ImB7E6QE
-         XXaKmV9Z1WxrTZmHFyAKJAz1PR3NMCD61bv0iX4EjF/PFHVBQLaUJJpt5EYpzyOm4G2S
-         rGuamsoDKxwKP83a2OufK2EAy4i0wf2BquvXpHd02ZeGFfCahvDYWWZUspTnWGJYdg4t
-         zW4wys5ZoNx8Fh+pm3qreqCSmzIWkuxW3n+CaB5J9uTylamoBGYI1y9T/Tn1irdoSBsr
-         txWTfJVdia6zJ3VMze63cHx1dKkpjKmYYK7g2lsIsk3wx10cEpaE9PDIqoYLRx85i7TS
-         QbhQ==
-X-Gm-Message-State: APjAAAWRdGzeELiguHg0tpEl+5Z8zsb/9tL7kSRMCegxOKbeFdeaVOVn
-        0L2Q05N8BdVDIzn64mYog87Ybg==
-X-Google-Smtp-Source: APXvYqzZ/qgX+VooAvQpMfM1yQf1VctPwpsb+po2tTIclwXw3KEamIuAcyFOcSopHq9CEAqjAbywFw==
-X-Received: by 2002:a17:902:bf08:: with SMTP id bi8mr91402087plb.189.1561052007066;
-        Thu, 20 Jun 2019 10:33:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Y//CKAUCmu4Z+CNgNicaVzKkv82IaCbCxrJa7F0wZn4=;
+        b=SfFndbNJlEGuM2lB9wESUpvzU2gU8g8nz6VSFQaIasl+IaUvfUY9Z/Morho2J3jaQl
+         kjYZ2pGNDvDN8Hls3A6k3FbSuFiB8Hoj5Z0yyesU7Vzixcq6vdrdXWI1k0MojuUeHfrc
+         Sx4Gj++zP1zqRjfWUoWhfsGjR1YYdmt+3fregJjTL0uwNljbLdzB0m6M1xgi4MZK6Pdo
+         14aISUkM+Zo3Sv5goLQ4EY2133kbfnuC8uFSxw9ufvlQWF7xqCvHuWzHzYrDZpcAEh8S
+         PUyJHWmN7NQzE7A0Qd9MIDbZX0OTpeW384XUt5TwB2V5/f/QkxWwkk092GJam7QekR6d
+         nURA==
+X-Gm-Message-State: APjAAAWe3/1e0g5gRDkp28ZoykmKRHqj+MYph+QoxBy1jk6Hh6LoYLdu
+        p74j7DPTvFpevPDMQYQzKZ5uRQ==
+X-Google-Smtp-Source: APXvYqxiL8EXgij8EVUiiz93r2xVAl4pTaySQemAPFQP6yna6EQozFcR2qsIBQ9qPplMpsgaKHVBCg==
+X-Received: by 2002:aa7:8083:: with SMTP id v3mr54261815pff.69.1561052158492;
+        Thu, 20 Jun 2019 10:35:58 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e184sm69143pfa.169.2019.06.20.10.33.26
+        by smtp.gmail.com with ESMTPSA id 128sm89983pfd.66.2019.06.20.10.35.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Jun 2019 10:33:26 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 10:33:25 -0700
+        Thu, 20 Jun 2019 10:35:57 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 10:35:56 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        sds@tycho.nsa.gov
-Subject: Stacked LSMs (was Re: [PATCH v2 00/25] LSM: Module stacking for
- AppArmor)
-Message-ID: <201906201029.0476F14A@keescook>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+        Alexander Popov <alex.popov@linux.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] structleak: disable BYREF_ALL in combination with
+ KASAN_STACK
+Message-ID: <201906201034.9E44D8A2A8@keescook>
+References: <20190618094731.3677294-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <alpine.LRH.2.21.1906200555400.25930@namei.org>
+In-Reply-To: <20190618094731.3677294-1-arnd@arndb.de>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 20, 2019 at 06:08:03AM +1000, James Morris wrote:
-> We extended stacking support in March to allow Landlock and SARA to be 
-> merged and have not seen anything from them since.
+On Tue, Jun 18, 2019 at 11:47:13AM +0200, Arnd Bergmann wrote:
+> The combination of KASAN_STACK and GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+> leads to much larger kernel stack usage, as seen from the warnings
+> about functions that now exceed the 2048 byte limit:
 
-Salvatore and Mickaël, have you had a chance to look at the stacking
-changes? I'd love to see work progress on your LSMs now that the
-stacking prerequisites have landed.
+Is the preference that this go into v5.2 (there's not much time left),
+or should this be v5.3? (You didn't mark it as Cc: stable?)
 
-Thanks!
+> one. I picked the dependency in GCC_PLUGIN_STRUCTLEAK_BYREF_ALL, as
+> this option is designed to make uninitialized stack usage less harmful
+> when enabled on its own, but it also prevents KASAN from detecting those
+> cases in which it was in fact needed.
+
+Right -- there's not much sense in both being enabled. I'd agree with
+this rationale.
 
 -- 
 Kees Cook
