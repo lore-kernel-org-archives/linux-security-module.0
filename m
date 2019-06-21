@@ -2,108 +2,274 @@ Return-Path: <SRS0=QDjJ=UU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CD6C48BE1
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 02:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B838C43613
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 06:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F15E7206BA
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 02:28:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2C0820679
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 06:34:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725951AbfFUC2S (ORCPT
+        id S1726025AbfFUGeO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Jun 2019 22:28:18 -0400
-Received: from mga06.intel.com ([134.134.136.31]:6289 "EHLO mga06.intel.com"
+        Fri, 21 Jun 2019 02:34:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59660 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbfFUC2S (ORCPT
+        id S1725911AbfFUGeO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Jun 2019 22:28:18 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 19:28:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,398,1557212400"; 
-   d="scan'208";a="181996563"
-Received: from mudigirx-mobl1.gar.corp.intel.com (HELO localhost) ([10.252.61.12])
-  by fmsmga001.fm.intel.com with ESMTP; 20 Jun 2019 19:28:12 -0700
-Date:   Fri, 21 Jun 2019 05:28:10 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Bill Roberts <william.c.roberts@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [RFC PATCH v4 07/12] LSM: x86/sgx: Introduce ->enclave_map()
- hook for Intel SGX
-Message-ID: <20190621022810.GL20474@linux.intel.com>
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <20190619222401.14942-8-sean.j.christopherson@intel.com>
+        Fri, 21 Jun 2019 02:34:14 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7F27781E05;
+        Fri, 21 Jun 2019 06:34:13 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-101.pek2.redhat.com [10.72.12.101])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6005660852;
+        Fri, 21 Jun 2019 06:34:06 +0000 (UTC)
+Date:   Fri, 21 Jun 2019 14:34:02 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     jmorris@namei.org, Jiri Bohac <jbohac@suse.cz>,
+        linux-api@vger.kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
+        dhowells@redhat.com, linux-security-module@vger.kernel.org,
+        luto@kernel.org
+Subject: Re: [PATCH V31 06/25] kexec_file: split KEXEC_VERIFY_SIG into
+ KEXEC_SIG and KEXEC_SIG_FORCE
+Message-ID: <20190621063402.GA4528@localhost.localdomain>
+References: <20190326182742.16950-1-matthewgarrett@google.com>
+ <20190326182742.16950-7-matthewgarrett@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619222401.14942-8-sean.j.christopherson@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190326182742.16950-7-matthewgarrett@google.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 21 Jun 2019 06:34:13 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 19, 2019 at 03:23:56PM -0700, Sean Christopherson wrote:
-> enclave_map() is an SGX specific variant of file_mprotect() and
-> mmap_file(), and is provided so that LSMs can apply W^X restrictions to
-> enclaves.
+On 03/26/19 at 11:27am, Matthew Garrett wrote:
+> From: Jiri Bohac <jbohac@suse.cz>
 > 
-> Due to the nature of SGX and its Enclave Page Cache (EPC), all enclave
-> VMAs are backed by a single file, i.e. /dev/sgx/enclave, that must be
-> MAP_SHARED.  Furthermore, all enclaves need read, write and execute
-> VMAs.  As a result, applying W^X restrictions on /dev/sgx/enclave using
-> existing LSM hooks is for all intents and purposes impossible, e.g.
-> denying either W or X would deny access to any enclave.
+> This is a preparatory patch for kexec_file_load() lockdown.  A locked down
+> kernel needs to prevent unsigned kernel images from being loaded with
+> kexec_file_load().  Currently, the only way to force the signature
+> verification is compiling with KEXEC_VERIFY_SIG.  This prevents loading
+> usigned images even when the kernel is not locked down at runtime.
 > 
-> Note, extensive discussion yielded no sane alternative to some form of
-> SGX specific LSM hook[1].
+> This patch splits KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE.
+> Analogous to the MODULE_SIG and MODULE_SIG_FORCE for modules, KEXEC_SIG
+> turns on the signature verification but allows unsigned images to be
+> loaded.  KEXEC_SIG_FORCE disallows images without a valid signature.
 > 
-> [1] https://lkml.kernel.org/r/CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com
+> [Modified by David Howells such that:
 > 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+>  (1) verify_pefile_signature() differentiates between no-signature and
+>      sig-didn't-match in its returned errors.
+> 
+>  (2) kexec fails with EKEYREJECTED and logs an appropriate message if
+>      signature checking is enforced and an signature is not found, uses
+>      unsupported crypto or has no matching key.
+> 
+>  (3) kexec fails with EKEYREJECTED if there is a signature for which we
+>      have a key, but signature doesn't match - even if in non-forcing mode.
+> 
+>  (4) kexec fails with EBADMSG or some other error if there is a signature
+>      which cannot be parsed - even if in non-forcing mode.
+> 
+>  (5) kexec fails with ELIBBAD if the PE file cannot be parsed to extract
+>      the signature - even if in non-forcing mode.
+> 
+> ]
+> 
+> Signed-off-by: Jiri Bohac <jbohac@suse.cz>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+> cc: kexec@lists.infradead.org
+> ---
+>  arch/x86/Kconfig                       | 20 ++++++++---
+>  crypto/asymmetric_keys/verify_pefile.c |  4 ++-
+>  include/linux/kexec.h                  |  4 +--
+>  kernel/kexec_file.c                    | 48 ++++++++++++++++++++++----
+>  4 files changed, 61 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 4b4a7f32b68e..735d04a4b18f 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2016,20 +2016,30 @@ config KEXEC_FILE
+>  config ARCH_HAS_KEXEC_PURGATORY
+>  	def_bool KEXEC_FILE
+>  
+> -config KEXEC_VERIFY_SIG
+> +config KEXEC_SIG
+>  	bool "Verify kernel signature during kexec_file_load() syscall"
+>  	depends on KEXEC_FILE
+>  	---help---
+> -	  This option makes kernel signature verification mandatory for
+> -	  the kexec_file_load() syscall.
+>  
+> -	  In addition to that option, you need to enable signature
+> +	  This option makes the kexec_file_load() syscall check for a valid
+> +	  signature of the kernel image.  The image can still be loaded without
+> +	  a valid signature unless you also enable KEXEC_SIG_FORCE, though if
+> +	  there's a signature that we can check, then it must be valid.
+> +
+> +	  In addition to this option, you need to enable signature
+>  	  verification for the corresponding kernel image type being
+>  	  loaded in order for this to work.
+>  
+> +config KEXEC_SIG_FORCE
+> +	bool "Require a valid signature in kexec_file_load() syscall"
+> +	depends on KEXEC_SIG
+> +	---help---
+> +	  This option makes kernel signature verification mandatory for
+> +	  the kexec_file_load() syscall.
+> +
+>  config KEXEC_BZIMAGE_VERIFY_SIG
+>  	bool "Enable bzImage signature verification support"
+> -	depends on KEXEC_VERIFY_SIG
+> +	depends on KEXEC_SIG
+>  	depends on SIGNED_PE_FILE_VERIFICATION
+>  	select SYSTEM_TRUSTED_KEYRING
+>  	---help---
+> diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
+> index d178650fd524..4473cea1e877 100644
+> --- a/crypto/asymmetric_keys/verify_pefile.c
+> +++ b/crypto/asymmetric_keys/verify_pefile.c
+> @@ -100,7 +100,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
+>  
+>  	if (!ddir->certs.virtual_address || !ddir->certs.size) {
+>  		pr_debug("Unsigned PE binary\n");
+> -		return -EKEYREJECTED;
+> +		return -ENODATA;
+>  	}
+>  
+>  	chkaddr(ctx->header_size, ddir->certs.virtual_address,
+> @@ -408,6 +408,8 @@ static int pefile_digest_pe(const void *pebuf, unsigned int pelen,
+>   *  (*) 0 if at least one signature chain intersects with the keys in the trust
+>   *	keyring, or:
+>   *
+> + *  (*) -ENODATA if there is no signature present.
+> + *
+>   *  (*) -ENOPKG if a suitable crypto module couldn't be found for a check on a
+>   *	chain.
+>   *
+> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+> index b9b1bc5f9669..58b27c7bdc2b 100644
+> --- a/include/linux/kexec.h
+> +++ b/include/linux/kexec.h
+> @@ -125,7 +125,7 @@ typedef void *(kexec_load_t)(struct kimage *image, char *kernel_buf,
+>  			     unsigned long cmdline_len);
+>  typedef int (kexec_cleanup_t)(void *loader_data);
+>  
+> -#ifdef CONFIG_KEXEC_VERIFY_SIG
+> +#ifdef CONFIG_KEXEC_SIG
+>  typedef int (kexec_verify_sig_t)(const char *kernel_buf,
+>  				 unsigned long kernel_len);
+>  #endif
+> @@ -134,7 +134,7 @@ struct kexec_file_ops {
+>  	kexec_probe_t *probe;
+>  	kexec_load_t *load;
+>  	kexec_cleanup_t *cleanup;
+> -#ifdef CONFIG_KEXEC_VERIFY_SIG
+> +#ifdef CONFIG_KEXEC_SIG
+>  	kexec_verify_sig_t *verify_sig;
+>  #endif
+>  };
+> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> index f1d0e00a3971..67f3a866eabe 100644
+> --- a/kernel/kexec_file.c
+> +++ b/kernel/kexec_file.c
+> @@ -90,7 +90,7 @@ int __weak arch_kimage_file_post_load_cleanup(struct kimage *image)
+>  	return kexec_image_post_load_cleanup_default(image);
+>  }
+>  
+> -#ifdef CONFIG_KEXEC_VERIFY_SIG
+> +#ifdef CONFIG_KEXEC_SIG
+>  static int kexec_image_verify_sig_default(struct kimage *image, void *buf,
+>  					  unsigned long buf_len)
+>  {
+> @@ -188,7 +188,8 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+>  			     const char __user *cmdline_ptr,
+>  			     unsigned long cmdline_len, unsigned flags)
+>  {
+> -	int ret = 0;
+> +	const char *reason;
+> +	int ret;
+>  	void *ldata;
+>  	loff_t size;
+>  
+> @@ -207,15 +208,48 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+>  	if (ret)
+>  		goto out;
+>  
+> -#ifdef CONFIG_KEXEC_VERIFY_SIG
+> +#ifdef CONFIG_KEXEC_SIG
+>  	ret = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
+>  					   image->kernel_buf_len);
+> -	if (ret) {
+> -		pr_debug("kernel signature verification failed.\n");
+> +#else
+> +	ret = -ENODATA;
+> +#endif
+> +
+> +	switch (ret) {
+> +	case 0:
+> +		break;
+> +
+> +		/* Certain verification errors are non-fatal if we're not
+> +		 * checking errors, provided we aren't mandating that there
+> +		 * must be a valid signature.
+> +		 */
+> +	case -ENODATA:
+> +		reason = "kexec of unsigned image";
+> +		goto decide;
+> +	case -ENOPKG:
+> +		reason = "kexec of image with unsupported crypto";
+> +		goto decide;
+> +	case -ENOKEY:
+> +		reason = "kexec of image with unavailable key";
+> +	decide:
+> +		if (IS_ENABLED(CONFIG_KEXEC_SIG_FORCE)) {
+> +			pr_notice("%s rejected\n", reason);
+> +			ret = -EKEYREJECTED;
 
-All the non-LSM changes are almost cleared from my part.
+Force use -EKEYREJECTED is odd,  why not just use original "ret"?
 
-I would suggest that we scrape v21 together as soon as you return from
-your vacation discluding the LSM hooks.
+> +			goto out;
+> +		}
+> +
+> +		ret = 0;
+> +		break;
+> +
+> +		/* All other errors are fatal, including nomem, unparseable
+> +		 * signatures and signature check failures - even if signatures
+> +		 * aren't required.
+> +		 */
+> +	default:
+> +		pr_notice("kernel signature verification failed (%d).\n", ret);
+>  		goto out;
+>  	}
+> -	pr_debug("kernel signature verification successful.\n");
+> -#endif
+> +
+>  	/* It is possible that there no initramfs is being loaded */
+>  	if (!(flags & KEXEC_FILE_NO_INITRAMFS)) {
+>  		ret = kernel_read_file_from_fd(initrd_fd, &image->initrd_buf,
+> -- 
+> 2.21.0.392.gf8f6787159e-goog
+> 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
 
-There is no any particular reason to get the LSM changes to the mainline
-before the SGX foundations so now is the right time close things
-underlying them.
-
-I'm now in the same boat with your changes to the ioctl API, which means
-that we are ready to go. I feel a tiny bit bad that it took me so long
-time with [1] but I'm a simple minded person so what I can do :-)
-
-Once you can come back please deal with the suggestions that I made
-and provide a "pure" SRCU patch (apologies for repeating myself). I
-will the squash them to the existing patch set.
-
-After that is fully done we can make v21 scope decision when it comes
-to the enclave life-cycle.
-
-Even if the LSM changes  would not be upstreamed as part of the
-foundations I can start holding versions of them in my tree but only
-after v21 is out.
-
-Can you cope with this plan?
-
-[1] https://patchwork.kernel.org/patch/11005431/
-
-/Jarkko
+Thanks
+Dave
