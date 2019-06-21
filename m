@@ -2,121 +2,95 @@ Return-Path: <SRS0=QDjJ=UU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B14C43613
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 20:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA982C48BE0
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 21:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E4A820673
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 20:18:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xj6Qle4/"
+	by mail.kernel.org (Postfix) with ESMTP id 9AD60208C3
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 21:22:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbfFUUSQ (ORCPT
+        id S1726058AbfFUVWP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jun 2019 16:18:16 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35726 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbfFUUSQ (ORCPT
+        Fri, 21 Jun 2019 17:22:15 -0400
+Received: from mga05.intel.com ([192.55.52.43]:60280 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725985AbfFUVWO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jun 2019 16:18:16 -0400
-Received: by mail-io1-f67.google.com with SMTP id m24so492398ioo.2
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2019 13:18:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E8efNcZtDwk7IidLHvLtP2hUl2fc9Kq5GohdU6xk+B0=;
-        b=Xj6Qle4/q+GM5Ky8b2Khzf+oX1HiCniPCrEDrmA+nj/WMc5akAtYIQ6OJAj94ohBnb
-         aX/9RTXO5LkDnk+mBUQQ3x5MOXNAP593Aaj9qJC62m3BuAAYVd0BM7x93MxB/eZMb564
-         ViDCqclpjT6u2cPNdJPmy22KXsTS0PnyoaQr4/78/7lxat7WAmkNrYzoalaarcBaxu4F
-         NSSswrNR2IN5nwO5k82C1Yn/EoGPNInSbjbOYm6PbKtTaMEFc7ghnTss+GAsTc0VT3co
-         iuuiNOnnE44+qY9sKAADPI3IEyStp11UrDg0PBvvcQhHnmGq9z6GO7nxez9WzxkFMPbs
-         k7LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E8efNcZtDwk7IidLHvLtP2hUl2fc9Kq5GohdU6xk+B0=;
-        b=eRAC0Z8rk2ZZeALxjq7laLmyMYyW7VVZw/X7wesoeLJe1D7OWGTEJJvnp7kbpEto4b
-         5ykHdC0xkHhO4RuPEY8iiG3iNkRY4xUu1MBbkFL8jLSPFlD3lWkfp7UVyxM6zym1ZzaH
-         TxSPa9Lv+d1Xjd1JWFkiFTnU1YSE/zvYXWffCx81D3oV/bACiWqZOly03PIqIfN1jPQ/
-         i1lJYiOmjg3Y6Itya3lDostAC1DntNvKAXfklZcZ8NPtXQ2BEBzTJIOMdW2J+LzqltuR
-         qsWKKKG1DFxhJXt3rPXZOd3p5w3dTflzMBeLxv7MGjs9IkkPMMCPGuvqjfgLqyTxw5zU
-         CuFg==
-X-Gm-Message-State: APjAAAXp2BeUl3PuYtOIUa0F6FJBs83My5zGE16Be01rFezNJRKrIl9L
-        0JrSIm9CkGMr2jYV24pCoOaFAgQf68Cd55VezBjopg==
-X-Google-Smtp-Source: APXvYqy23qbovsSsoFJ0RjtLQmZBZKdQgbpWtLEgyUTQHuLRdPlhf28KgpZ4L8+7/6SG64J+AK2cPMuORXLcoLNPoN4=
-X-Received: by 2002:a05:6638:3d3:: with SMTP id r19mr12698566jaq.53.1561148294551;
- Fri, 21 Jun 2019 13:18:14 -0700 (PDT)
+        Fri, 21 Jun 2019 17:22:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2019 14:22:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,401,1557212400"; 
+   d="scan'208";a="244106919"
+Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
+  by orsmga001.jf.intel.com with ESMTP; 21 Jun 2019 14:22:14 -0700
+Received: from orsmsx153.amr.corp.intel.com (10.22.226.247) by
+ ORSMSX103.amr.corp.intel.com (10.22.225.130) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 21 Jun 2019 14:22:13 -0700
+Received: from orsmsx116.amr.corp.intel.com ([169.254.7.97]) by
+ ORSMSX153.amr.corp.intel.com ([169.254.12.252]) with mapi id 14.03.0439.000;
+ Fri, 21 Jun 2019 14:22:13 -0700
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+CC:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        "Stephen Smalley" <sds@tycho.nsa.gov>
+Subject: RE: [RFC PATCH v4 10/12] security/selinux: Add enclave_load()
+ implementation
+Thread-Topic: [RFC PATCH v4 10/12] security/selinux: Add enclave_load()
+ implementation
+Thread-Index: AQHVJu2+BRxznwhIFUiQ7nhB61/EnaammGEA
+Date:   Fri, 21 Jun 2019 21:22:13 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F6551877E@ORSMSX116.amr.corp.intel.com>
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+ <20190619222401.14942-11-sean.j.christopherson@intel.com>
+In-Reply-To: <20190619222401.14942-11-sean.j.christopherson@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjQ5MzIyYWYtNTYzYS00NDZjLWI1NGUtN2I5ZmFlYzEwMWUzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTTRvRVF6TkIwOWc4dEhRdG9ZRTR1M3ZlQkU1RFhGemJIRDRlcEVcL2x2WVlxVFlCSFdzZUlaR0ppdXhqVHJGT3IifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20190326182742.16950-1-matthewgarrett@google.com>
- <20190326182742.16950-8-matthewgarrett@google.com> <20190621064340.GB4528@localhost.localdomain>
-In-Reply-To: <20190621064340.GB4528@localhost.localdomain>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Fri, 21 Jun 2019 13:18:03 -0700
-Message-ID: <CACdnJut=J1YTpM4s6g5XWCEs+=X0Jvf8otfMg+w=_oqSZmf01Q@mail.gmail.com>
-Subject: Re: [PATCH V31 07/25] kexec_file: Restrict at runtime if the kernel
- is locked down
-To:     Dave Young <dyoung@redhat.com>
-Cc:     James Morris <jmorris@namei.org>, Jiri Bohac <jbohac@suse.cz>,
-        Linux API <linux-api@vger.kernel.org>,
-        kexec@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 20, 2019 at 11:43 PM Dave Young <dyoung@redhat.com> wrote:
->
-> On 03/26/19 at 11:27am, Matthew Garrett wrote:
-> > From: Jiri Bohac <jbohac@suse.cz>
-> >
-> > When KEXEC_SIG is not enabled, kernel should not load images through
-> > kexec_file systemcall if the kernel is locked down.
-> >
-> > [Modified by David Howells to fit with modifications to the previous patch
-> >  and to return -EPERM if the kernel is locked down for consistency with
-> >  other lockdowns. Modified by Matthew Garrett to remove the IMA
-> >  integration, which will be replaced by integrating with the IMA
-> >  architecture policy patches.]
-> >
-> > Signed-off-by: Jiri Bohac <jbohac@suse.cz>
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > Signed-off-by: Matthew Garrett <mjg59@google.com>
-> > Reviewed-by: Jiri Bohac <jbohac@suse.cz>
-> > cc: kexec@lists.infradead.org
-> > ---
-> >  kernel/kexec_file.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > index 67f3a866eabe..a1cc37c8b43b 100644
-> > --- a/kernel/kexec_file.c
-> > +++ b/kernel/kexec_file.c
-> > @@ -239,6 +239,12 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
-> >               }
-> >
-> >               ret = 0;
-> > +
-> > +             if (kernel_is_locked_down(reason, LOCKDOWN_INTEGRITY)) {
-> > +                     ret = -EPERM;
-> > +                     goto out;
-> > +             }
-> > +
->
-> Checking here is late, it would be good to move the check to earlier
-> code around below code:
->         /* We only trust the superuser with rebooting the system. */
->         if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
->                 return -EPERM;
+> From: Christopherson, Sean J
+> Sent: Wednesday, June 19, 2019 3:24 PM
+> 
+> Intended use of each permission:
+> 
+>   - SGX_EXECDIRTY: dynamically load code within the enclave itself
+>   - SGX_EXECUNMR: load unmeasured code into the enclave, e.g. Graphene
 
-I don't think so - we want it to be possible to load images if they
-have a valid signature.
+Why does it matter whether a code page is measured or not?
+
+>   - SGX_EXECANON: load code from anonymous memory (likely Graphene)
+
+Graphene doesn't load code from anonymous memory. It loads code dynamically though, as in SGX_EXECDIRTY case.
+
+>   - SGX_EXECUTE: load an enclave from a file, i.e. normal behavior
+
+Why is SGX_EXECUTE needed from security perspective? Or why isn't FILE__EXECUTE sufficient?
