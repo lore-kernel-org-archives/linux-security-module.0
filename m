@@ -2,97 +2,124 @@ Return-Path: <SRS0=QDjJ=UU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79285C48BE1
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 01:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CB7C43613
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 01:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CD8C2084E
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 01:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2733320652
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 01:37:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UgJtjkuA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725951AbfFUBgg (ORCPT
+        id S1725906AbfFUBhe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Jun 2019 21:36:36 -0400
-Received: from mga03.intel.com ([134.134.136.65]:31493 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725906AbfFUBge (ORCPT
+        Thu, 20 Jun 2019 21:37:34 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43804 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfFUBhd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Jun 2019 21:36:34 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 18:35:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,398,1557212400"; 
-   d="scan'208";a="243825515"
-Received: from mudigirx-mobl1.gar.corp.intel.com (HELO localhost) ([10.252.61.12])
-  by orsmga001.jf.intel.com with ESMTP; 20 Jun 2019 18:35:22 -0700
-Date:   Fri, 21 Jun 2019 04:35:20 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Bill Roberts <william.c.roberts@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
+        Thu, 20 Jun 2019 21:37:33 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f25so2504078pgv.10
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2019 18:37:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+BBLwZtK559RusCbv05GmPVwa01R9tY1N/TrVS8kF/s=;
+        b=UgJtjkuAPfCnrYv5/+nT3DgmraBLhmyJlPrB/1R/HP+7xj5HMoOxBowzAxJKYuhXal
+         TUXR4AliTFs+xAYskx4xEjwkCvPnV5s/p3VitrZPdgdQ+pzqZ4eC+e5HFC1HQ72WpDov
+         PdJmAQwmEYv2XrO5loF/BkZSQVzjTeTg7Sv8c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+BBLwZtK559RusCbv05GmPVwa01R9tY1N/TrVS8kF/s=;
+        b=Ak7N9PCTL6Vk9mM+TQ4BayTkna9Ai5jQ/vmWXKXPAyWaVnAinZ6ZJ4lB53H96NGdKZ
+         cIiSRVfZ4673XvaTg3GieMq6moThrSS/a1ZsmPiuZOnd32aWRLXzSieX8fDsvUaB+704
+         5wN1LTMER4lWKMoEST7kGH0zX3hr/0MdqDh5YjKUEwg0D7L5ASQ4azByJojIaNtAPlWV
+         sMH4sjUKXOtrzlY9ayr1K7MRYJNVA9MXf6GHng+Nop/jegZdMmWNUES3Mp4umZ+AZmJi
+         wG7zzN2GXiPteXUxVgrfEtwPH7Ea394qxD/c1FRmK7WSyIr9qqVvQQo7eMpVZqn7ZEJO
+         ep6Q==
+X-Gm-Message-State: APjAAAXYy5chqdIGOYUTk+okfEA3KEKl2/1mr+noq2taVQkFdkyjzgfg
+        EKsJOfSEDLxjoEvBPBwGSdN2AD+qfJE=
+X-Google-Smtp-Source: APXvYqz96MlZh/gHUsZQiQrw95Tphw+Mau0IgtUkGB4/+lWwwoAdzVWZRWZFmnOth83mrBsvYd712g==
+X-Received: by 2002:a63:60d:: with SMTP id 13mr10624086pgg.272.1561081052880;
+        Thu, 20 Jun 2019 18:37:32 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id o14sm821876pjp.29.2019.06.20.18.37.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Jun 2019 18:37:31 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 18:37:30 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Hocko <mhocko@kernel.org>,
         James Morris <jmorris@namei.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [RFC PATCH v4 06/12] mm: Introduce vm_ops->may_mprotect()
-Message-ID: <20190621013520.GK20474@linux.intel.com>
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <20190619222401.14942-7-sean.j.christopherson@intel.com>
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marco Elver <elver@google.com>, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v6 1/3] mm: security: introduce init_on_alloc=1 and
+ init_on_free=1 boot options
+Message-ID: <201906201821.8887E75@keescook>
+References: <20190606164845.179427-1-glider@google.com>
+ <20190606164845.179427-2-glider@google.com>
+ <201906070841.4680E54@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619222401.14942-7-sean.j.christopherson@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <201906070841.4680E54@keescook>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 19, 2019 at 03:23:55PM -0700, Sean Christopherson wrote:
-> SGX will use ->may_mprotect() to invoke an SGX variant of the existing
-> file_mprotect() and mmap_file() LSM hooks.
-> 
-> The name may_mprotect() is intended to reflect the hook's purpose as a
-> way to restrict mprotect() as opposed to a wholesale replacement.
-> 
-> Due to the nature of SGX and its Enclave Page Cache (EPC), all enclave
-> VMAs are backed by a single file, i.e. /dev/sgx/enclave, that must be
-> MAP_SHARED.  Furthermore, all enclaves need read, write and execute
-> VMAs.  As a result, applying W^X restrictions on /dev/sgx/enclave using
-> existing LSM hooks is for all intents and purposes impossible, e.g.
-> denying either W or X would deny access to *any* enclave.
-> 
-> By hooking mprotect(), SGX can invoke an SGX specific LSM hook, which in
-> turn allows LSMs to enforce W^X policies.
-> 
-> Alternatively, SGX could provide a helper to identify enclaves given a
-> vma or file.  LSMs could then check if a mapping is for enclave and take
-> action according.
-> 
-> A second alternative would be to have SGX implement its own LSM hooks
-> for file_mprotect() and mmap_file(), using them to "forward" the call to
-> the SGX specific hook.
-> 
-> The major con to both alternatives is that they provide zero flexibility
-> for the SGX specific LSM hook.  The "is_sgx_enclave()" helper doesn't
-> allow SGX can't supply any additional information whatsoever, and the
-> mmap_file() hook is called before the final address is known, e.g. SGX
-> can't provide any information about the specific enclave being mapped.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+On Fri, Jun 07, 2019 at 08:42:27AM -0700, Kees Cook wrote:
+> On Thu, Jun 06, 2019 at 06:48:43PM +0200, Alexander Potapenko wrote:
+> > [...]
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index cd04dbd2b5d0..9c4a8b9a955c 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > [...]
+> > @@ -2741,8 +2758,14 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
+> >  		prefetch_freepointer(s, next_object);
+> >  		stat(s, ALLOC_FASTPATH);
+> >  	}
+> > +	/*
+> > +	 * If the object has been wiped upon free, make sure it's fully
+> > +	 * initialized by zeroing out freelist pointer.
+> > +	 */
+> > +	if (unlikely(slab_want_init_on_free(s)) && object)
+> > +		*(void **)object = NULL;
 
-Absolutely nothing to say about this one. We can take it as part of the
-main patch set as it is. Not going to apply it though before the things
-have been sorted out.
+In looking at metadata again, I noticed that I don't think this is
+correct, as it needs to be using s->offset to find the location of the
+freelist pointer:
 
-/Jarkko
+	memset(object + s->offset, 0, sizeof(void *));
+
+> >  
+> > -	if (unlikely(gfpflags & __GFP_ZERO) && object)
+> > +	if (unlikely(slab_want_init_on_alloc(gfpflags, s)) && object)
+> >  		memset(object, 0, s->object_size);
+
+init_on_alloc is using "object_size" but init_on_free is using "size". I
+assume the "alloc" wipe is smaller because metadata was just written
+for the allocation?
+
+-- 
+Kees Cook
