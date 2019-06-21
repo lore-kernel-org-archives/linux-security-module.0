@@ -2,194 +2,111 @@ Return-Path: <SRS0=QDjJ=UU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DA6C43613
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 13:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 442C9C43613
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 13:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA8221537
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 13:31:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16C77208C3
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jun 2019 13:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FGwg6y4t"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G3vi2AAO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbfFUNbr (ORCPT
+        id S1726029AbfFUNcw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jun 2019 09:31:47 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:35664 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfFUNbr (ORCPT
+        Fri, 21 Jun 2019 09:32:52 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36916 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbfFUNcw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:31:47 -0400
-Received: by mail-vs1-f65.google.com with SMTP id u124so3833149vsu.2
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2019 06:31:46 -0700 (PDT)
+        Fri, 21 Jun 2019 09:32:52 -0400
+Received: by mail-io1-f67.google.com with SMTP id e5so1811810iok.4
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2019 06:32:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=xxwRR3iqWJYzBJGmHu7dsEOV5WDLCvCciENrha/Bmm4=;
-        b=FGwg6y4tEufdq6RAhV0WTf04zK/j/S2XarThF7HqWhORPY+P3zwonTzns8twxYIjSP
-         AXe8aBdrpRV8x6csSbn1wYvxG4jPeXqT1JM/p10rrAaCoY2oHgeU2K1YfhldWF7kEuo8
-         jjFGGO63zFe/2PifMPG0GA7ahxFipfxrwCtQ4CfZB6D3ebhKcygGNDtAG+qASjBgVafY
-         Tu35YEa2pLUa8Uz3DDexgxERxTRADUBiQ7l4ro4GwkM5ze29gg3CYA34kF55/JFYcMbw
-         uDbLN7Xn7YGw5AaFVWC8VBk0djfQqD+i+1pQnDWydmho9dC1eCiaNirLdTIkVHHSm8xy
-         RTog==
+         :cc;
+        bh=ZOu+sVSXpOqICESmggSM2r4CPCyuPx9bs4vYuIKuU68=;
+        b=G3vi2AAOl4hhhusP8y7LXnvpUAsLTdGJFfvknAJ17R1YOy9TvoJJ3x7kaY/yQ4gr7a
+         g6a7wOgKUJn9B7X1Wy6wO2KCv+8vRXCkrWcO+VKunYTrgBfaEZq9uyvo/pQQxhF6M0SG
+         py8beLFr5Lg5jBqNXGNLWrUfPx7UJMX/0QYzTkkfSkX3opZgtR7tg5A8s/pLHnXvOzF/
+         mEFa9x4BTkqGp3bWQ5ZC2svEcgAY9/BX6yekUT6McoUBo4wfUx1f3GcYNs5n6YpCoZdF
+         mv2+WJ0uUtJRVmJITvuMqg9rf0Y0r8Sjeb9VAh/s5Mdklc02L9tX5a88QkRnlEBhNTqp
+         wiBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xxwRR3iqWJYzBJGmHu7dsEOV5WDLCvCciENrha/Bmm4=;
-        b=kDOqdwWNyAdSlqkS6iYFku7z+UF0/kEo4hvnHSRR1PYMnb4wghPpPWEmoNytP0ZLpt
-         NtuCQrCWfHWRdZh1Q7JOrfqeXEtETfbGKweseMpg0h1OavL4Jt0kL8LK26lKXQQ6g+W4
-         OYwxPqF4Ss8KjW7FL569Njoc91wrj2ZuOA9gX7xiFg8VTXx3DnroMhjcfubvYSqA39Pe
-         R9N/nzgmlOvLMXqhDtlxXy2L5tG4GYqkgZ7PcPvjU2UxUmZvsOgtY9njRg1rQgHTeNMf
-         6g6x6mZCfJLaLp5T186P5c8GM7FmcU9DBCfK6fcy159XVujIq2hk0Pr3gqQ/hbICPsNp
-         myxw==
-X-Gm-Message-State: APjAAAVdQvlYJRILOVkHmwEeq1Ou4Mj3SeCOFLVDsveIcCdv6THCAIrS
-        kR8MLTj+ZYxBGRRPJxzIMhcnUouGD3Ja08m473tu8Q==
-X-Google-Smtp-Source: APXvYqxwmfAhfqMtFmOa9Nrjd+Ahc6EvQ5HIW+ekr/0AZJ0siFcoYtV8yYZRkqXE70xqE7CAFXLv5oaqUvPX5ET8s5M=
-X-Received: by 2002:a67:8d8a:: with SMTP id p132mr10831738vsd.103.1561123905391;
- Fri, 21 Jun 2019 06:31:45 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=ZOu+sVSXpOqICESmggSM2r4CPCyuPx9bs4vYuIKuU68=;
+        b=RNWqXbEw6dP1voCkiqbO1RF8wG+J1wephdxx0rFK1XnH4ddAc9dLmtY3lfmgcQb+LX
+         jjmtv7C1tO8CkHBm5jXzNWi7GxVMUgnzCtAv1dphpC+n1O6M3xNE3XYr6/FN5xWo/LLU
+         QSUQAJDDR74K9fkI/k7YTRqrFwgacmo4JUmYGmUgLDL9hv2C+S2hAVt2jYjQW5DHWry5
+         uXXloYx8XBfM94QrOy7nNDTyVFOXFtx87xCwIBrPKemQIvGVq4/H4oTjJuLQD6Y/jixb
+         PSmBRmNf3PPe2a3QQqdAHlNayevENN1kWMZRsWWUHeqZd/ElrOSJd2QlszKkNV7sHvTZ
+         /Agg==
+X-Gm-Message-State: APjAAAUWZCq/iPEotzIX4houiDofHFcFSZWDNuyvvwSK0n/eYCbzvqSi
+        imKWlsoYiVH1CbvY/NNtJ10qng9MU3WbWXM3/vgRXQ==
+X-Google-Smtp-Source: APXvYqywBx+off9TrCkhXHGnxEFiuOzAKv+SiaNKvZJdidbzBrWYeoOWgFVT6uKrIaXpibz3u3FQ/cPBVwvmh4sxkd0=
+X-Received: by 2002:a02:1a86:: with SMTP id 128mr8265567jai.95.1561123971509;
+ Fri, 21 Jun 2019 06:32:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190617151050.92663-1-glider@google.com> <20190617151050.92663-2-glider@google.com>
- <1561120576.5154.35.camel@lca.pw>
-In-Reply-To: <1561120576.5154.35.camel@lca.pw>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Fri, 21 Jun 2019 15:31:33 +0200
-Message-ID: <CAG_fn=XKK5+nC5LErJ+zo7dt3N-cO7zToz=bN2R891dMG_rncA@mail.gmail.com>
-Subject: Re: [PATCH v7 1/2] mm: security: introduce init_on_alloc=1 and
- init_on_free=1 boot options
-To:     Qian Cai <cai@lca.pw>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Hocko <mhocko@kernel.org>,
+References: <20190618094731.3677294-1-arnd@arndb.de> <201906201034.9E44D8A2A8@keescook>
+ <CAK8P3a2uFcaGMSHRdg4NECHJwgAyhtMuYDv3U=z2UdBSL5U0Lw@mail.gmail.com>
+In-Reply-To: <CAK8P3a2uFcaGMSHRdg4NECHJwgAyhtMuYDv3U=z2UdBSL5U0Lw@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 21 Jun 2019 15:32:40 +0200
+Message-ID: <CAKv+Gu-A_OWUQ_neUAprmQOotPA=LoUGQHvFkZ2tqQAg=us1jA@mail.gmail.com>
+Subject: Re: [PATCH] structleak: disable BYREF_ALL in combination with KASAN_STACK
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Alexander Popov <alex.popov@linux.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marco Elver <elver@google.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 21, 2019 at 2:36 PM Qian Cai <cai@lca.pw> wrote:
+On Fri, 21 Jun 2019 at 11:44, Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> On Mon, 2019-06-17 at 17:10 +0200, Alexander Potapenko wrote:
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index d66bc8abe0af..50a3b104a491 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -136,6 +136,48 @@ unsigned long totalcma_pages __read_mostly;
+> On Thu, Jun 20, 2019 at 7:36 PM Kees Cook <keescook@chromium.org> wrote:
 > >
-> >  int percpu_pagelist_fraction;
-> >  gfp_t gfp_allowed_mask __read_mostly =3D GFP_BOOT_MASK;
-> > +#ifdef CONFIG_INIT_ON_ALLOC_DEFAULT_ON
-> > +DEFINE_STATIC_KEY_TRUE(init_on_alloc);
-> > +#else
-> > +DEFINE_STATIC_KEY_FALSE(init_on_alloc);
-> > +#endif
-> > +#ifdef CONFIG_INIT_ON_FREE_DEFAULT_ON
-> > +DEFINE_STATIC_KEY_TRUE(init_on_free);
-> > +#else
-> > +DEFINE_STATIC_KEY_FALSE(init_on_free);
-> > +#endif
-> > +
+> > On Tue, Jun 18, 2019 at 11:47:13AM +0200, Arnd Bergmann wrote:
+> > > The combination of KASAN_STACK and GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+> > > leads to much larger kernel stack usage, as seen from the warnings
+> > > about functions that now exceed the 2048 byte limit:
+> >
+> > Is the preference that this go into v5.2 (there's not much time left),
+> > or should this be v5.3? (You didn't mark it as Cc: stable?)
 >
-> There is a problem here running kernels built with clang,
+> Having it in 5.2 would be great. I had not done much build testing in the last
+> months, so I didn't actually realize that your patch was merged a while ago
+> rather than only in linux-next.
 >
-> [    0.000000] static_key_disable(): static key 'init_on_free+0x0/0x4' us=
-ed
-> before call to jump_label_init()
-> [    0.000000] WARNING: CPU: 0 PID: 0 at ./include/linux/jump_label.h:314
-> early_init_on_free+0x1c0/0x200
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.2.0-rc5-next-201=
-90620+
-> #11
-> [    0.000000] pstate: 60000089 (nZCv daIf -PAN -UAO)
-> [    0.000000] pc : early_init_on_free+0x1c0/0x200
-> [    0.000000] lr : early_init_on_free+0x1c0/0x200
-> [    0.000000] sp : ffff100012c07df0
-> [    0.000000] x29: ffff100012c07e20 x28: ffff1000110a01ec
-> [    0.000000] x27: 0000000000000001 x26: ffff100011716f88
-> [    0.000000] x25: ffff100010d367ae x24: ffff100010d367a5
-> [    0.000000] x23: ffff100010d36afd x22: ffff100011716758
-> [    0.000000] x21: 0000000000000000 x20: 0000000000000000
-> [    0.000000] x19: 0000000000000000 x18: 000000000000002e
-> [    0.000000] x17: 000000000000000f x16: 0000000000000040
-> [    0.000000] x15: 0000000000000000 x14: 6d756a206f74206c
-> [    0.000000] x13: 6c61632065726f66 x12: 6562206465737520
-> [    0.000000] x11: 0000000000000000 x10: 0000000000000000
-> [    0.000000] x9 : 0000000000000000 x8 : 0000000000000000
-> [    0.000000] x7 : 73203a2928656c62 x6 : ffff1000144367ad
-> [    0.000000] x5 : ffff100012c07b28 x4 : 000000000000000f
-> [    0.000000] x3 : ffff1000101b36ec x2 : 0000000000000001
-> [    0.000000] x1 : 0000000000000001 x0 : 000000000000005d
-> [    0.000000] Call trace:
-> [    0.000000]  early_init_on_free+0x1c0/0x200
-> [    0.000000]  do_early_param+0xd0/0x104
-> [    0.000000]  parse_args+0x204/0x54c
-> [    0.000000]  parse_early_param+0x70/0x8c
-> [    0.000000]  setup_arch+0xa8/0x268
-> [    0.000000]  start_kernel+0x80/0x588
-> [    0.000000] random: get_random_bytes called from __warn+0x164/0x208 wi=
-th
-> crng_init=3D0
+> BTW, I have now run into a small number of files that are still affected
+> by a stack overflow warning from STRUCTLEAK_BYREF_ALL. I'm trying
+> to come up with patches for those as well, we can probably do it in a way
+> that also improves the affected drivers. I'll put you on Cc when I
+> find another one.
 >
-> > diff --git a/mm/slub.c b/mm/slub.c
-> > index cd04dbd2b5d0..9c4a8b9a955c 100644
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -1279,6 +1279,12 @@ static int __init setup_slub_debug(char *str)
-> >       if (*str =3D=3D ',')
-> >               slub_debug_slabs =3D str + 1;
-> >  out:
-> > +     if ((static_branch_unlikely(&init_on_alloc) ||
-> > +          static_branch_unlikely(&init_on_free)) &&
-> > +         (slub_debug & SLAB_POISON)) {
-> > +             pr_warn("disabling SLAB_POISON: can't be used together wi=
-th
-> > memory auto-initialization\n");
-> > +             slub_debug &=3D ~SLAB_POISON;
-> > +     }
-> >       return 1;
-> >  }
->
-> I don't think it is good idea to disable SLAB_POISON here as if people ha=
-ve
-> decided to enable SLUB_DEBUG later already, they probably care more to ma=
-ke sure
-> those additional checks with SLAB_POISON are still running to catch memor=
-y
-> corruption.
-The problem is that freed buffers can't be both poisoned and zeroed at
-the same time.
-Do you think we need to disable memory initialization in that case instead?
 
+There is something fundamentally wrong here, though. BYREF_ALL only
+initializes variables that have their address taken, which does not
+explain why the size of the stack frame should increase (since in
+order to have an address in the first place, the variable must already
+have a stack slot assigned)
 
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+So I suspect that BYREF_ALL is defeating some optimizations where.
+e.g., the call involving the address of the variable is optimized
+away, but the the initialization remains, thus forcing the variable to
+be allocated in the stack frame even though the initializer is the
+only thing that references it.
