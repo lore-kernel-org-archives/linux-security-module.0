@@ -5,149 +5,110 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58226C43613
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 00:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F225C43613
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 00:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CF46208C3
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 00:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13DBF20881
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 00:06:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fpp37vrx"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a+jT2ExB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbfFVAEh (ORCPT
+        id S1726567AbfFVAGj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jun 2019 20:04:37 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:43750 "EHLO
+        Fri, 21 Jun 2019 20:06:39 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:50182 "EHLO
         mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbfFVAEd (ORCPT
+        with ESMTP id S1726599AbfFVAEZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jun 2019 20:04:33 -0400
-Received: by mail-pf1-f202.google.com with SMTP id j7so5316680pfn.10
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2019 17:04:32 -0700 (PDT)
+        Fri, 21 Jun 2019 20:04:25 -0400
+Received: by mail-pf1-f202.google.com with SMTP id h27so5295587pfq.17
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2019 17:04:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=KhB8k5EQ6oackeS+pjqoF9TX+2zbJEYkNBGyLQREeww=;
-        b=fpp37vrxC2zzNF4VYXnqpXLxv/GRJVI9czcu5CjPcqPqIYiLaMJlD2Vk/Uwp7TAuhD
-         n8W8D3vPD+8NKZ3to4ocFRbsjD84dm2a22V7a9tan3vAnDLizMLJQHkgJt0aHe5SGXsI
-         4ecUre6B5AxnZE+Tf2Z1k4s3s82h4dFaNiLPB4pJ66yJsjbx9mkKA8Q/A41O+blCEUPq
-         u0OLJipGcviIsNscneNUdtsGZnCMbcYLcghvwelZ8mrEOqWwO5LcJ5pugOLcew54PeI9
-         p1iCj0LwWuUUDpV7f4UipuTFmNRpd7DYGG1Qt9G0H0nxcXT/7VuiZkdItcOYIzxoQC+b
-         Datg==
+        bh=o4JS6ZsbyHnt4Iukj8bZlTq9cv6XEso1+I/lLyLsbpA=;
+        b=a+jT2ExBtmOGrE2RBwibGRFthL5zBOYgrJWml8uNIPt9rHxq+DfglrA0/Y5pBqU9QQ
+         HpS+WH2bZYzHAFWpqgCYqmXUCwak+27QIHhABd4BbGjacaPht5GkZL4AUiYAZqiFEw4g
+         OWfCM5eDm4KrIttm0QlSi2FmyQ5mMxmZMrAg0PPYAY9jtCypjRtwPzqrvztnH6gGIENN
+         6gg0DvWo19xJnE3hv2pBXaws7upY4aoCIGqykeQepmFEC2MeVBjac+ouverM2jCUIr0N
+         76vtr2+s7zaSAuTfMYgT3Eb5U8sq72+KctC6jCs732M5YkTFIz0QsAVT6vMlXfsS6YBn
+         4DBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=KhB8k5EQ6oackeS+pjqoF9TX+2zbJEYkNBGyLQREeww=;
-        b=C59gcQmkBMJI0Av2tBHX4Zfo6QigVZf8Eh2BiMAdLrx7rVw9EfM7IqRtBFIXWWK3X+
-         Srjptqsk6yQT0vh7+pN3ANgseUEfO5totrdiAlE+QNOwzpmYQAyTIdc57Wo2Cqo2Vv5b
-         VFBsTAHrDlJU0MagPpoM7ccwo8YJM0+BOGSs9y+BYmZTd4CfkwzshdyK4Gx/z3U+mguX
-         75jleSALdohRyLZ6EURk67xXZ0L7S56XtGyp7RMDbW6AhxXAqmtz/FW2wntS0f0mXOkE
-         tIHCrGKOZclrQtUqcHd52PydJvgIMLrDP5X8YS+Z4RCLoQIDbb2UsCOVP9qtGkOOI86O
-         8KcQ==
-X-Gm-Message-State: APjAAAWItGLXh/PuUrMR9CXCi2HBLLbOEY9SnGDiSzFp4a/q49Ihqdxu
-        AzR6T9Jevrf0/oyUn0NcwNb8rUUAyX67j/LHWOAgHg==
-X-Google-Smtp-Source: APXvYqyeoN3qECYwlSUWOV5qISEKFpiFf7um1aRObU9/wvILwiDNOLiFr99GCpgElPi0EQ02dPrioEU/FKmIqkY17ONTGA==
-X-Received: by 2002:a65:64d5:: with SMTP id t21mr21487870pgv.310.1561161872026;
- Fri, 21 Jun 2019 17:04:32 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 17:03:41 -0700
+        bh=o4JS6ZsbyHnt4Iukj8bZlTq9cv6XEso1+I/lLyLsbpA=;
+        b=WAcbkYdTToYjV5jC1Qc9+Y6DzS+sYwaVy+U6tw9B8o1Iop4nl8mVIepPkC/8/5350g
+         sdVwxvdwa+CUjGRuwVYw7ErVp3qW5WPpW6tTh7QCYvcHQLR96cxznJ/04Nh1kqEnga2N
+         PMEjXZpyiM27cBVdgaqfo4QPz0O6hDpITK2EGPuoPFTR1bpCKsy2gGZwto7qN+CVEbW8
+         aeiIDZYRTo/tN1/4FthDeyuuFOecuqt1uIgj5oSVA0fCiS/AWHMMNRm+dZZpaF8HPQjz
+         OPz6AwGluZMnZkMVH8oMm/a7MKgGt36TkiH1h1sUEjVBOuiHeOzsJepheNkTDiyhRSHq
+         nuFQ==
+X-Gm-Message-State: APjAAAXtKJRSqUo89ofKcoAiVVj+O2bYKYd9HfoIqIEUMadraAQSHd4h
+        SLzpmqphsLR8aePwNUUj+sgNS6FHgOynRTZY/1aKVA==
+X-Google-Smtp-Source: APXvYqw5rFft+vShj1dHsGGITKkOPUFNJ8H0xme43V9+MAij1nj1qBbMAY4uDsOV1ThNNZ0FUlZ3kOxEzhFD4poriXVZqQ==
+X-Received: by 2002:a63:8c0f:: with SMTP id m15mr1862896pgd.441.1561161864327;
+ Fri, 21 Jun 2019 17:04:24 -0700 (PDT)
+Date:   Fri, 21 Jun 2019 17:03:38 -0700
 In-Reply-To: <20190622000358.19895-1-matthewgarrett@google.com>
-Message-Id: <20190622000358.19895-13-matthewgarrett@google.com>
+Message-Id: <20190622000358.19895-10-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190622000358.19895-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH V34 12/29] x86: Lock down IO port access when the kernel is
+Subject: [PATCH V34 09/29] kexec_file: Restrict at runtime if the kernel is
  locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Matthew Garrett <mjg59@google.com>,
-        David Howells <dhowells@redhat.com>, x86@kernel.org
+        Jiri Bohac <jbohac@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>, kexec@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Matthew Garrett <mjg59@srcf.ucam.org>
+From: Jiri Bohac <jbohac@suse.cz>
 
-IO port access would permit users to gain access to PCI configuration
-registers, which in turn (on a lot of hardware) give access to MMIO
-register space. This would potentially permit root to trigger arbitrary
-DMA, so lock it down by default.
+When KEXEC_SIG is not enabled, kernel should not load images through
+kexec_file systemcall if the kernel is locked down.
 
-This also implicitly locks down the KDADDIO, KDDELIO, KDENABIO and
-KDDISABIO console ioctls.
+[Modified by David Howells to fit with modifications to the previous patch
+ and to return -EPERM if the kernel is locked down for consistency with
+ other lockdowns. Modified by Matthew Garrett to remove the IMA
+ integration, which will be replaced by integrating with the IMA
+ architecture policy patches.]
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
+Signed-off-by: Jiri Bohac <jbohac@suse.cz>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: x86@kernel.org
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+cc: kexec@lists.infradead.org
 ---
- arch/x86/kernel/ioport.c     | 7 +++++--
- include/linux/security.h     | 1 +
- security/lockdown/lockdown.c | 1 +
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ kernel/kexec_file.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
-index 0fe1c8782208..61a89d3c0382 100644
---- a/arch/x86/kernel/ioport.c
-+++ b/arch/x86/kernel/ioport.c
-@@ -11,6 +11,7 @@
- #include <linux/errno.h>
- #include <linux/types.h>
- #include <linux/ioport.h>
-+#include <linux/security.h>
- #include <linux/smp.h>
- #include <linux/stddef.h>
- #include <linux/slab.h>
-@@ -31,7 +32,8 @@ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index eec7e5bb2a08..27adb4312b03 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -237,7 +237,10 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 			goto out;
+ 		}
  
- 	if ((from + num <= from) || (from + num > IO_BITMAP_BITS))
- 		return -EINVAL;
--	if (turn_on && !capable(CAP_SYS_RAWIO))
-+	if (turn_on && (!capable(CAP_SYS_RAWIO) ||
-+			security_locked_down(LOCKDOWN_IOPORT)))
- 		return -EPERM;
+-		ret = 0;
++		ret = security_locked_down(LOCKDOWN_KEXEC);
++		if (ret)
++			goto out;
++
+ 		break;
  
- 	/*
-@@ -126,7 +128,8 @@ SYSCALL_DEFINE1(iopl, unsigned int, level)
- 		return -EINVAL;
- 	/* Trying to gain more privileges? */
- 	if (level > old) {
--		if (!capable(CAP_SYS_RAWIO))
-+		if (!capable(CAP_SYS_RAWIO) ||
-+		    security_locked_down(LOCKDOWN_IOPORT))
- 			return -EPERM;
- 	}
- 	regs->flags = (regs->flags & ~X86_EFLAGS_IOPL) |
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 1b849f10dec6..60569b7e9465 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -87,6 +87,7 @@ enum lockdown_reason {
- 	LOCKDOWN_KEXEC,
- 	LOCKDOWN_HIBERNATION,
- 	LOCKDOWN_PCI_ACCESS,
-+	LOCKDOWN_IOPORT,
- 	LOCKDOWN_INTEGRITY_MAX,
- 	LOCKDOWN_CONFIDENTIALITY_MAX,
- };
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index e2ee8a16b94c..895ef3ba1b4c 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -23,6 +23,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
- 	[LOCKDOWN_HIBERNATION] = "hibernation",
- 	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
-+	[LOCKDOWN_IOPORT] = "raw io port access",
- 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
- 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
- };
+ 		/* All other errors are fatal, including nomem, unparseable
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
