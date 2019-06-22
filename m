@@ -2,265 +2,180 @@ Return-Path: <SRS0=kyj6=UV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F10B0C43613
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 00:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AD6C43613
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 04:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7AB420656
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 00:06:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hR20jTMV"
+	by mail.kernel.org (Postfix) with ESMTP id 0ED712075E
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 04:46:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbfFVAEF (ORCPT
+        id S1725994AbfFVEqU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jun 2019 20:04:05 -0400
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:51649 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbfFVAEF (ORCPT
+        Sat, 22 Jun 2019 00:46:20 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:60110 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfFVEqU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jun 2019 20:04:05 -0400
-Received: by mail-pg1-f201.google.com with SMTP id i35so3814316pgi.18
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2019 17:04:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=fMlhT4fwMMt7iRu5SpyzWIM9hHHfi6c27K0OkZeST/w=;
-        b=hR20jTMVzfnPAlv9JegM8qiBiqwD+EZG5g1R1J/R5fWpPtupkfeb0V2LpOIpc0jdTW
-         mycqq1p38Fy3vw8TkmbC0YIbLt9wpmBlciL6BrcObPQiSzfqiFU3dyu1v+uVD9NPubku
-         YvXpeJSNZ5w+NN83LqMzmSvxi6klBdRC7BTfRsFM9EwVfvgkWBLXE3H7wUESGq+6diLu
-         eXBTxDCJ3nQXDBVuf57sSRyG5ivhhzW5qdeGb3qJCsM4Q8hhnrrNtWS0CS+1iKpuYbe/
-         cZBf4bUSjYxP0n39VZ4jEsha0mjWXHDylnyEs/aSfQ+4FJiQU2n0tZLcyqg/0WC+U9ec
-         gqEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=fMlhT4fwMMt7iRu5SpyzWIM9hHHfi6c27K0OkZeST/w=;
-        b=mef742/n0bYJuaF31qvG2a4cEbQfz+EiNnqf3qZp4gYEuVAgFmnjyrlvok7wW9KeVM
-         nTwqL+O3zEJAO8L3Bi7u0p0oUsim6h8Ci9/6w/7bfR9yhnc4W2ribACgky8exMAJ4y2p
-         kz2EL8djOaVkOrJKWMP9Yl7cvNqmA5ctUWZxngusKyntlQJ/+OR+pDST3bgxgle/mGXs
-         Dp4Tb5NaR7DzCNh/XgH+Zz6wgX7QW/v4VpNlMJBIwzK1NxiVpiEyN9hc5rErGPu835/o
-         PbZpotTBv2Nnd9pyxktngU5lIYyU4pX9hIno/8PzaTJN04Jdy/pIZJNQxptXL0qIp93Q
-         eR7w==
-X-Gm-Message-State: APjAAAX6xXJZh4lVL1Jp1MLzn5BGgO3PZ993FxgA+J8kwTy41UGO+4u/
-        lmlsxneNIz5vIUfIqko/F8oKmCl33zZNvm5OcvCUdA==
-X-Google-Smtp-Source: APXvYqyELKYkW92f3mx5I4vwBY+gIiYVgRoC1bFR+V6tTn4vOIUHzxlUziAbrt07IWpMIPz3KF+zewNiFpYvGlGJVYxx0Q==
-X-Received: by 2002:a63:4415:: with SMTP id r21mr20620706pga.182.1561161843894;
- Fri, 21 Jun 2019 17:04:03 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 17:03:30 -0700
-In-Reply-To: <20190622000358.19895-1-matthewgarrett@google.com>
-Message-Id: <20190622000358.19895-2-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190622000358.19895-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH V34 01/29] security: Support early LSMs
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Matthew Garrett <mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 22 Jun 2019 00:46:20 -0400
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5M4jYDG014763;
+        Sat, 22 Jun 2019 13:45:34 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Sat, 22 Jun 2019 13:45:34 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x5M4jTdw014737
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 22 Jun 2019 13:45:34 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: [PATCH v2] tomoyo: Don't check open/getattr permission on sockets.
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        "David S. Miller" <davem@davemloft.net>
+References: <0000000000004f43fa058a97f4d3@google.com>
+ <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
+ <1b5722cc-adbc-035d-5ca1-9aa56e70d312@I-love.SAKURA.ne.jp>
+ <a4ed1778-8b73-49d1-0ff0-59d9c6ac0af8@I-love.SAKURA.ne.jp>
+ <20190618204933.GE17978@ZenIV.linux.org.uk>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
+Date:   Sat, 22 Jun 2019 13:45:30 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20190618204933.GE17978@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The lockdown module is intended to allow for kernels to be locked down
-early in boot - sufficiently early that we don't have the ability to
-kmalloc() yet. Add support for early initialisation of some LSMs, and
-then add them to the list of names when we do full initialisation later.
-Early LSMs are initialised in link order and cannot be overridden via
-boot parameters, and cannot make use of kmalloc() (since the allocator
-isn't initialised yet).
+On 2019/06/19 5:49, Al Viro wrote:
+> On Sun, Jun 16, 2019 at 03:49:00PM +0900, Tetsuo Handa wrote:
+>> Hello, Al.
+>>
+>> Q1: Do you agree that we should fix TOMOYO side rather than SOCKET_I()->sk
+>>     management.
+> 
+> You do realize that sockets are not unique in that respect, right?
+> All kinds of interesting stuff can be accessed via /proc/*/fd/*, and
+> it _can_ be closed under you.  So I'd suggest checking how your code
+> copes with similar for pipes, FIFOs, epoll, etc., accessed that way...
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
+I know all kinds of interesting stuff can be accessed via /proc/*/fd/*,
+and it _can_ be closed under me.
+
+Regarding sockets, I was accessing "struct socket" memory and
+"struct sock" memory which are outside of "struct inode" memory.
+
+But regarding other objects, I am accessing "struct dentry" memory,
+"struct super_block" memory and "struct inode" memory. I'm expecting
+that these memory can't be kfree()d as long as "struct path" holds
+a reference. Is my expectation correct?
+
+> 
+> We are _not_ going to be checking that in fs/open.c - the stuff found
+> via /proc/*/fd/* can have the associated file closed by the time
+> we get to calling ->open() and we won't know that until said call.
+
+OK. Then, fixing TOMOYO side is the correct way.
+
+> 
+>> Q2: Do you see any problem with using f->f_path.dentry->d_inode ?
+>>     Do we need to use d_backing_inode() or d_inode() ?
+> 
+> Huh?  What's wrong with file_inode(f), in the first place?  And
+> just when can that be NULL, while we are at it?
+
+Oh, I was not aware of file_inode(). Thanks.
+
+> 
+>>>  static int tomoyo_inode_getattr(const struct path *path)
+>>>  {
+>>> +	/* It is not safe to call tomoyo_get_socket_name(). */
+>>> +	if (path->dentry->d_inode && S_ISSOCK(path->dentry->d_inode->i_mode))
+>>> +		return 0;
+> 
+> Can that be called for a negative?
+> 
+
+I check for NULL when I'm not sure it is guaranteed to hold a valid pointer.
+You meant "we are sure that path->dentry->d_inode is valid", don't you?
+
+By the way, "negative" associates with IS_ERR() range. I guess that
+"NULL" is the better name...
+
+Anyway, here is V2 patch.
+
+From c63c4074300921d6d1c33c3b8dc9c84ebfededf5 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Sat, 22 Jun 2019 13:14:26 +0900
+Subject: [PATCH v2] tomoyo: Don't check open/getattr permission on sockets.
+
+syzbot is reporting that use of SOCKET_I()->sk from open() can result in
+use after free problem [1], for socket's inode is still reachable via
+/proc/pid/fd/n despite destruction of SOCKET_I()->sk already completed.
+
+But there is no point with calling security_file_open() on sockets
+because open("/proc/pid/fd/n", !O_PATH) on sockets fails with -ENXIO.
+
+There is some point with calling security_inode_getattr() on sockets
+because stat("/proc/pid/fd/n") and fstat(open("/proc/pid/fd/n", O_PATH))
+are valid. If we want to access "struct sock"->sk_{family,type,protocol}
+fields, we will need to use security_socket_post_create() hook and
+security_inode_free() hook in order to remember these fields because
+security_sk_free() hook is called before the inode is destructed. But
+since information which can be protected by checking
+security_inode_getattr() on sockets is trivial, let's not be bothered by
+"struct inode"->i_security management.
+
+There is point with calling security_file_ioctl() on sockets. Since
+ioctl(open("/proc/pid/fd/n", O_PATH)) is invalid, security_file_ioctl()
+on sockets should remain safe.
+
+[1] https://syzkaller.appspot.com/bug?id=73d590010454403d55164cca23bd0565b1eb3b74
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>
 ---
- include/asm-generic/vmlinux.lds.h |  8 ++++-
- include/linux/lsm_hooks.h         |  6 ++++
- include/linux/security.h          |  1 +
- init/main.c                       |  1 +
- security/security.c               | 50 ++++++++++++++++++++++++++-----
- 5 files changed, 57 insertions(+), 9 deletions(-)
+ security/tomoyo/tomoyo.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index f8f6f04c4453..e1963352fdb6 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -208,8 +208,13 @@
- 			__start_lsm_info = .;				\
- 			KEEP(*(.lsm_info.init))				\
- 			__end_lsm_info = .;
-+#define EARLY_LSM_TABLE()	. = ALIGN(8);				\
-+			__start_early_lsm_info = .;			\
-+			KEEP(*(.early_lsm_info.init))			\
-+			__end_early_lsm_info = .;
- #else
- #define LSM_TABLE()
-+#define EARLY_LSM_TABLE()
- #endif
- 
- #define ___OF_TABLE(cfg, name)	_OF_TABLE_##cfg(name)
-@@ -610,7 +615,8 @@
- 	ACPI_PROBE_TABLE(irqchip)					\
- 	ACPI_PROBE_TABLE(timer)						\
- 	EARLYCON_TABLE()						\
--	LSM_TABLE()
-+	LSM_TABLE()							\
-+	EARLY_LSM_TABLE()
- 
- #define INIT_TEXT							\
- 	*(.init.text .init.text.*)					\
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index a240a3fc5fc4..66fd1eac7a32 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2085,12 +2085,18 @@ struct lsm_info {
- };
- 
- extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
-+extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
- 
- #define DEFINE_LSM(lsm)							\
- 	static struct lsm_info __lsm_##lsm				\
- 		__used __section(.lsm_info.init)			\
- 		__aligned(sizeof(unsigned long))
- 
-+#define DEFINE_EARLY_LSM(lsm)						\
-+	static struct lsm_info __early_lsm_##lsm			\
-+		__used __section(.early_lsm_info.init)			\
-+		__aligned(sizeof(unsigned long))
-+
- #ifdef CONFIG_SECURITY_SELINUX_DISABLE
- /*
-  * Assuring the safety of deleting a security module is up to
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 49f2685324b0..1bb6fb2f1523 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -194,6 +194,7 @@ int unregister_lsm_notifier(struct notifier_block *nb);
- 
- /* prototypes */
- extern int security_init(void);
-+extern int early_security_init(void);
- 
- /* Security operations */
- int security_binder_set_context_mgr(struct task_struct *mgr);
-diff --git a/init/main.c b/init/main.c
-index 598e278b46f7..f3faeb89c75f 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -563,6 +563,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	boot_cpu_init();
- 	page_address_init();
- 	pr_notice("%s", linux_banner);
-+	early_security_init();
- 	setup_arch(&command_line);
- 	/*
- 	 * Set up the the initial canary and entropy after arch
-diff --git a/security/security.c b/security/security.c
-index 23cbb1a295a3..487e1f3eb2df 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -37,6 +37,7 @@
- 
- /* How many LSMs were built into the kernel? */
- #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
-+#define EARLY_LSM_COUNT (__end_early_lsm_info - __start_early_lsm_info)
- 
- struct security_hook_heads security_hook_heads __lsm_ro_after_init;
- static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
-@@ -281,6 +282,8 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
- static void __init lsm_early_cred(struct cred *cred);
- static void __init lsm_early_task(struct task_struct *task);
- 
-+static int lsm_append(const char *new, char **result);
-+
- static void __init ordered_lsm_init(void)
- {
- 	struct lsm_info **lsm;
-@@ -327,6 +330,26 @@ static void __init ordered_lsm_init(void)
- 	kfree(ordered_lsms);
- }
- 
-+int __init early_security_init(void)
-+{
-+	int i;
-+	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
-+	struct lsm_info *lsm;
-+
-+	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
-+	     i++)
-+		INIT_HLIST_HEAD(&list[i]);
-+
-+	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
-+		if (!lsm->enabled)
-+			lsm->enabled = &lsm_enabled_true;
-+		prepare_lsm(lsm);
-+		initialize_lsm(lsm);
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * security_init - initializes the security framework
-  *
-@@ -334,14 +357,18 @@ static void __init ordered_lsm_init(void)
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 716c92e..8ea3f5d 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -126,6 +126,9 @@ static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
   */
- int __init security_init(void)
+ static int tomoyo_inode_getattr(const struct path *path)
  {
--	int i;
--	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
-+	struct lsm_info *lsm;
- 
- 	pr_info("Security Framework initializing\n");
- 
--	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
--	     i++)
--		INIT_HLIST_HEAD(&list[i]);
-+	/*
-+	 * Append the names of the early LSM modules now that kmalloc() is
-+	 * available
-+	 */
-+	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
-+		if (lsm->enabled)
-+			lsm_append(lsm->name, &lsm_names);
-+	}
- 
- 	/* Load LSMs in specified order. */
- 	ordered_lsm_init();
-@@ -388,7 +415,7 @@ static bool match_last_lsm(const char *list, const char *lsm)
- 	return !strcmp(last, lsm);
++	/* It is not safe to call tomoyo_get_socket_name(). */
++	if (S_ISSOCK(d_inode(path->dentry)->i_mode))
++		return 0;
+ 	return tomoyo_path_perm(TOMOYO_TYPE_GETATTR, path, NULL);
  }
  
--static int lsm_append(char *new, char **result)
-+static int lsm_append(const char *new, char **result)
- {
- 	char *cp;
- 
-@@ -426,8 +453,15 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
- 		hooks[i].lsm = lsm;
- 		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
- 	}
--	if (lsm_append(lsm, &lsm_names) < 0)
--		panic("%s - Cannot get early memory.\n", __func__);
-+
-+	/*
-+	 * Don't try to append during early_security_init(), we'll come back
-+	 * and fix this up afterwards.
-+	 */
-+	if (slab_is_available()) {
-+		if (lsm_append(lsm, &lsm_names) < 0)
-+			panic("%s - Cannot get early memory.\n", __func__);
-+	}
+@@ -316,6 +319,9 @@ static int tomoyo_file_open(struct file *f)
+ 	/* Don't check read permission here if called from do_execve(). */
+ 	if (current->in_execve)
+ 		return 0;
++	/* Sockets can't be opened by open(). */
++	if (S_ISSOCK(file_inode(f)->i_mode))
++		return 0;
+ 	return tomoyo_check_open_permission(tomoyo_domain(), &f->f_path,
+ 					    f->f_flags);
  }
- 
- int call_lsm_notifier(enum lsm_event event, void *data)
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+1.8.3.1
 
