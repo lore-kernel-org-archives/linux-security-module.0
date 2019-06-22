@@ -2,116 +2,261 @@ Return-Path: <SRS0=kyj6=UV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE272C43613
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 20:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33CFFC48BE8
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 22:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B012B2070B
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 20:26:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AECA2084E
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 22:42:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PJubyZXg"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Hi6Dulo7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726328AbfFVU0F (ORCPT
+        id S1725844AbfFVWmr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 22 Jun 2019 16:26:05 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46600 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbfFVU0E (ORCPT
+        Sat, 22 Jun 2019 18:42:47 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44656 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726286AbfFVWmr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 22 Jun 2019 16:26:04 -0400
-Received: by mail-pl1-f194.google.com with SMTP id e5so4651123pls.13
-        for <linux-security-module@vger.kernel.org>; Sat, 22 Jun 2019 13:26:04 -0700 (PDT)
+        Sat, 22 Jun 2019 18:42:47 -0400
+Received: by mail-pl1-f195.google.com with SMTP id t7so4742298plr.11
+        for <linux-security-module@vger.kernel.org>; Sat, 22 Jun 2019 15:42:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=3LSJX+LSGEGQXGztmOIE004OfGh43169X3pcb5+bEdo=;
-        b=PJubyZXgmBMF9k6yZxMLMCoxJX3lLbrfjE/x11wxvT4SyKzC7lqaSzwuAzKsdvRECT
-         JX+yyONHgatgA52lc2VKENZDXJ0oJQJPvb4ClFK6LmUuGM2m096eJJ2k956gRVMIZcq1
-         vzetQM/j9ky6lgW/ScwHIPlBGEHxdCZpSDcV0=
+        bh=oifZtYtaymGeepdlKcC/lwfrN00OPy3AvMSUCQesT1M=;
+        b=Hi6Dulo7vEb1nXC4gr2G3cIgGW/ulRL6bE5VWshv55MYsYjvDDto9ezVuUa1pSGnPN
+         nxpmlZbRmk0tNGjO8y1F+zTEgFJqen1R4WOMmojzfmyf9275GNC6sw8jRpCj2dc2SU1e
+         yXT+4hJiCW1JXRFnMJwx/svpJmLsBnaRRp/bE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=3LSJX+LSGEGQXGztmOIE004OfGh43169X3pcb5+bEdo=;
-        b=B/2Dw7qITjrqdl19cD5hlkzzW4XboDC+otIPooRthh0WM8v3+wFTyGY8PoPGjGsrI0
-         FRJ8q+HgfRQN9NwrGB5jV0LP7btVXC8WWvx0+GJTyYvSObTnn9KJqCApQesXrQkOHqdv
-         4n1rZmvGLChtVi2p1DgOyCiWrla7BOJCP2500EbEg76tH/lzxLZ6G82efWmuk9rT3gfX
-         9AZNxgi9ylSi8x34rCBwzqilb/RwXi35SepqqswPkksrjVloSV4TENTVlpiLfLZw5sZG
-         XHyoUp6L4Fy3R9exIl/QyumhvBP0hcBdJUumPWcaS8vkh83fcv2ix4cTjOvkxmGaA4gv
-         +3ng==
-X-Gm-Message-State: APjAAAVwZZWsHH61kHeGMT6IsbvjKHM3sF1GCdRGeo7OpXPDn0lPhhKW
-        RC6TS/nuCkpWKRKuDBwabGWHIQ==
-X-Google-Smtp-Source: APXvYqwsWh+Rhre5Q6lIWu0XK+GpHk0JyBbDpywnv/6/g83T3V7rSeoORcYPnSeq6m705DN4ZF+rnQ==
-X-Received: by 2002:a17:902:2ae8:: with SMTP id j95mr96325450plb.276.1561235163946;
-        Sat, 22 Jun 2019 13:26:03 -0700 (PDT)
+        bh=oifZtYtaymGeepdlKcC/lwfrN00OPy3AvMSUCQesT1M=;
+        b=PNQrsNHxN+vPz4Gp2Fw8PaykYj2AvYtjIWNCluWhDmQoW30+wC6z+9jfEHE1s+q3d9
+         aCWMlNqpzemygx/xntguu+zz5itUAvhtuxoNNQ7iBL3+ISzi5kLafpMiFebEeNyFmd60
+         C1D68DE1UVM1xzWwgXpYirsZ50JkvNUYBGfDbjvYfZ1zq43bbdn8kk7BfsTR5AekayID
+         1bbI/i8cOLIszZxeFysUkwKfRgtmn+BxgrBoo+RKyXzPPZK5ASNYo80FpkBjjas6YbtG
+         NOkwe9KTCYoVvlMg/okDom+PLFoSB/NWhfwRxD6MSsX21VWMcYaRiz+ECNR3UQlCFUbh
+         SLRA==
+X-Gm-Message-State: APjAAAVadg8941UQrNezqQIRmHx276Y+TxtJy3Xw2Tt+5pxE1NMwfeez
+        NYyUOXYxSVCYTJw2N5zmyMNC4A==
+X-Google-Smtp-Source: APXvYqydu3U0p+kic6rtp7M67YfDPGMYWttOm7sdq7eOEXOE9ULREbpEllayKN96A2tlWRmLr8P8ug==
+X-Received: by 2002:a17:902:e01:: with SMTP id 1mr8924783plw.268.1561243366009;
+        Sat, 22 Jun 2019 15:42:46 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o74sm10129957pfg.91.2019.06.22.13.26.02
+        by smtp.gmail.com with ESMTPSA id w132sm6905181pfd.78.2019.06.22.15.42.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 22 Jun 2019 13:26:03 -0700 (PDT)
-Date:   Sat, 22 Jun 2019 13:26:02 -0700
+        Sat, 22 Jun 2019 15:42:45 -0700 (PDT)
+Date:   Sat, 22 Jun 2019 15:42:44 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] structleak: disable BYREF_ALL in combination with
- KASAN_STACK
-Message-ID: <201906221324.C08C1EF@keescook>
-References: <20190618094731.3677294-1-arnd@arndb.de>
- <201906201034.9E44D8A2A8@keescook>
- <CAK8P3a2uFcaGMSHRdg4NECHJwgAyhtMuYDv3U=z2UdBSL5U0Lw@mail.gmail.com>
- <CAKv+Gu-A_OWUQ_neUAprmQOotPA=LoUGQHvFkZ2tqQAg=us1jA@mail.gmail.com>
- <CAK8P3a2d3H-pdiLX_8aA4LNLOVTSyPW_jvwZQkv0Ey3SJS87Bg@mail.gmail.com>
- <CAKv+Gu9p017iPva85dPMdnKW_MSOUcthqcy7KDhGEYCN7=C_SA@mail.gmail.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com, sds@tycho.nsa.gov
+Subject: Re: [PATCH v3 04/24] LSM: Create and manage the lsmblob data
+ structure.
+Message-ID: <201906221542.510418C3@keescook>
+References: <20190621185233.6766-1-casey@schaufler-ca.com>
+ <20190621185233.6766-5-casey@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9p017iPva85dPMdnKW_MSOUcthqcy7KDhGEYCN7=C_SA@mail.gmail.com>
+In-Reply-To: <20190621185233.6766-5-casey@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 21, 2019 at 03:50:02PM +0200, Ard Biesheuvel wrote:
-> On Fri, 21 Jun 2019 at 15:44, Arnd Bergmann <arnd@arndb.de> wrote:
-> > One pattern I have seen here is temporary variables from macros or
-> > inline functions whose lifetime now extends over the entire function
-> > rather than just the basic block in which they are defined, see e.g.
-> > lpfc_debug_dump_qe() being inlined multiple times into
-> > lpfc_debug_dump_all_queues(). Each instance of the local
-> > "char line_buf[LPFC_LBUF_SZ];" seems to add on to the previous
-> > one now, where the behavior without the structleak plugin is that
-> > they don't.
-
-Ewww.
-
-> Right, that seems to be due to the fact that this code
+On Fri, Jun 21, 2019 at 11:52:13AM -0700, Casey Schaufler wrote:
+> When more than one security module is exporting data to
+> audit and networking sub-systems a single 32 bit integer
+> is no longer sufficient to represent the data. Add a
+> structure to be used instead.
 > 
-> /* split the first bb where we can put the forced initializers */
-> gcc_assert(single_succ_p(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
-> bb = single_succ(ENTRY_BLOCK_PTR_FOR_FN(cfun));
-> if (!single_pred_p(bb)) {
->     split_edge(single_succ_edge(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
->     gcc_assert(single_succ_p(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
-> }
+> The lsmblob structure is currently an array of
+> u32 "secids". There is an entry for each of the
+> security modules built into the system that would
+> use secids if active. The system assigns the module
+> a "slot" when it registers hooks. If modules are
+> compiled in but not registered there will be unused
+> slots.
 > 
-> puts all the initializers at the beginning of the function rather than
-> inside the scope of the definition.
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Do you see a sane way to improve this? I hadn't noticed that this
-actually moved it up to the start of the function. :(
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  include/linux/lsm_hooks.h |  1 +
+>  include/linux/security.h  | 62 +++++++++++++++++++++++++++++++++++++++
+>  security/security.c       | 36 +++++++++++++++++++++++
+>  3 files changed, 99 insertions(+)
+> 
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 3fe39abccc8f..4d1ddf1a2aa6 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -2038,6 +2038,7 @@ struct security_hook_list {
+>  	struct hlist_head		*head;
+>  	union security_list_options	hook;
+>  	char				*lsm;
+> +	int				slot;
+>  } __randomize_layout;
+>  
+>  /*
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 49f2685324b0..0aa9417a5762 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -76,6 +76,68 @@ enum lsm_event {
+>  	LSM_POLICY_CHANGE,
+>  };
+>  
+> +/*
+> + * Data exported by the security modules
+> + */
+> +#define LSMBLOB_ENTRIES ( \
+> +	(IS_ENABLED(CONFIG_SECURITY_SELINUX) ? 1 : 0) + \
+> +	(IS_ENABLED(CONFIG_SECURITY_SMACK) ? 1 : 0) + \
+> +	(IS_ENABLED(CONFIG_SECURITY_APPARMOR) ? 1 : 0))
+> +
+> +struct lsmblob {
+> +	u32     secid[LSMBLOB_ENTRIES];
+> +};
+> +
+> +#define LSMBLOB_INVALID	-1
+> +
+> +/**
+> + * lsmblob_init - initialize an lsmblob structure.
+> + * @blob: Pointer to the data to initialize
+> + * @secid: The initial secid value
+> + *
+> + * Set all secid for all modules to the specified value.
+> + */
+> +static inline void lsmblob_init(struct lsmblob *blob, u32 secid)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < LSMBLOB_ENTRIES; i++)
+> +		blob->secid[i] = secid;
+> +}
+> +
+> +/**
+> + * lsmblob_is_set - report if there is an value in the lsmblob
+> + * @blob: Pointer to the exported LSM data
+> + *
+> + * Returns true if there is a secid set, false otherwise
+> + */
+> +static inline bool lsmblob_is_set(struct lsmblob *blob)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < LSMBLOB_ENTRIES; i++)
+> +		if (blob->secid[i] != 0)
+> +			return true;
+> +	return false;
+> +}
+> +
+> +/**
+> + * lsmblob_equal - report if the two lsmblob's are equal
+> + * @bloba: Pointer to one LSM data
+> + * @blobb: Pointer to the other LSM data
+> + *
+> + * Returns true if all entries in the two are equal, false otherwise
+> + */
+> +static inline bool lsmblob_equal(struct lsmblob *bloba, struct lsmblob *blobb)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < LSMBLOB_ENTRIES; i++)
+> +		if (bloba->secid[i] != blobb->secid[i])
+> +			return false;
+> +	return true;
+> +}
+> +
+>  /* These functions are in security/commoncap.c */
+>  extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
+>  		       int cap, unsigned int opts);
+> diff --git a/security/security.c b/security/security.c
+> index d05f00a40e82..7618c761060d 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -317,6 +317,7 @@ static void __init ordered_lsm_init(void)
+>  	init_debug("sock blob size       = %d\n", blob_sizes.lbs_sock);
+>  	init_debug("superblock blob size = %d\n", blob_sizes.lbs_superblock);
+>  	init_debug("task blob size       = %d\n", blob_sizes.lbs_task);
+> +	init_debug("lsmblob size         = %lu\n", sizeof(struct lsmblob));
+>  
+>  	/*
+>  	 * Create any kmem_caches needed for blobs
+> @@ -420,6 +421,11 @@ static int lsm_append(char *new, char **result)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Current index to use while initializing the lsmblob secid list.
+> + */
+> +static int lsm_slot __initdata;
+> +
+>  /**
+>   * security_add_hooks - Add a modules hooks to the hook lists.
+>   * @hooks: the hooks to add
+> @@ -427,15 +433,45 @@ static int lsm_append(char *new, char **result)
+>   * @lsm: the name of the security module
+>   *
+>   * Each LSM has to register its hooks with the infrastructure.
+> + * If the LSM is using hooks that export secids allocate a slot
+> + * for it in the lsmblob.
+>   */
+>  void __init security_add_hooks(struct security_hook_list *hooks, int count,
+>  				char *lsm)
+>  {
+> +	int slot = LSMBLOB_INVALID;
+>  	int i;
+>  
+>  	for (i = 0; i < count; i++) {
+>  		hooks[i].lsm = lsm;
+>  		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
+> +		/*
+> +		 * If this is one of the hooks that uses a secid
+> +		 * note it so that a slot can in allocated for the
+> +		 * secid in the lsmblob structure.
+> +		 */
+> +		if (hooks[i].head == &security_hook_heads.audit_rule_match ||
+> +		    hooks[i].head == &security_hook_heads.kernel_act_as ||
+> +		    hooks[i].head ==
+> +			&security_hook_heads.socket_getpeersec_dgram ||
+> +		    hooks[i].head == &security_hook_heads.getprocattr ||
+> +		    hooks[i].head == &security_hook_heads.setprocattr ||
+> +		    hooks[i].head == &security_hook_heads.secctx_to_secid ||
+> +		    hooks[i].head == &security_hook_heads.secid_to_secctx ||
+> +		    hooks[i].head == &security_hook_heads.ipc_getsecid ||
+> +		    hooks[i].head == &security_hook_heads.task_getsecid ||
+> +		    hooks[i].head == &security_hook_heads.inode_getsecid ||
+> +		    hooks[i].head == &security_hook_heads.cred_getsecid) {
+> +			if (slot == LSMBLOB_INVALID) {
+> +				slot = lsm_slot++;
+> +				if (slot >= LSMBLOB_ENTRIES)
+> +					panic("%s Too many LSMs registered.\n",
+> +					      __func__);
+> +				init_debug("%s assigned lsmblob slot %d\n",
+> +					hooks[i].lsm, slot);
+> +			}
+> +		}
+> +		hooks[i].slot = slot;
+>  	}
+>  	if (lsm_append(lsm, &lsm_names) < 0)
+>  		panic("%s - Cannot get early memory.\n", __func__);
+> -- 
+> 2.20.1
+> 
 
 -- 
 Kees Cook
