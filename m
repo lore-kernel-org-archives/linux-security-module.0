@@ -4,111 +4,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D4BC48BE0
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 00:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4DFC48BE3
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 00:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC09E215EA
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 00:04:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE1C120656
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 00:04:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QRjJLKdN"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YbOGu6X3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbfFVAEl (ORCPT
+        id S1726851AbfFVAEt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jun 2019 20:04:41 -0400
-Received: from mail-qt1-f202.google.com ([209.85.160.202]:40490 "EHLO
-        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbfFVAEl (ORCPT
+        Fri, 21 Jun 2019 20:04:49 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:51341 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726853AbfFVAEs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jun 2019 20:04:41 -0400
-Received: by mail-qt1-f202.google.com with SMTP id z6so9775092qtj.7
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2019 17:04:40 -0700 (PDT)
+        Fri, 21 Jun 2019 20:04:48 -0400
+Received: by mail-pl1-f201.google.com with SMTP id d2so4458194pla.18
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2019 17:04:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=kMkOq/TdZP2DxC+0jYMlNvaXt/K0jRyWoQ2RXLMuYi0=;
-        b=QRjJLKdNtZo8CP4nTH7hluG2qV1AXyHaeNhLgJ9dx1fDUKb4PKvKgsxZC9qD/JpyOc
-         nDlpqLlNjPK2Fr6/XPB9DFGktNMicEjN1U3rsUDXfXc0qt6uDJ4LiVqBRuB0IEYVTdqC
-         g9pw8gFOb/hrRGu3KsVlrmVHnvI6Fg2+fFpvLxGvsYk9kHFo5degfWEqDha7Y8eH/AMU
-         owop8HB8frx+BdG4M4kFYi15V93p/L6y8OBHHLti5WrGcp5xyaJuzKxcJQQIy7uVl5RI
-         bM63+qZ8cl4gZwKMeJroO8r+Eqm/Y9IaQqorCVln/XP6Sft3X+wUDeJFpOaUTuF1wRyz
-         uPNw==
+        bh=7XUJQ2WWQgV+58iwM6R5lnhVlgjpfti3qggxZNIjvHc=;
+        b=YbOGu6X3QdBGGGe8faHuFUYcFb8svwX0Yxl+CKZAFfrIXqI87gpdCYLkBy1RaGPta6
+         yrXHUhg6AvScoTY4m1Odo+/d3z9d7LUQVs7GrNeE9mFjrvxC0jFRRG0WFDmeARdHINoL
+         9EcWj34vMERn+3r+itQyO16RcWcpEpm9Lf6JNPHsvRDe46Q5sI5yk8mvHp3AbTMt9oeY
+         Eovet+DRjjFBtgQyhhJsO/zVZP74OIBcPT7f8KuZ2LtAAHjxLB0tATATujAR/MbaUZZ4
+         Pm/32Y/fZlVXUWXMUQoLA+3vWhjjyHix9KSTINraPHgkYVJQZgEicVTLVGsYT3pskJn6
+         egvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=kMkOq/TdZP2DxC+0jYMlNvaXt/K0jRyWoQ2RXLMuYi0=;
-        b=SHHTQZf4o2pn13AgJQw9283Sd1shOfsky33b2cKmLXArScGa6oSJfGpWCgrqKHUGuk
-         4qm1ngx5DeGVAug8MZmvxVJxG1bZOZoCSh130LCw81KuvDRLf9tSkdDehCdOlEjV+w+u
-         MddWb8cB4UfXkJFB0yXZwaL8X9aWHeV2MMaoaYJdixLN/NYa/V56WbFILOjQUWWVJlLT
-         vvUfBJs0rzHwP+nQgsTFtgTgZAkYf1+YKkpUWICpl2ndZObOzlqW1T09+QlYMizUzz2B
-         L1EtunAdL0pDkSE037d17TukSPZgqWCBcnA0Wee303DSar4sa5rXbgwyxZNaMg84kevP
-         PkZg==
-X-Gm-Message-State: APjAAAXnmxYOCuZa8yY6TG72vPjk0+F7pGrQf/EJJumQUriyBRgwFNvN
-        6fQvI6TbVPS6aKxf6KB2FTY/A9vLMAAicD0VIMneDw==
-X-Google-Smtp-Source: APXvYqyfTelCSA7v0vPY8aBBSkh56jUJFjBxZnlm2jUkbBn4LGuF/pZ/ysDWTqqbVvj8Ybj3gU9B9i2a5Gg4/j2L/hPeGw==
-X-Received: by 2002:a37:a9c9:: with SMTP id s192mr111878928qke.335.1561161880192;
- Fri, 21 Jun 2019 17:04:40 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 17:03:44 -0700
+        bh=7XUJQ2WWQgV+58iwM6R5lnhVlgjpfti3qggxZNIjvHc=;
+        b=qmEfKm+gzxWS/wq3I9OZ/Jf9bOdUxsH3FIyYAleNbEuE6Gz8e+6LiblIe966qpVMIi
+         8p7nXHXW2mYyZMhd5uguCFSqzhjmm2lQGaNpKyiCWK6LZLzVirGvMGFF9edT2T6FUYPL
+         JMCCQ4yGP98DcfjmhJIE3i9eUzyz3jfKZp6miWQgtob8L+zAAA2AZIQeODAia0etXbcP
+         tPBC+JaMe5P5sWCh070ckJe6ZKwnK2EzUjiBlHm5279fcRQP53lsQ2HUilfLTj27YmXv
+         9uzCe6hcGoA/u9Ap+NRr+8q3RCcZ8JtclPySf4yYwwnTvQmWl05a8gPBKqhLypop5OqP
+         yajg==
+X-Gm-Message-State: APjAAAVfv6iVmtvNqozDHtYOKiTZy/u6ROt3u0L0qqtglnpxMTAvW7nY
+        S19isD6r7IcDiVSUEWwSjf5bvLd6fbX0bbWZK4uR0w==
+X-Google-Smtp-Source: APXvYqwX0BWadWUzKD1pGC6iismXRYFWPwCnDuU+HcsvZA1gPfoXYPu6NOPQ3UQf1f2qQnXsIVTWV1ab1WpwKnLIpbDK9g==
+X-Received: by 2002:a63:f70b:: with SMTP id x11mr21395458pgh.212.1561161887383;
+ Fri, 21 Jun 2019 17:04:47 -0700 (PDT)
+Date:   Fri, 21 Jun 2019 17:03:47 -0700
 In-Reply-To: <20190622000358.19895-1-matthewgarrett@google.com>
-Message-Id: <20190622000358.19895-16-matthewgarrett@google.com>
+Message-Id: <20190622000358.19895-19-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190622000358.19895-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH V34 15/29] acpi: Ignore acpi_rsdp kernel param when the kernel
- has been locked down
+Subject: [PATCH V34 18/29] Lock down TIOCSSERIAL
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Josh Boyer <jwboyer@redhat.com>,
         David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Matthew Garrett <mjg59@google.com>,
-        Dave Young <dyoung@redhat.com>, linux-acpi@vger.kernel.org
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Josh Boyer <jwboyer@redhat.com>
+From: David Howells <dhowells@redhat.com>
 
-This option allows userspace to pass the RSDP address to the kernel, which
-makes it possible for a user to modify the workings of hardware .  Reject
-the option when the kernel is locked down.
+Lock down TIOCSSERIAL as that can be used to change the ioport and irq
+settings on a serial port.  This only appears to be an issue for the serial
+drivers that use the core serial code.  All other drivers seem to either
+ignore attempts to change port/irq or give an error.
 
-Signed-off-by: Josh Boyer <jwboyer@redhat.com>
+Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-cc: Dave Young <dyoung@redhat.com>
-cc: linux-acpi@vger.kernel.org
+cc: Jiri Slaby <jslaby@suse.com>
+Cc: linux-serial@vger.kernel.org
 ---
- drivers/acpi/osl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/serial/serial_core.c | 5 +++++
+ include/linux/security.h         | 1 +
+ security/lockdown/lockdown.c     | 1 +
+ 3 files changed, 7 insertions(+)
 
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index f29e427d0d1d..60cda8a0f36b 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -40,6 +40,7 @@
- #include <linux/list.h>
- #include <linux/jiffies.h>
- #include <linux/semaphore.h>
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 351843f847c0..a84f231a5df4 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -22,6 +22,7 @@
+ #include <linux/serial_core.h>
+ #include <linux/delay.h>
+ #include <linux/mutex.h>
 +#include <linux/security.h>
  
- #include <asm/io.h>
+ #include <linux/irq.h>
  #include <linux/uaccess.h>
-@@ -194,7 +195,7 @@ acpi_physical_address __init acpi_os_get_root_pointer(void)
- 	acpi_physical_address pa;
+@@ -852,6 +853,10 @@ static int uart_set_info(struct tty_struct *tty, struct tty_port *port,
+ 	new_flags = (__force upf_t)new_info->flags;
+ 	old_custom_divisor = uport->custom_divisor;
  
- #ifdef CONFIG_KEXEC
--	if (acpi_rsdp)
-+	if (acpi_rsdp && !security_locked_down(LOCKDOWN_ACPI_TABLES))
- 		return acpi_rsdp;
- #endif
- 	pa = acpi_arch_get_root_pointer();
++	retval = security_locked_down(LOCKDOWN_TIOCSSERIAL);
++	if (retval && (change_port || change_irq))
++		goto exit;
++
+ 	if (!capable(CAP_SYS_ADMIN)) {
+ 		retval = -EPERM;
+ 		if (change_irq || change_port ||
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 03c125b277ca..61e3f4a62d16 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -91,6 +91,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_MSR,
+ 	LOCKDOWN_ACPI_TABLES,
+ 	LOCKDOWN_PCMCIA_CIS,
++	LOCKDOWN_TIOCSSERIAL,
+ 	LOCKDOWN_INTEGRITY_MAX,
+ 	LOCKDOWN_CONFIDENTIALITY_MAX,
+ };
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index 7be3e8fb5847..c89046dc2155 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -27,6 +27,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_MSR] = "raw MSR access",
+ 	[LOCKDOWN_ACPI_TABLES] = "modified ACPI tables",
+ 	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
++	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
+ 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+ 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+ };
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
