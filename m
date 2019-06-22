@@ -2,72 +2,86 @@ Return-Path: <SRS0=kyj6=UV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE8DC48BE8
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 14:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C34C43613
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 17:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A89DB206BA
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 14:21:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E11D72070B
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jun 2019 17:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbfFVOVX convert rfc822-to-8bit (ORCPT
+        id S1726370AbfFVRwL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 22 Jun 2019 10:21:23 -0400
-Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:39414 "EHLO
-        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfFVOVW (ORCPT
+        Sat, 22 Jun 2019 13:52:11 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55265 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbfFVRwL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 22 Jun 2019 10:21:22 -0400
-X-Greylist: delayed 333 seconds by postgrey-1.27 at vger.kernel.org; Sat, 22 Jun 2019 10:21:20 EDT
-Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
-        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x5MEFA5o020020
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 22 Jun 2019 16:15:10 +0200
-Received: from localhost (19.131.134.77.rev.sfr.net [77.134.131.19])
-        (authenticated bits=0)
-        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x5MEF6KB123947
-        (version=TLSv1/SSLv3 cipher=AES128-GCM-SHA256 bits=128 verify=NO);
-        Sat, 22 Jun 2019 16:15:07 +0200
-Date:   Sat, 22 Jun 2019 16:15:05 +0200
-In-Reply-To: <201906201029.0476F14A@keescook>
-References: <201906201029.0476F14A@keescook>
+        Sat, 22 Jun 2019 13:52:11 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 6BAF680689; Sat, 22 Jun 2019 19:51:58 +0200 (CEST)
+Date:   Sat, 22 Jun 2019 19:52:08 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>, rjw@rjwysocki.net,
+        linux-pm@vger.kernel.org, jikos@suse.cz
+Subject: Re: [PATCH V34 10/29] hibernate: Disable when the kernel is locked
+ down
+Message-ID: <20190622175208.GB30317@amd>
+References: <20190622000358.19895-1-matthewgarrett@google.com>
+ <20190622000358.19895-11-matthewgarrett@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: Stacked LSMs (was Re: [PATCH v2 00/25] LSM: Module stacking for AppArmor)
-To:     Kees Cook <keescook@chromium.org>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>,
-        James Morris <jmorris@namei.org>
-CC:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        sds@tycho.nsa.gov
-From:   =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Message-ID: <008DBF7D-C015-49F5-A9FC-032E6A8EC9DB@digikod.net>
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qlTNgmc+xy1dBmNv"
+Content-Disposition: inline
+In-Reply-To: <20190622000358.19895-11-matthewgarrett@google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
+--qlTNgmc+xy1dBmNv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On June 20, 2019 7:33:25 PM GMT+02:00, Kees Cook <keescook@chromium.org> wrote:
-> On Thu, Jun 20, 2019 at 06:08:03AM +1000, James Morris wrote:
-> > We extended stacking support in March to allow Landlock and SARA to
-> be 
-> > merged and have not seen anything from them since.
-> 
-> Salvatore and Mickaël, have you had a chance to look at the stacking
-> changes? I'd love to see work progress on your LSMs now that the
-> stacking prerequisites have landed.
-> 
-> Thanks!
+On Fri 2019-06-21 17:03:39, Matthew Garrett wrote:
+> From: Josh Boyer <jwboyer@fedoraproject.org>
+>=20
+> There is currently no way to verify the resume image when returning
+> from hibernate.  This might compromise the signed modules trust model,
+> so until we can work with signed hibernate images we disable it when the
+> kernel is locked down.
 
-Yes, I successfully updated Landlock as a stackable LSM. I also worked on removing some code (and related features, for now) to get smaller patches for the next round, and I tried to get rid of the VFS modifications. I still need to update the tests, rebase a last time and review everything before sending a new patch set, hopefully next week.
+I keep getting these...
 
- Mickaël
+IIRC suse has patches to verify the images.
+								Pavel=20
+
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--qlTNgmc+xy1dBmNv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl0OasgACgkQMOfwapXb+vK4ZwCgroXTYUFxTOMmRgUE1WUOZBSW
+BP8Ani8DLJP1nVX8/NMG2MEgT7nBMDtv
+=9tFP
+-----END PGP SIGNATURE-----
+
+--qlTNgmc+xy1dBmNv--
