@@ -2,119 +2,119 @@ Return-Path: <SRS0=cqTL=UW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB88DC43613
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 Jun 2019 00:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C37FBC48BE8
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 Jun 2019 00:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 758FB20673
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 Jun 2019 00:14:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 996B620862
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 Jun 2019 00:25:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G10ix/75"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hGZBty9v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfFWAOs (ORCPT
+        id S1726355AbfFWAZc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 22 Jun 2019 20:14:48 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36640 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbfFWAOr (ORCPT
+        Sat, 22 Jun 2019 20:25:32 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40217 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfFWAZa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 22 Jun 2019 20:14:47 -0400
-Received: by mail-pl1-f194.google.com with SMTP id k8so4821491plt.3
-        for <linux-security-module@vger.kernel.org>; Sat, 22 Jun 2019 17:14:47 -0700 (PDT)
+        Sat, 22 Jun 2019 20:25:30 -0400
+Received: by mail-pf1-f194.google.com with SMTP id p184so5442332pfp.7
+        for <linux-security-module@vger.kernel.org>; Sat, 22 Jun 2019 17:25:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=btG6avAzDAyvn5JxuzcdJRsv07F3W0fAi+zvzELLu4g=;
-        b=G10ix/75gAlaiLGUlBh565tLQ8+aylPU/RQBBsKWCCMUORUSsygtn+q15t9tr59J2A
-         cUiEQyECiFsC4UExccIv11GBw77rxdlv0rlsUUNpDdl5FmjAPK3GAviiQ1EbJBhyAJCJ
-         C48HUkgUK3dqaC+1Ih76fePbjemx7QzQ6cHf8=
+        bh=Muy8l67XTgQ8QvvYzm/lgbWW8wIRKwYpaJ4/hlcS4jk=;
+        b=hGZBty9vkwSEnFjKjjzvO41IQIGOS2M1st7Zs3Q2F5qYDxJa17E/2ppGWE/VoTbKE7
+         Ex+YYt8iotCN+AvqdKFQvogDBDELCpucsd4iGP9AfpIbPSn1IV8eFeA0d78v5BBaA1Yd
+         VBtAB4e4wegcGRAoCgrMEViWixlEWgGZpr8bU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=btG6avAzDAyvn5JxuzcdJRsv07F3W0fAi+zvzELLu4g=;
-        b=h3lqp28Oy4XgkQeU5zI1Hr7hIQKdYVlLQtK8VfnyRpbTNYX+jswNSEMEDuGLtTn+T7
-         vduar6Q1Wa4Q+ooeeyYGqdk71rjCNZGCpJxiFb+qbx7A9Yn2OIW7MwtEutEZzhVYFB+D
-         u+bsTPSspEMR4HaDrUdtaCp/2XJQ+DZRAPQp2Lz4IhwC4xOo8BqOt0FlDN1doN5VlKyp
-         8PAvRcc4KpwbF+K0g/kODXfEoGQJhYJseg/h3ltpn/132hJoWmg5FCm56/X68dxjO84A
-         ZJ1G11KKPodFGfw5ru3RyRm4dO2MFYcW4A+JkxtTirEVbU/Exsuj1zn7ch/j9QbGGl4/
-         w0cg==
-X-Gm-Message-State: APjAAAV6u0XxHOGbm4f/L0f5loBKPDTA38J696uAYaONyzaN7VW5V0AH
-        l9I99yIdjNjB5U4keDleSPq5d9gAzuM=
-X-Google-Smtp-Source: APXvYqxcvat/DBQ6Sbeb3rN2qxDjuCbNFZLf7vlqSfx2l0aGYSWcasg0xVthOBBHvZpowm2Cy1Uu7w==
-X-Received: by 2002:a17:902:7443:: with SMTP id e3mr3104455plt.176.1561248887361;
-        Sat, 22 Jun 2019 17:14:47 -0700 (PDT)
+        bh=Muy8l67XTgQ8QvvYzm/lgbWW8wIRKwYpaJ4/hlcS4jk=;
+        b=GHms1K/W44fsE6igE/qQ1Bcse347sOmW7O1NSTNnVdFN5b8rxNIvElpUANO142tltB
+         x9QdKLqiTZFmGirmbK1oRN97e6v4lKXKsOrWe/tkAuOnP/9vvYgkM2/QxrEaNYDeAKtK
+         yG9tatw2OHThNwLkJ+Wu9GSwNY8woE5tDxsQbS/Ul+Ni87+w0Lx0gXk8i59iMR97Cxgq
+         4a7iZQ0u6vDkaygeXMXPrPbUoaS2YyYiLLtRsVNRL8qdhbwEXP0wFf98/iHg7wNggTDe
+         qQXRhswUZEKPG3hvGz2Ro/9HJY2wz4d3CQItk8R0rI2+sCHhwqKVDO2GzypZ+9Ga1XNt
+         udAQ==
+X-Gm-Message-State: APjAAAWzOTeD93qWuXkrYNN8ZH6+IqQFJUeyqaSvCKfIzF1ZXZnsuIb/
+        N65DC/gcGiFLpZeyCC0Y3NQT5A==
+X-Google-Smtp-Source: APXvYqyfE7pyqOmRt//qF5dntnKG8qFiDNfEU/crAJj6CQbY7HT06JFeATqZu/GBxAPBGY+3arfbxQ==
+X-Received: by 2002:a17:90b:d8a:: with SMTP id bg10mr15802946pjb.92.1561249530062;
+        Sat, 22 Jun 2019 17:25:30 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q10sm6534267pgg.35.2019.06.22.17.14.46
+        by smtp.gmail.com with ESMTPSA id e20sm6764757pfi.35.2019.06.22.17.25.28
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 22 Jun 2019 17:14:46 -0700 (PDT)
-Date:   Sat, 22 Jun 2019 17:14:45 -0700
+        Sat, 22 Jun 2019 17:25:28 -0700 (PDT)
+Date:   Sat, 22 Jun 2019 17:25:28 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Matthew Garrett <matthewgarrett@google.com>
 Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <mjg59@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-efi@vger.kernel.org
-Subject: Re: [PATCH V34 28/29] efi: Restrict efivar_ssdt_load when the kernel
- is locked down
-Message-ID: <201906221714.CDECCAEDA6@keescook>
+        David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH V34 29/29] lockdown: Print current->comm in restriction
+ messages
+Message-ID: <201906221724.EF1BA1D@keescook>
 References: <20190622000358.19895-1-matthewgarrett@google.com>
- <20190622000358.19895-29-matthewgarrett@google.com>
+ <20190622000358.19895-30-matthewgarrett@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190622000358.19895-29-matthewgarrett@google.com>
+In-Reply-To: <20190622000358.19895-30-matthewgarrett@google.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 21, 2019 at 05:03:57PM -0700, Matthew Garrett wrote:
-> efivar_ssdt_load allows the kernel to import arbitrary ACPI code from an
-> EFI variable, which gives arbitrary code execution in ring 0. Prevent
-> that when the kernel is locked down.
+On Fri, Jun 21, 2019 at 05:03:58PM -0700, Matthew Garrett wrote:
+> Print the content of current->comm in messages generated by lockdown to
+> indicate a restriction that was hit.  This makes it a bit easier to find
+> out what caused the message.
 > 
+> The message now patterned something like:
+> 
+>         Lockdown: <comm>: <what> is restricted; see man kernel_lockdown.7
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
 > Signed-off-by: Matthew Garrett <mjg59@google.com>
+> ---
+>  security/lockdown/lockdown.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index 98f9ee0026d5..9ca6f442fbc7 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -83,8 +83,8 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
+>  {	
+>  	if ((kernel_locked_down >= what)) {
+
+To satisfy my paranoia, can you just add here:
+
+		if (WARN(what > LOCKDOWN_..._MAX))
+			return -EPERM;
+
+With that:
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -Kees
 
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: linux-efi@vger.kernel.org
-> ---
->  drivers/firmware/efi/efi.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index 55b77c576c42..9f92a013ab27 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -31,6 +31,7 @@
->  #include <linux/acpi.h>
->  #include <linux/ucs2_string.h>
->  #include <linux/memblock.h>
-> +#include <linux/security.h>
+>  		if (lockdown_reasons[what])
+> -			pr_notice("Lockdown: %s is restricted; see man kernel_lockdown.7\n",
+> -				  lockdown_reasons[what]);
+> +			pr_notice("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
+> +				  current->comm, lockdown_reasons[what]);
+>  		return -EPERM;
+>  	}
 >  
->  #include <asm/early_ioremap.h>
->  
-> @@ -242,6 +243,11 @@ static void generic_ops_unregister(void)
->  static char efivar_ssdt[EFIVAR_SSDT_NAME_MAX] __initdata;
->  static int __init efivar_ssdt_setup(char *str)
->  {
-> +	int ret = security_locked_down(LOCKDOWN_ACPI_TABLES);
-> +
-> +	if (ret)
-> +		return ret;
-> +
->  	if (strlen(str) < sizeof(efivar_ssdt))
->  		memcpy(efivar_ssdt, str, strlen(str));
->  	else
 > -- 
 > 2.22.0.410.gd8fdbe21b5-goog
 > 
