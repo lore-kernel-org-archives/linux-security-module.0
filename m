@@ -2,74 +2,156 @@ Return-Path: <SRS0=cqTL=UW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_DR,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8236DC43613
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 Jun 2019 11:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0044DC48BE8
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 Jun 2019 17:17:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56E8420840
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 Jun 2019 11:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6B5A204EC
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 Jun 2019 17:17:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfFWLbh (ORCPT
+        id S1726565AbfFWRRY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 Jun 2019 07:31:37 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33246 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbfFWLbh (ORCPT
+        Sun, 23 Jun 2019 13:17:24 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:36178 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726399AbfFWRRY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 Jun 2019 07:31:37 -0400
-X-Greylist: delayed 1359 seconds by postgrey-1.27 at vger.kernel.org; Sun, 23 Jun 2019 07:31:36 EDT
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hf0Mf-00080j-Ge; Sun, 23 Jun 2019 13:08:53 +0200
-Date:   Sun, 23 Jun 2019 13:08:52 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Matthew Garrett <matthewgarrett@google.com>
-cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: Re: [PATCH V34 20/29] x86/mmiotrace: Lock down the testmmiotrace
- module
-In-Reply-To: <20190622000358.19895-21-matthewgarrett@google.com>
-Message-ID: <alpine.DEB.2.21.1906231308420.32342@nanos.tec.linutronix.de>
-References: <20190622000358.19895-1-matthewgarrett@google.com> <20190622000358.19895-21-matthewgarrett@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Sun, 23 Jun 2019 13:17:24 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x5NHGScC025697;
+        Sun, 23 Jun 2019 12:16:28 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x5NHGQhc025696;
+        Sun, 23 Jun 2019 12:16:26 -0500
+Date:   Sun, 23 Jun 2019 12:16:26 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>, casey.schaufler@intel.com,
+        william.c.roberts@intel.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: [RFC PATCH v3 09/12] LSM: x86/sgx: Introduce ->enclave_load() hook for Intel SGX
+Message-ID: <20190623171626.GA25683@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20190617222438.2080-1-sean.j.christopherson@intel.com> <20190617222438.2080-10-sean.j.christopherson@intel.com> <0c4f75a0ae2fdeee6db07f3a224918f321163d56.camel@linux.intel.com> <alpine.LRH.2.21.1906200702040.28119@namei.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1906200702040.28119@namei.org>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sun, 23 Jun 2019 12:16:28 -0500 (CDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Jun 20, 2019 at 07:13:50AM +1000, James Morris wrote:
 
+Good morning, I hope the weekend has been going well for everyone.
 
-On Fri, 21 Jun 2019, Matthew Garrett wrote:
-
-> From: David Howells <dhowells@redhat.com>
+> On Wed, 19 Jun 2019, Jarkko Sakkinen wrote:
 > 
-> The testmmiotrace module shouldn't be permitted when the kernel is locked
-> down as it can be used to arbitrarily read and write MMIO space. This is
-> a runtime check rather than buildtime in order to allow configurations
-> where the same kernel may be run in both locked down or permissive modes
-> depending on local policy.
-> 
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: David Howells <dhowells@redhat.com
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> cc: Thomas Gleixner <tglx@linutronix.de>
-> cc: Steven Rostedt <rostedt@goodmis.org>
-> cc: Ingo Molnar <mingo@kernel.org>
-> cc: "H. Peter Anvin" <hpa@zytor.com>
-> cc: x86@kernel.org
+> > Can LSM callbacks ever non-generic when it comes to hardware? This is
+> > the very first time I ever see such callbacks being introduced.
+> > 
+> > I suspect that from maintainers perspective, accepting such changes for
+> > Intel hardware, could open a pandoras box.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+> If there's a major distro/userbase committing to ship with these
+> hooks enabled via a supported in-tree LSM, the case for inclusion is
+> clear.
+
+I see that Jarkko responded down thread that there may be a major
+distribution already committed to SGX specific LSM hooks.  My
+apologies for providing these reflections if that is the case and
+there is some type of 'deal' in place with respect to all of this.
+
+> If the hooks could be generalized beyond just SGX, that would be
+> ideal, but it's not clear if that's feasible.
+
+We believe there is some degree of commonality that can be addressed
+with respect to implementing LSM enforcement over SGX enclaves.
+
+However, big picture, here is the challenge that we see with respect
+to these conversations surrounding the integration of the SGX driver
+with the LSM:
+
+As a technology, SGX was designed to enable software to protect itself
+from an adversarial operating system and hardware platform.  Given
+that, if we are intellectually honest, how effective can the LSM/OS be
+with respect to controlling the actions of an enclave?
+
+Without question, being able to regulate and control which identities
+can intersect to load executable content into an enclave is important.
+All of the infrastructure appears to be already there to accomplish
+that, given the default model of a shared library implementation of an
+enclave and requiring the loader to mmap file backed TEXT pages RX.
+
+The most relevant and important control with respect to whether or not
+an enclave should be allowed to execute is evaluation of the
+SIGSTRUCT.  Given the trajectory that platform security is on, SGX is
+not going to be the last technology of its type nor the only
+technology that makes use of cryptographically based code provenance.
+
+As a result, if we are content with handing an opaque pointer of a
+descriptive struture to an LSM routine, a generic hook that is tasked
+with verifying code or execution environment provenance doesn't seem
+like it would need to be technology specific nor controversial.
+
+That leaves as the last thorny issue the question of dynamic
+allocation of memory for executable content.  As we have stated
+before, and at the outset of this note, from a security perspective
+this is only, effectively, a binary question for the platform owner as
+to whether or not the concept should be allowed.
+
+A generic LSM hook, appropriately named, could execute that decision
+without being SGX specific.  Arguably, the hook should be named to
+indicate that it is seeking approval for allocating memory to be used
+for anonymous executable content, since that is what it would be
+effectively requesting approval for, in the case of SGX.
+
+For completeness a third generic hook may be useful.  The purpose of
+that hook would be to verify a block of memory as being
+measured or signed for consideration as executable content.  Arguably
+that will have utility far beyond SGX.
+
+In the case of SGX it would address the issue as to whether or not a
+block of executable content in untrusted space is eligible for
+anonymous execution.  That may be a useful security measure in order
+to provide some control over an enclave being used as a random
+execution oracle.
+
+It obviously has no security utility against the enclave author since,
+as we have noted before, it is possible for the enclave author to
+simply pull whatever code is desired over an encrypted network
+connection.
+
+> James Morris
+
+Hopefully these comments are a useful basis for further discussion.
+
+Best wishes for a productive week to everyone.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker
+IDfusion, LLC
+4206 N. 19th Ave.           Implementing measured information privacy
+Fargo, ND  58102            and integrity architectures.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: gw@idfusion.org
+------------------------------------------------------------------------------
+"My thoughts on trusting Open-Source?  A quote I once saw said it
+ best: 'Remember, Amateurs built the ark.  Professionals built the
+ Titanic.'  Perhaps most significantly the ark was one guy, there were
+ no doubt committees involved with the Titanic project."
+                                -- Dr. G.W. Wettstein
+                                   Resurrection
