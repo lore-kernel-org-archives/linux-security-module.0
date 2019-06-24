@@ -2,103 +2,154 @@ Return-Path: <SRS0=R8bZ=UX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90606C4646B
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 21:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A0CC48BD3
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 21:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6814020673
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 21:09:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zxf/1zMI"
+	by mail.kernel.org (Postfix) with ESMTP id C3D8D20663
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 21:22:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbfFXVJ6 (ORCPT
+        id S1728374AbfFXVWV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Jun 2019 17:09:58 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37266 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfFXVJ6 (ORCPT
+        Mon, 24 Jun 2019 17:22:21 -0400
+Received: from www62.your-server.de ([213.133.104.62]:42800 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbfFXVWV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Jun 2019 17:09:58 -0400
-Received: by mail-pl1-f196.google.com with SMTP id bh12so7574655plb.4
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Jun 2019 14:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+M9GTKc889J/I4j8FdnQoUxnObw5B7R/lYgu2IzB7wI=;
-        b=Zxf/1zMIOK7HgcBG8KOWwQkar56B+aG7cMOyPTymRHLLRUXd3T9MMnoGLayGq4hytU
-         ll1sZ70yOCvNS0pqGnvw/bBA1Ujt25ThPVxNzTiL46lwGjVGdOGvZ2hfRfjh2B+vS8aH
-         M38pT5k5eeEPZXsTdYQoErvBdaH7KeAYleN2c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+M9GTKc889J/I4j8FdnQoUxnObw5B7R/lYgu2IzB7wI=;
-        b=conpHDIKwErEqrGQytaMmAkBPx4EOXNG6C5ciMVt/tLldqlGNwZLCrTTfSYlmPE+5j
-         c0NRZ4WbYxauzxd6IpwBmTKkqpy+nJ+yORJsC0vIr+MzT+Gf2qdkRrd9RDTMuiGRJM5v
-         11PQu58EED5eeYp0nf+M7E5HX3Hn61C1I202/REGB3DkG/ewObgBdO8F+35q/ElYP+lW
-         O3gKxXObTeVwLF2xlYC4IcGDcWxXhYzY534MCpq2e1BPVYKxGkpK6qPpO3DFg9rwglti
-         jZdBkM78PTNmzBX2zwoCYANVX/rICgrJQB7Fg2yA+glVSqVnwuZGGDFzzHw73nExSefr
-         mmyw==
-X-Gm-Message-State: APjAAAXDsStp1VIcw825PzErq3VV2IeW4JmZ/CBFw6OUXY3l0U8bS+4e
-        ocJtaZbT6TOkJ58fL8wZ/Fx+uw==
-X-Google-Smtp-Source: APXvYqwPjIj377DrJtcVZCD2Ebl8o8MphZbpTJcSjhVVRx5WG/PMyImnCnAjQNOTzSq8HpQ6mo8vXw==
-X-Received: by 2002:a17:902:7443:: with SMTP id e3mr13650915plt.176.1561410597791;
-        Mon, 24 Jun 2019 14:09:57 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i3sm13706719pfo.138.2019.06.24.14.09.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Jun 2019 14:09:56 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 14:09:55 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, sds@tycho.nsa.gov
-Subject: Re: [PATCH v3 10/24] Use lsmblob in security_ipc_getsecid
-Message-ID: <201906241408.FE94F84A@keescook>
-References: <20190621185233.6766-1-casey@schaufler-ca.com>
- <20190621185233.6766-11-casey@schaufler-ca.com>
- <201906221545.43D54F0F@keescook>
- <a70ad13e-bc69-ef03-1f9a-3378c38cae23@schaufler-ca.com>
+        Mon, 24 Jun 2019 17:22:21 -0400
+Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hfW4E-0002Kr-QH; Mon, 24 Jun 2019 22:59:58 +0200
+Received: from [178.199.41.31] (helo=linux.home)
+        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hfW4E-0007X2-GT; Mon, 24 Jun 2019 22:59:58 +0200
+Subject: Re: [PATCH V34 23/29] bpf: Restrict bpf when kernel lockdown is in
+ confidentiality mode
+To:     Andy Lutomirski <luto@kernel.org>,
+        Matthew Garrett <mjg59@google.com>
+Cc:     James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Chun-Yi Lee <jlee@suse.com>, Jann Horn <jannh@google.com>,
+        bpf@vger.kernel.org
+References: <20190622000358.19895-1-matthewgarrett@google.com>
+ <20190622000358.19895-24-matthewgarrett@google.com>
+ <739e21b5-9559-d588-3542-bf0bc81de1b2@iogearbox.net>
+ <CACdnJuvR2bn3y3fYzg06GWXXgAGjgED2Dfa5g0oAwJ28qCCqBg@mail.gmail.com>
+ <CALCETrWmZX3R1L88Gz9vLY68gcK8zSXL4cA4GqAzQoyqSR7rRQ@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <7f36edf7-3120-975e-b643-3c0fa470bafd@iogearbox.net>
+Date:   Mon, 24 Jun 2019 22:59:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a70ad13e-bc69-ef03-1f9a-3378c38cae23@schaufler-ca.com>
+In-Reply-To: <CALCETrWmZX3R1L88Gz9vLY68gcK8zSXL4cA4GqAzQoyqSR7rRQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25490/Mon Jun 24 10:02:14 2019)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 24, 2019 at 09:39:05AM -0700, Casey Schaufler wrote:
-> On 6/22/2019 3:48 PM, Kees Cook wrote:
-> > On Fri, Jun 21, 2019 at 11:52:19AM -0700, Casey Schaufler wrote:
-> >> +	struct security_hook_list *hp;
-> >> +
-> >> +	lsmblob_init(blob, 0);
-> >> +	hlist_for_each_entry(hp, &security_hook_heads.ipc_getsecid, list)
-> >> +		hp->hook.ipc_getsecid(ipcp, &blob->secid[hp->slot]);
-> > Just for sanity when using hp->slot, it might be good to do something
-> > like this in the places it gets used. Like for here:
-> >
-> > 	if (!WARN_ON(hp->slot < 0 || hp->slot >= LSMBLOB_COUNT))
-> > 		hp->hook.ipc_getsecid(ipcp, &blob->secid[hp->slot]);
-> >
-> > This _should_ be overkill, but since lists of hooks that trigger slot
-> > assignment is hardcoded, it seems nice to cover any future problems or
-> > mismatches.
+On 06/24/2019 10:08 PM, Andy Lutomirski wrote:
+> On Mon, Jun 24, 2019 at 12:54 PM Matthew Garrett <mjg59@google.com> wrote:
+>> On Mon, Jun 24, 2019 at 8:37 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>>> On 06/22/2019 02:03 AM, Matthew Garrett wrote:
+>>>> From: David Howells <dhowells@redhat.com>
+>>>>
+>>>> There are some bpf functions can be used to read kernel memory:
+>>>
+>>> Nit: that
+>>
+>> Fixed.
+>>
+>>>> bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
+>>>
+>>> Please explain how bpf_probe_write_user reads kernel memory ... ?!
+>>
+>> Ha.
+>>
+>>>> private keys in kernel memory (e.g. the hibernation image signing key) to
+>>>> be read by an eBPF program and kernel memory to be altered without
+>>>
+>>> ... and while we're at it, also how they allow "kernel memory to be
+>>> altered without restriction". I've been pointing this false statement
+>>> out long ago.
+>>
+>> Yup. How's the following description:
+>>
+>>     bpf: Restrict bpf when kernel lockdown is in confidentiality mode
+>>
+>>     There are some bpf functions that can be used to read kernel memory and
+>>     exfiltrate it to userland: bpf_probe_read, bpf_probe_write_user and
+>>     bpf_trace_printk.  These could be abused to (eg) allow private
+>> keys in kernel
+>>     memory to be leaked. Disable them if the kernel has been locked
+>> down in confidentiality
+>>     mode.
 > 
-> How about a CONFIG_LSM_SLOT_CHECK around a function lsm_slot_check()?
-> If configured, it does the WARN_ON, and if not it's a static inline
-> true return. As you say, it's probably overkill, but it would be available
-> for the paranoid/debug/bringup situation.
+> I'm confused.  I understand why we're restricting bpf_probe_read().
+> Why are we restricting bpf_probe_write_user() and bpf_trace_printk(),
+> though?
 
-No, this doesn't need another CONFIG. The test is nearly free and WARN
-means it's wrapped in an unlikely already. I think just adding it
-outright would be fine.
+Agree, for example, bpf_probe_write_user() can never write into
+kernel memory (only user one). Just thinking out loud, wouldn't it
+be cleaner and more generic to perform this check at the actual function
+which performs the kernel memory without faulting? All three of these
+are in mm/maccess.c, and the very few occasions that override the
+probe_kernel_read symbol are calling eventually into __probe_kernel_read(),
+so this would catch all of them wrt lockdown restrictions. Otherwise
+you'd need to keep tracking every bit of new code being merged that
+calls into one of these, no? That way you only need to do it once like
+below and are guaranteed that the check catches these in future as well.
 
--- 
-Kees Cook
+Thanks,
+Daniel
+
+diff --git a/mm/maccess.c b/mm/maccess.c
+index 482d4d6..2c8220f 100644
+--- a/mm/maccess.c
++++ b/mm/maccess.c
+@@ -29,6 +29,9 @@ long __probe_kernel_read(void *dst, const void *src, size_t size)
+ 	long ret;
+ 	mm_segment_t old_fs = get_fs();
+
++	if (security_locked_down(LOCKDOWN_KERNEL_READ))
++		return -EFAULT;
++
+ 	set_fs(KERNEL_DS);
+ 	pagefault_disable();
+ 	ret = __copy_from_user_inatomic(dst,
+@@ -57,6 +60,9 @@ long __probe_kernel_write(void *dst, const void *src, size_t size)
+ 	long ret;
+ 	mm_segment_t old_fs = get_fs();
+
++	if (security_locked_down(LOCKDOWN_KERNEL_WRITE))
++		return -EFAULT;
++
+ 	set_fs(KERNEL_DS);
+ 	pagefault_disable();
+ 	ret = __copy_to_user_inatomic((__force void __user *)dst, src, size);
+@@ -90,6 +96,9 @@ long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count)
+ 	const void *src = unsafe_addr;
+ 	long ret;
+
++	if (security_locked_down(LOCKDOWN_KERNEL_READ))
++		return -EFAULT;
++
+ 	if (unlikely(count <= 0))
+ 		return 0;
+
