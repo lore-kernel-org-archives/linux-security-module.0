@@ -2,95 +2,269 @@ Return-Path: <SRS0=R8bZ=UX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E924C4646B
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 21:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A6DC4646C
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 21:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6273020665
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 21:31:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GV/T5Ga4"
+	by mail.kernel.org (Postfix) with ESMTP id C9E1520665
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 21:33:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730223AbfFXVa7 (ORCPT
+        id S1727520AbfFXVdr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Jun 2019 17:30:59 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33138 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728448AbfFXVa6 (ORCPT
+        Mon, 24 Jun 2019 17:33:47 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53745 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726376AbfFXVdq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Jun 2019 17:30:58 -0400
-Received: by mail-io1-f67.google.com with SMTP id u13so918831iop.0
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Jun 2019 14:30:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X1crQPJTAtGM5uUHM8HI5Md6CDkFNGlZyxi3sPcH+qY=;
-        b=GV/T5Ga4ZWk+3W3tqaFce2Ne2RQBxrSLyrhdSzfTB7LlQz8v8cPfHUnL0gw97i2ytW
-         U4a+Nfv1evzoydxm7+aE0QEItVbBUUIJG/3U7ZVO97sH5R/GBfQ/sK+TpOvu118vpAVE
-         5Ebmq730K8DfY367AGv9eK+RcSiWu/TKO7xNIlIMr46k+uacGMr0RWHh9AkvQlBwPQz/
-         3dK8NiOrmCOZBOFRnBLzpc7otO4y3P98/1Bzu4aZ7JDhtZf7jNuJnBC8VOF1BZHvZufo
-         L+R4LgK/I5cGCdrR41cI4yo5nDHrqGqdldJiFjF0OI44NEPptk1A10JIl1ioUUvMRyJx
-         zBBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X1crQPJTAtGM5uUHM8HI5Md6CDkFNGlZyxi3sPcH+qY=;
-        b=cg7pdicskJrnj70hXnAQPP5CMdBCeo0keZ9pvMu5GPW+wOra3LW8ewJRNbmhB2EgX0
-         Vzyus3lzIf2zNo1GnTtT80b1i7xk8U1lDWxr1kHikZbS6JBZAHzknv57j++3nFhWRzCA
-         3gyngr8pU5FNXKO3fu2+KIAShTunPiijgu30n4dHT3Cm6dsuKFDT3qFHOE9bHujhPubx
-         oZi1IA06bCdk0US/6SJW0//38C+i+k7PW2dPDyisXo5tx58E5b/wR50HvsaTO5TnfSS9
-         yN/Tm87JgLDZA3DcBeYcyDnhw+OemI7Kt/j5Bf1BFIbZJ+VQHC0sqn+LalAXqPU4b7Lx
-         tp/Q==
-X-Gm-Message-State: APjAAAWZ4MQa7SsSCq0jlFDyBYCDQWcIdHVFScHIutH6bLkwRy9SYcK+
-        6WB3JJdyGjt57p89YM2xkgqKuBIpDMfotQfWrKKOtQ==
-X-Google-Smtp-Source: APXvYqwbJ6/OJ4cAqwtkSkNEdex1XxYWjuM6oISUMTZ0zxZxc1DgCYwtvFO6zbVNKmMolpTJMIfjoUOPVX3NdCWBiKk=
-X-Received: by 2002:a6b:f114:: with SMTP id e20mr39401495iog.169.1561411857221;
- Mon, 24 Jun 2019 14:30:57 -0700 (PDT)
+        Mon, 24 Jun 2019 17:33:46 -0400
+Received: from static-50-53-46-226.bvtn.or.frontiernet.net ([50.53.46.226] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1hfWaj-0004o2-Fe; Mon, 24 Jun 2019 21:33:33 +0000
+Subject: Re: [PATCH v3 21/24] Audit: Store LSM audit information in an lsmblob
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     keescook@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com, sds@tycho.nsa.gov,
+        Eric Paris <eparis@redhat.com>
+References: <20190621185233.6766-1-casey@schaufler-ca.com>
+ <20190621185233.6766-22-casey@schaufler-ca.com>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <79cd4a92-c221-eda4-58ba-730b5c2680d7@canonical.com>
+Date:   Mon, 24 Jun 2019 14:33:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-References: <20190622000358.19895-1-matthewgarrett@google.com>
- <20190622000358.19895-24-matthewgarrett@google.com> <739e21b5-9559-d588-3542-bf0bc81de1b2@iogearbox.net>
- <CACdnJuvR2bn3y3fYzg06GWXXgAGjgED2Dfa5g0oAwJ28qCCqBg@mail.gmail.com>
- <CALCETrWmZX3R1L88Gz9vLY68gcK8zSXL4cA4GqAzQoyqSR7rRQ@mail.gmail.com> <7f36edf7-3120-975e-b643-3c0fa470bafd@iogearbox.net>
-In-Reply-To: <7f36edf7-3120-975e-b643-3c0fa470bafd@iogearbox.net>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Mon, 24 Jun 2019 14:30:46 -0700
-Message-ID: <CACdnJuuHdX-y5VpqVFVDM3ORUXLNh+-XKxykxypvYKotHuk1mA@mail.gmail.com>
-Subject: Re: [PATCH V34 23/29] bpf: Restrict bpf when kernel lockdown is in
- confidentiality mode
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Chun-Yi Lee <jlee@suse.com>, Jann Horn <jannh@google.com>,
-        bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190621185233.6766-22-casey@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 24, 2019 at 2:22 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
-> Agree, for example, bpf_probe_write_user() can never write into
-> kernel memory (only user one). Just thinking out loud, wouldn't it
-> be cleaner and more generic to perform this check at the actual function
-> which performs the kernel memory without faulting? All three of these
-> are in mm/maccess.c, and the very few occasions that override the
-> probe_kernel_read symbol are calling eventually into __probe_kernel_read(),
-> so this would catch all of them wrt lockdown restrictions. Otherwise
-> you'd need to keep tracking every bit of new code being merged that
-> calls into one of these, no? That way you only need to do it once like
-> below and are guaranteed that the check catches these in future as well.
+On 6/21/19 11:52 AM, Casey Schaufler wrote:
+> Change the audit code to store full lsmblob data instead of
+> a single u32 secid. This allows for multiple security modules
+> to use the audit system at the same time. It also allows the
+> removal of scaffolding code that was included during the
+> revision of LSM interfaces.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Not all paths into probe_kernel_read/write are from entry points that
-need to be locked down (eg, as far as I can tell ftrace can't leak
-anything interesting here).
+I know Kees raised this too, but I haven't seen a reply
+
+Eric (Paul is already CCed): I have directly added you because of
+the question below.
+
+In summary there isn't necessarily a single secid any more, and
+we need to know whether dropping the logging of the secid or
+logging all secids is the correct action.
+
+> ---
+>  kernel/audit.h   |  6 +++---
+>  kernel/auditsc.c | 38 +++++++++++---------------------------
+>  2 files changed, 14 insertions(+), 30 deletions(-)
+> 
+> diff --git a/kernel/audit.h b/kernel/audit.h
+> index 29e29c6f4afb..a8dd479e9556 100644
+> --- a/kernel/audit.h
+> +++ b/kernel/audit.h
+> @@ -91,7 +91,7 @@ struct audit_names {
+>  	kuid_t			uid;
+>  	kgid_t			gid;
+>  	dev_t			rdev;
+> -	u32			osid;
+> +	struct lsmblob		olsm;
+>  	struct audit_cap_data	fcap;
+>  	unsigned int		fcap_ver;
+>  	unsigned char		type;		/* record type */
+> @@ -148,7 +148,7 @@ struct audit_context {
+>  	kuid_t		    target_auid;
+>  	kuid_t		    target_uid;
+>  	unsigned int	    target_sessionid;
+> -	struct lsmblob   target_lsm;
+> +	struct lsmblob	    target_lsm;
+>  	char		    target_comm[TASK_COMM_LEN];
+>  
+>  	struct audit_tree_refs *trees, *first_trees;
+> @@ -165,7 +165,7 @@ struct audit_context {
+>  			kuid_t			uid;
+>  			kgid_t			gid;
+>  			umode_t			mode;
+> -			u32			osid;
+> +			struct lsmblob		olsm;
+>  			int			has_perm;
+>  			uid_t			perm_uid;
+>  			gid_t			perm_gid;
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 0478680cd0a8..d3ad13f11788 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -646,17 +646,15 @@ static int audit_filter_rules(struct task_struct *tsk,
+>  			if (f->lsm_rule) {
+>  				/* Find files that match */
+>  				if (name) {
+> -					lsmblob_init(&blob, name->osid);
+>  					result = security_audit_rule_match(
+> -								&blob,
+> +								&name->olsm,
+>  								f->type,
+>  								f->op,
+>  								f->lsm_rule);
+>  				} else if (ctx) {
+>  					list_for_each_entry(n, &ctx->names_list, list) {
+> -						lsmblob_init(&blob, n->osid);
+>  						if (security_audit_rule_match(
+> -								&blob,
+> +								&n->olsm,
+>  								f->type,
+>  								f->op,
+>  								f->lsm_rule)) {
+> @@ -668,8 +666,7 @@ static int audit_filter_rules(struct task_struct *tsk,
+>  				/* Find ipc objects that match */
+>  				if (!ctx || ctx->type != AUDIT_IPC)
+>  					break;
+> -				lsmblob_init(&blob, ctx->ipc.osid);
+> -				if (security_audit_rule_match(&blob,
+> +				if (security_audit_rule_match(&ctx->ipc.olsm,
+>  							      f->type, f->op,
+>  							      f->lsm_rule))
+>  					++result;
+> @@ -1187,21 +1184,18 @@ static void show_special(struct audit_context *context, int *call_panic)
+>  				context->socketcall.args[i]);
+>  		break; }
+>  	case AUDIT_IPC: {
+> -		u32 osid = context->ipc.osid;
+> +		struct lsmblob *olsm = &context->ipc.olsm;
+>  
+>  		audit_log_format(ab, "ouid=%u ogid=%u mode=%#ho",
+>  				 from_kuid(&init_user_ns, context->ipc.uid),
+>  				 from_kgid(&init_user_ns, context->ipc.gid),
+>  				 context->ipc.mode);
+> -		if (osid) {
+> +		if (lsmblob_is_set(olsm)) {
+>  			struct lsmcontext lsmcxt;
+> -			struct lsmblob blob;
+>  
+> -			lsmblob_init(&blob, osid);
+> -			if (security_secid_to_secctx(&blob, &lsmcxt)) {
+> -				audit_log_format(ab, " osid=%u", osid);
+
+I am not comfortable just dropping this I would think logging all secids is the
+correct action here.
+
+
+> +			if (security_secid_to_secctx(olsm, &lsmcxt))
+>  				*call_panic = 1;
+> -			} else {
+> +			else {
+>  				audit_log_format(ab, " obj=%s", lsmcxt.context);
+>  				security_release_secctx(&lsmcxt);
+>  			}
+> @@ -1346,13 +1340,10 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
+>  				 from_kgid(&init_user_ns, n->gid),
+>  				 MAJOR(n->rdev),
+>  				 MINOR(n->rdev));
+> -	if (n->osid != 0) {
+> -		struct lsmblob blob;
+> +	if (lsmblob_is_set(&n->olsm)) {
+>  		struct lsmcontext lsmctx;
+>  
+> -		lsmblob_init(&blob, n->osid);
+> -		if (security_secid_to_secctx(&blob, &lsmctx)) {
+> -			audit_log_format(ab, " osid=%u", n->osid);
+
+and here
+
+
+> +		if (security_secid_to_secctx(&n->olsm, &lsmctx)) {
+>  			if (call_panic)
+>  				*call_panic = 2;
+>  		} else {
+> @@ -1906,17 +1897,13 @@ static inline int audit_copy_fcaps(struct audit_names *name,
+>  void audit_copy_inode(struct audit_names *name, const struct dentry *dentry,
+>  		      struct inode *inode, unsigned int flags)
+>  {
+> -	struct lsmblob blob;
+> -
+>  	name->ino   = inode->i_ino;
+>  	name->dev   = inode->i_sb->s_dev;
+>  	name->mode  = inode->i_mode;
+>  	name->uid   = inode->i_uid;
+>  	name->gid   = inode->i_gid;
+>  	name->rdev  = inode->i_rdev;
+> -	security_inode_getsecid(inode, &blob);
+> -	/* scaffolding until osid is updated */
+> -	name->osid = blob.secid[0];
+> +	security_inode_getsecid(inode, &name->olsm);
+>  	if (flags & AUDIT_INODE_NOEVAL) {
+>  		name->fcap_ver = -1;
+>  		return;
+> @@ -2266,14 +2253,11 @@ void __audit_mq_getsetattr(mqd_t mqdes, struct mq_attr *mqstat)
+>  void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
+>  {
+>  	struct audit_context *context = audit_context();
+> -	struct lsmblob blob;
+>  	context->ipc.uid = ipcp->uid;
+>  	context->ipc.gid = ipcp->gid;
+>  	context->ipc.mode = ipcp->mode;
+>  	context->ipc.has_perm = 0;
+> -	security_ipc_getsecid(ipcp, &blob);
+> -	/* scaffolding on the [0] - change "osid" to a lsmblob */
+> -	context->ipc.osid = blob.secid[0];
+> +	security_ipc_getsecid(ipcp, &context->ipc.olsm);
+>  	context->type = AUDIT_IPC;
+>  }
+>  
+> 
+
