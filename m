@@ -6,337 +6,394 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D531C48BE9
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 18:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A7DC48BE9
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 19:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2095420657
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 18:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF72B20645
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 19:52:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfFXSsm (ORCPT
+        id S1728330AbfFXTw3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Jun 2019 14:48:42 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50508 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbfFXSsm (ORCPT
+        Mon, 24 Jun 2019 15:52:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42748 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727101AbfFXTw2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Jun 2019 14:48:42 -0400
-Received: from static-50-53-46-226.bvtn.or.frontiernet.net ([50.53.46.226] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1hfU13-0000tu-LL; Mon, 24 Jun 2019 18:48:34 +0000
-From:   John Johansen <john.johansen@canonical.com>
-Subject: [PATCH v3 15/24] LSM: Specify which LSM to display
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     keescook@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, sds@tycho.nsa.gov
-References: <20190621185233.6766-1-casey@schaufler-ca.com>
- <20190621185233.6766-16-casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <eb2c3cd3-0de4-807a-ec67-3f11a83cb100@canonical.com>
-Date:   Mon, 24 Jun 2019 11:48:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Mon, 24 Jun 2019 15:52:28 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OJlXge010945
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Jun 2019 15:52:27 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tb1stgv2d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Jun 2019 15:52:26 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Mon, 24 Jun 2019 20:52:24 +0100
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 24 Jun 2019 20:52:18 +0100
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5OJqHtw38404584
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 19:52:17 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 501DFC6055;
+        Mon, 24 Jun 2019 19:52:17 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF23AC605B;
+        Mon, 24 Jun 2019 19:52:12 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.209.86])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Mon, 24 Jun 2019 19:52:11 +0000 (GMT)
+References: <20190611062817.18412-1-bauerman@linux.ibm.com> <20190611062817.18412-2-bauerman@linux.ibm.com>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v11 01/13] MODSIGN: Export module signature definitions
+In-reply-to: <20190611062817.18412-2-bauerman@linux.ibm.com>
+Date:   Mon, 24 Jun 2019 16:52:09 -0300
 MIME-Version: 1.0
-In-Reply-To: <20190621185233.6766-16-casey@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 19062419-0016-0000-0000-000009C64D7D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011322; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01222738; UDB=6.00643410; IPR=6.01003899;
+ MB=3.00027449; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-24 19:52:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062419-0017-0000-0000-000043C4ABE1
+Message-Id: <87imsukbh2.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240158
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/21/19 11:52 AM, Casey Schaufler wrote:
-> Create a new entry "display" in /proc/.../attr for controlling
-> which LSM security information is displayed for a process.
-> The name of an active LSM that supplies hooks for human readable
-> data may be written to "display" to set the value. The name of
-> the LSM currently in use can be read from "display".
-> At this point there can only be one LSM capable of display
-> active.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+
+Hello Jessica,
+
+AFAIK Mimi is happy with this patch set, but I still need acks from
+maintainers of other subsystems that my changes touch before she can
+accept it.
+
+Is this patch OK from your PoV?
+
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
 
 
-there is small issue, see below
+Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
 
-
-Also I want to get rid of the list search for the display lsm
-but that can come as a separate patch later
-
-
+> IMA will use the module_signature format for append signatures, so export
+> the relevant definitions and factor out the code which verifies that the
+> appended signature trailer is valid.
+>
+> Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
+> and be able to use mod_check_sig() without having to depend on either
+> CONFIG_MODULE_SIG or CONFIG_MODULES.
+>
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: Jessica Yu <jeyu@kernel.org>
 > ---
->  fs/proc/base.c      |   1 +
->  security/security.c | 110 +++++++++++++++++++++++++++++++++++---------
->  2 files changed, 90 insertions(+), 21 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index ddef482f1334..7bf70e041315 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -2618,6 +2618,7 @@ static const struct pid_entry attr_dir_stuff[] = {
->  	ATTR(NULL, "fscreate",		0666),
->  	ATTR(NULL, "keycreate",		0666),
->  	ATTR(NULL, "sockcreate",	0666),
-> +	ATTR(NULL, "display",		0666),
->  #ifdef CONFIG_SECURITY_SMACK
->  	DIR("smack",			0555,
->  	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
-> diff --git a/security/security.c b/security/security.c
-> index aa8e1c73a062..92c5aa427b53 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -46,7 +46,9 @@ static struct kmem_cache *lsm_file_cache;
->  static struct kmem_cache *lsm_inode_cache;
->  
->  char *lsm_names;
-> -static struct lsm_blob_sizes blob_sizes __lsm_ro_after_init;
-> +static struct lsm_blob_sizes blob_sizes __lsm_ro_after_init = {
-> +	.lbs_task = sizeof(int),	/* slot number for the "display" LSM */
+>  include/linux/module.h           |  3 --
+>  include/linux/module_signature.h | 44 +++++++++++++++++++++++++
+>  init/Kconfig                     |  6 +++-
+>  kernel/Makefile                  |  1 +
+>  kernel/module.c                  |  1 +
+>  kernel/module_signature.c        | 46 ++++++++++++++++++++++++++
+>  kernel/module_signing.c          | 56 +++++---------------------------
+>  scripts/Makefile                 |  2 +-
+>  8 files changed, 106 insertions(+), 53 deletions(-)
+>
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index 188998d3dca9..aa56f531cf1e 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -25,9 +25,6 @@
+>  #include <linux/percpu.h>
+>  #include <asm/module.h>
+>
+> -/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
+> -#define MODULE_SIG_STRING "~Module signature appended~\n"
+> -
+>  /* Not Yet Implemented */
+>  #define MODULE_SUPPORTED_DEVICE(name)
+>
+> diff --git a/include/linux/module_signature.h b/include/linux/module_signature.h
+> new file mode 100644
+> index 000000000000..523617fc5b6a
+> --- /dev/null
+> +++ b/include/linux/module_signature.h
+> @@ -0,0 +1,44 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Module signature handling.
+> + *
+> + * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + */
+> +
+> +#ifndef _LINUX_MODULE_SIGNATURE_H
+> +#define _LINUX_MODULE_SIGNATURE_H
+> +
+> +/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
+> +#define MODULE_SIG_STRING "~Module signature appended~\n"
+> +
+> +enum pkey_id_type {
+> +	PKEY_ID_PGP,		/* OpenPGP generated key ID */
+> +	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
+> +	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
 > +};
->  
->  /* Boot-time LSM user choice */
->  static __initdata const char *chosen_lsm_order;
-> @@ -583,6 +585,8 @@ int lsm_inode_alloc(struct inode *inode)
->   */
->  static int lsm_task_alloc(struct task_struct *task)
->  {
-> +	int *display;
 > +
->  	if (blob_sizes.lbs_task == 0) {
->  		task->security = NULL;
->  		return 0;
-> @@ -591,6 +595,15 @@ static int lsm_task_alloc(struct task_struct *task)
->  	task->security = kzalloc(blob_sizes.lbs_task, GFP_KERNEL);
->  	if (task->security == NULL)
->  		return -ENOMEM;
+> +/*
+> + * Module signature information block.
+> + *
+> + * The constituents of the signature section are, in order:
+> + *
+> + *	- Signer's name
+> + *	- Key identifier
+> + *	- Signature data
+> + *	- Information block
+> + */
+> +struct module_signature {
+> +	u8	algo;		/* Public-key crypto algorithm [0] */
+> +	u8	hash;		/* Digest algorithm [0] */
+> +	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
+> +	u8	signer_len;	/* Length of signer's name [0] */
+> +	u8	key_id_len;	/* Length of key identifier [0] */
+> +	u8	__pad[3];
+> +	__be32	sig_len;	/* Length of signature data */
+> +};
 > +
-> +	/*
-> +	 * The start of the task blob contains the "display" LSM slot number.
-> +	 * Start with it set to the invalid slot number, indicating that the
-> +	 * default first registered LSM be displayed.
-> +	 */
-> +	display = task->security;
-> +	*display = LSMBLOB_INVALID;
+> +int mod_check_sig(const struct module_signature *ms, size_t file_len,
+> +		  const char *name);
 > +
->  	return 0;
->  }
->  
-> @@ -1579,14 +1592,24 @@ int security_file_open(struct file *file)
->  
->  int security_task_alloc(struct task_struct *task, unsigned long clone_flags)
->  {
-> +	int *odisplay = current->security;
-> +	int *ndisplay;
->  	int rc = lsm_task_alloc(task);
->  
-> -	if (rc)
-> +	if (unlikely(rc))
->  		return rc;
+> +#endif /* _LINUX_MODULE_SIGNATURE_H */
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 8b9ffe236e4f..c2286a3c74c5 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1852,6 +1852,10 @@ config BASE_SMALL
+>  	default 0 if BASE_FULL
+>  	default 1 if !BASE_FULL
+>
+> +config MODULE_SIG_FORMAT
+> +	def_bool n
+> +	select SYSTEM_DATA_VERIFICATION
 > +
->  	rc = call_int_hook(task_alloc, 0, task, clone_flags);
-> -	if (unlikely(rc))
-> +	if (unlikely(rc)) {
->  		security_task_free(task);
-> -	return rc;
-> +		return rc;
+>  menuconfig MODULES
+>  	bool "Enable loadable module support"
+>  	option modules
+> @@ -1929,7 +1933,7 @@ config MODULE_SRCVERSION_ALL
+>  config MODULE_SIG
+>  	bool "Module signature verification"
+>  	depends on MODULES
+> -	select SYSTEM_DATA_VERIFICATION
+> +	select MODULE_SIG_FORMAT
+>  	help
+>  	  Check modules for valid signatures upon load: the signature
+>  	  is simply appended to the module. For more information see
+> diff --git a/kernel/Makefile b/kernel/Makefile
+> index 33824f0385b3..f29ae2997a43 100644
+> --- a/kernel/Makefile
+> +++ b/kernel/Makefile
+> @@ -58,6 +58,7 @@ endif
+>  obj-$(CONFIG_UID16) += uid16.o
+>  obj-$(CONFIG_MODULES) += module.o
+>  obj-$(CONFIG_MODULE_SIG) += module_signing.o
+> +obj-$(CONFIG_MODULE_SIG_FORMAT) += module_signature.o
+>  obj-$(CONFIG_KALLSYMS) += kallsyms.o
+>  obj-$(CONFIG_BSD_PROCESS_ACCT) += acct.o
+>  obj-$(CONFIG_CRASH_CORE) += crash_core.o
+> diff --git a/kernel/module.c b/kernel/module.c
+> index 6e6712b3aaf5..2712f4d217f5 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/export.h>
+>  #include <linux/extable.h>
+>  #include <linux/moduleloader.h>
+> +#include <linux/module_signature.h>
+>  #include <linux/trace_events.h>
+>  #include <linux/init.h>
+>  #include <linux/kallsyms.h>
+> diff --git a/kernel/module_signature.c b/kernel/module_signature.c
+> new file mode 100644
+> index 000000000000..4224a1086b7d
+> --- /dev/null
+> +++ b/kernel/module_signature.c
+> @@ -0,0 +1,46 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Module signature checker
+> + *
+> + * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + */
+> +
+> +#include <linux/errno.h>
+> +#include <linux/printk.h>
+> +#include <linux/module_signature.h>
+> +#include <asm/byteorder.h>
+> +
+> +/**
+> + * mod_check_sig - check that the given signature is sane
+> + *
+> + * @ms:		Signature to check.
+> + * @file_len:	Size of the file to which @ms is appended.
+> + * @name:	What is being checked. Used for error messages.
+> + */
+> +int mod_check_sig(const struct module_signature *ms, size_t file_len,
+> +		  const char *name)
+> +{
+> +	if (be32_to_cpu(ms->sig_len) >= file_len - sizeof(*ms))
+> +		return -EBADMSG;
+> +
+> +	if (ms->id_type != PKEY_ID_PKCS7) {
+> +		pr_err("%s: Module is not signed with expected PKCS#7 message\n",
+> +		       name);
+> +		return -ENOPKG;
 > +	}
 > +
-> +	ndisplay = task->security;
-> +	if (ndisplay && odisplay)
-> +		*ndisplay = *odisplay;
+> +	if (ms->algo != 0 ||
+> +	    ms->hash != 0 ||
+> +	    ms->signer_len != 0 ||
+> +	    ms->key_id_len != 0 ||
+> +	    ms->__pad[0] != 0 ||
+> +	    ms->__pad[1] != 0 ||
+> +	    ms->__pad[2] != 0) {
+> +		pr_err("%s: PKCS#7 signature info has unexpected non-zero params\n",
+> +		       name);
+> +		return -EBADMSG;
+> +	}
 > +
 > +	return 0;
->  }
->  
->  void security_task_free(struct task_struct *task)
-> @@ -1972,10 +1995,28 @@ int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
->  				char **value)
+> +}
+> diff --git a/kernel/module_signing.c b/kernel/module_signing.c
+> index 6b9a926fd86b..cdd04a6b8074 100644
+> --- a/kernel/module_signing.c
+> +++ b/kernel/module_signing.c
+> @@ -11,37 +11,13 @@
+>
+>  #include <linux/kernel.h>
+>  #include <linux/errno.h>
+> +#include <linux/module.h>
+> +#include <linux/module_signature.h>
+>  #include <linux/string.h>
+>  #include <linux/verification.h>
+>  #include <crypto/public_key.h>
+>  #include "module-internal.h"
+>
+> -enum pkey_id_type {
+> -	PKEY_ID_PGP,		/* OpenPGP generated key ID */
+> -	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
+> -	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
+> -};
+> -
+> -/*
+> - * Module signature information block.
+> - *
+> - * The constituents of the signature section are, in order:
+> - *
+> - *	- Signer's name
+> - *	- Key identifier
+> - *	- Signature data
+> - *	- Information block
+> - */
+> -struct module_signature {
+> -	u8	algo;		/* Public-key crypto algorithm [0] */
+> -	u8	hash;		/* Digest algorithm [0] */
+> -	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
+> -	u8	signer_len;	/* Length of signer's name [0] */
+> -	u8	key_id_len;	/* Length of key identifier [0] */
+> -	u8	__pad[3];
+> -	__be32	sig_len;	/* Length of signature data */
+> -};
+> -
+>  /*
+>   * Verify the signature on a module.
+>   */
+> @@ -49,6 +25,7 @@ int mod_verify_sig(const void *mod, struct load_info *info)
 >  {
->  	struct security_hook_list *hp;
-> +	int *display = current->security;
+>  	struct module_signature ms;
+>  	size_t sig_len, modlen = info->len;
+> +	int ret;
+>
+>  	pr_devel("==>%s(,%zu)\n", __func__, modlen);
+>
+> @@ -56,32 +33,15 @@ int mod_verify_sig(const void *mod, struct load_info *info)
+>  		return -EBADMSG;
+>
+>  	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
+> -	modlen -= sizeof(ms);
 > +
-> +	if (!strcmp(name, "display")) {
-> +		hlist_for_each_entry(hp, &security_hook_heads.secid_to_secctx,
-> +				     list) {
-> +			if (*display == LSMBLOB_INVALID ||
-> +			    hp->slot == *display) {
-> +				*value = kstrdup(hp->lsm, GFP_KERNEL);
-> +				if (*value)
-> +					return strlen(hp->lsm);
-> +				return -ENOMEM;
-> +			}
-> +		}
-> +		return -EINVAL;
-> +	}
->  
->  	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
->  		if (lsm != NULL && strcmp(lsm, hp->lsm))
->  			continue;
-> +		if (lsm == NULL && *display != LSMBLOB_INVALID &&
-> +		    *display != hp->slot)
-> +			continue;
->  		return hp->hook.getprocattr(p, name, value);
->  	}
->  	return -EINVAL;
-> @@ -1985,10 +2026,27 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
->  			 size_t size)
->  {
->  	struct security_hook_list *hp;
-> +	int *display = current->security;
-> +	int len;
-> +
-> +	if (!strcmp(name, "display")) {
-> +		hlist_for_each_entry(hp, &security_hook_heads.secid_to_secctx,
-> +				     list) {
-> +			len = strlen(hp->lsm);
-> +			if (size >= len && !strncmp(value, hp->lsm, len)) {
-
-This isn't quite right. It allows a value that contains a prefix of an lsm to match. That
-is
-  selinux2
-etc would match to selinux. While it isn't a real problem atm. Its not something I
-want as part of the user space API which would make it so we can't fix it.
-
-
-
-
-> +				*display = hp->slot;
-> +				return size;
-> +			}
-> +		}
-> +		return -EINVAL;
-> +	}
->  
->  	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
->  		if (lsm != NULL && strcmp(lsm, hp->lsm))
->  			continue;
-> +		if (lsm == NULL && *display != LSMBLOB_INVALID &&
-> +		    *display != hp->slot)
-> +			continue;
->  		return hp->hook.setprocattr(name, value, size);
->  	}
->  	return -EINVAL;
-> @@ -2008,14 +2066,12 @@ EXPORT_SYMBOL(security_ismaclabel);
->  int security_secid_to_secctx(struct lsmblob *blob, char **secdata, u32 *seclen)
->  {
->  	struct security_hook_list *hp;
-> -	int rc;
-> +	int *display = current->security;
->  
-> -	hlist_for_each_entry(hp, &security_hook_heads.secid_to_secctx, list) {
-> -		rc = hp->hook.secid_to_secctx(blob->secid[hp->slot],
-> -					      secdata, seclen);
-> -		if (rc != 0)
-> -			return rc;
+> +	ret = mod_check_sig(&ms, modlen, info->name);
+> +	if (ret)
+> +		return ret;
+>
+>  	sig_len = be32_to_cpu(ms.sig_len);
+> -	if (sig_len >= modlen)
+> -		return -EBADMSG;
+> -	modlen -= sig_len;
+> +	modlen -= sig_len + sizeof(ms);
+>  	info->len = modlen;
+>
+> -	if (ms.id_type != PKEY_ID_PKCS7) {
+> -		pr_err("%s: Module is not signed with expected PKCS#7 message\n",
+> -		       info->name);
+> -		return -ENOPKG;
 > -	}
-> +	hlist_for_each_entry(hp, &security_hook_heads.secid_to_secctx, list)
-> +		if (*display == LSMBLOB_INVALID || *display == hp->slot)
-> +			return hp->hook.secid_to_secctx(blob->secid[hp->slot],
-> +							secdata, seclen);
->  	return 0;
->  }
->  EXPORT_SYMBOL(security_secid_to_secctx);
-> @@ -2024,22 +2080,27 @@ int security_secctx_to_secid(const char *secdata, u32 seclen,
->  			     struct lsmblob *blob)
->  {
->  	struct security_hook_list *hp;
-> -	int rc;
-> +	int *display = current->security;
->  
->  	lsmblob_init(blob, 0);
-> -	hlist_for_each_entry(hp, &security_hook_heads.secctx_to_secid, list) {
-> -		rc = hp->hook.secctx_to_secid(secdata, seclen,
-> -					      &blob->secid[hp->slot]);
-> -		if (rc != 0)
-> -			return rc;
+> -
+> -	if (ms.algo != 0 ||
+> -	    ms.hash != 0 ||
+> -	    ms.signer_len != 0 ||
+> -	    ms.key_id_len != 0 ||
+> -	    ms.__pad[0] != 0 ||
+> -	    ms.__pad[1] != 0 ||
+> -	    ms.__pad[2] != 0) {
+> -		pr_err("%s: PKCS#7 signature info has unexpected non-zero params\n",
+> -		       info->name);
+> -		return -EBADMSG;
 > -	}
-> +	hlist_for_each_entry(hp, &security_hook_heads.secctx_to_secid, list)
-> +		if (*display == LSMBLOB_INVALID || *display == hp->slot)
-> +			return hp->hook.secctx_to_secid(secdata, seclen,
-> +							&blob->secid[hp->slot]);
->  	return 0;
->  }
->  EXPORT_SYMBOL(security_secctx_to_secid);
->  
->  void security_release_secctx(char *secdata, u32 seclen)
->  {
-> -	call_void_hook(release_secctx, secdata, seclen);
-> +	struct security_hook_list *hp;
-> +	int *display = current->security;
-> +
-> +	hlist_for_each_entry(hp, &security_hook_heads.release_secctx, list)
-> +		if (*display == LSMBLOB_INVALID || *display == hp->slot) {
-> +			hp->hook.release_secctx(secdata, seclen);
-> +			return;
-> +		}
->  }
->  EXPORT_SYMBOL(security_release_secctx);
->  
-> @@ -2164,8 +2225,15 @@ EXPORT_SYMBOL(security_sock_rcv_skb);
->  int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
->  				      int __user *optlen, unsigned len)
->  {
-> -	return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
-> -				optval, optlen, len);
-> +	int *display = current->security;
-> +	struct security_hook_list *hp;
-> +
-> +	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeersec_stream,
-> +			     list)
-> +		if (*display == LSMBLOB_INVALID || *display == hp->slot)
-> +			return hp->hook.socket_getpeersec_stream(sock, optval,
-> +								 optlen, len);
-> +	return -ENOPROTOOPT;
->  }
->  
->  int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb,
-> 
-
-
+> -
+>  	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
+>  				      VERIFY_USE_SECONDARY_KEYRING,
+>  				      VERIFYING_MODULE_SIGNATURE,
+> diff --git a/scripts/Makefile b/scripts/Makefile
+> index 9d442ee050bd..52098b080ab7 100644
+> --- a/scripts/Makefile
+> +++ b/scripts/Makefile
+> @@ -17,7 +17,7 @@ hostprogs-$(CONFIG_VT)           += conmakehash
+>  hostprogs-$(BUILD_C_RECORDMCOUNT) += recordmcount
+>  hostprogs-$(CONFIG_BUILDTIME_EXTABLE_SORT) += sortextable
+>  hostprogs-$(CONFIG_ASN1)	 += asn1_compiler
+> -hostprogs-$(CONFIG_MODULE_SIG)	 += sign-file
+> +hostprogs-$(CONFIG_MODULE_SIG_FORMAT) += sign-file
+>  hostprogs-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += extract-cert
+>  hostprogs-$(CONFIG_SYSTEM_EXTRA_CERTIFICATE) += insert-sys-cert
+>
 
