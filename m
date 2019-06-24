@@ -2,118 +2,242 @@ Return-Path: <SRS0=R8bZ=UX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 849CDC48BE9
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 19:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A3DC48BEA
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 19:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59CE420645
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 19:54:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T5bgSuFF"
+	by mail.kernel.org (Postfix) with ESMTP id F273F20645
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 19:57:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbfFXTyN (ORCPT
+        id S1731231AbfFXT5h (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Jun 2019 15:54:13 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43847 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729572AbfFXTyM (ORCPT
+        Mon, 24 Jun 2019 15:57:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10782 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727282AbfFXT5h (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Jun 2019 15:54:12 -0400
-Received: by mail-io1-f65.google.com with SMTP id k20so1373016ios.10
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Jun 2019 12:54:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YCg/MjFmfZjibFv1+zfjJ/08w0AqICIa/H9ziec7kII=;
-        b=T5bgSuFF2J0SClg2TX96KcIkt8PMoAR1G3u6wAV9ZlHT11IjSJBWqyLCR87fxH+c29
-         LTufoMIaOaS5RzlQZdhwIhVGqFpXAIChtxNsI8BWjtM0tF2pFRYeHCKuLi5czhKl6iw/
-         Kh4t45FA7uaBdu+cxYKWG6S4qqD66Wb7/01m2fvDCCMbfZCFA4qJWtcmCxfFo0R0UJYn
-         9RwhYjanjDxnX37mmFLMatT8eDcY+4IhBRCV/7mN+h5oZP/SOk7UlIo3kxh2grH6N1Aq
-         nB2By88uwy0THJJ3z/Iol2KMXK0mq8grrgUkxODb07Yba6xPmycLbGleHl0GH6KQvt/o
-         4a/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YCg/MjFmfZjibFv1+zfjJ/08w0AqICIa/H9ziec7kII=;
-        b=ekmBnRy0MOzFOdsca6fzWLdkmOHFMEtZ08i7wJe1JxsSZAVMdjTvDuZ9eoli0udXz9
-         xKpLH+Xpbi6sygbB4XC2erirnYC+bqriZ2ZmQCAnB57/Gal/no8UFYHNj1pYITr/5qAv
-         LphB2eg8pulpA9oYFEQhZAdQxz6GpUfvDtcoKa5vYFHFwdFwTziAN6UO9ThVE+Msl78a
-         OaPbzi3sTxIuIaf8vQ6v4bo3Kc+31BiCvm610jOG791YVCw6noO+Oh/la3dsn/HTejyX
-         5iq8vM981AOb3scgDc41jN7WfaoOk/Tuz9LeFfsNwwMYL8gs+5Xf2zzyzmPUeu1UuId9
-         HXng==
-X-Gm-Message-State: APjAAAXMN2nzPbKfK2y8xUPxzLKowNpSWHm10xgf00adsMYLxn5aQbZe
-        icCQ455wp+okCIly2oIysANghg7XR63JAM9YDeaTgg==
-X-Google-Smtp-Source: APXvYqyFU7p5SRJ6nKCqIZqMdeK3zYkp5IdfxuzZhylp6PCqxOOHmnAokMWRrX7K9YZRQdLi+tIxlDW1HYKDsttAmXA=
-X-Received: by 2002:a05:6638:3d3:: with SMTP id r19mr30442055jaq.53.1561406051539;
- Mon, 24 Jun 2019 12:54:11 -0700 (PDT)
+        Mon, 24 Jun 2019 15:57:37 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OJuqR7068710;
+        Mon, 24 Jun 2019 15:56:59 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tb4e2hqxc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 15:56:59 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5OJuwXL069377;
+        Mon, 24 Jun 2019 15:56:58 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tb4e2hqwj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 15:56:58 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5OJsw1l022275;
+        Mon, 24 Jun 2019 19:56:57 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma03dal.us.ibm.com with ESMTP id 2t9by6rj46-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 19:56:57 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5OJuuSF63242568
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 19:56:56 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 26B39C6057;
+        Mon, 24 Jun 2019 19:56:56 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9F754C6055;
+        Mon, 24 Jun 2019 19:56:51 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.209.86])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Mon, 24 Jun 2019 19:56:51 +0000 (GMT)
+References: <20190611062817.18412-1-bauerman@linux.ibm.com> <20190611062817.18412-3-bauerman@linux.ibm.com>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v11 02/13] PKCS#7: Refactor verify_pkcs7_signature()
+In-reply-to: <20190611062817.18412-3-bauerman@linux.ibm.com>
+Date:   Mon, 24 Jun 2019 16:56:49 -0300
+Message-ID: <87h88ekb9a.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-References: <20190622000358.19895-1-matthewgarrett@google.com>
- <20190622000358.19895-24-matthewgarrett@google.com> <739e21b5-9559-d588-3542-bf0bc81de1b2@iogearbox.net>
-In-Reply-To: <739e21b5-9559-d588-3542-bf0bc81de1b2@iogearbox.net>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Mon, 24 Jun 2019 12:54:00 -0700
-Message-ID: <CACdnJuvR2bn3y3fYzg06GWXXgAGjgED2Dfa5g0oAwJ28qCCqBg@mail.gmail.com>
-Subject: Re: [PATCH V34 23/29] bpf: Restrict bpf when kernel lockdown is in
- confidentiality mode
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Chun-Yi Lee <jlee@suse.com>, Jann Horn <jannh@google.com>,
-        bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240159
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 24, 2019 at 8:37 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+
+Hello David,
+
+AFAIK Mimi is happy with this patch set, but I still need acks from
+maintainers of other subsystems that my changes touch before she can
+accept it.
+
+Are this patch and the next one ("PKCS#7: Introduce pkcs7_get_digest()")
+OK from your PoV?
+
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
+
+
+Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
+
+> IMA will need to verify a PKCS#7 signature which has already been parsed.
+> For this reason, factor out the code which does that from
+> verify_pkcs7_signature() into a new function which takes a struct
+> pkcs7_message instead of a data buffer.
 >
-> On 06/22/2019 02:03 AM, Matthew Garrett wrote:
-> > From: David Howells <dhowells@redhat.com>
-> >
-> > There are some bpf functions can be used to read kernel memory:
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> ---
+>  certs/system_keyring.c       | 61 ++++++++++++++++++++++++++----------
+>  include/linux/verification.h | 10 ++++++
+>  2 files changed, 55 insertions(+), 16 deletions(-)
 >
-> Nit: that
-
-Fixed.
-
-> > bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index c05c29ae4d5d..4ba82e52e4b4 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -194,33 +194,27 @@ late_initcall(load_system_certificate_list);
+>  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
 >
-> Please explain how bpf_probe_write_user reads kernel memory ... ?!
-
-Ha.
-
-> > private keys in kernel memory (e.g. the hibernation image signing key) to
-> > be read by an eBPF program and kernel memory to be altered without
+>  /**
+> - * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
+> + * verify_pkcs7_message_sig - Verify a PKCS#7-based signature on system data.
+>   * @data: The data to be verified (NULL if expecting internal data).
+>   * @len: Size of @data.
+> - * @raw_pkcs7: The PKCS#7 message that is the signature.
+> - * @pkcs7_len: The size of @raw_pkcs7.
+> + * @pkcs7: The PKCS#7 message that is the signature.
+>   * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
+>   *					(void *)1UL for all trusted keys).
+>   * @usage: The use to which the key is being put.
+>   * @view_content: Callback to gain access to content.
+>   * @ctx: Context for callback.
+>   */
+> -int verify_pkcs7_signature(const void *data, size_t len,
+> -			   const void *raw_pkcs7, size_t pkcs7_len,
+> -			   struct key *trusted_keys,
+> -			   enum key_being_used_for usage,
+> -			   int (*view_content)(void *ctx,
+> -					       const void *data, size_t len,
+> -					       size_t asn1hdrlen),
+> -			   void *ctx)
+> +int verify_pkcs7_message_sig(const void *data, size_t len,
+> +			     struct pkcs7_message *pkcs7,
+> +			     struct key *trusted_keys,
+> +			     enum key_being_used_for usage,
+> +			     int (*view_content)(void *ctx,
+> +						 const void *data, size_t len,
+> +						 size_t asn1hdrlen),
+> +			     void *ctx)
+>  {
+> -	struct pkcs7_message *pkcs7;
+>  	int ret;
 >
-> ... and while we're at it, also how they allow "kernel memory to be
-> altered without restriction". I've been pointing this false statement
-> out long ago.
-
-Yup. How's the following description:
-
-    bpf: Restrict bpf when kernel lockdown is in confidentiality mode
-
-    There are some bpf functions that can be used to read kernel memory and
-    exfiltrate it to userland: bpf_probe_read, bpf_probe_write_user and
-    bpf_trace_printk.  These could be abused to (eg) allow private
-keys in kernel
-    memory to be leaked. Disable them if the kernel has been locked
-down in confidentiality
-    mode.
-
-> This whole thing is still buggy as has been pointed out before by
-> Jann. For helpers like above and few others below, error conditions
-> must clear the buffer ...
-
-Sorry, yes. My fault.
+> -	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
+> -	if (IS_ERR(pkcs7))
+> -		return PTR_ERR(pkcs7);
+> -
+>  	/* The data should be detached - so we need to supply it. */
+>  	if (data && pkcs7_supply_detached_data(pkcs7, data, len) < 0) {
+>  		pr_err("PKCS#7 signature with non-detached data\n");
+> @@ -273,6 +267,41 @@ int verify_pkcs7_signature(const void *data, size_t len,
+>  	}
+>
+>  error:
+> +	pr_devel("<==%s() = %d\n", __func__, ret);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
+> + * @data: The data to be verified (NULL if expecting internal data).
+> + * @len: Size of @data.
+> + * @raw_pkcs7: The PKCS#7 message that is the signature.
+> + * @pkcs7_len: The size of @raw_pkcs7.
+> + * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
+> + *					(void *)1UL for all trusted keys).
+> + * @usage: The use to which the key is being put.
+> + * @view_content: Callback to gain access to content.
+> + * @ctx: Context for callback.
+> + */
+> +int verify_pkcs7_signature(const void *data, size_t len,
+> +			   const void *raw_pkcs7, size_t pkcs7_len,
+> +			   struct key *trusted_keys,
+> +			   enum key_being_used_for usage,
+> +			   int (*view_content)(void *ctx,
+> +					       const void *data, size_t len,
+> +					       size_t asn1hdrlen),
+> +			   void *ctx)
+> +{
+> +	struct pkcs7_message *pkcs7;
+> +	int ret;
+> +
+> +	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
+> +	if (IS_ERR(pkcs7))
+> +		return PTR_ERR(pkcs7);
+> +
+> +	ret = verify_pkcs7_message_sig(data, len, pkcs7, trusted_keys, usage,
+> +				       view_content, ctx);
+> +
+>  	pkcs7_free_message(pkcs7);
+>  	pr_devel("<==%s() = %d\n", __func__, ret);
+>  	return ret;
+> diff --git a/include/linux/verification.h b/include/linux/verification.h
+> index 018fb5f13d44..5e1d41f2b336 100644
+> --- a/include/linux/verification.h
+> +++ b/include/linux/verification.h
+> @@ -36,6 +36,7 @@ extern const char *const key_being_used_for[NR__KEY_BEING_USED_FOR];
+>  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+>
+>  struct key;
+> +struct pkcs7_message;
+>
+>  extern int verify_pkcs7_signature(const void *data, size_t len,
+>  				  const void *raw_pkcs7, size_t pkcs7_len,
+> @@ -45,6 +46,15 @@ extern int verify_pkcs7_signature(const void *data, size_t len,
+>  						      const void *data, size_t len,
+>  						      size_t asn1hdrlen),
+>  				  void *ctx);
+> +extern int verify_pkcs7_message_sig(const void *data, size_t len,
+> +				    struct pkcs7_message *pkcs7,
+> +				    struct key *trusted_keys,
+> +				    enum key_being_used_for usage,
+> +				    int (*view_content)(void *ctx,
+> +							const void *data,
+> +							size_t len,
+> +							size_t asn1hdrlen),
+> +				    void *ctx);
+>
+>  #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
+>  extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
