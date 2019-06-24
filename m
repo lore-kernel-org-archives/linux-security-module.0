@@ -2,267 +2,181 @@ Return-Path: <SRS0=R8bZ=UX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20DAC48BE8
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 02:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0699C48BE8
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 06:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBEE22089F
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 02:01:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A56821670
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jun 2019 06:24:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iOlh0jPx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfFXCBQ (ORCPT
+        id S1727647AbfFXGYu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 Jun 2019 22:01:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55788 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726574AbfFXCBO (ORCPT
+        Mon, 24 Jun 2019 02:24:50 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38358 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727266AbfFXGYt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:01:14 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C5D1E3082E1E;
-        Mon, 24 Jun 2019 02:01:13 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-23.pek2.redhat.com [10.72.12.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F25931001B0B;
-        Mon, 24 Jun 2019 02:01:09 +0000 (UTC)
-Date:   Mon, 24 Jun 2019 10:01:06 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Jiri Bohac <jbohac@suse.cz>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>, kexec@lists.infradead.org
-Subject: Re: [PATCH V34 08/29] kexec_file: split KEXEC_VERIFY_SIG into
- KEXEC_SIG and KEXEC_SIG_FORCE
-Message-ID: <20190624020106.GD2976@dhcp-128-65.nay.redhat.com>
-References: <20190622000358.19895-1-matthewgarrett@google.com>
- <20190622000358.19895-9-matthewgarrett@google.com>
+        Mon, 24 Jun 2019 02:24:49 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y15so2253886pfn.5;
+        Sun, 23 Jun 2019 23:24:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7OOsaxAN5ixXtIxH/sN7tLO0KmPMB9Rqm1XorQdXq1E=;
+        b=iOlh0jPxa7GdWtkhlr4lwe15gANa42HHIYamJfsLQLJSNxG7L+Rr4kNJCnf1XI55DW
+         DhlYGfFiXAJy3/P8NrGL5WqgB58H5wrNR/f3VlF0YMspLBMzilxjvHo398nuw70nGJXz
+         8RCacdlFjfBpSBiTmYmzUVIhEzbzQlCkbAYeGnTqM1WgpOSTk14SMtwItnjCjw59V5zv
+         l4aYG9UfBh3Rdq2LY1jZKKuLt4y80UkcWKd//5HOEUnUkOKmnkLex/id5hchtsYtecGP
+         6lKbW0DuWu9vYE+4vqWZNovvVNVE3bwpa5TwrQrqxj7k7+DoxrFMeEcZhgUuwIDZ74kn
+         YXcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7OOsaxAN5ixXtIxH/sN7tLO0KmPMB9Rqm1XorQdXq1E=;
+        b=SXy4xkTboXESaun4dXVHwzdRrDtBDwObsZFvMJP8YbRoO2s/C+oSbL/PcY1zke6gwy
+         PyPCbYr+XFI4p/NK9cS2mCNa8JmeUeeGbMbQJZKh+TBf3qFj4FTOOCWcRLY2AKVCYUMG
+         UgSev05cFFluTA89MENYMGGnr+yylsvOx/drXlyplZmxV9X+cXENJfj8xirgZ2jmQPLv
+         c2l6JEB8e7GcrE1JzAIYgEOSD5V2ot0oSQcjoVZ5Cp3ptmLtavsWTARpyO/b2B2/lR6g
+         ick2gCRQ9wwoFx+N6tQTJPZ5tVjqh2nn9U2VJxpQRriz+IgRZwS/9wOcy0SDOtjkLInn
+         PT8Q==
+X-Gm-Message-State: APjAAAUPMeVfD2Pxxx/s93ijjEf3vTPMTmGokbTbW6PtxECalmgvzqzQ
+        LX4MtMsuZkA+fvaHgHw/KFxXujgB
+X-Google-Smtp-Source: APXvYqxntwxtgfpQ5uVPA7XDE9orAu8ZKnlfrGEw9e7G8J95eAPrrUpo/6i6ixDKO1v0liilYQkYSA==
+X-Received: by 2002:a17:90a:d151:: with SMTP id t17mr22705585pjw.60.1561357488434;
+        Sun, 23 Jun 2019 23:24:48 -0700 (PDT)
+Received: from prsriva-ThinkPad-P50s.hsd1.wa.comcast.net ([2601:602:9c01:c794:e00a:1dbc:5f62:b8ea])
+        by smtp.gmail.com with ESMTPSA id 191sm2641620pfu.177.2019.06.23.23.24.46
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 23 Jun 2019 23:24:47 -0700 (PDT)
+From:   Prakhar Srivastava <prsriva02@gmail.com>
+To:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     zohar@linux.ibm.com, roberto.sassu@huawei.com, vgoyal@redhat.com,
+        Prakhar Srivastava <prsriva02@gmail.com>
+Subject: [PATCH V10 0/3] Add support for measuring the boot command line during kexec_file_load
+Date:   Sun, 23 Jun 2019 23:23:28 -0700
+Message-Id: <20190624062331.388-1-prsriva02@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190622000358.19895-9-matthewgarrett@google.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 24 Jun 2019 02:01:14 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 06/21/19 at 05:03pm, Matthew Garrett wrote:
-> From: Jiri Bohac <jbohac@suse.cz>
-> 
-> This is a preparatory patch for kexec_file_load() lockdown.  A locked down
-> kernel needs to prevent unsigned kernel images from being loaded with
-> kexec_file_load().  Currently, the only way to force the signature
-> verification is compiling with KEXEC_VERIFY_SIG.  This prevents loading
-> usigned images even when the kernel is not locked down at runtime.
-> 
-> This patch splits KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE.
-> Analogous to the MODULE_SIG and MODULE_SIG_FORCE for modules, KEXEC_SIG
-> turns on the signature verification but allows unsigned images to be
-> loaded.  KEXEC_SIG_FORCE disallows images without a valid signature.
-> 
-> [Modified by David Howells such that:
-> 
->  (1) verify_pefile_signature() differentiates between no-signature and
->      sig-didn't-match in its returned errors.
-> 
->  (2) kexec fails with EKEYREJECTED if there is a signature for which we
->      have a key, but signature doesn't match - even if in non-forcing mode.
-> 
->  (3) kexec fails with EBADMSG or some other error if there is a signature
->      which cannot be parsed - even if in non-forcing mode.
-> 
->  (4) kexec fails with ELIBBAD if the PE file cannot be parsed to extract
->      the signature - even if in non-forcing mode.
-> 
-> ]
+The kexec boot command line arguments are not currently being
+measured.
 
-Seems I do not see EBADMSG and ELIBBAD in this patch, also kexec fails
-with proper errno instead of EKEYREJECTED only.
+Currently during soft reboot(kexec) 
+  - the PCRS are not reset
+  - the command line arguments used for the next kernel are not measured.
+This gives the impression to the secure boot attestation that a cold boot took
+place.
+For secure boot attestation, it is necessary to measure the kernel
+command line. For cold boot, the boot loader can be enhanced to measure 
+these parameters.
+(https://mjg59.dreamwidth.org/48897.html)
 
-I may missed something?  Other than the patch log issue:
+This patch set aims to address measuring the boot command line during
+soft reboot(kexec_file_load).
 
-Reviewed-by: Dave Young <dyoung@redhat.com>
+To achive the above the patch series does the following
+  -Add a new ima hook: ima_kexec_cmdline which measures the cmdline args
+   into the ima log, behind a new ima policy entry KEXEC_CMDLINE.
+   The kexec cmdline hash is stored in the "d-ng" field of the template data.
+  -Since the cmldine args cannot be appraised, a new template field(buf) is
+   added. The template field contains the buffer passed(cmldine args), which
+   can be used to appraise/attest at a later stage.
+   The kexec cmdline buffer is stored as HEX in the buf field of the event_data.
+  -Call the ima_kexec_cmdline(...) hook from kexec_file_load call.
 
-> 
-> Signed-off-by: Jiri Bohac <jbohac@suse.cz>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Reviewed-by: Jiri Bohac <jbohac@suse.cz>
-> cc: kexec@lists.infradead.org
-> ---
->  arch/x86/Kconfig                       | 20 ++++++++---
->  crypto/asymmetric_keys/verify_pefile.c |  4 ++-
->  include/linux/kexec.h                  |  4 +--
->  kernel/kexec_file.c                    | 47 ++++++++++++++++++++++----
->  4 files changed, 60 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index c1f9b3cf437c..84381dd60760 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2012,20 +2012,30 @@ config KEXEC_FILE
->  config ARCH_HAS_KEXEC_PURGATORY
->  	def_bool KEXEC_FILE
->  
-> -config KEXEC_VERIFY_SIG
-> +config KEXEC_SIG
->  	bool "Verify kernel signature during kexec_file_load() syscall"
->  	depends on KEXEC_FILE
->  	---help---
-> -	  This option makes kernel signature verification mandatory for
-> -	  the kexec_file_load() syscall.
->  
-> -	  In addition to that option, you need to enable signature
-> +	  This option makes the kexec_file_load() syscall check for a valid
-> +	  signature of the kernel image.  The image can still be loaded without
-> +	  a valid signature unless you also enable KEXEC_SIG_FORCE, though if
-> +	  there's a signature that we can check, then it must be valid.
-> +
-> +	  In addition to this option, you need to enable signature
->  	  verification for the corresponding kernel image type being
->  	  loaded in order for this to work.
->  
-> +config KEXEC_SIG_FORCE
-> +	bool "Require a valid signature in kexec_file_load() syscall"
-> +	depends on KEXEC_SIG
-> +	---help---
-> +	  This option makes kernel signature verification mandatory for
-> +	  the kexec_file_load() syscall.
-> +
->  config KEXEC_BZIMAGE_VERIFY_SIG
->  	bool "Enable bzImage signature verification support"
-> -	depends on KEXEC_VERIFY_SIG
-> +	depends on KEXEC_SIG
->  	depends on SIGNED_PE_FILE_VERIFICATION
->  	select SYSTEM_TRUSTED_KEYRING
->  	---help---
-> diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
-> index d178650fd524..4473cea1e877 100644
-> --- a/crypto/asymmetric_keys/verify_pefile.c
-> +++ b/crypto/asymmetric_keys/verify_pefile.c
-> @@ -100,7 +100,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
->  
->  	if (!ddir->certs.virtual_address || !ddir->certs.size) {
->  		pr_debug("Unsigned PE binary\n");
-> -		return -EKEYREJECTED;
-> +		return -ENODATA;
->  	}
->  
->  	chkaddr(ctx->header_size, ddir->certs.virtual_address,
-> @@ -408,6 +408,8 @@ static int pefile_digest_pe(const void *pebuf, unsigned int pelen,
->   *  (*) 0 if at least one signature chain intersects with the keys in the trust
->   *	keyring, or:
->   *
-> + *  (*) -ENODATA if there is no signature present.
-> + *
->   *  (*) -ENOPKG if a suitable crypto module couldn't be found for a check on a
->   *	chain.
->   *
-> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-> index b9b1bc5f9669..58b27c7bdc2b 100644
-> --- a/include/linux/kexec.h
-> +++ b/include/linux/kexec.h
-> @@ -125,7 +125,7 @@ typedef void *(kexec_load_t)(struct kimage *image, char *kernel_buf,
->  			     unsigned long cmdline_len);
->  typedef int (kexec_cleanup_t)(void *loader_data);
->  
-> -#ifdef CONFIG_KEXEC_VERIFY_SIG
-> +#ifdef CONFIG_KEXEC_SIG
->  typedef int (kexec_verify_sig_t)(const char *kernel_buf,
->  				 unsigned long kernel_len);
->  #endif
-> @@ -134,7 +134,7 @@ struct kexec_file_ops {
->  	kexec_probe_t *probe;
->  	kexec_load_t *load;
->  	kexec_cleanup_t *cleanup;
-> -#ifdef CONFIG_KEXEC_VERIFY_SIG
-> +#ifdef CONFIG_KEXEC_SIG
->  	kexec_verify_sig_t *verify_sig;
->  #endif
->  };
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index f1d0e00a3971..eec7e5bb2a08 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -90,7 +90,7 @@ int __weak arch_kimage_file_post_load_cleanup(struct kimage *image)
->  	return kexec_image_post_load_cleanup_default(image);
->  }
->  
-> -#ifdef CONFIG_KEXEC_VERIFY_SIG
-> +#ifdef CONFIG_KEXEC_SIG
->  static int kexec_image_verify_sig_default(struct kimage *image, void *buf,
->  					  unsigned long buf_len)
->  {
-> @@ -188,7 +188,8 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
->  			     const char __user *cmdline_ptr,
->  			     unsigned long cmdline_len, unsigned flags)
->  {
-> -	int ret = 0;
-> +	const char *reason;
-> +	int ret;
->  	void *ldata;
->  	loff_t size;
->  
-> @@ -207,15 +208,47 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
->  	if (ret)
->  		goto out;
->  
-> -#ifdef CONFIG_KEXEC_VERIFY_SIG
-> +#ifdef CONFIG_KEXEC_SIG
->  	ret = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
->  					   image->kernel_buf_len);
-> -	if (ret) {
-> -		pr_debug("kernel signature verification failed.\n");
-> +#else
-> +	ret = -ENODATA;
-> +#endif
-> +
-> +	switch (ret) {
-> +	case 0:
-> +		break;
-> +
-> +		/* Certain verification errors are non-fatal if we're not
-> +		 * checking errors, provided we aren't mandating that there
-> +		 * must be a valid signature.
-> +		 */
-> +	case -ENODATA:
-> +		reason = "kexec of unsigned image";
-> +		goto decide;
-> +	case -ENOPKG:
-> +		reason = "kexec of image with unsupported crypto";
-> +		goto decide;
-> +	case -ENOKEY:
-> +		reason = "kexec of image with unavailable key";
-> +	decide:
-> +		if (IS_ENABLED(CONFIG_KEXEC_SIG_FORCE)) {
-> +			pr_notice("%s rejected\n", reason);
-> +			goto out;
-> +		}
-> +
-> +		ret = 0;
-> +		break;
-> +
-> +		/* All other errors are fatal, including nomem, unparseable
-> +		 * signatures and signature check failures - even if signatures
-> +		 * aren't required.
-> +		 */
-> +	default:
-> +		pr_notice("kernel signature verification failed (%d).\n", ret);
->  		goto out;
->  	}
-> -	pr_debug("kernel signature verification successful.\n");
-> -#endif
-> +
->  	/* It is possible that there no initramfs is being loaded */
->  	if (!(flags & KEXEC_FILE_NO_INITRAMFS)) {
->  		ret = kernel_read_file_from_fd(initrd_fd, &image->initrd_buf,
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
-> 
+The ima logs need to be carried over to the next kernel, which will be followed
+up by other patchsets for x86_64 and arm64.
+
+The kexec cmdline hash is stored in the "d-ng" field of the template data.
+and can be verified using
+sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements | 
+  grep  kexec-cmdline | cut -d' ' -f 6 | xxd -r -p | sha256sum
+
+Changelog:
+V10(since V9):
+  -rebased over next-queued-integrity
+  -code cleanup
+
+V9(since V8):
+  - code cleanup
+
+V8(since V7):
+  - added a new ima template name "ima-buf" 
+  - code cleanup
+
+V7:
+  - rebased to next-queued-testing
+  https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/log/?h=next-queued-testing
+
+V6:
+  -add a new ima hook and policy to measure the cmdline
+    args(ima_kexec_cmdline)
+  -add a new template field buf to contain the buffer measured.
+  [suggested by Mimi Zohar]
+   add new fields to ima_event_data to store/read buffer data.
+  [suggested by Roberto]
+  -call ima_kexec_cmdline from kexec_file_load path
+
+v5:
+  -add a new ima hook and policy to measure the cmdline
+    args(ima_kexec_cmdline)
+  -add a new template field buf to contain the buffer measured.
+    [suggested by Mimi Zohar]
+  -call ima_kexec_cmdline from kexec_file_load path
+
+v4:
+  - per feedback from LSM community, removed the LSM hook and renamed the
+    IMA policy to KEXEC_CMDLINE
+
+v3: (rebase changes to next-general)
+  - Add policy checks for buffer[suggested by Mimi Zohar]
+  - use the IMA_XATTR to add buffer
+  - Add kexec_cmdline used for kexec file load
+  - Add an LSM hook to allow usage by other LSM.[suggestd by Mimi Zohar]
+
+v2:
+  - Add policy checks for buffer[suggested by Mimi Zohar]
+  - Add an LSM hook to allow usage by other LSM.[suggestd by Mimi Zohar]
+  - use the IMA_XATTR to add buffer instead of sig template
+
+v1:
+  -Add kconfigs to control the ima_buffer_check
+  -measure the cmdline args suffixed with the kernel file name
+  -add the buffer to the template sig field.
+
+Prakhar Srivastava (3):
+  Add a new ima hook ima_kexec_cmdline to measure cmdline args
+  add a new ima template field buf
+  call ima_kexec_cmdline to measure the cmdline args
+
+ Documentation/ABI/testing/ima_policy      |  1 +
+ Documentation/security/IMA-templates.rst  |  2 +-
+ include/linux/ima.h                       |  2 +
+ kernel/kexec_file.c                       |  8 ++-
+ security/integrity/ima/ima.h              |  3 +
+ security/integrity/ima/ima_api.c          |  5 +-
+ security/integrity/ima/ima_init.c         |  2 +-
+ security/integrity/ima/ima_main.c         | 80 +++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c       |  9 +++
+ security/integrity/ima/ima_template.c     |  2 +
+ security/integrity/ima/ima_template_lib.c | 20 ++++++
+ security/integrity/ima/ima_template_lib.h |  4 ++
+ 12 files changed, 131 insertions(+), 7 deletions(-)
+
+-- 
+2.17.1
+
