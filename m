@@ -2,32 +2,32 @@ Return-Path: <SRS0=mxSC=UY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC41FC48BD6
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 21:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DD6C48BD7
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 22:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B80E12080C
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 21:58:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEE9A2080C
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 22:04:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726430AbfFYV6L (ORCPT
+        id S1725782AbfFYWD7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jun 2019 17:58:11 -0400
-Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:43791 "EHLO
+        Tue, 25 Jun 2019 18:03:59 -0400
+Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:43652 "EHLO
         smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbfFYV6L (ORCPT
+        with ESMTP id S1725914AbfFYWD7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jun 2019 17:58:11 -0400
+        Tue, 25 Jun 2019 18:03:59 -0400
 Received: from smtp5.infomaniak.ch (smtp5.infomaniak.ch [83.166.132.18])
-        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x5PLr7Ee019685
+        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x5PLrLve019831
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jun 2019 23:53:07 +0200
+        Tue, 25 Jun 2019 23:53:21 +0200
 Received: from localhost (ns3096276.ip-94-23-54.eu [94.23.54.103])
         (authenticated bits=0)
-        by smtp5.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x5PLr2Vm038187;
-        Tue, 25 Jun 2019 23:53:02 +0200
+        by smtp5.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x5PLrLhB038785;
+        Tue, 25 Jun 2019 23:53:21 +0200
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -59,10 +59,12 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH bpf-next v9 00/10] Landlock LSM: Toward unprivileged sandboxing
-Date:   Tue, 25 Jun 2019 23:52:29 +0200
-Message-Id: <20190625215239.11136-1-mic@digikod.net>
+Subject: [PATCH bpf-next v9 05/10] bpf,landlock: Add a new map type: inode
+Date:   Tue, 25 Jun 2019 23:52:34 +0200
+Message-Id: <20190625215239.11136-6-mic@digikod.net>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190625215239.11136-1-mic@digikod.net>
+References: <20190625215239.11136-1-mic@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -72,412 +74,689 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+This new map store arbitrary 64-bits values referenced by inode keys.
+The map can be updated from user space with file descriptor pointing to
+inodes tied to a file system.  From an eBPF (Landlock) program point of
+view, such a map is read-only and can only be used to retrieved a
+64-bits value tied to a given inode.  This is useful to recognize an
+inode tagged by user space, without access right to this inode (i.e. no
+need to have a write access to this inode).
 
-This ninth series upgrade Landlock as a stackable LSM [4] and elide the
-file system path evaluation from the previous series [1] to make this
-review process easier.  This patch series is almost half the size of the
-previous one.
+Add dedicated BPF functions to handle this type of map:
+* bpf_inode_map_update_elem()
+* bpf_inode_map_lookup_elem()
+* bpf_inode_map_delete_elem()
 
-Landlock is a low-level framework to build custom access-control systems
-or safe endpoint security agents.  There is two types of Landlock hooks:
-FS_WALK and FS_PICK.  Each of them accepts a dedicated eBPF program,
-called a Landlock program.  The set of actions on a file is well defined
-(e.g.  read, write, ioctl, append, lock, mount...) taking inspiration
-from the major Linux LSMs and some other access-controls like Capsicum.
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: James Morris <jmorris@namei.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Jann Horn <jann@thejh.net>
+---
 
-The example patch show how a file system access control can be built
-based on a list of denied files and directories.  From a security point
-of view, it may be preferable to use a whitelist instead of a blacklist,
-but this series only enable to match a specific list of files.  Bringing
-back a way to evaluate a path is planned for a future dedicated series,
-once this base Landlock framework is merged.  I may take inspiration
-from the LOOKUP_BENEATH approach [5], but from an eBPF point of view.
+Changes since v8:
+* remove prog chaining and object tagging to ease review
+* use bpf_map_init_from_attr()
 
-The documentation patch contains some kernel documentation and
-explanations on how to use Landlock.  The compiled documentation and
-some talks can be found here: https://landlock.io
-This patch series can be found in a Git repository here:
-https://github.com/landlock-lsm/linux/commits/landlock-v9
+Changes since v7:
+* new design with a dedicated map and a BPF function to tie a value to
+  an inode
+* add the ability to set or get a tag on an inode from a Landlock
+  program
 
-There is still some minor issues with this patch series but it is enough
-to get a deep review.
+Changes since v6:
+* remove WARN_ON() for missing dentry->d_inode
+* refactor bpf_landlock_func_proto() (suggested by Kees Cook)
 
-This is the first step of the roadmap discussed at LPC [2].  While the
-intended final goal is to allow unprivileged users to use Landlock, this
-series allows only a process with global CAP_SYS_ADMIN to load and
-enforce a rule.  This may help to get feedback and avoid unexpected
-behaviors.
+Changes since v5:
+* cosmetic fixes and rebase
 
-This series can be applied on top of bpf-next, commit 88091ff56b71
-("selftests, bpf: Add test for veth native XDP").  This can be tested
-with CONFIG_SECCOMP_FILTER and CONFIG_SECURITY_LANDLOCK.  I would really
-appreciate constructive comments on the design and the code.
+Changes since v4:
+* use a file abstraction (handle) to wrap inode, dentry, path and file
+  structs
+* remove bpf_landlock_cmp_fs_beneath()
+* rename the BPF helper and move it to kernel/bpf/
+* tighten helpers accessible by a Landlock rule
 
+Changes since v3:
+* remove bpf_landlock_cmp_fs_prop() (suggested by Alexei Starovoitov)
+* add hooks dealing with struct inode and struct path pointers:
+  inode_permission and inode_getattr
+* add abstraction over eBPF helper arguments thanks to wrapping structs
+* add bpf_landlock_get_fs_mode() helper to check file type and mode
+* merge WARN_ON() (suggested by Kees Cook)
+* fix and update bpf_helpers.h
+* use BPF_CALL_* for eBPF helpers (suggested by Alexei Starovoitov)
+* make handle arraymap safe (RCU) and remove buggy synchronize_rcu()
+* factor out the arraymay walk
+* use size_t to index array (suggested by Jann Horn)
 
-# Landlock LSM
-
-The goal of this new Linux Security Module (LSM) called Landlock is to
-allow any process, including unprivileged ones, to create powerful
-security sandboxes comparable to XNU Sandbox or OpenBSD Pledge (which
-could be implemented with Landlock).  This kind of sandbox is expected
-to help mitigate the security impact of bugs or unexpected/malicious
-behaviors in user-space applications.
-
-The approach taken is to add the minimum amount of code while still
-allowing the user-space application to create quite complex access
-rules.  A dedicated security policy language such as the one used by
-SELinux, AppArmor and other major LSMs involves a lot of code and is
-usually permitted to only a trusted user (i.e. root).  On the contrary,
-eBPF programs already exist and are designed to be safely loaded by
-unprivileged user-space.
-
-This design does not seem too intrusive but is flexible enough to allow
-a powerful sandbox mechanism accessible by any process on Linux. The use
-of seccomp and Landlock is more suitable with the help of a user-space
-library (e.g.  libseccomp) that could help to specify a high-level
-language to express a security policy instead of raw eBPF programs.
-Moreover, thanks to the LLVM front-end, it is quite easy to write an
-eBPF program with a subset of the C language.
-
-
-# Frequently asked questions
-
-## Why is seccomp-bpf not enough?
-
-A seccomp filter can access only raw syscall arguments (i.e. the
-register values) which means that it is not possible to filter according
-to the value pointed to by an argument, such as a file pathname. As an
-embryonic Landlock version demonstrated, filtering at the syscall level
-is complicated (e.g. need to take care of race conditions). This is
-mainly because the access control checkpoints of the kernel are not at
-this high-level but more underneath, at the LSM-hook level. The LSM
-hooks are designed to handle this kind of checks.  Landlock abstracts
-this approach to leverage the ability of unprivileged users to limit
-themselves.
-
-Cf. section "What it isn't?" in Documentation/prctl/seccomp_filter.txt
-
-
-## Why use the seccomp(2) syscall?
-
-Landlock use the same semantic as seccomp to apply access rule
-restrictions. It add a new layer of security for the current process
-which is inherited by its children. It makes sense to use an unique
-access-restricting syscall (that should be allowed by seccomp filters)
-which can only drop privileges. Moreover, a Landlock rule could come
-from outside a process (e.g.  passed through a UNIX socket). It is then
-useful to differentiate the creation/load of Landlock eBPF programs via
-bpf(2), from rule enforcement via seccomp(2).
-
-
-## Why a new LSM? Are SELinux, AppArmor, Smack and Tomoyo not good
-   enough?
-
-The current access control LSMs are fine for their purpose which is to
-give the *root* the ability to enforce a security policy for the
-*system*. What is missing is a way to enforce a security policy for any
-application by its developer and *unprivileged user* as seccomp can do
-for raw syscall filtering.
-
-Differences from other (access control) LSMs:
-* not only dedicated to administrators (i.e. no_new_priv);
-* limited kernel attack surface (e.g. policy parsing);
-* constrained policy rules (no DoS: deterministic execution time);
-* do not leak more information than the loader process can legitimately
-  have access to (minimize metadata inference).
-
-
-# Changes since v8
-
-* fit with the new LSM stacking framework (security blobs were tested
-  but are not use in this series because of the code reduction)
-* remove the Landlock program chaining and the file path evaluation
-  feature to get a minimum viable product and ease the review
-* replace the example with a simple blacklist policy
-* rebase on bpf-next
-
-
-# Changes since v7
-
-* major revamp of the file system enforcement:
-  * new eBPF map dedicated to tie an inode with an arbitrary 64-bits
-    value, which can be used to tag files
-  * three new Landlock hooks: FS_WALK, FS_PICK and FS_GET
-  * add the ability to chain Landlock programs
-  * add a new eBPF map type to compare inodes
-  * don't use macros anymore
-* replace subtype fields:
-  * triggers: fine-grained bitfiel of actions on which a Landlock
-    program may be called (if it comes from a sandbox process)
-  * previous: a parent chained program
-* upstreamed patches:
-  * commit 369130b63178 ("selftests: Enhance kselftest_harness.h to
-    print which assert failed")
-
-
-# Changes since v6
-
-* upstreamed patches:
-  * commit 752ba56fb130 ("bpf: Extend check_uarg_tail_zero() checks")
-  * commit 0b40808a1084 ("selftests: Make test_harness.h more generally
-    available") and related ones
-  * commit 3bb857e47e49 ("LSM: Enable multiple calls to
-    security_add_hooks() for the same LSM")
-* simplify the landlock_context (remove syscall_* fields) and add three
-  FS sub-events: IOCTL, LOCK, FCNTL
-* minimize the number of callable BPF functions from a Landlock rule
-* do not split put_seccomp_filter() with put_seccomp()
-* rename Landlock version to Landlock ABI
-* miscellaneous fixes
-* rebase on net-next
-
-
-# Changes since v5
-
-* eBPF program subtype:
-  * use a prog_subtype pointer instead of inlining it into bpf_attr
-  * enable a future-proof behavior (reject unhandled data/size)
-  * add tests
-* use a simple rule hierarchy (similar to seccomp-bpf)
-* add a ptrace scope protection
-* add more tests
-* add more documentation
-* rename some files
-* miscellaneous fixes
-* rebase on net-next
-
-
-# Changes since v4
-
-* upstreamed patches:
-  * commit d498f8719a09 ("bpf: Rebuild bpf.o for any dependency update")
-  * commit a734fb5d6006 ("samples/bpf: Reset global variables") and
-    related ones
-  * commit f4874d01beba ("bpf: Use bpf_create_map() from the library")
-    and related ones
-  * commit d02d8986a768 ("bpf: Always test unprivileged programs")
-  * commit 640eb7e7b524 ("fs: Constify path_is_under()'s arguments")
-  * commit 535e7b4b5ef2 ("bpf: Use u64_to_user_ptr()")
-* revamp Landlock to not expose an LSM hook interface but wrap and
-  abstract them with Landlock events (currently one for all filesystem
-  related operations: LANDLOCK_SUBTYPE_EVENT_FS)
-* wrap all filesystem kernel objects through the same FS handle (struct
-  landlock_handle_fs): struct file, struct inode, struct path and struct
-  dentry
-* a rule don't return an errno code but only a boolean to allow or deny
-  an access request
-* handle all filesystem related LSM hooks
-* add some tests and a sample:
-  * BPF context tests
-  * Landlock sandboxing tests and sample
-  * write Landlock rules in C and compile them with LLVM
-* change field names of eBPF program subtype
-* remove arraymap of handles for now (will be replaced with a revamped
-  map)
-* remove cgroup handling for now
-* add user and kernel documentation
-* rebase on net-next
-
-
-# Changes since v3
-
-* upstreamed patch:
-  * commit 1955351da41c ("bpf: Set register type according to
-    is_valid_access()")
-* use abstract LSM hook arguments with custom types (e.g.
-  *_LANDLOCK_ARG_FS for struct file, struct inode and struct path)
-* add more LSM hooks to support full filesystem access control
-* improve the sandbox example
-* fix races and RCU issues:
-  * eBPF program execution and eBPF helpers
-  * revamp the arraymap of handles to cleanly deal with update/delete
-* eBPF program subtype for Landlock:
-  * remove the "origin" field
-  * add an "option" field
-* rebase onto Daniel Mack's patches v7 [3]
-* remove merged commit 1955351da41c ("bpf: Set register type according
-  to is_valid_access()")
-* fix spelling mistakes
-* cleanup some type and variable names
-* split patches
-* for now, remove cgroup delegation handling for unprivileged user
-* remove extra access check for cgroup_get_from_fd()
-* remove unused example code dealing with skb
-* remove seccomp-bpf link:
-  * no more seccomp cookie
-  * for now, it is no more possible to check the current syscall
-    properties
-
-
-# Changes since v2
-
-* revamp cgroup handling:
-  * use Daniel Mack's patches "Add eBPF hooks for cgroups" v5
-  * remove bpf_landlock_cmp_cgroup_beneath()
-  * make BPF_PROG_ATTACH usable with delegated cgroups
-  * add a new CGRP_NO_NEW_PRIVS flag for safe cgroups
-  * handle Landlock sandboxing for cgroups hierarchy
-  * allow unprivileged processes to attach Landlock eBPF program to
-    cgroups
-* add subtype to eBPF programs:
-  * replace Landlock hook identification by custom eBPF program types
-    with a dedicated subtype field
-  * manage fine-grained privileged Landlock programs
-  * register Landlock programs for dedicated trigger origins (e.g.
-    syscall, return from seccomp filter and/or interruption)
-* performance and memory optimizations: use an array to access Landlock
-  hooks directly but do not duplicated it for each thread
-  (seccomp-based)
-* allow running Landlock programs without seccomp filter
-* fix seccomp-related issues
-* remove extra errno bounding check for Landlock programs
-* add some examples for optional eBPF functions or context access
-  (network related) according to security checks to allow more features
-  for privileged programs (e.g. Checmate)
-
-
-# Changes since v1
-
-* focus on the LSM hooks, not the syscalls:
-  * much more simple implementation
-  * does not need audit cache tricks to avoid race conditions
-  * more simple to use and more generic because using the LSM hook
-    abstraction directly
-  * more efficient because only checking in LSM hooks
-  * architecture agnostic
-* switch from cBPF to eBPF:
-  * new eBPF program types dedicated to Landlock
-  * custom functions used by the eBPF program
-  * gain some new features (e.g. 10 registers, can load values of
-    different size, LLVM translator) but only a few functions allowed
-    and a dedicated map type
-  * new context: LSM hook ID, cookie and LSM hook arguments
-  * need to set the sysctl kernel.unprivileged_bpf_disable to 0 (default
-    value) to be able to load hook filters as unprivileged users
-* smaller and simpler:
-  * no more checker groups but dedicated arraymap of handles
-  * simpler userland structs thanks to eBPF functions
-* distinctive name: Landlock
-
-
-[1] https://lore.kernel.org/lkml/20180227004121.3633-1-mic@digikod.net/
-[2] https://lore.kernel.org/lkml/5828776A.1010104@digikod.net/
-[3] https://lore.kernel.org/netdev/1477390454-12553-1-git-send-email-daniel@zonque.org/
-[4] https://lore.kernel.org/lkml/50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com/
-[5] https://lore.kernel.org/lkml/20190520133305.11925-1-cyphar@cyphar.com/
-
-Regards,
-
-Mickaël Salaün (10):
-  fs,security: Add a new file access type: MAY_CHROOT
-  bpf: Add eBPF program subtype and is_valid_subtype() verifier
-  bpf,landlock: Define an eBPF program type for Landlock hooks
-  seccomp,landlock: Enforce Landlock programs per process hierarchy
-  bpf,landlock: Add a new map type: inode
-  landlock: Handle filesystem access control
-  landlock: Add ptrace restrictions
-  bpf: Add a Landlock sandbox example
-  bpf,landlock: Add tests for Landlock
-  landlock: Add user and kernel documentation for Landlock
-
- Documentation/security/index.rst              |   1 +
- Documentation/security/landlock/index.rst     |  20 +
- Documentation/security/landlock/kernel.rst    |  99 +++
- Documentation/security/landlock/user.rst      | 148 +++++
- MAINTAINERS                                   |  13 +
- fs/open.c                                     |   3 +-
- include/linux/bpf.h                           |  17 +
- include/linux/bpf_types.h                     |   6 +
- include/linux/fs.h                            |   1 +
- include/linux/landlock.h                      |  34 ++
- include/linux/lsm_hooks.h                     |   1 +
- include/linux/seccomp.h                       |   5 +
- include/uapi/linux/bpf.h                      |  22 +-
- include/uapi/linux/landlock.h                 | 109 ++++
- include/uapi/linux/seccomp.h                  |   1 +
- kernel/bpf/Makefile                           |   3 +
- kernel/bpf/core.c                             |   3 +
- kernel/bpf/inodemap.c                         | 315 ++++++++++
- kernel/bpf/syscall.c                          |  59 +-
- kernel/bpf/verifier.c                         |  25 +
- kernel/fork.c                                 |   8 +-
- kernel/seccomp.c                              |   4 +
- net/core/filter.c                             |  25 +-
- samples/bpf/.gitignore                        |   1 +
- samples/bpf/Makefile                          |   3 +
- samples/bpf/bpf_load.c                        |  76 ++-
- samples/bpf/bpf_load.h                        |   7 +
- samples/bpf/landlock1.h                       |   8 +
- samples/bpf/landlock1_kern.c                  | 104 ++++
- samples/bpf/landlock1_user.c                  | 157 +++++
- security/Kconfig                              |   1 +
- security/Makefile                             |   2 +
- security/landlock/Kconfig                     |  18 +
- security/landlock/Makefile                    |   5 +
- security/landlock/common.h                    |  81 +++
- security/landlock/enforce.c                   | 272 +++++++++
- security/landlock/enforce.h                   |  18 +
- security/landlock/enforce_seccomp.c           |  92 +++
- security/landlock/hooks.c                     |  95 +++
- security/landlock/hooks.h                     |  31 +
- security/landlock/hooks_fs.c                  | 568 ++++++++++++++++++
- security/landlock/hooks_fs.h                  |  31 +
- security/landlock/hooks_ptrace.c              | 121 ++++
- security/landlock/hooks_ptrace.h              |   8 +
- security/landlock/init.c                      | 159 +++++
- security/security.c                           |  15 +
- tools/include/uapi/linux/bpf.h                |  22 +-
- tools/include/uapi/linux/landlock.h           | 109 ++++
- tools/lib/bpf/bpf.c                           |  10 +-
- tools/lib/bpf/bpf.h                           |   2 +
- tools/lib/bpf/libbpf.c                        |   1 +
- tools/lib/bpf/libbpf.map                      |   1 +
- tools/lib/bpf/libbpf_probes.c                 |   2 +
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/bpf/bpf_helpers.h     |   2 +
- tools/testing/selftests/bpf/test_verifier.c   |  27 +-
- .../testing/selftests/bpf/verifier/landlock.c |  35 ++
- .../testing/selftests/bpf/verifier/subtype.c  |  20 +
- tools/testing/selftests/landlock/.gitignore   |   4 +
- tools/testing/selftests/landlock/Makefile     |  39 ++
- tools/testing/selftests/landlock/test.h       |  48 ++
- tools/testing/selftests/landlock/test_base.c  |  24 +
- tools/testing/selftests/landlock/test_fs.c    | 257 ++++++++
- .../testing/selftests/landlock/test_ptrace.c  | 154 +++++
- 64 files changed, 3528 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/security/landlock/index.rst
- create mode 100644 Documentation/security/landlock/kernel.rst
- create mode 100644 Documentation/security/landlock/user.rst
- create mode 100644 include/linux/landlock.h
- create mode 100644 include/uapi/linux/landlock.h
+Changes since v2:
+* add MNT_INTERNAL check to only add file handle from user-visible FS
+  (e.g. no anonymous inode)
+* replace struct file* with struct path* in map_landlock_handle
+* add BPF protos
+* fix bpf_landlock_cmp_fs_prop_with_struct_file()
+---
+ include/linux/bpf.h            |   9 +
+ include/linux/bpf_types.h      |   3 +
+ include/uapi/linux/bpf.h       |  12 +-
+ kernel/bpf/Makefile            |   3 +
+ kernel/bpf/core.c              |   2 +
+ kernel/bpf/inodemap.c          | 315 +++++++++++++++++++++++++++++++++
+ kernel/bpf/syscall.c           |  27 ++-
+ kernel/bpf/verifier.c          |  14 ++
+ tools/include/uapi/linux/bpf.h |  12 +-
+ tools/lib/bpf/libbpf_probes.c  |   1 +
+ 10 files changed, 395 insertions(+), 3 deletions(-)
  create mode 100644 kernel/bpf/inodemap.c
- create mode 100644 samples/bpf/landlock1.h
- create mode 100644 samples/bpf/landlock1_kern.c
- create mode 100644 samples/bpf/landlock1_user.c
- create mode 100644 security/landlock/Kconfig
- create mode 100644 security/landlock/Makefile
- create mode 100644 security/landlock/common.h
- create mode 100644 security/landlock/enforce.c
- create mode 100644 security/landlock/enforce.h
- create mode 100644 security/landlock/enforce_seccomp.c
- create mode 100644 security/landlock/hooks.c
- create mode 100644 security/landlock/hooks.h
- create mode 100644 security/landlock/hooks_fs.c
- create mode 100644 security/landlock/hooks_fs.h
- create mode 100644 security/landlock/hooks_ptrace.c
- create mode 100644 security/landlock/hooks_ptrace.h
- create mode 100644 security/landlock/init.c
- create mode 100644 tools/include/uapi/linux/landlock.h
- create mode 100644 tools/testing/selftests/bpf/verifier/landlock.c
- create mode 100644 tools/testing/selftests/bpf/verifier/subtype.c
- create mode 100644 tools/testing/selftests/landlock/.gitignore
- create mode 100644 tools/testing/selftests/landlock/Makefile
- create mode 100644 tools/testing/selftests/landlock/test.h
- create mode 100644 tools/testing/selftests/landlock/test_base.c
- create mode 100644 tools/testing/selftests/landlock/test_fs.c
- create mode 100644 tools/testing/selftests/landlock/test_ptrace.c
 
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index da167d3afecc..cc72ec18f0f6 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -208,6 +208,8 @@ enum bpf_arg_type {
+ 	ARG_PTR_TO_INT,		/* pointer to int */
+ 	ARG_PTR_TO_LONG,	/* pointer to long */
+ 	ARG_PTR_TO_SOCKET,	/* pointer to bpf_sock (fullsock) */
++
++	ARG_PTR_TO_INODE,	/* pointer to a struct inode */
+ };
+ 
+ /* type of values returned from helper functions */
+@@ -278,6 +280,7 @@ enum bpf_reg_type {
+ 	PTR_TO_TCP_SOCK_OR_NULL, /* reg points to struct tcp_sock or NULL */
+ 	PTR_TO_TP_BUFFER,	 /* reg points to a writable raw tp's buffer */
+ 	PTR_TO_XDP_SOCK,	 /* reg points to struct xdp_sock */
++	PTR_TO_INODE,		 /* reg points to struct inode */
+ };
+ 
+ /* The information passed from prog-specific *_is_valid_access
+@@ -485,6 +488,7 @@ struct bpf_event_entry {
+ 	struct rcu_head rcu;
+ };
+ 
++
+ bool bpf_prog_array_compatible(struct bpf_array *array, const struct bpf_prog *fp);
+ int bpf_prog_calc_tag(struct bpf_prog *fp);
+ 
+@@ -689,6 +693,10 @@ int bpf_fd_array_map_lookup_elem(struct bpf_map *map, void *key, u32 *value);
+ int bpf_fd_htab_map_update_elem(struct bpf_map *map, struct file *map_file,
+ 				void *key, void *value, u64 map_flags);
+ int bpf_fd_htab_map_lookup_elem(struct bpf_map *map, void *key, u32 *value);
++int bpf_inode_map_update_elem(struct bpf_map *map, int *key, u64 *value,
++			      u64 flags);
++int bpf_inode_map_lookup_elem(struct bpf_map *map, int *key, u64 *value);
++int bpf_inode_map_delete_elem(struct bpf_map *map, int *key);
+ 
+ int bpf_get_file_flag(int flags);
+ int bpf_check_uarg_tail_zero(void __user *uaddr, size_t expected_size,
+@@ -1059,6 +1067,7 @@ extern const struct bpf_func_proto bpf_spin_unlock_proto;
+ extern const struct bpf_func_proto bpf_get_local_storage_proto;
+ extern const struct bpf_func_proto bpf_strtol_proto;
+ extern const struct bpf_func_proto bpf_strtoul_proto;
++extern const struct bpf_func_proto bpf_inode_map_lookup_proto;
+ 
+ /* Shared helpers among cBPF and eBPF. */
+ void bpf_user_rnd_init_once(void);
+diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
+index dee8b82e31b1..9e385473b57a 100644
+--- a/include/linux/bpf_types.h
++++ b/include/linux/bpf_types.h
+@@ -79,3 +79,6 @@ BPF_MAP_TYPE(BPF_MAP_TYPE_REUSEPORT_SOCKARRAY, reuseport_array_ops)
+ #endif
+ BPF_MAP_TYPE(BPF_MAP_TYPE_QUEUE, queue_map_ops)
+ BPF_MAP_TYPE(BPF_MAP_TYPE_STACK, stack_map_ops)
++#ifdef CONFIG_SECURITY_LANDLOCK
++BPF_MAP_TYPE(BPF_MAP_TYPE_INODE, inode_ops)
++#endif
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 50145d448bc3..08ff720835ba 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -134,6 +134,7 @@ enum bpf_map_type {
+ 	BPF_MAP_TYPE_QUEUE,
+ 	BPF_MAP_TYPE_STACK,
+ 	BPF_MAP_TYPE_SK_STORAGE,
++	BPF_MAP_TYPE_INODE,
+ };
+ 
+ /* Note that tracing related programs such as
+@@ -2716,6 +2717,14 @@ union bpf_attr {
+  *		**-EPERM** if no permission to send the *sig*.
+  *
+  *		**-EAGAIN** if bpf program can try again.
++ *
++ * u64 bpf_inode_map_lookup(map, key)
++ * 	Description
++ * 		Perform a lookup in *map* for an entry associated to an inode
++ * 		*key*.
++ * 	Return
++ * 		Map value associated to *key*, or **NULL** if no entry was
++ * 		found.
+  */
+ #define __BPF_FUNC_MAPPER(FN)		\
+ 	FN(unspec),			\
+@@ -2827,7 +2836,8 @@ union bpf_attr {
+ 	FN(strtoul),			\
+ 	FN(sk_storage_get),		\
+ 	FN(sk_storage_delete),		\
+-	FN(send_signal),
++	FN(send_signal),		\
++	FN(inode_map_lookup),
+ 
+ /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+  * function eBPF program intends to call
+diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+index 29d781061cd5..e6fe613b3105 100644
+--- a/kernel/bpf/Makefile
++++ b/kernel/bpf/Makefile
+@@ -22,3 +22,6 @@ obj-$(CONFIG_CGROUP_BPF) += cgroup.o
+ ifeq ($(CONFIG_INET),y)
+ obj-$(CONFIG_BPF_SYSCALL) += reuseport_array.o
+ endif
++ifeq ($(CONFIG_SECURITY_LANDLOCK),y)
++obj-$(CONFIG_BPF_SYSCALL) += inodemap.o
++endif
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index 8ad392e52328..3cf5d16a8496 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -2032,6 +2032,8 @@ const struct bpf_func_proto bpf_get_current_comm_proto __weak;
+ const struct bpf_func_proto bpf_get_current_cgroup_id_proto __weak;
+ const struct bpf_func_proto bpf_get_local_storage_proto __weak;
+ 
++const struct bpf_func_proto bpf_inode_map_update_proto __weak;
++
+ const struct bpf_func_proto * __weak bpf_get_trace_printk_proto(void)
+ {
+ 	return NULL;
+diff --git a/kernel/bpf/inodemap.c b/kernel/bpf/inodemap.c
+new file mode 100644
+index 000000000000..fcad0de51557
+--- /dev/null
++++ b/kernel/bpf/inodemap.c
+@@ -0,0 +1,315 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * inode map for Landlock
++ *
++ * Copyright © 2017-2019 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2019 ANSSI
++ */
++
++#include <asm/resource.h> /* RLIMIT_NOFILE */
++#include <linux/bpf.h>
++#include <linux/err.h>
++#include <linux/file.h> /* fput() */
++#include <linux/filter.h> /* BPF_CALL_2() */
++#include <linux/fs.h> /* struct file */
++#include <linux/mm.h>
++#include <linux/mount.h> /* MNT_INTERNAL */
++#include <linux/path.h> /* struct path */
++#include <linux/sched/signal.h> /* rlimit() */
++#include <linux/security.h>
++#include <linux/slab.h>
++
++struct inode_elem {
++	struct inode *inode;
++	u64 value;
++};
++
++struct inode_array {
++	struct bpf_map map;
++	size_t nb_entries;
++	struct inode_elem elems[0];
++};
++
++/* must call iput(inode) after this call */
++static struct inode *inode_from_fd(int ufd, bool check_access)
++{
++	struct inode *ret;
++	struct fd f;
++	int deny;
++
++	f = fdget(ufd);
++	if (unlikely(!f.file || !file_inode(f.file))) {
++		ret = ERR_PTR(-EBADF);
++		goto put_fd;
++	}
++	/* TODO: add this check when called from an eBPF program too (already
++	 * checked by the LSM parent hooks anyway) */
++	if (unlikely(IS_PRIVATE(file_inode(f.file)))) {
++		ret = ERR_PTR(-EINVAL);
++		goto put_fd;
++	}
++	/* check if the FD is tied to a mount point */
++	/* TODO: add this check when called from an eBPF program too */
++	if (unlikely(!f.file->f_path.mnt || f.file->f_path.mnt->mnt_flags &
++				MNT_INTERNAL)) {
++		ret = ERR_PTR(-EINVAL);
++		goto put_fd;
++	}
++	if (check_access) {
++		/*
++		 * need to be allowed to access attributes from this file to
++		 * then be able to compare an inode to this entry
++		 */
++		deny = security_inode_getattr(&f.file->f_path);
++		if (deny) {
++			ret = ERR_PTR(deny);
++			goto put_fd;
++		}
++	}
++	ret = file_inode(f.file);
++	ihold(ret);
++
++put_fd:
++	fdput(f);
++	return ret;
++}
++
++/* (never) called from eBPF program */
++static int fake_map_delete_elem(struct bpf_map *map, void *key)
++{
++	WARN_ON(1);
++	return -EINVAL;
++}
++
++/* called from syscall */
++static int sys_inode_map_delete_elem(struct bpf_map *map, struct inode *key)
++{
++	struct inode_array *array = container_of(map, struct inode_array, map);
++	struct inode *inode;
++	int i;
++
++	WARN_ON_ONCE(!rcu_read_lock_held());
++	for (i = 0; i < array->map.max_entries; i++) {
++		if (array->elems[i].inode == key) {
++			inode = xchg(&array->elems[i].inode, NULL);
++			array->nb_entries--;
++			iput(inode);
++			return 0;
++		}
++	}
++	return -ENOENT;
++}
++
++/* called from syscall */
++int bpf_inode_map_delete_elem(struct bpf_map *map, int *key)
++{
++	struct inode *inode;
++	int err;
++
++	inode = inode_from_fd(*key, false);
++	if (IS_ERR(inode))
++		return PTR_ERR(inode);
++	err = sys_inode_map_delete_elem(map, inode);
++	iput(inode);
++	return err;
++}
++
++static void inode_map_free(struct bpf_map *map)
++{
++	struct inode_array *array = container_of(map, struct inode_array, map);
++	int i;
++
++	synchronize_rcu();
++	for (i = 0; i < array->map.max_entries; i++)
++		iput(array->elems[i].inode);
++	bpf_map_area_free(array);
++}
++
++static struct bpf_map *inode_map_alloc(union bpf_attr *attr)
++{
++	int numa_node = bpf_map_attr_numa_node(attr);
++	struct inode_array *array;
++	u64 array_size;
++
++	/* only allow root to create this type of map (for now), should be
++	 * removed when Landlock will be usable by unprivileged users */
++	if (!capable(CAP_SYS_ADMIN))
++		return ERR_PTR(-EPERM);
++
++	/* the key is a file descriptor and the value must be 64-bits (for
++	 * now) */
++	if (attr->max_entries == 0 || attr->key_size != sizeof(u32) ||
++	    attr->value_size != FIELD_SIZEOF(struct inode_elem, value) ||
++	    attr->map_flags & ~(BPF_F_RDONLY | BPF_F_WRONLY) ||
++	    numa_node != NUMA_NO_NODE)
++		return ERR_PTR(-EINVAL);
++
++	if (attr->value_size > KMALLOC_MAX_SIZE)
++		/* if value_size is bigger, the user space won't be able to
++		 * access the elements.
++		 */
++		return ERR_PTR(-E2BIG);
++
++	/*
++	 * Limit number of entries in an inode map to the maximum number of
++	 * open files for the current process. The maximum number of file
++	 * references (including all inode maps) for a process is then
++	 * (RLIMIT_NOFILE - 1) * RLIMIT_NOFILE. If the process' RLIMIT_NOFILE
++	 * is 0, then any entry update is forbidden.
++	 *
++	 * An eBPF program can inherit all the inode map FD. The worse case is
++	 * to fill a bunch of arraymaps, create an eBPF program, close the
++	 * inode map FDs, and start again. The maximum number of inode map
++	 * entries can then be close to RLIMIT_NOFILE^3.
++	 */
++	if (attr->max_entries > rlimit(RLIMIT_NOFILE))
++		return ERR_PTR(-EMFILE);
++
++	array_size = sizeof(*array);
++	array_size += (u64) attr->max_entries * sizeof(struct inode_elem);
++
++	/* make sure there is no u32 overflow later in round_up() */
++	if (array_size >= U32_MAX - PAGE_SIZE)
++		return ERR_PTR(-ENOMEM);
++
++	/* allocate all map elements and zero-initialize them */
++	array = bpf_map_area_alloc(array_size, numa_node);
++	if (!array)
++		return ERR_PTR(-ENOMEM);
++
++	/* copy mandatory map attributes */
++	bpf_map_init_from_attr(&array->map, attr);
++	array->map.memory.pages = round_up(array_size, PAGE_SIZE) >> PAGE_SHIFT;
++
++	return &array->map;
++}
++
++/* (never) called from eBPF program */
++static void *fake_map_lookup_elem(struct bpf_map *map, void *key)
++{
++	WARN_ON(1);
++	return ERR_PTR(-EINVAL);
++}
++
++/* called from syscall (wrapped) and eBPF program */
++static u64 inode_map_lookup_elem(struct bpf_map *map, struct inode *key)
++{
++	struct inode_array *array = container_of(map, struct inode_array, map);
++	size_t i;
++	u64 ret = 0;
++
++	WARN_ON_ONCE(!rcu_read_lock_held());
++	/* TODO: use rbtree to switch to O(log n) */
++	for (i = 0; i < array->map.max_entries; i++) {
++		if (array->elems[i].inode == key) {
++			ret = array->elems[i].value;
++			break;
++		}
++	}
++	return ret;
++}
++
++/*
++ * The key is a FD when called from a syscall, but an inode pointer when called
++ * from an eBPF program.
++ */
++
++/* called from syscall */
++int bpf_inode_map_lookup_elem(struct bpf_map *map, int *key, u64 *value)
++{
++	struct inode *inode;
++
++	inode = inode_from_fd(*key, false);
++	if (IS_ERR(inode))
++		return PTR_ERR(inode);
++	*value = inode_map_lookup_elem(map, inode);
++	iput(inode);
++	if (!value)
++		return -ENOENT;
++	return 0;
++}
++
++/* (never) called from eBPF program */
++static int fake_map_update_elem(struct bpf_map *map, void *key, void *value,
++				u64 flags)
++{
++	WARN_ON(1);
++	/* do not leak an inode accessed by a Landlock program */
++	return -EINVAL;
++}
++
++/* called from syscall */
++static int sys_inode_map_update_elem(struct bpf_map *map, struct inode *key,
++		u64 *value, u64 flags)
++{
++	struct inode_array *array = container_of(map, struct inode_array, map);
++	size_t i;
++
++	if (unlikely(flags != BPF_ANY))
++		return -EINVAL;
++
++	if (unlikely(array->nb_entries >= array->map.max_entries))
++		/* all elements were pre-allocated, cannot insert a new one */
++		return -E2BIG;
++
++	for (i = 0; i < array->map.max_entries; i++) {
++		if (!array->elems[i].inode) {
++			/* the inode (key) is already grabbed by the caller */
++			ihold(key);
++			array->elems[i].inode = key;
++			array->elems[i].value = *value;
++			array->nb_entries++;
++			return 0;
++		}
++	}
++	WARN_ON(1);
++	return -ENOENT;
++}
++
++/* called from syscall */
++int bpf_inode_map_update_elem(struct bpf_map *map, int *key, u64 *value,
++			      u64 flags)
++{
++	struct inode *inode;
++	int err;
++
++	WARN_ON_ONCE(!rcu_read_lock_held());
++	inode = inode_from_fd(*key, true);
++	if (IS_ERR(inode))
++		return PTR_ERR(inode);
++	err = sys_inode_map_update_elem(map, inode, value, flags);
++	iput(inode);
++	return err;
++}
++
++/* called from syscall or (never) from eBPF program */
++static int fake_map_get_next_key(struct bpf_map *map, void *key,
++				 void *next_key)
++{
++	/* do not leak a file descriptor */
++	return -EINVAL;
++}
++
++/* void map for eBPF program */
++const struct bpf_map_ops inode_ops = {
++	.map_alloc = inode_map_alloc,
++	.map_free = inode_map_free,
++	.map_get_next_key = fake_map_get_next_key,
++	.map_lookup_elem = fake_map_lookup_elem,
++	.map_delete_elem = fake_map_delete_elem,
++	.map_update_elem = fake_map_update_elem,
++};
++
++BPF_CALL_2(bpf_inode_map_lookup, struct bpf_map *, map, void *, key)
++{
++	WARN_ON_ONCE(!rcu_read_lock_held());
++	return inode_map_lookup_elem(map, key);
++}
++
++const struct bpf_func_proto bpf_inode_map_lookup_proto = {
++	.func		= bpf_inode_map_lookup,
++	.gpl_only	= false,
++	.ret_type	= RET_INTEGER,
++	.arg1_type	= ARG_CONST_MAP_PTR,
++	.arg2_type	= ARG_PTR_TO_INODE,
++};
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 7dd3376904d4..ba2a09a7f813 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -720,6 +720,22 @@ static void *__bpf_copy_key(void __user *ukey, u64 key_size)
+ 	return NULL;
+ }
+ 
++int __weak bpf_inode_map_update_elem(struct bpf_map *map, int *key,
++				     u64 *value, u64 flags)
++{
++	return -ENOTSUPP;
++}
++
++int __weak bpf_inode_map_lookup_elem(struct bpf_map *map, int *key, u64 *value)
++{
++	return -ENOTSUPP;
++}
++
++int __weak bpf_inode_map_delete_elem(struct bpf_map *map, int *key)
++{
++	return -ENOTSUPP;
++}
++
+ /* last field in 'union bpf_attr' used by this command */
+ #define BPF_MAP_LOOKUP_ELEM_LAST_FIELD flags
+ 
+@@ -801,6 +817,8 @@ static int map_lookup_elem(union bpf_attr *attr)
+ 	} else if (map->map_type == BPF_MAP_TYPE_QUEUE ||
+ 		   map->map_type == BPF_MAP_TYPE_STACK) {
+ 		err = map->ops->map_peek_elem(map, value);
++	} else if (map->map_type == BPF_MAP_TYPE_INODE) {
++		err = bpf_inode_map_lookup_elem(map, key, value);
+ 	} else {
+ 		rcu_read_lock();
+ 		if (map->ops->map_lookup_elem_sys_only)
+@@ -951,6 +969,10 @@ static int map_update_elem(union bpf_attr *attr)
+ 	} else if (map->map_type == BPF_MAP_TYPE_QUEUE ||
+ 		   map->map_type == BPF_MAP_TYPE_STACK) {
+ 		err = map->ops->map_push_elem(map, value, attr->flags);
++	} else if (map->map_type == BPF_MAP_TYPE_INODE) {
++		rcu_read_lock();
++		err = bpf_inode_map_update_elem(map, key, value, attr->flags);
++		rcu_read_unlock();
+ 	} else {
+ 		rcu_read_lock();
+ 		err = map->ops->map_update_elem(map, key, value, attr->flags);
+@@ -1006,7 +1028,10 @@ static int map_delete_elem(union bpf_attr *attr)
+ 	preempt_disable();
+ 	__this_cpu_inc(bpf_prog_active);
+ 	rcu_read_lock();
+-	err = map->ops->map_delete_elem(map, key);
++	if (map->map_type == BPF_MAP_TYPE_INODE)
++		err = bpf_inode_map_delete_elem(map, key);
++	else
++		err = map->ops->map_delete_elem(map, key);
+ 	rcu_read_unlock();
+ 	__this_cpu_dec(bpf_prog_active);
+ 	preempt_enable();
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 930260683d0a..ce3cd7fd8882 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -400,6 +400,7 @@ static const char * const reg_type_str[] = {
+ 	[PTR_TO_TCP_SOCK_OR_NULL] = "tcp_sock_or_null",
+ 	[PTR_TO_TP_BUFFER]	= "tp_buffer",
+ 	[PTR_TO_XDP_SOCK]	= "xdp_sock",
++	[PTR_TO_INODE]		= "inode",
+ };
+ 
+ static char slot_type_char[] = {
+@@ -1801,6 +1802,7 @@ static bool is_spillable_regtype(enum bpf_reg_type type)
+ 	case PTR_TO_TCP_SOCK:
+ 	case PTR_TO_TCP_SOCK_OR_NULL:
+ 	case PTR_TO_XDP_SOCK:
++	case PTR_TO_INODE:
+ 		return true;
+ 	default:
+ 		return false;
+@@ -3254,6 +3256,10 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 regno,
+ 			verbose(env, "verifier internal error\n");
+ 			return -EFAULT;
+ 		}
++	} else if (arg_type == ARG_PTR_TO_INODE) {
++		expected_type = PTR_TO_INODE;
++		if (type != expected_type)
++			goto err_type;
+ 	} else if (arg_type_is_mem_ptr(arg_type)) {
+ 		expected_type = PTR_TO_STACK;
+ 		/* One exception here. In case function allows for NULL to be
+@@ -3462,6 +3468,10 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
+ 		    func_id != BPF_FUNC_sk_storage_delete)
+ 			goto error;
+ 		break;
++	case BPF_MAP_TYPE_INODE:
++		if (func_id != BPF_FUNC_inode_map_lookup)
++			goto error;
++		break;
+ 	default:
+ 		break;
+ 	}
+@@ -3530,6 +3540,10 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
+ 		if (map->map_type != BPF_MAP_TYPE_SK_STORAGE)
+ 			goto error;
+ 		break;
++	case BPF_FUNC_inode_map_lookup:
++		if (map->map_type != BPF_MAP_TYPE_INODE)
++			goto error;
++		break;
+ 	default:
+ 		break;
+ 	}
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+index 50145d448bc3..08ff720835ba 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -134,6 +134,7 @@ enum bpf_map_type {
+ 	BPF_MAP_TYPE_QUEUE,
+ 	BPF_MAP_TYPE_STACK,
+ 	BPF_MAP_TYPE_SK_STORAGE,
++	BPF_MAP_TYPE_INODE,
+ };
+ 
+ /* Note that tracing related programs such as
+@@ -2716,6 +2717,14 @@ union bpf_attr {
+  *		**-EPERM** if no permission to send the *sig*.
+  *
+  *		**-EAGAIN** if bpf program can try again.
++ *
++ * u64 bpf_inode_map_lookup(map, key)
++ * 	Description
++ * 		Perform a lookup in *map* for an entry associated to an inode
++ * 		*key*.
++ * 	Return
++ * 		Map value associated to *key*, or **NULL** if no entry was
++ * 		found.
+  */
+ #define __BPF_FUNC_MAPPER(FN)		\
+ 	FN(unspec),			\
+@@ -2827,7 +2836,8 @@ union bpf_attr {
+ 	FN(strtoul),			\
+ 	FN(sk_storage_get),		\
+ 	FN(sk_storage_delete),		\
+-	FN(send_signal),
++	FN(send_signal),		\
++	FN(inode_map_lookup),
+ 
+ /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+  * function eBPF program intends to call
+diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
+index f4f34cb8869a..000319a95bfb 100644
+--- a/tools/lib/bpf/libbpf_probes.c
++++ b/tools/lib/bpf/libbpf_probes.c
+@@ -249,6 +249,7 @@ bool bpf_probe_map_type(enum bpf_map_type map_type, __u32 ifindex)
+ 	case BPF_MAP_TYPE_XSKMAP:
+ 	case BPF_MAP_TYPE_SOCKHASH:
+ 	case BPF_MAP_TYPE_REUSEPORT_SOCKARRAY:
++	case BPF_MAP_TYPE_INODE:
+ 	default:
+ 		break;
+ 	}
 -- 
 2.20.1
 
