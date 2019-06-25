@@ -2,105 +2,161 @@ Return-Path: <SRS0=mxSC=UY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52238C4646C
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 01:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2616DC4646B
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 01:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30BF020644
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 01:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3F012077C
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 01:47:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="18/XRgS9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfFYBqY (ORCPT
+        id S1730099AbfFYBrA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Jun 2019 21:46:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23890 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730140AbfFYBqY (ORCPT
+        Mon, 24 Jun 2019 21:47:00 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40268 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730088AbfFYBrA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Jun 2019 21:46:24 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5P1fp0O073403
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Jun 2019 21:46:23 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tb5hj29by-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Jun 2019 21:46:23 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 25 Jun 2019 02:46:20 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 25 Jun 2019 02:46:16 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5P1kFOe60752006
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jun 2019 01:46:15 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B32D8A4062;
-        Tue, 25 Jun 2019 01:46:15 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6F738A405B;
-        Tue, 25 Jun 2019 01:46:14 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.110.18])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 25 Jun 2019 01:46:14 +0000 (GMT)
-Subject: Re: [PATCH V31 07/25] kexec_file: Restrict at runtime if the kernel
- is locked down
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     Dave Young <dyoung@redhat.com>, James Morris <jmorris@namei.org>,
-        Jiri Bohac <jbohac@suse.cz>,
-        Linux API <linux-api@vger.kernel.org>,
-        kexec@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 24 Jun 2019 21:46:03 -0400
-In-Reply-To: <CACdnJuvE-MbD42AJTrio=0RaN8SaWo-RHHt21z=3an1vtjTFhA@mail.gmail.com>
-References: <20190326182742.16950-1-matthewgarrett@google.com>
-         <20190326182742.16950-8-matthewgarrett@google.com>
-         <20190621064340.GB4528@localhost.localdomain>
-         <CACdnJut=J1YTpM4s6g5XWCEs+=X0Jvf8otfMg+w=_oqSZmf01Q@mail.gmail.com>
-         <20190624015206.GB2976@dhcp-128-65.nay.redhat.com>
-         <CACdnJusPtYLdg7ZPhBo=Y5EsBz6B+5M2zYscBrLcc89oNnPkdQ@mail.gmail.com>
-         <1561411657.4340.70.camel@linux.ibm.com>
-         <CACdnJuvE-MbD42AJTrio=0RaN8SaWo-RHHt21z=3an1vtjTFhA@mail.gmail.com>
+        Mon, 24 Jun 2019 21:47:00 -0400
+Received: by mail-lj1-f196.google.com with SMTP id a21so14499366ljh.7
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Jun 2019 18:46:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yY0buOnDBXDxAC7PLVBtYI3pFTakloh8+6q+akNwwUY=;
+        b=18/XRgS968rYTsu5WnfR3Grv4B0yDOon1KV28UOCSURWf6rac6dp8hhq01n27l5NbQ
+         8Kcv3CfoSX1LBTxjARXMnytBH/Uf07XHfAl4UafAaRDTxxzgPn+g6igK0PGm8YhgIV/R
+         zDALb0Bagl+RcN/n1vm5lHGZhXGLVaQZIXxt49wp24/BXXwx0lSl0Wbb5DPxbycL3D2j
+         ERaa9UinCF3CKKsJahIuE5w/yMeg6mPA58tm14Cvm3ApIincqpTjvVGgOe0yUEty7aGa
+         gWBamm7HPnIPYXKJ+1uufJcQsCI3ZZKCH9w4y79SWDGOmie3goPCqB55qfrcq3/3FbHa
+         hoNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yY0buOnDBXDxAC7PLVBtYI3pFTakloh8+6q+akNwwUY=;
+        b=HikS6cvhGnzvMPS1w2eCt+DAodyH4fveRBE9qHLlEm1bAb8gfkgMPgEt+SiayPe4v3
+         DK5BwHDHx1IiC/g4krPYStxDHA9WD4rI1Z7vyeuvSqYtAOn6+EDh10AzwSjpNZWH8P5e
+         OSCRqPo1eYvcsAJcy8fVnY9h7kqKF+u4Uk1NEwbZeOTsdE5g9WGAS+8FMcDx3M8jVOnw
+         VhT+NcZMJa488IsokOr8Z2qHjyzlig6am6W8hOvoN0/phxuHzDJOPwHh0SOkohO+iXsH
+         3EiZ6nMtb9ZtUOSwj7ycsPBYX3WgopgwL0nFN6mmWTs3a3NRKe/L1vK2ceHXJSXawGI5
+         tV2g==
+X-Gm-Message-State: APjAAAUjkDwlMaN/a+J3GoCbN1KRfDJD+hSCQOJgbkRbq7e35BUrVvT7
+        7XrNB5G/lOQ1x5jWUUeDMHTdBb0aSlHKtAJ/qg57
+X-Google-Smtp-Source: APXvYqyV/UzNQSyh+uB8UzCU+XP/BX5eQeH5sbBsCUpkW/mXyKWYTvAtmGJKvqMSchug0I0CRMz2KcfEpE1NyKE/iMs=
+X-Received: by 2002:a2e:5bdd:: with SMTP id m90mr72395341lje.46.1561427217178;
+ Mon, 24 Jun 2019 18:46:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190621185233.6766-1-casey@schaufler-ca.com> <20190621185233.6766-22-casey@schaufler-ca.com>
+ <79cd4a92-c221-eda4-58ba-730b5c2680d7@canonical.com> <0ad8f906-16ff-61af-ce7c-0ea1e9760d03@schaufler-ca.com>
+In-Reply-To: <0ad8f906-16ff-61af-ce7c-0ea1e9760d03@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 24 Jun 2019 21:46:45 -0400
+Message-ID: <CAHC9VhSSwCY8L71x4WTr7kJhF1f_oyQ1NcwyXCAgW7ruKACQdQ@mail.gmail.com>
+Subject: Re: [PATCH v3 21/24] Audit: Store LSM audit information in an lsmblob
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        keescook@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@redhat.com>, linux-audit@redhat.com
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19062501-0020-0000-0000-0000034D0FB6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062501-0021-0000-0000-000021A07C50
-Message-Id: <1561427163.4340.98.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-25_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906250011
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2019-06-24 at 17:02 -0700, Matthew Garrett wrote:
-> On Mon, Jun 24, 2019 at 2:27 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> 
-> > I agree with Dave.  There should be a stub lockdown function to
-> > prevent enforcing lockdown when it isn't enabled.
-> 
-> Sorry, when what isn't enabled? If no LSMs are enforcing lockdown then
-> the check will return 0. The goal here is for distributions to be able
-> to ship a kernel that has CONFIG_KEXEC_SIG=y, CONFIG_KEXEC_SIG_FORCE=n
-> and at runtime be able to enforce a policy that requires signatures on
-> kexec payloads.
+On Mon, Jun 24, 2019 at 9:01 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 6/24/2019 2:33 PM, John Johansen wrote:
+> > On 6/21/19 11:52 AM, Casey Schaufler wrote:
+> >> Change the audit code to store full lsmblob data instead of
+> >> a single u32 secid. This allows for multiple security modules
+> >> to use the audit system at the same time. It also allows the
+> >> removal of scaffolding code that was included during the
+> >> revision of LSM interfaces.
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > I know Kees raised this too, but I haven't seen a reply
+> >
+> > Eric (Paul is already CCed): I have directly added you because of
+> > the question below.
+> >
+> > In summary there isn't necessarily a single secid any more, and
+> > we need to know whether dropping the logging of the secid or
+> > logging all secids is the correct action.
+>
+> It is to be considered that this is an error case. If
+> everything is working normally you should have produced
+> a secctx previously, which you'll have included in the
+> audit record. Including the secid in the record ought to
+> be pointless, as the secid is strictly an internal token
+> with no meaning outside the running kernel. You are providing
+> no security relevant information by providing the secid.
+> I will grant the possibility that the secid might be useful
+> in debugging, but for that a pr_warn is more appropriate
+> than a field in the audit record.
 
-Never mind, the call can't be moved earlier.
+FWIW, this probably should have been CC'd to the audit list.
 
+I agree that this is an error case (security_secid_to_secctx() failed
+to resolve the secid) and further that logging the secid, or a
+collection of secids, has little value the way things currently work.
+Since secids are a private kernel implementation detail, we don't
+really display them outside the context of the kernel, including in
+the audit logs.  Recording a secid in this case doesn't provide
+anything meaningful since secids aren't recorded in the audit record
+stream, only the secctxs, and there is no "magic decoder ring" to go
+between the two in the audit logs, or anywhere else in userspace for
+that matter.
+
+> >> ---
+> >>  kernel/audit.h   |  6 +++---
+> >>  kernel/auditsc.c | 38 +++++++++++---------------------------
+> >>  2 files changed, 14 insertions(+), 30 deletions(-)
+
+...
+
+> >> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> >> index 0478680cd0a8..d3ad13f11788 100644
+> >> --- a/kernel/auditsc.c
+> >> +++ b/kernel/auditsc.c
+> >> @@ -1187,21 +1184,18 @@ static void show_special(struct audit_context *context, int *call_panic)
+> >>                              context->socketcall.args[i]);
+> >>              break; }
+> >>      case AUDIT_IPC: {
+> >> -            u32 osid = context->ipc.osid;
+> >> +            struct lsmblob *olsm = &context->ipc.olsm;
+> >>
+> >>              audit_log_format(ab, "ouid=%u ogid=%u mode=%#ho",
+> >>                               from_kuid(&init_user_ns, context->ipc.uid),
+> >>                               from_kgid(&init_user_ns, context->ipc.gid),
+> >>                               context->ipc.mode);
+> >> -            if (osid) {
+> >> +            if (lsmblob_is_set(olsm)) {
+> >>                      struct lsmcontext lsmcxt;
+> >> -                    struct lsmblob blob;
+> >>
+> >> -                    lsmblob_init(&blob, osid);
+> >> -                    if (security_secid_to_secctx(&blob, &lsmcxt)) {
+> >> -                            audit_log_format(ab, " osid=%u", osid);
+> > I am not comfortable just dropping this I would think logging all secids is the
+> > correct action here.
+> >
+> >
+> >> +                    if (security_secid_to_secctx(olsm, &lsmcxt))
+> >>                              *call_panic = 1;
+> >> -                    } else {
+> >> +                    else {
+> >>                              audit_log_format(ab, " obj=%s", lsmcxt.context);
+> >>                              security_release_secctx(&lsmcxt);
+> >>                      }
+
+-- 
+paul moore
+www.paul-moore.com
