@@ -2,191 +2,278 @@ Return-Path: <SRS0=mxSC=UY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DB8C4646C
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 02:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1708EC4646C
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 02:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA2E520652
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 02:15:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2FAF20644
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 02:35:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730373AbfFYCPB (ORCPT
+        id S1730476AbfFYCfZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Jun 2019 22:15:01 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:57636 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727835AbfFYCPB (ORCPT
+        Mon, 24 Jun 2019 22:35:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60648 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726774AbfFYCfZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Jun 2019 22:15:01 -0400
-Received: from static-50-53-46-226.bvtn.or.frontiernet.net ([50.53.46.226] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1hfayv-0000UO-LF; Tue, 25 Jun 2019 02:14:49 +0000
-Subject: Re: [PATCH v3 21/24] Audit: Store LSM audit information in an lsmblob
-To:     Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        keescook@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@redhat.com>, linux-audit@redhat.com
-References: <20190621185233.6766-1-casey@schaufler-ca.com>
- <20190621185233.6766-22-casey@schaufler-ca.com>
- <79cd4a92-c221-eda4-58ba-730b5c2680d7@canonical.com>
- <0ad8f906-16ff-61af-ce7c-0ea1e9760d03@schaufler-ca.com>
- <CAHC9VhSSwCY8L71x4WTr7kJhF1f_oyQ1NcwyXCAgW7ruKACQdQ@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <41f99313-1aa4-bacc-6767-8ee1389ca220@canonical.com>
-Date:   Mon, 24 Jun 2019 19:14:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Mon, 24 Jun 2019 22:35:25 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1295981F25;
+        Tue, 25 Jun 2019 02:35:24 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-89.pek2.redhat.com [10.72.12.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EE84D5D9C5;
+        Tue, 25 Jun 2019 02:35:19 +0000 (UTC)
+Date:   Tue, 25 Jun 2019 10:35:14 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Jiri Bohac <jbohac@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>, kexec@lists.infradead.org
+Subject: Re: [PATCH V34 08/29] kexec_file: split KEXEC_VERIFY_SIG into
+ KEXEC_SIG and KEXEC_SIG_FORCE
+Message-ID: <20190625023514.GA4007@dhcp-128-65.nay.redhat.com>
+References: <20190622000358.19895-1-matthewgarrett@google.com>
+ <20190622000358.19895-9-matthewgarrett@google.com>
+ <20190624020106.GD2976@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhSSwCY8L71x4WTr7kJhF1f_oyQ1NcwyXCAgW7ruKACQdQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624020106.GD2976@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 25 Jun 2019 02:35:24 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/24/19 6:46 PM, Paul Moore wrote:
-> On Mon, Jun 24, 2019 at 9:01 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 6/24/2019 2:33 PM, John Johansen wrote:
->>> On 6/21/19 11:52 AM, Casey Schaufler wrote:
->>>> Change the audit code to store full lsmblob data instead of
->>>> a single u32 secid. This allows for multiple security modules
->>>> to use the audit system at the same time. It also allows the
->>>> removal of scaffolding code that was included during the
->>>> revision of LSM interfaces.
->>>>
->>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>> I know Kees raised this too, but I haven't seen a reply
->>>
->>> Eric (Paul is already CCed): I have directly added you because of
->>> the question below.
->>>
->>> In summary there isn't necessarily a single secid any more, and
->>> we need to know whether dropping the logging of the secid or
->>> logging all secids is the correct action.
->>
->> It is to be considered that this is an error case. If
->> everything is working normally you should have produced
->> a secctx previously, which you'll have included in the
->> audit record. Including the secid in the record ought to
->> be pointless, as the secid is strictly an internal token
->> with no meaning outside the running kernel. You are providing
->> no security relevant information by providing the secid.
->> I will grant the possibility that the secid might be useful
->> in debugging, but for that a pr_warn is more appropriate
->> than a field in the audit record.
+On 06/24/19 at 10:01am, Dave Young wrote:
+> On 06/21/19 at 05:03pm, Matthew Garrett wrote:
+> > From: Jiri Bohac <jbohac@suse.cz>
+> > 
+> > This is a preparatory patch for kexec_file_load() lockdown.  A locked down
+> > kernel needs to prevent unsigned kernel images from being loaded with
+> > kexec_file_load().  Currently, the only way to force the signature
+> > verification is compiling with KEXEC_VERIFY_SIG.  This prevents loading
+> > usigned images even when the kernel is not locked down at runtime.
+> > 
+> > This patch splits KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE.
+> > Analogous to the MODULE_SIG and MODULE_SIG_FORCE for modules, KEXEC_SIG
+> > turns on the signature verification but allows unsigned images to be
+> > loaded.  KEXEC_SIG_FORCE disallows images without a valid signature.
+> > 
+> > [Modified by David Howells such that:
+> > 
+> >  (1) verify_pefile_signature() differentiates between no-signature and
+> >      sig-didn't-match in its returned errors.
+> > 
+> >  (2) kexec fails with EKEYREJECTED if there is a signature for which we
+> >      have a key, but signature doesn't match - even if in non-forcing mode.
+> > 
+> >  (3) kexec fails with EBADMSG or some other error if there is a signature
+> >      which cannot be parsed - even if in non-forcing mode.
+> > 
+> >  (4) kexec fails with ELIBBAD if the PE file cannot be parsed to extract
+> >      the signature - even if in non-forcing mode.
+> > 
+> > ]
 > 
-> FWIW, this probably should have been CC'd to the audit list.
+> Seems I do not see EBADMSG and ELIBBAD in this patch, also kexec fails
+> with proper errno instead of EKEYREJECTED only.
 > 
-hrmm indeed, sorry
+> I may missed something?  Other than the patch log issue:
+> 
+> Reviewed-by: Dave Young <dyoung@redhat.com>
 
-> I agree that this is an error case (security_secid_to_secctx() failed
-> to resolve the secid) and further that logging the secid, or a
-> collection of secids, has little value the way things currently work.
-> Since secids are a private kernel implementation detail, we don't
-> really display them outside the context of the kernel, including in
-> the audit logs.  Recording a secid in this case doesn't provide
-> anything meaningful since secids aren't recorded in the audit record
-> stream, only the secctxs, and there is no "magic decoder ring" to go
-> between the two in the audit logs, or anywhere else in userspace for
-> that matter.
-> 
-Okay, thanks. Casey I am good with just a pr_warn here. I just didn't
-have context of why it was going to the audit_log and didn't want
-to change that without some more input.
+Hold on :)  Noticed another issue, please see comment inline..
 
+> 
+> > 
+> > Signed-off-by: Jiri Bohac <jbohac@suse.cz>
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > Signed-off-by: Matthew Garrett <mjg59@google.com>
+> > Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+> > cc: kexec@lists.infradead.org
+> > ---
+> >  arch/x86/Kconfig                       | 20 ++++++++---
+> >  crypto/asymmetric_keys/verify_pefile.c |  4 ++-
+> >  include/linux/kexec.h                  |  4 +--
+> >  kernel/kexec_file.c                    | 47 ++++++++++++++++++++++----
+> >  4 files changed, 60 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> > index c1f9b3cf437c..84381dd60760 100644
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -2012,20 +2012,30 @@ config KEXEC_FILE
+> >  config ARCH_HAS_KEXEC_PURGATORY
+> >  	def_bool KEXEC_FILE
+> >  
+> > -config KEXEC_VERIFY_SIG
+> > +config KEXEC_SIG
+> >  	bool "Verify kernel signature during kexec_file_load() syscall"
+> >  	depends on KEXEC_FILE
+> >  	---help---
+> > -	  This option makes kernel signature verification mandatory for
+> > -	  the kexec_file_load() syscall.
+> >  
+> > -	  In addition to that option, you need to enable signature
+> > +	  This option makes the kexec_file_load() syscall check for a valid
+> > +	  signature of the kernel image.  The image can still be loaded without
+> > +	  a valid signature unless you also enable KEXEC_SIG_FORCE, though if
+> > +	  there's a signature that we can check, then it must be valid.
+> > +
+> > +	  In addition to this option, you need to enable signature
+> >  	  verification for the corresponding kernel image type being
+> >  	  loaded in order for this to work.
+> >  
+> > +config KEXEC_SIG_FORCE
+> > +	bool "Require a valid signature in kexec_file_load() syscall"
+> > +	depends on KEXEC_SIG
+> > +	---help---
+> > +	  This option makes kernel signature verification mandatory for
+> > +	  the kexec_file_load() syscall.
+> > +
+> >  config KEXEC_BZIMAGE_VERIFY_SIG
+> >  	bool "Enable bzImage signature verification support"
+> > -	depends on KEXEC_VERIFY_SIG
+> > +	depends on KEXEC_SIG
+> >  	depends on SIGNED_PE_FILE_VERIFICATION
+> >  	select SYSTEM_TRUSTED_KEYRING
+> >  	---help---
+> > diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
+> > index d178650fd524..4473cea1e877 100644
+> > --- a/crypto/asymmetric_keys/verify_pefile.c
+> > +++ b/crypto/asymmetric_keys/verify_pefile.c
+> > @@ -100,7 +100,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
+> >  
+> >  	if (!ddir->certs.virtual_address || !ddir->certs.size) {
+> >  		pr_debug("Unsigned PE binary\n");
+> > -		return -EKEYREJECTED;
+> > +		return -ENODATA;
+> >  	}
+> >  
+> >  	chkaddr(ctx->header_size, ddir->certs.virtual_address,
+> > @@ -408,6 +408,8 @@ static int pefile_digest_pe(const void *pebuf, unsigned int pelen,
+> >   *  (*) 0 if at least one signature chain intersects with the keys in the trust
+> >   *	keyring, or:
+> >   *
+> > + *  (*) -ENODATA if there is no signature present.
+> > + *
+> >   *  (*) -ENOPKG if a suitable crypto module couldn't be found for a check on a
+> >   *	chain.
+> >   *
+> > diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+> > index b9b1bc5f9669..58b27c7bdc2b 100644
+> > --- a/include/linux/kexec.h
+> > +++ b/include/linux/kexec.h
+> > @@ -125,7 +125,7 @@ typedef void *(kexec_load_t)(struct kimage *image, char *kernel_buf,
+> >  			     unsigned long cmdline_len);
+> >  typedef int (kexec_cleanup_t)(void *loader_data);
+> >  
+> > -#ifdef CONFIG_KEXEC_VERIFY_SIG
+> > +#ifdef CONFIG_KEXEC_SIG
+> >  typedef int (kexec_verify_sig_t)(const char *kernel_buf,
+> >  				 unsigned long kernel_len);
+> >  #endif
+> > @@ -134,7 +134,7 @@ struct kexec_file_ops {
+> >  	kexec_probe_t *probe;
+> >  	kexec_load_t *load;
+> >  	kexec_cleanup_t *cleanup;
+> > -#ifdef CONFIG_KEXEC_VERIFY_SIG
+> > +#ifdef CONFIG_KEXEC_SIG
+> >  	kexec_verify_sig_t *verify_sig;
+> >  #endif
+> >  };
+> > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > index f1d0e00a3971..eec7e5bb2a08 100644
+> > --- a/kernel/kexec_file.c
+> > +++ b/kernel/kexec_file.c
+> > @@ -90,7 +90,7 @@ int __weak arch_kimage_file_post_load_cleanup(struct kimage *image)
+> >  	return kexec_image_post_load_cleanup_default(image);
+> >  }
+> >  
+> > -#ifdef CONFIG_KEXEC_VERIFY_SIG
+> > +#ifdef CONFIG_KEXEC_SIG
+> >  static int kexec_image_verify_sig_default(struct kimage *image, void *buf,
+> >  					  unsigned long buf_len)
+> >  {
+> > @@ -188,7 +188,8 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+> >  			     const char __user *cmdline_ptr,
+> >  			     unsigned long cmdline_len, unsigned flags)
+> >  {
+> > -	int ret = 0;
+> > +	const char *reason;
+> > +	int ret;
+> >  	void *ldata;
+> >  	loff_t size;
+> >  
+> > @@ -207,15 +208,47 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+> >  	if (ret)
+> >  		goto out;
+> >  
+> > -#ifdef CONFIG_KEXEC_VERIFY_SIG
+> > +#ifdef CONFIG_KEXEC_SIG
+> >  	ret = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
+> >  					   image->kernel_buf_len);
+> > -	if (ret) {
+> > -		pr_debug("kernel signature verification failed.\n");
+> > +#else
+> > +	ret = -ENODATA;
 
->>>> ---
->>>>  kernel/audit.h   |  6 +++---
->>>>  kernel/auditsc.c | 38 +++++++++++---------------------------
->>>>  2 files changed, 14 insertions(+), 30 deletions(-)
-> 
-> ...
-> 
->>>> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
->>>> index 0478680cd0a8..d3ad13f11788 100644
->>>> --- a/kernel/auditsc.c
->>>> +++ b/kernel/auditsc.c
->>>> @@ -1187,21 +1184,18 @@ static void show_special(struct audit_context *context, int *call_panic)
->>>>                              context->socketcall.args[i]);
->>>>              break; }
->>>>      case AUDIT_IPC: {
->>>> -            u32 osid = context->ipc.osid;
->>>> +            struct lsmblob *olsm = &context->ipc.olsm;
->>>>
->>>>              audit_log_format(ab, "ouid=%u ogid=%u mode=%#ho",
->>>>                               from_kuid(&init_user_ns, context->ipc.uid),
->>>>                               from_kgid(&init_user_ns, context->ipc.gid),
->>>>                               context->ipc.mode);
->>>> -            if (osid) {
->>>> +            if (lsmblob_is_set(olsm)) {
->>>>                      struct lsmcontext lsmcxt;
->>>> -                    struct lsmblob blob;
->>>>
->>>> -                    lsmblob_init(&blob, osid);
->>>> -                    if (security_secid_to_secctx(&blob, &lsmcxt)) {
->>>> -                            audit_log_format(ab, " osid=%u", osid);
->>> I am not comfortable just dropping this I would think logging all secids is the
->>> correct action here.
->>>
->>>
->>>> +                    if (security_secid_to_secctx(olsm, &lsmcxt))
->>>>                              *call_panic = 1;
->>>> -                    } else {
->>>> +                    else {
->>>>                              audit_log_format(ab, " obj=%s", lsmcxt.context);
->>>>                              security_release_secctx(&lsmcxt);
->>>>                      }
-> 
+Use -ENODATA for above case looks not correct, please just remove the #else and
+move the #endif to the end of the switch chunk.
 
+> > +#endif
+> > +
+> > +	switch (ret) {
+> > +	case 0:
+> > +		break;
+> > +
+> > +		/* Certain verification errors are non-fatal if we're not
+> > +		 * checking errors, provided we aren't mandating that there
+> > +		 * must be a valid signature.
+> > +		 */
+> > +	case -ENODATA:
+> > +		reason = "kexec of unsigned image";
+> > +		goto decide;
+> > +	case -ENOPKG:
+> > +		reason = "kexec of image with unsupported crypto";
+> > +		goto decide;
+> > +	case -ENOKEY:
+> > +		reason = "kexec of image with unavailable key";
+> > +	decide:
+> > +		if (IS_ENABLED(CONFIG_KEXEC_SIG_FORCE)) {
+> > +			pr_notice("%s rejected\n", reason);
+> > +			goto out;
+> > +		}
+> > +
+> > +		ret = 0;
+> > +		break;
+> > +
+> > +		/* All other errors are fatal, including nomem, unparseable
+> > +		 * signatures and signature check failures - even if signatures
+> > +		 * aren't required.
+> > +		 */
+> > +	default:
+> > +		pr_notice("kernel signature verification failed (%d).\n", ret);
+> >  		goto out;
+> >  	}
+> > -	pr_debug("kernel signature verification successful.\n");
+> > -#endif
+> > +
+> >  	/* It is possible that there no initramfs is being loaded */
+> >  	if (!(flags & KEXEC_FILE_NO_INITRAMFS)) {
+> >  		ret = kernel_read_file_from_fd(initrd_fd, &image->initrd_buf,
+> > -- 
+> > 2.22.0.410.gd8fdbe21b5-goog
+> > 
+
+Thanks
+Dave
