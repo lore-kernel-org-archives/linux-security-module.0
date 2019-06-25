@@ -2,115 +2,114 @@ Return-Path: <SRS0=mxSC=UY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C21C48BD5
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 15:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36211C48BD4
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 15:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C0F3213F2
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 15:00:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DEF3208E3
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 15:01:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XEkdwu9t"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="diW+vWQ1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731982AbfFYPAg (ORCPT
+        id S1730827AbfFYPBp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jun 2019 11:00:36 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41850 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731964AbfFYPAg (ORCPT
+        Tue, 25 Jun 2019 11:01:45 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45976 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731153AbfFYPBl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jun 2019 11:00:36 -0400
-Received: by mail-io1-f66.google.com with SMTP id w25so213713ioc.8
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jun 2019 08:00:35 -0700 (PDT)
+        Tue, 25 Jun 2019 11:01:41 -0400
+Received: by mail-io1-f67.google.com with SMTP id e3so174125ioc.12
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Jun 2019 08:01:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=WCu2izc+AwFs8dxkBWfG0kU/xQQY4HsLibUm2/EhQEg=;
-        b=XEkdwu9tbyxynV2UESVQpvwU3iwK3hOE1k9Q1V76kobtha4OFJg8EuxOwyr9iFmFCF
-         03+IP8ze/+IkOWgqwTpYK3IA+caa2YfQYz/eo6KfpwPMDhq0+7/rvOJSrpLmt6w+CQny
-         NEdRK0dC/Ou/b9ECjr3caBsF5fwJhkr+xfFWaaDRwrRWL3rhMeeWH8HFoBrAKmYGIkva
-         h4nN/l3U6DtLZdNSOnQL9Ih7R4Vh9q25kWm87wwuDzJtxPiQd0g9nyeidql+/whr0yY8
-         hRSCFlzTYLEpYV2kxsIbsi+thmD6DyDRJf9PwCSIWPW0GUf18A1wZrVKYFPGX3EEcJNl
-         GGvQ==
+        bh=0yr5BGG5Soxpasmq18l/eZqmRu+7BCvMsxIS8QQvWds=;
+        b=diW+vWQ1cK8J8mbuShje1qzBD5LFfkxUEduZIToixNkQRkqTqpie/l61eMQPXHYH8O
+         83tsgOqMuHQTprd4S6JdERPZE+TlxqaeV+MxFjieF4rmW7BqkBkEBIRyr9y5Olsh0sTb
+         kIbFYqnnzV8WHY/LxxBOrCMY++yq5mUHnh9ZG+/Ek62tmmnp2bHS2rtGjtrV8ABgPH6W
+         TquBKMaN6GcosVz98HHhNV+0NvruRiFUsmKjmdE785L08+iNoeeI3/Wq7JKFOFmgVmrU
+         D5UXmgUdyiU4hGGM09aMFeL0jxTwN8DElgDAw/0DXsTVEGpmjT9rHg7Q4p0qlVJDliFD
+         Nr7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=WCu2izc+AwFs8dxkBWfG0kU/xQQY4HsLibUm2/EhQEg=;
-        b=jg0lpog3Yb+Wx8Qbeb4tTOX33RdzeLDKQg2+a+oBlESgcKWNFC8662IQ7/lsVv5vuY
-         +ybzmA8fBLUUAYKGS/VZGqgzgOHTLYL0Ey/FSkcMF4OEdW39im/ntmdSF3vj3ZDRwJ55
-         ydoe8e0HOX2ZmIBOLNxYH7mAzwPP0YuWWi3I3e50YTCb88xaoJD0FooxA+BSZmaitD6j
-         CQJ/r8mwYyTLd/LWeuKr8zW1+qAu2ZNzP2wnT2Wn5peqy9w5pOsndtHCcnWIfY8eeQ4m
-         pyfLZa4JkqjahA6UDggFcVVa6hvmNkYqglv6F1n7ZwANqu8UmdhUt677PShEsj/cgGnw
-         y5SQ==
-X-Gm-Message-State: APjAAAX/p0jfq3USwksoHKWF41yI2g7U85t/vL7uQN5agBtVinyWFLjp
-        YV/kCdoihYzqAhKenQEELx1iAEDOOndLzEIJuXy9DQ==
-X-Google-Smtp-Source: APXvYqzeVOugDrWRv5GZLuCebGXK5dE6WckDZUY2y3Mwk6wopB+mgprQm2ZWsgT4yJQvT/jz99cbIBKpq58fNj+5zo0=
-X-Received: by 2002:a02:c90d:: with SMTP id t13mr112928904jao.62.1561474835326;
- Tue, 25 Jun 2019 08:00:35 -0700 (PDT)
+        bh=0yr5BGG5Soxpasmq18l/eZqmRu+7BCvMsxIS8QQvWds=;
+        b=boI+SLtLTnMRBnj6wTE2woKAlOJCROZpOwz1LfNr7z+qat1SYXdecx2IGztJMnqanM
+         4npODk0mc+XNvPZ0qGCnUIm4/uWqsEymPr/ZbfwUjxmRSd9EmgLjiaT+YisolVlNFnTf
+         Iw5/IBGi8ATt2ZMeNJey4BLd+fgtn0SYF3Emd10DPLljIGzvQ0NOjlrAtkyga/2RzNWD
+         busVkNUSdXLHIIGUrfVg3hP4Mil+a6kXE6lRsYo+vjhlsIccbeODvNSoV0HugvcZfqg5
+         xHzv0lZwdQ3oydmMWX6X7FPU0uM3rN8smMMBJ011LQSRXF5dBwsiv1aTz8x4S+fFwIX2
+         EcDw==
+X-Gm-Message-State: APjAAAVJcCDNZqdS3oV/+E/U3KBT8luO8k7PZkg0wELIndliwMyab5X6
+        huWGBYWQcQZ1ilZpmCKlhJDQNKwsYDdM9eOyIAkfsA==
+X-Google-Smtp-Source: APXvYqzEVNC69Mi27uf6m7Bi3ZeIToOuD/jem/DgkFporAtOaz6bRyAKyT9CIE+AjyVnl2gTizP/1dBjhuxNC4RZ9+o=
+X-Received: by 2002:a5d:9d83:: with SMTP id 3mr13470506ion.65.1561474900420;
+ Tue, 25 Jun 2019 08:01:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190622000358.19895-1-matthewgarrett@google.com> <20190622000358.19895-29-matthewgarrett@google.com>
-In-Reply-To: <20190622000358.19895-29-matthewgarrett@google.com>
+References: <20190618094731.3677294-1-arnd@arndb.de> <201906201034.9E44D8A2A8@keescook>
+ <CAK8P3a2uFcaGMSHRdg4NECHJwgAyhtMuYDv3U=z2UdBSL5U0Lw@mail.gmail.com>
+ <CAKv+Gu-A_OWUQ_neUAprmQOotPA=LoUGQHvFkZ2tqQAg=us1jA@mail.gmail.com>
+ <CAK8P3a2d3H-pdiLX_8aA4LNLOVTSyPW_jvwZQkv0Ey3SJS87Bg@mail.gmail.com>
+ <CAKv+Gu9p017iPva85dPMdnKW_MSOUcthqcy7KDhGEYCN7=C_SA@mail.gmail.com> <201906221324.C08C1EF@keescook>
+In-Reply-To: <201906221324.C08C1EF@keescook>
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 25 Jun 2019 17:00:24 +0200
-Message-ID: <CAKv+Gu_0bSCdeUGQo=nnKU=mfHXu+-U+qXWqJpJGUd6dVZF61Q@mail.gmail.com>
-Subject: Re: [PATCH V34 28/29] efi: Restrict efivar_ssdt_load when the kernel
- is locked down
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
-        linux-efi <linux-efi@vger.kernel.org>
+Date:   Tue, 25 Jun 2019 17:01:29 +0200
+Message-ID: <CAKv+Gu90nGDYFwdi69centW+yyS16u1QDVNT7C7VcRaCkCaRyA@mail.gmail.com>
+Subject: Re: [PATCH] structleak: disable BYREF_ALL in combination with KASAN_STACK
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 22 Jun 2019 at 02:05, Matthew Garrett <matthewgarrett@google.com> wrote:
+On Sat, 22 Jun 2019 at 22:26, Kees Cook <keescook@chromium.org> wrote:
 >
-> efivar_ssdt_load allows the kernel to import arbitrary ACPI code from an
-> EFI variable, which gives arbitrary code execution in ring 0. Prevent
-> that when the kernel is locked down.
+> On Fri, Jun 21, 2019 at 03:50:02PM +0200, Ard Biesheuvel wrote:
+> > On Fri, 21 Jun 2019 at 15:44, Arnd Bergmann <arnd@arndb.de> wrote:
+> > > One pattern I have seen here is temporary variables from macros or
+> > > inline functions whose lifetime now extends over the entire function
+> > > rather than just the basic block in which they are defined, see e.g.
+> > > lpfc_debug_dump_qe() being inlined multiple times into
+> > > lpfc_debug_dump_all_queues(). Each instance of the local
+> > > "char line_buf[LPFC_LBUF_SZ];" seems to add on to the previous
+> > > one now, where the behavior without the structleak plugin is that
+> > > they don't.
 >
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: linux-efi@vger.kernel.org
+> Ewww.
+>
+> > Right, that seems to be due to the fact that this code
+> >
+> > /* split the first bb where we can put the forced initializers */
+> > gcc_assert(single_succ_p(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
+> > bb = single_succ(ENTRY_BLOCK_PTR_FOR_FN(cfun));
+> > if (!single_pred_p(bb)) {
+> >     split_edge(single_succ_edge(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
+> >     gcc_assert(single_succ_p(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
+> > }
+> >
+> > puts all the initializers at the beginning of the function rather than
+> > inside the scope of the definition.
+>
+> Do you see a sane way to improve this? I hadn't noticed that this
+> actually moved it up to the start of the function. :(
+>
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-
-> ---
->  drivers/firmware/efi/efi.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index 55b77c576c42..9f92a013ab27 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -31,6 +31,7 @@
->  #include <linux/acpi.h>
->  #include <linux/ucs2_string.h>
->  #include <linux/memblock.h>
-> +#include <linux/security.h>
->
->  #include <asm/early_ioremap.h>
->
-> @@ -242,6 +243,11 @@ static void generic_ops_unregister(void)
->  static char efivar_ssdt[EFIVAR_SSDT_NAME_MAX] __initdata;
->  static int __init efivar_ssdt_setup(char *str)
->  {
-> +       int ret = security_locked_down(LOCKDOWN_ACPI_TABLES);
-> +
-> +       if (ret)
-> +               return ret;
-> +
->         if (strlen(str) < sizeof(efivar_ssdt))
->                 memcpy(efivar_ssdt, str, strlen(str));
->         else
-> --
-> 2.22.0.410.gd8fdbe21b5-goog
->
+Not from the top of my head, and I won't be able to spend any time on
+this in the near future, unfortunately.
