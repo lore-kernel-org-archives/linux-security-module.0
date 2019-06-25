@@ -2,96 +2,83 @@ Return-Path: <SRS0=mxSC=UY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E658C48BD4
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 17:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0A6C48BD5
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 18:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F16B420644
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 17:35:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6B0A2080C
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 18:20:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732064AbfFYRfy (ORCPT
+        id S1727479AbfFYSUW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jun 2019 13:35:54 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56018 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730979AbfFYRfy (ORCPT
+        Tue, 25 Jun 2019 14:20:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37294 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727138AbfFYSUW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jun 2019 13:35:54 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5PHWEqN118481
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jun 2019 13:35:53 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tbp6c5aww-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jun 2019 13:35:53 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 25 Jun 2019 18:35:50 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 25 Jun 2019 18:35:45 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5PHZjvB52625554
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jun 2019 17:35:45 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E2AF35204E;
-        Tue, 25 Jun 2019 17:35:44 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.110.8])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id BCB9952059;
-        Tue, 25 Jun 2019 17:35:43 +0000 (GMT)
-Subject: Re: [PATCH v4 00/14] ima: introduce IMA Digest Lists extension
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        dmitry.kasatkin@huawei.com, mjg59@google.com,
-        Rob Landley <rob@landley.net>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Tue, 25 Jun 2019 13:35:33 -0400
-In-Reply-To: <88d368e6-5b3c-0206-23a0-dc3e0aa385f0@huawei.com>
-References: <20190614175513.27097-1-roberto.sassu@huawei.com>
-         <9029dd14-1077-ec89-ddc2-e677e16ad314@huawei.com>
-         <88d368e6-5b3c-0206-23a0-dc3e0aa385f0@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19062517-0012-0000-0000-0000032C52A3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062517-0013-0000-0000-000021658924
-Message-Id: <1561484133.4066.16.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-25_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906250132
+        Tue, 25 Jun 2019 14:20:22 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C107D223885;
+        Tue, 25 Jun 2019 18:20:11 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9BFC51972E;
+        Tue, 25 Jun 2019 18:20:05 +0000 (UTC)
+Date:   Tue, 25 Jun 2019 14:20:04 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
+        gmazyland@gmail.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, scottsh@microsoft.com,
+        ebiggers@google.com, jmorris@namei.org, dm-devel@redhat.com,
+        mpatocka@redhat.com, agk@redhat.com
+Subject: Re: [RFC PATCH v5 1/1] Add dm verity root hash pkcs7 sig validation.
+Message-ID: <20190625182004.GA32075@redhat.com>
+References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
+ <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 25 Jun 2019 18:20:21 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[Cc'ing Rob Landley]
+On Wed, Jun 19 2019 at  3:10pm -0400,
+Jaskaran Khurana <jaskarankhurana@linux.microsoft.com> wrote:
 
-On Tue, 2019-06-25 at 14:57 +0200, Roberto Sassu wrote:
-> Mimi, do you have any thoughts on this version?
+> The verification is to support cases where the roothash is not secured by
+> Trusted Boot, UEFI Secureboot or similar technologies.
+> One of the use cases for this is for dm-verity volumes mounted after boot,
+> the root hash provided during the creation of the dm-verity volume has to
+> be secure and thus in-kernel validation implemented here will be used
+> before we trust the root hash and allow the block device to be created.
+> 
+> The signature being provided for verification must verify the root hash and
+> must be trusted by the builtin keyring for verification to succeed.
+> 
+> The hash is added as a key of type "user" and the description is passed to 
+> the kernel so it can look it up and use it for verification.
+> 
+> Kernel commandline parameter will indicate whether to check (only if 
+> specified) or force (for all dm verity volumes) roothash signature 
+> verification.
+> 
+> Kernel commandline: dm_verity.verify_sig=1 or 2 for check/force root hash
+> signature validation respectively.
+> 
+> Signed-off-by: Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
 
-I need to look closer, but when I first looked these changes seemed to
-be really invasive.  Let's first work on getting the CPIO xattr
-support upstreamed.  Rob Landley said he was going to review and test
-them.  Do you have any documentation on how to set up a test
-environment?  I'd really appreciate if others would also help with
-reviewing the CPIO patches.
+Milan and/or others: could you please provide review and if you're OK
+with this patch respond accordingly?
 
-thanks!
-
-Mimi
-
+Thanks,
+Mike
