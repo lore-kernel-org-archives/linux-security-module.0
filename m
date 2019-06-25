@@ -2,30 +2,68 @@ Return-Path: <SRS0=mxSC=UY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C027C48BD6
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 22:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4A1C48BD5
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 23:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3999820659
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 22:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F29B12084B
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 23:03:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xb+hHpzd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726223AbfFYWwQ (ORCPT
+        id S1726460AbfFYXDL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jun 2019 18:52:16 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:40498 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbfFYWwQ (ORCPT
+        Tue, 25 Jun 2019 19:03:11 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35283 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfFYXDL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jun 2019 18:52:16 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfuID-0001yb-63; Tue, 25 Jun 2019 22:52:01 +0000
-Date:   Tue, 25 Jun 2019 23:52:01 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Tue, 25 Jun 2019 19:03:11 -0400
+Received: by mail-lf1-f66.google.com with SMTP id a25so195830lfg.2;
+        Tue, 25 Jun 2019 16:03:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vCqj6Gl5Q+n6lzWdb5L2oHqmQfEmkpa5M5PzJg/vAX0=;
+        b=Xb+hHpzdadY3+SZLz7lziYzk74KcI7TJz4DoosGtrKHDRZWbmvbRnU0CnFGMpbcfuF
+         Pk8kgfMcbnxZL00uBqYQOwGOH9t5TcnZt6TJlMwfK2h4iErKeRRXNLG8Z4F7C8ydio1j
+         1HlMw7Gv2XjLypWKJS+g0r87+zG+TkbGD5M+MCKwEw9yRo0GLdGXm6Lfzpcu+k9UE9d0
+         F/M1TF1+T/R8J7RiHvYkadgyTfoCuki9o2u4q3pGOwFIW5+XofAOHXF5gW7KhBQtx+kT
+         A/0C/2uSQzf7ymawbvg8ME7Vop7uFjg1N3hzdSaT8Xbqmd1KmjrxGBiqWXqzyhqm7B5L
+         Mkkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vCqj6Gl5Q+n6lzWdb5L2oHqmQfEmkpa5M5PzJg/vAX0=;
+        b=oixzy6Ral1Z03dPceB/nY3lc1BvoSFuRtvjGR3+ygYxUff+vL4ahPdcp7R8KnPN2Kf
+         1a/T2v6rdICze3xr4sAEoJFjcpPE77hmjNRDt9AAFpGWGYtWmAQxHYIZWdPWoQ5Nbex9
+         8PUWOExp3W8Hm9vlhZFtGLXJzqmyn0mxmSWIEdDTRXOU/0yi5UH6NMurViH7vg8qAzZd
+         +klxUh306G/KWp4BcMhWABBVudCa94Ec5dBGxFYAgyPO0h47YmRxmvsz9ozRQl6aZh8D
+         C9LsDJT/wpkOQEPyLgukY/FBP/8xoMLFjv6MIxjymwzepQ6XfeccGWgh1qD4JIAe+hoS
+         fXYA==
+X-Gm-Message-State: APjAAAVaOR+xyEVQcRzFLolSJUtI7VJUk9Rp8VhSal4roQaumPDeDxEE
+        qnO1Oac2UomjtymjRhMMhiyJRU5WMl/wMu3pctiSvVpx
+X-Google-Smtp-Source: APXvYqwMki2vRi0D6xb9XX2ObQWdMs2vNpF7/ZvfvRpFFo74l4CVr0RYcBMIdgXXJPnYTSSDRLHNjCE2a1Zni1qeP0M=
+X-Received: by 2002:a19:6e4d:: with SMTP id q13mr691917lfk.6.1561503788417;
+ Tue, 25 Jun 2019 16:03:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190625215239.11136-1-mic@digikod.net> <20190625215239.11136-3-mic@digikod.net>
+In-Reply-To: <20190625215239.11136-3-mic@digikod.net>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Tue, 25 Jun 2019 16:02:57 -0700
+Message-ID: <CAADnVQ+Twio22VSi21RR5TY1Zm-1xRTGmREcXLSs5Jv-KWGTiw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v9 02/10] bpf: Add eBPF program subtype and
+ is_valid_subtype() verifier
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Alexei Starovoitov <ast@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Lutomirski <luto@amacapital.net>,
@@ -40,7 +78,7 @@ Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
         Paul Moore <paul@paul-moore.com>,
         Sargun Dhillon <sargun@sargun.me>,
         "Serge E . Hallyn" <serge@hallyn.com>,
@@ -49,94 +87,59 @@ Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
         Will Drewry <wad@chromium.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v9 05/10] bpf,landlock: Add a new map type: inode
-Message-ID: <20190625225201.GJ17978@ZenIV.linux.org.uk>
-References: <20190625215239.11136-1-mic@digikod.net>
- <20190625215239.11136-6-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190625215239.11136-6-mic@digikod.net>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 25, 2019 at 11:52:34PM +0200, Mickaël Salaün wrote:
-> +/* must call iput(inode) after this call */
-> +static struct inode *inode_from_fd(int ufd, bool check_access)
-> +{
-> +	struct inode *ret;
-> +	struct fd f;
-> +	int deny;
-> +
-> +	f = fdget(ufd);
-> +	if (unlikely(!f.file || !file_inode(f.file))) {
-> +		ret = ERR_PTR(-EBADF);
-> +		goto put_fd;
-> +	}
+On Tue, Jun 25, 2019 at 3:04 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+>
+> The goal of the program subtype is to be able to have different static
+> fine-grained verifications for a unique program type.
+>
+> The struct bpf_verifier_ops gets a new optional function:
+> is_valid_subtype(). This new verifier is called at the beginning of the
+> eBPF program verification to check if the (optional) program subtype is
+> valid.
+>
+> The new helper bpf_load_program_xattr() enables to verify a program with
+> subtypes.
+>
+> For now, only Landlock eBPF programs are using a program subtype (see
+> next commits) but this could be used by other program types in the
+> future.
+>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: David S. Miller <davem@davemloft.net>
+> Link: https://lkml.kernel.org/r/20160827205559.GA43880@ast-mbp.thefaceboo=
+k.com
+> ---
+>
+> Changes since v8:
+> * use bpf_load_program_xattr() instead of bpf_load_program() and add
+>   bpf_verify_program_xattr() to deal with subtypes
+> * remove put_extra() since there is no more "previous" field (for now)
+>
+> Changes since v7:
+> * rename LANDLOCK_SUBTYPE_* to LANDLOCK_*
+> * move subtype in bpf_prog_aux and use only one bit for has_subtype
+>   (suggested by Alexei Starovoitov)
 
-Just when does one get a NULL file_inode()?  The reason I'm asking is
-that arseloads of code would break if one managed to create such
-a beast...
-
-Incidentally, that should be return ERR_PTR(-EBADF); fdput() is wrong there.
-
-> +	}
-> +	/* check if the FD is tied to a mount point */
-> +	/* TODO: add this check when called from an eBPF program too */
-> +	if (unlikely(!f.file->f_path.mnt
-
-Again, the same question - when the hell can that happen?  If you are
-sitting on an exploitable roothole, do share it...
-
- || f.file->f_path.mnt->mnt_flags &
-> +				MNT_INTERNAL)) {
-> +		ret = ERR_PTR(-EINVAL);
-> +		goto put_fd;
-
-What does it have to do with mountpoints, anyway?
-
-> +/* called from syscall */
-> +static int sys_inode_map_delete_elem(struct bpf_map *map, struct inode *key)
-> +{
-> +	struct inode_array *array = container_of(map, struct inode_array, map);
-> +	struct inode *inode;
-> +	int i;
-> +
-> +	WARN_ON_ONCE(!rcu_read_lock_held());
-> +	for (i = 0; i < array->map.max_entries; i++) {
-> +		if (array->elems[i].inode == key) {
-> +			inode = xchg(&array->elems[i].inode, NULL);
-> +			array->nb_entries--;
-
-Umm...  Is that intended to be atomic in any sense?
-
-> +			iput(inode);
-> +			return 0;
-> +		}
-> +	}
-> +	return -ENOENT;
-> +}
-> +
-> +/* called from syscall */
-> +int bpf_inode_map_delete_elem(struct bpf_map *map, int *key)
-> +{
-> +	struct inode *inode;
-> +	int err;
-> +
-> +	inode = inode_from_fd(*key, false);
-> +	if (IS_ERR(inode))
-> +		return PTR_ERR(inode);
-> +	err = sys_inode_map_delete_elem(map, inode);
-> +	iput(inode);
-> +	return err;
-> +}
-
-Wait a sec...  So we have those beasties that can have long-term
-references to arbitrary inodes stuck in them?  What will happen
-if you get umount(2) called while such a thing exists?
+sorry to say, but I don't think the landlock will ever land,
+since posting huge patches once a year is missing a lot of development
+that is happening during that time.
+This 2/10 patch is an example.
+subtype concept was useful 2 years ago when v6 was posted.
+Since then bpf developers faced very similar problem in other parts
+and it was solved with 'expected_attach_type' field.
+See commit 5e43f899b03a ("bpf: Check attach type at prog load time")
+dated March 2018.
