@@ -2,89 +2,66 @@ Return-Path: <SRS0=mxSC=UY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9761C4646B
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 02:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A738C48BD5
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 06:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89B542077C
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 02:51:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01CC520656
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jun 2019 06:04:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730478AbfFYCv4 (ORCPT
+        id S1728838AbfFYGE1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Jun 2019 22:51:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55820 "EHLO mx1.redhat.com"
+        Tue, 25 Jun 2019 02:04:27 -0400
+Received: from namei.org ([65.99.196.166]:47546 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729502AbfFYCv4 (ORCPT
+        id S1726495AbfFYGE1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Jun 2019 22:51:56 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 93E3159473;
-        Tue, 25 Jun 2019 02:51:55 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-89.pek2.redhat.com [10.72.12.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 298936085B;
-        Tue, 25 Jun 2019 02:51:51 +0000 (UTC)
-Date:   Tue, 25 Jun 2019 10:51:48 +0800
-From:   Dave Young <dyoung@redhat.com>
+        Tue, 25 Jun 2019 02:04:27 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x5P64Fvp031584;
+        Tue, 25 Jun 2019 06:04:15 GMT
+Date:   Tue, 25 Jun 2019 16:04:15 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
 To:     Matthew Garrett <mjg59@google.com>
-Cc:     James Morris <jmorris@namei.org>, Jiri Bohac <jbohac@suse.cz>,
-        Linux API <linux-api@vger.kernel.org>,
-        kexec@lists.infradead.org,
+cc:     LSM List <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH V31 07/25] kexec_file: Restrict at runtime if the kernel
- is locked down
-Message-ID: <20190625025148.GA4024@dhcp-128-65.nay.redhat.com>
-References: <20190326182742.16950-1-matthewgarrett@google.com>
- <20190326182742.16950-8-matthewgarrett@google.com>
- <20190621064340.GB4528@localhost.localdomain>
- <CACdnJut=J1YTpM4s6g5XWCEs+=X0Jvf8otfMg+w=_oqSZmf01Q@mail.gmail.com>
- <20190624015206.GB2976@dhcp-128-65.nay.redhat.com>
- <CACdnJusPtYLdg7ZPhBo=Y5EsBz6B+5M2zYscBrLcc89oNnPkdQ@mail.gmail.com>
+        Linux API <linux-api@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Andy Lutomirski <luto@amacapital.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH V34 00/29] Lockdown as an LSM
+In-Reply-To: <CACdnJut2erF9ZKeJQ+uvWZeEnHh=stmEioi_P36DF9mN5i2RGQ@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1906251601430.26271@namei.org>
+References: <20190622000358.19895-1-matthewgarrett@google.com> <alpine.LRH.2.21.1906250853290.7826@namei.org> <CACdnJut2erF9ZKeJQ+uvWZeEnHh=stmEioi_P36DF9mN5i2RGQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACdnJusPtYLdg7ZPhBo=Y5EsBz6B+5M2zYscBrLcc89oNnPkdQ@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 25 Jun 2019 02:51:55 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 06/24/19 at 02:06pm, Matthew Garrett wrote:
-> On Sun, Jun 23, 2019 at 6:52 PM Dave Young <dyoung@redhat.com> wrote:
-> >
-> > On 06/21/19 at 01:18pm, Matthew Garrett wrote:
-> > > I don't think so - we want it to be possible to load images if they
-> > > have a valid signature.
-> >
-> > I know it works like this way because of the previous patch.  But from
-> > the patch log "When KEXEC_SIG is not enabled, kernel should not load
-> > images", it is simple to check it early for !IS_ENABLED(CONFIG_KEXEC_SIG) &&
-> > kernel_is_locked_down(reason, LOCKDOWN_INTEGRITY)  instead of depending
-> > on the late code to verify signature.  In that way, easier to
-> > understand the logic, no?
+On Mon, 24 Jun 2019, Matthew Garrett wrote:
+
+> > We are still not resolved on granularity. Stephen has said he's not sure
+> > if a useful policy can be constructed with just confidentiality and
+> > integrity settings. I'd be interested to know JJ and Casey's thoughts on
+> > lockdown policy flexibility wrt their respective LSMs.
 > 
-> But that combination doesn't enforce signature validation? We can't
-> depend on !IS_ENABLED(CONFIG_KEXEC_SIG_FORCE) because then it'll
-> enforce signature validation even if lockdown is disabled.
+> This implementation provides arbitrary granularity at the LSM level,
+> though the lockdown LSM itself only provides two levels. Other LSMs
+> can choose an appropriate level of exposure.
 
-Ok, got your point. still something could be improved though, in the switch
-chunk, the errno, reason and IS_ENABLED(CONFIG_KEXEC_SIG_FORCE) etc is
-not necessary for this -EPERM case.
+Ahh, OK, I only looked at the patchset description and had not looked at 
+V33 yet.
 
-/* add some comment to describe the behavior */
-if (ret && security_is_locked_down(LOCKDOWN_KEXEC)) {
-	ret = -EPERM;
-	goto out;
-}
+This is looking good.
 
-Thanks
-Dave
+
+-- 
+James Morris
+<jmorris@namei.org>
+
