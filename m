@@ -2,142 +2,96 @@ Return-Path: <SRS0=MGza=UZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C80C48BD6
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 23:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B2DC48BD3
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 23:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E2462177B
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 23:18:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WJRD5u49"
+	by mail.kernel.org (Postfix) with ESMTP id B4329217D8
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 23:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561591718;
+	bh=bvxU9GtnxrSS6JL5vSuxzibwl2B9AdNA5bQBLj2CaHo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=lAmvs+E62spXBmFeJBsW4XtTVUvrpbXXkDKM8sn4qud6XHQtybv2+NczkifmRdmam
+	 p5Ef/ExZHnRHrR9NkbDhrLsMAKi34TcoMLYTf8B7+Dq3g0rqhYiCRpMyN3/r7Soifg
+	 wMFfLn92BuwRxp1KISWiKFPps/4arqMMJQefEkLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726480AbfFZXSo (ORCPT
+        id S1726463AbfFZX2i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jun 2019 19:18:44 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46739 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfFZXSn (ORCPT
+        Wed, 26 Jun 2019 19:28:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47032 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726373AbfFZX2h (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jun 2019 19:18:43 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 81so193295pfy.13
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jun 2019 16:18:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Auv1gZ2zwVP+D3ZI4Wlif+2Ta9NstTGaeKCi/c1Uj+8=;
-        b=WJRD5u49Urd+c7NkvYim0Dw+EA/BnZ1lfX6yvdKm1byizz3TZcYC+vFMqo+DYQ0lT3
-         A2b8k8ZFzaK7X81qmcLTkgvrD+3JCuUQuQ4t4c2xn1L0Do8YfxL1s/da7qa3Qa+6TEmV
-         4HbHkF8hzsNjmuOOrOkWbeoWJrIZP/wbeFjhM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Auv1gZ2zwVP+D3ZI4Wlif+2Ta9NstTGaeKCi/c1Uj+8=;
-        b=tvzxoDNNEqupQn9GUxo8k+jcOX8DWBYu7wQdCK2MGvA4X6ZM6+kVKGoN5ZogP7ItK1
-         Qi3/8VS/WRXFKTyvJemzj7H1jC54ci52UGEAy9g4GcfFXE4VtF4vgTrtgj9v31nmLHr4
-         ExFp9LN1IFqZwajcsxgIcnOvyIKVXm19GwSrtfff0dFAgBhk+b+OsxwFdAtIm44Kkso/
-         zURCtmnXEbTGV6woXYahMTEsf2aDSs4rqm9depQrP7wg6JplIQB+Cmmd/nQjIslaULgv
-         19azGFjxP1pRDSRuTL85D0wjveuByzPqtCDIcLUANrra3rC7I9gFUgnFGT3ggRUj7Jwq
-         gWhA==
-X-Gm-Message-State: APjAAAVHINlAMzucwKUjwpU5hNdSVjwoL5yCsEDpr6vEp2egL2b+KJWM
-        6EClET7Hwbv66ez6BXst1jpLtg==
-X-Google-Smtp-Source: APXvYqzT1ef5AOSa74HAYStW1iBw/jnz2cYBUANujd5vuUQINNj/huUuNFUkyL32re/9iX8Gv6MFkw==
-X-Received: by 2002:a63:60cc:: with SMTP id u195mr486755pgb.13.1561591123268;
-        Wed, 26 Jun 2019 16:18:43 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h18sm335358pfr.75.2019.06.26.16.18.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Jun 2019 16:18:42 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 16:18:41 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, sds@tycho.nsa.gov
-Subject: Re: [PATCH v4 23/23] AppArmor: Remove the exclusive flag
-Message-ID: <201906261618.21261BAEC@keescook>
-References: <20190626192234.11725-1-casey@schaufler-ca.com>
- <20190626192234.11725-24-casey@schaufler-ca.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626192234.11725-24-casey@schaufler-ca.com>
+        Wed, 26 Jun 2019 19:28:37 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11ECE214DA;
+        Wed, 26 Jun 2019 23:28:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561591716;
+        bh=bvxU9GtnxrSS6JL5vSuxzibwl2B9AdNA5bQBLj2CaHo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zmegpjl0RaiGNlS93NVud3hTVj0twmtsxSir+O4KVOYh5+Vxzeaoc1YAvUKF3f2na
+         9F1F4ANmd9ITzobFe0KSzL85XYPqL1ZmzSjigvfJe/ej50so4Sd4RwAxntdbVjEX1/
+         h3edJ8Doi2xX1X0wWnUsOQrr70SVJqduegIQBWf4=
+Date:   Wed, 26 Jun 2019 16:28:35 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marco Elver <elver@google.com>, Qian Cai <cai@lca.pw>,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v8 1/2] mm: security: introduce init_on_alloc=1 and
+ init_on_free=1 boot options
+Message-Id: <20190626162835.0947684d36ef01639f969232@linux-foundation.org>
+In-Reply-To: <20190626121943.131390-2-glider@google.com>
+References: <20190626121943.131390-1-glider@google.com>
+        <20190626121943.131390-2-glider@google.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 26, 2019 at 12:22:34PM -0700, Casey Schaufler wrote:
-> With the inclusion of the "display" process attribute
-> mechanism AppArmor no longer needs to be treated as an
-> "exclusive" security module. Remove the flag that indicates
-> it is exclusive. Remove the stub getpeersec_dgram AppArmor
-> hook as it has no effect in the single LSM case and
-> interferes in the multiple LSM case.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+On Wed, 26 Jun 2019 14:19:42 +0200 Alexander Potapenko <glider@google.com> wrote:
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+>  v8:
+>   - addressed comments by Michal Hocko: revert kernel/kexec_core.c and
+>     apply initialization in dma_pool_free()
+>   - disable init_on_alloc/init_on_free if slab poisoning or page
+>     poisoning are enabled, as requested by Qian Cai
+>   - skip the redzone when initializing a freed heap object, as requested
+>     by Qian Cai and Kees Cook
+>   - use s->offset to address the freeptr (suggested by Kees Cook)
+>   - updated the patch description, added Signed-off-by: tag
 
--Kees
+v8 failed to incorporate 
 
-> ---
->  security/apparmor/lsm.c | 20 +-------------------
->  1 file changed, 1 insertion(+), 19 deletions(-)
-> 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 6d2eefc9b7c1..fb5798683ae1 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1079,22 +1079,6 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
->  	return error;
->  }
->  
-> -/**
-> - * apparmor_socket_getpeersec_dgram - get security label of packet
-> - * @sock: the peer socket
-> - * @skb: packet data
-> - * @secid: pointer to where to put the secid of the packet
-> - *
-> - * Sets the netlabel socket state on sk from parent
-> - */
-> -static int apparmor_socket_getpeersec_dgram(struct socket *sock,
-> -					    struct sk_buff *skb, u32 *secid)
-> -
-> -{
-> -	/* TODO: requires secid support */
-> -	return -ENOPROTOOPT;
-> -}
-> -
->  /**
->   * apparmor_sock_graft - Initialize newly created socket
->   * @sk: child sock
-> @@ -1195,8 +1179,6 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
->  #endif
->  	LSM_HOOK_INIT(socket_getpeersec_stream,
->  		      apparmor_socket_getpeersec_stream),
-> -	LSM_HOOK_INIT(socket_getpeersec_dgram,
-> -		      apparmor_socket_getpeersec_dgram),
->  	LSM_HOOK_INIT(sock_graft, apparmor_sock_graft),
->  #ifdef CONFIG_NETWORK_SECMARK
->  	LSM_HOOK_INIT(inet_conn_request, apparmor_inet_conn_request),
-> @@ -1707,7 +1689,7 @@ static int __init apparmor_init(void)
->  
->  DEFINE_LSM(apparmor) = {
->  	.name = "apparmor",
-> -	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-> +	.flags = LSM_FLAG_LEGACY_MAJOR,
->  	.enabled = &apparmor_enabled,
->  	.blobs = &apparmor_blob_sizes,
->  	.init = apparmor_init,
-> -- 
-> 2.20.1
-> 
+https://ozlabs.org/~akpm/mmots/broken-out/mm-security-introduce-init_on_alloc=1-and-init_on_free=1-boot-options-fix.patch
+and
+https://ozlabs.org/~akpm/mmots/broken-out/mm-security-introduce-init_on_alloc=1-and-init_on_free=1-boot-options-fix-2.patch
 
--- 
-Kees Cook
+it's conventional to incorporate such fixes when preparing a new
+version of a patch.
+
