@@ -2,139 +2,112 @@ Return-Path: <SRS0=MGza=UZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2724FC48BD3
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 22:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1D0C48BD3
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 23:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EED0C214DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 22:50:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 556D62177B
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 23:04:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ClKEuBXT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbfFZWuk (ORCPT
+        id S1726472AbfFZXEq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jun 2019 18:50:40 -0400
-Received: from mga04.intel.com ([192.55.52.120]:27478 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726387AbfFZWuk (ORCPT
+        Wed, 26 Jun 2019 19:04:46 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44456 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbfFZXEq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jun 2019 18:50:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 15:50:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,421,1557212400"; 
-   d="scan'208";a="170209986"
-Received: from mwsinger-mobl3.ger.corp.intel.com ([10.252.48.211])
-  by FMSMGA003.fm.intel.com with ESMTP; 26 Jun 2019 15:50:37 -0700
-Message-ID: <2595b4f6ce49cc3d413c75f86a63ad9d26f0f1fd.camel@linux.intel.com>
-Subject: [GIT PULL] tpmdd updates for Linux v5.3
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, jmorris@namei.org,
-        mjg59@google.com
-Date:   Thu, 27 Jun 2019 01:50:47 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.1-2 
+        Wed, 26 Jun 2019 19:04:46 -0400
+Received: by mail-pf1-f195.google.com with SMTP id t16so182483pfe.11
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Jun 2019 16:04:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=O+unN2ppMz+Lxz0HqVzJ4qMUjsNDCJD0N+sZPuyGAeU=;
+        b=ClKEuBXTKkr+Kl9RmNFHiZKM8QoJsIpNT9BZJOhNj1AHqMy77A+RHPqGWLdSzNtyl0
+         OSz8308toD2AtG3OTLcA/MxuvwQpFlucPmojP8d6UP4FAr/5bSr1qwIWhc8fA0LC03vu
+         ta+j2JRkx7kvMUOwcGM3y+THWoOJscgF89Zn8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=O+unN2ppMz+Lxz0HqVzJ4qMUjsNDCJD0N+sZPuyGAeU=;
+        b=eX84h+MB/j8b7x8GgZFX/WKoYTeW2KYMlIG8IA45lygJlpdS4vZ0ueLe6fEKD7EgQr
+         Qh1/Grsb378Uy++JWOqCX/kZnGyBIHeID/pD5WbrACg2/NH7B+NOHnXGvxUfjOazR0W7
+         CbUBFQV0Pbz1HLcBtMFTDaTU67ARJM3LHpFT7nnb6VbjD1SGqnLXbtt3fX18vYGafPrP
+         dfa0sHeqfIu4628wStnRdi6BrpRFOfwBtpURdi9Brm0Kxqc4ZjKspUQbzZ8v7tF+UA3g
+         oygtkKLFDSbghhtD5iZj5LQolmEdsVSOtOyAmeFFwmMNNWhWLE1hZ3LqdXPyOyU+IF3k
+         jJ1A==
+X-Gm-Message-State: APjAAAWxQjeeIvRAAY6tLLjYKVC/lI9qhwvlz8zr2J6Hbnw/P9U04IT6
+        qiLek/XmeZo8WPFSzCXd27tKyg==
+X-Google-Smtp-Source: APXvYqwuKLw0kIc4ha14kbUR8ZRJlKwgNAQr626qa5CZ7lf898izd/gUEOhmfp2Ok5FMpPuxbKtXzA==
+X-Received: by 2002:a17:90a:3590:: with SMTP id r16mr1944100pjb.44.1561590285922;
+        Wed, 26 Jun 2019 16:04:45 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 125sm325062pfg.23.2019.06.26.16.04.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Jun 2019 16:04:44 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 16:04:43 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        sds@tycho.nsa.gov
+Subject: Re: [PATCH v4 00/23] LSM: Module stacking for AppArmor
+Message-ID: <201906261604.C387F7D7A@keescook>
+References: <20190626192234.11725-1-casey@schaufler-ca.com>
+ <201906261404.451588F@keescook>
+ <47abf84c-208e-3a08-d50b-5d3f51aee271@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <47abf84c-208e-3a08-d50b-5d3f51aee271@canonical.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+On Wed, Jun 26, 2019 at 02:11:23PM -0700, John Johansen wrote:
+> On 6/26/19 2:04 PM, Kees Cook wrote:
+> > On Wed, Jun 26, 2019 at 12:22:11PM -0700, Casey Schaufler wrote:
+> >> This patchset provides the changes required for
+> >> the AppArmor security module to stack safely with any other.
+> >>
+> 
+> 
+> here v
+> 
+> >> Because of the changes to slot handling and the rework of
+> >> "display" I have not included the Reviewed-by tags from the
+> >> previous version.
+> 
+> 
+> >>
+> >> v4: Incorporate feedback from v3
+> >>     - Mark new lsm_<blob>_alloc functions static
+> >>     - Replace the lsm and slot fields of the security_hook_list
+> >>       with a pointer to a LSM allocated lsm_id structure. The
+> >>       LSM identifies if it needs a slot explicitly. Use the
+> >>       lsm_id rather than make security_add_hooks return the
+> >>       slot value.
+> >>     - Validate slot values used in security.c
+> >>     - Reworked the "display" process attribute handling so that
+> >>       it works right and doesn't use goofy list processing.
+> >>     - fix display value check in dentry_init_security
+> >>     - Replace audit_log of secids with '?' instead of deleting
+> >>       the audit log
+> > 
+> > I think you missed adding my and John's Reviewed-bys from v3?
+> > 
+> Casey stated why above
 
-My v5.3 PR contains two critical bug fixes and support for obtaining TPM
-events triggered by ExitBootServices(). For the latter I have to give a
-quite verbose explanation not least because I had to revisit all the
-details myself to remember what was going on in Matthew's patches.
+Oops! Thanks! I skimmed too fast and only read the "v4" log. :P
 
-The preboot software stack maintains an event log that gets entries
-every time something gets hashed to any of the PCR registers. What gets
-hashed could be a component to be run or perhaps log of some actions
-taken just to give couple of coarse examples. In general, anything
-relevant for the boot process that the preboot software does gets hashed
-and a log entry with a specific event type [1].
-
-The main application for this is remote attestation and the reason why
-it is useful is nicely put in the very first section of [1]:
-
-"Attestation is used to provide information about the platform’s state
-to a challenger. However, PCR contents are difficult to interpret;
-therefore, attestation is typically more useful when the PCR contents
-are accompanied by a measurement log. While not trusted on their own,
-the measurement log contains a richer set of information than do the PCR
-contents. The PCR contents are used to provide the validation of the
-measurement log."
-
-Because EFI_TCG2_PROTOCOL.GetEventLog() is not available after calling
-ExitBootServices(), Linux EFI stub copies the event log to a custom
-configuration table. Unfortunately, ExitBootServices() also generates
-events and obviously these events do not get copied to that table.
-Luckily firmware does this for us by providing a configuration table
-identified by EFI_TCG2_FINAL_EVENTS_TABLE_GUID.
-
-This PR essentially contains necessary changes to provide the full
-event log for the use the user space that is concatenated from these
-two partial event logs [2].
-
-[1] 
-https://trustedcomputinggroup.org/resource/pc-client-specific-platform-firmware-profile-specification/
-[2] The final concatenation is done in drivers/char/tpm/eventlog/efi.c
-
-/Jarkko
-
-The following changes since commit c88e40e07cd967dcdf37321a63ab6e8b0d881100:
-
-  Merge tag 'mfd-fixes-5.2-1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd (2019-06-25 03:41:03
-+0800)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20190625
-
-for you to fetch changes up to 166a2809d65b282272c474835ec22c882a39ca1b:
-
-  tpm: Don't duplicate events from the final event log in the TCG2 log (2019-06-
-24 23:57:50 +0300)
-
-----------------------------------------------------------------
-tpmdd updates for Linux v5.3
-
-----------------------------------------------------------------
-Kees Cook (1):
-      tpm: Actually fail on TPM errors during "get random"
-
-Matthew Garrett (6):
-      tpm: Abstract crypto agile event size calculations
-      tpm: Reserve the TPM final events table
-      tpm: Append the final event log to the TPM event log
-      efi: Attempt to get the TCG2 event log in the boot stub
-      Abstract out support for locating an EFI config table
-      tpm: Don't duplicate events from the final event log in the TCG2 log
-
-Vadim Sukhomlinov (1):
-      tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM operations
-
- drivers/char/tpm/eventlog/efi.c                |  59 ++++++++--
- drivers/char/tpm/eventlog/tpm2.c               |  47 +-------
- drivers/char/tpm/tpm-chip.c                    |   6 +-
- drivers/char/tpm/tpm1-cmd.c                    |   7 +-
- drivers/char/tpm/tpm2-cmd.c                    |   7 +-
- drivers/firmware/efi/efi.c                     |   2 +
- drivers/firmware/efi/libstub/efi-stub-helper.c |  15 +++
- drivers/firmware/efi/libstub/efistub.h         |   2 +
- drivers/firmware/efi/libstub/fdt.c             |  27 ++---
- drivers/firmware/efi/libstub/tpm.c             |  80 ++++++++++---
- drivers/firmware/efi/tpm.c                     |  63 +++++++++-
- include/linux/efi.h                            |  10 ++
- include/linux/tpm_eventlog.h                   | 152 +++++++++++++++++++++++++
- 13 files changed, 378 insertions(+), 99 deletions(-)
-
+-- 
+Kees Cook
