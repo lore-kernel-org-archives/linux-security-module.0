@@ -2,146 +2,123 @@ Return-Path: <SRS0=MGza=UZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C6EC48BD3
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 07:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 904BCC4646B
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 08:17:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 338E3208E3
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 07:35:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72764208E3
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 08:17:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfFZHfR (ORCPT
+        id S1726835AbfFZIRJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jun 2019 03:35:17 -0400
-Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:48195 "EHLO
-        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbfFZHfQ (ORCPT
+        Wed, 26 Jun 2019 04:17:09 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33035 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725379AbfFZIRI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:35:16 -0400
-Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
-        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x5Q7XpeS029374
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 09:33:51 +0200
-Received: from ns3096276.ip-94-23-54.eu (ns3096276.ip-94-23-54.eu [94.23.54.103])
-        (authenticated bits=0)
-        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x5Q7XZKl136464
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
-        Wed, 26 Jun 2019 09:33:46 +0200
-Subject: Re: [PATCH bpf-next v9 02/10] bpf: Add eBPF program subtype and
- is_valid_subtype() verifier
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>
-References: <20190625215239.11136-1-mic@digikod.net>
- <20190625215239.11136-3-mic@digikod.net>
- <CAADnVQ+Twio22VSi21RR5TY1Zm-1xRTGmREcXLSs5Jv-KWGTiw@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Openpgp: preference=signencrypt
-Message-ID: <1b87e170-0779-fad0-f623-8cf677843338@digikod.net>
-Date:   Wed, 26 Jun 2019 09:33:35 +0200
-User-Agent: 
+        Wed, 26 Jun 2019 04:17:08 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id D7F66B43525032CA199F;
+        Wed, 26 Jun 2019 09:17:05 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 26 Jun
+ 2019 09:16:57 +0100
+Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Rob Landley <rob@landley.net>, <viro@zeniv.linux.org.uk>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
+        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
+        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
+        <kamensky@cisco.com>, <hpa@zytor.com>, <arnd@arndb.de>,
+        <james.w.mcmechan@gmail.com>, <niveditas98@gmail.com>
+References: <20190523121803.21638-1-roberto.sassu@huawei.com>
+ <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
+ <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
+Date:   Wed, 26 Jun 2019 10:15:10 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAADnVQ+Twio22VSi21RR5TY1Zm-1xRTGmREcXLSs5Jv-KWGTiw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 26/06/2019 01:02, Alexei Starovoitov wrote:
-> On Tue, Jun 25, 2019 at 3:04 PM Mickaël Salaün <mic@digikod.net> wrote:
+On 6/3/2019 8:32 PM, Rob Landley wrote:
+> On 6/3/19 4:31 AM, Roberto Sassu wrote:
+>>> This patch set aims at solving the following use case: appraise files from
+>>> the initial ram disk. To do that, IMA checks the signature/hash from the
+>>> security.ima xattr. Unfortunately, this use case cannot be implemented
+>>> currently, as the CPIO format does not support xattrs.
+>>>
+>>> This proposal consists in including file metadata as additional files named
+>>> METADATA!!!, for each file added to the ram disk. The CPIO parser in the
+>>> kernel recognizes these special files from the file name, and calls the
+>>> appropriate parser to add metadata to the previously extracted file. It has
+>>> been proposed to use bit 17:16 of the file mode as a way to recognize files
+>>> with metadata, but both the kernel and the cpio tool declare the file mode
+>>> as unsigned short.
 >>
->> The goal of the program subtype is to be able to have different static
->> fine-grained verifications for a unique program type.
+>> Any opinion on this patch set?
 >>
->> The struct bpf_verifier_ops gets a new optional function:
->> is_valid_subtype(). This new verifier is called at the beginning of the
->> eBPF program verification to check if the (optional) program subtype is
->> valid.
+>> Thanks
 >>
->> The new helper bpf_load_program_xattr() enables to verify a program with
->> subtypes.
->>
->> For now, only Landlock eBPF programs are using a program subtype (see
->> next commits) but this could be used by other program types in the
->> future.
->>
->> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->> Cc: Alexei Starovoitov <ast@kernel.org>
->> Cc: Daniel Borkmann <daniel@iogearbox.net>
->> Cc: David S. Miller <davem@davemloft.net>
->> Link: https://lkml.kernel.org/r/20160827205559.GA43880@ast-mbp.thefacebook.com
->> ---
->>
->> Changes since v8:
->> * use bpf_load_program_xattr() instead of bpf_load_program() and add
->>   bpf_verify_program_xattr() to deal with subtypes
->> * remove put_extra() since there is no more "previous" field (for now)
->>
->> Changes since v7:
->> * rename LANDLOCK_SUBTYPE_* to LANDLOCK_*
->> * move subtype in bpf_prog_aux and use only one bit for has_subtype
->>   (suggested by Alexei Starovoitov)
+>> Roberto
 > 
-> sorry to say, but I don't think the landlock will ever land,
-> since posting huge patches once a year is missing a lot of development
-> that is happening during that time.
+> Sorry, I've had the window open since you posted it but haven't gotten around to
+> it. I'll try to build it later today.
+> 
+> It does look interesting, and I have no objections to the basic approach. I
+> should be able to add support to toybox cpio over a weekend once I've got the
+> kernel doing it to test against.
 
-You're right that it's been a while since the last patch set, but the
-main reasons behind this was a lack of feedback (probably because of the
-size of the patch set, which is now reduce to a consistent minimum), the
-rework needed to address everyone's concern (Landlock modify kernel
-components from different maintainers), and above all, the LSM stacking
-infrastructure which was quite beefy and then took some time to land:
-https://lore.kernel.org/lkml/50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com/
-This stacking infrastructure was required to have a useful version of
-Landlock (which is used as a use case example), and it was released with
-Linux v5.1 (last month). Now, I think everything is finally ready to
-move forward.
+Ok.
 
-> This 2/10 patch is an example.
-> subtype concept was useful 2 years ago when v6 was posted.
-> Since then bpf developers faced very similar problem in other parts
-> and it was solved with 'expected_attach_type' field.
-> See commit 5e43f899b03a ("bpf: Check attach type at prog load time")
-> dated March 2018.
+Let me give some instructions so that people can test this patch set.
 
-I saw this nice feature but I wasn't sure if it was the right field to
-use. Indeed, I need more than a "type", but also some values (triggers)
-as shown by this patch. What do you suggest?
+To add xattrs to the ram disk embedded in the kernel it is sufficient
+to set CONFIG_INITRAMFS_FILE_METADATA="xattr" and
+CONFIG_INITRAMFS_SOURCE="<file with xattr>" in the kernel configuration.
+
+To add xattrs to the external ram disk, it is necessary to patch cpio:
+
+https://github.com/euleros/cpio/commit/531cabc88e9ecdc3231fad6e4856869baa9a91ef 
+(xattr-v1 branch)
+
+and dracut:
+
+https://github.com/euleros/dracut/commit/a2dee56ea80495c2c1871bc73186f7b00dc8bf3b 
+(digest-lists branch)
+
+The same modification can be done for mkinitramfs (add '-e xattr' to the
+cpio command line).
+
+To simplify the test, it would be sufficient to replace only the cpio
+binary and the dracut script with the modified versions. For dracut, the
+patch should be applied to the local dracut (after it has been renamed
+to dracut.sh).
+
+Then, run:
+
+dracut -e xattr -I <file with xattr> (add -f to overwrite the ram disk)
+
+Xattrs can be seen by stopping the boot process for example by adding
+rd.break to the kernel command line.
+
+Roberto
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
