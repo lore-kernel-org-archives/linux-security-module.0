@@ -2,170 +2,164 @@ Return-Path: <SRS0=MGza=UZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B71C48BD3
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 12:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3C4C48BD9
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 12:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB6320B1F
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 12:27:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LA9vnejy"
+	by mail.kernel.org (Postfix) with ESMTP id 1751E2147A
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jun 2019 12:50:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbfFZM1K (ORCPT
+        id S1727139AbfFZMur (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jun 2019 08:27:10 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:38236 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbfFZM1K (ORCPT
+        Wed, 26 Jun 2019 08:50:47 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:36394 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726104AbfFZMur (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:27:10 -0400
-Received: by mail-vs1-f66.google.com with SMTP id k9so1440876vso.5
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jun 2019 05:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6kfkIhuHoPIjfMfVB0Ztiwt1Me6klHBycZVbDOiK0gk=;
-        b=LA9vnejysG80LoRMNK06zRKNClzSYlPIdhO2BG8R5WimhgksbZNGFBE1+GUiQLEifw
-         eagA1Ss7o118bXvq49QRHs+qJqELP+XQixvQAYDIsNY3C8BcfX7mpLNtT8ORoVLO0I87
-         c0MDtIeXo60EqlRh1gnyMvvuq9qf0CzKX64dtRn0ifZI4hXXE0kqy16Q5v4HugyKWeK2
-         UuwCITTAl5UFtiD9Rs4b/geol+F+Nyj5TAz6c5zFvVJKZYPyKWMPY2Z6T+8dQC+CzHVK
-         xBAsf8dcoFTgafsDg4Thp/2Chqjg9t5WhkYXBT/PqOpgZF0AEy8MdUMfUE56k+QPMpzj
-         VlTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6kfkIhuHoPIjfMfVB0Ztiwt1Me6klHBycZVbDOiK0gk=;
-        b=h8B4qTY5IwwKzniUl4S60Xx5O784Of7tdb4v24KKPKg4Qv7KDDdOZwCrl4mAkWV9iV
-         uwVyX/Fw/yxfIAWWA+AVGGR9t5d1F2UEIzeK6wvcyaF+nxRYqB/rqEAdRJQGCSakVt22
-         gKFunABfpDjrPrsIIypG86sIdKCary1dssshzK5IHl7mKzhnhJU/6XXhrP/7/xSJoJsG
-         k8htWDtvNAX9x30V3XonuKtDP54iiL+JXs9+ioOpMmJx54IZBZOxJu/SYYGHw2gXnrNb
-         HvFvr4j0hVurWmFeF5BhuxGaBk7XZyNzdXmt5Y1VCJ7tzqrzLgJ3sR4rqsk/0W6aQoaO
-         MhbQ==
-X-Gm-Message-State: APjAAAXY0vZ5bPwSylkkTf5HAj+Xuvmcrtc2h+ZAmVJeaDRJUfxNWgW4
-        zeZDMh7kz3n+YjABoGtR6OHr9pqFJnq8w4zaGoGJiw==
-X-Google-Smtp-Source: APXvYqzFVn7+Sobi3957YqMqzgXYiYzf1aj+EhLLCRNEuqntRTM8bUrv2ro9eKC8ad0q35LYmIjx6cO3FPMvsDikbes=
-X-Received: by 2002:a67:11c1:: with SMTP id 184mr2733987vsr.217.1561552028933;
- Wed, 26 Jun 2019 05:27:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190626121943.131390-1-glider@google.com>
-In-Reply-To: <20190626121943.131390-1-glider@google.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Wed, 26 Jun 2019 14:26:57 +0200
-Message-ID: <CAG_fn=V5o-wt5PQ4LSarpXrEGfbrdbtSFqOOag=nmMrxf4gfnA@mail.gmail.com>
-Subject: Re: [PATCH v8 0/3] add init_on_alloc/init_on_free boot options
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Hocko <mhocko@kernel.org>,
+        Wed, 26 Jun 2019 08:50:47 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x5QCnw2O020449;
+        Wed, 26 Jun 2019 07:49:58 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x5QCnvFQ020448;
+        Wed, 26 Jun 2019 07:49:57 -0500
+Date:   Wed, 26 Jun 2019 07:49:57 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org,
+        Bill Roberts <william.c.roberts@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marco Elver <elver@google.com>, Qian Cai <cai@lca.pw>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>
+Subject: Re: [RFC PATCH v4 08/12] security/selinux: Require SGX_MAPWX to map enclave page WX
+Message-ID: <20190626124957.GA20130@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com> <20190619222401.14942-9-sean.j.christopherson@intel.com> <119f6de8-e7b6-6ebd-be12-862303806ea7@tycho.nsa.gov>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <119f6de8-e7b6-6ebd-be12-862303806ea7@tycho.nsa.gov>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 26 Jun 2019 07:49:58 -0500 (CDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 26, 2019 at 2:19 PM Alexander Potapenko <glider@google.com> wro=
-te:
->
-> Provide init_on_alloc and init_on_free boot options.
-akpm: May I kindly ask you to replace the two patches from this series
-in the -mm tree with their newer versions?
+On Tue, Jun 25, 2019 at 04:19:35PM -0400, Stephen Smalley wrote:
 
-> These are aimed at preventing possible information leaks and making the
-> control-flow bugs that depend on uninitialized values more deterministic.
->
-> Enabling either of the options guarantees that the memory returned by the
-> page allocator and SL[AU]B is initialized with zeroes.
-> SLOB allocator isn't supported at the moment, as its emulation of kmem
-> caches complicates handling of SLAB_TYPESAFE_BY_RCU caches correctly.
->
-> Enabling init_on_free also guarantees that pages and heap objects are
-> initialized right after they're freed, so it won't be possible to access
-> stale data by using a dangling pointer.
->
-> As suggested by Michal Hocko, right now we don't let the heap users to
-> disable initialization for certain allocations. There's not enough
-> evidence that doing so can speed up real-life cases, and introducing
-> ways to opt-out may result in things going out of control.
->
-> To: Andrew Morton <akpm@linux-foundation.org>
-> To: Christoph Lameter <cl@linux.com>
-> To: Kees Cook <keescook@chromium.org>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Cc: Kostya Serebryany <kcc@google.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Sandeep Patil <sspatil@android.com>
-> Cc: Laura Abbott <labbott@redhat.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Qian Cai <cai@lca.pw>
-> Cc: linux-mm@kvack.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: kernel-hardening@lists.openwall.com
->
-> Alexander Potapenko (2):
->   mm: security: introduce init_on_alloc=3D1 and init_on_free=3D1 boot
->     options
->   mm: init: report memory auto-initialization features at boot time
->
->  .../admin-guide/kernel-parameters.txt         |  9 +++
->  drivers/infiniband/core/uverbs_ioctl.c        |  2 +-
->  include/linux/mm.h                            | 22 ++++++
->  init/main.c                                   | 24 +++++++
->  mm/dmapool.c                                  |  4 +-
->  mm/page_alloc.c                               | 71 +++++++++++++++++--
->  mm/slab.c                                     | 16 ++++-
->  mm/slab.h                                     | 19 +++++
->  mm/slub.c                                     | 43 +++++++++--
->  net/core/sock.c                               |  2 +-
->  security/Kconfig.hardening                    | 29 +++++++++
->  12 files changed, 204 insertions(+), 19 deletions(-)
-> ---
->  v3: dropped __GFP_NO_AUTOINIT patches
->  v5: dropped support for SLOB allocator, handle SLAB_TYPESAFE_BY_RCU
->  v6: changed wording in boot-time message
->  v7: dropped the test_meminit.c patch (picked by Andrew Morton already),
->      minor wording changes
->  v8: fixes for interoperability with other heap debugging features
-> --
-> 2.22.0.410.gd8fdbe21b5-goog
->
+Good morning, I hope the week is going well for everyone.
 
+> On 6/19/19 6:23 PM, Sean Christopherson wrote:
+> >Hook enclave_map() to require a new per-process capability, SGX_MAPWX,
+> >when mapping an enclave as simultaneously writable and executable.
+> >Note, @prot contains the actual protection bits that will be set by the
+> >kernel, not the maximal protection bits specified by userspace when the
+> >page was first loaded into the enclave.
+> >
+> >Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> >---
+> >  security/selinux/hooks.c            | 21 +++++++++++++++++++++
+> >  security/selinux/include/classmap.h |  3 ++-
+> >  2 files changed, 23 insertions(+), 1 deletion(-)
+> >
+> >diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> >index 3ec702cf46ca..fc239e541b62 100644
+> >--- a/security/selinux/hooks.c
+> >+++ b/security/selinux/hooks.c
+> >@@ -6726,6 +6726,23 @@ static void selinux_bpf_prog_free(struct 
+> >bpf_prog_aux *aux)
+> >  }
+> >  #endif
+> >  
+> >+#ifdef CONFIG_INTEL_SGX
+> >+static int selinux_enclave_map(unsigned long prot)
+> >+{
+> >+	const struct cred *cred = current_cred();
+> >+	u32 sid = cred_sid(cred);
+> >+
+> >+	/* SGX is supported only in 64-bit kernels. */
+> >+	WARN_ON_ONCE(!default_noexec);
+> >+
+> >+	if ((prot & PROT_EXEC) && (prot & PROT_WRITE))
+> >+		return avc_has_perm(&selinux_state, sid, sid,
+> >+				    SECCLASS_PROCESS2, PROCESS2__SGX_MAPWX,
+> >+				    NULL);
 
---=20
-Alexander Potapenko
-Software Engineer
+> Possibly we should use a slightly more general name for the
+> permission to allow reusing it in the future if/when another
+> architecture introduces a similar construct under a different
+> branding?  ENCLAVE_* seems slightly more generic than SGX_*.
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
+Perhaps TEE_*, since it is generic and expresses the notion of
+privileges specific to an alternate execution environment.
 
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+> I was interested in testing this code but sadly the driver reports
+> the following on my development workstation:
+>
+> [    1.644191] sgx: The launch control MSRs are not writable
+> [    1.695477] sgx: EPC section 0x70200000-0x75f7ffff
+> [    1.771760] sgx: The public key MSRs are not writable
+>
+> I guess I'm out of luck until/unless I get a NUC or server class
+> hardware that supports flexible launch control?  Seems developer
+> unfriendly.
+
+Indeed.
+
+Most importantly, it is decidedly unfriendly to the future of the
+technology on Linux.
+
+More problematically, from a development perspective, the driver is
+incompatible with the current Intel runtime, which makes testing at a
+level beyond the one page test harness that is included with the
+patchset impossible.
+
+As I noted previously, before the LSM discussion, we have a patch that
+addresses the compatibility, security and launch control issues the
+original version of the driver had.  If you missed the thread, it is
+available from the following URL:
+
+ftp://ftp.idfusion.net/pub/idfusion/jarkko-master-SFLC.patch
+
+It will be a bit dated by now and doesn't address the API change
+needed to set page permissions.  It is a pretty solid starting point
+if you want to use the existing runtime to do more then trivial
+testing.
+
+We have an extension to the existing driver that we will be releasing,
+so users of our SRDE will be able to use both the out-of-tree and
+in-tree drivers.  It also re-establishes launch control and provides a
+very simplistic interface to implement ring-0 security for launch
+control on flexible launch control platforms.
+
+I'm in Israel right now but we should have a GIT tree against the
+current development branches by the weekend.  We will be testing the
+driver with our SRDE against real world enclaves as we advance the
+driver forward.
+
+Have a good day.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker
+IDfusion, LLC
+4206 N. 19th Ave.           Implementing measured information privacy
+Fargo, ND  58102            and integrity architectures.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: greg@idfusion.net
+------------------------------------------------------------------------------
+"This place is so screwed up.  It's just like the Titanic, only
+ we don't even have a band playing.
+                                -- Terrance George Wieland
+                                   Resurrection.
