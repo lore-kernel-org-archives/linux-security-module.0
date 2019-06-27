@@ -2,216 +2,106 @@ Return-Path: <SRS0=lnE7=U2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF12C5B54D
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 22:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D93CC4321A
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 23:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 619BF208CB
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 22:52:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40B9020B7C
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 23:16:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p+RXdIQ9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbfF0WwN (ORCPT
+        id S1726653AbfF0XQu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jun 2019 18:52:13 -0400
-Received: from mga12.intel.com ([192.55.52.136]:15209 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726506AbfF0WwN (ORCPT
+        Thu, 27 Jun 2019 19:16:50 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44517 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726646AbfF0XQu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jun 2019 18:52:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 15:52:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,425,1557212400"; 
-   d="scan'208";a="173292514"
-Received: from orsmsx101.amr.corp.intel.com ([10.22.225.128])
-  by orsmga002.jf.intel.com with ESMTP; 27 Jun 2019 15:52:11 -0700
-Received: from orsmsx151.amr.corp.intel.com (10.22.226.38) by
- ORSMSX101.amr.corp.intel.com (10.22.225.128) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 27 Jun 2019 15:52:10 -0700
-Received: from orsmsx116.amr.corp.intel.com ([169.254.7.97]) by
- ORSMSX151.amr.corp.intel.com ([169.254.7.71]) with mapi id 14.03.0439.000;
- Thu, 27 Jun 2019 15:52:10 -0700
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-CC:     "Schaufler, Casey" <casey.schaufler@intel.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "greg@enjellic.com" <greg@enjellic.com>,
-        "sds@tycho.nsa.gov" <sds@tycho.nsa.gov>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Subject: RE: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
-Thread-Topic: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
-Thread-Index: AQHVLG/L9SgvyZq9qEim/LcvveBd6KawhbyA//+RRaA=
-Date:   Thu, 27 Jun 2019 22:52:10 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F6551B8D7@ORSMSX116.amr.corp.intel.com>
-References: <cover.1561588012.git.cedric.xing@intel.com>
- <72420cff8fa944b64e57df8d25c63bd30f8aacfa.1561588012.git.cedric.xing@intel.com>
- <b08798a5-65f7-f96e-1c04-39dd0e60c114@schaufler-ca.com>
-In-Reply-To: <b08798a5-65f7-f96e-1c04-39dd0e60c114@schaufler-ca.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTJiOWQ2OTItODcyYS00MGJjLWIwMTAtMTIzZjhmMzljMTJjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoidGtHWlo4djh1d1lEbVpQYVY3dXZveWVkN2dnQjBEZFhmVnRLMGJcL2pEVitOenBVOFlOYW11RFRCZ09ueU1TbnQifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 27 Jun 2019 19:16:50 -0400
+Received: by mail-io1-f65.google.com with SMTP id s7so8471644iob.11
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Jun 2019 16:16:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=l09Vp/UFzjV2DgL5GelYaPoe+l0vquG8kvrDE5UvKZ4=;
+        b=p+RXdIQ9LdOUo9HMqEjolw7nVtxtU9esOCN/xbbHp1vRG8hYQOlh+KveY/OvRL2Dk7
+         /Sgzz0KeR4Q8yEuZM0OMJsjc+IHH6W0vlWIS3We0QKUMy4r+wXV5mzL2CMPPpLc7MU9E
+         nihwmXvu6kxkmZt0zF2OFHwzLYMt8EvlDQloKxfK9UTQjiLCOEDnBHLWTpVh4ebm7DTR
+         hDzQbz5nPxZ7KW9nhlq+/LEYTqO7mykeJsKaUKHQyCEvYsRyiOdQE8mlaeXkmO67/htL
+         TDe4QO4KlswqnZf5MQ5sqfIuXUvKtpXkOiBvmW4yjA4YOlbbldqAB3GGpBkkLZGRuWDY
+         Mefg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l09Vp/UFzjV2DgL5GelYaPoe+l0vquG8kvrDE5UvKZ4=;
+        b=rONkCdBmr6ZB6GpFY8uSlOlAY0XfnxZDoxSv+7YAGmrJuvmpfQgYoyZrW4P2pMj/pN
+         4XsTjI7QTP5e3qNR6ZtndA4ja8hAIJsNY11xrw6mYQz2zNN1h9cKSTnZw4k51xt+DcKC
+         08iHBnu7Ct0pLtbh6PL2LLj+IV4cWCzd/rlxrlSZVS2IBUD3yFP4MyFmikzWqWOM9A1L
+         W0YZAZ2JsuT43pI7/dvD+NEajEq8Jmvi489UR5pXbfb0kF2DQsij1CKrgfJ99R5dzQBl
+         QCbleC6EZDdpDlzwW4ed1XDLWPf3wpzz1gEND45nvyilkX7bWhu7lu2QrOVtbDFus61e
+         yFhg==
+X-Gm-Message-State: APjAAAWQaLVUVFGTii3yRn54cGJLUMAgPycMBcMuvYRBaDv3eF/HluEC
+        gMbRVT3IuIq9Qcpn6zwSjcGDt56BMwI4SK80wTfSAw==
+X-Google-Smtp-Source: APXvYqwhWpwuqv8JIHwubX3lZlHutL4a69xEX/nsI5R2vEJeO+7JbyaxQ07hwkqSiA02QGSjTt+drzLx9imS1tYMhQw=
+X-Received: by 2002:a02:ab99:: with SMTP id t25mr7575038jan.113.1561677408975;
+ Thu, 27 Jun 2019 16:16:48 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190621011941.186255-1-matthewgarrett@google.com>
+ <20190621011941.186255-25-matthewgarrett@google.com> <CALCETrVUwQP7roLnW6kFG80Cc5U6X_T6AW+BTAftLccYGp8+Ow@mail.gmail.com>
+ <alpine.LRH.2.21.1906270621080.28132@namei.org> <6E53376F-01BB-4795-BC02-24F9CAE00001@amacapital.net>
+ <bce70c8b-9efd-6362-d536-cfbbcf70b0b7@tycho.nsa.gov> <alpine.LRH.2.21.1906280332500.17363@namei.org>
+ <de8b15eb-ba6c-847a-7435-42742203d4a5@tycho.nsa.gov>
+In-Reply-To: <de8b15eb-ba6c-847a-7435-42742203d4a5@tycho.nsa.gov>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Thu, 27 Jun 2019 16:16:36 -0700
+Message-ID: <CACdnJuuG8cR7h9v3pNcBKsxyckAzpKuBJs1GQxsz77jk5DRoQA@mail.gmail.com>
+Subject: Re: [PATCH V33 24/30] bpf: Restrict bpf when kernel lockdown is in
+ confidentiality mode
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     James Morris <jmorris@namei.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        linux-security@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Chun-Yi Lee <jlee@suse.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-SGkgQ2FzZXksDQoNCj4gRnJvbTogQ2FzZXkgU2NoYXVmbGVyIFttYWlsdG86Y2FzZXlAc2NoYXVm
-bGVyLWNhLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIEp1bmUgMjcsIDIwMTkgMzowNyBQTQ0KPiAN
-Cj4gRG9uJ3QgdXNlICJsc21fZW1hIi4gVGhpcyBpc24ndCBMU00gaW5mcmFzdHJ1Y3R1cmUuDQo+
-IFRocmVlIGxldHRlciBhYmJyZXZpYXRpb25zIGFyZSBlYXN5IHRvIHR5cGUsIGJ1dCBhcmUgZG9v
-bWVkIHRvIGVuY291bnRlcg0KPiBjb25mbGljdHMgYW5kIGxlYWQgdG8gY29uZnVzaW9uLg0KPiBJ
-IHN1Z2dlc3QgdGhhdCB5b3UgdXNlICJlbmNsYXZlIiwgYmVjYXVzZSBpdCBkb2Vzbid0IHN0YXJ0
-IG9mZg0KPiBjb25mbGljdGluZyB3aXRoIGFueXRoaW5nIGFuZCBpcyBkZXNjcmlwdGl2ZS4NCj4g
-DQo+IFRoaXMgY29kZSBzaG91bGQgbm90IGJlIG1peGVkIGluIHdpdGggdGhlIExTTSBpbmZyYXN0
-cnVjdHVyZS4NCj4gSXQgc2hvdWxkIGFsbCBiZSBjb250YWluZWQgaW4gaXRzIG93biBtb2R1bGUs
-IHVuZGVyIHNlY3VyaXR5L2VuY2xhdmUuDQoNCmxzbV9lbWEgaXMgKmludGVuZGVkKiB0byBiZSBw
-YXJ0IG9mIHRoZSBMU00gaW5mcmFzdHJ1Y3R1cmUuIEl0IGlzIGdvaW5nIHRvIGJlIHNoYXJlZCBh
-bW9uZyBhbGwgTFNNcyB0aGF0IHdvdWxkIGxpa2UgdG8gdHJhY2sgZW5jbGF2ZSBwYWdlcyBhbmQg
-dGhlaXIgb3JpZ2lucy4gQW5kIHRoZXkgY291bGQgYmUgZXh0ZW5kZWQgdG8gc3RvcmUgbW9yZSBp
-bmZvcm1hdGlvbiBhcyBkZWVtZWQgYXBwcm9wcmlhdGUgYnkgdGhlIExTTSBtb2R1bGUuIFRoZSBs
-YXN0IHBhdGNoIG9mIHRoaXMgc2VyaWVzIHNob3dzIGhvdyB0byBleHRlbmQgRU1BIGluc2lkZSBT
-RUxpbnV4Lg0KDQo+IA0KPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2xzbV9lbWEuaCBi
-L2luY2x1ZGUvbGludXgvbHNtX2VtYS5oIG5ldw0KPiA+IGZpbGUgbW9kZSAxMDA2NDQgaW5kZXgg
-MDAwMDAwMDAwMDAwLi5hMDliOGY5NmRhMDUNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIv
-aW5jbHVkZS9saW51eC9sc21fZW1hLmgNCj4gDQo+IFRoZXJlJ3Mgbm8gbmVlZCBmb3IgdGhpcyBo
-ZWFkZXIgdG8gYmUgdXNlZCBvdXRzaWRlIHRoZSBlbmNsYXZlDQo+IExTTS4gSXQgc2hvdWxkIGJl
-ICJzZWN1cml0eS9lbmNsYXZlL2VuY2xhdmUuaCINCg0KVGhpcyBoZWFkZXIgZmlsZSBpcyBzdXBw
-b3NlZCB0byBiZSB1c2VkIGJ5IGFsbCBMU00gbW9kdWxlcywgc2ltaWxhciB0byBsc21faG9va3Mu
-aC4gSGVuY2UgaXQgaXMgcGxhY2VkIGluIHRoZSBzYW1lIGxvY2F0aW9uLg0KDQo+IA0KPiANCj4g
-PiBAQCAtMCwwICsxLDE3MSBAQA0KPiA+ICsvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogKEdQ
-TC0yLjAgT1IgQlNELTMtQ2xhdXNlKSAqLw0KPiA+ICsvKioNCj4gPiArICogRW5jbGF2ZSBNZW1v
-cnkgQXJlYSBpbnRlcmZhY2UgZm9yIExTTSBtb2R1bGVzDQo+ID4gKyAqDQo+ID4gKyAqIENvcHly
-aWdodChjKSAyMDE2LTE5IEludGVsIENvcnBvcmF0aW9uLg0KPiA+ICsgKi8NCj4gPiArDQo+ID4g
-KyNpZm5kZWYgX0xTTV9FTUFfSF8NCj4gPiArI2RlZmluZSBfTFNNX0VNQV9IXw0KPiA+ICsNCj4g
-PiArI2luY2x1ZGUgPGxpbnV4L2xpc3QuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L211dGV4Lmg+
-DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9mcy5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvZmlsZS5o
-Pg0KPiA+ICsNCj4gPiArLyoqDQo+ID4gKyAqIGxzbV9lbWEgLSBMU00gRW5jbGF2ZSBNZW1vcnkg
-QXJlYSBzdHJ1Y3R1cmUNCj4gDQo+IEhvdyBhYm91dCBzL2xzbV9lbWEvZW5jbGF2ZS8gPw0KDQpJ
-IHVuZGVyc3RhbmQgeW91ciBzdWdnZXN0aW9uLCBidXQgdGhpcyBzdHJ1Y3R1cmUgaXMgc2hhcmVk
-IGFtb25nIGFsbCBMU01zLiBBbmQgSSB0aGluayBsc21fZW1hIGlzIHByZXR0eSBkZXNjcmlwdGl2
-ZSB3aXRob3V0IGJlaW5nIHRvbyB2ZXJib3NlLg0KDQo+IA0KPiA+ICsgKg0KPiA+ICsgKiBEYXRh
-IHN0cnVjdHVyZSB0byB0cmFjayBvcmlnaW5zIG9mIGVuY2xhdmUgcGFnZXMNCj4gPiArICoNCj4g
-PiArICogQGxpbms6DQo+ID4gKyAqCUxpbmsgdG8gYWRqYWNlbnQgRU1Bcy4gRU1BcyBhcmUgc29y
-dGVkIGJ5IHRoZWlyIGFkZHJlc3NlcyBpbg0KPiBhc2NlbmRpbmcNCj4gPiArICoJb3JkZXINCj4g
-PiArICogQHN0YXJ0Og0KPiA+ICsgKglTdGFydGluZyBhZGRyZXNzDQo+ID4gKyAqIEBlbmQ6DQo+
-ID4gKyAqCUVuZGluZyBhZGRyZXNzDQo+ID4gKyAqIEBzb3VyY2U6DQo+ID4gKyAqCUZpbGUgZnJv
-bSB3aGljaCB0aGlzIHJhbmdlIHdhcyBsb2FkZWQgZnJvbSwgb3IgTlVMTCBpZiBub3QgbG9hZGVk
-DQo+IGZyb20NCj4gPiArICoJYW55IGZpbGVzDQo+ID4gKyAqLw0KPiA+ICtzdHJ1Y3QgbHNtX2Vt
-YSB7DQo+ID4gKwlzdHJ1Y3QgbGlzdF9oZWFkCWxpbms7DQo+ID4gKwlzaXplX3QJCQlzdGFydDsN
-Cj4gPiArCXNpemVfdAkJCWVuZDsNCj4gPiArCXN0cnVjdCBmaWxlCQkqc291cmNlOw0KPiA+ICt9
-Ow0KPiA+ICsNCj4gPiArI2RlZmluZSBsc21fZW1hX2RhdGEoZW1hLCBibG9iX3NpemVzKQlcDQo+
-ID4gKwkoKGNoYXIgKikoKHN0cnVjdCBsc21fZW1hICopKGVtYSkgKyAxKSArIGJsb2Jfc2l6ZXMu
-bGJzX2VtYV9kYXRhKQ0KPiANCj4gV2hvIHVzZXMgdGhpcz8gVGhlIGVuY2xhdmUgTFNNPyBDb252
-ZW50aW9uIHdvdWxkIGhhdmUgdGhpcw0KPiBiZSBzZWxpbnV4X2VuY2xhdmUoZW1hKSBmb3IgdGhl
-IFNFTGludXggY29kZS4gVGhpcyBpcw0KPiBpbmNvbnNpc3RlbnQgd2l0aCB0aGUgd2F5IG90aGVy
-IGJsb2JzIGFyZSBoYW5kbGVkLg0KDQpUaGlzIGlzIHRvIGJlIHVzZWQgaW4gdmFyaW91cyBMU01z
-LiBBcyB5b3UgY2FuIHNlZSBpbiB0aGUgbGFzdCBwYXRjaCBvZiB0aGlzIHNlcmllcywgc2VsaW51
-eF9lbWEoKSBpcyBkZWZpbmVkIGFzIGEgd3JhcHBlciBvZiB0aGlzIG1hY3JvLg0KDQo+IA0KPiA+
-ICsNCj4gPiArLyoqDQo+ID4gKyAqIGxzbV9lbWFfbWFwIC0gTFNNIEVuY2xhdmUgTWVtb3J5IE1h
-cCBzdHJ1Y3R1cmUNCj4gDQo+IGVuY2xhdmVfbWFwDQo+IA0KPiA+ICsgKg0KPiA+ICsgKiBDb250
-YWluZXIgZm9yIEVNQXMgb2YgYW4gZW5jbGF2ZQ0KPiA+ICsgKg0KPiA+ICsgKiBAbGlzdDoNCj4g
-PiArICoJSGVhZCBvZiBhIGxpc3Qgb2Ygc29ydGVkIEVNQXMNCj4gPiArICogQGxvY2s6DQo+ID4g
-KyAqCUFjcXVpcmUgYmVmb3JlIHF1ZXJ5aW5nL3VwZGF0ZWluZyB0aGUgbGlzdCBFTUFzDQo+ID4g
-KyAqLw0KPiA+ICtzdHJ1Y3QgbHNtX2VtYV9tYXAgew0KPiA+ICsJc3RydWN0IGxpc3RfaGVhZAls
-aXN0Ow0KPiA+ICsJc3RydWN0IG11dGV4CQlsb2NrOw0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArLyoq
-DQo+ID4gKyAqIFRoZXNlIGFyZSBmdW5jdGlvbnMgdG8gYmUgdXNlZCBieSB0aGUgTFNNIGZyYW1l
-d29yaywgYW5kIG11c3QgYmUNCj4gZGVmaW5lZA0KPiA+ICsgKiByZWdhcmRsZXNzIENPTkZJR19J
-TlRFTF9TR1ggaXMgZW5hYmxlZCBvciBub3QuDQo+IA0KPiBOb3QgYWNjZXB0YWJsZSBmb3IgdGhl
-IExTTSBpbmZyYXN0cnVjdHVyZS4gVGhleQ0KPiBhcmUgaW5jb25zaXN0ZW50IHdpdGggdGhlIHdh
-eSBkYXRhIGlzIHVzZWQgdGhlcmUuDQoNCkknbSBub3Qgc3VyZSBJIHVuZGVyc3RhbmQgdGhpcyBj
-b21tZW50Lg0KDQo+IA0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKyNpZmRlZiBDT05GSUdfSU5URUxf
-U0dYDQo+ID4gK3ZvaWQgbHNtX2VtYV9nbG9iYWxfaW5pdChzaXplX3QpOw0KPiA+ICt2b2lkIGxz
-bV9mcmVlX2VtYV9tYXAoYXRvbWljX2xvbmdfdCAqKTsNCj4gPiArI2Vsc2UNCj4gPiArc3RhdGlj
-IGlubGluZSB2b2lkIGxzbV9lbWFfZ2xvYmFsX2luaXQoc2l6ZV90IGVtYV9kYXRhX3NpemUpDQo+
-ID4gK3sNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGlubGluZSB2b2lkIGxzbV9mcmVlX2Vt
-YV9tYXAoYXRvbWljX2xvbmdfdCAqcCkNCj4gPiArew0KPiA+ICt9DQo+ID4gKyNlbmRpZg0KPiA+
-ICsNCj4gPiArLyoqDQo+ID4gKyAqIEJlbG93IGFyZSBBUElzIHRvIGJlIHVzZWQgYnkgTFNNIG1v
-ZHVsZXMNCj4gPiArICovDQo+ID4gKw0KPiA+ICtzdHJ1Y3QgbHNtX2VtYV9tYXAgKmxzbV9pbml0
-X29yX2dldF9lbWFfbWFwKGF0b21pY19sb25nX3QgKik7DQo+ID4gK3N0cnVjdCBsc21fZW1hICps
-c21fYWxsb2NfZW1hKHZvaWQpOw0KPiANCj4gRG8geW91IG1lYW4gc2VjdXJpdHlfYWxsb2NfZW5j
-bGF2ZSgpPw0KPiBUaGF0IHdvdWxkIGdvIGludG8gc2VjdXJpdHkvc2VjdXJpdHkuaA0KDQpOby4g
-TmVpdGhlciBsc21fYWxsb2NfZW1hKCkgYWJvdmUsIG5vciBsc21fZnJlZV9lbWEoKSBiZWxvdywg
-aXMgTFNNIGhvb2suIFRoZXkgYXJlIEFQSXMgdG8gZGVhbCB3aXRoIEVNQXMuDQoNCj4gDQo+ID4g
-K3ZvaWQgbHNtX2ZyZWVfZW1hKHN0cnVjdCBsc21fZW1hICopOw0KPiANCj4gRG8geW91IG1lYW4g
-c2VjdXJpdHlfZnJlZV9lbmNsYXZlKCk/DQo+IFRoYXQgd291bGQgZ28gaW50byBzZWN1cml0eS9z
-ZWN1cml0eS5oDQo+IA0KPiA+ICt2b2lkIGxzbV9pbml0X2VtYShzdHJ1Y3QgbHNtX2VtYSAqLCBz
-aXplX3QsIHNpemVfdCwgc3RydWN0IGZpbGUgKik7DQo+IA0KPiBUaGlzIGdvZXMgaW4gdGhlIGVu
-Y2xhdmUgTFNNLg0KDQpUaGVyZSdzIE5PIGVuY2xhdmUgTFNNLiBUaGlzIHBhdGNoIGlzIGludHJv
-ZHVjaW5nIG5ldyBMU00gaG9va3MgYXBwbGljYWJsZSB0byBhbGwgTFNNIG1vZHVsZXMsIGJ1dCBu
-b3QgaW50cm9kdWNpbmcgbmV3IExTTSBtb2R1bGVzLg0KDQo+IA0KPiA+ICtpbnQgbHNtX21lcmdl
-X2VtYShzdHJ1Y3QgbHNtX2VtYSAqLCBzdHJ1Y3QgbHNtX2VtYV9tYXAgKik7DQo+ID4gK3N0cnVj
-dCBsc21fZW1hICpsc21fc3BsaXRfZW1hKHN0cnVjdCBsc21fZW1hICosIHNpemVfdCwgc3RydWN0
-DQo+IGxzbV9lbWFfbWFwICopOw0KPiA+ICsNCj4gPiArc3RhdGljIGlubGluZSBzdHJ1Y3QgbHNt
-X2VtYV9tYXAgKmxzbV9nZXRfZW1hX21hcChzdHJ1Y3QgZmlsZSAqZikNCj4gPiArew0KPiA+ICsJ
-cmV0dXJuICh2b2lkICopYXRvbWljX2xvbmdfcmVhZChmLT5mX3NlY3VyaXR5KTsNCj4gPiArfQ0K
-PiA+ICsNCj4gPiArc3RhdGljIGlubGluZSBpbnQgX19tdXN0X2NoZWNrIGxzbV9sb2NrX2VtYShz
-dHJ1Y3QgbHNtX2VtYV9tYXAgKm1hcCkNCj4gPiArew0KPiA+ICsJcmV0dXJuIG11dGV4X2xvY2tf
-aW50ZXJydXB0aWJsZSgmbWFwLT5sb2NrKTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGlu
-bGluZSB2b2lkIGxzbV91bmxvY2tfZW1hKHN0cnVjdCBsc21fZW1hX21hcCAqbWFwKQ0KPiA+ICt7
-DQo+ID4gKwltdXRleF91bmxvY2soJm1hcC0+bG9jayk7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0
-YXRpYyBpbmxpbmUgc3RydWN0IGxzbV9lbWEgKmxzbV9wcmV2X2VtYShzdHJ1Y3QgbHNtX2VtYSAq
-cCwNCj4gPiArCQkJCQkgICBzdHJ1Y3QgbHNtX2VtYV9tYXAgKm1hcCkNCj4gPiArew0KPiA+ICsJ
-cCA9IGxpc3RfcHJldl9lbnRyeShwLCBsaW5rKTsNCj4gPiArCXJldHVybiAmcC0+bGluayA9PSAm
-bWFwLT5saXN0ID8gTlVMTCA6IHA7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbmxpbmUg
-c3RydWN0IGxzbV9lbWEgKmxzbV9uZXh0X2VtYShzdHJ1Y3QgbHNtX2VtYSAqcCwNCj4gPiArCQkJ
-CQkgICBzdHJ1Y3QgbHNtX2VtYV9tYXAgKm1hcCkNCj4gPiArew0KPiA+ICsJcCA9IGxpc3RfbmV4
-dF9lbnRyeShwLCBsaW5rKTsNCj4gPiArCXJldHVybiAmcC0+bGluayA9PSAmbWFwLT5saXN0ID8g
-TlVMTCA6IHA7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbmxpbmUgc3RydWN0IGxzbV9l
-bWEgKmxzbV9maW5kX2VtYShzdHJ1Y3QgbHNtX2VtYV9tYXAgKm1hcCwNCj4gc2l6ZV90IGEpDQo+
-ID4gK3sNCj4gPiArCXN0cnVjdCBsc21fZW1hICpwOw0KPiA+ICsNCj4gPiArCUJVR19PTighbXV0
-ZXhfaXNfbG9ja2VkKCZtYXAtPmxvY2spKTsNCj4gPiArDQo+ID4gKwlsaXN0X2Zvcl9lYWNoX2Vu
-dHJ5KHAsICZtYXAtPmxpc3QsIGxpbmspDQo+ID4gKwkJaWYgKGEgPCBwLT5lbmQpDQo+ID4gKwkJ
-CWJyZWFrOw0KPiA+ICsJcmV0dXJuICZwLT5saW5rID09ICZtYXAtPmxpc3QgPyBOVUxMIDogcDsN
-Cj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGlubGluZSBpbnQgbHNtX2luc2VydF9lbWEoc3Ry
-dWN0IGxzbV9lbWFfbWFwICptYXAsIHN0cnVjdA0KPiBsc21fZW1hICpuKQ0KPiA+ICt7DQo+ID4g
-KwlzdHJ1Y3QgbHNtX2VtYSAqcCA9IGxzbV9maW5kX2VtYShtYXAsIG4tPnN0YXJ0KTsNCj4gPiAr
-DQo+ID4gKwlpZiAoIXApDQo+ID4gKwkJbGlzdF9hZGRfdGFpbCgmbi0+bGluaywgJm1hcC0+bGlz
-dCk7DQo+ID4gKwllbHNlIGlmIChuLT5lbmQgPD0gcC0+c3RhcnQpDQo+ID4gKwkJbGlzdF9hZGRf
-dGFpbCgmbi0+bGluaywgJnAtPmxpbmspOw0KPiA+ICsJZWxzZQ0KPiA+ICsJCXJldHVybiAtRUVY
-SVNUOw0KPiA+ICsNCj4gPiArCWxzbV9tZXJnZV9lbWEobiwgbWFwKTsNCj4gPiArCWlmIChwKQ0K
-PiA+ICsJCWxzbV9tZXJnZV9lbWEocCwgbWFwKTsNCj4gPiArCXJldHVybiAwOw0KPiA+ICt9DQo+
-ID4gKw0KPiA+ICtzdGF0aWMgaW5saW5lIGludCBsc21fZm9yX2VhY2hfZW1hKHN0cnVjdCBsc21f
-ZW1hX21hcCAqbWFwLCBzaXplX3QNCj4gc3RhcnQsDQo+ID4gKwkJCQkgICBzaXplX3QgZW5kLCBp
-bnQgKCpjYikoc3RydWN0IGxzbV9lbWEgKiwNCj4gPiArCQkJCQkJCSB2b2lkICopLCB2b2lkICph
-cmcpDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBsc21fZW1hICplbWE7DQo+ID4gKwlpbnQgcmM7DQo+
-ID4gKw0KPiA+ICsJZW1hID0gbHNtX2ZpbmRfZW1hKG1hcCwgc3RhcnQpOw0KPiA+ICsJd2hpbGUg
-KGVtYSAmJiBlbmQgPiBlbWEtPnN0YXJ0KSB7DQo+ID4gKwkJaWYgKHN0YXJ0ID4gZW1hLT5zdGFy
-dCkNCj4gPiArCQkJbHNtX3NwbGl0X2VtYShlbWEsIHN0YXJ0LCBtYXApOw0KPiA+ICsJCWlmIChl
-bmQgPCBlbWEtPmVuZCkNCj4gPiArCQkJZW1hID0gbHNtX3NwbGl0X2VtYShlbWEsIGVuZCwgbWFw
-KTsNCj4gPiArDQo+ID4gKwkJcmMgPSAoKmNiKShlbWEsIGFyZyk7DQo+ID4gKwkJbHNtX21lcmdl
-X2VtYShlbWEsIG1hcCk7DQo+ID4gKwkJaWYgKHJjKQ0KPiA+ICsJCQlyZXR1cm4gcmM7DQo+ID4g
-Kw0KPiA+ICsJCWVtYSA9IGxzbV9uZXh0X2VtYShlbWEsIG1hcCk7DQo+ID4gKwl9DQo+ID4gKw0K
-PiA+ICsJaWYgKGVtYSkNCj4gPiArCQlsc21fbWVyZ2VfZW1hKGVtYSwgbWFwKTsNCj4gPiArCXJl
-dHVybiAwOw0KPiA+ICt9DQo+IA0KPiBUaGVyZSBpcyBubyB3YXkgdGhhdCB0aGVzZSBiZWxvbmcg
-YXMgcGFydCBvZiB0aGUgTFNNDQo+IGluZnJhc3RydWN0dXJlLiBJZiB5b3UgbmVlZCBhbiBlbmNs
-YXZlIG1hbmFnZW1lbnQgQVBJDQo+IHlvdSBuZWVkIHRvIGZpbmQgc29tZSBvdGhlciBwbGFjZSBm
-b3IgaXQuDQoNClRoZXkgYXJlIE5PIGVuY2xhdmUgbWFuYWdlbWVudCBBUElzLiBUaGV5IGRvbid0
-IG1hbmFnZSBlbmNsYXZlcy4gVGhleSB0cmFjayBvcmlnaW5zIG9mIGVuY2xhdmUgcGFnZXMuIFRo
-ZXkgYXJlIG5lZWRlZCBieSBhbGwgTFNNcy4NCg0KQXMgSSBzdGF0ZWQgaW4gdGhlIGNvdmVyIGxl
-dHRlciwgdGhlIHByaW1hcnkgcXVlc3Rpb24gaXMgaG93IHRvIHByZXZlbnQgU0dYIGZyb20gYmVp
-bmcgYWJ1c2VkIGFzIGEgYmFja2Rvb3IgdG8gbWFrZSBleGVjdXRhYmxlIHBhZ2VzIHRoYXQgd291
-bGQgb3RoZXJ3aXNlIG5vdCBiZSBleGVjdXRhYmxlIHdpdGhvdXQgU0dYLiBBbnkgTFNNIG1vZHVs
-ZSB1bmF3YXJlIG9mIHRoYXQgd291bGQgbGVhdmUgdGhhdCAiaG9sZSIgb3Blbi4gU28gdHJhY2tp
-bmcgZW5jbGF2ZSBwYWdlcyB3aWxsIGJlY29tZSBhIGNvbW1vbiB0YXNrIGZvciBhbGwgTFNNcyB0
-aGF0IGNhcmUgcGFnZSBwcm90ZWN0aW9ucywgYW5kIHRoYXQncyB3aHkgSSBwbGFjZSBpdCBpbnNp
-ZGUgTFNNIGluZnJhc3RydWN0dXJlLg0K
+On Thu, Jun 27, 2019 at 1:16 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> That would only allow the LSM to further lock down the system above the
+> lockdown level set at boot, not grant exemptions for specific
+> functionality/interfaces required by the user or by a specific
+> process/program. You'd have to boot with lockdown=none (or your
+> lockdown=custom suggestion) in order for the LSM to allow anything
+> covered by the integrity or confidentiality levels.  And then the kernel
+> would be unprotected prior to full initialization of the LSM, including
+> policy load.
+>
+> It seems like one would want to be able to boot with lockdown=integrity
+> to protect the kernel initially, then switch over to allowing the LSM to
+> selectively override it.
+
+One option would be to allow modules to be "unstacked" at runtime, but
+there's still something of a problem here - how do you ensure that
+your userland can be trusted to load a new policy before it does so?
+If you're able to assert that your early userland is trustworthy
+(perhaps because it's in an initramfs that's part of your signed boot
+payload), there's maybe an argument that most of the lockdown
+integrity guarantees are unnecessary before handoff - just using the
+lockdown LSM to protect against attacks via kernel parameters would be
+sufficient.
