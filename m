@@ -2,130 +2,126 @@ Return-Path: <SRS0=lnE7=U2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71EDBC48BD7
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 16:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BD5C48BD9
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 16:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4123B208E3
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 16:44:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="geImDuUK"
+	by mail.kernel.org (Postfix) with ESMTP id 884252133F
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 16:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbfF0QoI (ORCPT
+        id S1726482AbfF0Q5R (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jun 2019 12:44:08 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:33722 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbfF0QoI (ORCPT
+        Thu, 27 Jun 2019 12:57:17 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:47906 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbfF0Q5R (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jun 2019 12:44:08 -0400
-Received: by mail-qk1-f194.google.com with SMTP id r6so2314514qkc.0
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jun 2019 09:44:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=w2BmOlVfFwkgLZSQC1w8R20Owu5XUJlV/BzLLVY15k0=;
-        b=geImDuUK3nzgaKe4rg1kDwEEwfUdwvxURv/YU09DF9oFlWMFeIGMHkNFo+kl+Mvfgp
-         3NO8fx+rX1WWjRagnKQMMJXa7pZt+GIeetEEtjHApswcGjlKc+gxyDCKrAzKCe62curu
-         iW3bdzqK2OkSXzpeeJRpbwoTJgCh3u5Amano2cgvcnouqqXbiCvwAk366bvP8GkEgKAY
-         1XYyATJFDwDk7/D++da1v3yBiCjkjfVbCeUbPEqBas4q+imDOQ1Gp08PVnQ835YTl4e3
-         KVWwxlF+N5UDMQYpCb+jztRgrugr2eMpS3t4p9tRj4wNkE5ZVAADfT74LIah+lTkfQlG
-         fWcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=w2BmOlVfFwkgLZSQC1w8R20Owu5XUJlV/BzLLVY15k0=;
-        b=VOqz2y9749OgnPh6M7NIG+irvT1k00/3McTsQDwhJgxFh6v2tWsxdOhKLE4TJTUFTe
-         nZQfrgCiUpidE6VA3UW2MSHkgl5WQsJgPZYyVjtHlMLKk5zDiE5Lw+MDYmYSoGwn778u
-         P8C/qro1kh+Jtb8Kgn2AevpjASDkHWmswiqLWZOx+fhQxKixV2Z/ArLBQk1KLIhec5V4
-         /FCETlRU5BHBJ9vnQM99+XMX0aS0GM4A00Ivu5rhYQnx1NFh1pHhHvwTjyr6Jh5SKoYw
-         GH0xtwzs486A7o4HcOTIjCuEWmP56LW0ZWtsQq8+VbKkSVRnLnujg0kh9lZoVS2PjDZN
-         3B9A==
-X-Gm-Message-State: APjAAAXZdtXBqD7ueI2w+N+Hn54n2qJrv3wpC/X8f5cAbPzbTISzmDbK
-        2UULEZUZ+zP95TkQSYQ7kjsgxA==
-X-Google-Smtp-Source: APXvYqy634RuieC+fz/WCPxqpxiLBIdyBILOYC+PwsQcQ+t7LBPTDYlzrhZfeWGzOYF9AbMHbkQZYQ==
-X-Received: by 2002:a37:5d07:: with SMTP id r7mr4294931qkb.4.1561653847500;
-        Thu, 27 Jun 2019 09:44:07 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id f3sm1180627qkb.58.2019.06.27.09.44.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 09:44:06 -0700 (PDT)
-Message-ID: <1561653844.5154.87.camel@lca.pw>
-Subject: Re: [PATCH v9 1/2] mm: security: introduce init_on_alloc=1 and
- init_on_free=1 boot options
-From:   Qian Cai <cai@lca.pw>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Alexander Potapenko <glider@google.com>,
+        Thu, 27 Jun 2019 12:57:17 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hgXhQ-00066m-Ks; Thu, 27 Jun 2019 16:56:40 +0000
+Date:   Thu, 27 Jun 2019 17:56:40 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marco Elver <elver@google.com>, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Date:   Thu, 27 Jun 2019 12:44:04 -0400
-In-Reply-To: <201906270926.02AAEE93@keescook>
-References: <20190627130316.254309-1-glider@google.com>
-         <20190627130316.254309-2-glider@google.com>
-         <1561641911.5154.85.camel@lca.pw> <201906270926.02AAEE93@keescook>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v9 05/10] bpf,landlock: Add a new map type: inode
+Message-ID: <20190627165640.GQ17978@ZenIV.linux.org.uk>
+References: <20190625215239.11136-1-mic@digikod.net>
+ <20190625215239.11136-6-mic@digikod.net>
+ <20190625225201.GJ17978@ZenIV.linux.org.uk>
+ <79bac827-4092-8a4d-9dc6-6019419b2486@ssi.gouv.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <79bac827-4092-8a4d-9dc6-6019419b2486@ssi.gouv.fr>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2019-06-27 at 09:29 -0700, Kees Cook wrote:
-> On Thu, Jun 27, 2019 at 09:25:11AM -0400, Qian Cai wrote:
-> > On Thu, 2019-06-27 at 15:03 +0200, Alexander Potapenko wrote:
-> > > +static int __init early_init_on_alloc(char *buf)
-> > > +{
-> > > +	int ret;
-> > > +	bool bool_result;
-> > > +
-> > > +	if (!buf)
-> > > +		return -EINVAL;
-> > > +	ret = kstrtobool(buf, &bool_result);
-> > > +	if (bool_result && IS_ENABLED(CONFIG_PAGE_POISONING))
-> > > +		pr_warn("mem auto-init: CONFIG_PAGE_POISONING is on, will
-> > > take precedence over init_on_alloc\n");
-> > 
-> > I don't like the warning here. It makes people think it is bug that need to
-> > be
-> > fixed, but actually it is just information. People could enable both in a
-> > debug
-> > kernel.
+On Thu, Jun 27, 2019 at 06:18:12PM +0200, Mickaël Salaün wrote:
+
+> >> +/* called from syscall */
+> >> +static int sys_inode_map_delete_elem(struct bpf_map *map, struct inode *key)
+> >> +{
+> >> +    struct inode_array *array = container_of(map, struct inode_array, map);
+> >> +    struct inode *inode;
+> >> +    int i;
+> >> +
+> >> +    WARN_ON_ONCE(!rcu_read_lock_held());
+> >> +    for (i = 0; i < array->map.max_entries; i++) {
+> >> +            if (array->elems[i].inode == key) {
+> >> +                    inode = xchg(&array->elems[i].inode, NULL);
+> >> +                    array->nb_entries--;
+> >
+> > Umm...  Is that intended to be atomic in any sense?
 > 
-> How would you suggest it be adjusted? Should it be silent, or be
-> switched to pr_info()?
+> nb_entries is not used as a bound check but to avoid walking uselessly
+> through the (pre-allocated) array when adding a new element, but I'll
+> use an atomic to avoid inconsistencies anyway.
 
-pr_info() sounds more reasonable to me, so people don't need to guess the
-correct behavior. Ideally, CONFIG_PAGE_POISONING should be  renamed to something
-like CONFIG_INIT_ON_FREE_CHECK, and it only does the checking part if enabled,
-and init_on_free will gain an ability to poison a pattern other than 0.
 
-Also, there might be some rooms to consolidate with SLAB_POSION as well.
-
+> > Wait a sec...  So we have those beasties that can have long-term
+> > references to arbitrary inodes stuck in them?  What will happen
+> > if you get umount(2) called while such a thing exists?
 > 
-> Also, doesn't this need to check "want_page_poisoning", not just
-> CONFIG_PAGE_POISONING? Perhaps just leave the warning out entirely?
-> 
+> I though an umount would be denied but no, we get a self-destructed busy
+> inode and a bug!
+> What about wrapping the inode's superblock->s_op->destroy_inode() to
+> first remove the element from the map and then call the real
+> destroy_inode(), if any?
 
-Yes, only checking CONFIG_PAGE_POISONING is not enough, and need to check
-page_poisoning_enabled().
+What do you mean, _the_ map?  I don't see anything to prevent insertion
+of references to the same inode into any number of those...
+
+> Or I could update fs/inode.c:destroy_inode() to call inode->free_inode()
+> if it is set, and set it when such inode is referenced by a map?
+> Or maybe I could hold the referencing file in the map and then wrap its
+> f_op?
+
+First of all, anything including the word "wrap" is a non-starter.
+We really don't need the headache associated with the locking needed
+to replace the method tables on the fly, or with the code checking that
+->f_op points to given method table, etc.  That's not going to fly,
+especially since you'd end up _chaining_ those (again, the same reference
+can go in more than once).
+
+Nothing is allowed to change the method tables of live objects, period.
+Once a struct file is opened, its ->f_op is never going to change and
+it entirely belongs to the device driver or filesystem it resides on.
+Nothing else (not VFS, not VM, not some LSM module, etc.) has any business
+touching that.  The same goes for inodes, dentries, etc.
+
+What kind of behaviour do you want there?  Do you want the inodes you've
+referenced there to be forgotten on e.g. memory pressure?  The thing is,
+I don't see how "it's getting freed" could map onto any semantics that
+might be useful for you - it looks like the wrong event for that.
