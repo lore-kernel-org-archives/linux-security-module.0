@@ -6,63 +6,108 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 435DEC48BD7
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 12:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF04C48BD9
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 13:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 255A02085A
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 12:56:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F46C2085A
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 13:02:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbfF0M4c (ORCPT
+        id S1726505AbfF0NCg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jun 2019 08:56:32 -0400
-Received: from mga17.intel.com ([192.55.52.151]:30719 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726059AbfF0M4c (ORCPT
+        Thu, 27 Jun 2019 09:02:36 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15600 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726465AbfF0NCf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jun 2019 08:56:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 05:56:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,423,1557212400"; 
-   d="scan'208";a="164326961"
-Received: from unknown (HELO jsakkine-mobl1) ([10.252.36.47])
-  by fmsmga007.fm.intel.com with ESMTP; 27 Jun 2019 05:56:30 -0700
-Message-ID: <320da9183c7e9ae2c63982d5e124054a615c4b99.camel@linux.intel.com>
-Subject: LSM module for SGX?
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-security-module@vger.kernel.org, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-Cc:     casey.schaufler@intel.com, jmorris@namei.org, luto@kernel.org,
-        sean.j.christopherson@intel.com
-Date:   Thu, 27 Jun 2019 15:56:29 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Thu, 27 Jun 2019 09:02:35 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RCx4HG020849
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Jun 2019 09:02:34 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tcwr59yjw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Jun 2019 09:02:32 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 27 Jun 2019 14:02:30 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Jun 2019 14:02:26 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5RD2PTH58589308
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 13:02:25 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B5EF6A4064;
+        Thu, 27 Jun 2019 13:02:25 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A5D16A406D;
+        Thu, 27 Jun 2019 13:02:24 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.82.20])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Jun 2019 13:02:24 +0000 (GMT)
+Subject: Re: linux-next: Tree for Jun 26 (security/integrity/ima/)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Date:   Thu, 27 Jun 2019 09:02:14 -0400
+In-Reply-To: <ee503bc1-a588-81f5-47e0-1762f590662f@infradead.org>
+References: <20190626231617.1e858da3@canb.auug.org.au>
+         <ee503bc1-a588-81f5-47e0-1762f590662f@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062713-0012-0000-0000-0000032CEC7D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062713-0013-0000-0000-000021662A98
+Message-Id: <1561640534.4101.124.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906270152
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Looking at the SGX-LSM discussions I haven't seen even a single email
-that would have any conclusions that the new hooks are the only possible
-route to limit the privileges to use SGX.
+[Cc'ing David Howells]
 
-An obvious alternative to consider might be to have a small-scale LSM
-that you could stack. AFAIK Casey's LSM stacking patch set has not yet
-landed but I also remember that with some constraints you can still do
-it. Casey explained these constraints to me few years ago but I can't
-recall them anymore :-)
+On Wed, 2019-06-26 at 11:35 -0700, Randy Dunlap wrote:
+> On 6/26/19 6:16 AM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > The sparc64 builds are broken in this tree, sorry.
+> > 
+> > Changes since 20190625:
+> > 
+> 
+> on x86_64:
+> 
+> 11 warnings like this one (in a randconfig build):
+> 
+>   CC      security/integrity/ima/ima_fs.o
+> In file included from ../security/integrity/ima/ima.h:25:0,
+>                  from ../security/integrity/ima/ima_fs.c:26:
+> ../security/integrity/ima/../integrity.h:170:18: warning: ‘struct key_acl’ declared inside parameter list [enabled by default]
+>            struct key_acl *acl)
+>                   ^
+> ../security/integrity/ima/../integrity.h:170:18: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
 
-One example of this is Yama, which limits the use of ptrace(). You can
-enable it together with any of the "big" LSMs in the kernel.
+David, CONFIG_INTEGRITY_SIGNATURE is dependent on KEYS being enabled,
+but the stub functions are not.  There's now a dependency on
+key_acl().
 
-A major benefit in this approach would that it is non-intrusive when it
-comes to other architectures than x86. New hooks are not only
-maintenance burden for those who care about SGX but also for those who
-have to deal with LSMs.
-
-/Jarkko
+Mimi
 
