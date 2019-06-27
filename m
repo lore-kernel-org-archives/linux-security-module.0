@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBBFC48BD7
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 04:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E42C48BD6
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 04:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EB43217D9
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 04:10:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F2F4218A2
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 04:59:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfF0EK2 (ORCPT
+        id S1726830AbfF0E7f (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jun 2019 00:10:28 -0400
-Received: from namei.org ([65.99.196.166]:48920 "EHLO namei.org"
+        Thu, 27 Jun 2019 00:59:35 -0400
+Received: from namei.org ([65.99.196.166]:48942 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725850AbfF0EK2 (ORCPT
+        id S1725385AbfF0E7f (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jun 2019 00:10:28 -0400
+        Thu, 27 Jun 2019 00:59:35 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x5R4AIo3017422;
-        Thu, 27 Jun 2019 04:10:18 GMT
-Date:   Thu, 27 Jun 2019 14:10:18 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x5R4x9Cl020018;
+        Thu, 27 Jun 2019 04:59:09 GMT
+Date:   Thu, 27 Jun 2019 14:59:09 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [PATCH v4 00/23] LSM: Module stacking for AppArmor
-In-Reply-To: <alpine.LRH.2.21.1906271344480.16512@namei.org>
-Message-ID: <alpine.LRH.2.21.1906271409460.16512@namei.org>
-References: <20190626192234.11725-1-casey@schaufler-ca.com> <alpine.LRH.2.21.1906271230490.12379@namei.org> <alpine.LRH.2.21.1906271245210.13254@namei.org> <alpine.LRH.2.21.1906271344480.16512@namei.org>
+To:     Matthew Garrett <matthewgarrett@google.com>
+cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Jiri Bohac <jbohac@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>, kexec@lists.infradead.org
+Subject: Re: [PATCH V34 09/29] kexec_file: Restrict at runtime if the kernel
+ is locked down
+In-Reply-To: <20190622000358.19895-10-matthewgarrett@google.com>
+Message-ID: <alpine.LRH.2.21.1906271423070.16512@namei.org>
+References: <20190622000358.19895-1-matthewgarrett@google.com> <20190622000358.19895-10-matthewgarrett@google.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -43,12 +43,30 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 27 Jun 2019, James Morris wrote:
+On Fri, 21 Jun 2019, Matthew Garrett wrote:
 
-> Confirming there's no oops when Tomoyo is un-selected in the kernel 
-> config.
+> From: Jiri Bohac <jbohac@suse.cz>
+> 
+> When KEXEC_SIG is not enabled, kernel should not load images through
+> kexec_file systemcall if the kernel is locked down.
 
-n/m, the problem is still there.
+This is not a criticism of the patch but a related issue which I haven't 
+seen discussed (apologies if it has).
+
+If signed code is loaded into ring 0, verified by the kernel, then 
+executed, you still lose your secure/trusted/verified boot state. If the 
+currently running kernel has been runtime-compromised, any signature 
+verification performed by the kernel cannot be trusted.
+
+This problem is out of scope for the lockdown threat model (which 
+naturally cannot include a compromised kernel), but folk should be aware 
+that signature-verified kexec does not provide equivalent assurance to a 
+full reboot on a secure-boot system.
+
+Potential mitigations here include runtime integrity verification of the
+kernel via a separate security monitor (hypervisor, SMM, TEE etc.) or some
+kind of platform support for kexec verification.
+
 
 -- 
 James Morris
