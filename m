@@ -2,130 +2,152 @@ Return-Path: <SRS0=lnE7=U2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 231B1C48BD6
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 13:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F79C48BD9
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 13:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E276820828
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 13:41:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="UvdXmhOy"
+	by mail.kernel.org (Postfix) with ESMTP id AAC05208CB
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 13:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561643862;
+	bh=51DDG2DY3FLtkRp2J7Z4n5yca8QsFHCjA1IBw10ZSDc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=PJdex8bZeRO9zkJSURRmcsc7bT7TJmx2PpKfrggHIQkEmDtNGsMRRg9tF0OReYsh0
+	 4k/Xkfl3kmrU6dkfZwhdtpEcVvCqrSIyRm/Ogn/OH0qy8tl0QX2uwcG6XU1MCo/Zxt
+	 h2Oe3pgd5aviGzy6AfSykc+7hRqcn1zXZEo/3b1Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbfF0Nl7 (ORCPT
+        id S1726883AbfF0N5l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jun 2019 09:41:59 -0400
-Received: from upbd19pa09.eemsg.mail.mil ([214.24.27.84]:32098 "EHLO
-        UPBD19PA09.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfF0Nl7 (ORCPT
+        Thu, 27 Jun 2019 09:57:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54522 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726480AbfF0N5l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jun 2019 09:41:59 -0400
-X-EEMSG-check-017: 206277185|UPBD19PA09_EEMSG_MP9.csd.disa.mil
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by UPBD19PA09.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 27 Jun 2019 13:41:51 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1561642911; x=1593178911;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=+L2MvjrputUjxROu/IGmwLeO9XvJ1XahPS1+06A214s=;
-  b=UvdXmhOyw+eu+QeXBvGKuDOMKyJy8FNtHvwVDC18RxuHRj4yDQ5Og6kI
-   eXDd9VGhUC+BJ55FWaDGTYj0aHomz+ayHph2bYbQzt0PL5AfGekmFl4Hc
-   WVX9lCHHcN8D2bz5ci3CtSRrS/t3Zg+INBS5hdFm4yIAtriQKaWwgHY39
-   I+z/qKb5OkJYfcjqUKYzfTa92EiOkZqaPHIy+s86LhYU9mD04yuSDr3C1
-   O2tyaEL6rS3Fv2K2RIkG/FHolipOfEbfdDDr3VVQlgLhdrkczf3c5X8st
-   lcJYtyXi76+ln/+ratzarLCNR63VqazMo2g2whYCrtyETmVIZBvDg2DW6
-   A==;
-X-IronPort-AV: E=Sophos;i="5.63,423,1557187200"; 
-   d="scan'208";a="29496468"
-IronPort-PHdr: =?us-ascii?q?9a23=3AjJqd7hVMaUV33JO6PUhB/JP4+LPV8LGtZVwlr6?=
- =?us-ascii?q?E/grcLSJyIuqrYZReOvqdThVPEFb/W9+hDw7KP9fy5AypZsd3f7jhCKMUKC0?=
- =?us-ascii?q?Zcz51O3kQJO42sMQXDNvnkbig3ToxpdWRO2DWFC3VTA9v0fFbIo3e/vnY4Ex?=
- =?us-ascii?q?T7MhdpdKyuQtaBx8u42Pqv9JLNfg5GmCSyYa9oLBWxsA7dqtQajZFtJ6os1B?=
- =?us-ascii?q?fFuGZEdudZyW5pJF+YghLw6tut8JJ5/Clcpu8t+9RcXanmeqgzUKBVAikhP2?=
- =?us-ascii?q?0p/sPgqAPNTRGI5nsSU2UWlgRHDg3Y5xzkXZn/rzX3uPNl1CaVIcP5Q7Y0WS?=
- =?us-ascii?q?+/76hwUx/nlD0HNz8i/27JjMF7kb9Wrwigpxx7xI7UfZ2VOf9jda7TYd8WWW?=
- =?us-ascii?q?xMVdtKWidfHo2zcZcAD+sZPeZZsYb9oUcOrQCjDgWoHe/j1yNEimPz0aA83e?=
- =?us-ascii?q?shCwXG1xE+EdwIvnrfsdH5OL4SXO2xyaXFyyjIYfFL1jfn8IXGbw4vof+MU7?=
- =?us-ascii?q?xzf8Tex0YgGAHZgVufsoHlIzGY2/4Rv2SH4edtV+SigHMnpQFrpTivw98hhJ?=
- =?us-ascii?q?TVho0L0lDE9Tt2wIAoLtOlTU50e9qkEJ9OuCCaKoB7RdgiTHxzuCsh1r0HuY?=
- =?us-ascii?q?K0fCgNyJg9wR7fcOaIf5KH4hLkSuacODF1j29mdrKnnxu+7Eetx+LmWsS0zV?=
- =?us-ascii?q?pGtDRJn9bSunwXyhDe7NWMROFn8Ue7wzmP0hje6uRDIU8pi6XWM4Uhwrsslp?=
- =?us-ascii?q?oLtkTDAzP2lF32jKCIckUk/fCl6/j9bbX8p5+cKpR0hhviMqUuhsO/AeM4Ph?=
- =?us-ascii?q?IIX2eH4uSzyKfv/Uj4QLVOlvE2k6/Zv47GJckDu6K0DABY3pwj5hqiFTuqzt?=
- =?us-ascii?q?sVkWcdIF5YYB6HipLmO1DKIPD2F/e/hFGsnS9wx//bJb3sGYnNL3jfn7fher?=
- =?us-ascii?q?Zx8UhcyBEpwtxF6JJUDa8BLOrpWkDtrNzYEgM5MwuszublEtp9zIAeWWGIAq?=
- =?us-ascii?q?ODK6Pdq1yI5uEuI+mKeoAVvi3wK/wk5/7okH84lkURfaiv3ZsLdn+4Gu5qLF?=
- =?us-ascii?q?meYXrpmt0BC3sFvhIiTOz2j12PSTpTZ3e0X6Ih6TA3EZmmApnfSYCwmryB3T?=
- =?us-ascii?q?u7H51PamBDDVCDDGrod4GaVPoXdiKSLdFukiYeWbiiVYAhzxeuuxH+y7Z9Ke?=
- =?us-ascii?q?rU4CIYv4r51Ndp/+3TiQ0y9TtsAsSZ0mGNSXx0n2wRSz8t06B+rldwykmM0a?=
- =?us-ascii?q?dmmfxUD99T6O1TUgc8K5Hcy/Z2C9foWgLOZt2JUkqpQs26ATEtSdI829APbk?=
- =?us-ascii?q?V8Fti5jRDMwTCqA7kLmLyPHpA09bjc33fpLcZn13nGzLUhj0UhQsZXKWKpnL?=
- =?us-ascii?q?V/+BbTBoLTiEWWi6aqer4B3C7D8GeM03COsVpZUA52TaXKQ3QfalHKotT+40?=
- =?us-ascii?q?PIV6WuBqg/Mgtd1c6CLbNHat/sjVVBXvfjItXeY3mqlme2HxmIw62DbIvwd2?=
- =?us-ascii?q?UaxiXdB1AOkxoP8naeKQg+GiChrnraDDxzCVLvZFjh8epgp3OhSE870QWKY1?=
- =?us-ascii?q?dm17qv9R4fneacRO8L3rIYpCchrC15HE2j0N3MDdqMvQhhcL9AbtM9+ldH1H?=
- =?us-ascii?q?nZtxB6Ppy4L6BtmEQecx9wv0PozBh3C4NAkdQ0o3Mu1gZ9NaWY0FYSPw+fiL?=
- =?us-ascii?q?L5IL7ULSHJ9ROsaqjb3BmK0t+M+aQIru8xqFbiugyvPk4j9Wh3ldhTz3aYoJ?=
- =?us-ascii?q?7NCVxWGZbwVFsnsgN3rKzAYzUsoobT2WBoPIGqvTLYndEkHu0ozlCnZdgbeK?=
- =?us-ascii?q?eFEhLiVtYVF+CwJ+Ew3VukdBQJOKZV7qFwd9P2KdOF1bStMeImmyip3kpd54?=
- =?us-ascii?q?Uo6V6B7ypxTKbz2p8Bx/yJll+cWyzUkEaqssexn5tNIz4VADzsmmDfGIdNa/?=
- =?us-ascii?q?gqLs4wAmC0Lpjyn4gvig=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2BMAAANxxRd/wHyM5BlHQEBBQEHBQGBVAcBCwGBbCqBO?=
- =?us-ascii?q?wEyhEGTPgEBAQEBAQaBCQgliVmPFBSBZwkBAQEBAQEBAQE0AQIBAYRAAoMAI?=
- =?us-ascii?q?zUIDgEDAQEBBAEBAQEEAQFsikOCOikBgmcBBSMVQRALGAICJgICVwYBDAgBA?=
- =?us-ascii?q?YJfP4F3FKV3gTKFR4MvgUaBDCgBi14XeIEHgTgMgl8+hBEBDAYBgymCWASUU?=
- =?us-ascii?q?pVUCYIZgh+RUAYbl16NKZkYAzNncSsIAhgIIQ+DKJEgIwOBNgEBi1MOF4IsA?=
- =?us-ascii?q?QE?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 27 Jun 2019 13:41:50 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x5RDfmJd024291;
-        Thu, 27 Jun 2019 09:41:49 -0400
-Subject: Re: LSM module for SGX?
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-security-module@vger.kernel.org, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-Cc:     casey.schaufler@intel.com, jmorris@namei.org, luto@kernel.org,
-        sean.j.christopherson@intel.com
-References: <320da9183c7e9ae2c63982d5e124054a615c4b99.camel@linux.intel.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <496ea018-2655-a438-bc6b-80330c36cd11@tycho.nsa.gov>
-Date:   Thu, 27 Jun 2019 09:41:48 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 27 Jun 2019 09:57:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A2CDEABE7;
+        Thu, 27 Jun 2019 13:57:38 +0000 (UTC)
+Date:   Thu, 27 Jun 2019 15:57:36 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marco Elver <elver@google.com>, Qian Cai <cai@lca.pw>,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v9 1/2] mm: security: introduce init_on_alloc=1 and
+ init_on_free=1 boot options
+Message-ID: <20190627135736.GA5303@dhcp22.suse.cz>
+References: <20190627130316.254309-1-glider@google.com>
+ <20190627130316.254309-2-glider@google.com>
 MIME-Version: 1.0
-In-Reply-To: <320da9183c7e9ae2c63982d5e124054a615c4b99.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190627130316.254309-2-glider@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/27/19 8:56 AM, Jarkko Sakkinen wrote:
-> Looking at the SGX-LSM discussions I haven't seen even a single email
-> that would have any conclusions that the new hooks are the only possible
-> route to limit the privileges to use SGX.
+On Thu 27-06-19 15:03:15, Alexander Potapenko wrote:
+> The new options are needed to prevent possible information leaks and
+> make control-flow bugs that depend on uninitialized values more
+> deterministic.
 > 
-> An obvious alternative to consider might be to have a small-scale LSM
-> that you could stack. AFAIK Casey's LSM stacking patch set has not yet
-> landed but I also remember that with some constraints you can still do
-> it. Casey explained these constraints to me few years ago but I can't
-> recall them anymore :-)
+> This is expected to be on-by-default on Android and Chrome OS. And it
+> gives the opportunity for anyone else to use it under distros too via
+> the boot args. (The init_on_free feature is regularly requested by
+> folks where memory forensics is included in their threat models.)
 > 
-> One example of this is Yama, which limits the use of ptrace(). You can
-> enable it together with any of the "big" LSMs in the kernel.
+> init_on_alloc=1 makes the kernel initialize newly allocated pages and heap
+> objects with zeroes. Initialization is done at allocation time at the
+> places where checks for __GFP_ZERO are performed.
 > 
-> A major benefit in this approach would that it is non-intrusive when it
-> comes to other architectures than x86. New hooks are not only
-> maintenance burden for those who care about SGX but also for those who
-> have to deal with LSMs.
+> init_on_free=1 makes the kernel initialize freed pages and heap objects
+> with zeroes upon their deletion. This helps to ensure sensitive data
+> doesn't leak via use-after-free accesses.
+> 
+> Both init_on_alloc=1 and init_on_free=1 guarantee that the allocator
+> returns zeroed memory. The two exceptions are slab caches with
+> constructors and SLAB_TYPESAFE_BY_RCU flag. Those are never
+> zero-initialized to preserve their semantics.
+> 
+> Both init_on_alloc and init_on_free default to zero, but those defaults
+> can be overridden with CONFIG_INIT_ON_ALLOC_DEFAULT_ON and
+> CONFIG_INIT_ON_FREE_DEFAULT_ON.
+> 
+> If either SLUB poisoning or page poisoning is enabled, those options
+> take precedence over init_on_alloc and init_on_free: initialization is
+> only applied to unpoisoned allocations.
+> 
+> Slowdown for the new features compared to init_on_free=0,
+> init_on_alloc=0:
+> 
+> hackbench, init_on_free=1:  +7.62% sys time (st.err 0.74%)
+> hackbench, init_on_alloc=1: +7.75% sys time (st.err 2.14%)
+> 
+> Linux build with -j12, init_on_free=1:  +8.38% wall time (st.err 0.39%)
+> Linux build with -j12, init_on_free=1:  +24.42% sys time (st.err 0.52%)
+> Linux build with -j12, init_on_alloc=1: -0.13% wall time (st.err 0.42%)
+> Linux build with -j12, init_on_alloc=1: +0.57% sys time (st.err 0.40%)
+> 
+> The slowdown for init_on_free=0, init_on_alloc=0 compared to the
+> baseline is within the standard error.
+> 
+> The new features are also going to pave the way for hardware memory
+> tagging (e.g. arm64's MTE), which will require both on_alloc and on_free
+> hooks to set the tags for heap objects. With MTE, tagging will have the
+> same cost as memory initialization.
+> 
+> Although init_on_free is rather costly, there are paranoid use-cases where
+> in-memory data lifetime is desired to be minimized. There are various
+> arguments for/against the realism of the associated threat models, but
+> given that we'll need the infrastructure for MTE anyway, and there are
+> people who want wipe-on-free behavior no matter what the performance cost,
+> it seems reasonable to include it in this series.
+> 
+> Signed-off-by: Alexander Potapenko <glider@google.com>
+> Acked-by: Kees Cook <keescook@chromium.org>
+> To: Andrew Morton <akpm@linux-foundation.org>
+> To: Christoph Lameter <cl@linux.com>
+> To: Kees Cook <keescook@chromium.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Kostya Serebryany <kcc@google.com>
+> Cc: Dmitry Vyukov <dvyukov@google.com>
+> Cc: Sandeep Patil <sspatil@android.com>
+> Cc: Laura Abbott <labbott@redhat.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Marco Elver <elver@google.com>
+> Cc: Qian Cai <cai@lca.pw>
+> Cc: linux-mm@kvack.org
+> Cc: linux-security-module@vger.kernel.org
+> Cc: kernel-hardening@lists.openwall.com
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 
-Regardless of whether or not you or anyone else creates such a 
-small-scale LSM, we would still want to be able to control the loading 
-of enclaves and the creation of executable enclave mappings via SELinux 
-policy, so the hooks would be necessary anyway.
-
+Acked-by: Michal Hocko <mhocko@suse.com> # page and dmapool parts
+-- 
+Michal Hocko
+SUSE Labs
