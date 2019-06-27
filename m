@@ -2,126 +2,91 @@ Return-Path: <SRS0=lnE7=U2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BD5C48BD9
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 16:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF73C48BD9
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 17:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 884252133F
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 16:57:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 501A7205F4
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 17:07:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g66r0h14"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbfF0Q5R (ORCPT
+        id S1726514AbfF0RH3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jun 2019 12:57:17 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:47906 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726425AbfF0Q5R (ORCPT
+        Thu, 27 Jun 2019 13:07:29 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35986 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbfF0RH3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jun 2019 12:57:17 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgXhQ-00066m-Ks; Thu, 27 Jun 2019 16:56:40 +0000
-Date:   Thu, 27 Jun 2019 17:56:40 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>
-Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Thu, 27 Jun 2019 13:07:29 -0400
+Received: by mail-pl1-f196.google.com with SMTP id k8so1636270plt.3
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Jun 2019 10:07:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=SjrNNd6jKuOENqivRCcx96Wx7wxTY+hBV+/1VBbN3mg=;
+        b=g66r0h14ua6IfSpYMOHuG8frq0vPDk44KGrnt+3UFVkNg8zjZqzxfhEbybAmhFgbYT
+         YC1spOx+z3Bt4uYQ0nMM3NElgCxFC4wd+H6U+3jmeSoPzAUtxH+qwKVjRLbG11LsuHPi
+         WGZ9t6GN8fcL7P7D1D/5jV/jgNZuemMWmqA/Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SjrNNd6jKuOENqivRCcx96Wx7wxTY+hBV+/1VBbN3mg=;
+        b=dvjSPjdGXxbue4X3Shj3vpGQylL8zDIQwMGsPsmuWK6Chi//rok4UEIF7tQAwRibTe
+         xd3a6oyu31tDfrvfRYsK8z3NsKy7yH07mEmmlC7t0+NhplaWF2eU1rsD7ne/uFPtCcmC
+         Z8JcysshJVvFMphyKOTztSDbd3bfCNeDUhuHJvimXjXC7y07f2Y61254bGh+Y3qZk3Es
+         1gIsvWm+mfzH11PyT5usGGIsANfPpz0j5sJnkmyT5cm1hh/GZnYpu1G9YC/zY93J0I0n
+         pRxcb/MHhbB7HCVFiX123EfwDiOg6YkrYGUDi3JL8LwcbLi1z4t71BowigtsejN+kp6P
+         AQkw==
+X-Gm-Message-State: APjAAAWb0p/mTIhYVQcidldwnO7zJ4mzUIE3IYhxmgTh0iH+RB7DmouW
+        e/OWq/om6hSCvKpb8uZ9985/lg==
+X-Google-Smtp-Source: APXvYqxZtxonPJl/JfomojA7Fc6G0iKNGHkEJuxMqYAK6di8HYz3o7UcLfvPVacLLYrn+NunF/MM/w==
+X-Received: by 2002:a17:902:f216:: with SMTP id gn22mr5790165plb.118.1561655248797;
+        Thu, 27 Jun 2019 10:07:28 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id n89sm11405192pjc.0.2019.06.27.10.07.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Jun 2019 10:07:28 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 10:07:27 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org,
         John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v9 05/10] bpf,landlock: Add a new map type: inode
-Message-ID: <20190627165640.GQ17978@ZenIV.linux.org.uk>
-References: <20190625215239.11136-1-mic@digikod.net>
- <20190625215239.11136-6-mic@digikod.net>
- <20190625225201.GJ17978@ZenIV.linux.org.uk>
- <79bac827-4092-8a4d-9dc6-6019419b2486@ssi.gouv.fr>
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: [PATCH v4 00/23] LSM: Module stacking for AppArmor
+Message-ID: <201906271006.57DE3C2@keescook>
+References: <20190626192234.11725-1-casey@schaufler-ca.com>
+ <alpine.LRH.2.21.1906271230490.12379@namei.org>
+ <alpine.LRH.2.21.1906271245210.13254@namei.org>
+ <alpine.LRH.2.21.1906271344480.16512@namei.org>
+ <alpine.LRH.2.21.1906271409460.16512@namei.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <79bac827-4092-8a4d-9dc6-6019419b2486@ssi.gouv.fr>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <alpine.LRH.2.21.1906271409460.16512@namei.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 27, 2019 at 06:18:12PM +0200, Mickaël Salaün wrote:
-
-> >> +/* called from syscall */
-> >> +static int sys_inode_map_delete_elem(struct bpf_map *map, struct inode *key)
-> >> +{
-> >> +    struct inode_array *array = container_of(map, struct inode_array, map);
-> >> +    struct inode *inode;
-> >> +    int i;
-> >> +
-> >> +    WARN_ON_ONCE(!rcu_read_lock_held());
-> >> +    for (i = 0; i < array->map.max_entries; i++) {
-> >> +            if (array->elems[i].inode == key) {
-> >> +                    inode = xchg(&array->elems[i].inode, NULL);
-> >> +                    array->nb_entries--;
-> >
-> > Umm...  Is that intended to be atomic in any sense?
+On Thu, Jun 27, 2019 at 02:10:18PM +1000, James Morris wrote:
+> On Thu, 27 Jun 2019, James Morris wrote:
 > 
-> nb_entries is not used as a bound check but to avoid walking uselessly
-> through the (pre-allocated) array when adding a new element, but I'll
-> use an atomic to avoid inconsistencies anyway.
-
-
-> > Wait a sec...  So we have those beasties that can have long-term
-> > references to arbitrary inodes stuck in them?  What will happen
-> > if you get umount(2) called while such a thing exists?
+> > Confirming there's no oops when Tomoyo is un-selected in the kernel 
+> > config.
 > 
-> I though an umount would be denied but no, we get a self-destructed busy
-> inode and a bug!
-> What about wrapping the inode's superblock->s_op->destroy_inode() to
-> first remove the element from the map and then call the real
-> destroy_inode(), if any?
+> n/m, the problem is still there.
 
-What do you mean, _the_ map?  I don't see anything to prevent insertion
-of references to the same inode into any number of those...
+Were you able to test my fix for this? I wonder if what I found was just
+a coincidence.
 
-> Or I could update fs/inode.c:destroy_inode() to call inode->free_inode()
-> if it is set, and set it when such inode is referenced by a map?
-> Or maybe I could hold the referencing file in the map and then wrap its
-> f_op?
-
-First of all, anything including the word "wrap" is a non-starter.
-We really don't need the headache associated with the locking needed
-to replace the method tables on the fly, or with the code checking that
-->f_op points to given method table, etc.  That's not going to fly,
-especially since you'd end up _chaining_ those (again, the same reference
-can go in more than once).
-
-Nothing is allowed to change the method tables of live objects, period.
-Once a struct file is opened, its ->f_op is never going to change and
-it entirely belongs to the device driver or filesystem it resides on.
-Nothing else (not VFS, not VM, not some LSM module, etc.) has any business
-touching that.  The same goes for inodes, dentries, etc.
-
-What kind of behaviour do you want there?  Do you want the inodes you've
-referenced there to be forgotten on e.g. memory pressure?  The thing is,
-I don't see how "it's getting freed" could map onto any semantics that
-might be useful for you - it looks like the wrong event for that.
+-- 
+Kees Cook
