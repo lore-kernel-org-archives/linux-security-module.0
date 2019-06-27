@@ -2,152 +2,200 @@ Return-Path: <SRS0=lnE7=U2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F79C48BD9
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 13:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A619C48BD9
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 14:36:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAC05208CB
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 13:57:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561643862;
-	bh=51DDG2DY3FLtkRp2J7Z4n5yca8QsFHCjA1IBw10ZSDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PJdex8bZeRO9zkJSURRmcsc7bT7TJmx2PpKfrggHIQkEmDtNGsMRRg9tF0OReYsh0
-	 4k/Xkfl3kmrU6dkfZwhdtpEcVvCqrSIyRm/Ogn/OH0qy8tl0QX2uwcG6XU1MCo/Zxt
-	 h2Oe3pgd5aviGzy6AfSykc+7hRqcn1zXZEo/3b1Q=
+	by mail.kernel.org (Postfix) with ESMTP id 67442208CB
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 14:36:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="ULXMlQhE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbfF0N5l (ORCPT
+        id S1726431AbfF0Of6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jun 2019 09:57:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54522 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726480AbfF0N5l (ORCPT
+        Thu, 27 Jun 2019 10:35:58 -0400
+Received: from uhil19pa11.eemsg.mail.mil ([214.24.21.84]:48642 "EHLO
+        uhil19pa11.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbfF0Of6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jun 2019 09:57:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A2CDEABE7;
-        Thu, 27 Jun 2019 13:57:38 +0000 (UTC)
-Date:   Thu, 27 Jun 2019 15:57:36 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marco Elver <elver@google.com>, Qian Cai <cai@lca.pw>,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v9 1/2] mm: security: introduce init_on_alloc=1 and
- init_on_free=1 boot options
-Message-ID: <20190627135736.GA5303@dhcp22.suse.cz>
-References: <20190627130316.254309-1-glider@google.com>
- <20190627130316.254309-2-glider@google.com>
+        Thu, 27 Jun 2019 10:35:58 -0400
+X-EEMSG-check-017: 423829992|UHIL19PA11_EEMSG_MP9.csd.disa.mil
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by uhil19pa11.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 27 Jun 2019 14:35:45 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1561646145; x=1593182145;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=wCjLS9SBMsaxCpBSG5kqdTihRrCzyiEPucIu7jv36QM=;
+  b=ULXMlQhEgx3UWGYLj0/iRUUpA+5COR7fCSj7QZ+v9eynrR/6AYqmcpyG
+   +wHr8QjjGf224uWnYvFHuv0cvYmZoTy2sRGKw1W37k5eTNdlB33fjjTjE
+   83C2I4RjfDWMx1mH1IMB3laeYK3kNwqjaWKrIhqzDgbFUFwMFFlkIQARj
+   rw4d3tezGC7Uqm67B6faNGttKHagO89hNUspGXY5glix9tEjiZJye35IJ
+   RoX3Bx3MG2XayQH47eKke/OmocVYp50ZLIHE7GZtYb+3/PLQymZQaUxFr
+   PSRusW1bybsZIJ4kgLx3/tkIoQiUONanbsURJY5wK1lJERoe16OtpPgXk
+   w==;
+X-IronPort-AV: E=Sophos;i="5.63,424,1557187200"; 
+   d="scan'208";a="29501317"
+IronPort-PHdr: =?us-ascii?q?9a23=3AzsFWLxEbuwGMA1kjE1qQWp1GYnF86YWxBRYc79?=
+ =?us-ascii?q?8ds5kLTJ76ocq9bnLW6fgltlLVR4KTs6sC17OM9fmwEjNQqdbZ6TZeKcUKD0?=
+ =?us-ascii?q?dEwewt3CUYSPafDkP6KPO4JwcbJ+9lEGFfwnegLEJOE9z/bVCB6le77DoVBw?=
+ =?us-ascii?q?mtfVEtfre9FYHdldm42P6v8JPPfQpImCC9YbRvJxmqsAndrMYbjZZ8Jqor1x?=
+ =?us-ascii?q?fEoXREduZVyGh1IV6fgwvw6t2/8ZJ+7ihcoe4t+9JFXa7nY6k2ULtUASg8PW?=
+ =?us-ascii?q?so/sPrrx7DTQWO5nsYTGoblwdDDhbG4h/nQJr/qzP2ueVh1iaUO832Vq00Vi?=
+ =?us-ascii?q?+576h3Uh/oiTwIOCA//WrKl8F/lqNboBampxxi347ZZZyeOfRicq/Be94RWH?=
+ =?us-ascii?q?FMVdhNWSNfHoy8bpMPD+sfMuZes4n9vEYFoR+nCQWxGO/j1jpEi3n40q0g1+?=
+ =?us-ascii?q?QqDB/I0gouEdkTtHjYtdv4OaMXXe2z0aLGzyjMb+lO1Dng9obIfBAvr/KCU7?=
+ =?us-ascii?q?1+fsXey1UgGQzeg1WMqoHoJS+Z2vgDvmWZ6edrSOKhi3QgqwF0ujWh29sshZ?=
+ =?us-ascii?q?fRhoIV1F/E8zhyzpswJdKiTE57ZcCrEZtNvCydLIt5X9giTnp0uCc61rIGuZ?=
+ =?us-ascii?q?m7cDIMyJQ83RHTcfOHc4+W4h/6UuuaPDR2hGp9db6iiBu//lKsx+3hWsWuzl?=
+ =?us-ascii?q?pHoTRJnsPRun0Lyhfd8NKISuFn8UekwTuP0gfT5fxaLk0sjqrbLoIhwqY3lp?=
+ =?us-ascii?q?oOrUTPBi/2l1vyjK+Rbkgk5vKn6/7mYrX7vZ+QLZN0iwHiPaQuncyzG+I4PR?=
+ =?us-ascii?q?QVX2eH4+i80bzj/UnhTLVLiP05jLXZvYjHKckUqaO1GQ9Y3ps55xqhADqqzs?=
+ =?us-ascii?q?4UkWQfIFJAYh2HjozpO1/UIPD/CPeym0+snypwx/3dIr3gAonCLnjEkLv7e7?=
+ =?us-ascii?q?Z98FRTxBA8zdBY+ZJYEqsBL+7rWk/tqNzYCQc0Mwipw+b7D9VwzZkRWWeVDa?=
+ =?us-ascii?q?CFKqzSqV6I5v41LOmIfoMVvijyK+Q97f70kXA5gUMdfbWu3ZYPanC4G/NmI1?=
+ =?us-ascii?q?+DYXrtmdcMCmEKsRA7TOP0iV2OSzlTZ2y9X6gk/DE0FJqmDZvfRoCqmLGB2D?=
+ =?us-ascii?q?q7HoFRZm1dCVCDD23od4OaVPcIci6SJdVhkjMcX7i7V4AhzQ2utBP9y7d/K+?=
+ =?us-ascii?q?rb4DEYtY7j1Ndr6ezTmgs99SZuD8uDz2GNU3p5nmwPRz8x06B/pVJyxk2f3q?=
+ =?us-ascii?q?h/hvxSDcZT6O9RUgcmKZ7cyPR3C9TzWgLHY9eIR0+qQs64Dj4tU9Ix2d4OY1?=
+ =?us-ascii?q?p9Gti5kBDD0DSlA6UPm7yIGpM06KTc0Gb1J8pnzHbGzqYhhUE8QsRTLW2mmr?=
+ =?us-ascii?q?J/9w/LCo7NkkWZkbuqdKsF0C7O6miD12yOs19cUANrT6XFUm4QZlHModT6+E?=
+ =?us-ascii?q?zCVbmuBqojMgdbzs6CMKRKYMXzjVpaXPfjJMjeY2Wplme0BBaIwK6MbYXzd2?=
+ =?us-ascii?q?oHxCXdCVMJkx4c/XmYLwgyHCShrHzEDDxoC13vZ1ng8e5kqHO0VkU01R2Fb1?=
+ =?us-ascii?q?V917qp/R4YneGTS/MU3rMKpighrzF0HE2m0tLMFdWPugphc79AYd8n/FhH0m?=
+ =?us-ascii?q?fZvRRnPpO8N6BimkIecwNvskz00xV4FIpBntYrrH8w1wpyNbiX0ElGdzOG2p?=
+ =?us-ascii?q?DwO6HXKm7s/B20ZK7W30vR0NeS+qsV9Ps4rFDjthmzFkU+63Vnz8VV03yE65?=
+ =?us-ascii?q?XPDgoSXpL8X0Is+hh1oLHaZSY954fK2nF2Laa0tTrC0cozBOQ50hagY8tfMK?=
+ =?us-ascii?q?ScGQ/0DcIaG9WhJ/I0m1WycBIEM/5d9LQuM8OlafSGwqirM/hknD68imRH+o?=
+ =?us-ascii?q?992FqW9yVgUu7Iw4oFw/aA0wuFUzfzkkmuv9vsmYBZfjEdAHCzxjTjBI5Ufq?=
+ =?us-ascii?q?dyZ5oECX+yI82rwdVzn4PiVGRe9F6iGVwG3NSkeRuVb1zywwJfz14XrmegmS?=
+ =?us-ascii?q?q31TB0lS8mrraH1izU3+vibAYHOnJMRGR6iVfsII60j80VXUSxdAgmigeq5V?=
+ =?us-ascii?q?vgx6hauKR+L3DfQUJPfyfrMmFiVrW/u6GcY85A9pwoqz9bUOeiblCATL7yvR?=
+ =?us-ascii?q?8a3znkH2tEyzBoPw2t77z/kw0yrH+BK3NytmHaeIkkwQrD4/TVQPda1yIHWC?=
+ =?us-ascii?q?B8zz/aGg74d/ug+NiP37LEqPq/TCr1VJhUazPq1quGvS625CttGxLpzN6pnd?=
+ =?us-ascii?q?iyKhQ3yS/20ZFRUCzMqBvtKt3w27+SLfNsfk4uAkT1rcV9BNctwcMLmJgM1C?=
+ =?us-ascii?q?1C1d2u9n0dnDK2aI4K1A=3D=3D?=
+X-IPAS-Result: =?us-ascii?q?A2CpAwDH0hRd/wHyM5BlHQEBBQEHBQGBZ4FoBSqBOwEyK?=
+ =?us-ascii?q?IQZknGBYggliVmRDwkBAQEBAQEBAQE0AQIBAYRAAoMAIzgTAQMBAQEEAQEBA?=
+ =?us-ascii?q?QQBAWyKQ4I6KQGCZwEFIw8BBTYLEAsOCgICJgICVwYBDAYCAQGCXz+BdxSlf?=
+ =?us-ascii?q?oEyhUeDL4FGgQwoikGBHhd4gQeBOAyCMS4+h06CWASLeYIym3sJghmCH5FQB?=
+ =?us-ascii?q?huCK4sjihCMX0qZLSGBWCsIAhgIIQ87gmyCeI4pIwMwgQYBAY4kAQE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 27 Jun 2019 14:35:44 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x5REZfVA011759;
+        Thu, 27 Jun 2019 10:35:43 -0400
+Subject: Re: [PATCH V33 24/30] bpf: Restrict bpf when kernel lockdown is in
+ confidentiality mode
+To:     Andy Lutomirski <luto@amacapital.net>,
+        James Morris <jmorris@namei.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        linux-security@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Chun-Yi Lee <jlee@suse.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        linux-security-module@vger.kernel.org
+References: <20190621011941.186255-1-matthewgarrett@google.com>
+ <20190621011941.186255-25-matthewgarrett@google.com>
+ <CALCETrVUwQP7roLnW6kFG80Cc5U6X_T6AW+BTAftLccYGp8+Ow@mail.gmail.com>
+ <alpine.LRH.2.21.1906270621080.28132@namei.org>
+ <6E53376F-01BB-4795-BC02-24F9CAE00001@amacapital.net>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <bce70c8b-9efd-6362-d536-cfbbcf70b0b7@tycho.nsa.gov>
+Date:   Thu, 27 Jun 2019 10:35:41 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190627130316.254309-2-glider@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <6E53376F-01BB-4795-BC02-24F9CAE00001@amacapital.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu 27-06-19 15:03:15, Alexander Potapenko wrote:
-> The new options are needed to prevent possible information leaks and
-> make control-flow bugs that depend on uninitialized values more
-> deterministic.
+On 6/26/19 8:57 PM, Andy Lutomirski wrote:
 > 
-> This is expected to be on-by-default on Android and Chrome OS. And it
-> gives the opportunity for anyone else to use it under distros too via
-> the boot args. (The init_on_free feature is regularly requested by
-> folks where memory forensics is included in their threat models.)
 > 
-> init_on_alloc=1 makes the kernel initialize newly allocated pages and heap
-> objects with zeroes. Initialization is done at allocation time at the
-> places where checks for __GFP_ZERO are performed.
+>> On Jun 26, 2019, at 1:22 PM, James Morris <jmorris@namei.org> wrote:
+>>
+>> [Adding the LSM mailing list: missed this patchset initially]
+>>
+>>> On Thu, 20 Jun 2019, Andy Lutomirski wrote:
+>>>
+>>> This patch exemplifies why I don't like this approach:
+>>>
+>>>> @@ -97,6 +97,7 @@ enum lockdown_reason {
+>>>>         LOCKDOWN_INTEGRITY_MAX,
+>>>>         LOCKDOWN_KCORE,
+>>>>         LOCKDOWN_KPROBES,
+>>>> +       LOCKDOWN_BPF,
+>>>>         LOCKDOWN_CONFIDENTIALITY_MAX,
+>>>
+>>>> --- a/security/lockdown/lockdown.c
+>>>> +++ b/security/lockdown/lockdown.c
+>>>> @@ -33,6 +33,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+>>>>         [LOCKDOWN_INTEGRITY_MAX] = "integrity",
+>>>>         [LOCKDOWN_KCORE] = "/proc/kcore access",
+>>>>         [LOCKDOWN_KPROBES] = "use of kprobes",
+>>>> +       [LOCKDOWN_BPF] = "use of bpf",
+>>>>         [LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+>>>
+>>> The text here says "use of bpf", but what this patch is *really* doing
+>>> is locking down use of BPF to read kernel memory.  If the details
+>>> change, then every LSM needs to get updated, and we risk breaking user
+>>> policies that are based on LSMs that offer excessively fine
+>>> granularity.
+>>
+>> Can you give an example of how the details might change?
+>>
+>>> I'd be more comfortable if the LSM only got to see "confidentiality"
+>>> or "integrity".
+>>
+>> These are not sufficient for creating a useful policy for the SELinux
+>> case.
+>>
+>>
 > 
-> init_on_free=1 makes the kernel initialize freed pages and heap objects
-> with zeroes upon their deletion. This helps to ensure sensitive data
-> doesn't leak via use-after-free accesses.
+> I may have misunderstood, but I thought that SELinux mainly needed to allow certain privileged programs to bypass the policy.  Is there a real example of what SELinux wants to do that can’t be done in the simplified model?
 > 
-> Both init_on_alloc=1 and init_on_free=1 guarantee that the allocator
-> returns zeroed memory. The two exceptions are slab caches with
-> constructors and SLAB_TYPESAFE_BY_RCU flag. Those are never
-> zero-initialized to preserve their semantics.
-> 
-> Both init_on_alloc and init_on_free default to zero, but those defaults
-> can be overridden with CONFIG_INIT_ON_ALLOC_DEFAULT_ON and
-> CONFIG_INIT_ON_FREE_DEFAULT_ON.
-> 
-> If either SLUB poisoning or page poisoning is enabled, those options
-> take precedence over init_on_alloc and init_on_free: initialization is
-> only applied to unpoisoned allocations.
-> 
-> Slowdown for the new features compared to init_on_free=0,
-> init_on_alloc=0:
-> 
-> hackbench, init_on_free=1:  +7.62% sys time (st.err 0.74%)
-> hackbench, init_on_alloc=1: +7.75% sys time (st.err 2.14%)
-> 
-> Linux build with -j12, init_on_free=1:  +8.38% wall time (st.err 0.39%)
-> Linux build with -j12, init_on_free=1:  +24.42% sys time (st.err 0.52%)
-> Linux build with -j12, init_on_alloc=1: -0.13% wall time (st.err 0.42%)
-> Linux build with -j12, init_on_alloc=1: +0.57% sys time (st.err 0.40%)
-> 
-> The slowdown for init_on_free=0, init_on_alloc=0 compared to the
-> baseline is within the standard error.
-> 
-> The new features are also going to pave the way for hardware memory
-> tagging (e.g. arm64's MTE), which will require both on_alloc and on_free
-> hooks to set the tags for heap objects. With MTE, tagging will have the
-> same cost as memory initialization.
-> 
-> Although init_on_free is rather costly, there are paranoid use-cases where
-> in-memory data lifetime is desired to be minimized. There are various
-> arguments for/against the realism of the associated threat models, but
-> given that we'll need the infrastructure for MTE anyway, and there are
-> people who want wipe-on-free behavior no matter what the performance cost,
-> it seems reasonable to include it in this series.
-> 
-> Signed-off-by: Alexander Potapenko <glider@google.com>
-> Acked-by: Kees Cook <keescook@chromium.org>
-> To: Andrew Morton <akpm@linux-foundation.org>
-> To: Christoph Lameter <cl@linux.com>
-> To: Kees Cook <keescook@chromium.org>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Cc: Kostya Serebryany <kcc@google.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Sandeep Patil <sspatil@android.com>
-> Cc: Laura Abbott <labbott@redhat.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Qian Cai <cai@lca.pw>
-> Cc: linux-mm@kvack.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: kernel-hardening@lists.openwall.com
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> The think that specifically makes me uneasy about exposing all of these precise actions to LSMs is that they will get exposed to userspace in a way that forces us to treat them as stable ABIs.
 
-Acked-by: Michal Hocko <mhocko@suse.com> # page and dmapool parts
--- 
-Michal Hocko
-SUSE Labs
+There are two scenarios where finer-grained distinctions make sense:
+
+- Users may need to enable specific functionality that falls under the 
+umbrella of "confidentiality" or "integrity" lockdown.  Finer-grained 
+lockdown reasons free them from having to make an all-or-nothing choice 
+between lost functionality or no lockdown at all. This can be supported 
+directly by the lockdown module without any help from SELinux or other 
+security modules; we just need the ability to specify these 
+finer-grained lockdown levels via the boot parameters and securityfs nodes.
+
+- Different processes/programs may need to use different sets of 
+functionality restricted via lockdown confidentiality or integrity 
+categories.  If we have to allow all-or-none for the set of 
+interfaces/functionality covered by the generic confidentiality or 
+integrity categories, then we'll end up having to choose between lost 
+functionality or overprivileged processes, neither of which is optimal.
+
+Is it truly the case that everything under the "confidentiality" 
+category poses the same level of risk to kernel confidentiality, and 
+similarly for everything under the "integrity" category?  If not, then 
+being able to distinguish them definitely has benefit.
+
+I'm still not clear though on how/if this will compose with or be 
+overridden by other security modules.  We would need some means for 
+another security module to take over lockdown decisions once it has 
+initialized (including policy load), and to be able to access state that 
+is currently private to the lockdown module, like the level.
