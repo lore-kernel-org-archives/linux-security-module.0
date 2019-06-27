@@ -2,110 +2,113 @@ Return-Path: <SRS0=lnE7=U2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA438C4321A
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 23:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E782C4321A
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 23:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76C2E2084B
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 23:23:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561677804;
-	bh=kXB0eS8pT4D+hcUPC2PR+0kOliEd8dU5IchIN1Hskt8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=HmhjkEAC01C2GOf0AK6xRQZmKWbvEau9DEY6SozkjOWDQtaOJVHXksumUwLNKGnan
-	 AeoPzB/9PJPtwJEdqditUV/XU8i7F/Bicni6pMdPf8qvjpObxp0k/+G5pT6Fc0eTzr
-	 K15xR+BGYrhGPIVZAexDr3BUG9l1uHb7mIhpGU9M=
+	by mail.kernel.org (Postfix) with ESMTP id DDAF82084B
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jun 2019 23:26:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726506AbfF0XXY (ORCPT
+        id S1726579AbfF0X0o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jun 2019 19:23:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47458 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbfF0XXX (ORCPT
+        Thu, 27 Jun 2019 19:26:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10304 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726506AbfF0X0o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:23:23 -0400
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E109B216FD
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jun 2019 23:23:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561677803;
-        bh=kXB0eS8pT4D+hcUPC2PR+0kOliEd8dU5IchIN1Hskt8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Rzq1Mbzi52Cqr9tKPeg9PIx8m2rEDwxZVowrCg4wXtLlpuP3Jtc9v39mqsgGyUHQK
-         B2+ijaiqQJoVHPKsrkPR0z6M98vReMp2FiiOoxvRob9yvo2r8Pc/wvGfzpI3jaEGyw
-         a2EWhBxJIOcI/YW0Ql/gicAhLgjR8qyIc6OQWpyA=
-Received: by mail-wr1-f53.google.com with SMTP id k11so4324413wrl.1
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jun 2019 16:23:22 -0700 (PDT)
-X-Gm-Message-State: APjAAAU+SrOVQRz09mcPnrxgmnstPtMV72KnFpxVj1nP8s1grDDlu8wG
-        XGbBEE/vYMWH0Q+KPi6yIdyqHHcQBDO7PO788+KB5g==
-X-Google-Smtp-Source: APXvYqzjr/QH+PIoGqS71dCctuNtbCVXYhiRJONwF8d9fXg29Z5HH0Te+o3LGa7ZOuGFyx26xlvsCSwEDCX8Q8cBEy0=
-X-Received: by 2002:a5d:6a42:: with SMTP id t2mr5110416wrw.352.1561677801383;
- Thu, 27 Jun 2019 16:23:21 -0700 (PDT)
+        Thu, 27 Jun 2019 19:26:44 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RNQbS0028835
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Jun 2019 19:26:43 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2td45hftud-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Jun 2019 19:26:43 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Fri, 28 Jun 2019 00:26:42 +0100
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 28 Jun 2019 00:26:39 +0100
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5RNQbRX59703622
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 23:26:38 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E22737805E;
+        Thu, 27 Jun 2019 23:26:37 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 89E317805C;
+        Thu, 27 Jun 2019 23:26:36 +0000 (GMT)
+Received: from morokweng.localdomain.com (unknown [9.85.218.134])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Jun 2019 23:26:36 +0000 (GMT)
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH] ima: Update MAX_TEMPLATE_NAME_LEN to fit largest reasonable definition
+Date:   Thu, 27 Jun 2019 20:25:46 -0300
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190621011941.186255-1-matthewgarrett@google.com>
- <20190621011941.186255-25-matthewgarrett@google.com> <CALCETrVUwQP7roLnW6kFG80Cc5U6X_T6AW+BTAftLccYGp8+Ow@mail.gmail.com>
- <alpine.LRH.2.21.1906270621080.28132@namei.org> <6E53376F-01BB-4795-BC02-24F9CAE00001@amacapital.net>
- <bce70c8b-9efd-6362-d536-cfbbcf70b0b7@tycho.nsa.gov> <alpine.LRH.2.21.1906280332500.17363@namei.org>
- <de8b15eb-ba6c-847a-7435-42742203d4a5@tycho.nsa.gov> <CACdnJuuG8cR7h9v3pNcBKsxyckAzpKuBJs1GQxsz77jk5DRoQA@mail.gmail.com>
-In-Reply-To: <CACdnJuuG8cR7h9v3pNcBKsxyckAzpKuBJs1GQxsz77jk5DRoQA@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 27 Jun 2019 16:23:10 -0700
-X-Gmail-Original-Message-ID: <CALCETrU7JVH7LR3d_=s-O=b2bjevTLw2rSm5g50UjaUB2PTY5A@mail.gmail.com>
-Message-ID: <CALCETrU7JVH7LR3d_=s-O=b2bjevTLw2rSm5g50UjaUB2PTY5A@mail.gmail.com>
-Subject: Re: [PATCH V33 24/30] bpf: Restrict bpf when kernel lockdown is in
- confidentiality mode
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        linux-security@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Chun-Yi Lee <jlee@suse.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062723-0012-0000-0000-00001749BB66
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011343; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01224213; UDB=6.00644313; IPR=6.01005401;
+ MB=3.00027497; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-27 23:26:41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062723-0013-0000-0000-000057DBE90C
+Message-Id: <20190627232546.28746-1-bauerman@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906270272
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 27, 2019 at 4:16 PM Matthew Garrett <mjg59@google.com> wrote:
->
-> On Thu, Jun 27, 2019 at 1:16 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> > That would only allow the LSM to further lock down the system above the
-> > lockdown level set at boot, not grant exemptions for specific
-> > functionality/interfaces required by the user or by a specific
-> > process/program. You'd have to boot with lockdown=none (or your
-> > lockdown=custom suggestion) in order for the LSM to allow anything
-> > covered by the integrity or confidentiality levels.  And then the kernel
-> > would be unprotected prior to full initialization of the LSM, including
-> > policy load.
-> >
-> > It seems like one would want to be able to boot with lockdown=integrity
-> > to protect the kernel initially, then switch over to allowing the LSM to
-> > selectively override it.
->
-> One option would be to allow modules to be "unstacked" at runtime, but
-> there's still something of a problem here - how do you ensure that
-> your userland can be trusted to load a new policy before it does so?
-> If you're able to assert that your early userland is trustworthy
-> (perhaps because it's in an initramfs that's part of your signed boot
-> payload), there's maybe an argument that most of the lockdown
-> integrity guarantees are unnecessary before handoff - just using the
-> lockdown LSM to protect against attacks via kernel parameters would be
-> sufficient.
+MAX_TEMPLATE_NAME_LEN is used when restoring measurements carried over from
+a kexec. It should be set to the length of a template containing all fields
+except for 'd' and 'n', which don't need to be accounted for since they
+shouldn't be defined in the same template description as 'd-ng' and 'n-ng'.
 
-I think that, if you don't trust your system enough to avoid
-compromising itself before policy load, then your MAC policy is more
-or less dead in the water.  It seems to be that it ought to be good
-enough to boot with lockdown=none and then have a real policy loaded
-along with the rest of the MAC policy.  Or, for applications that need
-to be stricter, you accept that MAC policy can't override lockdown.
+That length is greater than the current 15, so update using a sizeof() to
+show where the number comes from and also can be visually shown to be
+correct. The sizeof() is calculated at compile time.
+
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+---
+ security/integrity/ima/ima_template.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index a01a17e5c581..7343e8e0ae2f 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -47,7 +47,13 @@ static const struct ima_template_field supported_fields[] = {
+ 	{.field_id = "buf", .field_init = ima_eventbuf_init,
+ 	 .field_show = ima_show_template_buf},
+ };
+-#define MAX_TEMPLATE_NAME_LEN 15
++
++/*
++ * Used when restoring measurements carried over from a kexec. 'd' and 'n' don't
++ * need to be accounted for since they shouldn't be defined in the same template
++ * description as 'd-ng' and 'n-ng' respectively.
++ */
++#define MAX_TEMPLATE_NAME_LEN sizeof("d-ng|n-ng|sig|buf")
+ 
+ static struct ima_template_desc *ima_template;
+ 
+
