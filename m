@@ -2,186 +2,188 @@ Return-Path: <SRS0=W4wH=U3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7EEC5B57A
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 14:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F41AEC5B57A
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 15:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11A8C2086D
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 14:48:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ofGc0v9h"
+	by mail.kernel.org (Postfix) with ESMTP id D3D31205F4
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 15:48:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfF1Osg (ORCPT
+        id S1727373AbfF1Pso (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Jun 2019 10:48:36 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42060 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfF1Osf (ORCPT
+        Fri, 28 Jun 2019 11:48:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49232 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726990AbfF1Psn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Jun 2019 10:48:35 -0400
-Received: by mail-pg1-f195.google.com with SMTP id k13so2682302pgq.9
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Jun 2019 07:48:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4+9BQ/9qN/HEB5jYhHOcTVXcrlmUmZtAOZVfYv7/QOA=;
-        b=ofGc0v9hZZwUxfhb5r0SX5BCHeOcj3Ym+G17847226BPeApHLQt5lHVJGZPjPCl6mJ
-         R9yEA1WaiRHbrYKbycxmjkd9zcIuG73DJH0UQtlrraeon+eWgyD9ND/T5MTW0MQaCyTR
-         T/8ILMD0OYRqTF/FvjRgFsB3BtZtKPQ5aqUdQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4+9BQ/9qN/HEB5jYhHOcTVXcrlmUmZtAOZVfYv7/QOA=;
-        b=Hzv6pf7gPkAOnkAd+FhTC+6wGWhdFPq20LwXXw9KJYfxcxkyws644kYhJfpv+lkJQ9
-         7NhMRL+PQ4VYSKlKSz/sqsfjytPASfbPm1YOxOAF401kBbAwRqDHMi8vth6wVyJ4vYaU
-         ABreultnGitGtSHltemNf38vvZBHu/FAI1huL284+zcUb5FA/nWoZs0lk+nTaCsvFqj9
-         o88hh5gQhLeBA6qWJWb6Rb6djJ4pXjHCJ0Ob/oBeVWM0eIFFkS9+tkrgtbnZ520XfnZe
-         skVkWqvRWCNCErp6xkuZy9n8tVqysQVwkosDNMFQU5smNXu0TcF87m0nNLPWBM5it4n0
-         xKug==
-X-Gm-Message-State: APjAAAUzJLAOJwP2Cclf7AG6mwZ59oxDsJQlSkWJhx718rqXDyvA0aJE
-        +j5tklmWFICLcS1ZRe1bNa7f1w==
-X-Google-Smtp-Source: APXvYqxuLReGYT1J6pyZqWFjFn4v/IkeCqcW7PORteWScBzJ7GtXkI24Q14wzzAy1SnCsExLh59UaA==
-X-Received: by 2002:a17:90a:29c5:: with SMTP id h63mr13123809pjd.83.1561733315036;
-        Fri, 28 Jun 2019 07:48:35 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b11sm2896176pfd.18.2019.06.28.07.48.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Jun 2019 07:48:33 -0700 (PDT)
-Date:   Fri, 28 Jun 2019 07:48:33 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Fri, 28 Jun 2019 11:48:43 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 62BCB83F3D;
+        Fri, 28 Jun 2019 15:48:42 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-219.rdu2.redhat.com [10.10.120.219])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 24BE9608CA;
+        Fri, 28 Jun 2019 15:48:34 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/9] uapi: General notification ring definitions [ver #5]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Wensong Zhang <wensong@linux-vs.org>,
-        Simon Horman <horms@verge.net.au>,
-        Julian Anastasov <ja@ssi.bg>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 1/4] [v2] structleak: disable STRUCTLEAK_BYREF in
- combination with KASAN_STACK
-Message-ID: <201906280748.910641F1DD@keescook>
-References: <20190628123819.2785504-1-arnd@arndb.de>
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 28 Jun 2019 16:48:34 +0100
+Message-ID: <156173691411.15137.2073887155273175167.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156173690158.15137.3985163001079120218.stgit@warthog.procyon.org.uk>
+References: <156173690158.15137.3985163001079120218.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190628123819.2785504-1-arnd@arndb.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 28 Jun 2019 15:48:42 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 28, 2019 at 02:37:46PM +0200, Arnd Bergmann wrote:
-> The combination of KASAN_STACK and GCC_PLUGIN_STRUCTLEAK_BYREF
-> leads to much larger kernel stack usage, as seen from the warnings
-> about functions that now exceed the 2048 byte limit:
-> 
-> drivers/media/i2c/tvp5150.c:253:1: error: the frame size of 3936 bytes is larger than 2048 bytes
-> drivers/media/tuners/r820t.c:1327:1: error: the frame size of 2816 bytes is larger than 2048 bytes
-> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16552:1: error: the frame size of 3144 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
-> fs/ocfs2/aops.c:1892:1: error: the frame size of 2088 bytes is larger than 2048 bytes
-> fs/ocfs2/dlm/dlmrecovery.c:737:1: error: the frame size of 2088 bytes is larger than 2048 bytes
-> fs/ocfs2/namei.c:1677:1: error: the frame size of 2584 bytes is larger than 2048 bytes
-> fs/ocfs2/super.c:1186:1: error: the frame size of 2640 bytes is larger than 2048 bytes
-> fs/ocfs2/xattr.c:3678:1: error: the frame size of 2176 bytes is larger than 2048 bytes
-> net/bluetooth/l2cap_core.c:7056:1: error: the frame size of 2144 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
-> net/bluetooth/l2cap_core.c: In function 'l2cap_recv_frame':
-> net/bridge/br_netlink.c:1505:1: error: the frame size of 2448 bytes is larger than 2048 bytes
-> net/ieee802154/nl802154.c:548:1: error: the frame size of 2232 bytes is larger than 2048 bytes
-> net/wireless/nl80211.c:1726:1: error: the frame size of 2224 bytes is larger than 2048 bytes
-> net/wireless/nl80211.c:2357:1: error: the frame size of 4584 bytes is larger than 2048 bytes
-> net/wireless/nl80211.c:5108:1: error: the frame size of 2760 bytes is larger than 2048 bytes
-> net/wireless/nl80211.c:6472:1: error: the frame size of 2112 bytes is larger than 2048 bytes
-> 
-> The structleak plugin was previously disabled for CONFIG_COMPILE_TEST,
-> but meant we missed some bugs, so this time we should address them.
-> 
-> The frame size warnings are distracting, and risking a kernel stack
-> overflow is generally not beneficial to performance, so it may be best
-> to disallow that particular combination. This can be done by turning
-> off either one. I picked the dependency in GCC_PLUGIN_STRUCTLEAK_BYREF
-> and GCC_PLUGIN_STRUCTLEAK_BYREF_ALL, as this option is designed to
-> make uninitialized stack usage less harmful when enabled on its own,
-> but it also prevents KASAN from detecting those cases in which it was
-> in fact needed.
-> 
-> KASAN_STACK is currently implied by KASAN on gcc, but could be made a
-> user selectable option if we want to allow combining (non-stack) KASAN
-> with GCC_PLUGIN_STRUCTLEAK_BYREF.
-> 
-> Note that it would be possible to specifically address the files that
-> print the warning, but presumably the overall stack usage is still
-> significantly higher than in other configurations, so this would not
-> address the full problem.
-> 
-> I could not test this with CONFIG_INIT_STACK_ALL, which may or may not
-> suffer from a similar problem.
-> 
-> Fixes: 81a56f6dcd20 ("gcc-plugins: structleak: Generalize to all variable types")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Add UAPI definitions for the general notification ring, including the
+following pieces:
 
-Acked-by: Kees Cook <keescook@chromium.org>
+ (1) struct watch_notification.
 
--Kees
+     This is the metadata header for each entry in the ring.  It includes a
+     type and subtype that indicate the source of the message
+     (eg. WATCH_TYPE_MOUNT_NOTIFY) and the kind of the message
+     (eg. NOTIFY_MOUNT_NEW_MOUNT).
 
-> ---
-> [v2] do it for both GCC_PLUGIN_STRUCTLEAK_BYREF and GCC_PLUGIN_STRUCTLEAK_BYREF_ALL.
-> ---
->  security/Kconfig.hardening | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-> index a1ffe2eb4d5f..af4c979b38ee 100644
-> --- a/security/Kconfig.hardening
-> +++ b/security/Kconfig.hardening
-> @@ -61,6 +61,7 @@ choice
->  	config GCC_PLUGIN_STRUCTLEAK_BYREF
->  		bool "zero-init structs passed by reference (strong)"
->  		depends on GCC_PLUGINS
-> +		depends on !(KASAN && KASAN_STACK=1)
->  		select GCC_PLUGIN_STRUCTLEAK
->  		help
->  		  Zero-initialize any structures on the stack that may
-> @@ -70,9 +71,15 @@ choice
->  		  exposures, like CVE-2017-1000410:
->  		  https://git.kernel.org/linus/06e7e776ca4d3654
->  
-> +		  As a side-effect, this keeps a lot of variables on the
-> +		  stack that can otherwise be optimized out, so combining
-> +		  this with CONFIG_KASAN_STACK can lead to a stack overflow
-> +		  and is disallowed.
-> +
->  	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
->  		bool "zero-init anything passed by reference (very strong)"
->  		depends on GCC_PLUGINS
-> +		depends on !(KASAN && KASAN_STACK=1)
->  		select GCC_PLUGIN_STRUCTLEAK
->  		help
->  		  Zero-initialize any stack variables that may be passed
-> -- 
-> 2.20.0
-> 
+     The header also contains an information field that conveys the
+     following information:
 
--- 
-Kees Cook
+	- WATCH_INFO_LENGTH.  The size of the entry (entries are variable
+          length).
+
+	- WATCH_INFO_ID.  The watch ID specified when the watchpoint was
+          set.
+
+	- WATCH_INFO_TYPE_INFO.  (Sub)type-specific information.
+
+	- WATCH_INFO_FLAG_*.  Flag bits overlain on the type-specific
+          information.  For use by the type.
+
+     All the information in the header can be used in filtering messages at
+     the point of writing into the buffer.
+
+ (2) struct watch_queue_buffer.
+
+     This describes the layout of the ring.  Note that the first slots in
+     the ring contain a special metadata entry that contains the ring
+     pointers.  The producer in the kernel knows to skip this and it has a
+     proper header (WATCH_TYPE_META, WATCH_META_SKIP_NOTIFICATION) that
+     indicates the size so that the ring consumer can handle it the same as
+     any other record and just skip it.
+
+     Note that this means that ring entries can never be split over the end
+     of the ring, so if an entry would need to be split, a skip record is
+     inserted to wrap the ring first; this is also WATCH_TYPE_META,
+     WATCH_META_SKIP_NOTIFICATION.
+
+ (3) WATCH_INFO_NOTIFICATIONS_LOST.
+
+     This is a flag that can be set in the metadata header by the kernel to
+     indicate that at least one message was lost since it was last cleared
+     by userspace.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ include/uapi/linux/watch_queue.h |   67 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 include/uapi/linux/watch_queue.h
+
+diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
+new file mode 100644
+index 000000000000..70f575099968
+--- /dev/null
++++ b/include/uapi/linux/watch_queue.h
+@@ -0,0 +1,67 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_WATCH_QUEUE_H
++#define _UAPI_LINUX_WATCH_QUEUE_H
++
++#include <linux/types.h>
++
++enum watch_notification_type {
++	WATCH_TYPE_META		= 0,	/* Special record */
++	WATCH_TYPE___NR		= 1
++};
++
++enum watch_meta_notification_subtype {
++	WATCH_META_SKIP_NOTIFICATION	= 0,	/* Just skip this record */
++	WATCH_META_REMOVAL_NOTIFICATION	= 1,	/* Watched object was removed */
++};
++
++#define WATCH_LENGTH_GRANULARITY sizeof(__u64)
++
++/*
++ * Notification record header.  This is aligned to 64-bits so that subclasses
++ * can contain __u64 fields.
++ */
++struct watch_notification {
++	__u32			type:24;	/* enum watch_notification_type */
++	__u32			subtype:8;	/* Type-specific subtype (filterable) */
++	__u32			info;
++#define WATCH_INFO_LENGTH	0x0000003f	/* Length of record / sizeof(watch_notification) */
++#define WATCH_INFO_LENGTH__SHIFT 0
++#define WATCH_INFO_ID		0x0000ff00	/* ID of watchpoint, if type-appropriate */
++#define WATCH_INFO_ID__SHIFT	8
++#define WATCH_INFO_TYPE_INFO	0xffff0000	/* Type-specific info */
++#define WATCH_INFO_TYPE_INFO__SHIFT 16
++#define WATCH_INFO_FLAG_0	0x00010000	/* Type-specific info, flag bit 0 */
++#define WATCH_INFO_FLAG_1	0x00020000	/* ... */
++#define WATCH_INFO_FLAG_2	0x00040000
++#define WATCH_INFO_FLAG_3	0x00080000
++#define WATCH_INFO_FLAG_4	0x00100000
++#define WATCH_INFO_FLAG_5	0x00200000
++#define WATCH_INFO_FLAG_6	0x00400000
++#define WATCH_INFO_FLAG_7	0x00800000
++} __attribute__((aligned(WATCH_LENGTH_GRANULARITY)));
++
++struct watch_queue_buffer {
++	union {
++		/* The first few entries are special, containing the
++		 * ring management variables.
++		 */
++		struct {
++			struct watch_notification watch; /* WATCH_TYPE_META */
++			__u32		head;		/* Ring head index */
++			__u32		tail;		/* Ring tail index */
++			__u32		mask;		/* Ring index mask */
++			__u32		__reserved;
++		} meta;
++		struct watch_notification slots[0];
++	};
++};
++
++/*
++ * The Metadata pseudo-notification message uses a flag bits in the information
++ * field to convey the fact that messages have been lost.  We can only use a
++ * single bit in this manner per word as some arches that support SMP
++ * (eg. parisc) have no kernel<->user atomic bit ops.
++ */
++#define WATCH_INFO_NOTIFICATIONS_LOST WATCH_INFO_FLAG_0
++
++#endif /* _UAPI_LINUX_WATCH_QUEUE_H */
+
