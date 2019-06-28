@@ -2,191 +2,189 @@ Return-Path: <SRS0=W4wH=U3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9387C4321A
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 12:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 843A9C5B57A
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 13:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A136B208E3
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 12:55:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F7532133F
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 13:17:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ng/LpVIz"
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="V4oH5XMU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbfF1MzS (ORCPT
+        id S1726672AbfF1NQ6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Jun 2019 08:55:18 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35897 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726660AbfF1MzR (ORCPT
+        Fri, 28 Jun 2019 09:16:58 -0400
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:54792 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbfF1NQ6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:55:17 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190628125514euoutp014edf00165e92c79c70efc940b797771c~sXf2Vz_jf3234532345euoutp013;
-        Fri, 28 Jun 2019 12:55:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190628125514euoutp014edf00165e92c79c70efc940b797771c~sXf2Vz_jf3234532345euoutp013
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561726514;
-        bh=GrXQNTXN4I9JHpQIL9zEkPq5zel3LSoEW3EB5ycEB2s=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Ng/LpVIzRsZ7uGyNkWHy/60hDS9y3MXaKxN/pLMXMT/Bss+fscGXO4sT151M0V6LW
-         QnUUmI4ALzkM6LrKmpH2V91CL0TahcMQc1lrHnHJeNV17Pp51zvLwJ2S4ssCIqcPRr
-         XOw/LyfRj5xsOxagZmKVtqZMHmRvG41kFNIfuAHc=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190628125514eucas1p1fd4db9f4161cfcae44ce131fc32d78ff~sXf19jycg2330223302eucas1p1v;
-        Fri, 28 Jun 2019 12:55:14 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 60.05.04298.13E061D5; Fri, 28
-        Jun 2019 13:55:13 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190628125513eucas1p149cf5397774d31921b4eee030d2d8500~sXf1JHVEo3050330503eucas1p1G;
-        Fri, 28 Jun 2019 12:55:13 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190628125512eusmtrp1f2e2177567d58a7c6fc5cb876c1efe21~sXf06je0q1299212992eusmtrp1O;
-        Fri, 28 Jun 2019 12:55:12 +0000 (GMT)
-X-AuditID: cbfec7f2-f13ff700000010ca-72-5d160e310d01
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2E.CA.04146.03E061D5; Fri, 28
-        Jun 2019 13:55:12 +0100 (BST)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190628125511eusmtip2334885dcd96bf89cc8f0faa1cb1e303f~sXfzmDhKC0126701267eusmtip2m;
-        Fri, 28 Jun 2019 12:55:11 +0000 (GMT)
-Subject: Re: [PATCH 37/39] docs: adds some directories to the main
- documentation index
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jens Axboe <axboe@kernel.dk>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
+        Fri, 28 Jun 2019 09:16:58 -0400
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id BECDAD0006F;
+        Fri, 28 Jun 2019 15:17:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1561727823;
+        bh=4QpdD3Fv+j/DUToNpr9bdvINCY1lm/nwotSarRRnLoo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=V4oH5XMUGscMi8Gq1v5kREK8lTOsGXMNBJTpC+fp5yU/eKSBiSb1w/b9EhX95Jktz
+         23y4Ybyo+tnUbieYEDaGeYUlNE1cHJ6RJtZA3MPIpycNccHkUiBXMBanxf2uAAHmJh
+         Ft7/MNqWnvCVcuWJXvjzRin9RRW2xBP5gPWF9Yt/dfXGtYhG/ut4j7KHBwST+N6T9t
+         owuJLIZt1jkyJ3osKMCyBGjh9DKTRFVkcm1jdz3BA4PyPUp4bUoD1GIffCvvgBdkd6
+         wbBdiaGoCggKhAHyhC1FygajiYABF0pYSEW8ruWL6BWs/IF2x3k95+enXclwpBtyxP
+         oOEynOlKBS30Q==
+Subject: Re: [PATCH bpf-next v9 05/10] bpf,landlock: Add a new map type: inode
+To:     Al Viro <viro@zeniv.linux.org.uk>
+CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
         Paul Moore <paul@paul-moore.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, live-patching@vger.kernel.org,
-        netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-watchdog@vger.kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <a89ef0db-211c-1880-e60c-dc599b36feb7@samsung.com>
-Date:   Fri, 28 Jun 2019 14:55:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.6.1
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>,
+        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>
+References: <20190625215239.11136-1-mic@digikod.net>
+ <20190625215239.11136-6-mic@digikod.net>
+ <20190625225201.GJ17978@ZenIV.linux.org.uk>
+ <79bac827-4092-8a4d-9dc6-6019419b2486@ssi.gouv.fr>
+ <20190627165640.GQ17978@ZenIV.linux.org.uk>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <9dbe8d9c-d7a7-5bf2-dda2-7dd72c44be2d@ssi.gouv.fr>
+Date:   Fri, 28 Jun 2019 15:17:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-In-Reply-To: <b26fc645cb2c81fe88ab13616c65664d2c3cead5.1561724493.git.mchehab+samsung@kernel.org>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxTZxTee796qRavlcE7YRqbOZVkCnMuZ36NJcu8WWJCjGaLjGDVOzDQ
-        anqpU7dkuPBZOnQyQ6hMwA8ooNAVggXEdWhbFKyTrwFaWCqLQlIRK9vcFKW9NePfc97nec55
-        zklellROMYvZfdpMQadVZ6gYOdXsfOp+Jz48MjnO54iDCXs+gjrPMQbG7HkIym5lU9A3PcnA
-        sCsHQUljLQP2p50ITD+2E1CZe46CzqJHNHhL/5aB0+Yl4FmrjYDe1jIG/N9fQ1D4u42BR0Yv
-        A4P1V2RQkT0rHqvsJqD71xEGql0zBHjMgwRMPi4gwHbjDAnlR7dAZXcSOCsi4c6JEgo8NxwM
-        vLg3TUN3Vw8NOed9BDRaT5Jwb3yGhPYRP0pYzjfVDBH8by3z+BaTR8Y3mmP5s5fHCb73pp63
-        1hYw/EO3W8bXXLhA86OFLoI/W1RM857cjfzUn8MUf7H9AeInr/QzfFN/HpUYuVO+ca+Qse+g
-        oFuzeZc8bWDkLnOgPvxQ07VSlIXG5QbEsph7DztdjAHJWSVnRvi8LQcZUNhs8QThbG+I8CNs
-        f36fChABg3f6JCER1Qg/6x8JFT6Es9oMREC1iPsct/tdwVYR3Pv4utsRbEVyZjnus1iZAMFw
-        6/EPebVBkYLbjP+q66UDmOKW46vmJ8H312cbjTottKRZiK+XjgVjhHFqbGm2BDUkF4WHx8oJ
-        CS/Fl3xlZGAY5txh2PrCwki5P8Y/TxpDeBGecDXJJByDu4qNlGSoR/h5/oOQ+xLC1cUzIccG
-        fNV1mw6cjORW4YbWNdL1PsLe776QYDge9C2UMoTjE80lpPSswPm5SqnH29hS9SpNDDa01JDH
-        kco0ZzPTnG1Mc7Yx/T+2AlG1KErQi5pUQYzXCl+tFtUaUa9NXb1nv8aKZj9C14zrsQ1N9+zu
-        QByLVPMV/8yPTFbS6oPiYU0HwiypilC84Y5IVir2qg8fEXT7U3T6DEHsQNEspYpSfP3aH0lK
-        LlWdKaQLwgFB94ol2LDFWShae5NOO5Ikq4J3V/z06b9Lb0/E9C375uK2hzvyKrVl8nl6cUG5
-        55fEUwkNsdF1H9hHp/xbfY5vNVXpQ5syNp26ZVnXdvqzO+v6MpfVpXBrV705evytgi93e7Ya
-        h6jeDwdSEnYuaXD0VGyLK7q/stCY0ro91TxwbAl39ND6zk/aEv+rTl+posQ0dXwsqRPVLwFc
-        V6c/BAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0yTVxiAPd+tpVvNZ0U4AzO2JmYGY7Ug9oUgarZlJ7qo0T9kjGjFz2Kk
-        revXEi/ZohnX4mVOCWnDBogECnijTIsRqFWpl1oNeIPRLqldYiWKjrGFBNlKGxP+PXnf5znJ
-        SV4prSjnUqR7DGbBZNCWKDkZc2/GG1y+cn5S4crQOw28dFch6Aic4CDsrkRQ/6CMgUeT4xyM
-        eMsR1DnbOXBP3UZgP91LQVPFWQZuH3/DQsj2rwQGXCEKpq+6KBi6Ws/BxLGbCGqeujh4czTE
-        wbPzfRJoLIvK4SYfBb7rQQ5avTMUBNqeUTD+VzUFrrtnaGg48hU0+QpgoDEJfv+5joHA3Vsc
-        /Pd8kgXfvUEWylteUeDsqqXheWSGht7gBFq3hHQ7hinysOcD0mMPSIizLZ00X4tQZOi+hXS1
-        V3Pktd8vIY7OTpb8UeOlSPPxUywJVOSSt3+OMORc7wtExvsec6T7cSWzJekbVa7JaDELnxQb
-        RfMaZYEaMlTqbFBlrMpWqTM1hTkZWcoVebm7hJI9pYJpRd4OVfGT4Ci37/z8/d03begwisis
-        KEGK+VU4NFlLWZFMquBbEO7zldFWJI0uFmPvhdK4sxBPP7FycWcM4arhLsnsYiGfj3snvGiW
-        E/nV+I7/Vkyi+U4Z7q9zS+LFi2jR8wsza3F8Dj5Z2R4r5Hwe/qdjiJ1lhl+Cb7T9HZsvir7q
-        G29j4s4CfMcWjnECr8UXL1+MOTT/GZ7+dZCOczIeCTdQcU7DV17V0z8hhX1Obp+T2Ock9jlJ
-        I2LaUaJgEfU6vahWiVq9aDHoVEVGfReKnuDlgSmnCw1e2uZBvBQpP5Q3ypIKFay2VDyg9yAs
-        pZWJ8o/8iYUK+S7tgYOCybjdZCkRRA/Kin7uJJ2yqMgYPWiDebs6S62BbLUmU5O5GpTJ8ir+
-        +rcKXqc1C3sFYZ9get9R0oSUwyh5mH3KTKUZ0z3XPs1yr2leN+/jo+sP5m5eLCdLjwymOmq+
-        eLTpzIndG1ULfjgkidTd77SNtTglX6Y/WMsWdFTrUn/bWSF/2O8Yae1/t9xtHW7J9+SMVjmV
-        59ytjilD+OuNNvx9td0478eI45LuuyvBDa+DwWJ/Q9qy0VTaXFu09XMlIxZr1em0SdT+Dxpi
-        Ik6YAwAA
-X-CMS-MailID: 20190628125513eucas1p149cf5397774d31921b4eee030d2d8500
-X-Msg-Generator: CA
+In-Reply-To: <20190627165640.GQ17978@ZenIV.linux.org.uk>
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190628123051epcas3p35e0cb4a5a1159dac19bde504ae21b0f3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190628123051epcas3p35e0cb4a5a1159dac19bde504ae21b0f3
-References: <cover.1561724493.git.mchehab+samsung@kernel.org>
-        <CGME20190628123051epcas3p35e0cb4a5a1159dac19bde504ae21b0f3@epcas3p3.samsung.com>
-        <b26fc645cb2c81fe88ab13616c65664d2c3cead5.1561724493.git.mchehab+samsung@kernel.org>
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 6/28/19 2:30 PM, Mauro Carvalho Chehab wrote:
-> The contents of those directories were orphaned at the documentation
-> body.
-> 
-> While those directories could likely be moved to be inside some guide,
-> I'm opting to just adding their indexes to the main one, removing the
-> :orphan: and adding the SPDX header.
-> 
-> For the drivers, the rationale is that the documentation contains
-> a mix of Kernelspace, uAPI and admin-guide. So, better to keep them on
-> separate directories, as we've be doing with similar subsystem-specific
-> docs that were not split yet.
-> 
-> For the others, well... I'm too lazy to do the move. Also, it
-> seems to make sense to keep at least some of those at the main
-> dir (like kbuild, for example). In any case, a latter patch
-> could do the move.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+On 27/06/2019 18:56, Al Viro wrote:
+> On Thu, Jun 27, 2019 at 06:18:12PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+>
+>>>> +/* called from syscall */
+>>>> +static int sys_inode_map_delete_elem(struct bpf_map *map, struct inod=
+e *key)
+>>>> +{
+>>>> +    struct inode_array *array =3D container_of(map, struct inode_arra=
+y, map);
+>>>> +    struct inode *inode;
+>>>> +    int i;
+>>>> +
+>>>> +    WARN_ON_ONCE(!rcu_read_lock_held());
+>>>> +    for (i =3D 0; i < array->map.max_entries; i++) {
+>>>> +            if (array->elems[i].inode =3D=3D key) {
+>>>> +                    inode =3D xchg(&array->elems[i].inode, NULL);
+>>>> +                    array->nb_entries--;
+>>>
+>>> Umm...  Is that intended to be atomic in any sense?
+>>
+>> nb_entries is not used as a bound check but to avoid walking uselessly
+>> through the (pre-allocated) array when adding a new element, but I'll
+>> use an atomic to avoid inconsistencies anyway.
+>
+>
+>>> Wait a sec...  So we have those beasties that can have long-term
+>>> references to arbitrary inodes stuck in them?  What will happen
+>>> if you get umount(2) called while such a thing exists?
+>>
+>> I though an umount would be denied but no, we get a self-destructed busy
+>> inode and a bug!
+>> What about wrapping the inode's superblock->s_op->destroy_inode() to
+>> first remove the element from the map and then call the real
+>> destroy_inode(), if any?
+>
+> What do you mean, _the_ map?  I don't see anything to prevent insertion
+> of references to the same inode into any number of those...
 
-> ---
->  Documentation/cdrom/index.rst           |  2 +-
->  Documentation/fault-injection/index.rst |  2 +-
->  Documentation/fb/index.rst              |  2 +-
->  Documentation/fpga/index.rst            |  2 +-
->  Documentation/ide/index.rst             |  2 +-
->  Documentation/index.rst                 | 14 ++++++++++++++
->  Documentation/kbuild/index.rst          |  2 +-
->  Documentation/livepatch/index.rst       |  2 +-
->  Documentation/netlabel/index.rst        |  2 +-
->  Documentation/pcmcia/index.rst          |  2 +-
->  Documentation/power/index.rst           |  2 +-
->  Documentation/target/index.rst          |  2 +-
->  Documentation/timers/index.rst          |  2 +-
->  Documentation/watchdog/index.rst        |  2 +-
->  14 files changed, 27 insertions(+), 13 deletions(-)
-Best regards,
+Indeed, the current design needs to check for duplicate inode references
+to avoid unused entries (until a reference is removed). I was planning
+to use an rbtree but I'm working on using a hash table instead (cf.
+bpf/hashtab.c), which will solve the issue anyway.
+
+>
+>> Or I could update fs/inode.c:destroy_inode() to call inode->free_inode()
+>> if it is set, and set it when such inode is referenced by a map?
+>> Or maybe I could hold the referencing file in the map and then wrap its
+>> f_op?
+>
+> First of all, anything including the word "wrap" is a non-starter.
+> We really don't need the headache associated with the locking needed
+> to replace the method tables on the fly, or with the code checking that
+> ->f_op points to given method table, etc.  That's not going to fly,
+> especially since you'd end up _chaining_ those (again, the same reference
+> can go in more than once).
+>
+> Nothing is allowed to change the method tables of live objects, period.
+> Once a struct file is opened, its ->f_op is never going to change and
+> it entirely belongs to the device driver or filesystem it resides on.
+> Nothing else (not VFS, not VM, not some LSM module, etc.) has any busines=
+s
+> touching that.  The same goes for inodes, dentries, etc.
+>
+> What kind of behaviour do you want there?  Do you want the inodes you've
+> referenced there to be forgotten on e.g. memory pressure?  The thing is,
+> I don't see how "it's getting freed" could map onto any semantics that
+> might be useful for you - it looks like the wrong event for that.
+
+At least, I would like to be able to compare an inode with the reference
+one if this reference may be accessible somewhere on the system. Being
+able to keep the inode reference as long as its superblock is alive
+seems to solve the problem. This enable for example to compare inodes
+from two bind mounts of the same file system even if one mount point is
+unmounted.
+
+Storing and using the device ID and the inode number bring a new problem
+when an inode is removed and when its number is recycled. However, if I
+can be notified when such an inode is removed (preferably without using
+an LSM hook) and if I can know when the backing device go out of the
+scope of the (live) system (e.g. hot unplugging an USB drive), this
+should solve the problem and also enable to keep a reference to an inode
+as long as possible without any dangling pointer nor wrapper.
+
+
 --
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Micka=C3=ABl Sala=C3=BCn
+ANSSI/SDE/ST/LAM
+
+Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
+es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
+=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
+nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
+=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
+tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
+acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
+eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
+t de d=C3=A9truire le message. The personal data collected and processed du=
+ring this exchange aims solely at completing a business relationship and is=
+ limited to the necessary duration of that relationship. If you wish to use=
+ your rights of consultation, rectification and deletion of your data, plea=
+se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
+n error, we thank you for informing the sender and destroying the message.
