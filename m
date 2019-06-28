@@ -2,192 +2,144 @@ Return-Path: <SRS0=W4wH=U3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF8AC5B578
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 02:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6ECC5B577
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 03:00:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4EEE20656
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 02:21:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA01E2177B
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 03:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561690830;
+	bh=pbLYvNe/6qkAnoA79ALM9ag4cBtnyMvqkIIhOCRf2Hg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=QJs8xxrFhqcWpeXYOm/xczmqYDUstmeXEhghW7fFoIcCmeScdsYVLWNbyvBv9KADv
+	 HdSUgrEePdLx1nVXlxXLVdOoGl3ENQyvBNGLGTRqaBLYJoLvC4xefiY2Tcxn/JVJFj
+	 ScUYpq1krhPrcZ4btXlxXqEjb5M8gi3J2ULczmEk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfF1CU3 (ORCPT
+        id S1726911AbfF1DAa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jun 2019 22:20:29 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47656 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726476AbfF1CU2 (ORCPT
+        Thu, 27 Jun 2019 23:00:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38126 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726542AbfF1DAa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jun 2019 22:20:28 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5S2GWQx098045;
-        Thu, 27 Jun 2019 22:20:06 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2td9m2rwk0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jun 2019 22:20:05 -0400
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5S2GaTD098244;
-        Thu, 27 Jun 2019 22:20:05 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2td9m2rwje-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jun 2019 22:20:05 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5S2JUro006238;
-        Fri, 28 Jun 2019 02:20:04 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma04dal.us.ibm.com with ESMTP id 2t9by7ap7m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Jun 2019 02:20:04 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5S2K3jd51708168
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Jun 2019 02:20:03 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5323E112064;
-        Fri, 28 Jun 2019 02:20:03 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D989112061;
-        Fri, 28 Jun 2019 02:20:00 +0000 (GMT)
-Received: from morokweng.localdomain.com (unknown [9.85.218.134])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Jun 2019 02:19:59 +0000 (GMT)
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v12 03/11] PKCS#7: Introduce pkcs7_get_digest()
-Date:   Thu, 27 Jun 2019 23:19:26 -0300
-Message-Id: <20190628021934.4260-4-bauerman@linux.ibm.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190628021934.4260-1-bauerman@linux.ibm.com>
-References: <20190628021934.4260-1-bauerman@linux.ibm.com>
+        Thu, 27 Jun 2019 23:00:30 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51D99208CB;
+        Fri, 28 Jun 2019 03:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561690828;
+        bh=pbLYvNe/6qkAnoA79ALM9ag4cBtnyMvqkIIhOCRf2Hg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zNbh31L95Ds/t4wKKYOnaNQuAvd/Jdq/lVR0fxPThWzMUYK4tIaBviOwSFLoOTvXZ
+         9P3QMp+gcKP05LNAxYVo92cnlRj+A73lH/5fcBWoa0G87sFEYE06RqZl+GjVj/dUBj
+         H5g1jTPlrTOUhiH8tKTc7aGzNRoP6N73LYkj3mDE=
+Date:   Thu, 27 Jun 2019 20:00:17 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, jmorris@namei.org, scottsh@microsoft.com,
+        mpatocka@redhat.com, gmazyland@gmail.com
+Subject: Re: [RFC PATCH v5 1/1] Add dm verity root hash pkcs7 sig validation.
+Message-ID: <20190628030017.GA673@sol.localdomain>
+References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
+ <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com>
+ <20190627234149.GA212823@gmail.com>
+ <alpine.LRH.2.21.1906271844470.22562@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906280019
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1906271844470.22562@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA will need to access the digest of the PKCS7 message (as calculated by
-the kernel) before the signature is verified, so introduce
-pkcs7_get_digest() for that purpose.
+Hi Jaskaran,
 
-Also, modify pkcs7_digest() to detect when the digest was already
-calculated so that it doesn't have to do redundant work. Verifying that
-sinfo->sig->digest isn't NULL is sufficient because both places which
-allocate sinfo->sig (pkcs7_parse_message() and pkcs7_note_signed_info())
-use kzalloc() so sig->digest is always initialized to zero.
+On Thu, Jun 27, 2019 at 06:49:58PM -0700, Jaskaran Singh Khurana wrote:
+> 
+> 
+> On Thu, 27 Jun 2019, Eric Biggers wrote:
+> 
+> > Hi Jaskaran, one comment (I haven't reviewed this in detail):
+> > 
+> > On Wed, Jun 19, 2019 at 12:10:48PM -0700, Jaskaran Khurana wrote:
+> > > diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
+> > > index db269a348b20..2d658a3512cb 100644
+> > > --- a/drivers/md/Kconfig
+> > > +++ b/drivers/md/Kconfig
+> > > @@ -475,6 +475,7 @@ config DM_VERITY
+> > >  	select CRYPTO
+> > >  	select CRYPTO_HASH
+> > >  	select DM_BUFIO
+> > > +	select SYSTEM_DATA_VERIFICATION
+> > >  	---help---
+> > >  	  This device-mapper target creates a read-only device that
+> > >  	  transparently validates the data on one underlying device against
+> > > diff --git a/drivers/md/Makefile b/drivers/md/Makefile
+> > > index be7a6eb92abc..3b47b256b15e 100644
+> > > --- a/drivers/md/Makefile
+> > > +++ b/drivers/md/Makefile
+> > > @@ -18,7 +18,7 @@ dm-cache-y	+= dm-cache-target.o dm-cache-metadata.o dm-cache-policy.o \
+> > >  		    dm-cache-background-tracker.o
+> > >  dm-cache-smq-y   += dm-cache-policy-smq.o
+> > >  dm-era-y	+= dm-era-target.o
+> > > -dm-verity-y	+= dm-verity-target.o
+> > > +dm-verity-y	+= dm-verity-target.o dm-verity-verify-sig.o
+> > >  md-mod-y	+= md.o md-bitmap.o
+> > >  raid456-y	+= raid5.o raid5-cache.o raid5-ppl.o
+> > >  dm-zoned-y	+= dm-zoned-target.o dm-zoned-metadata.o dm-zoned-reclaim.o
+> > 
+> > Perhaps this should be made optional and controlled by a kconfig option
+> > CONFIG_DM_VERITY_SIGNATURE_VERIFICATION, similar to CONFIG_DM_VERITY_FEC?
+> > 
+> > CONFIG_SYSTEM_DATA_VERIFICATION brings in a lot of stuff, which might be
+> > unnecessary for some dm-verity users.  Also, you've already separated most of
+> > the code out into a separate .c file anyway.
+> > 
+> > - Eric
+> > 
+> Hello Eric,
+> 
+> This started with a config (see V4). We didnot want scripts that pass this
+> parameter to suddenly stop working if for some reason the verification is
+> turned off so the optional parameter was just parsed and no validation
+> happened if the CONFIG was turned off. This was changed to a commandline
+> parameter after feedback from the community, so I would prefer to keep it
+> *now* as commandline parameter. Let me know if you are OK with this.
+> 
+> Regards,
+> JK
 
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
----
- crypto/asymmetric_keys/pkcs7_verify.c | 33 +++++++++++++++++++++++++++
- include/crypto/pkcs7.h                |  4 ++++
- 2 files changed, 37 insertions(+)
+Sorry, I haven't been following the whole discussion.  (BTW, you sent out
+multiple versions both called "v4", and using a cover letter for a single patch
+makes it unnecessarily difficult to review.)  However, it appears Milan were
+complaining about the DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE option which set the
+policy for signature verification, *not* the DM_VERITY_VERIFY_ROOTHASH_SIG
+option which enabled support for signature verification.  Am I missing
+something?  You can have a module parameter which controls the "signatures
+required" setting, while also allowing people to compile out kernel support for
+the signature verification feature.
 
-diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_keys/pkcs7_verify.c
-index f7b0980bf02d..3243981152b5 100644
---- a/crypto/asymmetric_keys/pkcs7_verify.c
-+++ b/crypto/asymmetric_keys/pkcs7_verify.c
-@@ -16,6 +16,7 @@
- #include <linux/err.h>
- #include <linux/asn1.h>
- #include <crypto/hash.h>
-+#include <crypto/hash_info.h>
- #include <crypto/public_key.h>
- #include "pkcs7_parser.h"
- 
-@@ -33,6 +34,10 @@ static int pkcs7_digest(struct pkcs7_message *pkcs7,
- 
- 	kenter(",%u,%s", sinfo->index, sinfo->sig->hash_algo);
- 
-+	/* The digest was calculated already. */
-+	if (sig->digest)
-+		return 0;
-+
- 	if (!sinfo->sig->hash_algo)
- 		return -ENOPKG;
- 
-@@ -121,6 +126,34 @@ static int pkcs7_digest(struct pkcs7_message *pkcs7,
- 	return ret;
- }
- 
-+int pkcs7_get_digest(struct pkcs7_message *pkcs7, const u8 **buf, u32 *len,
-+		     enum hash_algo *hash_algo)
-+{
-+	struct pkcs7_signed_info *sinfo = pkcs7->signed_infos;
-+	int i, ret;
-+
-+	/*
-+	 * This function doesn't support messages with more than one signature.
-+	 */
-+	if (sinfo == NULL || sinfo->next != NULL)
-+		return -EBADMSG;
-+
-+	ret = pkcs7_digest(pkcs7, sinfo);
-+	if (ret)
-+		return ret;
-+
-+	*buf = sinfo->sig->digest;
-+	*len = sinfo->sig->digest_size;
-+
-+	for (i = 0; i < HASH_ALGO__LAST; i++)
-+		if (!strcmp(hash_algo_name[i], sinfo->sig->hash_algo)) {
-+			*hash_algo = i;
-+			break;
-+		}
-+
-+	return 0;
-+}
-+
- /*
-  * Find the key (X.509 certificate) to use to verify a PKCS#7 message.  PKCS#7
-  * uses the issuer's name and the issuing certificate serial number for
-diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
-index 583f199400a3..3bfe6829eaae 100644
---- a/include/crypto/pkcs7.h
-+++ b/include/crypto/pkcs7.h
-@@ -13,6 +13,7 @@
- #define _CRYPTO_PKCS7_H
- 
- #include <linux/verification.h>
-+#include <linux/hash_info.h>
- #include <crypto/public_key.h>
- 
- struct key;
-@@ -44,4 +45,7 @@ extern int pkcs7_verify(struct pkcs7_message *pkcs7,
- extern int pkcs7_supply_detached_data(struct pkcs7_message *pkcs7,
- 				      const void *data, size_t datalen);
- 
-+extern int pkcs7_get_digest(struct pkcs7_message *pkcs7, const u8 **buf,
-+			    u32 *len, enum hash_algo *hash_algo);
-+
- #endif /* _CRYPTO_PKCS7_H */
+Sure, it means that the signature verification support won't be guaranteed to be
+present when dm-verity is.  But the same is true of the hash algorithm (e.g.
+sha512), and of the forward error correction feature.  Since the signature
+verification is nontrivial and pulls in a lot of other kernel code which might
+not be otherwise needed (via SYSTEM_DATA_VERIFICATION), it seems a natural
+candidate for putting the support behind a Kconfig option.
+
+BTW, I'm doing something similar for fs-verity; see
+https://patchwork.kernel.org/patch/11008077/.  The signature verification
+support is behind CONFIG_FS_VERITY_BUILTIN_SIGNATURES, but the policy of
+requiring signatures is a sysctl fs.verity.require_signatures.
+
+- Eric
