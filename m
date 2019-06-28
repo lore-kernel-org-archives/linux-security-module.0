@@ -2,199 +2,200 @@ Return-Path: <SRS0=W4wH=U3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D90C5B579
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 09:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1C6C46478
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 10:07:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDDC120665
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 09:31:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="REUUVS8v"
+	by mail.kernel.org (Postfix) with ESMTP id 1F96520665
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 10:07:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbfF1Jbo (ORCPT
+        id S1726561AbfF1KHv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Jun 2019 05:31:44 -0400
-Received: from mail-yw1-f74.google.com ([209.85.161.74]:38236 "EHLO
-        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726385AbfF1Jbo (ORCPT
+        Fri, 28 Jun 2019 06:07:51 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42655 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726484AbfF1KHv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Jun 2019 05:31:44 -0400
-Received: by mail-yw1-f74.google.com with SMTP id p76so7557555ywg.5
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Jun 2019 02:31:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=OTM/dBWKP5pXAZwQDJU1YbjuxxUPU+6Vr1IAcbjuDVo=;
-        b=REUUVS8vBg2H/z0it6JTEUWGi30pyMFfd+dKyOdmlmrXJN/54g0uufubMFDdrjvKUa
-         F9o3+Wl5P+yqkzUwpw6n5n1lRb6ky1dG0xGQJSeHl69UacCM/ZwGgiKRY+c7SZ0lXxVR
-         r6e/3EnVwWqPAP8HsP7CAJ7fKxDsW7QfAVRge2yBewN1zUFdRKkZgYVTfUEXFKHbmEJc
-         1hSW+MYzLNa4/oJRkmtPl+30i1H7Rv5Ew3Nyh9J23uj5uiYi6ijS1kvynOgLS1YIeBaW
-         mFXfuvVBCdyR4XyJRBDleQRNiCFwtYwyvUJiwsWtBGifRcag5OM5wSKHgqCLWMjKRRl0
-         j9Yw==
+        Fri, 28 Jun 2019 06:07:51 -0400
+Received: by mail-ot1-f67.google.com with SMTP id l15so5406959otn.9
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Jun 2019 03:07:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=OTM/dBWKP5pXAZwQDJU1YbjuxxUPU+6Vr1IAcbjuDVo=;
-        b=gavyZjZ05KIMPlEMaUPtaYxhfkCKgpr0ekOw82z21tiRKyfSpfCs3k2MCJ6f5rp7sH
-         DgwiQ/C/3RG4GlauT8J5kzywJEb+8gsUru7PGE5XcIc7UfIJ1Eb13GXBKim8MvCRUN74
-         vvYR95tyTFupE4rYr5UVinKwl3gm1k820cN0yMQOs6g3bzfhXNE6QpfTrol6O6zKs6df
-         Rmk4HAu8kRXZY0lYk8wmZB8J2X8mbytZWPBCQUF9U+uUVJSGG3TBFSSDra8JzLQlGyfc
-         7KGGR0Wle2m0vvebbLYusypKWqtC/thlphDK6wO6cZXhWgeCa7MvMWxqJzlmhIxcqiLe
-         llKQ==
-X-Gm-Message-State: APjAAAUx2Ax17EfOyYmkZ2Q3JRDBOuQK6fckrVwzIpCxKEGrKmXrA6a3
-        WD7yeblM1qDRpjiKmYpzYaEXNPpFWMg=
-X-Google-Smtp-Source: APXvYqxr82FEZUsZl41QBUdwTE83MyFZYWHcMSxK71KVoFLH9afR/pRchCaM1jtaNI2n7dM1odx28qfXL8c=
-X-Received: by 2002:a81:4c3:: with SMTP id 186mr5372311ywe.462.1561714302128;
- Fri, 28 Jun 2019 02:31:42 -0700 (PDT)
-Date:   Fri, 28 Jun 2019 11:31:31 +0200
-In-Reply-To: <20190628093131.199499-1-glider@google.com>
-Message-Id: <20190628093131.199499-3-glider@google.com>
-Mime-Version: 1.0
-References: <20190628093131.199499-1-glider@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v10 2/2] mm: init: report memory auto-initialization features
- at boot time
-From:   Alexander Potapenko <glider@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>
-Cc:     Alexander Potapenko <glider@google.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/QTzzZ1pGg2DNxVTH1owqL1jYH/Icsrcb9T9UIShn30=;
+        b=BmWSfDWkOudYK5x+e2PPaBvgvVXxogkKWRMDh+MQ66um2ObmDsmz//XdTHkoK0k7vq
+         rEM7YiO2/WytUGXmiYk2FhthvK++hjDmJ3mtEI1YzwUmC8MEpftp5I26rJB1AtABauEJ
+         ya8MHIRu6gjORv/iKP0qaduHNrPCjPnkR2+d9guzBSbqDdGmjT6/D6vvt0DVARIzQ1xF
+         IhkGSOfJO3Ohovv1Ih4jlk8Nomt/KTfvmBu3o6AaJVxAzLbH6A5I9oBLhwu0PQP0pNtK
+         dKcLGJErkPYyWErkJUVv5Uw40HLLWQwscZ+GLbsYED9Zv7BWwgPA2gaDPknMTkNZwl/M
+         VLuA==
+X-Gm-Message-State: APjAAAWNAJ3G5izdWjffdE5o1BQM5GZ5hTlNz33ac6EuXIp8g/O10MnQ
+        Z7GgNTPlAPsE6EtQnQsilWWkfdIyj6QXJaLoYUhKWw==
+X-Google-Smtp-Source: APXvYqw4+5sFaYXIZEM8UZIX8+8Br1Jar161dsAXk3VI1gSRXorubZEk2/GCQwERTxNC9xLrQ11cGPsqstJUvlZuhUQ=
+X-Received: by 2002:a9d:73cd:: with SMTP id m13mr6917109otk.43.1561716469823;
+ Fri, 28 Jun 2019 03:07:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190626192234.11725-1-casey@schaufler-ca.com> <20190626192234.11725-19-casey@schaufler-ca.com>
+In-Reply-To: <20190626192234.11725-19-casey@schaufler-ca.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Fri, 28 Jun 2019 12:07:38 +0200
+Message-ID: <CAFqZXNteNpy0kLfB4hZZ6=5WxRCtzy-sqik1yoiq-+w+tzJo+w@mail.gmail.com>
+Subject: Re: [PATCH v4 18/23] LSM: Use lsmcontext in security_dentry_init_security
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Casey Schaufler <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sandeep Patil <sspatil@android.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Marco Elver <elver@google.com>,
-        Kaiwan N Billimoria <kaiwan@kaiwantech.com>,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org
+        John Johansen <john.johansen@canonical.com>,
+        penguin-kernel@i-love.sakura.ne.jp,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Print the currently enabled stack and heap initialization modes.
+On Wed, Jun 26, 2019 at 9:23 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> Change the security_dentry_init_security() interface to
+> fill an lsmcontext structure instead of a void * data area
+> and a length. The lone caller of this interface is NFS4,
+> which may make copies of the data using its own mechanisms.
+> A rework of the nfs4 code to use the lsmcontext properly
+> is a significant project, so the coward's way out is taken,
+> and the lsmcontext data from security_dentry_init_security()
+> is copied, then released directly.
+>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  fs/nfs/nfs4proc.c        | 26 ++++++++++++++++----------
+>  include/linux/security.h |  7 +++----
+>  security/security.c      | 19 +++++++++++++++----
+>  3 files changed, 34 insertions(+), 18 deletions(-)
+>
+> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> index af1c0db29c39..952f805965bb 100644
+> --- a/fs/nfs/nfs4proc.c
+> +++ b/fs/nfs/nfs4proc.c
+> @@ -113,6 +113,7 @@ static inline struct nfs4_label *
+>  nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
+>         struct iattr *sattr, struct nfs4_label *label)
+>  {
+> +       struct lsmcontext context;
+>         int err;
+>
+>         if (label == NULL)
+> @@ -122,21 +123,26 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
+>                 return NULL;
+>
+>         err = security_dentry_init_security(dentry, sattr->ia_mode,
+> -                               &dentry->d_name, (void **)&label->label, &label->len);
+> -       if (err == 0)
+> -               return label;
+> +                                           &dentry->d_name, &context);
+> +
+> +       if (err)
+> +               return NULL;
+> +
+> +       label->label = kmemdup(context.context, context.len, GFP_KERNEL);
+> +       if (label->label == NULL)
+> +               label = NULL;
+> +       else
+> +               label->len = context.len;
+> +
+> +       security_release_secctx(&context);
+> +
+> +       return label;
+>
+> -       return NULL;
+>  }
+>  static inline void
+>  nfs4_label_release_security(struct nfs4_label *label)
+>  {
+> -       struct lsmcontext scaff; /* scaffolding */
+> -
+> -       if (label) {
+> -               lsmcontext_init(&scaff, label->label, label->len, 0);
+> -               security_release_secctx(&scaff);
+> -       }
+> +       kfree(label->label);
+>  }
+>  static inline u32 *nfs4_bitmask(struct nfs_server *server, struct nfs4_label *label)
+>  {
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 7255825aa697..2674eb70c2d7 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -352,8 +352,8 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+>  int security_add_mnt_opt(const char *option, const char *val,
+>                                 int len, void **mnt_opts);
+>  int security_dentry_init_security(struct dentry *dentry, int mode,
+> -                                       const struct qstr *name, void **ctx,
+> -                                       u32 *ctxlen);
+> +                                       const struct qstr *name,
+> +                                       struct lsmcontext *ctx);
+>  int security_dentry_create_files_as(struct dentry *dentry, int mode,
+>                                         struct qstr *name,
+>                                         const struct cred *old,
+> @@ -724,8 +724,7 @@ static inline void security_inode_free(struct inode *inode)
+>  static inline int security_dentry_init_security(struct dentry *dentry,
+>                                                  int mode,
+>                                                  const struct qstr *name,
+> -                                                void **ctx,
+> -                                                u32 *ctxlen)
+> +                                                struct lsmcontext *ctx)
+>  {
+>         return -EOPNOTSUPP;
+>  }
+> diff --git a/security/security.c b/security/security.c
+> index 97b468f6e6a9..61cdc6bcd32e 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1024,11 +1024,22 @@ void security_inode_free(struct inode *inode)
+>  }
+>
+>  int security_dentry_init_security(struct dentry *dentry, int mode,
+> -                                       const struct qstr *name, void **ctx,
+> -                                       u32 *ctxlen)
+> +                                 const struct qstr *name,
+> +                                 struct lsmcontext *cp)
+>  {
+> -       return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
+> -                               name, ctx, ctxlen);
+> +       int *display = current->security;
+> +       struct security_hook_list *hp;
+> +
+> +       hlist_for_each_entry(hp, &security_hook_heads.dentry_init_security,
+> +                            list)
+> +               if (*display == LSMBLOB_INVALID ||
+> +                   *display == hp->lsmid->slot) {
+> +                       cp->slot = hp->lsmid->slot;
+> +                       return hp->hook.dentry_init_security(dentry, mode,
+> +                                       name, (void **)&cp->context, &cp->len);
+> +               }
 
-Stack initialization is enabled by a config flag, while heap
-initialization is configured at boot time with defaults being set
-in the config. It's more convenient for the user to have all information
-about these hardening measures in one place at boot, so the user can
-reason about the expected behavior of the running system.
+Sorry for chiming in only now, but does it really make sense to select
+the per-task display LSM here? I'm not sure what exactly NFS does with
+the returned context, but if it sends it to the server (it looks like
+it does), wouldn't this mean that the server would potentially get
+context from different LSMs, depending on the setting of the task
+which is creating the file/directory?
 
-The possible options for stack are:
- - "all" for CONFIG_INIT_STACK_ALL;
- - "byref_all" for CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL;
- - "byref" for CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF;
- - "__user" for CONFIG_GCC_PLUGIN_STRUCTLEAK_USER;
- - "off" otherwise.
+> +
+> +       return -EOPNOTSUPP;
+>  }
+>  EXPORT_SYMBOL(security_dentry_init_security);
+>
+> --
+> 2.20.1
+>
 
-Depending on the values of init_on_alloc and init_on_free boottime
-options we also report "heap alloc" and "heap free" as "on"/"off".
-
-In the init_on_free mode initializing pages at boot time may take a
-while, so print a notice about that as well. This depends on how much
-memory is installed, the memory bandwidth, etc.
-On a relatively modern x86 system, it takes about 0.75s/GB to wipe all
-memory:
-
-  [    0.418722] mem auto-init: stack:byref_all, heap alloc:off, heap free:on
-  [    0.419765] mem auto-init: clearing system memory may take some time...
-  [   12.376605] Memory: 16408564K/16776672K available (14339K kernel code, 1397K rwdata, 3756K rodata, 1636K init, 11460K bss, 368108K reserved, 0K cma-reserved)
-
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Suggested-by: Kees Cook <keescook@chromium.org>
-Acked-by: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kostya Serebryany <kcc@google.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Sandeep Patil <sspatil@android.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: Marco Elver <elver@google.com>
-Cc: Kaiwan N Billimoria <kaiwan@kaiwantech.com>
-Cc: kernel-hardening@lists.openwall.com
-Cc: linux-mm@kvack.org
-Cc: linux-security-module@vger.kernel.org
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-
----
- v6:
- - update patch description, fixed message about clearing memory
- v7:
- - rebase the patch, add the Acked-by: tag;
- - more description updates as suggested by Kees;
- - make report_meminit() static.
- v8:
- - added the Signed-off-by: tag
----
- init/main.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/init/main.c b/init/main.c
-index 66a196c5e4c3..ff5803b0841c 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -520,6 +520,29 @@ static inline void initcall_debug_enable(void)
- }
- #endif
- 
-+/* Report memory auto-initialization states for this boot. */
-+static void __init report_meminit(void)
-+{
-+	const char *stack;
-+
-+	if (IS_ENABLED(CONFIG_INIT_STACK_ALL))
-+		stack = "all";
-+	else if (IS_ENABLED(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL))
-+		stack = "byref_all";
-+	else if (IS_ENABLED(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF))
-+		stack = "byref";
-+	else if (IS_ENABLED(CONFIG_GCC_PLUGIN_STRUCTLEAK_USER))
-+		stack = "__user";
-+	else
-+		stack = "off";
-+
-+	pr_info("mem auto-init: stack:%s, heap alloc:%s, heap free:%s\n",
-+		stack, want_init_on_alloc(GFP_KERNEL) ? "on" : "off",
-+		want_init_on_free() ? "on" : "off");
-+	if (want_init_on_free())
-+		pr_info("mem auto-init: clearing system memory may take some time...\n");
-+}
-+
- /*
-  * Set up kernel memory allocators
-  */
-@@ -530,6 +553,7 @@ static void __init mm_init(void)
- 	 * bigger than MAX_ORDER unless SPARSEMEM.
- 	 */
- 	page_ext_init_flatmem();
-+	report_meminit();
- 	mem_init();
- 	kmem_cache_init();
- 	pgtable_init();
--- 
-2.22.0.410.gd8fdbe21b5-goog
-
+--
+Ondrej Mosnacek <omosnace at redhat dot com>
+Software Engineer, Security Technologies
+Red Hat, Inc.
