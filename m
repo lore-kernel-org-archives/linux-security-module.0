@@ -4,50 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71398C4321A
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 02:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 646FCC5B576
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 02:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47E7E20656
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 02:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3852120656
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 02:21:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfF1CUl (ORCPT
+        id S1727017AbfF1CVG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jun 2019 22:20:41 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:21966 "EHLO
+        Thu, 27 Jun 2019 22:21:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43808 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726862AbfF1CUi (ORCPT
+        by vger.kernel.org with ESMTP id S1726867AbfF1CUl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jun 2019 22:20:38 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5S2GWG2098000
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jun 2019 22:20:38 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2td9m2rx3b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jun 2019 22:20:38 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Fri, 28 Jun 2019 03:20:36 +0100
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 28 Jun 2019 03:20:32 +0100
+        Thu, 27 Jun 2019 22:20:41 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5S2H1gN135698;
+        Thu, 27 Jun 2019 22:20:18 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2td71fe5g0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jun 2019 22:20:17 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5S2HaN5141524;
+        Thu, 27 Jun 2019 22:20:17 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2td71fe5fb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jun 2019 22:20:17 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5S2JYKs017193;
+        Fri, 28 Jun 2019 02:20:16 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma03dal.us.ibm.com with ESMTP id 2t9by7jjp8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 28 Jun 2019 02:20:15 +0000
 Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5S2KVww23790076
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5S2KF7l28246448
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Jun 2019 02:20:31 GMT
+        Fri, 28 Jun 2019 02:20:15 GMT
 Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9327D112062;
-        Fri, 28 Jun 2019 02:20:31 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 33562112065;
+        Fri, 28 Jun 2019 02:20:15 +0000 (GMT)
 Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F2D26112061;
-        Fri, 28 Jun 2019 02:20:27 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id B362F112062;
+        Fri, 28 Jun 2019 02:20:11 +0000 (GMT)
 Received: from morokweng.localdomain.com (unknown [9.85.218.134])
         by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Jun 2019 02:20:27 +0000 (GMT)
+        Fri, 28 Jun 2019 02:20:11 +0000 (GMT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -65,22 +71,15 @@ Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         Jonathan Corbet <corbet@lwn.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v12 10/11] ima: Store the measurement again when appraising a modsig
-Date:   Thu, 27 Jun 2019 23:19:33 -0300
+Subject: [PATCH v12 06/11] ima: Factor xattr_verify() out of ima_appraise_measurement()
+Date:   Thu, 27 Jun 2019 23:19:29 -0300
+Message-Id: <20190628021934.4260-7-bauerman@linux.ibm.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190628021934.4260-1-bauerman@linux.ibm.com>
 References: <20190628021934.4260-1-bauerman@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 19062802-2213-0000-0000-000003A60F53
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011344; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01224269; UDB=6.00644348; IPR=6.01005460;
- MB=3.00027497; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-28 02:20:36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062802-2214-0000-0000-00005F061081
-Message-Id: <20190628021934.4260-11-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_15:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -92,139 +91,184 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-If the IMA template contains the "modsig" or "d-modsig" field, then the
-modsig should be added to the measurement list when the file is appraised.
+Verify xattr signature in a separate function so that the logic in
+ima_appraise_measurement() remains clear when it gains the ability to also
+verify an appended module signature.
 
-And that is what normally happens, but if a measurement rule caused a file
-containing a modsig to be measured before a different rule causes it to be
-appraised, the resulting measurement entry will not contain the modsig
-because it is only fetched during appraisal. When the appraisal rule
-triggers, it won't store a new measurement containing the modsig because
-the file was already measured.
-
-We need to detect that situation and store an additional measurement with
-the modsig. This is done by adding an IMA_MEASURE action flag if we read a
-modsig and the IMA template contains a modsig field.
+The code in the switch statement is unchanged except for having to
+dereference the status and cause variables (since they're now pointers),
+and fixing the style of a block comment to appease checkpatch.
 
 Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- security/integrity/ima/ima.h          |  1 +
- security/integrity/ima/ima_api.c      | 19 +++++++++++++++----
- security/integrity/ima/ima_main.c     | 15 ++++++++++++---
- security/integrity/ima/ima_template.c | 19 +++++++++++++++++++
- 4 files changed, 47 insertions(+), 7 deletions(-)
+ security/integrity/ima/ima_appraise.c | 141 +++++++++++++++-----------
+ 1 file changed, 81 insertions(+), 60 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 3293dd07b6c9..01a7a140bb4a 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -154,6 +154,7 @@ int template_desc_init_fields(const char *template_fmt,
- 			      int *num_fields);
- struct ima_template_desc *ima_template_desc_current(void);
- struct ima_template_desc *lookup_template_desc(const char *name);
-+bool ima_template_has_modsig(const struct ima_template_desc *ima_template);
- int ima_restore_measurement_entry(struct ima_template_entry *entry);
- int ima_restore_measurement_list(loff_t bufsize, void *buf);
- int ima_measurements_show(struct seq_file *m, void *v);
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 9d1fe712a6cc..3a78373d835c 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -223,6 +223,14 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
- 		char digest[IMA_MAX_DIGEST_SIZE];
- 	} hash;
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 18bbe753421a..5d4772f39757 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -202,6 +202,83 @@ int ima_read_xattr(struct dentry *dentry,
+ 	return ret;
+ }
  
-+	/*
-+	 * Always collect the modsig, because IMA might have already collected
-+	 * the file digest without collecting the modsig in a previous
-+	 * measurement rule.
-+	 */
-+	if (modsig)
-+		ima_collect_modsig(modsig, buf, size);
-+
- 	if (iint->flags & IMA_COLLECTED)
- 		goto out;
- 
-@@ -256,9 +264,6 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
- 	memcpy(iint->ima_hash, &hash, length);
- 	iint->version = i_version;
- 
--	if (modsig)
--		ima_collect_modsig(modsig, buf, size);
--
- 	/* Possibly temporary failure due to type of read (eg. O_DIRECT) */
- 	if (!result)
- 		iint->flags |= IMA_COLLECTED;
-@@ -308,7 +313,13 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
- 					     .modsig = modsig };
- 	int violation = 0;
- 
--	if (iint->measured_pcrs & (0x1 << pcr))
-+	/*
-+	 * We still need to store the measurement in the case of MODSIG because
-+	 * we only have its contents to put in the list at the time of
-+	 * appraisal, but a file measurement from earlier might already exist in
-+	 * the measurement list.
-+	 */
-+	if (iint->measured_pcrs & (0x1 << pcr) && !modsig)
- 		return;
- 
- 	result = ima_alloc_init_template(&event_data, &entry, template_desc);
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 8b35a200e0cc..e855a4658425 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -311,9 +311,18 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 		/* read 'security.ima' */
- 		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
- 
--		/* Read the appended modsig if allowed by the policy. */
--		if (iint->flags & IMA_MODSIG_ALLOWED)
--			ima_read_modsig(func, buf, size, &modsig);
-+		/*
-+		 * Read the appended modsig if allowed by the policy, and allow
-+		 * an additional measurement list entry, if needed, based on the
-+		 * template format and whether the file was already measured.
-+		 */
-+		if (iint->flags & IMA_MODSIG_ALLOWED) {
-+			rc = ima_read_modsig(func, buf, size, &modsig);
-+
-+			if (!rc && ima_template_has_modsig(template_desc) &&
-+			    iint->flags & IMA_MEASURED)
-+				action |= IMA_MEASURE;
-+		}
- 	}
- 
- 	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index ac526b34973f..536205735456 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -62,6 +62,25 @@ static const struct ima_template_field supported_fields[] = {
- 
- static struct ima_template_desc *ima_template;
- 
-+/**
-+ * ima_template_has_modsig - Check whether template has modsig-related fields.
-+ * @ima_template: IMA template to check.
++/*
++ * xattr_verify - verify xattr digest or signature
 + *
-+ * Tells whether the given template has fields referencing a file's appended
-+ * signature.
++ * Verify whether the hash or signature matches the file contents.
++ *
++ * Return 0 on success, error code otherwise.
 + */
-+bool ima_template_has_modsig(const struct ima_template_desc *ima_template)
++static int xattr_verify(enum ima_hooks func, struct integrity_iint_cache *iint,
++			struct evm_ima_xattr_data *xattr_value, int xattr_len,
++			enum integrity_status *status, const char **cause)
 +{
-+	int i;
++	int rc = -EINVAL, hash_start = 0;
 +
-+	for (i = 0; i < ima_template->num_fields; i++)
-+		if (!strcmp(ima_template->fields[i]->field_id, "modsig") ||
-+		    !strcmp(ima_template->fields[i]->field_id, "d-modsig"))
-+			return true;
++	switch (xattr_value->type) {
++	case IMA_XATTR_DIGEST_NG:
++		/* first byte contains algorithm id */
++		hash_start = 1;
++		/* fall through */
++	case IMA_XATTR_DIGEST:
++		if (iint->flags & IMA_DIGSIG_REQUIRED) {
++			*cause = "IMA-signature-required";
++			*status = INTEGRITY_FAIL;
++			break;
++		}
++		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
++		if (xattr_len - sizeof(xattr_value->type) - hash_start >=
++				iint->ima_hash->length)
++			/*
++			 * xattr length may be longer. md5 hash in previous
++			 * version occupied 20 bytes in xattr, instead of 16
++			 */
++			rc = memcmp(&xattr_value->data[hash_start],
++				    iint->ima_hash->digest,
++				    iint->ima_hash->length);
++		else
++			rc = -EINVAL;
++		if (rc) {
++			*cause = "invalid-hash";
++			*status = INTEGRITY_FAIL;
++			break;
++		}
++		*status = INTEGRITY_PASS;
++		break;
++	case EVM_IMA_XATTR_DIGSIG:
++		set_bit(IMA_DIGSIG, &iint->atomic_flags);
++		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
++					     (const char *)xattr_value,
++					     xattr_len,
++					     iint->ima_hash->digest,
++					     iint->ima_hash->length);
++		if (rc == -EOPNOTSUPP) {
++			*status = INTEGRITY_UNKNOWN;
++			break;
++		}
++		if (IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING) && rc &&
++		    func == KEXEC_KERNEL_CHECK)
++			rc = integrity_digsig_verify(INTEGRITY_KEYRING_PLATFORM,
++						     (const char *)xattr_value,
++						     xattr_len,
++						     iint->ima_hash->digest,
++						     iint->ima_hash->length);
++		if (rc) {
++			*cause = "invalid-signature";
++			*status = INTEGRITY_FAIL;
++		} else {
++			*status = INTEGRITY_PASS;
++		}
++		break;
++	default:
++		*status = INTEGRITY_UNKNOWN;
++		*cause = "unknown-ima-data";
++		break;
++	}
 +
-+	return false;
++	return rc;
 +}
 +
- static int __init ima_template_setup(char *str)
- {
- 	struct ima_template_desc *template_desc;
-
+ /*
+  * ima_appraise_measurement - appraise file measurement
+  *
+@@ -221,7 +298,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	enum integrity_status status = INTEGRITY_UNKNOWN;
+-	int rc = xattr_len, hash_start = 0;
++	int rc = xattr_len;
+ 
+ 	if (!(inode->i_opflags & IOP_XATTR))
+ 		return INTEGRITY_UNKNOWN;
+@@ -259,65 +336,9 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 		WARN_ONCE(true, "Unexpected integrity status %d\n", status);
+ 	}
+ 
+-	switch (xattr_value->type) {
+-	case IMA_XATTR_DIGEST_NG:
+-		/* first byte contains algorithm id */
+-		hash_start = 1;
+-		/* fall through */
+-	case IMA_XATTR_DIGEST:
+-		if (iint->flags & IMA_DIGSIG_REQUIRED) {
+-			cause = "IMA-signature-required";
+-			status = INTEGRITY_FAIL;
+-			break;
+-		}
+-		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
+-		if (xattr_len - sizeof(xattr_value->type) - hash_start >=
+-				iint->ima_hash->length)
+-			/* xattr length may be longer. md5 hash in previous
+-			   version occupied 20 bytes in xattr, instead of 16
+-			 */
+-			rc = memcmp(&xattr_value->data[hash_start],
+-				    iint->ima_hash->digest,
+-				    iint->ima_hash->length);
+-		else
+-			rc = -EINVAL;
+-		if (rc) {
+-			cause = "invalid-hash";
+-			status = INTEGRITY_FAIL;
+-			break;
+-		}
+-		status = INTEGRITY_PASS;
+-		break;
+-	case EVM_IMA_XATTR_DIGSIG:
+-		set_bit(IMA_DIGSIG, &iint->atomic_flags);
+-		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+-					     (const char *)xattr_value,
+-					     xattr_len,
+-					     iint->ima_hash->digest,
+-					     iint->ima_hash->length);
+-		if (rc == -EOPNOTSUPP) {
+-			status = INTEGRITY_UNKNOWN;
+-			break;
+-		}
+-		if (IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING) && rc &&
+-		    func == KEXEC_KERNEL_CHECK)
+-			rc = integrity_digsig_verify(INTEGRITY_KEYRING_PLATFORM,
+-						     (const char *)xattr_value,
+-						     xattr_len,
+-						     iint->ima_hash->digest,
+-						     iint->ima_hash->length);
+-		if (rc) {
+-			cause = "invalid-signature";
+-			status = INTEGRITY_FAIL;
+-		} else {
+-			status = INTEGRITY_PASS;
+-		}
+-		break;
+-	default:
+-		status = INTEGRITY_UNKNOWN;
+-		cause = "unknown-ima-data";
+-		break;
+-	}
++	if (xattr_value)
++		rc = xattr_verify(func, iint, xattr_value, xattr_len, &status,
++				  &cause);
+ 
+ out:
+ 	/*
