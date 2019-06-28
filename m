@@ -2,94 +2,303 @@ Return-Path: <SRS0=W4wH=U3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 756A2C4321A
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 11:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11DAAC4321A
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 12:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BFD120645
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 11:42:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1E352083B
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 12:31:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561725095;
+	bh=7sCRTFd8upFluE+DWq7ISiINIsEjJ3Wgg88mPBfnvuA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Uez8n9Xegw2csn2gKj+ZFEXLrGGvbza5KE1RI2jjyfYABhTbZgicGzot7/oCSZXaM
+	 v9f1XyKno23MXnfNHS6u8Us+jezyynZG+jqujxvSeCoX3IoSJ84RReB5MIcyGxZs8e
+	 9kF7bqJ2NbZaAtxhXQ2be16VOOecI17K/IQ/H7ig=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbfF1LmA (ORCPT
+        id S1727302AbfF1Mb3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Jun 2019 07:42:00 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33220 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726562AbfF1LmA (ORCPT
+        Fri, 28 Jun 2019 08:31:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39646 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727128AbfF1Maq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Jun 2019 07:42:00 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5SBcG3P049167
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Jun 2019 07:41:59 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tdgc5cjbb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Jun 2019 07:41:59 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 28 Jun 2019 12:41:57 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 28 Jun 2019 12:41:54 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5SBfroG58458292
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Jun 2019 11:41:53 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 464294C044;
-        Fri, 28 Jun 2019 11:41:53 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 660CD4C04E;
-        Fri, 28 Jun 2019 11:41:52 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.81.240])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Jun 2019 11:41:52 +0000 (GMT)
-Subject: Re: [PATCH] ima: Update MAX_TEMPLATE_NAME_LEN to fit largest
- reasonable definition
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 28 Jun 2019 07:41:41 -0400
-In-Reply-To: <20190627232546.28746-1-bauerman@linux.ibm.com>
-References: <20190627232546.28746-1-bauerman@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19062811-0016-0000-0000-0000028D563F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062811-0017-0000-0000-000032EAD99E
-Message-Id: <1561722101.4264.3.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-28_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906280139
+        Fri, 28 Jun 2019 08:30:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=V/HBcP10AaKg9f7QXCB/xlHhS75hL4oliVjFK2WwiWw=; b=DJ/WCxxkcrYW8G3KYkrHJnkf2P
+        jVRL0+UHsVSIf8VtGu+GJ+NK1gVs4f5L9BvDhdSkrkObRcuIcNwh2ckXwuFieia/rKgL36WvMuY9Z
+        nT6Huh3yl0ut6x0Rf6Y6sz2cdaYXiy4rO0wROl5LruZdy9aIj8Om8dOt6vWBqldhQ8ZRGOC88ma64
+        OFQp1WxYj3pk+dzTAvSUbFUgAbYZl7CWLsPeAzeYBMiW0VyvKiQQYnT4iHs9pYsGgFzLfwMG6XVwm
+        MePcBZkCo2f+oz0eiS7lY82L4KICcgRa9NnZD/K3rytV4FuomrWxv11teHb5arzgZjfDBfeN8hU6i
+        gjFHMc4Q==;
+Received: from [186.213.242.156] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hgq1W-00054w-6k; Fri, 28 Jun 2019 12:30:38 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hgq1S-0005Tu-Ta; Fri, 28 Jun 2019 09:30:34 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Jens Axboe <axboe@kernel.dk>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Moritz Fischer <mdf@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-fpga@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, live-patching@vger.kernel.org,
+        netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH 37/39] docs: adds some directories to the main documentation index
+Date:   Fri, 28 Jun 2019 09:30:30 -0300
+Message-Id: <b26fc645cb2c81fe88ab13616c65664d2c3cead5.1561724493.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
+References: <cover.1561724493.git.mchehab+samsung@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2019-06-27 at 20:25 -0300, Thiago Jung Bauermann wrote:
-> MAX_TEMPLATE_NAME_LEN is used when restoring measurements carried over from
-> a kexec. It should be set to the length of a template containing all fields
-> except for 'd' and 'n', which don't need to be accounted for since they
-> shouldn't be defined in the same template description as 'd-ng' and 'n-ng'.
-> 
-> That length is greater than the current 15, so update using a sizeof() to
-> show where the number comes from and also can be visually shown to be
-> correct. The sizeof() is calculated at compile time.
-> 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+The contents of those directories were orphaned at the documentation
+body.
 
-Thanks, it's now in next-queued-testing.
+While those directories could likely be moved to be inside some guide,
+I'm opting to just adding their indexes to the main one, removing the
+:orphan: and adding the SPDX header.
 
-Mimi
+For the drivers, the rationale is that the documentation contains
+a mix of Kernelspace, uAPI and admin-guide. So, better to keep them on
+separate directories, as we've be doing with similar subsystem-specific
+docs that were not split yet.
+
+For the others, well... I'm too lazy to do the move. Also, it
+seems to make sense to keep at least some of those at the main
+dir (like kbuild, for example). In any case, a latter patch
+could do the move.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ Documentation/cdrom/index.rst           |  2 +-
+ Documentation/fault-injection/index.rst |  2 +-
+ Documentation/fb/index.rst              |  2 +-
+ Documentation/fpga/index.rst            |  2 +-
+ Documentation/ide/index.rst             |  2 +-
+ Documentation/index.rst                 | 14 ++++++++++++++
+ Documentation/kbuild/index.rst          |  2 +-
+ Documentation/livepatch/index.rst       |  2 +-
+ Documentation/netlabel/index.rst        |  2 +-
+ Documentation/pcmcia/index.rst          |  2 +-
+ Documentation/power/index.rst           |  2 +-
+ Documentation/target/index.rst          |  2 +-
+ Documentation/timers/index.rst          |  2 +-
+ Documentation/watchdog/index.rst        |  2 +-
+ 14 files changed, 27 insertions(+), 13 deletions(-)
+
+diff --git a/Documentation/cdrom/index.rst b/Documentation/cdrom/index.rst
+index efbd5d111825..338ad5f94e7c 100644
+--- a/Documentation/cdrom/index.rst
++++ b/Documentation/cdrom/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ =====
+ cdrom
+diff --git a/Documentation/fault-injection/index.rst b/Documentation/fault-injection/index.rst
+index 92b5639ed07a..8408a8a91b34 100644
+--- a/Documentation/fault-injection/index.rst
++++ b/Documentation/fault-injection/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ===============
+ fault-injection
+diff --git a/Documentation/fb/index.rst b/Documentation/fb/index.rst
+index d47313714635..baf02393d8ee 100644
+--- a/Documentation/fb/index.rst
++++ b/Documentation/fb/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ============
+ Frame Buffer
+diff --git a/Documentation/fpga/index.rst b/Documentation/fpga/index.rst
+index 2c87d1ea084f..f80f95667ca2 100644
+--- a/Documentation/fpga/index.rst
++++ b/Documentation/fpga/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ====
+ fpga
+diff --git a/Documentation/ide/index.rst b/Documentation/ide/index.rst
+index 45bc12d3957f..813dfe611a31 100644
+--- a/Documentation/ide/index.rst
++++ b/Documentation/ide/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ==================================
+ Integrated Drive Electronics (IDE)
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index e69d2fde7735..075c732501a2 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -35,6 +35,7 @@ trying to get it to work optimally on a given system.
+    :maxdepth: 2
+ 
+    admin-guide/index
++   kbuild/index
+ 
+ Firmware-related documentation
+ ------------------------------
+@@ -77,6 +78,9 @@ merged much easier.
+    kernel-hacking/index
+    trace/index
+    maintainer/index
++   fault-injection/index
++   livepatch/index
++
+ 
+ Kernel API documentation
+ ------------------------
+@@ -94,12 +98,22 @@ needed).
+    core-api/index
+    accounting/index
+    block/index
++   cdrom/index
++   ide/index
++   fb/index
++   fpga/index
+    hid/index
+    iio/index
+    infiniband/index
+    leds/index
+    media/index
++   netlabel/index
+    networking/index
++   pcmcia/index
++   power/index
++   target/index
++   timers/index
++   watchdog/index
+    input/index
+    hwmon/index
+    gpu/index
+diff --git a/Documentation/kbuild/index.rst b/Documentation/kbuild/index.rst
+index 42d4cbe4460c..e323a3f2cc81 100644
+--- a/Documentation/kbuild/index.rst
++++ b/Documentation/kbuild/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ===================
+ Kernel Build System
+diff --git a/Documentation/livepatch/index.rst b/Documentation/livepatch/index.rst
+index edd291d51847..17674a9e21b2 100644
+--- a/Documentation/livepatch/index.rst
++++ b/Documentation/livepatch/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ===================
+ Kernel Livepatching
+diff --git a/Documentation/netlabel/index.rst b/Documentation/netlabel/index.rst
+index 47f1e0e5acd1..984e1b191b12 100644
+--- a/Documentation/netlabel/index.rst
++++ b/Documentation/netlabel/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ========
+ NetLabel
+diff --git a/Documentation/pcmcia/index.rst b/Documentation/pcmcia/index.rst
+index 779c8527109e..7ae1f62fca14 100644
+--- a/Documentation/pcmcia/index.rst
++++ b/Documentation/pcmcia/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ======
+ pcmcia
+diff --git a/Documentation/power/index.rst b/Documentation/power/index.rst
+index 20415f21e48a..002e42745263 100644
+--- a/Documentation/power/index.rst
++++ b/Documentation/power/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ================
+ Power Management
+diff --git a/Documentation/target/index.rst b/Documentation/target/index.rst
+index b68f48982392..4b24f81f747e 100644
+--- a/Documentation/target/index.rst
++++ b/Documentation/target/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ==================
+ TCM Virtual Device
+diff --git a/Documentation/timers/index.rst b/Documentation/timers/index.rst
+index 91f6f8263c48..df510ad0c989 100644
+--- a/Documentation/timers/index.rst
++++ b/Documentation/timers/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ======
+ timers
+diff --git a/Documentation/watchdog/index.rst b/Documentation/watchdog/index.rst
+index 33a0de631e84..c177645081d8 100644
+--- a/Documentation/watchdog/index.rst
++++ b/Documentation/watchdog/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ ======================
+ Linux Watchdog Support
+-- 
+2.21.0
 
