@@ -2,132 +2,150 @@ Return-Path: <SRS0=W4wH=U3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F575C5B578
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 05:12:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BC1C4321A
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 09:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E91F02086D
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 05:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D82520665
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 09:31:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xj0afykF"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CR3gJDc6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbfF1FMN (ORCPT
+        id S1726476AbfF1Jbh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Jun 2019 01:12:13 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45013 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbfF1FMN (ORCPT
+        Fri, 28 Jun 2019 05:31:37 -0400
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:55358 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbfF1Jbg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Jun 2019 01:12:13 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r16so2941622wrl.11;
-        Thu, 27 Jun 2019 22:12:11 -0700 (PDT)
+        Fri, 28 Jun 2019 05:31:36 -0400
+Received: by mail-vk1-f201.google.com with SMTP id b85so1465689vke.22
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Jun 2019 02:31:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SJl+MEcLHxsmC7hL4toqKB0JY3VqT6Z87x0g1KUG1aU=;
-        b=Xj0afykFiahF870UUKq5lZkACMiX71h/r/Fjzqg0kwINVwRSXMJIdIxbMFTjvAmKKj
-         r9aTY7HivgbiWpxz/UkX9PgvGJ72XaLblhYwGeSp6U1yFk62FguSSfYz0VS9a0/O3k3n
-         5ZFZmFdkEvgaz24Ic8fH8oAamBFeBd71A2fqOha9ABaSH1jFBRN6voUSYFZ0yjbgBQ7a
-         aIwH0sZXTZ+toSpmqi2C0BL/a98uHowFepcb1aWDJ4GtAmcbFRXJi/ACi2JtShWxiyS+
-         j4+65Zfxv50nYfdJ+j6vXWB9anIuclvwSMlxR3cEx0VUf58aJWT8EQ7h61VaCBTqGV/D
-         vw2Q==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=yltp3Nr5hoDNAZ2OFPn4NI5Rzn3a2yDgIbIXrha4iaM=;
+        b=CR3gJDc6z07Wkkp9RjMwVFQC4vw0FiFVhhdFCWnKVWL5Udpul5ft0d9yYfYyL0KRwe
+         YvRi1l9qjXnTB1P0zT35j66EcCqiwt6K3lfL4hLf0IxNBq2QL1KE2AMHzxaMEf2pgvsa
+         571ff3tO8S3tYjKNFZVANKIKaZn9uaXtksbv1SzPsNibM/a44Z0owTk9AjxE3nwh3fF9
+         zQk8l8HyUsb1klLlMbqWf3aQOJZep/CGW7FwnLbg6WnsVIJkgt+uSVwepXRg/npeC29A
+         uo2u96SMp7B/7q8EsHK9npvcHWfcoiwa2m0AVxrdmIMyzWADc776p/OtlxIbNBF1gmvZ
+         ASqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SJl+MEcLHxsmC7hL4toqKB0JY3VqT6Z87x0g1KUG1aU=;
-        b=lGZUPlzgnOsOnhp3whEf0EDCX2ieGKXHjkH249TQ7Lxt34JUqGrnhkBe8l3eyezyzn
-         0GzNvZA5Nrk+VzrU7t5OG5HYvZ0HhuHTKn6jb4da8LpaP+2C+ZbJCXyGMhL91jGk34TE
-         quojnPvuol11rGsYyhTecD8XvYxg7kCdGL7QO06K2ukLLSQrFOtZEafuZ2YklGmlVbnh
-         YHRzktFwn/nNNj1eSO+oqJysuwwDXDWsMFEBb9VW+sUkYPRkUU5gh0SWkmxbeOdBAoda
-         hmZCfXY5fIVpcA7fYmIS8/xt6NMKP/eaP4hDyc16ZJr5CtgUpvCd8sDeS0ob76Yodl7P
-         xV7g==
-X-Gm-Message-State: APjAAAVQnYMvvA1w4ZwVgoxMU2wqzb8Zc0TjjlDzWjiT2k29xt/UGdqS
-        8C7hQKSkgQest0I0ywSL5Wo=
-X-Google-Smtp-Source: APXvYqw7iXg661+P0ytoSzuTlnML16T3d6/S3LFZw22cAgZe+5f7D14Z3sXNaeE4rKoyj1MqsaEQrg==
-X-Received: by 2002:adf:de90:: with SMTP id w16mr5957398wrl.217.1561698731019;
-        Thu, 27 Jun 2019 22:12:11 -0700 (PDT)
-Received: from [192.168.2.27] (39.35.broadband4.iol.cz. [85.71.35.39])
-        by smtp.gmail.com with ESMTPSA id a2sm2218310wmj.9.2019.06.27.22.12.09
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 22:12:10 -0700 (PDT)
-Subject: Re: [RFC PATCH v5 1/1] Add dm verity root hash pkcs7 sig validation.
-To:     Eric Biggers <ebiggers@kernel.org>,
-        Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, jmorris@namei.org, scottsh@microsoft.com,
-        mpatocka@redhat.com
-References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
- <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com>
- <20190627234149.GA212823@gmail.com>
- <alpine.LRH.2.21.1906271844470.22562@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
- <20190628030017.GA673@sol.localdomain>
-From:   Milan Broz <gmazyland@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <264565b3-ff3c-29c0-7df0-d8ff061087d3@gmail.com>
-Date:   Fri, 28 Jun 2019 07:12:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190628030017.GA673@sol.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=yltp3Nr5hoDNAZ2OFPn4NI5Rzn3a2yDgIbIXrha4iaM=;
+        b=cpxyY2Qso9DhzfoTAmKquMZW8o+WDZoBR60myVTG/Kh9tj5FIun3MYgjO2g3QM8zhS
+         S6VZcCF8acZgQMbvM7kpbhHa5gK7j8+D3NAW2XWWZfsBIy/6C8bqp7PT70x15T03EPVp
+         Gej8jq1xoFdo98NbIXgtL5ihlM4FucX0eGqCeUJcowZgQ9X+imrgR9WirfC5bX4bsL7i
+         6aFbSal0woa3tBLHL/xthtN+XKvCSk7UqJFnbLaPmw5qfENF0jOIvzjJL68cBz8qyww8
+         vcXAj/R75V20aVmuwS94qcfnGpPlCDBAAMOFDfaB1gWZatAHLzfNlCs3RFRMFd29BTXI
+         4ggg==
+X-Gm-Message-State: APjAAAVJDkEyKaxLHKiqiNcL9uEZCXxpuhe83RlzhzsaN+lhM0TTYH+x
+        lsFzBAdGw71D/h0x0YuMw0U0zYHDZY0=
+X-Google-Smtp-Source: APXvYqzAImN3IyFkxzATucMUrAj64yrEoBQxTycRYblSPKjSiOfq+yF5DcKQlNTMfZ1GTbPhBbh9+vm2v60=
+X-Received: by 2002:a1f:728b:: with SMTP id n133mr3319864vkc.84.1561714295487;
+ Fri, 28 Jun 2019 02:31:35 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 11:31:29 +0200
+Message-Id: <20190628093131.199499-1-glider@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v10 0/3] add init_on_alloc/init_on_free boot options
+From:   Alexander Potapenko <glider@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marco Elver <elver@google.com>, Qian Cai <cai@lca.pw>,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 28/06/2019 05:00, Eric Biggers wrote:
->> Hello Eric,
->>
->> This started with a config (see V4). We didnot want scripts that pass this
->> parameter to suddenly stop working if for some reason the verification is
->> turned off so the optional parameter was just parsed and no validation
->> happened if the CONFIG was turned off. This was changed to a commandline
->> parameter after feedback from the community, so I would prefer to keep it
->> *now* as commandline parameter. Let me know if you are OK with this.
->>
->> Regards,
->> JK
-> 
-> Sorry, I haven't been following the whole discussion.  (BTW, you sent out
-> multiple versions both called "v4", and using a cover letter for a single patch
-> makes it unnecessarily difficult to review.)  However, it appears Milan were
-> complaining about the DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE option which set the
-> policy for signature verification, *not* the DM_VERITY_VERIFY_ROOTHASH_SIG
-> option which enabled support for signature verification.  Am I missing
-> something?  You can have a module parameter which controls the "signatures
-> required" setting, while also allowing people to compile out kernel support for
-> the signature verification feature.
+Provide init_on_alloc and init_on_free boot options.
 
-Yes, this was exactly my point.
+These are aimed at preventing possible information leaks and making the
+control-flow bugs that depend on uninitialized values more deterministic.
 
-I think I even mention in some reply to use exactly the same config Makefile logic
-as for FEC - to allow completely compile it out of the source:
+Enabling either of the options guarantees that the memory returned by the
+page allocator and SL[AU]B is initialized with zeroes.
+SLOB allocator isn't supported at the moment, as its emulation of kmem
+caches complicates handling of SLAB_TYPESAFE_BY_RCU caches correctly.
 
-ifeq ($(CONFIG_DM_VERITY_FEC),y)
-dm-verity-objs                  += dm-verity-fec.o
-endif
+Enabling init_on_free also guarantees that pages and heap objects are
+initialized right after they're freed, so it won't be possible to access
+stale data by using a dangling pointer.
 
-> Sure, it means that the signature verification support won't be guaranteed to be
-> present when dm-verity is.  But the same is true of the hash algorithm (e.g.
-> sha512), and of the forward error correction feature.  Since the signature
-> verification is nontrivial and pulls in a lot of other kernel code which might
-> not be otherwise needed (via SYSTEM_DATA_VERIFICATION), it seems a natural
-> candidate for putting the support behind a Kconfig option.
+As suggested by Michal Hocko, right now we don't let the heap users to
+disable initialization for certain allocations. There's not enough
+evidence that doing so can speed up real-life cases, and introducing
+ways to opt-out may result in things going out of control.
 
-On the other side, dm-verity is meant for a system verification, so if it depends
-on SYSTEM_DATA_VERIFICATION is ... not so surprising :)
+To: Andrew Morton <akpm@linux-foundation.org>
+To: Christoph Lameter <cl@linux.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Kostya Serebryany <kcc@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Sandeep Patil <sspatil@android.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jann Horn <jannh@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Marco Elver <elver@google.com>
+Cc: Qian Cai <cai@lca.pw>
+Cc: linux-mm@kvack.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com
 
-But the change above is quite easy and while we already have FEC as config option,
-perhaps let's do it the same here.
+Alexander Potapenko (2):
+  mm: security: introduce init_on_alloc=1 and init_on_free=1 boot
+    options
+  mm: init: report memory auto-initialization features at boot time
 
-Milan
+ .../admin-guide/kernel-parameters.txt         |  9 +++
+ drivers/infiniband/core/uverbs_ioctl.c        |  2 +-
+ include/linux/mm.h                            | 24 +++++++
+ init/main.c                                   | 24 +++++++
+ mm/dmapool.c                                  |  4 +-
+ mm/page_alloc.c                               | 71 +++++++++++++++++--
+ mm/slab.c                                     | 16 ++++-
+ mm/slab.h                                     | 20 ++++++
+ mm/slub.c                                     | 40 +++++++++--
+ net/core/sock.c                               |  2 +-
+ security/Kconfig.hardening                    | 29 ++++++++
+ 11 files changed, 223 insertions(+), 18 deletions(-)
+---
+ v3: dropped __GFP_NO_AUTOINIT patches
+ v5: dropped support for SLOB allocator, handle SLAB_TYPESAFE_BY_RCU
+ v6: changed wording in boot-time message
+ v7: dropped the test_meminit.c patch (picked by Andrew Morton already),
+     minor wording changes
+ v8: fixes for interoperability with other heap debugging features
+ v9: added support for page/slab poisoning
+ v10: changed pr_warn() to pr_info(), added Acked-by: tags
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
