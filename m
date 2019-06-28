@@ -2,105 +2,107 @@ Return-Path: <SRS0=W4wH=U3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F440C4321A
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 18:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D13C4321A
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 19:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CC53214DA
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 18:47:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ULWQJchS"
+	by mail.kernel.org (Postfix) with ESMTP id 239BA208C4
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jun 2019 19:45:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbfF1SrZ (ORCPT
+        id S1726967AbfF1TpM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Jun 2019 14:47:25 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:42714 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbfF1SrZ (ORCPT
+        Fri, 28 Jun 2019 15:45:12 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:60050 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbfF1TpM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Jun 2019 14:47:25 -0400
-Received: by mail-io1-f66.google.com with SMTP id u19so6109596ior.9
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Jun 2019 11:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TS6M/Nxme28NPi028YG4VL6UkJsnX87eP23dRyQxlL8=;
-        b=ULWQJchSSBGqlKXWeas4g7WIZ8OlQF02e/2fni6ZOZONXYEs3ZCH+r4cic8fiYxfD0
-         eHnbXowAwuPBZ89DrfUkpwTDs9b+1pqQrg7eDqxc7WPuE1R1HXMpIVW8H3p/u/Nljjwe
-         nGgIWQLRB86Fr5HVwK/7FifYn8quFD54pQ1rcG7vEyBMJiIh++rAIfHCNZoFUDN6/r6F
-         e0JJ7ljcCosjh6XyxVdTwFEg+Ryd3//WBaWWOHqgiiJ8CleZ6HuUNXCtKg9lh4/OuQKJ
-         R8YskmnppDVe4ergbv2NJAVXObMYFdGbjt93mjBFWt/coimuZTorjdy0ZETQWq8/UYw6
-         doXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TS6M/Nxme28NPi028YG4VL6UkJsnX87eP23dRyQxlL8=;
-        b=tKH7Mx4ks6MlPZX5wiUwlYtxvFk3o8SVYwNYJxO11er4pGgYwRj20g41mEvO/agjds
-         bcVaPiQg+9KlhjMvsIYiNxNYbyatqWLGqeiMepMm7XVG1qE831nISOc4qwSiFBA6b3RW
-         HfHkk/2b9KKrUog9jqmCoVrclKq4wfhjbsAIBFjmtxT/+HjBRDGg/tLRC4YCi3r/64ih
-         sSuiJLcCPb8blSbTEgRNQXl2sTDHYQ/RolhBdT85ntQjsulYNxWJkC1/UJhrnZSHZJxF
-         x5gzxu0MfM4A00zZUZl/Pxcmdp3msXgAvp+qnPASEKjUNTrY2SuUMGbccCLxt5+uXUz2
-         P22Q==
-X-Gm-Message-State: APjAAAXgrZDWI679dBv5MfJ8b+4b2zrUJzUyWgxLtYshDgbtCRik6p/e
-        w+wXgvqMhsDzB0KAxAjTE5m1R9Vxbex0klzAjcuWCg==
-X-Google-Smtp-Source: APXvYqyRJ1W1SO0XpPNJiChAzXB+Zx58pCxRD8I5LkVFmL9E/Q77a50+QGKt5gr4PNYscmP2X/zdh9LHxXJb3l9RHn8=
-X-Received: by 2002:a6b:8dcf:: with SMTP id p198mr13241371iod.46.1561747644150;
- Fri, 28 Jun 2019 11:47:24 -0700 (PDT)
+        Fri, 28 Jun 2019 15:45:12 -0400
+Received: by linux.microsoft.com (Postfix, from userid 1029)
+        id 5A4D22007696; Fri, 28 Jun 2019 12:45:11 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by linux.microsoft.com (Postfix) with ESMTP id 4A08C301032E;
+        Fri, 28 Jun 2019 12:45:11 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 12:45:11 -0700 (PDT)
+From:   Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
+X-X-Sender: jaskarankhurana@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net
+To:     Eric Biggers <ebiggers@kernel.org>
+cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, jmorris@namei.org, scottsh@microsoft.com,
+        mpatocka@redhat.com, gmazyland@gmail.com
+Subject: Re: [RFC PATCH v5 0/1] Add dm verity root hash pkcs7 sig
+ validation.
+In-Reply-To: <20190628040041.GB673@sol.localdomain>
+Message-ID: <alpine.LRH.2.21.1906281242110.2789@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com> <20190628040041.GB673@sol.localdomain>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190621011941.186255-1-matthewgarrett@google.com>
- <20190621011941.186255-25-matthewgarrett@google.com> <CALCETrVUwQP7roLnW6kFG80Cc5U6X_T6AW+BTAftLccYGp8+Ow@mail.gmail.com>
- <alpine.LRH.2.21.1906270621080.28132@namei.org> <6E53376F-01BB-4795-BC02-24F9CAE00001@amacapital.net>
- <bce70c8b-9efd-6362-d536-cfbbcf70b0b7@tycho.nsa.gov> <CALCETrXwt43w6rQY6zt0J_3HOaad=+E5PushJNdSOZDBuaYV+Q@mail.gmail.com>
-In-Reply-To: <CALCETrXwt43w6rQY6zt0J_3HOaad=+E5PushJNdSOZDBuaYV+Q@mail.gmail.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Fri, 28 Jun 2019 11:47:12 -0700
-Message-ID: <CACdnJuuy7-tkj86njAqtdJ3dUMu-2T8a2y8DC3fMKBK0z9J6ag@mail.gmail.com>
-Subject: Re: [PATCH V33 24/30] bpf: Restrict bpf when kernel lockdown is in
- confidentiality mode
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        linux-security@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Chun-Yi Lee <jlee@suse.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 27, 2019 at 4:27 PM Andy Lutomirski <luto@kernel.org> wrote:
-> They're really quite similar in my mind.  Certainly some things in the
-> "integrity" category give absolutely trivial control over the kernel
-> (e.g. modules) while others make it quite challenging (ioperm), but
-> the end result is very similar.  And quite a few "confidentiality"
-> things genuinely do allow all kernel memory to be read.
->
-> I agree that finer-grained distinctions could be useful. My concern is
-> that it's a tradeoff, and the other end of the tradeoff is an ABI
-> stability issue.  If someone decides down the road that some feature
-> that is currently "integrity" can be split into a narrow "integrity"
-> feature and a "confidentiality" feature then, if the user policy knows
-> about the individual features, there's a risk of breaking people's
-> systems.  If we keep the fine-grained control, do we have a clear
-> compatibility story?
 
-My preference right now is to retain the fine-grained aspect of things
-in the internal API, simply because it'll be more annoying to add it
-back later if we want to. I don't want to expose it via the Lockdown
-user facing API for the reasons you've described, but it's not
-impossible that another LSM would find a way to do this reasonably.
-Does it seem reasonable to punt this discussion out to the point where
-another LSM tries to do something with this information, based on the
-implementation they're attempting?
+Hello Eric,
+On Thu, 27 Jun 2019, Eric Biggers wrote:
+
+> On Wed, Jun 19, 2019 at 12:10:47PM -0700, Jaskaran Khurana wrote:
+>> This patch set adds in-kernel pkcs7 signature checking for the roothash of
+>> the dm-verity hash tree.
+>> The verification is to support cases where the roothash is not secured by
+>> Trusted Boot, UEFI Secureboot or similar technologies.
+>> One of the use cases for this is for dm-verity volumes mounted after boot,
+>> the root hash provided during the creation of the dm-verity volume has to
+>> be secure and thus in-kernel validation implemented here will be used
+>> before we trust the root hash and allow the block device to be created.
+>>
+>> Why we are doing validation in the Kernel?
+>>
+>> The reason is to still be secure in cases where the attacker is able to
+>> compromise the user mode application in which case the user mode validation
+>> could not have been trusted.
+>> The root hash signature validation in the kernel along with existing
+>> dm-verity implementation gives a higher level of confidence in the
+>> executable code or the protected data. Before allowing the creation of
+>> the device mapper block device the kernel code will check that the detached
+>> pkcs7 signature passed to it validates the roothash and the signature is
+>> trusted by builtin keys set at kernel creation. The kernel should be
+>> secured using Verified boot, UEFI Secure Boot or similar technologies so we
+>> can trust it.
+>>
+>> What about attacker mounting non dm-verity volumes to run executable
+>> code?
+>>
+>> This verification can be used to have a security architecture where a LSM
+>> can enforce this verification for all the volumes and by doing this it can
+>> ensure that all executable code runs from signed and trusted dm-verity
+>> volumes.
+>>
+>> Further patches will be posted that build on this and enforce this
+>> verification based on policy for all the volumes on the system.
+>>
+>
+> I don't understand your justification for this feature.
+>
+> If userspace has already been pwned severely enough for the attacker to be
+> executing arbitrary code with CAP_SYS_ADMIN (which is what the device mapper
+> ioctls need), what good are restrictions on loading more binaries from disk?
+>
+> Please explain your security model.
+>
+> - Eric
+>
+
+In a datacenter like environment, this will protect the system from below 
+attacks:
+
+1.Prevents attacker from deploying scripts that run arbitrary executables on the system.
+2.Prevents physically present malicious admin to run arbitrary code on the
+   machine.
+
+Regards,
+Jaskaran
