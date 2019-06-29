@@ -3,185 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C358C5B57C
-	for <linux-security-module@archiver.kernel.org>; Sat, 29 Jun 2019 23:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FD9C5B57B
+	for <linux-security-module@archiver.kernel.org>; Sat, 29 Jun 2019 23:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE3FF21726
-	for <linux-security-module@archiver.kernel.org>; Sat, 29 Jun 2019 23:46:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09B1121726
+	for <linux-security-module@archiver.kernel.org>; Sat, 29 Jun 2019 23:48:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561852014;
-	bh=m7JiaOc8uLjHzqJHjyTPWc76HXtqun5q862Jdn9emXA=;
+	s=default; t=1561852087;
+	bh=/Z9JxHM/U8pOR2q9Q111pLKFbaSLjxZI1rBO4UNXjGs=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=2Sn8FzDkkl5ctnt7fGDgFWV/e75F604I0ofbpCElmdJjIlw8d2Y7c5CafDI0LaLiA
-	 hALEjhgbIu3fshpzi0rOt7ULRCFQuroW1QZ7b5m3janpqSPYBitwMtOeHaK32OX8KX
-	 bEc9Y1KqX1r1brFo1nUD9TNCNqk/1DjaGs4ObSCA=
+	b=B2eOCEIESXmb0strhr7qUTvYG9oBV43xxZkCpKcPMH24Q8/q5j2ykofDK/4J/gIhZ
+	 7yU19p+T8MVzDC2SpBMyRvXXYvESXSVGGWh88eJiot+3nqLQBxY5XL7dD1MZhsOjeQ
+	 kOLX2L6NrgvFE0B3/q/0Nw18GjO6enB6i634mrMM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbfF2Xqx (ORCPT
+        id S1726953AbfF2XsG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 29 Jun 2019 19:46:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58090 "EHLO mail.kernel.org"
+        Sat, 29 Jun 2019 19:48:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726962AbfF2Xqx (ORCPT
+        id S1726958AbfF2XsG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 29 Jun 2019 19:46:53 -0400
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+        Sat, 29 Jun 2019 19:48:06 -0400
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7ACF0217F4
-        for <linux-security-module@vger.kernel.org>; Sat, 29 Jun 2019 23:46:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21F7C217F5
+        for <linux-security-module@vger.kernel.org>; Sat, 29 Jun 2019 23:48:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561852011;
-        bh=m7JiaOc8uLjHzqJHjyTPWc76HXtqun5q862Jdn9emXA=;
+        s=default; t=1561852085;
+        bh=/Z9JxHM/U8pOR2q9Q111pLKFbaSLjxZI1rBO4UNXjGs=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zpW4HQmR459p8kugiYS2y2Xe/ym7lLJdk36xAN6iLgBcbsfiX+p63m5veuGXpizbA
-         25r9uBaFH8Tbj0hxwbHLyUTEc8iJkWILcO2huEUrwD+X6uUJlhEcw26bSr2iChvj21
-         cyO9svxL+i+PMuM75dyryQ6180Mu/kUB9gOYtnI4=
-Received: by mail-wr1-f42.google.com with SMTP id n4so9877529wrw.13
-        for <linux-security-module@vger.kernel.org>; Sat, 29 Jun 2019 16:46:51 -0700 (PDT)
-X-Gm-Message-State: APjAAAX5u9BR7B0BdS5nMJcB+Vu+6oueyRQK7gtmJA0jjRk5XjresB3w
-        RWaJDV1osyOyBTqXSfApPDDzyttw6Ha/B9o333Mzaw==
-X-Google-Smtp-Source: APXvYqzofs1nCSaOg4mX/lrKS3QLuWzVK5IU02OHCP4Aptlfby8fTI1WtJcnsq+OD1I3WGtdv5l9yawertL3GggF7W4=
-X-Received: by 2002:adf:a143:: with SMTP id r3mr3393764wrr.352.1561852009958;
- Sat, 29 Jun 2019 16:46:49 -0700 (PDT)
+        b=DhmTf41Y2AuaabsMozTRzHIZvaRyAuQnNAVsjlAdX17h5VfZCAAt73CqYND0OuWLT
+         Lq4O6ZKNaaR2s6Xde+Jhb4vpZSxaF7h0FlO1NZ6Zu41SuIQF4k0VerykHuEEWED+Xa
+         1d9VWfWJonrnFa53poGTxTuBHSXOqSfoVPIl25NE=
+Received: by mail-wm1-f43.google.com with SMTP id v19so12256172wmj.5
+        for <linux-security-module@vger.kernel.org>; Sat, 29 Jun 2019 16:48:05 -0700 (PDT)
+X-Gm-Message-State: APjAAAUygZYqC8gmaizM1NzU9xEg9qlJgbAUJ2wpNiqqA6lN1Iq/Re4q
+        63HTxhA+6FGm1ksgoOYSGVqzwzk7WQiCl4m++bJB0A==
+X-Google-Smtp-Source: APXvYqwPvmJHkMRl329cQ9T4D/2dboMc6Y5O8FWBmYdZc9xtZrbDnQPOXbb072fAhtMQs+QCOGRqxnm2IlTbXokTVhU=
+X-Received: by 2002:a1c:1a56:: with SMTP id a83mr12548344wma.161.1561852083701;
+ Sat, 29 Jun 2019 16:48:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <cover.1561588012.git.cedric.xing@intel.com> <72420cff8fa944b64e57df8d25c63bd30f8aacfa.1561588012.git.cedric.xing@intel.com>
-In-Reply-To: <72420cff8fa944b64e57df8d25c63bd30f8aacfa.1561588012.git.cedric.xing@intel.com>
+References: <20190621011941.186255-1-matthewgarrett@google.com>
+ <20190621011941.186255-25-matthewgarrett@google.com> <CALCETrVUwQP7roLnW6kFG80Cc5U6X_T6AW+BTAftLccYGp8+Ow@mail.gmail.com>
+ <alpine.LRH.2.21.1906270621080.28132@namei.org> <6E53376F-01BB-4795-BC02-24F9CAE00001@amacapital.net>
+ <bce70c8b-9efd-6362-d536-cfbbcf70b0b7@tycho.nsa.gov> <CALCETrXwt43w6rQY6zt0J_3HOaad=+E5PushJNdSOZDBuaYV+Q@mail.gmail.com>
+ <CACdnJuuy7-tkj86njAqtdJ3dUMu-2T8a2y8DC3fMKBK0z9J6ag@mail.gmail.com>
+In-Reply-To: <CACdnJuuy7-tkj86njAqtdJ3dUMu-2T8a2y8DC3fMKBK0z9J6ag@mail.gmail.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 29 Jun 2019 16:46:38 -0700
-X-Gmail-Original-Message-ID: <CALCETrWQUEEwAAdPrVQMengKDhX3-fVrtJwaP2i=mWD+s+B8vg@mail.gmail.com>
-Message-ID: <CALCETrWQUEEwAAdPrVQMengKDhX3-fVrtJwaP2i=mWD+s+B8vg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
-To:     Cedric Xing <cedric.xing@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr. Greg Wettstein" <greg@enjellic.com>,
+Date:   Sat, 29 Jun 2019 16:47:52 -0700
+X-Gmail-Original-Message-ID: <CALCETrUzGfB2EO0eUpan3b4qyUPmkTZ-7dMuLqu_bmnY-ry=SA@mail.gmail.com>
+Message-ID: <CALCETrUzGfB2EO0eUpan3b4qyUPmkTZ-7dMuLqu_bmnY-ry=SA@mail.gmail.com>
+Subject: Re: [PATCH V33 24/30] bpf: Restrict bpf when kernel lockdown is in
+ confidentiality mode
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
         Stephen Smalley <sds@tycho.nsa.gov>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+        James Morris <jmorris@namei.org>,
+        linux-security@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Chun-Yi Lee <jlee@suse.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 27, 2019 at 11:56 AM Cedric Xing <cedric.xing@intel.com> wrote:
+On Fri, Jun 28, 2019 at 11:47 AM Matthew Garrett <mjg59@google.com> wrote:
 >
-> SGX enclaves are loaded from pages in regular memory. Given the ability t=
-o
-> create executable pages, the newly added SGX subsystem may present a back=
-door
-> for adversaries to circumvent LSM policies, such as creating an executabl=
-e
-> enclave page from a modified regular page that would otherwise not be mad=
-e
-> executable as prohibited by LSM. Therefore arises the primary question of
-> whether an enclave page should be allowed to be created from a given sour=
-ce
-> page in regular memory.
+> On Thu, Jun 27, 2019 at 4:27 PM Andy Lutomirski <luto@kernel.org> wrote:
+> > They're really quite similar in my mind.  Certainly some things in the
+> > "integrity" category give absolutely trivial control over the kernel
+> > (e.g. modules) while others make it quite challenging (ioperm), but
+> > the end result is very similar.  And quite a few "confidentiality"
+> > things genuinely do allow all kernel memory to be read.
+> >
+> > I agree that finer-grained distinctions could be useful. My concern is
+> > that it's a tradeoff, and the other end of the tradeoff is an ABI
+> > stability issue.  If someone decides down the road that some feature
+> > that is currently "integrity" can be split into a narrow "integrity"
+> > feature and a "confidentiality" feature then, if the user policy knows
+> > about the individual features, there's a risk of breaking people's
+> > systems.  If we keep the fine-grained control, do we have a clear
+> > compatibility story?
 >
-> A related question is whether to grant/deny a mprotect() request on a giv=
-en
-> enclave page/range. mprotect() is traditionally covered by
-> security_file_mprotect() hook, however, enclave pages have a different li=
-fespan
-> than either MAP_PRIVATE or MAP_SHARED. Particularly, MAP_PRIVATE pages ha=
-ve the
-> same lifespan as the VMA while MAP_SHARED pages have the same lifespan as=
- the
-> backing file (on disk), but enclave pages have the lifespan of the enclav=
-e=E2=80=99s
-> file descriptor. For example, enclave pages could be munmap()=E2=80=99ed =
-then mmap()=E2=80=99ed
-> again without losing contents (like MAP_SHARED), but all enclave pages wi=
-ll be
-> lost once its file descriptor has been closed (like MAP_PRIVATE). That sa=
-id,
-> LSM modules need some new data structure for tracking protections of encl=
-ave
-> pages/ranges so that they can make proper decisions at mmap()/mprotect()
-> syscalls.
->
-> The last question, which is orthogonal to the 2 above, is whether or not =
-to
-> allow a given enclave to launch/run. Enclave pages are not visible to the=
- rest
-> of the system, so to some extent offer a better place for malicious softw=
-are to
-> hide. Thus, it is sometimes desirable to whitelist/blacklist enclaves by =
-their
-> measurements, signing public keys, or image files.
->
-> To address the questions above, 2 new LSM hooks are added for enclaves.
->   - security_enclave_load() =E2=80=93 This hook allows LSM to decide whet=
-her or not to
->     allow instantiation of a range of enclave pages using the specified V=
-MA. It
->     is invoked when a range of enclave pages is about to be loaded. It se=
-rves 3
->     purposes: 1) indicate to LSM that the file struct in subject is an en=
-clave;
->     2) allow LSM to decide whether or not to instantiate those pages and =
-3)
->     allow LSM to initialize internal data structures for tracking
->     origins/protections of those pages.
->   - security_enclave_init() =E2=80=93 This hook allows whitelisting/black=
-listing or
->     performing whatever checks deemed appropriate before an enclave is al=
-lowed
->     to run. An LSM module may opt to use the file backing the SIGSTRUCT a=
-s a
->     proxy to dictate allowed protections for anonymous pages.
->
-> mprotect() of enclave pages continue to be governed by
-> security_file_mprotect(), with the expectation that LSM is able to distin=
-guish
-> between regular and enclave pages inside the hook. For mmap(), the SGX
-> subsystem is expected to invoke security_file_mprotect() explicitly to ch=
-eck
-> protections against the requested protections for existing enclave pages.=
- As
-> stated earlier, enclave pages have different lifespan than the existing
-> MAP_PRIVATE and MAP_SHARED pages, so would require a new data structure o=
-utside
-> of VMA to track their protections and/or origins. Enclave Memory Area (or=
- EMA
-> for short) has been introduced to address the need. EMAs are maintained b=
-y the
-> LSM framework for all LSM modules to share. EMAs will be instantiated for
-> enclaves only so will not impose memory/performance overheads for regular
-> applications/files. Please see include/linux/lsm_ema.h and security/lsm_e=
-ma.c
-> for details.
->
-> A new setup parameter =E2=80=93 lsm.ema.cache_decisions has been introduc=
-ed to offer
-> the choice between memory consumption and accuracy of audit logs. Enablin=
-g
-> lsm.ema.cache_decisions causes LSM framework NOT to keep backing files op=
-en for
-> EMAs. While that saves memory, it requires LSM modules to make and cache
-> decisions ahead of time, and makes it difficult for LSM modules to genera=
-te
-> accurate audit logs. System administrators are expected to run LSM in
-> permissive mode with lsm.ema.cache_decisions off to determine the minimal
-> permissions needed, and then turn it back on in enforcing mode for optima=
-l
-> performance and memory usage. lsm.ema.cache_decisions is on by default an=
-d
-> could be turned off by appending =E2=80=9Clsm.ema.cache_decisions=3D0=E2=
-=80=9D or
-> =E2=80=9Clsm.ema.cache_decisions=3Doff=E2=80=9D to the kernel command lin=
-e.
+> My preference right now is to retain the fine-grained aspect of things
+> in the internal API, simply because it'll be more annoying to add it
+> back later if we want to. I don't want to expose it via the Lockdown
+> user facing API for the reasons you've described, but it's not
+> impossible that another LSM would find a way to do this reasonably.
+> Does it seem reasonable to punt this discussion out to the point where
+> another LSM tries to do something with this information, based on the
+> implementation they're attempting?
 
-Just on a very cursory review, this seems like it's creating a bunch
-of complexity (a whole new library and data structure), and I'm not
-convinced the result is any better than Sean's version.
+I think I can get behind this, as long as it's clear to LSM authors
+that this list is only a little bit stable.  I can certainly see the
+use for the fine-grained info being available for auditing.
