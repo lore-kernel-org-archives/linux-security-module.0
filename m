@@ -2,124 +2,153 @@ Return-Path: <SRS0=pBN5=U6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5326C4646D
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jul 2019 09:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C25A7C06511
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jul 2019 12:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEAA920B7C
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jul 2019 09:41:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMrB1vsX"
+	by mail.kernel.org (Postfix) with ESMTP id A5368214AE
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jul 2019 12:54:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbfGAJll (ORCPT
+        id S1726329AbfGAMye (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Jul 2019 05:41:41 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54375 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728334AbfGAJll (ORCPT
+        Mon, 1 Jul 2019 08:54:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38132 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727093AbfGAMye (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Jul 2019 05:41:41 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g135so15104200wme.4;
-        Mon, 01 Jul 2019 02:41:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6mj1GNCBlm5Kzl/Gv47qDDxI924Jr5t8ezQS95HGAxE=;
-        b=RMrB1vsX/2hK+on0/p7Z7GxznCyEy8+F457kddIrwKQwlCyrQQxmFpdyIB7KPTFSrI
-         1UEEwV35Lu1CwDmb2s+W4OV+NkzstIuw8Cc63+MTmhAkrLOTiGJ1qG16J4JvqTAEsrSs
-         uZnWKKrQgeqZdO/mh9YOy2EoWVT//ZMAZ8eHGu9m2sZo312GQ3vgDEcVGV8kekxPtJMN
-         rv0CFJjViOmLgWPsk0vUPM+G4Qtu0X7i8ze6FzUMeBgTwPapqt1nU/op3JD7L/rym6eB
-         LO9RSQlwXNBw4IS2pP/gIgz2ZEOQZYuk+kM5QZ6v7wLL6Ud/9JPtH+DTjO8Md5KsnlAx
-         l+pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6mj1GNCBlm5Kzl/Gv47qDDxI924Jr5t8ezQS95HGAxE=;
-        b=CNtxuFG0C+fodwzzq5WlRxI4eXG8u4oWNxdMbtgVH9eqvjg3qGe5BECdPnlRUwQHOl
-         5zPPffl0ZubCXhpFD+PP+biNgkSIrDyMEbgruvTLVtTQKAWiZplQgdS2dLMGR0KyHioL
-         0TesIpiz0CRrh47EEDomi3WbSdX2FX5ruq2nNlJHdl08YwgoWwCQP/Xjl6R9L0h3aIDX
-         rzzuHEZgXsEBXJCU2jnPN/HaiJK09JtABWgzPqi3JB/v4dD7z41EiAVtiNLRdbjr3c33
-         YR3fM0RwSsJaBAo0gmjf0z9OjJ0ohc2OjqwkF8BCyZN91V2yIUKbsjb91pvV2Noo1KrB
-         sCRA==
-X-Gm-Message-State: APjAAAUPpI1RUfTiCL2xC0BUakC47MacJo+h/dgw7tjbfOFjPCYRshky
-        BvC0niR5Pjy6mo1wcrJ6Wa0=
-X-Google-Smtp-Source: APXvYqw1GiG2c1p4SOty1AL+8QolpaF03Qeti32qNeBWi0z+owqwU83+3Kt9KKC6JMz4wuXTHDVY/A==
-X-Received: by 2002:a1c:3:: with SMTP id 3mr16735741wma.6.1561974098900;
-        Mon, 01 Jul 2019 02:41:38 -0700 (PDT)
-Received: from [172.22.36.64] (redhat-nat.vtp.fi.muni.cz. [78.128.215.6])
-        by smtp.gmail.com with ESMTPSA id 5sm5860353wmi.22.2019.07.01.02.41.37
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 02:41:38 -0700 (PDT)
-Subject: Re: [RFC PATCH v5 0/1] Add dm verity root hash pkcs7 sig validation.
-To:     James Morris <jmorris@namei.org>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, scottsh@microsoft.com, mpatocka@redhat.com
-References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
- <20190628040041.GB673@sol.localdomain>
- <alpine.LRH.2.21.1906282040490.15624@namei.org>
-From:   Milan Broz <gmazyland@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <749ddf56-3cb6-42c8-9ccc-71e09558400f@gmail.com>
-Date:   Mon, 1 Jul 2019 11:41:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1906282040490.15624@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 1 Jul 2019 08:54:34 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x61CppOn089633
+        for <linux-security-module@vger.kernel.org>; Mon, 1 Jul 2019 08:54:33 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tfh69nb08-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jul 2019 08:54:32 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 1 Jul 2019 13:54:30 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 1 Jul 2019 13:54:26 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x61CsEID36503890
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 1 Jul 2019 12:54:14 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 193E752051;
+        Mon,  1 Jul 2019 12:54:25 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.110.66])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E8AB55204E;
+        Mon,  1 Jul 2019 12:54:22 +0000 (GMT)
+Subject: Re: [PATCH v4 2/3] initramfs: read metadata from special file
+ METADATA!!!
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk
+Cc:     linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bug-cpio@gnu.org,
+        zohar@linux.vnet.ibm.com, silviu.vlasceanu@huawei.com,
+        dmitry.kasatkin@huawei.com, takondra@cisco.com, kamensky@cisco.com,
+        hpa@zytor.com, arnd@arndb.de, rob@landley.net,
+        james.w.mcmechan@gmail.com, niveditas98@gmail.com
+Date:   Mon, 01 Jul 2019 08:54:12 -0400
+In-Reply-To: <20190523121803.21638-3-roberto.sassu@huawei.com>
+References: <20190523121803.21638-1-roberto.sassu@huawei.com>
+         <20190523121803.21638-3-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19070112-0016-0000-0000-0000028E22EC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19070112-0017-0000-0000-000032EBAFDE
+Message-Id: <1561985652.4049.24.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-01_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907010159
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 29/06/2019 06:01, James Morris wrote:
-> On Thu, 27 Jun 2019, Eric Biggers wrote:
+Hi Roberto,
+
+> diff --git a/init/initramfs.c b/init/initramfs.c
+> index 5de396a6aac0..862c03123de8 100644
+> --- a/init/initramfs.c
+> +++ b/init/initramfs.c
+
+> +static int __init do_process_metadata(char *buf, int len, bool last)
+> +{
+
+Part of the problem in upstreaming CPIO xattr support has been the
+difficulty in reading and understanding the initramfs code due to a
+lack of comments.  At least for any new code, let's add some comments
+to simplify the review.  In this case, understanding "last", before
+reading the code, would help.
+
+Mimi
+
+> +	int ret = 0;
+> +
+> +	if (!metadata_buf) {
+> +		metadata_buf_ptr = metadata_buf = kmalloc(body_len, GFP_KERNEL);
+> +		if (!metadata_buf_ptr) {
+> +			ret = -ENOMEM;
+> +			goto out;
+> +		}
+> +
+> +		metadata_len = body_len;
+> +	}
+> +
+> +	if (metadata_buf_ptr + len > metadata_buf + metadata_len) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	memcpy(metadata_buf_ptr, buf, len);
+> +	metadata_buf_ptr += len;
+> +
+> +	if (last)
+> +		do_parse_metadata(previous_name_buf);
+> +out:
+> +	if (ret < 0 || last) {
+> +		kfree(metadata_buf);
+> +		metadata_buf = NULL;
+> +		metadata = 0;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static int __init do_copy(void)
+>  {
+>  	if (byte_count >= body_len) {
+>  		if (xwrite(wfd, victim, body_len) != body_len)
+>  			error("write error");
+> +		if (metadata)
+> +			do_process_metadata(victim, body_len, true);
+>  		ksys_close(wfd);
+>  		do_utime(vcollected, mtime);
+>  		kfree(vcollected);
+> @@ -458,6 +500,8 @@ static int __init do_copy(void)
+>  	} else {
+>  		if (xwrite(wfd, victim, byte_count) != byte_count)
+>  			error("write error");
+> +		if (metadata)
+> +			do_process_metadata(victim, byte_count, false);
+>  		body_len -= byte_count;
+>  		eat(byte_count);
+>  		return 1;
 > 
->> I don't understand your justification for this feature.
->>
->> If userspace has already been pwned severely enough for the attacker to be
->> executing arbitrary code with CAP_SYS_ADMIN (which is what the device mapper
->> ioctls need), what good are restrictions on loading more binaries from disk?
->>
->> Please explain your security model.
-> 
-> Let's say the system has a policy where all code must be signed with a 
-> valid key, and that one mechanism for enforcing this is via signed 
-> dm-verity volumes. Validating the signature within the kernel provides 
-> stronger assurance than userspace validation. The kernel validates and 
-> executes the code, using kernel-resident keys, and does not need to rely 
-> on validation which has occurred across a trust boundary.
 
-Yes, but as it is implemented in this patch, a certificate is provided as
-a binary blob by the (super)user that activates the dm-verity device.
-
-Actually, I can put there anything that looks like a correct signature (self-signed
-or so), and dm-verity code is happy because the root hash is now signed.
-
-Maybe could this concept be extended to support in-kernel compiled certificates?
-
-I like the idea of signed root hash, but the truth is that if you have access
-to device activation, it brings nothing, you can just put any cert in the keyring
-and use it.
-
-Milan
-
-> 
-> You don't need arbitrary CAP_SYS_ADMIN code execution, you just need a 
-> flaw in the app (or its dependent libraries, or configuration) which 
-> allows signature validation to be bypassed.
-> 
-> The attacker now needs a kernel rather than a userspace vulnerability to 
-> bypass the signed code policy.
-> 
