@@ -6,148 +6,88 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D84CEC4646D
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jul 2019 19:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A72C0650E
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jul 2019 19:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B85EC206A3
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jul 2019 19:32:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE5FE2183F
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jul 2019 19:36:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562009579;
-	bh=ziupIDluryvJgMAzf5H0Vi0YavM+fEiqtmmoNA62bzg=;
+	s=default; t=1562009778;
+	bh=nJFYnrBEZtuf8KB7H1QIaum2Qn7mnpL1puwV+pE5jEc=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=IfbXD/aJqxHg/AUwiYwpgjYTW8cP84hxeWna9XwjeA05fBawNW74vGH1R61iISGOL
-	 17nxAaSC9XHSQJ6PjekWvUJK+LIFej4SQeAxJTUyQE5VbvK+k6VCvUeHHb7RdFGzVd
-	 QyCNTrmTxvMNcJDG5AMKM5H7/W6TTa764dl3MMNM=
+	b=WEw2Si1Ws8aC2cCc4zb/W4K97LpBtib1IX6D/LoUrfUUxtpiZzq2ewyPyv1KPBpOK
+	 DRA1jduvVeq1B4O8ZubSQsQ9tZk/P1DuoWRg7lolBFVPCJhQ8J3r8xNNdUh3CkcYNe
+	 J0vJ67yACIZC0e5NHgfOLp2so6tVXBwc1CwGVsEY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfGATc7 (ORCPT
+        id S1726731AbfGATgS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Jul 2019 15:32:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36614 "EHLO mail.kernel.org"
+        Mon, 1 Jul 2019 15:36:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726798AbfGATc6 (ORCPT
+        id S1726442AbfGATgS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Jul 2019 15:32:58 -0400
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+        Mon, 1 Jul 2019 15:36:18 -0400
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 736FB21871
-        for <linux-security-module@vger.kernel.org>; Mon,  1 Jul 2019 19:32:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 306B82183F
+        for <linux-security-module@vger.kernel.org>; Mon,  1 Jul 2019 19:36:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562009577;
-        bh=ziupIDluryvJgMAzf5H0Vi0YavM+fEiqtmmoNA62bzg=;
+        s=default; t=1562009777;
+        bh=nJFYnrBEZtuf8KB7H1QIaum2Qn7mnpL1puwV+pE5jEc=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=G2mpPKRektFSwOhc4wdHFPIVLFFn/IhlHUi5MhJfHSWe0NV8xyOeU/BzO8Ab2gER9
-         K38f4LlX2NQVIsFY49VOwqUFcBRxgGmRou5HsrQNTrfvuQaZeQy5vcuLpOBfIC5JW5
-         3Lek+4s9j45hYDVGEIHLPo+t8YkiI7cxe4Puu3PQ=
-Received: by mail-wr1-f42.google.com with SMTP id n9so15121852wru.0
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Jul 2019 12:32:57 -0700 (PDT)
-X-Gm-Message-State: APjAAAXlGnQDls6pbekgjfKDhQOwpzJkeJfMbuZVni1+ikHamTdXu8d9
-        1V5ygRXaMwz6GB3SA1b6mssLukuOTxr55fTCfttZ7w==
-X-Google-Smtp-Source: APXvYqztPnVyAHGvo92uX8JHGB+CXgP+a/o6R5tZaK2g6mNBe0FhsydWtCQ4uUzAhIu0abROw7rXm0n0BKNwcaJP9i4=
-X-Received: by 2002:adf:dd0f:: with SMTP id a15mr17290143wrm.265.1562009575930;
- Mon, 01 Jul 2019 12:32:55 -0700 (PDT)
+        b=fiZeMw/Rfz/rrJZlmV2VFJXeN+SNNLueIdsgNgx9hQY5nUXI1UxDDVaHFv050z02O
+         LOAd/x3A4gb3ieYCE7/ZQdqr4FQFc3QmTuCCg/7dVdIvzX894yV0uVZjlBdB0wBdo/
+         9P21UXH+rV53ysJY9G4FI3lXJH8ddMcrhkmHx2b8=
+Received: by mail-wm1-f52.google.com with SMTP id c6so753316wml.0
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jul 2019 12:36:17 -0700 (PDT)
+X-Gm-Message-State: APjAAAWZ6Qo8RTG1C9NfKG394XsS59s5p9HgSFF/WrEn8Lpc7RM+yq/d
+        jg0sLVrrYE9k3z40RDTYB5pHUjXBMLJ1+quruNbXUg==
+X-Google-Smtp-Source: APXvYqyJS4h7bJYUQstwrUG1roDEOHkZFLjfTg3s9qiM72VVpVAxczPzwr3mSuSP6b1DutLlRCvvy3Uue+yurpRWwR8=
+X-Received: by 2002:a1c:1a56:: with SMTP id a83mr512606wma.161.1562009775779;
+ Mon, 01 Jul 2019 12:36:15 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <20190619222401.14942-11-sean.j.christopherson@intel.com> <960B34DE67B9E140824F1DCDEC400C0F6551877E@ORSMSX116.amr.corp.intel.com>
- <b36d6fd0-3135-e48d-ed84-d69853bd79f1@tycho.nsa.gov> <CALCETrWPzSaFUWi4q4Vq_0RrtNMFZAKkwKkya=p6cfB50x2tMQ@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F6551D558@ORSMSX116.amr.corp.intel.com>
- <CALCETrXjq9JNjXZo3Va83Ca7fiAJx7ZM9VRWYebzpyH6ug0cKg@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F6551D63B@ORSMSX116.amr.corp.intel.com>
-In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F6551D63B@ORSMSX116.amr.corp.intel.com>
+ <cover.1561588012.git.cedric.xing@intel.com> <72420cff8fa944b64e57df8d25c63bd30f8aacfa.1561588012.git.cedric.xing@intel.com>
+ <CALCETrWQUEEwAAdPrVQMengKDhX3-fVrtJwaP2i=mWD+s+B8vg@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F6551D4B3@ORSMSX116.amr.corp.intel.com>
+ <CALCETrUR=W3rfmG+qHydm0FQvASSYRt_V72v5WeQ4KWT7tjEdA@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F6551D5FA@ORSMSX116.amr.corp.intel.com>
+In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F6551D5FA@ORSMSX116.amr.corp.intel.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 1 Jul 2019 12:32:44 -0700
-X-Gmail-Original-Message-ID: <CALCETrU=Btr+o9jb-zbj2kw8571WGhuhA6ZdttxQ_5_3pzZwUw@mail.gmail.com>
-Message-ID: <CALCETrU=Btr+o9jb-zbj2kw8571WGhuhA6ZdttxQ_5_3pzZwUw@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 10/12] security/selinux: Add enclave_load() implementation
+Date:   Mon, 1 Jul 2019 12:36:04 -0700
+X-Gmail-Original-Message-ID: <CALCETrUAme7ujK3j-6gg1=_FtVGY3ZM8WBg9_9Sn-keywd7Smg@mail.gmail.com>
+Message-ID: <CALCETrUAme7ujK3j-6gg1=_FtVGY3ZM8WBg9_9Sn-keywd7Smg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
 To:     "Xing, Cedric" <cedric.xing@intel.com>
 Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
         "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
         "Schaufler, Casey" <casey.schaufler@intel.com>,
         James Morris <jmorris@namei.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
+        "Dr. Greg Wettstein" <greg@enjellic.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 1, 2019 at 11:54 AM Xing, Cedric <cedric.xing@intel.com> wrote:
->
-> > From: Andy Lutomirski [mailto:luto@kernel.org]
-> > Sent: Monday, July 01, 2019 10:54 AM
-> >
-> > On Mon, Jul 1, 2019 at 10:46 AM Xing, Cedric <cedric.xing@intel.com>
-> > wrote:
-> > >
-> > > > From: Andy Lutomirski [mailto:luto@kernel.org]
-> > > > Sent: Saturday, June 29, 2019 4:42 PM
-> > > >
-> > > > On Tue, Jun 25, 2019 at 2:09 PM Stephen Smalley <sds@tycho.nsa.gov>
-> > > > wrote:
-> > > > >
-> > > > > On 6/21/19 5:22 PM, Xing, Cedric wrote:
-> > > > > >> From: Christopherson, Sean J
-> > > > > >> Sent: Wednesday, June 19, 2019 3:24 PM
-> > > > > >>
-> > > > > >> Intended use of each permission:
-> > > > > >>
-> > > > > >>    - SGX_EXECDIRTY: dynamically load code within the enclave
-> > itself
-> > > > > >>    - SGX_EXECUNMR: load unmeasured code into the enclave, e.g.
-> > > > > >> Graphene
-> > > > > >
-> > > > > > Why does it matter whether a code page is measured or not?
-> > > > >
-> > > > > It won't be incorporated into an attestation?
-> > > > >
-> > > >
-> > > > Also, if there is, in parallel, a policy that limits the set of
-> > > > enclave SIGSTRUCTs that are accepted, requiring all code be measure=
-d
-> > > > makes it harder to subvert by writing incompetent or maliciously
-> > > > incompetent enclaves.
-> > >
-> > > As analyzed in my reply to one of Stephen's comments, no executable
-> > page shall be "enclave only" as enclaves have access to host's memory,
-> > so if an executable page in regular memory is considered posting a
-> > threat to the process, it should be considered posting the same threat
-> > inside an enclave as well.
->
-> What I was trying to say was, an executable page, if considered a threat =
-to the enclosing process, should always be considered a threat no matter it=
- is in that process's memory or inside an enclave enclosed in that same pro=
-cess's address space.
->
-> Therefore, for a page in regular memory, if it is denied executable, it i=
-s because it is considered a potential security threat to the enclosing pro=
-cess, so it shall not be used as the source for an executable enclave page,=
- as the same threat exists regardless it is in regular memory or EPC. Does =
-that make more sense?
+On Mon, Jul 1, 2019 at 11:31 AM Xing, Cedric <cedric.xing@intel.com> wrote:
+> I intended to say the major reason I objected Sean's approach was its ina=
+bility to support SGX2 smoothly - as #PF driven EAUG requires non-existent =
+pages to be mmap()'ed, otherwise vm_ops->fault wouldn't be dispatched so EA=
+UG couldn't be issued in response to #PF.
 
-It does make sense, but I'm not sure it's correct to assume that any
-LSM policy will always allow execution on enclave source pages if it
-would allow execution inside the enclave.  As an example, here is a
-policy that seems reasonable:
+I still think that, if the kernel wants to support #PF-driven EAUG, it
+should be an opt-in thing.  It would be something like
+SGX_IOC_ADD_LAZY_EAUG_PAGES or similar.  If it's done that way, then
+the driver needs to learn how to track ranges of pages efficiently,
+which is another reason to consider leaving all the fancy page / page
+range tracking in the driver.
 
-Task A cannot execute dynamic non-enclave code (no execmod, no
-execmem, etc -- only approved unmodified file pages can be executed).
-But task A can execute an enclave with MRENCLAVE =3D=3D such-and-such, and
-that enclave may be loaded from regular anonymous memory -- the
-MRENCLAVE is considered enough verification.
-
->
-> My patch doesn't require X on source pages either. I said "would", meanin=
-g X *would* be granted but doesn't have to be granted. You can see this in =
-selinux_enclave_load() calling selinux_file_mprotect() in my code. The purp=
-ose is to determine if X *would* be granted to the source pages without act=
-ually granting X.
-
-As above, I'm not convinced this assumption is valid.
+I don't think it's a good idea for a page fault on any non-EADDed page
+in ELRANGE to automatically populate the page.
