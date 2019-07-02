@@ -8,42 +8,44 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9957FC06510
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jul 2019 18:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1EDC06510
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jul 2019 19:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70C902184B
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jul 2019 18:33:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02F7521721
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jul 2019 19:00:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="UQ0RKQQT"
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="C601VR8H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbfGBSdf (ORCPT
+        id S1726821AbfGBTAs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Jul 2019 14:33:35 -0400
-Received: from mout.web.de ([212.227.17.11]:42069 "EHLO mout.web.de"
+        Tue, 2 Jul 2019 15:00:48 -0400
+Received: from mout.web.de ([212.227.17.11]:35257 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725851AbfGBSde (ORCPT
+        id S1726457AbfGBTAs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Jul 2019 14:33:34 -0400
+        Tue, 2 Jul 2019 15:00:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1562092404;
-        bh=XBXlgdxq8oVU2ycoKygvKHdH4LF9bMOOCgFO6zi/iHg=;
+        s=dbaedf251592; t=1562094041;
+        bh=E3pGj2dkiDZ6+glyTl7AWQYkPf1IakfUILl61N8Rv88=;
         h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
-        b=UQ0RKQQTWpVyhCluuNXEd5kiC1n/iJjZ6y7qUs3Yl9B2jd1FEsxanjygbU3oPTxZN
-         yyXwl6WHkX4c2ISt3BEfuoYVr8gTeJoJmTQRNFMQ7qjv2KtdiFx3Gz5Yq4FqYcKgDy
-         iAWDDxBFPxK5AuRqKKz83+cXzfpIGQ7QwTZK0rd8=
+        b=C601VR8Hi8PIlCpfgrtCjCTRKfGyRxJdzErAoDbrwZ0oFqTOxcKmJdP9P6N/Of9Y+
+         BrNi9GpaET/ilru8EB+Lz9f69rbJeNxCCNSrLv7i2PmZZHooGD4jAgaHzlCkGBd2qO
+         +HkL1lQ0VqQwiL4eHik14pyUXJo7I6ncYai4+RrM=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([78.48.11.114]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LqUPN-1iCmWb1zAv-00e8em; Tue, 02
- Jul 2019 20:33:24 +0200
-To:     linux-security-module@vger.kernel.org,
+Received: from [192.168.1.2] ([78.48.11.114]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LZeZU-1iP6hQ2TYC-00lU3l; Tue, 02
+ Jul 2019 21:00:40 +0200
+To:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
         "Serge E. Hallyn" <serge@hallyn.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org
 From:   Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] apparmor: Replace two seq_printf() calls by seq_puts() in
- aa_label_seq_xprint()
+Subject: [PATCH] ima: Replace two seq_printf() calls by seq_puts() in
+ ima_show_template_data_ascii()
 Openpgp: preference=signencrypt
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -88,41 +90,41 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <9dd6c122-89f5-70e8-acfc-d6d6596e1261@web.de>
-Date:   Tue, 2 Jul 2019 20:33:21 +0200
+Message-ID: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
+Date:   Tue, 2 Jul 2019 21:00:33 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:QYM2+DbNCRM7QoxJl09IOfAxvkii5ttI0N5dO3/pJgg7rpJLVyT
- i1m+pQrE5LJIL+tIsXaFww3uJ8r36rMk4AU7kJnWvTUJ2tc7EMl3DxPmVfgVtQu9Xmx72lX
- Q3C/XsELupenEdY/FA6C/AG3JTZnM+9MB0NNE7vcoJlB5MIInIzVVbFQZ8KS1oXkp6w7g67
- LobsUdsYu4hC+AD6GkFGQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:INLRb3NmPrY=:4SrYQ7JB7D3x8vZh92IS75
- bKy1PnRDmMXRuAE7vLnDMalzDGCoQ0krHOxIm6Bf4bhAENtKy0zzVncNlweRy0uvFr7nru7ah
- BhDXUBHLLr/KmH/00fWLcORYAre9ayvTF5A8z8MepcMpd9/xQznWXCChl0XbRYtmD9CQ8KFeb
- SAzEhgWbBkXlDRWqYCBmIwuonFlk30FHXDrC94+btLt0H4gqcGYI4VxXaY2QEa6xumINU7rhg
- Ze1/ykZoxiO6Ehi/IG7VgpFzTy2DFCoZYMeWBc2OlDlxg0yEoY7lvu84F8iY9EpsuBzl2P576
- JY29U/ZPE6YRgwmvCv1ty9QxX4ewmBWlJf8WeYvP/871vx4YEjkQ3cz7N8f5bYpcQFnHWm6VF
- Dl/wzAZVjxcY7bxlXSYii8dUBkgPYyIotrhyfgZe8Gbcs7AJcV8QmBSdafG9DhlBfO0/7MXrZ
- jLOHsyEnqio23LAHs3tK+CrlpqAeVde2BAH/3MiZDWj9pRrbZMhO6xnB6crDFqfTiJxAm5JBh
- oXYxt5foyLHXpPvoFFwwKo0ntJf2S6TgS/eAJgbm/DBJyEka7WQIWk5Lx4CAan1mJ4U9bhtpx
- DmrD06qXTVrv/QHj2xnCcR/F9Mr/8VnXWJnbEL4TxpUB2FXRV02CrJ5U03sZ9yRKfMDEk77jY
- W/MUg7j4nLcnLzriYeRmjesa7CSvmuoYxN2a5VPExdInxK38ODwJQ2DFISACKtl3O5S1FYfcL
- 7n+CwbkDXvMrfcY6TBLdM6ECRAYngYrjQgntWe/nQEksdlI6OMDttuDs38JNmh8Yi+LIyMCtZ
- V3dfdCeL/XW+3UkLGuNRWA3xPKsbnf0YayhhvcrF/ffIoqWTGLqufflpgOugkXyadlkLbHIPC
- i26wKjdDWHsM4U4C3zCiUX3y9qHBjxvkhmSOyYc2GN34Uj/oR7rZNsuQUJmLjLkriFJpZ+gRx
- D/G7yJj9rqDXOVE912TbJo7ca+fWNHxIEupu2x79g1+20dJnQiU1N9cTfsab0/020uXmJaf9Y
- MfiI6krkX74SY3hJIMjohpRQQh+Z1Pn/uy4Y/MgsG+qtFbo7rm8sk3ZThpkskmWqmxqaiwhem
- H+w17tflmomg+B6heiBQDp/7Bkn41Rm5+Od
+X-Provags-ID: V03:K1:W+irPRfYaDiM6s4DgUlbL87eLZ5kOn9hornFsfCsdVoDDuDdnVV
+ rZNdklXdtiJz1QauxLaTaKLEcV24xIELOjUFMJzkVthFLpGwcfGLGx1gN3vK//XEauzyNPU
+ vwh01qJKjdIT+Ko3L1DWM5pR4/m3N60xQF9fbBRHczLU+mCSU8t3/n1ZK+zfQBYscl2btPt
+ tZLuYxlcaKRPP18OLcP8Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:jmbcbut9EVI=:k1I1FJ40YuUnkMYvzK0n+d
+ eKoCaFBtpdyu+jBbrjsgmW60/4wi97TGE228691vpXEwLLyNCL/NynBvww+BU/ObwizR8VyGu
+ HZJefYsaMmxf5p8HyKgi9azF4ZjNHwQBfcYrI48E0kFa9pGVsHMUWe/1WWtH1aB/6HPVCxIgm
+ +5pGzjOZEL6KUevzRUWuFssSKCZt4/sIrYEpl3PjxXMA8DOBunCh+bO/OHrq4tDBd36NORzBP
+ TNlGtcl67lbE+63kHXoOL40/WO+81NWHdLZyP4q+gLtwFJ9cDLyYon6BOT9AisnbfILvrT0p2
+ Ytcb8pRwkf4oQmcPPO0ncxa6QJbg1QjU5UgnOB8mvTfFAv0rB+qEFLYn7RJsk9nqS+3viqAwa
+ 5SuV2dm8fxwKCFXLQAo+wVV3DdU0byWlpCXWUrRdSmXpfyrzlBPvuAYZ3oC9lDSqk3xs0rqiY
+ TBTxtIz6/nF8wA0SPGMDC+3f3t5lVU93XkUW4LPMbeLDe6vWt1WvmWC13fVsXu3T6RoyAUN82
+ bPB6qFf8dcUBrmxzB8b612XeYoLB3zBGd/TFwnJ6jPkaRacjrScFVsDBDTr7nk/DrDEL29W6G
+ J2h+nilmhF8QFVCLkMJSlQPjYGSkTKc2YP0qU28v9rQqWgNywagU8kDcwHXlp8FJKvevRJJuv
+ q9R/5W/Vo/BvhAc8S8JazDvBzBzf2EtRmaz/ULoZUipuTxe1L/jc6FI+FAGu/NPeZ+0JBhHqF
+ 9ZlzetvFPE7ZO9MVSRyPv62cCwloeloOOPR2v3w7RJU1wmi/4rOwDg2iX6fQpynWmOq7Cg0JV
+ xENQVeKe+5eoiPP0ANvGnEnXf66YxW5iZNNr/8YoLiABmREZSeV2ehyCMJv7Ea+kqaeroc8Ne
+ zSAfB1DZRFGQ32mSD4NEROQGCDAh+StxUQCleq2zlMTAhUA2Q860UwkekHFcGKQG7YlIPq0Vn
+ ucioVc/TsWgV8j0ToE5SSqJmZMEHeS9+KLDbBk8rGLZKsNHKee9bH2gxi3OZ4wj2jRcy+Q0wK
+ 9LvjaRFb3sSJVgpT2Hm4cGtRzKSyVMnzg5mj3sTeHgntrXrAW8m1JOi+yt+mtKxde2OzKAwXj
+ P+9ABEEqhtBKv+f0b+ClzFeBsp09kkl6XYB
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 Jul 2019 20:27:32 +0200
+Date: Tue, 2 Jul 2019 20:52:21 +0200
 
 Two strings which did not contain a data format specification should be pu=
 t
@@ -133,31 +135,34 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- security/apparmor/label.c | 4 ++--
+ security/integrity/ima/ima_template_lib.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-index 59f1cc2557a7..20acc1f3112e 100644
-=2D-- a/security/apparmor/label.c
-+++ b/security/apparmor/label.c
-@@ -1747,13 +1747,13 @@ void aa_label_seq_xprint(struct seq_file *f, struc=
-t aa_ns *ns,
- 			AA_DEBUG("label print error");
- 			return;
- 		}
--		seq_printf(f, "%s", str);
-+		seq_puts(f, str);
- 		kfree(str);
- 	} else if (display_mode(ns, label, flags))
- 		seq_printf(f, "%s (%s)", label->hname,
- 			   label_modename(ns, label, flags));
- 	else
--		seq_printf(f, "%s", label->hname);
-+		seq_puts(f, label->hname);
- }
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrit=
+y/ima/ima_template_lib.c
+index 9fe0ef7f91e2..05636e9b19b1 100644
+=2D-- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -74,7 +74,7 @@ static void ima_show_template_data_ascii(struct seq_file=
+ *m,
+ 	case DATA_FMT_DIGEST_WITH_ALGO:
+ 		buf_ptr =3D strnchr(field_data->data, buflen, ':');
+ 		if (buf_ptr !=3D field_data->data)
+-			seq_printf(m, "%s", field_data->data);
++			seq_puts(m, field_data->data);
 
- void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags=
-,
+ 		/* skip ':' and '\0' */
+ 		buf_ptr +=3D 2;
+@@ -87,7 +87,7 @@ static void ima_show_template_data_ascii(struct seq_file=
+ *m,
+ 		ima_print_digest(m, buf_ptr, buflen);
+ 		break;
+ 	case DATA_FMT_STRING:
+-		seq_printf(m, "%s", buf_ptr);
++		seq_puts(m, buf_ptr);
+ 		break;
+ 	default:
+ 		break;
 =2D-
 2.22.0
 
