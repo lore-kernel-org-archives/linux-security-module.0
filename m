@@ -2,132 +2,93 @@ Return-Path: <SRS0=c2mM=U7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F37BEC0650E
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jul 2019 02:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DDBC5B57D
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jul 2019 05:11:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC9F62183F
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jul 2019 02:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C036A21721
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jul 2019 05:11:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562034576;
-	bh=sBZpHc2zXrpDRQDybsumjUZX90bQJCEO+Kk6c0bPMII=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=RfCGSNKXm3YDAw5dYyLdS6jT4BL4OGEic+/0s/4eTQ5D+kkTKN9UeaFS4TXrr/xPL
-	 LxlGNiK5IIr+wnOtAYnsQ9fV0/t1Q9D7qPRsk0UFi6rcZfKU5yWzD+u+bDcgTZuqAD
-	 Ubw5sVGyy3pw/BYkU0uNCs47hnTluAEPBYdivcw4=
+	s=default; t=1562044307;
+	bh=rr8H9JYWkIOXWScAGyk9eAclmqL84aYzmS6To8J5bq0=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=mPbhjelILU6thkUeUTAhJmlZX5aTElaqR5cmp6qszcKupzn7n1wXk8gOEpfwthedI
+	 F7aEa8TzPNOxZng8sRxnlOWIYJSxOU+8Rv1infG8Xwv10sLSO4tbGQpbgPgLMv6yoC
+	 CUlrH6MB1Y33hYHX4FnhEQv60g9ET8jXh1KD03Sc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbfGBC3f (ORCPT
+        id S1726358AbfGBFLr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Jul 2019 22:29:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41898 "EHLO mail.kernel.org"
+        Tue, 2 Jul 2019 01:11:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbfGBC3f (ORCPT
+        id S1725775AbfGBFLr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Jul 2019 22:29:35 -0400
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 2 Jul 2019 01:11:47 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F31422183F
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Jul 2019 02:29:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04344216C8;
+        Tue,  2 Jul 2019 05:11:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562034574;
-        bh=sBZpHc2zXrpDRQDybsumjUZX90bQJCEO+Kk6c0bPMII=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qRz2xpXyjh3TP2RntT6RcySMfpTWnvEjk4JtcbccgmYw7HfHjJ57un7T5SE0Ysu3W
-         NhFfq4SmFsH50fAmRM0E4kUB8ZOueyBhRE7x40vIl6KSfjH8Me/SewH3LpHkcYzPfo
-         aO4TGxCBWzeJM2ib1vomp16kJCX8tKVUCmYdkAww=
-Received: by mail-wr1-f44.google.com with SMTP id x4so15876379wrt.6
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Jul 2019 19:29:33 -0700 (PDT)
-X-Gm-Message-State: APjAAAWfPP7cTz0DDMQhaddu+I0Gzk+6PK//e2jLk69jMoipWgr5IJx1
-        i2TFANKRfjf3XIDbcJPi27WfgWq8zKVwImNrJcrdJA==
-X-Google-Smtp-Source: APXvYqw33NmImx/Br19TU/TU77TdnBbURzCGpxBpz72W8JL+aUv4z+H4JfCRLmV1R3lv7yevjLJvwvSMk+oP0Ao0o8Q=
-X-Received: by 2002:adf:a143:: with SMTP id r3mr11646705wrr.352.1562034572600;
- Mon, 01 Jul 2019 19:29:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <cover.1561588012.git.cedric.xing@intel.com> <72420cff8fa944b64e57df8d25c63bd30f8aacfa.1561588012.git.cedric.xing@intel.com>
- <CALCETrWQUEEwAAdPrVQMengKDhX3-fVrtJwaP2i=mWD+s+B8vg@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F6551D4B3@ORSMSX116.amr.corp.intel.com>
- <CALCETrUR=W3rfmG+qHydm0FQvASSYRt_V72v5WeQ4KWT7tjEdA@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F6551D5FA@ORSMSX116.amr.corp.intel.com>
- <CALCETrUAme7ujK3j-6gg1=_FtVGY3ZM8WBg9_9Sn-keywd7Smg@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F6551D75B@ORSMSX116.amr.corp.intel.com>
-In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F6551D75B@ORSMSX116.amr.corp.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 1 Jul 2019 19:29:21 -0700
-X-Gmail-Original-Message-ID: <CALCETrVRDBN_AcKQaYbodtUVv5vW=s2bWP2OAucw=8OjhWo=ng@mail.gmail.com>
-Message-ID: <CALCETrVRDBN_AcKQaYbodtUVv5vW=s2bWP2OAucw=8OjhWo=ng@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        s=default; t=1562044306;
+        bh=rr8H9JYWkIOXWScAGyk9eAclmqL84aYzmS6To8J5bq0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=SdQEh2YVo78/UfumZBJZLbJNYXTfvWFuLvUxX2LxvxOTndbg/vMJgAGpxsfWaEH08
+         rhbwc/Yso9SGpBs9mgUwCy69+FSDtX76cSl7ZQaJgt7OBZh2m9uGQGZoRnElAQdXTP
+         fDri70yb/ruVfYyaLKSAxwMlWJ4AAqCCzVA/bnZw=
+Date:   Mon, 1 Jul 2019 22:11:44 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
         James Morris <jmorris@namei.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr. Greg Wettstein" <greg@enjellic.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Reminder: 1 open syzbot bug in "security/smack" subsystem
+Message-ID: <20190702051144.GD23743@sol.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 1, 2019 at 12:56 PM Xing, Cedric <cedric.xing@intel.com> wrote:
->
-> > From: Andy Lutomirski [mailto:luto@kernel.org]
-> > Sent: Monday, July 01, 2019 12:36 PM
-> >
-> > On Mon, Jul 1, 2019 at 11:31 AM Xing, Cedric <cedric.xing@intel.com>
-> > wrote:
-> > > I intended to say the major reason I objected Sean's approach was its
-> > inability to support SGX2 smoothly - as #PF driven EAUG requires non-
-> > existent pages to be mmap()'ed, otherwise vm_ops->fault wouldn't be
-> > dispatched so EAUG couldn't be issued in response to #PF.
-> >
-> > I still think that, if the kernel wants to support #PF-driven EAUG, it
-> > should be an opt-in thing.  It would be something like
-> > SGX_IOC_ADD_LAZY_EAUG_PAGES or similar.  If it's done that way, then
-> > the driver needs to learn how to track ranges of pages efficiently,
-> > which is another reason to consider leaving all the fancy page / page
-> > range tracking in the driver.
-> >
-> > I don't think it's a good idea for a page fault on any non-EADDed page
-> > in ELRANGE to automatically populate the page.
->
-> I'm with you. The user code shall be explicit on which range to EAUG page=
-s upon #PF. What I'm saying is, a range has to be mapped before the driver =
-could receive #PFs (in the form of vm_ops->fault callbacks). But Sean's ser=
-ies doesn=E2=80=99t support that because no pages can be mapped before comi=
-ng into existence.
->
-> For "page tracking", what information to track is LSM dependent, so it ma=
-y run into problems if different LSMs want to track different things. And t=
-hat's the major reason I think it should be done inside LSM.
->
-> Besides, the current page tracking structure in the driver is page orient=
-ed and its sole purpose is to serve #PFs. Page protection is better tracked=
- using range oriented structures. Those 2 are orthogonal. It wouldn't reduc=
-e the complexity of the whole kernel by moving it into SGX driver.
+[This email was generated by a script.  Let me know if you have any suggestions
+to make it better, or if you want it re-generated with the latest status.]
 
-It seems to me that the driver is going to need to improve its data
-structures to track ranges of pages regardless of any LSM issues.  If
-we're going to have an enclave with a huge ELRANGE and we're going to
-mark some large subset of the full ELRANGE as allocate-on-demand, then
-we are going to want to track that range in some efficient way.  It
-could be a single extent or a set of power-of-two-sized extents (i.e.
-radix tree entries), or something else, but a list of pages, of which
-some are marked not-yet-allocated, isn't going to cut it.
+Of the currently open syzbot reports against the upstream kernel, I've manually
+marked 1 of them as possibly being a bug in the "security/smack" subsystem.
 
-Once that happens, it seems natural to put whatever permission
-tracking we need into the same data structure.  That's why my proposal
-had the driver getting coarse-grained info from LSM ("may execute
-dirty page", for example) rather than asking the LSM to track the
-whole state machine.
+If you believe this bug is no longer valid, please close the syzbot report by
+sending a '#syz fix', '#syz dup', or '#syz invalid' command in reply to the
+original thread, as explained at https://goo.gl/tpsmEJ#status
 
-Does that make sense?
+If you believe I misattributed this bug to the "security/smack" subsystem,
+please let me know, and if possible forward the report to the correct people or
+mailing list.
+
+Here is the bug:
+
+--------------------------------------------------------------------------------
+Title:              possible deadlock in ext4_evict_inode
+Last occurred:      259 days ago
+Reported:           298 days ago
+Branches:           Mainline
+Dashboard link:     https://syzkaller.appspot.com/bug?id=9eda6092f146cb23cb9109f675a2e2cb743ee48b
+Original thread:    https://lkml.kernel.org/lkml/00000000000091615e0575368e33@google.com/T/#u
+
+This bug has a syzkaller reproducer only.
+
+The original thread for this bug received 2 replies; the last was 298 days ago.
+
+If you fix this bug, please add the following tag to the commit:
+    Reported-by: syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com
+
+If you send any email or patch for this bug, please consider replying to the
+original thread.  For the git send-email command to use, or tips on how to reply
+if the thread isn't in your mailbox, see the "Reply instructions" at
+https://lkml.kernel.org/r/00000000000091615e0575368e33@google.com
+
