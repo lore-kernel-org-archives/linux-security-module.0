@@ -2,137 +2,113 @@ Return-Path: <SRS0=lFJQ=VA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FAAC06511
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 09:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30863C0650E
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 11:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D080F21882
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 09:47:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C7E121882
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 11:14:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbfGCJr0 (ORCPT
+        id S1726811AbfGCLO6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Jul 2019 05:47:26 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:37002 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbfGCJr0 (ORCPT
+        Wed, 3 Jul 2019 07:14:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12882 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726581AbfGCLO6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Jul 2019 05:47:26 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x639krAT029727;
-        Wed, 3 Jul 2019 04:46:53 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x639kp8l029726;
-        Wed, 3 Jul 2019 04:46:51 -0500
-Date:   Wed, 3 Jul 2019 04:46:51 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
-        Stephen Smalley <stephen.smalley@gmail.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Wed, 3 Jul 2019 07:14:58 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x63BD06r141371
+        for <linux-security-module@vger.kernel.org>; Wed, 3 Jul 2019 07:14:56 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tgrajys0h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Jul 2019 07:14:56 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 3 Jul 2019 12:14:54 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 3 Jul 2019 12:14:51 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x63BEpOK52953218
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 3 Jul 2019 11:14:51 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F3397A405C;
+        Wed,  3 Jul 2019 11:14:50 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D3C8CA405B;
+        Wed,  3 Jul 2019 11:14:49 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.110.77])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  3 Jul 2019 11:14:49 +0000 (GMT)
+Subject: Re: [PATCH] ima: Replace two seq_printf() calls by seq_puts() in
+ ima_show_template_data_ascii()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     David Laight <David.Laight@ACULAB.COM>,
+        "'Markus Elfring'" <Markus.Elfring@web.de>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "sds@tycho.nsa.gov" <sds@tycho.nsa.gov>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Subject: Re: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
-Message-ID: <20190703094651.GA29601@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <960B34DE67B9E140824F1DCDEC400C0F6551B975@ORSMSX116.amr.corp.intel.com> <f6f16990-0291-c530-61dd-dcd26525285c@schaufler-ca.com> <CAB9W1A1RpM_9D_49E1VauuKE1tL=TyfeATomv47HX4FONnjA4A@mail.gmail.com> <18833f2e-9d18-1f39-6bc5-9242910ab25c@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551D585@ORSMSX116.amr.corp.intel.com> <f59529e4-6cc8-2405-d7db-2519727f9a80@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551D7F7@ORSMSX116.amr.corp.intel.com> <63c92ab6-dc8d-826b-b8bf-05ad262f06e4@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551DBF7@ORSMSX116.amr.corp.intel.com> <9e45df1b-3aac-e851-4ef2-5b262f5139bd@schaufler-ca.com>
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Date:   Wed, 03 Jul 2019 07:14:39 -0400
+In-Reply-To: <d94bfdb9d53b46059787b9bdd10c5919@AcuMS.aculab.com>
+References: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
+         <d94bfdb9d53b46059787b9bdd10c5919@AcuMS.aculab.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e45df1b-3aac-e851-4ef2-5b262f5139bd@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 03 Jul 2019 04:46:53 -0500 (CDT)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19070311-0008-0000-0000-000002F96C24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19070311-0009-0000-0000-00002266B96B
+Message-Id: <1562152479.4774.18.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-03_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=757 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907030135
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 02, 2019 at 08:44:40AM -0700, Casey Schaufler wrote:
+On Wed, 2019-07-03 at 09:16 +0000, David Laight wrote:
 
-Good morning, I hope this note finds the week going well for everyone.
+> > diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+> > index 9fe0ef7f91e2..05636e9b19b1 100644
+> > --- a/security/integrity/ima/ima_template_lib.c
+> > +++ b/security/integrity/ima/ima_template_lib.c
+> > @@ -74,7 +74,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+> >  	case DATA_FMT_DIGEST_WITH_ALGO:
+> >  		buf_ptr = strnchr(field_data->data, buflen, ':');
+> >  		if (buf_ptr != field_data->data)
+> > -			seq_printf(m, "%s", field_data->data);
+> > +			seq_puts(m, field_data->data);
+> > 
+> >  		/* skip ':' and '\0' */
+> >  		buf_ptr += 2;
+> 
+> That code looks highly suspect!
+> It uses a bounded scan then assumes a '\0' terminated string.
+> It then adds 2 to a potentially NULL pointer.
 
-> On 7/2/2019 12:42 AM, Xing, Cedric wrote:
-> > ...
-> > Guess this discussion will never end if we don't get into
-> > code. Guess it'd be more productive to talk over phone then come back
-> > to this thread with a conclusion. Will that be ok with you?
+The code here is used for displaying the IMA measurement list, that
+the kernel itself created.  Protecting the in kernel memory from
+attack is a different problem.  Refer to Igor Stoppa's write once
+memory pools.
 
-> I don't think that a phone call is going to help. Talking code
-> issues tends to muddle them in my brain. If you can give me a few
-> days I will propose a rough version of how I think your code should
-> be integrated into the LSM environment. I'm spending more time
-> trying (unsuccessfully :( ) to discribe the issues in English than
-> it will probably take in C.
+Mimi
 
-While Casey is off writing his rosetta stone, let me suggest that the
-most important thing we need to do is to take a little time, step back
-and look at the big picture with respect to what we are trying to
-accomplish and if we are going about it in a way that makes any sense
-from an engineering perspective.
-
-This conversation shouldn't be about SGX, it should be about the best
-way for the kernel/LSM to discipline a Trusted Execution Environment
-(TEE).  As I have noted previously, a TEE is a 'blackbox' that, by
-design, is intended to allow execution of code and processing of data
-in a manner that is resistant to manipulation or inspection by
-untrusted userspace, the kernel and/or the hardware itself.
-
-Given that fact, if we are to be intellectually honest, we need to ask
-ourselves how effective we believe we can be in controlling any TEE
-with kernel based mechanisms.  This is particularly the case if the
-author of any code running in the TEE has adversarial intent.
-
-Here is the list of controls that we believe an LSM can, effectively,
-implement against a TEE:
-
-1.) Code provenance and origin.
-
-2.) Cryptographic verification of dynamically executable content.
-
-2.) The ability of a TEE to implement anonymous executable content.
-
-If people are in agreement with this concept, it is difficult to
-understand why we should be implementing complex state machines and
-the like, whether it is in the driver or the LSM.  Security code has
-to be measured with a metric of effectiveness, otherwise we are
-engaging in security theater.
-
-I believe that if we were using this lens, we would already have a
-mainline SGX driver, since we seem to have most of the needed LSM
-infrastructure and any additional functionality would be a straight
-forward implementation.  Most importantly, the infrastructure would
-not be SGX specific, which would seem to be a desirable political
-concept.
-
-If we are not willing to engage in this discussion we are going to end
-up with a quasi-technology specific solution that isn't implementing
-any relevant security guarantees.
-
-FWIW, we wouldn't even be having this, now lengthy discussion, if I
-wouldn't have aggressively advocated, starting last November, that an
-SGX driver needed some form of execution control if there was a desire
-for the technology to not pose a security risk to the platform.  So
-humor me a little bit.... :-)
-
-Best wishes for a productive remainder of the week to everyone.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker
-IDfusion, LLC
-4206 N. 19th Ave.           Implementing measured information privacy
-Fargo, ND  58102            and integrity architectures.
-PH: 701-281-1686
-FAX: 701-281-3949           EMAIL: greg@idfusion.net
-------------------------------------------------------------------------------
-"... remember that innovation is saying 'no' to 1000 things."
