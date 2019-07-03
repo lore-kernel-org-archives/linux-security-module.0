@@ -2,84 +2,95 @@ Return-Path: <SRS0=lFJQ=VA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E703C5B57D
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 02:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D15C0650E
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 09:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6598F21721
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 02:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A01D2189E
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 09:16:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbfGCC5z (ORCPT
+        id S1727311AbfGCJQt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Jul 2019 22:57:55 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51646 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727108AbfGCC5z (ORCPT
+        Wed, 3 Jul 2019 05:16:49 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:58720 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727227AbfGCJQs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Jul 2019 22:57:55 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 01DDCA6008E8F9D1AD22;
-        Wed,  3 Jul 2019 10:48:53 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 3 Jul 2019 10:48:46 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        Kairui Song <kasong@redhat.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Thiago Jung Bauermann" <bauerman@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        "Eric Biggers" <ebiggers@google.com>
-CC:     YueHaibing <yuehaibing@huawei.com>,
+        Wed, 3 Jul 2019 05:16:48 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-215-p55ghHJYOB6dt1vkY_MCpA-1; Wed, 03 Jul 2019 10:16:45 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
+ 3 Jul 2019 10:16:45 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 3 Jul 2019 10:16:45 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Markus Elfring' <Markus.Elfring@web.de>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] integrity: Remove set but not used variable 'acl'
-Date:   Wed, 3 Jul 2019 02:55:18 +0000
-Message-ID: <20190703025518.6379-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] ima: Replace two seq_printf() calls by seq_puts() in
+ ima_show_template_data_ascii()
+Thread-Topic: [PATCH] ima: Replace two seq_printf() calls by seq_puts() in
+ ima_show_template_data_ascii()
+Thread-Index: AQHVMQh6dLT9GyunYEy+ElDVTeXJmqa4nMYA
+Date:   Wed, 3 Jul 2019 09:16:44 +0000
+Message-ID: <d94bfdb9d53b46059787b9bdd10c5919@AcuMS.aculab.com>
+References: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
+In-Reply-To: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+X-MC-Unique: p55ghHJYOB6dt1vkY_MCpA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-security/integrity/digsig.c: In function 'integrity_init_keyring':
-security/integrity/digsig.c:99:18: warning:
- variable 'acl' set but not used [-Wunused-but-set-variable]
-
-It seems 'acl' is needed in __integrity_init_keyring
-
-Fixes: 6100ac53909d ("keys: Replace uid/gid/perm permissions checking with an ACL")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- security/integrity/digsig.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index 1f2c43f62047..f9f3c8ffe786 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -114,7 +114,7 @@ int __init integrity_init_keyring(const unsigned int id)
- 	acl = &internal_writable_keyring_acl;
- 
- out:
--	return __integrity_init_keyring(id, &internal_keyring_acl, restriction);
-+	return __integrity_init_keyring(id, acl, restriction);
- }
- 
- static int __init integrity_add_key(const unsigned int id, const void *data,
-
-
+RnJvbTogIE1hcmt1cyBFbGZyaW5nDQo+IFNlbnQ6IDAyIEp1bHkgMjAxOSAyMDowMQ0KPiANCj4g
+RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiBE
+YXRlOiBUdWUsIDIgSnVsIDIwMTkgMjA6NTI6MjEgKzAyMDANCj4gDQo+IFR3byBzdHJpbmdzIHdo
+aWNoIGRpZCBub3QgY29udGFpbiBhIGRhdGEgZm9ybWF0IHNwZWNpZmljYXRpb24gc2hvdWxkIGJl
+IHB1dA0KPiBpbnRvIGEgc2VxdWVuY2UuIFRodXMgdXNlIHRoZSBjb3JyZXNwb25kaW5nIGZ1bmN0
+aW9uIOKAnHNlcV9wdXRz4oCdLg0KPiANCj4gVGhpcyBpc3N1ZSB3YXMgZGV0ZWN0ZWQgYnkgdXNp
+bmcgdGhlIENvY2NpbmVsbGUgc29mdHdhcmUuDQoNClRoZSB0d28gY2FsbHMgYXJlIGFsbW9zdCBj
+ZXJ0YWlubHkgYWJzb2x1dGVseSBlcXVpdmFsZW50Lg0KU28gdGhpcyBpcyBwcm9iYWJseSBqdXN0
+IGEgbWlub3IgcGVyZm9ybWFuY2UgaW1wcm92ZW1lbnQgaW4gYSBjb2RlDQpwYXRoIHdoZXJlIGl0
+IHJlYWxseSBkb2Vzbid0IG1hdHRlci4NCg0KPiBTaWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmlu
+ZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+IC0tLQ0KPiAgc2VjdXJpdHkvaW50
+ZWdyaXR5L2ltYS9pbWFfdGVtcGxhdGVfbGliLmMgfCA0ICsrLS0NCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvc2Vj
+dXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfdGVtcGxhdGVfbGliLmMgYi9zZWN1cml0eS9pbnRlZ3Jp
+dHkvaW1hL2ltYV90ZW1wbGF0ZV9saWIuYw0KPiBpbmRleCA5ZmUwZWY3ZjkxZTIuLjA1NjM2ZTli
+MTliMSAxMDA2NDQNCj4gLS0tIGEvc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfdGVtcGxhdGVf
+bGliLmMNCj4gKysrIGIvc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfdGVtcGxhdGVfbGliLmMN
+Cj4gQEAgLTc0LDcgKzc0LDcgQEAgc3RhdGljIHZvaWQgaW1hX3Nob3dfdGVtcGxhdGVfZGF0YV9h
+c2NpaShzdHJ1Y3Qgc2VxX2ZpbGUgKm0sDQo+ICAJY2FzZSBEQVRBX0ZNVF9ESUdFU1RfV0lUSF9B
+TEdPOg0KPiAgCQlidWZfcHRyID0gc3RybmNocihmaWVsZF9kYXRhLT5kYXRhLCBidWZsZW4sICc6
+Jyk7DQo+ICAJCWlmIChidWZfcHRyICE9IGZpZWxkX2RhdGEtPmRhdGEpDQo+IC0JCQlzZXFfcHJp
+bnRmKG0sICIlcyIsIGZpZWxkX2RhdGEtPmRhdGEpOw0KPiArCQkJc2VxX3B1dHMobSwgZmllbGRf
+ZGF0YS0+ZGF0YSk7DQo+IA0KPiAgCQkvKiBza2lwICc6JyBhbmQgJ1wwJyAqLw0KPiAgCQlidWZf
+cHRyICs9IDI7DQoNClRoYXQgY29kZSBsb29rcyBoaWdobHkgc3VzcGVjdCENCkl0IHVzZXMgYSBi
+b3VuZGVkIHNjYW4gdGhlbiBhc3N1bWVzIGEgJ1wwJyB0ZXJtaW5hdGVkIHN0cmluZy4NCkl0IHRo
+ZW4gYWRkcyAyIHRvIGEgcG90ZW50aWFsbHkgTlVMTCBwb2ludGVyLg0KDQpBYm91dCB0eXBpY2Fs
+IGZvciAnc2VjdXJpdHknIGNvZGUgOi0pDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJl
+c3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsx
+IDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
