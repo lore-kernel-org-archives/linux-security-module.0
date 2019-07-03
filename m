@@ -2,152 +2,137 @@ Return-Path: <SRS0=lFJQ=VA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D966CC0650E
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 09:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FAAC06511
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 09:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8EAB21882
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 09:33:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="AAT/yZiC"
+	by mail.kernel.org (Postfix) with ESMTP id D080F21882
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 09:47:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbfGCJdg (ORCPT
+        id S1726434AbfGCJr0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Jul 2019 05:33:36 -0400
-Received: from mout.web.de ([212.227.17.11]:34977 "EHLO mout.web.de"
+        Wed, 3 Jul 2019 05:47:26 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:37002 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725820AbfGCJdg (ORCPT
+        id S1725796AbfGCJr0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Jul 2019 05:33:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1562146405;
-        bh=MuIReLZrODBMR2dpGFuu0WuqH0PetKGbveXgbZ4+Ao8=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=AAT/yZiCTZk7ygGysyTWzg6AhPNX/RIghr/PEvEUbbBJNIvt2Sg2YUVKPXmchJj/c
-         I5+kC9G1XYf8CpslMcR/64EalqGgtJC6SUf5mL9/OBQUWgN87Ab2FzOakwTDE/DxPd
-         0uzO6E316jOPfz6FeimeINKQ2mgEI1WiYPZBCJbA=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.132.189.108]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MINAx-1hg8Ox4BX5-004Ebx; Wed, 03
- Jul 2019 11:33:25 +0200
-Subject: Re: ima: Replace two seq_printf() calls by seq_puts() in
- ima_show_template_data_ascii()
-To:     David Laight <David.Laight@ACULAB.COM>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
- <d94bfdb9d53b46059787b9bdd10c5919@AcuMS.aculab.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <6b7db918-8d0b-b280-91e4-c15e22451cfc@web.de>
-Date:   Wed, 3 Jul 2019 11:33:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <d94bfdb9d53b46059787b9bdd10c5919@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:eTuH+cPnv7rUtZftUJKwLncs21EDbgKi6GOQLctscTNlkgbH2TB
- tP73jbN9bfn4h+dvRzFSQfm7eTwykLkN5pWIFRSfRQIzfw+/HkF8njwgkekXIE6gmoazTmo
- juwjkKL8YxLZ98nHqb52qaOcvwredZpKuCEPHVcOzsSchlKzXsGlsCVJNa0KJtjVs1EVHfO
- ouhTwJpTkBHGTHroSG6nA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8qAnTI8UoOs=:o9nQL/LjU3d/cBB/NCG1gz
- mfu9xracmQfEXa6/p6kMirjCzhc8RDI+mL9APutJyTwSLgTQMmcRDCt6qmsLS2AhbtTXMLLPC
- nvmHHiziiIYAoOspyp6SFv4cECBGqXxfo07HMFy96Ss/KrGGAL4c8FtJXBy948CTZ7MDh6vuf
- vwvIW28r1ZE7PN/EabD6av2O5nTViGWGAlLGUzEUQd5UISYr1y90kf+WFuHsvlwvhU4kxPGEq
- Wn9KwRlMY6i7aqyb+rrWrU/pV2euekbWCOKgLajLKYzD3qaIbpX3FqspIQfqgruGuGE5PzkeS
- NjeCRyd7MVcFzrWAQ4R0Es/y2LY4j8KWvwRH7es6XeKGxicORuACc3FizE9KYPTjQDIC9N6gN
- /Y7lQy0EBLxBK13nJG8lQrnS7+71hX9bbkQcw9E8v+4DOj44FYQ+hVGDkThUSnLCbbrr1T3JH
- tNVmvso9ppQS7kf5L6QWAP6t65lSGPfBj1jA8ozjhPu3ub6itD64UKaloXot0A8j0/AXb875V
- dJLHf10g3iQ5oV7jSly2fafIJHBQVE8riHXa8Wy++AK19VXBDMRW3N5SVjqZuJxw5f2Ot6I7P
- 7Xg4b1TGXkoTjMALws1fVv6tNKtrq96iCKG+jK9DqhceDwK63U0GcJhNlvqy1Srf0llMaMpji
- rgPzREXtFW53d2IDAkbhANku6kG0/cLjQWXgk1SaOH81aTuYX8XMD4Lh/cHq/895OtaJJhICV
- XiAy0FiYtquLc/I8wmn+PnDVaxNhXKETWBPWyypu8Zf+RytU0HGZUMZiEGxpDamHmM+0Qm24l
- SHA6NCx1OjwVXpKk9hXW0V3/ja2IEV+2v35TqeWMlM44Yv05Nt0jiZSf9A3npz2ZvzCb05kCo
- xS05Tt9p2dMw/xMQ/a3X+g4Ya1CjcSNVi2vtWcbimf3Zx+EOUbgbGugudRAc5/jmde7UaAowq
- iNPNiQAuCx1wRAXHeiJbL0fElkf1jwT8guvz/79r3hBIdytccP1TGEsPRtYmxKtK5Wx6KI89R
- 1rkg2SWiGMPrcjdIN0WPwi+lm578vg97wDfUlXCUJCX/UBSuLiczZ98ojXCXm9tKE5GTrtmbL
- /UHs0CFwqXxTqyiv6s215+0ZlNAky1SY3yC
+        Wed, 3 Jul 2019 05:47:26 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x639krAT029727;
+        Wed, 3 Jul 2019 04:46:53 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x639kp8l029726;
+        Wed, 3 Jul 2019 04:46:51 -0500
+Date:   Wed, 3 Jul 2019 04:46:51 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+        Stephen Smalley <stephen.smalley@gmail.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jethro@fortanix.com" <jethro@fortanix.com>,
+        "sds@tycho.nsa.gov" <sds@tycho.nsa.gov>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+Subject: Re: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
+Message-ID: <20190703094651.GA29601@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <960B34DE67B9E140824F1DCDEC400C0F6551B975@ORSMSX116.amr.corp.intel.com> <f6f16990-0291-c530-61dd-dcd26525285c@schaufler-ca.com> <CAB9W1A1RpM_9D_49E1VauuKE1tL=TyfeATomv47HX4FONnjA4A@mail.gmail.com> <18833f2e-9d18-1f39-6bc5-9242910ab25c@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551D585@ORSMSX116.amr.corp.intel.com> <f59529e4-6cc8-2405-d7db-2519727f9a80@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551D7F7@ORSMSX116.amr.corp.intel.com> <63c92ab6-dc8d-826b-b8bf-05ad262f06e4@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551DBF7@ORSMSX116.amr.corp.intel.com> <9e45df1b-3aac-e851-4ef2-5b262f5139bd@schaufler-ca.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e45df1b-3aac-e851-4ef2-5b262f5139bd@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 03 Jul 2019 04:46:53 -0500 (CDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> So this is probably just a minor performance improvement in a code
-> path where it really doesn't matter.
+On Tue, Jul 02, 2019 at 08:44:40AM -0700, Casey Schaufler wrote:
 
-I imagine that another small software adjustment can help a bit
-to get nicer run time characteristics also at this place.
+Good morning, I hope this note finds the week going well for everyone.
 
+> On 7/2/2019 12:42 AM, Xing, Cedric wrote:
+> > ...
+> > Guess this discussion will never end if we don't get into
+> > code. Guess it'd be more productive to talk over phone then come back
+> > to this thread with a conclusion. Will that be ok with you?
 
->> +++ b/security/integrity/ima/ima_template_lib.c
->> @@ -74,7 +74,7 @@ static void ima_show_template_data_ascii(struct seq_f=
-ile *m,
->>  	case DATA_FMT_DIGEST_WITH_ALGO:
->>  		buf_ptr =3D strnchr(field_data->data, buflen, ':');
->>  		if (buf_ptr !=3D field_data->data)
->> -			seq_printf(m, "%s", field_data->data);
->> +			seq_puts(m, field_data->data);
->>
->>  		/* skip ':' and '\0' */
->>  		buf_ptr +=3D 2;
->
-> That code looks highly suspect!
+> I don't think that a phone call is going to help. Talking code
+> issues tends to muddle them in my brain. If you can give me a few
+> days I will propose a rough version of how I think your code should
+> be integrated into the LSM environment. I'm spending more time
+> trying (unsuccessfully :( ) to discribe the issues in English than
+> it will probably take in C.
 
-Would you like to change this implementation detail any more?
+While Casey is off writing his rosetta stone, let me suggest that the
+most important thing we need to do is to take a little time, step back
+and look at the big picture with respect to what we are trying to
+accomplish and if we are going about it in a way that makes any sense
+from an engineering perspective.
 
-Regards,
-Markus
+This conversation shouldn't be about SGX, it should be about the best
+way for the kernel/LSM to discipline a Trusted Execution Environment
+(TEE).  As I have noted previously, a TEE is a 'blackbox' that, by
+design, is intended to allow execution of code and processing of data
+in a manner that is resistant to manipulation or inspection by
+untrusted userspace, the kernel and/or the hardware itself.
+
+Given that fact, if we are to be intellectually honest, we need to ask
+ourselves how effective we believe we can be in controlling any TEE
+with kernel based mechanisms.  This is particularly the case if the
+author of any code running in the TEE has adversarial intent.
+
+Here is the list of controls that we believe an LSM can, effectively,
+implement against a TEE:
+
+1.) Code provenance and origin.
+
+2.) Cryptographic verification of dynamically executable content.
+
+2.) The ability of a TEE to implement anonymous executable content.
+
+If people are in agreement with this concept, it is difficult to
+understand why we should be implementing complex state machines and
+the like, whether it is in the driver or the LSM.  Security code has
+to be measured with a metric of effectiveness, otherwise we are
+engaging in security theater.
+
+I believe that if we were using this lens, we would already have a
+mainline SGX driver, since we seem to have most of the needed LSM
+infrastructure and any additional functionality would be a straight
+forward implementation.  Most importantly, the infrastructure would
+not be SGX specific, which would seem to be a desirable political
+concept.
+
+If we are not willing to engage in this discussion we are going to end
+up with a quasi-technology specific solution that isn't implementing
+any relevant security guarantees.
+
+FWIW, we wouldn't even be having this, now lengthy discussion, if I
+wouldn't have aggressively advocated, starting last November, that an
+SGX driver needed some form of execution control if there was a desire
+for the technology to not pose a security risk to the platform.  So
+humor me a little bit.... :-)
+
+Best wishes for a productive remainder of the week to everyone.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker
+IDfusion, LLC
+4206 N. 19th Ave.           Implementing measured information privacy
+Fargo, ND  58102            and integrity architectures.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: greg@idfusion.net
+------------------------------------------------------------------------------
+"... remember that innovation is saying 'no' to 1000 things."
