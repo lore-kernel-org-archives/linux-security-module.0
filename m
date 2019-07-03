@@ -1,168 +1,134 @@
-Return-Path: <SRS0=c2mM=U7=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=lFJQ=VA=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9808C06510
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jul 2019 19:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D22C5B57D
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 00:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B16C821851
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jul 2019 19:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69BB1218AD
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 00:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="bWg8MEFH"
+	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="dKPauEKr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfGBTAy (ORCPT
+        id S1727117AbfGCA7X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Jul 2019 15:00:54 -0400
-Received: from mout.web.de ([212.227.17.12]:50945 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727088AbfGBTAy (ORCPT
+        Tue, 2 Jul 2019 20:59:23 -0400
+Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:56588 "EHLO
+        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727082AbfGCA7X (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Jul 2019 15:00:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1562094040;
-        bh=E3pGj2dkiDZ6+glyTl7AWQYkPf1IakfUILl61N8Rv88=;
-        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
-        b=bWg8MEFHsbla8weMkXk51pxmcmvarfsO4dImH4kFFAkETXoyAM3DhcFOoXQNaKCOt
-         5DjtaLcYzmLTNg8RNUnzFM2kNs/m6HPCazFZJgHAoWY1nqgYzypVoeTY/cb0G3KjDB
-         /HIdm6I1PEq3zcvNL0EwNDOzjSE+C9/0m4pHSsNs=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([78.48.11.114]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MVLWc-1i2mgg2TL4-00YmQk; Tue, 02
- Jul 2019 21:00:40 +0200
-To:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-From:   Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] ima: Replace two seq_printf() calls by seq_puts() in
- ima_show_template_data_ascii()
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <b0842345-1ab0-b199-91c7-90df51351d74@web.de>
-Date:   Tue, 2 Jul 2019 21:00:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        Tue, 2 Jul 2019 20:59:23 -0400
+Received: from pps.filterd (m0050096.ppops.net [127.0.0.1])
+        by m0050096.ppops.net-00190b01. (8.16.0.27/8.16.0.27) with SMTP id x630vIWU025766;
+        Wed, 3 Jul 2019 01:59:11 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=jan2016.eng;
+ bh=9pZ9ryOnK9wPGkn/8i9iDreAG7ft/sEEwlO0Jad2gyA=;
+ b=dKPauEKr1U+hKOcxAbDA3CdO7vPFfawP4q3i3TnfwGqfrGAa5bVNgS1y75IQXyuYvUl0
+ ouiP1+d1bU0ABupEdIW85+F6c51eNeaJ9NAXu7nFQAfIG0jKQnUusdC3qil+Yw7wFwmM
+ 8GCn/NupllEeNGO9DjraXi0Lqy98oxs7X1lN2UtrUAij4xCA7avfPu0vEAlo5dgKyhjw
+ BId897T0SZbP4INdfyVZawM5JiPr1SuV/mkHQcUe5tFx+my7WxJdcq2yNKNDS+6NDuoM
+ 0YAFMf4Uh1c9fZdrMCVydHEj5ifIC4P3hb8X/haEPqiLX86Oq16Yy4a2K24j97/icH0+ oA== 
+Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18] (may be forged))
+        by m0050096.ppops.net-00190b01. with ESMTP id 2tg2s5kq8d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 03 Jul 2019 01:59:11 +0100
+Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
+        by prod-mail-ppoint1.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x630ljCc002837;
+        Tue, 2 Jul 2019 20:59:10 -0400
+Received: from email.msg.corp.akamai.com ([172.27.25.30])
+        by prod-mail-ppoint1.akamai.com with ESMTP id 2te3awh4vp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 02 Jul 2019 20:59:09 -0400
+Received: from USTX2EX-DAG1MB5.msg.corp.akamai.com (172.27.27.105) by
+ ustx2ex-dag1mb4.msg.corp.akamai.com (172.27.27.104) with Microsoft SMTP
+ Server (TLS) id 15.0.1473.3; Tue, 2 Jul 2019 19:58:34 -0500
+Received: from USTX2EX-DAG1MB5.msg.corp.akamai.com ([172.27.27.105]) by
+ ustx2ex-dag1mb5.msg.corp.akamai.com ([172.27.27.105]) with mapi id
+ 15.00.1473.004; Tue, 2 Jul 2019 19:58:34 -0500
+From:   "Lubashev, Igor" <ilubashe@akamai.com>
+To:     James Morris <jmorris@namei.org>
+CC:     Serge Hallyn <serge@hallyn.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH 0/1] security: add SECURE_KEEP_FSUID to preserve
+ fsuid/fsgid across execve
+Thread-Topic: [RFC PATCH 0/1] security: add SECURE_KEEP_FSUID to preserve
+ fsuid/fsgid across execve
+Thread-Index: AQHVIkp2KrFaTjvuWkqWuYjnYmNLQ6aa7f2AgAD6xpCAAIJWAIAbwq2g
+Date:   Wed, 3 Jul 2019 00:58:34 +0000
+Message-ID: <127af0e711e747279742b2aa13a658fb@ustx2ex-dag1mb5.msg.corp.akamai.com>
+References: <1560473087-27754-1-git-send-email-ilubashe@akamai.com>
+ <alpine.LRH.2.21.1906141445010.7150@namei.org>
+ <720751180a9543cfa205cd527248df7c@ustx2ex-dag1mb5.msg.corp.akamai.com>
+ <alpine.LRH.2.21.1906142049480.3646@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1906142049480.3646@namei.org>
+Accept-Language: en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [172.19.37.5]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:sGi2IDw/J9l3Ayf/UZG/vdS5LYX/KC0LaJdg6+JOrrHWV6UUcmI
- juU756esa8X9AfzpPyfxuDRwB6mIZBh0dw0nTvzNT1Epp1zxP3pJntfIrbSBaoB77sp8fhA
- V1Rzk5tN8PIeIXCdc3aqXUMnGU1c90e1lwtooebGf0g0S1NtV5vOwAUr98VhzjTfK90yvPp
- cWaGTpH1GsdQp55vsp7OA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:/pBAmOTH5fk=:xyL8lgwLUWNdaA6slGbIwC
- tLEWogVV4TPbhJXFiCFRJ9kb+Y34sOYr0c3gBnD51ZdxMvs4/IvOch0hOSiv4mynydtmc1bIm
- Wo7E9tlkKx5bnDQXmFNY554gu6dlvsIJdCYZchRA1payLLJH/qC/MZKJBssTUW2Tqjd0wBPvQ
- Wbm9VayBfnU4/upiTqCTqSKwsF4DHSewQG8k2sUclBQ5AIQ/240lgCbzUNIf/yu5NaKtJw3MA
- NKCznn/v8COrNev9bV2FVTKf5SgTPyA/7LfJZ4+06jnadB9XM/ngfKA7cTnLNcMEKzYlLUkow
- hObBDQFhS4NQ2dlulhdK62cpvTS0pcTZuVpJ8AQrIJitMwXDLA3gx3azrHIxLchq9Bk6+Ci1U
- Rc7wyOkUiEl6KfaDrUBKhMdJ4WXyeu2MS2XS+wH5BRiE4tnKVjX7z9xJYXKzIWnW2uAC6LNxT
- KQa7st1kPtvO9rlfSQHA0qi7YaKy5aivZUZuMee5pnMZDiQBl2azEzWEbgVECn9wWq+VkhfZh
- kLKHjGA4RgN8tJGGwg8dv4GTQseF97nTJk4uEga+jI9rAwx8hqQHKYiKoDy2M18uEo0KS5Z3F
- VMFTl2JYA5J2mHWfXlFiiPtXWwumxQ/zIIfjBD4oCPMoKiILHQuWYT+ZMVaAXmWaqvUjX2O76
- rrnpCwwWgrwuYH+zIxgUmZN1DreVaCvb6vXdFHOgU52vEnO0AP7Tt+sHeF7yWZN+s3SuCHfJF
- l96xzGxg8EAhBKllj5wvDcKJVdZ48LGsl1rz8V/YDZcGtar6uMku0q1R3kXCNn1QD8XihR+6m
- 31Ssir92Fjcu8VG15XDX7LJtJnB4g0diCTVaLwj2PyyiaTr3GizoY9hn/dXEwDr6TdAUiYtrq
- LTerRlryE5rq3uzsvBNqaQY9USlPFEFxqgwvEY5n9wNrBUdzk1WG/y6sTcoR/CtN4Yf1j5Mtb
- YvAylC4BQMCfHfPWK+OCfo4ArrvoNoUM11Brs4FxV2Gs+kyHmuQe4WXmm1h66Vl+sal/XkNGN
- 87TMm5WBwtnRGd54LUdQCPBwPF49qG38qZVFRNONMhE82ayt6J3G9MdnBIbVfnGluWuZB/LIA
- 3fAheJMsRzBCX1ANOi3UcPlCTe+Efrs7LKv
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-02_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907030009
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-02_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907030011
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 Jul 2019 20:52:21 +0200
+> From: James Morris <jmorris@namei.org>  on Friday, June 14, 2019 11:54 PM=
+:
+> On Sat, 15 Jun 2019, Lubashev, Igor wrote:
+>=20
+> > Unfortunately, perf is using uid=3D=3D0 and euid=3D=3D0 as a "capabilit=
+y bits".
+> >
+> >
+> > In tools/perf/util/evsel.c:
+> > 	static bool perf_event_can_profile_kernel(void)
+> > 	{
+> > 		return geteuid() =3D=3D 0 || perf_event_paranoid() =3D=3D -1;
+> > 	}
+> >
+> > In tools/perf/util/symbol.c:
+> > 	static bool symbol__read_kptr_restrict(void)
+> > 	{
+> > 	...
+> > 		value =3D ((geteuid() !=3D 0) || (getuid() !=3D 0)) ?
+> > 				(atoi(line) !=3D 0) :
+> > 				(atoi(line) =3D=3D 2);
+> > 	...
+> > 	}
+>=20
+> These are bugs. They should be checking for CAP_SYS_ADMIN.
 
-Two strings which did not contain a data format specification should be pu=
-t
-into a sequence. Thus use the corresponding function =E2=80=9Cseq_puts=E2=
-=80=9D.
+Thanks for the suggestion.
 
-This issue was detected by using the Coccinelle software.
+Actually, the former one should be checking CAP_SYS_ADMIN, while the latter=
+ -- CAP_SYSLOG (see lib/vsprintf.c).
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- security/integrity/ima/ima_template_lib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Just posted a patch to perf (http://lists.infradead.org/pipermail/linux-arm=
+-kernel/2019-July/664552.html).
 
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrit=
-y/ima/ima_template_lib.c
-index 9fe0ef7f91e2..05636e9b19b1 100644
-=2D-- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -74,7 +74,7 @@ static void ima_show_template_data_ascii(struct seq_file=
- *m,
- 	case DATA_FMT_DIGEST_WITH_ALGO:
- 		buf_ptr =3D strnchr(field_data->data, buflen, ':');
- 		if (buf_ptr !=3D field_data->data)
--			seq_printf(m, "%s", field_data->data);
-+			seq_puts(m, field_data->data);
+Thank you,
 
- 		/* skip ':' and '\0' */
- 		buf_ptr +=3D 2;
-@@ -87,7 +87,7 @@ static void ima_show_template_data_ascii(struct seq_file=
- *m,
- 		ima_print_digest(m, buf_ptr, buflen);
- 		break;
- 	case DATA_FMT_STRING:
--		seq_printf(m, "%s", buf_ptr);
-+		seq_puts(m, buf_ptr);
- 		break;
- 	default:
- 		break;
-=2D-
-2.22.0
-
+- Igor
