@@ -1,4 +1,4 @@
-Return-Path: <SRS0=lFJQ=VA=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=UcS9=VB=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,64 +6,73 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 122AAC0650E
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 23:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7930C5B578
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 01:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE536218A0
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jul 2019 23:23:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C67D218A3
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 01:23:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfGCXXp (ORCPT
+        id S1727004AbfGDBXU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Jul 2019 19:23:45 -0400
-Received: from mga09.intel.com ([134.134.136.24]:56198 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727126AbfGCXXp (ORCPT
+        Wed, 3 Jul 2019 21:23:20 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8136 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726574AbfGDBXU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Jul 2019 19:23:45 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 16:23:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,448,1557212400"; 
-   d="scan'208";a="184874880"
-Received: from elsaidmo-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.33.22])
-  by fmsmga001.fm.intel.com with ESMTP; 03 Jul 2019 16:23:39 -0700
-Date:   Thu, 4 Jul 2019 02:23:38 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Cedric Xing <cedric.xing@intel.com>
-Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, casey.schaufler@intel.com,
-        jmorris@namei.org, luto@kernel.org, jethro@fortanix.com,
-        greg@enjellic.com, sds@tycho.nsa.gov,
-        sean.j.christopherson@intel.com
-Subject: Re: [RFC PATCH v2 0/3] security/x86/sgx: SGX specific LSM hooks
-Message-ID: <20190703232338.ru3py25qirwagfr7@linux.intel.com>
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <cover.1561588012.git.cedric.xing@intel.com>
- <20190703231650.bhnkn34ccrzdwwhz@linux.intel.com>
- <20190703232221.l66lhmxhu2kmjcip@linux.intel.com>
+        Wed, 3 Jul 2019 21:23:20 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 32C64764528F2CFDDA99;
+        Thu,  4 Jul 2019 09:23:18 +0800 (CST)
+Received: from [127.0.0.1] (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Thu, 4 Jul 2019
+ 09:23:16 +0800
+Subject: Re: [PATCH -next] integrity: Remove set but not used variable 'acl'
+To:     David Howells <dhowells@redhat.com>
+References: <20190703025518.6379-1-yuehaibing@huawei.com>
+ <15691.1562162261@warthog.procyon.org.uk>
+CC:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Kairui Song <kasong@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Mimi Zohar" <zohar@linux.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Biggers <ebiggers@google.com>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <be6aaeb1-13ab-50bc-81a6-c461d3748820@huawei.com>
+Date:   Thu, 4 Jul 2019 09:23:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703232221.l66lhmxhu2kmjcip@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+In-Reply-To: <15691.1562162261@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 04, 2019 at 02:22:21AM +0300, Jarkko Sakkinen wrote:
-> > The eye should be on whether the uapi (e.g. device files, ioctl's) will
-> > work for LSM's in a legit way. Do we need more of these different
-> > flavors of experimental LSM changes or can we make some conclusions with
-> > the real issue we are trying to deal with?
+On 2019/7/3 21:57, David Howells wrote:
+> YueHaibing <yuehaibing@huawei.com> wrote:
 > 
-> Anyway, sending v21 soonish. Finished it on Thu but have been waiting
-> any internal QA feedback. If nothing pops up, I'll send it tmrw.
+>> Fixes gcc '-Wunused-but-set-variable' warning:
+>>
+>> security/integrity/digsig.c: In function 'integrity_init_keyring':
+>> security/integrity/digsig.c:99:18: warning:
+>>  variable 'acl' set but not used [-Wunused-but-set-variable]
+>>
+>> It seems 'acl' is needed in __integrity_init_keyring
+> 
+> I've folded this fix in, thanks.
 
-Ugh, the point I forgot to add was that it contains update to
-SGX_IOC_ENCLAVE_ADD_PAGE that is relevant for the discussion (probably
-the same as Sean proposed cannot recall if I did tuning to it).
+Thanks, also I write a wrong patch title.
 
-/Jarkko
+> 
+> David
+> 
+> .
+> 
+
