@@ -2,125 +2,126 @@ Return-Path: <SRS0=UcS9=VB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6F5C06513
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 11:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCC1C0651F
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 15:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504F42184B
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 11:58:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E6A1218A0
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 15:47:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbfGDL64 (ORCPT
+        id S1727394AbfGDPrH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Jul 2019 07:58:56 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:64348 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727590AbfGDL6z (ORCPT
+        Thu, 4 Jul 2019 11:47:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:4090 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727895AbfGDPrE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Jul 2019 07:58:55 -0400
-Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x64Bwod2018089;
-        Thu, 4 Jul 2019 20:58:50 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
- Thu, 04 Jul 2019 20:58:50 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x64BwiPK018055
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 4 Jul 2019 20:58:50 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
- sockets.
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org
-References: <0000000000004f43fa058a97f4d3@google.com>
- <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
- <1b5722cc-adbc-035d-5ca1-9aa56e70d312@I-love.SAKURA.ne.jp>
- <a4ed1778-8b73-49d1-0ff0-59d9c6ac0af8@I-love.SAKURA.ne.jp>
- <20190618204933.GE17978@ZenIV.linux.org.uk>
- <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
-Message-ID: <bc146372-764d-93a9-af27-666d73ed3af5@i-love.sakura.ne.jp>
-Date:   Thu, 4 Jul 2019 20:58:43 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 4 Jul 2019 11:47:04 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x64Fkc3D099981
+        for <linux-security-module@vger.kernel.org>; Thu, 4 Jul 2019 11:47:02 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2thk882j0c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Jul 2019 11:47:02 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 4 Jul 2019 16:47:00 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 4 Jul 2019 16:46:55 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x64FksMH33947800
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 4 Jul 2019 15:46:54 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 615D1AE04D;
+        Thu,  4 Jul 2019 15:46:54 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EB93BAE051;
+        Thu,  4 Jul 2019 15:46:51 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.110.72])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  4 Jul 2019 15:46:51 +0000 (GMT)
+Subject: Re: [PATCH] Revert "tpm: pass an array of tpm_extend_digest
+ structures to tpm_pcr_extend()"
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Michal Suchanek <msuchanek@suse.de>,
+        linux-integrity@vger.kernel.org
+Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Date:   Thu, 04 Jul 2019 11:46:41 -0400
+In-Reply-To: <1562240882.6165.78.camel@linux.ibm.com>
+References: <20190701131505.17759-1-msuchanek@suse.de>
+         <8e4cc105b748c5395132b4d3d29d0d9b30a8720c.camel@linux.intel.com>
+         <cf2ea579-41c2-42da-2df3-0b1f12e1c639@huawei.com>
+         <1562240882.6165.78.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19070415-0008-0000-0000-000002F9E80F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19070415-0009-0000-0000-000022673ADE
+Message-Id: <1562255201.6165.143.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-04_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=834 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907040200
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello.
+Hi Jarkko,
 
-Since it seems that Al has no comments, I'd like to send this patch to
-linux-next.git . What should I do? Do I need to set up a git tree?
+On Thu, 2019-07-04 at 07:48 -0400, Mimi Zohar wrote:
+> On Thu, 2019-07-04 at 13:28 +0200, Roberto Sassu wrote:
+> > On 7/4/2019 12:03 PM, Jarkko Sakkinen wrote:
+> > > On Mon, 2019-07-01 at 15:15 +0200, Michal Suchanek wrote:
+> > >> This reverts commit 0b6cf6b97b7ef1fa3c7fefab0cac897a1c4a3400 to avoid
+> > >> following crash:
+> > > 
+> > > Thank you. I think this the right choice for the moment. I fixed
+> > > a trivial checkpatch.pl error and added the mandatory tags. Can
+> > > you check quickly v2 (just posted)?
+> > > 
+> > > I already made it available in my master and next.
+> > 
+> > Could you please wait few days? I would prefer to fix this issue instead
+> > of reverting the whole patch.
+> 
+> Nayna posted a patch late yesterday titled "tpm: fixes uninitialized
+> allocated banks for IBM vtpm driver", which addresses this bug.
 
-On 2019/06/22 13:45, Tetsuo Handa wrote:
-> From c63c4074300921d6d1c33c3b8dc9c84ebfededf5 Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Sat, 22 Jun 2019 13:14:26 +0900
-> Subject: [PATCH v2] tomoyo: Don't check open/getattr permission on sockets.
-> 
-> syzbot is reporting that use of SOCKET_I()->sk from open() can result in
-> use after free problem [1], for socket's inode is still reachable via
-> /proc/pid/fd/n despite destruction of SOCKET_I()->sk already completed.
-> 
-> But there is no point with calling security_file_open() on sockets
-> because open("/proc/pid/fd/n", !O_PATH) on sockets fails with -ENXIO.
-> 
-> There is some point with calling security_inode_getattr() on sockets
-> because stat("/proc/pid/fd/n") and fstat(open("/proc/pid/fd/n", O_PATH))
-> are valid. If we want to access "struct sock"->sk_{family,type,protocol}
-> fields, we will need to use security_socket_post_create() hook and
-> security_inode_free() hook in order to remember these fields because
-> security_sk_free() hook is called before the inode is destructed. But
-> since information which can be protected by checking
-> security_inode_getattr() on sockets is trivial, let's not be bothered by
-> "struct inode"->i_security management.
-> 
-> There is point with calling security_file_ioctl() on sockets. Since
-> ioctl(open("/proc/pid/fd/n", O_PATH)) is invalid, security_file_ioctl()
-> on sockets should remain safe.
-> 
-> [1] https://syzkaller.appspot.com/bug?id=73d590010454403d55164cca23bd0565b1eb3b74
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Reported-by: syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>
-> ---
->  security/tomoyo/tomoyo.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-> index 716c92e..8ea3f5d 100644
-> --- a/security/tomoyo/tomoyo.c
-> +++ b/security/tomoyo/tomoyo.c
-> @@ -126,6 +126,9 @@ static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
->   */
->  static int tomoyo_inode_getattr(const struct path *path)
->  {
-> +	/* It is not safe to call tomoyo_get_socket_name(). */
-> +	if (S_ISSOCK(d_inode(path->dentry)->i_mode))
-> +		return 0;
->  	return tomoyo_path_perm(TOMOYO_TYPE_GETATTR, path, NULL);
->  }
->  
-> @@ -316,6 +319,9 @@ static int tomoyo_file_open(struct file *f)
->  	/* Don't check read permission here if called from do_execve(). */
->  	if (current->in_execve)
->  		return 0;
-> +	/* Sockets can't be opened by open(). */
-> +	if (S_ISSOCK(file_inode(f)->i_mode))
-> +		return 0;
->  	return tomoyo_check_open_permission(tomoyo_domain(), &f->f_path,
->  					    f->f_flags);
->  }
-> 
+Now with my review, and with Sachin Sant's and Michal Suchánek
+testing, instead of reverting this patch could you pick up Nayna's
+patch instead?
+
+thanks!
+
+Mimi
 
