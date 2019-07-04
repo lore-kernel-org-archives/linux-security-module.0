@@ -2,90 +2,117 @@ Return-Path: <SRS0=UcS9=VB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EBCC0651F
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 19:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A10C0651F
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 19:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B0DA218A3
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 19:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562270032;
-	bh=D8dJJX8KT2Xl8Nh7bMvZgekUUmiAou9NFBVZsil11Lc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=BU8ZksWGGstkjBzlswPalgVdcofE4ceVgnXco9ME66v5ch714kHmb9VPffIcPoQtC
-	 rmgUdX7T/1FMNYG81B8VGFZL1ptxz1Yk/1tBfxQ+vYM0n0EiVd3qrBi5g5NbYhPWRh
-	 /IKnwFy+bIwud5BixGTYdA33FbD/GJHH/rBTYh9g=
+	by mail.kernel.org (Postfix) with ESMTP id 1F99721852
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 19:59:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfGDTxw (ORCPT
+        id S1727032AbfGDT7Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Jul 2019 15:53:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57078 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726805AbfGDTxv (ORCPT
+        Thu, 4 Jul 2019 15:59:16 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50461 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfGDT7P (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Jul 2019 15:53:51 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBADA21852;
-        Thu,  4 Jul 2019 19:53:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562270030;
-        bh=D8dJJX8KT2Xl8Nh7bMvZgekUUmiAou9NFBVZsil11Lc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YrQuDPw+rga1xtwxOX16kcC0a03XtrEZuxO6OMtfMYRlXCWQXEwoRhtzXiTaMi7UH
-         aY85ep5KDVRdkbbC3GGx6CKhK/VzlWNWBObEqB0mE5xBp8a7JvEcKmCN57ocm/RBNl
-         1jkz+TotL/QtoBgpN+wyIXo03MdfNEnor9UGm1Tk=
-Date:   Thu, 4 Jul 2019 12:53:49 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Hocko <mhocko@suse.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Hocko <mhocko@kernel.org>,
+        Thu, 4 Jul 2019 15:59:15 -0400
+Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=elm)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <tyhicks@canonical.com>)
+        id 1hj7sn-00065o-5y; Thu, 04 Jul 2019 19:59:05 +0000
+Date:   Thu, 4 Jul 2019 14:58:58 -0500
+From:   Tyler Hicks <tyhicks@canonical.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Michal Suchanek <msuchanek@suse.de>,
+        linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marco Elver <elver@google.com>, Qian Cai <cai@lca.pw>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH v10 1/2] mm: security: introduce init_on_alloc=1 and
- init_on_free=1 boot options
-Message-Id: <20190704125349.0dd001629a9c4b8e4cb9f227@linux-foundation.org>
-In-Reply-To: <CAG_fn=XYRpeBgLpbwhaF=JfNHa-styydOKq8_SA3vsdMcXNgzw@mail.gmail.com>
-References: <20190628093131.199499-1-glider@google.com>
-        <20190628093131.199499-2-glider@google.com>
-        <20190702155915.ab5e7053e5c0d49e84c6ed67@linux-foundation.org>
-        <CAG_fn=XYRpeBgLpbwhaF=JfNHa-styydOKq8_SA3vsdMcXNgzw@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH] Revert "tpm: pass an array of tpm_extend_digest
+ structures to tpm_pcr_extend()"
+Message-ID: <20190704195857.GB6105@elm>
+References: <20190701131505.17759-1-msuchanek@suse.de>
+ <8e4cc105b748c5395132b4d3d29d0d9b30a8720c.camel@linux.intel.com>
+ <cf2ea579-41c2-42da-2df3-0b1f12e1c639@huawei.com>
+ <1562240882.6165.78.camel@linux.ibm.com>
+ <1562255201.6165.143.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1562255201.6165.143.camel@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 3 Jul 2019 13:40:26 +0200 Alexander Potapenko <glider@google.com> wrote:
+Hey Mimi!
 
-> > There are unchangelogged alterations between v9 and v10.  The
-> > replacement of IS_ENABLED(CONFIG_PAGE_POISONING)) with
-> > page_poisoning_enabled().
-> In the case I send another version of the patch, do I need to
-> retroactively add them to the changelog?
+On 2019-07-04 11:46:41, Mimi Zohar wrote:
+> Hi Jarkko,
+> 
+> On Thu, 2019-07-04 at 07:48 -0400, Mimi Zohar wrote:
+> > On Thu, 2019-07-04 at 13:28 +0200, Roberto Sassu wrote:
+> > > On 7/4/2019 12:03 PM, Jarkko Sakkinen wrote:
+> > > > On Mon, 2019-07-01 at 15:15 +0200, Michal Suchanek wrote:
+> > > >> This reverts commit 0b6cf6b97b7ef1fa3c7fefab0cac897a1c4a3400 to avoid
+> > > >> following crash:
+> > > > 
+> > > > Thank you. I think this the right choice for the moment. I fixed
+> > > > a trivial checkpatch.pl error and added the mandatory tags. Can
+> > > > you check quickly v2 (just posted)?
+> > > > 
+> > > > I already made it available in my master and next.
+> > > 
+> > > Could you please wait few days? I would prefer to fix this issue instead
+> > > of reverting the whole patch.
+> > 
+> > Nayna posted a patch late yesterday titled "tpm: fixes uninitialized
+> > allocated banks for IBM vtpm driver", which addresses this bug.
+> 
+> Now with my review, and with Sachin Sant's and Michal Suchánek
+> testing, instead of reverting this patch could you pick up Nayna's
+> patch instead?
 
-I don't think the world could stand another version ;)
+It looks to me like the revert would also fix a bug that is keeping the
+eCryptfs module from loading when the TPM is in an "inactive" state:
 
-Please simply explain this change for the reviewers?
+  https://bugzilla.kernel.org/show_bug.cgi?id=203953
+
+I just noticed that it was recently discussed here, too:
+
+  https://lore.kernel.org/linux-integrity/1562244125.6165.95.camel@linux.ibm.com/T/#t
+
+I believe that the revert would fix it because the call to
+init_digests()/tpm_get_random() would no longer be in the path of
+loading ecryptfs.ko (which depends on encrypted-keys.ko, which depends
+on trusted.ko).
+
+If the revert isn't used, we'll need a different fix for bug 203953. It
+should be an easy fix but I don't want it to be forgotten.
+
+Tyler
+
+> 
+> thanks!
+> 
+> Mimi
+> 
