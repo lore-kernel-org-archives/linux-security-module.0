@@ -1,118 +1,195 @@
-Return-Path: <SRS0=UcS9=VB=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=D23n=VC=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A10C0651F
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 19:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F937C0650E
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jul 2019 02:35:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F99721852
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jul 2019 19:59:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F2DD21850
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jul 2019 02:35:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfGDT7Q (ORCPT
+        id S1727305AbfGECfh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Jul 2019 15:59:16 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50461 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbfGDT7P (ORCPT
+        Thu, 4 Jul 2019 22:35:37 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:40107 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726404AbfGECfh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Jul 2019 15:59:15 -0400
-Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=elm)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <tyhicks@canonical.com>)
-        id 1hj7sn-00065o-5y; Thu, 04 Jul 2019 19:59:05 +0000
-Date:   Thu, 4 Jul 2019 14:58:58 -0500
-From:   Tyler Hicks <tyhicks@canonical.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Michal Suchanek <msuchanek@suse.de>,
-        linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Armijn Hemel <armijn@tjaldur.nl>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH] Revert "tpm: pass an array of tpm_extend_digest
- structures to tpm_pcr_extend()"
-Message-ID: <20190704195857.GB6105@elm>
-References: <20190701131505.17759-1-msuchanek@suse.de>
- <8e4cc105b748c5395132b4d3d29d0d9b30a8720c.camel@linux.intel.com>
- <cf2ea579-41c2-42da-2df3-0b1f12e1c639@huawei.com>
- <1562240882.6165.78.camel@linux.ibm.com>
- <1562255201.6165.143.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1562255201.6165.143.camel@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 4 Jul 2019 22:35:37 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=zhangliguang@linux.alibaba.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---0TW3gsEG_1562294121;
+Received: from localhost(mailfrom:zhangliguang@linux.alibaba.com fp:SMTPD_---0TW3gsEG_1562294121)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 05 Jul 2019 10:35:32 +0800
+From:   luanshi <zhangliguang@linux.alibaba.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-security-module@vger.kernel.org
+Subject: [PATCH] smack: fix some kernel-doc notations
+Date:   Fri,  5 Jul 2019 10:35:20 +0800
+Message-Id: <1562294120-68221-1-git-send-email-zhangliguang@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hey Mimi!
+Fix/add kernel-doc notation and fix typos in security/smack/.
 
-On 2019-07-04 11:46:41, Mimi Zohar wrote:
-> Hi Jarkko,
-> 
-> On Thu, 2019-07-04 at 07:48 -0400, Mimi Zohar wrote:
-> > On Thu, 2019-07-04 at 13:28 +0200, Roberto Sassu wrote:
-> > > On 7/4/2019 12:03 PM, Jarkko Sakkinen wrote:
-> > > > On Mon, 2019-07-01 at 15:15 +0200, Michal Suchanek wrote:
-> > > >> This reverts commit 0b6cf6b97b7ef1fa3c7fefab0cac897a1c4a3400 to avoid
-> > > >> following crash:
-> > > > 
-> > > > Thank you. I think this the right choice for the moment. I fixed
-> > > > a trivial checkpatch.pl error and added the mandatory tags. Can
-> > > > you check quickly v2 (just posted)?
-> > > > 
-> > > > I already made it available in my master and next.
-> > > 
-> > > Could you please wait few days? I would prefer to fix this issue instead
-> > > of reverting the whole patch.
-> > 
-> > Nayna posted a patch late yesterday titled "tpm: fixes uninitialized
-> > allocated banks for IBM vtpm driver", which addresses this bug.
-> 
-> Now with my review, and with Sachin Sant's and Michal Suchánek
-> testing, instead of reverting this patch could you pick up Nayna's
-> patch instead?
+Signed-off-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
+---
+ security/smack/smack_lsm.c | 33 +++++++++++++++------------------
+ 1 file changed, 15 insertions(+), 18 deletions(-)
 
-It looks to me like the revert would also fix a bug that is keeping the
-eCryptfs module from loading when the TPM is in an "inactive" state:
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 4c5e5a4..51960f2 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -307,7 +307,7 @@ static struct smack_known *smk_fetch(const char *name, struct inode *ip,
+ 
+ /**
+  * init_inode_smack - initialize an inode security blob
+- * @isp: the blob to initialize
++ * @inode: inode to extract the info from
+  * @skp: a pointer to the Smack label entry to use in the blob
+  *
+  */
+@@ -509,7 +509,7 @@ static int smack_ptrace_traceme(struct task_struct *ptp)
+ 
+ /**
+  * smack_syslog - Smack approval on syslog
+- * @type: message type
++ * @typefrom_file: unused
+  *
+  * Returns 0 on success, error code otherwise.
+  */
+@@ -765,7 +765,7 @@ static int smack_sb_eat_lsm_opts(char *options, void **mnt_opts)
+ /**
+  * smack_set_mnt_opts - set Smack specific mount options
+  * @sb: the file system superblock
+- * @opts: Smack mount options
++ * @mnt_opts: Smack mount options
+  * @kern_flags: mount option from kernel space or user space
+  * @set_kern_flags: where to store converted mount opts
+  *
+@@ -958,7 +958,7 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
+  * smack_inode_alloc_security - allocate an inode blob
+  * @inode: the inode in need of a blob
+  *
+- * Returns 0 if it gets a blob, -ENOMEM otherwise
++ * Returns 0
+  */
+ static int smack_inode_alloc_security(struct inode *inode)
+ {
+@@ -1164,7 +1164,7 @@ static int smack_inode_rename(struct inode *old_inode,
+  *
+  * This is the important Smack hook.
+  *
+- * Returns 0 if access is permitted, -EACCES otherwise
++ * Returns 0 if access is permitted, an error code otherwise
+  */
+ static int smack_inode_permission(struct inode *inode, int mask)
+ {
+@@ -1222,8 +1222,7 @@ static int smack_inode_setattr(struct dentry *dentry, struct iattr *iattr)
+ 
+ /**
+  * smack_inode_getattr - Smack check for getting attributes
+- * @mnt: vfsmount of the object
+- * @dentry: the object
++ * @path: path to extract the info from
+  *
+  * Returns 0 if access is permitted, an error code otherwise
+  */
+@@ -1870,14 +1869,13 @@ static int smack_file_receive(struct file *file)
+ /**
+  * smack_file_open - Smack dentry open processing
+  * @file: the object
+- * @cred: task credential
+  *
+  * Set the security blob in the file structure.
+  * Allow the open only if the task has read access. There are
+  * many read operations (e.g. fstat) that you can do with an
+  * fd even if you have the file open write-only.
+  *
+- * Returns 0
++ * Returns 0 if current has access, error code otherwise
+  */
+ static int smack_file_open(struct file *file)
+ {
+@@ -1900,7 +1898,7 @@ static int smack_file_open(struct file *file)
+ 
+ /**
+  * smack_cred_alloc_blank - "allocate" blank task-level security credentials
+- * @new: the new credentials
++ * @cred: the new credentials
+  * @gfp: the atomicity of any memory allocations
+  *
+  * Prepare a blank set of credentials for modification.  This must allocate all
+@@ -1983,7 +1981,7 @@ static void smack_cred_transfer(struct cred *new, const struct cred *old)
+ 
+ /**
+  * smack_cred_getsecid - get the secid corresponding to a creds structure
+- * @c: the object creds
++ * @cred: the object creds
+  * @secid: where to put the result
+  *
+  * Sets the secid to contain a u32 version of the smack label.
+@@ -2140,8 +2138,6 @@ static int smack_task_getioprio(struct task_struct *p)
+ /**
+  * smack_task_setscheduler - Smack check on setting scheduler
+  * @p: the task object
+- * @policy: unused
+- * @lp: unused
+  *
+  * Return 0 if read access is permitted
+  */
+@@ -2611,8 +2607,9 @@ static void smk_ipv6_port_label(struct socket *sock, struct sockaddr *address)
+ 
+ /**
+  * smk_ipv6_port_check - check Smack port access
+- * @sock: socket
++ * @sk: socket
+  * @address: address
++ * @act: the action being taken
+  *
+  * Create or update the port list entry
+  */
+@@ -2782,7 +2779,7 @@ static int smack_socket_post_create(struct socket *sock, int family,
+  *
+  * Cross reference the peer labels for SO_PEERSEC
+  *
+- * Returns 0 on success, and error code otherwise
++ * Returns 0
+  */
+ static int smack_socket_socketpair(struct socket *socka,
+ 		                   struct socket *sockb)
+@@ -3014,13 +3011,13 @@ static int smack_shm_shmctl(struct kern_ipc_perm *isp, int cmd)
+  *
+  * Returns 0 if current has the requested access, error code otherwise
+  */
+-static int smack_shm_shmat(struct kern_ipc_perm *ipc, char __user *shmaddr,
++static int smack_shm_shmat(struct kern_ipc_perm *isp, char __user *shmaddr,
+ 			   int shmflg)
+ {
+ 	int may;
+ 
+ 	may = smack_flags_to_may(shmflg);
+-	return smk_curacc_shm(ipc, may);
++	return smk_curacc_shm(isp, may);
+ }
+ 
+ /**
+@@ -4762,7 +4759,7 @@ static __init void init_smack_known_list(void)
+ /**
+  * smack_init - initialize the smack system
+  *
+- * Returns 0
++ * Returns 0 on success, -ENOMEM is there's no memory
+  */
+ static __init int smack_init(void)
+ {
+-- 
+1.8.3.1
 
-  https://bugzilla.kernel.org/show_bug.cgi?id=203953
-
-I just noticed that it was recently discussed here, too:
-
-  https://lore.kernel.org/linux-integrity/1562244125.6165.95.camel@linux.ibm.com/T/#t
-
-I believe that the revert would fix it because the call to
-init_digests()/tpm_get_random() would no longer be in the path of
-loading ecryptfs.ko (which depends on encrypted-keys.ko, which depends
-on trusted.ko).
-
-If the revert isn't used, we'll need a different fix for bug 203953. It
-should be an easy fix but I don't want it to be forgotten.
-
-Tyler
-
-> 
-> thanks!
-> 
-> Mimi
-> 
