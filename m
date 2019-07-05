@@ -2,90 +2,125 @@ Return-Path: <SRS0=D23n=VC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D74EC468A0
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jul 2019 16:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07854C46499
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jul 2019 16:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1740121670
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jul 2019 16:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9B0121670
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jul 2019 16:41:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725865AbfGEQF6 (ORCPT
+        id S1728563AbfGEQlC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Jul 2019 12:05:58 -0400
-Received: from mga04.intel.com ([192.55.52.120]:49722 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbfGEQF6 (ORCPT
+        Fri, 5 Jul 2019 12:41:02 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33057 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726302AbfGEQlC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Jul 2019 12:05:58 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2019 09:05:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,455,1557212400"; 
-   d="scan'208";a="363630458"
-Received: from hsolima-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.48.252])
-  by fmsmga006.fm.intel.com with ESMTP; 05 Jul 2019 09:05:50 -0700
-Date:   Fri, 5 Jul 2019 19:05:49 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Bill Roberts <william.c.roberts@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [RFC PATCH v4 00/12] security: x86/sgx: SGX vs. LSM
-Message-ID: <20190705160549.tzsck5ho5kvtdhit@linux.intel.com>
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+        Fri, 5 Jul 2019 12:41:02 -0400
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 01758ED5E91E14B571A7;
+        Fri,  5 Jul 2019 17:41:00 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.34) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 5 Jul 2019 17:40:52 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <jejb@linux.ibm.com>,
+        <zohar@linux.ibm.com>, <jgg@ziepe.ca>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <crazyt2019+lml@gmail.com>, <tyhicks@canonical.com>,
+        <nayna@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH] KEYS: trusted: allow module init if TPM is inactive or deactivated
+Date:   Fri, 5 Jul 2019 18:37:35 +0200
+Message-ID: <20190705163735.11539-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619222401.14942-1-sean.j.christopherson@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 19, 2019 at 03:23:49PM -0700, Sean Christopherson wrote:
+Commit c78719203fc6 ("KEYS: trusted: allow trusted.ko to initialize w/o a
+TPM") allows the trusted module to be loaded even a TPM is not found to
+avoid module dependency problems.
 
-I still don't get why we need this whole mess and do not simply admit
-that there are two distinct roles:
+Unfortunately, this does not completely solve the issue, as there could be
+a case where a TPM is found but is not functional (the TPM commands return
+an error). Specifically, after the tpm_chip structure is returned by
+tpm_default_chip() in init_trusted(), the execution terminates after
+init_digests() returns -EFAULT (due to the fact that tpm_get_random()
+returns a positive value, but less than TPM_MAX_DIGEST_SIZE).
 
-1. Creator
-2. User
+This patch fixes the issue by ignoring the TPM_ERR_DEACTIVATED and
+TPM_ERR_DISABLED errors.
 
-In the SELinux context Creator needs FILE__WRITE and FILE__EXECUTE but
-User does not. It just gets the fd from the Creator. I'm sure that all
-the SGX2 related functionality can be solved somehow in this role
-playing game.
+Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ drivers/char/tpm/tpm.h  | 2 --
+ include/linux/tpm.h     | 3 +++
+ security/keys/trusted.c | 6 +++++-
+ 3 files changed, 8 insertions(+), 3 deletions(-)
 
-An example would be the usual case where enclave is actually a loader
-that loads the actual piece of software that one wants to run. Things
-simply need to be designed in a way the Creator runs the loader part.
-These are non-trivial problems but oddball security model is not going
-to make them disappear - on the contrary it will make designing user
-space only more complicated.
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index e503ffc3aa39..a216ac396711 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -54,8 +54,6 @@ enum tpm_addr {
+ 
+ #define TPM_WARN_RETRY          0x800
+ #define TPM_WARN_DOING_SELFTEST 0x802
+-#define TPM_ERR_DEACTIVATED     0x6
+-#define TPM_ERR_DISABLED        0x7
+ #define TPM_ERR_INVALID_POSTINIT 38
+ 
+ #define TPM_HEADER_SIZE		10
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 53c0ea9ec9df..efd3ccbb6aee 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -26,6 +26,9 @@
+ #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
+ #define TPM_MAX_DIGEST_SIZE SHA512_DIGEST_SIZE
+ 
++#define TPM_ERR_DEACTIVATED     0x6
++#define TPM_ERR_DISABLED        0x7
++
+ struct tpm_chip;
+ struct trusted_key_payload;
+ struct trusted_key_options;
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index 9a94672e7adc..430d85090b3b 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -389,6 +389,10 @@ static int pcrlock(const int pcrnum)
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
++	/* This can happen if the TPM is inactive. */
++	if (!digests)
++		return -EINVAL;
++
+ 	return tpm_pcr_extend(chip, pcrnum, digests) ? -EINVAL : 0;
+ }
+ 
+@@ -1233,7 +1237,7 @@ static int __init init_digests(void)
+ 	int i;
+ 
+ 	ret = tpm_get_random(chip, digest, TPM_MAX_DIGEST_SIZE);
+-	if (ret < 0)
++	if (ret < 0 || ret == TPM_ERR_DEACTIVATED || ret == TPM_ERR_DISABLED)
+ 		return ret;
+ 	if (ret < TPM_MAX_DIGEST_SIZE)
+ 		return -EFAULT;
+-- 
+2.17.1
 
-I think this is classical example of when something overly complicated
-is invented in the kernel only to realize that it should be solved in
-the user space.
-
-It would not be like the only use case where some kind of privileged
-daemon is used for managing some a kernel provided resource.
-
-I think a really good conclusion from this discussion that has taken two
-months is to realize that nothing needs to be done in this area (except
-*maybe* noexec check).
-
-/Jarkko
