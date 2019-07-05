@@ -2,85 +2,86 @@ Return-Path: <SRS0=D23n=VC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B22C5B57D
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jul 2019 08:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31074C4649B
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jul 2019 11:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11C93218BE
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jul 2019 08:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562316308;
-	bh=GEwAZHym+11LpGma3a5nx4N6HauXHp3MSbJ/q/jAOEw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BOptY3+uPks7u39x7Jlo+8g0GgypKwr77gYPPcZbEYDDMqoR/iIF17CfARYV0/1LB
-	 m6LGNdRqUbx7xM6k3dq+Bam78By5gN7l/hL4uR2x40XJpbxkv3GpKZdSfZjRbZi3q1
-	 w0Clo9ruKRrDSq2R0GoVvw3jd5kT1h8SFUKQpc4o=
+	by mail.kernel.org (Postfix) with ESMTP id 0D51B216E3
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jul 2019 11:03:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbfGEIpE (ORCPT
+        id S1727853AbfGELDP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Jul 2019 04:45:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58416 "EHLO mail.kernel.org"
+        Fri, 5 Jul 2019 07:03:15 -0400
+Received: from mga06.intel.com ([134.134.136.31]:51250 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726116AbfGEIpE (ORCPT
+        id S1726116AbfGELDP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Jul 2019 04:45:04 -0400
-Received: from localhost (83-84-126-242.cable.dynamic.v4.ziggo.nl [83.84.126.242])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 957A2218BB;
-        Fri,  5 Jul 2019 08:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562316303;
-        bh=GEwAZHym+11LpGma3a5nx4N6HauXHp3MSbJ/q/jAOEw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YApoGUclFpP3s8P76l8Ct6nQ8/oePFNV0NdE/Ky3oj1SjfBC+vbkLWNxamKeWEg6x
-         DteXHG3yqymcD+ap9nKVpnCGYfwZRVEBrc8foKpH9LSTxPP2g9QMe7sYqN4WJLfgyv
-         9/aOdXmdGl3a5ugl0NkXNwaHIAeflVGaXXVCOexA=
-Date:   Fri, 5 Jul 2019 10:44:59 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
-        raven@themaw.net, Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/9] Add a general, global device notification watch list
- [ver #5]
-Message-ID: <20190705084459.GA2579@kroah.com>
-References: <20190705051733.GA15821@kroah.com>
- <20190703190846.GA15663@kroah.com>
- <156173690158.15137.3985163001079120218.stgit@warthog.procyon.org.uk>
- <156173697086.15137.9549379251509621554.stgit@warthog.procyon.org.uk>
- <10295.1562256260@warthog.procyon.org.uk>
- <12946.1562313857@warthog.procyon.org.uk>
+        Fri, 5 Jul 2019 07:03:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2019 04:03:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,454,1557212400"; 
+   d="scan'208";a="316065024"
+Received: from jsakkine-mobl1.tm.intel.com ([10.237.50.189])
+  by orsmga004.jf.intel.com with ESMTP; 05 Jul 2019 04:03:09 -0700
+Message-ID: <1b890d9a1a949683fdb7104e395c7f92022772fe.camel@linux.intel.com>
+Subject: Re: [PATCH] Revert "tpm: pass an array of tpm_extend_digest
+ structures to tpm_pcr_extend()"
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Michal Suchanek <msuchanek@suse.de>,
+        linux-integrity@vger.kernel.org
+Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Date:   Fri, 05 Jul 2019 14:03:08 +0300
+In-Reply-To: <cf2ea579-41c2-42da-2df3-0b1f12e1c639@huawei.com>
+References: <20190701131505.17759-1-msuchanek@suse.de>
+         <8e4cc105b748c5395132b4d3d29d0d9b30a8720c.camel@linux.intel.com>
+         <cf2ea579-41c2-42da-2df3-0b1f12e1c639@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12946.1562313857@warthog.procyon.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 05, 2019 at 09:04:17AM +0100, David Howells wrote:
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On Thu, 2019-07-04 at 13:28 +0200, Roberto Sassu wrote:
+> On 7/4/2019 12:03 PM, Jarkko Sakkinen wrote:
+> > On Mon, 2019-07-01 at 15:15 +0200, Michal Suchanek wrote:
+> > > This reverts commit 0b6cf6b97b7ef1fa3c7fefab0cac897a1c4a3400 to avoid
+> > > following crash:
+> > 
+> > Thank you. I think this the right choice for the moment. I fixed
+> > a trivial checkpatch.pl error and added the mandatory tags. Can
+> > you check quickly v2 (just posted)?
+> > 
+> > I already made it available in my master and next.
 > 
-> > Hm, good point, but there should be some way to test this to verify it
-> > works.  Maybe for the other types of events?
-> 
-> Keyrings is the simplest.  keyutils's testsuite will handle that.  I'm trying
-> to work out if I can simply make every macro in there that does a modification
-> perform a watch automatically to make sure the appropriate events happen.
+> Could you please wait few days? I would prefer to fix this issue instead
+> of reverting the whole patch.
 
-That should be good enough to test the basic functionality.  After this
-gets merged I'll see if I can come up with a way to test the USB
-stuff...
+Nayna provided a fix should be ok.
 
-thanks,
+/Jarkko
 
-greg k-h
