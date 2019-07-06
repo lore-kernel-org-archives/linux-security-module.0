@@ -2,111 +2,89 @@ Return-Path: <SRS0=6Cle=VD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=GAPPY_SUBJECT,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0FAC0650E
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 18:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D673C0650E
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 19:29:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA54A2075B
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 18:33:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rMLJmYNu"
+	by mail.kernel.org (Postfix) with ESMTP id C91B920838
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 19:28:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbfGFSdP (ORCPT
+        id S1726921AbfGFT27 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 6 Jul 2019 14:33:15 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35879 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726876AbfGFSdP (ORCPT
+        Sat, 6 Jul 2019 15:28:59 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59086 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726743AbfGFT26 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 6 Jul 2019 14:33:15 -0400
-Received: by mail-ot1-f66.google.com with SMTP id r6so12137418oti.3
-        for <linux-security-module@vger.kernel.org>; Sat, 06 Jul 2019 11:33:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L8R4z3fd/pNkVMb+89dxA4ui8k10ocj37Bt7whLaC1Q=;
-        b=rMLJmYNuSevuKWuCiVdI43bNmxi2G3pHLMt7d6UgYRzPT5IXjgo/GT6keDasRoZK4g
-         /OBhvjWjUYS2v0qo9lkIJjfjkWE4kQLRuB6HOjB54kxbMOj7Ibd3pgQiMMTDL/I/5iCg
-         2BeOM0HRHns6OEvAIi7NDoj2y/dlF3VxnijP9I+3HzHbLr7M1LTr+5Cg10Syh3dz5oTS
-         pBae4r8DF086crOJ38wMkDHMpLDL60ovH7rl6Se08aUjhSzMzcn0vQpNsNrr1cgMoU/P
-         YlfFMVxPhwry/SRvgTR1K80hTe9zWiuHkC34F1tIefAjUxRB4y7wu0+32btM3e8V9hGs
-         3xLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L8R4z3fd/pNkVMb+89dxA4ui8k10ocj37Bt7whLaC1Q=;
-        b=FZcwoDUn2IQHUyW/fcMhxdp1Is6FbsChfTzmSuIr3zXj1hljzgcj1WPa+QkjGApJ5t
-         Gzt86ssvulUfFSBlu69CXe6wfm6TFPL7XIj6u8sikqF35b4iO5IzyHPTOj6I+/R5Ypvm
-         HAWpX0h/VhHifkC30igIlExLSnitlk9Gw66423x5TVuR1EfBj0RZplHws9rfMvbiAicr
-         gyBPYSLcC3uzKdf2s4fxfjtb66H3dHdv0MB6utxGoV8IBXsvF5iCNEaqeXjTFVXPXnqc
-         3h+SY4lh/HHnTj3dJzkfD5FQhuGYyAyuI599N4nuvEEfHsAWfhyA2XFuLJ1HumcBmDON
-         bnMA==
-X-Gm-Message-State: APjAAAWkrb9ac5xWPDfjnboUgtkyhFnFvbpEjz/SwV2veiNAZJY45fDM
-        vVktVXzIaR/kwR0BxnGzcOvRhcNDp1IEoZOMSp9bhA==
-X-Google-Smtp-Source: APXvYqyBcck06VlUCnJhTINmdA4ZJqB4oH2g6lhQMqchyhM/oF3KhFa6xeVxaox70u4OowtbK7dZn6ufESL4f0s1zvE=
-X-Received: by 2002:a9d:774a:: with SMTP id t10mr7301075otl.228.1562437994877;
- Sat, 06 Jul 2019 11:33:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com> <1562410493-8661-5-git-send-email-s.mesoraca16@gmail.com>
-In-Reply-To: <1562410493-8661-5-git-send-email-s.mesoraca16@gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Sat, 6 Jul 2019 20:32:48 +0200
-Message-ID: <CAG48ez35oJhey5WNzMQR14ko6RPJUJp+nCuAHVUJqX7EPPPokA@mail.gmail.com>
-Subject: Re: [PATCH v5 04/12] S.A.R.A.: generic DFA for string matching
+        Sat, 6 Jul 2019 15:28:58 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hjqMf-0002wo-4P; Sat, 06 Jul 2019 19:28:53 +0000
+Date:   Sat, 6 Jul 2019 20:28:53 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+Cc:     linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
         Brad Spengler <spender@grsecurity.net>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Christoph Hellwig <hch@infradead.org>,
         James Morris <james.l.morris@oracle.com>,
+        Jann Horn <jannh@google.com>,
         Kees Cook <keescook@chromium.org>,
         PaX Team <pageexec@freemail.hu>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v5 06/12] S.A.R.A.: WX protection
+Message-ID: <20190706192852.GO17978@ZenIV.linux.org.uk>
+References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
+ <1562410493-8661-7-git-send-email-s.mesoraca16@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562410493-8661-7-git-send-email-s.mesoraca16@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jul 6, 2019 at 12:55 PM Salvatore Mesoraca
-<s.mesoraca16@gmail.com> wrote:
-> Creation of a generic Discrete Finite Automata implementation
-> for string matching. The transition tables have to be produced
-> in user-space.
-> This allows us to possibly support advanced string matching
-> patterns like regular expressions, but they need to be supported
-> by user-space tools.
+On Sat, Jul 06, 2019 at 12:54:47PM +0200, Salvatore Mesoraca wrote:
 
-AppArmor already has a DFA implementation that takes a DFA machine
-from userspace and runs it against file paths; see e.g.
-aa_dfa_match(). Did you look into whether you could move their DFA to
-some place like lib/ and reuse it instead of adding yet another
-generic rule interface to the kernel?
-
-[...]
-> +++ b/security/sara/dfa.c
-> @@ -0,0 +1,335 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> +#define sara_warn_or_return(err, msg) do {		\
+> +	if ((sara_wxp_flags & SARA_WXP_VERBOSE))	\
+> +		pr_wxp(msg);				\
+> +	if (!(sara_wxp_flags & SARA_WXP_COMPLAIN))	\
+> +		return -err;				\
+> +} while (0)
 > +
-> +/*
-> + * S.A.R.A. Linux Security Module
-> + *
-> + * Copyright (C) 2017 Salvatore Mesoraca <s.mesoraca16@gmail.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2, as
-> + * published by the Free Software Foundation.
+> +#define sara_warn_or_goto(label, msg) do {		\
+> +	if ((sara_wxp_flags & SARA_WXP_VERBOSE))	\
+> +		pr_wxp(msg);				\
+> +	if (!(sara_wxp_flags & SARA_WXP_COMPLAIN))	\
+> +		goto label;				\
+> +} while (0)
 
-Throughout the series, you are adding files that both add an SPDX
-identifier and have a description of the license in the comment block
-at the top. The SPDX identifier already identifies the license.
+No.  This kind of "style" has no place in the kernel.
+
+Don't hide control flow.  It's nasty enough to reviewers,
+but it's pure hell on anyone who strays into your code while
+chasing a bug or doing general code audit.  In effect, you
+are creating your oh-so-private C dialect and assuming that
+everyone who ever looks at your code will start with learning
+that *AND* incorporating it into their mental C parser.
+I'm sorry, but you are not that important.
+
+If it looks like a function call, a casual reader will assume
+that this is exactly what it is.  And when one is scanning
+through a function (e.g. to tell if handling of some kind
+of refcounts is correct, with twentieth grep through the
+tree having brought something in your code into the view),
+the last thing one wants is to switch between the area-specific
+C dialects.  Simply because looking at yours is sandwiched
+between digging through some crap in drivers/target/ and that
+weird thing in kernel/tracing/, hopefully staying limited
+to 20 seconds of glancing through several functions in your
+code.
+
+Don't Do That.  Really.
