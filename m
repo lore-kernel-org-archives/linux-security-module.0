@@ -2,43 +2,43 @@ Return-Path: <SRS0=6Cle=VD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E41C0650E
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 15:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AFAC0650E
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 17:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 214C920838
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 15:39:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C3DF2075B
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 17:14:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zk1xeLOy"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YcI9f/as"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfGFPi7 (ORCPT
+        id S1726800AbfGFROr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 6 Jul 2019 11:38:59 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42032 "EHLO
+        Sat, 6 Jul 2019 13:14:47 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:42406 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfGFPi7 (ORCPT
+        with ESMTP id S1726712AbfGFROr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 6 Jul 2019 11:38:59 -0400
+        Sat, 6 Jul 2019 13:14:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=7TQwAzn0J5EXLc+BbiWf8v/R95Wdjh5+dxrOc78SyBQ=; b=zk1xeLOyXqj8CUdxCMPGb5v4O6
-        7hsXykVY8BfzjRyGPWIiYyGMnVxn3mN2H9t48yfsDQr2b0t2KsCupiuMaoV3qjEeKnUyIetD1fE5E
-        1Ku0V7rf+tU/MCbArHAkSOmlGc/Zj0/pjuIp/N7qSWFohv/1Pkif4/dN2NQDN2MymGp3euW92NUIA
-        Mc7fJimKvdws8bLQFAm3bwYo9fNSCQAO+C59n98FSTLsk4D/TjJWDbVVoGYXBWP/337wSBHKhUnQL
-        3AFwOHHBGkPtXaEz8acl3Bi2LmaUZZCeImDaFYoBAUz0uGii+Nb43uWaZlXeqb7euZPHBZ9uKr4+7
-        n448kLpw==;
+        bh=SxTT+EWBfYSwQj+6DsnQ7bR1Cw0W2AhS76xH8+vQQCU=; b=YcI9f/asf/DFbMw8T+yspybRM8
+        lhteGuiOCnRNdrnbFgrtWoNM1gI66Mog3qM9y8hn9atK6b9/8WszRUipYCOdMzMtzRc4PuixYVCTz
+        C00vj+2SIZ3O2NAvwlVW5ZvymAVxQDAqZcBURUob2vqwKPtaPBlgewGpnKGNe1+98dmCLfMEZ7giP
+        l0XJn/zwfute5OFLgywTYAibtTppUhL4FmNoPHZFJ1FeXOWkLMBJXLyySt8nYdIbN55m6g7xrQG4C
+        T6hIbeSLkSZX5ORKAYDgSGCJITFtMXhD2Vs1tCeJ5fFkxAgWTez6ZA2ogzAK13+MgHDVaQAkWfrzw
+        6Vqv62Yw==;
 Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
         by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hjmlu-0001Aq-7U; Sat, 06 Jul 2019 15:38:42 +0000
-Subject: Re: [PATCH v5 06/12] S.A.R.A.: WX protection
+        id 1hjoGZ-0001vH-6M; Sat, 06 Jul 2019 17:14:27 +0000
+Subject: Re: [PATCH v5 01/12] S.A.R.A.: add documentation
 To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>,
         linux-kernel@vger.kernel.org
 Cc:     kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
@@ -54,14 +54,14 @@ Cc:     kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Thomas Gleixner <tglx@linutronix.de>
 References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
- <1562410493-8661-7-git-send-email-s.mesoraca16@gmail.com>
+ <1562410493-8661-2-git-send-email-s.mesoraca16@gmail.com>
 From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <fcbf55e9-78dc-fb1a-e893-4fea8ebdc202@infradead.org>
-Date:   Sat, 6 Jul 2019 08:38:39 -0700
+Message-ID: <4d943e67-2e81-93fa-d3f9-e3877403b94d@infradead.org>
+Date:   Sat, 6 Jul 2019 10:14:24 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <1562410493-8661-7-git-send-email-s.mesoraca16@gmail.com>
+In-Reply-To: <1562410493-8661-2-git-send-email-s.mesoraca16@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,99 +69,151 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi,
+
+Just a few typo fixes (inline).
+
 On 7/6/19 3:54 AM, Salvatore Mesoraca wrote:
-> diff --git a/security/sara/Kconfig b/security/sara/Kconfig
-> index b98cf27..54a96e0 100644
-> --- a/security/sara/Kconfig
-> +++ b/security/sara/Kconfig
-> @@ -60,3 +60,77 @@ config SECURITY_SARA_NO_RUNTIME_ENABLE
->  
->  	  If unsure, answer Y.
->  
-> +config SECURITY_SARA_WXPROT
-> +	bool "WX Protection: W^X and W!->X protections"
-> +	depends on SECURITY_SARA
-> +	default y
-> +	help
-> +	  WX Protection aims to improve user-space programs security by applying:
-> +	    - W^X memory restriction
-> +	    - W!->X (once writable never executable) mprotect restriction
-> +	    - Executable MMAP prevention
-> +	  See Documentation/admin-guide/LSM/SARA.rst. for further information.
+> Adding documentation for S.A.R.A. LSM.
+> 
+> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+> ---
+>  Documentation/admin-guide/LSM/SARA.rst          | 177 ++++++++++++++++++++++++
+>  Documentation/admin-guide/LSM/index.rst         |   1 +
+>  Documentation/admin-guide/kernel-parameters.txt |  24 ++++
+>  3 files changed, 202 insertions(+)
+>  create mode 100644 Documentation/admin-guide/LSM/SARA.rst
+> 
+> diff --git a/Documentation/admin-guide/LSM/SARA.rst b/Documentation/admin-guide/LSM/SARA.rst
+> new file mode 100644
+> index 0000000..fdde04c
+> --- /dev/null
+> +++ b/Documentation/admin-guide/LSM/SARA.rst
+> @@ -0,0 +1,177 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +========
+> +S.A.R.A.
+> +========
+> +
+> +S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux Security
+> +Module that aims to collect heterogeneous security measures, providing a common
+> +interface to manage them.
+> +As of today it consists of one submodule:
+> +
+> +- WX Protection
+> +
+> +
+> +The kernel-space part is complemented by its user-space counterpart: `saractl`
+> +[2]_.
+> +A test suite for WX Protection, called `sara-test` [4]_, is also available.
+> +More information about where to find these tools and the full S.A.R.A.
+> +documentation are in the `External Links and Documentation`_ section.
+> +
+> +-------------------------------------------------------------------------------
+> +
+> +S.A.R.A.'s Submodules
+> +=====================
+> +
+> +WX Protection
+> +-------------
+> +WX Protection aims to improve user-space programs security by applying:
+> +
+> +- `W^X enforcement`_
+> +- `W!->X (once writable never executable) mprotect restriction`_
+> +- `Executable MMAP prevention`_
+> +
+> +All of the above features can be enabled or disabled both system wide
+> +or on a per executable basis through the use of configuration files managed by
+> +`saractl` [2]_.
+> +
+> +It is important to note that some programs may have issues working with
+> +WX Protection. In particular:
+> +
+> +- **W^X enforcement** will cause problems to any programs that needs
+> +  memory pages mapped both as writable and executable at the same time e.g.
+> +  programs with executable stack markings in the *PT_GNU_STACK* segment.
+> +- **W!->X mprotect restriction** will cause problems to any program that
+> +  needs to generate executable code at run time or to modify executable
+> +  pages e.g. programs with a *JIT* compiler built-in or linked against a
+> +  *non-PIC* library.
+> +- **Executable MMAP prevention** can work only with programs that have at least
+> +  partial *RELRO* support. It's disabled automatically for programs that
+> +  lack this feature. It will cause problems to any program that uses *dlopen*
+> +  or tries to do an executable mmap. Unfortunately this feature is the one
+> +  that could create most problems and should be enabled only after careful
+> +  evaluation.
+> +
+> +To extend the scope of the above features, despite the issues that they may
+> +cause, they are complemented by **/proc/PID/attr/sara/wxprot** interface
+> +and **trampoline emulation**.
+> +
+> +At the moment, WX Protection (unless specified otherwise) should work on
+> +any architecture supporting the NX bit, including, but not limited to:
+> +`x86_64`, `x86_32` (with PAE), `ARM` and `ARM64`.
+> +
+> +Parts of WX Protection are inspired by some of the features available in PaX.
+> +
+> +For further information about configuration file format and user-space
+> +utilities please take a look at the full documentation [1]_.
+> +
+> +W^X enforcement
+> +^^^^^^^^^^^^^^^
+> +W^X means that a program can't have a page of memory that is marked, at the
+> +same time, writable and executable. This also allow to detect many bad
 
-	                                        .rst for further information.
+                                                 allows
 
+> +behaviours that make life much more easy for attackers. Programs running with
+> +this feature enabled will be more difficult to exploit in the case they are
+> +affected by some vulnerabilities, because the attacker will be forced
+> +to make more steps in order to exploit them.
+> +This feature also blocks accesses to /proc/*/mem files that would allow to
+> +write the current process read-only memory, bypassing any protection.
 > +
-> +	  If unsure, answer Y.
+> +W!->X (once writable never executable) mprotect restriction
+> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> +"Once writable never executable" means that any page that could have been
+> +marked as writable in the past won't ever be allowed to be marked (e.g. via
+> +an mprotect syscall) as executable.
+> +This goes on the same track as W^X, but is much stricter and prevents
+> +the runtime creation of new executable code in memory.
+> +Obviously, this feature does not prevent a program from creating a new file and
+> +*mmapping* it as executable, however, it will be way more difficult for
+> +attackers to exploit vulnerabilities if this feature is enabled.
 > +
-> +choice
-> +	prompt "Default action for W^X and W!->X protections"
-> +	depends on SECURITY_SARA
-> +	depends on SECURITY_SARA_WXPROT
-> +	default SECURITY_SARA_WXPROT_DEFAULT_FLAGS_ALL_COMPLAIN_VERBOSE
-> +
-> +        help
+> +Executable MMAP prevention
+> +^^^^^^^^^^^^^^^^^^^^^^^^^^
+> +This feature prevents the creation of new executable mmaps after the dynamic
+> +libraries have been loaded. When used in combination with **W!->X mprotect
+> +restriction** this feature will completely prevent the creation of new
+> +executable code from the current thread.
+> +Obviously, this feature does not prevent cases in which an attacker uses an
+> +*execve* to start a completely new program. This kind of restriction, if
+> +needed, can be applied using one of the other LSM that focuses on MAC.
 
-Use tab instead of spaces for indentation above.
+                                                 LSMs
 
-> +	  Choose the default behaviour of WX Protection when no config
-> +	  rule matches or no rule is loaded.
-> +	  For further information on available flags and their meaning
-> +	  see Documentation/admin-guide/LSM/SARA.rst.
+> +Please be aware that this feature can break many programs and so it should be
+> +enabled after careful evaluation.
 > +
-> +	config SECURITY_SARA_WXPROT_DEFAULT_FLAGS_ALL_COMPLAIN_VERBOSE
-> +		bool "Protections enabled but not enforced."
-> +		help
-> +		  All features enabled except "Executable MMAP prevention",
-> +		  verbose reporting, but no actual enforce: it just complains.
-> +		  Its numeric value is 0x3f, for more information see
-> +		  Documentation/admin-guide/LSM/SARA.rst.
-> +
-> +        config SECURITY_SARA_WXPROT_DEFAULT_FLAGS_ALL_ENFORCE_VERBOSE
-> +		bool "Full protection, verbose."
-> +		help
-> +		  All features enabled except "Executable MMAP prevention".
-> +		  The enabled features will be enforced with verbose reporting.
-> +		  Its numeric value is 0x2f, for more information see
-> +		  Documentation/admin-guide/LSM/SARA.rst.
-> +
-> +        config SECURITY_SARA_WXPROT_DEFAULT_FLAGS_ALL_ENFORCE
-> +		bool "Full protection, quiet."
-> +		help
-> +		  All features enabled except "Executable MMAP prevention".
-> +		  The enabled features will be enforced quietly.
-> +		  Its numeric value is 0xf, for more information see
-> +		  Documentation/admin-guide/LSM/SARA.rst.
-> +
-> +	config SECURITY_SARA_WXPROT_DEFAULT_FLAGS_NONE
-> +		bool "No protection at all."
-> +		help
-> +		  All features disabled.
-> +		  Its numeric value is 0, for more information see
-> +		  Documentation/admin-guide/LSM/SARA.rst.
-> +endchoice
-> +
-> +config SECURITY_SARA_WXPROT_DISABLED
-> +	bool "WX protection will be disabled at boot."
-> +	depends on SECURITY_SARA_WXPROT
-> +	default n
+> +/proc/PID/attr/sara/wxprot interface
+> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> +The `procattr` interface can be used by a thread to discover which
+> +WX Protection features are enabled and/or to tighten them: protection
+> +can't be softened via procattr.
+> +The interface is simple: it's a text file with an hexadecimal
 
-Omit "default n" please.
+                                             with a
 
-> +	help
-> +	  If you say Y here WX protection won't be enabled at startup. You can
-> +	  override this option via user-space utilities or at boot time via
-> +	  "sara.wxprot_enabled=[0|1]" kernel parameter.
-> +
-> +	  If unsure, answer N.
-> +
-> +config SECURITY_SARA_WXPROT_DEFAULT_FLAGS
-> +	hex
-> +	default "0x3f" if SECURITY_SARA_WXPROT_DEFAULT_FLAGS_ALL_COMPLAIN_VERBOSE
-> +	default "0x2f" if SECURITY_SARA_WXPROT_DEFAULT_FLAGS_ALL_ENFORCE_VERBOSE
-> +	default "0xf" if SECURITY_SARA_WXPROT_DEFAULT_FLAGS_ALL_ENFORCE
-> +	default "0" if SECURITY_SARA_WXPROT_DEFAULT_FLAGS_NONE
+> +number in it representing enabled features (more information can be
+> +found in the `Flags values`_ section). Via this interface it is also
+> +possible to perform a complete memory scan to remove the write permission
+> +from pages that are both writable and executable, please note that this
+> +change will also affect other threads of the same process.
 
+[snip]
 
+cheers.
 -- 
 ~Randy
