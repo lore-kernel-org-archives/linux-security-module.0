@@ -2,60 +2,60 @@ Return-Path: <SRS0=6Cle=VD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,GAPPY_SUBJECT,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1C5C0650E
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 10:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BDF9C468AD
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 10:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF9921670
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 10:55:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16B4A21670
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 10:55:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c02v5eGe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kc2cJKhD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbfGFKzN (ORCPT
+        id S1726576AbfGFKzS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 6 Jul 2019 06:55:13 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50400 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbfGFKzM (ORCPT
+        Sat, 6 Jul 2019 06:55:18 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40872 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbfGFKzS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 6 Jul 2019 06:55:12 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v15so1040187wml.0;
-        Sat, 06 Jul 2019 03:55:10 -0700 (PDT)
+        Sat, 6 Jul 2019 06:55:18 -0400
+Received: by mail-wm1-f65.google.com with SMTP id v19so11941179wmj.5;
+        Sat, 06 Jul 2019 03:55:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LSDyibP1XVZpeGT3DZYqEdlxulsdBlWaxtrr4VNl6oY=;
-        b=c02v5eGeCj5HbIEAdudQQjgbzUrq82XXgqCQ02NBUHo1JB4D/SfUo+Z7GnKdKCG/Av
-         1TtgEsaynVkfr+x9paW1rL3z7p2ESzYOOaqNhFI3/QxVW7oCHm6H+PtJF20Bz7JZfP96
-         tvXanRd/k0QIHCtd/nmbdcG4n/dA95D7A8BhmxrBxtmLrkg/W+EbSrV62ApXeI4qX1X+
-         tFRNas3NgtrAATMdKmVNQC/UT5t4rXrFeF7rSbH390TA/WC2eUBLRgq8Z8p/F/YVkew9
-         LJ0Nt0lHbZakmefJNnCwKjtqkdNRKOHI5AA2BtLw7ifnr7IRYZ2GZWFiBYXeytfe6PS+
-         o3dw==
+        bh=tntZg8r5S9LwiMO7vss45dOAl1fEVW4KEshHq7hSndk=;
+        b=kc2cJKhDmxsorvbYBJN4L4LP1TLlMTnFPLFX6zgkZebJ/WsFIMzWWYWhtSgVtP7zMQ
+         0cOB3K0BaSp0V5QtNPW6SGBa+vrt3q/HL19vYWaeS7qrfH+dWKn9nfeK/a+K8xeUEotp
+         5ZmpQDndExIKqNYdSvxCEi9NPZMxIGZK9+ornVkxCqrBSuxArZeonMC6E7vUvtjhX4VT
+         5szWyZvmeouxknBYxB9Wbjm9LbY7t21Y+4zZ9LjC/eMDRTlMMT+GuGm2SSyALI9h5Hng
+         oeLX0GzYFtaj78gVuuV1vufxWfJg/xwaAdrvfKBhwc/EYZdO2fu2pXy4SOCaITR4HIIa
+         gRdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LSDyibP1XVZpeGT3DZYqEdlxulsdBlWaxtrr4VNl6oY=;
-        b=hvNuFwERsR5H+bX+S3G8SfyWtN6//Zw7Tb6o7bEONLnLCpAgy0r2i2I3XHTZNBppzA
-         J8aBREbGvX3ru4kmUnmjXbRDkPb/nOvTTE8izyNdA+ng12t/FpJqAS948vNPKxgnvOJz
-         o6NhbJlEn6IoHsoNI1h3+s3YXoCGbo51fqdc/viVNi301TWMlj0cZbY+awXTaYYGrW6w
-         SOj3jYnrgaozHUJOqlBrN+6jQCUkCCPx7gyRqWH/5drSvtygF0eSAtCXfRM1UWUC37CI
-         HVssfISMNNqbIQQ8D5a/WDJBUKON/kdPfC4tmrLbHOhk/gkDbP4UZmawCokrgtQ1Gcps
-         0thw==
-X-Gm-Message-State: APjAAAU2YPjQEMW7s7Kyucv2lyVf5FykAy2F6NZ5UzmMZffZulDFu1ih
-        Uv19ZiCJMAWVcrkC1blpaDXSOiUE3TaNBw==
-X-Google-Smtp-Source: APXvYqyxuovPbriEIhLSokjppZ1C87fwAjiJaQfHFYTH//jwFs40w+Dju5jKKRQe/vcnd9FsB8CHMA==
-X-Received: by 2002:a7b:c954:: with SMTP id i20mr6912798wml.169.1562410509333;
-        Sat, 06 Jul 2019 03:55:09 -0700 (PDT)
+        bh=tntZg8r5S9LwiMO7vss45dOAl1fEVW4KEshHq7hSndk=;
+        b=NFOL/YE4Wsu5HD9kmsFQn4vHaLaIj7vTd4rEZ6j96+ITKdV2wzd2bF+bCAmMzpp5hU
+         B6n2nGYWWHghWRpT0kz3126s0FC2vdKYti/7KP+bcdjsEWR3ae2Wrf2zps/IsZQkUZw6
+         LgaX2TH4XuEL5ZUg96C0E5zHxzRHArZU9vSKzdk4dqW43OYY9Ek4f6I+jbTeZE7lQU3o
+         FSJrTXKjQhf5l23mFwyjfuoV9XlE8SJC0xAkm5ZUr76+3+VIkJK2dY7xliP3FhKOuEAu
+         7oe64yiT7fRO5EU9ttvx8g/pwtU2+f9+w8HulDURxvAor1qQeVsGIjps29q/dqxhnMGY
+         6r+w==
+X-Gm-Message-State: APjAAAVV58V274DPlV7EfnwgEU7WyvDrDK5U/6r9yB53nKRRwPQHnVfJ
+        X8Bbc4A4tug5Fv+ow4MmemQwnOHpv1Qm1g==
+X-Google-Smtp-Source: APXvYqyT5FvHevvfORCP5Opw4y7yO1x8K1YKmTYR/PUKpHFg48nVRxzDqlQiuBD7tLbShBXcjqdbVA==
+X-Received: by 2002:a1c:b706:: with SMTP id h6mr7598997wmf.119.1562410514962;
+        Sat, 06 Jul 2019 03:55:14 -0700 (PDT)
 Received: from localhost (net-93-71-3-102.cust.vodafonedsl.it. [93.71.3.102])
-        by smtp.gmail.com with ESMTPSA id h11sm12578794wrx.93.2019.07.06.03.55.08
+        by smtp.gmail.com with ESMTPSA id h11sm12578794wrx.93.2019.07.06.03.55.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 06 Jul 2019 03:55:08 -0700 (PDT)
+        Sat, 06 Jul 2019 03:55:14 -0700 (PDT)
 From:   Salvatore Mesoraca <s.mesoraca16@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
@@ -71,9 +71,9 @@ Cc:     kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v5 01/12] S.A.R.A.: add documentation
-Date:   Sat,  6 Jul 2019 12:54:42 +0200
-Message-Id: <1562410493-8661-2-git-send-email-s.mesoraca16@gmail.com>
+Subject: [PATCH v5 03/12] S.A.R.A.: cred blob management
+Date:   Sat,  6 Jul 2019 12:54:44 +0200
+Message-Id: <1562410493-8661-4-git-send-email-s.mesoraca16@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
 References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
@@ -81,243 +81,228 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Adding documentation for S.A.R.A. LSM.
+Creation of the S.A.R.A. cred blob management "API".
+In order to allow S.A.R.A. to be stackable with other LSMs, it doesn't use
+the "security" field of struct cred, instead it uses an ad hoc field named
+security_sara.
+This solution is probably not acceptable for upstream, so this part will
+be modified as soon as the LSM stackable cred blob management will be
+available.
 
 Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 ---
- Documentation/admin-guide/LSM/SARA.rst          | 177 ++++++++++++++++++++++++
- Documentation/admin-guide/LSM/index.rst         |   1 +
- Documentation/admin-guide/kernel-parameters.txt |  24 ++++
- 3 files changed, 202 insertions(+)
- create mode 100644 Documentation/admin-guide/LSM/SARA.rst
+ security/sara/Makefile            |  2 +-
+ security/sara/include/sara_data.h | 84 +++++++++++++++++++++++++++++++++++++++
+ security/sara/main.c              |  7 ++++
+ security/sara/sara_data.c         | 69 ++++++++++++++++++++++++++++++++
+ 4 files changed, 161 insertions(+), 1 deletion(-)
+ create mode 100644 security/sara/include/sara_data.h
+ create mode 100644 security/sara/sara_data.c
 
-diff --git a/Documentation/admin-guide/LSM/SARA.rst b/Documentation/admin-guide/LSM/SARA.rst
+diff --git a/security/sara/Makefile b/security/sara/Makefile
+index 8acd291..14bf7a8 100644
+--- a/security/sara/Makefile
++++ b/security/sara/Makefile
+@@ -1,3 +1,3 @@
+ obj-$(CONFIG_SECURITY_SARA) := sara.o
+ 
+-sara-y := main.o securityfs.o utils.o
++sara-y := main.o securityfs.o utils.o sara_data.o
+diff --git a/security/sara/include/sara_data.h b/security/sara/include/sara_data.h
 new file mode 100644
-index 0000000..fdde04c
+index 0000000..9216c47
 --- /dev/null
-+++ b/Documentation/admin-guide/LSM/SARA.rst
-@@ -0,0 +1,177 @@
-+.. SPDX-License-Identifier: GPL-2.0
++++ b/security/sara/include/sara_data.h
+@@ -0,0 +1,84 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
-+========
-+S.A.R.A.
-+========
++/*
++ * S.A.R.A. Linux Security Module
++ *
++ * Copyright (C) 2017 Salvatore Mesoraca <s.mesoraca16@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2, as
++ * published by the Free Software Foundation.
++ *
++ */
 +
-+S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux Security
-+Module that aims to collect heterogeneous security measures, providing a common
-+interface to manage them.
-+As of today it consists of one submodule:
++#ifndef __SARA_DATA_H
++#define __SARA_DATA_H
 +
-+- WX Protection
++#include <linux/cred.h>
++#include <linux/init.h>
++#include <linux/lsm_hooks.h>
++#include <linux/spinlock.h>
++
++int sara_data_init(void) __init;
++
++extern struct lsm_blob_sizes sara_blob_sizes __lsm_ro_after_init;
++
++#ifdef CONFIG_SECURITY_SARA_WXPROT
++
++struct sara_data {
++	unsigned long	relro_page;
++	struct file	*relro_file;
++	u16		wxp_flags;
++	u16		execve_flags;
++	bool		relro_page_found;
++	bool		mmap_blocked;
++};
++
++struct sara_shm_data {
++	bool		no_exec;
++	bool		no_write;
++	spinlock_t	lock;
++};
 +
 +
-+The kernel-space part is complemented by its user-space counterpart: `saractl`
-+[2]_.
-+A test suite for WX Protection, called `sara-test` [4]_, is also available.
-+More information about where to find these tools and the full S.A.R.A.
-+documentation are in the `External Links and Documentation`_ section.
++static inline struct sara_data *get_sara_data(const struct cred *cred)
++{
++	return cred->security + sara_blob_sizes.lbs_cred;
++}
 +
-+-------------------------------------------------------------------------------
++#define get_current_sara_data() get_sara_data(current_cred())
 +
-+S.A.R.A.'s Submodules
-+=====================
++#define get_sara_wxp_flags(X) (get_sara_data((X))->wxp_flags)
++#define get_current_sara_wxp_flags() get_sara_wxp_flags(current_cred())
 +
-+WX Protection
-+-------------
-+WX Protection aims to improve user-space programs security by applying:
++#define get_sara_execve_flags(X) (get_sara_data((X))->execve_flags)
++#define get_current_sara_execve_flags() get_sara_execve_flags(current_cred())
 +
-+- `W^X enforcement`_
-+- `W!->X (once writable never executable) mprotect restriction`_
-+- `Executable MMAP prevention`_
++#define get_sara_relro_page(X) (get_sara_data((X))->relro_page)
++#define get_current_sara_relro_page() get_sara_relro_page(current_cred())
 +
-+All of the above features can be enabled or disabled both system wide
-+or on a per executable basis through the use of configuration files managed by
-+`saractl` [2]_.
++#define get_sara_relro_file(X) (get_sara_data((X))->relro_file)
++#define get_current_sara_relro_file() get_sara_relro_file(current_cred())
 +
-+It is important to note that some programs may have issues working with
-+WX Protection. In particular:
++#define get_sara_relro_page_found(X) (get_sara_data((X))->relro_page_found)
++#define get_current_sara_relro_page_found() \
++	get_sara_relro_page_found(current_cred())
 +
-+- **W^X enforcement** will cause problems to any programs that needs
-+  memory pages mapped both as writable and executable at the same time e.g.
-+  programs with executable stack markings in the *PT_GNU_STACK* segment.
-+- **W!->X mprotect restriction** will cause problems to any program that
-+  needs to generate executable code at run time or to modify executable
-+  pages e.g. programs with a *JIT* compiler built-in or linked against a
-+  *non-PIC* library.
-+- **Executable MMAP prevention** can work only with programs that have at least
-+  partial *RELRO* support. It's disabled automatically for programs that
-+  lack this feature. It will cause problems to any program that uses *dlopen*
-+  or tries to do an executable mmap. Unfortunately this feature is the one
-+  that could create most problems and should be enabled only after careful
-+  evaluation.
++#define get_sara_mmap_blocked(X) (get_sara_data((X))->mmap_blocked)
++#define get_current_sara_mmap_blocked() get_sara_mmap_blocked(current_cred())
 +
-+To extend the scope of the above features, despite the issues that they may
-+cause, they are complemented by **/proc/PID/attr/sara/wxprot** interface
-+and **trampoline emulation**.
 +
-+At the moment, WX Protection (unless specified otherwise) should work on
-+any architecture supporting the NX bit, including, but not limited to:
-+`x86_64`, `x86_32` (with PAE), `ARM` and `ARM64`.
++static inline struct sara_shm_data *get_sara_shm_data(
++					const struct kern_ipc_perm *ipc)
++{
++	return ipc->security + sara_blob_sizes.lbs_ipc;
++}
 +
-+Parts of WX Protection are inspired by some of the features available in PaX.
++#define get_sara_shm_no_exec(X) (get_sara_shm_data((X))->no_exec)
++#define get_sara_shm_no_write(X) (get_sara_shm_data((X))->no_write)
++#define lock_sara_shm(X) (spin_lock(&get_sara_shm_data((X))->lock))
++#define unlock_sara_shm(X) (spin_unlock(&get_sara_shm_data((X))->lock))
 +
-+For further information about configuration file format and user-space
-+utilities please take a look at the full documentation [1]_.
++#endif
 +
-+W^X enforcement
-+^^^^^^^^^^^^^^^
-+W^X means that a program can't have a page of memory that is marked, at the
-+same time, writable and executable. This also allow to detect many bad
-+behaviours that make life much more easy for attackers. Programs running with
-+this feature enabled will be more difficult to exploit in the case they are
-+affected by some vulnerabilities, because the attacker will be forced
-+to make more steps in order to exploit them.
-+This feature also blocks accesses to /proc/*/mem files that would allow to
-+write the current process read-only memory, bypassing any protection.
-+
-+W!->X (once writable never executable) mprotect restriction
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+"Once writable never executable" means that any page that could have been
-+marked as writable in the past won't ever be allowed to be marked (e.g. via
-+an mprotect syscall) as executable.
-+This goes on the same track as W^X, but is much stricter and prevents
-+the runtime creation of new executable code in memory.
-+Obviously, this feature does not prevent a program from creating a new file and
-+*mmapping* it as executable, however, it will be way more difficult for
-+attackers to exploit vulnerabilities if this feature is enabled.
-+
-+Executable MMAP prevention
-+^^^^^^^^^^^^^^^^^^^^^^^^^^
-+This feature prevents the creation of new executable mmaps after the dynamic
-+libraries have been loaded. When used in combination with **W!->X mprotect
-+restriction** this feature will completely prevent the creation of new
-+executable code from the current thread.
-+Obviously, this feature does not prevent cases in which an attacker uses an
-+*execve* to start a completely new program. This kind of restriction, if
-+needed, can be applied using one of the other LSM that focuses on MAC.
-+Please be aware that this feature can break many programs and so it should be
-+enabled after careful evaluation.
-+
-+/proc/PID/attr/sara/wxprot interface
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+The `procattr` interface can be used by a thread to discover which
-+WX Protection features are enabled and/or to tighten them: protection
-+can't be softened via procattr.
-+The interface is simple: it's a text file with an hexadecimal
-+number in it representing enabled features (more information can be
-+found in the `Flags values`_ section). Via this interface it is also
-+possible to perform a complete memory scan to remove the write permission
-+from pages that are both writable and executable, please note that this
-+change will also affect other threads of the same process.
-+
-+Protections that prevent the runtime creation of executable code
-+can be troublesome for all those programs that actually need to do it
-+e.g. programs shipping with a JIT compiler built-in.
-+This feature can be use to run the JIT compiler with few restrictions
-+while enforcing full WX Protection in the rest of the program.
-+
-+The preferred way to access this interface is via `libsara` [3]_.
-+If you don't want it as a dependency, you can just statically link it
-+in your project or copy/paste parts of it.
-+To make things simpler `libsara` is the only part of S.A.R.A. released under
-+*CC0 - No Rights Reserved* license.
-+
-+Trampoline emulation
-+^^^^^^^^^^^^^^^^^^^^
-+Some programs need to generate part of their code at runtime. Luckily enough,
-+in some cases they only generate well-known code sequences (the
-+*trampolines*) that can be easily recognized and emulated by the kernel.
-+This way WX Protection can still be active, so a potential attacker won't be
-+able to generate arbitrary sequences of code, but just those that are
-+explicitly allowed. This is not ideal, but it's still better than having WX
-+Protection completely disabled.
-+
-+In particular S.A.R.A. is able to recognize trampolines used by GCC for nested
-+C functions and libffi's trampolines.
-+This feature is available only on `x86_32` and `x86_64`.
-+
-+Flags values
-+^^^^^^^^^^^^
-+Flags are represented as a 16 bit unsigned integer in which every bit indicates
-+the status of a given feature:
-+
-++------------------------------+----------+
-+|           Feature            |  Value   |
-++==============================+==========+
-+| W!->X Heap                   |  0x0001  |
-++------------------------------+----------+
-+| W!->X Stack                  |  0x0002  |
-++------------------------------+----------+
-+| W!->X Other memory           |  0x0004  |
-++------------------------------+----------+
-+| W^X                          |  0x0008  |
-++------------------------------+----------+
-+| Don't enforce, just complain |  0x0010  |
-++------------------------------+----------+
-+| Be Verbose                   |  0x0020  |
-++------------------------------+----------+
-+| Executable MMAP prevention   |  0x0040  |
-++------------------------------+----------+
-+| Force W^X on setprocattr     |  0x0080  |
-++------------------------------+----------+
-+| Trampoline emulation         |  0x0100  |
-++------------------------------+----------+
-+| Children will inherit flags  |  0x0200  |
-++------------------------------+----------+
-+
-+-------------------------------------------------------------------------------
-+
-+External Links and Documentation
-+================================
-+
-+.. [1] `Documentation	<https://sara.smeso.it>`_
-+.. [2] `saractl		<https://github.com/smeso/saractl>`_
-+.. [3] `libsara		<https://github.com/smeso/libsara>`_
-+.. [4] `sara-test	<https://github.com/smeso/sara-test>`_
-diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-index a6ba95f..81b50e4 100644
---- a/Documentation/admin-guide/LSM/index.rst
-+++ b/Documentation/admin-guide/LSM/index.rst
-@@ -47,3 +47,4 @@ subdirectories.
-    tomoyo
-    Yama
-    SafeSetID
-+   SARA
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 138f666..3d6e86d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4230,6 +4230,30 @@
- 			1 -- enable.
- 			Default value is set via kernel config option.
++#endif /* __SARA_H */
+diff --git a/security/sara/main.c b/security/sara/main.c
+index 52e6d18..dc5dda4 100644
+--- a/security/sara/main.c
++++ b/security/sara/main.c
+@@ -18,6 +18,7 @@
+ #include <linux/printk.h>
  
-+	sara.enabled=	[SARA] Disable or enable S.A.R.A. at boot time.
-+			If disabled this way S.A.R.A. can't be enabled
-+			again.
-+			Format: { "0" | "1" }
-+			See security/sara/Kconfig help text
-+			0 -- disable.
-+			1 -- enable.
-+			Default value is set via kernel config option.
-+
-+	sara.wxprot_enabled= [SARA]
-+			Disable or enable S.A.R.A. WX Protection
-+			at boot time.
-+			Format: { "0" | "1" }
-+			See security/sara/Kconfig help text
-+			0 -- disable.
-+			1 -- enable.
-+			Default value is set via kernel config option.
-+
-+	sara.wxprot_default_flags= [SARA]
-+			Set S.A.R.A. WX Protection default flags.
-+			Format: <integer>
-+			See S.A.R.A. documentation.
-+			Default value is set via kernel config option.
-+
- 	serialnumber	[BUGS=X86-32]
+ #include "include/sara.h"
++#include "include/sara_data.h"
+ #include "include/securityfs.h"
  
- 	shapers=	[NET]
+ static const int sara_version = SARA_VERSION;
+@@ -93,6 +94,11 @@ static int __init sara_init(void)
+ 		goto error;
+ 	}
+ 
++	if (sara_data_init()) {
++		pr_crit("impossible to initialize creds.\n");
++		goto error;
++	}
++
+ 	pr_debug("initialized.\n");
+ 
+ 	if (sara_enabled)
+@@ -112,4 +118,5 @@ static int __init sara_init(void)
+ 	.name = "sara",
+ 	.enabled = &sara_enabled,
+ 	.init = sara_init,
++	.blobs = &sara_blob_sizes,
+ };
+diff --git a/security/sara/sara_data.c b/security/sara/sara_data.c
+new file mode 100644
+index 0000000..9afca37
+--- /dev/null
++++ b/security/sara/sara_data.c
+@@ -0,0 +1,69 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * S.A.R.A. Linux Security Module
++ *
++ * Copyright (C) 2017 Salvatore Mesoraca <s.mesoraca16@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2, as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include "include/sara_data.h"
++
++#ifdef CONFIG_SECURITY_SARA_WXPROT
++#include <linux/cred.h>
++#include <linux/lsm_hooks.h>
++#include <linux/mm.h>
++#include <linux/spinlock.h>
++
++static int sara_cred_prepare(struct cred *new, const struct cred *old,
++			     gfp_t gfp)
++{
++	*get_sara_data(new) = *get_sara_data(old);
++	return 0;
++}
++
++static void sara_cred_transfer(struct cred *new, const struct cred *old)
++{
++	*get_sara_data(new) = *get_sara_data(old);
++}
++
++static int sara_shm_alloc_security(struct kern_ipc_perm *shp)
++{
++	struct sara_shm_data *d;
++
++	d = get_sara_shm_data(shp);
++	spin_lock_init(&d->lock);
++	return 0;
++}
++
++static struct security_hook_list data_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(cred_prepare, sara_cred_prepare),
++	LSM_HOOK_INIT(cred_transfer, sara_cred_transfer),
++	LSM_HOOK_INIT(shm_alloc_security, sara_shm_alloc_security),
++};
++
++struct lsm_blob_sizes sara_blob_sizes __lsm_ro_after_init = {
++	.lbs_cred = sizeof(struct sara_data),
++	.lbs_ipc = sizeof(struct sara_shm_data),
++};
++
++int __init sara_data_init(void)
++{
++	security_add_hooks(data_hooks, ARRAY_SIZE(data_hooks), "sara");
++	return 0;
++}
++
++#else /* CONFIG_SECURITY_SARA_WXPROT */
++
++struct lsm_blob_sizes sara_blob_sizes __lsm_ro_after_init = { };
++
++int __init sara_data_init(void)
++{
++	return 0;
++}
++
++#endif
 -- 
 1.9.1
 
