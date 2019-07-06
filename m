@@ -2,101 +2,105 @@ Return-Path: <SRS0=6Cle=VD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,GAPPY_SUBJECT,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A69D7C0650E
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 15:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E496C0650E
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 15:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 713FD20856
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 15:02:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB13120828
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 15:07:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rh/FqlVe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ezTkUV/E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfGFPC7 (ORCPT
+        id S1726522AbfGFPHz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 6 Jul 2019 11:02:59 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33430 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbfGFPC6 (ORCPT
+        Sat, 6 Jul 2019 11:07:55 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40177 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfGFPHz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 6 Jul 2019 11:02:58 -0400
-Received: by mail-io1-f65.google.com with SMTP id z3so10309553iog.0;
-        Sat, 06 Jul 2019 08:02:58 -0700 (PDT)
+        Sat, 6 Jul 2019 11:07:55 -0400
+Received: by mail-wr1-f67.google.com with SMTP id r1so6310078wrl.7;
+        Sat, 06 Jul 2019 08:07:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=boVbp9ZUpDsf//+FdnJqiUZCUcTK245wDcHd7jIjrpY=;
-        b=rh/FqlVekhxhsGpxulSZ7913KgIi6gqoFF4i/RNbOKBumEHd/qP8oFyX+UMcwSBJ/K
-         eJbwXN4Ov/ueoIt4Oyi19u68UVz6gWVl32e1YjWfUsFB+HhwINCxXsiVdhbRDT3gbdiG
-         5ibSk2q5E+W34FIfKzIclMIaC9eqyeGf8flkt1UTZCjuuU8xyABLpmZVy9kQW38Wcd47
-         gAN4OKTn4B+qQpI+Fdb0r7ze2FAi8FFmV7f4mtLyNxY5j9rWNMTHzsbte1amZOAaiclM
-         2DjSHrq+GVNYO2PJo+dpnRZ5GGJt2TrAWtORL250xGp3SE0C7nVC/Ze8vY2ybOEgpvg+
-         BqLA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tE4puqQe9l5hi2kIxH8qoaAWvN8GSQBOzxrdLq5HQzk=;
+        b=ezTkUV/E0+T8fEImE2ehAsd6CleldbKYG5rblHKEw+EjEyKJJQOMRfedt6/OE1W0u8
+         aVIG+iQkSkaRzm2juFbdeVO1uIVczDBZWuVnfIdzvMZc+GY7R8nR4OTW50xyI43LG0yS
+         RqLp9KbYd6Lcbx8qCPEMQLQidkB8bZ1VFmHGPBROjIOdFbtmmi5RNx4mx8od9+raiP8Z
+         104H0LwrvkraImbIzxXWktr1ZzuDa4mgS+0fBOnkj17v6zb5pUZsb5V5esvPq2B5rzAS
+         j8+5qQNgv5IqAA94LyKwOlPDF+eAMNRx5bMdjrvOnjpEwZPYMEXUPZbRHtD7zxt7Vo/T
+         Ag3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=boVbp9ZUpDsf//+FdnJqiUZCUcTK245wDcHd7jIjrpY=;
-        b=fYMW63wembzSsVmxR1Qp9N40c3unn6d74J4+2hs8Z82IfJx1tRGkmXaMUsjZiljgqh
-         +/OvIBhgqjHaM1gkHDtaDC+0NXe3FfXX+bqVNVp3PsjaA8+uAUHU0czdW2Onl2nU3ZQi
-         Qb2u5hWWuVk077GHGu3Ep1wUFyx5lEfv2YlyLZY02KBZEUWycqqK+DMFm1DFuRjxlz6q
-         D3BwT+1ROFbuCLn8ypVcSF99VqoEOQkm9AbQvHB0V3Yl3apABl6IN0S1Dai/n0gXiw5G
-         eBoLtj3Hd1ec9SQAOWKNHCOpsXVdFaZA/hHXH5gQv5fFF1SmSDgns66CJzU+xOgp81Tl
-         A/Uw==
-X-Gm-Message-State: APjAAAWEPXzlvpVZUFCJ/ZXOQyiXoY+aGQkDzrc3M+TkiOq6RQ+zUMVP
-        sSA4c7zhE7ZwYS53yZtFpQFLe4RQfHtn/+DbiwQ=
-X-Google-Smtp-Source: APXvYqy2UcPtMHw6LxYEegmwXcbc6qsKnlfXOceq6+ohw3DYNqy1gXgyu+nij430oPjMdmSFDPXMk206/IR43gK04QA=
-X-Received: by 2002:a02:b710:: with SMTP id g16mr10876342jam.88.1562425378023;
- Sat, 06 Jul 2019 08:02:58 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tE4puqQe9l5hi2kIxH8qoaAWvN8GSQBOzxrdLq5HQzk=;
+        b=N+h6+vpD1cYaXAWazOYE5SRJv5E6gPiF/fwK8tC2MTxQIHNdBP+YjSjRb5sKrzXiD2
+         TYTHyQBjAiZ7ZiNcqNsqIaOzzhZNZKDS6BrPzZpaNPAVqTeUFrI4p9vtZu7e2YQFtI4y
+         63lXTWYYJISnszvaNWf5We/XFLMp2BTfpIRZFe7UU0ES/E6J2VRCfjAeKlrfPpMDXyn0
+         Wa5nUbsNd3tW7XKoS3pwdnPnT09xVYsIlMFvMAZtlv5d0ZdOC9D9FSA0oqo+Ef7nuwVl
+         T4iw6q9YqmGiJpMmVL/82Q9RWnhc4otsG0WypJvPuGeWrbYQ6wj+yVNMPIWkZIoQ1X73
+         vyAQ==
+X-Gm-Message-State: APjAAAUU9bMZoVEC2nvta3xvbVl9l3RmLXQyGX37j+njdFfnfQcx/MK0
+        RUUFE6LSBXhLqBFr3L2CfQ0=
+X-Google-Smtp-Source: APXvYqzM/jyg39HKHcy3ojFrcslNwerHo0IJXsAdA7NX6hRYnRxx+h0GDJFGKtrnSUNmCSmIbUvxhw==
+X-Received: by 2002:adf:f591:: with SMTP id f17mr9687738wro.119.1562425672512;
+        Sat, 06 Jul 2019 08:07:52 -0700 (PDT)
+Received: from localhost.localdomain (bzq-79-183-250-21.red.bezeqint.net. [79.183.250.21])
+        by smtp.gmail.com with ESMTPSA id y10sm8464830wmj.2.2019.07.06.08.07.51
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 06 Jul 2019 08:07:51 -0700 (PDT)
+From:   Carmeli Tamir <carmeli.tamir@gmail.com>
+To:     serge@hallyn.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Carmeli Tamir <carmeli.tamir@gmail.com>
+Subject: [PATCH] security/commoncap: Use xattr security prefix len
+Date:   Sat,  6 Jul 2019 11:07:38 -0400
+Message-Id: <20190706150738.4619-1-carmeli.tamir@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com> <HJktY5gtjje4zNNpxEQx_tBd_TRDsjz0-7kL29cMNXFvB_t6KSgOHHXFQef04GQFqCi1Ie3oZFh9DS9_m-70pJtnunZ2XS0UlGxXwK9UcYo=@protonmail.ch>
-In-Reply-To: <HJktY5gtjje4zNNpxEQx_tBd_TRDsjz0-7kL29cMNXFvB_t6KSgOHHXFQef04GQFqCi1Ie3oZFh9DS9_m-70pJtnunZ2XS0UlGxXwK9UcYo=@protonmail.ch>
-From:   Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date:   Sat, 6 Jul 2019 17:02:46 +0200
-Message-ID: <CAJHCu1LVk-3XwZCF=iQzZfbJR0eDn-0VOaipOthYeqknT6VzKQ@mail.gmail.com>
-Subject: Re: [PATCH v5 00/12] S.A.R.A. a new stacked LSM
-To:     Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Brad Spengler <spender@grsecurity.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        PaX Team <pageexec@freemail.hu>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-You are right. I just forgot to remove that paragraph from the cover letter.
-My bad.
-Thank you for noticing that :)
+Using the existing defined XATTR_SECURITY_PREFIX_LEN instead of
+sizeof(XATTR_SECURITY_PREFIX) - 1. Pretty simple cleanup.
 
-Il giorno sab 6 lug 2019 alle ore 16:33 Jordan Glover
-<Golden_Miller83@protonmail.ch> ha scritto:
->
-> On Saturday, July 6, 2019 10:54 AM, Salvatore Mesoraca <s.mesoraca16@gmail.com> wrote:
->
-> > S.A.R.A. is meant to be stacked but it needs cred blobs and the procattr
-> > interface, so I temporarily implemented those parts in a way that won't
-> > be acceptable for upstream, but it works for now. I know that there
-> > is some ongoing work to make cred blobs and procattr stackable, as soon
-> > as the new interfaces will be available I'll reimplement the involved
-> > parts.
->
-> I thought all stacking pieces for minor LSM were merged in Linux 5.1.
-> Is there still something missing or is this comment out-fo-date?
->
-> Jordan
+Signed-off-by: Carmeli Tamir <carmeli.tamir@gmail.com>
+---
+ security/commoncap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/commoncap.c b/security/commoncap.c
+index c0b9664ee49e..99d1fcae22fd 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -915,7 +915,7 @@ int cap_inode_setxattr(struct dentry *dentry, const char *name,
+ 
+ 	/* Ignore non-security xattrs */
+ 	if (strncmp(name, XATTR_SECURITY_PREFIX,
+-			sizeof(XATTR_SECURITY_PREFIX) - 1) != 0)
++			XATTR_SECURITY_PREFIX_LEN) != 0)
+ 		return 0;
+ 
+ 	/*
+@@ -947,7 +947,7 @@ int cap_inode_removexattr(struct dentry *dentry, const char *name)
+ 
+ 	/* Ignore non-security xattrs */
+ 	if (strncmp(name, XATTR_SECURITY_PREFIX,
+-			sizeof(XATTR_SECURITY_PREFIX) - 1) != 0)
++			XATTR_SECURITY_PREFIX_LEN) != 0)
+ 		return 0;
+ 
+ 	if (strcmp(name, XATTR_NAME_CAPS) == 0) {
+-- 
+2.21.0
+
