@@ -2,47 +2,68 @@ Return-Path: <SRS0=6Cle=VD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,GAPPY_SUBJECT,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AFAC0650E
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 17:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF643C0650E
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 17:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3DF2075B
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 17:14:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B8CF20836
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jul 2019 17:32:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YcI9f/as"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWzW0LYp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfGFROr (ORCPT
+        id S1726876AbfGFRc5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 6 Jul 2019 13:14:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42406 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726712AbfGFROr (ORCPT
+        Sat, 6 Jul 2019 13:32:57 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41146 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726743AbfGFRc4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 6 Jul 2019 13:14:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=SxTT+EWBfYSwQj+6DsnQ7bR1Cw0W2AhS76xH8+vQQCU=; b=YcI9f/asf/DFbMw8T+yspybRM8
-        lhteGuiOCnRNdrnbFgrtWoNM1gI66Mog3qM9y8hn9atK6b9/8WszRUipYCOdMzMtzRc4PuixYVCTz
-        C00vj+2SIZ3O2NAvwlVW5ZvymAVxQDAqZcBURUob2vqwKPtaPBlgewGpnKGNe1+98dmCLfMEZ7giP
-        l0XJn/zwfute5OFLgywTYAibtTppUhL4FmNoPHZFJ1FeXOWkLMBJXLyySt8nYdIbN55m6g7xrQG4C
-        T6hIbeSLkSZX5ORKAYDgSGCJITFtMXhD2Vs1tCeJ5fFkxAgWTez6ZA2ogzAK13+MgHDVaQAkWfrzw
-        6Vqv62Yw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hjoGZ-0001vH-6M; Sat, 06 Jul 2019 17:14:27 +0000
+        Sat, 6 Jul 2019 13:32:56 -0400
+Received: by mail-io1-f68.google.com with SMTP id j5so6379074ioj.8;
+        Sat, 06 Jul 2019 10:32:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SEvZkE5vJAPhuJRsrqZsuhS+PD5Zgh6qAYTfG4/9RWg=;
+        b=nWzW0LYp8W1LDGaS//1OA1RobxIc5VU0heFAxlgRyqaRrd+E2vAbJ4IWUqPpzxC2NP
+         bKxbljkcUx7zP1VqQoZ//yBYx5ZTuHeYNIf4AayhBSngZ3bQdhLc/WHHnhKGTTJLvjS6
+         93hrs6Cmz8+cxn3rWw4bx5pAEk8hwA/RlID/aaMy9V1EtaLHrJil1i9raoOLYqwLqkab
+         UVl8m8aB3oFCRjd8RLByYm/s1DnzV+V9DBXfXeS8YRUtWDdyroDxYWReVoDcXVz7Tub9
+         PRKECViw+UqsNKcfLdE9qKgy5flzI/E4UCiF1ey1IluSuOVuvdYTTkNK7mVigb7uFnfw
+         mBQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SEvZkE5vJAPhuJRsrqZsuhS+PD5Zgh6qAYTfG4/9RWg=;
+        b=hurjETG1Wn3klWj2Y3zRUeVMFFOoU6D5TixAycHrBNypTCAgYkvb74rkszRJPsZDkS
+         jbGY5iwxZNFArvqt6xTNhpsrQHAc9L4HLHrw8+WGygJ6JmDJ9ctTKSZ82Xj+/s2Wjdtd
+         l2Iao5Slrg4OBkWZVHRAhjuwdXXMVUqenfMkze2c2k6ZAIxIGYh8UdXz8pQ8/7rS8thc
+         LS7RG+oeKO/tZmJzPj6Z3geFVxuL+F/hcxwXzvZJp89obUKmNzqzPqvhuNE47w50k7Vf
+         hJO1196VRs7WwuTpYRftfOvl761Z3j3ZiKsgZV6hRrq2/35ML0LoX3t4bb1M9o/a/fAa
+         mU5g==
+X-Gm-Message-State: APjAAAUtepsDvNoGFKmyERkIGxcxF7/TBVd3RA8TvG4CCwaOH5IHQ8kx
+        /kbHhh5hBaSYYNAWIHJo6ax2Ro2Le9F2yobYfOs=
+X-Google-Smtp-Source: APXvYqyZhsWPUJypEBlw3iOzCCnc0Z8Ysl6psPw4ayKhk+owN6/VPWptNgnm20i2NBMKtNRWNVS5yDY40eR5lXoOP6Y=
+X-Received: by 2002:a5d:940b:: with SMTP id v11mr2834210ion.69.1562434375888;
+ Sat, 06 Jul 2019 10:32:55 -0700 (PDT)
+MIME-Version: 1.0
+References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
+ <1562410493-8661-2-git-send-email-s.mesoraca16@gmail.com> <4d943e67-2e81-93fa-d3f9-e3877403b94d@infradead.org>
+In-Reply-To: <4d943e67-2e81-93fa-d3f9-e3877403b94d@infradead.org>
+From:   Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Date:   Sat, 6 Jul 2019 19:32:44 +0200
+Message-ID: <CAJHCu1+hmA6cPH78KArA2PYwWcTy6US3Ja5XcNVy1bkamddjfQ@mail.gmail.com>
 Subject: Re: [PATCH v5 01/12] S.A.R.A.: add documentation
-To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>,
-        linux-kernel@vger.kernel.org
-Cc:     kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Brad Spengler <spender@grsecurity.net>,
         Casey Schaufler <casey@schaufler-ca.com>,
@@ -53,167 +74,21 @@ Cc:     kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         PaX Team <pageexec@freemail.hu>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Thomas Gleixner <tglx@linutronix.de>
-References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
- <1562410493-8661-2-git-send-email-s.mesoraca16@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4d943e67-2e81-93fa-d3f9-e3877403b94d@infradead.org>
-Date:   Sat, 6 Jul 2019 10:14:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <1562410493-8661-2-git-send-email-s.mesoraca16@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> Hi,
+>
+> Just a few typo fixes (inline).
 
-Just a few typo fixes (inline).
+Hi Randy,
+thank you for your help!
+I'll address these and the other fixes in the next version of the patchset.
 
-On 7/6/19 3:54 AM, Salvatore Mesoraca wrote:
-> Adding documentation for S.A.R.A. LSM.
-> 
-> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-> ---
->  Documentation/admin-guide/LSM/SARA.rst          | 177 ++++++++++++++++++++++++
->  Documentation/admin-guide/LSM/index.rst         |   1 +
->  Documentation/admin-guide/kernel-parameters.txt |  24 ++++
->  3 files changed, 202 insertions(+)
->  create mode 100644 Documentation/admin-guide/LSM/SARA.rst
-> 
-> diff --git a/Documentation/admin-guide/LSM/SARA.rst b/Documentation/admin-guide/LSM/SARA.rst
-> new file mode 100644
-> index 0000000..fdde04c
-> --- /dev/null
-> +++ b/Documentation/admin-guide/LSM/SARA.rst
-> @@ -0,0 +1,177 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +========
-> +S.A.R.A.
-> +========
-> +
-> +S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux Security
-> +Module that aims to collect heterogeneous security measures, providing a common
-> +interface to manage them.
-> +As of today it consists of one submodule:
-> +
-> +- WX Protection
-> +
-> +
-> +The kernel-space part is complemented by its user-space counterpart: `saractl`
-> +[2]_.
-> +A test suite for WX Protection, called `sara-test` [4]_, is also available.
-> +More information about where to find these tools and the full S.A.R.A.
-> +documentation are in the `External Links and Documentation`_ section.
-> +
-> +-------------------------------------------------------------------------------
-> +
-> +S.A.R.A.'s Submodules
-> +=====================
-> +
-> +WX Protection
-> +-------------
-> +WX Protection aims to improve user-space programs security by applying:
-> +
-> +- `W^X enforcement`_
-> +- `W!->X (once writable never executable) mprotect restriction`_
-> +- `Executable MMAP prevention`_
-> +
-> +All of the above features can be enabled or disabled both system wide
-> +or on a per executable basis through the use of configuration files managed by
-> +`saractl` [2]_.
-> +
-> +It is important to note that some programs may have issues working with
-> +WX Protection. In particular:
-> +
-> +- **W^X enforcement** will cause problems to any programs that needs
-> +  memory pages mapped both as writable and executable at the same time e.g.
-> +  programs with executable stack markings in the *PT_GNU_STACK* segment.
-> +- **W!->X mprotect restriction** will cause problems to any program that
-> +  needs to generate executable code at run time or to modify executable
-> +  pages e.g. programs with a *JIT* compiler built-in or linked against a
-> +  *non-PIC* library.
-> +- **Executable MMAP prevention** can work only with programs that have at least
-> +  partial *RELRO* support. It's disabled automatically for programs that
-> +  lack this feature. It will cause problems to any program that uses *dlopen*
-> +  or tries to do an executable mmap. Unfortunately this feature is the one
-> +  that could create most problems and should be enabled only after careful
-> +  evaluation.
-> +
-> +To extend the scope of the above features, despite the issues that they may
-> +cause, they are complemented by **/proc/PID/attr/sara/wxprot** interface
-> +and **trampoline emulation**.
-> +
-> +At the moment, WX Protection (unless specified otherwise) should work on
-> +any architecture supporting the NX bit, including, but not limited to:
-> +`x86_64`, `x86_32` (with PAE), `ARM` and `ARM64`.
-> +
-> +Parts of WX Protection are inspired by some of the features available in PaX.
-> +
-> +For further information about configuration file format and user-space
-> +utilities please take a look at the full documentation [1]_.
-> +
-> +W^X enforcement
-> +^^^^^^^^^^^^^^^
-> +W^X means that a program can't have a page of memory that is marked, at the
-> +same time, writable and executable. This also allow to detect many bad
+Best,
 
-                                                 allows
-
-> +behaviours that make life much more easy for attackers. Programs running with
-> +this feature enabled will be more difficult to exploit in the case they are
-> +affected by some vulnerabilities, because the attacker will be forced
-> +to make more steps in order to exploit them.
-> +This feature also blocks accesses to /proc/*/mem files that would allow to
-> +write the current process read-only memory, bypassing any protection.
-> +
-> +W!->X (once writable never executable) mprotect restriction
-> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> +"Once writable never executable" means that any page that could have been
-> +marked as writable in the past won't ever be allowed to be marked (e.g. via
-> +an mprotect syscall) as executable.
-> +This goes on the same track as W^X, but is much stricter and prevents
-> +the runtime creation of new executable code in memory.
-> +Obviously, this feature does not prevent a program from creating a new file and
-> +*mmapping* it as executable, however, it will be way more difficult for
-> +attackers to exploit vulnerabilities if this feature is enabled.
-> +
-> +Executable MMAP prevention
-> +^^^^^^^^^^^^^^^^^^^^^^^^^^
-> +This feature prevents the creation of new executable mmaps after the dynamic
-> +libraries have been loaded. When used in combination with **W!->X mprotect
-> +restriction** this feature will completely prevent the creation of new
-> +executable code from the current thread.
-> +Obviously, this feature does not prevent cases in which an attacker uses an
-> +*execve* to start a completely new program. This kind of restriction, if
-> +needed, can be applied using one of the other LSM that focuses on MAC.
-
-                                                 LSMs
-
-> +Please be aware that this feature can break many programs and so it should be
-> +enabled after careful evaluation.
-> +
-> +/proc/PID/attr/sara/wxprot interface
-> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> +The `procattr` interface can be used by a thread to discover which
-> +WX Protection features are enabled and/or to tighten them: protection
-> +can't be softened via procattr.
-> +The interface is simple: it's a text file with an hexadecimal
-
-                                             with a
-
-> +number in it representing enabled features (more information can be
-> +found in the `Flags values`_ section). Via this interface it is also
-> +possible to perform a complete memory scan to remove the write permission
-> +from pages that are both writable and executable, please note that this
-> +change will also affect other threads of the same process.
-
-[snip]
-
-cheers.
--- 
-~Randy
+Salvatore
