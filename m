@@ -2,162 +2,181 @@ Return-Path: <SRS0=y5yI=VF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C789C606C1
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 16:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08926C606C2
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 16:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14C2021479
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 16:33:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jy8Ff5Ne"
+	by mail.kernel.org (Postfix) with ESMTP id DFD5221479
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 16:34:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387945AbfGHQbq (ORCPT
+        id S1728204AbfGHQec (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jul 2019 12:31:46 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42975 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfGHQbq (ORCPT
+        Mon, 8 Jul 2019 12:34:32 -0400
+Received: from mga11.intel.com ([192.55.52.93]:53919 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727811AbfGHQec (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jul 2019 12:31:46 -0400
-Received: by mail-lf1-f65.google.com with SMTP id s19so10648127lfb.9
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Jul 2019 09:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3muSErcKEFndhXfaKY3ATCVtuVvwHasHWrKAnKptt3A=;
-        b=jy8Ff5Nekqo/UDsSM6LPdZ1/vxXRxHPPtCQNmrMM9JBSzKLh/D5A49NUn+QH8yxpsN
-         ZcneME9bQ5PEkkfjrJ5FFDXn51FOriVckEKMGfCX2C3b3tapU4Zog43RMlaoakymFFVr
-         8v2hEmD0TJZAZo2mtG7DNytqbW2S69YhcO4m+up5YxpC1iCRYbyIQ5rNjx0uOSmoxkvX
-         JAn9KqrTnU2fCfxIxP3Js5Muakzs0ucaDQ+dNOqm7KGl0mMoAvZd8PteWG2J87NJ6y5T
-         ApLhbzQONg2+flpPM4Evj/KZ0VrvDrl48NOSfNPbN7psuTAsrlP8nOA5fMCMQtkl1YMH
-         J2pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3muSErcKEFndhXfaKY3ATCVtuVvwHasHWrKAnKptt3A=;
-        b=chFAWoctHbdYWbZVBpXq+UZnUsh86uHuBTTpfRn1oC/n/LVP9L6HSTwEdJ5Oqvl9Cd
-         dII+ThjnQhh8+dBLj22UaOdmwB7ff0FcwfV64zC3H0ka9pKFkg6No4HJSdHUJbfoM/vR
-         1gIQYOBzrnZyNv4iFxe3PHvYlLgFxbVxSYsJlWRW2rS4lQoDmliTWwN6Z3IWwzdWbem5
-         sXgIvBD698kP2UfDW3pWxX+rOSZDyctbV1esar4h4E+p2zJKUkEDWr9X5/GXMs74RJl/
-         WFf/MYd3XUpWNRiL15F15LfQIkrq79HtNyDjxcEwtNI59SSXMTDJtSXAGvEZEpcTzLU3
-         qoFQ==
-X-Gm-Message-State: APjAAAWiHXDEnCFLYfSjTF30YKRrgE8JX5zHxQpyvGV4qoQvahWtmlp6
-        T4QIkbx8Ul32e23WFjbvRIdZbMEy1GfJPA==
-X-Google-Smtp-Source: APXvYqxUVvYjuVf39gxQ380dX6pWA86hhvJUjir+HrNiY0cZ5linR0Mbx8/ENcW/g4VOsocx8t9j7Q==
-X-Received: by 2002:a19:5f46:: with SMTP id a6mr9474420lfj.142.1562603504069;
-        Mon, 08 Jul 2019 09:31:44 -0700 (PDT)
-Received: from jax (h-84-105.A175.priv.bahnhof.se. [79.136.84.105])
-        by smtp.gmail.com with ESMTPSA id y5sm3724894ljj.5.2019.07.08.09.31.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Jul 2019 09:31:43 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 18:31:41 +0200
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     corbet@lwn.net, dhowells@redhat.com, jejb@linux.ibm.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, jmorris@namei.org,
-        serge@hallyn.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tee-dev@lists.linaro.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [RFC 0/7] Introduce TEE based Trusted Keys support
-Message-ID: <20190708163140.GB28253@jax>
-References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
- <CAFA6WYPn3HB6BRocKmKTR+ZPE=Fav5w1TUdRgmLp-NkYobp3rw@mail.gmail.com>
+        Mon, 8 Jul 2019 12:34:32 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 09:34:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,466,1557212400"; 
+   d="scan'208";a="248869192"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
+  by orsmga001.jf.intel.com with ESMTP; 08 Jul 2019 09:34:31 -0700
+Date:   Mon, 8 Jul 2019 09:34:31 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: [RFC PATCH v4 04/12] x86/sgx: Require userspace to define
+ enclave pages' protection bits
+Message-ID: <20190708163431.GF20433@linux.intel.com>
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+ <20190619222401.14942-5-sean.j.christopherson@intel.com>
+ <960B34DE67B9E140824F1DCDEC400C0F65518451@ORSMSX116.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFA6WYPn3HB6BRocKmKTR+ZPE=Fav5w1TUdRgmLp-NkYobp3rw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F65518451@ORSMSX116.amr.corp.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Sumit,
-
-On Mon, Jul 08, 2019 at 06:11:39PM +0530, Sumit Garg wrote:
-> Hi Jens,
+On Fri, Jun 21, 2019 at 09:42:54AM -0700, Xing, Cedric wrote:
+> > From: Christopherson, Sean J
+> > Sent: Wednesday, June 19, 2019 3:24 PM
+> > 
+> > diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h index
+> > 6dba9f282232..67a3babbb24d 100644
+> > --- a/arch/x86/include/uapi/asm/sgx.h
+> > +++ b/arch/x86/include/uapi/asm/sgx.h
+> > @@ -35,15 +35,17 @@ struct sgx_enclave_create  {
+> >   * @src:	address for the page data
+> >   * @secinfo:	address for the SECINFO data
+> >   * @mrmask:	bitmask for the measured 256 byte chunks
+> > + * @prot:	maximal PROT_{READ,WRITE,EXEC} protections for the page
+> >   */
+> >  struct sgx_enclave_add_page {
+> >  	__u64	addr;
+> >  	__u64	src;
+> >  	__u64	secinfo;
+> > -	__u64	mrmask;
+> > +	__u16	mrmask;
+> > +	__u8	prot;
+> > +	__u8	pad;
+> >  };
 > 
-> On Thu, 13 Jun 2019 at 16:01, Sumit Garg <sumit.garg@linaro.org> wrote:
-> >
-> > Add support for TEE based trusted keys where TEE provides the functionality
-> > to seal and unseal trusted keys using hardware unique key. Also, this is
-> > an alternative in case platform doesn't possess a TPM device.
-> >
-> > This series also adds some TEE features like:
-> >
-> > Patch #1, #2 enables support for registered kernel shared memory with TEE.
-> >
-> 
-> Would you like to pick up Patch #1, #2 separately? I think both these
-> patches add independent functionality and also got reviewed-by tags
-> too.
+> Given EPCM permissions cannot change in SGX1, these maximal PROT_* flags can
+> be the same as EPCM permissions, so don't have to be specified by user code
+> until SGX2. Given we don't have a clear picture on how SGX2 will work yet, I
+> think we shall take "prot" off until it is proven necessary.
 
-I think it makes more sense to keep them together in the same patch
-series or could end up with dependencies between trees.
+I'm ok with deriving the maximal protections from SECINFO, so long as we
+acknowledge that we're preventing userspace from utilizing EMODPE (until
+the kernel supports SGX2).
 
-If you don't think dependencies will be an issue then I don't mind
-picking them up, in that case they'd likely sit in an arm-soc branch
-until next merge window. However, I think that #3 (support for private
-kernel login method) should be included too and that one isn't ready
-yet.
+> > diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c
+> > b/arch/x86/kernel/cpu/sgx/driver/main.c
+> > index 29384cdd0842..dabfe2a7245a 100644
+> > --- a/arch/x86/kernel/cpu/sgx/driver/main.c
+> > +++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+> > @@ -93,15 +93,64 @@ static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,  }
+> > #endif
+> > 
+> > +/*
+> > + * Returns the AND of VM_{READ,WRITE,EXEC} permissions across all pages
+> > + * covered by the specific VMA.  A non-existent (or yet to be added)
+> > +enclave
+> > + * page is considered to have no RWX permissions, i.e. is inaccessible.
+> > + */
+> > +static unsigned long sgx_allowed_rwx(struct sgx_encl *encl,
+> > +				     struct vm_area_struct *vma)
+> > +{
+> > +	unsigned long allowed_rwx = VM_READ | VM_WRITE | VM_EXEC;
+> > +	unsigned long idx, idx_start, idx_end;
+> > +	struct sgx_encl_page *page;
+> > +
+> > +	idx_start = PFN_DOWN(vma->vm_start);
+> > +	idx_end = PFN_DOWN(vma->vm_end - 1);
+> > +
+> > +	for (idx = idx_start; idx <= idx_end; ++idx) {
+> > +		/*
+> > +		 * No need to take encl->lock, vm_prot_bits is set prior to
+> > +		 * insertion and never changes, and racing with adding pages is
+> > +		 * a userspace bug.
+> > +		 */
+> > +		rcu_read_lock();
+> > +		page = radix_tree_lookup(&encl->page_tree, idx);
+> > +		rcu_read_unlock();
+> 
+> This loop iterates through every page in the range, which could be very slow
+> if the range is large.
 
-Thanks,
-Jens
+At this point I'm shooting for functional correctness and minimal code
+changes.  Optimizations will be in order at some point, just not now.
 
+> > +
+> > +		/* Do not allow R|W|X to a non-existent page. */
+> > +		if (!page)
+> > +			allowed_rwx = 0;
+> > +		else
+> > +			allowed_rwx &= page->vm_prot_bits;
+> > +		if (!allowed_rwx)
+> > +			break;
+> > +	}
+> > +
+> > +	return allowed_rwx;
+> > +}
+> > +
+> >  static int sgx_mmap(struct file *file, struct vm_area_struct *vma)  {
+> >  	struct sgx_encl *encl = file->private_data;
+> > +	unsigned long allowed_rwx;
+> >  	int ret;
+> > 
+> > +	allowed_rwx = sgx_allowed_rwx(encl, vma);
+> > +	if (vma->vm_flags & (VM_READ | VM_WRITE | VM_EXEC) & ~allowed_rwx)
+> > +		return -EACCES;
+> > +
+> >  	ret = sgx_encl_mm_add(encl, vma->vm_mm);
+> >  	if (ret)
+> >  		return ret;
+> > 
+> > +	if (!(allowed_rwx & VM_READ))
+> > +		vma->vm_flags &= ~VM_MAYREAD;
+> > +	if (!(allowed_rwx & VM_WRITE))
+> > +		vma->vm_flags &= ~VM_MAYWRITE;
+> > +	if (!(allowed_rwx & VM_EXEC))
+> > +		vma->vm_flags &= ~VM_MAYEXEC;
+> > +
 > 
+> Say a range comprised of a RW sub-range and a RX sub-range is being mmap()'ed
+> as R here. It'd succeed but mprotect(<RW sub-range>, RW) afterwards will fail
+> because VM_MAYWRITE is cleared here. However, if those two sub-ranges are
+> mapped by separate mmap() calls then the same mprotect() would succeed. The
+> inconsistence here is unexpected and unprecedented.
+
+Boo, I thought I was being super clever.
+
+> >  	vma->vm_ops = &sgx_vm_ops;
+> >  	vma->vm_flags |= VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO;
+> >  	vma->vm_private_data = encl;
 > 
-> -Sumit
-> 
-> > Patch #3 enables support for private kernel login method required for
-> > cases like trusted keys where we don't wan't user-space to directly access
-> > TEE service to retrieve trusted key contents.
-> >
-> > Rest of the patches from #4 to #7 adds support for TEE based trusted keys.
-> >
-> > This patch-set has been tested with OP-TEE based pseudo TA which can be
-> > found here [1].
-> >
-> > Looking forward to your valuable feedback/suggestions.
-> >
-> > [1] https://github.com/OP-TEE/optee_os/pull/3082
-> >
-> > Sumit Garg (7):
-> >   tee: optee: allow kernel pages to register as shm
-> >   tee: enable support to register kernel memory
-> >   tee: add private login method for kernel clients
-> >   KEYS: trusted: Introduce TEE based Trusted Keys
-> >   KEYS: encrypted: Allow TEE based trusted master keys
-> >   doc: keys: Document usage of TEE based Trusted Keys
-> >   MAINTAINERS: Add entry for TEE based Trusted Keys
-> >
-> >  Documentation/security/keys/tee-trusted.rst      |  93 +++++
-> >  MAINTAINERS                                      |   9 +
-> >  drivers/tee/optee/call.c                         |   7 +
-> >  drivers/tee/tee_core.c                           |   6 +
-> >  drivers/tee/tee_shm.c                            |  16 +-
-> >  include/keys/tee_trusted.h                       |  84 ++++
-> >  include/keys/trusted-type.h                      |   1 +
-> >  include/linux/tee_drv.h                          |   1 +
-> >  include/uapi/linux/tee.h                         |   2 +
-> >  security/keys/Kconfig                            |   3 +
-> >  security/keys/Makefile                           |   3 +
-> >  security/keys/encrypted-keys/masterkey_trusted.c |  10 +-
-> >  security/keys/tee_trusted.c                      | 506 +++++++++++++++++++++++
-> >  13 files changed, 737 insertions(+), 4 deletions(-)
-> >  create mode 100644 Documentation/security/keys/tee-trusted.rst
-> >  create mode 100644 include/keys/tee_trusted.h
-> >  create mode 100644 security/keys/tee_trusted.c
-> >
-> > --
-> > 2.7.4
-> >
