@@ -2,177 +2,93 @@ Return-Path: <SRS0=y5yI=VF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E79AC606AC
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 12:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF92C606AC
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 13:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 024FE2087F
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 12:59:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E00520861
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 13:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730893AbfGHM7Q (ORCPT
+        id S1731100AbfGHNSj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jul 2019 08:59:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59552 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731063AbfGHM7Q (ORCPT
+        Mon, 8 Jul 2019 09:18:39 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:56694 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727352AbfGHNSj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jul 2019 08:59:16 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x68CwBo4018690
-        for <linux-security-module@vger.kernel.org>; Mon, 8 Jul 2019 08:59:15 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tm5yj0tdw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Jul 2019 08:59:14 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 8 Jul 2019 13:59:12 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 8 Jul 2019 13:59:10 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x68CwvCD25166306
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 8 Jul 2019 12:58:57 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C324742047;
-        Mon,  8 Jul 2019 12:59:09 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0EB3B4204B;
-        Mon,  8 Jul 2019 12:59:09 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.110.58])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  8 Jul 2019 12:59:08 +0000 (GMT)
-Subject: [GIT PULL] integrity subsystem updates for v5.3
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Mon, 08 Jul 2019 08:58:58 -0400
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19070812-0016-0000-0000-0000029047EA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19070812-0017-0000-0000-000032EDF56F
-Message-Id: <1562590738.11461.9.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-08_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907080162
+        Mon, 8 Jul 2019 09:18:39 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hkTXL-00068s-Pz; Mon, 08 Jul 2019 13:18:31 +0000
+Date:   Mon, 8 Jul 2019 14:18:31 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        ebiederm@xmission.com, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts
+ around
+Message-ID: <20190708131831.GT17978@ZenIV.linux.org.uk>
+References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
+ <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
+ <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On Mon, Jul 08, 2019 at 09:02:10PM +0900, Tetsuo Handa wrote:
+> Hello, David Howells.
+> 
+> I realized via https://lwn.net/Articles/792622/ that a new set of
+> system calls for filesystem mounting has been added to Linux 5.2. But
+> I feel that LSM modules are not ready to support these system calls.
+> 
+> An example is move_mount() added by this patch. This patch added
+> security_move_mount() LSM hook but none of in-tree LSM modules are
+> providing "LSM_HOOK_INIT(move_mount, ...)" entry. Therefore, currently
+> security_move_mount() is a no-op. At least for TOMOYO, I want to check
+> mount manipulations caused by system calls because allowing mounts on
+> arbitrary location is not acceptable for pathname based access control.
+> What happened? I want TOMOYO to perform similar checks like mount() does.
 
-Included in this pull request are bug fixes, code clean up, and new
-features.  Listed below are the main changes.
+That would be like tomoyo_check_mount_acl(), right?
+        if (need_dev) {
+                /* Get mount point or device file. */
+                if (!dev_name || kern_path(dev_name, LOOKUP_FOLLOW, &path)) {
+                        error = -ENOENT;
+                        goto out;
+                }
+                obj.path1 = path;
+                requested_dev_name = tomoyo_realpath_from_path(&path);
+                if (!requested_dev_name) {
+                        error = -ENOENT;
+                        goto out;
+                }
+        } else {
+is an obvious crap for *ALL* cases.  You are doing pathname resolution,
+followed by normalization and checks.  Then the result of said pathname
+resolution is thrown out and it's redone (usually by something in fs/super.c).
+Results of _that_ get used.
 
-- IMA policy rules can be defined in terms of LSM labels, making the
-IMA policy dependent on LSM policy label changes, in particular LSM
-label deletions.  The new environment, in which IMA-appraisal is being
-used, frequently updates the LSM policy and permits LSM label
-deletions.
+Could you spell TOCTOU?  And yes, exploiting that takes a lot less than
+being able to do mount(2) in the first place - just pass it
+/proc/self/fd/69/<some acceptable path>/. with descriptor refering to
+opened root directory.  With ~/<some acceptable path> being a symlink
+to whatever you actually want to hit.  And descriptor 42 being your
+opened homedir.  Now have that call of mount(2) overlap with dup2(42, 69)
+from another thread sharing your descriptor table.  It doesn't take much
+to get the timing right, especially if you can arrange for some other
+activity frequently hitting namespace_sem at least shared (e.g. reading
+/proc/mounts in a loop from another process); that's likely to stall
+mount(2) at the point of lock_mount(), which comes *AFTER* the point
+where LSM hook is stuck into.
 
-- Prevent an mmap'ed shared file opened for write from also being
-mmap'ed execute.  In the long term, making this and other similar
-changes at the VFS layer would be preferable.
-
-- The IMA per policy rule template format support is needed for a
-couple of new/proposed features (eg. kexec boot command line
-measurement, appended signatures, and VFS provided file hashes).
-
-- Other than the "boot-aggregate" record in the IMA measuremeent list,
-all other measurements are of file data.  Measuring and storing the
-kexec boot command line in the IMA measurement list is the first
-buffer based measurement included in the measurement list.
-
-(Stephen is carrying a patch to address a merge conflict with David's
-"Keys: Set 4 - Key ACLs for 5.3").
-
-thanks,
-
-Mimi
-
-
-The following changes since commit 8cdc23a3d9ec0944000ad43bad588e36afdc38cd:
-
-  ima: show rules with IMA_INMASK correctly (2019-05-29 23:18:25 -0400)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-
-for you to fetch changes up to 650b29dbdf2caf7db27cdc8bfa8fc009b28a6ce3:
-
-  integrity: Introduce struct evm_xattr (2019-06-30 17:54:41 -0400)
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      integrity: Fix __integrity_init_keyring() section mismatch
-
-Janne Karhunen (2):
-      LSM: switch to blocking policy update notifiers
-      ima: use the lsm policy update notifier
-
-Matthew Garrett (1):
-      IMA: support for per policy rule template formats
-
-Mimi Zohar (2):
-      x86/ima: check EFI SetupMode too
-      ima: prevent a file already mmap'ed write to be mmap'ed execute
-
-Nayna Jain (1):
-      x86/ima: fix the Kconfig dependency for IMA_ARCH_POLICY
-
-Prakhar Srivastava (3):
-      IMA: Define a new hook to measure the kexec boot command line arguments
-      IMA: Define a new template field buf
-      KEXEC: Call ima_kexec_cmdline to measure the boot command line args
-
-Thiago Jung Bauermann (3):
-      ima: Use designated initializers for struct ima_event_data
-      ima: Update MAX_TEMPLATE_NAME_LEN to fit largest reasonable definition
-      integrity: Introduce struct evm_xattr
-
-YueHaibing (1):
-      ima: Make arch_policy_entry static
-
- Documentation/ABI/testing/ima_policy      |   6 +-
- Documentation/security/IMA-templates.rst  |   7 +-
- arch/x86/kernel/ima_arch.c                |  12 ++-
- drivers/infiniband/core/device.c          |   6 +-
- include/linux/ima.h                       |   2 +
- include/linux/security.h                  |  12 +--
- kernel/kexec_file.c                       |   9 +-
- security/integrity/digsig.c               |   5 +-
- security/integrity/evm/evm_main.c         |   8 +-
- security/integrity/ima/Kconfig            |   3 +-
- security/integrity/ima/ima.h              |  21 +++-
- security/integrity/ima/ima_api.c          |  38 +++++--
- security/integrity/ima/ima_appraise.c     |   9 +-
- security/integrity/ima/ima_init.c         |   6 +-
- security/integrity/ima/ima_main.c         | 123 ++++++++++++++++++++--
- security/integrity/ima/ima_policy.c       | 163 +++++++++++++++++++++++++-----
- security/integrity/ima/ima_template.c     |  23 +++--
- security/integrity/ima/ima_template_lib.c |  21 ++++
- security/integrity/ima/ima_template_lib.h |   4 +
- security/integrity/integrity.h            |   6 ++
- security/security.c                       |  23 +++--
- security/selinux/hooks.c                  |   2 +-
- security/selinux/selinuxfs.c              |   2 +-
- 23 files changed, 413 insertions(+), 98 deletions(-)
-
+Again, *ANY* checks on "dev_name" in ->sb_mount() instances are so much
+snake oil.  Always had been.
