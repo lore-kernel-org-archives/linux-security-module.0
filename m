@@ -2,93 +2,117 @@ Return-Path: <SRS0=y5yI=VF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF92C606AC
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 13:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070F1C606C1
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 14:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E00520861
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 13:18:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE398216B7
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 14:34:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731100AbfGHNSj (ORCPT
+        id S1731805AbfGHOeO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jul 2019 09:18:39 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:56694 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbfGHNSj (ORCPT
+        Mon, 8 Jul 2019 10:34:14 -0400
+Received: from mga12.intel.com ([192.55.52.136]:15546 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728725AbfGHOeO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jul 2019 09:18:39 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hkTXL-00068s-Pz; Mon, 08 Jul 2019 13:18:31 +0000
-Date:   Mon, 8 Jul 2019 14:18:31 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        ebiederm@xmission.com, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts
- around
-Message-ID: <20190708131831.GT17978@ZenIV.linux.org.uk>
-References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
- <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
- <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
+        Mon, 8 Jul 2019 10:34:14 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 07:34:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,466,1557212400"; 
+   d="scan'208";a="167693008"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
+  by orsmga003.jf.intel.com with ESMTP; 08 Jul 2019 07:34:13 -0700
+Date:   Mon, 8 Jul 2019 07:34:13 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: [RFC PATCH v4 12/12] LSM: x86/sgx: Show line of sight to LSM
+ support SGX2's EAUG
+Message-ID: <20190708143413.GB20433@linux.intel.com>
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+ <20190619222401.14942-13-sean.j.christopherson@intel.com>
+ <960B34DE67B9E140824F1DCDEC400C0F655184EC@ORSMSX116.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F655184EC@ORSMSX116.amr.corp.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 08, 2019 at 09:02:10PM +0900, Tetsuo Handa wrote:
-> Hello, David Howells.
+On Fri, Jun 21, 2019 at 10:18:55AM -0700, Xing, Cedric wrote:
+> > From: Christopherson, Sean J
+> > Sent: Wednesday, June 19, 2019 3:24 PM
+> > 
+> > diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+> > index 4379a2fb1f82..b478c0f45279 100644
+> > --- a/arch/x86/kernel/cpu/sgx/driver/main.c
+> > +++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+> > @@ -99,7 +99,8 @@ static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
+> >   * page is considered to have no RWX permissions, i.e. is inaccessible.
+> >   */
+> >  static unsigned long sgx_allowed_rwx(struct sgx_encl *encl,
+> > -				     struct vm_area_struct *vma)
+> > +				     struct vm_area_struct *vma,
+> > +				     bool *eaug)
+> >  {
+> >  	unsigned long allowed_rwx = VM_READ | VM_WRITE | VM_EXEC;
+> >  	unsigned long idx, idx_start, idx_end; @@ -123,6 +124,8 @@ static unsigned long
+> > sgx_allowed_rwx(struct sgx_encl *encl,
+> >  			allowed_rwx = 0;
+> >  		else
+> >  			allowed_rwx &= page->vm_prot_bits;
+> > +		if (page->vm_prot_bits & SGX_VM_EAUG)
+> > +			*eaug = true;
+> >  		if (!allowed_rwx)
+> >  			break;
+> >  	}
+> > @@ -134,16 +137,17 @@ static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
+> > {
+> >  	struct sgx_encl *encl = file->private_data;
+> >  	unsigned long allowed_rwx, prot;
+> > +	bool eaug = false;
+> >  	int ret;
+> > 
+> > -	allowed_rwx = sgx_allowed_rwx(encl, vma);
+> > +	allowed_rwx = sgx_allowed_rwx(encl, vma, &eaug);
+> >  	if (vma->vm_flags & (VM_READ | VM_WRITE | VM_EXEC) & ~allowed_rwx)
+> >  		return -EACCES;
 > 
-> I realized via https://lwn.net/Articles/792622/ that a new set of
-> system calls for filesystem mounting has been added to Linux 5.2. But
-> I feel that LSM modules are not ready to support these system calls.
+> IIUC, "eaug range" has to be mapped PROT_NONE, then vm_ops->fault() won't be
+> invoked. Am I correct? Then how to EAUG on #PF?
+
+Pages tagged SGX_VM_EAUG also have maximal permissions and can be mapped
+PROT_{READ,WRITE,EXEC} accordingly.
+
 > 
-> An example is move_mount() added by this patch. This patch added
-> security_move_mount() LSM hook but none of in-tree LSM modules are
-> providing "LSM_HOOK_INIT(move_mount, ...)" entry. Therefore, currently
-> security_move_mount() is a no-op. At least for TOMOYO, I want to check
-> mount manipulations caused by system calls because allowing mounts on
-> arbitrary location is not acceptable for pathname based access control.
-> What happened? I want TOMOYO to perform similar checks like mount() does.
-
-That would be like tomoyo_check_mount_acl(), right?
-        if (need_dev) {
-                /* Get mount point or device file. */
-                if (!dev_name || kern_path(dev_name, LOOKUP_FOLLOW, &path)) {
-                        error = -ENOENT;
-                        goto out;
-                }
-                obj.path1 = path;
-                requested_dev_name = tomoyo_realpath_from_path(&path);
-                if (!requested_dev_name) {
-                        error = -ENOENT;
-                        goto out;
-                }
-        } else {
-is an obvious crap for *ALL* cases.  You are doing pathname resolution,
-followed by normalization and checks.  Then the result of said pathname
-resolution is thrown out and it's redone (usually by something in fs/super.c).
-Results of _that_ get used.
-
-Could you spell TOCTOU?  And yes, exploiting that takes a lot less than
-being able to do mount(2) in the first place - just pass it
-/proc/self/fd/69/<some acceptable path>/. with descriptor refering to
-opened root directory.  With ~/<some acceptable path> being a symlink
-to whatever you actually want to hit.  And descriptor 42 being your
-opened homedir.  Now have that call of mount(2) overlap with dup2(42, 69)
-from another thread sharing your descriptor table.  It doesn't take much
-to get the timing right, especially if you can arrange for some other
-activity frequently hitting namespace_sem at least shared (e.g. reading
-/proc/mounts in a loop from another process); that's likely to stall
-mount(2) at the point of lock_mount(), which comes *AFTER* the point
-where LSM hook is stuck into.
-
-Again, *ANY* checks on "dev_name" in ->sb_mount() instances are so much
-snake oil.  Always had been.
+> > 
+> >  	prot = _calc_vm_trans(vma->vm_flags, VM_READ, PROT_READ) |
+> >  	       _calc_vm_trans(vma->vm_flags, VM_WRITE, PROT_WRITE) |
+> >  	       _calc_vm_trans(vma->vm_flags, VM_EXEC, PROT_EXEC);
+> > -	ret = security_enclave_map(prot);
+> > +	ret = security_enclave_map(prot, eaug);
+> >  	if (ret)
+> >  		return ret;
+> > 
