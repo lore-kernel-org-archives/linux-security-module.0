@@ -2,113 +2,177 @@ Return-Path: <SRS0=y5yI=VF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=GAPPY_SUBJECT,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A81C606AC
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 12:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E79AC606AC
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 12:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D3B82086D
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 12:42:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 024FE2087F
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 12:59:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729750AbfGHMmT convert rfc822-to-8bit (ORCPT
+        id S1730893AbfGHM7Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jul 2019 08:42:19 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:50850 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727065AbfGHMmT (ORCPT
+        Mon, 8 Jul 2019 08:59:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59552 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731063AbfGHM7Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jul 2019 08:42:19 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-230-dcsia1rtNYyT8xw3SipVDQ-1; Mon, 08 Jul 2019 13:42:16 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 8 Jul 2019 13:42:15 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 8 Jul 2019 13:42:15 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Salvatore Mesoraca' <s.mesoraca16@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Brad Spengler <spender@grsecurity.net>,
-        "Casey Schaufler" <casey@schaufler-ca.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Jann Horn <jannh@google.com>,
-        "Kees Cook" <keescook@chromium.org>,
-        PaX Team <pageexec@freemail.hu>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: RE: [PATCH v5 06/12] S.A.R.A.: WX protection
-Thread-Topic: [PATCH v5 06/12] S.A.R.A.: WX protection
-Thread-Index: AQHVM+lhx/3G+gwH+UeGA1TJk0kwgabAq9yQ
-Date:   Mon, 8 Jul 2019 12:42:15 +0000
-Message-ID: <b946dd861874401a910740a9adea8e8e@AcuMS.aculab.com>
-References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
- <1562410493-8661-7-git-send-email-s.mesoraca16@gmail.com>
-In-Reply-To: <1562410493-8661-7-git-send-email-s.mesoraca16@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-MC-Unique: dcsia1rtNYyT8xw3SipVDQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Mon, 8 Jul 2019 08:59:16 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x68CwBo4018690
+        for <linux-security-module@vger.kernel.org>; Mon, 8 Jul 2019 08:59:15 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tm5yj0tdw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Jul 2019 08:59:14 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 8 Jul 2019 13:59:12 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 8 Jul 2019 13:59:10 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x68CwvCD25166306
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 8 Jul 2019 12:58:57 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C324742047;
+        Mon,  8 Jul 2019 12:59:09 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0EB3B4204B;
+        Mon,  8 Jul 2019 12:59:09 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.110.58])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  8 Jul 2019 12:59:08 +0000 (GMT)
+Subject: [GIT PULL] integrity subsystem updates for v5.3
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Mon, 08 Jul 2019 08:58:58 -0400
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19070812-0016-0000-0000-0000029047EA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19070812-0017-0000-0000-000032EDF56F
+Message-Id: <1562590738.11461.9.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-08_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907080162
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Salvatore Mesoraca
-> Sent: 06 July 2019 11:55
-...
-> Executable MMAP prevention works by preventing any new executable
-> allocation after the dynamic libraries have been loaded. It works under the
-> assumption that, when the dynamic libraries have been finished loading, the
-> RELRO section will be marked read only.
+Hi Linus,
 
-What about writing to the file of a dynamic library after it is loaded
-but before it is faulted it (or after evicting it from the I$).
+Included in this pull request are bug fixes, code clean up, and new
+features.  Listed below are the main changes.
 
-...
-> +#define find_relro_section(ELFH, ELFP, FILE, RELRO, FOUND) do {		\
-> +	unsigned long i;						\
-> +	int _tmp;							\
-> +	loff_t _pos = 0;						\
-> +	if (ELFH.e_type == ET_DYN || ELFH.e_type == ET_EXEC) {		\
-> +		for (i = 0; i < ELFH.e_phnum; ++i) {			\
-> +			_pos = ELFH.e_phoff + i*sizeof(ELFP);		\
-> +			_tmp = kernel_read(FILE, &ELFP, sizeof(ELFP),	\
-> +					   &_pos);			\
-> +			if (_tmp != sizeof(ELFP))			\
-> +				break;					\
-> +			if (ELFP.p_type == PT_GNU_RELRO) {		\
-> +				RELRO = ELFP.p_offset >> PAGE_SHIFT;	\
-> +				FOUND = true;				\
-> +				break;					\
-> +			}						\
-> +		}							\
-> +	}								\
-> +} while (0)
+- IMA policy rules can be defined in terms of LSM labels, making the
+IMA policy dependent on LSM policy label changes, in particular LSM
+label deletions.  The new environment, in which IMA-appraisal is being
+used, frequently updates the LSM policy and permits LSM label
+deletions.
 
-This is big for a #define.
-Since it contains kernel_read() it can't really matter if it is
-a real function.
+- Prevent an mmap'ed shared file opened for write from also being
+mmap'ed execute.  In the long term, making this and other similar
+changes at the VFS layer would be preferable.
 
-	David
+- The IMA per policy rule template format support is needed for a
+couple of new/proposed features (eg. kexec boot command line
+measurement, appended signatures, and VFS provided file hashes).
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+- Other than the "boot-aggregate" record in the IMA measuremeent list,
+all other measurements are of file data.  Measuring and storing the
+kexec boot command line in the IMA measurement list is the first
+buffer based measurement included in the measurement list.
+
+(Stephen is carrying a patch to address a merge conflict with David's
+"Keys: Set 4 - Key ACLs for 5.3").
+
+thanks,
+
+Mimi
+
+
+The following changes since commit 8cdc23a3d9ec0944000ad43bad588e36afdc38cd:
+
+  ima: show rules with IMA_INMASK correctly (2019-05-29 23:18:25 -0400)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+
+for you to fetch changes up to 650b29dbdf2caf7db27cdc8bfa8fc009b28a6ce3:
+
+  integrity: Introduce struct evm_xattr (2019-06-30 17:54:41 -0400)
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      integrity: Fix __integrity_init_keyring() section mismatch
+
+Janne Karhunen (2):
+      LSM: switch to blocking policy update notifiers
+      ima: use the lsm policy update notifier
+
+Matthew Garrett (1):
+      IMA: support for per policy rule template formats
+
+Mimi Zohar (2):
+      x86/ima: check EFI SetupMode too
+      ima: prevent a file already mmap'ed write to be mmap'ed execute
+
+Nayna Jain (1):
+      x86/ima: fix the Kconfig dependency for IMA_ARCH_POLICY
+
+Prakhar Srivastava (3):
+      IMA: Define a new hook to measure the kexec boot command line arguments
+      IMA: Define a new template field buf
+      KEXEC: Call ima_kexec_cmdline to measure the boot command line args
+
+Thiago Jung Bauermann (3):
+      ima: Use designated initializers for struct ima_event_data
+      ima: Update MAX_TEMPLATE_NAME_LEN to fit largest reasonable definition
+      integrity: Introduce struct evm_xattr
+
+YueHaibing (1):
+      ima: Make arch_policy_entry static
+
+ Documentation/ABI/testing/ima_policy      |   6 +-
+ Documentation/security/IMA-templates.rst  |   7 +-
+ arch/x86/kernel/ima_arch.c                |  12 ++-
+ drivers/infiniband/core/device.c          |   6 +-
+ include/linux/ima.h                       |   2 +
+ include/linux/security.h                  |  12 +--
+ kernel/kexec_file.c                       |   9 +-
+ security/integrity/digsig.c               |   5 +-
+ security/integrity/evm/evm_main.c         |   8 +-
+ security/integrity/ima/Kconfig            |   3 +-
+ security/integrity/ima/ima.h              |  21 +++-
+ security/integrity/ima/ima_api.c          |  38 +++++--
+ security/integrity/ima/ima_appraise.c     |   9 +-
+ security/integrity/ima/ima_init.c         |   6 +-
+ security/integrity/ima/ima_main.c         | 123 ++++++++++++++++++++--
+ security/integrity/ima/ima_policy.c       | 163 +++++++++++++++++++++++++-----
+ security/integrity/ima/ima_template.c     |  23 +++--
+ security/integrity/ima/ima_template_lib.c |  21 ++++
+ security/integrity/ima/ima_template_lib.h |   4 +
+ security/integrity/integrity.h            |   6 ++
+ security/security.c                       |  23 +++--
+ security/selinux/hooks.c                  |   2 +-
+ security/selinux/selinuxfs.c              |   2 +-
+ 23 files changed, 413 insertions(+), 98 deletions(-)
 
