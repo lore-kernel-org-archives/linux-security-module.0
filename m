@@ -2,256 +2,135 @@ Return-Path: <SRS0=y5yI=VF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02354C606BD
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 18:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 165C7C606CA
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 18:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BABD221874
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 18:46:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="TZeJ/D+i"
+	by mail.kernel.org (Postfix) with ESMTP id F027D2086D
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 18:49:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733226AbfGHSqY (ORCPT
+        id S2388471AbfGHSt5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jul 2019 14:46:24 -0400
-Received: from ucol19pa13.eemsg.mail.mil ([214.24.24.86]:16622 "EHLO
-        ucol19pa13.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728109AbfGHSqX (ORCPT
+        Mon, 8 Jul 2019 14:49:57 -0400
+Received: from mga05.intel.com ([192.55.52.43]:3728 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726126AbfGHSt5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jul 2019 14:46:23 -0400
-X-EEMSG-check-017: 727914215|UCOL19PA13_EEMSG_MP11.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.63,466,1557187200"; 
-   d="scan'208";a="727914215"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by ucol19pa13.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 08 Jul 2019 18:46:14 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1562611574; x=1594147574;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=96bFs/j1tykk6zv5kGzC/jOaR4nIBLQvQjY7eMB6i98=;
-  b=TZeJ/D+iOsuw2AKT+JZh1qG24a6J00O8/aa3OVdtyERt4kloYlHjt3ck
-   QsW4EzBP7OX8EkyUc8+k4u6EL/bB2uIQzyoCcSnQb6IjtWlTOJ4GL+uid
-   Nzy5upxY8kI09OK+cg3Pckwcx+Or5a3eFOMTtTmBngHVoq1ndFSEpWBok
-   p077R0fz0wwiUBTFmCGtYyJacVwoNhQHQrnaAVaHAmGuHnePar1avo/yX
-   lVSOoGak1GC5vWIWHEc7h1MMCdJ7e0FHx4FxyXLmt5eYyL/JpxOeOpOpw
-   DGDMItr2QnzFnnJ3iPJqBUPEww4sPrrYxsbdXaGoX1jjbqqryZtz90A1/
-   A==;
-X-IronPort-AV: E=Sophos;i="5.63,466,1557187200"; 
-   d="scan'208";a="25479746"
-IronPort-PHdr: =?us-ascii?q?9a23=3AxTpC6hZFQvYoCGUV/hVeLov/LSx+4OfEezUN45?=
- =?us-ascii?q?9isYplN5qZpsqyYx7h7PlgxGXEQZ/co6odzbaP6ea8ASdZu8bJmUtBWaQEbw?=
- =?us-ascii?q?UCh8QSkl5oK+++Imq/EsTXaTcnFt9JTl5v8iLzG0FUHMHjew+a+SXqvnYdFR?=
- =?us-ascii?q?rlKAV6OPn+FJLMgMSrzeCy/IDYbxlViDanbr5+MQu6oR/eu8UKjoduN7g9xx?=
- =?us-ascii?q?jUqXZUZupawn9lK0iOlBjm/Mew+5Bj8yVUu/0/8sNLTLv3caclQ7FGFToqK2?=
- =?us-ascii?q?866tHluhnFVguP+2ATUn4KnRpSAgjK9w/1U5HsuSbnrOV92S2aPcrrTbAoXD?=
- =?us-ascii?q?mp8qlmRAP0hCoBKjU063/chNBug61HoRKhvx1/zJDSYIGJL/p1Y6fRccoHSW?=
- =?us-ascii?q?ZdQspdUipMDY2mb4sLEuEPI+BWoYfgrFcKtBeyGw2hCObpxzRVhHH5wLc63v?=
- =?us-ascii?q?w8Hw/Y0gwuH9EAvnrao9r6NqgdTe+7wbLUzTjBdf5axSvx5YbKfx0nvPqCXa?=
- =?us-ascii?q?hwcc3UyUQ3Cg3FkkufqZTlPzyL0OQGrnWV7+96WuKrj24otQFwqSWoy8c3l4?=
- =?us-ascii?q?bJnZkYykzE9CplwIY1Ise0SEhgYdG+CpdQuCaaN5VvT84kXmpmuz46x6UbtZ?=
- =?us-ascii?q?O0cyUG0pQqywPFZ/CZfIWE/AjvWPuXLDxlnnxqYqi/iAy38UW4z+38UdS730?=
- =?us-ascii?q?hSoypel9nMqmgN1xvO6sibUvd9/lmu2TKI1w3L9uFLO1o0lavGK5462LIwip?=
- =?us-ascii?q?oSvljDHi/xgkn2irOZdl449eSy7uTnY7HmqoedN49ylA7+LrwjltGwDOk3KA?=
- =?us-ascii?q?QDX3WX9f6i2LDs40H1WqhGguUzkqbDsZDaIcobprS+Aw9Qyosj8AuwDyy93d?=
- =?us-ascii?q?QEnXgIMFJFeBWdg4jvIFHBOur0Dfi4g1SyiDtr3ezJPqX9ApXRKXjOiKrufb?=
- =?us-ascii?q?Z6609S1gUzydRf54lPB7EbPv38R0/xu8bEDhMjLwO0xOPnAs1n1owCQWKPHr?=
- =?us-ascii?q?OZMKTKvF+W5+IvOe6MaZQUuTnjLfgl5uDugWU9mV8ce6mpwJQWZGq/HvR8LE?=
- =?us-ascii?q?WVe2fsgtQZG2cQogU+VPDqiEGFUTNLe3m9Rbk86S87CY+9FofMWoCtj6ac3C?=
- =?us-ascii?q?e1Gp1ZeHpGBkmQHnjybYmLR/AMaCeKKM97jjMETaShS5Mm1Ry2uw/60aRoLu?=
- =?us-ascii?q?XX+i0Yrp/j0Nl15+vOlRA9+zx0CNmd02eQQG5ugmMIRjg23KZlrUx60FeD3r?=
- =?us-ascii?q?Byg+ZEGtxL+/NJTgA6OIbaz+x7F9/yXQbBcc2SSFq8X9qmAC0+TtItw9AQZ0?=
- =?us-ascii?q?ZwANSvjx7C3yqsHrAZjaCEBJsx8qjExXj+O959y2ra1Kkml1QmWNFANXO4ia?=
- =?us-ascii?q?557AXTG47JnFucl6mwe6UQxijN+3mfzWCWpkFXTBZwUbnZXXAYfkbZsdT55l?=
- =?us-ascii?q?nDT7+1FbQnMxFOyciZJ6RRcN3ml0hGRPH9N9TEeW6xmmCwDw6SxryQdIrqZ3?=
- =?us-ascii?q?kd3CLFBUgHjQ8S/WyGNQk4BieuuGLTFyJuFV3xbEP26+V+q220TlUyzw6Ua0?=
- =?us-ascii?q?1tzb21+gQahfaEUfMcwqoEuDs9qzVzBFu929PWC9ydpwtuZalcfMg970xc2G?=
- =?us-ascii?q?LHuAxyIIagI7phhlEAaQR3uV3h1xFtBoVHi8gqo2sgzBBuJqKAzFNBazSY0I?=
- =?us-ascii?q?j0Or3WLGny4R+uZ7fN2l7AzNmW570P6PUkq1TjpQ2pE00i/Gh609lRzXSR/Y?=
- =?us-ascii?q?vKDAUMXpLrSEo39AZ1p6vcYiYj44PYz3psMbO7sjXawdImGPMlygq8f9dYKK?=
- =?us-ascii?q?6EEA7yE8sHB8mhMeAqlUOpYQ8aM+BM6qE0O9ird+WJ2KG1JuZshjGmgnpd4I?=
- =?us-ascii?q?B7zE2M8zBwSunS35YK2/uYxBeIVy/gjFe9tcD6gYREZTAUHmqixinoHZReZr?=
- =?us-ascii?q?VzfYsQF2euLNO4xs9ki57uRXFY7lijCE0C2MOzfhqSdVP91xVK1UsLuXynhT?=
- =?us-ascii?q?e4zztsnjEtr6qf2jHOwuv7eBUcPm5LQ3VtjVT3LIiqgNAVQlKoYxIqlBS7/0?=
- =?us-ascii?q?b6wbZUpKBlI2nUW0dIcDD8L3t+XauoqrqCf8lP5YsssSVWVuS8fF+bRqf+ox?=
- =?us-ascii?q?QEySPjGXVRxDQgejG0tZX2gQZ6hHieLHlttnrZf99/xRPF6NzbX/5R0WlOeC?=
- =?us-ascii?q?4tpTDJB1T0H9628NGQjN+XvuC5SG+lUoZ7ayTnzYqc8iC84DsuSQO+hfebiN?=
- =?us-ascii?q?DhEBZ81S79ysksUj/H6gv/Mafx0KHvCv5qZkllAhfH7sN+Hoxv2t8riIo4xW?=
- =?us-ascii?q?kRhpLT+2EO12j0L4MIiurFcHMRSGtTkJbu6w//1RgmdyjYyg=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2CZAABnjiNd/wHyM5BlHAEBAQQBAQcEAQGBVgQBAQsBg?=
- =?us-ascii?q?WcFKoFuKIQckzIGgQktiVuRFAkBAQEBAQEBAQE0AQIBAYRAAoI4IzcGDgEDA?=
- =?us-ascii?q?QEBBAEBAQEEAQFsikOCOikBgmcBBSMVQRALDgoCAiYCAlcGAQwGAgEBglMMP?=
- =?us-ascii?q?4F3FKo6gTKFR4MlgUeBDCgBh22DcRd4gQeBOII9Lj6HToJYBJRmlWwJghmCH?=
- =?us-ascii?q?5FfBhuXfo0wmUsigVgrCAIYCCEPgyeCTReOPSMDMAx6AQGNaQEB?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 08 Jul 2019 18:46:13 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x68IkB5p017610;
-        Mon, 8 Jul 2019 14:46:11 -0400
-Subject: Re: [PATCH 2/9] security: Add hooks to rule on setting a watch [ver
- #5]
-To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <156173690158.15137.3985163001079120218.stgit@warthog.procyon.org.uk>
- <156173692760.15137.9636883182556029747.stgit@warthog.procyon.org.uk>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <cd657aab-e11c-c0b1-2e36-dd796ca75b75@tycho.nsa.gov>
-Date:   Mon, 8 Jul 2019 14:46:11 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 8 Jul 2019 14:49:57 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 11:49:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,466,1557212400"; 
+   d="scan'208";a="192409163"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Jul 2019 11:49:55 -0700
+Date:   Mon, 8 Jul 2019 11:49:55 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, casey.schaufler@intel.com,
+        jmorris@namei.org, luto@kernel.org, jethro@fortanix.com,
+        greg@enjellic.com, sds@tycho.nsa.gov,
+        jarkko.sakkinen@linux.intel.com
+Subject: Re: [RFC PATCH v3 0/4] security/x86/sgx: SGX specific LSM hooks
+Message-ID: <20190708184955.GC20791@linux.intel.com>
+References: <cover.1561588012.git.cedric.xing@intel.com>
+ <cover.1562542383.git.cedric.xing@intel.com>
+ <20190708155524.GD20433@linux.intel.com>
+ <8ba6c32d-cedc-53fd-9e86-f78be0067ac3@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <156173692760.15137.9636883182556029747.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8ba6c32d-cedc-53fd-9e86-f78be0067ac3@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/28/19 11:48 AM, David Howells wrote:
-> Add security hooks that will allow an LSM to rule on whether or not a watch
-> may be set.  More than one hook is required as the watches watch different
-> types of object.
+On Mon, Jul 08, 2019 at 10:49:59AM -0700, Xing, Cedric wrote:
+> On 7/8/2019 8:55 AM, Sean Christopherson wrote:
+> >On Sun, Jul 07, 2019 at 04:41:30PM -0700, Cedric Xing wrote:
+> True only for SGX1.
+> >>     “maximal protection” at page load time, but such information is NOT always
+> >>     available. For example, Graphene containers may run different applications
+> >>     comprised of different set of executables and/or shared objects. Some of
+> >>     them may contain self-modifying code (or text relocation) while others
+> >>     don’t. The generic enclave loader usually doesn’t have such information so
+> >>     wouldn’t be able to provide it ahead of time.
+> >
+> >I'm unconvinced that it would be remotely difficult to teach an enclave
+> >loader that an enclave or hosted application employs SMC, relocation or
+> >any other behavior that would require declaring RWX on all pages.
 > 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Casey Schaufler <casey@schaufler-ca.com>
-> cc: Stephen Smalley <sds@tycho.nsa.gov>
-> cc: linux-security-module@vger.kernel.org
-> ---
-> 
->   include/linux/lsm_hooks.h |   22 ++++++++++++++++++++++
->   include/linux/security.h  |   15 +++++++++++++++
->   security/security.c       |   13 +++++++++++++
->   3 files changed, 50 insertions(+)
-> 
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 47f58cfb6a19..f9d31f6445e4 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -1413,6 +1413,20 @@
->    *	@ctx is a pointer in which to place the allocated security context.
->    *	@ctxlen points to the place to put the length of @ctx.
->    *
-> + * Security hooks for the general notification queue:
-> + *
-> + * @watch_key:
-> + *	Check to see if a process is allowed to watch for event notifications
-> + *	from a key or keyring.
-> + *	@watch: The watch object
-> + *	@key: The key to watch.
-> + *
-> + * @watch_devices:
-> + *	Check to see if a process is allowed to watch for event notifications
-> + *	from devices (as a global set).
-> + *	@watch: The watch object
+> You've been talking as if "enclave loader" is tailored to the enclave it is
+> loading. But in reality "enclave loader" is usually a library knowing
+> usually nothing about the enclave. How could it know if an enclave contains
+> self-modifying code?
 
-It is difficult to evaluate these without at least one implementation of 
-each hook.  I am unclear as to how any security module would use the 
-watch argument, since it has no security field/blob and does not appear 
-to contain any information that would be relevant to deciding whether or 
-not to permit the watch to be set.
-
-> + *
-> + *
->    * Security hooks for using the eBPF maps and programs functionalities through
->    * eBPF syscalls.
->    *
-> @@ -1688,6 +1702,10 @@ union security_list_options {
->   	int (*inode_notifysecctx)(struct inode *inode, void *ctx, u32 ctxlen);
->   	int (*inode_setsecctx)(struct dentry *dentry, void *ctx, u32 ctxlen);
->   	int (*inode_getsecctx)(struct inode *inode, void **ctx, u32 *ctxlen);
-> +#ifdef CONFIG_WATCH_QUEUE
-> +	int (*watch_key)(struct watch *watch, struct key *key);
-> +	int (*watch_devices)(struct watch *watch);
-> +#endif /* CONFIG_WATCH_QUEUE */
->   
->   #ifdef CONFIG_SECURITY_NETWORK
->   	int (*unix_stream_connect)(struct sock *sock, struct sock *other,
-> @@ -1964,6 +1982,10 @@ struct security_hook_heads {
->   	struct hlist_head inode_notifysecctx;
->   	struct hlist_head inode_setsecctx;
->   	struct hlist_head inode_getsecctx;
-> +#ifdef CONFIG_WATCH_QUEUE
-> +	struct hlist_head watch_key;
-> +	struct hlist_head watch_devices;
-> +#endif /* CONFIG_WATCH_QUEUE */
->   #ifdef CONFIG_SECURITY_NETWORK
->   	struct hlist_head unix_stream_connect;
->   	struct hlist_head unix_may_send;
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 659071c2e57c..540863678355 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -57,6 +57,7 @@ struct mm_struct;
->   struct fs_context;
->   struct fs_parameter;
->   enum fs_value_type;
-> +struct watch;
->   
->   /* Default (no) options for the capable function */
->   #define CAP_OPT_NONE 0x0
-> @@ -392,6 +393,10 @@ void security_inode_invalidate_secctx(struct inode *inode);
->   int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
->   int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
->   int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
-> +#ifdef CONFIG_WATCH_QUEUE
-> +int security_watch_key(struct watch *watch, struct key *key);
-> +int security_watch_devices(struct watch *watch);
-> +#endif /* CONFIG_WATCH_QUEUE */
->   #else /* CONFIG_SECURITY */
->   
->   static inline int call_lsm_notifier(enum lsm_event event, void *data)
-> @@ -1204,6 +1209,16 @@ static inline int security_inode_getsecctx(struct inode *inode, void **ctx, u32
->   {
->   	return -EOPNOTSUPP;
->   }
-> +#ifdef CONFIG_WATCH_QUEUE
-> +static inline int security_watch_key(struct watch *watch, struct key *key)
-> +{
-> +	return 0;
-> +}
-> +static inline int security_watch_devices(struct watch *watch)
-> +{
-> +	return 0;
-> +}
-> +#endif /* CONFIG_WATCH_QUEUE */
->   #endif	/* CONFIG_SECURITY */
->   
->   #ifdef CONFIG_SECURITY_NETWORK
-> diff --git a/security/security.c b/security/security.c
-> index 613a5c00e602..2c9919226ad1 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1917,6 +1917,19 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
->   }
->   EXPORT_SYMBOL(security_inode_getsecctx);
->   
-> +#ifdef CONFIG_WATCH_QUEUE
-> +int security_watch_key(struct watch *watch, struct key *key)
-> +{
-> +	return call_int_hook(watch_key, 0, watch, key);
-> +}
-> +
-> +int security_watch_devices(struct watch *watch)
-> +{
-> +	return call_int_hook(watch_devices, 0, watch);
-> +}
-> +
-> +#endif /* CONFIG_WATCH_QUEUE */
-> +
->   #ifdef CONFIG_SECURITY_NETWORK
->   
->   int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk)
+Given the rarity of SMC, require enclaves to declare "I do SMC"...  The
+Intel SDK already requires the enclave developer to declare heap size,
+stack size, thread affinity, etc...  I have a very hard time believing
+that it can't support SMC and relocation flags.
+ 
+> >>   · Inefficient Auditing – Audit logs are supposed to help system
+> >>     administrators to determine the set of minimally needed permissions and to
+> >>     detect abnormal behaviors. But consider the “maximal protection” model, if
+> >>     “maximal protection” is set to be too permissive, then audit log wouldn’t
+> >>     be able to detect anomalies;
+> >
+> >Huh?  Declaring overly permissive protections is only problematic if an
+> >LSM denies the permission, in which case it will generate an accurate
+> >audit log.
+> >
+> >If the enclave/loader "requires" a permission it doesn't actually need,
+> >e.g. EXECDIRTY, then it's a software bug that should be fixed.  I don't
+> >see how this scenario is any different than an application that uses
+> >assembly code without 'noexecstack' and inadvertantly "requires"
+> >EXECSTACK due to triggering "read implies exec".  In both cases the
+> >denied permission is unnecessary due to a userspace application bug.
 > 
+> You see, you've been assuming "enclave loader" knows everything and tailored
+> to what it loads in a particular application. But the reality is the loader
+> is generic and probably shared by multiple applications. 
 
+No, I'm assuming that an enclave can communicate its basic needs without
+undue pain.
+
+> It needs some generic way to figure out the "maximal protection". An
+> implementation could use information embedded in the enclave file, or could
+> just be "configurable". In the former case, you put extra burdens on the build
+> tools, while in the latter case, your audit logs cannot help generating an
+> appropriate configuration.
+
+I'm contending the "extra burdens" is minimal.
+
+  if (do_smc || do_relocation)
+          max_prot = RWX;
+  else
+          max_prot = SECINFO.FLAGS;
+
+> >>     or if “maximal protection” is too restrictive,
+> >>     then audit log cannot identify the file violating the policy.
+> >
+> >Maximal protections that are too restrictive are completely orthogonal to
+> >LSMs as the enclave would fail to run irrespective of LSMs.  This is no
+> >different than specifying the wrong RWX flags in SECINFO, or opening a
+> >file as RO instead of RW.
+> 
+> Say loader is configurable. By looking at the log, can an administrator tell
+> which file has too restrictive "maximal protection"?
+
+Again, this fails irrespective of LSMs.  So the answer is "no", because
+there is no log.  But the admin will never have to deal with this issue
+because the enclave will *never* run, i.e. would unconditionally fail to
+run during initial development.  And the developer has bigger problems if
+they can't debug their own code.
+
+> >>In either case the audit log cannot fulfill its purposes.
