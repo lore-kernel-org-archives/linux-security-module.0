@@ -2,151 +2,93 @@ Return-Path: <SRS0=y5yI=VF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAADC606CD
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 19:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B945C606CF
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 20:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B020520861
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 19:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B3D6216F4
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 20:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731581AbfGHTzq (ORCPT
+        id S1730111AbfGHUVq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jul 2019 15:55:46 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54335 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727163AbfGHTzp (ORCPT
+        Mon, 8 Jul 2019 16:21:46 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33744 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfGHUVq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jul 2019 15:55:45 -0400
-Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=elm)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <tyhicks@canonical.com>)
-        id 1hkZjd-0008Dn-Ik; Mon, 08 Jul 2019 19:55:37 +0000
-Date:   Mon, 8 Jul 2019 14:55:32 -0500
-From:   Tyler Hicks <tyhicks@canonical.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     jarkko.sakkinen@linux.intel.com, jejb@linux.ibm.com,
-        zohar@linux.ibm.com, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, crazyt2019+lml@gmail.com,
-        nayna@linux.vnet.ibm.com, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH] KEYS: trusted: allow module init if TPM is inactive or
- deactivated
-Message-ID: <20190708195532.GB5292@elm>
-References: <20190705163735.11539-1-roberto.sassu@huawei.com>
+        Mon, 8 Jul 2019 16:21:46 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hka8a-0006Uo-Ea; Mon, 08 Jul 2019 20:21:24 +0000
+Date:   Mon, 8 Jul 2019 21:21:24 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts
+ around
+Message-ID: <20190708202124.GX17978@ZenIV.linux.org.uk>
+References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
+ <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
+ <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
+ <20190708131831.GT17978@ZenIV.linux.org.uk>
+ <874l3wo3gq.fsf@xmission.com>
+ <20190708180132.GU17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190705163735.11539-1-roberto.sassu@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190708180132.GU17978@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019-07-05 18:37:35, Roberto Sassu wrote:
-> Commit c78719203fc6 ("KEYS: trusted: allow trusted.ko to initialize w/o a
-> TPM") allows the trusted module to be loaded even a TPM is not found to
-> avoid module dependency problems.
+On Mon, Jul 08, 2019 at 07:01:32PM +0100, Al Viro wrote:
+> On Mon, Jul 08, 2019 at 12:12:21PM -0500, Eric W. Biederman wrote:
 > 
-> Unfortunately, this does not completely solve the issue, as there could be
-> a case where a TPM is found but is not functional (the TPM commands return
-> an error). Specifically, after the tpm_chip structure is returned by
-> tpm_default_chip() in init_trusted(), the execution terminates after
-> init_digests() returns -EFAULT (due to the fact that tpm_get_random()
-> returns a positive value, but less than TPM_MAX_DIGEST_SIZE).
-> 
-> This patch fixes the issue by ignoring the TPM_ERR_DEACTIVATED and
-> TPM_ERR_DISABLED errors.
-> 
-> Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  drivers/char/tpm/tpm.h  | 2 --
->  include/linux/tpm.h     | 3 +++
->  security/keys/trusted.c | 6 +++++-
->  3 files changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index e503ffc3aa39..a216ac396711 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -54,8 +54,6 @@ enum tpm_addr {
->  
->  #define TPM_WARN_RETRY          0x800
->  #define TPM_WARN_DOING_SELFTEST 0x802
-> -#define TPM_ERR_DEACTIVATED     0x6
-> -#define TPM_ERR_DISABLED        0x7
->  #define TPM_ERR_INVALID_POSTINIT 38
->  
->  #define TPM_HEADER_SIZE		10
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index 53c0ea9ec9df..efd3ccbb6aee 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -26,6 +26,9 @@
->  #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
->  #define TPM_MAX_DIGEST_SIZE SHA512_DIGEST_SIZE
->  
-> +#define TPM_ERR_DEACTIVATED     0x6
-> +#define TPM_ERR_DISABLED        0x7
-> +
->  struct tpm_chip;
->  struct trusted_key_payload;
->  struct trusted_key_options;
-> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-> index 9a94672e7adc..430d85090b3b 100644
-> --- a/security/keys/trusted.c
-> +++ b/security/keys/trusted.c
-> @@ -389,6 +389,10 @@ static int pcrlock(const int pcrnum)
->  	if (!capable(CAP_SYS_ADMIN))
->  		return -EPERM;
->  
-> +	/* This can happen if the TPM is inactive. */
-> +	if (!digests)
-> +		return -EINVAL;
-> +
->  	return tpm_pcr_extend(chip, pcrnum, digests) ? -EINVAL : 0;
->  }
->  
-> @@ -1233,7 +1237,7 @@ static int __init init_digests(void)
->  	int i;
->  
->  	ret = tpm_get_random(chip, digest, TPM_MAX_DIGEST_SIZE);
-> -	if (ret < 0)
-> +	if (ret < 0 || ret == TPM_ERR_DEACTIVATED || ret == TPM_ERR_DISABLED)
->  		return ret;
+> > Al you do realize that the TOCTOU you are talking about comes the system
+> > call API.  TOMOYO can only be faulted for not playing in their own
+> > sandbox and not reaching out and fixing the vfs implementation details.
 
-As someone who hasn't looked at much of the TPM code, I would have
-expected tpm_get_random() to return a positive value that only ever
-indicates the number of random bytes saved to the buffer. From the
-function documentation:
+PS: the fact that mount(2) has been overloaded to hell and back (including
+MS_MOVE, which goes back to v2.5.0.5) predates the introduction of ->sb_mount()
+and LSM in general (2.5.27).  MS_BIND is 2.4.0-test9pre2.
 
-  Return: number of random bytes read or a negative error value.
+In all the years since the introduction of ->sb_mount() I've seen zero
+questions from LSM folks regarding a sane place for those checks.  What I have
+seen was "we want it immediately upon the syscall entry, let the module
+figure out what to do" in reply to several times I tried to tell them "folks,
+it's called in a bad place; you want the checks applied to objects, not to
+raw string arguments".
 
-Despite the function documentation and as your patch suggests, I can
-see that it is possible for tpm_transmit_cmd() to return
-a positive value that's also returned by tpm_get_random() even though it
-may not have filled the buffer when the TPM is in an
-inactive/deactivated state.
+As it is, we have easily bypassable checks on mount(2) (by way of ->sb_mount();
+there are other hooks also in the game for remounts and new mounts).
 
-I think there are other callers which are not prepared for positive
-return values that indicate a failure to fill the buffer with random
-data. For instance, the way that tpm_hwrng_read() is calling
-tpm_get_random() looks a little worrisome.
+I see no point whatsoever trying to duplicate ->sb_mount() on the top level
+of move_mount(2).  When and if sane checks are agreed upon for that thing,
+they certainly should be used both for MS_MOVE case of mount(2) and for
+move_mount(2).  And that'll come for free from calling those in do_move_mount().
+They won't be the first thing called in mount(2) - we demultiplex first,
+decide that we have a move and do pathname resolution on source.  And that's
+precisely what we need to avoid the TOCTOU there.
 
-This patch would likely fix the bug reported against eCryptfs
-(https://bugzilla.kernel.org/show_bug.cgi?id=203953) but I can't help to
-think that callers of tpm_get_random() would benefit from a more
-consolidated approach of handling TPM_ERR_* return values rather than
-handling them at this single call site.
+I'm sorry, but this "run the hook at the very beginning, the modules know
+better what they want, just give them as close to syscall arguments as
+possible before even looking at the flags" model is wrong, plain and simple.
 
-Tyler
+As for the MS_MOVE checks, the arguments are clear enough (two struct path *,
+same as what we pass to do_move_mount()).  AFAICS, only tomoyo and
+apparmor are trying to do anything for MS_MOVE in ->sb_mount(), and both
+look like it should be easy enough to implement what said checks intend
+to do (probably - assuming that aa_move_mount() doesn't depend upon
+having its kern_path() inside the __begin_current_label_crit_section()/
+__end_current_label_crit_section() pair; looks like it shouldn't be,
+but that's for apparmor folks to decide).
 
->  	if (ret < TPM_MAX_DIGEST_SIZE)
->  		return -EFAULT;
-> -- 
-> 2.17.1
-> 
+That's really for LSM folks, though - I've given up on convincing
+(or even getting a rationale out of) them on anything related to hook
+semantics years ago.
