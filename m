@@ -2,117 +2,141 @@ Return-Path: <SRS0=y5yI=VF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5D6C606BD
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 17:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113C2C606C8
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 17:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 620F720644
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 17:38:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oTS27VBG"
+	by mail.kernel.org (Postfix) with ESMTP id E7C362189F
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jul 2019 17:50:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730860AbfGHRiB (ORCPT
+        id S1729779AbfGHRuA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jul 2019 13:38:01 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:35218 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729327AbfGHRiB (ORCPT
+        Mon, 8 Jul 2019 13:50:00 -0400
+Received: from mga12.intel.com ([192.55.52.136]:30625 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390638AbfGHRt7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jul 2019 13:38:01 -0400
-Received: by mail-oi1-f196.google.com with SMTP id a127so13257820oii.2
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Jul 2019 10:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7dDlUWXE3BDiYJAkGp7CGjzY68vf5TiBs2gkLxCROPg=;
-        b=oTS27VBGAXTGyWJrG+1bRf5KktV5vuIvxa8IWh1u4JAjBQEhi23d4SyczOUH26kY2R
-         y//ajtI2TI29q75dcyp4FSN6kHo6UyR1wPu6Y62WtELMtJtY2Xkr824CBphlKwNvrFuO
-         ieIrosIuDlKuPw3h2M3licdQ3No/OcsZmxHFpt3c0Kc+o5hSNDIzOkDfH9Z91ZQWyD9C
-         grhZTvCUxZJhweX5ja9rWveALtoabLG30fihRzI/xTkp6fk/mdSPQab2R5qH1XoaWpiD
-         o9GNdIcFxNYegyyTxVLrvQTgO8RvIuuA7e/Fsm1h2c1BcSOCqsarhQ/oMOQ4o/vR2/An
-         BE2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7dDlUWXE3BDiYJAkGp7CGjzY68vf5TiBs2gkLxCROPg=;
-        b=Tu3NOIaDngXYYqlRLn3D/1J/CNuPW8RL9zCzDdSV+1utWCJjL7psJjnZp5pG7cgJc2
-         4pwE8YViOf9M3z8JChpGHglEJzaaottsUffWbPyZadvCypXr8wJ5Qo+ExBAPhE/heYoY
-         fgTu4BVgQvzALYcjgr1ont7GPjhYHztnup3bSCk3KTE0DbeJ51BFQCPs/JM/o8dHmmgQ
-         JZJy+6100kueu8FYdWz3KnWDNtLy1y/8ngj5NldbOBhKHczMbjwgn/48CXLLgsQUIzne
-         6EdCS0TNq6O0jcRsYKWfMRPO48IPzM5Ptq0wiBg2uKth7/y0mGzpqmH/X0A9Eg8rYu+k
-         JNrg==
-X-Gm-Message-State: APjAAAUQblDqb1/QHErrSSdybhFxVDb4IicOuqn9gCNQAKTYN/PSB3hu
-        N3qtJoajk/M3Qeh/d5pjiqcPejEQ+FouKodWJFe0oD4Q9fTD2w==
-X-Google-Smtp-Source: APXvYqxWC2WzfHpl8ZigyXVHyyT6QtrbedYXY8/NrWJL/zNHr0x2cmYj/XsDrwdBKxwSxPY6OsYxHdMmiMEzeBNat6Y=
-X-Received: by 2002:aca:b06:: with SMTP id 6mr10585303oil.175.1562607480451;
- Mon, 08 Jul 2019 10:38:00 -0700 (PDT)
+        Mon, 8 Jul 2019 13:49:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2019 10:49:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,466,1557212400"; 
+   d="scan'208";a="316780227"
+Received: from bxing-desk.ccr.corp.intel.com (HELO [134.134.148.187]) ([134.134.148.187])
+  by orsmga004.jf.intel.com with ESMTP; 08 Jul 2019 10:49:58 -0700
+Subject: Re: [RFC PATCH v3 0/4] security/x86/sgx: SGX specific LSM hooks
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, casey.schaufler@intel.com,
+        jmorris@namei.org, luto@kernel.org, jethro@fortanix.com,
+        greg@enjellic.com, sds@tycho.nsa.gov,
+        jarkko.sakkinen@linux.intel.com
+References: <cover.1561588012.git.cedric.xing@intel.com>
+ <cover.1562542383.git.cedric.xing@intel.com>
+ <20190708155524.GD20433@linux.intel.com>
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+Message-ID: <8ba6c32d-cedc-53fd-9e86-f78be0067ac3@intel.com>
+Date:   Mon, 8 Jul 2019 10:49:59 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
- <1562410493-8661-5-git-send-email-s.mesoraca16@gmail.com> <CAG48ez35oJhey5WNzMQR14ko6RPJUJp+nCuAHVUJqX7EPPPokA@mail.gmail.com>
- <CAJHCu1+35GhGJY8jDMPEU8meYhJTVgvzY5sJgVCuLrxCoGgHEg@mail.gmail.com>
-In-Reply-To: <CAJHCu1+35GhGJY8jDMPEU8meYhJTVgvzY5sJgVCuLrxCoGgHEg@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 8 Jul 2019 19:37:33 +0200
-Message-ID: <CAG48ez2f1TbUZt_0F99DLyzn-3DhjuoTJZ7Dwxgmto7J9ZQ95g@mail.gmail.com>
-Subject: Re: [PATCH v5 04/12] S.A.R.A.: generic DFA for string matching
-To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Brad Spengler <spender@grsecurity.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        PaX Team <pageexec@freemail.hu>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190708155524.GD20433@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Jul 7, 2019 at 6:01 PM Salvatore Mesoraca
-<s.mesoraca16@gmail.com> wrote:
-> Jann Horn <jannh@google.com> wrote:
-> > Throughout the series, you are adding files that both add an SPDX
-> > identifier and have a description of the license in the comment block
-> > at the top. The SPDX identifier already identifies the license.
->
-> I added the license description because I thought it was required anyway.
-> IANAL, if you tell me that SPDX it's enough I'll remove the description.
+On 7/8/2019 8:55 AM, Sean Christopherson wrote:
+> On Sun, Jul 07, 2019 at 04:41:30PM -0700, Cedric Xing wrote:
+> ...
+> 
+>> different FSMs to govern page protection transitions. Implementation wise, his
+>> model also imposes unwanted restrictions specifically to SGX2, such as:
+>>    · Complicated/Restricted UAPI – Enclave loaders are required to provide
+> 
+> I don't think "complicated" is a fair assessment.  For SGX1 enclaves it's
+> literally a direct propagation of the SECINFO RWX flags.
 
-IANAL too, but Documentation/process/license-rules.rst says:
+True only for SGX1.
+>>      “maximal protection” at page load time, but such information is NOT always
+>>      available. For example, Graphene containers may run different applications
+>>      comprised of different set of executables and/or shared objects. Some of
+>>      them may contain self-modifying code (or text relocation) while others
+>>      don’t. The generic enclave loader usually doesn’t have such information so
+>>      wouldn’t be able to provide it ahead of time.
+> 
+> I'm unconvinced that it would be remotely difficult to teach an enclave
+> loader that an enclave or hosted application employs SMC, relocation or
+> any other behavior that would require declaring RWX on all pages.
 
-====
-The common way of expressing the license of a source file is to add the
-matching boilerplate text into the top comment of the file.  Due to
-formatting, typos etc. these "boilerplates" are hard to validate for
-tools which are used in the context of license compliance.
+You've been talking as if "enclave loader" is tailored to the enclave it 
+is loading. But in reality "enclave loader" is usually a library knowing 
+usually nothing about the enclave. How could it know if an enclave 
+contains self-modifying code?
 
-An alternative to boilerplate text is the use of Software Package Data
-Exchange (SPDX) license identifiers in each source file.  SPDX license
-identifiers are machine parsable and precise shorthands for the license
-under which the content of the file is contributed.  SPDX license
-identifiers are managed by the SPDX Workgroup at the Linux Foundation and
-have been agreed on by partners throughout the industry, tool vendors, and
-legal teams.  For further information see https://spdx.org/
+>>    · Inefficient Auditing – Audit logs are supposed to help system
+>>      administrators to determine the set of minimally needed permissions and to
+>>      detect abnormal behaviors. But consider the “maximal protection” model, if
+>>      “maximal protection” is set to be too permissive, then audit log wouldn’t
+>>      be able to detect anomalies;
+> 
+> Huh?  Declaring overly permissive protections is only problematic if an
+> LSM denies the permission, in which case it will generate an accurate
+> audit log.
+> 
+> If the enclave/loader "requires" a permission it doesn't actually need,
+> e.g. EXECDIRTY, then it's a software bug that should be fixed.  I don't
+> see how this scenario is any different than an application that uses
+> assembly code without 'noexecstack' and inadvertantly "requires"
+> EXECSTACK due to triggering "read implies exec".  In both cases the
+> denied permission is unnecessary due to a userspace application bug.
 
-The Linux kernel requires the precise SPDX identifier in all source files.
-The valid identifiers used in the kernel are explained in the section
-`License identifiers`_ and have been retrieved from the official SPDX
-license list at https://spdx.org/licenses/ along with the license texts.
-====
+You see, you've been assuming "enclave loader" knows everything and 
+tailored to what it loads in a particular application. But the reality 
+is the loader is generic and probably shared by multiple applications. 
+It needs some generic way to figure out the "maximal protection". An 
+implementation could use information embedded in the enclave file, or 
+could just be "configurable". In the former case, you put extra burdens 
+on the build tools, while in the latter case, your audit logs cannot 
+help generating an appropriate configuration.
 
-and there have been lots of conversion patches to replace license
-boilerplate headers with SPDX identifiers, see e.g. all the "treewide:
-Replace GPLv2 boilerplate/reference with SPDX" patches.
+>>      or if “maximal protection” is too restrictive,
+>>      then audit log cannot identify the file violating the policy.
+> 
+> Maximal protections that are too restrictive are completely orthogonal to
+> LSMs as the enclave would fail to run irrespective of LSMs.  This is no
+> different than specifying the wrong RWX flags in SECINFO, or opening a
+> file as RO instead of RW.
+
+Say loader is configurable. By looking at the log, can an administrator 
+tell which file has too restrictive "maximal protection"?
+
+>> In either case the audit log cannot fulfill its purposes.
+>>    · Inability to support #PF driven EPC allocation in SGX2 – For those
+>>      unfamiliar with SGX2 software flows, an SGX2 enclave requests a page by
+>>      issuing EACCEPT on the address that a new page is wanted, and the resulted
+>>      #PF is expected to be handled by the kernel by EAUG’ing an EPC page at the
+>>      fault address, and then the enclave would be resumed and the faulting
+>>      EACCEPT retried, and succeed. The key requirement is to allow mmap()’ing
+>>      non-existing enclave pages so that the SGX module/subsystem could respond
+>>      to #PFs by EAUG’ing new pages. Sean’s implementation doesn’t allow
+>>      mmap()’ing non-existing pages for variety of reasons and therefore blocks
+>>      this major SGX2 usage.
+> 
+> This is simply wrong.  The key requirement in the theoretical EAUG scheme
+> is to mmap() pages that have not been added to the _hardware_ maintained
+> enclave.  The pages (or some optimized representation of a range of pages)
+> would exist in the kernel's software mode of the enclave.
+
+You are right. Code can always change. My assessment was made on what's 
+in your patch.
+
+The key point here is your patch is more complicated than it seems 
+because you've been hand-waving on imminent requirements.
