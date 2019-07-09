@@ -6,84 +6,62 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 202B8C73C59
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 16:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CA6C73C53
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 16:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE30821707
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 16:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8559C21670
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 16:25:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbfGIQWN (ORCPT
+        id S1726115AbfGIQZG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Jul 2019 12:22:13 -0400
-Received: from mga18.intel.com ([134.134.136.126]:54281 "EHLO mga18.intel.com"
+        Tue, 9 Jul 2019 12:25:06 -0400
+Received: from mga06.intel.com ([134.134.136.31]:50005 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbfGIQWL (ORCPT
+        id S1725816AbfGIQZG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Jul 2019 12:22:11 -0400
+        Tue, 9 Jul 2019 12:25:06 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 09:22:10 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 09:25:05 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,470,1557212400"; 
-   d="scan'208";a="364637562"
+   d="scan'208";a="364638749"
 Received: from mmaitert-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.34.54])
-  by fmsmga006.fm.intel.com with ESMTP; 09 Jul 2019 09:22:04 -0700
-Date:   Tue, 9 Jul 2019 19:22:03 +0300
+  by fmsmga006.fm.intel.com with ESMTP; 09 Jul 2019 09:24:59 -0700
+Date:   Tue, 9 Jul 2019 19:24:58 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Bill Roberts <william.c.roberts@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [RFC PATCH v4 00/12] security: x86/sgx: SGX vs. LSM
-Message-ID: <20190709162203.gzyvulah5u7eksip@linux.intel.com>
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <20190705160549.tzsck5ho5kvtdhit@linux.intel.com>
- <20190708172930.GA20791@linux.intel.com>
+To:     James Bottomley <jejb@linux.ibm.com>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>, zohar@linux.ibm.com,
+        jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, crazyt2019+lml@gmail.com,
+        tyhicks@canonical.com, nayna@linux.vnet.ibm.com,
+        silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH] KEYS: trusted: allow module init if TPM is inactive or
+ deactivated
+Message-ID: <20190709162458.f4fjteokcmidv7w6@linux.intel.com>
+References: <20190705163735.11539-1-roberto.sassu@huawei.com>
+ <1562618099.20748.13.camel@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190708172930.GA20791@linux.intel.com>
+In-Reply-To: <1562618099.20748.13.camel@linux.ibm.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 08, 2019 at 10:29:30AM -0700, Sean Christopherson wrote:
-> On Fri, Jul 05, 2019 at 07:05:49PM +0300, Jarkko Sakkinen wrote:
-> > On Wed, Jun 19, 2019 at 03:23:49PM -0700, Sean Christopherson wrote:
-> > 
-> > I still don't get why we need this whole mess and do not simply admit
-> > that there are two distinct roles:
-> > 
-> > 1. Creator
-> > 2. User
-> 
-> Because SELinux has existing concepts of EXECMEM and EXECMOD.
+On Mon, Jul 08, 2019 at 01:34:59PM -0700, James Bottomley wrote:
+> Not a criticism of your patch, but can we please stop doing this. 
+> Single random number sources are horrendously bad practice because it
+> gives an attacker a single target to subvert.  We should ensure the TPM
+> is plugged into the kernel RNG as a source and then take randomness
+> from the mixed pool so it's harder for an attacker because they have to
+> subvert all our sources to predict what came out.
 
-What is the official documentation for those? I've only found some
-explanations from discussions and some RHEL sysadmin guides.
-
-> That being said, we can do so without functional changes to the SGX uapi,
-> e.g. add reserved fields so that the initial uapi can be extended *if* we
-> decide to go with the "userspace provides maximal protections" path, and
-> use the EPCM permissions as the maximal protections for the initial
-> upstreaming.
-> 
-> That'd give us a minimal implemenation for initial upstreaming and would
-> eliminate Cedric's blocking complaint.  The "whole mess" of whitelisting,
-> blacklisting and SGX2 support would be deferred until post-upstreaming.
-
-I'd like that approach more too.
+It is and I agree.
 
 /Jarkko
