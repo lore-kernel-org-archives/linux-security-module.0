@@ -2,126 +2,68 @@ Return-Path: <SRS0=y+58=VG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82335C73C46
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 19:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7673C73C53
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 19:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61AE02082A
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 19:15:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2F66216C4
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 19:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562699717;
-	bh=Xa0ZWuyarGQ9jfbFZDvYzj8QRTx+PiAs5JnSBFhpMeQ=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=WuV0ykdZivA/QbdSwqs3KxbXf89+MG+PWCe/jqPa5x2CcJdvwaHdZ1/gntFRcsIRA
-	 wuQJJWRdfUFHcSkwgoWybpMXB30tQkLC3I5zMORQGDOP4L/dLHb3CsnlnTp6cUo4Jm
-	 qCFi8Vsx4WUl6vSpzY3o390p8EfBy8b27BlBFOzY=
+	s=default; t=1562702110;
+	bh=p8McqkZPbJMafKOclnSs3qGsZajsOXS/ra5BNJGRfnw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=NqVE2yoRfYh2CrUglgPNQFWssJA2hEMKC2WFy1gYZKiHIc35UE4uDqWQL9kALWpxR
+	 WwK4tJoGqyyPkYxAr7iP9ajwGfJYrgKMTTXb9CIZ2P00sqQbBzk8yayZOESGN5HIZd
+	 cXfVVDlw/6fTjShhKI7zSKN1dJ3EOP5xhPC9J/Ls=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729159AbfGITPQ (ORCPT
+        id S1729099AbfGITzK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Jul 2019 15:15:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45366 "EHLO mail.kernel.org"
+        Tue, 9 Jul 2019 15:55:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727608AbfGITPQ (ORCPT
+        id S1729566AbfGITzJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Jul 2019 15:15:16 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A0042073D;
-        Tue,  9 Jul 2019 19:15:14 +0000 (UTC)
+        Tue, 9 Jul 2019 15:55:09 -0400
+Subject: Re: [GIT PULL] LSM: capabilities updates for v5.3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562699715;
-        bh=Xa0ZWuyarGQ9jfbFZDvYzj8QRTx+PiAs5JnSBFhpMeQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=qBl041Zkp5u6G9BjLV8K0Ja95s/vjISPq+Ay3RjQdZCWx0GuYC96eHdKghBLGhXaa
-         0zSyHAJANX3yeV0jQD/G7mP9zVx3Q91QqXg3GjDWA/nBqNYdGP3DYTT0jqq5gddPry
-         CzDFKr/n0xmiPDSA4Z0e2+0MiyymW89Hl0EosFug=
-Date:   Tue, 9 Jul 2019 12:15:12 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Reminder: 2 open syzbot bugs in "security/integrity" subsystem
-Message-ID: <20190709191512.GE641@sol.localdomain>
-Mail-Followup-To: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        s=default; t=1562702109;
+        bh=p8McqkZPbJMafKOclnSs3qGsZajsOXS/ra5BNJGRfnw=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=ISxjqDyrk1nojQDLvDQlB7BRJhFDhHYMOoMhUsun1dTas4TkFEQsbCjaP24eXLobz
+         kzQTe4dOn78x3vkugFiRlJpMnm1p5iWzDhSY6ctk6Esvxr0gRf4anQ0ONY1P5sdP3r
+         jHK6YFbDtx/hwn9wLjSWw7g15bB6+xWA2Pylk/xg=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <alpine.LRH.2.21.1907090427070.13953@namei.org>
+References: <alpine.LRH.2.21.1907090427070.13953@namei.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <alpine.LRH.2.21.1907090427070.13953@namei.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+ next-lsm
+X-PR-Tracked-Commit-Id: c5eaab1d131d0a6272df7d55a971a67400d63f56
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9d22167f34305280c5dd57a74c21651da3c23015
+Message-Id: <156270210912.21525.4158654088652904074.pr-tracker-bot@kernel.org>
+Date:   Tue, 09 Jul 2019 19:55:09 +0000
+To:     James Morris <jmorris@namei.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[This email was generated by a script.  Let me know if you have any suggestions
-to make it better, or if you want it re-generated with the latest status.]
+The pull request you sent on Tue, 9 Jul 2019 04:32:39 -0700 (PDT):
 
-Of the currently open syzbot reports against the upstream kernel, I've manually
-marked 2 of them as possibly being bugs in the "security/integrity" subsystem. 
-I've listed these reports below, sorted by an algorithm that tries to list first
-the reports most likely to be still valid, important, and actionable.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-lsm
 
-If you believe a bug is no longer valid, please close the syzbot report by
-sending a '#syz fix', '#syz dup', or '#syz invalid' command in reply to the
-original thread, as explained at https://goo.gl/tpsmEJ#status
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9d22167f34305280c5dd57a74c21651da3c23015
 
-If you believe I misattributed a bug to the "security/integrity" subsystem,
-please let me know, and if possible forward the report to the correct people or
-mailing list.
+Thank you!
 
-Here are the bugs:
-
---------------------------------------------------------------------------------
-Title:              possible deadlock in process_measurement
-Last occurred:      34 days ago
-Reported:           267 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=aad04cfa9fddcc5588f8b28ddf739f9a3ebf5874
-Original thread:    https://lkml.kernel.org/lkml/0000000000003302870578477029@google.com/T/#u
-
-This bug has a C reproducer.
-
-No one replied to the original thread for this bug.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+5ab61747675a87ea359d@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please consider replying to the
-original thread.  For the git send-email command to use, or tips on how to reply
-if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/0000000000003302870578477029@google.com
-
---------------------------------------------------------------------------------
-Title:              INFO: task hung in process_measurement
-Last occurred:      118 days ago
-Reported:           281 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=623c2e176b9d80b1872e7559e5b823b1ec4911b6
-Original thread:    https://lkml.kernel.org/lkml/00000000000033ebee0577262a98@google.com/T/#u
-
-This bug has a C reproducer.
-
-syzbot has bisected this bug, but I think the bisection result is incorrect.
-
-The original thread for this bug received 1 reply, 106 days ago.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+cdc562bc26a2b2b0a94f@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please consider replying to the
-original thread.  For the git send-email command to use, or tips on how to reply
-if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/00000000000033ebee0577262a98@google.com
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
