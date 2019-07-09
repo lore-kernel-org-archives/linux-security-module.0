@@ -2,132 +2,120 @@ Return-Path: <SRS0=y+58=VG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35471C73C5A
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 20:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D19C73C53
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 20:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B9572073D
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 20:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBBB82073D
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jul 2019 20:42:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562704948;
+	bh=WuMoU6c/Nu0kKp80/Mw0OKcXEh7XR0qwBohejD1dIqU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=twjXy2oASutboiXT3uRSGAcmrOWELANkS5sUzA6/+/ICk0TeiNwObzY4uq86d61A7
+	 cyOVKKJpvfcPAWXchTxGinESuG+v/xSiXHiW9KISARKjCnNim2J22AXzL92ZOg1DUE
+	 BR3KW/mTNTEz47/RNiyWN1yezp9ph5nPXipkUjJU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729765AbfGIUl3 (ORCPT
+        id S1729767AbfGIUm2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Jul 2019 16:41:29 -0400
-Received: from mga18.intel.com ([134.134.136.126]:10570 "EHLO mga18.intel.com"
+        Tue, 9 Jul 2019 16:42:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728955AbfGIUl3 (ORCPT
+        id S1728955AbfGIUm2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Jul 2019 16:41:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 13:41:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,471,1557212400"; 
-   d="scan'208";a="168099604"
-Received: from bxing-desk.ccr.corp.intel.com (HELO [134.134.148.187]) ([134.134.148.187])
-  by orsmga003.jf.intel.com with ESMTP; 09 Jul 2019 13:41:27 -0700
-Subject: Re: [RFC PATCH v4 00/12] security: x86/sgx: SGX vs. LSM
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Bill Roberts <william.c.roberts@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <20190705160549.tzsck5ho5kvtdhit@linux.intel.com>
- <20190708172930.GA20791@linux.intel.com>
- <20190709162203.gzyvulah5u7eksip@linux.intel.com>
- <20190709170917.GD25369@linux.intel.com>
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-Message-ID: <512391ba-fe0d-e758-ae32-09660c1264f7@intel.com>
-Date:   Tue, 9 Jul 2019 13:41:28 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 9 Jul 2019 16:42:28 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE7932073D;
+        Tue,  9 Jul 2019 20:42:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562704947;
+        bh=WuMoU6c/Nu0kKp80/Mw0OKcXEh7XR0qwBohejD1dIqU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zeH5QyOsqThxkjJIZX95VM+NEDkLi3h3gW0ti8uqkiMXGMGer5nV3h1TJ/FFIECb2
+         kMqY3IKr4hjxBxv9k3s2bHI44yVU4f1y1x2/WUR4VRGCHQdFBYuIEO46ZnbQ753TtK
+         qB77okb7UD4mPGVERbK9snJgmKsv4zV3Hn5+uRg4=
+Date:   Tue, 9 Jul 2019 13:42:25 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] KEYS: Provide KEYCTL_GRANT_PERMISSION
+Message-ID: <20190709204225.GM641@sol.localdomain>
+Mail-Followup-To: David Howells <dhowells@redhat.com>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <155862710003.24863.11807972177275927370.stgit@warthog.procyon.org.uk>
+ <155862712317.24863.13455329541359881229.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20190709170917.GD25369@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155862712317.24863.13455329541359881229.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/9/2019 10:09 AM, Sean Christopherson wrote:
-> On Tue, Jul 09, 2019 at 07:22:03PM +0300, Jarkko Sakkinen wrote:
->> On Mon, Jul 08, 2019 at 10:29:30AM -0700, Sean Christopherson wrote:
->>> On Fri, Jul 05, 2019 at 07:05:49PM +0300, Jarkko Sakkinen wrote:
->>>> On Wed, Jun 19, 2019 at 03:23:49PM -0700, Sean Christopherson wrote:
->>>>
->>>> I still don't get why we need this whole mess and do not simply admit
->>>> that there are two distinct roles:
->>>>
->>>> 1. Creator
->>>> 2. User
->>>
->>> Because SELinux has existing concepts of EXECMEM and EXECMOD.
->>
->> What is the official documentation for those? I've only found some
->> explanations from discussions and some RHEL sysadmin guides.
+On Thu, May 23, 2019 at 04:58:43PM +0100, David Howells wrote:
+> Provide a keyctl() operation to grant/remove permissions.  The grant
+> operation, wrapped by libkeyutils, looks like:
 > 
-> No clue.  My knowledge was gleaned from the code and from Stephen's
-> feedback.
+> 	int ret = keyctl_grant_permission(key_serial_t key,
+> 					  enum key_ace_subject_type type,
+> 					  unsigned int subject,
+> 					  unsigned int perm);
 > 
+> Where key is the key to be modified, type and subject represent the subject
+> to which permission is to be granted (or removed) and perm is the set of
+> permissions to be granted.  0 is returned on success.  SET_SECURITY
+> permission is required for this.
 > 
-> The high level breakdown:
+> The subject type currently must be KEY_ACE_SUBJ_STANDARD for the moment
+> (other subject types will come along later).
 > 
->    - FILE__EXECUTE: required to gain X on a mapping to a regular file
+> For subject type KEY_ACE_SUBJ_STANDARD, the following subject values are
+> available:
 > 
+> 	KEY_ACE_POSSESSOR	The possessor of the key
+> 	KEY_ACE_OWNER		The owner of the key
+> 	KEY_ACE_GROUP		The key's group
+> 	KEY_ACE_EVERYONE	Everyone
 > 
->    - FILE__EXECUTE + FILE__WRITE: required to gain WX or W->X on a shared
->                                   mapping to a regular file
+> perm lists the permissions to be granted:
 > 
->    - FILE__EXECMOD: required to gain W->X on a private mapping of a regular
->                     file
+> 	KEY_ACE_VIEW		Can view the key metadata
+> 	KEY_ACE_READ		Can read the key content
+> 	KEY_ACE_WRITE		Can update/modify the key content
+> 	KEY_ACE_SEARCH		Can find the key by searching/requesting
+> 	KEY_ACE_LINK		Can make a link to the key
+> 	KEY_ACE_SET_SECURITY	Can set security
+> 	KEY_ACE_INVAL		Can invalidate
+> 	KEY_ACE_REVOKE		Can revoke
+> 	KEY_ACE_JOIN		Can join this keyring
+> 	KEY_ACE_CLEAR		Can clear this keyring
 > 
->    - PROCESS__EXECMEM: required to gain WX on a private mapping to a regular
->                        file, OR to gain X on an anonymous mapping.
+> If an ACE already exists for the subject, then the permissions mask will be
+> overwritten; if perm is 0, it will be deleted.
 > 
+> Currently, the internal ACL is limited to a maximum of 16 entries.
 > 
-> Translating those to SGX, with a lot of input from Stephen, I ended up
-> with the following:
+> For example:
 > 
->    - FILE__ENCLAVE_EXECUTE: equivalent to FILE__EXECUTE, required to gain X
->                             on an enclave page loaded from a regular file
+> 	int ret = keyctl_grant_permission(key,
+> 					  KEY_ACE_SUBJ_STANDARD,
+> 					  KEY_ACE_OWNER,
+> 					  KEY_ACE_VIEW | KEY_ACE_READ);
 > 
->    - PROCESS2__ENCLAVE_EXECDIRTY: hybrid of EXECMOD and EXECUTE+WRITE,
->                                   required to gain W->X on an enclave page
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-EXECMOD basically indicates a file containing self-modifying code. Your 
-ENCLAVE_EXECDIRTY is however a process permission, which is illogical.
+Where is the documentation and tests for this?  I want to add syzkaller
+definitions for this, but there is no documentation (a commit message doesn't
+count).  I checked the 'next' branch of keyutils as well.
 
->    - PROCESS2__ENCLAVE_EXECANON: subset of EXECMEM, required to gain X on
->                                  an enclave page that is loaded from an
->                                  anonymous mapping
->                         
->    - PROCESS2__ENCLAVE_MAPWX: subset of EXECMEM, required to gain WX on an
->                               enclave page
-> 
-> 
-> 
->>> That being said, we can do so without functional changes to the SGX uapi,
->>> e.g. add reserved fields so that the initial uapi can be extended *if* we
->>> decide to go with the "userspace provides maximal protections" path, and
->>> use the EPCM permissions as the maximal protections for the initial
->>> upstreaming.
->>>
->>> That'd give us a minimal implemenation for initial upstreaming and would
->>> eliminate Cedric's blocking complaint.  The "whole mess" of whitelisting,
->>> blacklisting and SGX2 support would be deferred until post-upstreaming.
->>
->> I'd like that approach more too.
->>
->> /Jarkko
+How is anyone supposed to use this if there is no documentation?
+
+- Eric
