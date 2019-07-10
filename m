@@ -2,88 +2,119 @@ Return-Path: <SRS0=0vKf=VH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C381C73C65
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jul 2019 01:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F7DC73C68
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jul 2019 02:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6960220693
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jul 2019 01:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562722557;
-	bh=G8l0qfV1rZedrGf3CKStAk7W/ybMot/6ylczZwVxTbA=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=Fbzj/X2TXrSVcoy4xizPyXsaDHXb1npm/4WqGntL3L9vm4nQiaHfEbEO/eN6vv9Gc
-	 VRGwxDPcdrantOYomJD+P6tF1iFG/uPzBwg7sFEf8mZpNTl5pdcDJ3UUQv1TILLbqI
-	 7CixvBWw+gM2IeAEGtML1b+Nps0efFNKfbZq5JTo=
+	by mail.kernel.org (Postfix) with ESMTP id 98AB32064B
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jul 2019 02:04:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfGJBf4 (ORCPT
+        id S1725875AbfGJCEf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Jul 2019 21:35:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42914 "EHLO mail.kernel.org"
+        Tue, 9 Jul 2019 22:04:35 -0400
+Received: from mga04.intel.com ([192.55.52.120]:62718 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726324AbfGJBf4 (ORCPT
+        id S1725871AbfGJCEf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Jul 2019 21:35:56 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65CD120693;
-        Wed, 10 Jul 2019 01:35:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562722555;
-        bh=G8l0qfV1rZedrGf3CKStAk7W/ybMot/6ylczZwVxTbA=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=GGdkVqlp13SW1vC82uEbUUFXMVHfk8oghJOxj7T5R1cgPGfQ5gD5yqxpwOENPjFjp
-         MVAjmiyFJ85/CNwguHy21F2lkDSp7Go2jOVlaaAaEnd1/imphKo98ngsUNJmiteHZC
-         MPU1UkMMRTVcd/yChGW5UWTNFLeU1oo95AjW4bGU=
-Date:   Tue, 9 Jul 2019 18:35:53 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] KEYS: Replace uid/gid/perm permissions checking with
- an ACL
-Message-ID: <20190710013553.GC7973@sol.localdomain>
-Mail-Followup-To: David Howells <dhowells@redhat.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <155862710003.24863.11807972177275927370.stgit@warthog.procyon.org.uk>
- <155862710731.24863.14013725058582750710.stgit@warthog.procyon.org.uk>
- <20190710011559.GA7973@sol.localdomain>
+        Tue, 9 Jul 2019 22:04:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 19:04:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,472,1557212400"; 
+   d="scan'208";a="168165043"
+Received: from bxing-desk.ccr.corp.intel.com (HELO [134.134.148.187]) ([134.134.148.187])
+  by orsmga003.jf.intel.com with ESMTP; 09 Jul 2019 19:04:33 -0700
+Subject: Re: [RFC PATCH v4 00/12] security: x86/sgx: SGX vs. LSM
+To:     "Dr. Greg" <greg@idfusion.net>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org,
+        Bill Roberts <william.c.roberts@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+ <20190705160549.tzsck5ho5kvtdhit@linux.intel.com>
+ <20190708172930.GA20791@linux.intel.com>
+ <20190710012811.GA18755@wind.enjellic.com>
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+Message-ID: <120cfcee-af82-83cd-fb73-a39ecddff2af@intel.com>
+Date:   Tue, 9 Jul 2019 19:04:35 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190710011559.GA7973@sol.localdomain>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190710012811.GA18755@wind.enjellic.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 09, 2019 at 06:16:01PM -0700, Eric Biggers wrote:
-> On Thu, May 23, 2019 at 04:58:27PM +0100, David Howells wrote:
-> > Replace the uid/gid/perm permissions checking on a key with an ACL to allow
-> > the SETATTR and SEARCH permissions to be split.  This will also allow a
-> > greater range of subjects to represented.
-> > 
+On 7/9/2019 6:28 PM, Dr. Greg wrote:
+> On Mon, Jul 08, 2019 at 10:29:30AM -0700, Sean Christopherson wrote:
 > 
-> This patch broke 'keyctl new_session', and hence broke all the fscrypt tests:
+> Good evening to everyone.
 > 
-> $ keyctl new_session
-> keyctl_session_to_parent: Permission denied
+>> That being said, we can do so without functional changes to the SGX
+>> uapi, e.g. add reserved fields so that the initial uapi can be
+>> extended *if* we decide to go with the "userspace provides maximal
+>> protections" path, and use the EPCM permissions as the maximal
+>> protections for the initial upstreaming.
+>>
+>> That'd give us a minimal implemenation for initial upstreaming and
+>> would eliminate Cedric's blocking complaint.  The "whole mess" of
+>> whitelisting, blacklisting and SGX2 support would be deferred until
+>> post-upstreaming.
 > 
-> Output of 'keyctl show' is
+> Are we convinced the 'mess' will be any easier to clean up after the
+> driver is upstreamed?
 > 
-> $ keyctl show
-> Session Keyring
->  605894913 --alswrv      0     0  keyring: _ses
->  189223103 ----s-rv      0     0   \_ user: invocation_id
-> 
-> - Eric
+> The primary problem is that we haven't addressed the issue of what
+> this technology is designed to do and its implications with respect to
+> the kernel.  As a result we are attempting to implement controls which
+> we are comfortable with and understand rather then those that are
+> relevant.
 
-... and this also broke loading in-kernel X.509 certificates.  See the other
-thread: https://lore.kernel.org/lkml/27671.1562384658@turing-police/T/#u
+I don't think it's about easier or harder to clean up the mess, but a 
+divide-and-conquer strategy. After all, SGX and LSM are kind of 
+orthogonal as long as SGX doesn't compromise the protection provided by LSM.
 
-- Eric
+Let's step back and look at what started this lengthy discussion. The 
+primary problem of v20 was that the SGX module allows executable enclave 
+pages to be created from non-executable regular pages, which could be 
+exploited by adversaries to grant executable permissions to pages that 
+would otherwise be denied without SGX. And that could be fixed simply by 
+capping EPCM permissions to whatever allowed on the source page, without 
+touching LSM. Of course the drawback is loss of functionality - i.e. 
+self-modifying enclaves cannot be loaded unless the calling process has 
+EXECMEM. But that should suffice, as most SGX1 applications don't 
+contain self-modifying code anyway.
+
+Then we could switch our focus back to LSM and work out what's relevant, 
+especially for SGX2 and beyond.
+
+> Have a good evening.
+> 
+> Dr. Greg
+> 
+> As always,
+> Dr. Greg Wettstein, Ph.D, Worker
+> IDfusion, LLC               Implementing SGX secured and modeled
+> 4206 N. 19th Ave.           intelligent network endpoints.
+> Fargo, ND  58102
+> PH: 701-281-1686            EMAIL: greg@idfusion.net
+> ------------------------------------------------------------------------------
+> "Courage is not the absence of fear, but rather the judgement that
+>   something else is more important than fear."
+>                                  -- Ambrose Redmoon
+> 
