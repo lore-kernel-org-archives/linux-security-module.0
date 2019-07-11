@@ -2,230 +2,184 @@ Return-Path: <SRS0=Tg6P=VI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC76C74A35
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 14:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 455B3C74A54
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 14:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03E3B21537
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 14:15:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EC5E21019
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 14:32:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="Ak3oiqM6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbfGKOPB (ORCPT
+        id S1728429AbfGKOcw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Jul 2019 10:15:01 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10284 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728497AbfGKOO5 (ORCPT
+        Thu, 11 Jul 2019 10:32:52 -0400
+Received: from usfb19pa11.eemsg.mail.mil ([214.24.26.82]:49393 "EHLO
+        USFB19PA11.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728045AbfGKOcw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:14:57 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6BEC4qq139321
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Jul 2019 10:14:56 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tp5a14nkv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Jul 2019 10:14:55 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 11 Jul 2019 15:14:53 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 11 Jul 2019 15:14:49 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6BEEmsx50921690
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Jul 2019 14:14:48 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5EACFAE058;
-        Thu, 11 Jul 2019 14:14:48 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B70FAE05A;
-        Thu, 11 Jul 2019 14:14:47 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.110.74])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 11 Jul 2019 14:14:47 +0000 (GMT)
-Subject: Re: possible deadlock in process_measurement
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     syzbot <syzbot+5ab61747675a87ea359d@syzkaller.appspotmail.com>,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, zohar@linux.vnet.ibm.com
-Date:   Thu, 11 Jul 2019 10:14:36 -0400
-In-Reply-To: <00000000000054e5d1058a6df2eb@google.com>
-References: <00000000000054e5d1058a6df2eb@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19071114-0028-0000-0000-0000038377CB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071114-0029-0000-0000-000024438C5D
-Message-Id: <1562854476.4014.47.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-11_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907110160
+        Thu, 11 Jul 2019 10:32:52 -0400
+X-EEMSG-check-017: 162675973|USFB19PA11_EEMSG_MP7.csd.disa.mil
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by USFB19PA11.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 11 Jul 2019 14:32:49 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1562855570; x=1594391570;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=ia/iXlGcZBtjRBR3YX13UNiblz5vp05BNnipHsH4m8I=;
+  b=Ak3oiqM6RsDVECXnWPvWMf/UwPs76XBpPDyoslHT7JhcmWpqS884Pmt0
+   8Y6ycdbu0Rea4BdyPUeIdgRcxVccKcBdoYjEwh7uxli667J3zd1XJivCm
+   mxetJY1GnLQVxGaW0lJqvd2z/gkoCbtLGw1UieEBAqZ+lmwkXsfCUQTa1
+   xgWxOrvmY6klubvmi1R687LALCtY7i8aojtXLpbtTOofgTyCDoH0U4eW1
+   4N2rzn4AvYMllMk29dtqzAYkK4414fbSHv1nPoyz9Bz7lhONEf9mWI68t
+   ZOnSC3YWWMJzwXd9EnGcgbnZuMBFQ1OnfbW8/irMLH9P/u9XYwXg/uydK
+   w==;
+X-IronPort-AV: E=Sophos;i="5.63,478,1557187200"; 
+   d="scan'208";a="30025926"
+IronPort-PHdr: =?us-ascii?q?9a23=3AUbBorBb/HFqv4KGbaR4KxQz/LSx+4OfEezUN45?=
+ =?us-ascii?q?9isYplN5qZpsq9Yx7h7PlgxGXEQZ/co6odzbaP6ea8CSdfv96oizMrSNR0TR?=
+ =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
+ =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9vMhm6twrcu8oZjYZgK6s61w?=
+ =?us-ascii?q?fErGZPd+lK321jOEidnwz75se+/Z5j9zpftvc8/MNeUqv0Yro1Q6VAADspL2?=
+ =?us-ascii?q?466svrtQLeTQSU/XsTTn8WkhtTDAfb6hzxQ4r8vTH7tup53ymaINH2QLUpUj?=
+ =?us-ascii?q?ms86tnVBnlgzocOjUn7G/YlNB/jKNDoBKguRN/xZLUYJqIP/Z6Z6/RYM8WSX?=
+ =?us-ascii?q?ZEUstXWSNBGIe8ZJYRAeQHM+hTso3xq0IAoBa6AAWhAv7kxD1ViX/sxaA0zv?=
+ =?us-ascii?q?ovEQ/G0gIjEdwBvnvbo9fpO6kdSu210KvFwC/fY/9K1zrw6o7FeQ0hr/GWWr?=
+ =?us-ascii?q?JwdNLcx1QzFwzbllWQqZLqPzWI3eoQtmiU9e5gVeaxhG8ntgp8pSOvydo3io?=
+ =?us-ascii?q?TSmoIUykzL9SV+wIovI924U1R0bcSrEJtXqSGXLo17Sd4sTWFvvSY10LwGuZ?=
+ =?us-ascii?q?ijcSgR1psnwx/fa/qac4mH+hLjTuGRITVmi315ZLKznRGy8VKvyuD6S8K600?=
+ =?us-ascii?q?5KozJYntTDuX0BzRze5tWdRvdj8UqtxyyD2x3V5+pZO047j7DbJIQkwrMok5?=
+ =?us-ascii?q?oTtlnMETHulUXtia+Wal0k+u+16+T7ernmpoGTN4tzigzmLqQhgNa/AeUlMg?=
+ =?us-ascii?q?gVRWSb5eS926Hj/U3+WrlKiOE5krLFv5zAIMQbp6q5DxdU0oYl9Rm/Ey+r3M?=
+ =?us-ascii?q?kXkHQINl5IeA+Lg5L3N1zBPvz0F+qzj0ypkDhxxvDGOrPhAo/KLnjGiLrhZq?=
+ =?us-ascii?q?ty61VHxQovzdFQ+5JUCrYbLPL1QU/+rsbUDhA+Mwyq2+rnEsly1psCWWKTBa?=
+ =?us-ascii?q?+UKKHSvkWS5uIsIOmMY5UZuC3nJPgm5P7ujHk5lkEbfaSy2ZsXaXa4HulpIk?=
+ =?us-ascii?q?mDYHrshMsBHnkOvgYkUOPqj1iCWyZJZ3muR6I8+i07CIW+AIjfWI+inaaB3C?=
+ =?us-ascii?q?anEZFMaWFGC1aMEXjzeoWFXfcMdDydIst7njMYUrihTpcr1Quyuw/i17pnMu?=
+ =?us-ascii?q?3U9zUDtZ39ztd14ffflRMo+TNoD8SdyWCNT3ponmMPXz823L5woVZmyleE16?=
+ =?us-ascii?q?h1mP1YFdpP5/xXVgc2L4LTz+t/C9rqQALOYs+JSEq6QtWhGTwxStMxw9kTY0?=
+ =?us-ascii?q?dyAtmilR/D3iWxDr8LmLyEGoY0/rjf33fvPcZ9zWjJ1K07g1khWMtPOnWshr?=
+ =?us-ascii?q?Rj+AjLG47Jj0KZmr6udaQd2i7N6WiCwXOVvE5GTAFwTL/FXXEDZkrWtNj540?=
+ =?us-ascii?q?TCQKKzCbQjLARM0tCCKqRUZd3zl1lGR+nsOM7YY22vn2e8HxGIxqmDbIDyYW?=
+ =?us-ascii?q?USwD3dCFQYkwAU5XuGLhYxBiOgo2LYETxvGkniY13j8eZgsnO3VEw0wB+Qb0?=
+ =?us-ascii?q?1nybW1/gQZhfuGS/McxrgEojsuqy1oHFah2NLbE9SBpwtlfKVYYNMy+lJH2X?=
+ =?us-ascii?q?jFuABnJJygKLttiUAEcwRrpEPjzBR3CoNckcc0qHMm1hZ9KaWd0FlZbTOXwY?=
+ =?us-ascii?q?jwOqHLKmn15B2gd7TZ2krA39eW4KsP8+g3q1X5swG0GEoi92to08NO3nud4J?=
+ =?us-ascii?q?XKEBQdUZbrXkkr8Bh6oqnQYjMh6IPMyX1sLa60vyfA29IsA+sl0Aygf9ZEMK?=
+ =?us-ascii?q?6fEg/9CcgaCNavKOAwnFipdB0ENvhI9KEoJ8Oma+eG2KmzMel9hj2mk3pI7J?=
+ =?us-ascii?q?p90k2W8Sp8UfDH35AezvGZ2AuHSynzjFO7vs/rnoBEYCkYHnCjxij8GI5Req?=
+ =?us-ascii?q?pycJ4PCWezP823wc5zh53zVH5C8l6sGVcG1NWueRqIYFz3xRdQ2lgPoXy7hS?=
+ =?us-ascii?q?u4yCR5kzM3oaqD3CzO2ePieQEJOm5MXmlikU3jIY61j9EVRkSncw8plB6970?=
+ =?us-ascii?q?bg26dbvLh/L3XUQUpQcCj2NX9tUqSru7WcZc5P6o0nsSFTUOS9fV+WUKLyox?=
+ =?us-ascii?q?wf03CrI2wL5jkhdDKt8q7wnB97jm+bZCJxpWDaesY23h7c593aSPh52jsAWT?=
+ =?us-ascii?q?k+iD/LC1z6NN6sq5Hc3afCtO/6H0msWodSemOjmYiNuDG67it6ABuwt/G1ht?=
+ =?us-ascii?q?DjVwM91Hmo+cNtUHDzsBvkYoTtn5+/OOZjc1ggUETw8OJmC4p+lc02n5hW1n?=
+ =?us-ascii?q?8E0MbGtUEbmHv+ZI0IkZn1a2AAEHtSmI/Y?=
+X-IPAS-Result: =?us-ascii?q?A2BlAADRRydd/wHyM5BlGgEBAQEBAgEBAQEHAgEBAQGBZ?=
+ =?us-ascii?q?4FoBSpqUjKERJJeUwaBCQgliV6RFQkBAQEBAQEBAQErCQECAQGEQAKCUyM4E?=
+ =?us-ascii?q?wEDAQEBBAEBAQEEAQFshTwMgjopAYJnAQUjBBFBEAsYAgImAgJXBg0IAQGCX?=
+ =?us-ascii?q?z8BgXYUD6wpfzOFR4MqgUEGgQwoi18XeIEHgTgMgl8+h06CWASMToF0hiqVb?=
+ =?us-ascii?q?wmCG4IfhDmNKgYbmAONM4dEkhUhgVgrCAIYCCEPO4Jti0WFWyMDgTYBAY8PA?=
+ =?us-ascii?q?QE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 11 Jul 2019 14:32:48 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x6BEWfTs022959;
+        Thu, 11 Jul 2019 10:32:43 -0400
+Subject: Re: [RFC PATCH v4 00/12] security: x86/sgx: SGX vs. LSM
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org,
+        Bill Roberts <william.c.roberts@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+ <20190705160549.tzsck5ho5kvtdhit@linux.intel.com>
+ <20190708172930.GA20791@linux.intel.com>
+ <20190709162203.gzyvulah5u7eksip@linux.intel.com>
+ <20190709170917.GD25369@linux.intel.com>
+ <20190710221638.bwnwtcozpv44ojdg@linux.intel.com>
+ <38d3b0ee-be9c-cb1a-785a-325a3ade003b@intel.com>
+ <20190711092609.jxe4uubwg5qbwfju@linux.intel.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <ef0c9052-d22e-aaa6-4915-b1823abea64c@tycho.nsa.gov>
+Date:   Thu, 11 Jul 2019 10:32:41 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190711092609.jxe4uubwg5qbwfju@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Eric,
+On 7/11/19 5:26 AM, Jarkko Sakkinen wrote:
+> On Wed, Jul 10, 2019 at 04:16:42PM -0700, Xing, Cedric wrote:
+>>> Still puzzling with EXECMOD given that how it is documented in
+>>> https://selinuxproject.org/page/ObjectClassesPerms. If anything in that
+>>> document is out of date, would be nice if it was updated.
+>>
+>> If you search for "EXECMOD" in security/selinux/hooks.c in the latest
+>> (Linux-5.2) master, you'll find only one occurrence - at line 3702.
+>>
+>> The logic over there, if translated into English, basically says
+>> FILE__EXECMOD is required (on the backing file) if mprotect() is called to
+>> request X on a private file mapping that has been modified by the calling
+>> process. That's what Sean meant by "W->X".
+> 
+> Looking at that part of code, there is this comment:
+> 
+> /*
+>   * We are making executable a file mapping that has
+>   * had some COW done. Since pages might have been
+>   * written, check ability to execute the possibly
+>   * modified content.  This typically should only
+>   * occur for text relocations.
+>   */
+> 
+> There is no COW done with enclaves, never. Thus, EXECMOD does not
+> connect in any possible way to SGX. OR, that comment is false.
+> 
+> Which one is it?
+> 
+> Also the official documentation for SELinux speaks only about COW
+> mappings.
+> 
+> Also the condition supports all this as a *private* file mapping ends up
+> to the anon_vma list when it gets written. We have a *shared* file
+> mapping
+> 
+> Nothing that you say makes sense to me, sorry...
 
-On Mon, 2019-06-03 at 09:35 -0700, syzbot wrote:
-> syzbot has found a reproducer for the following crash on:
-> 
-> HEAD commit:    3c09c195 Add linux-next specific files for 20190531
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10f61a0ea00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6cfb24468280cd5c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5ab61747675a87ea359d
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177c3d16a00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ec01baa00000
-> 
+The existing permissions don't map cleanly to SGX but I think Sean and 
+Cedric were trying to make a best-effort approximation to the underlying 
+concepts in a manner that permits control over the introduction of 
+executable content.
 
-This reproducer seems like it is similar, but the cause is different
-than the original report.  One has to do with overlayfs, while the
-other has to do with ext4, mprotect/mmap.  I assume in both cases an
-IMA policy was required to trigger the locking bug.  What type of IMA
-policy are you using?
+Sure, the existing EXECMOD check is only applied today when there is an 
+attempt to make executable a previously modified (detected based on COW 
+having occurred) private file mapping.  But the general notion of 
+controlling the ability to execute modified content is still meaningful.
 
-Do we need to differentiate the two reports?  Is the "last occurred"
-notification for the overlay, for mprotect, or both?  Please Cc the
-overlay mailing list on the overlay aspect.
+In the case of regular files, having both FILE__WRITE and FILE__EXECUTE 
+to the file is sufficient because that implies the ability to execute 
+modified content.  And those FILE__* checks predated the introduction of 
+EXECMOD and EXECMEM.
 
-thanks,
-
-Mimi
-
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+5ab61747675a87ea359d@syzkaller.appspotmail.com
-> 
-> get_swap_device: Bad swap file entry 6000000000000001
-> get_swap_device: Bad swap file entry 6400000000000001
-> get_swap_device: Bad swap file entry 6800000000000001
-> get_swap_device: Bad swap file entry 6c00000000000001
-> get_swap_device: Bad swap file entry 7000000000000001
-> get_swap_device: Bad swap file entry 7400000000000001
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 5.2.0-rc2-next-20190531 #4 Not tainted
-> ------------------------------------------------------
-> syz-executor395/17373 is trying to acquire lock:
-> 000000003d1a4a53 (&sb->s_type->i_mutex_key#10){+.+.}, at: inode_lock  
-> include/linux/fs.h:778 [inline]
-> 000000003d1a4a53 (&sb->s_type->i_mutex_key#10){+.+.}, at:  
-> process_measurement+0x15ae/0x15e0 security/integrity/ima/ima_main.c:228
-> 
-> but task is already holding lock:
-> 00000000e0714fc5 (&mm->mmap_sem#2){++++}, at: do_mprotect_pkey+0x1f6/0xa30  
-> mm/mprotect.c:485
-> 
-> which lock already depends on the new lock.
-> 
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #1 (&mm->mmap_sem#2){++++}:
->         down_read+0x3f/0x1e0 kernel/locking/rwsem.c:24
->         get_user_pages_unlocked+0xfc/0x4a0 mm/gup.c:1174
->         __gup_longterm_unlocked mm/gup.c:2193 [inline]
->         get_user_pages_fast+0x43f/0x530 mm/gup.c:2245
->         iov_iter_get_pages+0x2c2/0xf80 lib/iov_iter.c:1287
->         dio_refill_pages fs/direct-io.c:171 [inline]
->         dio_get_page fs/direct-io.c:215 [inline]
->         do_direct_IO fs/direct-io.c:983 [inline]
->         do_blockdev_direct_IO+0x3f7b/0x8e00 fs/direct-io.c:1336
->         __blockdev_direct_IO+0xa1/0xca fs/direct-io.c:1422
->         ext4_direct_IO_write fs/ext4/inode.c:3782 [inline]
->         ext4_direct_IO+0xaa7/0x1bb0 fs/ext4/inode.c:3909
->         generic_file_direct_write+0x20a/0x4a0 mm/filemap.c:3110
->         __generic_file_write_iter+0x2ee/0x630 mm/filemap.c:3293
->         ext4_file_write_iter+0x332/0x1070 fs/ext4/file.c:266
->         call_write_iter include/linux/fs.h:1870 [inline]
->         new_sync_write+0x4d3/0x770 fs/read_write.c:483
->         __vfs_write+0xe1/0x110 fs/read_write.c:496
->         vfs_write+0x268/0x5d0 fs/read_write.c:558
->         ksys_write+0x14f/0x290 fs/read_write.c:611
->         __do_sys_write fs/read_write.c:623 [inline]
->         __se_sys_write fs/read_write.c:620 [inline]
->         __x64_sys_write+0x73/0xb0 fs/read_write.c:620
->         do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
->         entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> -> #0 (&sb->s_type->i_mutex_key#10){+.+.}:
->         lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4300
->         down_write+0x38/0xa0 kernel/locking/rwsem.c:66
->         inode_lock include/linux/fs.h:778 [inline]
->         process_measurement+0x15ae/0x15e0  
-> security/integrity/ima/ima_main.c:228
->         ima_file_mmap+0x11a/0x130 security/integrity/ima/ima_main.c:370
->         security_file_mprotect+0xd5/0x100 security/security.c:1430
->         do_mprotect_pkey+0x537/0xa30 mm/mprotect.c:550
->         __do_sys_pkey_mprotect mm/mprotect.c:590 [inline]
->         __se_sys_pkey_mprotect mm/mprotect.c:587 [inline]
->         __x64_sys_pkey_mprotect+0x97/0xf0 mm/mprotect.c:587
->         do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
->         entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> other info that might help us debug this:
-> 
->   Possible unsafe locking scenario:
-> 
->         CPU0                    CPU1
->         ----                    ----
->    lock(&mm->mmap_sem#2);
->                                 lock(&sb->s_type->i_mutex_key#10);
->                                 lock(&mm->mmap_sem#2);
->    lock(&sb->s_type->i_mutex_key#10);
-> 
->   *** DEADLOCK ***
-> 
-> 1 lock held by syz-executor395/17373:
->   #0: 00000000e0714fc5 (&mm->mmap_sem#2){++++}, at:  
-> do_mprotect_pkey+0x1f6/0xa30 mm/mprotect.c:485
-> 
-> stack backtrace:
-> CPU: 1 PID: 17373 Comm: syz-executor395 Not tainted 5.2.0-rc2-next-20190531  
-> #4
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->   print_circular_bug.cold+0x1cc/0x28f kernel/locking/lockdep.c:1566
->   check_prev_add kernel/locking/lockdep.c:2311 [inline]
->   check_prevs_add kernel/locking/lockdep.c:2419 [inline]
->   validate_chain kernel/locking/lockdep.c:2801 [inline]
->   __lock_acquire+0x3755/0x5490 kernel/locking/lockdep.c:3790
->   lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4300
->   down_write+0x38/0xa0 kernel/locking/rwsem.c:66
->   inode_lock include/linux/fs.h:778 [inline]
->   process_measurement+0x15ae/0x15e0 security/integrity/ima/ima_main.c:228
->   ima_file_mmap+0x11a/0x130 security/integrity/ima/ima_main.c:370
->   security_file_mprotect+0xd5/0x100 security/security.c:1430
->   do_mprotect_pkey+0x537/0xa30 mm/mprotect.c:550
->   __do_sys_pkey_mprotect mm/mprotect.c:590 [inline]
->   __se_sys_pkey_mprotect mm/mprotect.c:587 [inline]
->   __x64_sys_pkey_mprotect+0x97/0xf0 mm/mprotect.c:587
->   do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x440279
-> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-> ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffeec2f48d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000149
-> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440279
-> RDX: 000000000000000
-> 
-
+The mapping of /dev/sgx/enclave doesn't really fit existing categories 
+because it doesn't provide the same semantics as a shared mapping of a 
+regular file.  Userspace will always need both FILE__WRITE and 
+FILE__EXECUTE to /dev/sgx/enclave.
