@@ -2,118 +2,112 @@ Return-Path: <SRS0=Tg6P=VI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 430E6C74A46
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 04:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43361C74A53
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 09:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BB3F21530
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 04:12:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQipN+bs"
+	by mail.kernel.org (Postfix) with ESMTP id 26F9E20872
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 09:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfGKELx (ORCPT
+        id S1728177AbfGKJGz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Jul 2019 00:11:53 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43384 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbfGKELw (ORCPT
+        Thu, 11 Jul 2019 05:06:55 -0400
+Received: from mga07.intel.com ([134.134.136.100]:4909 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728045AbfGKJGz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Jul 2019 00:11:52 -0400
-Received: by mail-pl1-f196.google.com with SMTP id cl9so2288439plb.10;
-        Wed, 10 Jul 2019 21:11:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bSqx5lRhnvQ+7sTCSs3xCfsXxcwdrD2eEqRPLZvVrbA=;
-        b=HQipN+bsvIBMHH7pXW047PoLn1gb24JU6O6094dySrF2kg2I9dihkWzrRRvEW5lmbx
-         1WmRCHYsgMmVisomKYe2R9zHJVAGjer/+fC5cNecSCiC9ZOFF88hNsN8Bgc+8fFyZmBk
-         pUnaMkAQL/N/+YyY12cO9ELzj3E7V5kOk18t/MYMKhvmpITlJVpl6YNlaTZ7p84fv+Q3
-         dNMGD77wMSl+tMmXnHw0QccYZfTcT27l2F0ZmVBkiorsIagbeZx//DAzWP/AI9R9kgMV
-         9RaUX0IuYTR0iL9W5nPOIGx73j+/VWjmf46iWkV3/kbhK7tEFEeWpcc+YkymY9Oc6szH
-         ClEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bSqx5lRhnvQ+7sTCSs3xCfsXxcwdrD2eEqRPLZvVrbA=;
-        b=Ak27Wgk8I6t4u26yZB0FyFeYNGCAfl99mBjcrmMnJnxW+Wh1jDqHR/3aXBcOb+0+dX
-         SOye7VvLTUpcw5XCAD7WWEyfXLuVKxxIe4ZMWtVV40MTpkUsqHnw4XNiu2ySgWOuGeGl
-         ADOwsDGdFHqMKJPXYgzCvUjFgHgT3SIp+P9PtL47dzCb7WWI41cRmns/Fr14D35/GB2k
-         sALdKcAfko4VoqmgrY/i6sWJRqOQJQWpOR9MQLbslBNauNZXiG7x3sFT5PojOsIH0VWe
-         w9W1G9h5x0/Yy8ZvvYBF+KNdfkrt5qFy5UEg7WHg1rLORWtNxauJ2J14HGMNz58SMs1P
-         OGnQ==
-X-Gm-Message-State: APjAAAUaAiStmKGCw8J6P4GndXnoCJudtiJ/tRzAMHvt13q6VGyj6ptA
-        bKrHEYx8JZBZ+CQNDXT3sH8=
-X-Google-Smtp-Source: APXvYqz7t7+RwovcwFBuTIN5fXo1cdhnlVpoV9TKSdDMLz0WqLr7TyJkJsDJ2xPHxhsibEhdPdupFQ==
-X-Received: by 2002:a17:902:42d:: with SMTP id 42mr2105475ple.228.1562818312183;
-        Wed, 10 Jul 2019 21:11:52 -0700 (PDT)
-Received: from linux-l9pv.suse ([202.47.205.198])
-        by smtp.gmail.com with ESMTPSA id 12sm3586433pfi.60.2019.07.10.21.11.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 21:11:51 -0700 (PDT)
-From:   joeyli <joeyli.kernel@gmail.com>
-X-Google-Original-From: joeyli <jlee@suse.com>
-Date:   Thu, 11 Jul 2019 12:11:45 +0800
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Matthew Garrett <matthewgarrett@google.com>, jmorris@namei.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Josh Boyer <jwboyer@fedoraproject.org>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>, rjw@rjwysocki.net,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH V34 10/29] hibernate: Disable when the kernel is locked
- down
-Message-ID: <20190711041145.GA28145@linux-l9pv.suse>
-References: <20190622000358.19895-1-matthewgarrett@google.com>
- <20190622000358.19895-11-matthewgarrett@google.com>
- <20190622175208.GB30317@amd>
- <nycvar.YFH.7.76.1906241520500.27227@cbobk.fhfr.pm>
+        Thu, 11 Jul 2019 05:06:55 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 02:06:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,478,1557212400"; 
+   d="scan'208";a="156765731"
+Received: from spoledic-mobl.ger.corp.intel.com (HELO localhost) ([10.252.50.84])
+  by orsmga007.jf.intel.com with ESMTP; 11 Jul 2019 02:06:51 -0700
+Date:   Thu, 11 Jul 2019 12:06:50 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org,
+        Bill Roberts <william.c.roberts@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: [RFC PATCH v4 00/12] security: x86/sgx: SGX vs. LSM
+Message-ID: <20190711090650.fccxi2isfb35uerl@linux.intel.com>
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+ <20190705160549.tzsck5ho5kvtdhit@linux.intel.com>
+ <20190708172930.GA20791@linux.intel.com>
+ <20190709162203.gzyvulah5u7eksip@linux.intel.com>
+ <20190709170917.GD25369@linux.intel.com>
+ <20190710201930.ly7ykediuy35cjze@linux.intel.com>
+ <20190710203104.GH4348@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1906241520500.27227@cbobk.fhfr.pm>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190710203104.GH4348@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi experts,
-
-On Mon, Jun 24, 2019 at 03:21:23PM +0200, Jiri Kosina wrote:
-> On Sat, 22 Jun 2019, Pavel Machek wrote:
-> 
-> > > There is currently no way to verify the resume image when returning
-> > > from hibernate.  This might compromise the signed modules trust model,
-> > > so until we can work with signed hibernate images we disable it when the
-> > > kernel is locked down.
+On Wed, Jul 10, 2019 at 01:31:04PM -0700, Sean Christopherson wrote:
+> On Wed, Jul 10, 2019 at 11:19:30PM +0300, Jarkko Sakkinen wrote:
+> > On Tue, Jul 09, 2019 at 10:09:17AM -0700, Sean Christopherson wrote:
+> > > On Tue, Jul 09, 2019 at 07:22:03PM +0300, Jarkko Sakkinen wrote:
+> > > > On Mon, Jul 08, 2019 at 10:29:30AM -0700, Sean Christopherson wrote:
+> > > > > On Fri, Jul 05, 2019 at 07:05:49PM +0300, Jarkko Sakkinen wrote:
+> > > > > > On Wed, Jun 19, 2019 at 03:23:49PM -0700, Sean Christopherson wrote:
+> > > > > > 
+> > > > > > I still don't get why we need this whole mess and do not simply admit
+> > > > > > that there are two distinct roles:
+> > > > > > 
+> > > > > > 1. Creator
+> > > > > > 2. User
+> > > > > 
+> > > > > Because SELinux has existing concepts of EXECMEM and EXECMOD.
+> > > > 
+> > > > What is the official documentation for those? I've only found some
+> > > > explanations from discussions and some RHEL sysadmin guides.
+> > > 
+> > > No clue.  My knowledge was gleaned from the code and from Stephen's
+> > > feedback.
 > > 
-> > I keep getting these...
+> > OK, thanks for elaboration. Got nailed some details I was missing :-)
 > > 
-> > IIRC suse has patches to verify the images.
+> > Anyway, to accompany your code changes I'm eager to document this not
+> > least because it is a good peer test that this all make sense (you
+> > cannot "unit test" a security model so that is the next best thing).
+> > 
+> > Still, we need a documentation reference to reflect the narrative
+> > for these changes, seriously. It cannot be that SELinux is widely
+> > deployed and it completely lacks documentation for its basic
+> > objects, can it?
 > 
-> Yeah, Joey Lee is taking care of those. CCing.
->
+> The vast majority of documentation I've found is on *using* SELinux,
+> e.g. writing policies and whatnot.  I haven't found anything on its
+> internal details, although I admitedly haven't looked all that hard.
 
-The last time that I sent for hibernation encryption and authentication is
-here:
-    https://lkml.org/lkml/2019/1/3/281
+I think these are the best references.
 
-It needs some big changes after review:
- - Simplify the design: remove keyring dependency and trampoline.
- - Encrypted whole snapshot image instead of only data pages.
- - Using TPM:
-        - Direct use TPM API in hibernation instead of keyring
-        - Localities (suggested by James Bottomley)
+Object classes:
 
-I am still finding enough time to implement those changes, especial TPM
-parts.
+https://selinuxproject.org/page/ObjectClassesPerms
 
-Thanks
-Joey Lee
+Background/concepts:
+
+https://selinuxproject.org/page/Category:Notebook#Notebook_Sections
+
+/Jarkko
