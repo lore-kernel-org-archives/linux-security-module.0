@@ -2,115 +2,118 @@ Return-Path: <SRS0=Tg6P=VI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3F8C74A41
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 03:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 430E6C74A46
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 04:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27E2D21019
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 03:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BB3F21530
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jul 2019 04:12:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQipN+bs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfGKDJj (ORCPT
+        id S1727789AbfGKELx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Jul 2019 23:09:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59248 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726353AbfGKDJj (ORCPT
+        Thu, 11 Jul 2019 00:11:53 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43384 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbfGKELw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Jul 2019 23:09:39 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6B39YZr048088
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2019 23:09:38 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tnuyesq54-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2019 23:09:35 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 11 Jul 2019 04:07:31 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 11 Jul 2019 04:07:28 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6B37F0p35652076
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Jul 2019 03:07:15 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5429A405B;
-        Thu, 11 Jul 2019 03:07:27 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 735A7A4054;
-        Thu, 11 Jul 2019 03:07:26 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.110.74])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 11 Jul 2019 03:07:26 +0000 (GMT)
-Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thu, 11 Jul 2019 00:11:52 -0400
+Received: by mail-pl1-f196.google.com with SMTP id cl9so2288439plb.10;
+        Wed, 10 Jul 2019 21:11:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bSqx5lRhnvQ+7sTCSs3xCfsXxcwdrD2eEqRPLZvVrbA=;
+        b=HQipN+bsvIBMHH7pXW047PoLn1gb24JU6O6094dySrF2kg2I9dihkWzrRRvEW5lmbx
+         1WmRCHYsgMmVisomKYe2R9zHJVAGjer/+fC5cNecSCiC9ZOFF88hNsN8Bgc+8fFyZmBk
+         pUnaMkAQL/N/+YyY12cO9ELzj3E7V5kOk18t/MYMKhvmpITlJVpl6YNlaTZ7p84fv+Q3
+         dNMGD77wMSl+tMmXnHw0QccYZfTcT27l2F0ZmVBkiorsIagbeZx//DAzWP/AI9R9kgMV
+         9RaUX0IuYTR0iL9W5nPOIGx73j+/VWjmf46iWkV3/kbhK7tEFEeWpcc+YkymY9Oc6szH
+         ClEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bSqx5lRhnvQ+7sTCSs3xCfsXxcwdrD2eEqRPLZvVrbA=;
+        b=Ak27Wgk8I6t4u26yZB0FyFeYNGCAfl99mBjcrmMnJnxW+Wh1jDqHR/3aXBcOb+0+dX
+         SOye7VvLTUpcw5XCAD7WWEyfXLuVKxxIe4ZMWtVV40MTpkUsqHnw4XNiu2ySgWOuGeGl
+         ADOwsDGdFHqMKJPXYgzCvUjFgHgT3SIp+P9PtL47dzCb7WWI41cRmns/Fr14D35/GB2k
+         sALdKcAfko4VoqmgrY/i6sWJRqOQJQWpOR9MQLbslBNauNZXiG7x3sFT5PojOsIH0VWe
+         w9W1G9h5x0/Yy8ZvvYBF+KNdfkrt5qFy5UEg7WHg1rLORWtNxauJ2J14HGMNz58SMs1P
+         OGnQ==
+X-Gm-Message-State: APjAAAUaAiStmKGCw8J6P4GndXnoCJudtiJ/tRzAMHvt13q6VGyj6ptA
+        bKrHEYx8JZBZ+CQNDXT3sH8=
+X-Google-Smtp-Source: APXvYqz7t7+RwovcwFBuTIN5fXo1cdhnlVpoV9TKSdDMLz0WqLr7TyJkJsDJ2xPHxhsibEhdPdupFQ==
+X-Received: by 2002:a17:902:42d:: with SMTP id 42mr2105475ple.228.1562818312183;
+        Wed, 10 Jul 2019 21:11:52 -0700 (PDT)
+Received: from linux-l9pv.suse ([202.47.205.198])
+        by smtp.gmail.com with ESMTPSA id 12sm3586433pfi.60.2019.07.10.21.11.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Jul 2019 21:11:51 -0700 (PDT)
+From:   joeyli <joeyli.kernel@gmail.com>
+X-Google-Original-From: joeyli <jlee@suse.com>
+Date:   Thu, 11 Jul 2019 12:11:45 +0800
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Matthew Garrett <matthewgarrett@google.com>, jmorris@namei.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Josh Boyer <jwboyer@fedoraproject.org>,
         David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
-        Netdev <netdev@vger.kernel.org>, linux-nfs@vger.kernel.org,
-        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Date:   Wed, 10 Jul 2019 23:07:15 -0400
-In-Reply-To: <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com>
-References: <28477.1562362239@warthog.procyon.org.uk>
-         <CAHk-=wjxoeMJfeBahnWH=9zShKp2bsVy527vo3_y8HfOdhwAAw@mail.gmail.com>
-         <20190710194620.GA83443@gmail.com> <20190710201552.GB83443@gmail.com>
-         <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19071103-4275-0000-0000-0000034BBC6E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071103-4276-0000-0000-0000385BC1F1
-Message-Id: <1562814435.4014.11.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-10_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907110035
+        Matthew Garrett <mjg59@google.com>, rjw@rjwysocki.net,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH V34 10/29] hibernate: Disable when the kernel is locked
+ down
+Message-ID: <20190711041145.GA28145@linux-l9pv.suse>
+References: <20190622000358.19895-1-matthewgarrett@google.com>
+ <20190622000358.19895-11-matthewgarrett@google.com>
+ <20190622175208.GB30317@amd>
+ <nycvar.YFH.7.76.1906241520500.27227@cbobk.fhfr.pm>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YFH.7.76.1906241520500.27227@cbobk.fhfr.pm>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+Hi experts,
 
-On Wed, 2019-07-10 at 18:59 -0700, Linus Torvalds wrote:
-> Anyway, since it does seem like David is offline, I've just reverted
-> this from my tree, and will be continuing my normal merge window pull
-> requests (the other issues I have seen have fixes in their respective
-> trees).
+On Mon, Jun 24, 2019 at 03:21:23PM +0200, Jiri Kosina wrote:
+> On Sat, 22 Jun 2019, Pavel Machek wrote:
+> 
+> > > There is currently no way to verify the resume image when returning
+> > > from hibernate.  This might compromise the signed modules trust model,
+> > > so until we can work with signed hibernate images we disable it when the
+> > > kernel is locked down.
+> > 
+> > I keep getting these...
+> > 
+> > IIRC suse has patches to verify the images.
+> 
+> Yeah, Joey Lee is taking care of those. CCing.
+>
 
-Sorry for the delay.  An exception is needed for loading builtin keys
-"KEY_ALLOC_BUILT_IN" onto a keyring that is not writable by userspace.
- The following works, but probably is not how David would handle the
-exception.
+The last time that I sent for hibernation encryption and authentication is
+here:
+    https://lkml.org/lkml/2019/1/3/281
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 519211a996e7..a99332c1e014 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -896,7 +896,7 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
-        /* if we're going to allocate a new key, we're going to have
-         * to modify the keyring */
-        ret = key_permission(keyring_ref, KEY_NEED_WRITE);
--       if (ret < 0) {
-+       if (ret < 0 && !(flags & KEY_ALLOC_BUILT_IN)) {
-                key_ref = ERR_PTR(ret);
-                goto error_link_end;
-        }
+It needs some big changes after review:
+ - Simplify the design: remove keyring dependency and trampoline.
+ - Encrypted whole snapshot image instead of only data pages.
+ - Using TPM:
+        - Direct use TPM API in hibernation instead of keyring
+        - Localities (suggested by James Bottomley)
 
-Mimi
+I am still finding enough time to implement those changes, especial TPM
+parts.
 
+Thanks
+Joey Lee
