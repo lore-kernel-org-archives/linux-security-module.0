@@ -2,104 +2,74 @@ Return-Path: <SRS0=X76I=VJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DDEC742A8
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jul 2019 05:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B4B5C742A5
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jul 2019 05:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1274B20863
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jul 2019 05:13:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nYyYj4Td"
+	by mail.kernel.org (Postfix) with ESMTP id 4440521019
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jul 2019 05:14:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725974AbfGLFNv (ORCPT
+        id S1725856AbfGLFOx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Jul 2019 01:13:51 -0400
-Received: from mail-lf1-f54.google.com ([209.85.167.54]:38406 "EHLO
-        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbfGLFNu (ORCPT
+        Fri, 12 Jul 2019 01:14:53 -0400
+Received: from mga06.intel.com ([134.134.136.31]:53526 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725807AbfGLFOx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Jul 2019 01:13:50 -0400
-Received: by mail-lf1-f54.google.com with SMTP id h28so5575606lfj.5
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Jul 2019 22:13:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h1l+yKMs5eoMYO2qnNQH2xVuYFvFDBbrlUII08j6+mA=;
-        b=nYyYj4Td71VI953FAnyXurziweSCfNklLpK/20JzdgHfGVOtnzeWSnTD3QpkBj1m1j
-         0+XmP7aKHmB2tFrjhco2B+BLfXxMvapsbXEtTS75L9D50cT/Q2k5mi6/ZGUMADNYJ6M9
-         /wuGf83vcQk9fw1Hq2K8CgfhpnTk+MjsURGJYWwESfgUrX+cFxD0RX8+iLv9l+U1x+Ru
-         +2L7b1HpO0WufLCNfWtO6u0yVL2VhFfuXVTpsxpQBt1N2FTYYnoKgiYAm9CTf7lQSH+D
-         7//dX24mOdjvvoS0Rie7FLIkW9l4pAywDy0IClhfcvZNIxXxJhwrw4/kcgHqvDlhqhCu
-         WXTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h1l+yKMs5eoMYO2qnNQH2xVuYFvFDBbrlUII08j6+mA=;
-        b=qZeSHYyCDEkzLSpQUN4j3TUd/twpNJj1UyBgddDjP5k7cgxJqOceAsCFRJIuMshDN8
-         Mw53NG8u94bnguGLJI/0jzS6r+ln8dCg79L12TCh8IMVeyb0q0cy0wVlQEownydJBN8L
-         DUaKFVM9pGJZnTYi5IsqNZr7llPojR/A7NcOBpn23iXHBP5vq5p2N7OAaSc2tQ479vmW
-         FXoWt6XR6KjnQTTCnmkT83XB7Ge6J6VIcZhKvdtO+i6uN+mDL5eAFAfgKVY61mVpn0F8
-         49t3vemey0dJH2oGmg0n4Miu8BV0EnFNZGObujsF8mIKlgv8frXloYbGvt3teaGQHVw5
-         LOkg==
-X-Gm-Message-State: APjAAAUXKMOiFLWsBF1P8dPr0jABSItMXYJL78lmQjnzTyJ+Nq6uxywl
-        oonlng+toXO7SITBeW3+r9MWUQJN1rJi+FHuqLTGjA==
-X-Google-Smtp-Source: APXvYqyfBXA9XmXbGZHqcWD0t0USlZpN+WDbCnrmpXLdBk+4LqbchAml/Mo4CSWEgwoiXHjQ8mHI9xNYcHbD44LAJNo=
-X-Received: by 2002:a19:c7ca:: with SMTP id x193mr3592234lff.151.1562908429171;
- Thu, 11 Jul 2019 22:13:49 -0700 (PDT)
+        Fri, 12 Jul 2019 01:14:53 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 22:14:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,481,1557212400"; 
+   d="scan'208";a="189734191"
+Received: from gonegri-mobl.ger.corp.intel.com (HELO localhost) ([10.252.48.192])
+  by fmsmga004.fm.intel.com with ESMTP; 11 Jul 2019 22:14:50 -0700
+Date:   Fri, 12 Jul 2019 08:14:49 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: Some LSM and SGX remarks before parting of for two weeks
+Message-ID: <20190712051449.sywsnncepdasxjbi@linux.intel.com>
+References: <20190712021055.22qijpsahsy3gpmp@linux.intel.com>
+ <alpine.LRH.2.21.1907121303080.17953@namei.org>
 MIME-Version: 1.0
-References: <1562337154-26376-1-git-send-email-sumit.garg@linaro.org> <20190711192215.5w3fzdjwsebgoesh@linux.intel.com>
-In-Reply-To: <20190711192215.5w3fzdjwsebgoesh@linux.intel.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Fri, 12 Jul 2019 10:43:38 +0530
-Message-ID: <CAFA6WYMOyKo2vXY8bO448ikmdGioK3s5JMZLz6c2y8ObPm4zHw@mail.gmail.com>
-Subject: Re: [RFC/RFT] KEYS: trusted: Add generic trusted keys framework
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-        jejb@linux.ibm.com, Mimi Zohar <zohar@linux.ibm.com>,
-        jmorris@namei.org, serge@hallyn.com,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tee-dev@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1907121303080.17953@namei.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 12 Jul 2019 at 00:52, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Fri, Jul 05, 2019 at 08:02:34PM +0530, Sumit Garg wrote:
-> > Current trusted keys framework is tightly coupled to use TPM device as
-> > an underlying implementation which makes it difficult for implementations
-> > like Trusted Execution Environment (TEE) etc. to provide trusked keys
-> > support in case platform doesn't posses a TPM device.
-> >
-> > So this patch tries to add generic trusted keys framework where underlying
-> > implemtations like TPM, TEE etc. could be easily plugged-in.
-> >
-> > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->
-> 1. Needs to be somehow dissected into digestable/reviewable pieces.
+On Fri, Jul 12, 2019 at 01:12:23PM +1000, James Morris wrote:
+> On Fri, 12 Jul 2019, Jarkko Sakkinen wrote:
+> 
+> > Before going to a two week vacation (sending v21 today), I'll make some
+> > remarks on SGX and LSM's:
+> > 
+> > 1. Currently all patch sets proposing LSM changes are missing a problem
+> >    statement and describe a solution to an undescribed problem.
+> > 2. When speaking of SELinux I haven't seen any draft's on how would
+> >    define a policy module with the new constructs. Does not have to
+> >    be a full policy modules but more like snippets demosntrating that
+> >    "this would work".
+> > 3. All the SELinux discussion is centered on type based policies.
+> >    Potentially one could isolate enclaves with some UBAC or RBAC
+> >    based model. That could be good first step and might not even
+> >    require LSM changes.
+> 
+> Unless I misunderstand what you mean here, RBAC and UBAC in SELinux still 
+> require LSM hooks, and are typically integrated with Type Enforcement.
 
-Sure, will try to split this patch in next version.
+OK, I was thinking something like with normal DAC just to have SGID
+for enclaves. Just learning basic SELinux concepts. Still quite alien
+world to me.
 
-> 2. As a precursory step probably would make sense to move all
->    existing trusted keys code into one subsystem first.
-
-Okay.
-
--Sumit
-
->
-> /Jarkko
+/Jarkko
