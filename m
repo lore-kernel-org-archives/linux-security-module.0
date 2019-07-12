@@ -2,64 +2,104 @@ Return-Path: <SRS0=X76I=VJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFECC742A7
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jul 2019 03:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DDEC742A8
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jul 2019 05:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E5B2214AF
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jul 2019 03:29:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1274B20863
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jul 2019 05:13:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nYyYj4Td"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729166AbfGLD3t (ORCPT
+        id S1725974AbfGLFNv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Jul 2019 23:29:49 -0400
-Received: from namei.org ([65.99.196.166]:34804 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728955AbfGLD3t (ORCPT
+        Fri, 12 Jul 2019 01:13:51 -0400
+Received: from mail-lf1-f54.google.com ([209.85.167.54]:38406 "EHLO
+        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbfGLFNu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Jul 2019 23:29:49 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x6C3TXIY022499;
-        Fri, 12 Jul 2019 03:29:33 GMT
-Date:   Fri, 12 Jul 2019 13:29:32 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-cc:     Aaron Goidel <acgoide@tycho.nsa.gov>, paul@paul-moore.com,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
-        amir73il@gmail.com, sds@tycho.nsa.gov, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fanotify, inotify, dnotify, security: add security
- hook for fs notifications
-In-Reply-To: <4fd98c88-61a6-a155-5028-db22a778d3c1@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1907121327150.22212@namei.org>
-References: <20190710133403.855-1-acgoide@tycho.nsa.gov> <4fd98c88-61a6-a155-5028-db22a778d3c1@schaufler-ca.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Fri, 12 Jul 2019 01:13:50 -0400
+Received: by mail-lf1-f54.google.com with SMTP id h28so5575606lfj.5
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Jul 2019 22:13:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h1l+yKMs5eoMYO2qnNQH2xVuYFvFDBbrlUII08j6+mA=;
+        b=nYyYj4Td71VI953FAnyXurziweSCfNklLpK/20JzdgHfGVOtnzeWSnTD3QpkBj1m1j
+         0+XmP7aKHmB2tFrjhco2B+BLfXxMvapsbXEtTS75L9D50cT/Q2k5mi6/ZGUMADNYJ6M9
+         /wuGf83vcQk9fw1Hq2K8CgfhpnTk+MjsURGJYWwESfgUrX+cFxD0RX8+iLv9l+U1x+Ru
+         +2L7b1HpO0WufLCNfWtO6u0yVL2VhFfuXVTpsxpQBt1N2FTYYnoKgiYAm9CTf7lQSH+D
+         7//dX24mOdjvvoS0Rie7FLIkW9l4pAywDy0IClhfcvZNIxXxJhwrw4/kcgHqvDlhqhCu
+         WXTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h1l+yKMs5eoMYO2qnNQH2xVuYFvFDBbrlUII08j6+mA=;
+        b=qZeSHYyCDEkzLSpQUN4j3TUd/twpNJj1UyBgddDjP5k7cgxJqOceAsCFRJIuMshDN8
+         Mw53NG8u94bnguGLJI/0jzS6r+ln8dCg79L12TCh8IMVeyb0q0cy0wVlQEownydJBN8L
+         DUaKFVM9pGJZnTYi5IsqNZr7llPojR/A7NcOBpn23iXHBP5vq5p2N7OAaSc2tQ479vmW
+         FXoWt6XR6KjnQTTCnmkT83XB7Ge6J6VIcZhKvdtO+i6uN+mDL5eAFAfgKVY61mVpn0F8
+         49t3vemey0dJH2oGmg0n4Miu8BV0EnFNZGObujsF8mIKlgv8frXloYbGvt3teaGQHVw5
+         LOkg==
+X-Gm-Message-State: APjAAAUXKMOiFLWsBF1P8dPr0jABSItMXYJL78lmQjnzTyJ+Nq6uxywl
+        oonlng+toXO7SITBeW3+r9MWUQJN1rJi+FHuqLTGjA==
+X-Google-Smtp-Source: APXvYqyfBXA9XmXbGZHqcWD0t0USlZpN+WDbCnrmpXLdBk+4LqbchAml/Mo4CSWEgwoiXHjQ8mHI9xNYcHbD44LAJNo=
+X-Received: by 2002:a19:c7ca:: with SMTP id x193mr3592234lff.151.1562908429171;
+ Thu, 11 Jul 2019 22:13:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <1562337154-26376-1-git-send-email-sumit.garg@linaro.org> <20190711192215.5w3fzdjwsebgoesh@linux.intel.com>
+In-Reply-To: <20190711192215.5w3fzdjwsebgoesh@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Fri, 12 Jul 2019 10:43:38 +0530
+Message-ID: <CAFA6WYMOyKo2vXY8bO448ikmdGioK3s5JMZLz6c2y8ObPm4zHw@mail.gmail.com>
+Subject: Re: [RFC/RFT] KEYS: trusted: Add generic trusted keys framework
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
+        jejb@linux.ibm.com, Mimi Zohar <zohar@linux.ibm.com>,
+        jmorris@namei.org, serge@hallyn.com,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tee-dev@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 10 Jul 2019, Casey Schaufler wrote:
+On Fri, 12 Jul 2019 at 00:52, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Fri, Jul 05, 2019 at 08:02:34PM +0530, Sumit Garg wrote:
+> > Current trusted keys framework is tightly coupled to use TPM device as
+> > an underlying implementation which makes it difficult for implementations
+> > like Trusted Execution Environment (TEE) etc. to provide trusked keys
+> > support in case platform doesn't posses a TPM device.
+> >
+> > So this patch tries to add generic trusted keys framework where underlying
+> > implemtations like TPM, TEE etc. could be easily plugged-in.
+> >
+> > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>
+> 1. Needs to be somehow dissected into digestable/reviewable pieces.
 
-> On 7/10/2019 6:34 AM, Aaron Goidel wrote:
-> 
-> > Furthermore, fanotify watches grant more power to
-> > an application in the form of permission events. While notification events
-> > are solely, unidirectional (i.e. they only pass information to the
-> > receiving application), permission events are blocking. Permission events
-> > make a request to the receiving application which will then reply with a
-> > decision as to whether or not that action may be completed.
-> 
-> You're not saying why this is an issue.
+Sure, will try to split this patch in next version.
 
-Also in the description, please explain the issues with read and write 
-notifications and why a simple 'read' permission is not adequate.
+> 2. As a precursory step probably would make sense to move all
+>    existing trusted keys code into one subsystem first.
 
+Okay.
 
--- 
-James Morris
-<jmorris@namei.org>
+-Sumit
 
+>
+> /Jarkko
