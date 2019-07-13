@@ -2,45 +2,40 @@ Return-Path: <SRS0=w96y=VK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=GAPPY_SUBJECT,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB9FC742D2
-	for <linux-security-module@archiver.kernel.org>; Sat, 13 Jul 2019 00:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE0DC742DD
+	for <linux-security-module@archiver.kernel.org>; Sat, 13 Jul 2019 04:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C1FE20863
-	for <linux-security-module@archiver.kernel.org>; Sat, 13 Jul 2019 00:15:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA989217D4
+	for <linux-security-module@archiver.kernel.org>; Sat, 13 Jul 2019 04:30:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbfGMAPV (ORCPT
+        id S1725916AbfGMEaQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Jul 2019 20:15:21 -0400
-Received: from namei.org ([65.99.196.166]:35010 "EHLO namei.org"
+        Sat, 13 Jul 2019 00:30:16 -0400
+Received: from namei.org ([65.99.196.166]:35038 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727118AbfGMAPV (ORCPT
+        id S1725914AbfGMEaQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Jul 2019 20:15:21 -0400
+        Sat, 13 Jul 2019 00:30:16 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x6D0Efvn025905;
-        Sat, 13 Jul 2019 00:14:41 GMT
-Date:   Sat, 13 Jul 2019 10:14:41 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x6D4Tx3e004642;
+        Sat, 13 Jul 2019 04:29:59 GMT
+Date:   Sat, 13 Jul 2019 14:29:59 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
-To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>
-cc:     linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Brad Spengler <spender@grsecurity.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        PaX Team <pageexec@freemail.hu>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v5 01/12] S.A.R.A.: add documentation
-In-Reply-To: <1562410493-8661-2-git-send-email-s.mesoraca16@gmail.com>
-Message-ID: <alpine.LRH.2.21.1907130953130.21853@namei.org>
-References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com> <1562410493-8661-2-git-send-email-s.mesoraca16@gmail.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicholas Franck <nhfran2@tycho.nsa.gov>, paul@paul-moore.com,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        luto@amacapital.net, keescook@chromium.org, serge@hallyn.com,
+        john.johansen@canonical.com, mortonm@chromium.org
+Subject: Re: [RFC PATCH] security, capability: pass object information to
+ security_capable
+In-Reply-To: <16cade37-9467-ca7f-ddea-b8254c501f48@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1907131410310.3804@namei.org>
+References: <20190712173404.14417-1-nhfran2@tycho.nsa.gov> <680c35a8-1ee5-725d-b33c-7bdced39763c@schaufler-ca.com> <e8de4a1c-7e18-fc20-e372-67bbaa93fd42@tycho.nsa.gov> <16cade37-9467-ca7f-ddea-b8254c501f48@schaufler-ca.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -48,39 +43,24 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 6 Jul 2019, Salvatore Mesoraca wrote:
+On Fri, 12 Jul 2019, Casey Schaufler wrote:
 
-> Adding documentation for S.A.R.A. LSM.
+> I'm not disagreeing with that. What I'm saying is that the capability
+> check interface is not the right place to pass that information. The
+> capability check has no use for the object information. I would much
+> rather see a security_pass_object_data() hook that gets called after
+> (or before) the security_capable() hook in the places where you want
+> the extra information.
 
-It would be good if you could add an operational overview to help people 
-understand how it works in practice, e.g. setting policies for binaries 
-via sara-xattr and global config via saractl (IIUC). It's difficult to 
-understand if you have to visit several links to piece things together.
+Extending existing security models is a core feature of the LSM framework. 
 
-> +S.A.R.A.'s Submodules
-> +=====================
-> +
-> +WX Protection
-> +-------------
-> +WX Protection aims to improve user-space programs security by applying:
-> +
-> +- `W^X enforcement`_
-> +- `W!->X (once writable never executable) mprotect restriction`_
-> +- `Executable MMAP prevention`_
-> +
-> +All of the above features can be enabled or disabled both system wide
-> +or on a per executable basis through the use of configuration files managed by
-> +`saractl` [2]_.
+The Linux capability code has no use for object metadata by design, but 
+extending that model to MAC (and other models) via LSM hooks is well 
+within scope and of course already happening e.g. mediating Linux 
+capabilities wrt SELinux subject types. Adding object metadata extends the 
+function of the capability hook along these lines, so that more effective 
+MAC policies may be implemented by LSMs.
 
-How complete is the WX protection provided by this module? How does it 
-compare with other implementations (such as PaX's restricted mprotect).
-
-> +Parts of WX Protection are inspired by some of the features available in PaX.
-
-Some critical aspects are copied (e.g. trampoline emulation), so it's 
-more than just inspired. Could you include more information in the 
-description about what's been ported from PaX to SARA?
-	
 
 -- 
 James Morris
