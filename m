@@ -2,119 +2,121 @@ Return-Path: <SRS0=DosV=VM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CB3C7618F
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 16:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A3AC7618F
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 16:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C97F205ED
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 16:05:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vx5UHmP4"
+	by mail.kernel.org (Postfix) with ESMTP id 37E3920838
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 16:35:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1563208503;
+	bh=P7A+7gOxObkHWO6q15pHPOZJY3ZnoB4xnL29l3PZe7s=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=Buf5Ku1CWcIXb1OB+3Th+XMuyIblK1LPZqABtJHfPZ7yxTglu7qdVpFCLBxu9AENf
+	 cV1H0jMeedeLxYM+y2AlzEMKNF+Ehea3vNzDov0FGFhzZymnkZ4TdSfefUVaXoHUb4
+	 YD/38fm/GFBRFxqxxofoJ5k4GvbG91ZQlu3YmHG0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729674AbfGOQFA (ORCPT
+        id S1730520AbfGOQfC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jul 2019 12:05:00 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33004 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729533AbfGOQFA (ORCPT
+        Mon, 15 Jul 2019 12:35:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57216 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729533AbfGOQfC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jul 2019 12:05:00 -0400
-Received: by mail-io1-f67.google.com with SMTP id z3so34997095iog.0
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2019 09:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=abd3MzgGdND+mibf+9QP7+SAzCXmIg9aBJBUAlhxoSE=;
-        b=Vx5UHmP4FSl+2sW2xSMATHmt/TstgDDB2D2BYOmRytxQn8jrzjv9CHvBN6ziokACKV
-         yzABsXIgYMdyMShtxK0HrEeZ6yqmlt1ErRBouLjdWGCgNDX8nI3gIQGZ6TbZfGsRZAHQ
-         G91t8osAi33e15JefGOz/Q8Tfy03uYvccBxHc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=abd3MzgGdND+mibf+9QP7+SAzCXmIg9aBJBUAlhxoSE=;
-        b=SmccNtKR07DWU/tadN3VCHn7FM8KcU78dICb/Ign6EfKHISy8E8fSck0FyIi+S1wzu
-         XknQPxFi+PC5w2cpav5totXcXa3bkdbfxDKyRBJez3GFymiC+Y8nVXxSZ6bedun+Oshr
-         bM0UzvPhoAYIgYXqX7HulAkbwRBaynsJbgKagiNUqa5HFVKT4PI3prTKjq0foIxh98g2
-         q8fJReMwlmORoCRjR97LEqR/iRMbrxu5xMWe5trFpRD2fZnO8pVO1CN7JZ46aJamKbU7
-         AuX10gjx8Q9OiGDzOhv8UcW0EsL6iMDUHEzdJkmFuC8zsWAbADtZW6ieWXer+D8ErZoW
-         QXEw==
-X-Gm-Message-State: APjAAAWTfQ8DRdx1PNoGKysKL3GtntraEqeWzzANds296pH+VZuFO/Af
-        QO+uWCeB94VNHVh3jzFx/pXxns/KHCsxubC6bZ8MBw==
-X-Google-Smtp-Source: APXvYqxIWrDZQA5aJHb2ZwP6MlOqQQByu0F7zWYD236UlUTqOmdsc6Xfpir6+WTeVaRUAFknNlgvqiYC7RyKKDGoS4g=
-X-Received: by 2002:a05:6638:81:: with SMTP id v1mr27332807jao.72.1563206699374;
- Mon, 15 Jul 2019 09:04:59 -0700 (PDT)
+        Mon, 15 Jul 2019 12:35:02 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DCDB2081C;
+        Mon, 15 Jul 2019 16:35:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563208501;
+        bh=P7A+7gOxObkHWO6q15pHPOZJY3ZnoB4xnL29l3PZe7s=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=qRoAXzIa+pdRPCFXmxYW6ryLdJ2CjbYC4GD+SDb0fQBtStL6KbuhUqmyfRlQFh0g9
+         n7FqCIbiLmWySaaO1UByUZU6qPSTydhuwChSZkbatxzPJt+c+rFLYo1pUpwziZeyas
+         4AoxFsumGv8w82GA/mGC5+C1YtW4PbLtSrEmfv4g=
+Date:   Mon, 15 Jul 2019 09:34:59 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        syzbot <syzbot+5ab61747675a87ea359d@syzkaller.appspotmail.com>,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, zohar@linux.vnet.ibm.com
+Subject: Re: possible deadlock in process_measurement
+Message-ID: <20190715163459.GB728@sol.localdomain>
+Mail-Followup-To: Mimi Zohar <zohar@linux.ibm.com>,
+        syzbot <syzbot+5ab61747675a87ea359d@syzkaller.appspotmail.com>,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, zohar@linux.vnet.ibm.com
+References: <00000000000054e5d1058a6df2eb@google.com>
+ <1562854476.4014.47.camel@linux.ibm.com>
+ <20190711195011.GA48706@gmail.com>
 MIME-Version: 1.0
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Mon, 15 Jul 2019 09:04:48 -0700
-Message-ID: <CAJ-EccPGqp4PmRkFk505QhDKHWn-ajxS0__Nk9VS32jV_+3Y2A@mail.gmail.com>
-Subject: [GIT PULL] SafeSetID LSM changes for 5.3
-To:     torvalds@linux-foundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190711195011.GA48706@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On Thu, Jul 11, 2019 at 12:50:13PM -0700, Eric Biggers wrote:
+> Hi Mimi,
+> 
+> On Thu, Jul 11, 2019 at 10:14:36AM -0400, Mimi Zohar wrote:
+> > Hi Eric,
+> > 
+> > On Mon, 2019-06-03 at 09:35 -0700, syzbot wrote:
+> > > syzbot has found a reproducer for the following crash on:
+> > > 
+> > > HEAD commit:    3c09c195 Add linux-next specific files for 20190531
+> > > git tree:       linux-next
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=10f61a0ea00000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=6cfb24468280cd5c
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=5ab61747675a87ea359d
+> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177c3d16a00000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ec01baa00000
+> > > 
+> > 
+> > This reproducer seems like it is similar, but the cause is different
+> > than the original report.  One has to do with overlayfs, while the
+> > other has to do with ext4, mprotect/mmap.  I assume in both cases an
+> > IMA policy was required to trigger the locking bug.  What type of IMA
+> > policy are you using?
+> > 
+> > Do we need to differentiate the two reports?  Is the "last occurred"
+> > notification for the overlay, for mprotect, or both?  Please Cc the
+> > overlay mailing list on the overlay aspect.
+> 
+> AFAICS, syzbot boots all kernels with "ima_policy=tcb" on the command line.
+> And I don't think anything in userspace changes the IMA policy.
+> 
+> It's not unusual for multiple underlying bugs to get mixed into the same syzbot
+> bug.  syzbot doesn't know that one "possible deadlock in process_measurement" is
+> different from another.  "Last occurred" is for any crash that appeared as such.
+> 
+> This just needs to be handled the best we can.  Sometimes all the bugs can be
+> fixed; sometimes they've already been fixed; or sometimes it's easiest to fix
+> just one and then mark the syzbot bug as fixed, and syzbot will report it again
+> it's still occurring for some other reason.
+> 
+> - Eric
 
-I'm maintaining the new SafeSetID LSM and was told to set up my own
-tree for sending pull requests rather than sending my changes through
-James Morris and the security subsystem tree.
+Invalidating this bug report as per the discussion at
+https://lkml.kernel.org/linux-integrity/1563122888.4539.119.camel@linux.ibm.com/T/#mcd083826e5843f048c914c56a4e82147fc211704
 
-This is my first time doing one of these pull requests so hopefully I
-didn't screw something up.
+#syz invalid
 
-Thanks,
-Micah
----
-The following changes since commit fec88ab0af9706b2201e5daf377c5031c62d11f7:
-Merge tag 'for-linus-hmm' of
-git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2019-07-14
-19:42:11 -0700)
-are available in the Git repository at:
-https://github.com/micah-morton/linux.git tags/safesetid-5.3
-for you to fetch changes up to e10337daefecb47209fd2af5f4fab0d1a370737f:
-LSM: SafeSetID: fix use of literal -1 in capable hook (2019-07-15
-08:08:03 -0700)
-----------------------------------------------------------------
-SafeSetID patches for 5.3
-These changes from Jann Horn fix a couple issues in the recently added
-SafeSetID LSM:
+For future reference, anyone can update the status of syzbot bugs; no need to
+ask me to do it.  See https://goo.gl/tpsmEJ#status
 
-(1) There was a simple logic bug in one of the hooks for the LSM where
-the code was incorrectly returning early in some cases before all
-security checks had been passed.
-(2) There was a more high level issue with how this LSM gets configured
-that could allow for a program to bypass the security restrictions
-by switching to an allowed UID and then again to any other UID on
-the system if the target UID of the first transition is
-unconstrained on the system. Luckily this is an easy fix that we now
-enforce at the time the LSM gets configured.
-
-There are also some changes from Jann that make policy updates for this
-LSM atomic. Kees Cook, Jann and myself have reviewed these changes and they
-look good from our point of view.
-Signed-off-by: Micah Morton <mortonm@chromium.org>
-----------------------------------------------------------------
-Jann Horn (10):
-LSM: SafeSetID: fix pr_warn() to include newline
-LSM: SafeSetID: fix check for setresuid(new1, new2, new3)
-LSM: SafeSetID: refactor policy hash table
-LSM: SafeSetID: refactor safesetid_security_capable()
-LSM: SafeSetID: refactor policy parsing
-LSM: SafeSetID: fix userns handling in securityfs
-LSM: SafeSetID: rewrite userspace API to atomic updates
-LSM: SafeSetID: add read handler
-LSM: SafeSetID: verify transitive constrainedness
-LSM: SafeSetID: fix use of literal -1 in capable hook
-security/safesetid/lsm.c | 276 +++++++++++++-----------------------------
-security/safesetid/lsm.h | 34 ++++--
-security/safesetid/securityfs.c | 307
-+++++++++++++++++++++++++++++------------------
-tools/testing/selftests/safesetid/safesetid-test.c | 18 ++-
-4 files changed, 306 insertions(+), 329 deletions(-)
+- Eric
