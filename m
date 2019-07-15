@@ -2,179 +2,108 @@ Return-Path: <SRS0=DosV=VM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CB4C7618F
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 20:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98356C76191
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 22:24:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC4821738
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 20:02:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O3wJDTMn"
+	by mail.kernel.org (Postfix) with ESMTP id 6F9422053B
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 22:24:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1563229441;
+	bh=sXN8yTSkzlc2tuMkiJcjFdTjSzcCd65oQqUJ3FJmeJY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Yb0JDlWuxpp1kBlxPLoxK4AdU2LBJrdIO9b2m4JztZsz39+/k1Rf5nppZEaJcXlB6
+	 nTFKkhajqaY2j7hmg3tbh4S9I1vCy7qEWAw8t6nDjZN2sp0QSHgIVH7/K0Nei2St63
+	 +reDes/CkleeYHVtYuZJhQ5rX+7KyuV9g+Or0E5s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730893AbfGOUCy (ORCPT
+        id S1730796AbfGOWYA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jul 2019 16:02:54 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:41320 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732166AbfGOT77 (ORCPT
+        Mon, 15 Jul 2019 18:24:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39000 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730768AbfGOWYA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jul 2019 15:59:59 -0400
-Received: by mail-pg1-f202.google.com with SMTP id b18so11102286pgg.8
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2019 12:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=f/RnEfWSrg+mjsb2cXMX4L7C/xNmjjOSgJcVU/cQXL4=;
-        b=O3wJDTMnR9+H3RojAsFfUzZ287o93Xl/j+eBzr9xiJ7GSnL6wH09hswz5HkUJo5TO0
-         zSIxrKaO7KxH1NGZU7OTkNwfKk0GwAeKc+MKisrrtdIClB8NctvgLH77qjBC5hKc/QNx
-         90e0sVBG4jPv7BUvyWIiRJhlq59sTL/+jDBqvmkICOjjJPFXRubWcJBrG3bYXhIeJMTx
-         WcdMWTeTFuVC1gX8BKQw0/+98YB4jYff2uID6Vz0O0yOW0JHGKEGXJHEzUU/7bJ8ovCB
-         z1mfyjYl0jF0/UyMq87sSAtqXC8sIdTLF2q38qdJlTGG5wkbomCUUrM9ehm3vT5Nppbc
-         C49g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=f/RnEfWSrg+mjsb2cXMX4L7C/xNmjjOSgJcVU/cQXL4=;
-        b=VpJbRC/40Vbmd6y7R4bSY/mLvI5mk2Jl37qg2yAk8bxsC6pVYb6Ht+RrttSEJ+cqbp
-         ZvChQqVh0K52mUyqvfo5vzRZ8j9e/PSLVNlSqMzNS+DX4FY39BEWhbF5RQ6UQwN/Js/Y
-         d6HGr5YvT32jwa+uoHCuRzGYQyp1/vRui0YasnkXErmcVH4q2RuM+IqnVyK2OchMJhmJ
-         1qd+i+wjxtqpnzzC9CMT/JrX4GXuXcc/10997rqzk2ISeklC8jY7eCKZ2CHS8TtIz4Df
-         /C0Iqe8CJp8rR6BbmVu/TpWRohFOaI6HFqETodH2FD2hyXMFnt2KzrN/67gkbL+D7A/M
-         /TSw==
-X-Gm-Message-State: APjAAAU9j/7FJIlWgtm1E8vW+CWQ5l1EG76cpcdolmOiCCTYG1pFbOn1
-        HoWY6gyuKplUaM2DQBrmcgAZKR8uiXodM97HW8QgHg==
-X-Google-Smtp-Source: APXvYqwymNGgJxKQXYrvXHvEFFXosA7/epA7W3EwA368wSAhTsTwzUzG35fXHKoCej+cuEmSBj+RFWvwC9co2fGpXfPAiw==
-X-Received: by 2002:a63:1310:: with SMTP id i16mr28407114pgl.187.1563220798084;
- Mon, 15 Jul 2019 12:59:58 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 12:59:19 -0700
-In-Reply-To: <20190715195946.223443-1-matthewgarrett@google.com>
-Message-Id: <20190715195946.223443-3-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190715195946.223443-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH V35 02/29] security: Add a "locked down" LSM hook
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>
+        Mon, 15 Jul 2019 18:24:00 -0400
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF43F2173B
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2019 22:23:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563229438;
+        bh=sXN8yTSkzlc2tuMkiJcjFdTjSzcCd65oQqUJ3FJmeJY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yON+IeagokTNon69qlcZndQWj7stI4VQZQG7sYNtg2WMcfC2tsSYgTRnz2O2zMiHu
+         bxqjJ6RDNj36L80JFV6bcheGpUt0M+2iRiyYzR3mHI7EA7U3RClMAgaRo5FQWhDWpw
+         Nq7QbNzbDqlOv8A62BrrHUzwF4k2wiK0UPJ+dhNs=
+Received: by mail-wr1-f48.google.com with SMTP id z1so18704092wru.13
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2019 15:23:58 -0700 (PDT)
+X-Gm-Message-State: APjAAAW3lxpF2uK+XatBr5J+bcEjEP3OzVxQiXKPxnxqDOz1tpp4slCD
+        InPH3sm3Gb76bPGZ/qzn3idPBiso0WpIc08RnzI/Og==
+X-Google-Smtp-Source: APXvYqyj/9VuP/+ihUF83njy2/IebE75lbwjE05Fh3u3X6o4w/jRKgrJb1caiXxXudMLSyjB+41C03VLnS0S0oyPpNY=
+X-Received: by 2002:adf:cc85:: with SMTP id p5mr29293788wrj.47.1563229437236;
+ Mon, 15 Jul 2019 15:23:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <960B34DE67B9E140824F1DCDEC400C0F6551D585@ORSMSX116.amr.corp.intel.com>
+ <f59529e4-6cc8-2405-d7db-2519727f9a80@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551D7F7@ORSMSX116.amr.corp.intel.com>
+ <63c92ab6-dc8d-826b-b8bf-05ad262f06e4@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551DBF7@ORSMSX116.amr.corp.intel.com>
+ <9e45df1b-3aac-e851-4ef2-5b262f5139bd@schaufler-ca.com> <20190703094651.GA29601@wind.enjellic.com>
+ <012fc47d-4e9d-3398-0d9d-d9298a758c8d@schaufler-ca.com> <20190707133023.GA4521@wind.enjellic.com>
+ <256013f7-292d-7014-9abb-61755f07eb25@schaufler-ca.com> <20190711102247.GA5357@wind.enjellic.com>
+In-Reply-To: <20190711102247.GA5357@wind.enjellic.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 15 Jul 2019 15:23:45 -0700
+X-Gmail-Original-Message-ID: <CALCETrWmvtSaqtdZWeBdTMYP-38xeyWhf5TP9vV+OY30nHgJbQ@mail.gmail.com>
+Message-ID: <CALCETrWmvtSaqtdZWeBdTMYP-38xeyWhf5TP9vV+OY30nHgJbQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
+To:     "Dr. Greg" <greg@idfusion.net>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        Stephen Smalley <stephen.smalley@gmail.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jethro@fortanix.com" <jethro@fortanix.com>,
+        "sds@tycho.nsa.gov" <sds@tycho.nsa.gov>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a mechanism to allow LSMs to make a policy decision around whether
-kernel functionality that would allow tampering with or examining the
-runtime state of the kernel should be permitted.
+On Thu, Jul 11, 2019 at 3:23 AM Dr. Greg <greg@idfusion.net> wrote:
+>
+> On Mon, Jul 08, 2019 at 05:02:00PM -0700, Casey Schaufler wrote:
+>
+> > > On 7/7/2019 6:30 AM, Dr. Greg wrote:
+> > > All well taken points from an implementation perspective, but they
+> > > elide the point I was trying to make.  Which is the fact that without
+> > > any semblance of a discussion regarding the requirements needed to
+> > > implement a security architecture around the concept of a TEE, this
+> > > entire process, despite Cedric's well intentioned efforts, amounts to
+> > > pounding a square solution into the round hole of a security problem.
+>
+> > Lead with code. I love a good requirements document, but one of the
+> > few places where I agree with the agile folks is that working code
+> > speaks loudly.
+> >
+> > > Which, as I noted in my e-mail, is tantamount to security theater.
+> >
+> > Not buying that. Not rejecting it, either. Without code
+> > to judge it's kind of hard to say.
+>
+> We tried the code approach.
+>
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
----
- include/linux/lsm_hooks.h |  2 ++
- include/linux/security.h  | 32 ++++++++++++++++++++++++++++++++
- security/security.c       |  6 ++++++
- 3 files changed, 40 insertions(+)
+You sent code.  That code did not, in any respect, address the issue
+of how LSMs were supposed to control what code got executed.
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index aebb0e032072..29c22cf40113 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1807,6 +1807,7 @@ union security_list_options {
- 	int (*bpf_prog_alloc_security)(struct bpf_prog_aux *aux);
- 	void (*bpf_prog_free_security)(struct bpf_prog_aux *aux);
- #endif /* CONFIG_BPF_SYSCALL */
-+	int (*locked_down)(enum lockdown_reason what);
- };
- 
- struct security_hook_heads {
-@@ -2046,6 +2047,7 @@ struct security_hook_heads {
- 	struct hlist_head bpf_prog_alloc_security;
- 	struct hlist_head bpf_prog_free_security;
- #endif /* CONFIG_BPF_SYSCALL */
-+	struct hlist_head locked_down;
- } __randomize_layout;
- 
- /*
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 66a2fcbe6ab0..c2b1204e8e26 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -77,6 +77,33 @@ enum lsm_event {
- 	LSM_POLICY_CHANGE,
- };
- 
-+/*
-+ * These are reasons that can be passed to the security_locked_down()
-+ * LSM hook. Lockdown reasons that protect kernel integrity (ie, the
-+ * ability for userland to modify kernel code) are placed before
-+ * LOCKDOWN_INTEGRITY_MAX.  Lockdown reasons that protect kernel
-+ * confidentiality (ie, the ability for userland to extract
-+ * information from the running kernel that would otherwise be
-+ * restricted) are placed before LOCKDOWN_CONFIDENTIALITY_MAX.
-+ *
-+ * LSM authors should note that the semantics of any given lockdown
-+ * reason are not guaranteed to be stable - the same reason may block
-+ * one set of features in one kernel release, and a slightly different
-+ * set of features in a later kernel release. LSMs that seek to expose
-+ * lockdown policy at any level of granularity other than "none",
-+ * "integrity" or "confidentiality" are responsible for either
-+ * ensuring that they expose a consistent level of functionality to
-+ * userland, or ensuring that userland is aware that this is
-+ * potentially a moving target. It is easy to misuse this information
-+ * in a way that could break userspace. Please be careful not to do
-+ * so.
-+ */
-+enum lockdown_reason {
-+	LOCKDOWN_NONE,
-+	LOCKDOWN_INTEGRITY_MAX,
-+	LOCKDOWN_CONFIDENTIALITY_MAX,
-+};
-+
- /* These functions are in security/commoncap.c */
- extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
- 		       int cap, unsigned int opts);
-@@ -393,6 +420,7 @@ void security_inode_invalidate_secctx(struct inode *inode);
- int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
-+int security_locked_down(enum lockdown_reason what);
- #else /* CONFIG_SECURITY */
- 
- static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-@@ -1205,6 +1233,10 @@ static inline int security_inode_getsecctx(struct inode *inode, void **ctx, u32
- {
- 	return -EOPNOTSUPP;
- }
-+static inline int security_locked_down(enum lockdown_reason what)
-+{
-+	return 0;
-+}
- #endif	/* CONFIG_SECURITY */
- 
- #ifdef CONFIG_SECURITY_NETWORK
-diff --git a/security/security.c b/security/security.c
-index 90f1e291c800..ce6c945bf347 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2392,3 +2392,9 @@ void security_bpf_prog_free(struct bpf_prog_aux *aux)
- 	call_void_hook(bpf_prog_free_security, aux);
- }
- #endif /* CONFIG_BPF_SYSCALL */
-+
-+int security_locked_down(enum lockdown_reason what)
-+{
-+	return call_int_hook(locked_down, 0, what);
-+}
-+EXPORT_SYMBOL(security_locked_down);
--- 
-2.22.0.510.g264f2c817a-goog
-
+Do you have an actual suggestion here that we should pay attention to?
