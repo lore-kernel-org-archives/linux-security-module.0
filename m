@@ -2,85 +2,84 @@ Return-Path: <SRS0=DosV=VM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B73D4C7618F
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 16:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F4BCC7618F
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 16:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 997D1206B8
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 16:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 489352080A
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 16:52:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NX4KmUPk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731392AbfGOQo3 (ORCPT
+        id S1731063AbfGOQwZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jul 2019 12:44:29 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33085 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730071AbfGOQo3 (ORCPT
+        Mon, 15 Jul 2019 12:52:25 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40783 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729533AbfGOQwZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jul 2019 12:44:29 -0400
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id CBD685973DB97AE590A7;
-        Mon, 15 Jul 2019 17:44:26 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 15 Jul
- 2019 17:44:19 +0100
-Subject: Re: [PATCH] KEYS: trusted: allow module init if TPM is inactive or
- deactivated
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <jejb@linux.ibm.com>, <zohar@linux.ibm.com>, <jgg@ziepe.ca>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <crazyt2019+lml@gmail.com>, <tyhicks@canonical.com>,
-        <nayna@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>
-References: <20190705163735.11539-1-roberto.sassu@huawei.com>
- <20190711194811.rfsohbfc3a7carpa@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <b4454a78-1f1b-cc75-114a-99926e097b05@huawei.com>
-Date:   Mon, 15 Jul 2019 18:44:28 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 15 Jul 2019 12:52:25 -0400
+Received: by mail-io1-f65.google.com with SMTP id h6so35168671iom.7
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2019 09:52:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sHoMa0aB575ndxF9MO91+SFVtilbhRQHj9EIOaDf/E0=;
+        b=NX4KmUPklIE7SqmWpLBQywave9TEGd/+/k6eJ2icHjCqvWHv5JKuRIusELHKd15mUh
+         JprrUpm8paJ93gr/5wR7WbQnPpAioD5mmfknE2yMF666H8cSKKpT4eEze3nRBGW1MuLa
+         1CXVjnnWBd6LIcajDmXjrIw5l2Xq5x91Y1nNw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sHoMa0aB575ndxF9MO91+SFVtilbhRQHj9EIOaDf/E0=;
+        b=LEhUJw2MMoED4K3i28+LftS6PF8H1b7mVFEXQr0sJ81Kf7YeFVLw0g9jJNBX/UBPUw
+         5s9vsCA/sQ/zZ4GOSkNYUzSMV8n14XT8ONvBbK7Bk1npYCtPdEZz3o/rw5+B78corEhC
+         HHjKzSE3ZHCfGWRRgLPG0I8AKNtRYXmrDyHJ5wbTxJ89kuxoiLBDEjfUaYhlsX9T2J1F
+         +60+uVvD36+/iRaTF0lLYX/+PA2i7oqUjcLKSnoTusNrDtvBa45UpIcXsjrRCXT9a718
+         tJojWpnBzNzTU4LY/bt2EsmzMa/Qak2pG0ymyq18NBNKn56eCK4qvxPASRiQjeNQ772D
+         /i3g==
+X-Gm-Message-State: APjAAAXSJmO0wbkvCuVaFBDD28+njNeVSBxsQ+HZMROrN0a2XWafBOYz
+        6CNO+89wuR8JYnQCeK90pjMr/UJqsTaeGT7MiBOkaaPD
+X-Google-Smtp-Source: APXvYqzks/Yh3nT94EU73JeQYfbm5eQCktqaSsKgM0EsmdXp+RQy6lM42+v5gyP0k5DiZS7Tq13K9MLQ7M9+nJVbMAI=
+X-Received: by 2002:a5d:9bc6:: with SMTP id d6mr19317271ion.160.1563209544592;
+ Mon, 15 Jul 2019 09:52:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190711194811.rfsohbfc3a7carpa@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+References: <20190522172241.192669-1-mortonm@chromium.org> <alpine.LRH.2.21.1905230341520.18826@namei.org>
+ <CAJ-EccPo2T6y=7Gw-naPZ4d25em+8TsZMSXp4C=pGeTutbPqZA@mail.gmail.com> <alpine.LRH.2.21.1907130314410.32193@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1907130314410.32193@namei.org>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Mon, 15 Jul 2019 09:52:13 -0700
+Message-ID: <CAJ-EccPOko4pHKWH2R6b=HO0NnrtbKQWdH6BpO4w5HRsHrTdeg@mail.gmail.com>
+Subject: Re: [PATCH] LSM: Update MAINTAINERS file for SafeSetID LSM.
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/11/2019 9:48 PM, Jarkko Sakkinen wrote:
-> On Fri, Jul 05, 2019 at 06:37:35PM +0200, Roberto Sassu wrote:
->> Commit c78719203fc6 ("KEYS: trusted: allow trusted.ko to initialize w/o a
->> TPM") allows the trusted module to be loaded even a TPM is not found to
->> avoid module dependency problems.
->>
->> Unfortunately, this does not completely solve the issue, as there could be
->> a case where a TPM is found but is not functional (the TPM commands return
->> an error). Specifically, after the tpm_chip structure is returned by
->> tpm_default_chip() in init_trusted(), the execution terminates after
->> init_digests() returns -EFAULT (due to the fact that tpm_get_random()
->> returns a positive value, but less than TPM_MAX_DIGEST_SIZE).
->>
->> This patch fixes the issue by ignoring the TPM_ERR_DEACTIVATED and
->> TPM_ERR_DISABLED errors.
-> 
-> Why allow trusted module to initialize if TPM is not functional?
+Sounds good.
 
-According to the bug report at https://bugs.archlinux.org/task/62678,
-the trusted module is a dependency of the ecryptfs module. We should
-load the trusted module even if the TPM is inactive or deactivated.
-
-Given that commit 782779b60faa ("tpm: Actually fail on TPM errors during
-"get random"") changes the return code of tpm_get_random(), the patch
-should be modified to ignore the -EIO error. I will send a new version.
-
-Roberto
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+On Fri, Jul 12, 2019 at 10:15 AM James Morris <jmorris@namei.org> wrote:
+>
+> On Fri, 12 Jul 2019, Micah Morton wrote:
+>
+> > Hi James,
+> >
+> > Are we still merging this kind of thing through your tree?
+> >
+> > Or does it make more sense for me to send this through my tree when I
+> > get one up and running?
+>
+> Send it via your tree with my acked-by.
+>
+> --
+> James Morris
+> <jmorris@namei.org>
+>
