@@ -2,124 +2,134 @@ Return-Path: <SRS0=DosV=VM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 712C2C7618F
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 22:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A68C7618F
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 22:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 478052086C
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 22:29:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563229777;
-	bh=1o/MhE8wLDRGugzlRBNF+fQFZHSjqcfwu7zrwe+cre8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ugbN1DEu0yBa9ydIugGEoBvNDPuhMgRRwhhVi0FlN3rpNxxLW0bySuEvDsUh0lIip
-	 5AvTGV2UZtlyAWGBGBrwAzxKeL5oiqjr8dbopNTPVJnOXd3TQIJ49JRDjRQCi+B/CS
-	 Z9jTm49DeI140/qRNkOH1wC+vwpmo48+Otaea8cA=
+	by mail.kernel.org (Postfix) with ESMTP id 0963A20693
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 22:54:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731223AbfGOW3g (ORCPT
+        id S1731221AbfGOWyR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jul 2019 18:29:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44978 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731145AbfGOW3g (ORCPT
+        Mon, 15 Jul 2019 18:54:17 -0400
+Received: from www62.your-server.de ([213.133.104.62]:38728 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730960AbfGOWyR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jul 2019 18:29:36 -0400
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FAEA21743
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2019 22:29:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563229775;
-        bh=1o/MhE8wLDRGugzlRBNF+fQFZHSjqcfwu7zrwe+cre8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZpDkylhailMnpdRsfDMZ9sgx/6WEvUFf2W1QdSbfg4+IbzCmjlQLl1e7CWFk0vulR
-         pHQIxZkjMsk9EwsDA66rGR/qXwTfDqrYaTo/8NHMSyKlaer43RgO+s+jJGyz/yxkU3
-         KpksNaWKviuwgv0NXhFqVRCJcyvaqIDpnSvfUsts=
-Received: by mail-wm1-f42.google.com with SMTP id s15so16703589wmj.3
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2019 15:29:35 -0700 (PDT)
-X-Gm-Message-State: APjAAAULGH/PDB6/QnVOETfZoIdMJ/ijq46OsitMMJKem6KxLUq2HocX
-        NllyOk9HlNZjoy77v3syYcxiKl/xFVBV4cUnJ6fCcw==
-X-Google-Smtp-Source: APXvYqwrGgYmx1u4B6STzlyQ0IXuhijCGw7k58WoJIe8fye9JZ3JBNz6Xc04hL1kryvhnKuWBaLSrjJHUIzF81iDO7I=
-X-Received: by 2002:a1c:c5c2:: with SMTP id v185mr27926618wmf.161.1563229773990;
- Mon, 15 Jul 2019 15:29:33 -0700 (PDT)
+        Mon, 15 Jul 2019 18:54:17 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hn9rI-0004FB-U8; Tue, 16 Jul 2019 00:54:12 +0200
+Received: from [99.0.85.34] (helo=localhost.localdomain)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hn9rI-0001NB-Cu; Tue, 16 Jul 2019 00:54:12 +0200
+Subject: Re: [PATCH V35 23/29] bpf: Restrict bpf when kernel lockdown is in
+ confidentiality mode
+To:     Matthew Garrett <matthewgarrett@google.com>, jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Matthew Garrett <mjg59@google.com>, netdev@vger.kernel.org,
+        Chun-Yi Lee <jlee@suse.com>
+References: <20190715195946.223443-1-matthewgarrett@google.com>
+ <20190715195946.223443-24-matthewgarrett@google.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <5d363f09-d649-5693-45c0-bb99d69f0f38@iogearbox.net>
+Date:   Tue, 16 Jul 2019 00:54:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190617222438.2080-1-sean.j.christopherson@intel.com>
- <20190617222438.2080-5-sean.j.christopherson@intel.com> <dc3d59c2783ea81d85d4d447bd1a4a2d5fe51421.camel@linux.intel.com>
- <20190619152018.GC1203@linux.intel.com> <20190620221702.GE20474@linux.intel.com>
- <20190707190809.GE19593@linux.intel.com> <1b7369a08e98dd08a4f8bb19b16479f12bee130f.camel@linux.intel.com>
- <20190708161932.GE20433@linux.intel.com> <20190709160634.3yupyabf5svnj4ds@linux.intel.com>
- <20190710172553.GE4348@linux.intel.com>
-In-Reply-To: <20190710172553.GE4348@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 15 Jul 2019 15:29:23 -0700
-X-Gmail-Original-Message-ID: <CALCETrXMAwHod_KZYPGWjTjg-fxOb1=02=Qj2g1o624wOPfPZQ@mail.gmail.com>
-Message-ID: <CALCETrXMAwHod_KZYPGWjTjg-fxOb1=02=Qj2g1o624wOPfPZQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 04/12] x86/sgx: Require userspace to define enclave
- pages' protection bits
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190715195946.223443-24-matthewgarrett@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25511/Mon Jul 15 10:10:35 2019)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 10, 2019 at 10:25 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Tue, Jul 09, 2019 at 07:06:34PM +0300, Jarkko Sakkinen wrote:
-> > On Mon, Jul 08, 2019 at 09:19:32AM -0700, Sean Christopherson wrote:
-> > > > 2. Probably some "user story" type of examples would help with the
-> > > > discussion overall [1] i.e. how one would use this for
-> > > > her own good.
-> > >
-> > > The compelling story is Andy's original concern that userspace could
-> > > circumvent existing security policies by running code in an enclave.
-> > >
-> > > AIUI, closing the LSM loophole is the minimal requirement to get SGX
-> > > upstreamed.  The extensive discussion has largely been focused on
-> > > ensuring that whatever mechanism is used to close the loophole will
-> > > play nice with future SGX functionality and/or LSM security policies.
-> >
-> > OK, might be getting here where I fall out of the wagon so:
-> >
-> > Doesn't Andy's example anyway require a process that has privileges to
-> > make pages executable i.e. it could run arbitrary code even without an
-> > enclave?
->
-> Ah, no.  He did raise that concern, but it'd only be an issue if the
-> enclave fd were backed by an anon inode, in which case all enclaves would
-> need EXECMEM in order to gain PROT_EXEC on EPC.  Because the fd is backed
-> /dev/sgx/enclave, userspace just needs FILE__EXECUTE on /dev/sgx/enclave.
+On 7/15/19 9:59 PM, Matthew Garrett wrote:
+> From: David Howells <dhowells@redhat.com>
+> 
+> bpf_read() and bpf_read_str() could potentially be abused to (eg) allow
+> private keys in kernel memory to be leaked. Disable them if the kernel
+> has been locked down in confidentiality mode.
+> 
+> Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> cc: netdev@vger.kernel.org
+> cc: Chun-Yi Lee <jlee@suse.com>
+> cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> ---
+>  include/linux/security.h     |  1 +
+>  kernel/trace/bpf_trace.c     | 10 ++++++++++
+>  security/lockdown/lockdown.c |  1 +
+>  3 files changed, 12 insertions(+)
+> 
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 987d8427f091..8dd1741a52cd 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -118,6 +118,7 @@ enum lockdown_reason {
+>  	LOCKDOWN_INTEGRITY_MAX,
+>  	LOCKDOWN_KCORE,
+>  	LOCKDOWN_KPROBES,
+> +	LOCKDOWN_BPF_READ,
+>  	LOCKDOWN_CONFIDENTIALITY_MAX,
+>  };
+>  
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index ca1255d14576..605908da61c5 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -142,7 +142,12 @@ BPF_CALL_3(bpf_probe_read, void *, dst, u32, size, const void *, unsafe_ptr)
+>  {
+>  	int ret;
+>  
+> +	ret = security_locked_down(LOCKDOWN_BPF_READ);
+> +	if (ret)
+> +		goto out;
+> +
+>  	ret = probe_kernel_read(dst, unsafe_ptr, size);
+> +out:
+>  	if (unlikely(ret < 0))
+>  		memset(dst, 0, size);
 
-I would say it differently: regardless of exactly how /dev/sgx/enclave
-is wired up under the hood, we want a way that a process can be
-granted permission to usefully run enclaves without being granted
-permission to execute whatever bytes of code it wants.  Preferably
-without requiring LSMs to maintain some form of enclave signature
-whitelist.
+Hmm, does security_locked_down() ever return a code > 0 or why do you
+have the double check on return code? If not, then for clarity the
+ret code from security_locked_down() should be checked as 'ret < 0'
+as well and out label should be at the memset directly instead.
 
-This is pretty much the only hard requirement I see.  We really could
-achieve this, in a somewhat limited form, by saying that LSMs can
-approve or reject the SIGSTRUCT.  But doing it that way is a bit nasty
-as we've noticed, for a few reasons.  Several of you have raised
-objections to requiring SIGSTRUCT to come from a .sigstruct file.  We
-also need to worry about a SIGSTRUCT that refers to an enclave that
-forgot to measure its text.  And we need to worry about SGX2.
+> @@ -569,6 +574,10 @@ BPF_CALL_3(bpf_probe_read_str, void *, dst, u32, size,
+>  {
+>  	int ret;
+>  
+> +	ret = security_locked_down(LOCKDOWN_BPF_READ);
+> +	if (ret)
+> +		goto out;
+> +
+>  	/*
+>  	 * The strncpy_from_unsafe() call will likely not fill the entire
+>  	 * buffer, but that's okay in this circumstance as we're probing
+> @@ -579,6 +588,7 @@ BPF_CALL_3(bpf_probe_read_str, void *, dst, u32, size,
+>  	 * is returned that can be used for bpf_perf_event_output() et al.
+>  	 */
+>  	ret = strncpy_from_unsafe(dst, unsafe_ptr, size);
+> +out:
+>  	if (unlikely(ret < 0))
+>  		memset(dst, 0, size);
 
-So this whole messy exercise boils down to: a bunch of security policy
-authors think that EXECMEM and similar are not to be given out
-lightly.  How to we allow policies like that to be compatible with
-SGX?
+Ditto.
+
+Thanks,
+Daniel
