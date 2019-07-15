@@ -2,150 +2,140 @@ Return-Path: <SRS0=DosV=VM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB21C76196
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 20:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C030C76191
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 20:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35DA720659
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 20:02:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 640AC20659
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 20:02:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pAFIQjO3"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cJ58uU0X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732320AbfGOUCV (ORCPT
+        id S1732318AbfGOUC1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jul 2019 16:02:21 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:48692 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732378AbfGOUA0 (ORCPT
+        Mon, 15 Jul 2019 16:02:27 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:37968 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732326AbfGOUAU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:00:26 -0400
-Received: by mail-pl1-f201.google.com with SMTP id i33so8814892pld.15
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2019 13:00:26 -0700 (PDT)
+        Mon, 15 Jul 2019 16:00:20 -0400
+Received: by mail-pg1-f202.google.com with SMTP id w5so11104869pgs.5
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2019 13:00:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=RqpfjquZ0GE2zpg4eJx3Cd128lI5VFuP5LKKMsWaFSI=;
-        b=pAFIQjO33EAXPRRh+j+8nZiaw+WI8Xw1Fa6DZNgdB7zZx2A1EGkXPj46P4Q5VOpGBz
-         JcmYxpaDUscEFw1lRXB/bfKXJrsUlP0FHkN1oEFjUJdwwrdeE9Q6j+FsfTTaDvdF/lOL
-         7CGophnnEH0kve3B7v4Xky1J6MS3VJ0IfYjtEucLIHGAbLN5l3iB0/fgauLGOPwt1RRf
-         gdTugZchq9qqOL2i9ei2vjVNzJ1cQr8L2LQeGJuzqDA6nin6fVzaeMWaR5xx+njjTvy8
-         gXoOwFkBUhRx1ycrD/WIirZVvdk2PE+Vg587H1WoE/kf0p6xm9UtCXWMciAbcD7ByrhV
-         g/5A==
+        bh=7Fsa5djs+VQ2BrQJC+FUs9YwCCHQQfjCNM9PGrMIw+A=;
+        b=cJ58uU0XE/YKJRyI5Mt8XS66fhl7mlr/5SBCN06rI3kOZahs9sJMcXx2ibpLoUVCaE
+         9N1NY7OgxzhRPwe9rAJ9sX1BJ0ihRRRL3eB1ATlWoL9AgojAMGNFU+IEzasvl9Qi8eeC
+         ZkFc3LVDfGlr7B4KL2h2Fk7rzQRbQLG0fV2EprbbLhYAb3pInpVl0C4tpIWrC5ke1CaF
+         8SpfsbNg0HaA8UNxyOZPyFO9oH7pXi6W4xurmmtxgY7D5fmX5k+NL4JCD8shTiLjN3Q2
+         SXoPSH4JASf5Jv9Der3AxoWSuW+W9hMxss6p61KH1/LToqcS5HgvobYgH+qD2KX+O9I0
+         NjTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=RqpfjquZ0GE2zpg4eJx3Cd128lI5VFuP5LKKMsWaFSI=;
-        b=RCPRqaxS/NEsYvhAmtw9dS/8k6UcUQRjtGj2z939C1tewaVRfdKQao7NimvsAnX83I
-         x37Unfs+t0lb03Gape57aZ26V4HgHAnc2/fB2uGXPCwsEqMatzYPExiucHY4WkrzknYv
-         IF+M4rCcfyxWhFDfJyX7+kKFpeSrwpDIZXwQ/iDfklITO0XmSNpXir2TAcSJkhmvB4CI
-         vKFyKM6pSBLFqokM7bHTCAIKpl7oUh9Dzig7fsVpzdfUB0zsDcu1+upyBuWRZBQmWZFh
-         qvc/Aul4BNnruqTZlzwDOTNuZnbeiUuUNJ5cRC7NyADYm+puopxU+9HVJVChy+6wrP+c
-         UEYA==
-X-Gm-Message-State: APjAAAU73Ldv7Re2F3tROb2LYHMAuQP+9tIZKJs1MKuazGUJjk9BQrYY
-        Akkn0RIggL4DmX3mwVA6udTeqb9Bf3hrJBimpwnx0Q==
-X-Google-Smtp-Source: APXvYqyGVV4UqtL4SyuFVuLy4As2KjplUBshYGHg/OONSN3srDOmMtYRsJ6sOWrUX2XwlAdRaYdP14jkVrCbHX6ZEvoc7A==
-X-Received: by 2002:a63:1305:: with SMTP id i5mr29060137pgl.211.1563220825360;
- Mon, 15 Jul 2019 13:00:25 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 12:59:29 -0700
+        bh=7Fsa5djs+VQ2BrQJC+FUs9YwCCHQQfjCNM9PGrMIw+A=;
+        b=sSNdyaHB58jcg9m0fGWaJfjnW6s6FEBP2DM+cmgbyRPOlwq/6S0csf8iz4xlYEpeIw
+         Pwmad5iJWhr21viqBTXLHDmoziDQ6jCOx3N65nuDwMp9XoMXniF28QUCEuTgkPpIQ8hp
+         Eqg/180Pf+n4/AAREOf4b7QFzjGsYP1P0giAsVbKzCby/O+LdIymq6furzFjYAeg3UjN
+         3TmPIQvNCeuE9ZNEk2RBVpF2RRylRbfKHxHVz/uxbprUDWVajFIlZbExmtUdeUnckN9b
+         XbAwo2VNs1xciSQG/KF/zKkgLx1inD/PqNnE6D2guafhq3I5Oa6V7FN0HwnjGwihMdGW
+         V5mA==
+X-Gm-Message-State: APjAAAVRBD6Nwnq7NgNQMeQaZSaaSgTTBoUceK5IQTOkxp28aqmTTatX
+        nUNBs7EjSZ7b/5SPrSVK6Ka08BSWwTwN3myP/ZhAFA==
+X-Google-Smtp-Source: APXvYqwVtJa9IPgk7H5zDUOO19rxBXwa1dInRZDEXWO7Uz1DWQaii5wotdUMuZXkJSevrN+xH8Yzo5reUPeuqmqn92YMUQ==
+X-Received: by 2002:a63:f857:: with SMTP id v23mr3963600pgj.228.1563220820065;
+ Mon, 15 Jul 2019 13:00:20 -0700 (PDT)
+Date:   Mon, 15 Jul 2019 12:59:27 -0700
 In-Reply-To: <20190715195946.223443-1-matthewgarrett@google.com>
-Message-Id: <20190715195946.223443-13-matthewgarrett@google.com>
+Message-Id: <20190715195946.223443-11-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190715195946.223443-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH V35 12/29] x86: Lock down IO port access when the kernel is
- locked down
+Subject: [PATCH V35 10/29] hibernate: Disable when the kernel is locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Matthew Garrett <mjg59@google.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
         David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>, rjw@rjwysocki.net,
+        pavel@ucw.cz, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Matthew Garrett <mjg59@srcf.ucam.org>
+From: Josh Boyer <jwboyer@fedoraproject.org>
 
-IO port access would permit users to gain access to PCI configuration
-registers, which in turn (on a lot of hardware) give access to MMIO
-register space. This would potentially permit root to trigger arbitrary
-DMA, so lock it down by default.
+There is currently no way to verify the resume image when returning
+from hibernate.  This might compromise the signed modules trust model,
+so until we can work with signed hibernate images we disable it when the
+kernel is locked down.
 
-This also implicitly locks down the KDADDIO, KDDELIO, KDENABIO and
-KDDISABIO console ioctls.
-
-Signed-off-by: Matthew Garrett <mjg59@google.com>
+Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Matthew Garrett <mjg59@google.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-cc: x86@kernel.org
+Cc: rjw@rjwysocki.net
+Cc: pavel@ucw.cz
+cc: linux-pm@vger.kernel.org
 ---
- arch/x86/kernel/ioport.c     | 7 +++++--
  include/linux/security.h     | 1 +
+ kernel/power/hibernate.c     | 3 ++-
  security/lockdown/lockdown.c | 1 +
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ 3 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
-index 0fe1c8782208..61a89d3c0382 100644
---- a/arch/x86/kernel/ioport.c
-+++ b/arch/x86/kernel/ioport.c
-@@ -11,6 +11,7 @@
- #include <linux/errno.h>
- #include <linux/types.h>
- #include <linux/ioport.h>
-+#include <linux/security.h>
- #include <linux/smp.h>
- #include <linux/stddef.h>
- #include <linux/slab.h>
-@@ -31,7 +32,8 @@ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
- 
- 	if ((from + num <= from) || (from + num > IO_BITMAP_BITS))
- 		return -EINVAL;
--	if (turn_on && !capable(CAP_SYS_RAWIO))
-+	if (turn_on && (!capable(CAP_SYS_RAWIO) ||
-+			security_locked_down(LOCKDOWN_IOPORT)))
- 		return -EPERM;
- 
- 	/*
-@@ -126,7 +128,8 @@ SYSCALL_DEFINE1(iopl, unsigned int, level)
- 		return -EINVAL;
- 	/* Trying to gain more privileges? */
- 	if (level > old) {
--		if (!capable(CAP_SYS_RAWIO))
-+		if (!capable(CAP_SYS_RAWIO) ||
-+		    security_locked_down(LOCKDOWN_IOPORT))
- 			return -EPERM;
- 	}
- 	regs->flags = (regs->flags & ~X86_EFLAGS_IOPL) |
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 8adbd62b7669..79250b2ffb8f 100644
+index 69c5de539e9a..304a155a5628 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -108,6 +108,7 @@ enum lockdown_reason {
+@@ -106,6 +106,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_MODULE_SIGNATURE,
+ 	LOCKDOWN_DEV_MEM,
  	LOCKDOWN_KEXEC,
- 	LOCKDOWN_HIBERNATION,
- 	LOCKDOWN_PCI_ACCESS,
-+	LOCKDOWN_IOPORT,
++	LOCKDOWN_HIBERNATION,
  	LOCKDOWN_INTEGRITY_MAX,
  	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index cd7434e6000d..3c0a5a8170b0 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -30,6 +30,7 @@
+ #include <linux/ctype.h>
+ #include <linux/genhd.h>
+ #include <linux/ktime.h>
++#include <linux/security.h>
+ #include <trace/events/power.h>
+ 
+ #include "power.h"
+@@ -68,7 +69,7 @@ static const struct platform_hibernation_ops *hibernation_ops;
+ 
+ bool hibernation_available(void)
+ {
+-	return (nohibernate == 0);
++	return nohibernate == 0 && !security_locked_down(LOCKDOWN_HIBERNATION);
+ }
+ 
+ /**
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 655fe388e615..316f7cf4e996 100644
+index 6f302c156bc8..a0996f75629f 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -23,6 +23,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+@@ -21,6 +21,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
+ 	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
  	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
- 	[LOCKDOWN_HIBERNATION] = "hibernation",
- 	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
-+	[LOCKDOWN_IOPORT] = "raw io port access",
++	[LOCKDOWN_HIBERNATION] = "hibernation",
  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
  };
