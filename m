@@ -2,154 +2,115 @@ Return-Path: <SRS0=DosV=VM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6C1C76191
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 16:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F129EC7618F
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 18:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CD7A2080A
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 16:54:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D77582081C
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 18:42:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731391AbfGOQyM (ORCPT
+        id S1729804AbfGOSmV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jul 2019 12:54:12 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33086 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729533AbfGOQyL (ORCPT
+        Mon, 15 Jul 2019 14:42:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729503AbfGOSmV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jul 2019 12:54:11 -0400
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id DF8A4F5A9A65B8C0C267;
-        Mon, 15 Jul 2019 17:54:09 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 15 Jul
- 2019 17:54:04 +0100
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-To:     Rob Landley <rob@landley.net>, <hpa@zytor.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>
-CC:     Mimi Zohar <zohar@linux.ibm.com>, <viro@zeniv.linux.org.uk>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
-        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
-        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
-        <kamensky@cisco.com>, <arnd@arndb.de>, <james.w.mcmechan@gmail.com>
-References: <20190523121803.21638-1-roberto.sassu@huawei.com>
- <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
- <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
- <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
- <1561909199.3985.33.camel@linux.ibm.com>
- <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
- <1561991485.4067.14.camel@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
-Date:   Mon, 15 Jul 2019 18:54:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 15 Jul 2019 14:42:21 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5353630872F1;
+        Mon, 15 Jul 2019 18:42:20 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-14.phx2.redhat.com [10.3.112.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7CFCA4F676;
+        Mon, 15 Jul 2019 18:42:12 +0000 (UTC)
+Date:   Mon, 15 Jul 2019 14:42:09 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     James Morris <jmorris@namei.org>,
+        Nicholas Franck <nhfran2@tycho.nsa.gov>, mortonm@chromium.org,
+        john.johansen@canonical.com, selinux@vger.kernel.org,
+        luto@amacapital.net, linux-security-module@vger.kernel.org,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>, serge@hallyn.com
+Subject: Re: [RFC PATCH] security, capability: pass object information to
+ security_capable
+Message-ID: <20190715184209.j75kpav4tmmunejh@madcap2.tricolour.ca>
+References: <20190712173404.14417-1-nhfran2@tycho.nsa.gov>
+ <alpine.LRH.2.21.1907130347010.1509@namei.org>
+ <3605eb1a-fb1c-8933-b1e1-a60e54fb1e1c@tycho.nsa.gov>
 MIME-Version: 1.0
-In-Reply-To: <1561991485.4067.14.camel@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3605eb1a-fb1c-8933-b1e1-a60e54fb1e1c@tycho.nsa.gov>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 15 Jul 2019 18:42:20 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Rob, Peter, Arvind, did you have the chance to have a look at this
-version of the patch set?
+On 2019-07-12 14:02, Stephen Smalley wrote:
+> On 7/12/19 1:50 PM, James Morris wrote:
+> > On Fri, 12 Jul 2019, Nicholas Franck wrote:
+> > 
 
-Thanks
+This aggressive trimming dropped a bit of helpful context:
 
-Roberto
++++ b/security/lsm_audit.c
+@@ -229,9 +229,26 @@ static void dump_common_audit_data(struct
+audit_buffer *ab,
+        case LSM_AUDIT_DATA_IPC:
+                audit_log_format(ab, " key=%d ", a->u.ipc_id);
+                break;
+-       case LSM_AUDIT_DATA_CAP:
+-               audit_log_format(ab, " capability=%d ", a->u.cap);
 
+> > > +	case LSM_AUDIT_DATA_CAP: {
+> > > +		const struct inode *inode;
+> > > +
+> > > +		if (a->u.cap_struct.cad) {
+> > > +			switch (a->u.cap_struct.cad->type) {
+> > > +			case CAP_AUX_DATA_INODE: {
+> > > +				inode = a->u.cap_struct.cad->u.inode;
+> > > +
+> > > +				audit_log_format(ab, " dev=");
+> > > +				audit_log_untrustedstring(ab,
+> > > +					inode->i_sb->s_id);
+> > > +				audit_log_format(ab, " ino=%lu",
+> > > +					inode->i_ino);
+> > > +				break;
+> > > +			}
+> > > +			}
+> > > +		}
+> > > +		audit_log_format(ab, " capability=%d ", a->u.cap_struct.cap);
+> > >   		break;
 
-On 7/1/2019 4:31 PM, Mimi Zohar wrote:
-> On Mon, 2019-07-01 at 16:42 +0300, Roberto Sassu wrote:
->> On 6/30/2019 6:39 PM, Mimi Zohar wrote:
->>> On Wed, 2019-06-26 at 10:15 +0200, Roberto Sassu wrote:
->>>> On 6/3/2019 8:32 PM, Rob Landley wrote:
->>>>> On 6/3/19 4:31 AM, Roberto Sassu wrote:
->>>>>>> This patch set aims at solving the following use case: appraise files from
->>>>>>> the initial ram disk. To do that, IMA checks the signature/hash from the
->>>>>>> security.ima xattr. Unfortunately, this use case cannot be implemented
->>>>>>> currently, as the CPIO format does not support xattrs.
->>>>>>>
->>>>>>> This proposal consists in including file metadata as additional files named
->>>>>>> METADATA!!!, for each file added to the ram disk. The CPIO parser in the
->>>>>>> kernel recognizes these special files from the file name, and calls the
->>>>>>> appropriate parser to add metadata to the previously extracted file. It has
->>>>>>> been proposed to use bit 17:16 of the file mode as a way to recognize files
->>>>>>> with metadata, but both the kernel and the cpio tool declare the file mode
->>>>>>> as unsigned short.
->>>>>>
->>>>>> Any opinion on this patch set?
->>>>>>
->>>>>> Thanks
->>>>>>
->>>>>> Roberto
->>>>>
->>>>> Sorry, I've had the window open since you posted it but haven't gotten around to
->>>>> it. I'll try to build it later today.
->>>>>
->>>>> It does look interesting, and I have no objections to the basic approach. I
->>>>> should be able to add support to toybox cpio over a weekend once I've got the
->>>>> kernel doing it to test against.
->>>>
->>>> Ok.
->>>>
->>>> Let me give some instructions so that people can test this patch set.
->>>>
->>>> To add xattrs to the ram disk embedded in the kernel it is sufficient
->>>> to set CONFIG_INITRAMFS_FILE_METADATA="xattr" and
->>>> CONFIG_INITRAMFS_SOURCE="<file with xattr>" in the kernel configuration.
->>>>
->>>> To add xattrs to the external ram disk, it is necessary to patch cpio:
->>>>
->>>> https://github.com/euleros/cpio/commit/531cabc88e9ecdc3231fad6e4856869baa9a91ef
->>>> (xattr-v1 branch)
->>>>
->>>> and dracut:
->>>>
->>>> https://github.com/euleros/dracut/commit/a2dee56ea80495c2c1871bc73186f7b00dc8bf3b
->>>> (digest-lists branch)
->>>>
->>>> The same modification can be done for mkinitramfs (add '-e xattr' to the
->>>> cpio command line).
->>>>
->>>> To simplify the test, it would be sufficient to replace only the cpio
->>>> binary and the dracut script with the modified versions. For dracut, the
->>>> patch should be applied to the local dracut (after it has been renamed
->>>> to dracut.sh).
->>>>
->>>> Then, run:
->>>>
->>>> dracut -e xattr -I <file with xattr> (add -f to overwrite the ram disk)
->>>>
->>>> Xattrs can be seen by stopping the boot process for example by adding
->>>> rd.break to the kernel command line.
->>>
->>> A simple way of testing, without needing any changes other than the
->>> kernel patches, is to save the dracut temporary directory by supplying
->>> "--keep" on the dracut command line, calling
->>> usr/gen_initramfs_list.sh, followed by usr/gen_init_cpio with the "-e
->>> xattr" option.
->>
->> Alternatively, follow the instructions to create the embedded ram disk
->> with xattrs, and use the existing external ram disk created with dracut
->> to check if xattrs are created.
++       }
+        case LSM_AUDIT_DATA_PATH: {
+                struct inode *inode;
+
+> > 
+> > Will this break any existing userspace log parsers?
 > 
-> True, but this alternative is for those who normally use dracut to
-> create an initramfs, but don't want to update cpio or dracut.
-> 
-> Mimi
-> 
+> I'm hoping not given that we are only adding auxiliary fields and those are
+> already defined for other AVC audit messages.  ausearch appeared to work
+> fine.  Added the linux-audit mailing list to the cc line to get their view.
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+Generally, additional or optional fields should only be added after
+existing ones.  Also, generally, fields should not be optional, but this
+is tricky since it gobbles network and cpu bandwidth and disk space and
+there are lots of precedents to contradict this.
+
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
