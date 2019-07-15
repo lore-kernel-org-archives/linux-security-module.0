@@ -7,67 +7,68 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D033C76191
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 20:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9B0C7618F
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 20:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D81A221738
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 20:00:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C016420659
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jul 2019 20:00:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oZY9eqJZ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ChqgzH2z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732520AbfGOUAr (ORCPT
+        id S1732695AbfGOUA6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jul 2019 16:00:47 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:53771 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732572AbfGOUAo (ORCPT
+        Mon, 15 Jul 2019 16:00:58 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:39702 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732683AbfGOUA6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:00:44 -0400
-Received: by mail-pl1-f202.google.com with SMTP id y22so8806666plr.20
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2019 13:00:44 -0700 (PDT)
+        Mon, 15 Jul 2019 16:00:58 -0400
+Received: by mail-pf1-f202.google.com with SMTP id 6so10864913pfi.6
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2019 13:00:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=cmSzh4dtjNx/P+yROnH7EGJs7UfjLe1mZ8JUMa9RMlI=;
-        b=oZY9eqJZOq0g+fIwSn9L1Bd7+IvSG5PmYH+irfYuUEGUGVedGZ4zYdyHPlquK/xafd
-         S/N656316SMDuzoFQRZ1psGUlP7iBlP6T46CJkRLSw9K4A9IoLoLCVFz04u9xHIp86fh
-         6GrUCyj07ZsajFN9ou+5adigVhuwrUrL25pP2XqvyMAXa2lFs4ZFsANlOyK7v99xJjq/
-         JMTIZlQKyYbUxMooIuvlFJq5MRV5yMs5Nnv3dtR1UiTgl3PRzN9e/fco2UIij/KZB4ar
-         gbm1XsZIh/tLzuqSQpDHN9QuVBPQD8Ete1dI2AiLp6x3Me+rTf8WVDcRp6YGfd0hJOqK
-         Az0w==
+        bh=6flDTB2cc+idlYkETJxAjqgCPIisACHtzrHaM3jrXOY=;
+        b=ChqgzH2zFDK3tT4H5IhQ4S8ryxEnULmECSos4ucFSEGrnmOhH4smTTrqP3rLmwJ6bm
+         nHqApST8qhDWjUtUcr05S+8nZlo1vwWRNXWvAH5yUG7B1wschRgRPDG81Xmrt0cTjm6s
+         7rqClyqIOA12viOU8/hoPxZYow/PEP4KU1BVkH7NLkKaDTPJZ+EEy2X+6KtwhHhSjpY7
+         /azlbfPRNT+YYiwAd0qDqEvJpgwfUi+gsZUtQoQnBN1qPg+us7qlLqvddyD4IpPC3m6C
+         5cSUD3Klw3rDnkU7p39B7KGLg28nfmarFbFKQ2a2psShO56Euq2nph1i5SHHvAcsrVz1
+         QFOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=cmSzh4dtjNx/P+yROnH7EGJs7UfjLe1mZ8JUMa9RMlI=;
-        b=Lkz3mpBeOo8gw/KrfnlV7js3UJqZRmgw4hggq2TkRvCLqQncHKsEEOToJqpxbRvvmv
-         BEJ7XY8UPjE5vXbr1WgCQwdtIiBJRZ8NxMN/+uQCcGGY3OnFIzHeEM6UCiozNv5u2jZE
-         KkWtXy3laokMh18bOf8asc2c6Zqz1m5aXchseB1Sh9pyzg4meZT0VmWOiNi7V/PmP38K
-         Nxmoh11iSwkgvYMTBeDRE9qPRjkz2XngeHhW2GqWpc8ZS73tnU+2fI2OQWgFPEo2GYLV
-         2tJtWVUzZEhGd6DkjxSx5Hi6uruSLaiIEnq3aUROLe+rk+Z0gnwa5VE8b7kKdZpMlSYE
-         zOqQ==
-X-Gm-Message-State: APjAAAUfsSDiCzdtSyeySpyiRVpHXEkIYAwNRwEqL+7RGONoWXs2BWfU
-        4xEWjV7oxr7Vmc2dnDRONe7hb9mg3gYJhoQZDOMqKw==
-X-Google-Smtp-Source: APXvYqyzIvqz0TZoPY8nlguNiiDuTnJcj8lZOYnyhvWc4EfdP/oipkbD8qlGc4Cay8amBfhAwZMB7gdMHVNA1s1E3DLv2Q==
-X-Received: by 2002:a63:e807:: with SMTP id s7mr27900175pgh.194.1563220843484;
- Mon, 15 Jul 2019 13:00:43 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 12:59:36 -0700
+        bh=6flDTB2cc+idlYkETJxAjqgCPIisACHtzrHaM3jrXOY=;
+        b=AXEMF2b5scK7tYGWgNEQKdPVcTngD79peeuohtF2Jed2FOQqYhJ3Vhe6WQam3YOMok
+         lvqWRmdBoTCTxVIrgfAKFxikH0nr5IxdRolcWsSX5Lfj283iBy4zMR/azyw/mDOj5kb1
+         kOiCL4JQXF8MlUbxBfiNEF90SJdjNFyGtDytgbrLGSCNs4PPM25WgHsoc+lykUTC0QYw
+         lDbEMCno4ISAamx3PJrGbhzbQQwAQpTgQHeiVwF5QcrAusl1mtE8FBYp3gbvfcLK3b/Y
+         usEPK+QnG842hzAh7cMCTJUscFUSKzLnAOHxh+XwBenDbAsxZR0eWSFVxzoZiUUV64kr
+         YFSA==
+X-Gm-Message-State: APjAAAWnwUQlH/jjKIMsbOKqH7UVX9yZLKILElLg/0TvjVi9uId49kMu
+        JSuj1YBVFECVm/7TNNILOzRUnwFmBWsJLJhg3frvlw==
+X-Google-Smtp-Source: APXvYqxg52NsoxTabPM1Dv5rjomAok9LsWGgpqy0K2qiQR90JV7TUbpE8F353AcRIJ8oasv5d+Jl4wW0ZOgZMy7Slf0MLQ==
+X-Received: by 2002:a63:1a03:: with SMTP id a3mr27318096pga.397.1563220857095;
+ Mon, 15 Jul 2019 13:00:57 -0700 (PDT)
+Date:   Mon, 15 Jul 2019 12:59:41 -0700
 In-Reply-To: <20190715195946.223443-1-matthewgarrett@google.com>
-Message-Id: <20190715195946.223443-20-matthewgarrett@google.com>
+Message-Id: <20190715195946.223443-25-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190715195946.223443-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH V35 19/29] Lock down module params that specify hardware
- parameters (eg. ioport)
+Subject: [PATCH V35 24/29] Lock down perf when in confidentiality mode
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
@@ -75,117 +76,63 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-Provided an annotation for module parameters that specify hardware
-parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
-dma buffers and other types).
+Disallow the use of certain perf facilities that might allow userspace to
+access kernel data.
 
-Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 ---
- include/linux/security.h     |  1 +
- kernel/params.c              | 28 +++++++++++++++++++++++-----
- security/lockdown/lockdown.c |  1 +
- 3 files changed, 25 insertions(+), 5 deletions(-)
+ include/linux/security.h     | 1 +
+ kernel/events/core.c         | 7 +++++++
+ security/lockdown/lockdown.c | 1 +
+ 3 files changed, 9 insertions(+)
 
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 8f7048395114..43fa3486522b 100644
+index 8dd1741a52cd..8ef366de70b0 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -113,6 +113,7 @@ enum lockdown_reason {
- 	LOCKDOWN_ACPI_TABLES,
- 	LOCKDOWN_PCMCIA_CIS,
- 	LOCKDOWN_TIOCSSERIAL,
-+	LOCKDOWN_MODULE_PARAMETERS,
- 	LOCKDOWN_INTEGRITY_MAX,
+@@ -119,6 +119,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_KCORE,
+ 	LOCKDOWN_KPROBES,
+ 	LOCKDOWN_BPF_READ,
++	LOCKDOWN_PERF,
  	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
-diff --git a/kernel/params.c b/kernel/params.c
-index cf448785d058..f2779a76d39a 100644
---- a/kernel/params.c
-+++ b/kernel/params.c
-@@ -12,6 +12,7 @@
- #include <linux/err.h>
- #include <linux/slab.h>
- #include <linux/ctype.h>
-+#include <linux/security.h>
  
- #ifdef CONFIG_SYSFS
- /* Protects all built-in parameters, modules use their own param_lock */
-@@ -96,13 +97,20 @@ bool parameq(const char *a, const char *b)
- 	return parameqn(a, b, strlen(a)+1);
- }
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 785d708f8553..738d6f1cf5ec 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -10806,6 +10806,13 @@ SYSCALL_DEFINE5(perf_event_open,
+ 	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
+ 		return -EACCES;
  
--static void param_check_unsafe(const struct kernel_param *kp)
-+static bool param_check_unsafe(const struct kernel_param *kp,
-+			       const char *doing)
- {
-+	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
-+	    security_locked_down(LOCKDOWN_MODULE_PARAMETERS))
-+		return false;
++	err = security_locked_down(LOCKDOWN_PERF);
++	if (err && (attr.sample_type & PERF_SAMPLE_REGS_INTR))
++		/* REGS_INTR can leak data, lockdown must prevent this */
++		return err;
 +
- 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
- 		pr_notice("Setting dangerous option %s - tainting kernel\n",
- 			  kp->name);
- 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
- 	}
++	err = 0;
 +
-+	return true;
- }
- 
- static int parse_one(char *param,
-@@ -132,8 +140,10 @@ static int parse_one(char *param,
- 			pr_debug("handling %s with %p\n", param,
- 				params[i].ops->set);
- 			kernel_param_lock(params[i].mod);
--			param_check_unsafe(&params[i]);
--			err = params[i].ops->set(val, &params[i]);
-+			if (param_check_unsafe(&params[i], doing))
-+				err = params[i].ops->set(val, &params[i]);
-+			else
-+				err = -EPERM;
- 			kernel_param_unlock(params[i].mod);
- 			return err;
- 		}
-@@ -541,6 +551,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
- 	return count;
- }
- 
-+#ifdef CONFIG_MODULES
-+#define mod_name(mod) ((mod)->name)
-+#else
-+#define mod_name(mod) "unknown"
-+#endif
-+
- /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
- static ssize_t param_attr_store(struct module_attribute *mattr,
- 				struct module_kobject *mk,
-@@ -553,8 +569,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
- 		return -EPERM;
- 
- 	kernel_param_lock(mk->mod);
--	param_check_unsafe(attribute->param);
--	err = attribute->param->ops->set(buf, attribute->param);
-+	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
-+		err = attribute->param->ops->set(buf, attribute->param);
-+	else
-+		err = -EPERM;
- 	kernel_param_unlock(mk->mod);
- 	if (!err)
- 		return len;
+ 	/*
+ 	 * In cgroup mode, the pid argument is used to pass the fd
+ 	 * opened to the cgroup directory in cgroupfs. The cpu argument
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 07a49667f234..065432f9e218 100644
+index d14b89784412..e43c9d001e49 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -28,6 +28,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_ACPI_TABLES] = "modified ACPI tables",
- 	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
- 	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
-+	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
- 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+@@ -34,6 +34,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_KCORE] = "/proc/kcore access",
+ 	[LOCKDOWN_KPROBES] = "use of kprobes",
+ 	[LOCKDOWN_BPF_READ] = "use of bpf to read kernel RAM",
++	[LOCKDOWN_PERF] = "unsafe use of perf",
  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
  };
+ 
 -- 
 2.22.0.510.g264f2c817a-goog
 
