@@ -2,228 +2,289 @@ Return-Path: <SRS0=8dNN=VN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF50C7618F
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 21:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8EE0C76195
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 22:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53903206C2
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 21:46:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80AE12173B
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 22:15:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X3051l97"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbfGPVq6 (ORCPT
+        id S1728601AbfGPWPc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jul 2019 17:46:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47170 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728294AbfGPVq6 (ORCPT
+        Tue, 16 Jul 2019 18:15:32 -0400
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:48869 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728235AbfGPWPb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jul 2019 17:46:58 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CF9BF307CDEA;
-        Tue, 16 Jul 2019 21:46:57 +0000 (UTC)
-Received: from x2.localnet (ovpn-116-76.phx2.redhat.com [10.3.116.76])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B7C5A5C220;
-        Tue, 16 Jul 2019 21:46:52 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: Preferred subj= with multiple LSMs
-Date:   Tue, 16 Jul 2019 17:46:52 -0400
-Message-ID: <2517266.eHZzEmjMsX@x2>
-Organization: Red Hat
-In-Reply-To: <CAHC9VhTQLihNQ1iGjJB=LAn=C6BQokFsjsRcj8O_O9AjqQ7HBg@mail.gmail.com>
-References: <f824828c-5c9d-b91e-5cec-70ee7a45e760@schaufler-ca.com> <d1a237d3-4b72-48b0-27d6-fb168354ad31@schaufler-ca.com> <CAHC9VhTQLihNQ1iGjJB=LAn=C6BQokFsjsRcj8O_O9AjqQ7HBg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 16 Jul 2019 21:46:57 +0000 (UTC)
+        Tue, 16 Jul 2019 18:15:31 -0400
+Received: by mail-vk1-f201.google.com with SMTP id x71so1550369vkd.15
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jul 2019 15:15:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=MvZvD71NFoDIg+SfvI+3kyXWKLTiQPbfbya7b91g9Tg=;
+        b=X3051l97q7WdCLQBVjol9cBje+bAR7tZU5T/uQTI1F/FjcmptyxJ/DI0gN43DQmodK
+         8PEmfGnt+6WTgIQGJPEbknwewiWMDNysfB7S8WaG+ibS5pZNpcozNsImHcmT+N20/e9z
+         14wyFoPxFqvojcSD28sj3c1kFpIlrj7UGtA2t/eQ7/DxeDCdKBxemvOLhB52W2Hiv3ye
+         UvdvJCen5gHJc1hFcA+uE73xnhnwVj7H+guYZpN7p1+Fz8SCU4A0lyWm+0hsyQH/Y7mz
+         Y2iq5jBkBXwbXUKRCyMItOv05b+n1Pd3w4skLHg/xSOCndPI6loxC1d6ym5c4tgYAZuV
+         /0jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=MvZvD71NFoDIg+SfvI+3kyXWKLTiQPbfbya7b91g9Tg=;
+        b=XF4gaeVYuVpzS+DgxUZP0YIP/UbCy2+gNzClmhM1kuk+xD0MsT4QgRBryuNi6T6DLM
+         g/PH59Z4UFQOKizScC5yDzZqztaiu9hzoolKbwgvwZJ3fAJzHJK4WzE8ZMEkcaPLdz4u
+         bD6Pop+i2vcfj1iK+a4srmmM+td5WGO7yOI4FoyQrpgPaC1RpAEf4jQnFpEops83XSHB
+         zRIG5zadMTrLI0kyw/Rry44YKFGgybFfvsLq2/Tb63Sd89r1I7Mo5mtzyPLAg1CeC70v
+         6g9vZvmIDXm8gIjEz5RolhAu6PgMuwnFFPz7jfB1F7xFYHjEUjohkm+8aucimnlObGCA
+         +8JA==
+X-Gm-Message-State: APjAAAUMHVv3PSejJkxybUzxeiA0y4keG300zo/lYdKn0TjCjxRrv+02
+        r9h9h1SeGq/cvUadplNTF/44kzwAweg3GSHDqE3of4KjUDcpc7iq7aZjcw7zs/6V53Zz0ecfcpH
+        MhpBNPVRg7SKQFsJ+5npBT7ttBBzjxAAkrKTWnlW2tWVl+suT1i746p9j3RKVs9qgvS7nHmo+99
+        YCCumV3fXE5kQ/PYbBbx1l5i6tBJg=
+X-Google-Smtp-Source: APXvYqw6McX1xHGssSeVCoIHR48jVhR7fZmFdqKqp5rprhARgbmWL/d86S4HD2lpgnw54uo5A4VlM/yzWLW0xCmQoSPvog==
+X-Received: by 2002:a1f:8513:: with SMTP id h19mr13430748vkd.92.1563315329685;
+ Tue, 16 Jul 2019 15:15:29 -0700 (PDT)
+Date:   Tue, 16 Jul 2019 15:15:26 -0700
+In-Reply-To: <937ce9400ed86ad089d743dcca7b5926a7172566>
+Message-Id: <20190716221526.63422-1-matthewgarrett@google.com>
+Mime-Version: 1.0
+References: <937ce9400ed86ad089d743dcca7b5926a7172566>
+X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
+Subject: [RFC] acpi: Ignore acpi_rsdp kernel param when the kernel has been
+ locked down
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     Matthew Garrett <mjg59@google.com>,
+        Josh Boyer <jwboyer@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Young <dyoung@redhat.com>, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tuesday, July 16, 2019 5:25:21 PM EDT Paul Moore wrote:
-> On Tue, Jul 16, 2019 at 2:41 PM Casey Schaufler <casey@schaufler-ca.com> 
-wrote:
-> > On 7/16/2019 11:06 AM, Steve Grubb wrote:
-> > > On Tuesday, July 16, 2019 1:43:18 PM EDT Paul Moore wrote:
-> > >> On Tue, Jul 16, 2019 at 1:30 PM Casey Schaufler
-> > >> <casey@schaufler-ca.com>
-> > > 
-> > > wrote:
-> > >>> On 7/16/2019 10:12 AM, Paul Moore wrote:
-> > >>>> On Mon, Jul 15, 2019 at 6:56 PM Steve Grubb <sgrubb@redhat.com> 
-wrote:
-> > >>>>> On Monday, July 15, 2019 5:28:56 PM EDT Paul Moore wrote:
-> > >>>>>> On Mon, Jul 15, 2019 at 3:37 PM Casey Schaufler
-> > >>>>>> <casey@schaufler-ca.com>
-> > >>>>> 
-> > >>>>> wrote:
-> > >>>>>>> On 7/15/2019 12:04 PM, Richard Guy Briggs wrote:
-> > >>>>>>>> On 2019-07-13 11:08, Steve Grubb wrote:
-> > >>>> ...
-> > >>>> 
-> > >>>>>>>> Steve's answer is the obvious one, ideally allocating a seperate
-> > >>>>>>>> range
-> > >>>>>>>> to each LSM with each message type having its own well defined
-> > >>>>>>>> format.
-> > >>>>>>> 
-> > >>>>>>> It doesn't address the issue of success records, or records
-> > >>>>>>> generated outside the security modules.
-> > >>>>>> 
-> > >>>>>> Yes, exactly.  The individual LSM will presumably will continue to
-> > >>>>>> generate their own audit records as they do today and I would
-> > >>>>>> imagine
-> > >>>>>> that the subject and object fields could remain as they do today
-> > >>>>>> for
-> > >>>>>> the LSM specific records.
-> > >>>>>> 
-> > >>>>>> The trick is the other records which are not LSM specific but
-> > >>>>>> still
-> > >>>>>> want to include subject and/or object information.  Unfortunately
-> > >>>>>> we
-> > >>>>>> are stuck with some tough limitations given the current audit
-> > >>>>>> record
-> > >>>>>> format and Steve's audit userspace tools;
-> > >>>>> 
-> > >>>>> Not really. We just need to approach the problem thinking about how
-> > >>>>> to
-> > >>>>> make it work based on how things currently work.
-> > >>>> 
-> > >>>> I suppose it is all somewhat "subjective" - bad joke fully intended
-> > >>>> :)
-> > >>>> - with respect to what one considers good/bad/limiting.  My personal
-> > >>>> view is that an ideal solution would allow for multiple independent
-> > >>>> subj/obj labels without having to multiplex on a single subj/obj
-> > >>>> field.  My gut feeling is that this would confuse your tools, yes?
-> > >>>> 
-> > >>>>> For example Casey had a list of possible formats. Like this one:
-> > >>>>> 
-> > >>>>> Option 3:
-> > >>>>>         lsms=selinux,apparmor subj=x:y:z:s:c subj=a
-> > >>>>> 
-> > >>>>> I'd suggest something almost like that. The first field could be a
-> > >>>>> map
-> > >>>>> to
-> > >>>>> decipher the labels. Then we could have a comma separated list of
-> > >>>>> labels.
-> > >>>>> 
-> > >>>>> lsms=selinux,apparmor subj=x:y:z:s:c,a
-> > >>>> 
-> > >>>> Some quick comments:
-> > >>>> 
-> > >>>> * My usual reminder that new fields for existing audit records must
-> > >>>> be
-> > >>>> added to the end of the record.
-> > >>>> 
-> > >>>> * If we are going to multiplex the labels on a single field (more on
-> > >>>> that below) I might suggest using "subj_lsms" instead of "lsms" so
-> > >>>> we
-> > >>>> leave ourself some wiggle room in the future.
-> > >>>> 
-> > >>>> * Multiplexing on a single "subj" field is going to be difficult
-> > >>>> because picking the label delimiter is going to be a pain.  For
-> > >>>> example, in the example above a comma is used, which at the very
-> > >>>> least
-> > >>>> is a valid part of a SELinux label and I suspect for Smack as well
-> > >>>> (I'm not sure about the other LSMs).  I suspect the only way to
-> > >>>> parse
-> > >>>> out the component labels would be to have knowledge of the LSMs in
-> > >>>> use, as well as the policies loaded at the time the audit record was
-> > >>>> generated.
-> > >>>> 
-> > >>>> This may be a faulty assumption, but assuming your tools will fall
-> > >>>> over if they see multiple "subj" fields, could we do something like
-> > >>>> 
-> > >>>> the following (something between option #2 and #3):
-> > >>>>   subj1_lsm=smack subj1=<smack_label> subj2_lsm=selinux
-> > >>>> 
-> > >>>> subj2=<selinux_label> ...
-> > >>> 
-> > >>> If it's not a subj= field why use the indirection?
-> > >>> 
-> > >>>         subj_smack=<smack_label> subj_selinux=<selinux_label>
-> > >>> 
-> > >>> would be easier.
-> > >> 
-> > >> Good point, that looks reasonable to me.
-> > > 
-> > > But doing something like this will totally break all parsers. To be
-> > > honest, I don't know if I'll ever see more than one labeled security
-> > > system running at the same time. And this would be a big penalty to
-> > > pay for the flexibility that someone, somewhere just might possibly do
-> > > this.
-> > 
-> > While I have never seen multiple-LSM plans from RedHat/IBM I
-> > have seen them from Ubuntu. This isn't hypothetical. I know that
-> > it's a hard problem, which is why we need to get it as right as
-> > possible.
-> 
-> Agreed.  While I'm not going to be on a specific Linux release, I do
-> believe that at some point in the future the LSM stacking work is
-> going to land in Linus' tree.  Perhaps you'll never see it Steve, but
-> we need to prepare the code to handle it when it happens.
+From: Matthew Garrett <mjg59@google.com> 
 
-And I agree with that. I'm saying that if we push it all in subj= then it is 
-not a big penalty. It saves major breakage. Every single event is required to 
-have a subj= field if its a MAC system. By changing it to lsm_subj= it changes 
-the layout of every single event. And it make more to parse. And searching 
-the labels is worse because it has to iterate over a list of *_subj to match 
-it. This will hurt performance because it is for every single event.
+How about this? It still results in the early boot environment trusting
+the RSDP parameter, but only for SRAT parsing - it'll be ignored
+everywhere in the kernel proper if lockdown is enforcing.
 
-> For my own sanity, here is a quick summary of the constraints as I
-> currently see them, please feel free to add/disagree:
-> 
-> * We can't have multiple "subj" fields in a single audit record.
-> * The different LSMs all have different label formats and allowed
-> characters.  Further, a given label format may not be unique for a
-> given LSM; for example, Smack could be configured with a subset of
-> SELinux labels.
-> * Steve's audit tools appear to require a "subj" and "obj" fields for
-> LSM information or else they break into tiny little pieces.
+This option allows userspace to pass the RSDP address to the kernel, which
+makes it possible for a user to modify the workings of hardware. Reject
+the option when the kernel is locked down. This requires some reworking
+of the existing RSDP command line logic, since the early boot code also
+makes use of a command-line passed RSDP when locating the SRAT table
+before the lockdown code has been initialised. This is achieved by
+separating the command line RSDP path in the early boot code from the
+generic RSDP path, and then copying the command line RSDP into boot
+params in the kernel proper if lockdown is not enabled. If lockdown is
+enabled and an RSDP is provided on the command line, this will only be
+used when parsing SRAT (which shouldn't permit kernel code execution)
+and will be ignored in the rest of the kernel.
 
-It changes all knowledge of where to look for things. And considering 
-considering that events could be aggregated from systems of different ages/
-distributions, audit userspace will always have to be backwards compatible.
+(Modified by Matthew Garrett in order to handle the early boot RSDP
+environment)
+
+Signed-off-by: Josh Boyer <jwboyer@redhat.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+cc: Dave Young <dyoung@redhat.com>
+cc: linux-acpi@vger.kernel.org
+---
+ arch/x86/boot/compressed/acpi.c | 19 +++++++++++++------
+ arch/x86/include/asm/acpi.h     |  9 +++++++++
+ arch/x86/include/asm/x86_init.h |  2 ++
+ arch/x86/kernel/acpi/boot.c     |  5 +++++
+ arch/x86/kernel/x86_init.c      |  1 +
+ drivers/acpi/osl.c              | 14 +++++++++++++-
+ include/linux/acpi.h            |  6 ++++++
+ 7 files changed, 49 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+index 15255f388a85..149795c369f2 100644
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -26,7 +26,7 @@ struct mem_vector immovable_mem[MAX_NUMNODES*2];
+  */
+ #define MAX_ADDR_LEN 19
  
-> What if we preserved the existing subj/obj fields in the case where
-> there is only one "major" LSM (SELinux, Smack, AppArmor, etc.):
-> 
->   subj=<lsm_label>
-> 
-> ... and in the case of multiple major LSMs we set the subj value to
-> "?" and introduce new subj_X fields (as necessary) as discussed above:
-> 
->   subj=? subj_smack=<smack_label> subj_selinux=<selinux_label> ...
-> 
-> ... I believe that Steve's old/existing userspace tools would simply
-> report "?"/unknown LSM credentials where new multi-LSM tools could
-> report the multiple different labels. 
-
-Common Criteria as well as other standards require subject labels to be 
-searchable. So, changing behavior based on how many modules will still cause 
-problems with performance because I'll always have to assume it could be 
-either way and try both.
-
-> While this may not be perfect,
-> it avoids having to multiplex the different labels into a single field
-> (which is a big win IMHO) with the only issue being that multi-LSM
-> solutions will need an updated audit toolset to see the new labels
-> (which seems like a reasonable requirement).
-
-Why would not multiplexing different labels in the same field be a big win? Its 
-a big loss in my mind. Using the same field preserves backward compatibility, 
-is more compact in bytes, creates performance problems, changes all mapping 
-of what things means, etc. IOW, this makes things much worse.
-
--Steve
-
+-static acpi_physical_address get_acpi_rsdp(void)
++static acpi_physical_address get_cmdline_acpi_rsdp(void)
+ {
+ 	acpi_physical_address addr = 0;
+ 
+@@ -278,10 +278,7 @@ acpi_physical_address get_rsdp_addr(void)
+ {
+ 	acpi_physical_address pa;
+ 
+-	pa = get_acpi_rsdp();
+-
+-	if (!pa)
+-		pa = boot_params->acpi_rsdp_addr;
++	pa = boot_params->acpi_rsdp_addr;
+ 
+ 	/*
+ 	 * Try to get EFI data from setup_data. This can happen when we're a
+@@ -311,7 +308,17 @@ static unsigned long get_acpi_srat_table(void)
+ 	char arg[10];
+ 	u8 *entry;
+ 
+-	rsdp = (struct acpi_table_rsdp *)(long)boot_params->acpi_rsdp_addr;
++	/*
++	 * Check whether we were given an RSDP on the command line. We don't
++	 * stash this in boot params because the kernel itself may have
++	 * different ideas about whether to trust a command-line parameter.
++	 */
++	rsdp = (struct acpi_table_rsdp *)get_cmdline_acpi_rsdp();
++
++	if (!rsdp)
++		rsdp = (struct acpi_table_rsdp *)(long)
++			boot_params->acpi_rsdp_addr;
++
+ 	if (!rsdp)
+ 		return 0;
+ 
+diff --git a/arch/x86/include/asm/acpi.h b/arch/x86/include/asm/acpi.h
+index aac686e1e005..bc9693c9107e 100644
+--- a/arch/x86/include/asm/acpi.h
++++ b/arch/x86/include/asm/acpi.h
+@@ -117,6 +117,12 @@ static inline bool acpi_has_cpu_in_madt(void)
+ 	return !!acpi_lapic;
+ }
+ 
++#define ACPI_HAVE_ARCH_SET_ROOT_POINTER
++static inline void acpi_arch_set_root_pointer(u64 addr)
++{
++	x86_init.acpi.set_root_pointer(addr);
++}
++
+ #define ACPI_HAVE_ARCH_GET_ROOT_POINTER
+ static inline u64 acpi_arch_get_root_pointer(void)
+ {
+@@ -125,6 +131,7 @@ static inline u64 acpi_arch_get_root_pointer(void)
+ 
+ void acpi_generic_reduced_hw_init(void);
+ 
++void x86_default_set_root_pointer(u64 addr);
+ u64 x86_default_get_root_pointer(void);
+ 
+ #else /* !CONFIG_ACPI */
+@@ -138,6 +145,8 @@ static inline void disable_acpi(void) { }
+ 
+ static inline void acpi_generic_reduced_hw_init(void) { }
+ 
++static inline void x86_default_set_root_pointer(u64 addr) { }
++
+ static inline u64 x86_default_get_root_pointer(void)
+ {
+ 	return 0;
+diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
+index b85a7c54c6a1..d584128435cb 100644
+--- a/arch/x86/include/asm/x86_init.h
++++ b/arch/x86/include/asm/x86_init.h
+@@ -134,10 +134,12 @@ struct x86_hyper_init {
+ 
+ /**
+  * struct x86_init_acpi - x86 ACPI init functions
++ * @set_root_poitner:		set RSDP address
+  * @get_root_pointer:		get RSDP address
+  * @reduced_hw_early_init:	hardware reduced platform early init
+  */
+ struct x86_init_acpi {
++	void (*set_root_pointer)(u64 addr);
+ 	u64 (*get_root_pointer)(void);
+ 	void (*reduced_hw_early_init)(void);
+ };
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index 17b33ef604f3..04205ce127a1 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -1760,6 +1760,11 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
+ 	e820__update_table_print();
+ }
+ 
++void x86_default_set_root_pointer(u64 addr)
++{
++	boot_params.acpi_rsdp_addr = addr;
++}
++
+ u64 x86_default_get_root_pointer(void)
+ {
+ 	return boot_params.acpi_rsdp_addr;
+diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
+index 50a2b492fdd6..d0b8f5585a73 100644
+--- a/arch/x86/kernel/x86_init.c
++++ b/arch/x86/kernel/x86_init.c
+@@ -95,6 +95,7 @@ struct x86_init_ops x86_init __initdata = {
+ 	},
+ 
+ 	.acpi = {
++		.set_root_pointer	= x86_default_set_root_pointer,
+ 		.get_root_pointer	= x86_default_get_root_pointer,
+ 		.reduced_hw_early_init	= acpi_generic_reduced_hw_init,
+ 	},
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index 9c0edf2fc0dd..d43df3a3fa8d 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -26,6 +26,7 @@
+ #include <linux/list.h>
+ #include <linux/jiffies.h>
+ #include <linux/semaphore.h>
++#include <linux/security.h>
+ 
+ #include <asm/io.h>
+ #include <linux/uaccess.h>
+@@ -180,8 +181,19 @@ acpi_physical_address __init acpi_os_get_root_pointer(void)
+ 	acpi_physical_address pa;
+ 
+ #ifdef CONFIG_KEXEC
+-	if (acpi_rsdp)
++	/*
++	 * We may have been provided with an RSDP on the command line,
++	 * but if a malicious user has done so they may be pointing us
++	 * at modified ACPI tables that could alter kernel behaviour -
++	 * so, we check the lockdown status before making use of
++	 * it. If we trust it then also stash it in an architecture
++	 * specific location (if appropriate) so it can be carried
++	 * over further kexec()s.
++	 */
++	if (acpi_rsdp && !security_locked_down(LOCKDOWN_ACPI_TABLES)) {
++		acpi_arch_set_root_pointer(acpi_rsdp);
+ 		return acpi_rsdp;
++	}
+ #endif
+ 	pa = acpi_arch_get_root_pointer();
+ 	if (pa)
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 451e7b544342..e826f7311b2b 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -639,6 +639,12 @@ bool acpi_gtdt_c3stop(int type);
+ int acpi_arch_timer_mem_init(struct arch_timer_mem *timer_mem, int *timer_count);
+ #endif
+ 
++#ifndef ACPI_HAVE_ARCH_SET_ROOT_POINTER
++static inline void acpi_arch_set_root_pointer(u64 addr)
++{
++}
++#endif
++
+ #ifndef ACPI_HAVE_ARCH_GET_ROOT_POINTER
+ static inline u64 acpi_arch_get_root_pointer(void)
+ {
+-- 
+2.22.0.510.g264f2c817a-goog
 
