@@ -2,190 +2,159 @@ Return-Path: <SRS0=8dNN=VN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84667C76195
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 15:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 526AFC7618F
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 17:16:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D2B22173C
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 15:08:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1507620880
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 17:16:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="VeuBnmMJ"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Xk+yS/Zf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387781AbfGPPIk (ORCPT
+        id S1728575AbfGPRQw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jul 2019 11:08:40 -0400
-Received: from ucol19pa09.eemsg.mail.mil ([214.24.24.82]:51117 "EHLO
-        ucol19pa09.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728384AbfGPPIk (ORCPT
+        Tue, 16 Jul 2019 13:16:52 -0400
+Received: from sonic303-27.consmr.mail.ne1.yahoo.com ([66.163.188.153]:37784
+        "EHLO sonic303-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728004AbfGPRQw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jul 2019 11:08:40 -0400
-X-EEMSG-check-017: 873039548|UCOL19PA09_EEMSG_MP7.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.63,498,1557187200"; 
-   d="scan'208";a="873039548"
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by ucol19pa09.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 16 Jul 2019 15:08:26 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1563289706; x=1594825706;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=OlYRE8uRAueMrwc2Y4GxXIlPLZ0TFNlPetWv5UDX1g4=;
-  b=VeuBnmMJPVX3co9J5dNivOliegpKacVOcH8rZjx6sJV+XVxvpJyni1LE
-   CGiRb4ShA8pIErTjvtgJXyHpnl1/nsknD3xl0fD2vUEFUaGXdqbz7UN74
-   yJBlXhnVjxVby8x7fFNRGWiXtQWU07X4OabDAtLjFSAP1LZHiCXVOYjgI
-   kX7vi740lm+JIZ1HTYlunC7sV/Ft339iKlMp39nKnvy0brzuNJCbEOAgD
-   JM0wGAeNkupGiNNblvwa4B7qKqQVj/lpj3WCCC68Hho0/kStB9V3/iF3B
-   SgA5xrw3Fi+cLWmUXV/4dZIc8rv50ZjWp31QkUgxE4jsppurwzYjj1R56
-   w==;
-X-IronPort-AV: E=Sophos;i="5.63,498,1557187200"; 
-   d="scan'208";a="30205658"
-IronPort-PHdr: =?us-ascii?q?9a23=3Aiz5A2BYrfvZEVLbCa9ntvmj/LSx+4OfEezUN45?=
- =?us-ascii?q?9isYplN5qZps+9Zx7h7PlgxGXEQZ/co6odzbaP6ea+ASdQvt6oizMrSNR0TR?=
- =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
- =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9vMhm6twTcutUZjYZhKKs61w?=
- =?us-ascii?q?fErGZPd+lK321jOEidnwz75se+/Z5j9zpftvc8/MNeUqv0Yro1Q6VAADspL2?=
- =?us-ascii?q?466svrtQLeTQSU/XsTTn8WkhtTDAfb6hzxQ4r8vTH7tup53ymaINH2QLUpUj?=
- =?us-ascii?q?ms86tnVBnlgzocOjUn7G/YlNB/jKNDoBKguRN/xZLUYJqIP/Z6Z6/RYM8WSX?=
- =?us-ascii?q?ZEUstXWSNBGIe8ZJYRAeQHM+hTso3xq0IAoBa6AAWhAv7kxD1ViX/sxaA0zv?=
- =?us-ascii?q?ovEQ/G0gIjEdwBvnvbo9fpO6kdSu210KvFwC/fY/9K1zrw6o7FeQ0hr/GWWr?=
- =?us-ascii?q?JwdNLcx1QzFwzbllWQqZLqPzWI3eoQtmiU9e5gVeaxhG8ntgp8pSOvydo3io?=
- =?us-ascii?q?TSmoIUykzL9SV+wIovI924U1R0bcSrEJtXqSGXLo17Sd4hTWFwoCs217ILtJ?=
- =?us-ascii?q?GhcCUK1Zgr3QDTZvOZf4SS/x7uUvuaLy1ii3J/Yr2/gg6/8U2nyuLhSMa5yE?=
- =?us-ascii?q?1Kri9ZktnUsXANygDT5tCHSvRj+keh3i6C1xzJ5eFeIEA0iLHbJ4Q9wr8wip?=
- =?us-ascii?q?UTsUPDEjXwmErql6+Zal8o+u2p6+Tjernmp5mcOJFoigzmL6gjlcOyDf44Pw?=
- =?us-ascii?q?QTRWSX5+ux2KP58UHkWLlKi+c5kqjdsJDUP8Qboau5DhdO0ok+8BayFCum0d?=
- =?us-ascii?q?QEknkHK1JJYhSHj5PzNF3UL/D4Cum/j0y2kDh33/DGIqHhApLVI3jHjbfhYb?=
- =?us-ascii?q?F95lVfyAUt19Bf4YxbCrUbLPL0QE/xu8TSDgUlPAys3+bnFNJ925sFWW2RGK?=
- =?us-ascii?q?+ZP73dvESI5u01J+mMYI8UuDDnJ/c54P7uiGczmUUBcqmxwZsXdHe4E+x6LE?=
- =?us-ascii?q?qDenrjnNcAHHwRvgUiTOzlkkCCUTBXZ3msRaIw/y00B5i8AYjfQYCthaSL3D?=
- =?us-ascii?q?2nEZ1OemBGFleMHG/wd4qeRvcMbDmfItd7nTwZUbitUooh1RaptA/g1bVrNP?=
- =?us-ascii?q?bb+iodtZj7zth6+/XTlQ0u9TxzF8mdyH+CT2V1nmMOWj8307tyoVJyylidy6?=
- =?us-ascii?q?h0mf9YGsJJ5/NPTAg6MYTQz+tgC9D9QgjBZMuGSE66QtW6BjE8VtYxw94IY0?=
- =?us-ascii?q?ZgFNSulwvD0DS2DL8IjbyLBYA086LF03j0IMZy1mvG1K0/gFQ9XMtPOnOphr?=
- =?us-ascii?q?Rl+wjQGYHJiUOZmLiudagG2y7N7miDx3KUvE5ESA5wTbnFXXcHa0vUqNT54V?=
- =?us-ascii?q?nCT6WvCbQ8KQZBz9SNKq5UZd3ol1lGQ+3jONvGaWKrh2iwHQqIxq+LbIfyeG?=
- =?us-ascii?q?USwjvSCFMYnAAU+naGNhMzCTuho2LECzxuEFPvY17p8eVkr3O7VEA0xRmQb0?=
- =?us-ascii?q?J9z7q15gIVhfuERvMR2bIEuCEhpy92HFa639LZEdyApxF/c6Vaet4y/E1I1W?=
- =?us-ascii?q?Tetwx7P5yvM7pthloEfwtruEPu0g19Cp9cnsgysHMq0A1yJLqd0FNGbTOYwZ?=
- =?us-ascii?q?fwOrvSKmTp4B+va7TW2lbb0NaX56cP7e40q1L5vAGmRQIe9CBO1dVEm1+B+p?=
- =?us-ascii?q?LPDRAJUpO5BkIq6x9SpLzAZCQ5oYTO2isoeeOPvyXN1poEQqMFwxKkbtEVeP?=
- =?us-ascii?q?efGRX9HuUaDsyqOepskF+sOEEqJudXoZUoMtumev3O46uiOOJtjXrylmhcyJ?=
- =?us-ascii?q?xs2UKLsSxnQ6jH2IhTkKLQ5ReOSzqp1ATpicvwg40RIGhJT2c=3D?=
-X-IPAS-Result: =?us-ascii?q?A2ACAQCg5y1d/wHyM5BlHAEBAQQBAQcEAQGBVgQBAQsBg?=
- =?us-ascii?q?WwqgTsBMiiEHJJmUwaBCS2JYYl+hTKBZwkBAQEBAQEBAQE0AQIBAYRAAoI6I?=
- =?us-ascii?q?zcGDgEDAQEBBAEBAQEEAQFshUiCOikBgmYBAQEBAgEjFUEQCw4KAgIRFQICV?=
- =?us-ascii?q?wYBDAYCAQGCXz+BdwUPrRaBMoVHgzWBSIEMKAGLXhd4gQeBOII2NT6Df4EEg?=
- =?us-ascii?q?kuCWASMH4ImhiyVcgmCG4IfiSeIQAYbmAotjQiZXiKBWCsIAhgIIQ+DJ4JNF?=
- =?us-ascii?q?xSOKSMDMIEGAQGPKwEB?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 16 Jul 2019 15:08:26 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x6GF8LPP028909;
-        Tue, 16 Jul 2019 11:08:21 -0400
-Subject: Re: [RFC PATCH] security, capability: pass object information to
- security_capable
-To:     Andy Lutomirski <luto@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Nicholas Franck <nhfran2@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        mortonm@chromium.org
-References: <20190712173404.14417-1-nhfran2@tycho.nsa.gov>
- <680c35a8-1ee5-725d-b33c-7bdced39763c@schaufler-ca.com>
- <e8de4a1c-7e18-fc20-e372-67bbaa93fd42@tycho.nsa.gov>
- <16cade37-9467-ca7f-ddea-b8254c501f48@schaufler-ca.com>
- <20190716140349.GA4991@mail.hallyn.com>
- <CALCETrXR3RoRF0kZk_G-gAg=D6LNAcBJYiiHFHSe3S=bRZcwNA@mail.gmail.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <38ae330f-d673-d01b-c2be-530f9668ced5@tycho.nsa.gov>
-Date:   Tue, 16 Jul 2019 11:08:21 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 16 Jul 2019 13:16:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1563297410; bh=u7sAiRpyCpmW2BJzOS7brURt1AL8q1TjA6vK82WiCVs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Xk+yS/ZfaWPSIIxEb+/BZSLYATxLCT0WlVGDBuR83TZgxia4zjnd9NcHUEZLl5fUJ2NlaiscRD5pDpGVtm7gRLx9P5hUv/KUIZNiNNs1506zGAyX7/qmAvfFopg6xm/kX0JVbuT7tnQwcdEQHoYcIWaZCw4NKolOXxRJgZKoxIvMqVD7lkY0ML+oZFGKO8eWIvD0q/hjN0R7MtdQN87ZI0U5M7wNx1RZpU4DQ58LamBMOdTR72xyqs3LJA0F3yUqj2avxmh+94RmkkX1I4jIRRXmx8CWtIxBASbikzxnWCoUcOzl2AJvXQs+yUtBSx66eK+1d3cEzxHsjL1GUJkn7A==
+X-YMail-OSG: rpGMFisVM1lZdtGkZwhZgnhpuLp2Pol5Ht5VkryeacWQaAY1K0ci4hLxm9UPaD2
+ .8pGTxac1HKSN06l6b_cw5Xtc2jcbMPTlvP.2dpoehf3pX3GCMpBUNJVj1x7EX.lTbGJK9gEkLgz
+ 3tVbfZdnMr7LR.bcx2mo_wEcwjdUlCnRe12k01SETp4skldE1G8gYMEjOVNatpa4p8isplyZXask
+ kmJRFDiZqv2D9jfBe65K0YEnuGs2qaQII8mAq7bW8d48iYc9l9IbqL71D0L5Ian1cz6SmkK4CMMD
+ _.Q5mSRbgabpTJdwuMfdvYs36titcfRwfCyxo7n3nNWP1w.z6fEfgytrTu0v_tC5GjgkjX1pHl3e
+ GPyiETiycpXX_X59w5o38n2ix0E0mLWxq2b5bUeGCo1l19lDvNsrXz85eKixvxpjoPGiCwAA.gfs
+ ksgzeEXN6ZOgji1iD7YX1Td84SacAv4iaQeUFE5R1xXinT_yJg.xZa_cjeBGzIXI3VTxnWE_Aep0
+ JJ5.elftUHW0wc_uFo5nphqNbGaABe8r.0FpuZk4L.gsgq1OySujTekToECABN3JejQuW_5109Yi
+ VZMkwCZ9gQ3wJ1B_HxHtwpsGGlvWKg1l0.XNU8OD7lig6q5SwLcoea.wvAJWexkyta9BOwN1JQSs
+ dOSVlGS7Czk2k.pcWsCVjUUiPVpFX0maIfoRcSGV_ZoPrytoaDakRY.4lboyXEzUnDWwerXxGB4u
+ 5YQyOtbhglYGPphNSyH46fSNMgGSNacLlS4tOxcNR2.PG4W6nOYcjzOpHO6O0w2b2QcR.EGxcM8Y
+ ZIfMuV2VHG6zasYKTWDumrPnvORBPFHNMMLGmA7ojVnzbLU2gVGFEeqOcoTqwzjZQewuLIEjJ2W1
+ oypL0k_SWDMHu6mcQu2Yx2rd73XDZQMhhDsOehB3giFveB2nW7YGTAQiDKMoSFmfTbIEtELSerde
+ vuPxlPIF3h5OZUOLx_kTP7PM_Q6mQW3xfMVpFjFig2AEzYm3nRAXkEASwbk5S3bwor54kUZadUhm
+ 1hgmbz3DGu1VG0Ev4FhRGn0hNmDp9qTXch.vZxPUXAYzFCQHEUVkNC3KIK7BAhXRsbEbOLbTNChl
+ CbByOwL1X1xtRF9K7BDKo25PS4lfeThElSJwBSTyZIsds2My42c2gfi_PbjsuxTTUHrEk5Vne0W7
+ 8vVAgpe4wVWrl6RXmSwhgqSR9645VXgxOI5BFRzGZ4lshd0kocgK5FFzBFAjJt_eVeQHkACmU3PW
+ SsmdC3KLI
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Tue, 16 Jul 2019 17:16:50 +0000
+Received: by smtp431.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a05989cbd0d6943daf91831b8336a510;
+          Tue, 16 Jul 2019 17:16:46 +0000 (UTC)
+Subject: Re: Preferred subj= with multiple LSMs
+To:     Steve Grubb <sgrubb@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        casey@schaufler-ca.com,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+References: <f824828c-5c9d-b91e-5cec-70ee7a45e760@schaufler-ca.com>
+ <1979804.kRvuSoDnao@x2>
+ <2802ddee-b621-c2eb-9ff3-ea15c4f19d0c@schaufler-ca.com>
+ <3577098.oGDFHdoSSQ@x2>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <ee64901e-b374-07b6-12b4-5754187d8f70@schaufler-ca.com>
+Date:   Tue, 16 Jul 2019 10:16:45 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <CALCETrXR3RoRF0kZk_G-gAg=D6LNAcBJYiiHFHSe3S=bRZcwNA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <3577098.oGDFHdoSSQ@x2>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/16/19 10:21 AM, Andy Lutomirski wrote:
-> On Tue, Jul 16, 2019 at 7:03 AM Serge E. Hallyn <serge@hallyn.com> wrote:
+On 7/16/2019 9:14 AM, Steve Grubb wrote:
+> On Tuesday, July 16, 2019 12:00:05 PM EDT Casey Schaufler wrote:
 >>
->> On Fri, Jul 12, 2019 at 12:54:02PM -0700, Casey Schaufler wrote:
->>> On 7/12/2019 11:25 AM, Stephen Smalley wrote:
->>>> On 7/12/19 1:58 PM, Casey Schaufler wrote:
->>>>> On 7/12/2019 10:34 AM, Nicholas Franck wrote:
->>>>>> At present security_capable does not pass any object information
->>>>>> and therefore can neither audit the particular object nor take it
->>>>>> into account. Augment the security_capable interface to support
->>>>>> passing supplementary data. Use this facility initially to convey
->>>>>> the inode for capability checks relevant to inodes. This only
->>>>>> addresses capable_wrt_inode_uidgid calls; other capability checks
->>>>>> relevant to inodes will be addressed in subsequent changes. In the
->>>>>> future, this will be further extended to pass object information for
->>>>>> other capability checks such as the target task for CAP_KILL.
->>>>>
->>>>> This seems wrong to me. The capability system has nothing to do
->>>>> with objects. Passing object information through security_capable()
->>>>> may be convenient, but isn't relevant to the purpose of the interface.
->>>>> It appears that there are very few places where the object information
->>>>> is actually useful.
->>>>
->>>> A fair number of capabilities are checked upon some attempted object access (often right after comparing UIDs or other per-object state), and the particular object can be very helpful in both audit and in access control.  More below.
->>>
->>> I'm not disagreeing with that. What I'm saying is that the capability
->>> check interface is not the right place to pass that information. The
->>> capability check has no use for the object information. I would much
+>> Unless there's an objection I will use this format with
+>> a slight modification. Smack allows commas in labels, so
+>> using a bare comma can lead to ambiguity.
 >>
->> I've had to argue this before while doing the namespaced file
->> capabilities implementation.  Perhaps this would be worth writing something
->> more formal about.  My main argument is, even if we want to claim that the
->> capabilities model is and should be object agnostic, the implementation
->> of user namespaces (currently) is such that the whole view of the user's
->> privilege must include information which is stored with the object.
->>
->> There are various user namespaces.
->>
->> The Linux capabilities ( :-) ) model is user namespaced.  It must be, in
->> order to be useful.  If we're going to use file capabilities in distros,
->> and distros are going to run in containers, then the capabilities must
->> be namespaced.  Otherwise, capabilities will not be used, and heck, should
->> just be dropped.
->>
->> The only way to find out which user namespace has privilege over an inode
->> is to look at the inode.
->>
->> Therefore, object information is needed.
-> 
-> Agreed.  The concept in the kernel is "capability over a namespace."
-> 
-> That being said, sticking a flexible object type into ns_capable()
-> seems prematurely general to me.  How about adding
-> security_capable_wrt_inode_uidgid() and allowing LSMs to hook that?
-> The current implementation would go into commoncap.  The obvious
-> extensions I can think of are security_dac_read_search(..., inode,
-> ...) and security_dac_override(..., inode, ...).  (Or dentry or
-> whatever is appropriate.)
+>> lsms=3Dsmack,apparmor subj=3D"TS/Alpha,Beta","a"
 
-1) Not even all the inode-related capability checks go through 
-capable_wrt_inode_uidgid(), so a hook there won't suffice.
+Oops! '/' isn't allowed in a Smack label. How embarrassing is that?
 
-2) Other capabilities have other kinds of objects, e.g. tasks, sysvipc, 
-etc, and we'll want those to be handled too.
+>>
+>> It's more code change than some of the other options,
+>> but if it has the best chance of working with user space
+>> I'm game.
+> Quoting has a specific meaning in audit fields. So, we really shouldn't=
+ do=20
+> that. We can simply pick another field delimiter. I really don't care w=
+hich it=20
+> is as long as its illegal for use in a label. For example, we use=20
+>
+> #define AUDIT_KEY_SEPARATOR 0x01
+>
+> to separate key fields. We can pick almost anything. (exclamation mark,=
+ semi-
+> colon, hash, plus symbol, tilde, 0x02, whatever) But it will need to be=
+=20
+> documented and put into the API so that everyone is aware of the conven=
+tion.
 
-> 
-> If this patch were restructured like that, the semantics would be
-> obvious, and it would arguably be a genuine cleanup instead of a whole
-> new mechanism of unknown scope.
-> 
+Unless there's objection I'll document and use '/',
+
+lsms=3Dselinux,apparmor subj=3Da:b:c:d/a
+
+If there is objection without alternative presented I'll use 0x02,
+because no one (I hope) is going to allow that in their label, and
+keys have set precedence for unprintable characters.
+
+>
+> -Steve
+>
+>
 
