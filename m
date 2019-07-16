@@ -2,156 +2,109 @@ Return-Path: <SRS0=8dNN=VN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3CDC76195
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 12:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E44EC76195
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 14:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C45182173C
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 12:59:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrBp9R2l"
+	by mail.kernel.org (Postfix) with ESMTP id 126F62173C
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jul 2019 14:13:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732906AbfGPM7R (ORCPT
+        id S1733302AbfGPONu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jul 2019 08:59:17 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37185 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbfGPM7R (ORCPT
+        Tue, 16 Jul 2019 10:13:50 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:44916 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733223AbfGPONu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jul 2019 08:59:17 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n9so20863180wrr.4;
-        Tue, 16 Jul 2019 05:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w9BxyRWmPBlvIeLtR87nRY5VKE+s5L3fJe5sGlRHZJM=;
-        b=jrBp9R2lSvz8mzkqTX5FdlapNqw8F9d8ZpJXbN3mOzvIEKGOBn3NsI2DDna5+kvejb
-         CqusQJuIfUj6WOqKeRbupdtCZAX6qig9Qv/m+Nf6wcYRWBlBA1EfMWW/l0EzRdsE91ry
-         53k7IVXKUcMR0ketxsgIgOy/6WaBE8/9fBnRUa/HsqO1VRgt5gPRQtzMaLdBacqGNtAj
-         8FTie2M3ITO0bTG1nlg5IIGkwnsobaOHKJpSWU9lAcxILoxxb42PVgzWMgWwzLc/vD5+
-         hPzfxpCtlUw4mi8WMT8jIZTn6dQrIo3QJKpHDauhCQZIQmcRt2tUPYAojf20prF3Zfws
-         b9Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w9BxyRWmPBlvIeLtR87nRY5VKE+s5L3fJe5sGlRHZJM=;
-        b=UVYsd6S6jIJy3WJEbnEvtywxb9jbSrFE3O7Cq5NrJLsTddTzKxCKEGWkAoeuWJEnZv
-         8PMpb0gSVENMCps80Ox3tmj0bLWsbBZ05Ri+ZoDKiRysfr+38gmAh36HEpSgR0P3uzjL
-         dk6DZjH1M2H2IWgPlS1yUD0ytbxRalsGh+1j+VqaF+HQYiIyO8QvMpYx/CDjbedfIzJ0
-         GBsxsjWiFjp4GAWtBQNNvDqz/0Q5D4w3H12l0q2L3Jq4CCsJ+UBVuxH3o/UZqzahSzv1
-         UkJAza53VHr2AhNCL6sKd0iy6BkfHaWtfeSJBSZFajHi9fclivfpV3ysvZOOb1kiPYJg
-         uy7g==
-X-Gm-Message-State: APjAAAV/TAEwa3CrZwgdC0Lv/3qzcetvZi+4qaEVQ2Us9KAHlgoZIfJl
-        YfC4j0mm41KXNVRhKaE4pWeaeEbM
-X-Google-Smtp-Source: APXvYqwUNedV7nyiAJsfAYj0IfYBVVW61M2i41mNTJJt8+IhH3UY5jgZgdgze/yJYLTpoxXKih7DTA==
-X-Received: by 2002:a5d:6406:: with SMTP id z6mr35491318wru.280.1563281954206;
-        Tue, 16 Jul 2019 05:59:14 -0700 (PDT)
-Received: from [10.43.17.52] (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id g17sm14849574wrm.7.2019.07.16.05.59.12
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Jul 2019 05:59:13 -0700 (PDT)
-Subject: Re: [RFC PATCH v6 0/1] Add dm verity root hash pkcs7 sig validation.
-To:     Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
-Cc:     ebiggers@google.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, jmorris@namei.org,
-        Scott Shell <SCOTTSH@microsoft.com>,
-        Nazmus Sakib <mdsakib@microsoft.com>, mpatocka@redhat.com
-References: <20190701181958.6493-1-jaskarankhurana@linux.microsoft.com>
- <MN2PR21MB12008A962D4DD8662B3614508AF20@MN2PR21MB1200.namprd21.prod.outlook.com>
- <alpine.LRH.2.21.1907121025510.66082@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
-From:   Milan Broz <gmazyland@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <395efa90-65d8-d832-3e2b-2b8ee3794688@gmail.com>
-Date:   Tue, 16 Jul 2019 14:59:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 16 Jul 2019 10:13:50 -0400
+X-Greylist: delayed 597 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Jul 2019 10:13:48 EDT
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 2DE8D90B; Tue, 16 Jul 2019 09:03:50 -0500 (CDT)
+Date:   Tue, 16 Jul 2019 09:03:50 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicholas Franck <nhfran2@tycho.nsa.gov>, paul@paul-moore.com,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        luto@amacapital.net, jmorris@namei.org, keescook@chromium.org,
+        serge@hallyn.com, john.johansen@canonical.com, mortonm@chromium.org
+Subject: Re: [RFC PATCH] security, capability: pass object information to
+ security_capable
+Message-ID: <20190716140349.GA4991@mail.hallyn.com>
+References: <20190712173404.14417-1-nhfran2@tycho.nsa.gov>
+ <680c35a8-1ee5-725d-b33c-7bdced39763c@schaufler-ca.com>
+ <e8de4a1c-7e18-fc20-e372-67bbaa93fd42@tycho.nsa.gov>
+ <16cade37-9467-ca7f-ddea-b8254c501f48@schaufler-ca.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1907121025510.66082@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <16cade37-9467-ca7f-ddea-b8254c501f48@schaufler-ca.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/07/2019 19:33, Jaskaran Singh Khurana wrote:
+On Fri, Jul 12, 2019 at 12:54:02PM -0700, Casey Schaufler wrote:
+> On 7/12/2019 11:25 AM, Stephen Smalley wrote:
+> > On 7/12/19 1:58 PM, Casey Schaufler wrote:
+> >> On 7/12/2019 10:34 AM, Nicholas Franck wrote:
+> >>> At present security_capable does not pass any object information
+> >>> and therefore can neither audit the particular object nor take it
+> >>> into account. Augment the security_capable interface to support
+> >>> passing supplementary data. Use this facility initially to convey
+> >>> the inode for capability checks relevant to inodes. This only
+> >>> addresses capable_wrt_inode_uidgid calls; other capability checks
+> >>> relevant to inodes will be addressed in subsequent changes. In the
+> >>> future, this will be further extended to pass object information for
+> >>> other capability checks such as the target task for CAP_KILL.
+> >>
+> >> This seems wrong to me. The capability system has nothing to do
+> >> with objects. Passing object information through security_capable()
+> >> may be convenient, but isn't relevant to the purpose of the interface.
+> >> It appears that there are very few places where the object information
+> >> is actually useful.
+> >
+> > A fair number of capabilities are checked upon some attempted object access (often right after comparing UIDs or other per-object state), and the particular object can be very helpful in both audit and in access control.  More below.
 > 
-> Hello Milan,
-> 
->> Changes in v6:
->>
->> Address comments from Milan Broz and Eric Biggers on v5.
->>
->> -Keep the verification code under config DM_VERITY_VERIFY_ROOTHASH_SIG.
->>
->> -Change the command line parameter to requires_signatures(bool) which will
->> force root hash to be signed and trusted if specified.
->>
->> -Fix the signature not being present in verity_status. Merged the
->> https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fmbroz%2Flinux.git%2Fcommit%2F%3Fh%3Ddm-cryptsetup%26id%3Da26c10806f5257e255b6a436713127e762935ad3&amp;data=02%7C01%7CJaskaran.Khurana%40microsoft.com%7C18f92445e46940aeebb008d6fe50c610%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C636976020210890638&amp;sdata=aY0V9%2FBz2RHryIvoftGKUGnyPp9Fsc1JY4FZbHfW4hg%3D&amp;reserved=0
->> made by Milan Broz and tested it.
->>
->>
-> 
-> Could you please provide feedback on this v6 version.
+> I'm not disagreeing with that. What I'm saying is that the capability
+> check interface is not the right place to pass that information. The
+> capability check has no use for the object information. I would much
 
-Hi,
+I've had to argue this before while doing the namespaced file
+capabilities implementation.  Perhaps this would be worth writing something
+more formal about.  My main argument is, even if we want to claim that the
+capabilities model is and should be object agnostic, the implementation
+of user namespaces (currently) is such that the whole view of the user's
+privilege must include information which is stored with the object.
 
-I am ok with the v6 patch; I think Mike will return to it in 5.4 reviews.
+There are various user namespaces.
 
-But the documentation is very brief. I spent quite a long time to configure the system properly.
-I think you should add more description (at least to patch header) how to use this feature in combination with system keyring.
+The Linux capabilities ( :-) ) model is user namespaced.  It must be, in
+order to be useful.  If we're going to use file capabilities in distros,
+and distros are going to run in containers, then the capabilities must
+be namespaced.  Otherwise, capabilities will not be used, and heck, should
+just be dropped.
 
-Do I understand correctly that these steps need to be done?
+The only way to find out which user namespace has privilege over an inode
+is to look at the inode.
 
- - user configures a certificate and adds it in kernel builtin keyring (I used CONFIG_SYSTEM_TRUSTED_KEYS option).
- - the dm-verity device root hash is signed directly by a key of this cert
- - the signature is uploaded to the user keyring
- - reference to signature in keyring is added as an optional dm-verity table parameter root_hash_sig_key_desc
- - optionally, require_signatures dm-verity module is set to enforce signatures.
+Therefore, object information is needed.
 
-For reference, below is the bash script I used (with unpatched veritysetup to generate working DM table), is the expected workflow here?
+Until now we've sneaked around that by doing things like capable_wrt_inode_uidgid()
+and rootid_from_xattr().
 
-#!/bin/bash
+Again, this crucial: IMO, you have to be able to use a distro the same way in a
+container and not.  Either we support using capabilities in a user namespaced
+container, or we drop capabilities support will not be used, and we may as
+well drop the module.
 
-NAME=test
-DEV=/dev/sdc
-DEV_HASH=/dev/sdd
-ROOT_HASH=778fccab393842688c9af89cfd0c5cde69377cbe21ed439109ec856f2aa8a423
-SIGN=sign.txt
-SIGN_NAME=verity:$NAME
+Now, yes, if someone tries to extend this stuff to do pathname parsing, then we
+might have to put our footsies down.  But we've been dancing around this for a
+long time anyway, so passing the inode in so we can do better logging gets a +1
+from me.
 
-# get unsigned device-mapper table using unpatched veritysetup
-veritysetup open $DEV $NAME $DEV_HASH $ROOT_HASH
-TABLE=$(dmsetup table $NAME)
-veritysetup close $NAME
-
-# Generate self-signed CA key, must be in .config as CONFIG_SYSTEM_TRUSTED_KEYS="path/ca.pem"
-#openssl req -x509 -newkey rsa:1024 -keyout ca_key.pem -out ca.pem -nodes -days 365 -set_serial 01 -subj /CN=example.com
-
-# sign root hash directly by CA cert
-echo -n $ROOT_HASH | openssl smime -sign -nocerts -noattr -binary -inkey ca_key.pem -signer ca.pem -outform der -out $SIGN
-
-# load signature to keyring
-keyctl padd user $SIGN_NAME @u <$SIGN
-
-# add device-mapper table, now with sighed root hash optional argument
-dmsetup create -r $NAME --table "$TABLE 2 root_hash_sig_key_desc $SIGN_NAME"
-dmsetup table $NAME
-
-# cleanup
-dmsetup remove $NAME
-keyctl clear @u
-
-
-Milan
+-serge
