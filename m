@@ -6,63 +6,64 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA099C76186
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jul 2019 12:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78449C76186
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jul 2019 12:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79B41217F9
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jul 2019 12:14:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FCD020880
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jul 2019 12:24:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="YwK2iX9W"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="AuJH/e1L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725980AbfGQMOr (ORCPT
+        id S1726085AbfGQMYL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Jul 2019 08:14:47 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34181 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbfGQMOq (ORCPT
+        Wed, 17 Jul 2019 08:24:11 -0400
+Received: from mail-lj1-f179.google.com ([209.85.208.179]:45679 "EHLO
+        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbfGQMYL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Jul 2019 08:14:46 -0400
-Received: by mail-lf1-f68.google.com with SMTP id b29so9044984lfq.1
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2019 05:14:45 -0700 (PDT)
+        Wed, 17 Jul 2019 08:24:11 -0400
+Received: by mail-lj1-f179.google.com with SMTP id m23so23377400lje.12
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2019 05:24:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=q8//XbOhkKVpJiK+q5UMQizMtrSss/8pHXbVWHOnp8M=;
-        b=YwK2iX9W1nWVBOwPM4N/KC0f3fzRB5TC9Kvv/Nqic/BN1lVsgjCZTYyNwhSQqjw9Mv
-         uw43maB2a4lzQ2w1AwD1WOj3g5HZp7Yi1Km3bWmeG/tRhvLiUq12SNSJCDNEAflvit6d
-         un1YiwkV/Jhi6SunngBIQP/gFoFJKYdKKnQdeC5O8aSBnG447Ce63Xn8s4TqHotG8154
-         5g87d7YqouzL9cbjv9oqlz7sUSpZyml6mr0jy4BqXtEjnjY+3Gh2ibcA+/k2Mh3Ukj4Z
-         xkAbCl9KQkz+HTZEHAyFMG8JcgouJRw9F/6VrHyx7B5Mpwd7fGJx7S2Tfbv+hkQjpnRw
-         h6qQ==
+        bh=6fjmRWh4VVEeFFvGgt+lgp6jp51UPEMlzWuwbTO9L4k=;
+        b=AuJH/e1LFAc1bhlTsCyC5vYc/VAs1BB76cesc7PDTepSuPXorBnlxTjEUA92NDBC+t
+         Fj898AMwRlAEq/q5cAVczqgqCdJClWEteoSRDttCZJlt3DYFwtlwiyVT8qZ64qfKtff0
+         bhBE9gNjqgX+dv5vJ/IdUFihc5FAcOqXWNxzUdp4SDNukxySNWzFoEJtsCLBQJar4Dlb
+         vSbMReVbphpmAKR3vejVVHdLjpaAs28phWM3V2iMLt/f9p9+TpK/DBEA0nk7fbhOHa26
+         11ructPEEN1B8N1K4g/NpZQDXQOoGPkoSD3Inu6z3rAkQpIqk/z3uBUuzRodMFHWq9xU
+         CPeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=q8//XbOhkKVpJiK+q5UMQizMtrSss/8pHXbVWHOnp8M=;
-        b=IOowY6HHqi5ovfMsrDAQ0gm/mgvFchGhRWq5ZWW5uzSj29dlAn1XSgVCy60tDWJrHn
-         8AcwBjvtlBagyr9aJP8w+aRU2BbPrjRANcGIB2Xa31lgCz36o1XS31jIwb64kVCUqJlx
-         OhSmghAXs7iipmwg1qHxeaAh9hIuoX1RdrH6/X/t5LIhjQjwMeBgOptIxkb/fIrBJr6T
-         0aYTyL/odCNatHXPoIIZ6YHOlhKpD99JMMU+duEZnSf+9fgVcibOYm+QR8rgXwoszczo
-         slgR9TudZTuCrhWQdB5W/o3grPSoH9j+FRxpgGoos6rLqgrML32FQPJTn7v/esJrndxc
-         BsTg==
-X-Gm-Message-State: APjAAAXLG7uwWo/YGSTYgD/OQdrPcCmFrF3YcfUstSCjSH3iKbiQbqqp
-        ReCfXGq+f7cHPA3HP/28IwSS0Uo66ZJFdZ4wj2O5LWI=
-X-Google-Smtp-Source: APXvYqyniYh0/blvwu0++qJJJXZh/FE1QwpFlNlIdDMPfquzHJM4sxsvXSx/ATMHZd1IVN8o4497thCr8hvFn4BhkfY=
-X-Received: by 2002:a19:4349:: with SMTP id m9mr17398623lfj.64.1563365684685;
- Wed, 17 Jul 2019 05:14:44 -0700 (PDT)
+        bh=6fjmRWh4VVEeFFvGgt+lgp6jp51UPEMlzWuwbTO9L4k=;
+        b=e6LCuL6oBvpjMqMhKaT0dMiw15H7OoL+gspSI2lI8giugoutyR5DxM/3LtnMgaBWTk
+         kzB50JUmD0P0lFU4WRxGehoGL31zsS+TtdTXjh5ednNLJqpOYs94I3Euy+Wv/LS50mg+
+         Tslg18EXUrCE4Jf/G7RcLsup6JvP1PfrHX5+IhZP/JUjfxpX3iEbTbXJHvnFpGBRs2KO
+         SdFc5GqUOQsqKmtF5CBej5kRPJRSTSQ5dA1tkrAZ8Jw8qwcv4KRN/Tq1GmuXLegCeEir
+         pXOA7CtJa8TBzdtfihDCWlC53nGMvLVSO4Ey0skFAkjytO4Kw6xPIGXYAQQvoXRYePs7
+         dvMQ==
+X-Gm-Message-State: APjAAAUWEAmdV735I8Nj96HCAwcpoe4Jc8C9RGAZmg6orzyHP8R2eRGW
+        eRCj9IY9A+LyIXQAmcKTPMHz5RC60RbfkoQPKA==
+X-Google-Smtp-Source: APXvYqz+uZDCqnc/wZtJVW6dbWEGdaaWNRkbT/+omtUxB5Tj1/fPQfWmrZtkcbzIrsgyqLq4GzdlH97S4aocUKJUANc=
+X-Received: by 2002:a2e:3807:: with SMTP id f7mr7467552lja.87.1563366249173;
+ Wed, 17 Jul 2019 05:24:09 -0700 (PDT)
 MIME-Version: 1.0
 References: <f824828c-5c9d-b91e-5cec-70ee7a45e760@schaufler-ca.com>
  <d1a237d3-4b72-48b0-27d6-fb168354ad31@schaufler-ca.com> <CAHC9VhTQLihNQ1iGjJB=LAn=C6BQokFsjsRcj8O_O9AjqQ7HBg@mail.gmail.com>
- <2517266.eHZzEmjMsX@x2> <27e2c710-efe6-d9cd-d4f9-bc217df5ede3@schaufler-ca.com>
- <CAHC9VhTpcnyGg5j3b6Z7Yi0Ob01JETRiBmz1AuLqPWqP9tEAnA@mail.gmail.com> <5ea2a25b-364f-3c30-79c6-cfb18515d7ba@schaufler-ca.com>
-In-Reply-To: <5ea2a25b-364f-3c30-79c6-cfb18515d7ba@schaufler-ca.com>
+ <2517266.eHZzEmjMsX@x2> <CAHC9VhS-WGuKYzG5AU01BN8tk8nzp+7qxk7Sz-hbHQGL+UXOfg@mail.gmail.com>
+ <alpine.LRH.2.21.1907171435200.2314@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1907171435200.2314@namei.org>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 17 Jul 2019 08:14:33 -0400
-Message-ID: <CAHC9VhQ9MSh5zCkhMja4r9j0RT952LwKSaG5dR-BqXzXrtEAUw@mail.gmail.com>
+Date:   Wed, 17 Jul 2019 08:23:57 -0400
+Message-ID: <CAHC9VhQA9iCbk2F35i9qjP5G8SP_jzMzduwxJcj4wH7fbR1kDw@mail.gmail.com>
 Subject: Re: Preferred subj= with multiple LSMs
-To:     Casey Schaufler <casey@schaufler-ca.com>
+To:     James Morris <jmorris@namei.org>
 Cc:     Steve Grubb <sgrubb@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         Richard Guy Briggs <rgb@redhat.com>,
         "linux-audit@redhat.com" <linux-audit@redhat.com>,
         Linux Security Module list 
@@ -72,64 +73,38 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 16, 2019 at 7:47 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 7/16/2019 4:13 PM, Paul Moore wrote:
-> > On Tue, Jul 16, 2019 at 6:18 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> It sounds as if some variant of the Hideous format:
-> >>
-> >>         subj=selinux='a:b:c:d',apparmor='z'
-> >>         subj=selinux/a:b:c:d/apparmor/z
-> >>         subj=(selinux)a:b:c:d/(apparmor)z
-> >>
-> >> would meet Steve's searchability requirements, but with significant
-> >> parsing performance penalties.
-> > I think "hideous format" sums it up nicely.  Whatever we choose here
-> > we are likely going to be stuck with for some time and I'm near to
-> > 100% that multiplexing the labels onto a single field is going to be a
-> > disaster.
+On Wed, Jul 17, 2019 at 12:36 AM James Morris <jmorris@namei.org> wrote:
+> On Tue, 16 Jul 2019, Paul Moore wrote:
 >
-> If the requirement is that subj= be searchable I don't see much of
-> an alternative to a Hideous format. If we can get past that, and say
-> that all subj_* have to be searchable we can avoid that set of issues.
-> Instead of:
+> > The subj_X approach is still backwards compatible, the difference is
+> > that old versions of the tools get a "?" for the LSM creds which is a
+> > rather sane way of indicating something is different.
 >
->         s = strstr(source, "subj=")
->         search_after_subj(s, ...);
+> This will still break existing userspace, right?  We can't do that.
 
-This example does a lot of hand waving in search_after_subj(...)
-regarding parsing the multiplexed LSM label.  Unless we restrict the
-LSM label formats (which seems both wrong, and too late IMHO) we have
-a parsing nightmare; can you write a safe multiplexed LSM label parser
-without knowledge of each LSM label format?  Can you do that for each
-LSM without knowing their loaded policy?  What happens when the policy
-and/or label format changes?  What happens in a few years when another
-LSM is added to the kernel?
+Trust me, I don't want to break userspace, I wouldn't be suggesting that.
 
-> we have
+The subj_X approach would cause userspace to see a "?" for the LSM
+creds when looking at logs from a stacked-LSM system.  I would argue
+this is actually safer than the multiplexed approach as "?" is a safe
+sentinel used by the audit subsystem when the value can't be
+determined; the multiplexed label in the hands of legacy userspace
+tools would be confusing at best, and misleading at worst.
+
+> > Once again, I believe that the subj_X approach is going to be faster
+> > than safely parsing the multiplexed format.
 >
->         s = source
->         for (i = 0; i < lsm_slots ; i++) {
->                 s = strstr(s, "subj_")
->                 if (!s)
->                         break;
->                 s = search_after_subj_(s, lsm_slot_name[i], ...)
+> What about emitting one audit record for each LSM?
 
-The hand waving here in search_after_subj_(...) is much less;
-essentially you just match "subj_X" and then you can take the field
-value as the LSM's label without having to know the format, the policy
-loaded, etc.  It is both safer and doesn't require knowledge of the
-LSMs (the LSM "name" can be specified as a parameter to the search
-tool).
-
-> There's enough ugly to go around either way.
-> And I'm not partial to either approach, but do would very
-> much like to get the code done so I can get on to the next
-> set of amazing challenges.
->
-> Oh, and I don't want to pick on subj= as obj= has the exact same issues.
-
-Yes, I stopped talking about both subj and obj some time ago in this
-thread because I figure we can use the same approach for both.
+In many of the LSM generated audit events that is what would happen,
+and should just work.  What we've been discussing in all the cases
+where the audit event is generated outside the context of the LSM but
+the LSM credentials are still desirable bits of information.  While we
+are definitely going in the direction of making multiple record events
+more common, duplicating the same record, with only changes to the LSM
+creds, may end up confusing Steve's tools.  It would also end up
+bloating the audit log, which I know is something everyone wants to
+avoid.
 
 -- 
 paul moore
