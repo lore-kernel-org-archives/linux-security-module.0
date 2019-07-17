@@ -2,110 +2,117 @@ Return-Path: <SRS0=Vtm6=VO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78449C76186
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jul 2019 12:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89112C76186
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jul 2019 13:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FCD020880
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jul 2019 12:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6415420880
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jul 2019 13:08:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="AuJH/e1L"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTIrJmKd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbfGQMYL (ORCPT
+        id S1726284AbfGQNIS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Jul 2019 08:24:11 -0400
-Received: from mail-lj1-f179.google.com ([209.85.208.179]:45679 "EHLO
-        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfGQMYL (ORCPT
+        Wed, 17 Jul 2019 09:08:18 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39430 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbfGQNIS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Jul 2019 08:24:11 -0400
-Received: by mail-lj1-f179.google.com with SMTP id m23so23377400lje.12
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2019 05:24:10 -0700 (PDT)
+        Wed, 17 Jul 2019 09:08:18 -0400
+Received: by mail-wm1-f67.google.com with SMTP id u25so11738836wmc.4;
+        Wed, 17 Jul 2019 06:08:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6fjmRWh4VVEeFFvGgt+lgp6jp51UPEMlzWuwbTO9L4k=;
-        b=AuJH/e1LFAc1bhlTsCyC5vYc/VAs1BB76cesc7PDTepSuPXorBnlxTjEUA92NDBC+t
-         Fj898AMwRlAEq/q5cAVczqgqCdJClWEteoSRDttCZJlt3DYFwtlwiyVT8qZ64qfKtff0
-         bhBE9gNjqgX+dv5vJ/IdUFihc5FAcOqXWNxzUdp4SDNukxySNWzFoEJtsCLBQJar4Dlb
-         vSbMReVbphpmAKR3vejVVHdLjpaAs28phWM3V2iMLt/f9p9+TpK/DBEA0nk7fbhOHa26
-         11ructPEEN1B8N1K4g/NpZQDXQOoGPkoSD3Inu6z3rAkQpIqk/z3uBUuzRodMFHWq9xU
-         CPeQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=h2yLsvzismF8aSznQ40gS7iVeJd2FnjlYb1X34YBrA8=;
+        b=hTIrJmKdb4eBexEx/Rfsp2Pg7LnciIrsWX1mLz99xre2zIlgoiZaRCMFERkDAw8DDI
+         5SSzeqshErtNi7bSc3tgUmHN3HPsgCWWlvGsy5P/jXXVo0NoNhymFSNuVUOA4bwJMwQq
+         MtK+PW3Kf6jxpRM6/m4vtBsrRPTyXrgx/CfumOVFW75rvSeMeoGDLotXbLZ4dZj9XvW8
+         zdFqWe7FC1i2CMy81xtbA8AfUzcU8z4KSd/Vr3Dpsm935/ni2Spayq5xnOomWsic77dq
+         G/PfZx5IhgH+2aj5ZUt9rXZNbq+d9eLIiBIHkaNMX3oLc2RTPfkQ84cO11KPR8XNTi+r
+         Hnlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6fjmRWh4VVEeFFvGgt+lgp6jp51UPEMlzWuwbTO9L4k=;
-        b=e6LCuL6oBvpjMqMhKaT0dMiw15H7OoL+gspSI2lI8giugoutyR5DxM/3LtnMgaBWTk
-         kzB50JUmD0P0lFU4WRxGehoGL31zsS+TtdTXjh5ednNLJqpOYs94I3Euy+Wv/LS50mg+
-         Tslg18EXUrCE4Jf/G7RcLsup6JvP1PfrHX5+IhZP/JUjfxpX3iEbTbXJHvnFpGBRs2KO
-         SdFc5GqUOQsqKmtF5CBej5kRPJRSTSQ5dA1tkrAZ8Jw8qwcv4KRN/Tq1GmuXLegCeEir
-         pXOA7CtJa8TBzdtfihDCWlC53nGMvLVSO4Ey0skFAkjytO4Kw6xPIGXYAQQvoXRYePs7
-         dvMQ==
-X-Gm-Message-State: APjAAAUWEAmdV735I8Nj96HCAwcpoe4Jc8C9RGAZmg6orzyHP8R2eRGW
-        eRCj9IY9A+LyIXQAmcKTPMHz5RC60RbfkoQPKA==
-X-Google-Smtp-Source: APXvYqz+uZDCqnc/wZtJVW6dbWEGdaaWNRkbT/+omtUxB5Tj1/fPQfWmrZtkcbzIrsgyqLq4GzdlH97S4aocUKJUANc=
-X-Received: by 2002:a2e:3807:: with SMTP id f7mr7467552lja.87.1563366249173;
- Wed, 17 Jul 2019 05:24:09 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=h2yLsvzismF8aSznQ40gS7iVeJd2FnjlYb1X34YBrA8=;
+        b=O1e78+1J2f40rNBND+xZyUcC3m3V8AwikoMYItnpKQr22vdoVUePEX1gPcIsPzLDRF
+         quwPWEU9mEhkQ3C/t43TALj/yJfZ22rTmDc19+kZn352qwjtXJBzoYDPjVh0e8CWyuIB
+         VJ98Ue2AyFQpSVFMJ0nv9THVXR7DX/bCcdI8LCYXepO8+Ni5sLagLtvj124xPjoS8TYX
+         fJ8DHGsZG+M8nTu3o2mOl1mN8d1ChFC+YXOLmAwGuQam4mpNo4bF2z49p6Qn7fbU+Yfw
+         iz3CSAvQ7GqTKljuxw3jTVe6++1tIuy/sxNly4YjI4fCCG5m+gbLDHqF9+X/WP0FZ4qh
+         4fDA==
+X-Gm-Message-State: APjAAAXtsvPN2Iboe5msYUSDqHsIRdgStBMbDIp+OrqwVt85C7TSNwYJ
+        ZyEDyeo077APxs+3FFhiC+/nXYEUVIk=
+X-Google-Smtp-Source: APXvYqwizHNDm7V2q4Zl8PfRLV8uyVMUdooEDkuQU8R8qdODhQ4UauaxynjAA3/s6qsYZwd+jj1eJQ==
+X-Received: by 2002:a1c:9a53:: with SMTP id c80mr34774771wme.173.1563368895160;
+        Wed, 17 Jul 2019 06:08:15 -0700 (PDT)
+Received: from [10.43.17.52] (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id n12sm24739515wmc.24.2019.07.17.06.08.13
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Jul 2019 06:08:14 -0700 (PDT)
+Subject: Re: [RFC PATCH v6 0/1] Add dm verity root hash pkcs7 sig validation.
+To:     Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
+Cc:     ebiggers@google.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, jmorris@namei.org,
+        Scott Shell <SCOTTSH@microsoft.com>,
+        Nazmus Sakib <mdsakib@microsoft.com>, mpatocka@redhat.com
+References: <20190701181958.6493-1-jaskarankhurana@linux.microsoft.com>
+ <MN2PR21MB12008A962D4DD8662B3614508AF20@MN2PR21MB1200.namprd21.prod.outlook.com>
+ <alpine.LRH.2.21.1907121025510.66082@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+ <395efa90-65d8-d832-3e2b-2b8ee3794688@gmail.com>
+ <alpine.LRH.2.21.1907161035490.121213@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+From:   Milan Broz <gmazyland@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <bdcd7d7c-92fc-11af-7924-9bd0e184b427@gmail.com>
+Date:   Wed, 17 Jul 2019 15:08:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <f824828c-5c9d-b91e-5cec-70ee7a45e760@schaufler-ca.com>
- <d1a237d3-4b72-48b0-27d6-fb168354ad31@schaufler-ca.com> <CAHC9VhTQLihNQ1iGjJB=LAn=C6BQokFsjsRcj8O_O9AjqQ7HBg@mail.gmail.com>
- <2517266.eHZzEmjMsX@x2> <CAHC9VhS-WGuKYzG5AU01BN8tk8nzp+7qxk7Sz-hbHQGL+UXOfg@mail.gmail.com>
- <alpine.LRH.2.21.1907171435200.2314@namei.org>
-In-Reply-To: <alpine.LRH.2.21.1907171435200.2314@namei.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 17 Jul 2019 08:23:57 -0400
-Message-ID: <CAHC9VhQA9iCbk2F35i9qjP5G8SP_jzMzduwxJcj4wH7fbR1kDw@mail.gmail.com>
-Subject: Re: Preferred subj= with multiple LSMs
-To:     James Morris <jmorris@namei.org>
-Cc:     Steve Grubb <sgrubb@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.LRH.2.21.1907161035490.121213@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 17, 2019 at 12:36 AM James Morris <jmorris@namei.org> wrote:
-> On Tue, 16 Jul 2019, Paul Moore wrote:
->
-> > The subj_X approach is still backwards compatible, the difference is
-> > that old versions of the tools get a "?" for the LSM creds which is a
-> > rather sane way of indicating something is different.
->
-> This will still break existing userspace, right?  We can't do that.
+Hi,
 
-Trust me, I don't want to break userspace, I wouldn't be suggesting that.
+On 16/07/2019 20:08, Jaskaran Singh Khurana wrote:
+>>> Could you please provide feedback on this v6 version.
+>>
+>> Hi,
+>>
+>> I am ok with the v6 patch; I think Mike will return to it in 5.4 reviews.
+>>
+> 
+> Thanks for the help and also for reviewing this patch. Could you please 
+> add Reviewed-by/Tested-by tag to the patch.
 
-The subj_X approach would cause userspace to see a "?" for the LSM
-creds when looking at logs from a stacked-LSM system.  I would argue
-this is actually safer than the multiplexed approach as "?" is a safe
-sentinel used by the audit subsystem when the value can't be
-determined; the multiplexed label in the hands of legacy userspace
-tools would be confusing at best, and misleading at worst.
+ok, you can add
+Tested-and-Reviewed-by: Milan Broz <gmazyland@gmail.com>
 
-> > Once again, I believe that the subj_X approach is going to be faster
-> > than safely parsing the multiplexed format.
->
-> What about emitting one audit record for each LSM?
+or just use the version on my git, I already updated few lines because
+of recent kernel changes, mainly the revert of keyring changes, tested patch is here
 
-In many of the LSM generated audit events that is what would happen,
-and should just work.  What we've been discussing in all the cases
-where the audit event is generated outside the context of the LSM but
-the LSM credentials are still desirable bits of information.  While we
-are definitely going in the direction of making multiple record events
-more common, duplicating the same record, with only changes to the LSM
-creds, may end up confusing Steve's tools.  It would also end up
-bloating the audit log, which I know is something everyone wants to
-avoid.
+  https://git.kernel.org/pub/scm/linux/kernel/git/mbroz/linux.git/commit/?h=dm-cryptsetup&id=266f7c9c74b23e4cb2e67ceb813dd707061c1641
+...
 
--- 
-paul moore
-www.paul-moore.com
+> The steps and workflow is correct. I will send the cryptsetup changes for 
+> review.
+
+ok, I'll probably try to use our existing userspace libcryptsetup API to avoid introducing new calls,
+but that is not important for now - the kernel bits must be in the mainline kernel first.
+
+Thanks,
+Milan
