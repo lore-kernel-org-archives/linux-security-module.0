@@ -7,68 +7,67 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 794DDC76195
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFD0C7618F
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F0C2208C0
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CF7C208C0
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SeXjRzGu"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PM4iWh23"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403984AbfGRTpL (ORCPT
+        id S2403964AbfGRTqK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Jul 2019 15:45:11 -0400
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:53883 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403928AbfGRTpL (ORCPT
+        Thu, 18 Jul 2019 15:46:10 -0400
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:42374 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403962AbfGRTpI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:45:11 -0400
-Received: by mail-pg1-f201.google.com with SMTP id t18so7275786pgu.20
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2019 12:45:10 -0700 (PDT)
+        Thu, 18 Jul 2019 15:45:08 -0400
+Received: by mail-pf1-f201.google.com with SMTP id 21so17194439pfu.9
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2019 12:45:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=JVVIIgLtDOBKlqbr3dAhxhQOQv6A3XP76vT4880U/G8=;
-        b=SeXjRzGuTikZ6KQwoTivnohUXmbA9jZtlGvnhbW5Gf6eGO+4VFd29B9NCWSdujqhu/
-         8fh2j1Om1PhG29VKxAvPHvHEnsKA9M4CYYYG/Lu9Hp+oZek3BD7S8Mig7S68+6KmwG1c
-         /xo6cEaF8hx9fJlpJ/R/SstDqmbSIAXSy9NQlEtsI+j+VydsrXaPd4V0Beh16tfWRfGg
-         F7FfxfLwPdOpWRZpLyOlY+tC4JNNX68ecbgofIWwHOVea/cuOB6mklZYjtyQQINP37o7
-         1nsCU4lqB4gv/44OPNg1qrVANEr2JgFG1OziWfA8hG4f0UGUfVWeP4bgBBn0aAiyTeRO
-         foKA==
+        bh=RRBZMPW7QAp9NmodVTLU1AXKruLeSmfJqtEU4d2fgdQ=;
+        b=PM4iWh23cboh7pTTqTINE3qbgbZieKP97PqntC4mhWSgTVDlPP3Tu19Hes/MgnZ0ff
+         d8jyHj6X1VRLzfpeSTP05uJbDi5p2mLa705sH0W/D5XFjMeex4AcMdWatG+1iGfB7RnL
+         g0aH0W28tt10yqV1Fi/+rnGkqWMKJWPzgDZMGJonjCYYDqlTvAXyHXivFG7EW+fEjhbE
+         BYq14HbffrVLYWDyOtB8OVZe0tzVKCKWAIyxKmm0kVdTBNLjDpC5vrExWq0fcKgUjl9O
+         WD/PrjMEXVUqf9UzLthr2eWWTZeWMVBMdxRgWSKnNOmoWTg/B03VmeNYjC3AGSfD/56X
+         wUnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=JVVIIgLtDOBKlqbr3dAhxhQOQv6A3XP76vT4880U/G8=;
-        b=rR728YMtal0O0WIBTctL6wCfSJH1QP26FPcz3jx4es8zpEoMNsAzQ79CSY3Eg8XCCl
-         Y2+uHMTvoJl+VK9r5Yqp2V91NPyogpT3XDy1Dl6wEnZQBJRQe5pT1dwkL82A2ACoxHFK
-         xHqy8S7F7Aq+J6NMrRiz+8vkXtWe5rRPda9A/ykB87On5Tkzox40cVVdn8yDGstemcW/
-         gUf1QC4WPUXnoAcbMzsif/dpbpaix16gAz1BSmdnYHExzBvYxZREeuxrtmwN+MN+8H+h
-         tF1k2LvKuJa3H5l3j/+aw4zu1jt4x/zC5ECvmNzjMPby2JBMGPM/OCiILNifjUHKWVsb
-         vPtg==
-X-Gm-Message-State: APjAAAUiN1HMMBrguhE/6H8BfFxiSLWeR7z87+hx74bQpU+o5lMNSnVI
-        Fj99yWwtqTx6lEbhHkkSqCuPvSKipBl1uQWw3f7gCw==
-X-Google-Smtp-Source: APXvYqyrMfaHa+wsv0nlaqRsdZ00CNxJSF2ky+cOy/8f3LYHWhlJwVQ8Qy4eVKCExKgmZMrlPSjOjbjg7/Xdu0/lTFJ7Wg==
-X-Received: by 2002:a63:20a:: with SMTP id 10mr49075232pgc.226.1563479110182;
- Thu, 18 Jul 2019 12:45:10 -0700 (PDT)
-Date:   Thu, 18 Jul 2019 12:44:06 -0700
+        bh=RRBZMPW7QAp9NmodVTLU1AXKruLeSmfJqtEU4d2fgdQ=;
+        b=S27n26q/2ivd1OVcb+npqS6XZ8lSXnrHNa/42mEp/Z5/n0hgGoJozecBWTeJASM/jg
+         HrWPK0c60aBGyLVopWGJly+JD9Vv68VQGPQyqaUMKPvIoGFpi8jF1q8+qK4BjErVIE+8
+         J800PEOWWkd+d0Fhf2ftF2P9yxlE1N3FRKEf59TwWP3HZGB16AmWlD28kSAoSP0EkPiF
+         89vMxCv8wGBKoSxwypTcoO9h1G9ptnl++9bcutqVqKix2ICWdXBfSWiyDJK9crur6zYY
+         GcRzSxjRvOozVZ8VLgSeG6CG0cKyDqoenikou3JmmGC2kLbUPY3OYRA9Wy/90s6as2ms
+         vG+w==
+X-Gm-Message-State: APjAAAU9g16pvvAGEZAZ4qMcZBLfgj5Fcqtl/LiUQwOt+GbGrtnzNQnj
+        uUQdzd5IEgKGRoOTRJ1F0JjEQUeU83A+m+tUrXXQ6A==
+X-Google-Smtp-Source: APXvYqyuxq14TWeVgh27x5/3o80oK9cyWbyqgkolQ76QSM/rVnF0ch2qx/On89W/J5+HzZE8WUADsEA4zaNpRf0qUEfdjg==
+X-Received: by 2002:a63:9a51:: with SMTP id e17mr50126681pgo.212.1563479107590;
+ Thu, 18 Jul 2019 12:45:07 -0700 (PDT)
+Date:   Thu, 18 Jul 2019 12:44:05 -0700
 In-Reply-To: <20190718194415.108476-1-matthewgarrett@google.com>
-Message-Id: <20190718194415.108476-21-matthewgarrett@google.com>
+Message-Id: <20190718194415.108476-20-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190718194415.108476-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH V36 20/29] x86/mmiotrace: Lock down the testmmiotrace module
+Subject: [PATCH V36 19/29] Lock down module params that specify hardware
+ parameters (eg. ioport)
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         Matthew Garrett <mjg59@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+        Kees Cook <keescook@chromium.org>, Jessica Yu <jeyu@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
@@ -76,71 +75,115 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-The testmmiotrace module shouldn't be permitted when the kernel is locked
-down as it can be used to arbitrarily read and write MMIO space. This is
-a runtime check rather than buildtime in order to allow configurations
-where the same kernel may be run in both locked down or permissive modes
-depending on local policy.
+Provided an annotation for module parameters that specify hardware
+parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
+dma buffers and other types).
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: David Howells <dhowells@redhat.com
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-cc: Thomas Gleixner <tglx@linutronix.de>
-cc: Steven Rostedt <rostedt@goodmis.org>
-cc: Ingo Molnar <mingo@kernel.org>
-cc: "H. Peter Anvin" <hpa@zytor.com>
-cc: x86@kernel.org
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: Jessica Yu <jeyu@kernel.org>
 ---
- arch/x86/mm/testmmiotrace.c  | 5 +++++
- include/linux/security.h     | 1 +
- security/lockdown/lockdown.c | 1 +
- 3 files changed, 7 insertions(+)
+ include/linux/security.h     |  1 +
+ kernel/params.c              | 28 +++++++++++++++++++++++-----
+ security/lockdown/lockdown.c |  1 +
+ 3 files changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
-index 0881e1ff1e58..a8bd952e136d 100644
---- a/arch/x86/mm/testmmiotrace.c
-+++ b/arch/x86/mm/testmmiotrace.c
-@@ -8,6 +8,7 @@
- #include <linux/module.h>
- #include <linux/io.h>
- #include <linux/mmiotrace.h>
-+#include <linux/security.h>
- 
- static unsigned long mmio_address;
- module_param_hw(mmio_address, ulong, iomem, 0);
-@@ -115,6 +116,10 @@ static void do_test_bulk_ioremapping(void)
- static int __init init(void)
- {
- 	unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
-+	int ret = security_locked_down(LOCKDOWN_MMIOTRACE);
-+
-+	if (ret)
-+		return ret;
- 
- 	if (mmio_address == 0) {
- 		pr_err("you have to use the module argument mmio_address.\n");
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 43fa3486522b..3f7b6a4cd65a 100644
+index 8f7048395114..43fa3486522b 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -114,6 +114,7 @@ enum lockdown_reason {
+@@ -113,6 +113,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_ACPI_TABLES,
  	LOCKDOWN_PCMCIA_CIS,
  	LOCKDOWN_TIOCSSERIAL,
- 	LOCKDOWN_MODULE_PARAMETERS,
-+	LOCKDOWN_MMIOTRACE,
++	LOCKDOWN_MODULE_PARAMETERS,
  	LOCKDOWN_INTEGRITY_MAX,
  	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
+diff --git a/kernel/params.c b/kernel/params.c
+index cf448785d058..f2779a76d39a 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -12,6 +12,7 @@
+ #include <linux/err.h>
+ #include <linux/slab.h>
+ #include <linux/ctype.h>
++#include <linux/security.h>
+ 
+ #ifdef CONFIG_SYSFS
+ /* Protects all built-in parameters, modules use their own param_lock */
+@@ -96,13 +97,20 @@ bool parameq(const char *a, const char *b)
+ 	return parameqn(a, b, strlen(a)+1);
+ }
+ 
+-static void param_check_unsafe(const struct kernel_param *kp)
++static bool param_check_unsafe(const struct kernel_param *kp,
++			       const char *doing)
+ {
++	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
++	    security_locked_down(LOCKDOWN_MODULE_PARAMETERS))
++		return false;
++
+ 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+ 		pr_notice("Setting dangerous option %s - tainting kernel\n",
+ 			  kp->name);
+ 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+ 	}
++
++	return true;
+ }
+ 
+ static int parse_one(char *param,
+@@ -132,8 +140,10 @@ static int parse_one(char *param,
+ 			pr_debug("handling %s with %p\n", param,
+ 				params[i].ops->set);
+ 			kernel_param_lock(params[i].mod);
+-			param_check_unsafe(&params[i]);
+-			err = params[i].ops->set(val, &params[i]);
++			if (param_check_unsafe(&params[i], doing))
++				err = params[i].ops->set(val, &params[i]);
++			else
++				err = -EPERM;
+ 			kernel_param_unlock(params[i].mod);
+ 			return err;
+ 		}
+@@ -541,6 +551,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
+ 	return count;
+ }
+ 
++#ifdef CONFIG_MODULES
++#define mod_name(mod) ((mod)->name)
++#else
++#define mod_name(mod) "unknown"
++#endif
++
+ /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
+ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 				struct module_kobject *mk,
+@@ -553,8 +569,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 		return -EPERM;
+ 
+ 	kernel_param_lock(mk->mod);
+-	param_check_unsafe(attribute->param);
+-	err = attribute->param->ops->set(buf, attribute->param);
++	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
++		err = attribute->param->ops->set(buf, attribute->param);
++	else
++		err = -EPERM;
+ 	kernel_param_unlock(mk->mod);
+ 	if (!err)
+ 		return len;
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 5177938cfa0d..37b7d7e50474 100644
+index 00a3a6438dd2..5177938cfa0d 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -29,6 +29,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+@@ -28,6 +28,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
  	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
  	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
- 	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
-+	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
++	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
  };
