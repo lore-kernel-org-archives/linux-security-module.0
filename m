@@ -7,220 +7,152 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9159C7618F
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C09C7618F
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B71F2208C0
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06B84208C0
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sbkZeuL/"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fUk+ZTco"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404199AbfGRTpz (ORCPT
+        id S2404211AbfGRTqD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Jul 2019 15:45:55 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:46374 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404071AbfGRTpY (ORCPT
+        Thu, 18 Jul 2019 15:46:03 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:50839 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404034AbfGRTpT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:45:24 -0400
-Received: by mail-pg1-f202.google.com with SMTP id u1so17233478pgr.13
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2019 12:45:23 -0700 (PDT)
+        Thu, 18 Jul 2019 15:45:19 -0400
+Received: by mail-pl1-f201.google.com with SMTP id d6so14430651pls.17
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2019 12:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=7AN62uUjggsGkjuR8QbGPFtdpCdy/nAEaFCETV075VE=;
-        b=sbkZeuL/Mzms7mOAJyUTFwHiXLACcjOravWInLM4UlOv/Jf1C/DdbH85nluYgkTsHQ
-         VseH3ZyKUHYZcOAbSwC2LUOWUqwQGaJPXDzE40yCZsX8m6PRZA0Zd7FwLKD/+V/076Jn
-         3uYPQvTo2utj0Gw70g+Cc7W4o9sT42WwIyCT7hbiOqQRipCQuxDXTnRgzmWHLQKmlf8z
-         LaLvermZWv9jMz2+h2GV5/qyn9RuyQv8r/Amr+Faa6f6Rwn64WXwx1S7JIgx4w5HP48Y
-         Z2esAX1ukBWDnk/H+N1uIc3JfArzETB4/IhBJE4n4ZlNev5MdDce8Ac32rL6D2ucJPvG
-         AH6g==
+        bh=+kj/i0peoh/v65WgevbFUm6xG2Y2qR8kjesuSzHy2lw=;
+        b=fUk+ZTcoldUn+2TCtr1PoKSI+zovfN9gKmXjF4DrrDJ2mSIEUWLiWeWLX372f4p7D7
+         XH47RYmM1fDnYZrXQezARD7Bq4u3XiB7YfGYIBP2lw2CaDaI5pLwSZpqdZVUvMMDZ4a3
+         Ui6jNsTXZVHxNPcmbFg1EEz62Z2B0DEvIv8WosO1SgJE9k2GlfUb3uP9EEak5G4+pbZU
+         pML3LBLqQq3brER9SrLoE55UgsBTAAID2fkHr3thzYM+waRIXUXdGVRDnkk+LTv0nnt1
+         R+Zo0PRnopkj51Suj0kOGDZoLZd8t2G0hpiwyTBSuZ6qXwF3WpC3oqf9DSXYLKtkhkIG
+         6JmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=7AN62uUjggsGkjuR8QbGPFtdpCdy/nAEaFCETV075VE=;
-        b=M6NrpnY37kmx3rE53FjYhrLaA06vGb0czv0mclig4xiKpk1Bd2sg2Lzvy4ekhHswOq
-         QsxOAxCavIMvA5b4ANM/WJgdqe2NttrwpPIdHFmzaSnkeZT46gNmBy2UXpLK50NCcHs/
-         aQwRB37d3ETmE8J419O+KhHUCAzTRrEBhquAm2PYtfWaqOGVx2xtcL3tKz1rsJIdq5F8
-         kFeMplNr/lZAY/LVzG4X8+r0OdCt70Xr7q3ZL4oBODYz7prhvdffCtSMpHgfvIglcA/o
-         YmB4J/ptIPcAO8w1s98FOhpY+THT55sbbObe3od8qJ3GlSXOmjdNJw9QeSTZDt+ngwJh
-         cAKQ==
-X-Gm-Message-State: APjAAAWfKqHq/8aN9nCDhld2ngXRswcBr5I7M+bKbfxGqo6nS8NhFh5T
-        9IvCd7N1M3z0Lo9KsrIKP+z1oXDbSO0Rol0KSQzuHQ==
-X-Google-Smtp-Source: APXvYqwguFRz8a2O7ZkhUKtJ8E4Nc0LzzfYHnEV57plWrCugjY00nzdLKupqCVZeTV7EOXpo5yRwY8dzNi6al3Dyyr6V+A==
-X-Received: by 2002:a63:de07:: with SMTP id f7mr11162915pgg.213.1563479123189;
- Thu, 18 Jul 2019 12:45:23 -0700 (PDT)
-Date:   Thu, 18 Jul 2019 12:44:11 -0700
+        bh=+kj/i0peoh/v65WgevbFUm6xG2Y2qR8kjesuSzHy2lw=;
+        b=pvSGoqktt/AnR7aarOZJmRBMLkz5GPPlUURgNZtx6LumG8BBHuCbv7fOVJn28eVIZY
+         Ju8MXUTJ3f/BdRxnqYG5y0mwbGRrdcwmhQdfzi7RVyLtywHtl/9kCtLhaNKND1pNsBhM
+         SDtbKnu6E+fq80I6SRAvtR8bm5aBao9JDwsdwLAKajRej4sLFo7mbT2Q4dHgiqsHZV8M
+         Ed6f14kVfCMSyqOQVcgVcRS39NEH5PWPC+k0AXQLMEMnEoN6JVBI6POvX+ELIQworNRs
+         b03f2vaufZ3XSdx4dzjZq5ox3KWeTNglMxZQhRqdvsZFIjhmWZZ8tKvx+T8XGh2ldSU7
+         nZ8A==
+X-Gm-Message-State: APjAAAUi9yYNd5KeJNIKa9tgBhwlkdld8FksFSmSSMjtAyhsWkavU23Q
+        hMZsaW25o4+rGUQgWtM2CCAK6x3FZ1uBz8PG8uMfLw==
+X-Google-Smtp-Source: APXvYqw2sxTZK/+Pp57R6A0PaZfCVXeZ1BWP5no8glAKxdRukIof4kMsddZqmrhFlykd+PpgRIKXIGQ6acGXoyjx5NaKtg==
+X-Received: by 2002:a63:24c1:: with SMTP id k184mr50552564pgk.120.1563479118172;
+ Thu, 18 Jul 2019 12:45:18 -0700 (PDT)
+Date:   Thu, 18 Jul 2019 12:44:09 -0700
 In-Reply-To: <20190718194415.108476-1-matthewgarrett@google.com>
-Message-Id: <20190718194415.108476-26-matthewgarrett@google.com>
+Message-Id: <20190718194415.108476-24-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190718194415.108476-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH V36 25/29] kexec: Allow kexec_file() with appropriate IMA
- policy when locked down
+Subject: [PATCH V36 23/29] bpf: Restrict bpf when kernel lockdown is in
+ confidentiality mode
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
+        David Howells <dhowells@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Matthew Garrett <mjg59@google.com>, netdev@vger.kernel.org,
+        Chun-Yi Lee <jlee@suse.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Systems in lockdown mode should block the kexec of untrusted kernels.
-For x86 and ARM we can ensure that a kernel is trustworthy by validating
-a PE signature, but this isn't possible on other architectures. On those
-platforms we can use IMA digital signatures instead. Add a function to
-determine whether IMA has or will verify signatures for a given event type,
-and if so permit kexec_file() even if the kernel is otherwise locked down.
-This is restricted to cases where CONFIG_INTEGRITY_TRUSTED_KEYRING is set
-in order to prevent an attacker from loading additional keys at runtime.
+From: David Howells <dhowells@redhat.com>
 
+bpf_read() and bpf_read_str() could potentially be abused to (eg) allow
+private keys in kernel memory to be leaked. Disable them if the kernel
+has been locked down in confidentiality mode.
+
+Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: linux-integrity@vger.kernel.org
+cc: netdev@vger.kernel.org
+cc: Chun-Yi Lee <jlee@suse.com>
+cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
 ---
- include/linux/ima.h                 |  9 ++++++
- kernel/kexec_file.c                 | 12 +++++--
- security/integrity/ima/ima.h        |  2 ++
- security/integrity/ima/ima_main.c   |  2 +-
- security/integrity/ima/ima_policy.c | 50 +++++++++++++++++++++++++++++
- 5 files changed, 72 insertions(+), 3 deletions(-)
+ include/linux/security.h     |  1 +
+ kernel/trace/bpf_trace.c     | 10 ++++++++++
+ security/lockdown/lockdown.c |  1 +
+ 3 files changed, 12 insertions(+)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index a20ad398d260..1c37f17f7203 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -131,4 +131,13 @@ static inline int ima_inode_removexattr(struct dentry *dentry,
- 	return 0;
- }
- #endif /* CONFIG_IMA_APPRAISE */
-+
-+#if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
-+extern bool ima_appraise_signature(enum kernel_read_file_id func);
-+#else
-+static inline bool ima_appraise_signature(enum kernel_read_file_id func)
-+{
-+	return false;
-+}
-+#endif /* CONFIG_IMA_APPRAISE && CONFIG_INTEGRITY_TRUSTED_KEYRING */
- #endif /* _LINUX_IMA_H */
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index dd06f1070d66..13c9960a5860 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -228,9 +228,17 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 			goto out;
- 		}
- 
--		ret = security_locked_down(LOCKDOWN_KEXEC);
--		if (ret)
-+		ret = 0;
-+
-+		/* If IMA is guaranteed to appraise a signature on the kexec
-+		 * image, permit it even if the kernel is otherwise locked
-+		 * down.
-+		 */
-+		if (!ima_appraise_signature(READING_KEXEC_IMAGE) &&
-+		    security_locked_down(LOCKDOWN_KEXEC)) {
-+			ret = -EPERM;
- 			goto out;
-+		}
- 
- 		break;
- 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 011b91c79351..64dcb11cf444 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -113,6 +113,8 @@ struct ima_kexec_hdr {
- 	u64 count;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 987d8427f091..8dd1741a52cd 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -118,6 +118,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_INTEGRITY_MAX,
+ 	LOCKDOWN_KCORE,
+ 	LOCKDOWN_KPROBES,
++	LOCKDOWN_BPF_READ,
+ 	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
  
-+extern const int read_idmap[];
-+
- #ifdef CONFIG_HAVE_IMA_KEXEC
- void ima_load_kexec_buffer(void);
- #else
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 584019728660..b9f57503af2c 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -502,7 +502,7 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- 	return 0;
- }
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index ca1255d14576..492a8bfaae98 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -142,8 +142,13 @@ BPF_CALL_3(bpf_probe_read, void *, dst, u32, size, const void *, unsafe_ptr)
+ {
+ 	int ret;
  
--static const int read_idmap[READING_MAX_ID] = {
-+const int read_idmap[READING_MAX_ID] = {
- 	[READING_FIRMWARE] = FIRMWARE_CHECK,
- 	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
- 	[READING_MODULE] = MODULE_CHECK,
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 6df7f641ff66..827f1e33fe86 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1456,3 +1456,53 @@ int ima_policy_show(struct seq_file *m, void *v)
- 	return 0;
- }
- #endif	/* CONFIG_IMA_READ_POLICY */
++	ret = security_locked_down(LOCKDOWN_BPF_READ);
++	if (ret < 0)
++		goto out;
 +
-+#if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
-+/*
-+ * ima_appraise_signature: whether IMA will appraise a given function using
-+ * an IMA digital signature. This is restricted to cases where the kernel
-+ * has a set of built-in trusted keys in order to avoid an attacker simply
-+ * loading additional keys.
-+ */
-+bool ima_appraise_signature(enum kernel_read_file_id id)
-+{
-+	struct ima_rule_entry *entry;
-+	bool found = false;
-+	enum ima_hooks func;
+ 	ret = probe_kernel_read(dst, unsafe_ptr, size);
+ 	if (unlikely(ret < 0))
++out:
+ 		memset(dst, 0, size);
+ 
+ 	return ret;
+@@ -569,6 +574,10 @@ BPF_CALL_3(bpf_probe_read_str, void *, dst, u32, size,
+ {
+ 	int ret;
+ 
++	ret = security_locked_down(LOCKDOWN_BPF_READ);
++	if (ret < 0)
++		goto out;
 +
-+	if (id >= READING_MAX_ID)
-+		return false;
-+
-+	func = read_idmap[id] ?: FILE_CHECK;
-+
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(entry, ima_rules, list) {
-+		if (entry->action != APPRAISE)
-+			continue;
-+
-+		/*
-+		 * A generic entry will match, but otherwise require that it
-+		 * match the func we're looking for
-+		 */
-+		if (entry->func && entry->func != func)
-+			continue;
-+
-+		/*
-+		 * We require this to be a digital signature, not a raw IMA
-+		 * hash.
-+		 */
-+		if (entry->flags & IMA_DIGSIG_REQUIRED)
-+			found = true;
-+
-+		/*
-+		 * We've found a rule that matches, so break now even if it
-+		 * didn't require a digital signature - a later rule that does
-+		 * won't override it, so would be a false positive.
-+		 */
-+		break;
-+	}
-+
-+	rcu_read_unlock();
-+	return found;
-+}
-+#endif /* CONFIG_IMA_APPRAISE && CONFIG_INTEGRITY_TRUSTED_KEYRING */
+ 	/*
+ 	 * The strncpy_from_unsafe() call will likely not fill the entire
+ 	 * buffer, but that's okay in this circumstance as we're probing
+@@ -580,6 +589,7 @@ BPF_CALL_3(bpf_probe_read_str, void *, dst, u32, size,
+ 	 */
+ 	ret = strncpy_from_unsafe(dst, unsafe_ptr, size);
+ 	if (unlikely(ret < 0))
++out:
+ 		memset(dst, 0, size);
+ 
+ 	return ret;
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index 6b123cbf3748..1b89d3e8e54d 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -33,6 +33,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+ 	[LOCKDOWN_KCORE] = "/proc/kcore access",
+ 	[LOCKDOWN_KPROBES] = "use of kprobes",
++	[LOCKDOWN_BPF_READ] = "use of bpf to read kernel RAM",
+ 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+ };
+ 
 -- 
 2.22.0.510.g264f2c817a-goog
 
