@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E4DC76196
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BD4C76195
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D67A21849
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7ED5208C0
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jul 2019 19:46:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jsRInamE"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZkbTGs7F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391451AbfGRTo0 (ORCPT
+        id S2391342AbfGRToX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Jul 2019 15:44:26 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:37029 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391444AbfGRToZ (ORCPT
+        Thu, 18 Jul 2019 15:44:23 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:39714 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727687AbfGRToW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:44:25 -0400
-Received: by mail-qt1-f201.google.com with SMTP id 41so19513199qtm.4
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2019 12:44:24 -0700 (PDT)
+        Thu, 18 Jul 2019 15:44:22 -0400
+Received: by mail-pg1-f202.google.com with SMTP id t19so17244085pgh.6
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2019 12:44:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=f/RnEfWSrg+mjsb2cXMX4L7C/xNmjjOSgJcVU/cQXL4=;
-        b=jsRInamEwvOW5gKVCPS6gAzLtaGfVBCHyt8GuZv9y/xonXNaTWjlDWyFRdEgikwvLi
-         cqfuqEGIrHDApAZ+ysnScHx3BzvuZhJTkvlWbvXW6slZFCFZi5ys5kdQV27WLcB4HIG6
-         5MgeZTgdoXbZacSFO0WDSN/WGEWkdZmIH7KKxmtyyUT12+w0/AL6N11eh7mwcq+livto
-         DxlLdf1fOlHRcKsjg2IfnOAR4K6/0qWUPiGi//ucqWtIAooXzQb7AkF0TCMLewCJR832
-         65FwlNREl7Mo/MVTYFwOBOM7CMnn5xO8NYd0MDaNmsG+IddKdneQQYOmHWOmzeKJXdcU
-         5yJw==
+        bh=597mNbti9AE4jskQLQ5sdKqhsrWUg3noqnu7lsx00Ik=;
+        b=ZkbTGs7FpCCiRrttiRilxiosF826QIW9kfAEaMUPuIIsni9gHspwmsJZINkI68V1h+
+         thby5knIHW5YcyoqCtJTb28itY6d4hcSzENtydyHVroBQPbRu5BDoYVVNE9cD46wMWvC
+         +Ds1ahXGoXfrchTMurL0hVloEDiYdIsBPqw/lZef45ZqW+QAsGyd+tD+Ksk6OxWbnRr9
+         s4QFsT1vI+rA6XNKsTFnpILQZgUtcf3RnYdK+jYdpErSbDlB1BZhDxxbLbzdHtOFv4+w
+         NdD0YMfgj2C/se3LHFetW4Zb+7rs60QWm2t7nDKuPII9tZvkOc9iCGzEcoAvACnBvA40
+         A6TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=f/RnEfWSrg+mjsb2cXMX4L7C/xNmjjOSgJcVU/cQXL4=;
-        b=CWDsPrSz8fltrwsAxnkvMeVGp730g+8A8HQax3805UJScATLtOTfrwJsPaSmZksrur
-         8Pu+qE2o0JUvvx/gkmxrbunzKZjORcDYopG7wYyTAL0atVukyvJjFCToWVzeRA9X6YkA
-         Pwg7pNO+k88vMi+YHN/Re8AH8F1uyhOaFL55metyMXMlhCM3FtOvWdFR9Zr1Xu+5mPux
-         5eR19Q6owrUle2MYQBd8fctiiC2ILa6tNv0oS0lP5aKrLbhPbLif9H9EdphSM9czpv+W
-         VmT+H0NQU+45UbYakcAC+f8MiZ68pveruqiWtOb5/ICDbCbrDisO17zBo9a7nEV9TC/K
-         kJoA==
-X-Gm-Message-State: APjAAAWMYShd4C9WyvzJxbC0KiaZJd0dkGe8rVj51WlSobGsPczEWZw5
-        oNbT2AgTd1HsWGvgbWNelJCFsaOiaRs1lIWLh+2sgA==
-X-Google-Smtp-Source: APXvYqw+JsRBNHiAanPLyriUj70/+WJ5ZrVT82KeDFFh1TY+pdCGaJVMixIOL+mU07DfwWxGfCpqCo4opDBtRLVdkbbOiQ==
-X-Received: by 2002:ac8:3f81:: with SMTP id d1mr34152373qtk.5.1563479063836;
- Thu, 18 Jul 2019 12:44:23 -0700 (PDT)
-Date:   Thu, 18 Jul 2019 12:43:48 -0700
+        bh=597mNbti9AE4jskQLQ5sdKqhsrWUg3noqnu7lsx00Ik=;
+        b=Ackyl4nfrL5+EpElVJHWElLFzxUP2sXnyBZSFIzhVp/EFWYX+qNU8auvegdnWWnwKy
+         nOywMOphrUUkxOWX3PFjpKRS0uZb/renSbNRcP+MPCaleog4FoxKE01nm3oSTpkFdu9z
+         locZ+12nPt76yylcqkHteSHw7zoPq9a9Of59FhFwb/492+MZJ2I9W3ZNYfX6K3k4Wzs2
+         ge3FoHt3CUKIL0iefWYXxkLFE/8xbZsbubzlBgmjYO3Lln44pOKTP2jHOyamq7jQfzUU
+         fSG3X8I2RMgl15d20XujSQzfRMQMdCj2SvtF3XaWpbmMAMb8p+ZzXjKG6LQf2JLO2V1T
+         /ayA==
+X-Gm-Message-State: APjAAAXdPxVRIFFv3EhUJrWyfVCW/IJlbFVFRfG2zRaE3ym0Vd2BBXNU
+        4zEWyBdI0hOGOK9+F5E+NzhyS32msZ7dKPWgWsOFMg==
+X-Google-Smtp-Source: APXvYqxC8oXMhGBSsruKuBX7m7e9PA7Cmox+WxmN9bWO2QCRGCC8FVz1afN0q1rtFmZ+/IoG9TgL/daj+aJpQTz6+ZTZyA==
+X-Received: by 2002:a65:464d:: with SMTP id k13mr44644813pgr.99.1563479061158;
+ Thu, 18 Jul 2019 12:44:21 -0700 (PDT)
+Date:   Thu, 18 Jul 2019 12:43:47 -0700
 In-Reply-To: <20190718194415.108476-1-matthewgarrett@google.com>
-Message-Id: <20190718194415.108476-3-matthewgarrett@google.com>
+Message-Id: <20190718194415.108476-2-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190718194415.108476-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH V36 02/29] security: Add a "locked down" LSM hook
+Subject: [PATCH V36 01/29] security: Support early LSMs
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -71,109 +71,198 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a mechanism to allow LSMs to make a policy decision around whether
-kernel functionality that would allow tampering with or examining the
-runtime state of the kernel should be permitted.
+The lockdown module is intended to allow for kernels to be locked down
+early in boot - sufficiently early that we don't have the ability to
+kmalloc() yet. Add support for early initialisation of some LSMs, and
+then add them to the list of names when we do full initialisation later.
+Early LSMs are initialised in link order and cannot be overridden via
+boot parameters, and cannot make use of kmalloc() (since the allocator
+isn't initialised yet).
 
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 Acked-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/lsm_hooks.h |  2 ++
- include/linux/security.h  | 32 ++++++++++++++++++++++++++++++++
- security/security.c       |  6 ++++++
- 3 files changed, 40 insertions(+)
+ include/asm-generic/vmlinux.lds.h |  8 ++++-
+ include/linux/lsm_hooks.h         |  6 ++++
+ include/linux/security.h          |  1 +
+ init/main.c                       |  1 +
+ security/security.c               | 50 ++++++++++++++++++++++++++-----
+ 5 files changed, 57 insertions(+), 9 deletions(-)
 
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index ca42182992a5..6cc6174a2a4c 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -215,8 +215,13 @@
+ 			__start_lsm_info = .;				\
+ 			KEEP(*(.lsm_info.init))				\
+ 			__end_lsm_info = .;
++#define EARLY_LSM_TABLE()	. = ALIGN(8);				\
++			__start_early_lsm_info = .;			\
++			KEEP(*(.early_lsm_info.init))			\
++			__end_early_lsm_info = .;
+ #else
+ #define LSM_TABLE()
++#define EARLY_LSM_TABLE()
+ #endif
+ 
+ #define ___OF_TABLE(cfg, name)	_OF_TABLE_##cfg(name)
+@@ -616,7 +621,8 @@
+ 	ACPI_PROBE_TABLE(irqchip)					\
+ 	ACPI_PROBE_TABLE(timer)						\
+ 	EARLYCON_TABLE()						\
+-	LSM_TABLE()
++	LSM_TABLE()							\
++	EARLY_LSM_TABLE()
+ 
+ #define INIT_TEXT							\
+ 	*(.init.text .init.text.*)					\
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index aebb0e032072..29c22cf40113 100644
+index df1318d85f7d..aebb0e032072 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -1807,6 +1807,7 @@ union security_list_options {
- 	int (*bpf_prog_alloc_security)(struct bpf_prog_aux *aux);
- 	void (*bpf_prog_free_security)(struct bpf_prog_aux *aux);
- #endif /* CONFIG_BPF_SYSCALL */
-+	int (*locked_down)(enum lockdown_reason what);
+@@ -2104,12 +2104,18 @@ struct lsm_info {
  };
  
- struct security_hook_heads {
-@@ -2046,6 +2047,7 @@ struct security_hook_heads {
- 	struct hlist_head bpf_prog_alloc_security;
- 	struct hlist_head bpf_prog_free_security;
- #endif /* CONFIG_BPF_SYSCALL */
-+	struct hlist_head locked_down;
- } __randomize_layout;
+ extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
++extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
  
+ #define DEFINE_LSM(lsm)							\
+ 	static struct lsm_info __lsm_##lsm				\
+ 		__used __section(.lsm_info.init)			\
+ 		__aligned(sizeof(unsigned long))
+ 
++#define DEFINE_EARLY_LSM(lsm)						\
++	static struct lsm_info __early_lsm_##lsm			\
++		__used __section(.early_lsm_info.init)			\
++		__aligned(sizeof(unsigned long))
++
+ #ifdef CONFIG_SECURITY_SELINUX_DISABLE
  /*
+  * Assuring the safety of deleting a security module is up to
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 66a2fcbe6ab0..c2b1204e8e26 100644
+index 5f7441abbf42..66a2fcbe6ab0 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -77,6 +77,33 @@ enum lsm_event {
- 	LSM_POLICY_CHANGE,
- };
+@@ -195,6 +195,7 @@ int unregister_blocking_lsm_notifier(struct notifier_block *nb);
  
-+/*
-+ * These are reasons that can be passed to the security_locked_down()
-+ * LSM hook. Lockdown reasons that protect kernel integrity (ie, the
-+ * ability for userland to modify kernel code) are placed before
-+ * LOCKDOWN_INTEGRITY_MAX.  Lockdown reasons that protect kernel
-+ * confidentiality (ie, the ability for userland to extract
-+ * information from the running kernel that would otherwise be
-+ * restricted) are placed before LOCKDOWN_CONFIDENTIALITY_MAX.
-+ *
-+ * LSM authors should note that the semantics of any given lockdown
-+ * reason are not guaranteed to be stable - the same reason may block
-+ * one set of features in one kernel release, and a slightly different
-+ * set of features in a later kernel release. LSMs that seek to expose
-+ * lockdown policy at any level of granularity other than "none",
-+ * "integrity" or "confidentiality" are responsible for either
-+ * ensuring that they expose a consistent level of functionality to
-+ * userland, or ensuring that userland is aware that this is
-+ * potentially a moving target. It is easy to misuse this information
-+ * in a way that could break userspace. Please be careful not to do
-+ * so.
-+ */
-+enum lockdown_reason {
-+	LOCKDOWN_NONE,
-+	LOCKDOWN_INTEGRITY_MAX,
-+	LOCKDOWN_CONFIDENTIALITY_MAX,
-+};
-+
- /* These functions are in security/commoncap.c */
- extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
- 		       int cap, unsigned int opts);
-@@ -393,6 +420,7 @@ void security_inode_invalidate_secctx(struct inode *inode);
- int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
-+int security_locked_down(enum lockdown_reason what);
- #else /* CONFIG_SECURITY */
+ /* prototypes */
+ extern int security_init(void);
++extern int early_security_init(void);
  
- static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-@@ -1205,6 +1233,10 @@ static inline int security_inode_getsecctx(struct inode *inode, void **ctx, u32
- {
- 	return -EOPNOTSUPP;
- }
-+static inline int security_locked_down(enum lockdown_reason what)
-+{
-+	return 0;
-+}
- #endif	/* CONFIG_SECURITY */
- 
- #ifdef CONFIG_SECURITY_NETWORK
+ /* Security operations */
+ int security_binder_set_context_mgr(struct task_struct *mgr);
+diff --git a/init/main.c b/init/main.c
+index ff5803b0841c..0fefca3fd43c 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -593,6 +593,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 	boot_cpu_init();
+ 	page_address_init();
+ 	pr_notice("%s", linux_banner);
++	early_security_init();
+ 	setup_arch(&command_line);
+ 	mm_init_cpumask(&init_mm);
+ 	setup_command_line(command_line);
 diff --git a/security/security.c b/security/security.c
-index 90f1e291c800..ce6c945bf347 100644
+index 250ee2d76406..90f1e291c800 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -2392,3 +2392,9 @@ void security_bpf_prog_free(struct bpf_prog_aux *aux)
- 	call_void_hook(bpf_prog_free_security, aux);
- }
- #endif /* CONFIG_BPF_SYSCALL */
+@@ -33,6 +33,7 @@
+ 
+ /* How many LSMs were built into the kernel? */
+ #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
++#define EARLY_LSM_COUNT (__end_early_lsm_info - __start_early_lsm_info)
+ 
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static BLOCKING_NOTIFIER_HEAD(blocking_lsm_notifier_chain);
+@@ -277,6 +278,8 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ static void __init lsm_early_cred(struct cred *cred);
+ static void __init lsm_early_task(struct task_struct *task);
+ 
++static int lsm_append(const char *new, char **result);
 +
-+int security_locked_down(enum lockdown_reason what)
+ static void __init ordered_lsm_init(void)
+ {
+ 	struct lsm_info **lsm;
+@@ -323,6 +326,26 @@ static void __init ordered_lsm_init(void)
+ 	kfree(ordered_lsms);
+ }
+ 
++int __init early_security_init(void)
 +{
-+	return call_int_hook(locked_down, 0, what);
++	int i;
++	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
++	struct lsm_info *lsm;
++
++	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
++	     i++)
++		INIT_HLIST_HEAD(&list[i]);
++
++	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
++		if (!lsm->enabled)
++			lsm->enabled = &lsm_enabled_true;
++		prepare_lsm(lsm);
++		initialize_lsm(lsm);
++	}
++
++	return 0;
 +}
-+EXPORT_SYMBOL(security_locked_down);
++
+ /**
+  * security_init - initializes the security framework
+  *
+@@ -330,14 +353,18 @@ static void __init ordered_lsm_init(void)
+  */
+ int __init security_init(void)
+ {
+-	int i;
+-	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
++	struct lsm_info *lsm;
+ 
+ 	pr_info("Security Framework initializing\n");
+ 
+-	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
+-	     i++)
+-		INIT_HLIST_HEAD(&list[i]);
++	/*
++	 * Append the names of the early LSM modules now that kmalloc() is
++	 * available
++	 */
++	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
++		if (lsm->enabled)
++			lsm_append(lsm->name, &lsm_names);
++	}
+ 
+ 	/* Load LSMs in specified order. */
+ 	ordered_lsm_init();
+@@ -384,7 +411,7 @@ static bool match_last_lsm(const char *list, const char *lsm)
+ 	return !strcmp(last, lsm);
+ }
+ 
+-static int lsm_append(char *new, char **result)
++static int lsm_append(const char *new, char **result)
+ {
+ 	char *cp;
+ 
+@@ -422,8 +449,15 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+ 		hooks[i].lsm = lsm;
+ 		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
+ 	}
+-	if (lsm_append(lsm, &lsm_names) < 0)
+-		panic("%s - Cannot get early memory.\n", __func__);
++
++	/*
++	 * Don't try to append during early_security_init(), we'll come back
++	 * and fix this up afterwards.
++	 */
++	if (slab_is_available()) {
++		if (lsm_append(lsm, &lsm_names) < 0)
++			panic("%s - Cannot get early memory.\n", __func__);
++	}
+ }
+ 
+ int call_blocking_lsm_notifier(enum lsm_event event, void *data)
 -- 
 2.22.0.510.g264f2c817a-goog
 
