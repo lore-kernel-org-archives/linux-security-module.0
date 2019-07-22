@@ -2,51 +2,66 @@ Return-Path: <SRS0=Cnd7=VT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B73C76190
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jul 2019 14:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E67C76188
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jul 2019 15:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAF972171F
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jul 2019 14:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCC862084D
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jul 2019 15:23:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yy0am124"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730857AbfGVO05 (ORCPT
+        id S1728313AbfGVPXn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Jul 2019 10:26:57 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43083 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfGVO05 (ORCPT
+        Mon, 22 Jul 2019 11:23:43 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43980 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728288AbfGVPXn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Jul 2019 10:26:57 -0400
-Received: by mail-qk1-f193.google.com with SMTP id m14so3052827qka.10;
-        Mon, 22 Jul 2019 07:26:56 -0700 (PDT)
+        Mon, 22 Jul 2019 11:23:43 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p13so39827172wru.10
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Jul 2019 08:23:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=uNIXtMoWHaULzjujraJ7oGg3HCXmRUXf1Hrg+5gPseg=;
+        b=Yy0am124r9rOBj+kg/aTljeUfCtQ4wcSIbHJjqJalwkmicDObwQ/YjVsDhv3CjNRsw
+         XzngO8FH+3mjssmlknvKnaNiq6lUk8XBHDkyw4vjcCZ650BdJn5b0b1lnXQMh/lmJCpA
+         YtFG4I+MH6TlE9DPz70y5vKVrNXLN4sKzFb+C/aRPAwAm8OQWUB3EeaFPLDWITfKYL/H
+         uEIDU01tHxYtFak5OWPbRv2gqP0RlWUaS200C489PN4bSRYeObWs4uPIdBQD+1l9u0CP
+         bu4Bkz3oHYWLaEalTpJmMBvzPkpCihkXPLFu0UAXggsxQDcbxhy5c54bKxMLp/s0Ye9X
+         LhoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ah6GZe+0UgXZUd+jkutuNIUFv66KlGrmYWfNByDcOvg=;
-        b=YiHIKSd/Y12Jj4HEZ/c0CIq4VcU7J+EREpXOgiwu0Z4dZsNHvJBBw+WciCnsCvxQph
-         Tr+5vm38/wzhGyAAJ5FzbImSVr7MXLUNOyX/HVq/dmBeZo1JwELWlqXtrAkDfYx+GbkD
-         xV5ndf8EGQ5+wdtQaAxTtzsAwsSU8Z8FjjYtound6momZ3YVtjRybrz9puAXZ/xyF64g
-         SioWnE08q9GeLNLvfELhmvn5+GWM7o8esz+PJcN15q+nqcLK23rry8tkx4l2kFpX1xMA
-         wcSBvbd9xH2iXW51hjXbOGhtocwzTeF6Ox7WNdC7xGxkVIk8C4loro46mAV0jIqriaYC
-         2KLg==
-X-Gm-Message-State: APjAAAVvq37G0+pbbFuAZtRjVpi3u0kyYKN/ZTF50JweCIydaeJg1PMm
-        vAumt2BXhk+yWiO5vdSCQ4pYmBnfm7xbL574kXA=
-X-Google-Smtp-Source: APXvYqzV66V/n6SbUhF6RDSLieeP6SB8mXvDJ9CDlP2FV1DOr+tPhe6IyteNQRDa+DJx1zn2b70XAfY2PzNKTYedJIM=
-X-Received: by 2002:a05:620a:b:: with SMTP id j11mr13035375qki.352.1563805616319;
- Mon, 22 Jul 2019 07:26:56 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=uNIXtMoWHaULzjujraJ7oGg3HCXmRUXf1Hrg+5gPseg=;
+        b=punUr/LBYLkzC0xphx2kyxe6ZXcLozbnVQ38TOrmSgqdzkdabmqFXLYjZy/PEJ15KR
+         azsDD07UcfrS1V9r5Eo3KgIati413ndBCV3fMZ1jHV8DEfhk+gdTxtkEtukx6M1q8XEN
+         8PJKaDWXgQHM4YdPG7zbeqAp+KTBK80igAj+bIbg18HGaesAnz/YTKVbcc1WC+jmr22n
+         kMYvDDjxy8kNvd2r+Vz4dy/5HzhUgBM95Vmu0gj1gKZnY37yQ5c7q+W1tvBosfiK1Ovo
+         GL51WcvlSOfbQNRYFoA0sw/Awp8Grf1mqmF8RbIeKsxdFaQ/ra9/m8z2yZ3k06LAdFz0
+         G57w==
+X-Gm-Message-State: APjAAAUP+iqA5c6HMG2dyOmmhadzaowMKPR7ZtJy993t0u6MkUttETfR
+        8+EPEnKZudUMpJsVSaVG0leVyx531fmdjqiPNUzytg==
+X-Google-Smtp-Source: APXvYqwTtSxr9PAJX9GCQlNlRd7RPOpeKWvqKIkFUyFkVxIfLUXksDf0pIpfWonDTV1oMZAtgfu1AnvjLd8DXlRdLLY=
+X-Received: by 2002:a5d:5388:: with SMTP id d8mr75033157wrv.299.1563809020856;
+ Mon, 22 Jul 2019 08:23:40 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190722114134.3123901-1-arnd@arndb.de> <CAG_fn=UxowACw5w+erKaAPRr4SWk3WbLTfAgJj=cOL4HgZHK=Q@mail.gmail.com>
-In-Reply-To: <CAG_fn=UxowACw5w+erKaAPRr4SWk3WbLTfAgJj=cOL4HgZHK=Q@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 22 Jul 2019 16:26:40 +0200
-Message-ID: <CAK8P3a28c5V5VnsFrttgtCC5+i87yuAT-G5xx50KOsKUJ6-VKg@mail.gmail.com>
+ <CAK8P3a28c5V5VnsFrttgtCC5+i87yuAT-G5xx50KOsKUJ6-VKg@mail.gmail.com>
+In-Reply-To: <CAK8P3a28c5V5VnsFrttgtCC5+i87yuAT-G5xx50KOsKUJ6-VKg@mail.gmail.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Mon, 22 Jul 2019 17:23:28 +0200
+Message-ID: <CAG_fn=U60gv-zWiVZS5Z++1fMcLwDmOgoF8gpJY3c+4dGHBhvw@mail.gmail.com>
 Subject: Re: [PATCH] [RESEND v2] structleak: disable STRUCTLEAK_BYREF in
  combination with KASAN_STACK
-To:     Alexander Potapenko <glider@google.com>
+To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     Dmitriy Vyukov <dvyukov@google.com>,
         Marco Elver <elver@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -58,41 +73,71 @@ Cc:     Dmitriy Vyukov <dvyukov@google.com>,
         linux-security-module <linux-security-module@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 22, 2019 at 3:43 PM Alexander Potapenko <glider@google.com> wrote:
-> On Mon, Jul 22, 2019 at 1:41 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > KASAN_STACK is currently implied by KASAN on gcc, but could be made a
-> > user selectable option if we want to allow combining (non-stack) KASAN
-> > with GCC_PLUGIN_STRUCTLEAK_BYREF.
-> >
-> > Note that it would be possible to specifically address the files that
-> > print the warning, but presumably the overall stack usage is still
-> > significantly higher than in other configurations, so this would not
-> > address the full problem.
-> >
-> > I could not test this with CONFIG_INIT_STACK_ALL, which may or may not
-> > suffer from a similar problem.
-> We would love to be able to run KASAN together with
-> CONFIG_INIT_STACK_ALL on syzbot, as this will potentially reduce the
-> number of flaky errors.
+On Mon, Jul 22, 2019 at 4:26 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Mon, Jul 22, 2019 at 3:43 PM Alexander Potapenko <glider@google.com> w=
+rote:
+> > On Mon, Jul 22, 2019 at 1:41 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > KASAN_STACK is currently implied by KASAN on gcc, but could be made a
+> > > user selectable option if we want to allow combining (non-stack) KASA=
+N
+> > > with GCC_PLUGIN_STRUCTLEAK_BYREF.
+> > >
+> > > Note that it would be possible to specifically address the files that
+> > > print the warning, but presumably the overall stack usage is still
+> > > significantly higher than in other configurations, so this would not
+> > > address the full problem.
+> > >
+> > > I could not test this with CONFIG_INIT_STACK_ALL, which may or may no=
+t
+> > > suffer from a similar problem.
+> > We would love to be able to run KASAN together with
+> > CONFIG_INIT_STACK_ALL on syzbot, as this will potentially reduce the
+> > number of flaky errors.
+>
+> Doesn't that just limit the usefulness of KASAN, as you no longer catch
+> actual accesses to unintialized variables that KASAN is designed to find?
+KASAN (unlike KMSAN) doesn't detect accesses to uninitialized variables.
+It can of course detect bugs induced by e.g. treating an uninitialized
+variable as a pointer or an array index.
+Depending on the pattern used to initialize those variables, this can
+indeed mask some bugs, but OTOH others will become more reproducible.
 
-Doesn't that just limit the usefulness of KASAN, as you no longer catch
-actual accesses to unintialized variables that KASAN is designed to find?
+I'm not really sure KASAN+CONFIG_INIT_STACK_ALL is a problem right
+now, will need to take a look.
+> > Given that we already increase the stack size in KASAN builds, how big
+> > of a problem are these warnings?
+> > Perhaps it's better to disable them in this configuration, or push the =
+limit up?
+>
+> I'm really hoping to lower the per-function limit for 'allmodconfig' buil=
+ds,
+> since both a high limit and lots of bogus warnings prevent us from
+> noticing any newly introduced functions that use a lot of kernel stack
+> without KASAN.
+>
+> An allmodconfig build (and ideally also any randconfig build) should alwa=
+ys
+> complete without warnings to be useful for compile testing.
+>
+>        Arnd
 
-> Given that we already increase the stack size in KASAN builds, how big
-> of a problem are these warnings?
-> Perhaps it's better to disable them in this configuration, or push the limit up?
 
-I'm really hoping to lower the per-function limit for 'allmodconfig' builds,
-since both a high limit and lots of bogus warnings prevent us from
-noticing any newly introduced functions that use a lot of kernel stack
-without KASAN.
 
-An allmodconfig build (and ideally also any randconfig build) should always
-complete without warnings to be useful for compile testing.
+--=20
+Alexander Potapenko
+Software Engineer
 
-       Arnd
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
