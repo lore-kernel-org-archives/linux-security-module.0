@@ -2,175 +2,68 @@ Return-Path: <SRS0=Cnd7=VT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5144BC7618F
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jul 2019 17:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2ABEC7618F
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jul 2019 20:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24A4521985
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jul 2019 17:23:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d0NLpEWz"
+	by mail.kernel.org (Postfix) with ESMTP id 9768D21900
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jul 2019 20:50:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731266AbfGVRXd (ORCPT
+        id S1727743AbfGVUum (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Jul 2019 13:23:33 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34031 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728233AbfGVRXd (ORCPT
+        Mon, 22 Jul 2019 16:50:42 -0400
+Received: from namei.org ([65.99.196.166]:36578 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727164AbfGVUul (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:23:33 -0400
-Received: by mail-pl1-f196.google.com with SMTP id i2so19489969plt.1
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Jul 2019 10:23:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=FRwdh8exxsdgMPTPXtFJAWsj5j42oG+j8NccmCU/aPQ=;
-        b=d0NLpEWzwogS/ThZgEsKfpSO+In9RUmZ10LT5JWbwXE8k/fDSq3mn6CJAVGcJesmGD
-         0+CgGu9bTUp/58xXhIMmpApUrvj1y47jxBRgzy0FkZtchdQEyzb5Z3td+CtiCLq8QkwF
-         56rU6rd1Lm5oPnYyjae4uU2YoMvuemCyldn3I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=FRwdh8exxsdgMPTPXtFJAWsj5j42oG+j8NccmCU/aPQ=;
-        b=Q3vxvjeGW6S0Pa5eiPUbKhsYJGxtPcv1er1JudN1zgQZwjOJkw3fOZrqUgZKnHgJKJ
-         1r6D1MwrmpB/IsAWsdfx4ZV0BmdZKzQafdn9hE4AyHaRXl6aDj/Ybijag4DKZm0kRp6x
-         lN0EJvS4qnHyIE81CBd2HEEIRGxS30Gk77OI3BwvN4Mcy2tYK/PgTgyc/LRzNLvsVtWM
-         zt8wx4TS73QaJdU3NXrz/K1dSPiEdfOmeTy+ZkDbjC4AOSYsxRv2XQA1eKKuNzxEoP+f
-         L1posSbsf655SR3Wr32K/1jV8ijuqGBPN4V4mBORgK/yo6VJcHmTz47F6IEZz3i4L3aW
-         twqQ==
-X-Gm-Message-State: APjAAAWbCZmCMHWquPdsGgdxlIliNu3pCEKEDw90aK79TESxyLnv6yLP
-        rTAhqtmIGHBo5UII9Wnj0Iqj2w==
-X-Google-Smtp-Source: APXvYqxTPc1ftKX0JS8KLEPEzEkS5PPsPWxZ4rqQ/9/ZTuAOhO42HlIKraszJU3ZUd6mJ/6W8QaAAw==
-X-Received: by 2002:a17:902:f082:: with SMTP id go2mr79917259plb.25.1563816212503;
-        Mon, 22 Jul 2019 10:23:32 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u69sm46464171pgu.77.2019.07.22.10.23.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Jul 2019 10:23:31 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 10:23:30 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexander Potapenko <glider@google.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [RESEND v2] structleak: disable STRUCTLEAK_BYREF in
- combination with KASAN_STACK
-Message-ID: <201907221022.4597DDD92@keescook>
-References: <20190722114134.3123901-1-arnd@arndb.de>
+        Mon, 22 Jul 2019 16:50:41 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x6MKoZxs021586;
+        Mon, 22 Jul 2019 20:50:35 GMT
+Date:   Tue, 23 Jul 2019 06:50:35 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Paul Moore <paul@paul-moore.com>
+cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: Preferred subj= with multiple LSMs
+In-Reply-To: <CAHC9VhTf0yYDZBxOtfv2E5=GtrBYonoqr46hyBy7qdNdjVLoVg@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1907230649460.18217@namei.org>
+References: <f824828c-5c9d-b91e-5cec-70ee7a45e760@schaufler-ca.com> <d1a237d3-4b72-48b0-27d6-fb168354ad31@schaufler-ca.com> <CAHC9VhTQLihNQ1iGjJB=LAn=C6BQokFsjsRcj8O_O9AjqQ7HBg@mail.gmail.com> <2517266.eHZzEmjMsX@x2> <27e2c710-efe6-d9cd-d4f9-bc217df5ede3@schaufler-ca.com>
+ <CAHC9VhTpcnyGg5j3b6Z7Yi0Ob01JETRiBmz1AuLqPWqP9tEAnA@mail.gmail.com> <5ea2a25b-364f-3c30-79c6-cfb18515d7ba@schaufler-ca.com> <CAHC9VhQ9MSh5zCkhMja4r9j0RT952LwKSaG5dR-BqXzXrtEAUw@mail.gmail.com> <e9cf875a-0d0f-a56f-71dd-c22c67bdcc2d@schaufler-ca.com>
+ <CAHC9VhQS9We1TNqRfuR_E-kV4aZddx9euaiv5Gzd5B5AkiDAUQ@mail.gmail.com> <f375c23c-29e6-dc98-d71c-328db91117bc@schaufler-ca.com> <CAHC9VhTf0yYDZBxOtfv2E5=GtrBYonoqr46hyBy7qdNdjVLoVg@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190722114134.3123901-1-arnd@arndb.de>
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 22, 2019 at 01:41:20PM +0200, Arnd Bergmann wrote:
-> The combination of KASAN_STACK and GCC_PLUGIN_STRUCTLEAK_BYREF
-> leads to much larger kernel stack usage, as seen from the warnings
-> about functions that now exceed the 2048 byte limit:
-> 
-> drivers/media/i2c/tvp5150.c:253:1: error: the frame size of 3936 bytes is larger than 2048 bytes
-> drivers/media/tuners/r820t.c:1327:1: error: the frame size of 2816 bytes is larger than 2048 bytes
-> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16552:1: error: the frame size of 3144 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
-> fs/ocfs2/aops.c:1892:1: error: the frame size of 2088 bytes is larger than 2048 bytes
-> fs/ocfs2/dlm/dlmrecovery.c:737:1: error: the frame size of 2088 bytes is larger than 2048 bytes
-> fs/ocfs2/namei.c:1677:1: error: the frame size of 2584 bytes is larger than 2048 bytes
-> fs/ocfs2/super.c:1186:1: error: the frame size of 2640 bytes is larger than 2048 bytes
-> fs/ocfs2/xattr.c:3678:1: error: the frame size of 2176 bytes is larger than 2048 bytes
-> net/bluetooth/l2cap_core.c:7056:1: error: the frame size of 2144 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
-> net/bluetooth/l2cap_core.c: In function 'l2cap_recv_frame':
-> net/bridge/br_netlink.c:1505:1: error: the frame size of 2448 bytes is larger than 2048 bytes
-> net/ieee802154/nl802154.c:548:1: error: the frame size of 2232 bytes is larger than 2048 bytes
-> net/wireless/nl80211.c:1726:1: error: the frame size of 2224 bytes is larger than 2048 bytes
-> net/wireless/nl80211.c:2357:1: error: the frame size of 4584 bytes is larger than 2048 bytes
-> net/wireless/nl80211.c:5108:1: error: the frame size of 2760 bytes is larger than 2048 bytes
-> net/wireless/nl80211.c:6472:1: error: the frame size of 2112 bytes is larger than 2048 bytes
-> 
-> The structleak plugin was previously disabled for CONFIG_COMPILE_TEST,
-> but meant we missed some bugs, so this time we should address them.
-> 
-> The frame size warnings are distracting, and risking a kernel stack
-> overflow is generally not beneficial to performance, so it may be best
-> to disallow that particular combination. This can be done by turning
-> off either one. I picked the dependency in GCC_PLUGIN_STRUCTLEAK_BYREF
-> and GCC_PLUGIN_STRUCTLEAK_BYREF_ALL, as this option is designed to
-> make uninitialized stack usage less harmful when enabled on its own,
-> but it also prevents KASAN from detecting those cases in which it was
-> in fact needed.
-> 
-> KASAN_STACK is currently implied by KASAN on gcc, but could be made a
-> user selectable option if we want to allow combining (non-stack) KASAN
-> with GCC_PLUGIN_STRUCTLEAK_BYREF.
-> 
-> Note that it would be possible to specifically address the files that
-> print the warning, but presumably the overall stack usage is still
-> significantly higher than in other configurations, so this would not
-> address the full problem.
-> 
-> I could not test this with CONFIG_INIT_STACK_ALL, which may or may not
-> suffer from a similar problem.
-> 
-> Fixes: 81a56f6dcd20 ("gcc-plugins: structleak: Generalize to all variable types")
-> Acked-by: Kees Cook <keescook@chromium.org>
-> Link: https://lore.kernel.org/lkml/20190628123819.2785504-1-arnd@arndb.de/
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> [v2] do it for both GCC_PLUGIN_STRUCTLEAK_BYREF and GCC_PLUGIN_STRUCTLEAK_BYREF_ALL.
-> 
-> Andrew, can you pick this up in -mm? It looks like nobody else
-> wanted it in their trees even though there was agreement on the
-> patch itself.
+On Fri, 19 Jul 2019, Paul Moore wrote:
 
-Andrew, if you don't want it, I can take it via my gcc-plugins tree?
-
--Kees
-
-> ---
->  security/Kconfig.hardening | 7 +++++++
->  1 file changed, 7 insertions(+)
+> > We've never had to think about having general rules on
+> > what security modules do before, because with only one
+> > active each could do whatever it wanted without fear of
+> > conflict. If there is already a character that none of
+> > the existing modules use, how would it be wrong to
+> > reserve it?
 > 
-> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-> index a1ffe2eb4d5f..af4c979b38ee 100644
-> --- a/security/Kconfig.hardening
-> +++ b/security/Kconfig.hardening
-> @@ -61,6 +61,7 @@ choice
->  	config GCC_PLUGIN_STRUCTLEAK_BYREF
->  		bool "zero-init structs passed by reference (strong)"
->  		depends on GCC_PLUGINS
-> +		depends on !(KASAN && KASAN_STACK=1)
->  		select GCC_PLUGIN_STRUCTLEAK
->  		help
->  		  Zero-initialize any structures on the stack that may
-> @@ -70,9 +71,15 @@ choice
->  		  exposures, like CVE-2017-1000410:
->  		  https://git.kernel.org/linus/06e7e776ca4d3654
->  
-> +		  As a side-effect, this keeps a lot of variables on the
-> +		  stack that can otherwise be optimized out, so combining
-> +		  this with CONFIG_KASAN_STACK can lead to a stack overflow
-> +		  and is disallowed.
-> +
->  	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
->  		bool "zero-init anything passed by reference (very strong)"
->  		depends on GCC_PLUGINS
-> +		depends on !(KASAN && KASAN_STACK=1)
->  		select GCC_PLUGIN_STRUCTLEAK
->  		help
->  		  Zero-initialize any stack variables that may be passed
-> -- 
-> 2.20.0
+> "We've never had to think about having general rules on what security
+> modules do before..."
 > 
+> We famously haven't imposed restrictions on the label format before
+> now, and this seems like a pretty poor reason to start.
+
+Agreed.
+
 
 -- 
-Kees Cook
+James Morris
+<jmorris@namei.org>
+
