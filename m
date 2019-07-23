@@ -2,105 +2,153 @@ Return-Path: <SRS0=ig/x=VU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3349C7618B
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 10:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FAAC76194
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 13:45:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98391206B8
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 10:00:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhRz0o07"
+	by mail.kernel.org (Postfix) with ESMTP id 66023227BF
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 13:45:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfGWKA1 (ORCPT
+        id S1730907AbfGWNpy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Jul 2019 06:00:27 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40102 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbfGWKA1 (ORCPT
+        Tue, 23 Jul 2019 09:45:54 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59826 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbfGWNpy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Jul 2019 06:00:27 -0400
-Received: by mail-pg1-f194.google.com with SMTP id w10so19179947pgj.7;
-        Tue, 23 Jul 2019 03:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=5OAJErAik0xYRiczuYg/dRLWg9Npudu/HIsd564SyVk=;
-        b=dhRz0o072/BEcOUJhWA52ddEU/HGgqq6LhasWoT8YOHZvsSAKW337oGxSi0e93Owmv
-         6gfiwJMkzuSfycOhKDP4LWw9AhI8zzemt+PzF79gQzp56Sg/Tgm7ISHSaeGb4WskrkUi
-         xaTvVKQRFv7b+kYCFZvV/kPT+Wy7tSPKys6ePiwR9iLwLt1hpZbT3IRLqkIiBCW+OmX4
-         sXqqE9VSlc9lgZw4se9BbU0eJT3ptv6hDXYK7eSRFjogawuIMDoYud8ZcBWHSFmIhjsq
-         G0WpoR6K0MDB6d22cK3/kN0vix1CS7MmYZcKmd289zUZa601dz29++rdaoheisl04ilp
-         f04A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5OAJErAik0xYRiczuYg/dRLWg9Npudu/HIsd564SyVk=;
-        b=oSDmCr33i52B/Ydy3j/17BwEiimMvJgl6H/73MtmNsdE8x9efm8LI2IJJWTb91uhbl
-         iT3FdVXhBfK0c4DYhxoXlFz+EtwwoMU0rJKpb31njqAJaKJeTpbaHjW9uSBVtKael+32
-         3rspw5wuXF6Ae0RsPvYSNsybhuXaigThfe7nSQ0oEP9+R6UM8kKBq7f6um2vU6R827IT
-         Fx/+dgvotnPvlECWzc3CacnA/vGMoBeRcTZbDvbEJeM6a1w9Du8/qcOhLfpJZsOXJXCj
-         doBnUxYfp+GJcs1XJhgBAYVqOKU3b8h63CKkvh/WvWzQkQhrbdU7GWxDVnm3VeaCwHMO
-         QhXg==
-X-Gm-Message-State: APjAAAXLxXIYf/ldvDtO5WsoAhuZdpOnutO9qccU09e3yK2u7hPKODbj
-        KOEAZw0+cU2K0HnpSd0p0UE=
-X-Google-Smtp-Source: APXvYqwNWVAJYmjCW8kEPfETxNjyljUixVn9J0Y+PXozl+eLiUNPjvrPnnaCEuVfF1e4zAq/uJX/Mw==
-X-Received: by 2002:a17:90a:ca11:: with SMTP id x17mr82284773pjt.107.1563876026282;
-        Tue, 23 Jul 2019 03:00:26 -0700 (PDT)
-Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
-        by smtp.gmail.com with ESMTPSA id y12sm50328188pfn.187.2019.07.23.03.00.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Jul 2019 03:00:25 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     casey@schaufler-ca.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] security: smack: Fix possible null-pointer dereferences in smack_socket_sock_rcv_skb()
-Date:   Tue, 23 Jul 2019 18:00:15 +0800
-Message-Id: <20190723100015.5400-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 23 Jul 2019 09:45:54 -0400
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x6NDjRP2042320;
+        Tue, 23 Jul 2019 22:45:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Tue, 23 Jul 2019 22:45:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x6NDjQiU042312
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 23 Jul 2019 22:45:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts
+ around
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-security-module@vger.kernel.org
+References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
+ <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
+ <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
+ <20190708131831.GT17978@ZenIV.linux.org.uk> <874l3wo3gq.fsf@xmission.com>
+ <20190708180132.GU17978@ZenIV.linux.org.uk>
+ <20190708202124.GX17978@ZenIV.linux.org.uk> <87pnmkhxoy.fsf@xmission.com>
+ <5802b8b1-f734-1670-f83b-465eda133936@i-love.sakura.ne.jp>
+ <1698ec76-f56c-1e65-2f11-318c0ed225bb@i-love.sakura.ne.jp>
+ <e75d4a66-cfcf-2ce8-e82a-fdc80f01723d@canonical.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <7eb7378e-2eb8-c1ba-4e1f-ea8f5611f42b@i-love.sakura.ne.jp>
+Date:   Tue, 23 Jul 2019 22:45:29 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <e75d4a66-cfcf-2ce8-e82a-fdc80f01723d@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In smack_socket_sock_rcv_skb(), there is an if statement 
-on line 3920 to check whether skb is NULL:
-    if (skb && skb->secmark != 0)
+Al, will you send this patch to 5.3-rcX via vfs.git tree?
 
-This check indicates skb can be NULL in some cases.
-
-But on lines 3931 and 3932, skb is used:
-    ad.a.u.net->netif = skb->skb_iif;
-    ipv6_skb_to_auditdata(skb, &ad.a, NULL);
-
-Thus, possible null-pointer dereferences may occur when skb is NULL.
-
-To fix these possible bugs, an if statement is added to check skb.
-
-These bugs are found by a static analysis tool STCheck written by us.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- security/smack/smack_lsm.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 4c5e5a438f8b..5c9fc8ba6e57 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3925,6 +3925,8 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
- 			skp = smack_ipv6host_label(&sadd);
- 		if (skp == NULL)
- 			skp = smack_net_ambient;
-+		if (skb == NULL)
-+			break;
- #ifdef CONFIG_AUDIT
- 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
- 		ad.a.u.net->family = family;
--- 
-2.17.0
+On 2019/07/23 13:16, John Johansen wrote:
+> On 7/22/19 3:12 AM, Tetsuo Handa wrote:
+>> I did not see AppArmor patch for this problem in 5.3-rc1. 
+>> John, are you OK with this patch for 5.2-stable and 5.3 ?
+>>
+> yes, I have some larger mount rework and clean-up to do and an apparmor
+> patch for this is waiting on that. Looking at the thread I am wondering
+> where my previous reply is, probably lost in a mail client crash, I have
+> had a few of those lately.
+> 
+> Acked-by: John Johansen <john.johansen@canonical.com>
+> 
+> 
+>> On 2019/07/09 19:51, Tetsuo Handa wrote:
+>>> For now, can we apply this patch for 5.2-stable ?
+>>>
+>>>
+>>> >From dd62fab0592e02580fd5a34222a2d11bfc179f61 Mon Sep 17 00:00:00 2001
+>>> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>>> Date: Tue, 9 Jul 2019 19:05:49 +0900
+>>> Subject: [PATCH] LSM: Disable move_mount() syscall when TOMOYO or AppArmor is enabled.
+>>>
+>>> Commit 2db154b3ea8e14b0 ("vfs: syscall: Add move_mount(2) to move mounts
+>>> around") introduced security_move_mount() LSM hook, but we missed that
+>>> TOMOYO and AppArmor did not implement hooks for checking move_mount(2).
+>>> For pathname based access controls like TOMOYO and AppArmor, unchecked
+>>> mount manipulation is not acceptable. Therefore, until TOMOYO and AppArmor
+>>> implement hooks, in order to avoid unchecked mount manipulation, pretend
+>>> as if move_mount(2) is unavailable when either TOMOYO or AppArmor is
+>>> enabled.
+>>>
+>>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>>> Fixes: 2db154b3ea8e14b0 ("vfs: syscall: Add move_mount(2) to move mounts around")
+>>> Cc: stable@vger.kernel.org # 5.2
+>>> ---
+>>>  include/linux/lsm_hooks.h | 6 ++++++
+>>>  security/apparmor/lsm.c   | 1 +
+>>>  security/tomoyo/tomoyo.c  | 1 +
+>>>  3 files changed, 8 insertions(+)
+>>>
+>>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>>> index 47f58cf..cd411b7 100644
+>>> --- a/include/linux/lsm_hooks.h
+>>> +++ b/include/linux/lsm_hooks.h
+>>> @@ -2142,4 +2142,10 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+>>>  
+>>>  extern int lsm_inode_alloc(struct inode *inode);
+>>>  
+>>> +static inline int no_move_mount(const struct path *from_path,
+>>> +				const struct path *to_path)
+>>> +{
+>>> +	return -ENOSYS;
+>>> +}
+>>> +
+>>>  #endif /* ! __LINUX_LSM_HOOKS_H */
+>>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+>>> index ec3a928..5cdf63b 100644
+>>> --- a/security/apparmor/lsm.c
+>>> +++ b/security/apparmor/lsm.c
+>>> @@ -1158,6 +1158,7 @@ struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_after_init = {
+>>>  	LSM_HOOK_INIT(capable, apparmor_capable),
+>>>  
+>>>  	LSM_HOOK_INIT(sb_mount, apparmor_sb_mount),
+>>> +	LSM_HOOK_INIT(move_mount, no_move_mount),
+>>>  	LSM_HOOK_INIT(sb_umount, apparmor_sb_umount),
+>>>  	LSM_HOOK_INIT(sb_pivotroot, apparmor_sb_pivotroot),
+>>>  
+>>> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+>>> index 716c92e..be1b1a1 100644
+>>> --- a/security/tomoyo/tomoyo.c
+>>> +++ b/security/tomoyo/tomoyo.c
+>>> @@ -558,6 +558,7 @@ static void tomoyo_task_free(struct task_struct *task)
+>>>  	LSM_HOOK_INIT(path_chown, tomoyo_path_chown),
+>>>  	LSM_HOOK_INIT(path_chroot, tomoyo_path_chroot),
+>>>  	LSM_HOOK_INIT(sb_mount, tomoyo_sb_mount),
+>>> +	LSM_HOOK_INIT(move_mount, no_move_mount),
+>>>  	LSM_HOOK_INIT(sb_umount, tomoyo_sb_umount),
+>>>  	LSM_HOOK_INIT(sb_pivotroot, tomoyo_sb_pivotroot),
+>>>  	LSM_HOOK_INIT(socket_bind, tomoyo_socket_bind),
+>>>
+>>
+> 
+> 
 
