@@ -2,186 +2,111 @@ Return-Path: <SRS0=ig/x=VU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A72CC76194
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 22:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65358C76194
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 23:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BE9522387
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 22:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 463D82253D
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 23:30:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbfGWWju (ORCPT
+        id S1726951AbfGWXae (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Jul 2019 18:39:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55394 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731179AbfGWWjt (ORCPT
+        Tue, 23 Jul 2019 19:30:34 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:50106 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726888AbfGWXad (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Jul 2019 18:39:49 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6NMasBi100504
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2019 18:39:48 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tx8se5dh8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2019 18:39:48 -0400
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Tue, 23 Jul 2019 23:39:47 +0100
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 23 Jul 2019 23:39:41 +0100
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6NMdemE46465390
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Jul 2019 22:39:40 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D62C7805F;
-        Tue, 23 Jul 2019 22:39:40 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3DDBF7805C;
-        Tue, 23 Jul 2019 22:39:32 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.148.251])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Tue, 23 Jul 2019 22:39:31 +0000 (GMT)
-References: <20190628021934.4260-1-bauerman@linux.ibm.com> <20190628021934.4260-2-bauerman@linux.ibm.com> <20190701144752.GC25484@linux-8ccs> <87lfxel2q6.fsf@morokweng.localdomain> <20190704125427.31146026@laptop-ibm> <874l41ocf5.fsf@morokweng.localdomain> <20190705150000.372345b0@laptop-ibm>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Philipp Rudo <prudo@linux.ibm.com>
-Cc:     Jessica Yu <jeyu@kernel.org>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "James Morris" <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "David Howells" <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v12 01/11] MODSIGN: Export module signature definitions
-In-reply-to: <20190705150000.372345b0@laptop-ibm>
-Date:   Tue, 23 Jul 2019 19:39:27 -0300
+        Tue, 23 Jul 2019 19:30:33 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hq4Ea-00010p-D2; Tue, 23 Jul 2019 23:30:16 +0000
+Date:   Wed, 24 Jul 2019 00:30:16 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     James Morris <jmorris@namei.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts
+ around
+Message-ID: <20190723233016.GD1131@ZenIV.linux.org.uk>
+References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
+ <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
+ <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
+ <20190708131831.GT17978@ZenIV.linux.org.uk>
+ <874l3wo3gq.fsf@xmission.com>
+ <20190708180132.GU17978@ZenIV.linux.org.uk>
+ <20190708202124.GX17978@ZenIV.linux.org.uk>
+ <alpine.LRH.2.21.1907240744080.16974@namei.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19072322-0016-0000-0000-000009D393BA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011484; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01236487; UDB=6.00651706; IPR=6.01017844;
- MB=3.00027860; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-23 22:39:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19072322-0017-0000-0000-0000442346CA
-Message-Id: <8736iw9y00.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-23_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1907230230
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1907240744080.16974@namei.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Jul 24, 2019 at 07:45:07AM +1000, James Morris wrote:
+> On Mon, 8 Jul 2019, Al Viro wrote:
+> 
+> > On Mon, Jul 08, 2019 at 07:01:32PM +0100, Al Viro wrote:
+> > > On Mon, Jul 08, 2019 at 12:12:21PM -0500, Eric W. Biederman wrote:
+> > > 
+> > > > Al you do realize that the TOCTOU you are talking about comes the system
+> > > > call API.  TOMOYO can only be faulted for not playing in their own
+> > > > sandbox and not reaching out and fixing the vfs implementation details.
+> > 
+> > PS: the fact that mount(2) has been overloaded to hell and back (including
+> > MS_MOVE, which goes back to v2.5.0.5) predates the introduction of ->sb_mount()
+> > and LSM in general (2.5.27).  MS_BIND is 2.4.0-test9pre2.
+> > 
+> > In all the years since the introduction of ->sb_mount() I've seen zero
+> > questions from LSM folks regarding a sane place for those checks.  What I have
+> > seen was "we want it immediately upon the syscall entry, let the module
+> > figure out what to do" in reply to several times I tried to tell them "folks,
+> > it's called in a bad place; you want the checks applied to objects, not to
+> > raw string arguments".
+> > 
+> > As it is, we have easily bypassable checks on mount(2) (by way of ->sb_mount();
+> > there are other hooks also in the game for remounts and new mounts).
+> 
+> What are your recommendations for placing these checks?
 
-Hello Philipp,
+For MS_MOVE: do_move_mount(), after lock_mount(), when the mount tree is stable
+and pathnames are resolved.
+For MS_BIND: do_loopback(), ditto.
+Incidentally, for pivot_root(2) I would also suggest moving that past the
+lock_mount(), for the same reasons.
+For propagation flag changes: do_change_type(), after namespace_lock().
+For per-mount flag changes: do_reconfigure_mnt(), possibly after having
+grabbed ->s_umount.
+For fs remount: IMO it should be handled purely in ->sb_remount().
 
+For new mount: really depends upon the filesystem type, I'm afraid.  There's
+nothing type-independent that can be done - in the best case you can say
+"no mounting block filesystems from that device"; note that for NFS the
+meaning of the argument is entirely different and you *can* have something
+like foo.local.org: as a name of symlink (or directory), so blanket "you can
+mount foo.local.org:/srv/nfs/blah" is asking for trouble -
+mount -t ext4 foo.local.org:/srv/nfs/blah /mnt can bloody well end up
+successfully mounting a very untrusted usb disk.
 
-Philipp Rudo <prudo@linux.ibm.com> writes:
+Note, BTW, that things like cramfs can be given
+	* mtd:mtd_device_name
+	* mtd<decimal number>
+	* block device pathname
+The last one needs to be resolved/canonicalized/whatnot.
+The other two must *NOT* - there's nothing to stop the
+attacker from ln -s /dev/mtdblock0 ./mtd12 and confusing
+the fsck out of your LSM (it would assume that we are
+trying to get mtd0 when in reality it'll mount mtd12).
 
-> Hi Thiago,
->
-> On Thu, 04 Jul 2019 15:57:34 -0300
-> Thiago Jung Bauermann <bauerman@linux.ibm.com> wrote:
->
->> Hello Philipp,
->> 
->> Philipp Rudo <prudo@linux.ibm.com> writes:
->> 
->> > Hi Thiago,
->> >
->> >
->> > On Thu, 04 Jul 2019 03:42:57 -0300
->> > Thiago Jung Bauermann <bauerman@linux.ibm.com> wrote:
->> >  
->> >> Jessica Yu <jeyu@kernel.org> writes:
->> >>   
->> >> > +++ Thiago Jung Bauermann [27/06/19 23:19 -0300]:    
->> >> >>IMA will use the module_signature format for append signatures, so export
->> >> >>the relevant definitions and factor out the code which verifies that the
->> >> >>appended signature trailer is valid.
->> >> >>
->> >> >>Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
->> >> >>and be able to use mod_check_sig() without having to depend on either
->> >> >>CONFIG_MODULE_SIG or CONFIG_MODULES.
->> >> >>
->> >> >>Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
->> >> >>Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
->> >> >>Cc: Jessica Yu <jeyu@kernel.org>
->> >> >>---
->> >> >> include/linux/module.h           |  3 --
->> >> >> include/linux/module_signature.h | 44 +++++++++++++++++++++++++
->> >> >> init/Kconfig                     |  6 +++-
->> >> >> kernel/Makefile                  |  1 +
->> >> >> kernel/module.c                  |  1 +
->> >> >> kernel/module_signature.c        | 46 ++++++++++++++++++++++++++
->> >> >> kernel/module_signing.c          | 56 +++++---------------------------
->> >> >> scripts/Makefile                 |  2 +-
->> >> >> 8 files changed, 106 insertions(+), 53 deletions(-)
->> >> >>
->> >> >>diff --git a/include/linux/module.h b/include/linux/module.h
->> >> >>index 188998d3dca9..aa56f531cf1e 100644
->> >> >>--- a/include/linux/module.h
->> >> >>+++ b/include/linux/module.h
->> >> >>@@ -25,9 +25,6 @@
->> >> >> #include <linux/percpu.h>
->> >> >> #include <asm/module.h>
->> >> >>
->> >> >>-/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
->> >> >>-#define MODULE_SIG_STRING "~Module signature appended~\n"
->> >> >>-    
->> >> >
->> >> > Hi Thiago, apologies for the delay.    
->> >> 
->> >> Hello Jessica, thanks for reviewing the patch!
->> >>   
->> >> > It looks like arch/s390/kernel/machine_kexec_file.c also relies on
->> >> > MODULE_SIG_STRING being defined, so module_signature.h will need to be
->> >> > included there too, otherwise we'll run into a compilation error.    
->> >> 
->> >> Indeed. Thanks for spotting that. The patch below fixes it. It's
->> >> identical to the previous version except for the changes in 
->> >> arch/s390/kernel/machine_kexec_file.c and their description in the
->> >> commit message. I'm also copying some s390 people in this email.  
->> >
->> > to me the s390 part looks good but for one minor nit.  
->> 
->> Thanks for the prompt review!
->> 
->> > In arch/s390/Kconfig KEXEC_VERIFY_SIG currently depends on
->> > SYSTEM_DATA_VERIFICATION. I'd prefer when you update this to the new
->> > MODULE_SIG_FORMAT. It shouldn't make any difference right now, as we don't
->> > use mod_check_sig in our code path. But it could cause problems in the future,
->> > when more code might be shared.  
->> 
->> Makes sense. Here is the updated patch with the Kconfig change.
->> 
->
-> The patch looks good now.
-
-Thanks! Can I add your Reviewed-by?
-
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
-
+The rules really need to be type-dependent; ->sb_set_mnt_opts() has the
+state after the fs has been initialized to work with, but anything trying
+to stop the attempt to set the damn thing up in the first place (as
+current ->sb_mount() would) must be called from the inside of individual
+->get_tree()/->mount() instance (or a helper used by such).
