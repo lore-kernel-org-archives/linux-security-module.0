@@ -2,153 +2,105 @@ Return-Path: <SRS0=ig/x=VU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FAAC76194
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 13:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F53C7618B
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 14:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66023227BF
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 13:45:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3216421738
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 14:06:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730907AbfGWNpy (ORCPT
+        id S1727349AbfGWOGh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Jul 2019 09:45:54 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:59826 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbfGWNpy (ORCPT
+        Tue, 23 Jul 2019 10:06:37 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48498 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbfGWOGh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Jul 2019 09:45:54 -0400
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x6NDjRP2042320;
-        Tue, 23 Jul 2019 22:45:27 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
- Tue, 23 Jul 2019 22:45:27 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x6NDjQiU042312
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 23 Jul 2019 22:45:27 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts
- around
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-security-module@vger.kernel.org
-References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
- <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
- <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
- <20190708131831.GT17978@ZenIV.linux.org.uk> <874l3wo3gq.fsf@xmission.com>
- <20190708180132.GU17978@ZenIV.linux.org.uk>
- <20190708202124.GX17978@ZenIV.linux.org.uk> <87pnmkhxoy.fsf@xmission.com>
- <5802b8b1-f734-1670-f83b-465eda133936@i-love.sakura.ne.jp>
- <1698ec76-f56c-1e65-2f11-318c0ed225bb@i-love.sakura.ne.jp>
- <e75d4a66-cfcf-2ce8-e82a-fdc80f01723d@canonical.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <7eb7378e-2eb8-c1ba-4e1f-ea8f5611f42b@i-love.sakura.ne.jp>
-Date:   Tue, 23 Jul 2019 22:45:29 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 23 Jul 2019 10:06:37 -0400
+Received: from localhost (unknown [IPv6:2a00:5f00:102:0:3aba:f8ff:fe58:9ca1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: smcv)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 9FE1928A8AF;
+        Tue, 23 Jul 2019 15:06:36 +0100 (BST)
+Date:   Tue, 23 Jul 2019 15:06:34 +0100
+From:   Simon McVittie <smcv@collabora.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: Preferred subj= with multiple LSMs
+Message-ID: <20190723140634.GA30188@horizon>
+References: <CAHC9VhTpcnyGg5j3b6Z7Yi0Ob01JETRiBmz1AuLqPWqP9tEAnA@mail.gmail.com>
+ <5ea2a25b-364f-3c30-79c6-cfb18515d7ba@schaufler-ca.com>
+ <CAHC9VhQ9MSh5zCkhMja4r9j0RT952LwKSaG5dR-BqXzXrtEAUw@mail.gmail.com>
+ <e9cf875a-0d0f-a56f-71dd-c22c67bdcc2d@schaufler-ca.com>
+ <CAHC9VhQS9We1TNqRfuR_E-kV4aZddx9euaiv5Gzd5B5AkiDAUQ@mail.gmail.com>
+ <f375c23c-29e6-dc98-d71c-328db91117bc@schaufler-ca.com>
+ <CAHC9VhTf0yYDZBxOtfv2E5=GtrBYonoqr46hyBy7qdNdjVLoVg@mail.gmail.com>
+ <alpine.LRH.2.21.1907230649460.18217@namei.org>
+ <ca22ea45-3f3b-4f79-8d77-7528877b8b36@schaufler-ca.com>
+ <CAHC9VhSbg7BxPSA4NkQV3_1zx6cj3ej25e6fJ2FBWX9fU104rg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <e75d4a66-cfcf-2ce8-e82a-fdc80f01723d@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSbg7BxPSA4NkQV3_1zx6cj3ej25e6fJ2FBWX9fU104rg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Al, will you send this patch to 5.3-rcX via vfs.git tree?
+On Mon, 22 Jul 2019 at 18:30:35 -0400, Paul Moore wrote:
+> On Mon, Jul 22, 2019 at 6:01 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > I suggest that if supporting dbus well is assisted by
+> > making reasonable restrictions on what constitutes a valid LSM
+> > "context" that we have a good reason.
+> 
+> I continue to believe that restrictions on the label format are a bad
+> idea
 
-On 2019/07/23 13:16, John Johansen wrote:
-> On 7/22/19 3:12 AM, Tetsuo Handa wrote:
->> I did not see AppArmor patch for this problem in 5.3-rc1. 
->> John, are you OK with this patch for 5.2-stable and 5.3 ?
->>
-> yes, I have some larger mount rework and clean-up to do and an apparmor
-> patch for this is waiting on that. Looking at the thread I am wondering
-> where my previous reply is, probably lost in a mail client crash, I have
-> had a few of those lately.
-> 
-> Acked-by: John Johansen <john.johansen@canonical.com>
-> 
-> 
->> On 2019/07/09 19:51, Tetsuo Handa wrote:
->>> For now, can we apply this patch for 5.2-stable ?
->>>
->>>
->>> >From dd62fab0592e02580fd5a34222a2d11bfc179f61 Mon Sep 17 00:00:00 2001
->>> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->>> Date: Tue, 9 Jul 2019 19:05:49 +0900
->>> Subject: [PATCH] LSM: Disable move_mount() syscall when TOMOYO or AppArmor is enabled.
->>>
->>> Commit 2db154b3ea8e14b0 ("vfs: syscall: Add move_mount(2) to move mounts
->>> around") introduced security_move_mount() LSM hook, but we missed that
->>> TOMOYO and AppArmor did not implement hooks for checking move_mount(2).
->>> For pathname based access controls like TOMOYO and AppArmor, unchecked
->>> mount manipulation is not acceptable. Therefore, until TOMOYO and AppArmor
->>> implement hooks, in order to avoid unchecked mount manipulation, pretend
->>> as if move_mount(2) is unavailable when either TOMOYO or AppArmor is
->>> enabled.
->>>
->>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->>> Fixes: 2db154b3ea8e14b0 ("vfs: syscall: Add move_mount(2) to move mounts around")
->>> Cc: stable@vger.kernel.org # 5.2
->>> ---
->>>  include/linux/lsm_hooks.h | 6 ++++++
->>>  security/apparmor/lsm.c   | 1 +
->>>  security/tomoyo/tomoyo.c  | 1 +
->>>  3 files changed, 8 insertions(+)
->>>
->>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->>> index 47f58cf..cd411b7 100644
->>> --- a/include/linux/lsm_hooks.h
->>> +++ b/include/linux/lsm_hooks.h
->>> @@ -2142,4 +2142,10 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
->>>  
->>>  extern int lsm_inode_alloc(struct inode *inode);
->>>  
->>> +static inline int no_move_mount(const struct path *from_path,
->>> +				const struct path *to_path)
->>> +{
->>> +	return -ENOSYS;
->>> +}
->>> +
->>>  #endif /* ! __LINUX_LSM_HOOKS_H */
->>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->>> index ec3a928..5cdf63b 100644
->>> --- a/security/apparmor/lsm.c
->>> +++ b/security/apparmor/lsm.c
->>> @@ -1158,6 +1158,7 @@ struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_after_init = {
->>>  	LSM_HOOK_INIT(capable, apparmor_capable),
->>>  
->>>  	LSM_HOOK_INIT(sb_mount, apparmor_sb_mount),
->>> +	LSM_HOOK_INIT(move_mount, no_move_mount),
->>>  	LSM_HOOK_INIT(sb_umount, apparmor_sb_umount),
->>>  	LSM_HOOK_INIT(sb_pivotroot, apparmor_sb_pivotroot),
->>>  
->>> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
->>> index 716c92e..be1b1a1 100644
->>> --- a/security/tomoyo/tomoyo.c
->>> +++ b/security/tomoyo/tomoyo.c
->>> @@ -558,6 +558,7 @@ static void tomoyo_task_free(struct task_struct *task)
->>>  	LSM_HOOK_INIT(path_chown, tomoyo_path_chown),
->>>  	LSM_HOOK_INIT(path_chroot, tomoyo_path_chroot),
->>>  	LSM_HOOK_INIT(sb_mount, tomoyo_sb_mount),
->>> +	LSM_HOOK_INIT(move_mount, no_move_mount),
->>>  	LSM_HOOK_INIT(sb_umount, tomoyo_sb_umount),
->>>  	LSM_HOOK_INIT(sb_pivotroot, tomoyo_sb_pivotroot),
->>>  	LSM_HOOK_INIT(socket_bind, tomoyo_socket_bind),
->>>
->>
-> 
-> 
+Does this include the restriction "the label does not include \0",
+which is an assumption that dbus is already relying on since I checked
+it in the thread around
+<https://marc.info/?l=linux-security-module&m=142323508321029&w=2>?
+Or is that restriction so fundamental that it's considered OK?
 
+(Other user-space tools like ls -Z and ps -Z also rely on that assumption
+by printing security contexts with %s, as far as I know.)
+
+dbus does not require a way to multiplex multiple LSMs' labels in a
+printable text string, so from my point of view, multiplexed labels do
+not necessarily have to be in what Casey calls the "Hideous" format,
+or in any text format at all: anything with documented rules for parsing
+(including the unescaping that readers are expected to apply, if there
+is any) would be fine. Based on the assumption of no "\0", I previously
+suggested a "\0"-delimited encoding similar to /proc/self/cmdline, which
+would not need any escaping/unescaping:
+
+    "apparmor\0" <apparmor label> "\0"
+    "selinux\0" <SELinux label> "\0"
+    ...
+    "\0" (or this could be omitted since it's redundant with the length)
+
+which would be fine (indeed, actually easier than the "Hideous" format)
+from dbus' point of view.
+
+dbus does not strictly need reading security labels for sockets or
+processes to be atomic, either: it would be OK if we can get the complete
+list of LSM labels *somehow*, possibly in O(number of LSMs) rather than
+O(1) syscalls (although I'd prefer O(1)).
+
+However, the getsockopt() interface only lets the kernel return one thing
+per socket option, and I assume the networking maintainers probably don't
+want to have to add SO_PEERAPPARMOR, SO_PEERSELINUX... for each LSM -
+so this part at least would probably be easier as a single blob in some
+text or binary format.
+
+    smcv
