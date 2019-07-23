@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C34C8C76186
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 21:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA26C76186
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 21:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7212253D
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 21:45:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A70622253D
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jul 2019 21:47:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731613AbfGWVpR (ORCPT
+        id S2392177AbfGWVrF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Jul 2019 17:45:17 -0400
-Received: from namei.org ([65.99.196.166]:36738 "EHLO namei.org"
+        Tue, 23 Jul 2019 17:47:05 -0400
+Received: from namei.org ([65.99.196.166]:36756 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729131AbfGWVpR (ORCPT
+        id S2392173AbfGWVrF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Jul 2019 17:45:17 -0400
+        Tue, 23 Jul 2019 17:47:05 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x6NLj7Ko017100;
-        Tue, 23 Jul 2019 21:45:07 GMT
-Date:   Wed, 24 Jul 2019 07:45:07 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x6NLkwlk017263;
+        Tue, 23 Jul 2019 21:46:58 GMT
+Date:   Wed, 24 Jul 2019 07:46:58 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts
- around
-In-Reply-To: <20190708202124.GX17978@ZenIV.linux.org.uk>
-Message-ID: <alpine.LRH.2.21.1907240744080.16974@namei.org>
-References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk> <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk> <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp> <20190708131831.GT17978@ZenIV.linux.org.uk>
- <874l3wo3gq.fsf@xmission.com> <20190708180132.GU17978@ZenIV.linux.org.uk> <20190708202124.GX17978@ZenIV.linux.org.uk>
+To:     Simon McVittie <smcv@collabora.com>
+cc:     Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: Preferred subj= with multiple LSMs
+In-Reply-To: <20190723140634.GA30188@horizon>
+Message-ID: <alpine.LRH.2.21.1907240746280.16974@namei.org>
+References: <CAHC9VhTpcnyGg5j3b6Z7Yi0Ob01JETRiBmz1AuLqPWqP9tEAnA@mail.gmail.com> <5ea2a25b-364f-3c30-79c6-cfb18515d7ba@schaufler-ca.com> <CAHC9VhQ9MSh5zCkhMja4r9j0RT952LwKSaG5dR-BqXzXrtEAUw@mail.gmail.com> <e9cf875a-0d0f-a56f-71dd-c22c67bdcc2d@schaufler-ca.com>
+ <CAHC9VhQS9We1TNqRfuR_E-kV4aZddx9euaiv5Gzd5B5AkiDAUQ@mail.gmail.com> <f375c23c-29e6-dc98-d71c-328db91117bc@schaufler-ca.com> <CAHC9VhTf0yYDZBxOtfv2E5=GtrBYonoqr46hyBy7qdNdjVLoVg@mail.gmail.com> <alpine.LRH.2.21.1907230649460.18217@namei.org>
+ <ca22ea45-3f3b-4f79-8d77-7528877b8b36@schaufler-ca.com> <CAHC9VhSbg7BxPSA4NkQV3_1zx6cj3ej25e6fJ2FBWX9fU104rg@mail.gmail.com> <20190723140634.GA30188@horizon>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -44,30 +46,25 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 8 Jul 2019, Al Viro wrote:
+On Tue, 23 Jul 2019, Simon McVittie wrote:
 
-> On Mon, Jul 08, 2019 at 07:01:32PM +0100, Al Viro wrote:
-> > On Mon, Jul 08, 2019 at 12:12:21PM -0500, Eric W. Biederman wrote:
+> On Mon, 22 Jul 2019 at 18:30:35 -0400, Paul Moore wrote:
+> > On Mon, Jul 22, 2019 at 6:01 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > I suggest that if supporting dbus well is assisted by
+> > > making reasonable restrictions on what constitutes a valid LSM
+> > > "context" that we have a good reason.
 > > 
-> > > Al you do realize that the TOCTOU you are talking about comes the system
-> > > call API.  TOMOYO can only be faulted for not playing in their own
-> > > sandbox and not reaching out and fixing the vfs implementation details.
+> > I continue to believe that restrictions on the label format are a bad
+> > idea
 > 
-> PS: the fact that mount(2) has been overloaded to hell and back (including
-> MS_MOVE, which goes back to v2.5.0.5) predates the introduction of ->sb_mount()
-> and LSM in general (2.5.27).  MS_BIND is 2.4.0-test9pre2.
-> 
-> In all the years since the introduction of ->sb_mount() I've seen zero
-> questions from LSM folks regarding a sane place for those checks.  What I have
-> seen was "we want it immediately upon the syscall entry, let the module
-> figure out what to do" in reply to several times I tried to tell them "folks,
-> it's called in a bad place; you want the checks applied to objects, not to
-> raw string arguments".
-> 
-> As it is, we have easily bypassable checks on mount(2) (by way of ->sb_mount();
-> there are other hooks also in the game for remounts and new mounts).
+> Does this include the restriction "the label does not include \0",
+> which is an assumption that dbus is already relying on since I checked
+> it in the thread around
+> <https://marc.info/?l=linux-security-module&m=142323508321029&w=2>?
+> Or is that restriction so fundamental that it's considered OK?
 
-What are your recommendations for placing these checks?
+Security labels are strings, so this is implied.
+
 
 -- 
 James Morris
