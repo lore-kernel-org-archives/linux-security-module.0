@@ -6,52 +6,50 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3AFC76186
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jul 2019 02:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43084C76186
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jul 2019 02:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF910229ED
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jul 2019 02:42:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16240229F4
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jul 2019 02:48:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563936174;
-	bh=DvKFb//NwiSlJFmS8fTpbjuHVD7LocVfvojzT6o2ZrQ=;
+	s=default; t=1563936480;
+	bh=Xyk3AsVikvm0d2EkCpGJpuwEcB71DFhIMgOaRPVJ7Jg=;
 	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=otcGqQdX53HprE9oAHWvp5ihgAdLK9lVqzmxCxQUk2JdnMslmNx4zeaHDzRgnlzWX
-	 O2+WtLkf1B6wxbbIplCiOixRaumXBm2BkEBb+eou55B+7BRcSw1SA3nCepGqtobSUm
-	 v8LjSpUlg6jLdKXjZog3HN7qBDsC8yFCZUcMcmvs=
+	b=IBekmIa7E4/IWxTwxW3bxfIBc/6L8UC39OvEPU7Cu3PZ9QqFDvcD0HosbpFIF9W7S
+	 eIF83XCY7UG8tGVZxf2pfH8GwXAt3ynDBGGn/SNiLoT3JK1x6P+Uv3MUpA3iXPHkNp
+	 +gJCPRwV37Y9BT24WOW5xY+0NGHONaNq5J04Aa+Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbfGXCmy (ORCPT
+        id S1725861AbfGXCr7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Jul 2019 22:42:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46356 "EHLO mail.kernel.org"
+        Tue, 23 Jul 2019 22:47:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725372AbfGXCmy (ORCPT
+        id S1725827AbfGXCr7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Jul 2019 22:42:54 -0400
+        Tue, 23 Jul 2019 22:47:59 -0400
 Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36D5320828;
-        Wed, 24 Jul 2019 02:42:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24091229F3;
+        Wed, 24 Jul 2019 02:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563936173;
-        bh=DvKFb//NwiSlJFmS8fTpbjuHVD7LocVfvojzT6o2ZrQ=;
+        s=default; t=1563936478;
+        bh=Xyk3AsVikvm0d2EkCpGJpuwEcB71DFhIMgOaRPVJ7Jg=;
         h=Date:From:To:Cc:Subject:From;
-        b=kZhYGzDDFxIUXDjBO6Kcgm7wuSpD2a89QvtDZHfqNAWznYmigmUn8/tMr1UtRSbZV
-         hF2mGfK73DHaILklKkUqD6zDzM8bfnG0qTMSGRbthjCbBHGJoExuH8H0UkA0jOQx19
-         DFbidLtsnYEVFGwb8PU2OdOPDFZmIQ5Mb94dkUR0=
-Date:   Tue, 23 Jul 2019 19:42:51 -0700
+        b=VI2yePW3xvp/jq/8fiO+yr6Y95RanNjqp43S+XbBSPOFBmO0X5oP1w/WCL6nwaDi1
+         xfPWacDUn8H0eF1jEYyJhnx/lhGqV410J9ATwkFjTwpCSp+MsX2Uiv85UEvw/oRRz3
+         F7cVo9OHKzR/XpKdYYO0uO00fun72f+W28kYDZo8=
+Date:   Tue, 23 Jul 2019 19:47:56 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-security-module@vger.kernel.org,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>
 Cc:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Reminder: 2 open syzbot bugs in "security/tomoyo" subsystem
-Message-ID: <20190724024251.GF643@sol.localdomain>
+Subject: Reminder: 1 open syzbot bug in "security/smack" subsystem
+Message-ID: <20190724024756.GJ643@sol.localdomain>
 Mail-Followup-To: linux-security-module@vger.kernel.org,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com
@@ -67,58 +65,35 @@ List-ID: <linux-security-module.vger.kernel.org>
 to make it better, or if you want it re-generated with the latest status.]
 
 Of the currently open syzbot reports against the upstream kernel, I've manually
-marked 2 of them as possibly being bugs in the "security/tomoyo" subsystem. 
-I've listed these reports below, sorted by an algorithm that tries to list first
-the reports most likely to be still valid, important, and actionable.
+marked 1 of them as possibly being a bug in the "security/smack" subsystem.
 
-If you believe a bug is no longer valid, please close the syzbot report by
+If you believe this bug is no longer valid, please close the syzbot report by
 sending a '#syz fix', '#syz dup', or '#syz invalid' command in reply to the
 original thread, as explained at https://goo.gl/tpsmEJ#status
 
-If you believe I misattributed a bug to the "security/tomoyo" subsystem, please
-let me know, and if possible forward the report to the correct people or mailing
-list.
+If you believe I misattributed this bug to the "security/smack" subsystem,
+please let me know, and if possible forward the report to the correct people or
+mailing list.
 
-Here are the bugs:
+Here is the bug:
 
 --------------------------------------------------------------------------------
-Title:              KASAN: use-after-free Read in tomoyo_realpath_from_path
-Last occurred:      28 days ago
-Reported:           48 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=73d590010454403d55164cca23bd0565b1eb3b74
-Original thread:    https://lkml.kernel.org/lkml/0000000000004f43fa058a97f4d3@google.com/T/#u
+Title:              possible deadlock in ext4_evict_inode
+Last occurred:      281 days ago
+Reported:           320 days ago
+Branches:           Mainline
+Dashboard link:     https://syzkaller.appspot.com/bug?id=9eda6092f146cb23cb9109f675a2e2cb743ee48b
+Original thread:    https://lkml.kernel.org/lkml/00000000000091615e0575368e33@google.com/T/#u
 
 This bug has a syzkaller reproducer only.
 
-The original thread for this bug has received 7 replies; the last was 31 days
-ago.
+The original thread for this bug received 2 replies; the last was 320 days ago.
 
 If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com
+    Reported-by: syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com
 
 If you send any email or patch for this bug, please consider replying to the
 original thread.  For the git send-email command to use, or tips on how to reply
 if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/0000000000004f43fa058a97f4d3@google.com
-
---------------------------------------------------------------------------------
-Title:              KASAN: invalid-free in tomoyo_realpath_from_path
-Last occurred:      57 days ago
-Reported:           56 days ago
-Branches:           net-next
-Dashboard link:     https://syzkaller.appspot.com/bug?id=e9e5a1d41c3fb5d0f79aeea0e4cd535f160a6702
-Original thread:    https://lkml.kernel.org/lkml/000000000000785e9d0589ec359a@google.com/T/#u
-
-Unfortunately, this bug does not have a reproducer.
-
-The original thread for this bug has received 1 reply, 56 days ago.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+9742b1c6c7aedf18beda@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please consider replying to the
-original thread.  For the git send-email command to use, or tips on how to reply
-if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/000000000000785e9d0589ec359a@google.com
+https://lkml.kernel.org/r/00000000000091615e0575368e33@google.com
 
