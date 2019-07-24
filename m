@@ -2,108 +2,184 @@ Return-Path: <SRS0=855y=VV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0805DC7618B
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jul 2019 05:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19685C7618F
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jul 2019 15:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFD68227BF
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jul 2019 05:00:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563944432;
-	bh=4qlljs09rpgALdvcWFh3jS7Ew6ewa47qANZ0vqx2k0k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TRPnTRMNOPMItJBR6lN2UA8jvRi+UYGrnDqS/h2CseYZsZNapE1x/PJyBobvqYmyo
-	 s320tS3T6C7U1Ik9nn2XuAw+iDVkehU77zKBS52D/E1N4khWBmUMpjMTSOOVWUftEd
-	 fZLvkkZUqqmnrIICME2zSwszzxUR/XJkkFGWNcX0=
+	by mail.kernel.org (Postfix) with ESMTP id F0AC821951
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jul 2019 15:35:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725870AbfGXFAc (ORCPT
+        id S1727795AbfGXPe7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Jul 2019 01:00:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725813AbfGXFAc (ORCPT
+        Wed, 24 Jul 2019 11:34:59 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33098 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726846AbfGXPe7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Jul 2019 01:00:32 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BC3B218DA;
-        Wed, 24 Jul 2019 05:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563944431;
-        bh=4qlljs09rpgALdvcWFh3jS7Ew6ewa47qANZ0vqx2k0k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vT/7OMIxMsGZLbsE7mk3XbCjXZNfqTAAQFz155uSCN0tSLW88cryzqibycjNUaPqc
-         g75Rjum79NYS37ExBD8YwKlYBHD8+6OYf4r176O4HhQt4zE17djBCDVs0bhzI8hBha
-         uYhI5d4ckIdP23nMyOg9s3L6tC1YQREBo5V+AGxU=
-Date:   Tue, 23 Jul 2019 22:00:29 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: Reminder: 2 open syzbot bugs in "security/tomoyo" subsystem
-Message-ID: <20190724050029.GD643@sol.localdomain>
-Mail-Followup-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <20190724024251.GF643@sol.localdomain>
- <7800c28f-bf1c-56cd-c82e-b1ff174ccbc8@i-love.sakura.ne.jp>
- <20190724043450.GZ643@sol.localdomain>
- <737a46de-cfb0-6220-c796-563ffd3ff325@i-love.sakura.ne.jp>
+        Wed, 24 Jul 2019 11:34:59 -0400
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id A977B46866255EF82649;
+        Wed, 24 Jul 2019 16:34:56 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 24 Jul
+ 2019 16:34:48 +0100
+Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Rob Landley <rob@landley.net>, <hpa@zytor.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>
+CC:     Mimi Zohar <zohar@linux.ibm.com>, <viro@zeniv.linux.org.uk>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
+        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
+        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
+        <kamensky@cisco.com>, <arnd@arndb.de>, <james.w.mcmechan@gmail.com>
+References: <20190523121803.21638-1-roberto.sassu@huawei.com>
+ <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
+ <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
+ <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
+ <1561909199.3985.33.camel@linux.ibm.com>
+ <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
+ <1561991485.4067.14.camel@linux.ibm.com>
+ <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
+Message-ID: <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
+Date:   Wed, 24 Jul 2019 17:34:53 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <737a46de-cfb0-6220-c796-563ffd3ff325@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 24, 2019 at 01:54:40PM +0900, Tetsuo Handa wrote:
-> On 2019/07/24 13:34, Eric Biggers wrote:
-> > On Wed, Jul 24, 2019 at 12:18:47PM +0900, Tetsuo Handa wrote:
-> >>> --------------------------------------------------------------------------------
-> >>> Title:              KASAN: invalid-free in tomoyo_realpath_from_path
-> >>> Last occurred:      57 days ago
-> >>> Reported:           56 days ago
-> >>> Branches:           net-next
-> >>> Dashboard link:     https://syzkaller.appspot.com/bug?id=e9e5a1d41c3fb5d0f79aeea0e4cd535f160a6702
-> >>> Original thread:    https://lkml.kernel.org/lkml/000000000000785e9d0589ec359a@google.com/T/#u
-> >>
-> >> This cannot be a TOMOYO's bug. We are waiting for a reproducer but
-> >> no crash occurred since then. Maybe it is time to close as invalid.
-> > 
-> > Maybe.  Did you check for stack buffer overflows in the functions that
-> > tomoyo_realpath_from_path() calls?  Perhaps something is corrupting the 'buf'
-> > variable in the parent's stack frame.
-> > 
+Is there anything I didn't address in this patch set, that is delaying
+the review? I would appreciate if you can give me a feedback, positive
+or negative.
+
+Thanks a lot!
+
+Roberto
+
+
+On 7/15/2019 6:54 PM, Roberto Sassu wrote:
+> Rob, Peter, Arvind, did you have the chance to have a look at this
+> version of the patch set?
 > 
-> What do you mean? If this crash were a stack buffer overflow, this crash
-> should have already occurred again.
+> Thanks
+> 
+> Roberto
+> 
+> 
+> On 7/1/2019 4:31 PM, Mimi Zohar wrote:
+>> On Mon, 2019-07-01 at 16:42 +0300, Roberto Sassu wrote:
+>>> On 6/30/2019 6:39 PM, Mimi Zohar wrote:
+>>>> On Wed, 2019-06-26 at 10:15 +0200, Roberto Sassu wrote:
+>>>>> On 6/3/2019 8:32 PM, Rob Landley wrote:
+>>>>>> On 6/3/19 4:31 AM, Roberto Sassu wrote:
+>>>>>>>> This patch set aims at solving the following use case: appraise 
+>>>>>>>> files from
+>>>>>>>> the initial ram disk. To do that, IMA checks the signature/hash 
+>>>>>>>> from the
+>>>>>>>> security.ima xattr. Unfortunately, this use case cannot be 
+>>>>>>>> implemented
+>>>>>>>> currently, as the CPIO format does not support xattrs.
+>>>>>>>>
+>>>>>>>> This proposal consists in including file metadata as additional 
+>>>>>>>> files named
+>>>>>>>> METADATA!!!, for each file added to the ram disk. The CPIO 
+>>>>>>>> parser in the
+>>>>>>>> kernel recognizes these special files from the file name, and 
+>>>>>>>> calls the
+>>>>>>>> appropriate parser to add metadata to the previously extracted 
+>>>>>>>> file. It has
+>>>>>>>> been proposed to use bit 17:16 of the file mode as a way to 
+>>>>>>>> recognize files
+>>>>>>>> with metadata, but both the kernel and the cpio tool declare the 
+>>>>>>>> file mode
+>>>>>>>> as unsigned short.
+>>>>>>>
+>>>>>>> Any opinion on this patch set?
+>>>>>>>
+>>>>>>> Thanks
+>>>>>>>
+>>>>>>> Roberto
+>>>>>>
+>>>>>> Sorry, I've had the window open since you posted it but haven't 
+>>>>>> gotten around to
+>>>>>> it. I'll try to build it later today.
+>>>>>>
+>>>>>> It does look interesting, and I have no objections to the basic 
+>>>>>> approach. I
+>>>>>> should be able to add support to toybox cpio over a weekend once 
+>>>>>> I've got the
+>>>>>> kernel doing it to test against.
+>>>>>
+>>>>> Ok.
+>>>>>
+>>>>> Let me give some instructions so that people can test this patch set.
+>>>>>
+>>>>> To add xattrs to the ram disk embedded in the kernel it is sufficient
+>>>>> to set CONFIG_INITRAMFS_FILE_METADATA="xattr" and
+>>>>> CONFIG_INITRAMFS_SOURCE="<file with xattr>" in the kernel 
+>>>>> configuration.
+>>>>>
+>>>>> To add xattrs to the external ram disk, it is necessary to patch cpio:
+>>>>>
+>>>>> https://github.com/euleros/cpio/commit/531cabc88e9ecdc3231fad6e4856869baa9a91ef 
+>>>>>
+>>>>> (xattr-v1 branch)
+>>>>>
+>>>>> and dracut:
+>>>>>
+>>>>> https://github.com/euleros/dracut/commit/a2dee56ea80495c2c1871bc73186f7b00dc8bf3b 
+>>>>>
+>>>>> (digest-lists branch)
+>>>>>
+>>>>> The same modification can be done for mkinitramfs (add '-e xattr' 
+>>>>> to the
+>>>>> cpio command line).
+>>>>>
+>>>>> To simplify the test, it would be sufficient to replace only the cpio
+>>>>> binary and the dracut script with the modified versions. For 
+>>>>> dracut, the
+>>>>> patch should be applied to the local dracut (after it has been renamed
+>>>>> to dracut.sh).
+>>>>>
+>>>>> Then, run:
+>>>>>
+>>>>> dracut -e xattr -I <file with xattr> (add -f to overwrite the ram 
+>>>>> disk)
+>>>>>
+>>>>> Xattrs can be seen by stopping the boot process for example by adding
+>>>>> rd.break to the kernel command line.
+>>>>
+>>>> A simple way of testing, without needing any changes other than the
+>>>> kernel patches, is to save the dracut temporary directory by supplying
+>>>> "--keep" on the dracut command line, calling
+>>>> usr/gen_initramfs_list.sh, followed by usr/gen_init_cpio with the "-e
+>>>> xattr" option.
+>>>
+>>> Alternatively, follow the instructions to create the embedded ram disk
+>>> with xattrs, and use the existing external ram disk created with dracut
+>>> to check if xattrs are created.
+>>
+>> True, but this alternative is for those who normally use dracut to
+>> create an initramfs, but don't want to update cpio or dracut.
+>>
+>> Mimi
+>>
 > 
 
-Well not necessarily, it could be very rare.
-
-That being said, it was only seen on net-next and only once; so it could have
-been caused by some broken patch elsewhere in the kernel that was only present
-for a short time.
-
-So if you aren't going to do anything else with this, please just go ahead and
-invalidate it.
-
-> Since the "buf" variable is a local variable, it cannot be shared between
-> two threads. Since "buf" is assigned as
-> 
->   buf = kmalloc(buf_len, GFP_NOFS);
-> 
-> and nobody else is reassigning "buf",
-> 
->   kfree(buf);
-> 
-> can't become an invalid free.
-> 
-
-- Eric
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
