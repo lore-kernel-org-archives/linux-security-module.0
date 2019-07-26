@@ -2,106 +2,122 @@ Return-Path: <SRS0=DyZ0=VX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3127BC76194
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 02:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5ABC76191
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 04:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08E97217D4
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 02:23:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="wbo3cxpR"
+	by mail.kernel.org (Postfix) with ESMTP id 233C822C7E
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 04:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564115849;
+	bh=1nt7q8KxuqRj39ao5XXnNzUnhd9l2e/3yTz4YLjJoXQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jPoATJ9DajhTc6R3JRuplDX2gWZSkp+vG1CKZ/X9FUXzm7b4suRF2T4AYOhAX3sBT
+	 jGG7Njong6tulADB5MoEeQ94bFnZRH52knYgwVMN63O7w9esHld/squn9mH/VrQwzO
+	 42drjaMvRHotbJajzqP6lgEvC1w+sx9/3QDYv9mo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725808AbfGZCXY (ORCPT
+        id S1726435AbfGZEhW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jul 2019 22:23:24 -0400
-Received: from condef-10.nifty.com ([202.248.20.75]:39480 "EHLO
-        condef-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbfGZCXY (ORCPT
+        Fri, 26 Jul 2019 00:37:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43554 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726384AbfGZEhW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jul 2019 22:23:24 -0400
-Received: from conuserg-10.nifty.com ([10.126.8.73])by condef-10.nifty.com with ESMTP id x6Q2Bjtx004780;
-        Fri, 26 Jul 2019 11:11:46 +0900
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x6Q2B03l020523;
-        Fri, 26 Jul 2019 11:11:03 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6Q2B03l020523
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564107064;
-        bh=d0XIimaYVsZuor/Vqvat3vZ1jPTCJjSdyV2UnY7OLcQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wbo3cxpRfJwWVXDE26VHPcZJzvkvNPmdtSZzhaCH/OleeiJo9oSsmQa4nM+LrBxZg
-         jKlgx8BYKcXVSFGrXxyFiG54oKueKUWsFi738OIOmdKo9xua1720j1j7tGlCzXs1hn
-         es9RTXA6gHvxt8YcxXZKtrWV9eEkZuDloj5BsGn5lhFm+kbi0X6kPuj4/9WBIp/S1e
-         Vxe5njb7eGHy+fY+Dg3j0Q0hZILr5jBVah8cU3o4QgRnNhBinAii83DCHbsdEK3+XH
-         Esj0rHgLwTKeY5QU8xV/ltusQxMn6dDjYstdEVeNlljsWUh/O0I7a2+hUuGyWVhGM2
-         ANCgN1FC3r1lQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Dave Howells <dhowells@redhat.com>,
+        Fri, 26 Jul 2019 00:37:22 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36D2422BE8;
+        Fri, 26 Jul 2019 04:37:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564115841;
+        bh=1nt7q8KxuqRj39ao5XXnNzUnhd9l2e/3yTz4YLjJoXQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WVBxM/YV8tvQiY8Qz7TwN9/0ZnDu7VgpBpwwwkwyW7i9HzUhRuKogVAVDOy14013F
+         LGG4C+p4aZZQzL6s0BJAkmDVCj9w5GHvB+9lKBM3O8kJdvvv4gahecherBfmWvKHKK
+         pdn4Heg8oyDdq98B3/8yKc2xXShzOIFt3zFK5cHc=
+Date:   Thu, 25 Jul 2019 21:37:19 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
-        Josh Boyer <jwboyer@fedoraproject.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
         "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH 3/5] integrity: use obj-y for non-modular objects
-Date:   Fri, 26 Jul 2019 11:10:56 +0900
-Message-Id: <20190726021058.4212-4-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190726021058.4212-1-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH 4/5] IMA: use obj-y for non-modular objects
+Message-ID: <20190726043719.GB643@sol.localdomain>
+Mail-Followup-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
 References: <20190726021058.4212-1-yamada.masahiro@socionext.com>
+ <20190726021058.4212-5-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190726021058.4212-5-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-CONFIG_INTEGRITY is a boolean option, so none of these objects is
-linked into a module.
+On Fri, Jul 26, 2019 at 11:10:57AM +0900, Masahiro Yamada wrote:
+> CONFIG_IMA is a boolean option, so none of these objects is linked
+> into a module.
+> 
+> All the objects in this directory are compiled only when CONFIG_IMA=y
+> since this directory is guarded by the parent Makefile:
+> 
+>   obj-$(CONFIG_IMA)                       += ima/
+> 
+> So, there is no point in creating the composite object, ima.o
+> 
+> Flatten the code into the obj-$(CONFIG_...) form.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>  security/integrity/ima/Makefile | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+> index d921dc4f9eb0..5517486c9154 100644
+> --- a/security/integrity/ima/Makefile
+> +++ b/security/integrity/ima/Makefile
+> @@ -4,10 +4,8 @@
+>  # Measurement Architecture(IMA).
+>  #
+>  
+> -obj-$(CONFIG_IMA) += ima.o
+> -
+> -ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+> +obj-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+>  	 ima_policy.o ima_template.o ima_template_lib.o
+> -ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+> -ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+> +obj-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+> +obj-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+>  obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+> -- 
 
-All of the other CONFIG options here depend on CONFIG_INTEGRITY,
-so there is no point in creating the composite object, integirity.o
+This patch changes the kernel command line options
 
-Flatten the code into the obj-$(CONFIG_...) form.
+	ima.ahash_minsize
+	ima.ahash_bufsize
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+to
+	ima_crypto.ahash_minsize
+	ima_crypto.ahash_bufsize
 
- security/integrity/Makefile | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+Intentional?
 
-diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-index 35e6ca773734..53bb1d70e631 100644
---- a/security/integrity/Makefile
-+++ b/security/integrity/Makefile
-@@ -3,16 +3,14 @@
- # Makefile for caching inode integrity data (iint)
- #
- 
--obj-$(CONFIG_INTEGRITY) += integrity.o
--
--integrity-y := iint.o
--integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
--integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
--integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
--integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
--integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
-+obj-$(CONFIG_INTEGRITY) += iint.o
-+obj-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
-+obj-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
-+obj-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
-+obj-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
-+obj-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
- 					platform_certs/load_uefi.o
--integrity-$(CONFIG_LOAD_IPL_KEYS) += platform_certs/load_ipl_s390.o
-+obj-$(CONFIG_LOAD_IPL_KEYS) += platform_certs/load_ipl_s390.o
- 
- obj-$(CONFIG_IMA)			+= ima/
- obj-$(CONFIG_EVM)			+= evm/
--- 
-2.17.1
+Note that these are documented in
+Documentation/admin-guide/kernel-parameters.txt.
 
+- Eric
