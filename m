@@ -7,49 +7,52 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC70C41517
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 02:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C23C76194
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 02:14:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFD4D22C7C
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 02:14:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A307C22C7C
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 02:14:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="MXTzbm4u"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="dUApB1VG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725867AbfGZCOi (ORCPT
+        id S1725942AbfGZCOt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jul 2019 22:14:38 -0400
-Received: from condef-08.nifty.com ([202.248.20.73]:30429 "EHLO
-        condef-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725808AbfGZCOi (ORCPT
+        Thu, 25 Jul 2019 22:14:49 -0400
+Received: from condef-01.nifty.com ([202.248.20.66]:57775 "EHLO
+        condef-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbfGZCOt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jul 2019 22:14:38 -0400
-Received: from conuserg-10.nifty.com ([10.126.8.73])by condef-08.nifty.com with ESMTP id x6Q2Bjtw013844;
-        Fri, 26 Jul 2019 11:11:45 +0900
+        Thu, 25 Jul 2019 22:14:49 -0400
+Received: from conuserg-10.nifty.com ([10.126.8.73])by condef-01.nifty.com with ESMTP id x6Q2BkHP024719;
+        Fri, 26 Jul 2019 11:11:46 +0900
 Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x6Q2B03m020523;
-        Fri, 26 Jul 2019 11:11:04 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6Q2B03m020523
+        by conuserg-10.nifty.com with ESMTP id x6Q2B03j020523;
+        Fri, 26 Jul 2019 11:11:01 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6Q2B03j020523
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564107065;
-        bh=2py97rXQmeBJv0x49nST5dYu797IUCM7mWTUZUS20lY=;
+        s=dec2015msa; t=1564107062;
+        bh=HtcIZbZ1cRNbQwQ8xFJxK6kDpAQ+ysB+8/CuJSWfBmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MXTzbm4uOdkuSdZBWHV2rF+A3QgFM7x2x+mWb3z+COmAhltTh4e67vwYhx6iyiTA6
-         /FEanUpRLEBSYNwyQGaPJ3+cA1R/J8VyXHEmA63HfXDQjgjPS1qURaoACzCHNwuJ3n
-         Q0yRW6ff5zMqvLj+AHdWPTvEyy7gd4h8flSJFV6DyNwwd/viWiL8IEK3Wh5WOBeZ6U
-         Ic/pQxZYWBYTgLB614/VwvRA4VBheSEBj7bFlOkYBP7ZhbEhLf9OC53M5gSKpYelUL
-         /B4C9AdZydWf5TCmq0GKUS+lcVOL4pfVfMVBR9l98AJ2T0oowPWqOfVNzx0+Gwpu4K
-         Emm/8uq34ANBQ==
+        b=dUApB1VGtbZ7YUhYHnmVTvbvV4McLS446urzu4TTIrCx6Q3uzjOXkejckWvxWj0Ny
+         NVy979g1POs6m9GgEH1PVmliV+NSBj2CT5XFuFq4DqXXr0TZGArMAncmaLAO5uOXl6
+         tOoAnXg9snAbHp5BoxQKYV37oYvFCTgTb0PbISJNh7xRO1megtbpTk9cVECvy7jJ/D
+         f6xwBqVY73xZCbjtmlakoN05mP8V4G/tBCqg6qpiRYSQwbCNRY4/drTsYrvrQeLJz7
+         MdYDS8mOf4YiQ91NP+RL1ed6bIiuPQTQ7EVudW5KAysyzD88m7WsQs0JmF/BqkNl17
+         9a1YdDVcwhWKQ==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
 Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Dave Howells <dhowells@redhat.com>,
         James Morris <jmorris@namei.org>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
         "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH 4/5] IMA: use obj-y for non-modular objects
-Date:   Fri, 26 Jul 2019 11:10:57 +0900
-Message-Id: <20190726021058.4212-5-yamada.masahiro@socionext.com>
+Subject: [PATCH 1/5] integrity: remove unneeded, broken attempt to add -fshort-wchar
+Date:   Fri, 26 Jul 2019 11:10:54 +0900
+Message-Id: <20190726021058.4212-2-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190726021058.4212-1-yamada.masahiro@socionext.com>
 References: <20190726021058.4212-1-yamada.masahiro@socionext.com>
@@ -57,42 +60,42 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-CONFIG_IMA is a boolean option, so none of these objects is linked
-into a module.
+I guess commit 15ea0e1e3e18 ("efi: Import certificates from UEFI Secure
+Boot") attempted to add -fshort-wchar for building load_uefi.o, but it
+has never worked as intended.
 
-All the objects in this directory are compiled only when CONFIG_IMA=y
-since this directory is guarded by the parent Makefile:
+load_uefi.o is created in the platform_certs/ sub-directory. If you
+really want to add -fshort-wchar, the correct code is:
 
-  obj-$(CONFIG_IMA)                       += ima/
+  $(obj)/platform_certs/load_uefi.o: KBUILD_CFLAGS += -fshort-wchar
 
-So, there is no point in creating the composite object, ima.o
+or, in a more Kbuild-ish way:
 
-Flatten the code into the obj-$(CONFIG_...) form.
+  CFLAGS_load_uefi.o := -fshort-wchar
+
+But, you do not need to fix it.
+
+Commit 8c97023cf051 ("Kbuild: use -fshort-wchar globally") had already
+added -fshort-wchar globally. This code was unneeded in the first place.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- security/integrity/ima/Makefile | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ security/integrity/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
-index d921dc4f9eb0..5517486c9154 100644
---- a/security/integrity/ima/Makefile
-+++ b/security/integrity/ima/Makefile
-@@ -4,10 +4,8 @@
- # Measurement Architecture(IMA).
- #
+diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+index 19faace69644..b6d6273a4176 100644
+--- a/security/integrity/Makefile
++++ b/security/integrity/Makefile
+@@ -13,7 +13,6 @@ integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyrin
+ integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+ 					platform_certs/load_uefi.o
+ integrity-$(CONFIG_LOAD_IPL_KEYS) += platform_certs/load_ipl_s390.o
+-$(obj)/load_uefi.o: KBUILD_CFLAGS += -fshort-wchar
  
--obj-$(CONFIG_IMA) += ima.o
--
--ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
-+obj-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
- 	 ima_policy.o ima_template.o ima_template_lib.o
--ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
--ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
-+obj-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
-+obj-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
- obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+ subdir-$(CONFIG_IMA)			+= ima
+ obj-$(CONFIG_IMA)			+= ima/
 -- 
 2.17.1
 
