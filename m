@@ -2,122 +2,144 @@ Return-Path: <SRS0=DyZ0=VX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5ABC76191
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 04:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C767C76191
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 07:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 233C822C7E
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 04:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564115849;
-	bh=1nt7q8KxuqRj39ao5XXnNzUnhd9l2e/3yTz4YLjJoXQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jPoATJ9DajhTc6R3JRuplDX2gWZSkp+vG1CKZ/X9FUXzm7b4suRF2T4AYOhAX3sBT
-	 jGG7Njong6tulADB5MoEeQ94bFnZRH52knYgwVMN63O7w9esHld/squn9mH/VrQwzO
-	 42drjaMvRHotbJajzqP6lgEvC1w+sx9/3QDYv9mo=
+	by mail.kernel.org (Postfix) with ESMTP id 24347218B0
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 07:05:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="rvVZeqt6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbfGZEhW (ORCPT
+        id S1725903AbfGZHFW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jul 2019 00:37:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbfGZEhW (ORCPT
+        Fri, 26 Jul 2019 03:05:22 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:65401 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfGZHFW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jul 2019 00:37:22 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36D2422BE8;
-        Fri, 26 Jul 2019 04:37:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564115841;
-        bh=1nt7q8KxuqRj39ao5XXnNzUnhd9l2e/3yTz4YLjJoXQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WVBxM/YV8tvQiY8Qz7TwN9/0ZnDu7VgpBpwwwkwyW7i9HzUhRuKogVAVDOy14013F
-         LGG4C+p4aZZQzL6s0BJAkmDVCj9w5GHvB+9lKBM3O8kJdvvv4gahecherBfmWvKHKK
-         pdn4Heg8oyDdq98B3/8yKc2xXShzOIFt3zFK5cHc=
-Date:   Thu, 25 Jul 2019 21:37:19 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 4/5] IMA: use obj-y for non-modular objects
-Message-ID: <20190726043719.GB643@sol.localdomain>
-Mail-Followup-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20190726021058.4212-1-yamada.masahiro@socionext.com>
- <20190726021058.4212-5-yamada.masahiro@socionext.com>
+        Fri, 26 Jul 2019 03:05:22 -0400
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x6Q752an012469;
+        Fri, 26 Jul 2019 16:05:02 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x6Q752an012469
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564124703;
+        bh=hf3V59I5cEBKminI065xbdxm3L9O5Fl0uGomw+56D08=;
+        h=References:In-Reply-To:From:Date:Subject:To:From;
+        b=rvVZeqt68sq4elNmUHxFKFkzb91btDIX43mcwq2hjNYQxd1TF6kT8UiCP1Jkvisca
+         qBlbKboUt9XCxFhWcWvZak9fMsYLzBtNCL4TQYfsQjoMyTUTB+gTYodqQke8Ft4C/q
+         cpuqt8cylEebo/fSDxr8l3VYIFZvAcXEujVcrr40NBPgWHmqKv6CD8xrikJCK2LcQT
+         lEouJ8kpVN6Q/yYRb3++/X+Tv66azlAJkdRB5QZmYet2tzNq2E3ou959Qnc6fXAFxd
+         I2tsqF+vC59UJH8MkvR34QqGm4UVK4byzhOFjFdYqFKZlliiUghorBAK5oXS6jB+iF
+         LRuIDt29e1Kew==
+X-Nifty-SrcIP: [209.85.217.51]
+Received: by mail-vs1-f51.google.com with SMTP id 190so35434283vsf.9;
+        Fri, 26 Jul 2019 00:05:02 -0700 (PDT)
+X-Gm-Message-State: APjAAAXAHjh1REvDsFlVTSJihdCBQSUapnbpTgES7FxhZC6a6La9ui26
+        qYwerTGGTfu6Qzr6QjdZH8btYIPFkTxFv9v2cnw=
+X-Google-Smtp-Source: APXvYqxICz+MjfLEujejITXMpQhAs6T5RoUN7yEeG79RQzzeORmsaKPiKHGvtyFlhUAyAGr6hXde53fpb62/UEcp97U=
+X-Received: by 2002:a67:f495:: with SMTP id o21mr58544872vsn.54.1564124701676;
+ Fri, 26 Jul 2019 00:05:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190726021058.4212-5-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190726021058.4212-1-yamada.masahiro@socionext.com>
+ <20190726021058.4212-5-yamada.masahiro@socionext.com> <20190726043719.GB643@sol.localdomain>
+In-Reply-To: <20190726043719.GB643@sol.localdomain>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 26 Jul 2019 16:04:25 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARfUkJTfRHHxkL-4nOq6wG+Y9sDbBHZE97UVOdSrA_1CQ@mail.gmail.com>
+Message-ID: <CAK7LNARfUkJTfRHHxkL-4nOq6wG+Y9sDbBHZE97UVOdSrA_1CQ@mail.gmail.com>
+Subject: Re: [PATCH 4/5] IMA: use obj-y for non-modular objects
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 26, 2019 at 11:10:57AM +0900, Masahiro Yamada wrote:
-> CONFIG_IMA is a boolean option, so none of these objects is linked
-> into a module.
-> 
-> All the objects in this directory are compiled only when CONFIG_IMA=y
-> since this directory is guarded by the parent Makefile:
-> 
->   obj-$(CONFIG_IMA)                       += ima/
-> 
-> So, there is no point in creating the composite object, ima.o
-> 
-> Flatten the code into the obj-$(CONFIG_...) form.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  security/integrity/ima/Makefile | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
-> index d921dc4f9eb0..5517486c9154 100644
-> --- a/security/integrity/ima/Makefile
-> +++ b/security/integrity/ima/Makefile
-> @@ -4,10 +4,8 @@
->  # Measurement Architecture(IMA).
->  #
->  
-> -obj-$(CONFIG_IMA) += ima.o
-> -
-> -ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
-> +obj-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
->  	 ima_policy.o ima_template.o ima_template_lib.o
-> -ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
-> -ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
-> +obj-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
-> +obj-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
->  obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
-> -- 
+On Fri, Jul 26, 2019 at 1:37 PM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Fri, Jul 26, 2019 at 11:10:57AM +0900, Masahiro Yamada wrote:
+> > CONFIG_IMA is a boolean option, so none of these objects is linked
+> > into a module.
+> >
+> > All the objects in this directory are compiled only when CONFIG_IMA=y
+> > since this directory is guarded by the parent Makefile:
+> >
+> >   obj-$(CONFIG_IMA)                       += ima/
+> >
+> > So, there is no point in creating the composite object, ima.o
+> >
+> > Flatten the code into the obj-$(CONFIG_...) form.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  security/integrity/ima/Makefile | 8 +++-----
+> >  1 file changed, 3 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+> > index d921dc4f9eb0..5517486c9154 100644
+> > --- a/security/integrity/ima/Makefile
+> > +++ b/security/integrity/ima/Makefile
+> > @@ -4,10 +4,8 @@
+> >  # Measurement Architecture(IMA).
+> >  #
+> >
+> > -obj-$(CONFIG_IMA) += ima.o
+> > -
+> > -ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+> > +obj-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+> >        ima_policy.o ima_template.o ima_template_lib.o
+> > -ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+> > -ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+> > +obj-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+> > +obj-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+> >  obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+> > --
+>
+> This patch changes the kernel command line options
+>
+>         ima.ahash_minsize
+>         ima.ahash_bufsize
+>
+> to
+>         ima_crypto.ahash_minsize
+>         ima_crypto.ahash_bufsize
+>
+> Intentional?
 
-This patch changes the kernel command line options
+No.
+I missed those kernel parameters.
+So, please drop this patch.
 
-	ima.ahash_minsize
-	ima.ahash_bufsize
+I see no problem in 3/5, 5/5, but
+if composite object is preferred for consistency,
+please feel free to drop them as well.
 
-to
-	ima_crypto.ahash_minsize
-	ima_crypto.ahash_bufsize
+Thanks.
 
-Intentional?
 
-Note that these are documented in
-Documentation/admin-guide/kernel-parameters.txt.
 
-- Eric
+
+> Note that these are documented in
+> Documentation/admin-guide/kernel-parameters.txt.
+
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
