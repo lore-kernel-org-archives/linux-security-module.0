@@ -2,144 +2,91 @@ Return-Path: <SRS0=DyZ0=VX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C767C76191
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 07:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B9FC7618B
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 13:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24347218B0
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 07:05:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DC8122ADA
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jul 2019 13:32:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="rvVZeqt6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nONwtblm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725903AbfGZHFW (ORCPT
+        id S1727169AbfGZNcY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jul 2019 03:05:22 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:65401 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfGZHFW (ORCPT
+        Fri, 26 Jul 2019 09:32:24 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46336 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbfGZNcY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jul 2019 03:05:22 -0400
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x6Q752an012469;
-        Fri, 26 Jul 2019 16:05:02 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x6Q752an012469
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564124703;
-        bh=hf3V59I5cEBKminI065xbdxm3L9O5Fl0uGomw+56D08=;
-        h=References:In-Reply-To:From:Date:Subject:To:From;
-        b=rvVZeqt68sq4elNmUHxFKFkzb91btDIX43mcwq2hjNYQxd1TF6kT8UiCP1Jkvisca
-         qBlbKboUt9XCxFhWcWvZak9fMsYLzBtNCL4TQYfsQjoMyTUTB+gTYodqQke8Ft4C/q
-         cpuqt8cylEebo/fSDxr8l3VYIFZvAcXEujVcrr40NBPgWHmqKv6CD8xrikJCK2LcQT
-         lEouJ8kpVN6Q/yYRb3++/X+Tv66azlAJkdRB5QZmYet2tzNq2E3ou959Qnc6fXAFxd
-         I2tsqF+vC59UJH8MkvR34QqGm4UVK4byzhOFjFdYqFKZlliiUghorBAK5oXS6jB+iF
-         LRuIDt29e1Kew==
-X-Nifty-SrcIP: [209.85.217.51]
-Received: by mail-vs1-f51.google.com with SMTP id 190so35434283vsf.9;
-        Fri, 26 Jul 2019 00:05:02 -0700 (PDT)
-X-Gm-Message-State: APjAAAXAHjh1REvDsFlVTSJihdCBQSUapnbpTgES7FxhZC6a6La9ui26
-        qYwerTGGTfu6Qzr6QjdZH8btYIPFkTxFv9v2cnw=
-X-Google-Smtp-Source: APXvYqxICz+MjfLEujejITXMpQhAs6T5RoUN7yEeG79RQzzeORmsaKPiKHGvtyFlhUAyAGr6hXde53fpb62/UEcp97U=
-X-Received: by 2002:a67:f495:: with SMTP id o21mr58544872vsn.54.1564124701676;
- Fri, 26 Jul 2019 00:05:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190726021058.4212-1-yamada.masahiro@socionext.com>
- <20190726021058.4212-5-yamada.masahiro@socionext.com> <20190726043719.GB643@sol.localdomain>
-In-Reply-To: <20190726043719.GB643@sol.localdomain>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 26 Jul 2019 16:04:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARfUkJTfRHHxkL-4nOq6wG+Y9sDbBHZE97UVOdSrA_1CQ@mail.gmail.com>
-Message-ID: <CAK7LNARfUkJTfRHHxkL-4nOq6wG+Y9sDbBHZE97UVOdSrA_1CQ@mail.gmail.com>
-Subject: Re: [PATCH 4/5] IMA: use obj-y for non-modular objects
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 26 Jul 2019 09:32:24 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v24so51595891ljg.13;
+        Fri, 26 Jul 2019 06:32:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Ndf+C19KCI/wn1UnH3ACuvGKYzFyQFlM48xOYxZPmMQ=;
+        b=nONwtblmmefOBB7rTSOrzsqGehJMAqZlbGJK1D55WzblZXsNR2voAR+/DGJvnaKGU3
+         FkeTTsCMgNe/rUL1/MucPE8eY+hKj4RA0kfkNtC9vvFyJ7Ogi62el3L8wT6i7F4cpw6b
+         WmDy8BtnniHWQuHimyJUQgy2Z7g47XilDLUkfBeRxP8OBh16Q1mvDIdn4J/LYSLzBwz5
+         d8BIbjojReTvhOOC7gwXY2SkXECh3A9BoghE4u7rPbANfZHw1QPH6ffDzpz0tIhgN9hP
+         8iLoOMkmfnfWQAf6lSzuqL3YZY1ec66EGBMFnH2XZXbhSjIgXJleTdHLMGgb3GUjBLcj
+         7wPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ndf+C19KCI/wn1UnH3ACuvGKYzFyQFlM48xOYxZPmMQ=;
+        b=HkMVnPc7QJegVojw48L96HMdMzNUuzCJGBPB4iTKEJ13QUcCFzphUfg2R47VOzaBZQ
+         UCWS9BHpePXCeqYJaTu79RWwPaTJMXuUxza0t1pP5VX/nV2tgwBnV2B3/RC8mW/QyLC7
+         4FfOi7xWoXuj32Szf1TwgF2fWmQkEWKvhCBd4DfEDBaLViH5XbJezuVMV68TooHlSRbH
+         2MUhl1YTX2tchgBYHVvX+FDHiPTXPPWXdIM74Jc9WcSAciZNXCmxVZ/rkGrQBA/33Qpm
+         XxJlr84Algdpbi17Pr/I4TLkP+sqPuqbrodyPa8ROb9QCWn/Lz1kgaxh1j2iCYctI5J1
+         1kQA==
+X-Gm-Message-State: APjAAAWoqCb1f1ANIHI+XjD6Bp5gO3pkS+E/qp++Q8/aZf76ssKRfkSu
+        jCq+A0qrJajKUr8B419cfcs=
+X-Google-Smtp-Source: APXvYqzK3S4WmRa2VX9hXCiWLt+XR4QQdZ80aCnuiaJ/VPG3WuwqJ4J8yabqEF47Jy/X8QtTFsQCdQ==
+X-Received: by 2002:a2e:870f:: with SMTP id m15mr49788710lji.223.1564147942130;
+        Fri, 26 Jul 2019 06:32:22 -0700 (PDT)
+Received: from ul001888.eu.tieto.com ([91.198.246.10])
+        by smtp.gmail.com with ESMTPSA id u13sm8369578lfi.4.2019.07.26.06.32.20
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 26 Jul 2019 06:32:20 -0700 (PDT)
+From:   Vasyl Gomonovych <gomonovych@gmail.com>
+To:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com
+Cc:     Vasyl Gomonovych <gomonovych@gmail.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] AppArmor: Remove semicolon
+Date:   Fri, 26 Jul 2019 15:32:10 +0200
+Message-Id: <20190726133210.9084-1-gomonovych@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 26, 2019 at 1:37 PM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Fri, Jul 26, 2019 at 11:10:57AM +0900, Masahiro Yamada wrote:
-> > CONFIG_IMA is a boolean option, so none of these objects is linked
-> > into a module.
-> >
-> > All the objects in this directory are compiled only when CONFIG_IMA=y
-> > since this directory is guarded by the parent Makefile:
-> >
-> >   obj-$(CONFIG_IMA)                       += ima/
-> >
-> > So, there is no point in creating the composite object, ima.o
-> >
-> > Flatten the code into the obj-$(CONFIG_...) form.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> >
-> >  security/integrity/ima/Makefile | 8 +++-----
-> >  1 file changed, 3 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
-> > index d921dc4f9eb0..5517486c9154 100644
-> > --- a/security/integrity/ima/Makefile
-> > +++ b/security/integrity/ima/Makefile
-> > @@ -4,10 +4,8 @@
-> >  # Measurement Architecture(IMA).
-> >  #
-> >
-> > -obj-$(CONFIG_IMA) += ima.o
-> > -
-> > -ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
-> > +obj-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
-> >        ima_policy.o ima_template.o ima_template_lib.o
-> > -ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
-> > -ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
-> > +obj-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
-> > +obj-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
-> >  obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
-> > --
->
-> This patch changes the kernel command line options
->
->         ima.ahash_minsize
->         ima.ahash_bufsize
->
-> to
->         ima_crypto.ahash_minsize
->         ima_crypto.ahash_bufsize
->
-> Intentional?
+Remove unneeded semicolon
 
-No.
-I missed those kernel parameters.
-So, please drop this patch.
+Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
+---
+ security/apparmor/path.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I see no problem in 3/5, 5/5, but
-if composite object is preferred for consistency,
-please feel free to drop them as well.
-
-Thanks.
-
-
-
-
-> Note that these are documented in
-> Documentation/admin-guide/kernel-parameters.txt.
-
-
-
-
-
-
+diff --git a/security/apparmor/path.c b/security/apparmor/path.c
+index c6da542de27b..b02dfdbff7cd 100644
+--- a/security/apparmor/path.c
++++ b/security/apparmor/path.c
+@@ -142,7 +142,7 @@ static int d_namespace_path(const struct path *path, char *buf, char **name,
+ 			error = PTR_ERR(res);
+ 			*name = buf;
+ 			goto out;
+-		};
++		}
+ 	} else if (!our_mnt(path->mnt))
+ 		connected = 0;
+ 
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
