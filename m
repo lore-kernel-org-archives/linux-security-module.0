@@ -2,104 +2,89 @@ Return-Path: <SRS0=RvC6=V2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B092FC433FF
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jul 2019 21:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D5FC76186
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jul 2019 21:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A642067D
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jul 2019 21:40:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3A962067D
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jul 2019 21:47:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QIc3w7Q6"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JX9vGziM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728927AbfG2Vkx (ORCPT
+        id S2388067AbfG2VrQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Jul 2019 17:40:53 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44039 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727681AbfG2Vkx (ORCPT
+        Mon, 29 Jul 2019 17:47:16 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46540 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728381AbfG2VrQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:40:53 -0400
-Received: by mail-pf1-f195.google.com with SMTP id t16so28644800pfe.11
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2019 14:40:53 -0700 (PDT)
+        Mon, 29 Jul 2019 17:47:16 -0400
+Received: by mail-io1-f65.google.com with SMTP id i10so10103147iol.13
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2019 14:47:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=xs2xbArNjlAd/eCn2GAtVz826B03NkeaFaeSWdY/6K0=;
-        b=QIc3w7Q6SEfOE4onxDK4GcywpIvsLDTjmZaELSQ9J/hdWVYisAcYM0OxxIg6wqZO/X
-         OCgmhOsNTuxrU3jYBv16oPuN1bPWShF0wz/Mgg4IdW0vs084SrpszRfMQRl1sMop/jSI
-         jfJ2agJ9lKHYmlJGzLztJF7l2h/ob2ejI/BrY=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j10iEndEcfl7GFmx0FBUfHkT/DIF6Lz0Je3WuUXspf4=;
+        b=JX9vGziMLV0bTzWdDEXuN2wORxj61dz7dEOXT8Y9SKYKtqwU+xD6ErVpMeRWiEzuI9
+         98yyj3qE8qXIZZMfgOvU/ScnBtJ2CDT7V5DT0pjTOgpoyLSl95jt69WDW0iNODp2cmw9
+         oF09HKKjSA6zgwa6539xg9dw/7oNc3Q6Debx/rjZCXOUFxjL/1CUBhy5gRGjz0EDELiY
+         9DcD3CI1ee7sVs5VlAd44Xw0XZ16251YPtko3DyygrdJoTjMekRrdWrFZ1Nb2c4cLzEf
+         KpxJZbxyRTy9MEYf/AHlJ0Sd8kVCJIC6j3PJvb19FoT65p1ROCUKwFKE9pqk9jvoKbBq
+         E1eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xs2xbArNjlAd/eCn2GAtVz826B03NkeaFaeSWdY/6K0=;
-        b=EfEWNzZkiyzqUoJtUxlRItPD5nhv0k8jsx6Bp9G5UKS8Cn6knnsrwOzoGIjOzDt8KO
-         zTuWIJCpmbfp3t1E3RVZFr81QCpoznWLbO834k3lhnIb/NHBPwnL2N8CrIinGndF/dfS
-         w33v6Rde67sXnfC6dQxTJR6fEeun1LLoBx9jCeNZDeGkJj3536bo1KJhUcX7KBE0mew2
-         4BWKRhqFYfybqv0qGXohoEIWLrvpKP70ZtOUBSV6vi5aQgZyO2CoSFQzM1crnt40Vlnp
-         fvE57ooqXGf84G/op9AsMvtcV8bTc4WYFFt+ajmBCnhD3tERyEUwK35gZT2cznJzOt1M
-         2BvQ==
-X-Gm-Message-State: APjAAAVwR5JJP129CrDCu6dLp4h+kIiJVnQdZ28Em6M/172Yev4KuZl5
-        9JC2P9jc2UUjK253qGDbmtd+gw==
-X-Google-Smtp-Source: APXvYqzKH6RZBmU+KlDCxrdOG129tmmQGUFimWAI+UZI9PckG1+NvlIos+RuEhAzbm9fb9+rMII3tQ==
-X-Received: by 2002:a17:90a:d151:: with SMTP id t17mr113021055pjw.60.1564436453046;
-        Mon, 29 Jul 2019 14:40:53 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id s3sm23431878pgq.17.2019.07.29.14.40.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jul 2019 14:40:52 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 14:40:51 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, sds@tycho.nsa.gov
-Subject: Re: [PATCH 26/27] LSM: Add /proc attr entry for full LSM context
-Message-ID: <201907291440.B073758@keescook>
-References: <20190726233923.2570-1-casey@schaufler-ca.com>
- <20190726233923.2570-27-casey@schaufler-ca.com>
- <201907291018.CD249AD02@keescook>
- <ea34ed4b-1f34-d896-7c1b-a7a5a304594c@schaufler-ca.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j10iEndEcfl7GFmx0FBUfHkT/DIF6Lz0Je3WuUXspf4=;
+        b=YKOf/bIEh1ozcuZHoPGgDjPNPAaqgwA41h8Ruoy5zD1PswluSgqsmxw7PAT6uRRnV6
+         G8wA80n8OUNxTfqF4m9WzsQ6XPYGPjZI+Jqgac72oUmheLSC+nrSIyU6Z3MKCBvw5m2j
+         8W2ggRFHM+FLlSUtOU+4lzD9Yj9ST7HXYhxH61cBSMZCnDNu8stgcs5SLJ97UlFjri7g
+         Vt+My6nTO71TCjM0qpNEmc4/NMh6jdkDjJbbCVIOJLCDgebfP9BzbKLvIwiTjBkwsXIB
+         7tRBE0iTpjVX2A2zfuNn6jEFHUlZrDAGWOSKKIF+3lacCBRQUXE2Yk87J6FvvcItuijO
+         QrVg==
+X-Gm-Message-State: APjAAAXbCwjfguwLs6M8Lj5SgTrgQSITqc8OYpfM0rBhYkdvEFTd7lTg
+        yLpcAYBnNxwVLjOTo8M3gPg/20nhrr3ovkT4aV8rZwtII/g=
+X-Google-Smtp-Source: APXvYqzm3EZUnnvVpNns0C5pcvCXqaLAcYBywGrdM9ZfVRZDiZMOV9R7ercGbfHFqw5oA66zZL1UqInfPCyK99Izl1k=
+X-Received: by 2002:a5e:8c11:: with SMTP id n17mr35080222ioj.64.1564436834661;
+ Mon, 29 Jul 2019 14:47:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea34ed4b-1f34-d896-7c1b-a7a5a304594c@schaufler-ca.com>
+References: <20190718194415.108476-1-matthewgarrett@google.com> <20190718194415.108476-24-matthewgarrett@google.com>
+In-Reply-To: <20190718194415.108476-24-matthewgarrett@google.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Mon, 29 Jul 2019 14:47:03 -0700
+Message-ID: <CACdnJuvFBQCpR4hk1YBQ2HSxJcweB0_XBqYZxn=LpG6NFU7S6w@mail.gmail.com>
+Subject: Re: [PATCH V36 23/29] bpf: Restrict bpf when kernel lockdown is in
+ confidentiality mode
+To:     James Morris <jmorris@namei.org>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Chun-Yi Lee <jlee@suse.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 29, 2019 at 12:22:37PM -0700, Casey Schaufler wrote:
-> On 7/29/2019 10:19 AM, Kees Cook wrote:
-> > On Fri, Jul 26, 2019 at 04:39:22PM -0700, Casey Schaufler wrote:
-> >> Add an entry /proc/.../attr/context which displays the full
-> >> process security "context" in compound format:'
-> >> 	lsm1\0value\0lsm2\0value\0...
-> >> This entry is not writable.
-> > As this is a new API, would it make sense to make this a bit more
-> > human readable (i.e. newlines not %NUL)?
-> 
-> With the far reaching discussion about what format would be
-> acceptable in mind I went with Simon McVittie's suggestion.
-> Also note that AppArmor includes newline in attr/current,
-> and this way we can preserve the existing value.
-> It's compatible with /proc/.../cmdline and easily keesized:
-> 
-> 	cat /proc/self/attr/context | tr '\0' '\n'
+On Thu, Jul 18, 2019 at 12:45 PM Matthew Garrett
+<matthewgarrett@google.com> wrote:
+> bpf_read() and bpf_read_str() could potentially be abused to (eg) allow
+> private keys in kernel memory to be leaked. Disable them if the kernel
+> has been locked down in confidentiality mode.
+>
+> Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> cc: netdev@vger.kernel.org
+> cc: Chun-Yi Lee <jlee@suse.com>
+> cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
 
-Okay, cool. I suspected it must be the result of so many bike sheds but
-I couldn't quite find those memories.
-
-> >  (And if not, please justify the
-> > reasoning in the commit log).
-> 
-> Good idea.
-
-Thanks! It'll help my poor brain. :)
-
--- 
-Kees Cook
+Any further feedback on this?
