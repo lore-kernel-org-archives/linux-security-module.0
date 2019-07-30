@@ -1,90 +1,90 @@
-Return-Path: <SRS0=RvC6=V2=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=NLeN=V3=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A5DC76186
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jul 2019 21:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236E9C7618E
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jul 2019 03:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 740222070D
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jul 2019 21:48:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l/RL7Y2K"
+	by mail.kernel.org (Postfix) with ESMTP id E723620882
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jul 2019 03:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564458600;
+	bh=37PshnNHyTKSRD1vHLM/mJAILgIXCFD7cY7PYklafH4=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=dHwDYqfWAeyBerKTCnzQSZc03qhhRKxgOYeXlZ+maG1BPRePwAQl7hFl/EdRomtOe
+	 eIrbI6hGf1WYzs2ntNmO9CaRNIuEGQQuCclqDvko1wM3edvpZz7fEl1xjULDCKUz/y
+	 ZDcP11W1K8IXTioFhmKOPq9KZsrdkyTfZV3AihLA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730190AbfG2VsJ (ORCPT
+        id S1728067AbfG3Dt7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Jul 2019 17:48:09 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38247 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728236AbfG2VsJ (ORCPT
+        Mon, 29 Jul 2019 23:49:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727993AbfG3Dt7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:48:09 -0400
-Received: by mail-io1-f67.google.com with SMTP id j6so3661921ioa.5
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2019 14:48:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=piQh2aqA30RCLiw+cIf1d6IHR82wSEf3qDisOX1wwys=;
-        b=l/RL7Y2Kyz2I8kqXJkJw/9E/ltkRzEbVMXQD38G56U8PUZAmwtnkKyk1cYdnW4RkE/
-         BRx+ImBhz8Kd0e72PSmi6DzIFPzZz64kGMHUiXYdecWyOMNgVaC54BmGAJFKRoNTuut8
-         PZd4JDjulvHHx4sqTgtjDyqilDAzhxkxGuPCGpSJoxbcIGu7fdFKOObX4H8TdzQlWyCM
-         G23CxF+/n1MtU/bkyCuBe7R2qSG66UQrAnRhW82VgKpIhP1sJHF6XJdewBfIXFoJb6tR
-         EDp+Xzcfwt3MI6laa6/wlpnuRJwSVMA/8v0UeVucDpQ8IOX0/R1elEKP78IJ2z5WBQ0k
-         ESlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=piQh2aqA30RCLiw+cIf1d6IHR82wSEf3qDisOX1wwys=;
-        b=akWeK7ravlQacAcjKQJuMv6lmYjzKmYxkXvj5rrHRQvELJ8PxgYFVzAvfStw6+mqdM
-         zVQvhAztzvc0OespHsxb4vRmqSb1O4DGtrYAtHJoImhFCciu546tSyQh4ECm/kr0dmEl
-         2QRe+WO1vWeh8QDSwbQXgT0KTN8+3DjiU/t6lmOtOhqjAXim8hmde0kPxQVMcxlDppmZ
-         ozd/zuPwt2HgaJnBoD473SSJsWca8PmhClVFwlg2YZo42jCRO85ppqdUmqJnOY2IFfLi
-         ZNVMEyVa43TIlv3CPakpb/L3qAxI96+wpQaF2BaDilkfYYKLhZWMA31i+YpNiczYR8vz
-         e3jQ==
-X-Gm-Message-State: APjAAAVXIXaG6QWLfr49LnvIEI5VncRaMuOn9c65G/1oBJjJl5JNQ9Lc
-        5IVtstWX0f3KFj/qeRcyAZo3+m0XRCdAl3u9laTjZQ==
-X-Google-Smtp-Source: APXvYqxS/upLfLcv1Opnwp9lYxlnoZ2TkKlbL41OpS0AiGsoLM5gWBwfxkyYcoAUnk0nANWmnZfxFJngb/NBSwuBQkk=
-X-Received: by 2002:a5e:9404:: with SMTP id q4mr42722436ioj.46.1564436887846;
- Mon, 29 Jul 2019 14:48:07 -0700 (PDT)
+        Mon, 29 Jul 2019 23:49:59 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67F442087F;
+        Tue, 30 Jul 2019 03:49:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564458598;
+        bh=37PshnNHyTKSRD1vHLM/mJAILgIXCFD7cY7PYklafH4=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=BReYm/C3ktVX5tD52hjP5uATbZkaxNIsgtF8PEyxF2W4G9kZVs0hq5YsqX0Ly4UUH
+         y7FAN4MpQgm1vbNxeNaS2aP2/RrdawE0C8+W3njVDnWC61FvSbJUagMZ+XCmucrWRS
+         fT8HOlKnxh8QhWaFepCPOwYUfaHYOOQx1AA4oKLM=
+Date:   Mon, 29 Jul 2019 20:49:56 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] KEYS: Replace uid/gid/perm permissions checking with
+ an ACL
+Message-ID: <20190730034956.GB1966@sol.localdomain>
+Mail-Followup-To: David Howells <dhowells@redhat.com>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <155862710003.24863.11807972177275927370.stgit@warthog.procyon.org.uk>
+ <155862710731.24863.14013725058582750710.stgit@warthog.procyon.org.uk>
+ <20190710011559.GA7973@sol.localdomain>
 MIME-Version: 1.0
-References: <20190718194415.108476-1-matthewgarrett@google.com> <20190718194415.108476-20-matthewgarrett@google.com>
-In-Reply-To: <20190718194415.108476-20-matthewgarrett@google.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Mon, 29 Jul 2019 14:47:56 -0700
-Message-ID: <CACdnJute8aakro+Cb7oNrxgCiZTYj2BOt2WMc1dYF-xktxBucQ@mail.gmail.com>
-Subject: Re: [PATCH V36 19/29] Lock down module params that specify hardware
- parameters (eg. ioport)
-To:     James Morris <jmorris@namei.org>
-Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Kees Cook <keescook@chromium.org>, Jessica Yu <jeyu@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710011559.GA7973@sol.localdomain>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 18, 2019 at 12:45 PM Matthew Garrett
-<matthewgarrett@google.com> wrote:
->
-> From: David Howells <dhowells@redhat.com>
->
-> Provided an annotation for module parameters that specify hardware
-> parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
-> dma buffers and other types).
->
-> Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Cc: Jessica Yu <jeyu@kernel.org>
+Hi David,
 
-Jessica, any feedback on this?
+On Tue, Jul 09, 2019 at 06:16:01PM -0700, Eric Biggers wrote:
+> On Thu, May 23, 2019 at 04:58:27PM +0100, David Howells wrote:
+> > Replace the uid/gid/perm permissions checking on a key with an ACL to allow
+> > the SETATTR and SEARCH permissions to be split.  This will also allow a
+> > greater range of subjects to represented.
+> > 
+> 
+> This patch broke 'keyctl new_session', and hence broke all the fscrypt tests:
+> 
+> $ keyctl new_session
+> keyctl_session_to_parent: Permission denied
+> 
+> Output of 'keyctl show' is
+> 
+> $ keyctl show
+> Session Keyring
+>  605894913 --alswrv      0     0  keyring: _ses
+>  189223103 ----s-rv      0     0   \_ user: invocation_id
+> 
+> - Eric
+
+This bug is still present in next-20190729.
+
+- Eric
