@@ -2,201 +2,199 @@ Return-Path: <SRS0=NLeN=V3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1654C433FF
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jul 2019 18:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B6DC0650F
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jul 2019 20:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7375A208E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jul 2019 18:47:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tNsT5Uyt"
+	by mail.kernel.org (Postfix) with ESMTP id 88CA12089E
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jul 2019 20:24:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564518255;
+	bh=Kt8xMfLEUIW3Y3BQbWr7auw3iHGpmo7WxKDcHNpHrJY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=qKaEqYjV6Mat1654xvDmiqxOygbqV6zwEbtiByQoDazfJ7ZHgX0Q7xb9Lx17LBNqu
+	 wD8jxuNBBTy5Oc7fjkmsAnP6OQtYOzhpcOdGQRvxYHBpFIW7Vpn9xG9Vis2hS1zJM4
+	 QnIGqSZA9MmU4wZD4/IfygCOLFchpGMm+wGKbLuQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387964AbfG3Srl (ORCPT
+        id S1728209AbfG3UYO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Jul 2019 14:47:41 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:42119 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728694AbfG3Srl (ORCPT
+        Tue, 30 Jul 2019 16:24:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35378 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727660AbfG3UYO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:47:41 -0400
-Received: by mail-pl1-f201.google.com with SMTP id e95so35845774plb.9
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2019 11:47:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=0pXH41oDr5n5A5Nqy3r8yf+zNgEME8ywg2NvLGu1usI=;
-        b=tNsT5UytdZLcCZd0C7EgSOYaigaGXMUScGxN0gDTyqpWT45H44j3LfHzphHUobVkL4
-         RcU4adigiMxAZXh10qbjMVLNUNASoXCRecfBxQjos3FUv/gFdXjcXhXEW7yiQpQLqsfr
-         vxHaX0032jt+/tJfcIUYbo/dXfj6tap4ospXabSre+S9+fKsoIZbo2Tm3lQd8gFD8hyu
-         HHX/3zfc7cqkDrDXl8MY9V92WDfj5h7cqWs2N9DAQbGd5LXyANGDL6jfMea7rwIx5fcu
-         FGz0vLPdVrtVHJfyAMNwQRq47+Bf5WOLQ1ifCHhnus6oqnmKwUdwaN2klkSY1cIBnpSX
-         De1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=0pXH41oDr5n5A5Nqy3r8yf+zNgEME8ywg2NvLGu1usI=;
-        b=gn2F6qKRJKmlGY3vQxye3+/73LRutq0qf+c9E3GtW64oJlE3xCpv6dW2d+TfoDTLiw
-         3k4RsES53TD6ffrIWBmgFL2bLsf6NnP33lOvqayYKHgQJ4rwubiI5TxiSKymfCAfg9Y4
-         +wsUyA0a/9pXcUhcreDMCvC3T1umIxvJRk+5sRHFmcNuRCjA3DejtyQps+rMl6TAfdS+
-         b3jei7daheiUnBrYt95DZ1487M0mhrczH9Evqg1g4B4M6YOz/WWb86nH7TUflGO3zjtJ
-         R30Xu7hmXR6x46eQh1bn7yOuD22mO4nezeCXj8HNzGuT4AF/KlC6ZiIaiCUh5eGjIGx3
-         VXsA==
-X-Gm-Message-State: APjAAAXWWOFgG4Y6j06Bf0mjBifsWtLIv2WdvVzW6Bq1VYX3DCE2xSov
-        rMTpyW1uOII/QOJyrX5VgyVPnNuwe3QkEeBZSzRDnw==
-X-Google-Smtp-Source: APXvYqzYjVpc+zHP0Gem9lR+d9nkJoivQJ2232f3VwG1MjXQ5j9+3YlYMKtT9Yp3lBjH8G56CWKxH8Rabxg8b3nRG2Vj6A==
-X-Received: by 2002:a63:d941:: with SMTP id e1mr76211750pgj.75.1564512459798;
- Tue, 30 Jul 2019 11:47:39 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 11:47:34 -0700
-In-Reply-To: <20190724222354.7cbd6c6e@oasis.local.home>
-Message-Id: <20190730184734.202386-1-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190724222354.7cbd6c6e@oasis.local.home>
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-Subject: [PATCH] tracefs: Restrict tracefs when the kernel is locked down
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Matthew Garrett <mjg59@google.com>
+        Tue, 30 Jul 2019 16:24:14 -0400
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23B61216C8
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2019 20:24:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564518253;
+        bh=Kt8xMfLEUIW3Y3BQbWr7auw3iHGpmo7WxKDcHNpHrJY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dg00idpt+nWyhqrCK+U2jSJ3sgEYeNS6kxfx6cIOY9laRHislxCGjaH1t797jpuTN
+         sGqGFZ6UDDXBtBA8yTn8ZU4/UL97slbOmXPw5DL1vlUGJvdEOBhdRv5bRTES4/henZ
+         J3pSln7N/BQjPbfsS7CEa6wQ1ApaNLU93HGJc8/0=
+Received: by mail-wr1-f44.google.com with SMTP id n9so67243300wru.0
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2019 13:24:13 -0700 (PDT)
+X-Gm-Message-State: APjAAAWylR7s97JJTxvi4CiCtPk0D7N0IExT0DAee3P/ldUgf4Ff2kVi
+        JBtNr8i/EtJCOodIkFqP3rCsM2VecPKYRp2C2yzbLQ==
+X-Google-Smtp-Source: APXvYqzZ/BahTMAZqJKvw3CKJJrYc0VH2HO2IKCQHMz+jcl+qF5qZMCRFU61mq2qYTzjNeslp+cWZBSZeISWQwA0qnU=
+X-Received: by 2002:adf:f28a:: with SMTP id k10mr52015339wro.343.1564518251602;
+ Tue, 30 Jul 2019 13:24:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190627201923.2589391-1-songliubraving@fb.com>
+ <20190627201923.2589391-2-songliubraving@fb.com> <21894f45-70d8-dfca-8c02-044f776c5e05@kernel.org>
+ <3C595328-3ABE-4421-9772-8D41094A4F57@fb.com> <CALCETrWBnH4Q43POU8cQ7YMjb9LioK28FDEQf7aHZbdf1eBZWg@mail.gmail.com>
+ <0DE7F23E-9CD2-4F03-82B5-835506B59056@fb.com> <CALCETrWBWbNFJvsTCeUchu3BZJ3SH3dvtXLUB2EhnPrzFfsLNA@mail.gmail.com>
+ <201907021115.DCD56BBABB@keescook> <CALCETrXTta26CTtEDnzvtd03-WOGdXcnsAogP8JjLkcj4-mHvg@mail.gmail.com>
+ <4A7A225A-6C23-4C0F-9A95-7C6C56B281ED@fb.com> <CALCETrX2bMnwC6_t4b_G-hzJSfMPrkK4YKs5ebcecv2LJ0rt3w@mail.gmail.com>
+ <514D5453-0AEE-420F-AEB6-3F4F58C62E7E@fb.com> <1DE886F3-3982-45DE-B545-67AD6A4871AB@amacapital.net>
+ <7F51F8B8-CF4C-4D82-AAE1-F0F28951DB7F@fb.com> <77354A95-4107-41A7-8936-D144F01C3CA4@fb.com>
+ <369476A8-4CE1-43DA-9239-06437C0384C7@fb.com>
+In-Reply-To: <369476A8-4CE1-43DA-9239-06437C0384C7@fb.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 30 Jul 2019 13:24:00 -0700
+X-Gmail-Original-Message-ID: <CALCETrUpVMrk7aaf0trfg9AfZ4fy279uJgZH7V+gZzjFw=hUxA@mail.gmail.com>
+Message-ID: <CALCETrUpVMrk7aaf0trfg9AfZ4fy279uJgZH7V+gZzjFw=hUxA@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Tracefs may release more information about the kernel than desirable, so
-restrict it when the kernel is locked down in confidentiality mode by
-preventing open().
+On Mon, Jul 29, 2019 at 10:07 PM Song Liu <songliubraving@fb.com> wrote:
+>
+> Hi Andy,
+>
+> > On Jul 27, 2019, at 11:20 AM, Song Liu <songliubraving@fb.com> wrote:
+> >
+> > Hi Andy,
+> >
+> >>>>>
+> >>>>
+> >>>> Well, yes. sys_bpf() is pretty powerful.
+> >>>>
+> >>>> The goal of /dev/bpf is to enable special users to call sys_bpf(). I=
+n
+> >>>> the meanwhile, such users should not take down the whole system easi=
+ly
+> >>>> by accident, e.g., with rm -rf /.
+> >>>
+> >>> That=E2=80=99s easy, though =E2=80=94 bpftool could learn to read /et=
+c/bpfusers before allowing ruid !=3D 0.
+> >>
+> >> This is a great idea! fscaps + /etc/bpfusers should do the trick.
+> >
+> > After some discussions and more thinking on this, I have some concerns
+> > with the user space only approach.
+> >
+> > IIUC, your proposal for user space only approach is like:
+> >
+> > 1. bpftool (and other tools) check /etc/bpfusers and only do
+> >   setuid for allowed users:
+> >
+> >       int main()
+> >       {
+> >               if (/* uid in /etc/bpfusers */)
+> >                       setuid(0);
+> >               sys_bpf(...);
+> >       }
+> >
+> > 2. bpftool (and other tools) is installed with CAP_SETUID:
+> >
+> >       setcap cap_setuid=3De+p /bin/bpftool
+> >
+> > 3. sys admin maintains proper /etc/bpfusers.
+> >
+> > This approach is not ideal, because we need to trust the tool to give
+> > it CAP_SETUID. A hacked tool could easily bypass /etc/bpfusers check
+> > or use other root only sys calls after setuid(0).
+> >
+>
+> I would like more comments on this.
+>
+> Currently, bpf permission is more or less "root or nothing", which we
+> would like to change.
+>
+> The short term goal is to separate bpf from root, in other words, it is
+> "all or nothing". Special user space utilities, such as systemd, would
+> benefit from this. Once this is implemented, systemd can call sys_bpf()
+> when it is not running as root.
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
----
+As generally nasty as Linux capabilities are, this sounds like a good
+use for CAP_BPF_ADMIN.
 
-Added the iput()
+But what do you have in mind?  Isn't non-root systemd mostly just the
+user systemd session?  That should *not* have bpf() privileges until
+bpf() is improved such that you can't use it to compromise the system.
 
- fs/tracefs/inode.c           | 40 +++++++++++++++++++++++++++++++++++-
- include/linux/security.h     |  1 +
- security/lockdown/lockdown.c |  1 +
- 3 files changed, 41 insertions(+), 1 deletion(-)
+>
+> In longer term, it may be useful to provide finer grain permission of
+> sys_bpf(). For example, sys_bpf() should be aware of containers; and
+> user may only have access to certain bpf maps. Let's call this
+> "fine grain" capability.
+>
+>
+> Since we are seeing new use cases every year, we will need many
+> iterations to implement the fine grain permission. I think we need an
+> API that is flexible enough to cover different types of permission
+> control.
+>
+> For example, bpf_with_cap() can be flexible:
+>
+>         bpf_with_cap(cmd, attr, size, perm_fd);
+>
+> We can get different types of permission via different combinations of
+> arguments:
+>
+>     A perm_fd to /dev/bpf gives access to all sys_bpf() commands, so
+>     this is "all or nothing" permission.
+>
+>     A perm_fd to /sys/fs/cgroup/.../bpf.xxx would only allow some
+>     commands to this specific cgroup.
+>
 
-diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-index eeeae0475da9..fb4d1d89ce53 100644
---- a/fs/tracefs/inode.c
-+++ b/fs/tracefs/inode.c
-@@ -20,6 +20,7 @@
- #include <linux/parser.h>
- #include <linux/magic.h>
- #include <linux/slab.h>
-+#include <linux/security.h>
- 
- #define TRACEFS_DEFAULT_MODE	0700
- 
-@@ -27,6 +28,23 @@ static struct vfsmount *tracefs_mount;
- static int tracefs_mount_count;
- static bool tracefs_registered;
- 
-+static int default_open_file(struct inode *inode, struct file *filp)
-+{
-+	struct dentry *dentry = filp->f_path.dentry;
-+	struct file_operations *real_fops;
-+	int ret;
-+
-+	if (!dentry)
-+		return -EINVAL;
-+
-+	ret = security_locked_down(LOCKDOWN_TRACEFS);
-+	if (ret)
-+		return ret;
-+
-+	real_fops = dentry->d_fsdata;
-+	return real_fops->open(inode, filp);
-+}
-+
- static ssize_t default_read_file(struct file *file, char __user *buf,
- 				 size_t count, loff_t *ppos)
- {
-@@ -221,6 +239,12 @@ static int tracefs_apply_options(struct super_block *sb)
- 	return 0;
- }
- 
-+static void tracefs_destroy_inode(struct inode *inode)
-+{
-+	if (S_ISREG(inode->i_mode))
-+		kfree(inode->i_fop);
-+}
-+
- static int tracefs_remount(struct super_block *sb, int *flags, char *data)
- {
- 	int err;
-@@ -256,6 +280,7 @@ static int tracefs_show_options(struct seq_file *m, struct dentry *root)
- 
- static const struct super_operations tracefs_super_operations = {
- 	.statfs		= simple_statfs,
-+	.destroy_inode  = tracefs_destroy_inode,
- 	.remount_fs	= tracefs_remount,
- 	.show_options	= tracefs_show_options,
- };
-@@ -387,6 +412,7 @@ struct dentry *tracefs_create_file(const char *name, umode_t mode,
- 				   struct dentry *parent, void *data,
- 				   const struct file_operations *fops)
- {
-+	struct file_operations *proxy_fops;
- 	struct dentry *dentry;
- 	struct inode *inode;
- 
-@@ -402,8 +428,20 @@ struct dentry *tracefs_create_file(const char *name, umode_t mode,
- 	if (unlikely(!inode))
- 		return failed_creating(dentry);
- 
-+	proxy_fops = kzalloc(sizeof(struct file_operations), GFP_KERNEL);
-+	if (unlikely(!proxy_fops)) {
-+		iput(inode);
-+		return failed_creating(dentry);
-+	}
-+
-+	if (!fops)
-+		fops = &tracefs_file_operations;
-+
-+	dentry->d_fsdata = (void *)fops;
-+	memcpy(proxy_fops, fops, sizeof(*proxy_fops));
-+	proxy_fops->open = default_open_file;
- 	inode->i_mode = mode;
--	inode->i_fop = fops ? fops : &tracefs_file_operations;
-+	inode->i_fop = proxy_fops;
- 	inode->i_private = data;
- 	d_instantiate(dentry, inode);
- 	fsnotify_create(dentry->d_parent->d_inode, dentry);
-diff --git a/include/linux/security.h b/include/linux/security.h
-index d92323b44a3f..807dc0d24982 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -121,6 +121,7 @@ enum lockdown_reason {
- 	LOCKDOWN_KPROBES,
- 	LOCKDOWN_BPF_READ,
- 	LOCKDOWN_PERF,
-+	LOCKDOWN_TRACEFS,
- 	LOCKDOWN_CONFIDENTIALITY_MAX,
- };
- 
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 88064ce1c844..173191562047 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -36,6 +36,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_KPROBES] = "use of kprobes",
- 	[LOCKDOWN_BPF_READ] = "use of bpf to read kernel RAM",
- 	[LOCKDOWN_PERF] = "unsafe use of perf",
-+	[LOCKDOWN_TRACEFS] = "use of tracefs",
- 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
- };
- 
--- 
-2.22.0.770.g0f2c4a37fd-goog
+I don't see why you need to invent a whole new mechanism for this.
+The entire cgroup ecosystem outside bpf() does just fine using the
+write permission on files in cgroupfs to control access.  Why can't
+bpf() do the same thing?
 
+>
+> Alexei raised another idea in offline discussions: instead of adding
+> bpf_with_cap(), we add a command LOAD_PERM_FD, which enables special
+> permission for the _next_ sys_bpf() from current task:
+>
+>     bpf(LOAD_PERM_FD, perm_fd);
+>     /* the next sys_bpf() uses permission from perm_fd */
+>     bpf(cmd, attr, size);
+>
+> This is equivalent to bpf_with_cap(cmd, attr, size, perm_fd), but
+> doesn't require the new sys call.
+
+That sounds almost every bit as problematic as the approach where you
+ask for permission once and it sticks.
+
+>
+> 1. User space only approach doesn't work, even for "all or nothing"
+>    permission control. I expanded the discussion in the previous
+>    email. Please let me know if I missed anything there.
+
+As in my previous email, I disagree.
