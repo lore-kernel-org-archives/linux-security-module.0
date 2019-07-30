@@ -2,199 +2,209 @@ Return-Path: <SRS0=NLeN=V3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B6DC0650F
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jul 2019 20:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A68FC433FF
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jul 2019 21:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88CA12089E
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jul 2019 20:24:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564518255;
-	bh=Kt8xMfLEUIW3Y3BQbWr7auw3iHGpmo7WxKDcHNpHrJY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=qKaEqYjV6Mat1654xvDmiqxOygbqV6zwEbtiByQoDazfJ7ZHgX0Q7xb9Lx17LBNqu
-	 wD8jxuNBBTy5Oc7fjkmsAnP6OQtYOzhpcOdGQRvxYHBpFIW7Vpn9xG9Vis2hS1zJM4
-	 QnIGqSZA9MmU4wZD4/IfygCOLFchpGMm+wGKbLuQ=
+	by mail.kernel.org (Postfix) with ESMTP id C5BB9206E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jul 2019 21:37:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="soNxNq/8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728209AbfG3UYO (ORCPT
+        id S1727067AbfG3Vhv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Jul 2019 16:24:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35378 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727660AbfG3UYO (ORCPT
+        Tue, 30 Jul 2019 17:37:51 -0400
+Received: from sonic301-38.consmr.mail.ne1.yahoo.com ([66.163.184.207]:34625
+        "EHLO sonic301-38.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726426AbfG3Vhu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Jul 2019 16:24:14 -0400
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23B61216C8
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2019 20:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564518253;
-        bh=Kt8xMfLEUIW3Y3BQbWr7auw3iHGpmo7WxKDcHNpHrJY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dg00idpt+nWyhqrCK+U2jSJ3sgEYeNS6kxfx6cIOY9laRHislxCGjaH1t797jpuTN
-         sGqGFZ6UDDXBtBA8yTn8ZU4/UL97slbOmXPw5DL1vlUGJvdEOBhdRv5bRTES4/henZ
-         J3pSln7N/BQjPbfsS7CEa6wQ1ApaNLU93HGJc8/0=
-Received: by mail-wr1-f44.google.com with SMTP id n9so67243300wru.0
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2019 13:24:13 -0700 (PDT)
-X-Gm-Message-State: APjAAAWylR7s97JJTxvi4CiCtPk0D7N0IExT0DAee3P/ldUgf4Ff2kVi
-        JBtNr8i/EtJCOodIkFqP3rCsM2VecPKYRp2C2yzbLQ==
-X-Google-Smtp-Source: APXvYqzZ/BahTMAZqJKvw3CKJJrYc0VH2HO2IKCQHMz+jcl+qF5qZMCRFU61mq2qYTzjNeslp+cWZBSZeISWQwA0qnU=
-X-Received: by 2002:adf:f28a:: with SMTP id k10mr52015339wro.343.1564518251602;
- Tue, 30 Jul 2019 13:24:11 -0700 (PDT)
+        Tue, 30 Jul 2019 17:37:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1564522668; bh=zrrhb62cSoHIWyvSdYWD56aWq5TyLcbALfqzakcPZhM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=soNxNq/8nMO7l3B+rSh4wTtw7wHnk3Rf+OFQuQ7FYID0b2qoLC5WkGrW4XOt0LIc5mSGoJwftruFjYxgNl0dIenNgldHGf0vdAmly0U/w6zEg5z5ueyexnx6wK4V5dadH+/zIjcHNHfWYUEGJTeKQ8SEIDGgBvg9CLUupp0BTUCZG1Zt1Na6XDajS7U6cEWTZb9KfXZTtwbK242Znzuc2Bu87K5HnHH6o3npHJxKLuTQ59d0/5jw6z8YQ1GGqqzut6MFHIALmyWLic89n5GdkKtRm9dni+MFzFuhd8REfBZsWsja0c+/JSDvWGwvpWIJNVZ7lBoQjkNb6P1dWS8FmQ==
+X-YMail-OSG: lYB5LKUVM1nJDTvMyMdypeCpLPagsof3C3ya_Y_DXs4OQ4O6yJGYwao_qnToSij
+ Rzxp6CR1fr0TqQec5npHnELVef6tf4G6swYKUmqvA59Vxa0oaJ1oCj3PzjoduQS0Rx9zzfQ2ECuu
+ dGVGrfvxYqHC8gdVAcs_INGDkxxjIBBhvGqhTr1WMkZ3ZsWGUJ2feZJoQyqy4T5_Bz2MLU1MiWdg
+ BJZ5l96kRodouGTyDnP_.xjZFVMLUoJPzmjlGDRvX6EZRNEZqBUvJigALD9YYht7FP4Kp1NnRc6p
+ xCbvFGJuLV2fAWRIbh1dSQoWjVZLM7ZDIk8zUx4xR7QVo2tDLIXYNE0Svx2bGoPMzKy3X77ep2tV
+ UlwzWaoKXsV498PWP5wcXdtqq72tq87FXYhdT9MaRwDl0P6VfR4GE0d1hwqFvxcXGEQbTzMGNscp
+ lBKWPVIp0i8ZqKKNKxHGtkjZSQo34fPCrXufTPptMGlBo0pVJrjrPfqN1ZuRTh9VfQfpFHNqpYIi
+ uD6B50DpZnplpzxEjifJY7tqjJqzi1.71wsX1Vn3glx6PTQHvZOTI9oZsXY00ETDNEg11I7T9Wz5
+ hWMxYHSWtf0eTkXbMEwivBgBKgjVr1uhEiI1EBA4_K157w3yVnDjQ1ijEuhwa2t.5kkIG6VqPMY9
+ 1qBkN6cOeGp.inQwJqksjVE0zY9MlWPGUbO_jwHvvkRAEPGN51jYwbVSKuLbVFByVcphkp3PrkeL
+ XJ5kp6SxxWCd562SYWxhYzRoea2Du1IuMRKqHoHklQskAmCBsk709ICRMNO8bnWRYT_zO7D8YddA
+ WNnt97dLIDeXlXDCE1Hwnbiz0VK_wsRYgl0F1_MNlxxKQmkUAdd6U5nk74OrSHXlWLNe75JWKg6U
+ bndA.SpTL8Z4CDWyZGuvkQipvOLFuId8QI.vRbqPswGp06p81VmMBnw7Jmix6HQn33q84kc2WshI
+ phd.gRaMvqL1M11JwsthoG4H03N1XB7cZ0cY.YSK.v8.apI4ymoJqkpWYyVx7puUxkESVko7WM2B
+ jsU4Bym5erIxUf7Iy9PzDRPnVEYNDEFvxbRtizBB4VolL92VijQ2fVKdKYDwPPJhtaHzJj_K7CKu
+ EV4fl0C4bsZ2kaYsi2ybKdGXaVffELR.89gsSR98Lx2YEimVE0UDpxfV0ffWG_oFv.FHk6AP7Bob
+ _lJqSIyGULLJSl2mFe2Ehz6wonED0caXx3OsDJjoXIXQLAz88xEL0PNrdOryFCZqNUJ9zISJCTnt
+ lnQ4KGg6nteP2pyU6lM2Fdz72NQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Tue, 30 Jul 2019 21:37:48 +0000
+Received: by smtp412.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 012fd6c3010b184d88945152a93467a4;
+          Tue, 30 Jul 2019 21:37:48 +0000 (UTC)
+Subject: Re: [PATCH v12 0/5] overlayfs override_creds=off
+To:     Mark Salyzyn <salyzyn@android.com>, linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-unionfs@vger.kernel.org, linux-doc@vger.kernel.org,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+References: <20190730172904.79146-1-salyzyn@android.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <36b08762-3bd5-b7de-85c1-508e367971b1@schaufler-ca.com>
+Date:   Tue, 30 Jul 2019 14:37:48 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190627201923.2589391-1-songliubraving@fb.com>
- <20190627201923.2589391-2-songliubraving@fb.com> <21894f45-70d8-dfca-8c02-044f776c5e05@kernel.org>
- <3C595328-3ABE-4421-9772-8D41094A4F57@fb.com> <CALCETrWBnH4Q43POU8cQ7YMjb9LioK28FDEQf7aHZbdf1eBZWg@mail.gmail.com>
- <0DE7F23E-9CD2-4F03-82B5-835506B59056@fb.com> <CALCETrWBWbNFJvsTCeUchu3BZJ3SH3dvtXLUB2EhnPrzFfsLNA@mail.gmail.com>
- <201907021115.DCD56BBABB@keescook> <CALCETrXTta26CTtEDnzvtd03-WOGdXcnsAogP8JjLkcj4-mHvg@mail.gmail.com>
- <4A7A225A-6C23-4C0F-9A95-7C6C56B281ED@fb.com> <CALCETrX2bMnwC6_t4b_G-hzJSfMPrkK4YKs5ebcecv2LJ0rt3w@mail.gmail.com>
- <514D5453-0AEE-420F-AEB6-3F4F58C62E7E@fb.com> <1DE886F3-3982-45DE-B545-67AD6A4871AB@amacapital.net>
- <7F51F8B8-CF4C-4D82-AAE1-F0F28951DB7F@fb.com> <77354A95-4107-41A7-8936-D144F01C3CA4@fb.com>
- <369476A8-4CE1-43DA-9239-06437C0384C7@fb.com>
-In-Reply-To: <369476A8-4CE1-43DA-9239-06437C0384C7@fb.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 30 Jul 2019 13:24:00 -0700
-X-Gmail-Original-Message-ID: <CALCETrUpVMrk7aaf0trfg9AfZ4fy279uJgZH7V+gZzjFw=hUxA@mail.gmail.com>
-Message-ID: <CALCETrUpVMrk7aaf0trfg9AfZ4fy279uJgZH7V+gZzjFw=hUxA@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-To:     Song Liu <songliubraving@fb.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190730172904.79146-1-salyzyn@android.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 29, 2019 at 10:07 PM Song Liu <songliubraving@fb.com> wrote:
->
-> Hi Andy,
->
-> > On Jul 27, 2019, at 11:20 AM, Song Liu <songliubraving@fb.com> wrote:
-> >
-> > Hi Andy,
-> >
-> >>>>>
-> >>>>
-> >>>> Well, yes. sys_bpf() is pretty powerful.
-> >>>>
-> >>>> The goal of /dev/bpf is to enable special users to call sys_bpf(). I=
-n
-> >>>> the meanwhile, such users should not take down the whole system easi=
-ly
-> >>>> by accident, e.g., with rm -rf /.
-> >>>
-> >>> That=E2=80=99s easy, though =E2=80=94 bpftool could learn to read /et=
-c/bpfusers before allowing ruid !=3D 0.
-> >>
-> >> This is a great idea! fscaps + /etc/bpfusers should do the trick.
-> >
-> > After some discussions and more thinking on this, I have some concerns
-> > with the user space only approach.
-> >
-> > IIUC, your proposal for user space only approach is like:
-> >
-> > 1. bpftool (and other tools) check /etc/bpfusers and only do
-> >   setuid for allowed users:
-> >
-> >       int main()
-> >       {
-> >               if (/* uid in /etc/bpfusers */)
-> >                       setuid(0);
-> >               sys_bpf(...);
-> >       }
-> >
-> > 2. bpftool (and other tools) is installed with CAP_SETUID:
-> >
-> >       setcap cap_setuid=3De+p /bin/bpftool
-> >
-> > 3. sys admin maintains proper /etc/bpfusers.
-> >
-> > This approach is not ideal, because we need to trust the tool to give
-> > it CAP_SETUID. A hacked tool could easily bypass /etc/bpfusers check
-> > or use other root only sys calls after setuid(0).
-> >
->
-> I would like more comments on this.
->
-> Currently, bpf permission is more or less "root or nothing", which we
-> would like to change.
->
-> The short term goal is to separate bpf from root, in other words, it is
-> "all or nothing". Special user space utilities, such as systemd, would
-> benefit from this. Once this is implemented, systemd can call sys_bpf()
-> when it is not running as root.
+On 7/30/2019 10:28 AM, Mark Salyzyn wrote:
+> Patch series:
 
-As generally nasty as Linux capabilities are, this sounds like a good
-use for CAP_BPF_ADMIN.
-
-But what do you have in mind?  Isn't non-root systemd mostly just the
-user systemd session?  That should *not* have bpf() privileges until
-bpf() is improved such that you can't use it to compromise the system.
+Please add linux-security-module@vger.kernel.org to the CC
+for all changes affecting handling of security xattrs.
 
 >
-> In longer term, it may be useful to provide finer grain permission of
-> sys_bpf(). For example, sys_bpf() should be aware of containers; and
-> user may only have access to certain bpf maps. Let's call this
-> "fine grain" capability.
+> overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh
+> Add flags option to get xattr method paired to __vfs_getxattr
+> overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+> overlayfs: internal getxattr operations without sepolicy checking
+> overlayfs: override_creds=off option bypass creator_cred
 >
+> The first four patches address fundamental security issues that should
+> be solved regardless of the override_creds=off feature.
+> on them).
 >
-> Since we are seeing new use cases every year, we will need many
-> iterations to implement the fine grain permission. I think we need an
-> API that is flexible enough to cover different types of permission
-> control.
+> The fifth adds the feature depends on these other fixes.
 >
-> For example, bpf_with_cap() can be flexible:
+> By default, all access to the upper, lower and work directories is the
+> recorded mounter's MAC and DAC credentials.  The incoming accesses are
+> checked against the caller's credentials.
 >
->         bpf_with_cap(cmd, attr, size, perm_fd);
+> If the principles of least privilege are applied for sepolicy, the
+> mounter's credentials might not overlap the credentials of the caller's
+> when accessing the overlayfs filesystem.  For example, a file that a
+> lower DAC privileged caller can execute, is MAC denied to the
+> generally higher DAC privileged mounter, to prevent an attack vector.
 >
-> We can get different types of permission via different combinations of
-> arguments:
+> We add the option to turn off override_creds in the mount options; all
+> subsequent operations after mount on the filesystem will be only the
+> caller's credentials.  The module boolean parameter and mount option
+> override_creds is also added as a presence check for this "feature",
+> existence of /sys/module/overlay/parameters/overlay_creds
 >
->     A perm_fd to /dev/bpf gives access to all sys_bpf() commands, so
->     this is "all or nothing" permission.
+> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Stephen Smalley <sds@tycho.nsa.gov>
+> Cc: linux-unionfs@vger.kernel.org
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
 >
->     A perm_fd to /sys/fs/cgroup/.../bpf.xxx would only allow some
->     commands to this specific cgroup.
+> ---
+> v12:
+> - Restore squished out patch 2 and 3 in the series,
+>   then change algorithm to add flags argument.
+>   Per-thread flag is a large security surface.
 >
-
-I don't see why you need to invent a whole new mechanism for this.
-The entire cgroup ecosystem outside bpf() does just fine using the
-write permission on files in cgroupfs to control access.  Why can't
-bpf() do the same thing?
-
+> v11:
+> - Squish out v10 introduced patch 2 and 3 in the series,
+>   then and use per-thread flag instead for nesting.
+> - Switch name to ovl_do_vds_getxattr for __vds_getxattr wrapper.
+> - Add sb argument to ovl_revert_creds to match future work.
 >
-> Alexei raised another idea in offline discussions: instead of adding
-> bpf_with_cap(), we add a command LOAD_PERM_FD, which enables special
-> permission for the _next_ sys_bpf() from current task:
+> v10:
+> - Return NULL on CAP_DAC_READ_SEARCH
+> - Add __get xattr method to solve sepolicy logging issue
+> - Drop unnecessary sys_admin sepolicy checking for administrative
+>   driver internal xattr functions.
 >
->     bpf(LOAD_PERM_FD, perm_fd);
->     /* the next sys_bpf() uses permission from perm_fd */
->     bpf(cmd, attr, size);
+> v6:
+> - Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
+> - Do better with the documentation, drop rationalizations.
+> - pr_warn message adjusted to report consequences.
 >
-> This is equivalent to bpf_with_cap(cmd, attr, size, perm_fd), but
-> doesn't require the new sys call.
-
-That sounds almost every bit as problematic as the approach where you
-ask for permission once and it sticks.
-
+> v5:
+> - beefed up the caveats in the Documentation
+> - Is dependent on
+>   "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
+>   "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
+> - Added prwarn when override_creds=off
 >
-> 1. User space only approach doesn't work, even for "all or nothing"
->    permission control. I expanded the discussion in the previous
->    email. Please let me know if I missed anything there.
-
-As in my previous email, I disagree.
+> v4:
+> - spelling and grammar errors in text
+>
+> v3:
+> - Change name from caller_credentials / creator_credentials to the
+>   boolean override_creds.
+> - Changed from creator to mounter credentials.
+> - Updated and fortified the documentation.
+> - Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
+>
+> v2:
+> - Forward port changed attr to stat, resulting in a build error.
+> - altered commit message.
+>
