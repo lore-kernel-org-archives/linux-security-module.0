@@ -5,70 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA66DC32751
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E38C433FF
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB68216C8
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 396FF216C8
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KWryge+y"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vvpeXRKy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731369AbfGaWS4 (ORCPT
+        id S1730012AbfGaWTB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Jul 2019 18:18:56 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:35346 "EHLO
+        Wed, 31 Jul 2019 18:19:01 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:35344 "EHLO
         mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731335AbfGaWRP (ORCPT
+        with ESMTP id S1731328AbfGaWRM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Jul 2019 18:17:15 -0400
-Received: by mail-pl1-f201.google.com with SMTP id s21so38298364plr.2
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 15:17:15 -0700 (PDT)
+        Wed, 31 Jul 2019 18:17:12 -0400
+Received: by mail-pl1-f201.google.com with SMTP id s21so38298314plr.2
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 15:17:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=ar9F1ezXL3PnxEqF0y9aMqfwFMY9y395H3iSelAOa90=;
-        b=KWryge+ybANXRbNwbUlERn6tPnwObLcAGOMqHbxqjgpCmsk/Mut4arFhCyIb2hfV9o
-         EB8iIwoveNQHMvvNvyxTyS/VzhNO7cqfI1jcH5rLsrEgZtM0txb1f5q8bGplFaDdTsci
-         Hs5qgHmgKnDAxCCreraAX4kWLdnl9aI+/ysG9zmGFWxnMHaI7YpHKqGUYXKrNByUNwLA
-         IYXzRZxeDx2m8D5owUvvR/boWpHMxnOTFIEe9l3Ogpxti1aHnVn8g4VRwrDHOBdXGeqH
-         q8NuCf8RuwoDuvwll7S3PdWmI2wr9oFVVsM7EWoWcwcvLfKfMVMHOmO20T0SXWJ7JDzD
-         mTOQ==
+        bh=AYLtZ41z1RHlFpOZnl+JGLaHaK4EJ2Av6xB01tUKIjQ=;
+        b=vvpeXRKyc5OhHv4Gr/tukOYbwIwjOYYXtqIP/Io9iIGtPO3Kve6jw/W7bz2rF/pLv1
+         RlW5o4cGWbTXLPdROo8nSoKA3X7rpN7sDIwV1d/Fkm3vpj5fFKlODN732XeUwRiYz3Ke
+         TW9ChBbAGCWNTBdcbOZ73xw4f5kes2Emo/1AT/+3MfhQ8BoEcrnKZHlAFFwFtqt85uMv
+         Hrp+989qk4cKlnGSLSV1ao/ObzrMwaeocP0iHhwU4p9uXakErgQiaqLm3O0VzWsyNNyY
+         9CqLjrTvWM8AjYlNkYT/fe066FOTrmczakFGWc6cjFSFGLsLIYYWVoFByBrYFECbZTDO
+         MNew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=ar9F1ezXL3PnxEqF0y9aMqfwFMY9y395H3iSelAOa90=;
-        b=ScjTYV2Mqx4qCXt2KEvOL3EnnthZB2Hi6GfXs4MedNtLKqNeIYqc+jVRlNSnuXJUVc
-         yNU1oOSFPtzWG9R2WSHqHOfKrpB1Ov6tRzQvjJJJI8u8QjwZOTpViZ1cLKVnL3WNopG1
-         VRXZCB6Fwd1lObamLeLo44mDfyDdN8gavESjbKT49HMcL7stsb74+2dapTFG4XUWDKfM
-         kGCCecJS8WxIFp4bO0dNbN0OjUho7BlMCTtNx7Hy7MfwVz+xsCunZfyExOotzzP5J90t
-         DiCfmnCKMHtNBdqgWTPPOqLK+AgfApsHs2lSyNt+G4T/U4vpeygayXoedwLqdupKZhV9
-         NkjQ==
-X-Gm-Message-State: APjAAAV9VP5FPR94Gm2DPJxpMSnF97s83a491STVjSw/pBqv26oyB/bF
-        ZQ2+994/zBuE1rEhMjlsttgTTSTatY21P/bZOmvDPg==
-X-Google-Smtp-Source: APXvYqwJSSTh2CmEEh9mZY1CZ3A0484iF1hyOxUMQ7arAImv2uOzpLvnEyasM52OJEs0/dbgDoUYiDnStbZtl54N/RNuwQ==
-X-Received: by 2002:a65:5342:: with SMTP id w2mr31174414pgr.261.1564611434315;
- Wed, 31 Jul 2019 15:17:14 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 15:16:07 -0700
+        bh=AYLtZ41z1RHlFpOZnl+JGLaHaK4EJ2Av6xB01tUKIjQ=;
+        b=aF6CXDjY5DYlErjNLx4RotJ3KStnYfsxib669OygTuzmxAa3DukmLrJgsHdRm2GluM
+         2rC0x1FxWX5DB3328m0Vj0ibYd5P94O3OWpXA6u5Z0/NMxJ10yaoW9WoC2df6if4CBp7
+         0+Qafiku7ipMcsq9Gwc2izkFgg7AKKW+JL22MgP1VXj6lKcXYUJNO3VObEUayK8uOXxP
+         jC2iW981BBtmfMEzn5Ot0GCUCi9i5yQufGwMZlhlonA1dKE6D3gwhp14TqJKdBaY61GA
+         866zywryqTQGigK90hynv0mSmu5B9Mr1Lu2w7eft8ClEt4hT/zwpDv0sC3DdzAGjTVWt
+         0GBA==
+X-Gm-Message-State: APjAAAX+UoXRJBcjPJF+r8FFbW7DGfL9wlqOKpwjw5JZyfbs960gwW0h
+        suKFAQZEa5m5P1zhMxWWUJBvaO1doJRICq/Z7r5B2w==
+X-Google-Smtp-Source: APXvYqzkiW7uEdQQUtaZ0YHcWPNEQQcr9wR/H4mTJIlJ8xEUbv8Q5RP5zNIsLLGkfkAO0eul945srgorH4QzlUVn11pgkg==
+X-Received: by 2002:a63:5402:: with SMTP id i2mr88751122pgb.414.1564611431661;
+ Wed, 31 Jul 2019 15:17:11 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 15:16:06 -0700
 In-Reply-To: <20190731221617.234725-1-matthewgarrett@google.com>
-Message-Id: <20190731221617.234725-20-matthewgarrett@google.com>
+Message-Id: <20190731221617.234725-19-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190731221617.234725-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-Subject: [PATCH V37 19/29] Lock down module params that specify hardware
- parameters (eg. ioport)
+Subject: [PATCH V37 18/29] Lock down TIOCSSERIAL
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>, Jessica Yu <jeyu@kernel.org>
+        Kees Cook <keescook@chromium.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
@@ -76,115 +76,67 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-Provided an annotation for module parameters that specify hardware
-parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
-dma buffers and other types).
+Lock down TIOCSSERIAL as that can be used to change the ioport and irq
+settings on a serial port.  This only appears to be an issue for the serial
+drivers that use the core serial code.  All other drivers seem to either
+ignore attempts to change port/irq or give an error.
 
-Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Jessica Yu <jeyu@kernel.org>
+cc: Jiri Slaby <jslaby@suse.com>
+Cc: linux-serial@vger.kernel.org
 ---
- include/linux/security.h     |  1 +
- kernel/params.c              | 28 +++++++++++++++++++++++-----
- security/lockdown/lockdown.c |  1 +
- 3 files changed, 25 insertions(+), 5 deletions(-)
+ drivers/tty/serial/serial_core.c | 5 +++++
+ include/linux/security.h         | 1 +
+ security/lockdown/lockdown.c     | 1 +
+ 3 files changed, 7 insertions(+)
 
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 4223cb496764..6e713be1d4e9 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -22,6 +22,7 @@
+ #include <linux/serial_core.h>
+ #include <linux/delay.h>
+ #include <linux/mutex.h>
++#include <linux/security.h>
+ 
+ #include <linux/irq.h>
+ #include <linux/uaccess.h>
+@@ -862,6 +863,10 @@ static int uart_set_info(struct tty_struct *tty, struct tty_port *port,
+ 		goto check_and_exit;
+ 	}
+ 
++	retval = security_locked_down(LOCKDOWN_TIOCSSERIAL);
++	if (retval && (change_irq || change_port))
++		goto exit;
++
+ 	/*
+ 	 * Ask the low level driver to verify the settings.
+ 	 */
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 8f7048395114..43fa3486522b 100644
+index 3773ad09b831..8f7048395114 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -113,6 +113,7 @@ enum lockdown_reason {
+@@ -112,6 +112,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_MSR,
  	LOCKDOWN_ACPI_TABLES,
  	LOCKDOWN_PCMCIA_CIS,
- 	LOCKDOWN_TIOCSSERIAL,
-+	LOCKDOWN_MODULE_PARAMETERS,
++	LOCKDOWN_TIOCSSERIAL,
  	LOCKDOWN_INTEGRITY_MAX,
  	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
-diff --git a/kernel/params.c b/kernel/params.c
-index cf448785d058..f2779a76d39a 100644
---- a/kernel/params.c
-+++ b/kernel/params.c
-@@ -12,6 +12,7 @@
- #include <linux/err.h>
- #include <linux/slab.h>
- #include <linux/ctype.h>
-+#include <linux/security.h>
- 
- #ifdef CONFIG_SYSFS
- /* Protects all built-in parameters, modules use their own param_lock */
-@@ -96,13 +97,20 @@ bool parameq(const char *a, const char *b)
- 	return parameqn(a, b, strlen(a)+1);
- }
- 
--static void param_check_unsafe(const struct kernel_param *kp)
-+static bool param_check_unsafe(const struct kernel_param *kp,
-+			       const char *doing)
- {
-+	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
-+	    security_locked_down(LOCKDOWN_MODULE_PARAMETERS))
-+		return false;
-+
- 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
- 		pr_notice("Setting dangerous option %s - tainting kernel\n",
- 			  kp->name);
- 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
- 	}
-+
-+	return true;
- }
- 
- static int parse_one(char *param,
-@@ -132,8 +140,10 @@ static int parse_one(char *param,
- 			pr_debug("handling %s with %p\n", param,
- 				params[i].ops->set);
- 			kernel_param_lock(params[i].mod);
--			param_check_unsafe(&params[i]);
--			err = params[i].ops->set(val, &params[i]);
-+			if (param_check_unsafe(&params[i], doing))
-+				err = params[i].ops->set(val, &params[i]);
-+			else
-+				err = -EPERM;
- 			kernel_param_unlock(params[i].mod);
- 			return err;
- 		}
-@@ -541,6 +551,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
- 	return count;
- }
- 
-+#ifdef CONFIG_MODULES
-+#define mod_name(mod) ((mod)->name)
-+#else
-+#define mod_name(mod) "unknown"
-+#endif
-+
- /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
- static ssize_t param_attr_store(struct module_attribute *mattr,
- 				struct module_kobject *mk,
-@@ -553,8 +569,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
- 		return -EPERM;
- 
- 	kernel_param_lock(mk->mod);
--	param_check_unsafe(attribute->param);
--	err = attribute->param->ops->set(buf, attribute->param);
-+	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
-+		err = attribute->param->ops->set(buf, attribute->param);
-+	else
-+		err = -EPERM;
- 	kernel_param_unlock(mk->mod);
- 	if (!err)
- 		return len;
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 00a3a6438dd2..5177938cfa0d 100644
+index 22482e1b9a77..00a3a6438dd2 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -28,6 +28,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+@@ -27,6 +27,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_MSR] = "raw MSR access",
  	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
  	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
- 	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
-+	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
++	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
  };
