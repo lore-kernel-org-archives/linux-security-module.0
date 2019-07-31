@@ -2,550 +2,508 @@ Return-Path: <SRS0=Q99v=V4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 167AAC32754
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 17:26:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B07D6C32751
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 18:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E188D20C01
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 17:26:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8308D214DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 18:47:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="OqZMkMn5"
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="mV6NVQqd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbfGaR0a (ORCPT
+        id S1726553AbfGaSq4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Jul 2019 13:26:30 -0400
-Received: from sonic309-22.consmr.mail.bf2.yahoo.com ([74.6.129.196]:34321
-        "EHLO sonic309-22.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727887AbfGaR0a (ORCPT
+        Wed, 31 Jul 2019 14:46:56 -0400
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:61219 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbfGaSqz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Jul 2019 13:26:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1564593984; bh=8dADLPwFCJMAtI7410gUwj9IiuNwqBepJc+K+/dQcgs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=OqZMkMn5Z81Fjfvj7xkrZ5BQBw3qRQEBLGppSq3/+yoPBNnyn1QMhxSfEYlH646MI2lm4CSfhnn3xcuR9bqiVf04KD+nw04WU2Q+5d/TjC48ojdgXlQSOYCsLV5LqefWvlXkMeDqo23WtRttYy76eDzFo4407C+VIOKJBd8cX6NqyKmYfpfXV32YoCavyoNBkEs94KGQqVUE+Jh78ATO61Ab90VDuNVPoPV+sywb6KgxQhLETh5tTp/1GdfXjFq/etdt/j1i/DEhyYnS4N8Tw8wFnIV8tjiyFmoJ/RqU12LA8N8e/qA0Iqe65ojskHWrBuFwShnTJISjrpLUQoeCMQ==
-X-YMail-OSG: sfhFGIwVM1mG9Xx7b9P76mR.bDF8JwaiGC.m2lQ6b74TV88mkC705k1wFr3tQAB
- t2lUbStbj46JS60EdC0weF9QqpIvnUAfNZrYdFxYCToIdXovi5_npLWpOBwovRzkvRSgVbjYuo_s
- 2haR.hf.G2J82JMLK6PHNrxT9P74qW8Cy5zRss6Tz8gIE.B.Ivg5162S5PnnrVWCwnN_6.ZNolz6
- J6qN_lWngaWuLHf8x15n.gMUfEvkl.CvPZQOJLmJc84LMs8TCEOcWOQFG38lvsyYxsA6RCEKm8XY
- mGA9C_zeeDzMXZiZJq_cJF9sDgImx9pO77ZjNHm_vP8tjri9sJrIgkm_cUOH2IQQj7P.ZrFucqYe
- N.IrZ3ybh9Dd.fQlv9XEVKkNpEvYd_VBVN0cAu2sDmv.Iyi6jW51WWV5P7zcfiRI9k3XCQz4mn.P
- 8aYK3cQEkIpqu4Nl6AMk_5GyIH3GG9rk9h4GhqB5F7FUBmLoMGnIUHsjAgkiz8ct7OT_05CcpCN4
- i6QnTlFMRJJkYRKN_97MEoouEurDbsdjj1ds1Zo_DdMvlArd9wLBwffxv.DfcRZmp5BzUsk8SXzZ
- 90K.Mn6dGo7DXkupVdBhYmBAQTAXUA8xgqTLAVrnmIRXTnQT9_XEL_1m2h2_E1ai2MK2A_rqtUC0
- gYnRj7Oa.TT1bsxqgkOskxzajdifHg6KuXjM3KQv0K6AbfKazqHUjz.oCaRlHgQiFENTIhm6raJW
- 3xCkLlE9wDEYgU0DJQow63WHF1pNLAWpL1H3OcEH3HFlr3sFtBDW2i0JG9ycV4NnARTe1fqRKA2M
- V4usuis8F8EFL6GIem6lBY4wHEttHcrmw7h.tNqnHGsUZTNjSkTVZPadhbDZJIR62RK6Es8.NjXD
- Id4pvKE9xJQiSc1dni1X3jov2XI1PYOLdGv0CsxiM2mO4gcYAC3ocnGKORAFKzWTojVwdTLG3vu.
- CHoD5tNOIPRwRbcRsVO53n_GLiiRk0aMCVCdaGdlFRZtz68oel6i4jpaY6d_y2uTNvMersdiPEEH
- WaDHtCM4TkmX682gQk1ExLnY5TPIKLrqeFWLOaX.19AFl9hqnLdr.JuTr7DcjuD4S9rF7YebGCao
- jBAe.DBgpRQ7YIjO48L8p5LvKuxBoNCCQU4t7abUPRjKvf2bodT9kKyYQ2gF_xgXlA44LxlTZpUm
- Fqa3ZPS8wgsquFTl4o6eOiX2PphiE9NWE1vBDfyeaFmblkZB1gnuUZdeaTLSH6ubsZrxMdjevaiw
- U4OQXWG6KRqNm8LOPsKU6eOXRQzk3WEziqlbwDg--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.bf2.yahoo.com with HTTP; Wed, 31 Jul 2019 17:26:24 +0000
-Received: by smtp408.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a5fbc22588e3f4cbc370ef80f320f5cf;
-          Wed, 31 Jul 2019 17:26:23 +0000 (UTC)
-Subject: Re: [PATCH] fanotify, inotify, dnotify, security: add security hook
- for fs notifications
-To:     Aaron Goidel <acgoide@tycho.nsa.gov>, paul@paul-moore.com
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
-        amir73il@gmail.com, jmorris@namei.org, sds@tycho.nsa.gov,
-        linux-kernel@vger.kernel.org
-References: <20190731153443.4984-1-acgoide@tycho.nsa.gov>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- mQINBFzV9HABEAC/mmv3jeJyF7lR7QhILYg1+PeBLIMZv7KCzBSc/4ZZipoWdmr77Lel/RxQ
- 1PrNx0UaM5r6Hj9lJmJ9eg4s/TUBSP67mTx+tsZ1RhG78/WFf9aBe8MSXxY5cu7IUwo0J/CG
- vdSqACKyYPV5eoTJmnMxalu8/oVUHyPnKF3eMGgE0mKOFBUMsb2pLS/enE4QyxhcZ26jeeS6
- 3BaqDl1aTXGowM5BHyn7s9LEU38x/y2ffdqBjd3au2YOlvZ+XUkzoclSVfSR29bomZVVyhMB
- h1jTmX4Ac9QjpwsxihT8KNGvOM5CeCjQyWcW/g8LfWTzOVF9lzbx6IfEZDDoDem4+ZiPsAXC
- SWKBKil3npdbgb8MARPes2DpuhVm8yfkJEQQmuLYv8GPiJbwHQVLZGQAPBZSAc7IidD2zbf9
- XAw1/SJGe1poxOMfuSBsfKxv9ba2i8hUR+PH7gWwkMQaQ97B1yXYxVEkpG8Y4MfE5Vd3bjJU
- kvQ/tOBUCw5zwyIRC9+7zr1zYi/3hk+OG8OryZ5kpILBNCo+aePeAJ44znrySarUqS69tuXd
- a3lMPHUJJpUpIwSKQ5UuYYkWlWwENEWSefpakFAIwY4YIBkzoJ/t+XJHE1HTaJnRk6SWpeDf
- CreF3+LouP4njyeLEjVIMzaEpwROsw++BX5i5vTXJB+4UApTAQARAQABtChDYXNleSBTY2hh
- dWZsZXIgPGNhc2V5QHNjaGF1Zmxlci1jYS5jb20+iQJUBBMBCAA+FiEEC+9tH1YyUwIQzUIe
- OKUVfIxDyBEFAlzV9HACGwMFCRLMAwAFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQOKUV
- fIxDyBG6ag/6AiRl8yof47YOEVHlrmewbpnlBTaYNfJ5cZflNRKRX6t4bp1B2YV1whlDTpiL
- vNOwFkh+ZE0eI5M4x8Gw2Oiok+4Q5liA9PHTozQYF+Ia+qdL5EehfbLGoEBqklpGvG3h8JsO
- 7SvONJuFDgvab/U/UriDYycJwzwKZuhVtK9EMpnTtUDyP3DY+Q8h7MWsniNBLVXnh4yBIEJg
- SSgDn3COpZoFTPGKE+rIzioo/GJe8CTa2g+ZggJiY/myWTS3quG0FMvwvNYvZ4I2g6uxSl7n
- bZVqAZgqwoTAv1HSXIAn9muwZUJL03qo25PFi2gQmX15BgJKQcV5RL0GHFHRThDS3IyadOgK
- P2j78P8SddTN73EmsG5OoyzwZAxXfck9A512BfVESqapHurRu2qvMoUkQaW/2yCeRQwGTsFj
- /rr0lnOBkyC6wCmPSKXe3dT2mnD5KnCkjn7KxLqexKt4itGjJz4/ynD/qh+gL7IPbifrQtVH
- JI7cr0fI6Tl8V6efurk5RjtELsAlSR6fKV7hClfeDEgLpigHXGyVOsynXLr59uE+g/+InVic
- jKueTq7LzFd0BiduXGO5HbGyRKw4MG5DNQvC//85EWmFUnDlD3WHz7Hicg95D+2IjD2ZVXJy
- x3LTfKWdC8bU8am1fi+d6tVEFAe/KbUfe+stXkgmfB7pxqW5Ag0EXNX0cAEQAPIEYtPebJzT
- wHpKLu1/j4jQcke06Kmu5RNuj1pEje7kX5IKzQSs+CPH0NbSNGvrA4dNGcuDUTNHgb5Be9hF
- zVqRCEvF2j7BFbrGe9jqMBWHuWheQM8RRoa2UMwQ704mRvKr4sNPh01nKT52ASbWpBPYG3/t
- WbYaqfgtRmCxBnqdOx5mBJIBh9Q38i63DjQgdNcsTx2qS7HFuFyNef5LCf3jogcbmZGxG/b7
- yF4OwmGsVc8ufvlKo5A9Wm+tnRjLr/9Mn9vl5Xa/tQDoPxz26+aWz7j1in7UFzAarcvqzsdM
- Em6S7uT+qy5jcqyuipuenDKYF/yNOVSNnsiFyQTFqCPCpFihOnuaWqfmdeUOQHCSo8fD4aRF
- emsuxqcsq0Jp2ODq73DOTsdFxX2ESXYoFt3Oy7QmIxeEgiHBzdKU2bruIB5OVaZ4zWF+jusM
- Uh+jh+44w9DZkDNjxRAA5CxPlmBIn1OOYt1tsphrHg1cH1fDLK/pDjsJZkiH8EIjhckOtGSb
- aoUUMMJ85nVhN1EbU/A3DkWCVFEA//Vu1+BckbSbJKE7Hl6WdW19BXOZ7v3jo1q6lWwcFYth
- esJfk3ZPPJXuBokrFH8kqnEQ9W2QgrjDX3et2WwZFLOoOCItWxT0/1QO4ikcef/E7HXQf/ij
- Dxf9HG2o5hOlMIAkJq/uLNMvABEBAAGJAjwEGAEIACYWIQQL720fVjJTAhDNQh44pRV8jEPI
- EQUCXNX0cAIbDAUJEswDAAAKCRA4pRV8jEPIEWkzEACKFUnpp+wIVHpckMfBqN8BE5dUbWJc
- GyQ7wXWajLtlPdw1nNw0Wrv+ob2RCT7qQlUo6GRLcvj9Fn5tR4hBvR6D3m8aR0AGHbcC62cq
- I7LjaSDP5j/em4oVL2SMgNTrXgE2w33JMGjAx9oBzkxmKUqprhJomPwmfDHMJ0t7y39Da724
- oLPTkQDpJL1kuraM9TC5NyLe1+MyIxqM/8NujoJbWeQUgGjn9uxQAil7o/xSCjrWCP3kZDID
- vd5ZaHpdl8e1mTExQoKr4EWgaMjmD/a3hZ/j3KfTVNpM2cLfD/QwTMaC2fkK8ExMsz+rUl1H
- icmcmpptCwOSgwSpPY1Zfio6HvEJp7gmDwMgozMfwQuT9oxyFTxn1X3rn1IoYQF3P8gsziY5
- qtTxy2RrgqQFm/hr8gM78RhP54UPltIE96VywviFzDZehMvuwzW//fxysIoK97Y/KBZZOQs+
- /T+Bw80Pwk/dqQ8UmIt2ffHEgwCTbkSm711BejapWCfklxkMZDp16mkxSt2qZovboVjXnfuq
- wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
- v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
- abzjfg==
-Message-ID: <1c62c931-9441-4264-c119-d038b2d0c9b9@schaufler-ca.com>
-Date:   Wed, 31 Jul 2019 10:26:21 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 31 Jul 2019 14:46:55 -0400
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id D541BD0006F;
+        Wed, 31 Jul 2019 20:47:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1564598820;
+        bh=3rdjMvWfzDAw5uT2VIrruNOeHott7EvYNwmo+f9pBv0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=mV6NVQqdBY7yIf2utNiZoPiK/DpxA9liDEBjFF9f8HBosBToLDEqKrcTYarWeE8Uc
+         Xtan1+DUCMfxZXrCJm55A+4OxPT/Nnuyr+nW5EyGFyBabjrknNYAcgZnzYodMDggQb
+         2Ecvmh6O8SnfQEC5NJ5FUOAMsgmMKc4WOvEw94Xvzy0EJYkR6MbcVlwtIXGrN9wcsY
+         EtstFxELxgMP91HNCWqi2SDlcth2TT/NezPF7kCZZACZILPTKcuT+1f8j/tj2dm/Xi
+         VkYg27Egq3SyjhGokbEHeUFJwZYipfKQiVxcrqoIMDy47onJrXUnA+RTDWZbraQ4OS
+         gcJ6RnI0CoAnQ==
+Subject: Re: [PATCH bpf-next v10 06/10] bpf,landlock: Add a new map type:
+ inode
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>,
+        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>
+References: <20190721213116.23476-1-mic@digikod.net>
+ <20190721213116.23476-7-mic@digikod.net>
+ <20190727014048.3czy3n2hi6hfdy3m@ast-mbp.dhcp.thefacebook.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <a870c2c9-d2f7-e0fa-c8cc-35dbf8b5b87d@ssi.gouv.fr>
+Date:   Wed, 31 Jul 2019 20:46:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-In-Reply-To: <20190731153443.4984-1-acgoide@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190727014048.3czy3n2hi6hfdy3m@ast-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/31/2019 8:34 AM, Aaron Goidel wrote:
-> As of now, setting watches on filesystem objects has, at most, applied a
-> check for read access to the inode, and in the case of fanotify, requires
-> CAP_SYS_ADMIN. No specific security hook or permission check has been
-> provided to control the setting of watches. Using any of inotify, dnotify,
-> or fanotify, it is possible to observe, not only write-like operations, but
-> even read access to a file. Modeling the watch as being merely a read from
-> the file is insufficient for the needs of SELinux. This is due to the fact
-> that read access should not necessarily imply access to information about
-> when another process reads from a file. Furthermore, fanotify watches grant
-> more power to an application in the form of permission events. While
-> notification events are solely, unidirectional (i.e. they only pass
-> information to the receiving application), permission events are blocking.
-> Permission events make a request to the receiving application which will
-> then reply with a decision as to whether or not that action may be
-> completed. This causes the issue of the watching application having the
-> ability to exercise control over the triggering process. Without drawing a
-> distinction within the permission check, the ability to read would imply
-> the greater ability to control an application. Additionally, mount and
-> superblock watches apply to all files within the same mount or superblock.
-> Read access to one file should not necessarily imply the ability to watch
-> all files accessed within a given mount or superblock.
->
-> In order to solve these issues, a new LSM hook is implemented and has been
-> placed within the system calls for marking filesystem objects with inotify,
-> fanotify, and dnotify watches. These calls to the hook are placed at the
-> point at which the target path has been resolved and are provided with the
-> path struct, the mask of requested notification events, and the type of
-> object on which the mark is being set (inode, superblock, or mount). The
-> mask and obj_type have already been translated into common FS_* values
-> shared by the entirety of the fs notification infrastructure. The path
-> struct is passed rather than just the inode so that the mount is available,
-> particularly for mount watches. This also allows for use of the hook by
-> pathname-based security modules. However, since the hook is intended for
-> use even by inode based security modules, it is not placed under the
-> CONFIG_SECURITY_PATH conditional. Otherwise, the inode-based security
-> modules would need to enable all of the path hooks, even though they do not
-> use any of them.
->
-> This only provides a hook at the point of setting a watch, and presumes
-> that permission to set a particular watch implies the ability to receive
-> all notification about that object which match the mask. This is all that
-> is required for SELinux. If other security modules require additional hooks
-> or infrastructure to control delivery of notification, these can be added
-> by them. It does not make sense for us to propose hooks for which we have
-> no implementation. The understanding that all notifications received by the
-> requesting application are all strictly of a type for which the application
-> has been granted permission shows that this implementation is sufficient in
-> its coverage.
->
-> Security modules wishing to provide complete control over fanotify must
-> also implement a security_file_open hook that validates that the access
-> requested by the watching application is authorized. Fanotify has the issue
-> that it returns a file descriptor with the file mode specified during
-> fanotify_init() to the watching process on event. This is already covered
-> by the LSM security_file_open hook if the security module implements
-> checking of the requested file mode there. Otherwise, a watching process
-> can obtain escalated access to a file for which it has not been authorized.
->
-> The selinux_path_notify hook implementation works by adding five new file
-> permissions: watch, watch_mount, watch_sb, watch_reads, and watch_with_perm
-> (descriptions about which will follow), and one new filesystem permission:
-> watch (which is applied to superblock checks). The hook then decides which
-> subset of these permissions must be held by the requesting application
-> based on the contents of the provided mask and the obj_type. The
-> selinux_file_open hook already checks the requested file mode and therefore
-> ensures that a watching process cannot escalate its access through
-> fanotify.
->
-> The watch, watch_mount, and watch_sb permissions are the baseline
-> permissions for setting a watch on an object and each are a requirement for
-> any watch to be set on a file, mount, or superblock respectively. It should
-> be noted that having either of the other two permissions (watch_reads and
-> watch_with_perm) does not imply the watch, watch_mount, or watch_sb
-> permission. Superblock watches further require the filesystem watch
-> permission to the superblock. As there is no labeled object in view for
-> mounts, there is no specific check for mount watches beyond watch_mount to
-> the inode. Such a check could be added in the future, if a suitable labeled
-> object existed representing the mount.
->
-> The watch_reads permission is required to receive notifications from
-> read-exclusive events on filesystem objects. These events include accessing
-> a file for the purpose of reading and closing a file which has been opened
-> read-only. This distinction has been drawn in order to provide a direct
-> indication in the policy for this otherwise not obvious capability. Read
-> access to a file should not necessarily imply the ability to observe read
-> events on a file.
->
-> Finally, watch_with_perm only applies to fanotify masks since it is the
-> only way to set a mask which allows for the blocking, permission event.
-> This permission is needed for any watch which is of this type. Though
-> fanotify requires CAP_SYS_ADMIN, this is insufficient as it gives implicit
-> trust to root, which we do not do, and does not support least privilege.
->
-> Signed-off-by: Aaron Goidel <acgoide@tycho.nsa.gov>
 
-I can't say that I accept your arguments that this is sufficient,
-but as you point out, the SELinux team does, and if I want more
-for Smack that's my fish to fry.
+On 27/07/2019 03:40, Alexei Starovoitov wrote:
+> On Sun, Jul 21, 2019 at 11:31:12PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+>> FIXME: 64-bits in the doc
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+FYI, this FIXME was fixed, just not removed from this message. :)
 
-> ---
->  fs/notify/dnotify/dnotify.c         | 15 +++++++--
->  fs/notify/fanotify/fanotify_user.c  | 27 +++++++++++++++--
->  fs/notify/inotify/inotify_user.c    | 13 ++++++--
->  include/linux/lsm_hooks.h           |  9 +++++-
->  include/linux/security.h            | 10 ++++--
->  security/security.c                 |  6 ++++
->  security/selinux/hooks.c            | 47 +++++++++++++++++++++++++++++
->  security/selinux/include/classmap.h |  5 +--
->  8 files changed, 120 insertions(+), 12 deletions(-)
+>>
+>> This new map store arbitrary values referenced by inode keys.  The map
+>> can be updated from user space with file descriptor pointing to inodes
+>> tied to a file system.  From an eBPF (Landlock) program point of view,
+>> such a map is read-only and can only be used to retrieved a value tied
+>> to a given inode.  This is useful to recognize an inode tagged by user
+>> space, without access right to this inode (i.e. no need to have a write
+>> access to this inode).
+>>
+>> Add dedicated BPF functions to handle this type of map:
+>> * bpf_inode_htab_map_update_elem()
+>> * bpf_inode_htab_map_lookup_elem()
+>> * bpf_inode_htab_map_delete_elem()
+>>
+>> This new map require a dedicated helper inode_map_lookup_elem() because
+>> of the key which is a pointer to an opaque data (only provided by the
+>> kernel).  This act like a (physical or cryptographic) key, which is why
+>> it is also not allowed to get the next key.
+>>
+>> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 >
-> diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
-> index 250369d6901d..87a7f61bc91c 100644
-> --- a/fs/notify/dnotify/dnotify.c
-> +++ b/fs/notify/dnotify/dnotify.c
-> @@ -22,6 +22,7 @@
->  #include <linux/sched/signal.h>
->  #include <linux/dnotify.h>
->  #include <linux/init.h>
-> +#include <linux/security.h>
->  #include <linux/spinlock.h>
->  #include <linux/slab.h>
->  #include <linux/fdtable.h>
-> @@ -288,6 +289,17 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
->  		goto out_err;
->  	}
->  
-> +	/*
-> +	 * convert the userspace DN_* "arg" to the internal FS_*
-> +	 * defined in fsnotify
-> +	 */
-> +	mask = convert_arg(arg);
-> +
-> +	error = security_path_notify(&filp->f_path, mask,
-> +			FSNOTIFY_OBJ_TYPE_INODE);
-> +	if (error)
-> +		goto out_err;
-> +
->  	/* expect most fcntl to add new rather than augment old */
->  	dn = kmem_cache_alloc(dnotify_struct_cache, GFP_KERNEL);
->  	if (!dn) {
-> @@ -302,9 +314,6 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
->  		goto out_err;
->  	}
->  
-> -	/* convert the userspace DN_* "arg" to the internal FS_* defines in fsnotify */
-> -	mask = convert_arg(arg);
-> -
->  	/* set up the new_fsn_mark and new_dn_mark */
->  	new_fsn_mark = &new_dn_mark->fsn_mark;
->  	fsnotify_init_mark(new_fsn_mark, dnotify_group);
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index a90bb19dcfa2..b83f27021f54 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -528,9 +528,10 @@ static const struct file_operations fanotify_fops = {
->  };
->  
->  static int fanotify_find_path(int dfd, const char __user *filename,
-> -			      struct path *path, unsigned int flags)
-> +			      struct path *path, unsigned int flags, __u64 mask)
->  {
->  	int ret;
-> +	unsigned int obj_type;
->  
->  	pr_debug("%s: dfd=%d filename=%p flags=%x\n", __func__,
->  		 dfd, filename, flags);
-> @@ -567,8 +568,30 @@ static int fanotify_find_path(int dfd, const char __user *filename,
->  
->  	/* you can only watch an inode if you have read permissions on it */
->  	ret = inode_permission(path->dentry->d_inode, MAY_READ);
-> +	if (ret) {
-> +		path_put(path);
-> +		goto out;
-> +	}
-> +
-> +	switch (flags & FANOTIFY_MARK_TYPE_BITS) {
-> +	case FAN_MARK_MOUNT:
-> +		obj_type = FSNOTIFY_OBJ_TYPE_VFSMOUNT;
-> +		break;
-> +	case FAN_MARK_FILESYSTEM:
-> +		obj_type = FSNOTIFY_OBJ_TYPE_SB;
-> +		break;
-> +	case FAN_MARK_INODE:
-> +		obj_type = FSNOTIFY_OBJ_TYPE_INODE;
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	ret = security_path_notify(path, mask, obj_type);
->  	if (ret)
->  		path_put(path);
-> +
->  out:
->  	return ret;
->  }
-> @@ -1014,7 +1037,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  		goto fput_and_out;
->  	}
->  
-> -	ret = fanotify_find_path(dfd, pathname, &path, flags);
-> +	ret = fanotify_find_path(dfd, pathname, &path, flags, mask);
->  	if (ret)
->  		goto fput_and_out;
->  
-> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-> index 7b53598c8804..e0d593c2d437 100644
-> --- a/fs/notify/inotify/inotify_user.c
-> +++ b/fs/notify/inotify/inotify_user.c
-> @@ -39,6 +39,7 @@
->  #include <linux/poll.h>
->  #include <linux/wait.h>
->  #include <linux/memcontrol.h>
-> +#include <linux/security.h>
->  
->  #include "inotify.h"
->  #include "../fdinfo.h"
-> @@ -342,7 +343,8 @@ static const struct file_operations inotify_fops = {
->  /*
->   * find_inode - resolve a user-given path to a specific inode
->   */
-> -static int inotify_find_inode(const char __user *dirname, struct path *path, unsigned flags)
-> +static int inotify_find_inode(const char __user *dirname, struct path *path,
-> +						unsigned int flags, __u64 mask)
->  {
->  	int error;
->  
-> @@ -351,8 +353,15 @@ static int inotify_find_inode(const char __user *dirname, struct path *path, uns
->  		return error;
->  	/* you can only watch an inode if you have read permissions on it */
->  	error = inode_permission(path->dentry->d_inode, MAY_READ);
-> +	if (error) {
-> +		path_put(path);
-> +		return error;
-> +	}
-> +	error = security_path_notify(path, mask,
-> +				FSNOTIFY_OBJ_TYPE_INODE);
->  	if (error)
->  		path_put(path);
-> +
->  	return error;
->  }
->  
-> @@ -744,7 +753,7 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
->  	if (mask & IN_ONLYDIR)
->  		flags |= LOOKUP_DIRECTORY;
->  
-> -	ret = inotify_find_inode(pathname, &path, flags);
-> +	ret = inotify_find_inode(pathname, &path, flags, mask);
->  	if (ret)
->  		goto fput_and_out;
->  
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 47f58cfb6a19..ead98af9c602 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -339,6 +339,9 @@
->   *	Check for permission to change root directory.
->   *	@path contains the path structure.
->   *	Return 0 if permission is granted.
-> + * @path_notify:
-> + *	Check permissions before setting a watch on events as defined by @mask,
-> + *	on an object at @path, whose type is defined by @obj_type.
->   * @inode_readlink:
->   *	Check the permission to read the symbolic link.
->   *	@dentry contains the dentry structure for the file link.
-> @@ -1535,7 +1538,9 @@ union security_list_options {
->  	int (*path_chown)(const struct path *path, kuid_t uid, kgid_t gid);
->  	int (*path_chroot)(const struct path *path);
->  #endif
-> -
-> +	/* Needed for inode based security check */
-> +	int (*path_notify)(const struct path *path, u64 mask,
-> +				unsigned int obj_type);
->  	int (*inode_alloc_security)(struct inode *inode);
->  	void (*inode_free_security)(struct inode *inode);
->  	int (*inode_init_security)(struct inode *inode, struct inode *dir,
-> @@ -1860,6 +1865,8 @@ struct security_hook_heads {
->  	struct hlist_head path_chown;
->  	struct hlist_head path_chroot;
->  #endif
-> +	/* Needed for inode based modules as well */
-> +	struct hlist_head path_notify;
->  	struct hlist_head inode_alloc_security;
->  	struct hlist_head inode_free_security;
->  	struct hlist_head inode_init_security;
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 659071c2e57c..7d9c1da1f659 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -259,7 +259,8 @@ int security_dentry_create_files_as(struct dentry *dentry, int mode,
->  					struct qstr *name,
->  					const struct cred *old,
->  					struct cred *new);
-> -
-> +int security_path_notify(const struct path *path, u64 mask,
-> +					unsigned int obj_type);
->  int security_inode_alloc(struct inode *inode);
->  void security_inode_free(struct inode *inode);
->  int security_inode_init_security(struct inode *inode, struct inode *dir,
-> @@ -387,7 +388,6 @@ int security_ismaclabel(const char *name);
->  int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
->  int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
->  void security_release_secctx(char *secdata, u32 seclen);
-> -
->  void security_inode_invalidate_secctx(struct inode *inode);
->  int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
->  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
-> @@ -621,6 +621,12 @@ static inline int security_move_mount(const struct path *from_path,
->  	return 0;
->  }
->  
-> +static inline int security_path_notify(const struct path *path, u64 mask,
-> +				unsigned int obj_type)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline int security_inode_alloc(struct inode *inode)
->  {
->  	return 0;
-> diff --git a/security/security.c b/security/security.c
-> index 613a5c00e602..30687e1366b7 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -871,6 +871,12 @@ int security_move_mount(const struct path *from_path, const struct path *to_path
->  	return call_int_hook(move_mount, 0, from_path, to_path);
->  }
->  
-> +int security_path_notify(const struct path *path, u64 mask,
-> +				unsigned int obj_type)
-> +{
-> +	return call_int_hook(path_notify, 0, path, mask, obj_type);
-> +}
-> +
->  int security_inode_alloc(struct inode *inode)
->  {
->  	int rc = lsm_inode_alloc(inode);
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index c61787b15f27..a1aaf79421df 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -92,6 +92,8 @@
->  #include <linux/kernfs.h>
->  #include <linux/stringhash.h>	/* for hashlen_string() */
->  #include <uapi/linux/mount.h>
-> +#include <linux/fsnotify.h>
-> +#include <linux/fanotify.h>
->  
->  #include "avc.h"
->  #include "objsec.h"
-> @@ -3261,6 +3263,50 @@ static int selinux_inode_removexattr(struct dentry *dentry, const char *name)
->  	return -EACCES;
->  }
->  
-> +static int selinux_path_notify(const struct path *path, u64 mask,
-> +						unsigned int obj_type)
-> +{
-> +	int ret;
-> +	u32 perm;
-> +
-> +	struct common_audit_data ad;
-> +
-> +	ad.type = LSM_AUDIT_DATA_PATH;
-> +	ad.u.path = *path;
-> +
-> +	/*
-> +	 * Set permission needed based on the type of mark being set.
-> +	 * Performs an additional check for sb watches.
-> +	 */
-> +	switch (obj_type) {
-> +	case FSNOTIFY_OBJ_TYPE_VFSMOUNT:
-> +		perm = FILE__WATCH_MOUNT;
-> +		break;
-> +	case FSNOTIFY_OBJ_TYPE_SB:
-> +		perm = FILE__WATCH_SB;
-> +		ret = superblock_has_perm(current_cred(), path->dentry->d_sb,
-> +						FILESYSTEM__WATCH, &ad);
-> +		if (ret)
-> +			return ret;
-> +		break;
-> +	case FSNOTIFY_OBJ_TYPE_INODE:
-> +		perm = FILE__WATCH;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	// check if the mask is requesting ability to set a blocking watch
-> +	if (mask & (ALL_FSNOTIFY_PERM_EVENTS))
-> +		perm |= FILE__WATCH_WITH_PERM; // if so, check that permission
-> +
-> +	// is the mask asking to watch file reads?
-> +	if (mask & (FS_ACCESS | FS_ACCESS_PERM | FS_CLOSE_NOWRITE))
-> +		perm |= FILE__WATCH_READS; // check that permission as well
-> +
-> +	return path_has_perm(current_cred(), path, perm);
-> +}
-> +
->  /*
->   * Copy the inode security context value to the user.
->   *
-> @@ -6797,6 +6843,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
->  	LSM_HOOK_INIT(inode_getsecid, selinux_inode_getsecid),
->  	LSM_HOOK_INIT(inode_copy_up, selinux_inode_copy_up),
->  	LSM_HOOK_INIT(inode_copy_up_xattr, selinux_inode_copy_up_xattr),
-> +	LSM_HOOK_INIT(path_notify, selinux_path_notify),
->  
->  	LSM_HOOK_INIT(kernfs_init_security, selinux_kernfs_init_security),
->  
-> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-> index 201f7e588a29..32e9b03be3dd 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -7,7 +7,8 @@
->  
->  #define COMMON_FILE_PERMS COMMON_FILE_SOCK_PERMS, "unlink", "link", \
->      "rename", "execute", "quotaon", "mounton", "audit_access", \
-> -    "open", "execmod"
-> +	"open", "execmod", "watch", "watch_mount", "watch_sb", \
-> +	"watch_with_perm", "watch_reads"
->  
->  #define COMMON_SOCK_PERMS COMMON_FILE_SOCK_PERMS, "bind", "connect", \
->      "listen", "accept", "getopt", "setopt", "shutdown", "recvfrom",  \
-> @@ -60,7 +61,7 @@ struct security_class_mapping secclass_map[] = {
->  	{ "filesystem",
->  	  { "mount", "remount", "unmount", "getattr",
->  	    "relabelfrom", "relabelto", "associate", "quotamod",
-> -	    "quotaget", NULL } },
-> +	    "quotaget", "watch", NULL } },
->  	{ "file",
->  	  { COMMON_FILE_PERMS,
->  	    "execute_no_trans", "entrypoint", NULL } },
+> there are too many things to comment on.
+> Let's do this patch.
+>
+> imo inode_map concept is interesting, but see below...
+>
+>> +
+>> +    /*
+>> +     * Limit number of entries in an inode map to the maximum number of
+>> +     * open files for the current process. The maximum number of file
+>> +     * references (including all inode maps) for a process is then
+>> +     * (RLIMIT_NOFILE - 1) * RLIMIT_NOFILE. If the process' RLIMIT_NOFI=
+LE
+>> +     * is 0, then any entry update is forbidden.
+>> +     *
+>> +     * An eBPF program can inherit all the inode map FD. The worse case=
+ is
+>> +     * to fill a bunch of arraymaps, create an eBPF program, close the
+>> +     * inode map FDs, and start again. The maximum number of inode map
+>> +     * entries can then be close to RLIMIT_NOFILE^3.
+>> +     */
+>> +    if (attr->max_entries > rlimit(RLIMIT_NOFILE))
+>> +            return -EMFILE;
+>
+> rlimit is checked, but no fd are consumed.
+> Once created such inode map_fd can be passed to a different process.
+> map_fd can be pinned into bpffs.
+> etc.
+> what the value of the check?
+
+I was looking for the most meaningful limit for a process, and rlimit is
+the best I found. As the limit of open FD per processes, rlimit is not
+perfect, but I think the semantic is close here (e.g. a process can also
+pass FD through unix socket).
+
+>
+>> +
+>> +    /* decorelate UAPI from kernel API */
+>> +    attr->key_size =3D sizeof(struct inode *);
+>> +
+>> +    return htab_map_alloc_check(attr);
+>> +}
+>> +
+>> +static void inode_htab_put_key(void *key)
+>> +{
+>> +    struct inode **inode =3D key;
+>> +
+>> +    if ((*inode)->i_state & I_FREEING)
+>> +            return;
+>
+> checking the state without take a lock? isn't it racy?
+
+This should only trigger when called from security_inode_free(). I'll
+add a comment.
+
+>
+>> +    iput(*inode);
+>> +}
+>> +
+>> +/* called from syscall or (never) from eBPF program */
+>> +static int map_get_next_no_key(struct bpf_map *map, void *key, void *ne=
+xt_key)
+>> +{
+>> +    /* do not leak a file descriptor */
+>
+> what this comment suppose to mean?
+
+Because a key is a reference to an inode, a possible return value for
+this function could be a file descriptor pointing to this inode (the
+same way a file descriptor is use to add an element). For now, I don't
+want to implement a way for a process with such a map to extract such
+inode, which I compare to a possible leak (of information, not kernel
+memory nor object). This could be implemented in the future if there is
+value in it (and probably some additional safeguards), though.
+
+>
+>> +    return -ENOTSUPP;
+>> +}
+>> +
+>> +/* must call iput(inode) after this call */
+>> +static struct inode *inode_from_fd(int ufd, bool check_access)
+>> +{
+>> +    struct inode *ret;
+>> +    struct fd f;
+>> +    int deny;
+>> +
+>> +    f =3D fdget(ufd);
+>> +    if (unlikely(!f.file))
+>> +            return ERR_PTR(-EBADF);
+>> +    /* TODO?: add this check when called from an eBPF program too (alre=
+ady
+>> +    * checked by the LSM parent hooks anyway) */
+>> +    if (unlikely(IS_PRIVATE(file_inode(f.file)))) {
+>> +            ret =3D ERR_PTR(-EINVAL);
+>> +            goto put_fd;
+>> +    }
+>> +    /* check if the FD is tied to a mount point */
+>> +    /* TODO?: add this check when called from an eBPF program too */
+>> +    if (unlikely(f.file->f_path.mnt->mnt_flags & MNT_INTERNAL)) {
+>> +            ret =3D ERR_PTR(-EINVAL);
+>> +            goto put_fd;
+>> +    }
+>
+> a bunch of TODOs do not inspire confidence.
+
+I think the current implement is good, but these TODOs are here to draw
+attention on particular points for which I would like external review
+and opinion (hence the "?").
+
+>
+>> +    if (check_access) {
+>> +            /*
+>> +            * must be allowed to access attributes from this file to th=
+en
+>> +            * be able to compare an inode to its map entry
+>> +            */
+>> +            deny =3D security_inode_getattr(&f.file->f_path);
+>> +            if (deny) {
+>> +                    ret =3D ERR_PTR(deny);
+>> +                    goto put_fd;
+>> +            }
+>> +    }
+>> +    ret =3D file_inode(f.file);
+>> +    ihold(ret);
+>> +
+>> +put_fd:
+>> +    fdput(f);
+>> +    return ret;
+>> +}
+>> +
+>> +/*
+>> + * The key is a FD when called from a syscall, but an inode address whe=
+n called
+>> + * from an eBPF program.
+>> + */
+>> +
+>> +/* called from syscall */
+>> +int bpf_inode_fd_htab_map_lookup_elem(struct bpf_map *map, int *key, vo=
+id *value)
+>> +{
+>> +    void *ptr;
+>> +    struct inode *inode;
+>> +    int ret;
+>> +
+>> +    /* check inode access */
+>> +    inode =3D inode_from_fd(*key, true);
+>> +    if (IS_ERR(inode))
+>> +            return PTR_ERR(inode);
+>> +
+>> +    rcu_read_lock();
+>> +    ptr =3D htab_map_lookup_elem(map, &inode);
+>> +    iput(inode);
+>> +    if (IS_ERR(ptr)) {
+>> +            ret =3D PTR_ERR(ptr);
+>> +    } else if (!ptr) {
+>> +            ret =3D -ENOENT;
+>> +    } else {
+>> +            ret =3D 0;
+>> +            copy_map_value(map, value, ptr);
+>> +    }
+>> +    rcu_read_unlock();
+>> +    return ret;
+>> +}
+>> +
+>> +/* called from kernel */
+>
+> wrong comment?
+> kernel side cannot call it, right?
+
+This is called from bpf_inode_fd_htab_map_delete_elem() (code just
+beneath), and from
+kernel/bpf/syscall.c:bpf_inode_ptr_unlocked_htab_map_delet_elem() which
+can be called by security_inode_free() (hook_inode_free_security).
+
+>
+>> +int bpf_inode_ptr_locked_htab_map_delete_elem(struct bpf_map *map,
+>> +            struct inode **key, bool remove_in_inode)
+>> +{
+>> +    if (remove_in_inode)
+>> +            landlock_inode_remove_map(*key, map);
+>> +    return htab_map_delete_elem(map, key);
+>> +}
+>> +
+>> +/* called from syscall */
+>> +int bpf_inode_fd_htab_map_delete_elem(struct bpf_map *map, int *key)
+>> +{
+>> +    struct inode *inode;
+>> +    int ret;
+>> +
+>> +    /* do not check inode access (similar to directory check) */
+>> +    inode =3D inode_from_fd(*key, false);
+>> +    if (IS_ERR(inode))
+>> +            return PTR_ERR(inode);
+>> +    ret =3D bpf_inode_ptr_locked_htab_map_delete_elem(map, &inode, true=
+);
+>> +    iput(inode);
+>> +    return ret;
+>> +}
+>> +
+>> +/* called from syscall */
+>> +int bpf_inode_fd_htab_map_update_elem(struct bpf_map *map, int *key, vo=
+id *value,
+>> +            u64 map_flags)
+>> +{
+>> +    struct inode *inode;
+>> +    int ret;
+>> +
+>> +    WARN_ON_ONCE(!rcu_read_lock_held());
+>> +
+>> +    /* check inode access */
+>> +    inode =3D inode_from_fd(*key, true);
+>> +    if (IS_ERR(inode))
+>> +            return PTR_ERR(inode);
+>> +    ret =3D htab_map_update_elem(map, &inode, value, map_flags);
+>> +    if (!ret)
+>> +            ret =3D landlock_inode_add_map(inode, map);
+>> +    iput(inode);
+>> +    return ret;
+>> +}
+>> +
+>> +static void inode_htab_map_free(struct bpf_map *map)
+>> +{
+>> +    struct bpf_htab *htab =3D container_of(map, struct bpf_htab, map);
+>> +    struct hlist_nulls_node *n;
+>> +    struct hlist_nulls_head *head;
+>> +    struct htab_elem *l;
+>> +    int i;
+>> +
+>> +    for (i =3D 0; i < htab->n_buckets; i++) {
+>> +            head =3D select_bucket(htab, i);
+>> +            hlist_nulls_for_each_entry_safe(l, n, head, hash_node) {
+>> +                    landlock_inode_remove_map(*((struct inode **)l->key=
+), map);
+>> +            }
+>> +    }
+>> +    htab_map_free(map);
+>> +}
+>
+> user space can delete the map.
+> that will trigger inode_htab_map_free() which will call
+> landlock_inode_remove_map().
+> which will simply itereate the list and delete from the list.
+
+landlock_inode_remove_map() removes the reference to the map (being
+freed) from the inode (with an RCU lock).
+
+>
+> While in parallel inode can be destoyed and hook_inode_free_security()
+> will be called.
+> I think nothing that protects from this race.
+
+According to security_inode_free(), the inode is effectively freed after
+the RCU grace period. However, I forgot to call bpf_map_inc() in
+landlock_inode_add_map(), which would prevent the map to be freed
+outside of the security_inode_free(). I'll fix that.
+
+>
+>> +
+>> +/*
+>> + * We need a dedicated helper to deal with inode maps because the key i=
+s a
+>> + * pointer to an opaque data, only provided by the kernel.  This really=
+ act
+>> + * like a (physical or cryptographic) key, which is why it is also not =
+allowed
+>> + * to get the next key with map_get_next_key().
+>
+> inode pointer is like cryptographic key? :)
+
+I wanted to highlight the fact that, contrary to other map key types,
+the value of this one should not be readable, only usable. A "secret
+value" is more appropriate but still confusing. I'll rephrase that.
+
+>
+>> + */
+>> +BPF_CALL_2(bpf_inode_map_lookup_elem, struct bpf_map *, map, void *, ke=
+y)
+>> +{
+>> +    WARN_ON_ONCE(!rcu_read_lock_held());
+>> +    return (unsigned long)htab_map_lookup_elem(map, &key);
+>> +}
+>> +
+>> +const struct bpf_func_proto bpf_inode_map_lookup_elem_proto =3D {
+>> +    .func           =3D bpf_inode_map_lookup_elem,
+>> +    .gpl_only       =3D false,
+>> +    .pkt_access     =3D true,
+>
+> pkt_access ? :)
+
+This slipped in with this rebase, I'll remove it. :)
+
+>
+>> +    .ret_type       =3D RET_PTR_TO_MAP_VALUE_OR_NULL,
+>> +    .arg1_type      =3D ARG_CONST_MAP_PTR,
+>> +    .arg2_type      =3D ARG_PTR_TO_INODE,
+>> +};
+>> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+>> index b2a8cb14f28e..e46441c42b68 100644
+>> --- a/kernel/bpf/syscall.c
+>> +++ b/kernel/bpf/syscall.c
+>> @@ -801,6 +801,8 @@ static int map_lookup_elem(union bpf_attr *attr)
+>>      } else if (map->map_type =3D=3D BPF_MAP_TYPE_QUEUE ||
+>>                 map->map_type =3D=3D BPF_MAP_TYPE_STACK) {
+>>              err =3D map->ops->map_peek_elem(map, value);
+>> +    } else if (map->map_type =3D=3D BPF_MAP_TYPE_INODE) {
+>> +            err =3D bpf_inode_fd_htab_map_lookup_elem(map, key, value);
+>>      } else {
+>>              rcu_read_lock();
+>>              if (map->ops->map_lookup_elem_sys_only)
+>> @@ -951,6 +953,10 @@ static int map_update_elem(union bpf_attr *attr)
+>>      } else if (map->map_type =3D=3D BPF_MAP_TYPE_QUEUE ||
+>>                 map->map_type =3D=3D BPF_MAP_TYPE_STACK) {
+>>              err =3D map->ops->map_push_elem(map, value, attr->flags);
+>> +    } else if (map->map_type =3D=3D BPF_MAP_TYPE_INODE) {
+>> +            rcu_read_lock();
+>> +            err =3D bpf_inode_fd_htab_map_update_elem(map, key, value, =
+attr->flags);
+>> +            rcu_read_unlock();
+>>      } else {
+>>              rcu_read_lock();
+>>              err =3D map->ops->map_update_elem(map, key, value, attr->fl=
+ags);
+>> @@ -1006,7 +1012,10 @@ static int map_delete_elem(union bpf_attr *attr)
+>>      preempt_disable();
+>>      __this_cpu_inc(bpf_prog_active);
+>>      rcu_read_lock();
+>> -    err =3D map->ops->map_delete_elem(map, key);
+>> +    if (map->map_type =3D=3D BPF_MAP_TYPE_INODE)
+>> +            err =3D bpf_inode_fd_htab_map_delete_elem(map, key);
+>> +    else
+>> +            err =3D map->ops->map_delete_elem(map, key);
+>>      rcu_read_unlock();
+>>      __this_cpu_dec(bpf_prog_active);
+>>      preempt_enable();
+>> @@ -1018,6 +1027,22 @@ static int map_delete_elem(union bpf_attr *attr)
+>>      return err;
+>>  }
+>>
+>> +int bpf_inode_ptr_unlocked_htab_map_delete_elem(struct bpf_map *map,
+>> +                                            struct inode **key, bool re=
+move_in_inode)
+>> +{
+>> +    int err;
+>> +
+>> +    preempt_disable();
+>> +    __this_cpu_inc(bpf_prog_active);
+>> +    rcu_read_lock();
+>> +    err =3D bpf_inode_ptr_locked_htab_map_delete_elem(map, key, remove_=
+in_inode);
+>> +    rcu_read_unlock();
+>> +    __this_cpu_dec(bpf_prog_active);
+>> +    preempt_enable();
+>> +    maybe_wait_bpf_programs(map);
+>
+> if that function was actually doing synchronize_rcu() the consequences
+> would have been unpleasant. Fortunately it's a nop in this case.
+> Please read the code carefully before copy-paste.
+> Also what do you think the reason of bpf_prog_active above?
+> What is the reason of rcu_read_lock above?
+
+The RCU is used as for every map modifications (usually from userspace).
+I wasn't sure about the other protections so I kept the same (generic)
+checks as in map_delete_elem() (just above) because this function follow
+the same semantic. What can I safely remove?
+
+>
+> I think the patch set needs to shrink at least in half to be reviewable.
+> The way you tie seccomp and lsm is probably the biggest obstacle
+> than any of the bugs above.
+> Can you drop seccomp ? and do it as normal lsm ?
+
+The seccomp/enforcement part is needed to have a minimum viable product,
+i.e. a process able to sandbox itself. Are you suggesting to first merge
+a version when it is only possible to create inode maps but not use them
+in an useful way (i.e. for sandboxing)? I can do it if it's OK with you,
+and I hope it will not be a problem for the security folks if it can
+help to move forward.
+
+--
+Micka=C3=ABl Sala=C3=BCn
+ANSSI/SDE/ST/LAM
+
+Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
+es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
+=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
+nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
+=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
+tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
+acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
+eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
+t de d=C3=A9truire le message. The personal data collected and processed du=
+ring this exchange aims solely at completing a business relationship and is=
+ limited to the necessary duration of that relationship. If you wish to use=
+ your rights of consultation, rectification and deletion of your data, plea=
+se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
+n error, we thank you for informing the sender and destroying the message.
