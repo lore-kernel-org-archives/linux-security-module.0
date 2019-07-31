@@ -2,63 +2,64 @@ Return-Path: <SRS0=Q99v=V4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C084C32751
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 13:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB13C32751
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 14:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB1E320693
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 13:59:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E60420679
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 14:23:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HI+gOcTa"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7ckL2eS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729845AbfGaN7A (ORCPT
+        id S1727287AbfGaOXW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Jul 2019 09:59:00 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42463 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729839AbfGaN65 (ORCPT
+        Wed, 31 Jul 2019 10:23:22 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45507 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727346AbfGaOXW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Jul 2019 09:58:57 -0400
-Received: by mail-lj1-f196.google.com with SMTP id t28so65704748lje.9
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 06:58:55 -0700 (PDT)
+        Wed, 31 Jul 2019 10:23:22 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u10so8833148lfm.12
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 07:23:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6uyQRZ6J/VGu+GRBY89f4/UdsO6g2H35LuTyha3NB8E=;
-        b=HI+gOcTaURQ3MEznucBgmDHuKOk0Y5171KUM3l34LlAOPW6XZpG6qqsyz9j/P+Llgw
-         jJwKIjSYVPTNi2/CIUILUJLlr3357zISH28+A2IjbBfvfscK9MyZe3j7F9SO33KsnikP
-         nbobJ+27D1CIl/MzLH7uP5K+S6ZGhkPC2kZ1PGxTuJC7Bygn93iO0bJMXcpPh9OOr2gC
-         Evf1SJ4kQOz1Hb3UszrvxYBu4Qmdheq6ChjQlD8fQgdiO//KgoS6f0dv2yyJ1MnmlqEQ
-         DctMddNSq9454hzkxOJCQz85RQokoy+If4U4Fozfhoenl1YWS4I0iJyPohnPdALeHUU0
-         wTIQ==
+        bh=6Mwmelmzw6bH/7dTu0yxXhnmtM+/gvfBNAeELEGk+uk=;
+        b=b7ckL2eSD9hJ7+SslSVgXgqXaYtTrghJzWVqnzRH5arC0as5UaAex1ADlOstZ0ZAgH
+         w5ZSSbXXNcoX8jtKyrctiyVtd6HsBbsFQtSIzZfS28PPueiU1cGACGc9zWiXCdQJ0wpk
+         DuLQOPY6YkD5kUNXs40RHrruT+f6kC9kF/wo6v+T1ORrj4UiuM6wfpvSj2z9NXqnYLZx
+         HgBwJ+wmjHC5w/e9yaL+cigyFxUP3EOJu/ohNtfLocTQL4WpgiRDQdhC4JvAcqraz54h
+         jeVh4ugy80tt9CPL8cyTLUzJDd1ZgLNDIcSfQc8LqwcMzYNldlPqEfbX2KUc9A9DpGGy
+         yiGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6uyQRZ6J/VGu+GRBY89f4/UdsO6g2H35LuTyha3NB8E=;
-        b=Ip4DR9MCLZ2kuR16MBb0kqqkAgEsMZY1LKuOVTS3X38DFh8TvkqEZQfDsY+NobrNpD
-         983aC1RFtkZi2bkSGcg6qaUbly3QyVYYaqu6BgeSBpEKsLUfWSy3lBBijUdlF0k58lmy
-         R3EaUT7EQTI8gDkYmvMD58ryAIHmgoel4gEuTkJfOAAOQQj0pvM+ptPZR+5VRmaTpBoc
-         BN1cHc69ZKn/cbZJtWQRa4Z04hBFkZ1X3uyY39UtZzV3GtfVwIKt4kspq/et6lseXYCo
-         GpI3GgTVieOwG5zQ1b8bYP3OHLppbZZweMGm+tw+Q/4cyYkxfNMfYK0LO86tq6OBMIB7
-         VhfQ==
-X-Gm-Message-State: APjAAAWFmIaj4Wi4s/oSqgN/dc/m0fh2UBSMCFnl/Dhh6bPzPGQHJlmg
-        oDMBuxqcpUegMyuG0qfjf5f+QbXYlsDtcGPNkom6VA==
-X-Google-Smtp-Source: APXvYqy0Wt0sy2BNVrAcYeCI8ch73LVT0TjAvnK4Q5cvn/jHQarDv/IdlVkkeNuR9mCwu+8di8NX8a9uWp3ErIq3vbw=
-X-Received: by 2002:a2e:301a:: with SMTP id w26mr63175510ljw.76.1564581534527;
- Wed, 31 Jul 2019 06:58:54 -0700 (PDT)
+        bh=6Mwmelmzw6bH/7dTu0yxXhnmtM+/gvfBNAeELEGk+uk=;
+        b=DlhY3pinotgCX4b1viwI3Gx+VLgDDXMMnwn8O+CM1n1cS67bplO8YImV6ynGbbKzKC
+         r+tv/FCVgM0EgNZ2/CsMjHo1qy6s06ViTIYOxjukVOQQrwTf6RfC+cVMjeUyznbruC14
+         jMjTLdo8M62PLqWV63oQLpjbVNpQNmg50uFJTs31Wm87TZbqq4QXC2qkAvDkwzKMnVpK
+         9Xczi7lqqpgHtqpSuFe0N2LOL8BKP9c06FzjigQWNQEeAG2jc1ofKq48Y9fPYdH4wyZd
+         r28tCwDgnBJPO2OnT/JQxKMaLfp0m3SzkLPqM8dXL0smwBqZth1NjzZRlUNE5vbzX+iD
+         pSSg==
+X-Gm-Message-State: APjAAAXtMsMb9bv4RqxKp5emwDz6pzMXTj2Ggm/qgASMO7ubIt1eyRXO
+        QtXTAN1+QiRuT7eerLchV8ypDvNI8YH2rHQXmzwHKw==
+X-Google-Smtp-Source: APXvYqzO1Rb1XuGHlY4gc7gehMJjpGhQ7bcBJg5KgrHrj/rbdrN0MlhufGWBshlYJcrDu7aQUEzfCCAGZ0ad3gulmm0=
+X-Received: by 2002:a19:c7ca:: with SMTP id x193mr3049727lff.151.1564583000498;
+ Wed, 31 Jul 2019 07:23:20 -0700 (PDT)
 MIME-Version: 1.0
 References: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
- <CAE=Ncrb63dQLe-nDQyO9OPv7XjwM_9mzL9SrcLiUi2Dr10cD4A@mail.gmail.com> <CAE=NcrY7b8eTTovOszBhGhVbjfJAXoAYehiUJyPENGfwWoVcPw@mail.gmail.com>
-In-Reply-To: <CAE=NcrY7b8eTTovOszBhGhVbjfJAXoAYehiUJyPENGfwWoVcPw@mail.gmail.com>
+ <CAE=Ncrb63dQLe-nDQyO9OPv7XjwM_9mzL9SrcLiUi2Dr10cD4A@mail.gmail.com>
+ <CAFA6WYPJAzbPdcpBqioxjY=T8RLw-73B_hpzX4cGnwVvm5zpJw@mail.gmail.com> <CAE=Ncrb23q++z8R8UMbjDE2epEq4YVcNGzrRD31eH3JAooYejg@mail.gmail.com>
+In-Reply-To: <CAE=Ncrb23q++z8R8UMbjDE2epEq4YVcNGzrRD31eH3JAooYejg@mail.gmail.com>
 From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Wed, 31 Jul 2019 19:28:43 +0530
-Message-ID: <CAFA6WYOEqe1a1DCyVYKA+oZaZ0n5hnjxdubstUnrwdUW1-4xHw@mail.gmail.com>
+Date:   Wed, 31 Jul 2019 19:53:08 +0530
+Message-ID: <CAFA6WYOKcOzSwakHhgshZcebD8ZBMSi7xQdjWYFS79=Xc+odOg@mail.gmail.com>
 Subject: Re: [RFC v2 0/6] Introduce TEE based Trusted Keys support
 To:     Janne Karhunen <janne.karhunen@gmail.com>
 Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
@@ -82,135 +83,49 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 31 Jul 2019 at 15:51, Janne Karhunen <janne.karhunen@gmail.com> wrote:
+On Wed, 31 Jul 2019 at 16:33, Janne Karhunen <janne.karhunen@gmail.com> wrote:
 >
-> Hi,
+> On Wed, Jul 31, 2019 at 1:26 PM Sumit Garg <sumit.garg@linaro.org> wrote:
 >
-> To clarify a bit further - my thought was to support any type of trust
-> source.
-
-That could be very well accomplished via Trusted Keys abstraction
-framework [1]. A trust source just need to implement following APIs:
-
-struct trusted_key_ops ts_trusted_key_ops = {
-       .migratable = 0, /* non-migratable */
-       .init = init_ts_trusted,
-       .seal = ts_key_seal,
-       .unseal = ts_key_unseal,
-       .get_random = ts_get_random,
-       .cleanup = cleanup_ts_trusted,
-};
-
-> Remote, local or both. Just having one particular type of
-> locally bound 'TEE' sounded very limited,
-
-TEE is just one of trust source like TPM, we can have other trust
-source as mentioned above.
-
-> especially when nothing from
-> the TEE execution side is really needed for supporting the kernel
-> crypto. What you really need is the seal/unseal transaction going
-> somewhere and where that somewhere is does not matter much.
-
-Its only the seal/unseal operations that are provided by TEE driver
-that hooks up under trusted keys abstraction layer.
-
-> With the
-> user mode helper in between anyone can easily add their own thing in
-> there.
+> > > Interesting, I wrote something similar and posted it to the lists a while back:
+> > > https://github.com/jkrh/linux/commit/d77ea03afedcb5fd42234cd834da8f8a0809f6a6
+> > >
+> > > Since there are no generic 'TEEs' available,
+> >
+> > There is already a generic TEE interface driver available in kernel.
+> > Have a look here: "Documentation/tee.txt".
+>
+> I guess my wording was wrong, tried to say that physical TEEs in the
+> wild vary massively hardware wise. Generalizing these things is rough.
 >
 
-Isn't actual purpose to have trusted keys is to protect user-space
-from access to kernel keys in plain format? Doesn't user mode helper
-defeat that purpose in one way or another?
+There are already well defined GlobalPlatform Standards to generalize
+the TEE interface. One of them is GlobalPlatform TEE Client API [1]
+which provides the basis for this TEE interface.
 
 >
+> > > I implemented the same
+> > > thing as a generic protocol translator. The shared memory binding for
+> > > instance already assumes fair amount about the TEE and how that is
+> > > physically present in the system. Besides, the help from usage of shm
+> > > is pretty limited due to the size of the keydata.
+> > >
+> >
+> > If you look at patch #1 and #2, they add support to register kernel
+> > memory buffer (keydata buffer in this case) with TEE to operate on. So
+> > there isn't any limitation due to the size of the keydata.
+>
+> Ah, didn't mean that. Meant that the keydata is typically pretty small
+> in size, so there is limited benefit from passing that in via shm if
+> that complicates anything.
+>
 
-[1] https://lkml.org/lkml/2019/7/18/284
+Ah, ok. Do you think of any better approach rather than to use SHM?
+
+[1] https://globalplatform.org/specs-library/tee-client-api-specification/
 
 -Sumit
 
+>
 > --
 > Janne
->
-> On Wed, Jul 31, 2019 at 10:11 AM Janne Karhunen
-> <janne.karhunen@gmail.com> wrote:
-> >
-> > Hi,
-> >
-> > Interesting, I wrote something similar and posted it to the lists a while back:
-> > https://github.com/jkrh/linux/commit/d77ea03afedcb5fd42234cd834da8f8a0809f6a6
-> >
-> > Since there are no generic 'TEEs' available, I implemented the same
-> > thing as a generic protocol translator. The shared memory binding for
-> > instance already assumes fair amount about the TEE and how that is
-> > physically present in the system. Besides, the help from usage of shm
-> > is pretty limited due to the size of the keydata.
-> >
-> >
-> > --
-> > Janne
-> >
-> >
-> >
-> >
-> > On Tue, Jul 30, 2019 at 3:26 PM Sumit Garg <sumit.garg@linaro.org> wrote:
-> > >
-> > > Add support for TEE based trusted keys where TEE provides the functionality
-> > > to seal and unseal trusted keys using hardware unique key. Also, this is
-> > > an alternative in case platform doesn't possess a TPM device.
-> > >
-> > > This series also adds some TEE features like:
-> > >
-> > > Patch #1, #2 enables support for registered kernel shared memory with TEE.
-> > >
-> > > Patch #3 enables support for private kernel login method required for
-> > > cases like trusted keys where we don't wan't user-space to directly access
-> > > TEE service to retrieve trusted key contents.
-> > >
-> > > Rest of the patches from #4 to #6 adds support for TEE based trusted keys.
-> > >
-> > > This patch-set has been tested with OP-TEE based pseudo TA which can be
-> > > found here [1].
-> > >
-> > > Also, this patch-set is dependent on generic Trusted Keys framework
-> > > patch-set [2].
-> > >
-> > > [1] https://github.com/OP-TEE/optee_os/pull/3082
-> > > [2] https://lkml.org/lkml/2019/7/18/284
-> > >
-> > > Changes in v2:
-> > > 1. Add reviewed-by tags for patch #1 and #2.
-> > > 2. Incorporate comments from Jens for patch #3.
-> > > 3. Switch to use generic trusted keys framework.
-> > >
-> > > Sumit Garg (6):
-> > >   tee: optee: allow kernel pages to register as shm
-> > >   tee: enable support to register kernel memory
-> > >   tee: add private login method for kernel clients
-> > >   KEYS: trusted: Introduce TEE based Trusted Keys
-> > >   doc: keys: Document usage of TEE based Trusted Keys
-> > >   MAINTAINERS: Add entry for TEE based Trusted Keys
-> > >
-> > >  Documentation/security/keys/index.rst       |   1 +
-> > >  Documentation/security/keys/tee-trusted.rst |  93 +++++++++
-> > >  MAINTAINERS                                 |   9 +
-> > >  drivers/tee/optee/call.c                    |   7 +
-> > >  drivers/tee/tee_core.c                      |   6 +
-> > >  drivers/tee/tee_shm.c                       |  16 +-
-> > >  include/keys/trusted-type.h                 |   3 +
-> > >  include/keys/trusted_tee.h                  |  66 +++++++
-> > >  include/linux/tee_drv.h                     |   1 +
-> > >  include/uapi/linux/tee.h                    |   8 +
-> > >  security/keys/Kconfig                       |   3 +
-> > >  security/keys/trusted-keys/Makefile         |   3 +-
-> > >  security/keys/trusted-keys/trusted-tee.c    | 282 ++++++++++++++++++++++++++++
-> > >  security/keys/trusted-keys/trusted.c        |   3 +
-> > >  14 files changed, 498 insertions(+), 3 deletions(-)
-> > >  create mode 100644 Documentation/security/keys/tee-trusted.rst
-> > >  create mode 100644 include/keys/trusted_tee.h
-> > >  create mode 100644 security/keys/trusted-keys/trusted-tee.c
-> > >
-> > > --
-> > > 2.7.4
-> > >
