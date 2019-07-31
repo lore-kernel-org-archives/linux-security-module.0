@@ -2,181 +2,70 @@ Return-Path: <SRS0=Q99v=V4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E1BC32751
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C768C32751
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 904CB214DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 155AF214DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DERqYxz9"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TyMnOqTf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731159AbfGaWQd (ORCPT
+        id S1730529AbfGaWQ1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Jul 2019 18:16:33 -0400
-Received: from mail-vs1-f73.google.com ([209.85.217.73]:35223 "EHLO
-        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731144AbfGaWQc (ORCPT
+        Wed, 31 Jul 2019 18:16:27 -0400
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:48733 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730491AbfGaWQ1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Jul 2019 18:16:32 -0400
-Received: by mail-vs1-f73.google.com with SMTP id 66so12932172vsp.2
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 15:16:31 -0700 (PDT)
+        Wed, 31 Jul 2019 18:16:27 -0400
+Received: by mail-vk1-f201.google.com with SMTP id x71so21162987vkd.15
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 15:16:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=WTiH4YTrH3kpcM05qpaK8fMoTjQf+8p0ghLlYf37sU8=;
-        b=DERqYxz9wX0gHlQoGUJX0WknuNtCqhZOzrWycP+02aBufd6T659MgVCUVR5uC5/ByF
-         v6eRY622zylM2F6tr3INtUyu+wE7R/907q/SSHHYUIYJRqc0m+zkLAX1/XHQjQLjy8Ss
-         sE8JzGxbw+jOhyOLmLNF3PMNS4G0zEjzA1gw5Hq4gc6O8YHPliYN91vG8cQQJBwaf+2S
-         u+3Ax6g7to46lAJRbMq7lMSe/jBas85IdWh6vxqiedomVTSl8mOvelUC3XrsmFtJkk3F
-         nK1T4QgBHrtZAzA3LY5RSF+fLp1J2p0Lvog2tekRVJxNavlh4KolInczFKp5SP1J5z4c
-         BK3A==
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=TNCYnHbae6Y+N46P+S/g9B2AO0ZpO70oB34sI5UpqOY=;
+        b=TyMnOqTfGDABMXlcAwuv7T7jhu8BpLlOWDHO+zQGLa2ChBB8hEfFDP2zhJDEWRTed8
+         itU6v2ZiJqe+i4EJYdCebruEriH2qsaxLRmEy+kII/wQA9nxDVVThu+714riM4DLr2wa
+         dqNTFiVHcyLg/3anICNNZ0z666Wb7mh4oSLXpDkYPn0h5F2Y4A8+gQ6+2rah8LfVxzdw
+         wZk7voII1+P+C6cSmHkgvcjwDjd0+a8PBbI14aVS+ru20lzThtzn2Q+5rBbeX4KOfgVX
+         Y+u/dMRJpKtkgAr10pS4pFCWlgp1Sc3M72BYDfVV2i67o7THjKqSYGuetlXj4bVuOX+i
+         Lp4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=WTiH4YTrH3kpcM05qpaK8fMoTjQf+8p0ghLlYf37sU8=;
-        b=Ku/MdNeVFBeZj8s+GWMsmyTh0jqjHRJkSlm/G22OPy7saBxS0sr/q6lAZVDGE0wXfP
-         vC8MC/8XFj3dtb5+Rtj4uLNc83e+qwH1fHcFBrK0oGGoJu1Hv/7uK2SlABvs+5nuJuTE
-         yplZaIn5fg1a0627Ux13WLLbHBQGdAU0VaJpxS5VDS1YaXzAL7CPYuejg6VpNUYnwUlx
-         D2EBUh19zJqwC8CCMFxnqio5QSQwR6d54B5q2A8PqWbGlCRaivaDCu+F4vaHfOQN+J9f
-         4K04DTGGXxujj4MsLA4zfNsqL0XVbDk4pm1KHEK07n29HpEpK+lHrN1fcDtTzIe02Q1Q
-         JCpA==
-X-Gm-Message-State: APjAAAWrdLTtfPt/UyZ/bG73IvNgwc9J6b5O4nfjHWAVkLhxUmykMK/a
-        kpPzSA9WzIN28V7s6Hi6M7i3m+44/+kTSPBoh+uHzw==
-X-Google-Smtp-Source: APXvYqzAe54T0QiTUuxksPpviValfZJ3QvQR/H1/B1wsbrIBwM6cGdu9A0LY0uYRsuLqgvSRg078qub8agvdkMHIxjQx+A==
-X-Received: by 2002:a67:f618:: with SMTP id k24mr80982528vso.66.1564611391373;
- Wed, 31 Jul 2019 15:16:31 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 15:15:50 -0700
-In-Reply-To: <20190731221617.234725-1-matthewgarrett@google.com>
-Message-Id: <20190731221617.234725-3-matthewgarrett@google.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=TNCYnHbae6Y+N46P+S/g9B2AO0ZpO70oB34sI5UpqOY=;
+        b=MyESvIcaJWWibROZWC27LqEN9hOi+QXMzWghgaDzNUs7Dewm9RkhPTfxaltwNsapuF
+         hJy2kcGyWo9WxWPighQ92LeXG5FtRuTE4ltNBq8GnPJO8Mjz8PPRH738LH80YLeJBTsD
+         eShK93wnguyVBTe6K7qefuvRHBuFEvJFVyzBgBC9Jv+9CrcQQAqKivVCvr5oXUto+/am
+         aT1MAWXXEYJ1QQid8sSniXUDzrFIHo9I1QflYNSr68o9N1Z9YuW3Nixtvp0UO+i3rNCF
+         h8d0nPzghOFN+++NqVllFb0c8NMukMO/XIU4l91ml684qwhHKPr81GqUjymP7o+AD/B7
+         4yUg==
+X-Gm-Message-State: APjAAAVLxcKe4HmPDEjgN1yGmRjaGFjJkpBKXzzOpitwKjyW2Iih8o64
+        fRCvft/pqoT1fKLx4bz6qqDGwrKv2Q70T61cA13PVw==
+X-Google-Smtp-Source: APXvYqwL9R2qHS/bl6BRUfgtjSoZ19607pzRI+aH/FxR+XimjEIv8tRaHjP3z6oMrbxKSWMVwlTwG43uv60sooxKe6omwQ==
+X-Received: by 2002:a67:fc19:: with SMTP id o25mr8573319vsq.106.1564611385933;
+ Wed, 31 Jul 2019 15:16:25 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 15:15:48 -0700
+Message-Id: <20190731221617.234725-1-matthewgarrett@google.com>
 Mime-Version: 1.0
-References: <20190731221617.234725-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-Subject: [PATCH V37 02/29] security: Add a "locked down" LSM hook
+Subject: [PATCH V37 00/29] security: Add support for locking down the kernel
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a mechanism to allow LSMs to make a policy decision around whether
-kernel functionality that would allow tampering with or examining the
-runtime state of the kernel should be permitted.
+A minor fix to the tracefs patch, some Acks and reviews added to the SOB
+chain, and rebased on next/master (there were a couple of minor fixes needed to
+align that).
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
----
- include/linux/lsm_hooks.h |  2 ++
- include/linux/security.h  | 32 ++++++++++++++++++++++++++++++++
- security/security.c       |  6 ++++++
- 3 files changed, 40 insertions(+)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index aebb0e032072..29c22cf40113 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1807,6 +1807,7 @@ union security_list_options {
- 	int (*bpf_prog_alloc_security)(struct bpf_prog_aux *aux);
- 	void (*bpf_prog_free_security)(struct bpf_prog_aux *aux);
- #endif /* CONFIG_BPF_SYSCALL */
-+	int (*locked_down)(enum lockdown_reason what);
- };
- 
- struct security_hook_heads {
-@@ -2046,6 +2047,7 @@ struct security_hook_heads {
- 	struct hlist_head bpf_prog_alloc_security;
- 	struct hlist_head bpf_prog_free_security;
- #endif /* CONFIG_BPF_SYSCALL */
-+	struct hlist_head locked_down;
- } __randomize_layout;
- 
- /*
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 66a2fcbe6ab0..c2b1204e8e26 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -77,6 +77,33 @@ enum lsm_event {
- 	LSM_POLICY_CHANGE,
- };
- 
-+/*
-+ * These are reasons that can be passed to the security_locked_down()
-+ * LSM hook. Lockdown reasons that protect kernel integrity (ie, the
-+ * ability for userland to modify kernel code) are placed before
-+ * LOCKDOWN_INTEGRITY_MAX.  Lockdown reasons that protect kernel
-+ * confidentiality (ie, the ability for userland to extract
-+ * information from the running kernel that would otherwise be
-+ * restricted) are placed before LOCKDOWN_CONFIDENTIALITY_MAX.
-+ *
-+ * LSM authors should note that the semantics of any given lockdown
-+ * reason are not guaranteed to be stable - the same reason may block
-+ * one set of features in one kernel release, and a slightly different
-+ * set of features in a later kernel release. LSMs that seek to expose
-+ * lockdown policy at any level of granularity other than "none",
-+ * "integrity" or "confidentiality" are responsible for either
-+ * ensuring that they expose a consistent level of functionality to
-+ * userland, or ensuring that userland is aware that this is
-+ * potentially a moving target. It is easy to misuse this information
-+ * in a way that could break userspace. Please be careful not to do
-+ * so.
-+ */
-+enum lockdown_reason {
-+	LOCKDOWN_NONE,
-+	LOCKDOWN_INTEGRITY_MAX,
-+	LOCKDOWN_CONFIDENTIALITY_MAX,
-+};
-+
- /* These functions are in security/commoncap.c */
- extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
- 		       int cap, unsigned int opts);
-@@ -393,6 +420,7 @@ void security_inode_invalidate_secctx(struct inode *inode);
- int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
-+int security_locked_down(enum lockdown_reason what);
- #else /* CONFIG_SECURITY */
- 
- static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-@@ -1205,6 +1233,10 @@ static inline int security_inode_getsecctx(struct inode *inode, void **ctx, u32
- {
- 	return -EOPNOTSUPP;
- }
-+static inline int security_locked_down(enum lockdown_reason what)
-+{
-+	return 0;
-+}
- #endif	/* CONFIG_SECURITY */
- 
- #ifdef CONFIG_SECURITY_NETWORK
-diff --git a/security/security.c b/security/security.c
-index 90f1e291c800..ce6c945bf347 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2392,3 +2392,9 @@ void security_bpf_prog_free(struct bpf_prog_aux *aux)
- 	call_void_hook(bpf_prog_free_security, aux);
- }
- #endif /* CONFIG_BPF_SYSCALL */
-+
-+int security_locked_down(enum lockdown_reason what)
-+{
-+	return call_int_hook(locked_down, 0, what);
-+}
-+EXPORT_SYMBOL(security_locked_down);
--- 
-2.22.0.770.g0f2c4a37fd-goog
 
