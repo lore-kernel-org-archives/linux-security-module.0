@@ -2,92 +2,270 @@ Return-Path: <SRS0=Q99v=V4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA29C32751
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 21:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26254C433FF
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05E7E206B8
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 21:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E26202064A
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:16:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y+XYLq1G"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qVVH+OGR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726421AbfGaVal (ORCPT
+        id S1731139AbfGaWQa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Jul 2019 17:30:41 -0400
-Received: from mail-io1-f43.google.com ([209.85.166.43]:44527 "EHLO
-        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726096AbfGaVal (ORCPT
+        Wed, 31 Jul 2019 18:16:30 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:43887 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730378AbfGaWQ3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Jul 2019 17:30:41 -0400
-Received: by mail-io1-f43.google.com with SMTP id s7so139446704iob.11
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 14:30:40 -0700 (PDT)
+        Wed, 31 Jul 2019 18:16:29 -0400
+Received: by mail-pg1-f202.google.com with SMTP id p29so35514754pgm.10
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 15:16:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=LorXcbFrkDiur0GwKhOS0WtYPlhd7m6A9hFg1D5qG4Q=;
-        b=Y+XYLq1GfpFsLdBp2odvBbnfZzGEE/EAyXfNcZDp6CRNDfB+xJ/SwxMyaaLKVBYn0N
-         +jVpn09a5mkEl8XQG4Gi6OnmJ+6QOZEPwBvzaziIVbZuLdM4Gx+hUxXTHsBnrpA+F6ko
-         W245s6uNCJby+pvNSQ7bsI9RWFURyKTIwAN9M=
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=51dHsz2VCo9w+VP1Zvpve034pgyEZM98AQeW9IXg4Ow=;
+        b=qVVH+OGRsMSn/LGHzMNz4COc3ENzyPmA4GDLlB9FJxKixdjiPTxaiI4Bpeo7+TfX7P
+         4ug4SCfAWimEMtk20uAkeQu7bqBEcBLWUbR0SHXY9qUruSQDsL6YF9JxvmS/+5sL8eOi
+         ZzzWlZ2iMAbN6b4IkLzBZPPGC/WbXY5iQu68P81I5MZbdJo1d4f0eOMTOJqIOCWmnDM/
+         2CkSweNuMx6OV2v+fJuPDS+gfg/gTw/QNERZZmIJC3lDT0RROgFmwWoIbVnX8uegbNfr
+         sr439LCuNbSq3JPmKhqoUMd+rz16eUxkhZ6i+PlwOd5hdIVDr1M4uG2tmCznIvRH9Qx1
+         Axlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=LorXcbFrkDiur0GwKhOS0WtYPlhd7m6A9hFg1D5qG4Q=;
-        b=cMfcY1xn1EjPQH4YlWE7CUPMjbI4M9a04B2Ht5uoZ+ByeTiEzje1TyxBFv/qUTtZhT
-         UqOFROY3xeHbdmVnbkPFt7fU7WeQC0OrMUw1xFw1Pkx1Pw+a9gu2jf0P05uTGfbNw2bQ
-         /lWZm9Fn4zJUK7CZq0Ak0/v3Y4v5xHlier+6SPZCImHm0iDwWP92Zqwv6zIEtadQjJb1
-         +cBifR7tCHlauZJFXvL1ytXrs7z8RBVHcRV2bbpqlHhJW+CvFqmXzBFEox0DaR32mpYe
-         G7pA6A6GrB2Vz+3aVzolDaiqt1Q4rOa2SlLOOhT2O0WOCv4q+bEpYEXvbBdATRKEKsTb
-         Fh3A==
-X-Gm-Message-State: APjAAAWUwjI9VOsiRDSYcJmxwhcZW+aVevLLV9h8g5DcTTtD67ud2rlS
-        0rg8n7C4L1xDT0bUBinb7VcUp/S83hs7gVsNKv6Bx7eKx6M=
-X-Google-Smtp-Source: APXvYqy3BKFTmjWzotYFCuzp4BPjn1MMaYy70Rlzz2fRaa9EbCnLYGgLAER+4pJYzAzQGEaU/wQqEBNu6KjKMF9N374=
-X-Received: by 2002:a02:710f:: with SMTP id n15mr87971397jac.119.1564608640491;
- Wed, 31 Jul 2019 14:30:40 -0700 (PDT)
-MIME-Version: 1.0
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Wed, 31 Jul 2019 14:30:29 -0700
-Message-ID: <CAJ-EccMXEVktpuPS5BwkGqTo++dGcpHAuSUZo7WgJhAzFByz0g@mail.gmail.com>
-Subject: [GIT PULL] SafeSetID MAINTAINERS file update for v5.3
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=51dHsz2VCo9w+VP1Zvpve034pgyEZM98AQeW9IXg4Ow=;
+        b=P5qtgkfw6kMV4H0JG6z9SJMbvl098ns0XTy7Qz9sddJh8V7rBvAdefw3En1JBYq76E
+         wFHDvV/0WUSk8cHjvqyFpq6uFuMZPXZ4/oJAdhzvaACNdinhBwJiAbTMQ1sgL24/M+IJ
+         EjATirWT03K8js28ojE6KN9X9CBAJdPkWDKxxZm98ESL/KvmLJw3ZR06M/od93omV4Zw
+         vNbph1cry9p1d6hjNXaYqpvAphVmQ3dGmJjHTbGxHCK71aCax2kO/6E0yu45dS3xtNk/
+         8UAFxbRyfN9DYP/AM0+qiFd3HV4GD9lwrBUk7Dn1bO5CGD8JGd2AvlN1ijFRL8Umjw+y
+         dTxg==
+X-Gm-Message-State: APjAAAWBszX9T2PQGzzbb/FjP5uYJoCRRiDlgNtqP16MyhH3M3/BcSE/
+        2nk8dHwCm8U5iYSSydEyz9iE12vgniz+jCaDbcQpWg==
+X-Google-Smtp-Source: APXvYqx84GYrBq6uqjqWf+y6nnPUb8miYjP7zdRnus3qjBKLCgc727OBJ0v2dqkTra6tifRXqgzB0LNbi4gBfBT/r2GC6g==
+X-Received: by 2002:a63:cb4b:: with SMTP id m11mr42081768pgi.49.1564611388704;
+ Wed, 31 Jul 2019 15:16:28 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 15:15:49 -0700
+In-Reply-To: <20190731221617.234725-1-matthewgarrett@google.com>
+Message-Id: <20190731221617.234725-2-matthewgarrett@google.com>
+Mime-Version: 1.0
+References: <20190731221617.234725-1-matthewgarrett@google.com>
+X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
+Subject: [PATCH V37 01/29] security: Support early LSMs
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+The lockdown module is intended to allow for kernels to be locked down
+early in boot - sufficiently early that we don't have the ability to
+kmalloc() yet. Add support for early initialisation of some LSMs, and
+then add them to the list of names when we do full initialisation later.
+Early LSMs are initialised in link order and cannot be overridden via
+boot parameters, and cannot make use of kmalloc() (since the allocator
+isn't initialised yet).
 
-You mentioned a couple weeks ago it would be good if I added myself to
-the MAINTAINERS file for the SafeSetID LSM. Here's the pull request
-for v5.3.
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ include/asm-generic/vmlinux.lds.h |  8 ++++-
+ include/linux/lsm_hooks.h         |  6 ++++
+ include/linux/security.h          |  1 +
+ init/main.c                       |  1 +
+ security/security.c               | 50 ++++++++++++++++++++++++++-----
+ 5 files changed, 57 insertions(+), 9 deletions(-)
 
-Thanks!
---
-The following changes since commit 179757afbef5f64b9bd25e6161f72fc1a52a8f2e:
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index cd28f63bfbc7..dae64600ccbf 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -215,8 +215,13 @@
+ 			__start_lsm_info = .;				\
+ 			KEEP(*(.lsm_info.init))				\
+ 			__end_lsm_info = .;
++#define EARLY_LSM_TABLE()	. = ALIGN(8);				\
++			__start_early_lsm_info = .;			\
++			KEEP(*(.early_lsm_info.init))			\
++			__end_early_lsm_info = .;
+ #else
+ #define LSM_TABLE()
++#define EARLY_LSM_TABLE()
+ #endif
+ 
+ #define ___OF_TABLE(cfg, name)	_OF_TABLE_##cfg(name)
+@@ -627,7 +632,8 @@
+ 	ACPI_PROBE_TABLE(timer)						\
+ 	THERMAL_TABLE(governor)						\
+ 	EARLYCON_TABLE()						\
+-	LSM_TABLE()
++	LSM_TABLE()							\
++	EARLY_LSM_TABLE()
+ 
+ #define INIT_TEXT							\
+ 	*(.init.text .init.text.*)					\
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index df1318d85f7d..aebb0e032072 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2104,12 +2104,18 @@ struct lsm_info {
+ };
+ 
+ extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
++extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
+ 
+ #define DEFINE_LSM(lsm)							\
+ 	static struct lsm_info __lsm_##lsm				\
+ 		__used __section(.lsm_info.init)			\
+ 		__aligned(sizeof(unsigned long))
+ 
++#define DEFINE_EARLY_LSM(lsm)						\
++	static struct lsm_info __early_lsm_##lsm			\
++		__used __section(.early_lsm_info.init)			\
++		__aligned(sizeof(unsigned long))
++
+ #ifdef CONFIG_SECURITY_SELINUX_DISABLE
+ /*
+  * Assuring the safety of deleting a security module is up to
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5f7441abbf42..66a2fcbe6ab0 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -195,6 +195,7 @@ int unregister_blocking_lsm_notifier(struct notifier_block *nb);
+ 
+ /* prototypes */
+ extern int security_init(void);
++extern int early_security_init(void);
+ 
+ /* Security operations */
+ int security_binder_set_context_mgr(struct task_struct *mgr);
+diff --git a/init/main.c b/init/main.c
+index 96f8d5af52d6..565af7b963e1 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -593,6 +593,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 	boot_cpu_init();
+ 	page_address_init();
+ 	pr_notice("%s", linux_banner);
++	early_security_init();
+ 	setup_arch(&command_line);
+ 	mm_init_cpumask(&init_mm);
+ 	setup_command_line(command_line);
+diff --git a/security/security.c b/security/security.c
+index 250ee2d76406..90f1e291c800 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -33,6 +33,7 @@
+ 
+ /* How many LSMs were built into the kernel? */
+ #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
++#define EARLY_LSM_COUNT (__end_early_lsm_info - __start_early_lsm_info)
+ 
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static BLOCKING_NOTIFIER_HEAD(blocking_lsm_notifier_chain);
+@@ -277,6 +278,8 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ static void __init lsm_early_cred(struct cred *cred);
+ static void __init lsm_early_task(struct task_struct *task);
+ 
++static int lsm_append(const char *new, char **result);
++
+ static void __init ordered_lsm_init(void)
+ {
+ 	struct lsm_info **lsm;
+@@ -323,6 +326,26 @@ static void __init ordered_lsm_init(void)
+ 	kfree(ordered_lsms);
+ }
+ 
++int __init early_security_init(void)
++{
++	int i;
++	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
++	struct lsm_info *lsm;
++
++	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
++	     i++)
++		INIT_HLIST_HEAD(&list[i]);
++
++	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
++		if (!lsm->enabled)
++			lsm->enabled = &lsm_enabled_true;
++		prepare_lsm(lsm);
++		initialize_lsm(lsm);
++	}
++
++	return 0;
++}
++
+ /**
+  * security_init - initializes the security framework
+  *
+@@ -330,14 +353,18 @@ static void __init ordered_lsm_init(void)
+  */
+ int __init security_init(void)
+ {
+-	int i;
+-	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
++	struct lsm_info *lsm;
+ 
+ 	pr_info("Security Framework initializing\n");
+ 
+-	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
+-	     i++)
+-		INIT_HLIST_HEAD(&list[i]);
++	/*
++	 * Append the names of the early LSM modules now that kmalloc() is
++	 * available
++	 */
++	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
++		if (lsm->enabled)
++			lsm_append(lsm->name, &lsm_names);
++	}
+ 
+ 	/* Load LSMs in specified order. */
+ 	ordered_lsm_init();
+@@ -384,7 +411,7 @@ static bool match_last_lsm(const char *list, const char *lsm)
+ 	return !strcmp(last, lsm);
+ }
+ 
+-static int lsm_append(char *new, char **result)
++static int lsm_append(const char *new, char **result)
+ {
+ 	char *cp;
+ 
+@@ -422,8 +449,15 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+ 		hooks[i].lsm = lsm;
+ 		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
+ 	}
+-	if (lsm_append(lsm, &lsm_names) < 0)
+-		panic("%s - Cannot get early memory.\n", __func__);
++
++	/*
++	 * Don't try to append during early_security_init(), we'll come back
++	 * and fix this up afterwards.
++	 */
++	if (slab_is_available()) {
++		if (lsm_append(lsm, &lsm_names) < 0)
++			panic("%s - Cannot get early memory.\n", __func__);
++	}
+ }
+ 
+ int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+-- 
+2.22.0.770.g0f2c4a37fd-goog
 
-  Merge commit 'v5.3-rc2^0' (2019-07-31 13:45:16 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/micah-morton/linux.git tags/safesetid-maintainers-5.3-rc2
-
-for you to fetch changes up to 7e20e910eabdf0af90fd10e712f15b413be8e135:
-
-  Add entry in MAINTAINERS file for SafeSetID LSM (2019-07-31 13:58:11 -0700)
-
-----------------------------------------------------------------
-Add entry in MAINTAINERS file for SafeSetID LSM.
-
-Has not had any bake time or testing, since its just changes to a text file.
-
-----------------------------------------------------------------
-Micah Morton (1):
-      Add entry in MAINTAINERS file for SafeSetID LSM
-
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
