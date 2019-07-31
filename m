@@ -5,147 +5,178 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1667C433FF
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E1BC32751
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74F5A214DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 904CB214DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BtsXIa2e"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DERqYxz9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731187AbfGaWQl (ORCPT
+        id S1731159AbfGaWQd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Jul 2019 18:16:41 -0400
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:55029 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731169AbfGaWQk (ORCPT
+        Wed, 31 Jul 2019 18:16:33 -0400
+Received: from mail-vs1-f73.google.com ([209.85.217.73]:35223 "EHLO
+        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731144AbfGaWQc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Jul 2019 18:16:40 -0400
-Received: by mail-pf1-f201.google.com with SMTP id y66so44179473pfb.21
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 15:16:39 -0700 (PDT)
+        Wed, 31 Jul 2019 18:16:32 -0400
+Received: by mail-vs1-f73.google.com with SMTP id 66so12932172vsp.2
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 15:16:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=YL983DZYCsDH2/bxBW55mkIkXEZ4iV1BlOwZ0Y9UQbo=;
-        b=BtsXIa2eTEgrtDB3YoZh0Vr0MqF3zG2HREwRJPT9j0PLXfgg2j3hG32IB5dfHPMy/2
-         rm0uDDUk38QtwLylkx1PGSeLlU64Nva0fuH1JwNUQQUtkhm7QfgTLm2TKTf/7+OlZbSE
-         fMXuJiJQwb9yTj6TCX6++29P/Sr4XGuR2UAS6+U8dUUzVj4VaEGg/YflN76TaB4J/tiX
-         9P2rzS75rZnOJtKNVpeLvatDRMWkjQSQe5lvohC6vizpCaIU2VSR6OYNm/FVr5BdlKXj
-         3mBodw3Mi95WtWxKxlSO4spjGTI5UzD68Uck0JfqLAxfMZdWLWt5aR3iMBTcoph2ExUE
-         Px0Q==
+        bh=WTiH4YTrH3kpcM05qpaK8fMoTjQf+8p0ghLlYf37sU8=;
+        b=DERqYxz9wX0gHlQoGUJX0WknuNtCqhZOzrWycP+02aBufd6T659MgVCUVR5uC5/ByF
+         v6eRY622zylM2F6tr3INtUyu+wE7R/907q/SSHHYUIYJRqc0m+zkLAX1/XHQjQLjy8Ss
+         sE8JzGxbw+jOhyOLmLNF3PMNS4G0zEjzA1gw5Hq4gc6O8YHPliYN91vG8cQQJBwaf+2S
+         u+3Ax6g7to46lAJRbMq7lMSe/jBas85IdWh6vxqiedomVTSl8mOvelUC3XrsmFtJkk3F
+         nK1T4QgBHrtZAzA3LY5RSF+fLp1J2p0Lvog2tekRVJxNavlh4KolInczFKp5SP1J5z4c
+         BK3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=YL983DZYCsDH2/bxBW55mkIkXEZ4iV1BlOwZ0Y9UQbo=;
-        b=QAvUT/fF9WbKES2LtUrfUguQZzbFwmuq7qyDmpexXlQXrUVjdW9fzf5IcNqwW7vP8D
-         lt6gj3PDw4nJazMXe2bGPtf/E+0th00pXHJ9DggHeV53N5e9DNvNV797Fdczbk0aXMLi
-         3tpYIFdYkjqArawINtWEc1H9tdT3gqFyewSNnaT8w0TdBKNii03XVzWupoQt6GCtvxYi
-         FHzO29fUQNKGvewU9hBcx4+3Rhhoa1WTINr1jxylB/eHR1432g6Gl0suCGmHaQ5+0fMi
-         Xwr8Iw5o7zUwfifP4hpy04s/ItaFuAjYLdEGKbAwzbG9qfeEtw09LyAUl6Ua1ScBPOy5
-         IFjQ==
-X-Gm-Message-State: APjAAAWAjXiGdVUUrfwg4O+K9YF/6G+hcdkgi1wEuli//MzdkAv/Xer+
-        WKfzNosKkCATgbdwl5Z1zo4Xnx9nlSPaGNtdrWSdIw==
-X-Google-Smtp-Source: APXvYqym1pasXsOwhBqWzoGZgVhOVBlOvMeVYgs8AnlFQw7KxjvustScOG1wWEkF3l3iPObYZMa3I6zo5k9FCZj91H7lgg==
-X-Received: by 2002:a65:44cb:: with SMTP id g11mr69696974pgs.288.1564611398925;
- Wed, 31 Jul 2019 15:16:38 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 15:15:53 -0700
+        bh=WTiH4YTrH3kpcM05qpaK8fMoTjQf+8p0ghLlYf37sU8=;
+        b=Ku/MdNeVFBeZj8s+GWMsmyTh0jqjHRJkSlm/G22OPy7saBxS0sr/q6lAZVDGE0wXfP
+         vC8MC/8XFj3dtb5+Rtj4uLNc83e+qwH1fHcFBrK0oGGoJu1Hv/7uK2SlABvs+5nuJuTE
+         yplZaIn5fg1a0627Ux13WLLbHBQGdAU0VaJpxS5VDS1YaXzAL7CPYuejg6VpNUYnwUlx
+         D2EBUh19zJqwC8CCMFxnqio5QSQwR6d54B5q2A8PqWbGlCRaivaDCu+F4vaHfOQN+J9f
+         4K04DTGGXxujj4MsLA4zfNsqL0XVbDk4pm1KHEK07n29HpEpK+lHrN1fcDtTzIe02Q1Q
+         JCpA==
+X-Gm-Message-State: APjAAAWrdLTtfPt/UyZ/bG73IvNgwc9J6b5O4nfjHWAVkLhxUmykMK/a
+        kpPzSA9WzIN28V7s6Hi6M7i3m+44/+kTSPBoh+uHzw==
+X-Google-Smtp-Source: APXvYqzAe54T0QiTUuxksPpviValfZJ3QvQR/H1/B1wsbrIBwM6cGdu9A0LY0uYRsuLqgvSRg078qub8agvdkMHIxjQx+A==
+X-Received: by 2002:a67:f618:: with SMTP id k24mr80982528vso.66.1564611391373;
+ Wed, 31 Jul 2019 15:16:31 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 15:15:50 -0700
 In-Reply-To: <20190731221617.234725-1-matthewgarrett@google.com>
-Message-Id: <20190731221617.234725-6-matthewgarrett@google.com>
+Message-Id: <20190731221617.234725-3-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190731221617.234725-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-Subject: [PATCH V37 05/29] Restrict /dev/{mem,kmem,port} when the kernel is
- locked down
+Subject: [PATCH V37 02/29] security: Add a "locked down" LSM hook
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        David Howells <dhowells@redhat.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
         Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Matthew Garrett <mjg59@srcf.ucam.org>
+Add a mechanism to allow LSMs to make a policy decision around whether
+kernel functionality that would allow tampering with or examining the
+runtime state of the kernel should be permitted.
 
-Allowing users to read and write to core kernel memory makes it possible
-for the kernel to be subverted, avoiding module loading restrictions, and
-also to steal cryptographic information.
-
-Disallow /dev/mem and /dev/kmem from being opened this when the kernel has
-been locked down to prevent this.
-
-Also disallow /dev/port from being opened to prevent raw ioport access and
-thus DMA from being used to accomplish the same thing.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: x86@kernel.org
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- drivers/char/mem.c           | 7 +++++--
- include/linux/security.h     | 1 +
- security/lockdown/lockdown.c | 1 +
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ include/linux/lsm_hooks.h |  2 ++
+ include/linux/security.h  | 32 ++++++++++++++++++++++++++++++++
+ security/security.c       |  6 ++++++
+ 3 files changed, 40 insertions(+)
 
-diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-index b08dc50f9f26..d0148aee1aab 100644
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -29,8 +29,8 @@
- #include <linux/export.h>
- #include <linux/io.h>
- #include <linux/uio.h>
--
- #include <linux/uaccess.h>
-+#include <linux/security.h>
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index aebb0e032072..29c22cf40113 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1807,6 +1807,7 @@ union security_list_options {
+ 	int (*bpf_prog_alloc_security)(struct bpf_prog_aux *aux);
+ 	void (*bpf_prog_free_security)(struct bpf_prog_aux *aux);
+ #endif /* CONFIG_BPF_SYSCALL */
++	int (*locked_down)(enum lockdown_reason what);
+ };
  
- #ifdef CONFIG_IA64
- # include <linux/efi.h>
-@@ -786,7 +786,10 @@ static loff_t memory_lseek(struct file *file, loff_t offset, int orig)
+ struct security_hook_heads {
+@@ -2046,6 +2047,7 @@ struct security_hook_heads {
+ 	struct hlist_head bpf_prog_alloc_security;
+ 	struct hlist_head bpf_prog_free_security;
+ #endif /* CONFIG_BPF_SYSCALL */
++	struct hlist_head locked_down;
+ } __randomize_layout;
  
- static int open_port(struct inode *inode, struct file *filp)
- {
--	return capable(CAP_SYS_RAWIO) ? 0 : -EPERM;
-+	if (!capable(CAP_SYS_RAWIO))
-+		return -EPERM;
-+
-+	return security_locked_down(LOCKDOWN_DEV_MEM);
- }
- 
- #define zero_lseek	null_lseek
+ /*
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 8e70063074a1..9458152601b5 100644
+index 66a2fcbe6ab0..c2b1204e8e26 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -104,6 +104,7 @@ enum lsm_event {
- enum lockdown_reason {
- 	LOCKDOWN_NONE,
- 	LOCKDOWN_MODULE_SIGNATURE,
-+	LOCKDOWN_DEV_MEM,
- 	LOCKDOWN_INTEGRITY_MAX,
- 	LOCKDOWN_CONFIDENTIALITY_MAX,
+@@ -77,6 +77,33 @@ enum lsm_event {
+ 	LSM_POLICY_CHANGE,
  };
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 2c53fd9f5c9b..d2ef29d9f0b2 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -19,6 +19,7 @@ static enum lockdown_reason kernel_locked_down;
- static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_NONE] = "none",
- 	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
-+	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
- 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
- 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
- };
+ 
++/*
++ * These are reasons that can be passed to the security_locked_down()
++ * LSM hook. Lockdown reasons that protect kernel integrity (ie, the
++ * ability for userland to modify kernel code) are placed before
++ * LOCKDOWN_INTEGRITY_MAX.  Lockdown reasons that protect kernel
++ * confidentiality (ie, the ability for userland to extract
++ * information from the running kernel that would otherwise be
++ * restricted) are placed before LOCKDOWN_CONFIDENTIALITY_MAX.
++ *
++ * LSM authors should note that the semantics of any given lockdown
++ * reason are not guaranteed to be stable - the same reason may block
++ * one set of features in one kernel release, and a slightly different
++ * set of features in a later kernel release. LSMs that seek to expose
++ * lockdown policy at any level of granularity other than "none",
++ * "integrity" or "confidentiality" are responsible for either
++ * ensuring that they expose a consistent level of functionality to
++ * userland, or ensuring that userland is aware that this is
++ * potentially a moving target. It is easy to misuse this information
++ * in a way that could break userspace. Please be careful not to do
++ * so.
++ */
++enum lockdown_reason {
++	LOCKDOWN_NONE,
++	LOCKDOWN_INTEGRITY_MAX,
++	LOCKDOWN_CONFIDENTIALITY_MAX,
++};
++
+ /* These functions are in security/commoncap.c */
+ extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
+ 		       int cap, unsigned int opts);
+@@ -393,6 +420,7 @@ void security_inode_invalidate_secctx(struct inode *inode);
+ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+ int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
+ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
++int security_locked_down(enum lockdown_reason what);
+ #else /* CONFIG_SECURITY */
+ 
+ static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+@@ -1205,6 +1233,10 @@ static inline int security_inode_getsecctx(struct inode *inode, void **ctx, u32
+ {
+ 	return -EOPNOTSUPP;
+ }
++static inline int security_locked_down(enum lockdown_reason what)
++{
++	return 0;
++}
+ #endif	/* CONFIG_SECURITY */
+ 
+ #ifdef CONFIG_SECURITY_NETWORK
+diff --git a/security/security.c b/security/security.c
+index 90f1e291c800..ce6c945bf347 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2392,3 +2392,9 @@ void security_bpf_prog_free(struct bpf_prog_aux *aux)
+ 	call_void_hook(bpf_prog_free_security, aux);
+ }
+ #endif /* CONFIG_BPF_SYSCALL */
++
++int security_locked_down(enum lockdown_reason what)
++{
++	return call_int_hook(locked_down, 0, what);
++}
++EXPORT_SYMBOL(security_locked_down);
 -- 
 2.22.0.770.g0f2c4a37fd-goog
 
