@@ -2,143 +2,258 @@ Return-Path: <SRS0=Q99v=V4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_SBL,URIBL_SBL_A,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9658C32751
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DECEC32751
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAA372171F
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE96F214DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 22:19:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IXsxtFi3"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T5C8KJDU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731242AbfGaWQy (ORCPT
+        id S1731222AbfGaWQs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Jul 2019 18:16:54 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:33104 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731240AbfGaWQw (ORCPT
+        Wed, 31 Jul 2019 18:16:48 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:57235 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731205AbfGaWQr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Jul 2019 18:16:52 -0400
-Received: by mail-pl1-f202.google.com with SMTP id f2so38311059plr.0
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 15:16:52 -0700 (PDT)
+        Wed, 31 Jul 2019 18:16:47 -0400
+Received: by mail-qk1-f202.google.com with SMTP id j81so59138736qke.23
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 15:16:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=mRx6DvobeAgz9fXiYoI+VAmx830kBHXoGc7G6A5EVd0=;
-        b=IXsxtFi3dTqKB+o/Wp7s083XS7SjUbQMcCgIsd0WIzzMtZmNaSQKck9SZk8/LV/tKW
-         iauqc9Sh1AIluynW7+PR4PhpczN6yRdIv953ynjwuwFWHa/UVnQ72sULwrXjNjS6e/rU
-         9B58SiL1PCO7x+gwtiCfLRDcFLfHYqJckXhIxs7f7BmC/OAWPsSihkTtRDo4hMCslWC4
-         DcbbsuYXQYGwOfMS+1sE0Xp813o+0VO5tuwgaPAWsIiBTlDFJ2yTuhzH/viPVcMxtFXv
-         PCDiNz31TQAFo2c/g5gz4FxUjGG5qNoYLTvZVJc1/xMrVhVCF6vii+6Ml1XW+QkFPzAs
-         w83w==
+        bh=0e260YowI9CRqgpWSZnFK5vaM3jseidaVbkh9lNaqp8=;
+        b=T5C8KJDUx9azZLWdpz1dHN6vsdvRR0gZKEvl1PMRoFDAxYz1C/GdcPLsBTRtv5f+k7
+         0PZFkLysDpcsZI2GwWei196H24omcqyCGqeDCyNYwlo1EJ8smCGY+kcW0aN/eX2v+NSn
+         BzbnuAGd88Ma2SyQpR2/aNBQqv+K5Y3eOwbDNfaBPe++D/TNGaCZgXS4gCmO7zaC3Sir
+         G2vpIg9hxBRdq8Cf3Hs2DTze1dsoLwnyBDQo5NxYqLCuideJROAzDShG01EjjNIAl/Hi
+         nvy/2m63KxhFJfEy7yherX07YMF/H6HXuHuDQx+K9SfbwUNYYDtzsEi4sdnyvlCPb6uR
+         rvLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=mRx6DvobeAgz9fXiYoI+VAmx830kBHXoGc7G6A5EVd0=;
-        b=XAXYrYUsQFO5mKJeWvnUNj2yXy8fbGOS0tMfq3Tc2Dssm4Ho8ap3oVjJ20PLNgaTCm
-         BHPH7ZpZozQK13N+0+RcZv1+HoPetgBPv4xgtdT5/wolLa4vXKVcRmgBMEpjmJHPmBv8
-         s1nqeDlQHHK4rwrEUHXZnUYQOW0A+XYRGJQDNL7u7Av+nE0/cjW+mq/nBcyI0iIuKvPb
-         3L2p6tBunEs/tNHAOpF9JX1JjOYrVoIk2pOq+7QGAJlwKtvSYdCdSbtC66/2we0G4lNn
-         BjI0R3Gf4GE592Xp29DZWkP50kOWwYUNqNQpv+p71Fb7tFFarwXjBPPbHojWNRwZ8NB/
-         17sw==
-X-Gm-Message-State: APjAAAWdGS/DycmKVze/hl5E8tR5qc3MMNn+Uv3TX6/GYTx9hVC+lb/z
-        uGLuPPtTp/EMJXQbSmxdFOqD78Tx3DzBK7BEOpamYA==
-X-Google-Smtp-Source: APXvYqwPUST8bcWEuK6wPg2C/0aVphd5/eFEPuRhKx/A1xJZobcujQxWD9xlWlFEjxq639LtyRci3WWJHAF+9qOzVRDrpA==
-X-Received: by 2002:a65:44cc:: with SMTP id g12mr37784362pgs.409.1564611411719;
- Wed, 31 Jul 2019 15:16:51 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 15:15:58 -0700
+        bh=0e260YowI9CRqgpWSZnFK5vaM3jseidaVbkh9lNaqp8=;
+        b=Lq9YEvNc1Jf+EFOvW2/wVbY0Pop4Yd/nDgtQwVzrjqeZMCdohHE62gUewQM4P0Rcw6
+         aQANgSmAQjjZzMfvehI7iXLUCqwUYKEhARsyhnm1gJgwDkixagnJ2su2ZBU9A+l3oU9R
+         iRhLSlqZBjGSard4GSoGUjnCxefEXoICGYIG0a19KdvY560OLoOmSQgRrFG8oeRl1gNZ
+         eNxIudO0yMTDEGwA4ZUjst7hXAJkEh2XEyPjjVy6g06faojVYhqOdxYBUm9/49PQ+Im8
+         fRezKcQFegKgqCL584azZ7KkdFrDph8OCNiu46ecyYbYZOYnW6vQwrhtEXCm8dcCl00S
+         ym6Q==
+X-Gm-Message-State: APjAAAUptkH1/Ex/QfTD/NwVKOnwrWS7A82fEnsCseJjbO6e3gm1N+kU
+        nyfHvTB6tw4ZopvWBVTlUBECs9XVke2ArzkeGUMVxw==
+X-Google-Smtp-Source: APXvYqyJUnnorO6RaYqdVA4leMv9/vkz+VLu5iZqhjqCYiop90bsNCQLhJOVeAcyeDFFs4DZBc9czNFiTXL/aOkJ/yauyQ==
+X-Received: by 2002:a0c:8b49:: with SMTP id d9mr87945356qvc.178.1564611406707;
+ Wed, 31 Jul 2019 15:16:46 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 15:15:56 -0700
 In-Reply-To: <20190731221617.234725-1-matthewgarrett@google.com>
-Message-Id: <20190731221617.234725-11-matthewgarrett@google.com>
+Message-Id: <20190731221617.234725-9-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190731221617.234725-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-Subject: [PATCH V37 10/29] hibernate: Disable when the kernel is locked down
+Subject: [PATCH V37 08/29] kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG
+ and KEXEC_SIG_FORCE
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Josh Boyer <jwboyer@fedoraproject.org>,
+        Jiri Bohac <jbohac@suse.cz>,
         David Howells <dhowells@redhat.com>,
         Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>, rjw@rjwysocki.net,
-        pavel@ucw.cz, linux-pm@vger.kernel.org
+        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Josh Boyer <jwboyer@fedoraproject.org>
+From: Jiri Bohac <jbohac@suse.cz>
 
-There is currently no way to verify the resume image when returning
-from hibernate.  This might compromise the signed modules trust model,
-so until we can work with signed hibernate images we disable it when the
-kernel is locked down.
+This is a preparatory patch for kexec_file_load() lockdown.  A locked down
+kernel needs to prevent unsigned kernel images from being loaded with
+kexec_file_load().  Currently, the only way to force the signature
+verification is compiling with KEXEC_VERIFY_SIG.  This prevents loading
+usigned images even when the kernel is not locked down at runtime.
 
-Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
+This patch splits KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE.
+Analogous to the MODULE_SIG and MODULE_SIG_FORCE for modules, KEXEC_SIG
+turns on the signature verification but allows unsigned images to be
+loaded.  KEXEC_SIG_FORCE disallows images without a valid signature.
+
+Signed-off-by: Jiri Bohac <jbohac@suse.cz>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: rjw@rjwysocki.net
-Cc: pavel@ucw.cz
-cc: linux-pm@vger.kernel.org
+Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+Reviewed-by: Dave Young <dyoung@redhat.com>
+cc: kexec@lists.infradead.org
 ---
- include/linux/security.h     | 1 +
- kernel/power/hibernate.c     | 3 ++-
- security/lockdown/lockdown.c | 1 +
- 3 files changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/Kconfig                       | 20 +++++++++----
+ crypto/asymmetric_keys/verify_pefile.c |  4 ++-
+ include/linux/kexec.h                  |  4 +--
+ kernel/kexec_file.c                    | 41 ++++++++++++++++++++++----
+ 4 files changed, 55 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 69c5de539e9a..304a155a5628 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -106,6 +106,7 @@ enum lockdown_reason {
- 	LOCKDOWN_MODULE_SIGNATURE,
- 	LOCKDOWN_DEV_MEM,
- 	LOCKDOWN_KEXEC,
-+	LOCKDOWN_HIBERNATION,
- 	LOCKDOWN_INTEGRITY_MAX,
- 	LOCKDOWN_CONFIDENTIALITY_MAX,
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 05e78acb187c..fd2cd4f861cc 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2032,20 +2032,30 @@ config KEXEC_FILE
+ config ARCH_HAS_KEXEC_PURGATORY
+ 	def_bool KEXEC_FILE
+ 
+-config KEXEC_VERIFY_SIG
++config KEXEC_SIG
+ 	bool "Verify kernel signature during kexec_file_load() syscall"
+ 	depends on KEXEC_FILE
+ 	---help---
+-	  This option makes kernel signature verification mandatory for
+-	  the kexec_file_load() syscall.
+ 
+-	  In addition to that option, you need to enable signature
++	  This option makes the kexec_file_load() syscall check for a valid
++	  signature of the kernel image.  The image can still be loaded without
++	  a valid signature unless you also enable KEXEC_SIG_FORCE, though if
++	  there's a signature that we can check, then it must be valid.
++
++	  In addition to this option, you need to enable signature
+ 	  verification for the corresponding kernel image type being
+ 	  loaded in order for this to work.
+ 
++config KEXEC_SIG_FORCE
++	bool "Require a valid signature in kexec_file_load() syscall"
++	depends on KEXEC_SIG
++	---help---
++	  This option makes kernel signature verification mandatory for
++	  the kexec_file_load() syscall.
++
+ config KEXEC_BZIMAGE_VERIFY_SIG
+ 	bool "Enable bzImage signature verification support"
+-	depends on KEXEC_VERIFY_SIG
++	depends on KEXEC_SIG
+ 	depends on SIGNED_PE_FILE_VERIFICATION
+ 	select SYSTEM_TRUSTED_KEYRING
+ 	---help---
+diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
+index 3b303fe2f061..cc9dbcecaaca 100644
+--- a/crypto/asymmetric_keys/verify_pefile.c
++++ b/crypto/asymmetric_keys/verify_pefile.c
+@@ -96,7 +96,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
+ 
+ 	if (!ddir->certs.virtual_address || !ddir->certs.size) {
+ 		pr_debug("Unsigned PE binary\n");
+-		return -EKEYREJECTED;
++		return -ENODATA;
+ 	}
+ 
+ 	chkaddr(ctx->header_size, ddir->certs.virtual_address,
+@@ -403,6 +403,8 @@ static int pefile_digest_pe(const void *pebuf, unsigned int pelen,
+  *  (*) 0 if at least one signature chain intersects with the keys in the trust
+  *	keyring, or:
+  *
++ *  (*) -ENODATA if there is no signature present.
++ *
+  *  (*) -ENOPKG if a suitable crypto module couldn't be found for a check on a
+  *	chain.
+  *
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 305f6a5ca4fe..998f77c3a0e1 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -125,7 +125,7 @@ typedef void *(kexec_load_t)(struct kimage *image, char *kernel_buf,
+ 			     unsigned long cmdline_len);
+ typedef int (kexec_cleanup_t)(void *loader_data);
+ 
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ typedef int (kexec_verify_sig_t)(const char *kernel_buf,
+ 				 unsigned long kernel_len);
+ #endif
+@@ -134,7 +134,7 @@ struct kexec_file_ops {
+ 	kexec_probe_t *probe;
+ 	kexec_load_t *load;
+ 	kexec_cleanup_t *cleanup;
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ 	kexec_verify_sig_t *verify_sig;
+ #endif
  };
-diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-index cd7434e6000d..3c0a5a8170b0 100644
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -30,6 +30,7 @@
- #include <linux/ctype.h>
- #include <linux/genhd.h>
- #include <linux/ktime.h>
-+#include <linux/security.h>
- #include <trace/events/power.h>
- 
- #include "power.h"
-@@ -68,7 +69,7 @@ static const struct platform_hibernation_ops *hibernation_ops;
- 
- bool hibernation_available(void)
- {
--	return (nohibernate == 0);
-+	return nohibernate == 0 && !security_locked_down(LOCKDOWN_HIBERNATION);
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index b8cc032d5620..875482c34154 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -88,7 +88,7 @@ int __weak arch_kimage_file_post_load_cleanup(struct kimage *image)
+ 	return kexec_image_post_load_cleanup_default(image);
  }
  
- /**
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 6f302c156bc8..a0996f75629f 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -21,6 +21,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
- 	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
- 	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
-+	[LOCKDOWN_HIBERNATION] = "hibernation",
- 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
- 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
- };
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ static int kexec_image_verify_sig_default(struct kimage *image, void *buf,
+ 					  unsigned long buf_len)
+ {
+@@ -186,7 +186,8 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 			     const char __user *cmdline_ptr,
+ 			     unsigned long cmdline_len, unsigned flags)
+ {
+-	int ret = 0;
++	const char *reason;
++	int ret;
+ 	void *ldata;
+ 	loff_t size;
+ 
+@@ -202,14 +203,42 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 	if (ret)
+ 		goto out;
+ 
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ 	ret = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
+ 					   image->kernel_buf_len);
+-	if (ret) {
+-		pr_debug("kernel signature verification failed.\n");
++	switch (ret) {
++	case 0:
++		break;
++
++		/* Certain verification errors are non-fatal if we're not
++		 * checking errors, provided we aren't mandating that there
++		 * must be a valid signature.
++		 */
++	case -ENODATA:
++		reason = "kexec of unsigned image";
++		goto decide;
++	case -ENOPKG:
++		reason = "kexec of image with unsupported crypto";
++		goto decide;
++	case -ENOKEY:
++		reason = "kexec of image with unavailable key";
++	decide:
++		if (IS_ENABLED(CONFIG_KEXEC_SIG_FORCE)) {
++			pr_notice("%s rejected\n", reason);
++			goto out;
++		}
++
++		ret = 0;
++		break;
++
++		/* All other errors are fatal, including nomem, unparseable
++		 * signatures and signature check failures - even if signatures
++		 * aren't required.
++		 */
++	default:
++		pr_notice("kernel signature verification failed (%d).\n", ret);
+ 		goto out;
+ 	}
+-	pr_debug("kernel signature verification successful.\n");
+ #endif
+ 	/* It is possible that there no initramfs is being loaded */
+ 	if (!(flags & KEXEC_FILE_NO_INITRAMFS)) {
 -- 
 2.22.0.770.g0f2c4a37fd-goog
 
