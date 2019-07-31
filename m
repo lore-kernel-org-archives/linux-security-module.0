@@ -2,141 +2,92 @@ Return-Path: <SRS0=Q99v=V4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CCCC433FF
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 19:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA29C32751
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 21:30:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB8E4206A3
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 19:19:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05E7E206B8
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Jul 2019 21:30:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="akhndPKO"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y+XYLq1G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730690AbfGaTTY (ORCPT
+        id S1726421AbfGaVal (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Jul 2019 15:19:24 -0400
-Received: from gateway23.websitewelcome.com ([192.185.49.218]:14242 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730029AbfGaTTY (ORCPT
+        Wed, 31 Jul 2019 17:30:41 -0400
+Received: from mail-io1-f43.google.com ([209.85.166.43]:44527 "EHLO
+        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfGaVal (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Jul 2019 15:19:24 -0400
-X-Greylist: delayed 1463 seconds by postgrey-1.27 at vger.kernel.org; Wed, 31 Jul 2019 15:19:23 EDT
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 15F345AD9
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 13:55:00 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id stkahJoEC4FKpstkahTGkh; Wed, 31 Jul 2019 13:55:00 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=KIJv1aOM1ysMzR07N3FqA1hGoliaxCsgaIx5trxif/g=; b=akhndPKOuVlMO4SCbZd6JPHzEY
-        0WMX7pBKsNJEwCHoZ1mjnjO422FmDfNANLZT7NXHmhFt/fTdPpP7Qppqqlahn5yPCGb7dKp3/r6Hq
-        M4KEUSr0BLrBHAfGB67bqI2pGJNZya+BTuty+ycZaOxN02KT69Pzqh5f4iDY5GrYZtOgF0Lv2w5G0
-        ORyp7lcPiFSSMThZZf/D+E2b/WYp8BSVLuMt8tzasDgRL9JiTZVosBnfNGU6Iz/XmXc8Lb/3C5o72
-        1uKtAWtB17diOLZfcOzhNszcNg6Tzch0Kj/9byNyFy4umMa7GNlzXvDPUuxBOOr5VqcmjY72KfyFD
-        bbcDzwEw==;
-Received: from [187.192.11.120] (port=38908 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hstkY-003ws3-UA; Wed, 31 Jul 2019 13:54:59 -0500
-Date:   Wed, 31 Jul 2019 13:54:57 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] tomoyo: common: Fix potential Spectre v1 vulnerability
-Message-ID: <20190731185457.GA21407@embeddedor>
+        Wed, 31 Jul 2019 17:30:41 -0400
+Received: by mail-io1-f43.google.com with SMTP id s7so139446704iob.11
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2019 14:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=LorXcbFrkDiur0GwKhOS0WtYPlhd7m6A9hFg1D5qG4Q=;
+        b=Y+XYLq1GfpFsLdBp2odvBbnfZzGEE/EAyXfNcZDp6CRNDfB+xJ/SwxMyaaLKVBYn0N
+         +jVpn09a5mkEl8XQG4Gi6OnmJ+6QOZEPwBvzaziIVbZuLdM4Gx+hUxXTHsBnrpA+F6ko
+         W245s6uNCJby+pvNSQ7bsI9RWFURyKTIwAN9M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=LorXcbFrkDiur0GwKhOS0WtYPlhd7m6A9hFg1D5qG4Q=;
+        b=cMfcY1xn1EjPQH4YlWE7CUPMjbI4M9a04B2Ht5uoZ+ByeTiEzje1TyxBFv/qUTtZhT
+         UqOFROY3xeHbdmVnbkPFt7fU7WeQC0OrMUw1xFw1Pkx1Pw+a9gu2jf0P05uTGfbNw2bQ
+         /lWZm9Fn4zJUK7CZq0Ak0/v3Y4v5xHlier+6SPZCImHm0iDwWP92Zqwv6zIEtadQjJb1
+         +cBifR7tCHlauZJFXvL1ytXrs7z8RBVHcRV2bbpqlHhJW+CvFqmXzBFEox0DaR32mpYe
+         G7pA6A6GrB2Vz+3aVzolDaiqt1Q4rOa2SlLOOhT2O0WOCv4q+bEpYEXvbBdATRKEKsTb
+         Fh3A==
+X-Gm-Message-State: APjAAAWUwjI9VOsiRDSYcJmxwhcZW+aVevLLV9h8g5DcTTtD67ud2rlS
+        0rg8n7C4L1xDT0bUBinb7VcUp/S83hs7gVsNKv6Bx7eKx6M=
+X-Google-Smtp-Source: APXvYqy3BKFTmjWzotYFCuzp4BPjn1MMaYy70Rlzz2fRaa9EbCnLYGgLAER+4pJYzAzQGEaU/wQqEBNu6KjKMF9N374=
+X-Received: by 2002:a02:710f:: with SMTP id n15mr87971397jac.119.1564608640491;
+ Wed, 31 Jul 2019 14:30:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1hstkY-003ws3-UA
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:38908
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Wed, 31 Jul 2019 14:30:29 -0700
+Message-ID: <CAJ-EccMXEVktpuPS5BwkGqTo++dGcpHAuSUZo7WgJhAzFByz0g@mail.gmail.com>
+Subject: [GIT PULL] SafeSetID MAINTAINERS file update for v5.3
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-profile is controlled by user-space via /sys/kernel/security/tomoyo/profile,
-hence leading to a potential exploitation of the Spectre variant 1
-vulnerability.
+Hi Linus,
 
-This issue was detected with the help of Smatch:
+You mentioned a couple weeks ago it would be good if I added myself to
+the MAINTAINERS file for the SafeSetID LSM. Here's the pull request
+for v5.3.
 
-security/tomoyo/common.c:498 tomoyo_assign_profile() warn: potential spectre issue 'ns->profile_ptr' [r] (local cap)
-security/tomoyo/common.c:499 tomoyo_assign_profile() warn: possible spectre second half.  'ptr'
-security/tomoyo/common.c:505 tomoyo_assign_profile() warn: possible spectre second half.  'ptr'
-security/tomoyo/common.c:523 tomoyo_assign_profile() warn: possible spectre second half.  'ptr'
+Thanks!
+--
+The following changes since commit 179757afbef5f64b9bd25e6161f72fc1a52a8f2e:
 
-Fix this by sanitizing profile before using it to index ns->profile_ptr
+  Merge commit 'v5.3-rc2^0' (2019-07-31 13:45:16 -0700)
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
+are available in the Git repository at:
 
-[1] https://lore.kernel.org/lkml/20180423164740.GY17484@dhcp22.suse.cz/
+  https://github.com/micah-morton/linux.git tags/safesetid-maintainers-5.3-rc2
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- security/tomoyo/common.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+for you to fetch changes up to 7e20e910eabdf0af90fd10e712f15b413be8e135:
 
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index dd3d5942e669..45858dbcfdb9 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -8,6 +8,7 @@
- #include <linux/uaccess.h>
- #include <linux/slab.h>
- #include <linux/security.h>
-+#include <linux/nospec.h>
- #include "common.h"
- 
- /* String table for operation mode. */
-@@ -488,13 +489,15 @@ static void tomoyo_print_number_union(struct tomoyo_io_buffer *head,
-  * Returns pointer to "struct tomoyo_profile" on success, NULL otherwise.
-  */
- static struct tomoyo_profile *tomoyo_assign_profile
--(struct tomoyo_policy_namespace *ns, const unsigned int profile)
-+(struct tomoyo_policy_namespace *ns, unsigned int profile)
- {
- 	struct tomoyo_profile *ptr;
- 	struct tomoyo_profile *entry;
- 
- 	if (profile >= TOMOYO_MAX_PROFILES)
- 		return NULL;
-+	profile = array_index_nospec(profile, TOMOYO_MAX_PROFILES);
-+
- 	ptr = ns->profile_ptr[profile];
- 	if (ptr)
- 		return ptr;
--- 
-2.22.0
+  Add entry in MAINTAINERS file for SafeSetID LSM (2019-07-31 13:58:11 -0700)
 
+----------------------------------------------------------------
+Add entry in MAINTAINERS file for SafeSetID LSM.
+
+Has not had any bake time or testing, since its just changes to a text file.
+
+----------------------------------------------------------------
+Micah Morton (1):
+      Add entry in MAINTAINERS file for SafeSetID LSM
+
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
