@@ -2,153 +2,145 @@ Return-Path: <SRS0=AbGf=V5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B19DC19759
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 11:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0159C19759
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 12:48:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB13C20838
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 11:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1D1B20665
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 12:48:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="BCqrZFER"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730485AbfHALgU (ORCPT
+        id S1731513AbfHAMsK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Aug 2019 07:36:20 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61908 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729316AbfHALgU (ORCPT
+        Thu, 1 Aug 2019 08:48:10 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39661 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731358AbfHAMsK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Aug 2019 07:36:20 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x71BaAkm090675;
-        Thu, 1 Aug 2019 20:36:10 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Thu, 01 Aug 2019 20:36:09 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from ccsecurity.localdomain (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x71BZxCO090624
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 1 Aug 2019 20:36:09 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     linux-security-module@vger.kernel.org
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Takeshi Misawa <jeliantsurux@gmail.com>
-Subject: [PATCH] tomoyo: Use error code from kern_path() rather than -ENOENT.
-Date:   Thu,  1 Aug 2019 20:35:55 +0900
-Message-Id: <1564659355-12826-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20190801030323.GA1958@DESKTOP>
-References: <20190801030323.GA1958@DESKTOP>
+        Thu, 1 Aug 2019 08:48:10 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v85so50111407lfa.6
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Aug 2019 05:48:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rl9gxlsQAmtdUucdCjHcN4IJXqqRSXnZiys3c1iAChM=;
+        b=BCqrZFER2qt2tRS4BERTa8OYTuAczZw6Vu3z7uTZGQYFaSHcfqcuV5SQV52phXuR2o
+         pc7vXSMcsbSyYQZoWwSHx+qcs5+KqXD1ix4QMDk1fiOe2f+Ey++TFVh4YlYS57d7nY/R
+         +PJ/gd2ZVxTYilPY2dcgN2+QJY+52AFbAoy3305qeyBUImzo0UJUG1ndwMGZnl91xgKz
+         NZSc6hvZbcgaGjMl71JYcOKdsjCyGbbYqmWeQxBn+au/dhacM3cMsu+jw8f7pJ2BZvPK
+         ixzTT/jc3086+42k3lk1OU5aCakMaxf9AgMmj6t3GYjy8+6qb4n0kmkj+3oN88PiNKlA
+         pQPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rl9gxlsQAmtdUucdCjHcN4IJXqqRSXnZiys3c1iAChM=;
+        b=EzuDFrHC2Gh8uogRQBss6xXCZlyknEO+79TnirGKSV1Ro3yyRg+8jCIepXOlbOf0XT
+         ZAFxVu4m6F8oOHd1uSCrC6qCU9CbArjDbnobD8wHIHGBMiAV54WOTgZBzG97ZR1GVvCE
+         BBWUUYPlVN0/g5pBNuzIhFerYfL3loyoUqAEYuIrIFOgXJbKUm1ap5sPJbXhMrPf/Opi
+         2VtXWs2iit1wV/+DM1oWjJlG6Im3mKCAkjyW4e2OCN+NwlGivgL574SXAepbbO+0UAQy
+         29Hw2Y6FjwKa8Q0u5xp0lMsqv2OqO5zFvv4Yr41acFNym11aqhNOOt1Hh49HGZhq9KYE
+         taYQ==
+X-Gm-Message-State: APjAAAWxC150sQiQXO0PA3qLSMsxxdGQqgMZTaC8vXsXNv5rC7UvBaIt
+        9t8yJlDoUoSOWEpmI56tE1W36SFKApzA+7p/Uw==
+X-Google-Smtp-Source: APXvYqxgr8PQjSzAdp7+U+PsgA9phbRv670CHsf3naEv6EhZF5kRfW6dfEe+5cBDHIT5XJU7QNpkLNvRclzntJy1hqs=
+X-Received: by 2002:ac2:5559:: with SMTP id l25mr59946611lfk.175.1564663688296;
+ Thu, 01 Aug 2019 05:48:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190731153443.4984-1-acgoide@tycho.nsa.gov> <1c62c931-9441-4264-c119-d038b2d0c9b9@schaufler-ca.com>
+ <CAHC9VhS6cfMw5ZUkOSov6hexh9QpnpKwipP7L7ZYGCVLCHGfFQ@mail.gmail.com> <66fbc35c-6cc8-bd08-9bf9-aa731dc3ff09@tycho.nsa.gov>
+In-Reply-To: <66fbc35c-6cc8-bd08-9bf9-aa731dc3ff09@tycho.nsa.gov>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 1 Aug 2019 08:47:56 -0400
+Message-ID: <CAHC9VhQg_UCDZpm=hWTn5YFAYQJt1K_fRxxq+LzORekJ8p9zNg@mail.gmail.com>
+Subject: Re: [PATCH] fanotify, inotify, dnotify, security: add security hook
+ for fs notifications
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
+        amir73il@gmail.com, James Morris <jmorris@namei.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Takeshi Misawa has pointed out that tomoyo_find_next_domain() is returning
--ENOENT when tomoyo_realpath_nofollow() failed [1]. That error code was
-chosen based on an assumption that when tomoyo_realpath_nofollow() fails,
-the cause of failure is kern_path() failure due to a race window that
-the pathname used for do_open_execat() from __do_execve_file() was removed
-before tomoyo_find_next_domain() is called.
+On Thu, Aug 1, 2019 at 7:31 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On 7/31/19 8:27 PM, Paul Moore wrote:
+> > On Wed, Jul 31, 2019 at 1:26 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> On 7/31/2019 8:34 AM, Aaron Goidel wrote:
 
-Since tomoyo_realpath_nofollow() is called by tomoyo_find_next_domain()
-only, and __do_execve_file() makes sure that bprm->filename != NULL, let's
-inline tomoyo_realpath_nofollow() into tomoyo_find_next_domain().
+...
 
-It seems that tomoyo_realpath_nofollow() is currently broken by
-commit 449325b52b7a6208 ("umh: introduce fork_usermode_blob() helper")
-when do_execve_file() is used. To fix it, we will need to know whether
-do_open_execat() was called before tomoyo_find_next_domain() is called.
-To fix it in a more accurate and race-free way, we will need to calculate
-both LOOKUP_FOLLOW pathname and !LOOKUP_FOLLOW pathname at the same time.
+> >>> +static int selinux_path_notify(const struct path *path, u64 mask,
+> >>> +                                             unsigned int obj_type)
+> >>> +{
+> >>> +     int ret;
+> >>> +     u32 perm;
+> >>> +
+> >>> +     struct common_audit_data ad;
+> >>> +
+> >>> +     ad.type = LSM_AUDIT_DATA_PATH;
+> >>> +     ad.u.path = *path;
+> >>> +
+> >>> +     /*
+> >>> +      * Set permission needed based on the type of mark being set.
+> >>> +      * Performs an additional check for sb watches.
+> >>> +      */
+> >>> +     switch (obj_type) {
+> >>> +     case FSNOTIFY_OBJ_TYPE_VFSMOUNT:
+> >>> +             perm = FILE__WATCH_MOUNT;
+> >>> +             break;
+> >>> +     case FSNOTIFY_OBJ_TYPE_SB:
+> >>> +             perm = FILE__WATCH_SB;
+> >>> +             ret = superblock_has_perm(current_cred(), path->dentry->d_sb,
+> >>> +                                             FILESYSTEM__WATCH, &ad);
+> >>> +             if (ret)
+> >>> +                     return ret;
+> >>> +             break;
+> >>> +     case FSNOTIFY_OBJ_TYPE_INODE:
+> >>> +             perm = FILE__WATCH;
+> >>> +             break;
+> >>> +     default:
+> >>> +             return -EINVAL;
+> >>> +     }
+> >>> +
+> >>> +     // check if the mask is requesting ability to set a blocking watch
+> >
+> > ... in the future please don't use "// XXX", use "/* XXX */" instead :)
+> >
+> > Don't respin the patch just for this, but if you have to do it for
+> > some other reason please fix the C++ style comments.  Thanks.
+>
+> This was discussed during the earlier RFC series but ultimately someone
+> pointed to:
+> https://lkml.org/lkml/2016/7/8/625
+> where Linus blessed the use of C++/C99 style comments.  And checkpatch
+> accepts them these days.
 
-[1] https://lkml.kernel.org/r/20190801030323.GA1958@DESKTOP
+Yep, I'm aware of both, it is simply a personal preference of mine.
+I'm not going to reject patches with C++ style comments, but I would
+ask people to stick to the good ol' fashioned comments for patches
+they submit.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: Takeshi Misawa <jeliantsurux@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Alexei Starovoitov <ast@kernel.org>
----
- security/tomoyo/common.h   |  1 -
- security/tomoyo/domain.c   | 18 ++++++++++++++----
- security/tomoyo/realpath.c | 20 --------------------
- 3 files changed, 14 insertions(+), 25 deletions(-)
+> Obviously if you truly don't want them in the SELinux code, that's your
+> call.  But note that all files now have at least one such comment as a
+> result of the mass SPDX license headers that were added throughout the
+> tree using that style.
 
-diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-index 050473df5809..58b51a21cf9c 100644
---- a/security/tomoyo/common.h
-+++ b/security/tomoyo/common.h
-@@ -957,7 +957,6 @@ char *tomoyo_init_log(struct tomoyo_request_info *r, int len, const char *fmt,
- 		      va_list args);
- char *tomoyo_read_token(struct tomoyo_acl_param *param);
- char *tomoyo_realpath_from_path(const struct path *path);
--char *tomoyo_realpath_nofollow(const char *pathname);
- const char *tomoyo_get_exe(void);
- const char *tomoyo_yesno(const unsigned int value);
- const struct tomoyo_path_info *tomoyo_compare_name_union
-diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
-index 8526a0a74023..5cd06bfd46c7 100644
---- a/security/tomoyo/domain.c
-+++ b/security/tomoyo/domain.c
-@@ -721,10 +721,20 @@ int tomoyo_find_next_domain(struct linux_binprm *bprm)
- 	ee->r.obj = &ee->obj;
- 	ee->obj.path1 = bprm->file->f_path;
- 	/* Get symlink's pathname of program. */
--	retval = -ENOENT;
--	exename.name = tomoyo_realpath_nofollow(original_name);
--	if (!exename.name)
--		goto out;
-+	{
-+		struct path path;
-+		int ret = kern_path(original_name, 0, &path);
-+
-+		if (ret) {
-+			retval = ret;
-+			exename.name = NULL;
-+			goto out;
-+		}
-+		exename.name = tomoyo_realpath_from_path(&path);
-+		path_put(&path);
-+		if (!exename.name) /* retval was initialized with -ENONEM */
-+			goto out;
-+	}
- 	tomoyo_fill_path_info(&exename);
- retry:
- 	/* Check 'aggregator' directive. */
-diff --git a/security/tomoyo/realpath.c b/security/tomoyo/realpath.c
-index e7832448d721..70d456348e1c 100644
---- a/security/tomoyo/realpath.c
-+++ b/security/tomoyo/realpath.c
-@@ -321,23 +321,3 @@ char *tomoyo_realpath_from_path(const struct path *path)
- 		tomoyo_warn_oom(__func__);
- 	return name;
- }
--
--/**
-- * tomoyo_realpath_nofollow - Get realpath of a pathname.
-- *
-- * @pathname: The pathname to solve.
-- *
-- * Returns the realpath of @pathname on success, NULL otherwise.
-- */
--char *tomoyo_realpath_nofollow(const char *pathname)
--{
--	struct path path;
--
--	if (pathname && kern_path(pathname, 0, &path) == 0) {
--		char *buf = tomoyo_realpath_from_path(&path);
--
--		path_put(&path);
--		return buf;
--	}
--	return NULL;
--}
+FYI, the sky is blue.
+
+It isn't just the license headers either, Al dropped one into hooks.c
+:).  Just like I don't plan to reject patches due only to the comment
+style, you don't see me pushing patches to change the C++ comments.
+
 -- 
-2.16.5
-
+paul moore
+www.paul-moore.com
