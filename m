@@ -2,113 +2,128 @@ Return-Path: <SRS0=AbGf=V5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F47C19759
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 17:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D153DC433FF
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 18:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAB9920838
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 17:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A342E20644
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 18:11:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="w0gH11WS"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mjjKlnnd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732485AbfHARt3 (ORCPT
+        id S2388020AbfHASLr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Aug 2019 13:49:29 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53746 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727899AbfHARt3 (ORCPT
+        Thu, 1 Aug 2019 14:11:47 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33577 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730790AbfHASLq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Aug 2019 13:49:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/wQ1T27awT3hqgJbloxgvOfdBCqajpO4xm94w+4G9Do=; b=w0gH11WScMc6U6c0/193f4lVGY
-        pJ5Va3+tj/TSEWluBZbB3EsZdE+5fi40Hd7sR4n8NRx+T69RBSZmHZ/UoJHMHoQqhP0bN7L7xwpnd
-        PnyuEOEWkSHWMDK4bwLVQOrsAZuYdJkbpUohRpAB/vTiDgEeNENBjcpfppf159WsUPFbRzRBYdiS2
-        B4yBu2ZX/XwmYyMam1kq+dPc+qgHtzng5hOraEFbZeQWxzCZ5ytD4CBej0CrS8EFW10k3lit3r5ul
-        1VLKt68FO3Nz279TNa/NMYzQtnkvCu2SBByGuhcqnupvhyqUPFTBrEug8bQuR/lE/4Arfluds3QCk
-        VKAOrv0w==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1htFCR-0000Yn-NH; Thu, 01 Aug 2019 17:49:11 +0000
-Subject: Re: [PATCH bpf-next v10 10/10] landlock: Add user and kernel
- documentation for Landlock
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-References: <20190721213116.23476-1-mic@digikod.net>
- <20190721213116.23476-11-mic@digikod.net>
- <88e90c22-1b78-c2f2-8823-fa776265361c@infradead.org>
- <2ced8fc8-79a6-b0fb-70fe-6716fae92aa7@ssi.gouv.fr>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <08c94f99-68e0-4866-3eba-28fa71347fca@infradead.org>
-Date:   Thu, 1 Aug 2019 10:49:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 1 Aug 2019 14:11:46 -0400
+Received: by mail-io1-f66.google.com with SMTP id z3so5251746iog.0
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Aug 2019 11:11:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7MPd9Z2BvCtW7Jj5gv1G0oE0SQQ2Vxu4lTK1/nmzm1Y=;
+        b=mjjKlnndG/GVdJ2j0Hg/y21fENjZrPYmRXprn1WIV7jx1SFh4AKaGH6jAMk+6QX0b7
+         8MAe2ZM+HcBcGCigoIvlWqL3V9NE0D8RrWqeVkaXe7XqLQWa9/3iAo7hvm1eoLZsDCTD
+         KPZu7tNADpUrbzM3RdL9AfiLGqRc71KwRISis=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7MPd9Z2BvCtW7Jj5gv1G0oE0SQQ2Vxu4lTK1/nmzm1Y=;
+        b=t+F7sxteDG0bRf1lC9ezaXB4UCFnVpsL7UmaQDxN3WjfRjK86BjMwTb72Uz/GMmQ3A
+         8XWYRYh5m88x/4dZImFREfQTq8HYGhsBdnzsTwTJnJg/iaP36CWV2Hw8G+kXlyKaIPis
+         tGdUTUgWaFfVqTjkq3JgY66ZXkZuWBAS0LbO+72m496Ji8l0LUiJZ4j8ZaElqDD6KRur
+         hhh/qtG2i+FRF8quw+OYHXkeFpIevNzt8ZE9xtYSRAtijK/PkBNjFAfHW5fYD7g3UW2R
+         y0Mai9OIKLvg8YCk/7fbOcP7oH9mLtl/lpDSPUMO8VJJsXoV4DjFCojsoT/db6GS2Ruj
+         YrQA==
+X-Gm-Message-State: APjAAAWgFEg+rp+8koGiwmT8XEaRrtI6+hck/JrCDk8ojOVMSBjGZsOp
+        uharWk7Q8JsKIOb5PcfAtB2/ZyOx8P8OceVkj7dcbg==
+X-Google-Smtp-Source: APXvYqys9OKV3WWO1jdTMSSqa3FCsNk1iOy3DY3kCK56G261uJszlQ4eZ7b5tSvUocfF99RAqKyEnoaFs161mi78zUo=
+X-Received: by 2002:a6b:e60b:: with SMTP id g11mr125198636ioh.9.1564683105971;
+ Thu, 01 Aug 2019 11:11:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <2ced8fc8-79a6-b0fb-70fe-6716fae92aa7@ssi.gouv.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CAJ-EccMXEVktpuPS5BwkGqTo++dGcpHAuSUZo7WgJhAzFByz0g@mail.gmail.com>
+ <CAHk-=whZzJ8WxAeHcirUghcbeOYxmpCr+XxeS9ngH3df3+=p2Q@mail.gmail.com>
+In-Reply-To: <CAHk-=whZzJ8WxAeHcirUghcbeOYxmpCr+XxeS9ngH3df3+=p2Q@mail.gmail.com>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Thu, 1 Aug 2019 11:11:34 -0700
+Message-ID: <CAJ-EccOqmmrf2KPb7Z7NU6bF_4W1XUawLLy=pLekCyFKqusjKQ@mail.gmail.com>
+Subject: Re: [GIT PULL] SafeSetID MAINTAINERS file update for v5.3
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/1/19 10:03 AM, Mickaël Salaün wrote:
->>> +Ptrace restrictions
->>> +-------------------
->>> +
->>> +A landlocked process has less privileges than a non-landlocked process and must
->>> +then be subject to additional restrictions when manipulating another process.
->>> +To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
->>> +process, a landlocked process must have a subset of the target process programs.
->>             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> Maybe that last statement is correct, but it seems to me that it is missing something.
-> What about this:
-> 
-> To be allowed to trace a process (using :manpage:`ptrace(2)`), a
-> landlocked tracer process must only be constrained by a subset (possibly
-> empty) of the Landlock programs which are also applied to the tracee.
-> This ensure that the tracer has less or the same constraints than the
+Sorry about that. To fix it I did a "git reset hard" to before any of
+those commits by Jann Horn, then fast-forwarded to the v5.3-rc2 tag
+and force pushed that to my origin/master then pushed a new branch up
+with my MAINTAINERS file changes. Hopefully this is a valid fix.
 
-       ensures
+--
+The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
 
-> tracee, hence protecting against privilege escalation.
+  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
 
-Yes, better.  Thanks.
+are available in the Git repository at:
 
+  https://github.com/micah-morton/linux.git
+  tags/safesetid-maintainers-correction-5.3-rc2
 
--- 
-~Randy
+for you to fetch changes up to fc5b34a35458314df1dd00281f6e41f419581aa9:
+
+  Add entry in MAINTAINERS file for SafeSetID LSM (2019-08-01 10:30:57 -0700)
+
+----------------------------------------------------------------
+Add entry in MAINTAINERS file for SafeSetID LSM.
+
+Has not had any bake time or testing, since its just changes to a text file.
+
+----------------------------------------------------------------
+Micah Morton (1):
+      Add entry in MAINTAINERS file for SafeSetID LSM
+
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+On Thu, Aug 1, 2019 at 6:25 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, Jul 31, 2019 at 2:30 PM Micah Morton <mortonm@chromium.org> wrote:
+> >
+> > You mentioned a couple weeks ago it would be good if I added myself to
+> > the MAINTAINERS file for the SafeSetID LSM. Here's the pull request
+> > for v5.3.
+>
+> There's a lot more than the maintainer ID in there. You've rebased old
+> patches that I already had etc:
+>
+>   Jann Horn (10):
+>       LSM: SafeSetID: fix pr_warn() to include newline
+>       LSM: SafeSetID: fix check for setresuid(new1, new2, new3)
+>       LSM: SafeSetID: refactor policy hash table
+>       LSM: SafeSetID: refactor safesetid_security_capable()
+>       LSM: SafeSetID: refactor policy parsing
+>       LSM: SafeSetID: fix userns handling in securityfs
+>       LSM: SafeSetID: rewrite userspace API to atomic updates
+>       LSM: SafeSetID: add read handler
+>       LSM: SafeSetID: verify transitive constrainedness
+>       LSM: SafeSetID: fix use of literal -1 in capable hook
+>
+>   Micah Morton (2):
+>       Merge commit 'v5.3-rc2^0'
+>       Add entry in MAINTAINERS file for SafeSetID LSM
+>
+> Not pulled.
+>
+>                   Linus
