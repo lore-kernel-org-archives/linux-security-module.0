@@ -2,80 +2,96 @@ Return-Path: <SRS0=AbGf=V5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4264C433FF
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 20:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E306C433FF
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 22:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79756206B8
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 20:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6254E20838
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 22:02:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p9nP+P/1"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="bfXgAeFC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732848AbfHAUoX (ORCPT
+        id S2389319AbfHAWCq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Aug 2019 16:44:23 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35341 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbfHAUoW (ORCPT
+        Thu, 1 Aug 2019 18:02:46 -0400
+Received: from mail-lf1-f50.google.com ([209.85.167.50]:46016 "EHLO
+        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389318AbfHAWCq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Aug 2019 16:44:22 -0400
-Received: by mail-io1-f68.google.com with SMTP id m24so147413839ioo.2
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Aug 2019 13:44:22 -0700 (PDT)
+        Thu, 1 Aug 2019 18:02:46 -0400
+Received: by mail-lf1-f50.google.com with SMTP id u10so12658772lfm.12
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Aug 2019 15:02:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kEYB2+OVQo5XUoP0DBjTnNKzZvTb5NJlv5p6H9Nyzv4=;
-        b=p9nP+P/1loHtaBCdy0RixW63mz45R3rvCZ00Zldzay+dbiKdcAlP60JiUO+vB9DPGE
-         NQJ1C+W5QRgA7GRQUTDum4dZCx4LwgnvuxVsXej6GZylA+kvpVZq6l0dgut7812mYn35
-         DsWqOMKrGeUGD4tPXmYcmWJx8fuBLkIxm3KMTmysQD92yPn1C5Vm+b1mi3yzYNgbfw2/
-         Y8DRxS8fqk8/SDEMiHv8A4b1GCoQG4Xo4d3w8Q7d89vyRaK4T2aOw/ElbTU7zkWGpfdv
-         PY4K3r3n6JTqdYh5mfC26n9HDI5B+8uPadncMj+1BwM8CqiGALvnDTb7ncp/F7ZNkpCx
-         tO1Q==
+        bh=PzgYLjc0DlH8R4/Bp3L3s/7baqBYRuLh++BLgTY5K6I=;
+        b=bfXgAeFCx7SbQU55pHYa0+qyjg5O0iNcK+vjjFJNssv9L/GDxastw0rnwyTNrIP6xB
+         PrYFfamTQdnKk+tbesPOX5J9We65zz9x7UPt1q23dq0U6xDJvvhd5wh5TCvMWHaIsiY3
+         FAVfLqqa6Eamt4N703CkKzw0FS1/35yDiHVnXZcCkYmW1PigYxx4mDqXAQTsM80mH2Gx
+         IOXcvKwb9ghfYF94gJ/ObqUW7DIN5tnvsvEZE3N2i001x0MxZZfYS+bYgqIw/Oqi4o1K
+         bw78S4e3Ulls8gvfwYXDTHGg+6taHSrzWgjAx37QLgYvawipGGz0x/38bYNAVdu7LQs7
+         zrtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kEYB2+OVQo5XUoP0DBjTnNKzZvTb5NJlv5p6H9Nyzv4=;
-        b=MXDZlbjKnKcRNHcHWgDg/wt58W1pSZm2XGYEcZSsN+9JdpC2aTotTsLO/Q3XvPs8Qw
-         NvyFbYf9yADqcOZOEiyS+3Z7ncR/xQi2Srugy7yn8Q54j6110mlCWDqtri+qTPeBQpGu
-         wUIh/GTOccr+TB+on23DxKAWh2KcUZ/lhNE9ShdtHcvBztLaxdOJxfC+6pMT3HzeuUXo
-         VPzaWtjmjA570DuhoD1uQKqx7aGxWWtO77DzjmPNdNNZsAxoGtjST8P5RmIAoUvkdTSi
-         iYcbYD4e31EHgd8gHBT//PfKtKXOfKLEwNzC8dzT2ARE7zdJpehR0FauqM9UYbXjevqJ
-         FyFQ==
-X-Gm-Message-State: APjAAAXKpaz6P20EtDbHq/Nqcljaz5TpVhOpEcRfuU+Q2uZDEuvTj68P
-        jhbfYBL3ru14oPs2nG3m91JRb59MPcsZem5JcI5qug==
-X-Google-Smtp-Source: APXvYqwMBy0UyzznhL2qb2ZDkC6aceenmGV8TFVCHyy3LZ6BRmQiV8H2e9lPWkZWc9KUJul91Wj9CSU+s9ZSbxWcPHM=
-X-Received: by 2002:a5d:97d8:: with SMTP id k24mr5004672ios.84.1564692261567;
- Thu, 01 Aug 2019 13:44:21 -0700 (PDT)
+        bh=PzgYLjc0DlH8R4/Bp3L3s/7baqBYRuLh++BLgTY5K6I=;
+        b=ADOh53jJSX7FQNPmS195GU7DJzqf/PsMK9qtrinGD+b00cut5kcLkNXTOygkes5Txa
+         DbrzrvKBeSgtD/G+L8z3E2pYW9YQgU+68QEwP/WbvJxVy6uJTP0G1+cpLOjXCqb+vxqT
+         eXao2VAp8AD5nV7gN33IQbj86JUqM785+tVNd3uVQhQzd/RgiCDdo7OhE8ICz4F7vMcE
+         o+YR0XcAHyFZyoymeM3dFW7f2Ph57K3Lj4QDJfwQFdH1uBRV4rseFSexQDBDCrxPud4e
+         8RT8upVvis15QJhYMCxvsRFDKE0qDm1wh2Mmg+Dp8BFHfjQPMfAI3i7sfT5cCNAtRksl
+         S4WQ==
+X-Gm-Message-State: APjAAAW+UkASzNO0pKa17fwOk9G7rPwMPd1kF0gcO4F/DouXXofTx2lS
+        Q2Ehc1DJY64mvKsteHtbkIZEKILTN97PHSXzQg==
+X-Google-Smtp-Source: APXvYqzmq0uXfwJt7g/bBIxK05IIy7u3ZYdIDXtXkS+45JB5jOtl3Mi1LGyMsk7G9yx299JjIG2MwsqssmU7yB7cG7I=
+X-Received: by 2002:a19:4349:: with SMTP id m9mr61702928lfj.64.1564696964070;
+ Thu, 01 Aug 2019 15:02:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190731221617.234725-1-matthewgarrett@google.com>
- <20190731221617.234725-20-matthewgarrett@google.com> <20190801161933.GB5834@linux-8ccs>
-In-Reply-To: <20190801161933.GB5834@linux-8ccs>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Thu, 1 Aug 2019 13:44:10 -0700
-Message-ID: <CACdnJutXUO9e0ti8tHtJ8z3xX6dcn4Cczbs-wMBRr07BM3iCvQ@mail.gmail.com>
-Subject: Re: [PATCH V37 19/29] Lock down module params that specify hardware
- parameters (eg. ioport)
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Kees Cook <keescook@chromium.org>
+References: <2d7f0c7e-a82a-5adb-df94-3ac4fa6b0dfe@schaufler-ca.com>
+In-Reply-To: <2d7f0c7e-a82a-5adb-df94-3ac4fa6b0dfe@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 1 Aug 2019 18:02:32 -0400
+Message-ID: <CAHC9VhQRUGbU70p8p+zoxqgAF-W92Zz=rOjFB68JsaitrfQt_g@mail.gmail.com>
+Subject: Re: Security labeling in NFS4 - who owns it?
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-nfs@vger.kernel.org,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SELinux <selinux@vger.kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 1, 2019 at 9:19 AM Jessica Yu <jeyu@kernel.org> wrote:
+On Thu, Aug 1, 2019 at 3:39 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> As part of my work on LSM stacking I've encountered some issues with
+> the Linux implementation of NFS4 security labels. For example, the LFS
+> data is ignored, so even if the client and server are willing to identify
+> the kind of information they are passing, the identity information isn't
+> available. The code asks if attributes requested are mandatory access
+> control attributes, but cannot differentiate between which of the possible
+> security attribute the other end is providing.
+>
+> Is anyone actively owing the NFS labeling code? I'd like to bounce an
+> idea or two around before committing too much time to my ideas of
+> solutions.
 
-> Hm, I don't think the doing parameter ended up being used in this function?
+I guess it all depends on what you mean by "own".  Historically it has
+been a mix of the NFS and SELinux folks that have worked on it and
+contributed patches, with code sprinkled between the two subsystems
+(and possibly elsewhere too).
 
-Thanks for catching that, I'll fix.
+I suspect a better question would be: who should you work with to
+discuss issues the labeled NFS code?  I don't want to assume too much,
+but I think you know the answer to that one already ;)
+
+-- 
+paul moore
+www.paul-moore.com
