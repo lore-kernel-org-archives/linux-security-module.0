@@ -2,108 +2,203 @@ Return-Path: <SRS0=AbGf=V5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 362B1C19759
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 13:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B59FC19759
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 14:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C63420665
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 13:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57B482171F
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 14:22:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564665960;
-	bh=o84hDh3hwjL6t8ptSiw35wgSF/zfVCYYjL1H/pzZd8Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=G5L+RkI4tR9WaCBkxm2h+NHlv9m0+68FJB9MKtBWp1HzZznc5/alZDjygKSKkCLYg
-	 bpJ1YcRH65PLpVD1JcQ0vaiJFcIKWDg/3mxP0pa6Vs6SZg2ydEVLJ7eeeTs1T+fzdG
-	 07qYRXHoEdThekmrVzF42cnGa5K5t6PYb5YiEgd0=
+	s=default; t=1564669333;
+	bh=vULIrOd1ehcCy4iM3E99fM48cHPr2vPexsYqFK5z9tg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=pKqYEEfamcf2vhmwFi7PO+df1itc6DIoF51kQp4SImcLA7GeO75kNP/j5mbzVpXvu
+	 u6zOcL8WaMHeqsQ9ARTljB0BWFS0sOXaTiGJgHt3u9uRuTwgITjjKuAVMk6o7IBJci
+	 VPOHmdUDXXDwlq/wdWi6a1Ya1H++dbPKaInyHpmQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730344AbfHANZ7 (ORCPT
+        id S1731945AbfHAOWM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Aug 2019 09:25:59 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43066 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731138AbfHANZz (ORCPT
+        Thu, 1 Aug 2019 10:22:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728129AbfHAOWM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Aug 2019 09:25:55 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c19so50240735lfm.10
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Aug 2019 06:25:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iedXLBO81OU3hcXhff2G+cwDQH73BKJzI4/klgD8xJA=;
-        b=gDYeHq/ogPb75MyGO6PFbzPmjAEdLAChmOzpYR6uroQtyUCboqkM2/HMUiu+CaiXyA
-         Jp/Vss+HnXIkGQNgBuT3Ja2d4Y+/0xtq2/Syo4cVzXdHfgHvVXRf4qVVkCNi5iTFa2oY
-         3tRPr0FtC36H9KKtz9IsTelh6TKdBlg/KppPI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iedXLBO81OU3hcXhff2G+cwDQH73BKJzI4/klgD8xJA=;
-        b=gJbRXlm/5zyAQBSiosCGI0IxwXO6FTc9vcYxY4mgn2R7sZYjX4QZQe82Vp03MDF9QZ
-         KCPpOdco9y6AtN0Et0Rxctk7ORGL34H5/3S0ontwwyfj4k/TaWvaJcd2LrGQpyZHB5Rn
-         ZM0uxpyJdplATnVGIcnNSbGW0ZcqbMaBkTiedbHlkEdAzTQ42ohNg1pikExFPHR/8MDM
-         7dOGDHOTVVPeCzkXkVp70pzEV5B09cFoe3rTPQk5GsH0eXWsxdqBMVO72WFcXp6C//3V
-         gODEVI1qKXB/fw72F+9HcAdlya6rowU6MJSXMVJAfT/1/LAXp6iPcoOPD+s26NzIKEEN
-         mL3A==
-X-Gm-Message-State: APjAAAWBPd4LbrHecsKlqbJe6U6Z+34ocd2L2upXQDV4yR82evmZHrMe
-        UDhb1UHwDxPuf2JlbUgclJfbxHPRJcM=
-X-Google-Smtp-Source: APXvYqzBqWigwwT9kYChNEA35u2OXmAjShGqvhBg72q8FpSF18N5yeynDL5SdE4j9IreSIV6JUoNMQ==
-X-Received: by 2002:ac2:455a:: with SMTP id j26mr10756978lfm.18.1564665952809;
-        Thu, 01 Aug 2019 06:25:52 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id w1sm16816968ljm.81.2019.08.01.06.25.51
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 06:25:51 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id v85so50206112lfa.6
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Aug 2019 06:25:51 -0700 (PDT)
-X-Received: by 2002:ac2:5601:: with SMTP id v1mr20711108lfd.106.1564665951390;
- Thu, 01 Aug 2019 06:25:51 -0700 (PDT)
+        Thu, 1 Aug 2019 10:22:12 -0400
+Received: from linux-8ccs (unknown [95.90.219.204])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FD3420644;
+        Thu,  1 Aug 2019 14:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564669331;
+        bh=vULIrOd1ehcCy4iM3E99fM48cHPr2vPexsYqFK5z9tg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mDdVcPmOglb7VfOP3ACFpX1kDMti1QwBqkMqLxaKnT4R3WQiUUHuj+2YIN68LUqeG
+         GVgGvf4AHcaBiytwRlmXp9MIenKq4hzTKLUvTYqdTm1zWSBt3LlOk0nu6YK3yNjXZo
+         qaXM61xDgz5cbbwCNNzfd2CKwbhnfHRAn7O/6640=
+Date:   Thu, 1 Aug 2019 16:21:58 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH V37 04/29] Enforce module signatures if the kernel is
+ locked down
+Message-ID: <20190801142157.GA5834@linux-8ccs>
+References: <20190731221617.234725-1-matthewgarrett@google.com>
+ <20190731221617.234725-5-matthewgarrett@google.com>
 MIME-Version: 1.0
-References: <CAJ-EccMXEVktpuPS5BwkGqTo++dGcpHAuSUZo7WgJhAzFByz0g@mail.gmail.com>
-In-Reply-To: <CAJ-EccMXEVktpuPS5BwkGqTo++dGcpHAuSUZo7WgJhAzFByz0g@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 1 Aug 2019 06:25:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whZzJ8WxAeHcirUghcbeOYxmpCr+XxeS9ngH3df3+=p2Q@mail.gmail.com>
-Message-ID: <CAHk-=whZzJ8WxAeHcirUghcbeOYxmpCr+XxeS9ngH3df3+=p2Q@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID MAINTAINERS file update for v5.3
-To:     Micah Morton <mortonm@chromium.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190731221617.234725-5-matthewgarrett@google.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 31, 2019 at 2:30 PM Micah Morton <mortonm@chromium.org> wrote:
++++ Matthew Garrett [31/07/19 15:15 -0700]:
+>From: David Howells <dhowells@redhat.com>
 >
-> You mentioned a couple weeks ago it would be good if I added myself to
-> the MAINTAINERS file for the SafeSetID LSM. Here's the pull request
-> for v5.3.
+>If the kernel is locked down, require that all modules have valid
+>signatures that we can verify.
+>
+>I have adjusted the errors generated:
+>
+> (1) If there's no signature (ENODATA) or we can't check it (ENOPKG,
+>     ENOKEY), then:
+>
+>     (a) If signatures are enforced then EKEYREJECTED is returned.
+>
+>     (b) If there's no signature or we can't check it, but the kernel is
+>	 locked down then EPERM is returned (this is then consistent with
+>	 other lockdown cases).
+>
+> (2) If the signature is unparseable (EBADMSG, EINVAL), the signature fails
+>     the check (EKEYREJECTED) or a system error occurs (eg. ENOMEM), we
+>     return the error we got.
+>
+>Note that the X.509 code doesn't check for key expiry as the RTC might not
+>be valid or might not have been transferred to the kernel's clock yet.
+>
+> [Modified by Matthew Garrett to remove the IMA integration. This will
+>  be replaced with integration with the IMA architecture policy
+>  patchset.]
+>
+>Signed-off-by: David Howells <dhowells@redhat.com>
+>Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
+>Reviewed-by: Kees Cook <keescook@chromium.org>
+>Cc: Jessica Yu <jeyu@kernel.org>
+>---
+> include/linux/security.h     |  1 +
+> kernel/module.c              | 37 +++++++++++++++++++++++++++++-------
+> security/lockdown/lockdown.c |  1 +
+> 3 files changed, 32 insertions(+), 7 deletions(-)
+>
+>diff --git a/include/linux/security.h b/include/linux/security.h
+>index 54a0532ec12f..8e70063074a1 100644
+>--- a/include/linux/security.h
+>+++ b/include/linux/security.h
+>@@ -103,6 +103,7 @@ enum lsm_event {
+>  */
+> enum lockdown_reason {
+> 	LOCKDOWN_NONE,
+>+	LOCKDOWN_MODULE_SIGNATURE,
+> 	LOCKDOWN_INTEGRITY_MAX,
+> 	LOCKDOWN_CONFIDENTIALITY_MAX,
+> };
+>diff --git a/kernel/module.c b/kernel/module.c
+>index cd8df516666d..318209889e26 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -2771,8 +2771,9 @@ static inline void kmemleak_load_module(const struct module *mod,
+> #ifdef CONFIG_MODULE_SIG
+> static int module_sig_check(struct load_info *info, int flags)
+> {
+>-	int err = -ENOKEY;
+>+	int err = -ENODATA;
+> 	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
+>+	const char *reason;
+> 	const void *mod = info->hdr;
+>
+> 	/*
+>@@ -2787,16 +2788,38 @@ static int module_sig_check(struct load_info *info, int flags)
+> 		err = mod_verify_sig(mod, info);
+> 	}
+>
+>-	if (!err) {
+>+	switch (err) {
+>+	case 0:
+> 		info->sig_ok = true;
+> 		return 0;
+>-	}
+>
+>-	/* Not having a signature is only an error if we're strict. */
+>-	if (err == -ENOKEY && !is_module_sig_enforced())
+>-		err = 0;
+>+		/* We don't permit modules to be loaded into trusted kernels
+>+		 * without a valid signature on them, but if we're not
+>+		 * enforcing, certain errors are non-fatal.
+>+		 */
+>+	case -ENODATA:
+>+		reason = "Loading of unsigned module";
+>+		goto decide;
+>+	case -ENOPKG:
+>+		reason = "Loading of module with unsupported crypto";
+>+		goto decide;
+>+	case -ENOKEY:
+>+		reason = "Loading of module with unavailable key";
+>+	decide:
+>+		if (is_module_sig_enforced()) {
+>+			pr_notice("%s is rejected\n", reason);
+>+			return -EKEYREJECTED;
+>+		}
+>
+>-	return err;
+>+		return security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
+>+
+>+		/* All other errors are fatal, including nomem, unparseable
+>+		 * signatures and signature check failures - even if signatures
+>+		 * aren't required.
+>+		 */
+>+	default:
+>+		return err;
+>+	}
+> }
+> #else /* !CONFIG_MODULE_SIG */
+> static int module_sig_check(struct load_info *info, int flags)
 
-There's a lot more than the maintainer ID in there. You've rebased old
-patches that I already had etc:
+Hi Matthew!
 
-  Jann Horn (10):
-      LSM: SafeSetID: fix pr_warn() to include newline
-      LSM: SafeSetID: fix check for setresuid(new1, new2, new3)
-      LSM: SafeSetID: refactor policy hash table
-      LSM: SafeSetID: refactor safesetid_security_capable()
-      LSM: SafeSetID: refactor policy parsing
-      LSM: SafeSetID: fix userns handling in securityfs
-      LSM: SafeSetID: rewrite userspace API to atomic updates
-      LSM: SafeSetID: add read handler
-      LSM: SafeSetID: verify transitive constrainedness
-      LSM: SafeSetID: fix use of literal -1 in capable hook
+Apologies if this was addressed in another patch in your series (I've
+only skimmed the first few), but what should happen if the kernel is
+locked down, but CONFIG_MODULE_SIG=n? Or shouldn't CONFIG_SECURITY_LOCKDOWN_LSM
+depend on CONFIG_MODULE_SIG? Otherwise I think we'll end up calling
+the empty !CONFIG_MODULE_SIG module_sig_check() stub even though
+lockdown is enabled.
 
-  Micah Morton (2):
-      Merge commit 'v5.3-rc2^0'
-      Add entry in MAINTAINERS file for SafeSetID LSM
 
-Not pulled.
+Thanks,
 
-                  Linus
+Jessica
+
+>diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+>index d30c4d254b5f..2c53fd9f5c9b 100644
+>--- a/security/lockdown/lockdown.c
+>+++ b/security/lockdown/lockdown.c
+>@@ -18,6 +18,7 @@ static enum lockdown_reason kernel_locked_down;
+>
+> static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+> 	[LOCKDOWN_NONE] = "none",
+>+	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
+> 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+> 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+> };
+>-- 
+>2.22.0.770.g0f2c4a37fd-goog
+>
