@@ -3,67 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D4AC19759
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 16:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE6DC19759
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 16:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D49820679
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 16:32:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 732E320838
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 16:38:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733000AbfHAQcX (ORCPT
+        id S1731967AbfHAQir (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Aug 2019 12:32:23 -0400
-Received: from mga02.intel.com ([134.134.136.20]:28142 "EHLO mga02.intel.com"
+        Thu, 1 Aug 2019 12:38:47 -0400
+Received: from mga06.intel.com ([134.134.136.31]:15207 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727024AbfHAQcX (ORCPT
+        id S1731966AbfHAQiq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Aug 2019 12:32:23 -0400
+        Thu, 1 Aug 2019 12:38:46 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2019 09:32:21 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2019 09:38:45 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,334,1559545200"; 
-   d="scan'208";a="201353113"
-Received: from criesing-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.51.57])
-  by fmsmga002.fm.intel.com with ESMTP; 01 Aug 2019 09:32:16 -0700
-Date:   Thu, 1 Aug 2019 19:32:15 +0300
+   d="scan'208";a="177880414"
+Received: from muelc-mobl.ger.corp.intel.com (HELO localhost) ([10.252.51.57])
+  by orsmga006.jf.intel.com with ESMTP; 01 Aug 2019 09:38:40 -0700
+Date:   Thu, 1 Aug 2019 19:38:39 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     jejb@linux.ibm.com, zohar@linux.ibm.com, jgg@ziepe.ca,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, crazyt2019+lml@gmail.com,
-        tyhicks@canonical.com, nayna@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH] KEYS: trusted: allow module init if TPM is inactive or
- deactivated
-Message-ID: <20190801163215.mfkagoafkxscesne@linux.intel.com>
-References: <20190705163735.11539-1-roberto.sassu@huawei.com>
- <20190711194811.rfsohbfc3a7carpa@linux.intel.com>
- <b4454a78-1f1b-cc75-114a-99926e097b05@huawei.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>, linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [RFC PATCH v3 04/12] x86/sgx: Require userspace to define
+ enclave pages' protection bits
+Message-ID: <20190801163839.wvcnq57hity4wwrk@linux.intel.com>
+References: <20190617222438.2080-5-sean.j.christopherson@intel.com>
+ <dc3d59c2783ea81d85d4d447bd1a4a2d5fe51421.camel@linux.intel.com>
+ <20190619152018.GC1203@linux.intel.com>
+ <20190620221702.GE20474@linux.intel.com>
+ <20190707190809.GE19593@linux.intel.com>
+ <1b7369a08e98dd08a4f8bb19b16479f12bee130f.camel@linux.intel.com>
+ <20190708161932.GE20433@linux.intel.com>
+ <20190709160634.3yupyabf5svnj4ds@linux.intel.com>
+ <20190710172553.GE4348@linux.intel.com>
+ <CALCETrXMAwHod_KZYPGWjTjg-fxOb1=02=Qj2g1o624wOPfPZQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b4454a78-1f1b-cc75-114a-99926e097b05@huawei.com>
+In-Reply-To: <CALCETrXMAwHod_KZYPGWjTjg-fxOb1=02=Qj2g1o624wOPfPZQ@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 15, 2019 at 06:44:28PM +0200, Roberto Sassu wrote:
-> According to the bug report at https://bugs.archlinux.org/task/62678,
-> the trusted module is a dependency of the ecryptfs module. We should
-> load the trusted module even if the TPM is inactive or deactivated.
-> 
-> Given that commit 782779b60faa ("tpm: Actually fail on TPM errors during
-> "get random"") changes the return code of tpm_get_random(), the patch
-> should be modified to ignore the -EIO error. I will send a new version.
+On Mon, Jul 15, 2019 at 03:29:23PM -0700, Andy Lutomirski wrote:
+> I would say it differently: regardless of exactly how /dev/sgx/enclave
+> is wired up under the hood, we want a way that a process can be
+> granted permission to usefully run enclaves without being granted
+> permission to execute whatever bytes of code it wants.  Preferably
+> without requiring LSMs to maintain some form of enclave signature
+> whitelist.
 
-Do you have information where this dependency comes from?
+Would it be better to have a signer whitelist instead or some
+combination? E.g. you could whiteliste either by signer or
+enclave signature.
 
 /Jarkko
