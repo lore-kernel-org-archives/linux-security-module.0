@@ -2,98 +2,99 @@ Return-Path: <SRS0=AbGf=V5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C22C433FF
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 22:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD11C19759
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 23:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E468720657
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 22:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DAF520657
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 23:02:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="S8j3gBwq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731204AbfHAW5T (ORCPT
+        id S2388271AbfHAXCF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Aug 2019 18:57:19 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38464 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731350AbfHAW5T (ORCPT
+        Thu, 1 Aug 2019 19:02:05 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46601 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727520AbfHAXCF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:57:19 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71Mv7Ix014255
-        for <linux-security-module@vger.kernel.org>; Thu, 1 Aug 2019 18:57:18 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u457ur8nk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Aug 2019 18:57:18 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 1 Aug 2019 23:57:16 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Aug 2019 23:57:11 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MvBEJ55902348
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 1 Aug 2019 22:57:11 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E8550AE051;
-        Thu,  1 Aug 2019 22:57:10 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC172AE04D;
-        Thu,  1 Aug 2019 22:57:09 +0000 (GMT)
-Received: from dhcp-9-31-103-47.watson.ibm.com (unknown [9.31.103.47])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Aug 2019 22:57:09 +0000 (GMT)
-Subject: Re: [PATCH] ima: Allow to import the blacklisted cert signed by
- secondary CA cert
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jia Zhang <zhang.jia@linux.alibaba.com>, dhowells@redhat.com,
-        dmitry.kasatkin@gmail.com
-Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Mark D. Baushke" <mdb@juniper.net>,
-        Petko Manolov <petkan@mip-labs.com>
-Date:   Thu, 01 Aug 2019 18:57:09 -0400
-In-Reply-To: <1564622625-112173-1-git-send-email-zhang.jia@linux.alibaba.com>
-References: <1564622625-112173-1-git-send-email-zhang.jia@linux.alibaba.com>
+        Thu, 1 Aug 2019 19:02:05 -0400
+Received: by mail-lf1-f65.google.com with SMTP id z15so47228332lfh.13
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Aug 2019 16:02:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=UnHL4pQNtVIpmyGSDaBU0opI82QJrnu+hxREmY3sJnY=;
+        b=S8j3gBwqjNIVIXHuusoTq/wIkZLgWjhuFIz0S6xa6GB0QdlV77aKPSFhstTdfhH6yg
+         3KChmnFoNg3q6R4hxSVNOK4/oCSOW46G2lWHtGapX0XHgXXYthy+yNrmCsR1nkDPwMaI
+         2YOHsM7LGgZXNVzk/VWVAxL+vZNH2bw5TNT/avFE/3LdooClmqSo1G26wU6leBviuuRg
+         GnCoGVATQEfQcyS2NfKvb2hxgZbr47+y64b6IEGp0FvfLNMOmQj0bkmVLZzdirewKxC3
+         q3QEeYX+DnwZHnsWX6eS3GXCIH+bsVQeIb/Lz3ZWDzHPCrw3M4WhHItlxg0yfl2Cuxtt
+         KEsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=UnHL4pQNtVIpmyGSDaBU0opI82QJrnu+hxREmY3sJnY=;
+        b=lk8MQnQPJL/+LsTy4tw2k8m7BBBDuxtHXrvUj6PMqMRY7xBY82qY2FVbtlQN9+nUr1
+         paJ+QLQx3TGrT+oKOQvBclsVlvPxeBg64vzecW9GH6GcFZJ8LpJZV/GOOeQo5Z4zGk9A
+         3BZ9FGvwLZqkM9yXwd1jerPvWE+T0hHxQUoNghTGnjOnqhaW6ke5wdQN+9nMNaaiXF7k
+         9ZgbT3QnnW8Jo9bhLtQpofiEavuyG/fNrwpov5BI/75FjKOCH/I9fsNqZelBbWy1/8Wu
+         4EKHiTey5oRUj7Qxdg8KnkF6dn8QppWep0suPoRzVC6lCpApXX7W2hrUC4rs6EjlZ0/o
+         PBDw==
+X-Gm-Message-State: APjAAAUs70c/LFxAmMfRn1IDLMy2ZI0uYAmuyIuSRX1joiOy13uV4kU2
+        kUgpefLLL3gOp1y/ojVRg3igAv5sXhNQOcDe6L1APU4=
+X-Google-Smtp-Source: APXvYqxyaCNAjbqpHWFZK+AUXX7LyIVRGbMS7v+RE8gYdSAnmhvcQoXTfUd7I7k/boWiCeenW0zF1/0piDjuzQvzZ7A=
+X-Received: by 2002:a19:4349:: with SMTP id m9mr61806805lfj.64.1564700523663;
+ Thu, 01 Aug 2019 16:02:03 -0700 (PDT)
+MIME-Version: 1.0
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 1 Aug 2019 19:01:52 -0400
+Message-ID: <CAHC9VhQ6X==anxZ435QAdbjiWtGiVA3LQbBbp0vhbzOhW6NvCQ@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v5.3 (#2)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19080122-0012-0000-0000-00000338828B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19080122-0013-0000-0000-000021723110
-Message-Id: <1564700229.11223.9.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=982 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908010242
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jia,
+Hi Linus,
 
-On Thu, 2019-08-01 at 09:23 +0800, Jia Zhang wrote:
-> Similar to .ima, the cert imported to .ima_blacklist is able to be
-> authenticated by a secondary CA cert.
-> 
-> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+One more small patch for Linux v5.3-rcX to fix a potential memory leak
+in an error path.  Please merge.
 
-The IMA blacklist, which is defined as experimental for a reason, was
-upstreamed prior to the system blacklist.  Any reason you're not using
-the system blacklist?  Before making this sort of change, I'd like
-some input from others.
+Thanks,
+-Paul
+--
+The following changes since commit acbc372e6109c803cbee4733769d02008381740f:
 
-thanks,
+ selinux: check sidtab limit before adding a new entry
+   (2019-07-24 11:13:34 -0400)
 
-Mimi
+are available in the Git repository at:
 
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20190801
+
+for you to fetch changes up to 45385237f65aeee73641f1ef737d7273905a233f:
+
+ selinux: fix memory leak in policydb_init() (2019-07-31 16:51:23 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.3 PR 20190801
+
+----------------------------------------------------------------
+Ondrej Mosnacek (1):
+     selinux: fix memory leak in policydb_init()
+
+security/selinux/ss/policydb.c | 6 +++++-
+1 file changed, 5 insertions(+), 1 deletion(-)
+
+-- 
+paul moore
+www.paul-moore.com
