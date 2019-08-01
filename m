@@ -2,125 +2,103 @@ Return-Path: <SRS0=AbGf=V5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34914C19759
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 10:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E25C19759
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 11:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04D23206B8
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 10:40:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7zESjZM"
+	by mail.kernel.org (Postfix) with ESMTP id 65B99206A2
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 11:03:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731033AbfHAKkl (ORCPT
+        id S1726014AbfHALDZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Aug 2019 06:40:41 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43669 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725930AbfHAKkl (ORCPT
+        Thu, 1 Aug 2019 07:03:25 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:51807 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbfHALDZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Aug 2019 06:40:41 -0400
-Received: by mail-lf1-f66.google.com with SMTP id c19so49869251lfm.10;
-        Thu, 01 Aug 2019 03:40:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=isUGmEYOLpjEg3jfVYEfLLyDXZizpluoarkdQOeJEco=;
-        b=e7zESjZM2/wzjwmiWWWbSAsTWhAV77ru/rCVx4JUymN/53sRSzBFQXud45X8Dr61zK
-         sqmwE48x+NwYk2Cj06PSvNDR8EAL73UGkym1ZfUF++xJXuhNMPXz+ZbmblOckb2EDibR
-         hn6TqYNEl4I925P779zb0qgrYlBYkGxknrNhHKo6jUgsDvnooc9DJ8mSJdetEzKQzfIu
-         yGRZza/lQjKJDFIMW4HrtW4SNKRhMMEr9D67Icb79a0oMCaE2HtXRxR5M4RhrEn5SpKM
-         a576UQfrDmvM2vsFwwi7Yxa0NJUzNBsNMxHNw41zLHW1yIPJgW5/e35MPiKmD1Qk/tSb
-         zgFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=isUGmEYOLpjEg3jfVYEfLLyDXZizpluoarkdQOeJEco=;
-        b=ocAW3vNpNejlf8c0y698MOcyJuojw2geujr5OI8EZf8JixVMH5BGYxyF12OwheKIUr
-         FTkdTfoVZjrYAQL6lLfV8xkuHqGIc/iMpZpVLlt3/G8K2a8OuhouDCchfXqv1C8P+dsd
-         Zet/ZJ0cIQSfEO8PU9iF47fqCK9jcvbKzlbzGLkdcrjgFbU5maowA9KThaHBi4VpCbGc
-         2xh8w4QFQSqKfm0c1HP/Lse5r4w5kFs7HdDXpVRCMS31VWfrjBTkcGB8JxnURvRAvKP+
-         QarxpIYxLhb/Bz+SMCtaKJqZ24UyvFuxi+VZcheCsLlaZmPr7uHMGqwUDCV2qchzCwIc
-         chkg==
-X-Gm-Message-State: APjAAAVpPfQFmrrocYYUn3tEzDYHhy5pR6AJwrLW++aj5K8MBLqchcvZ
-        fLMKoKL1ZfUbOrA4QSy8DD5B9YmUQv4xYWyeyXU=
-X-Google-Smtp-Source: APXvYqzBC9Gdh1FFxLOeL/OcODPMG8H50PClL/jL6/hOC+Ro8fVfZSKCPuosp/rXDAuw8uu1AiQV5PVAqbOPMwJCVac=
-X-Received: by 2002:ac2:5181:: with SMTP id u1mr10511367lfi.42.1564656038513;
- Thu, 01 Aug 2019 03:40:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
- <CAE=Ncrb63dQLe-nDQyO9OPv7XjwM_9mzL9SrcLiUi2Dr10cD4A@mail.gmail.com>
- <CAE=NcrY7b8eTTovOszBhGhVbjfJAXoAYehiUJyPENGfwWoVcPw@mail.gmail.com>
- <CAFA6WYOEqe1a1DCyVYKA+oZaZ0n5hnjxdubstUnrwdUW1-4xHw@mail.gmail.com>
- <CAE=NcraDkm5cxE=ceq_9XkQz=NZ6KdVXkNUsdD4G2LrWz-bpDw@mail.gmail.com>
- <CAFA6WYMOXQbL5OeheFUFpTr8gte8XHHr-71-h8+qX0+R_sekDQ@mail.gmail.com>
- <CAE=Ncrae6pM+WBDu9eJ7Fw2Fkvf3_YqH5tj9Tt938D4RtWcdSQ@mail.gmail.com> <CAFA6WYOwcO5-cyaJf3tMMAdyVHJo=BzmCWtsjA3S8aj5g-GZxQ@mail.gmail.com>
-In-Reply-To: <CAFA6WYOwcO5-cyaJf3tMMAdyVHJo=BzmCWtsjA3S8aj5g-GZxQ@mail.gmail.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Thu, 1 Aug 2019 13:40:26 +0300
-Message-ID: <CAE=NcrY7zA1OkKwpVrPbPd+c0OymZeAgT2hp6xZ3HQOgbXaZjg@mail.gmail.com>
-Subject: Re: [RFC v2 0/6] Introduce TEE based Trusted Keys support
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>, dhowells@redhat.com,
-        jejb@linux.ibm.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
+        Thu, 1 Aug 2019 07:03:25 -0400
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x71B2oew063046;
+        Thu, 1 Aug 2019 20:02:50 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Thu, 01 Aug 2019 20:02:50 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x71B2oBn063042
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 1 Aug 2019 20:02:50 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] tomoyo: common: Fix potential Spectre v1 vulnerability
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Kentaro Takeda <takedakn@nttdata.co.jp>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190731185457.GA21407@embeddedor>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <96483333-99e1-dce1-864a-5456ba6350d2@i-love.sakura.ne.jp>
+Date:   Thu, 1 Aug 2019 20:02:46 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190731185457.GA21407@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 1, 2019 at 1:00 PM Sumit Garg <sumit.garg@linaro.org> wrote:
+Hello.
 
-> > > Here TEE isn't similar to a user-space crypto library. In our case TEE
-> > > is based on ARM TrustZone which only allows TEE communications to be
-> > > initiated from privileged mode. So why would you like to route
-> > > communications via user-mode (which is less secure) when we have
-> > > standardised TEE interface available in kernel?
-> >
-> > The physical access guards for reading/writing the involved critical
-> > memory are identical as far as I know? Layered security is generally a
-> > good thing, and the userspace pass actually adds a layer, so not sure
-> > which is really safer?
->
-> AFAIK, layered security is better in case we move from lower privilege
-> level to higher privilege level rather than in reverse order.
+Thanks for a patch, but I have a question.
 
-You can look at this in many ways. Another way to look at it is that
-the services should be provided with the least amount of permissions
-required for the task. Further you can containerize something, the
-better.
+On 2019/08/01 3:54, Gustavo A. R. Silva wrote:
+> profile is controlled by user-space via /sys/kernel/security/tomoyo/profile,
 
-As for your PLATFORMS support: it is all nice, but there is no way to
-convince op-tee or any other tee to be adopted by many real users.
-Every serious user can and will do their own thing, or at very best,
-buy it from someone who did their own thing and is trusted. There is
-zero chance that samsung, huawei, apple, nsa, google, rambus, payment
-system vendors, .. would actually share the tee (or probably even the
-interfaces). It is just too vital and people do not trust each other
-anymore :(
+It is true that "profile" value is given from user-space, and it will be true
+that speculative execution would access "ns->profile_ptr[profile]" before whether
+"profile >= TOMOYO_MAX_PROFILES" is true is concluded. But
 
-Anyway, enough about the topic from my side. I guess people will tell
-what they want, I'm fine with any, and it is all progress from the
-current state :)
+> hence leading to a potential exploitation of the Spectre variant 1
+> vulnerability.
 
+which memory address is vulnerable to Spectre variant 1 attack? How can an attacker
+gain information from memory speculatively accessed by "ns->profile_ptr[profile]" ?
+Where is the memory access which corresponds to "arr2->data[index2]" demonstrated at
+https://googleprojectzero.blogspot.com/2018/01/reading-privileged-memory-with-side.html ?
 
---
-Janne
+Since I'm not familiar with Spectre/Meltdown problem, this patch sounds as if
+"Oh, let's suppress Smatch warning". I want to know whether this problem is real
+and this patch is worth keeping stable@vger.kernel.org ...
+
+> @@ -488,13 +489,15 @@ static void tomoyo_print_number_union(struct tomoyo_io_buffer *head,
+>   * Returns pointer to "struct tomoyo_profile" on success, NULL otherwise.
+>   */
+>  static struct tomoyo_profile *tomoyo_assign_profile
+> -(struct tomoyo_policy_namespace *ns, const unsigned int profile)
+> +(struct tomoyo_policy_namespace *ns, unsigned int profile)
+>  {
+>  	struct tomoyo_profile *ptr;
+>  	struct tomoyo_profile *entry;
+>  
+>  	if (profile >= TOMOYO_MAX_PROFILES)
+>  		return NULL;
+> +	profile = array_index_nospec(profile, TOMOYO_MAX_PROFILES);
+> +
+>  	ptr = ns->profile_ptr[profile];
+>  	if (ptr)
+>  		return ptr;
+> 
+
+By the way, since /sys/kernel/security/tomoyo/profile is writable by only explicitly
+whitelisted domains/programs (&& by only root user by default), I think that it is
+OK to treat this "profile" value as trusted.
+
