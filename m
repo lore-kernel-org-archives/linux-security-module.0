@@ -6,102 +6,84 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFA4C32750
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Aug 2019 16:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD904C433FF
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Aug 2019 19:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B91E20449
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Aug 2019 16:15:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A4A52067D
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Aug 2019 19:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390275AbfHBQPk (ORCPT
+        id S2406102AbfHBTiL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Aug 2019 12:15:40 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58930 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732543AbfHBQPk (ORCPT
+        Fri, 2 Aug 2019 15:38:11 -0400
+Received: from mga05.intel.com ([192.55.52.43]:16635 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403792AbfHBTiL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Aug 2019 12:15:40 -0400
-Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=elm)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <tyhicks@canonical.com>)
-        id 1htaDM-0004rZ-SG; Fri, 02 Aug 2019 16:15:33 +0000
-Date:   Fri, 2 Aug 2019 11:15:28 -0500
-From:   Tyler Hicks <tyhicks@canonical.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     jarkko.sakkinen@linux.intel.com, jejb@linux.ibm.com,
-        zohar@linux.ibm.com, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, crazyt2019+lml@gmail.com,
-        nayna@linux.vnet.ibm.com, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v2] KEYS: trusted: allow module init if TPM is inactive
- or deactivated
-Message-ID: <20190802161527.GC26616@elm>
-References: <20190802150733.1972-1-roberto.sassu@huawei.com>
- <20190802153030.GB26616@elm>
- <3222714a-a280-0708-f4c0-5db6d342d8dc@huawei.com>
- <8baf1c39-ad04-5cd6-bc67-341e7411db16@huawei.com>
+        Fri, 2 Aug 2019 15:38:11 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2019 12:38:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,339,1559545200"; 
+   d="scan'208";a="201764551"
+Received: from psathya-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.36.242])
+  by fmsmga002.fm.intel.com with ESMTP; 02 Aug 2019 12:38:03 -0700
+Date:   Fri, 2 Aug 2019 22:38:02 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
+        jejb@linux.ibm.com, Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+Subject: Re: [RFC/RFT v2 1/2] KEYS: trusted: create trusted keys subsystem
+Message-ID: <20190802193802.jn56jhoz5crebggt@linux.intel.com>
+References: <1563449086-13183-1-git-send-email-sumit.garg@linaro.org>
+ <1563449086-13183-2-git-send-email-sumit.garg@linaro.org>
+ <20190801172310.cldcftfdoh5vyfjg@linux.intel.com>
+ <CAFA6WYM+FQuXA9Saj5+ffOGsc-shhiF5Uos4g14Qndvu6w97Sg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8baf1c39-ad04-5cd6-bc67-341e7411db16@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAFA6WYM+FQuXA9Saj5+ffOGsc-shhiF5Uos4g14Qndvu6w97Sg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019-08-02 18:11:09, Roberto Sassu wrote:
-> On 8/2/2019 5:34 PM, Roberto Sassu wrote:
-> > On 8/2/2019 5:30 PM, Tyler Hicks wrote:
-> > > On 2019-08-02 17:07:33, Roberto Sassu wrote:
-> > > > Commit c78719203fc6 ("KEYS: trusted: allow trusted.ko to
-> > > > initialize w/o a
-> > > > TPM") allows the trusted module to be loaded even a TPM is not found to
-> > >                                                     ^ if
-> > > 
-> > > > avoid module dependency problems.
-> > > > 
-> > > > However, trusted module initialization can still fail if the TPM is
-> > > > inactive or deactivated. This patch ignores tpm_get_random() errors in
-> > > > init_digests() and returns -EFAULT in pcrlock() if the TPM didn't return
-> > > > random data.
-> > > > 
-> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > 
-> > > The code changes look correct to me.
-> > > 
-> > >    Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
-> > > 
-> > > For whoever takes this patch through their tree, I think that adding the
-> > > following Fixes tag would be useful (as well as cc'ing stable):
-> > > 
-> > >    Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip
-> > > structure...")
-> > > 
-> > > I think it is also worth leaving a short note, in the commit message,
-> > > for backporters that commit 782779b60faa ("tpm: Actually fail on TPM
-> > > errors during "get random"") should be included with any backports of
-> > > this patch.
-> > 
-> > Right, thanks. I wait for Jarkko's comments and I add both the Fixes tag
-> > and the short note in the next version of the patch.
+On Fri, Aug 02, 2019 at 11:20:09AM +0530, Sumit Garg wrote:
+> On Thu, 1 Aug 2019 at 22:54, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > On Thu, Jul 18, 2019 at 04:54:45PM +0530, Sumit Garg wrote:
+> > > Move existing code to trusted keys subsystem. Also, rename files with
+> > > "tpm" as suffix which provides the underlying implementation.
+> > >
+> > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> >
+> > What about TPM2 trusted keys code?
 > 
-> Uhm, I was thinking that maybe it is not necessary to mention commit
-> 782779b60faa. This patch would still return 0 even if that commit is not
-> backported (TPM_ERR_DISABLED < TPM_MAX_DIGEST_SIZE).
+> Isn't TPM2 code located here: "drivers/char/tpm/"? Would you like to
+> move that code under trusted keys subsystem only?
 
-The commit message for 782779b60faa shows 379 being returned when
-attempting to get random:
+Yeah, we need a design decision here. What I care is that they should
+be in the same subsystem. I did trusted keys directly to TPM 2.0 subsys
+because the subsystem was not too robust back then.
 
-  [   18.092103] tpm tpm0: A TPM error (379) occurred attempting get random
+Right now I think it would be feasible to implement TPM2 trusted keys
+outside TPM driver since the whole transmit functionality is way more
+robust.
 
-I don't know enough about TPM chips to know how common that is...
-
-Tyler
-
-> 
-> Roberto
-> 
-> -- 
-> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-> Managing Director: Li Peng, Li Jian, Shi Yanli
+/Jarkko
