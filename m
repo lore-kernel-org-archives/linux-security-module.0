@@ -2,62 +2,115 @@ Return-Path: <SRS0=uVv8=V6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F377C433FF
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Aug 2019 15:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20442C32754
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Aug 2019 15:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E406B2087C
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Aug 2019 15:27:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=demmlermachinery.com header.i=@demmlermachinery.com header.b="YoHxpCB0"
+	by mail.kernel.org (Postfix) with ESMTP id EC21A2087C
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Aug 2019 15:30:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732697AbfHBP1W (ORCPT
+        id S1733162AbfHBPaq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Aug 2019 11:27:22 -0400
-Received: from vps.peddinghaus.com ([199.168.186.160]:41268 "EHLO
-        vps.peddi.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1732033AbfHBP1W (ORCPT
+        Fri, 2 Aug 2019 11:30:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57690 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733136AbfHBPap (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Aug 2019 11:27:22 -0400
-X-Greylist: delayed 3726 seconds by postgrey-1.27 at vger.kernel.org; Fri, 02 Aug 2019 11:27:22 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=demmlermachinery.com; s=default; h=Date:Sender:Message-Id:Reply-To:From:
-        Subject:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=7uLrIJ6jOSivB5HYxShya8sulNQSKRPvkb5oT3Qj9s8=; b=YoHxpCB0YOH6yWZmw7Q+TzLRj5
-        lXFw6cbJBNuyv6tGEGgOgKli7JoC7p4D/ruM6w2695ZLMoeYGER+gQQxw++8g6OqirfuA/Vo1yAoD
-        gajqEhoN3drPUeQt7JXpWLuzUm6Pr5xyD6gobjSyW8D6fpUTivH3irHi58iSbMyjaERKBbnf45f0U
-        hpybhXxiSz1bJWdUlJ8Zc39igk0lUKjQdW/XIA9CuiUwPjk2qxV8DrGI9YjlpA0pddi2v+xt+fcE/
-        sew8P4xzU24QYvBE0nQam+gk06TH9rqI/3lW29F7NndXyRRbUlBrhPIeVlb4qnkpta3nED9B6XHDD
-        eEoxMWsw==;
-Received: from demmlermachinery by vps.peddi.com with local (Exim 4.92)
-        (envelope-from <demmlermachinery@vps.peddi.com>)
-        id 1htYUe-0000aE-5r
-        for linux-security-module@vger.kernel.org; Fri, 02 Aug 2019 10:25:16 -0400
-To:     linux-security-module@vger.kernel.org
-Subject: Thank-You - Demmler Machinery
-X-PHP-Script: www.demmlermachinery.com/contact-form.php for 185.104.184.118
-From:   sales@demmlermachinery.com
-Reply-To: sales@demmlermachinery.com
-Message-Id: <E1htYUe-0000aE-5r@vps.peddi.com>
-Date:   Fri, 02 Aug 2019 10:25:16 -0400
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vps.peddi.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [1003 994] / [47 12]
-X-AntiAbuse: Sender Address Domain - vps.peddi.com
-X-Get-Message-Sender-Via: vps.peddi.com: authenticated_id: demmlermachinery/from_h
-X-Authenticated-Sender: vps.peddi.com: sales@demmlermachinery.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Fri, 2 Aug 2019 11:30:45 -0400
+Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=elm)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <tyhicks@canonical.com>)
+        id 1htZVr-0001Mo-Ax; Fri, 02 Aug 2019 15:30:35 +0000
+Date:   Fri, 2 Aug 2019 10:30:30 -0500
+From:   Tyler Hicks <tyhicks@canonical.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     jarkko.sakkinen@linux.intel.com, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, crazyt2019+lml@gmail.com,
+        nayna@linux.vnet.ibm.com, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v2] KEYS: trusted: allow module init if TPM is inactive
+ or deactivated
+Message-ID: <20190802153030.GB26616@elm>
+References: <20190802150733.1972-1-roberto.sassu@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802150733.1972-1-roberto.sassu@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thank you for contacting Demmler Machinery.  A representative will be in touch with you as soon as possible.
+On 2019-08-02 17:07:33, Roberto Sassu wrote:
+> Commit c78719203fc6 ("KEYS: trusted: allow trusted.ko to initialize w/o a
+> TPM") allows the trusted module to be loaded even a TPM is not found to
+                                                   ^ if
+
+> avoid module dependency problems.
+> 
+> However, trusted module initialization can still fail if the TPM is
+> inactive or deactivated. This patch ignores tpm_get_random() errors in
+> init_digests() and returns -EFAULT in pcrlock() if the TPM didn't return
+> random data.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+
+The code changes look correct to me.
+
+  Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+
+For whoever takes this patch through their tree, I think that adding the
+following Fixes tag would be useful (as well as cc'ing stable):
+
+  Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
+
+I think it is also worth leaving a short note, in the commit message,
+for backporters that commit 782779b60faa ("tpm: Actually fail on TPM
+errors during "get random"") should be included with any backports of
+this patch.
+
+Thanks!
+
+Tyler
+
+> ---
+>  security/keys/trusted.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+> index 9a94672e7adc..34f04ffcf2e5 100644
+> --- a/security/keys/trusted.c
+> +++ b/security/keys/trusted.c
+> @@ -389,6 +389,10 @@ static int pcrlock(const int pcrnum)
+>  	if (!capable(CAP_SYS_ADMIN))
+>  		return -EPERM;
+>  
+> +	/* This happens if the TPM didn't return random data */
+> +	if (!digests)
+> +		return -EFAULT;
+> +
+>  	return tpm_pcr_extend(chip, pcrnum, digests) ? -EINVAL : 0;
+>  }
+>  
+> @@ -1233,10 +1237,8 @@ static int __init init_digests(void)
+>  	int i;
+>  
+>  	ret = tpm_get_random(chip, digest, TPM_MAX_DIGEST_SIZE);
+> -	if (ret < 0)
+> -		return ret;
+> -	if (ret < TPM_MAX_DIGEST_SIZE)
+> -		return -EFAULT;
+> +	if (ret < 0 || ret < TPM_MAX_DIGEST_SIZE)
+> +		return 0;
+>  
+>  	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
+>  			  GFP_KERNEL);
+> -- 
+> 2.17.1
+> 
