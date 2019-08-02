@@ -1,100 +1,84 @@
-Return-Path: <SRS0=AbGf=V5=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=uVv8=V6=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD11C19759
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 23:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9895C433FF
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Aug 2019 01:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DAF520657
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Aug 2019 23:02:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="S8j3gBwq"
+	by mail.kernel.org (Postfix) with ESMTP id BAA1E206A3
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Aug 2019 01:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388271AbfHAXCF (ORCPT
+        id S1731569AbfHBBmb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Aug 2019 19:02:05 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46601 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727520AbfHAXCF (ORCPT
+        Thu, 1 Aug 2019 21:42:31 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:39435 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731411AbfHBBmb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Aug 2019 19:02:05 -0400
-Received: by mail-lf1-f65.google.com with SMTP id z15so47228332lfh.13
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Aug 2019 16:02:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=UnHL4pQNtVIpmyGSDaBU0opI82QJrnu+hxREmY3sJnY=;
-        b=S8j3gBwqjNIVIXHuusoTq/wIkZLgWjhuFIz0S6xa6GB0QdlV77aKPSFhstTdfhH6yg
-         3KChmnFoNg3q6R4hxSVNOK4/oCSOW46G2lWHtGapX0XHgXXYthy+yNrmCsR1nkDPwMaI
-         2YOHsM7LGgZXNVzk/VWVAxL+vZNH2bw5TNT/avFE/3LdooClmqSo1G26wU6leBviuuRg
-         GnCoGVATQEfQcyS2NfKvb2hxgZbr47+y64b6IEGp0FvfLNMOmQj0bkmVLZzdirewKxC3
-         q3QEeYX+DnwZHnsWX6eS3GXCIH+bsVQeIb/Lz3ZWDzHPCrw3M4WhHItlxg0yfl2Cuxtt
-         KEsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=UnHL4pQNtVIpmyGSDaBU0opI82QJrnu+hxREmY3sJnY=;
-        b=lk8MQnQPJL/+LsTy4tw2k8m7BBBDuxtHXrvUj6PMqMRY7xBY82qY2FVbtlQN9+nUr1
-         paJ+QLQx3TGrT+oKOQvBclsVlvPxeBg64vzecW9GH6GcFZJ8LpJZV/GOOeQo5Z4zGk9A
-         3BZ9FGvwLZqkM9yXwd1jerPvWE+T0hHxQUoNghTGnjOnqhaW6ke5wdQN+9nMNaaiXF7k
-         9ZgbT3QnnW8Jo9bhLtQpofiEavuyG/fNrwpov5BI/75FjKOCH/I9fsNqZelBbWy1/8Wu
-         4EKHiTey5oRUj7Qxdg8KnkF6dn8QppWep0suPoRzVC6lCpApXX7W2hrUC4rs6EjlZ0/o
-         PBDw==
-X-Gm-Message-State: APjAAAUs70c/LFxAmMfRn1IDLMy2ZI0uYAmuyIuSRX1joiOy13uV4kU2
-        kUgpefLLL3gOp1y/ojVRg3igAv5sXhNQOcDe6L1APU4=
-X-Google-Smtp-Source: APXvYqxyaCNAjbqpHWFZK+AUXX7LyIVRGbMS7v+RE8gYdSAnmhvcQoXTfUd7I7k/boWiCeenW0zF1/0piDjuzQvzZ7A=
-X-Received: by 2002:a19:4349:: with SMTP id m9mr61806805lfj.64.1564700523663;
- Thu, 01 Aug 2019 16:02:03 -0700 (PDT)
+        Thu, 1 Aug 2019 21:42:31 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TYR759._1564710146;
+Received: from ali-6c96cfd98fb5.local(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TYR759._1564710146)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 02 Aug 2019 09:42:27 +0800
+Subject: Re: [PATCH] ima: Allow to import the blacklisted cert signed by
+ secondary CA cert
+To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        dmitry.kasatkin@gmail.com
+Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Mark D. Baushke" <mdb@juniper.net>,
+        Petko Manolov <petkan@mip-labs.com>
+References: <1564622625-112173-1-git-send-email-zhang.jia@linux.alibaba.com>
+ <1564700229.11223.9.camel@linux.ibm.com>
+From:   Jia Zhang <zhang.jia@linux.alibaba.com>
+Message-ID: <d6a27436-3822-3dda-a3be-4e2dfbe04390@linux.alibaba.com>
+Date:   Fri, 2 Aug 2019 09:42:26 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 1 Aug 2019 19:01:52 -0400
-Message-ID: <CAHC9VhQ6X==anxZ435QAdbjiWtGiVA3LQbBbp0vhbzOhW6NvCQ@mail.gmail.com>
-Subject: [GIT PULL] SELinux fixes for v5.3 (#2)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1564700229.11223.9.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
 
-One more small patch for Linux v5.3-rcX to fix a potential memory leak
-in an error path.  Please merge.
 
-Thanks,
--Paul
---
-The following changes since commit acbc372e6109c803cbee4733769d02008381740f:
+On 2019/8/2 上午6:57, Mimi Zohar wrote:
+> Hi Jia,
+> 
+> On Thu, 2019-08-01 at 09:23 +0800, Jia Zhang wrote:
+>> Similar to .ima, the cert imported to .ima_blacklist is able to be
+>> authenticated by a secondary CA cert.
+>>
+>> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+> 
+> The IMA blacklist, which is defined as experimental for a reason, was
+> upstreamed prior to the system blacklist.  Any reason you're not using
+> the system blacklist?  Before making this sort of change, I'd like
+> some input from others.
 
- selinux: check sidtab limit before adding a new entry
-   (2019-07-24 11:13:34 -0400)
+In our trusted cloud service, the IMA private key is controlled by
+tenant for some reason. Some unprofessional operations made by tenant
+may lead to the leakage of IMA private key. So the need for importing
+the blacklisted is necessary，without system/kexec reboot, on the
+contrary, the system blacklist needs a kernel rebuild and system/kexec
+reboot, without runtime and fine-grained control.
 
-are available in the Git repository at:
+The secondary CA cert has a similar story, but it is not controlled by
+tenant. It is always imported during system/kexec boot to serve
+importing IMA trusted cert and IMA blacklisted cert.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20190801
+Jia
 
-for you to fetch changes up to 45385237f65aeee73641f1ef737d7273905a233f:
-
- selinux: fix memory leak in policydb_init() (2019-07-31 16:51:23 -0400)
-
-----------------------------------------------------------------
-selinux/stable-5.3 PR 20190801
-
-----------------------------------------------------------------
-Ondrej Mosnacek (1):
-     selinux: fix memory leak in policydb_init()
-
-security/selinux/ss/policydb.c | 6 +++++-
-1 file changed, 5 insertions(+), 1 deletion(-)
-
--- 
-paul moore
-www.paul-moore.com
+> 
+> thanks,
+> 
+> Mimi
+> 
