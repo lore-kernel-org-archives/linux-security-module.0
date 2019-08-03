@@ -2,96 +2,69 @@ Return-Path: <SRS0=an0x=V7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 391EBC31E40
-	for <linux-security-module@archiver.kernel.org>; Sat,  3 Aug 2019 14:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70570C433FF
+	for <linux-security-module@archiver.kernel.org>; Sat,  3 Aug 2019 17:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 187CC214AE
-	for <linux-security-module@archiver.kernel.org>; Sat,  3 Aug 2019 14:44:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ADDF2087C
+	for <linux-security-module@archiver.kernel.org>; Sat,  3 Aug 2019 17:45:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564854312;
+	bh=lPh4AIBXrY77KC2xroeNW0G/7AjLMBhuNi3a1wBKcg0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=VDlkLIV7Iiru2FLSEvak7SYqWv8r/Z3nOtO8zzS3gscPo1e1fRY912QgWbbcrkv9B
+	 9+LLvPQm2NhCcRWfcvTueJIbm62J5nk51l+qAvYS11h8SqzFMSqg84Fb+JT1EVgIjw
+	 rzvwCsjmA8Y00D3uKM/kO6+3wQTS5ypXeLlaIHDo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726457AbfHCOop (ORCPT
+        id S1728319AbfHCRpL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 3 Aug 2019 10:44:45 -0400
-Received: from mga14.intel.com ([192.55.52.115]:31834 "EHLO mga14.intel.com"
+        Sat, 3 Aug 2019 13:45:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725844AbfHCOop (ORCPT
+        id S1728303AbfHCRpK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 3 Aug 2019 10:44:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Aug 2019 07:44:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,342,1559545200"; 
-   d="scan'208";a="164212471"
-Received: from xinpan-mobl1.ger.corp.intel.com ([10.249.33.239])
-  by orsmga007.jf.intel.com with ESMTP; 03 Aug 2019 07:44:39 -0700
-Message-ID: <aff3502c598fb76a1517795edaacd8c8ea330051.camel@linux.intel.com>
-Subject: Re: [PATCH] KEYS: trusted: allow module init if TPM is inactive or
- deactivated
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tyler Hicks <tyhicks@canonical.com>
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>, jejb@linux.ibm.com,
-        zohar@linux.ibm.com, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, crazyt2019+lml@gmail.com,
-        nayna@linux.vnet.ibm.com, silviu.vlasceanu@huawei.com
-Date:   Sat, 03 Aug 2019 17:44:37 +0300
-In-Reply-To: <20190802202343.GE26616@elm>
-References: <20190705163735.11539-1-roberto.sassu@huawei.com>
-         <20190711194811.rfsohbfc3a7carpa@linux.intel.com>
-         <b4454a78-1f1b-cc75-114a-99926e097b05@huawei.com>
-         <20190801163215.mfkagoafkxscesne@linux.intel.com>
-         <e50c4cfa-1f0c-6f4d-1910-010a8d874393@huawei.com>
-         <20190802142721.GA26616@elm>
-         <20190802194226.oiztvme5klkmw6fh@linux.intel.com>
-         <20190802202343.GE26616@elm>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 3 Aug 2019 13:45:10 -0400
+Subject: Re: [GIT PULL] SELinux fixes for v5.3 (#2)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564854310;
+        bh=lPh4AIBXrY77KC2xroeNW0G/7AjLMBhuNi3a1wBKcg0=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=w8M3KpXafujE4xPfZf0Yowa3+sEEbtxWCBxv012YWrzR0vW7Z7YbeiGsx1uJvZC/J
+         qV5pNOdp8bLPoitRl4bI8VhUx4iGBed80LZd5lIaCtzgrPl+yrflxNXw/GLwY5FjiG
+         amCskA4iZCpYV5cjVn4d8cJRgxAH1+EqMeoMa6xM=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAHC9VhQ6X==anxZ435QAdbjiWtGiVA3LQbBbp0vhbzOhW6NvCQ@mail.gmail.com>
+References: <CAHC9VhQ6X==anxZ435QAdbjiWtGiVA3LQbBbp0vhbzOhW6NvCQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhQ6X==anxZ435QAdbjiWtGiVA3LQbBbp0vhbzOhW6NvCQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ tags/selinux-pr-20190801
+X-PR-Tracked-Commit-Id: 45385237f65aeee73641f1ef737d7273905a233f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4f1a6ef1df6f952fc9f22f34d51a6c3d3c4fbe23
+Message-Id: <156485431005.24028.10256625498472409394.pr-tracker-bot@kernel.org>
+Date:   Sat, 03 Aug 2019 17:45:10 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2019-08-02 at 15:23 -0500, Tyler Hicks wrote:
-> That wasn't the conclusion that I came to. I prefer Robert's proposed
-> change to trusted.ko.
-> 
-> How do you propose that this be fixed in eCryptfs?
-> 
-> Removing encrypted_key support from eCryptfs is the only way that I can
-> see to fix the bug in eCryptfs. That support has been there since 2011.
-> I'm not sure of the number of users that would be broken by removing
-> encrypted_key support. I don't think the number is high but I can't say
-> that confidently.
+The pull request you sent on Thu, 1 Aug 2019 19:01:52 -0400:
 
-Looking at the documentation [1] it is stated that
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20190801
 
-"Encrypted keys do not depend on a TPM, and are faster, as they use AES
-for encryption/decryption."
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4f1a6ef1df6f952fc9f22f34d51a6c3d3c4fbe23
 
-Why would you need to remove support for encrypted keys? Isn't it a
-regression in encrypted keys to hard depend on trusted keys given
-what the documentation says?
+Thank you!
 
-> Roberto, what was your use case when you added encrypted_key support to
-> eCryptfs back then? Are you aware of any users of eCryptfs +
-> encrypted_keys?
-> 
-> Jarkko, removing a long-standing feature is potentially more disruptive
-> to users than adding a workaround to trusted.ko which already requires a
-> similar workaround. I don't think that I agree with you on the proper
-> fix here.
-
-There is nothing to disagree or agree. I just try to get the picture
-since ecryptfs is relatively alien to me.
-
-[1] https://www.kernel.org/doc/html/v4.13/security/keys/trusted-encrypted.html
-
-/Jarkko
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
