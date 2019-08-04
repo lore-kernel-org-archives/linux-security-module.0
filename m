@@ -6,170 +6,104 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82ADC19759
-	for <linux-security-module@archiver.kernel.org>; Sun,  4 Aug 2019 22:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0399C433FF
+	for <linux-security-module@archiver.kernel.org>; Sun,  4 Aug 2019 22:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADC8020882
-	for <linux-security-module@archiver.kernel.org>; Sun,  4 Aug 2019 22:17:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92F1E20880
+	for <linux-security-module@archiver.kernel.org>; Sun,  4 Aug 2019 22:20:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564957021;
-	bh=NOsxGe27UUkBUODosCJyRGgFS2Jq9IOxrPzUq8LIvcM=;
+	s=default; t=1564957239;
+	bh=4+uDKxvqM9OIkq0s1X/uCEDzLdtlyFxWBL44sjlJLNY=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=wo00Br+E8jREsl8rCQ33Lkw9IpU+WdmoKeUI4DWYObccAS4/vbeUkrgT/pGeSk4/f
-	 zj4RxLPRkLIawNm1qqGP6rFw0YbviohZNWPAsxyDNsAktZgVMf1eQV2tW6C8jwV6XZ
-	 lO+B1e28koLyNQakg+d+OwBVgoJcTUucZDip4GQM=
+	b=REyZpKbXseTu87/mhLxGaX/ur+9VmtNs/eZMBz9Ej9ElqR2bM9AHWT0aziBpMhEdA
+	 5xsBlPoOeKAPlaJwASCLjpP1Hp04296BSd91XG8TybqUr1Plm8/C1HE7364QcpoPc0
+	 EpKKmFVWc0dAdKlTsMe0YliG1fC2O9nudR2FcmhE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfHDWRB (ORCPT
+        id S1726713AbfHDWUi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 4 Aug 2019 18:17:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33716 "EHLO mail.kernel.org"
+        Sun, 4 Aug 2019 18:20:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726826AbfHDWRA (ORCPT
+        id S1726561AbfHDWUi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 4 Aug 2019 18:17:00 -0400
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        Sun, 4 Aug 2019 18:20:38 -0400
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9FB021842
-        for <linux-security-module@vger.kernel.org>; Sun,  4 Aug 2019 22:16:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACB1C21849
+        for <linux-security-module@vger.kernel.org>; Sun,  4 Aug 2019 22:20:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564957019;
-        bh=NOsxGe27UUkBUODosCJyRGgFS2Jq9IOxrPzUq8LIvcM=;
+        s=default; t=1564957238;
+        bh=4+uDKxvqM9OIkq0s1X/uCEDzLdtlyFxWBL44sjlJLNY=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Fqyy0NvLusu14az8Ov3YCYwhYCJ6lIV59Nr7t0tWwPT95pEWhNvy5Vi4+s9QecAYm
-         KL7LsFVc0TgpSvXtY8Eoq2AejrCZqE6en3NVi0TjLUU/G/SL8FYDm0XzZbbjnCSZHB
-         Z099ygyZifFp7av1c8XyGftglwxrcNNo/TCT4bXg=
-Received: by mail-wr1-f44.google.com with SMTP id n9so57387781wrr.4
-        for <linux-security-module@vger.kernel.org>; Sun, 04 Aug 2019 15:16:58 -0700 (PDT)
-X-Gm-Message-State: APjAAAX/UkyU8JH40uHgM/Tqf8KVXMbt/NiAgr8pO+swFxgvc7HpGRjF
-        Hykn9xXGp5EngixPCRq+3KGQzWlEx1lQENceTWnL+A==
-X-Google-Smtp-Source: APXvYqxpYh/r8L67Yq8wytHQI4oN79Aw0hUduH+jnQG7PwmNVjSC50w0B3l5qWCsOFZlpSgQcSB+ucGe4OkPF/pYd34=
-X-Received: by 2002:adf:f28a:: with SMTP id k10mr81834684wro.343.1564957017128;
- Sun, 04 Aug 2019 15:16:57 -0700 (PDT)
+        b=Gkx/Qoo7Ayjf9q3CDSkqpue+AINd98ZEg1JxTjj139nmf3ZgVzaY6p0f+8QjixjS/
+         pJJO26DZZzw29AemJSNBhe2cz/2hzPcld9cx70vD4t+KdratPzWk3TqYGcdt1WWqO2
+         x0iQK8HiR9dMVTsB5/0L3lXtu9QV7NZK8cfZbDsw=
+Received: by mail-wm1-f41.google.com with SMTP id w9so5366072wmd.1
+        for <linux-security-module@vger.kernel.org>; Sun, 04 Aug 2019 15:20:37 -0700 (PDT)
+X-Gm-Message-State: APjAAAUbvr0AYb1OeFS2tFCKKtdNOtNqKM40ML7Csk8YC4+k25WgR3nq
+        hs0YFmgzGktvwqbDFI6Ftzqda+VZu0ezT0ebT71MDQ==
+X-Google-Smtp-Source: APXvYqypYUCkDQdokcmAHSDQYXibQ3M2IW5YYjvxRskvGd32mMTS3XclDKNYo+ABvlfFbHHa0Y348qCjKX1x2AaSd3c=
+X-Received: by 2002:a1c:a942:: with SMTP id s63mr14669087wme.76.1564957236010;
+ Sun, 04 Aug 2019 15:20:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190627201923.2589391-1-songliubraving@fb.com>
- <20190627201923.2589391-2-songliubraving@fb.com> <21894f45-70d8-dfca-8c02-044f776c5e05@kernel.org>
- <3C595328-3ABE-4421-9772-8D41094A4F57@fb.com> <CALCETrWBnH4Q43POU8cQ7YMjb9LioK28FDEQf7aHZbdf1eBZWg@mail.gmail.com>
- <0DE7F23E-9CD2-4F03-82B5-835506B59056@fb.com> <CALCETrWBWbNFJvsTCeUchu3BZJ3SH3dvtXLUB2EhnPrzFfsLNA@mail.gmail.com>
- <201907021115.DCD56BBABB@keescook> <CALCETrXTta26CTtEDnzvtd03-WOGdXcnsAogP8JjLkcj4-mHvg@mail.gmail.com>
- <4A7A225A-6C23-4C0F-9A95-7C6C56B281ED@fb.com> <CALCETrX2bMnwC6_t4b_G-hzJSfMPrkK4YKs5ebcecv2LJ0rt3w@mail.gmail.com>
- <514D5453-0AEE-420F-AEB6-3F4F58C62E7E@fb.com> <1DE886F3-3982-45DE-B545-67AD6A4871AB@amacapital.net>
- <7F51F8B8-CF4C-4D82-AAE1-F0F28951DB7F@fb.com> <77354A95-4107-41A7-8936-D144F01C3CA4@fb.com>
- <369476A8-4CE1-43DA-9239-06437C0384C7@fb.com> <CALCETrUpVMrk7aaf0trfg9AfZ4fy279uJgZH7V+gZzjFw=hUxA@mail.gmail.com>
- <D4040C0C-47D6-4852-933C-59EB53C05242@fb.com> <CALCETrVoZL1YGUxx3kM-d21TWVRKdKw=f2B8aE5wc2zmX1cQ4g@mail.gmail.com>
- <5A2FCD7E-7F54-41E5-BFAE-BB9494E74F2D@fb.com>
-In-Reply-To: <5A2FCD7E-7F54-41E5-BFAE-BB9494E74F2D@fb.com>
+References: <20190617222438.2080-5-sean.j.christopherson@intel.com>
+ <dc3d59c2783ea81d85d4d447bd1a4a2d5fe51421.camel@linux.intel.com>
+ <20190619152018.GC1203@linux.intel.com> <20190620221702.GE20474@linux.intel.com>
+ <20190707190809.GE19593@linux.intel.com> <1b7369a08e98dd08a4f8bb19b16479f12bee130f.camel@linux.intel.com>
+ <20190708161932.GE20433@linux.intel.com> <20190709160634.3yupyabf5svnj4ds@linux.intel.com>
+ <20190710172553.GE4348@linux.intel.com> <CALCETrXMAwHod_KZYPGWjTjg-fxOb1=02=Qj2g1o624wOPfPZQ@mail.gmail.com>
+ <20190801163839.wvcnq57hity4wwrk@linux.intel.com>
+In-Reply-To: <20190801163839.wvcnq57hity4wwrk@linux.intel.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 4 Aug 2019 15:16:46 -0700
-X-Gmail-Original-Message-ID: <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
-Message-ID: <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-To:     Song Liu <songliubraving@fb.com>
+Date:   Sun, 4 Aug 2019 15:20:24 -0700
+X-Gmail-Original-Message-ID: <CALCETrWBewZyqVUf3cPDj11eSWXqfDG0z50vVw+Yg0Z8r0AtCg@mail.gmail.com>
+Message-ID: <CALCETrWBewZyqVUf3cPDj11eSWXqfDG0z50vVw+Yg0Z8r0AtCg@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 04/12] x86/sgx: Require userspace to define enclave
+ pages' protection bits
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>, linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
         LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 2, 2019 at 12:22 AM Song Liu <songliubraving@fb.com> wrote:
+On Thu, Aug 1, 2019 at 9:38 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
 >
-> Hi Andy,
+> On Mon, Jul 15, 2019 at 03:29:23PM -0700, Andy Lutomirski wrote:
+> > I would say it differently: regardless of exactly how /dev/sgx/enclave
+> > is wired up under the hood, we want a way that a process can be
+> > granted permission to usefully run enclaves without being granted
+> > permission to execute whatever bytes of code it wants.  Preferably
+> > without requiring LSMs to maintain some form of enclave signature
+> > whitelist.
 >
- >> I actually agree CAP_BPF_ADMIN makes sense. The hard part is to make
-> >> existing tools (setcap, getcap, etc.) and libraries aware of the new CAP.
-> >
-> > It's been done before -- it's not that hard.  IMO the main tricky bit
-> > would be try be somewhat careful about defining exactly what
-> > CAP_BPF_ADMIN does.
->
-> Agreed. I think defining CAP_BPF_ADMIN could be a good topic for the
-> Plumbers conference.
->
-> OTOH, I don't think we have to wait for CAP_BPF_ADMIN to allow daemons
-> like systemd to do sys_bpf() without root.
-
-I don't understand the use case here.  Are you talking about systemd
---user?  As far as I know, a user is expected to be able to fully
-control their systemd --user process, so giving it unrestricted bpf
-access is very close to giving it superuser access, and this doesn't
-sound like a good idea.  I think that, if systemd --user needs bpf(),
-it either needs real unprivileged bpf() or it needs a privileged
-helper (SUID or a daemon) to intermediate this access.
-
->
-> >
-> >>> I don't see why you need to invent a whole new mechanism for this.
-> >>> The entire cgroup ecosystem outside bpf() does just fine using the
-> >>> write permission on files in cgroupfs to control access.  Why can't
-> >>> bpf() do the same thing?
-> >>
-> >> It is easier to use write permission for BPF_PROG_ATTACH. But it is
-> >> not easy to do the same for other bpf commands: BPF_PROG_LOAD and
-> >> BPF_MAP_*. A lot of these commands don't have target concept. Maybe
-> >> we should have target concept for all these commands. But that is a
-> >> much bigger project. OTOH, "all or nothing" model allows all these
-> >> commands at once.
-> >
-> > For BPF_PROG_LOAD, I admit I've never understood why permission is
-> > required at all.  I think that CAP_SYS_ADMIN or similar should be
-> > needed to get is_priv in the verifier, but I think that should mainly
-> > be useful for tracing, and that requires lots of privilege anyway.
-> > BPF_MAP_* is probably the trickiest part.  One solution would be some
-> > kind of bpffs, but I'm sure other solutions are possible.
->
-> Improving permission management of cgroup_bpf is another good topic to
-> discuss. However, it is also an overkill for current use case.
+> Would it be better to have a signer whitelist instead or some
+> combination? E.g. you could whiteliste either by signer or
+> enclave signature.
 >
 
-I looked at the code some more, and I don't think this is so hard
-after all.  As I understand it, all of the map..by_id stuff is, to
-some extent, deprecated in favor of persistent maps.  As I see it, the
-map..by_id calls should require privilege forever, although I can
-imagine ways to scope that privilege to a namespace if the maps
-themselves were to be scoped to a namespace.
+I'm not sure, and also don't really think we need to commit to an
+answer right now.  I do think that the eventual solution should be
+more flexible than just whitelisting the signers.  In particular, it
+should be possible to make secure enclaves, open-source or otherwise,
+that are reproducibly buildable.  This more or less requires that the
+signing private key not be a secret, which means that no one would
+want to whitelist the signing key.  The enclave would be trusted, and
+would seal data, on the basis of its MRENCLAVE, and the policy, if
+any, would want to whitelist the MRENCLAVE or perhaps the whole
+SIGSTRUCT.
 
-Instead, unprivileged tools would use the persistent map interface
-roughly like this:
-
-$ bpftool map create /sys/fs/bpf/my_dir/filename type hash key 8 value
-8 entries 64 name mapname
-
-This would require that the caller have either CAP_DAC_OVERRIDE or
-that the caller have permission to create files in /sys/fs/bpf/my_dir
-(using the same rules as for any filesystem), and the resulting map
-would end up owned by the creating user and have mode 0600 (or maybe
-0666, or maybe a new bpf_attr parameter) modified by umask.  Then all
-the various capable() checks that are currently involved in accessing
-a persistent map would instead check FMODE_READ or FMODE_WRITE on the
-map file as appropriate.
-
-Half of this stuff already works.  I just set my system up like this:
-
-$ ls -l /sys/fs/bpf
-total 0
-drwxr-xr-x. 3 luto luto 0 Aug  4 15:10 luto
-
-$ mkdir /sys/fs/bpf/luto/test
-
-$ ls -l /sys/fs/bpf/luto
-total 0
-drwxrwxr-x. 2 luto luto 0 Aug  4 15:10 test
-
-I bet that making the bpf() syscalls work appropriately in this
-context without privilege would only be a couple of hours of work.
-The hard work, creating bpffs and making it function, is already done
-:)
-
-P.S. The docs for bpftool create are less than fantastic.  The
-complete lack of any error message at all when the syscall returns
--EACCES is also not fantastic.
+But my overall point is that it should be possible to have a conherent
+policy that allows any enclave whatsoever to run but that still
+respects EXECMEM and such.
