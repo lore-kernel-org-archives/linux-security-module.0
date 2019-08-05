@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A88D4C0650F
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 21:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEB5C433FF
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 21:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F92D20B1F
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 21:29:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12C34216B7
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 21:29:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565040574;
-	bh=u+3SYBPVgv/FEIxWu9RLECxDzTwrB/RGyZBZnMDQAec=;
+	s=default; t=1565040576;
+	bh=45+cRqS8MNOxm6R+6LgHhyjb3IGQXlsBUzjj4gB6koA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Jrgo/148FEtma5BH5Ti6aaYHUqanuvaBzbsW5eW/uhBqa4vsiUpWN1SUu5SvdPSaS
-	 Mt+9U3t1StPWzuhe1RO5ESD7DU2yBmap2XBO7JgOV5YYUgOEwu1fa5m5E2SbVosebH
-	 C32cS80ydMMrE9A1AJCHrJl9EGSxz+Fh9RUMEHTU=
+	b=RZeWLtRYCU4ioyRqhMM59Jc69KAbHQQ/YSY5KRwPpGviqofKfB7hFWPgVNV/8kH5Q
+	 n+BvXAG1UGUir36T2M5jt9sq4ZOVwWGz4B4rdTGv6ax9Ess5dENT6w7Gc8lOdYfW0P
+	 3WqiL7P9IZoAWB1y7B33UtVEg3qr+LkDzqgColkY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730600AbfHEV32 (ORCPT
+        id S1730847AbfHEV3N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Aug 2019 17:29:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730827AbfHEV3N (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
         Mon, 5 Aug 2019 17:29:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729834AbfHEV3M (ORCPT
+        <rfc822;linux-security-module@vger.kernel.org>);
+        Mon, 5 Aug 2019 17:29:12 -0400
 Received: from localhost (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 940BA216F4;
-        Mon,  5 Aug 2019 21:29:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F6E4216B7;
+        Mon,  5 Aug 2019 21:29:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565040552;
-        bh=u+3SYBPVgv/FEIxWu9RLECxDzTwrB/RGyZBZnMDQAec=;
+        s=default; t=1565040551;
+        bh=45+cRqS8MNOxm6R+6LgHhyjb3IGQXlsBUzjj4gB6koA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jERS4ABosOx4Nh0Qu2Lfi1dqigzT8zM+tMPMVq2zw4+f7Z+9O1FXkt6rXMe23xDL+
-         v+gizQCi+rDkwwvX6At/Am3eneEnSl9CoSiQfC37IPtAPtSPbDVW0kAaUT4b9ZNCq8
-         N/hamxJdUghTGHeiSGCv1/60I3uA4e6UKmMySj1g=
+        b=B2BtE7x+J+uyPpX6iLy9TJ7q1IO7/7TGuEUF1zxg35LXOFCU9dR2zAY+KnsxNUY/Q
+         lpVqvo97DgG+6mdKCeNL4ZbMEgBDvaTtV0TL2aNPObt3NbsA/1ZH7CyA5IgBPi6mil
+         irLa1qdsuLYYsXMFiON96atqoy0nu+THLCRczHg0=
 From:   Andy Lutomirski <luto@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>,
         Alexei Starovoitov <alexei.starovoitov@gmail.com>
@@ -55,9 +55,9 @@ Cc:     Song Liu <songliubraving@fb.com>,
         Linux API <linux-api@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Andy Lutomirski <luto@kernel.org>
-Subject: [WIP 4/4] bpf: Allow creating all program types without privilege
-Date:   Mon,  5 Aug 2019 14:29:05 -0700
-Message-Id: <9e77ae06243555a96a3fd5e854f61d24823110c9.1565040372.git.luto@kernel.org>
+Subject: [WIP 2/4] bpf: Don't require mknod() permission to pin an object
+Date:   Mon,  5 Aug 2019 14:29:03 -0700
+Message-Id: <3bb110117c983f781f545e69ce35d4fcdd0c543b.1565040372.git.luto@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1565040372.git.luto@kernel.org>
 References: <cover.1565040372.git.luto@kernel.org>
@@ -67,32 +67,35 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This doesn't let you *run* the programs except in test mode, so it should
-be safe.  Famous last words.
+security_path_mknod() seems excessive for pinning an object --
+pinning an object is effectively just creating a file.  It's also
+redundant, as vfs_mkobj() calls security_inode_create() by itself.
 
-This assumes that the check-privilege-to-call-privileged-functions
-patch actually catches all the cases and that there's nothing else
-that should need privilege lurking in the type-specific verifiers.
+This isn't strictly required -- mknod(path, S_IFREG, unused) works
+to create regular files, but bpf is currently the only user in the
+kernel outside of mknod() itself that uses it to create regular
+(i.e. S_IFREG) files.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 ---
- kernel/bpf/syscall.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/bpf/inode.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 23f8f89d2a86..730afa2be786 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1649,8 +1649,7 @@ static int bpf_prog_load(union bpf_attr *attr, union bpf_attr __user *uattr)
- 	    attr->insn_cnt > (capable(CAP_SYS_ADMIN) ? BPF_COMPLEXITY_LIMIT_INSNS : BPF_MAXINSNS))
- 		return -E2BIG;
- 	if (type != BPF_PROG_TYPE_SOCKET_FILTER &&
--	    type != BPF_PROG_TYPE_CGROUP_SKB &&
--	    !capable(CAP_SYS_ADMIN))
-+	    type != BPF_PROG_TYPE_CGROUP_SKB)
- 		return -EPERM;
+diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+index cb07736b33ae..14304609003a 100644
+--- a/kernel/bpf/inode.c
++++ b/kernel/bpf/inode.c
+@@ -394,10 +394,6 @@ static int bpf_obj_do_pin(const struct filename *pathname, void *raw,
  
- 	bpf_prog_load_fixup_attach_type(attr);
+ 	mode = S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
+ 
+-	ret = security_path_mknod(&path, dentry, mode, 0);
+-	if (ret)
+-		goto out;
+-
+ 	dir = d_inode(path.dentry);
+ 	if (dir->i_op != &bpf_dir_iops) {
+ 		ret = -EPERM;
 -- 
 2.21.0
 
