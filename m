@@ -2,114 +2,114 @@ Return-Path: <SRS0=x/8A=WB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF9DC19759
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 02:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83CB6C0650F
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 05:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 081572133F
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 02:26:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5944A2070D
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 05:03:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bjxN1i85"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pp7rr9JW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfHEC0a (ORCPT
+        id S1726847AbfHEFDN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 4 Aug 2019 22:26:30 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45828 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbfHEC0a (ORCPT
+        Mon, 5 Aug 2019 01:03:13 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38343 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfHEFDN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 4 Aug 2019 22:26:30 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r1so38784853pfq.12;
-        Sun, 04 Aug 2019 19:26:29 -0700 (PDT)
+        Mon, 5 Aug 2019 01:03:13 -0400
+Received: by mail-lf1-f68.google.com with SMTP id h28so56822042lfj.5
+        for <linux-security-module@vger.kernel.org>; Sun, 04 Aug 2019 22:03:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lcnoyc82zBJmK7HyZZ9/xYHIo+nvY1F0Vc3WAAWFXf4=;
-        b=bjxN1i855euNnjUnIRlcEX0LvYqx3HxLcGznZolbzXrZ9h2uenhVqHuurr9ZBo0Mdn
-         BEsRrms5VOqtu/pZu/TaKYkRFrpT11Va6g+49pLA5OWY+SZ0hMDbYRKwmWmxzMDhbb8f
-         GTQVuKdH4sre765l2YwqLwgEj5U5TCxJ11dgPQgtD9/F7nITzsxx1q+K6fPt8AJTwZ51
-         SXQT/3NcHGnARj71eCFz2j1ZKbUjtfQuqmAtbXa6juripZelfrT7KMWdgAkVhlhszJJH
-         Qh8QWc4/xPlfmZB6bDU1IsGkYlb7ALstwyWPJLnNFIgVmfoptlw3rJFEc3KpcOW6cCi6
-         uYRw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=59rGgYKXfbOVeORIb/3aPCsYO+up32tSP1XLT583cgM=;
+        b=Pp7rr9JWyW8rvNf7mskAanI9AtGCJ6FROK5Y/83r2NqcfGniuX15dpaNbFLBKhal8P
+         wcn6BAM1OS2b7l9JhEUu+FS4jI0d/3GAs5fSPHIOYeXXTcNlYrreX9QFYp2amkc/us3n
+         fPQS0IYuedLccQz4EBV6PVVi4j1lGml4t6nHKJjsvODNUqz+ZKWMwtQ4XS8y7BbkFPlR
+         UfGU2a2Vdilwtonwk61BmmALDw8mJueH6lj6efGPTYSB54fQ4ghZlgkmuLk0TB4C9uCT
+         q+r1ixbNM2GsHvVAAVMDTBsMBXdUeRcU3exa0a88mrKmpwKKtzY2uB0ycJSYruz7r9JQ
+         GjlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lcnoyc82zBJmK7HyZZ9/xYHIo+nvY1F0Vc3WAAWFXf4=;
-        b=S0rVlATrvU8RMWzbpL7Xv04NbyuyMvm6YmbevRTA0AHYfiAPPVYty2Sden3le34y7d
-         jYJG4/OJ4yCC5Lyosd4gzMRfjWTJB8HwTOaKUnYiHTEGAzA9BbLMEQ845gS8VUFr2fAI
-         C+9b1GU7qsml9wbCjo7kvv1//0NyNDSzpSlnVuzAY7UKQsrytCRHeYJj3PeabTC0fmi+
-         XtqMGoumeWWtDpqmOKNLjJnYqJc+DKNl934vExR2J5U2IOt8/wDHnbvMH5InsR3mH4+U
-         v2AZFVTaNZlatV40yj65HQ+M2EGsXfoDAPWqMpyLZkAWxEj3WcbgzdtJYLLE+MsG8b+B
-         lqtQ==
-X-Gm-Message-State: APjAAAV3r9DyLFs//17PCzX+TCb6Q4cBWWSE24NzQ2UU4HVupa5FVHyt
-        k3YKUca63gEDa0p8IuBoRJI=
-X-Google-Smtp-Source: APXvYqz56Uy3OWp9yKpnmoBerTa/QncOG/6somzUXYkyfxRhF/JGW0ZcxzT4FIvpzsPEHyTa4Zvc7A==
-X-Received: by 2002:a63:2004:: with SMTP id g4mr128483482pgg.97.1564971989557;
-        Sun, 04 Aug 2019 19:26:29 -0700 (PDT)
-Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id s6sm122624067pfs.122.2019.08.04.19.26.28
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 04 Aug 2019 19:26:29 -0700 (PDT)
-From:   john.hubbard@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH] security/tomoyo: convert put_page() to put_user_page*()
-Date:   Sun,  4 Aug 2019 19:26:26 -0700
-Message-Id: <20190805022626.13291-1-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.22.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=59rGgYKXfbOVeORIb/3aPCsYO+up32tSP1XLT583cgM=;
+        b=GJiFk6rH83uWLHW+rpFgXcBdk1zZ6OVZGfwtaJUPMd9U4R1kOheucUHgxZwCjmcoPT
+         CPZdqK1YTV5dCYSR9m7k3uTiv9tjxkGHf1x3XaOxthiM02GHIz28TevPWEct6WWtnEbs
+         P/wEpkwjN8KL1LbsGO5H9jWl5vR1vFnzIC5ftmzJ+rzzmkVYEenkjMMf7JE/nyMHmex6
+         wZuua0c0QWfZwaX+EqQ/3e1d5C9swL+MfnJ7MnRn45rIDleJu8wm6SO+7Em8TM9OcUwj
+         1yZ/JxxCLP+fwJ8hdQtpgW5+yFmUOIo6+uax/aYXHbrSY1zpAY1lGn0Kh4u/pO9nVgR7
+         4T6A==
+X-Gm-Message-State: APjAAAUMooj6w4qEEBxs0EP4aydFC9BJlHPdbgeB4NB2OZbve2isytKM
+        NYCK85NwETuAdlPpL9HhP9SB4uGEqTvlpXYiQimlxw==
+X-Google-Smtp-Source: APXvYqy5gh4FUNfT5zeuzGIzpHixqpgMfXNy82xJgmEg1C0rn6VH0AyjgsO7hoUJnb3lPf96FzNFy/x/O14eI0YZFv4=
+X-Received: by 2002:a19:c7ca:: with SMTP id x193mr14674281lff.151.1564981391240;
+ Sun, 04 Aug 2019 22:03:11 -0700 (PDT)
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
+References: <1563449086-13183-1-git-send-email-sumit.garg@linaro.org>
+ <1563449086-13183-2-git-send-email-sumit.garg@linaro.org> <20190801172310.cldcftfdoh5vyfjg@linux.intel.com>
+ <CAFA6WYM+FQuXA9Saj5+ffOGsc-shhiF5Uos4g14Qndvu6w97Sg@mail.gmail.com> <20190802193802.jn56jhoz5crebggt@linux.intel.com>
+In-Reply-To: <20190802193802.jn56jhoz5crebggt@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Mon, 5 Aug 2019 10:32:59 +0530
+Message-ID: <CAFA6WYOMXc2y=vXOwRv+PYyF8oBV70G7CrJ81jvD5yJT41zLZw@mail.gmail.com>
+Subject: Re: [RFC/RFT v2 1/2] KEYS: trusted: create trusted keys subsystem
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
+        jejb@linux.ibm.com, Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: John Hubbard <jhubbard@nvidia.com>
+On Sat, 3 Aug 2019 at 01:08, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Fri, Aug 02, 2019 at 11:20:09AM +0530, Sumit Garg wrote:
+> > On Thu, 1 Aug 2019 at 22:54, Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com> wrote:
+> > >
+> > > On Thu, Jul 18, 2019 at 04:54:45PM +0530, Sumit Garg wrote:
+> > > > Move existing code to trusted keys subsystem. Also, rename files with
+> > > > "tpm" as suffix which provides the underlying implementation.
+> > > >
+> > > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > >
+> > > What about TPM2 trusted keys code?
+> >
+> > Isn't TPM2 code located here: "drivers/char/tpm/"? Would you like to
+> > move that code under trusted keys subsystem only?
+>
+> Yeah, we need a design decision here. What I care is that they should
+> be in the same subsystem. I did trusted keys directly to TPM 2.0 subsys
+> because the subsystem was not too robust back then.
+>
+> Right now I think it would be feasible to implement TPM2 trusted keys
+> outside TPM driver since the whole transmit functionality is way more
+> robust.
+>
 
-For pages that were retained via get_user_pages*(), release those pages
-via the new put_user_page*() routines, instead of via put_page() or
-release_pages().
+Okay, I will try to move TPM2 trusted keys code also.
 
-This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-("mm: introduce put_user_page*(), placeholder versions").
+-Sumit
 
-Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: linux-security-module@vger.kernel.org
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- security/tomoyo/domain.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
-index 8526a0a74023..6887beecfb6e 100644
---- a/security/tomoyo/domain.c
-+++ b/security/tomoyo/domain.c
-@@ -931,7 +931,7 @@ bool tomoyo_dump_page(struct linux_binprm *bprm, unsigned long pos,
- 	}
- 	/* Same with put_arg_page(page) in fs/exec.c */
- #ifdef CONFIG_MMU
--	put_page(page);
-+	put_user_page(page);
- #endif
- 	return true;
- }
--- 
-2.22.0
-
+> /Jarkko
