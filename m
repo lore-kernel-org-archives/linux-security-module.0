@@ -2,114 +2,104 @@ Return-Path: <SRS0=x/8A=WB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D630EC433FF
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 14:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CAE6C433FF
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 14:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B64182086D
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 14:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6244820679
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 14:28:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565015281;
+	bh=EFibC8nuHz8k2yU2grpf2ggs1Z3fm4CC0QMtC9RxKSo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uDWeZiXnryD8zS6bC7zMRO9jNe3+qXrQ9+ekAgJ9lwY/inCza88+CUE/WMJ6I+0xu
+	 YNpfCy30kDXXa+QICUdiMw09tqdVt39kr531B5PRIzoiIqNN06+8n5B6t2cH9Y5MTg
+	 IGw5Qdjq++zDQorrBECnxtBt5tzIQHc5wiW2cPDg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbfHEO0A (ORCPT
+        id S1727460AbfHEO2A (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Aug 2019 10:26:00 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:28068 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728056AbfHEOZ4 (ORCPT
+        Mon, 5 Aug 2019 10:28:00 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45781 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727928AbfHEO17 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Aug 2019 10:25:56 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x75EM0Qi037759
-        for <linux-security-module@vger.kernel.org>; Mon, 5 Aug 2019 10:25:55 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u6kyxfbk4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Aug 2019 10:25:54 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 5 Aug 2019 15:25:51 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 5 Aug 2019 15:25:46 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x75EPiE337486818
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Aug 2019 14:25:44 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 01BDAA405E;
-        Mon,  5 Aug 2019 14:25:44 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 11DCBA4057;
-        Mon,  5 Aug 2019 14:25:42 +0000 (GMT)
-Received: from dhcp-9-31-103-47.watson.ibm.com (unknown [9.31.103.47])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  5 Aug 2019 14:25:41 +0000 (GMT)
-Subject: Re: [PATCH v12 01/11] MODSIGN: Export module signature definitions
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Philipp Rudo <prudo@linux.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     Jessica Yu <jeyu@kernel.org>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org
-Date:   Mon, 05 Aug 2019 10:25:41 -0400
-In-Reply-To: <20190805151123.12510d72@laptop-ibm>
-References: <20190628021934.4260-1-bauerman@linux.ibm.com>
-         <20190628021934.4260-2-bauerman@linux.ibm.com>
-         <20190701144752.GC25484@linux-8ccs> <87lfxel2q6.fsf@morokweng.localdomain>
-         <20190704125427.31146026@laptop-ibm> <874l41ocf5.fsf@morokweng.localdomain>
-         <20190705150000.372345b0@laptop-ibm> <8736iw9y00.fsf@morokweng.localdomain>
-         <20190805151123.12510d72@laptop-ibm>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19080514-0016-0000-0000-0000029A6FB3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19080514-0017-0000-0000-000032F977CF
-Message-Id: <1565015141.11223.145.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-05_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=938 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908050159
+        Mon, 5 Aug 2019 10:27:59 -0400
+Received: by mail-qt1-f194.google.com with SMTP id x22so7702421qtp.12
+        for <linux-security-module@vger.kernel.org>; Mon, 05 Aug 2019 07:27:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MPEMXXmCHM/Mi/52mb4NCYntDnv4EkvOmRuE01mrmhM=;
+        b=LsYu/7kbcZOBmMJF2KPR0BdGTxfFG4KIPTNBXea2pkzguDONumtWEwAtUGH2h/3hHr
+         AlrEx4oWTmsYDmbOCECB7IY3NUlCBLrjfKE5pSSSq5AhaeQ0Z+cTjkjdMxxFT5TxPVxM
+         ICdTYMGtFfhKijP26HFPKcqWDexRxlkTDtrmQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MPEMXXmCHM/Mi/52mb4NCYntDnv4EkvOmRuE01mrmhM=;
+        b=HF+QJUL8DovijGEJq8byPDer7ZI2H47eyqoacAZMxB2JR/WBm/AJpyi521AfqRY2/A
+         y8D/AdK0ULIomDUqXgx4X7Ze+ZrfmSPU6/xqnamupvMZa8ZUbbRy2MgONlDt7k6NeO85
+         mXwaRqhm/+e0DvohAaBD5GCjAUNXOMgRGNbdNvB4qJUfK3Vdh4G7OqqEDkngeSXngpr4
+         Lt6BCuktGQSiy1IA9wb3nZZXC2YjeLSNGXq8gP25xpdNbmwRhsvI/8G68praJWF5DaI7
+         R7sj2oEk95zHYVEBJToMQzBKua65OCcDe7gP7OagOVcWxkwP1gs/oPwgK5pFuz8vh7CQ
+         SeMw==
+X-Gm-Message-State: APjAAAWeV3IXCDbp7hENqMho4wyFAGd8zoQomJLUuRBZlaPMPogy1u/X
+        hSFkAymWkrIwJWmsqLBS6+p6ag==
+X-Google-Smtp-Source: APXvYqwNWHoP8flXC29xSNV4hE27uDEAsRgm6KXmlO41iOn5/WG4m1AQejfoVX6v04H7CdZ0ocxj9w==
+X-Received: by 2002:ac8:2a88:: with SMTP id b8mr97552817qta.331.1565015278681;
+        Mon, 05 Aug 2019 07:27:58 -0700 (PDT)
+Received: from chatter.i7.local (192-0-228-88.cpe.teksavvy.com. [192.0.228.88])
+        by smtp.gmail.com with ESMTPSA id j2sm38240945qtb.89.2019.08.05.07.27.57
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 05 Aug 2019 07:27:57 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 10:27:56 -0400
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Micah Morton <mortonm@chromium.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] SafeSetID MAINTAINERS file update for v5.3
+Message-ID: <20190805142756.GA4887@chatter.i7.local>
+References: <CAJ-EccMXEVktpuPS5BwkGqTo++dGcpHAuSUZo7WgJhAzFByz0g@mail.gmail.com>
+ <CAHk-=whZzJ8WxAeHcirUghcbeOYxmpCr+XxeS9ngH3df3+=p2Q@mail.gmail.com>
+ <CAJ-EccOqmmrf2KPb7Z7NU6bF_4W1XUawLLy=pLekCyFKqusjKQ@mail.gmail.com>
+ <CAHk-=wgT7Z3kCbKS9Q1rdA=OVxPL32CdBovX=eHvD2PppWCHpQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgT7Z3kCbKS9Q1rdA=OVxPL32CdBovX=eHvD2PppWCHpQ@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2019-08-05 at 15:11 +0200, Philipp Rudo wrote:
-> Hi Thiago,
-> 
-> > > The patch looks good now.  
-> > 
-> > Thanks! Can I add your Reviewed-by?
-> 
-> sorry, for the late answer, but I was on vacation the last two weeks. I hope
-> it's not too late now.
-> 
-> Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
+On Sun, Aug 04, 2019 at 10:47:54AM -0700, Linus Torvalds wrote:
+> - maybe pr-tracker-bot ignores follow-up emails with "Re:" in the 
+> subject?
 
-Thanks!  This patch set is still in the #next-queued-testing
-branch.  I'm still hoping for a few more tags, before pushing it out
-to the #next-integrity branch later today.
+Yes, this is the culprit. Here are the matching regexes:
 
-Mimi
+https://git.kernel.org/pub/scm/linux/kernel/git/mricon/korg-helpers.git/tree/pr-tracker-bot.py#n41
 
+Normally, pull requests don't come in as replies -- this is the first 
+one that got missed in months, to my knowledge.
+
+I can change it to be more permissive -- the only concern would be that 
+we would be scanning more bodies, and there *might* be a chance where we 
+end up tracking the wrong message if someone uses Outlook-style replies 
+(fully quoted messages without '>') and those replies arrive before the 
+original message. Both of these are very unlikely to happen (in fact, I 
+believe using Outlook-style replies on LKML would result in mass 
+outrage).
+
+So, just let me know if you'd like me to make this change and I'll 
+modify the regex to be something like '^\S*:?\s*\[GIT' that should match 
+most permutations of Re/Aw/etc.
+
+-K
