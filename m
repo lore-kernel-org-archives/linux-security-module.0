@@ -2,114 +2,216 @@ Return-Path: <SRS0=x/8A=WB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83CB6C0650F
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 05:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9AE5C0650F
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 05:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5944A2070D
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 05:03:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pp7rr9JW"
+	by mail.kernel.org (Postfix) with ESMTP id 8EB8B20818
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 05:47:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564984057;
+	bh=4uEyMUKSBbiCcpRBF67BMgQ+D5IblyYK3jYgiEZd0Zc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Trdg0CWDO6dcuXnfpdqRtVcsuAlEzBhFCo1DXrlSJpNf8mS3kJnFCfD7TbwFZlqaD
+	 j0SdHmJOOxzagAaH0wS95wFIOH/AulOWdp+Do7Yo9pOisR98gAAlZiE3yRZjXNXEj5
+	 X40sg5fqLAaAvZLxqom8ZHp7iNGjzYht49TIcG7w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfHEFDN (ORCPT
+        id S1726559AbfHEFrh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Aug 2019 01:03:13 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38343 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbfHEFDN (ORCPT
+        Mon, 5 Aug 2019 01:47:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41914 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726454AbfHEFrg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Aug 2019 01:03:13 -0400
-Received: by mail-lf1-f68.google.com with SMTP id h28so56822042lfj.5
-        for <linux-security-module@vger.kernel.org>; Sun, 04 Aug 2019 22:03:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=59rGgYKXfbOVeORIb/3aPCsYO+up32tSP1XLT583cgM=;
-        b=Pp7rr9JWyW8rvNf7mskAanI9AtGCJ6FROK5Y/83r2NqcfGniuX15dpaNbFLBKhal8P
-         wcn6BAM1OS2b7l9JhEUu+FS4jI0d/3GAs5fSPHIOYeXXTcNlYrreX9QFYp2amkc/us3n
-         fPQS0IYuedLccQz4EBV6PVVi4j1lGml4t6nHKJjsvODNUqz+ZKWMwtQ4XS8y7BbkFPlR
-         UfGU2a2Vdilwtonwk61BmmALDw8mJueH6lj6efGPTYSB54fQ4ghZlgkmuLk0TB4C9uCT
-         q+r1ixbNM2GsHvVAAVMDTBsMBXdUeRcU3exa0a88mrKmpwKKtzY2uB0ycJSYruz7r9JQ
-         GjlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=59rGgYKXfbOVeORIb/3aPCsYO+up32tSP1XLT583cgM=;
-        b=GJiFk6rH83uWLHW+rpFgXcBdk1zZ6OVZGfwtaJUPMd9U4R1kOheucUHgxZwCjmcoPT
-         CPZdqK1YTV5dCYSR9m7k3uTiv9tjxkGHf1x3XaOxthiM02GHIz28TevPWEct6WWtnEbs
-         P/wEpkwjN8KL1LbsGO5H9jWl5vR1vFnzIC5ftmzJ+rzzmkVYEenkjMMf7JE/nyMHmex6
-         wZuua0c0QWfZwaX+EqQ/3e1d5C9swL+MfnJ7MnRn45rIDleJu8wm6SO+7Em8TM9OcUwj
-         1yZ/JxxCLP+fwJ8hdQtpgW5+yFmUOIo6+uax/aYXHbrSY1zpAY1lGn0Kh4u/pO9nVgR7
-         4T6A==
-X-Gm-Message-State: APjAAAUMooj6w4qEEBxs0EP4aydFC9BJlHPdbgeB4NB2OZbve2isytKM
-        NYCK85NwETuAdlPpL9HhP9SB4uGEqTvlpXYiQimlxw==
-X-Google-Smtp-Source: APXvYqy5gh4FUNfT5zeuzGIzpHixqpgMfXNy82xJgmEg1C0rn6VH0AyjgsO7hoUJnb3lPf96FzNFy/x/O14eI0YZFv4=
-X-Received: by 2002:a19:c7ca:: with SMTP id x193mr14674281lff.151.1564981391240;
- Sun, 04 Aug 2019 22:03:11 -0700 (PDT)
+        Mon, 5 Aug 2019 01:47:36 -0400
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0EB92184B
+        for <linux-security-module@vger.kernel.org>; Mon,  5 Aug 2019 05:47:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564984056;
+        bh=4uEyMUKSBbiCcpRBF67BMgQ+D5IblyYK3jYgiEZd0Zc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yMcc/OXnadOpNIDgKh7IGg1SoyPKRDOylaxLp0kKnJjep0y1064x8lVLY+biyfihV
+         dOZ/CLk8lkFcIKopUwKT2pJ+lonan7CRZPwhUsTMYvNI7958+Gr4XAp1a7Bt1gp2ec
+         TAVSczsJqYHRo0FjD10fuB/HVdiWoaNkihdPmqyU=
+Received: by mail-wr1-f44.google.com with SMTP id n9so83158989wru.0
+        for <linux-security-module@vger.kernel.org>; Sun, 04 Aug 2019 22:47:35 -0700 (PDT)
+X-Gm-Message-State: APjAAAVylxoHPq38wV1nfpORFQ9GQATTC23Ns7KBOPpnYV+kl/IKktcr
+        86I99EtiANlMgQLXd2ZtM/dQ9lxgKisI7ZlPUpS2eA==
+X-Google-Smtp-Source: APXvYqzk/jUeNwsOHHWiF3MJXQUgB0Jd4rGWLiULA6M2rzljj60t1Aem4NNECj3f5ObBCimADy78jjBF8JsLHWtFmlc=
+X-Received: by 2002:adf:dd0f:: with SMTP id a15mr5238842wrm.265.1564984054257;
+ Sun, 04 Aug 2019 22:47:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <1563449086-13183-1-git-send-email-sumit.garg@linaro.org>
- <1563449086-13183-2-git-send-email-sumit.garg@linaro.org> <20190801172310.cldcftfdoh5vyfjg@linux.intel.com>
- <CAFA6WYM+FQuXA9Saj5+ffOGsc-shhiF5Uos4g14Qndvu6w97Sg@mail.gmail.com> <20190802193802.jn56jhoz5crebggt@linux.intel.com>
-In-Reply-To: <20190802193802.jn56jhoz5crebggt@linux.intel.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Mon, 5 Aug 2019 10:32:59 +0530
-Message-ID: <CAFA6WYOMXc2y=vXOwRv+PYyF8oBV70G7CrJ81jvD5yJT41zLZw@mail.gmail.com>
-Subject: Re: [RFC/RFT v2 1/2] KEYS: trusted: create trusted keys subsystem
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-        jejb@linux.ibm.com, Mimi Zohar <zohar@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+References: <20190627201923.2589391-1-songliubraving@fb.com>
+ <20190627201923.2589391-2-songliubraving@fb.com> <21894f45-70d8-dfca-8c02-044f776c5e05@kernel.org>
+ <3C595328-3ABE-4421-9772-8D41094A4F57@fb.com> <CALCETrWBnH4Q43POU8cQ7YMjb9LioK28FDEQf7aHZbdf1eBZWg@mail.gmail.com>
+ <0DE7F23E-9CD2-4F03-82B5-835506B59056@fb.com> <CALCETrWBWbNFJvsTCeUchu3BZJ3SH3dvtXLUB2EhnPrzFfsLNA@mail.gmail.com>
+ <201907021115.DCD56BBABB@keescook> <CALCETrXTta26CTtEDnzvtd03-WOGdXcnsAogP8JjLkcj4-mHvg@mail.gmail.com>
+ <4A7A225A-6C23-4C0F-9A95-7C6C56B281ED@fb.com> <CALCETrX2bMnwC6_t4b_G-hzJSfMPrkK4YKs5ebcecv2LJ0rt3w@mail.gmail.com>
+ <514D5453-0AEE-420F-AEB6-3F4F58C62E7E@fb.com> <1DE886F3-3982-45DE-B545-67AD6A4871AB@amacapital.net>
+ <7F51F8B8-CF4C-4D82-AAE1-F0F28951DB7F@fb.com> <77354A95-4107-41A7-8936-D144F01C3CA4@fb.com>
+ <369476A8-4CE1-43DA-9239-06437C0384C7@fb.com> <CALCETrUpVMrk7aaf0trfg9AfZ4fy279uJgZH7V+gZzjFw=hUxA@mail.gmail.com>
+ <D4040C0C-47D6-4852-933C-59EB53C05242@fb.com> <CALCETrVoZL1YGUxx3kM-d21TWVRKdKw=f2B8aE5wc2zmX1cQ4g@mail.gmail.com>
+ <5A2FCD7E-7F54-41E5-BFAE-BB9494E74F2D@fb.com> <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
+ <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
+In-Reply-To: <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 4 Aug 2019 22:47:22 -0700
+X-Gmail-Original-Message-ID: <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
+Message-ID: <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Song Liu <songliubraving@fb.com>,
+        Kees Cook <keescook@chromium.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 3 Aug 2019 at 01:08, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
+On Sun, Aug 4, 2019 at 5:08 PM Andy Lutomirski <luto@kernel.org> wrote:
 >
-> On Fri, Aug 02, 2019 at 11:20:09AM +0530, Sumit Garg wrote:
-> > On Thu, 1 Aug 2019 at 22:54, Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com> wrote:
-> > >
-> > > On Thu, Jul 18, 2019 at 04:54:45PM +0530, Sumit Garg wrote:
-> > > > Move existing code to trusted keys subsystem. Also, rename files with
-> > > > "tpm" as suffix which provides the underlying implementation.
-> > > >
-> > > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> > >
-> > > What about TPM2 trusted keys code?
+> On Sun, Aug 4, 2019 at 3:16 PM Andy Lutomirski <luto@kernel.org> wrote:
 > >
-> > Isn't TPM2 code located here: "drivers/char/tpm/"? Would you like to
-> > move that code under trusted keys subsystem only?
+> > On Fri, Aug 2, 2019 at 12:22 AM Song Liu <songliubraving@fb.com> wrote:
+> > >
+> > > Hi Andy,
+> > >
+> >  >> I actually agree CAP_BPF_ADMIN makes sense. The hard part is to make
+> > > >> existing tools (setcap, getcap, etc.) and libraries aware of the new CAP.
+> > > >
+> > > > It's been done before -- it's not that hard.  IMO the main tricky bit
+> > > > would be try be somewhat careful about defining exactly what
+> > > > CAP_BPF_ADMIN does.
+> > >
+> > > Agreed. I think defining CAP_BPF_ADMIN could be a good topic for the
+> > > Plumbers conference.
+> > >
+> > > OTOH, I don't think we have to wait for CAP_BPF_ADMIN to allow daemons
+> > > like systemd to do sys_bpf() without root.
+> >
+> > I don't understand the use case here.  Are you talking about systemd
+> > --user?  As far as I know, a user is expected to be able to fully
+> > control their systemd --user process, so giving it unrestricted bpf
+> > access is very close to giving it superuser access, and this doesn't
+> > sound like a good idea.  I think that, if systemd --user needs bpf(),
+> > it either needs real unprivileged bpf() or it needs a privileged
+> > helper (SUID or a daemon) to intermediate this access.
+> >
+> > >
+> > > >
+> > > >>> I don't see why you need to invent a whole new mechanism for this.
+> > > >>> The entire cgroup ecosystem outside bpf() does just fine using the
+> > > >>> write permission on files in cgroupfs to control access.  Why can't
+> > > >>> bpf() do the same thing?
+> > > >>
+> > > >> It is easier to use write permission for BPF_PROG_ATTACH. But it is
+> > > >> not easy to do the same for other bpf commands: BPF_PROG_LOAD and
+> > > >> BPF_MAP_*. A lot of these commands don't have target concept. Maybe
+> > > >> we should have target concept for all these commands. But that is a
+> > > >> much bigger project. OTOH, "all or nothing" model allows all these
+> > > >> commands at once.
+> > > >
+> > > > For BPF_PROG_LOAD, I admit I've never understood why permission is
+> > > > required at all.  I think that CAP_SYS_ADMIN or similar should be
+> > > > needed to get is_priv in the verifier, but I think that should mainly
+> > > > be useful for tracing, and that requires lots of privilege anyway.
+> > > > BPF_MAP_* is probably the trickiest part.  One solution would be some
+> > > > kind of bpffs, but I'm sure other solutions are possible.
+> > >
+> > > Improving permission management of cgroup_bpf is another good topic to
+> > > discuss. However, it is also an overkill for current use case.
+> > >
+> >
+> > I looked at the code some more, and I don't think this is so hard
+> > after all.  As I understand it, all of the map..by_id stuff is, to
+> > some extent, deprecated in favor of persistent maps.  As I see it, the
+> > map..by_id calls should require privilege forever, although I can
+> > imagine ways to scope that privilege to a namespace if the maps
+> > themselves were to be scoped to a namespace.
+> >
+> > Instead, unprivileged tools would use the persistent map interface
+> > roughly like this:
+> >
+> > $ bpftool map create /sys/fs/bpf/my_dir/filename type hash key 8 value
+> > 8 entries 64 name mapname
+> >
+> > This would require that the caller have either CAP_DAC_OVERRIDE or
+> > that the caller have permission to create files in /sys/fs/bpf/my_dir
+> > (using the same rules as for any filesystem), and the resulting map
+> > would end up owned by the creating user and have mode 0600 (or maybe
+> > 0666, or maybe a new bpf_attr parameter) modified by umask.  Then all
+> > the various capable() checks that are currently involved in accessing
+> > a persistent map would instead check FMODE_READ or FMODE_WRITE on the
+> > map file as appropriate.
+> >
+> > Half of this stuff already works.  I just set my system up like this:
+> >
+> > $ ls -l /sys/fs/bpf
+> > total 0
+> > drwxr-xr-x. 3 luto luto 0 Aug  4 15:10 luto
+> >
+> > $ mkdir /sys/fs/bpf/luto/test
+> >
+> > $ ls -l /sys/fs/bpf/luto
+> > total 0
+> > drwxrwxr-x. 2 luto luto 0 Aug  4 15:10 test
+> >
+> > I bet that making the bpf() syscalls work appropriately in this
+> > context without privilege would only be a couple of hours of work.
+> > The hard work, creating bpffs and making it function, is already done
+> > :)
+> >
+> > P.S. The docs for bpftool create are less than fantastic.  The
+> > complete lack of any error message at all when the syscall returns
+> > -EACCES is also not fantastic.
 >
-> Yeah, we need a design decision here. What I care is that they should
-> be in the same subsystem. I did trusted keys directly to TPM 2.0 subsys
-> because the subsystem was not too robust back then.
+> This isn't remotely finished, but I spent a bit of time fiddling with this:
 >
-> Right now I think it would be feasible to implement TPM2 trusted keys
-> outside TPM driver since the whole transmit functionality is way more
-> robust.
+> https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=bpf/perms
 >
+> What do you think?  (It's obviously not done.  It doesn't compile, and
+> I haven't gotten to the permissions needed to do map operations.  I
+> also haven't touched the capable() checks.)
 
-Okay, I will try to move TPM2 trusted keys code also.
+I updated the branch.  It compiles, and basic map functionality works!
 
--Sumit
+# mount -t bpf bpf /sys/fs/bpf
+# cd /sys/fs/bpf
+# mkdir luto
+# chown luto: luto
+# setpriv --euid=1000 --ruid=1000 bash
+$ pwd
+/sys/fs/bpf
+bash-5.0$ ls -l
+total 0
+drwxr-xr-x 2 luto luto 0 Aug  4 22:41 luto
+bash-5.0$ bpftool map create /sys/fs/bpf/luto/filename type hash key 8
+value 8 entries 64 name mapname
+bash-5.0$ bpftool map dump pinned /sys/fs/bpf/luto/filename
+Found 0 elements
 
-> /Jarkko
+# chown root: /sys/fs/bpf/luto/filename
+
+$ bpftool map dump pinned /sys/fs/bpf/luto/filename
+Error: bpf obj get (/sys/fs/bpf/luto): Permission denied
+
+So I think it's possible to get a respectable subset of bpf()
+functionality working without privilege in short order :)
+
+(FWIW, a decent fraction of this probably works even without my
+patches, but it's going to have nonsensical semantics and may fail for
+silly reasons.)
