@@ -2,115 +2,169 @@ Return-Path: <SRS0=x/8A=WB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A13EC433FF
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 17:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7757BC32751
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 17:23:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA56320880
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 17:20:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F63C21734
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 17:23:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565025808;
+	bh=/jV+MMgIe5IgN16Vzs40LMFftcAjXyreuD0IqIMo9k0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Taz3VOyaNTzldcuIYqdQwg0xglwHabt4pqFk57mrZTSX8iHlz16Ip7JzT4uzy3S5G
+	 dK89/0HGcXTJMO0Uq2cRKHnORusScFW0at+jXEbWHaIkJ6W7HXIqUPtuAp/5b4t1mg
+	 60TPXitQvN99rJu4NeHAxX7OdzklGYFJs9k5Y6aY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbfHERU2 (ORCPT
+        id S1726779AbfHERX0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Aug 2019 13:20:28 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42062 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbfHERU2 (ORCPT
+        Mon, 5 Aug 2019 13:23:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52730 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727830AbfHERX0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Aug 2019 13:20:28 -0400
-Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=elm)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <tyhicks@canonical.com>)
-        id 1hugeh-000388-CP; Mon, 05 Aug 2019 17:20:19 +0000
-Date:   Mon, 5 Aug 2019 12:20:14 -0500
-From:   Tyler Hicks <tyhicks@canonical.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     jarkko.sakkinen@linux.intel.com, jejb@linux.ibm.com,
-        zohar@linux.ibm.com, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, crazyt2019+lml@gmail.com,
-        nayna@linux.vnet.ibm.com, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v3] KEYS: trusted: allow module init if TPM is inactive
- or deactivated
-Message-ID: <20190805172014.GE3449@elm>
-References: <20190805164427.17408-1-roberto.sassu@huawei.com>
+        Mon, 5 Aug 2019 13:23:26 -0400
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB467217F4
+        for <linux-security-module@vger.kernel.org>; Mon,  5 Aug 2019 17:23:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565025805;
+        bh=/jV+MMgIe5IgN16Vzs40LMFftcAjXyreuD0IqIMo9k0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=B72Y/3R4HCComSn5WRjVAxflCkHa9A3+RoV1i5m3VmdUbIr3pAFRlfXvj9AmiOKXw
+         JZjn1Sfub6F/xyhkgEWRvuhYMOEeF9pvxJrQK6KK/OTqKb3HwwpFGC47XTDdfbs505
+         K+PefjJWUi2Y+jjC/GWpASwuFD+TYO96+8HeTc0I=
+Received: by mail-wm1-f51.google.com with SMTP id u25so63420333wmc.4
+        for <linux-security-module@vger.kernel.org>; Mon, 05 Aug 2019 10:23:24 -0700 (PDT)
+X-Gm-Message-State: APjAAAUxnHtQIom1yE/xdWlrcN6bTkjU49HuVQxaqtfOY7ozLfn4Dj60
+        MUVQ1jGzHlYcRCSnj2tHu3os2C2UEbXC2hrtQZzfSA==
+X-Google-Smtp-Source: APXvYqzbrZNl+et5W20TDUNPb9shoQcGV833hyVQWOpteUGntxDDkdbnf5VAC+8dawOZT/6K97LFH/mKfkzXIQNNQ3A=
+X-Received: by 2002:a1c:a942:: with SMTP id s63mr19397879wme.76.1565025803035;
+ Mon, 05 Aug 2019 10:23:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805164427.17408-1-roberto.sassu@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190627201923.2589391-1-songliubraving@fb.com>
+ <20190627201923.2589391-2-songliubraving@fb.com> <21894f45-70d8-dfca-8c02-044f776c5e05@kernel.org>
+ <3C595328-3ABE-4421-9772-8D41094A4F57@fb.com> <CALCETrWBnH4Q43POU8cQ7YMjb9LioK28FDEQf7aHZbdf1eBZWg@mail.gmail.com>
+ <0DE7F23E-9CD2-4F03-82B5-835506B59056@fb.com> <CALCETrWBWbNFJvsTCeUchu3BZJ3SH3dvtXLUB2EhnPrzFfsLNA@mail.gmail.com>
+ <201907021115.DCD56BBABB@keescook> <CALCETrXTta26CTtEDnzvtd03-WOGdXcnsAogP8JjLkcj4-mHvg@mail.gmail.com>
+ <4A7A225A-6C23-4C0F-9A95-7C6C56B281ED@fb.com> <CALCETrX2bMnwC6_t4b_G-hzJSfMPrkK4YKs5ebcecv2LJ0rt3w@mail.gmail.com>
+ <514D5453-0AEE-420F-AEB6-3F4F58C62E7E@fb.com> <1DE886F3-3982-45DE-B545-67AD6A4871AB@amacapital.net>
+ <7F51F8B8-CF4C-4D82-AAE1-F0F28951DB7F@fb.com> <77354A95-4107-41A7-8936-D144F01C3CA4@fb.com>
+ <369476A8-4CE1-43DA-9239-06437C0384C7@fb.com> <CALCETrUpVMrk7aaf0trfg9AfZ4fy279uJgZH7V+gZzjFw=hUxA@mail.gmail.com>
+ <D4040C0C-47D6-4852-933C-59EB53C05242@fb.com> <CALCETrVoZL1YGUxx3kM-d21TWVRKdKw=f2B8aE5wc2zmX1cQ4g@mail.gmail.com>
+ <5A2FCD7E-7F54-41E5-BFAE-BB9494E74F2D@fb.com> <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
+ <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
+ <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com> <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
+In-Reply-To: <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 5 Aug 2019 10:23:10 -0700
+X-Gmail-Original-Message-ID: <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
+Message-ID: <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019-08-05 18:44:27, Roberto Sassu wrote:
-> Commit c78719203fc6 ("KEYS: trusted: allow trusted.ko to initialize w/o a
-> TPM") allows the trusted module to be loaded even if a TPM is not found, to
-> avoid module dependency problems.
-> 
-> However, trusted module initialization can still fail if the TPM is
-> inactive or deactivated. tpm_get_random() returns an error.
-> 
-> This patch removes the call to tpm_get_random() and instead extends the PCR
-> specified by the user with zeros. The security of this alternative is
-> equivalent to the previous one, as either option prevents with a PCR update
-> unsealing and misuse of sealed data by a user space process.
-> 
-> Even if a PCR is extended with zeros, instead of random data, it is still
-> computationally infeasible to find a value as input for a new PCR extend
-> operation, to obtain again the PCR value that would allow unsealing.
-> 
-> Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+On Mon, Aug 5, 2019 at 12:37 AM Song Liu <songliubraving@fb.com> wrote:
+>
+> Hi Andy,
+>
 
-The approach changed a fair bit from v2 to v3 so I'll confirm that my
-Reviewed-by still stands.
+> >
+> > # mount -t bpf bpf /sys/fs/bpf
+> > # cd /sys/fs/bpf
+> > # mkdir luto
+> > # chown luto: luto
+> > # setpriv --euid=1000 --ruid=1000 bash
+> > $ pwd
+> > /sys/fs/bpf
+> > bash-5.0$ ls -l
+> > total 0
+> > drwxr-xr-x 2 luto luto 0 Aug  4 22:41 luto
+> > bash-5.0$ bpftool map create /sys/fs/bpf/luto/filename type hash key 8
+> > value 8 entries 64 name mapname
+> > bash-5.0$ bpftool map dump pinned /sys/fs/bpf/luto/filename
+> > Found 0 elements
+> >
+> > # chown root: /sys/fs/bpf/luto/filename
+> >
+> > $ bpftool map dump pinned /sys/fs/bpf/luto/filename
+> > Error: bpf obj get (/sys/fs/bpf/luto): Permission denied
+> >
+> > So I think it's possible to get a respectable subset of bpf()
+> > functionality working without privilege in short order :)
+>
+> I think we have two key questions to answer:
+>   1. What subset of bpf() functionality will the users need?
+>   2. Who are the users?
+>
+> Different answers to these two questions lead to different directions.
+>
+>
+> In our use case, the answers are
+>   1) almost all bpf() functionality
+>   2) highly trusted users (sudoers)
+>
+> So our initial approach of /dev/bpf allows all bpf() functionality
+> in one bit in task_struct. (Yes, we can just sudo. But, we would
+> rather not use sudo when possible.)
 
-Also, we have positive test results from an affected user:
+For this, I think some compelling evidence is needed that a new kernel
+mechanism is actually better than sudo and better than making bpftool
+privileged as previously discussed :)
 
- https://bugzilla.kernel.org/show_bug.cgi?id=203953#c10
+>
+>
+> "cgroup management" use case may have answers like:
+>   1) cgroup_bpf only
+>   2) users in their own containers
+>
+> For this case, getting cgroup_bpf related features (cgroup_bpf progs;
+> some map types, etc.) work with unprivileged users would be the right
+> direction.
 
-Tyler
+:)
 
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  security/keys/trusted.c | 13 -------------
->  1 file changed, 13 deletions(-)
-> 
-> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-> index 9a94672e7adc..ade699131065 100644
-> --- a/security/keys/trusted.c
-> +++ b/security/keys/trusted.c
-> @@ -1228,24 +1228,11 @@ static int __init trusted_shash_alloc(void)
->  
->  static int __init init_digests(void)
->  {
-> -	u8 digest[TPM_MAX_DIGEST_SIZE];
-> -	int ret;
-> -	int i;
-> -
-> -	ret = tpm_get_random(chip, digest, TPM_MAX_DIGEST_SIZE);
-> -	if (ret < 0)
-> -		return ret;
-> -	if (ret < TPM_MAX_DIGEST_SIZE)
-> -		return -EFAULT;
-> -
->  	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
->  			  GFP_KERNEL);
->  	if (!digests)
->  		return -ENOMEM;
->  
-> -	for (i = 0; i < chip->nr_allocated_banks; i++)
-> -		memcpy(digests[i].digest, digest, TPM_MAX_DIGEST_SIZE);
-> -
->  	return 0;
->  }
->  
-> -- 
-> 2.17.1
-> 
+>
+>
+> "USDT tracing" use case may have answers like:
+>   1) uprobe, stockmap, histogram, etc.
+>   2) unprivileged user, w/ or w/o containers
+>
+> For this case, the first step is likely hacking sys_perf_event_open().
+>
+
+This would be nice.
+
+>
+> I guess we will need more discussions to decide how to make bpf()
+> work better for all these (and more) use cases.
+>
+
+I refreshed the branch again.  I had a giant hole in my previous idea
+that we could deprivilege program loading: some BPF functions need
+privilege.  Now I have a changelog comment to that effect and a patch
+that sketches out a way to addressing this.
+
+I don't think I'm going to have time soon to actually get any of this
+stuff mergeable, and it would be fantastic if you or someone else who
+likes working of bpf were to take this code and run with it.  Feel
+free to add my Signed-off-by, and I'd be happy to help review.
