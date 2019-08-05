@@ -2,104 +2,169 @@ Return-Path: <SRS0=x/8A=WB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40624C0650F
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 19:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27623C32751
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 19:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11FE720B1F
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 19:18:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565032690;
-	bh=mFAWhKUiiM/QpD8h2CVsl+Yq4SH14saj9s2Pq4noprQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=lvsFhMN/O8vFX1BRpgBfhpwDq3uJhYysFmsRgonNOEb3PLn0jJSwgBbNmFg32byTO
-	 v5H0G3CVNOoEX/YhLtY/JBrQFce5UPd4MHR12//JRWtmbacfrETTkvFE8v5xcnApXT
-	 X8eoaEkUbqlhhN+uRda8XaCjCxoM2Z0f2WIq5dTw=
+	by mail.kernel.org (Postfix) with ESMTP id E31CC2075B
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 19:21:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m4AFlJzQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbfHETSJ (ORCPT
+        id S1730435AbfHETV1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Aug 2019 15:18:09 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37854 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727460AbfHETSJ (ORCPT
+        Mon, 5 Aug 2019 15:21:27 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35575 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727460AbfHETV1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Aug 2019 15:18:09 -0400
-Received: by mail-lf1-f67.google.com with SMTP id c9so58847365lfh.4
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Aug 2019 12:18:08 -0700 (PDT)
+        Mon, 5 Aug 2019 15:21:27 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n4so4954518pgv.2;
+        Mon, 05 Aug 2019 12:21:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QY3x1Neqw88a4kC5L8IILTg/Eusc/r1ujGUtxNuyElI=;
-        b=LTJMiN3M9Ray9BoJ54bRh6ytuEphVXUvDhxBtPFmrc9/OnveqmvtMAWLk4lnLLf2H8
-         h8a1EgEOvlM4gYUf3GXkWxjCp0Vwl4QzU9AqjxkwCPMwl7zRUsS95bisq7r97GLkGd7B
-         m9N62FqdWsBfNzIvnLNSJFjdD4wMIbKk/uylc=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HlOsSOgT1gT1zJxSf+hUIvzQARn9MCqtNx5Lk0Ak0xs=;
+        b=m4AFlJzQUHOhkP3i+afM4Na4yQfCiy7TV/H2wsb4ED0Yisc/C4jHXlcQ5AIGv8oCPC
+         RrR7Xn/bHfSXFU/vmc+Q/o4p8zb+mLg09PlYiIZVPXh/garjq/NFJiZ7LQnihNvmJEmp
+         ohIQfLIQXiKcfHULKPqfR6KIJuMmLiQ/UuWkjgi2rHSW2zX5cU3HLP5Huw1u2bR8h/IX
+         g48t4+abhMtR1eIIXM3F5Sf2u24T8vSm+OBLPedvJxFGM0dL5cbQYSy0KuinwASXzclw
+         /IpMI2g8hF2SZndOQCLy0X1APH4BjQmbKj2Fd3rIxmKKEQQpNhAbgrLdvhu4LjuEsBsv
+         sp8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QY3x1Neqw88a4kC5L8IILTg/Eusc/r1ujGUtxNuyElI=;
-        b=VsOTQ7QMcM90gSAqbSEc+5cqaMiwKKrIEfjeO+BuR82RvQvXwhXiCn54lTOd0jGR82
-         S0olERGuQVPox/Xo/MK4dbMrgZXg/WIZbOi4TJju9tp1kJWyoTls+iH9S0CfT79nhfOG
-         RGwTf+M+VVVxics92ZF/ZYfYhLKbkrfcLmJoosZb6pw4Z08VIMLKvjTAQWwmA1avGMA1
-         6bziVYiMW0ga4EwMaQDbY8kfHQlnaqDd6N8DMX9VlNp4j0QtBLa8vk1nWGvcjFdz2HGp
-         4aPwg2pF52yzt3hDXaiVzL0PE6lm47qmlXTIugJlSTiMM/dvRNZow87lfO2jfxz8/6Y3
-         B9Ag==
-X-Gm-Message-State: APjAAAURcaDz/otrBRdulj/sxlv367GDAz1oinjCUXsFZx6RF40JFqVk
-        eqiY8P8H6/2/+P5FiYiZd4WqyAoAytI=
-X-Google-Smtp-Source: APXvYqwCioAqN63n8BERzgDY7kTutve6moi97IjdMmqieHIlLZmKbivtnmyyvp9eh1b63WqmznvAwA==
-X-Received: by 2002:a19:8c08:: with SMTP id o8mr2471lfd.57.1565032686961;
-        Mon, 05 Aug 2019 12:18:06 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id n124sm15110736lfd.46.2019.08.05.12.18.05
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Aug 2019 12:18:06 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id b29so51664247lfq.1
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Aug 2019 12:18:05 -0700 (PDT)
-X-Received: by 2002:a19:641a:: with SMTP id y26mr70249477lfb.29.1565032685615;
- Mon, 05 Aug 2019 12:18:05 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HlOsSOgT1gT1zJxSf+hUIvzQARn9MCqtNx5Lk0Ak0xs=;
+        b=oqsZo0EvcmRxUbfgVSWjqgWIZoimp0XBh4npmXnjNQdIhDmwPZxSiF79Petn1P66D8
+         EgsjbJWSgMjoyJilkNhG0aHsw8xmT/Nz+jcOYgT5ygktJR1SVBo8eoucwNYTnxaPULTV
+         0RSMi8KsonXgS5d+Y8mGUlvMsOsFKrABl2VJ4PuOLrIpue4cUEoFdhyo1MicJd0WINPE
+         0/G0UeFnlt8enp2kNoLIiOmm/BtdAg/aMo5WV4iT3MfZhrQHFenEZk4tgazVnzqq/f4O
+         tCnAe79Pc49UsOTParGQWwppjyHaveIU/gzrWfIIudn6S/eKTTGDmKZU7TTGwtZnRUaZ
+         fc+A==
+X-Gm-Message-State: APjAAAX+/KI+7cWc+en+XDWa0rKF/rkGXayS2rpRe9j0pOXwOqX+9UsY
+        Qal0d2R3JxoM4isw1Ooenrw=
+X-Google-Smtp-Source: APXvYqyEZCcbktmkCy9fTIyYwfVOIzU+9/TBOeiMpCnpwTT8r+dDa8u2sSBpTtiDrAOWUYRoM6NPbw==
+X-Received: by 2002:a63:ed55:: with SMTP id m21mr16164160pgk.343.1565032886241;
+        Mon, 05 Aug 2019 12:21:26 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:200::1:8a30])
+        by smtp.gmail.com with ESMTPSA id m11sm69705033pgl.8.2019.08.05.12.21.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2019 12:21:25 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 12:21:24 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Song Liu <songliubraving@fb.com>,
+        Kees Cook <keescook@chromium.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
+Message-ID: <20190805192122.laxcaz75k4vxdspn@ast-mbp>
+References: <369476A8-4CE1-43DA-9239-06437C0384C7@fb.com>
+ <CALCETrUpVMrk7aaf0trfg9AfZ4fy279uJgZH7V+gZzjFw=hUxA@mail.gmail.com>
+ <D4040C0C-47D6-4852-933C-59EB53C05242@fb.com>
+ <CALCETrVoZL1YGUxx3kM-d21TWVRKdKw=f2B8aE5wc2zmX1cQ4g@mail.gmail.com>
+ <5A2FCD7E-7F54-41E5-BFAE-BB9494E74F2D@fb.com>
+ <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
+ <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
+ <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
+ <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
+ <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAJ-EccMXEVktpuPS5BwkGqTo++dGcpHAuSUZo7WgJhAzFByz0g@mail.gmail.com>
- <CAHk-=whZzJ8WxAeHcirUghcbeOYxmpCr+XxeS9ngH3df3+=p2Q@mail.gmail.com>
- <CAJ-EccOqmmrf2KPb7Z7NU6bF_4W1XUawLLy=pLekCyFKqusjKQ@mail.gmail.com>
- <CAHk-=wgT7Z3kCbKS9Q1rdA=OVxPL32CdBovX=eHvD2PppWCHpQ@mail.gmail.com>
- <20190805142756.GA4887@chatter.i7.local> <CAHk-=wgdiiBVprEVoi8+mpicGnOVNZ4Lb9YUJVskOXahO50sXw@mail.gmail.com>
- <20190805191136.GB4887@chatter.i7.local>
-In-Reply-To: <20190805191136.GB4887@chatter.i7.local>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 5 Aug 2019 12:17:49 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg4xMXMM3EfW=NV6YuScA4zvcvaCAPou3bxegjGy6r-qA@mail.gmail.com>
-Message-ID: <CAHk-=wg4xMXMM3EfW=NV6YuScA4zvcvaCAPou3bxegjGy6r-qA@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID MAINTAINERS file update for v5.3
-To:     Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc:     Micah Morton <mortonm@chromium.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 5, 2019 at 12:11 PM Konstantin Ryabitsev
-<konstantin@linuxfoundation.org> wrote:
->
-> However, I suspect that getting message-ids for all your pull requests
-> would significantly complicate your workflow.
+On Mon, Aug 05, 2019 at 10:23:10AM -0700, Andy Lutomirski wrote:
+> 
+> I refreshed the branch again.  I had a giant hole in my previous idea
+> that we could deprivilege program loading: some BPF functions need
+> privilege.  Now I have a changelog comment to that effect and a patch
+> that sketches out a way to addressing this.
+> 
+> I don't think I'm going to have time soon to actually get any of this
+> stuff mergeable, and it would be fantastic if you or someone else who
+> likes working of bpf were to take this code and run with it.  Feel
+> free to add my Signed-off-by, and I'd be happy to help review.
 
-Yeah, that would be a noticeable annoyance. If I were to process pull
-requests the way I used to process emailed patches (ie "git am -s" on
-a mailbox) that would be a natural thing to perhaps do, but it's not
-at all how it ends up working. Having to save the pull request email
-to then process it with some script would turn it into a chore.
+Thanks a lot for working on patches and helping us with the design!
 
-I think the pr-tracker-bot clearly catches most cases as it is, and
-it's only the occasional "somebody did something odd" that then misses
-an automated response. Not a huge deal. For me it was actually more
-the "I didn't understand why the response didn't happen", not so much
-"I really want to always see responses".
+Can you resend the patches to the mailing list?
+It's kinda hard to reply/review to patches that are somewhere in the web.
+I'm still trying to understand the main idea.
+If I'm reading things correctly:
+patch 1 "add access permissions to bpf fds"
+  just passes the flags ?
+patch 2 "Don't require mknod() permission to pin an object" 
+ makes sense in isolation.
+patch 3 "Allow creating all program types without privilege"
+  is not right.
+patch 4 "Add a way to mark functions as requiring privilege"
+ is an interesting idea, but I don't think it helps that much.
 
-                Linus
+So the main thing we're trying to solve with augmented bpf syscall
+and/or /dev/bpf is to be able to use root-only features of bpf when
+trused process already dropped root permissions.
+These features include bpf2bpf calls, bounded loops, special maps (like LPM), etc.
+
+Attaching to a cgroup already has file based permission checks.
+The user needs to open cgroup directory to attach.
+acls on cgroup dir can already be used to prevent attaching to
+certain parts of cgroup hierarchy.
+
+It seems this discussion is centered around making /dev/bpf to
+let unpriv (and not trusted) users (humans) to do bpf.
+That's not quite the case.
+It's a good use case, but not the one we're after at the moment.
+In our enviroment bpftrace, bpftool, all bcc tools are pre-installed
+and the users (humans) can simply 'sudo' to run them.
+Adding suid bit to installed bpftool binary is doable, but there is no need.
+'sudo' works just fine.
+What we need is to drop privileges sooner in daemons like systemd.
+Container management daemon runs in the nested containers.
+These trusted daemons need to have access to full bpf, but they
+don't want to be root all the time.
+They cannot flip back and forth via seteuid to root every time they
+need to do bpf.
+Hence the idea is to have a file that this daemon can open,
+then drop privileges and still keep doing bpf things because FD is held.
+Outer container daemon can pass this /dev/bpf's FD to inner daemon, etc.
+This /dev/bpf would be accessible to root only.
+There is no desire to open it up to non-root.
+
+It seems there is concern that /dev/bpf is unnecessary special.
+How about we combine bpffs and /dev/bpf ideas?
+Like we can have a special file name in bpffs.
+The root would do 'touch /sys/fs/bpf/privileges' and it would behave
+just like /dev/bpf, but now it can be in any bpffs directory and acls
+to bpffs mount would work as-is.
+
+CAP_BPF is also good idea. I think for the enviroment where untrusted
+and unprivileged users want to run 'bpftrace' that would be perfect mechanism.
+getcap /bin/bpftrace would have cap_bpf, cap_kprobe and whatever else.
+Sort of like /bin/ping.
+But I don't see how cap_bpf helps to solve our trusted root daemon problem.
+imo open ("/sys/fs/bpf/privileges") and pass that FD into bpf syscall
+is the only viable mechanism.
+
+Note the verifier does very different amount of work for unpriv vs root.
+It does speculative execution analysis, pointer leak checks for unpriv.
+So we gotta pass special flag to the verifier to make it act like it's
+loading a program for root.
+
