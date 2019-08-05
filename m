@@ -2,107 +2,102 @@ Return-Path: <SRS0=x/8A=WB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD32C0650F
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 19:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67640C41514
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 20:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D132B20B1F
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 19:27:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565033251;
-	bh=MQ8FR72Dyq5oOL55TMoiwVjBxDH1WhMvPfmVW1mvDIQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sjFSfkjdHqhf0PyXOKogPhQKNIajJ7o1KSJf7Kiwpi63un6zTZ65YI7YQ2Kz/Tw/P
-	 LodFDMWgDvoXovNORUuhHNTZsifyeDzyYztysttXeEmLcvza+TGpp1MVzjYhekZ/8h
-	 FAvI0YiwWuQ6EzFSc4Pi3BUsGKsXGDp7a5LrSYcQ=
+	by mail.kernel.org (Postfix) with ESMTP id 460FC2147A
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 20:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730036AbfHET1b (ORCPT
+        id S1730036AbfHEUvJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Aug 2019 15:27:31 -0400
-Received: from mail-qt1-f182.google.com ([209.85.160.182]:35126 "EHLO
-        mail-qt1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727802AbfHET1b (ORCPT
+        Mon, 5 Aug 2019 16:51:09 -0400
+Received: from mga17.intel.com ([192.55.52.151]:55069 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729566AbfHEUvI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Aug 2019 15:27:31 -0400
-Received: by mail-qt1-f182.google.com with SMTP id d23so82155161qto.2
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Aug 2019 12:27:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=h1ewf34lHhC/ecib1hsGGIlixnNIzDn15kep7wiXFj4=;
-        b=EverIdWBkbzrNKBtVjB/eEfEjEu95MHUnU5wBU8QlutwkoFjuV2QkwB4r0q4CLVmB/
-         QQlU8b6AEABq1mqziHyeOka6DTzr7MkEtLGiIKQLVfWMHVHBC7fTL6QM3upaV7R2qXi8
-         eV8XC4+v+h8mPIxGVQgYmEnGxAJ/12wtj0KV4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h1ewf34lHhC/ecib1hsGGIlixnNIzDn15kep7wiXFj4=;
-        b=FFflxWvLGFGGwVvyVPxeqiqBIStufSh/40jmUAPYmUDoHWttw+vyna+SodalyGYZlY
-         jfXt26Atz8RL2upd6GkHy7U2e75Nzw5yt+I33Pw4hE9H6jhYJPaa5syNiBIQN4o7/WRf
-         2NzeySaFO5oOHQrXiaK26rwgbhcQ1ZCALONbJUveVMzuVF6pb2BGQNVr1bBrstKkYwKS
-         S80bnZ1NwThRsXT/STwdM8LGfbbFEgITNAndjltx9jkXGpVU6NqRk+QZYc99udWnbDqv
-         zIJo4/z2jEaLTErsQ3A1pHkpqrbaEl2qb3omjNprA1OAR0z/4i7Y4PwGlTAXCyRiWqI8
-         ciCw==
-X-Gm-Message-State: APjAAAU4Rxx+5CJ88PeVNMgdIkAlRo4nRdBbinRif9z1VKWD+ZE0Zt0z
-        tgDUEYO6RU/eOZ0+ZAAY7KpaCU4suWI=
-X-Google-Smtp-Source: APXvYqzNnb5aK5bFMZDX/1DWfTBCo+Ag0Lvk6m3WaIGVkXDEPpTNVColK/U4FuU9sJuchpQcA5KhYg==
-X-Received: by 2002:ac8:3f55:: with SMTP id w21mr108549934qtk.217.1565033249978;
-        Mon, 05 Aug 2019 12:27:29 -0700 (PDT)
-Received: from chatter.i7.local (192-0-228-88.cpe.teksavvy.com. [192.0.228.88])
-        by smtp.gmail.com with ESMTPSA id j66sm35383650qkf.86.2019.08.05.12.27.29
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 12:27:29 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 15:27:27 -0400
-From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Micah Morton <mortonm@chromium.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] SafeSetID MAINTAINERS file update for v5.3
-Message-ID: <20190805192727.GA15470@chatter.i7.local>
-References: <CAJ-EccMXEVktpuPS5BwkGqTo++dGcpHAuSUZo7WgJhAzFByz0g@mail.gmail.com>
- <CAHk-=whZzJ8WxAeHcirUghcbeOYxmpCr+XxeS9ngH3df3+=p2Q@mail.gmail.com>
- <CAJ-EccOqmmrf2KPb7Z7NU6bF_4W1XUawLLy=pLekCyFKqusjKQ@mail.gmail.com>
- <CAHk-=wgT7Z3kCbKS9Q1rdA=OVxPL32CdBovX=eHvD2PppWCHpQ@mail.gmail.com>
- <20190805142756.GA4887@chatter.i7.local>
- <CAHk-=wgdiiBVprEVoi8+mpicGnOVNZ4Lb9YUJVskOXahO50sXw@mail.gmail.com>
- <20190805191136.GB4887@chatter.i7.local>
- <CAHk-=wg4xMXMM3EfW=NV6YuScA4zvcvaCAPou3bxegjGy6r-qA@mail.gmail.com>
+        Mon, 5 Aug 2019 16:51:08 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 13:51:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
+   d="scan'208";a="192498836"
+Received: from unknown (HELO localhost) ([10.252.52.83])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Aug 2019 13:51:05 -0700
+Date:   Mon, 5 Aug 2019 23:51:04 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>, linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [RFC PATCH v3 04/12] x86/sgx: Require userspace to define
+ enclave pages' protection bits
+Message-ID: <20190805205104.6ylxomqq37deqb3v@linux.intel.com>
+References: <20190619152018.GC1203@linux.intel.com>
+ <20190620221702.GE20474@linux.intel.com>
+ <20190707190809.GE19593@linux.intel.com>
+ <1b7369a08e98dd08a4f8bb19b16479f12bee130f.camel@linux.intel.com>
+ <20190708161932.GE20433@linux.intel.com>
+ <20190709160634.3yupyabf5svnj4ds@linux.intel.com>
+ <20190710172553.GE4348@linux.intel.com>
+ <CALCETrXMAwHod_KZYPGWjTjg-fxOb1=02=Qj2g1o624wOPfPZQ@mail.gmail.com>
+ <20190801163839.wvcnq57hity4wwrk@linux.intel.com>
+ <CALCETrWBewZyqVUf3cPDj11eSWXqfDG0z50vVw+Yg0Z8r0AtCg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wg4xMXMM3EfW=NV6YuScA4zvcvaCAPou3bxegjGy6r-qA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CALCETrWBewZyqVUf3cPDj11eSWXqfDG0z50vVw+Yg0Z8r0AtCg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 05, 2019 at 12:17:49PM -0700, Linus Torvalds wrote:
->> However, I suspect that getting message-ids for all your pull 
->> requests
->> would significantly complicate your workflow.
->
->Yeah, that would be a noticeable annoyance. If I were to process pull
->requests the way I used to process emailed patches (ie "git am -s" on
->a mailbox) that would be a natural thing to perhaps do, but it's not
->at all how it ends up working. Having to save the pull request email
->to then process it with some script would turn it into a chore.
->
->I think the pr-tracker-bot clearly catches most cases as it is, and
->it's only the occasional "somebody did something odd" that then misses
->an automated response. Not a huge deal. For me it was actually more
->the "I didn't understand why the response didn't happen", not so much
->"I really want to always see responses".
+On Sun, Aug 04, 2019 at 03:20:24PM -0700, Andy Lutomirski wrote:
+> On Thu, Aug 1, 2019 at 9:38 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > On Mon, Jul 15, 2019 at 03:29:23PM -0700, Andy Lutomirski wrote:
+> > > I would say it differently: regardless of exactly how /dev/sgx/enclave
+> > > is wired up under the hood, we want a way that a process can be
+> > > granted permission to usefully run enclaves without being granted
+> > > permission to execute whatever bytes of code it wants.  Preferably
+> > > without requiring LSMs to maintain some form of enclave signature
+> > > whitelist.
+> >
+> > Would it be better to have a signer whitelist instead or some
+> > combination? E.g. you could whiteliste either by signer or
+> > enclave signature.
+> >
+> 
+> I'm not sure, and also don't really think we need to commit to an
+> answer right now.  I do think that the eventual solution should be
+> more flexible than just whitelisting the signers.  In particular, it
+> should be possible to make secure enclaves, open-source or otherwise,
+> that are reproducibly buildable.  This more or less requires that the
+> signing private key not be a secret, which means that no one would
+> want to whitelist the signing key.  The enclave would be trusted, and
+> would seal data, on the basis of its MRENCLAVE, and the policy, if
+> any, would want to whitelist the MRENCLAVE or perhaps the whole
+> SIGSTRUCT.
+> 
+> But my overall point is that it should be possible to have a conherent
+> policy that allows any enclave whatsoever to run but that still
+> respects EXECMEM and such.
 
-Ok, let me add a fix for Re: at the start -- this won't make things
-significantly more expensive, but will catch this particular corner 
-case.
+So could kernel embed a fixed signing key that would be made available
+through sysfs for signing? Already have one for my selftest.
 
-Best regards,
--K
+/Jarkko
