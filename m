@@ -2,169 +2,100 @@ Return-Path: <SRS0=x/8A=WB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7757BC32751
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 17:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87163C433FF
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 17:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F63C21734
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 17:23:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565025808;
-	bh=/jV+MMgIe5IgN16Vzs40LMFftcAjXyreuD0IqIMo9k0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Taz3VOyaNTzldcuIYqdQwg0xglwHabt4pqFk57mrZTSX8iHlz16Ip7JzT4uzy3S5G
-	 dK89/0HGcXTJMO0Uq2cRKHnORusScFW0at+jXEbWHaIkJ6W7HXIqUPtuAp/5b4t1mg
-	 60TPXitQvN99rJu4NeHAxX7OdzklGYFJs9k5Y6aY=
+	by mail.kernel.org (Postfix) with ESMTP id 5DBDD20B1F
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Aug 2019 17:48:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lLuwUJnm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfHERX0 (ORCPT
+        id S1727460AbfHERst (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Aug 2019 13:23:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52730 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727830AbfHERX0 (ORCPT
+        Mon, 5 Aug 2019 13:48:49 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:19175 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbfHERst (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Aug 2019 13:23:26 -0400
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB467217F4
-        for <linux-security-module@vger.kernel.org>; Mon,  5 Aug 2019 17:23:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565025805;
-        bh=/jV+MMgIe5IgN16Vzs40LMFftcAjXyreuD0IqIMo9k0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=B72Y/3R4HCComSn5WRjVAxflCkHa9A3+RoV1i5m3VmdUbIr3pAFRlfXvj9AmiOKXw
-         JZjn1Sfub6F/xyhkgEWRvuhYMOEeF9pvxJrQK6KK/OTqKb3HwwpFGC47XTDdfbs505
-         K+PefjJWUi2Y+jjC/GWpASwuFD+TYO96+8HeTc0I=
-Received: by mail-wm1-f51.google.com with SMTP id u25so63420333wmc.4
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Aug 2019 10:23:24 -0700 (PDT)
-X-Gm-Message-State: APjAAAUxnHtQIom1yE/xdWlrcN6bTkjU49HuVQxaqtfOY7ozLfn4Dj60
-        MUVQ1jGzHlYcRCSnj2tHu3os2C2UEbXC2hrtQZzfSA==
-X-Google-Smtp-Source: APXvYqzbrZNl+et5W20TDUNPb9shoQcGV833hyVQWOpteUGntxDDkdbnf5VAC+8dawOZT/6K97LFH/mKfkzXIQNNQ3A=
-X-Received: by 2002:a1c:a942:: with SMTP id s63mr19397879wme.76.1565025803035;
- Mon, 05 Aug 2019 10:23:23 -0700 (PDT)
+        Mon, 5 Aug 2019 13:48:49 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d486c0a0001>; Mon, 05 Aug 2019 10:48:58 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 05 Aug 2019 10:48:48 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 05 Aug 2019 10:48:48 -0700
+Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 5 Aug
+ 2019 17:48:48 +0000
+Subject: Re: [PATCH] security/tomoyo: convert put_page() to put_user_page*()
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        <john.hubbard@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+CC:     <linux-security-module@vger.kernel.org>
+References: <20190805022626.13291-1-jhubbard@nvidia.com>
+ <346e5a8e-57fe-b2ac-4069-50a8a83048b5@i-love.sakura.ne.jp>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <fa58ec66-dea7-8e00-cc31-426b997eafae@nvidia.com>
+Date:   Mon, 5 Aug 2019 10:48:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190627201923.2589391-1-songliubraving@fb.com>
- <20190627201923.2589391-2-songliubraving@fb.com> <21894f45-70d8-dfca-8c02-044f776c5e05@kernel.org>
- <3C595328-3ABE-4421-9772-8D41094A4F57@fb.com> <CALCETrWBnH4Q43POU8cQ7YMjb9LioK28FDEQf7aHZbdf1eBZWg@mail.gmail.com>
- <0DE7F23E-9CD2-4F03-82B5-835506B59056@fb.com> <CALCETrWBWbNFJvsTCeUchu3BZJ3SH3dvtXLUB2EhnPrzFfsLNA@mail.gmail.com>
- <201907021115.DCD56BBABB@keescook> <CALCETrXTta26CTtEDnzvtd03-WOGdXcnsAogP8JjLkcj4-mHvg@mail.gmail.com>
- <4A7A225A-6C23-4C0F-9A95-7C6C56B281ED@fb.com> <CALCETrX2bMnwC6_t4b_G-hzJSfMPrkK4YKs5ebcecv2LJ0rt3w@mail.gmail.com>
- <514D5453-0AEE-420F-AEB6-3F4F58C62E7E@fb.com> <1DE886F3-3982-45DE-B545-67AD6A4871AB@amacapital.net>
- <7F51F8B8-CF4C-4D82-AAE1-F0F28951DB7F@fb.com> <77354A95-4107-41A7-8936-D144F01C3CA4@fb.com>
- <369476A8-4CE1-43DA-9239-06437C0384C7@fb.com> <CALCETrUpVMrk7aaf0trfg9AfZ4fy279uJgZH7V+gZzjFw=hUxA@mail.gmail.com>
- <D4040C0C-47D6-4852-933C-59EB53C05242@fb.com> <CALCETrVoZL1YGUxx3kM-d21TWVRKdKw=f2B8aE5wc2zmX1cQ4g@mail.gmail.com>
- <5A2FCD7E-7F54-41E5-BFAE-BB9494E74F2D@fb.com> <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
- <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
- <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com> <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
-In-Reply-To: <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 5 Aug 2019 10:23:10 -0700
-X-Gmail-Original-Message-ID: <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
-Message-ID: <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-To:     Song Liu <songliubraving@fb.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <346e5a8e-57fe-b2ac-4069-50a8a83048b5@i-love.sakura.ne.jp>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565027338; bh=UH/wZ2TD5j5LKteS/k/OilrdTGLQ50Zk7Ly0LMxNvdg=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=lLuwUJnmr2qKk2WHpe+CKK0srXn51CQ1F5Qx+hpjTSdAt6YzgwauHlM/2+Cxgmzh7
+         mX7Bat53fqDNUQD0eLKi52JARbCzHdSZBPesXwsKjmflWDIW+NHQDUY/wKDXAFoeJm
+         5Xom9eVGEe7k8hVge2WwiSLkAVqg9qhtq3lNM9yjtrEmQiOcWrv707vdAXd0bqV9nP
+         35ieiEGVYgMSBM/FGFuF5SCgTXu1D31Cr5hvJCWFkN+bMRKgtyWb5cJeHcE9Dx/8cV
+         L9muICybx9Nqb9yVzWaUria/csDk9uC1Hr7oNV7Djw6ynXK/NGu5qz959fmLKMYycE
+         Mj23x+rj0iFNQ==
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 5, 2019 at 12:37 AM Song Liu <songliubraving@fb.com> wrote:
->
-> Hi Andy,
->
+On 8/5/19 3:01 AM, Tetsuo Handa wrote:
+> On 2019/08/05 11:26, john.hubbard@gmail.com wrote:
+>> From: John Hubbard <jhubbard@nvidia.com>
+>>
+>> For pages that were retained via get_user_pages*(), release those pages
+>> via the new put_user_page*() routines, instead of via put_page() or
+>> release_pages().
+>>
+>> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+>> ("mm: introduce put_user_page*(), placeholder versions").
+>>
+>> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+>> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Cc: linux-security-module@vger.kernel.org
+>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> 
+> Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> 
+> Sending to Andrew Morton means you expect this patch to go via -mm tree, don't you?
 
-> >
-> > # mount -t bpf bpf /sys/fs/bpf
-> > # cd /sys/fs/bpf
-> > # mkdir luto
-> > # chown luto: luto
-> > # setpriv --euid=1000 --ruid=1000 bash
-> > $ pwd
-> > /sys/fs/bpf
-> > bash-5.0$ ls -l
-> > total 0
-> > drwxr-xr-x 2 luto luto 0 Aug  4 22:41 luto
-> > bash-5.0$ bpftool map create /sys/fs/bpf/luto/filename type hash key 8
-> > value 8 entries 64 name mapname
-> > bash-5.0$ bpftool map dump pinned /sys/fs/bpf/luto/filename
-> > Found 0 elements
-> >
-> > # chown root: /sys/fs/bpf/luto/filename
-> >
-> > $ bpftool map dump pinned /sys/fs/bpf/luto/filename
-> > Error: bpf obj get (/sys/fs/bpf/luto): Permission denied
-> >
-> > So I think it's possible to get a respectable subset of bpf()
-> > functionality working without privilege in short order :)
->
-> I think we have two key questions to answer:
->   1. What subset of bpf() functionality will the users need?
->   2. Who are the users?
->
-> Different answers to these two questions lead to different directions.
->
->
-> In our use case, the answers are
->   1) almost all bpf() functionality
->   2) highly trusted users (sudoers)
->
-> So our initial approach of /dev/bpf allows all bpf() functionality
-> in one bit in task_struct. (Yes, we can just sudo. But, we would
-> rather not use sudo when possible.)
+Yes, exactly.
 
-For this, I think some compelling evidence is needed that a new kernel
-mechanism is actually better than sudo and better than making bpftool
-privileged as previously discussed :)
+thanks,
+-- 
+John Hubbard
+NVIDIA
 
->
->
-> "cgroup management" use case may have answers like:
->   1) cgroup_bpf only
->   2) users in their own containers
->
-> For this case, getting cgroup_bpf related features (cgroup_bpf progs;
-> some map types, etc.) work with unprivileged users would be the right
-> direction.
+> Andrew, please take this patch. Thank you.
+> 
 
-:)
-
->
->
-> "USDT tracing" use case may have answers like:
->   1) uprobe, stockmap, histogram, etc.
->   2) unprivileged user, w/ or w/o containers
->
-> For this case, the first step is likely hacking sys_perf_event_open().
->
-
-This would be nice.
-
->
-> I guess we will need more discussions to decide how to make bpf()
-> work better for all these (and more) use cases.
->
-
-I refreshed the branch again.  I had a giant hole in my previous idea
-that we could deprivilege program loading: some BPF functions need
-privilege.  Now I have a changelog comment to that effect and a patch
-that sketches out a way to addressing this.
-
-I don't think I'm going to have time soon to actually get any of this
-stuff mergeable, and it would be fantastic if you or someone else who
-likes working of bpf were to take this code and run with it.  Feel
-free to add my Signed-off-by, and I'd be happy to help review.
