@@ -2,78 +2,70 @@ Return-Path: <SRS0=ikEQ=WE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01395C433FF
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 22:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CB2C0650F
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 22:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5ABD214C6
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 22:27:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C47092166E
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 22:43:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404697AbfHHW1A (ORCPT
+        id S2403783AbfHHWnS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Aug 2019 18:27:00 -0400
-Received: from foss.arm.com ([217.140.110.172]:39522 "EHLO foss.arm.com"
+        Thu, 8 Aug 2019 18:43:18 -0400
+Received: from namei.org ([65.99.196.166]:39598 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404636AbfHHW07 (ORCPT
+        id S1732938AbfHHWnR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Aug 2019 18:26:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB72F15A2;
-        Thu,  8 Aug 2019 15:26:58 -0700 (PDT)
-Received: from c02sv19cfvh4.usa.arm.com (c02sv19cfvh4.usa.arm.com [10.118.108.51])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D02DF3F575;
-        Thu,  8 Aug 2019 15:26:58 -0700 (PDT)
-Subject: Re: [Tee-dev] [RFC v2 2/6] tee: enable support to register kernel
- memory
-To:     Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     tee-dev@lists.linaro.org, daniel.thompson@linaro.org,
-        corbet@lwn.net, jejb@linux.ibm.com, ard.biesheuvel@linaro.org,
-        linux-doc@vger.kernel.org, zohar@linux.ibm.com,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        jarkko.sakkinen@linux.intel.com, casey@schaufler-ca.com,
-        linux-arm-kernel@lists.infradead.org, serge@hallyn.com
-References: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
- <1564489420-677-3-git-send-email-sumit.garg@linaro.org>
-From:   Stuart Yoder <stuart.yoder@arm.com>
-Message-ID: <99777010-db74-096a-ce1a-da30539d6fb5@arm.com>
-Date:   Thu, 8 Aug 2019 17:26:58 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        Thu, 8 Aug 2019 18:43:17 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x78Mh5V0015311;
+        Thu, 8 Aug 2019 22:43:05 GMT
+Date:   Fri, 9 Aug 2019 08:43:05 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Matthew Garrett <mjg59@google.com>
+cc:     Jessica Yu <jeyu@kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH V37 04/29] Enforce module signatures if the kernel is
+ locked down
+In-Reply-To: <CACdnJuu6gFQUQQOVj2MwL5+dx+XsBKY=Uq58r7F8Lr2C0Gi_TA@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1908090842390.14740@namei.org>
+References: <20190731221617.234725-1-matthewgarrett@google.com> <20190731221617.234725-5-matthewgarrett@google.com> <20190801142157.GA5834@linux-8ccs> <CACdnJusD_9W9tFqwKptDTA8fZU8HrSvsEQhKo0WS9QxLpgz5tA@mail.gmail.com> <20190808100059.GA30260@linux-8ccs>
+ <CACdnJuu6gFQUQQOVj2MwL5+dx+XsBKY=Uq58r7F8Lr2C0Gi_TA@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <1564489420-677-3-git-send-email-sumit.garg@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, 8 Aug 2019, Matthew Garrett wrote:
 
+> On Thu, Aug 8, 2019 at 3:01 AM Jessica Yu <jeyu@kernel.org> wrote:
+> > If you're confident that a hard dependency is not the right approach,
+> > then perhaps we could add a comment in the Kconfig (You could take a
+> > look at the comment under MODULE_SIG_ALL in init/Kconfig for an
+> > example)? If someone is configuring the kernel on their own then it'd
+> > be nice to let them know, otherwise having a lockdown kernel without
+> > module signatures would defeat the purpose of lockdown no? :-)
+> 
+> James, what would your preference be here? Jessica is right that not
+> having CONFIG_MODULE_SIG enabled means lockdown probably doesn't work
+> as expected, but tying it to the lockdown LSM seems inappropriate when
+> another LSM could be providing lockdown policy and run into the same
+> issue. Should this just be mentioned in the CONFIG_MODULE_SIG Kconfig
+> help?
 
-On 7/30/19 7:23 AM, Sumit Garg wrote:
+I agree and yes mention it in the help.  A respin of just this patch is 
+fine.
 
-> @@ -264,7 +266,17 @@ struct tee_shm *tee_shm_register(struct tee_context *ctx, unsigned long addr,
->   		goto err;
->   	}
->   
-> -	rc = get_user_pages_fast(start, num_pages, FOLL_WRITE, shm->pages);
-> +	if (flags & TEE_SHM_USER_MAPPED) {
-> +		rc = get_user_pages_fast(start, num_pages, FOLL_WRITE,
-> +					 shm->pages);
-> +	} else {
-> +		const struct kvec kiov = {
-> +			.iov_base = (void *)start,
-> +			.iov_len = PAGE_SIZE
-> +		};
-> +
-> +		rc = get_kernel_pages(&kiov, num_pages, 0, shm->pages);
+-- 
+James Morris
+<jmorris@namei.org>
 
-Passing a single kvec struct is temporary I assume?  Because as currently
-written this will only work with num_pages==1.
-
-Stuart
