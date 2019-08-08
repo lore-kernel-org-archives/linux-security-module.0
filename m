@@ -5,74 +5,72 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E78C433FF
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6910C32751
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A780E217D7
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:09:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7794217D7
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:09:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HhBc/gmE"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BDkDRuyS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389723AbfHHAIW (ORCPT
+        id S2389086AbfHHAJI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Aug 2019 20:08:22 -0400
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:40202 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389718AbfHHAIW (ORCPT
+        Wed, 7 Aug 2019 20:09:08 -0400
+Received: from mail-vs1-f74.google.com ([209.85.217.74]:41871 "EHLO
+        mail-vs1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389703AbfHHAIR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Aug 2019 20:08:22 -0400
-Received: by mail-pf1-f201.google.com with SMTP id z1so57778437pfb.7
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Aug 2019 17:08:21 -0700 (PDT)
+        Wed, 7 Aug 2019 20:08:17 -0400
+Received: by mail-vs1-f74.google.com with SMTP id k1so23498780vsq.8
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Aug 2019 17:08:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=XvMhL8IcfVDNreN9SwFKf8wrtWYtjyv1vRVRyj1buwk=;
-        b=HhBc/gmEGq9rH8H9Yq7YuOCen9MVhHMdBqBOMWU3Q65ZmLrnOZ9UKrPBXABdy6tda3
-         NnNwaUOFThXg5oOVcQzkAJ/xxxjcN5JMq9CqDUPO2sDMZ8FNR1Q1zkXCBDWpSOUeod0Q
-         vATHT/TvRKsVkPNVnc6tV69fAaYgmR2kBe4v+mgabDqLFDyev2sCdM0qP3NMPu5hYstI
-         MmokyePTXsDro7+ZAfnN/vLnRCReaAzHb3v5fNkdWC9ZqE7L3PblQMPpeQV2oPud/IT1
-         RtBEAbEWkJG+qXkhdjneV/Jl/vt+s8JsI6FhaqvASmoF0EWkkx+5i/rt8vS60Yx9qLkr
-         igwg==
+        bh=0wvr7l0OfQCpncv5jcw0tGNb43fa+c615YU3AwXBobQ=;
+        b=BDkDRuySmH99+uoxWfrhpwfmKNKn2qJaU9U/nzEU3gQ85Ycz5x21SymY69Kx+7BgVn
+         TZPOXubIcxk1FUPhB6QPNSl3h3POtgH+QVLlxpPrMnvAgPD+plxy9dozCgZIlKD0ESsz
+         iVLNLuxn0fk0sWBXSMA72U0mJt7FbH0qWwkKkcF87ZfT348ivWRfkl/gDkGlhug9gwlZ
+         GeZmmEpvW3AYDgqzlpv5CvDBjmAv1VmBDOChd3NOcXBd+mKUdcddnrKvAKhtkENqp5T1
+         M4+uNNJlDgYygp6TjDT3uFuRNHqNmm0ky2+YxmrB0VARBMGlEhTuKkGXpnJE2AgWP9HT
+         l8cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=XvMhL8IcfVDNreN9SwFKf8wrtWYtjyv1vRVRyj1buwk=;
-        b=PP7xJz4x05yEXXZLyjY5IsOW0hXY41vLEoa6KEDHgRXFG9Xji5defvqDT+VuR80AiU
-         T4qe3sMwxo/jYNfzs3ghs9yxZzB4KcGdT93IMU4jjT6DYa08QVlhRdXDb6DBXUxDkQwI
-         pARp0Tp39ehBVsKw0ccN+PgBwVhsfjU9DmA9fmuqGPh7JdndVJc8xj3Tu+7nANngIKXr
-         5DTah2W3XPuQXR9t16MmtJWlePJcqqAez+FjcIcA2v0HU5d9tHtRWkmhWumFRSMDmNpp
-         yjkMJ5kdBrD9rFijc2ruBvLG19rsLQvrJmaqnBhdIcxH4TC6kstzzMia596VjIoV0us9
-         dQKw==
-X-Gm-Message-State: APjAAAUREQNDjI3Ak5VninuK4zVjGSR/e8eg/MwbbpqoGnsqK9VYdKXz
-        Tpa5HsPvEAMXTksDgVEWORvmjIHXcOZUTMWP6UzCuQ==
-X-Google-Smtp-Source: APXvYqx+qmAKcKk0a1rigy0mGW/jFtJKbTr+As6X1fGIkQFzfR2B2pknokZ+peJUrAuDgc6I1TJXkyGlPPd7Xo42Pmd4tA==
-X-Received: by 2002:a63:c0d:: with SMTP id b13mr9962668pgl.420.1565222901118;
- Wed, 07 Aug 2019 17:08:21 -0700 (PDT)
-Date:   Wed,  7 Aug 2019 17:07:14 -0700
+        bh=0wvr7l0OfQCpncv5jcw0tGNb43fa+c615YU3AwXBobQ=;
+        b=ndZ3LtoZ22x9iRyR3ZyxEDkJq/TTUiVboYA/f3CVaCpljygof77n78qE4jv/mxSu5U
+         KY7vErHd2t2UpReuMqlvuvTX7DVnlaztaqNKW7vZLevjkeS8KC4mju9eKpGMrnisPgqh
+         gpgW8kOkT5iI/47rx8gH/BurWVk5LyMBB2I/SVVMM5poHxZEl01i3F9NRaMCTJw4MIXo
+         sJYHuS05Zh7nvwmz+yfIFUpPWcdY+YaeCyFAM/pCViRi2uWBrrCYiUuNpFBc6l68stD1
+         FJKariXcsKeMzoafi3FcuNV+CUqsNTmB976G+MsqzAUzbMUbO6lFTH+72UYZHO69tMSk
+         AtJg==
+X-Gm-Message-State: APjAAAWPr/1GMG+e2hQk+3akHmFSL+4+vYOEgXWNidV2iE4SIHTsQoeU
+        u2MBcxZpG6ggbn+DoakgoWkHivJL+hl5twJxXlOcOQ==
+X-Google-Smtp-Source: APXvYqxcfpqqsavzaQSk6TZq5rSUgP4b30JIhvbXsxs7veg7Eg3YU6weBFgQ8LHBcnt8hZcdSe5A5T0ZlXIZX06xlzylkg==
+X-Received: by 2002:ab0:6e2:: with SMTP id g89mr7736803uag.56.1565222896120;
+ Wed, 07 Aug 2019 17:08:16 -0700 (PDT)
+Date:   Wed,  7 Aug 2019 17:07:12 -0700
 In-Reply-To: <20190808000721.124691-1-matthewgarrett@google.com>
-Message-Id: <20190808000721.124691-23-matthewgarrett@google.com>
+Message-Id: <20190808000721.124691-21-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190808000721.124691-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-Subject: [PATCH V38 22/29] Lock down tracing and perf kprobes when in
- confidentiality mode
+Subject: [PATCH V38 20/29] x86/mmiotrace: Lock down the testmmiotrace module
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Matthew Garrett <mjg59@google.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Kees Cook <keescook@chromium.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        davem@davemloft.net
+        Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
@@ -80,74 +78,75 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-Disallow the creation of perf and ftrace kprobes when the kernel is
-locked down in confidentiality mode by preventing their registration.
-This prevents kprobes from being used to access kernel memory to steal
-crypto data, but continues to allow the use of kprobes from signed
-modules.
+The testmmiotrace module shouldn't be permitted when the kernel is locked
+down as it can be used to arbitrarily read and write MMIO space. This is
+a runtime check rather than buildtime in order to allow configurations
+where the same kernel may be run in both locked down or permissive modes
+depending on local policy.
 
-Reported-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: David Howells <dhowells@redhat.com
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Naveen N. Rao <naveen.n.rao@linux.ibm.com>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: davem@davemloft.net
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
+cc: Thomas Gleixner <tglx@linutronix.de>
+cc: Steven Rostedt <rostedt@goodmis.org>
+cc: Ingo Molnar <mingo@kernel.org>
+cc: "H. Peter Anvin" <hpa@zytor.com>
+cc: x86@kernel.org
 ---
+ arch/x86/mm/testmmiotrace.c  | 5 +++++
  include/linux/security.h     | 1 +
- kernel/trace/trace_kprobe.c  | 5 +++++
  security/lockdown/lockdown.c | 1 +
  3 files changed, 7 insertions(+)
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index f0cffd0977d3..987d8427f091 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -117,6 +117,7 @@ enum lockdown_reason {
- 	LOCKDOWN_MMIOTRACE,
- 	LOCKDOWN_INTEGRITY_MAX,
- 	LOCKDOWN_KCORE,
-+	LOCKDOWN_KPROBES,
- 	LOCKDOWN_CONFIDENTIALITY_MAX,
- };
- 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 9d483ad9bb6c..d5fbade68b33 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -11,6 +11,7 @@
- #include <linux/uaccess.h>
- #include <linux/rculist.h>
- #include <linux/error-injection.h>
+diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
+index 0881e1ff1e58..a8bd952e136d 100644
+--- a/arch/x86/mm/testmmiotrace.c
++++ b/arch/x86/mm/testmmiotrace.c
+@@ -8,6 +8,7 @@
+ #include <linux/module.h>
+ #include <linux/io.h>
+ #include <linux/mmiotrace.h>
 +#include <linux/security.h>
  
- #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
- 
-@@ -389,6 +390,10 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
+ static unsigned long mmio_address;
+ module_param_hw(mmio_address, ulong, iomem, 0);
+@@ -115,6 +116,10 @@ static void do_test_bulk_ioremapping(void)
+ static int __init init(void)
  {
- 	int i, ret;
- 
-+	ret = security_locked_down(LOCKDOWN_KPROBES);
+ 	unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
++	int ret = security_locked_down(LOCKDOWN_MMIOTRACE);
++
 +	if (ret)
 +		return ret;
-+
- 	if (trace_kprobe_is_registered(tk))
- 		return -EINVAL;
  
+ 	if (mmio_address == 0) {
+ 		pr_err("you have to use the module argument mmio_address.\n");
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 43fa3486522b..3f7b6a4cd65a 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -114,6 +114,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_PCMCIA_CIS,
+ 	LOCKDOWN_TIOCSSERIAL,
+ 	LOCKDOWN_MODULE_PARAMETERS,
++	LOCKDOWN_MMIOTRACE,
+ 	LOCKDOWN_INTEGRITY_MAX,
+ 	LOCKDOWN_CONFIDENTIALITY_MAX,
+ };
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index c050b82c7f9f..6b123cbf3748 100644
+index 5177938cfa0d..37b7d7e50474 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -32,6 +32,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
+@@ -29,6 +29,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
+ 	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
+ 	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
++	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
- 	[LOCKDOWN_KCORE] = "/proc/kcore access",
-+	[LOCKDOWN_KPROBES] = "use of kprobes",
  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
  };
- 
 -- 
 2.22.0.770.g0f2c4a37fd-goog
 
