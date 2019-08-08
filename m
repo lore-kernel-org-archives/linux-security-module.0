@@ -1,299 +1,154 @@
-Return-Path: <SRS0=7sjm=WD=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=ikEQ=WE=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFC8C32751
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Aug 2019 22:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63836C433FF
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 456F7217D9
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Aug 2019 22:43:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 336FA217D7
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:08:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gVyeaIiN"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tqhon0H3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389605AbfHGWnU (ORCPT
+        id S2389635AbfHHAIC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Aug 2019 18:43:20 -0400
-Received: from sonic317-27.consmr.mail.gq1.yahoo.com ([98.137.66.153]:43306
-        "EHLO sonic317-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389631AbfHGWnT (ORCPT
+        Wed, 7 Aug 2019 20:08:02 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:50936 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389615AbfHHAH6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Aug 2019 18:43:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1565217798; bh=rgt35VYK8xtWCyWCZH0+rRuwRdtZJYLmJIf0XfoyZVQ=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=gVyeaIiN+aFvS7j0igFCpk4MA+lDBU/1BxSoFR475ZnwhJQ5Ke1vsREW9ELqA0F+MkocpQ1nW8ze/YlOVfgmE4pE3oZnx0nJ9HgNTgEOoAf2Y9er/DYnohvxCvxkMLsE4nlmycevdxlGbPx8lKc3Unq80JkZ6LXJpFzcnDhM0Tt+J/nhJjCzJ7pUf8wpWM9KS/s4Kcf0OBY4U03WMKQ2gGrFz8m608QNFGfAC2q0kkA/G+JfXcAPZrl2zmf/O3w/6pboLHqSYzJfCYeM79W5NMZbcaK2xR+b4qzdheNU6R1yYNpFbKCOmxcdVJhxvLq9780Sr8V1DqQSA+AhaC+isQ==
-X-YMail-OSG: .k6Q0lwVM1n9bI21Q4Q1mWByexH2psMldO2kvAIsCnrBjh.peeYhc2bYF97.F9U
- fjNcmIXB39bZWkMK5ID7vTakY8PbMtBqgLHBmNso4SiRkRyqGYDHEZrPPHrGZlvoSC.VKeMP44ri
- X1ydJGR1z1QZ1ocgIz6lwnx6SNcPmTbclTgv6zP6igUlh1uPHeIuOE.SPF3iO_qV2Yc9fhHIe1eS
- U4w3j2_lj7h5gu5SHBz5sZ8sGBnV4Jw4ckiXxlGivZYQzbaWsKKLwh9XMLoIdJZxkkXXGCLG4uU1
- KMUnTjcbcjo.oKcBzenLYIAnlClkmYs8z7Xw0AaIR.8HvbAzAH.Cs.rcsxTVby3UXqxZqUP5Afxq
- 7KaXJpGbAZLA0sIBH1s7bGLO..XMen7scz8iHKERmrj5urHPoG5DlrwLQeSSm7e2rSvkiVNCR0TB
- Z.8TM3LL2SUyGcmYVAR3xq08yBcG.qnz9VNZyUtlmt9AbK4ZYl0KqnSKpVGVCWKBYSkodHVPtKVB
- aUXlgFBDuCVgM1no2j2KTPvKsgBUY3Z4nlEycYj_cIBJwhY8DrUA1ULWCDmPaOwtEfc2YbsG16cH
- ALbUTEDSx.Hmqy_p7vQRWdkoDo8JJurfrguGznd61tGwURrky8_ed2AdlkDbnhLfN8it08leIi.c
- q.kvTK8ytslF2wvsy1j2t9ZZ.ySswtJH1kxK__CIRIxzxCGmrZ_.b2Tx5GZptexz2KTFhShIHxPF
- o5KvDJQ.xq0xEYN0DYuz2sqW4oZ16.Cv.fNaFu8SipdW.6MsIXvRMJS92Jk2b0yVcfkIB7K_zx.E
- 1oBgnl1Ipr4wh0FW7T5FFh34djrOowdBt8UZi__1eKogA3S6DKUtIh0jQU1RP64SoSffAs3uWpAu
- 3hAm8kPYwBsUnrCBN1RPhG.joj_vWY1botErCYiBQZweac.vq4dKQzaNaNzYWgKHAX1Xjb2LZ4HR
- udSiQAgQEuGEN44Bduwq7lb7gBdFDylOVMCSA4cI8q89iR2oVoN3pYICFSpxVhlU7NKrhgsH.j3u
- bWyxIPYkU1Vsoa9PzC6Zk.S6TscNs72Y1eS5.wWMdbOPfvuZmrJ.Mhv8LofDYg2fyYTqjiZplLk7
- Hgd8W0c4hjC0zFweNqu9s01la3bqAlFre3tj8tbXWZOozshxNSjY9kYUQJbX2bSr0Cy83mUsoaJA
- PZ3RxLFHxWXTu2ole7o7dqmr_u1qIcU9DHISqxq_q5B745mQE3483WenQE4Vlr21018cZC8lbZ6Y
- MOMqzzFhydyzsHOWyiIqP.Jt1r.AJ_Pcq0TG9LYxvDy_qhZro993pP7lK5Cutn5JDDIXzU5yWwOB
- VqyRM_jBL
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.gq1.yahoo.com with HTTP; Wed, 7 Aug 2019 22:43:18 +0000
-Received: by smtp405.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b31e22a1723893410aaa66faa171513d;
-          Wed, 07 Aug 2019 22:43:16 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     casey@schaufler-ca.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, sds@tycho.nsa.gov
-Subject: [PATCH v7 14/16] LSM: Hook for netlabel reconciliation
-Date:   Wed,  7 Aug 2019 15:42:43 -0700
-Message-Id: <20190807224245.10798-16-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190807224245.10798-1-casey@schaufler-ca.com>
-References: <20190807224245.10798-1-casey@schaufler-ca.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 7 Aug 2019 20:07:58 -0400
+Received: by mail-qk1-f202.google.com with SMTP id e18so80700139qkl.17
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Aug 2019 17:07:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=q3etb4lqcpfoYcLMBUBDWWlC5fl/teVFWCZH3Y1QNdw=;
+        b=Tqhon0H3z8E92aFzuPwtjNN7FSEFdwBgdQh90r8+5jGt42X0jpWdT2ic6gZiBZAt8u
+         +ZeaMZ9Tb2E6/AHzGfMK9gWChnhOFKauqGkCxFiL6BGyxcxMswDQrz3xyK4QqV5kT2wc
+         Nav5p4TKwh5whjulyAHJSVPcTq4s/WL1Wsu/UKuSRuSg8Ml6FNYhpCyvlbsHvFYcBTDl
+         g/MWJxOOr7HzlFP4+ukFXafwQwDL3ZF8kkubFLQfZMMIbFPPj/Tx+Bl5AjNwAE2YnavF
+         O7GIxzl//nHtCkMtVT914UStZ/BJC6Dha4T0VOSIj4n0UynrW2oA3lmsi6h8I/il64WA
+         onVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=q3etb4lqcpfoYcLMBUBDWWlC5fl/teVFWCZH3Y1QNdw=;
+        b=TBmS+yvomYhz2ClOdKVfZ6LWdS7s7FinHMhkOk9YFV9OdA2X/plYy4IyDsB6NTO7Fi
+         oFsZjyl10Y/EerhY5OUo9iWPpDCt20OalAjdPWIdeDYjgCyt4HInhVMfw8N6o3FlEauU
+         s5LkWyMwspBRZO6yNxTUX1E+uAQC1H4qkCUiFwkSVhn8X0Dr9M+FkddUhIRa+/qdVvIc
+         3/2YW1dXnePHvg2Nm6z6zauyg9TuQjcdGA4jyjYvbkjMrxeGquk4XvLtdBu6R/zMqrfO
+         ITA79FX1qZmzWFsxWELZE9Y+90Pb2kk+YZvWkLjhYtTT7chahK1mleoX/6MydkjVi3c9
+         AjrQ==
+X-Gm-Message-State: APjAAAUOo+oc8ip9bMv1nc4eV2QOcEb5S0XcNKVVSbEGmQJtQYHkuoo1
+        4vkH/K7aYKXhPbZjBSYVtnlXfK+wUZPL19b4pRh35w==
+X-Google-Smtp-Source: APXvYqxygXUCD8ZQW0eUhdQi0YBIU2fXYtSPLBvBUKdb9Fcx5kgOpiLLKMaYoTc2ZpEPkk4WQEh+m3qnhNy8WAVosLrTcw==
+X-Received: by 2002:a37:9d13:: with SMTP id g19mr10622302qke.124.1565222877553;
+ Wed, 07 Aug 2019 17:07:57 -0700 (PDT)
+Date:   Wed,  7 Aug 2019 17:07:05 -0700
+In-Reply-To: <20190808000721.124691-1-matthewgarrett@google.com>
+Message-Id: <20190808000721.124691-14-matthewgarrett@google.com>
+Mime-Version: 1.0
+References: <20190808000721.124691-1-matthewgarrett@google.com>
+X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
+Subject: [PATCH V38 13/29] x86/msr: Restrict MSR access when the kernel is
+ locked down
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Matthew Garrett <mjg59@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add an LSM function security_reconcile_netlbl() which
-uses the new LSM hook socket_netlbl_secattr() to decide
-if the active security modules are in agreement regarding
-the labeling of a network packet.
+From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Writing to MSRs should not be allowed if the kernel is locked down, since
+it could lead to execution of arbitrary code in kernel mode.  Based on a
+patch by Kees Cook.
+
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+cc: x86@kernel.org
 ---
- include/linux/lsm_hooks.h           | 15 +++++++++
- include/linux/security.h            |  9 ++++++
- security/security.c                 | 50 +++++++++++++++++++++++++++++
- security/selinux/hooks.c            |  3 ++
- security/selinux/include/netlabel.h |  7 ++++
- security/selinux/netlabel.c         |  9 ++++++
- security/smack/smack_lsm.c          |  9 ++++++
- 7 files changed, 102 insertions(+)
+ arch/x86/kernel/msr.c        | 8 ++++++++
+ include/linux/security.h     | 1 +
+ security/lockdown/lockdown.c | 1 +
+ 3 files changed, 10 insertions(+)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 67797c67093b..4bf88fa5b55d 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -29,6 +29,9 @@
- #include <linux/init.h>
- #include <linux/rculist.h>
+diff --git a/arch/x86/kernel/msr.c b/arch/x86/kernel/msr.c
+index 3db2252b958d..1547be359d7f 100644
+--- a/arch/x86/kernel/msr.c
++++ b/arch/x86/kernel/msr.c
+@@ -34,6 +34,7 @@
+ #include <linux/notifier.h>
+ #include <linux/uaccess.h>
+ #include <linux/gfp.h>
++#include <linux/security.h>
  
-+#ifdef CONFIG_NETLABEL
-+struct netlbl_lsm_secattr;
-+#endif
- /**
-  * union security_list_options - Linux Security Module hook function list
-  *
-@@ -1432,6 +1435,10 @@
-  * @bpf_prog_free_security:
-  *	Clean up the security information stored inside bpf prog.
-  *
-+ * Security hooks for network labeling (Netlabel) operations.
-+ *
-+ * @socket_netlbl_secattr:
-+ *	Report the netlabel attributes this module wants for this socket.
-  */
- union security_list_options {
- 	int (*binder_set_context_mgr)(struct task_struct *mgr);
-@@ -1788,6 +1795,11 @@ union security_list_options {
- 	int (*bpf_prog_alloc_security)(struct bpf_prog_aux *aux);
- 	void (*bpf_prog_free_security)(struct bpf_prog_aux *aux);
- #endif /* CONFIG_BPF_SYSCALL */
-+#ifdef CONFIG_NETLABEL
-+	void (*socket_netlbl_secattr)(struct sock *sk,
-+				      struct netlbl_lsm_secattr **secattr,
-+				      int *set);
-+#endif
- };
+ #include <asm/cpufeature.h>
+ #include <asm/msr.h>
+@@ -79,6 +80,10 @@ static ssize_t msr_write(struct file *file, const char __user *buf,
+ 	int err = 0;
+ 	ssize_t bytes = 0;
  
- struct security_hook_heads {
-@@ -2025,6 +2037,9 @@ struct security_hook_heads {
- 	struct hlist_head bpf_prog_alloc_security;
- 	struct hlist_head bpf_prog_free_security;
- #endif /* CONFIG_BPF_SYSCALL */
-+#ifdef CONFIG_NETLABEL
-+	struct hlist_head socket_netlbl_secattr;
-+#endif
- } __randomize_layout;
++	err = security_locked_down(LOCKDOWN_MSR);
++	if (err)
++		return err;
++
+ 	if (count % 8)
+ 		return -EINVAL;	/* Invalid chunk size */
  
- /*
+@@ -130,6 +135,9 @@ static long msr_ioctl(struct file *file, unsigned int ioc, unsigned long arg)
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		err = security_locked_down(LOCKDOWN_MSR);
++		if (err)
++			break;
+ 		err = wrmsr_safe_regs_on_cpu(cpu, regs);
+ 		if (err)
+ 			break;
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 0e699d4ed13a..c234d881c206 100644
+index 79250b2ffb8f..155ff026eca4 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -1934,5 +1934,14 @@ static inline void security_bpf_prog_free(struct bpf_prog_aux *aux)
- #endif /* CONFIG_SECURITY */
- #endif /* CONFIG_BPF_SYSCALL */
- 
-+#ifdef CONFIG_NETLABEL
-+extern int security_reconcile_netlbl(struct sock *sk);
-+#else
-+static inline int security_reconcile_netlbl(struct sock *sk)
-+{
-+	return 0;
-+}
-+#endif
-+
- #endif /* ! __LINUX_SECURITY_H */
- 
-diff --git a/security/security.c b/security/security.c
-index e726fc7c6712..bfe40c11f5bf 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -34,6 +34,9 @@
- #include <linux/binfmts.h>
- #include <net/flow.h>
- #include <net/sock.h>
-+#ifdef CONFIG_NETLABEL
-+#include <net/netlabel.h>
-+#endif
- 
- #define MAX_LSM_EVM_XATTR	2
- 
-@@ -3003,3 +3006,50 @@ void security_bpf_prog_free(struct bpf_prog_aux *aux)
- 	call_void_hook(bpf_prog_free_security, aux);
- }
- #endif /* CONFIG_BPF_SYSCALL */
-+
-+#ifdef CONFIG_NETLABEL
-+int security_reconcile_netlbl(struct sock *sk)
-+{
-+	struct netlbl_lsm_secattr *prev = NULL;
-+	struct netlbl_lsm_secattr *this = NULL;
-+	int prev_set = 0;
-+	int this_set = 0;
-+	struct security_hook_list *hp;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.socket_netlbl_secattr,
-+				list) {
-+		hp->hook.socket_netlbl_secattr(sk, &this, &this_set);
-+		if (this_set == 0 || this == NULL)
-+			continue;
-+		if (prev != NULL) {
-+			/*
-+			 * Both unlabeled is easily acceptable.
-+			 */
-+			if (prev_set == NETLBL_NLTYPE_UNLABELED &&
-+			    this_set == NETLBL_NLTYPE_UNLABELED)
-+				continue;
-+			/*
-+			 * The nltype being different means that
-+			 * the secattrs aren't comparible. Except
-+			 * that ADDRSELECT means that couldn't know
-+			 * when the socket was created.
-+			 */
-+			if (prev_set != this_set &&
-+			    prev_set != NETLBL_NLTYPE_ADDRSELECT &&
-+			    this_set != NETLBL_NLTYPE_ADDRSELECT)
-+				return -EACCES;
-+			/*
-+			 * Count on the Netlabel system's judgement.
-+			 */
-+			if (!netlbl_secattr_equal(prev, this))
-+				return -EACCES;
-+		}
-+		prev = this;
-+		prev_set = this_set;
-+	}
-+	/*
-+	 * No conflicts have been found.
-+	 */
-+	return 0;
-+}
-+#endif /* CONFIG_NETLABEL */
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 91ef2ae77abb..48468a4b478c 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6887,6 +6887,9 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bpf_map_free_security, selinux_bpf_map_free),
- 	LSM_HOOK_INIT(bpf_prog_free_security, selinux_bpf_prog_free),
- #endif
-+#ifdef CONFIG_NETLABEL
-+	LSM_HOOK_INIT(socket_netlbl_secattr, selinux_socket_netlbl_secattr),
-+#endif
+@@ -109,6 +109,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_HIBERNATION,
+ 	LOCKDOWN_PCI_ACCESS,
+ 	LOCKDOWN_IOPORT,
++	LOCKDOWN_MSR,
+ 	LOCKDOWN_INTEGRITY_MAX,
+ 	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
- 
- static __init int selinux_init(void)
-diff --git a/security/selinux/include/netlabel.h b/security/selinux/include/netlabel.h
-index 8671de09c363..b316c62e7bcc 100644
---- a/security/selinux/include/netlabel.h
-+++ b/security/selinux/include/netlabel.h
-@@ -69,6 +69,9 @@ int selinux_netlbl_socket_setsockopt(struct socket *sock,
- int selinux_netlbl_socket_connect(struct sock *sk, struct sockaddr *addr);
- int selinux_netlbl_socket_connect_locked(struct sock *sk,
- 					 struct sockaddr *addr);
-+void selinux_socket_netlbl_secattr(struct sock *sk,
-+				   struct netlbl_lsm_secattr **secattr,
-+				   int *set);
- 
- #else
- static inline void selinux_netlbl_cache_invalidate(void)
-@@ -165,6 +168,10 @@ static inline int selinux_netlbl_socket_connect_locked(struct sock *sk,
- {
- 	return 0;
- }
-+static inline void selinux_socket_netlbl_secattr(struct sock *sk,
-+					struct netlbl_lsm_secattr **secattr)
-+{
-+}
- #endif /* CONFIG_NETLABEL */
- 
- #endif
-diff --git a/security/selinux/netlabel.c b/security/selinux/netlabel.c
-index 56e780340114..0f50a646c8cd 100644
---- a/security/selinux/netlabel.c
-+++ b/security/selinux/netlabel.c
-@@ -642,3 +642,12 @@ int selinux_netlbl_socket_connect(struct sock *sk, struct sockaddr *addr)
- 
- 	return rc;
- }
-+
-+void selinux_socket_netlbl_secattr(struct sock *sk,
-+				   struct netlbl_lsm_secattr **secattr,
-+				   int *set)
-+{
-+	struct sk_security_struct *sksec = selinux_sock(sk);
-+	*secattr = sksec->nlbl_secattr;
-+	*set = sksec->nlbl_set;
-+}
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 87c81cbc8c67..122c13604d28 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4572,6 +4572,14 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
- 	}
- 	return 0;
- }
-+void smack_socket_netlbl_secattr(struct sock *sk,
-+				 struct netlbl_lsm_secattr **secattr,
-+				 int *set)
-+{
-+	struct socket_smack *ssp = smack_sock(sk);
-+	*secattr = &ssp->smk_out->smk_netlabel;
-+	*set = ssp->smk_set;
-+}
- 
- struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
- 	.lbs_cred = sizeof(struct task_smack),
-@@ -4733,6 +4741,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_copy_up, smack_inode_copy_up),
- 	LSM_HOOK_INIT(inode_copy_up_xattr, smack_inode_copy_up_xattr),
- 	LSM_HOOK_INIT(dentry_create_files_as, smack_dentry_create_files_as),
-+	LSM_HOOK_INIT(socket_netlbl_secattr, smack_socket_netlbl_secattr),
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index 316f7cf4e996..d99c0bee739d 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -24,6 +24,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_HIBERNATION] = "hibernation",
+ 	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
+ 	[LOCKDOWN_IOPORT] = "raw io port access",
++	[LOCKDOWN_MSR] = "raw MSR access",
+ 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+ 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
  };
- 
- 
 -- 
-2.20.1
+2.22.0.770.g0f2c4a37fd-goog
 
