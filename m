@@ -2,120 +2,193 @@ Return-Path: <SRS0=ikEQ=WE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 248D4C32754
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 10:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D65C433FF
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 11:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDA9B2187F
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 10:33:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kvb8v7YR";
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dQITqwMc"
+	by mail.kernel.org (Postfix) with ESMTP id 8410F21881
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 11:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565262773;
+	bh=ZDXHOde0KsNMDKdq05cYqZYUO/lXGKFSmasR4po5Flk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=fBqropVsEbF/6IktAwpOzIVwUWAO6rR+QP3SUvTIENj2+O0FUOU/6MMeXyWXK8Ppf
+	 d1+Ji36sPM/Ck5D/M/jVGeA1V8g1wnnzEm/fgW82k5DytUpSRrFVxKDkKHz9QGdbqG
+	 iXqdogmRZVCNYtSpNuT1DTKeut9JvzeiNwkHu58c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731936AbfHHKdf (ORCPT
+        id S1730722AbfHHLMx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Aug 2019 06:33:35 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56120 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731038AbfHHKde (ORCPT
+        Thu, 8 Aug 2019 07:12:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726721AbfHHLMw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Aug 2019 06:33:34 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x78ASfUh040131;
-        Thu, 8 Aug 2019 10:33:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=owtx2/r1kl43RHps8TvfElN1G7GWDwn2fAmjeYOGRYw=;
- b=kvb8v7YR/VtEdWIORrB6EUE91dj6mxUqENm1/mN4hfxluTpVf7csUj/Nvyh1Gqiv0+hN
- jW3w4fxikjK4CjHqGFvK2GLA8BtnbPM8EDropcnIG68L8z3A15Yi+xvw9Q36Ca8XGaax
- UAHn1+eQPBTcMBhVGyvKBoOEWFgQwC507KeJcmnYvbeeJejSLE9FncNfG2FWJP4jjX0G
- kyAfFS4Ty6OuvROVqTn5EjAxtdX/vvZWLqrMelQdFCG1Ms8B+vUN7/pJRjIPsES8XVqA
- LEw16CJuM3zVHOiXbHtxTO6APhC7yKBkfymZlhTJDDBZ5jhYI96nhKN/LsPqdYnRPiX4 XQ== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=owtx2/r1kl43RHps8TvfElN1G7GWDwn2fAmjeYOGRYw=;
- b=dQITqwMcqzLkhSPmwxS8Od4xy5SDUO+VfnVXpwvoDY1eKBVT/beZ9GWypsqNjNnp8Bcb
- rrI18qTdg5Fxl/354KVT5t1JbpIM9htcs5SqaBLezHMcHV5+LovXiqy12eQKP1mgf6Qk
- 7jFjGoYAp9y3HEY3BKpI6bX4XwhShQ/CpoH6V1v9Jt7E9cE3/QnYv48M2dVIniA0LPcm
- Z0600/esjnq7OqmhCDeDC8IiM0+gQLUzWQs1RVUY3b1PUStvtZUiiWHZ5spRuEUHTlQW
- IQsvQOgEq229B8VcFe00RcgIIVaOSZwV/y4oVUt/AbJCmyBs9b5GA70GDFM/K6q7dtjv Lg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2u8hgp0841-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 08 Aug 2019 10:33:20 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x78AWZld022152;
-        Thu, 8 Aug 2019 10:33:20 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2u7668xafb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 08 Aug 2019 10:33:20 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x78AXIoW030844;
-        Thu, 8 Aug 2019 10:33:18 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 08 Aug 2019 03:33:17 -0700
-Date:   Thu, 8 Aug 2019 13:33:10 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] ima: Fix a use after free in ima_read_modsig()
-Message-ID: <20190808103310.GC30506@mwanda>
+        Thu, 8 Aug 2019 07:12:52 -0400
+Received: from linux-8ccs (nat.nue.novell.com [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A40FD21874;
+        Thu,  8 Aug 2019 11:12:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565262771;
+        bh=ZDXHOde0KsNMDKdq05cYqZYUO/lXGKFSmasR4po5Flk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HnM9Wc90YM29ZH0HsJTg6BT1xUUBYJFlXBHMSQP4C6Qg6qULAaIJ7+RvSj36Ll4ZH
+         pip5lWkznBXJm04mQOaSNOmtjgQ3GlLh1xPe2zy2hzR/lnuKNBbZE8wGXuRX5B6/FB
+         Y92EOa2fXZVN+OvdEUJTO+ObLhI1pyb9z9Ahc3g0=
+Date:   Thu, 8 Aug 2019 13:12:46 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH V38 19/29] Lock down module params that specify hardware
+ parameters (eg. ioport)
+Message-ID: <20190808111246.GA29211@linux-8ccs>
+References: <20190808000721.124691-1-matthewgarrett@google.com>
+ <20190808000721.124691-20-matthewgarrett@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20190808000721.124691-20-matthewgarrett@google.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9342 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908080115
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9342 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908080115
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This code frees "hdr" and then dereferences it on the next line to get
-the error code.
++++ Matthew Garrett [07/08/19 17:07 -0700]:
+>From: David Howells <dhowells@redhat.com>
+>
+>Provided an annotation for module parameters that specify hardware
+>parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
+>dma buffers and other types).
+>
+>Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+>Signed-off-by: David Howells <dhowells@redhat.com>
+>Signed-off-by: Matthew Garrett <mjg59@google.com>
+>Reviewed-by: Kees Cook <keescook@chromium.org>
+>Cc: Jessica Yu <jeyu@kernel.org>
+>---
+> include/linux/security.h     |  1 +
+> kernel/params.c              | 27 ++++++++++++++++++++++-----
+> security/lockdown/lockdown.c |  1 +
+> 3 files changed, 24 insertions(+), 5 deletions(-)
+>
+>diff --git a/include/linux/security.h b/include/linux/security.h
+>index 8f7048395114..43fa3486522b 100644
+>--- a/include/linux/security.h
+>+++ b/include/linux/security.h
+>@@ -113,6 +113,7 @@ enum lockdown_reason {
+> 	LOCKDOWN_ACPI_TABLES,
+> 	LOCKDOWN_PCMCIA_CIS,
+> 	LOCKDOWN_TIOCSSERIAL,
+>+	LOCKDOWN_MODULE_PARAMETERS,
+> 	LOCKDOWN_INTEGRITY_MAX,
+> 	LOCKDOWN_CONFIDENTIALITY_MAX,
+> };
+>diff --git a/kernel/params.c b/kernel/params.c
+>index cf448785d058..35f138fce762 100644
+>--- a/kernel/params.c
+>+++ b/kernel/params.c
+>@@ -12,6 +12,7 @@
+> #include <linux/err.h>
+> #include <linux/slab.h>
+> #include <linux/ctype.h>
+>+#include <linux/security.h>
+>
+> #ifdef CONFIG_SYSFS
+> /* Protects all built-in parameters, modules use their own param_lock */
+>@@ -96,13 +97,19 @@ bool parameq(const char *a, const char *b)
+> 	return parameqn(a, b, strlen(a)+1);
+> }
+>
+>-static void param_check_unsafe(const struct kernel_param *kp)
+>+static bool param_check_unsafe(const struct kernel_param *kp)
+> {
+>+	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
+>+	    security_locked_down(LOCKDOWN_MODULE_PARAMETERS))
+>+		return false;
+>+
+> 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+> 		pr_notice("Setting dangerous option %s - tainting kernel\n",
+> 			  kp->name);
+> 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+> 	}
+>+
+>+	return true;
+> }
+>
+> static int parse_one(char *param,
+>@@ -132,8 +139,10 @@ static int parse_one(char *param,
+> 			pr_debug("handling %s with %p\n", param,
+> 				params[i].ops->set);
+> 			kernel_param_lock(params[i].mod);
+>-			param_check_unsafe(&params[i]);
+>-			err = params[i].ops->set(val, &params[i]);
+>+			if (param_check_unsafe(&params[i]))
+>+				err = params[i].ops->set(val, &params[i]);
+>+			else
+>+				err = -EPERM;
+> 			kernel_param_unlock(params[i].mod);
+> 			return err;
+> 		}
+>@@ -541,6 +550,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
+> 	return count;
+> }
+>
+>+#ifdef CONFIG_MODULES
+>+#define mod_name(mod) ((mod)->name)
+>+#else
+>+#define mod_name(mod) "unknown"
+>+#endif
+>+
 
-Fixes: 39b07096364a ("ima: Implement support for module-style appended signatures")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- security/integrity/ima/ima_modsig.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hm, I don't think mod_name is used anywhere?
 
-diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-index c412e31d1714..d106885cc495 100644
---- a/security/integrity/ima/ima_modsig.c
-+++ b/security/integrity/ima/ima_modsig.c
-@@ -91,8 +91,9 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
- 
- 	hdr->pkcs7_msg = pkcs7_parse_message(buf + buf_len, sig_len);
- 	if (IS_ERR(hdr->pkcs7_msg)) {
-+		rc = PTR_ERR(hdr->pkcs7_msg);
- 		kfree(hdr);
--		return PTR_ERR(hdr->pkcs7_msg);
-+		return rc;
- 	}
- 
- 	memcpy(hdr->raw_pkcs7, buf + buf_len, sig_len);
--- 
-2.20.1
+But other than that:
 
+Acked-by: Jessica Yu <jeyu@kernel.org>
+
+Thanks!
+
+Jessica
+
+> /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
+> static ssize_t param_attr_store(struct module_attribute *mattr,
+> 				struct module_kobject *mk,
+>@@ -553,8 +568,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
+> 		return -EPERM;
+>
+> 	kernel_param_lock(mk->mod);
+>-	param_check_unsafe(attribute->param);
+>-	err = attribute->param->ops->set(buf, attribute->param);
+>+	if (param_check_unsafe(attribute->param))
+>+		err = attribute->param->ops->set(buf, attribute->param);
+>+	else
+>+		err = -EPERM;
+> 	kernel_param_unlock(mk->mod);
+> 	if (!err)
+> 		return len;
+>diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+>index 00a3a6438dd2..5177938cfa0d 100644
+>--- a/security/lockdown/lockdown.c
+>+++ b/security/lockdown/lockdown.c
+>@@ -28,6 +28,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+> 	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
+> 	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
+> 	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
+>+	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
+> 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+> 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+> };
+>-- 
+>2.22.0.770.g0f2c4a37fd-goog
+>
