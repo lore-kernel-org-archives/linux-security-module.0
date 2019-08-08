@@ -2,86 +2,110 @@ Return-Path: <SRS0=ikEQ=WE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 362D3C0650F
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 11:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB873C0650F
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 12:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 025C521880
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 11:55:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565265342;
-	bh=ajExdD9MvUPvivWKAOCCP3Sh0ZevjX8wHl40d2Wi3pw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
-	b=kh8b1aceXRHDE8sn1+8F+Y6UkOOQIYbOEYXbNKXn/8154MRVk6iDGK2mEKfvOMeuE
-	 A83UpSQf0DP8ULapwdAiHjinzZBR8P4CbDKmyodqXFjMtDxLcLWWVQKEoKVs96fyhE
-	 W8tYWZO2nTRSrqiqP/sWCJxrrPdFTQbTucEwmyVY=
+	by mail.kernel.org (Postfix) with ESMTP id BE0AA204EC
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 12:27:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pK2Jy2aJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbfHHLzl (ORCPT
+        id S1732346AbfHHM1P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Aug 2019 07:55:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbfHHLzl (ORCPT
+        Thu, 8 Aug 2019 08:27:15 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37633 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729112AbfHHM1L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Aug 2019 07:55:41 -0400
-Received: from localhost.localdomain (ool-18bba523.dyn.optonline.net [24.187.165.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8A7621874;
-        Thu,  8 Aug 2019 11:55:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565265340;
-        bh=ajExdD9MvUPvivWKAOCCP3Sh0ZevjX8wHl40d2Wi3pw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=WQZS0gjA5IFKfD6MwKv4d7aU6i1/Nv24C2lUrPTxl/84BjOJ4O8PLUDINcaseMng0
-         +HNZ1fcel3pNCa2w0QcnzUe3MT8+1Qyf59m/HdpXCky07wBxGpqYryXImV2uV+sR0Z
-         IDSP11tG3TVNULp5a1f9UZ4N5EF0K2Bx9nBoIkPI=
-Message-ID: <1565265338.4077.1.camel@kernel.org>
-Subject: Re: [PATCH] ima: Fix a use after free in ima_read_modsig()
-From:   Mimi Zohar <zohar@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Thu, 8 Aug 2019 08:27:11 -0400
+Received: by mail-lj1-f194.google.com with SMTP id z28so34490637ljn.4
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Aug 2019 05:27:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LJoQH6xbNoByXFD03CQzff1T1rg3XHHfexy4zm58VFs=;
+        b=pK2Jy2aJCqvL6Zbsse9R6qW+16L7rOEkySHszCEBs5F0VKRotPrPyu44jyyDIClbQQ
+         3DXllrjriP90L6RaVglWIEDATs2iioGY3o/+TzwopWNuXqtMPsTNpy1XfXKhSr8pH2AI
+         PmKanKd9U5CeLi80hdvEiobNCfwIbFdEuMJ60bzrJ9LAfk/2OYiAurZUw0qcixF4M5SE
+         YcUWAOtvqaMQSuC25S5dtrp2wI4qSjIkU4XQisSWyRh30It0AZ85X2drJbvJNBnGIRzL
+         Z6OeCrSjtn5x6V4mqIwHu4iZR4MPFncMiR6jAKvSTmHx2mMzGxStUZG6zRF4OiFk7FmD
+         /3Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LJoQH6xbNoByXFD03CQzff1T1rg3XHHfexy4zm58VFs=;
+        b=kcEbjoz82+h36qJFG54Yqo+FzFRqgAC8Q/MAB6SH56T59pA9VxLQy/LE4oT/Eynt74
+         8fUKkWwdL1UwV0OerHTtlPeuZFIcJcjn+FCJQjsEa5f8CWVX4CZigUKp6SBXOGNezmbZ
+         QlexxO+kIth6V6Mp+K9whX3YEBLGyqxBGuTyC0LpP/cRaWVtHMqldecp0Gck5bxEV/YW
+         1dQfDKcVBjCygkdPV3NTS69idVkPX72RUFCjmsM8d7MnHuj8rEDCON/OupT2VeuSFvo6
+         wH+CCmjia0aVdKEVh1nUoNtP0WTFH22/vzRa7Fs+2um6oP9NJvi/xvgJ0VaR02Ajj7iY
+         nhJg==
+X-Gm-Message-State: APjAAAXAaE7B4zunLrv5/6Mq7Pm/TbTnJ0GFbS1K6Zk8Wif76Yl1Josa
+        RtcSh/BsYZxzB0OqllRXZdJih2fEOrSjOhS+JWCqag==
+X-Google-Smtp-Source: APXvYqynn5VMST3cneWTKIKRfdQOUrgp2WS4DuM61xZXzMCVt2m7Y/3Qm9PGybsLU6uCQeZXVn92r6kYkU7iqFaN4is=
+X-Received: by 2002:a2e:4b12:: with SMTP id y18mr7770792lja.238.1565267229165;
+ Thu, 08 Aug 2019 05:27:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <1565098640-12536-1-git-send-email-sumit.garg@linaro.org>
+ <1565098640-12536-2-git-send-email-sumit.garg@linaro.org> <20190807185921.lhdt3ek6tphj33bo@linux.intel.com>
+In-Reply-To: <20190807185921.lhdt3ek6tphj33bo@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Thu, 8 Aug 2019 17:56:57 +0530
+Message-ID: <CAFA6WYPsNuN=F9y+Q0r8-6MQAGGZeKUtRheQgKv3HmE1ViyviA@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 1/3] KEYS: trusted: create trusted keys subsystem
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
+        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Date:   Thu, 08 Aug 2019 07:55:38 -0400
-In-Reply-To: <20190808114549.GJ1935@kadam>
-References: <20190808103310.GC30506@mwanda>
-         <1565263042.4220.25.camel@kernel.org> <20190808114549.GJ1935@kadam>
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2019-08-08 at 14:45 +0300, Dan Carpenter wrote:
-> On Thu, Aug 08, 2019 at 07:17:22AM -0400, Mimi Zohar wrote:
-> > On Thu, 2019-08-08 at 13:33 +0300, Dan Carpenter wrote:
-> > > This code frees "hdr" and then dereferences it on the next line to get
-> > > the error code.
-> > > 
-> > > Fixes: 39b07096364a ("ima: Implement support for module-style appended signatures")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > Thanks, Dan.  Julia already reported this.  Thiago posted a patch last
-> > night.  Just getting to it now.  Can I add your Reviewed-by or Tested-
-> > by?
-> 
-> I haven't seen the other patch so Reviewed-by seems like the wrong
-> thing.  I don't really need any sort of credit.  I'm just going through
-> my backlog of warnings from being out of office.  Perhaps Reported-by?
+On Thu, 8 Aug 2019 at 00:29, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Tue, Aug 06, 2019 at 07:07:18PM +0530, Sumit Garg wrote:
+> > Move existing code to trusted keys subsystem. Also, rename files with
+> > "tpm" as suffix which provides the underlying implementation.
+> >
+> > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+>
+> The name for should be still trusted.ko even if new backends are added.
+> Must be done in order not to break user space.
 
-That works.  FYI, your solution and Thiago's are exactly the same.[1]
+Agree. I think I need to update Makefile as follows:
 
-Mimi
+obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
+trusted-y += trusted-tpm.o
 
-[1] https://lore.kernel.org/linux-integrity/8736ico5ax.fsf@morokweng.localdomain/T/#u
+-Sumit
+
+>
+> Situation is quite similar as when new backends were added to tpm_tis
+> some time ago: MMIO backed implementation was kept as tpm_tis.ko, the
+> core module was named as tpm_tis_core and SPI backed implementation was
+> named as tpm_tis_spi.ko.
+>
+> /Jarkko
