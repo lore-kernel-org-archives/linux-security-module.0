@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB873C0650F
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 12:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C451EC0650F
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 13:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE0AA204EC
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 12:27:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9776B208C3
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 13:21:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pK2Jy2aJ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VnEIalSf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732346AbfHHM1P (ORCPT
+        id S2389872AbfHHNVw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Aug 2019 08:27:15 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37633 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729112AbfHHM1L (ORCPT
+        Thu, 8 Aug 2019 09:21:52 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34530 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389742AbfHHNVv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Aug 2019 08:27:11 -0400
-Received: by mail-lj1-f194.google.com with SMTP id z28so34490637ljn.4
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Aug 2019 05:27:09 -0700 (PDT)
+        Thu, 8 Aug 2019 09:21:51 -0400
+Received: by mail-lf1-f66.google.com with SMTP id b29so59592661lfq.1
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Aug 2019 06:21:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LJoQH6xbNoByXFD03CQzff1T1rg3XHHfexy4zm58VFs=;
-        b=pK2Jy2aJCqvL6Zbsse9R6qW+16L7rOEkySHszCEBs5F0VKRotPrPyu44jyyDIClbQQ
-         3DXllrjriP90L6RaVglWIEDATs2iioGY3o/+TzwopWNuXqtMPsTNpy1XfXKhSr8pH2AI
-         PmKanKd9U5CeLi80hdvEiobNCfwIbFdEuMJ60bzrJ9LAfk/2OYiAurZUw0qcixF4M5SE
-         YcUWAOtvqaMQSuC25S5dtrp2wI4qSjIkU4XQisSWyRh30It0AZ85X2drJbvJNBnGIRzL
-         Z6OeCrSjtn5x6V4mqIwHu4iZR4MPFncMiR6jAKvSTmHx2mMzGxStUZG6zRF4OiFk7FmD
-         /3Eg==
+        bh=yPRSbt/ERroXQ3CLHiXg6WnTxTB+hRN/pv9SKNLhs4Y=;
+        b=VnEIalSfu0SZj1Vm/7X2ReQgboUTXdytq3Ju8ZMCLD0t3tVftiaZQuk+TGh7D/LUAa
+         gaJaZK+auUmyKPLOORwZmJFQiOa1ihPZgxLYmqTdU8rB/57WqFu9TtOa5uA20I7UgE+3
+         hlphlO0UxK7JErrmwkGtDe4+fieeQpbxTcEr9701DA3NfDdfJaSMaDWW6uMdHChjnTxs
+         c7obhEnph33x5gT/xTjbhUcev8i0z9IHueN7LM/Nj0+821pA2r/BLVCjqtKE7qdaOENC
+         ts+fBmh/V6Fk09XKlbD70WrSjLEs1MNWTmkYJYa4UFM30KkQvAf/nYNhcMDAvtHbjAzX
+         tcrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LJoQH6xbNoByXFD03CQzff1T1rg3XHHfexy4zm58VFs=;
-        b=kcEbjoz82+h36qJFG54Yqo+FzFRqgAC8Q/MAB6SH56T59pA9VxLQy/LE4oT/Eynt74
-         8fUKkWwdL1UwV0OerHTtlPeuZFIcJcjn+FCJQjsEa5f8CWVX4CZigUKp6SBXOGNezmbZ
-         QlexxO+kIth6V6Mp+K9whX3YEBLGyqxBGuTyC0LpP/cRaWVtHMqldecp0Gck5bxEV/YW
-         1dQfDKcVBjCygkdPV3NTS69idVkPX72RUFCjmsM8d7MnHuj8rEDCON/OupT2VeuSFvo6
-         wH+CCmjia0aVdKEVh1nUoNtP0WTFH22/vzRa7Fs+2um6oP9NJvi/xvgJ0VaR02Ajj7iY
-         nhJg==
-X-Gm-Message-State: APjAAAXAaE7B4zunLrv5/6Mq7Pm/TbTnJ0GFbS1K6Zk8Wif76Yl1Josa
-        RtcSh/BsYZxzB0OqllRXZdJih2fEOrSjOhS+JWCqag==
-X-Google-Smtp-Source: APXvYqynn5VMST3cneWTKIKRfdQOUrgp2WS4DuM61xZXzMCVt2m7Y/3Qm9PGybsLU6uCQeZXVn92r6kYkU7iqFaN4is=
-X-Received: by 2002:a2e:4b12:: with SMTP id y18mr7770792lja.238.1565267229165;
- Thu, 08 Aug 2019 05:27:09 -0700 (PDT)
+        bh=yPRSbt/ERroXQ3CLHiXg6WnTxTB+hRN/pv9SKNLhs4Y=;
+        b=CvAmIhWdiUEuvK7oDmQKW3BFMMRlQ4jt2QCkJe8zFjW70kjYzRpLhtjy1aaB40m/3Q
+         3zwKJXT53Ax8MQ14Gxw9cfmfTnJxjFQjPZGF07Pq/rq8jNSr4B1tfZ2RzfHGO9uwnuZ/
+         Z0cXEAa/UCsfPFMsogXfJQLOHL01NTX1QZP9f/f/+QgtOoPP/wA9NnsdY7KlKfROjdKb
+         RdrGB4hE7RLAuW54qAOITGRQLAi4dHEQI3DXBexPo2Tkjrj19uAG4BGomgCC3E+S9NjI
+         vqeavZmPV9PWN7L1+2U1o8rEkSVLWT7UMyc5j4vRAgyoJjXK6JcRMAMK30aGmAaGkeAA
+         TEjQ==
+X-Gm-Message-State: APjAAAWUY7aWkIHI05vghkJX90UPkmtHWK6VwpXW2GB4g/EnWGbQrUwV
+        iQ9RJxQ28WOUaKcCmnUa7h2VGSJXRkYlxb/gDpRjhw==
+X-Google-Smtp-Source: APXvYqw4VebWjEwpo3i9J0LRc5h0s+ynpfKok3QYD7qKC4/j06X+QGgIcDtFC+QCcnhYJmwAPh6zR54jEVVZOZgyJm8=
+X-Received: by 2002:ac2:4901:: with SMTP id n1mr9552721lfi.0.1565270510135;
+ Thu, 08 Aug 2019 06:21:50 -0700 (PDT)
 MIME-Version: 1.0
 References: <1565098640-12536-1-git-send-email-sumit.garg@linaro.org>
- <1565098640-12536-2-git-send-email-sumit.garg@linaro.org> <20190807185921.lhdt3ek6tphj33bo@linux.intel.com>
-In-Reply-To: <20190807185921.lhdt3ek6tphj33bo@linux.intel.com>
+ <1565098640-12536-3-git-send-email-sumit.garg@linaro.org> <20190807190320.th4sbnsnmwb7myzx@linux.intel.com>
+In-Reply-To: <20190807190320.th4sbnsnmwb7myzx@linux.intel.com>
 From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Thu, 8 Aug 2019 17:56:57 +0530
-Message-ID: <CAFA6WYPsNuN=F9y+Q0r8-6MQAGGZeKUtRheQgKv3HmE1ViyviA@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 1/3] KEYS: trusted: create trusted keys subsystem
+Date:   Thu, 8 Aug 2019 18:51:38 +0530
+Message-ID: <CAFA6WYN-6MpP2TZQEz49BmjSQiMSqghVFWRZCCY0o1UVad1AFw@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 2/3] KEYS: trusted: move tpm2 trusted keys code
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
         "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
@@ -82,30 +82,45 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 8 Aug 2019 at 00:29, Jarkko Sakkinen
+On Thu, 8 Aug 2019 at 00:33, Jarkko Sakkinen
 <jarkko.sakkinen@linux.intel.com> wrote:
 >
-> On Tue, Aug 06, 2019 at 07:07:18PM +0530, Sumit Garg wrote:
-> > Move existing code to trusted keys subsystem. Also, rename files with
-> > "tpm" as suffix which provides the underlying implementation.
-> >
+> On Tue, Aug 06, 2019 at 07:07:19PM +0530, Sumit Garg wrote:
+> > Move TPM2 trusted keys code to trusted keys subsystem.
+>
+> Missing a long description. The reason is that it is better consolidate
+> all trusted keys code to a single location so that it can be maintained
+> sanely and it should be stated here.
+
+Sure will extend the description.
+
+>
 > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 >
-> The name for should be still trusted.ko even if new backends are added.
-> Must be done in order not to break user space.
+> I would suggest adding at least two commits before this:
+>
+> - A commit that just exports tpm_buf stuff and TPM2 constants to
+>   include/linux
 
-Agree. I think I need to update Makefile as follows:
+Okay, will create a separate patch for this.
 
-obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
-trusted-y += trusted-tpm.o
+> - A commit that just changes the existing TPM 1.x trusted keys
+>   code to use tpm_buf.
+
+It seems to be a functional change which I think requires proper unit
+testing. I am afraid that I don't posses a TPM device to test this and
+also very less conversant with tpm_buf code.
+
+So what I have done here is to rename existing TPM 1.x trusted keys
+code to use tpm1_buf.
+
+And I would be happy to integrate a tested patch if anyone familiar
+could work on this.
 
 -Sumit
 
 >
-> Situation is quite similar as when new backends were added to tpm_tis
-> some time ago: MMIO backed implementation was kept as tpm_tis.ko, the
-> core module was named as tpm_tis_core and SPI backed implementation was
-> named as tpm_tis_spi.ko.
+> These should be before the current 1/3 commit.
 >
 > /Jarkko
