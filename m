@@ -8,67 +8,65 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B79C32751
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8CB3C433FF
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF1EB21873
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:08:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABACE21873
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:08:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FNie7NtB"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HlI7Rts+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389685AbfHHAIM (ORCPT
+        id S2389714AbfHHAIU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Aug 2019 20:08:12 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:34942 "EHLO
+        Wed, 7 Aug 2019 20:08:20 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:45815 "EHLO
         mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389679AbfHHAIL (ORCPT
+        with ESMTP id S2389712AbfHHAIT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Aug 2019 20:08:11 -0400
-Received: by mail-pl1-f201.google.com with SMTP id s21so54322182plr.2
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Aug 2019 17:08:11 -0700 (PDT)
+        Wed, 7 Aug 2019 20:08:19 -0400
+Received: by mail-pl1-f201.google.com with SMTP id y9so54389046plp.12
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Aug 2019 17:08:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=AYLtZ41z1RHlFpOZnl+JGLaHaK4EJ2Av6xB01tUKIjQ=;
-        b=FNie7NtBIlaKsZ9JeO4UTZvAADr/vOE4ouDpyC2J7cEuR+3Dd/thtyVqfU90wTT+vo
-         T2vvtkEsWxarn40J0aEfSMXiYfObRgMgqgUgztiu8Pbe2q9fbtQaVJDwuCKjphmzsbbu
-         JbJkPaTR92GhnTqg0cTjlFVEFW6JZ7kS8ZiskcbWTBawHqcXTOa8Z343LCuIJ6yj0R25
-         V7/fCrcTcBuY7DZS3uJDAarNM8aLzi9UzpZfgm5Z/kVfBv+wML+duudHMtsnSKnUQlfZ
-         SuGJqzbsl7PWKVlBli8s9iWfhiCI5LxLmCzHHNaoKngqFkY8nLlLoeC8/0cL0Snf9wd0
-         NkSQ==
+        bh=FIo2fvd2ZRzAOCkOenwujWvUsEXtgcv+etTkEkyg1xI=;
+        b=HlI7Rts+QtzRW4GLuPztGKD87kPYSJpcD3OcKSF7X6Jeb+mS7V0K0o+ODF2M0pKW/6
+         hoY6BTWys59pq3J8kngkIEDoJ8ojECUgkCBjrcuXzU5T8AXEKSmWLwFa4Jy7mn/EcZ4u
+         RRE/0qOmbsCIC3kJ9SRcwCm+0BZFq2evgpl7Mmuc9q6iwW2hNjJ7riryL9Hzqmp6OuAs
+         GesRAMU2i91ckfgz34XqnR1B+65GbI2mHCxbduG2FfQqEFUm1sOXOXwTRYeKAkJS8Sp7
+         mqVoQHjMSHglXCEX3tU0WQnI3P/41LOjRdnHyq5Unv+q0EPR+Ej9jiXyD0QsqXXsMK6c
+         QTZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=AYLtZ41z1RHlFpOZnl+JGLaHaK4EJ2Av6xB01tUKIjQ=;
-        b=hnsaF6dl/90HPAiCTPPqYruDClAQ6WI3ZaVuhJqsxj4GMUgJ5xxSa+nE48KDLGBu2i
-         1lQ/MPP/KApDB9ZZPVypUoNWje717cCl+frJv+uCLFqeXdbBVdwu+iq0HVVJa5OLtBVH
-         DYiwQsSfF44DxWHjVaAOky0BIhbuocKNppCdBptjAmHDB2CELLuHyFHeaO0No24fa35q
-         x3v5ic978PXU/OzsToz+qv6SkTsZEzlxl0NIP7klKqmJ3pq6OPE/g2yS+OO3nY6MaLTW
-         16kjKy1bTimA7Gy1h/w2+Yv7A5IkqNgtsV7XmmCtGz6Qixc/Wfv2MzoCntOotNFvgWmO
-         WuGQ==
-X-Gm-Message-State: APjAAAXkDLJkdXlzjvtgelJoJCHEhveMXCAWSQSXg7pAfsLlRXntjV/I
-        1fetjAfi3B9K8v8E32+0zuXqrKdQrvGIgozs5kdrQg==
-X-Google-Smtp-Source: APXvYqyY4hPQ+uSwpXLxD3x3XBZHACPHGjdsgDh7wMOUzCkOt1SqtErX3QclbGkE3NIJReG0NbtaFtOgSRkBHvVk1R4mAA==
-X-Received: by 2002:a63:1b56:: with SMTP id b22mr9896383pgm.265.1565222890522;
- Wed, 07 Aug 2019 17:08:10 -0700 (PDT)
-Date:   Wed,  7 Aug 2019 17:07:10 -0700
+        bh=FIo2fvd2ZRzAOCkOenwujWvUsEXtgcv+etTkEkyg1xI=;
+        b=HYLJrQAs5+iV8Pb1cRr2qiFSrZt2Wl5g9ZKG5jVv/240zrHddAs3ZFAdcvN8efvCJy
+         lBhPo3a7weXtJ5FzwSuv9lc/snWmDQUpxmU0SgV2QO64H70j5rpb/C66nvfNiIX6Tk2I
+         NKP3df6pR2TnPCHgLAP3vepKfXipWQs/aIFDo6TtY4m1DgBKwC7k7/N47V3I2q94dJSv
+         mCGsQvB9+pc36RFUvb0Uesk0TBBRYxiVIzHiAe/Lnujr48VCwbHUrzAoJycujTZZDOfD
+         yhP0nlSh7v8eBz/Wz6hAjnApzJUbzBr2lC+rqNKclvLPA2+/Da5FabOB3ruNlZrqWa80
+         mFlQ==
+X-Gm-Message-State: APjAAAUbAZdFlZc2FRG2+u31csCdpu2bYf6SmYXP8qMIZ68xSXd1k9UC
+        h+KyLU0e0QyWBGVUtyzbqxsAaa98In4+PBVy7AQMaQ==
+X-Google-Smtp-Source: APXvYqzKY7wvOvJHauSEDw4LLkZ+RRap1la60w5DLrgKijg8RNHHD9Stn9spETv3/0cCk0lp2pzTJcX639VU3uIGImRybg==
+X-Received: by 2002:a65:458d:: with SMTP id o13mr9885716pgq.34.1565222898530;
+ Wed, 07 Aug 2019 17:08:18 -0700 (PDT)
+Date:   Wed,  7 Aug 2019 17:07:13 -0700
 In-Reply-To: <20190808000721.124691-1-matthewgarrett@google.com>
-Message-Id: <20190808000721.124691-19-matthewgarrett@google.com>
+Message-Id: <20190808000721.124691-22-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190808000721.124691-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-Subject: [PATCH V38 18/29] Lock down TIOCSSERIAL
+Subject: [PATCH V38 21/29] Lock down /proc/kcore
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+        Kees Cook <keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
@@ -76,70 +74,66 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-Lock down TIOCSSERIAL as that can be used to change the ioport and irq
-settings on a serial port.  This only appears to be an issue for the serial
-drivers that use the core serial code.  All other drivers seem to either
-ignore attempts to change port/irq or give an error.
+Disallow access to /proc/kcore when the kernel is locked down to prevent
+access to cryptographic data. This is limited to lockdown
+confidentiality mode and is still permitted in integrity mode.
 
-Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-cc: Jiri Slaby <jslaby@suse.com>
-Cc: linux-serial@vger.kernel.org
 ---
- drivers/tty/serial/serial_core.c | 5 +++++
- include/linux/security.h         | 1 +
- security/lockdown/lockdown.c     | 1 +
+ fs/proc/kcore.c              | 5 +++++
+ include/linux/security.h     | 1 +
+ security/lockdown/lockdown.c | 1 +
  3 files changed, 7 insertions(+)
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 4223cb496764..6e713be1d4e9 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -22,6 +22,7 @@
- #include <linux/serial_core.h>
- #include <linux/delay.h>
- #include <linux/mutex.h>
+diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+index f5834488b67d..ee2c576cc94e 100644
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -31,6 +31,7 @@
+ #include <linux/ioport.h>
+ #include <linux/memory.h>
+ #include <linux/sched/task.h>
 +#include <linux/security.h>
+ #include <asm/sections.h>
+ #include "internal.h"
  
- #include <linux/irq.h>
- #include <linux/uaccess.h>
-@@ -862,6 +863,10 @@ static int uart_set_info(struct tty_struct *tty, struct tty_port *port,
- 		goto check_and_exit;
- 	}
+@@ -545,6 +546,10 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
  
-+	retval = security_locked_down(LOCKDOWN_TIOCSSERIAL);
-+	if (retval && (change_irq || change_port))
-+		goto exit;
+ static int open_kcore(struct inode *inode, struct file *filp)
+ {
++	int ret = security_locked_down(LOCKDOWN_KCORE);
 +
- 	/*
- 	 * Ask the low level driver to verify the settings.
- 	 */
++	if (ret)
++		return ret;
+ 	if (!capable(CAP_SYS_RAWIO))
+ 		return -EPERM;
+ 
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 3773ad09b831..8f7048395114 100644
+index 3f7b6a4cd65a..f0cffd0977d3 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -112,6 +112,7 @@ enum lockdown_reason {
- 	LOCKDOWN_MSR,
- 	LOCKDOWN_ACPI_TABLES,
- 	LOCKDOWN_PCMCIA_CIS,
-+	LOCKDOWN_TIOCSSERIAL,
+@@ -116,6 +116,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_MODULE_PARAMETERS,
+ 	LOCKDOWN_MMIOTRACE,
  	LOCKDOWN_INTEGRITY_MAX,
++	LOCKDOWN_KCORE,
  	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
+ 
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 22482e1b9a77..00a3a6438dd2 100644
+index 37b7d7e50474..c050b82c7f9f 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -27,6 +27,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_MSR] = "raw MSR access",
- 	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
- 	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
-+	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
+@@ -31,6 +31,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
+ 	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
++	[LOCKDOWN_KCORE] = "/proc/kcore access",
  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
  };
+ 
 -- 
 2.22.0.770.g0f2c4a37fd-goog
 
