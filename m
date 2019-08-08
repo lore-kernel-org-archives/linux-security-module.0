@@ -2,93 +2,120 @@ Return-Path: <SRS0=ikEQ=WE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76570C433FF
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 10:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 248D4C32754
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 10:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 481CF2187F
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 10:01:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565258470;
-	bh=CXGx44GqUVtH0apYlJlTI8Umn34XvELg2oJSMNqJIpw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2AY/xCDReP59z1A9eX2x1uZTwYXCi0Jw41hGbA+fxJal2JQxrxU5vYzAD8FzHhCM2
-	 wZ6YCx5YM6NX4DVdThOAY4R5owrr+9jzHgk/dz6e/etxyZK9Ky7j4NWAlMHLuzFZOj
-	 TdRMl3SXFUt9KtpTbDWsO8sqJ422lSmrjM340Zz4=
+	by mail.kernel.org (Postfix) with ESMTP id EDA9B2187F
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 10:33:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kvb8v7YR";
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dQITqwMc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732249AbfHHKBF (ORCPT
+        id S1731936AbfHHKdf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Aug 2019 06:01:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbfHHKBF (ORCPT
+        Thu, 8 Aug 2019 06:33:35 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:56120 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731038AbfHHKde (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Aug 2019 06:01:05 -0400
-Received: from linux-8ccs (charybdis-ext.suse.de [195.135.221.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF54221874;
-        Thu,  8 Aug 2019 10:01:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565258464;
-        bh=CXGx44GqUVtH0apYlJlTI8Umn34XvELg2oJSMNqJIpw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PSjghN36wTkmO+sdaV5suvU5gI8yEJg20nbiyId9rjvm243B3d9VxgVaE4YMkp/DE
-         RHH1k1r9NA2oQEW1edym22OFYv3jLpE1XfzvCWJpsALgmvr3G3yvFI8E7fOqhkfIEY
-         MWcEmat6pET6Wq6VlxpkYDejweSzieKMjQmO4+JY=
-Date:   Thu, 8 Aug 2019 12:01:00 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH V37 04/29] Enforce module signatures if the kernel is
- locked down
-Message-ID: <20190808100059.GA30260@linux-8ccs>
-References: <20190731221617.234725-1-matthewgarrett@google.com>
- <20190731221617.234725-5-matthewgarrett@google.com>
- <20190801142157.GA5834@linux-8ccs>
- <CACdnJusD_9W9tFqwKptDTA8fZU8HrSvsEQhKo0WS9QxLpgz5tA@mail.gmail.com>
+        Thu, 8 Aug 2019 06:33:34 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x78ASfUh040131;
+        Thu, 8 Aug 2019 10:33:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=owtx2/r1kl43RHps8TvfElN1G7GWDwn2fAmjeYOGRYw=;
+ b=kvb8v7YR/VtEdWIORrB6EUE91dj6mxUqENm1/mN4hfxluTpVf7csUj/Nvyh1Gqiv0+hN
+ jW3w4fxikjK4CjHqGFvK2GLA8BtnbPM8EDropcnIG68L8z3A15Yi+xvw9Q36Ca8XGaax
+ UAHn1+eQPBTcMBhVGyvKBoOEWFgQwC507KeJcmnYvbeeJejSLE9FncNfG2FWJP4jjX0G
+ kyAfFS4Ty6OuvROVqTn5EjAxtdX/vvZWLqrMelQdFCG1Ms8B+vUN7/pJRjIPsES8XVqA
+ LEw16CJuM3zVHOiXbHtxTO6APhC7yKBkfymZlhTJDDBZ5jhYI96nhKN/LsPqdYnRPiX4 XQ== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=owtx2/r1kl43RHps8TvfElN1G7GWDwn2fAmjeYOGRYw=;
+ b=dQITqwMcqzLkhSPmwxS8Od4xy5SDUO+VfnVXpwvoDY1eKBVT/beZ9GWypsqNjNnp8Bcb
+ rrI18qTdg5Fxl/354KVT5t1JbpIM9htcs5SqaBLezHMcHV5+LovXiqy12eQKP1mgf6Qk
+ 7jFjGoYAp9y3HEY3BKpI6bX4XwhShQ/CpoH6V1v9Jt7E9cE3/QnYv48M2dVIniA0LPcm
+ Z0600/esjnq7OqmhCDeDC8IiM0+gQLUzWQs1RVUY3b1PUStvtZUiiWHZ5spRuEUHTlQW
+ IQsvQOgEq229B8VcFe00RcgIIVaOSZwV/y4oVUt/AbJCmyBs9b5GA70GDFM/K6q7dtjv Lg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2u8hgp0841-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 08 Aug 2019 10:33:20 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x78AWZld022152;
+        Thu, 8 Aug 2019 10:33:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2u7668xafb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 08 Aug 2019 10:33:20 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x78AXIoW030844;
+        Thu, 8 Aug 2019 10:33:18 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 08 Aug 2019 03:33:17 -0700
+Date:   Thu, 8 Aug 2019 13:33:10 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] ima: Fix a use after free in ima_read_modsig()
+Message-ID: <20190808103310.GC30506@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACdnJusD_9W9tFqwKptDTA8fZU8HrSvsEQhKo0WS9QxLpgz5tA@mail.gmail.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
+X-Mailer: git-send-email haha only kidding
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9342 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908080115
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9342 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908080115
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-+++ Matthew Garrett [01/08/19 13:42 -0700]:
->On Thu, Aug 1, 2019 at 7:22 AM Jessica Yu <jeyu@kernel.org> wrote:
->> Apologies if this was addressed in another patch in your series (I've
->> only skimmed the first few), but what should happen if the kernel is
->> locked down, but CONFIG_MODULE_SIG=n? Or shouldn't CONFIG_SECURITY_LOCKDOWN_LSM
->> depend on CONFIG_MODULE_SIG? Otherwise I think we'll end up calling
->> the empty !CONFIG_MODULE_SIG module_sig_check() stub even though
->> lockdown is enabled.
->
->Hm. Someone could certainly configure their kernel in that way. I'm
->not sure that tying CONFIG_SECURITY_LOCKDOWN_LSM to CONFIG_MODULE_SIG
->is the right solution, since the new LSM approach means that any other
->LSM could also impose the same policy. Perhaps we should just document
->this?
+This code frees "hdr" and then dereferences it on the next line to get
+the error code.
 
-Hi Matthew,
+Fixes: 39b07096364a ("ima: Implement support for module-style appended signatures")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ security/integrity/ima/ima_modsig.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-If you're confident that a hard dependency is not the right approach,
-then perhaps we could add a comment in the Kconfig (You could take a
-look at the comment under MODULE_SIG_ALL in init/Kconfig for an
-example)? If someone is configuring the kernel on their own then it'd
-be nice to let them know, otherwise having a lockdown kernel without
-module signatures would defeat the purpose of lockdown no? :-)
+diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
+index c412e31d1714..d106885cc495 100644
+--- a/security/integrity/ima/ima_modsig.c
++++ b/security/integrity/ima/ima_modsig.c
+@@ -91,8 +91,9 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
+ 
+ 	hdr->pkcs7_msg = pkcs7_parse_message(buf + buf_len, sig_len);
+ 	if (IS_ERR(hdr->pkcs7_msg)) {
++		rc = PTR_ERR(hdr->pkcs7_msg);
+ 		kfree(hdr);
+-		return PTR_ERR(hdr->pkcs7_msg);
++		return rc;
+ 	}
+ 
+ 	memcpy(hdr->raw_pkcs7, buf + buf_len, sig_len);
+-- 
+2.20.1
 
-Thank you,
-
-Jessica
