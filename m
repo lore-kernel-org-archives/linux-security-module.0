@@ -2,270 +2,69 @@ Return-Path: <SRS0=ikEQ=WE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9DF8C32751
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BDAC32754
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B575A21873
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:09:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4095E21874
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Aug 2019 00:09:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qaPMZFsx"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X3UXrNSc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730525AbfHHAH2 (ORCPT
+        id S1730335AbfHHAH0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Aug 2019 20:07:28 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:48497 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730149AbfHHAH2 (ORCPT
+        Wed, 7 Aug 2019 20:07:26 -0400
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:33613 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730145AbfHHAHZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Aug 2019 20:07:28 -0400
-Received: by mail-pl1-f202.google.com with SMTP id i33so54388702pld.15
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Aug 2019 17:07:28 -0700 (PDT)
+        Wed, 7 Aug 2019 20:07:25 -0400
+Received: by mail-pf1-f201.google.com with SMTP id d190so57758577pfa.0
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Aug 2019 17:07:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=51dHsz2VCo9w+VP1Zvpve034pgyEZM98AQeW9IXg4Ow=;
-        b=qaPMZFsxPYlh8hN7E8ZioYbLyoR2pnDjpUUdmvY82bDBN4zqlIczR0U1yBwpU333HZ
-         aSch76HNl1DW8kctots8Mrj8L3EbKtrh9q4nuhBYvc0Z1EOR/JIfl3aZpyWr+C23mn72
-         g9HOt17EpcIbJ7QlgWlERG14acM/xEk9FLARVuCHKSudxWmSL5xub/4seyB3pD+D3Va5
-         DVqZ6FgAeJwHubIPsuex5xOBBNoVqePDedbxGWuOHDJNcURe/7+XlN/ThGoh9NoRdDTI
-         wPFHD2qhLBeMr4Yw29yn97s9LTZi5I4xogrV35LxyTlNL3QoHVm+JfRun+A3NQUgNb5z
-         L03g==
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=RA/AzJFbqTTjRNhYxA2E49Vb11Ruh+1EJHlxTueWjTY=;
+        b=X3UXrNScaPGXcZrnUuHWqeCsi+0ba/hy6lA/tcRliqPEmv+PCWNVtiZ5NkTmWRUfWA
+         FYXYef5PqQjgWqrA3Vaq3/yl3c8J7zWfN2qotCd+nXliqQ0i2psj1dpndL8y7vdKF+12
+         7Xdr5s9Ea5Ci5KdN7azDmW5TRUnbHfuG8I9c+AoBKB+RvTfY0yQYbFsWBLDqu3GrLghj
+         K9sj1BzMDrefvide68vZUJ3BlYFn9ABSac6mhMP7CVWcsO7Jn6iE8Z3HoDCZh+hAhNYD
+         b88UuaMB7nNjBacqWnqCnGNoSLoe+/NjjX1GBfsvhrMfYpU2PccJW3YGI9FjR6URUeMu
+         zzJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=51dHsz2VCo9w+VP1Zvpve034pgyEZM98AQeW9IXg4Ow=;
-        b=BBrRejfQuaqHMBkhSztkV0grjfJ1dPqwg2A12ZbdexnocTvSjx7tn8vdYswNngVWlf
-         06xQtjMqBAkvvHrsDBRd47/DYj9pQwJlW6tUBAil2rZft5y9eqAcrVnY6VNrGrAm11sM
-         6UVknVHCQchOepLZ9Htjn3qvUeZFRYxsDyOX5aMIMrJ+aCVW2Jksd1z9oXLYhuL1yjnP
-         JzqFDPOApRzKPX44i0OpkGu5cKqBxsOQBPB7XR3wBx4G26NjMXoJjqEfTtKIR27CXYFT
-         bZlS9MFL/LZIrFDUHd5DQGeRin7r3tJ9TL/rmeO9NXfSZrBN2RNeuVKhP8KFJ3yqfvy1
-         ANtw==
-X-Gm-Message-State: APjAAAV1ydi06v7Hf6rFQ8m51S0/O8KOXgdrtc8J217kiEnKmkwCC37n
-        wedY6JMfBQu/H78Eys6R8slwAjfL/JlhSES2LPkJXw==
-X-Google-Smtp-Source: APXvYqyXtNAxynYmxfxirHWyIQHSssxHGPLAILeIiaUiKtIaz1Su7soR9o0OnZUQglCEnNkTXXxrxUaj34yGnQgmX6KI1A==
-X-Received: by 2002:a65:52ca:: with SMTP id z10mr10274165pgp.424.1565222847365;
- Wed, 07 Aug 2019 17:07:27 -0700 (PDT)
-Date:   Wed,  7 Aug 2019 17:06:53 -0700
-In-Reply-To: <20190808000721.124691-1-matthewgarrett@google.com>
-Message-Id: <20190808000721.124691-2-matthewgarrett@google.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=RA/AzJFbqTTjRNhYxA2E49Vb11Ruh+1EJHlxTueWjTY=;
+        b=EdXd3slLJ9jlgWLc8/v3ri3GbymE8zsyQXUeNo+tajYeX/n11hU7cjQaA1c1H7XgJL
+         LXK+z2D3vtSdc5WEC0a1KppMgrSFIn/Rr6rmoWDAf7E7n7oUYEoMVP1yCXwy7k/CDeIE
+         uF8FVRVpGUhh7pHoO4qI0Nfag1k7Vv2Yus31H3Hidder58YU+KjqntwXHSnHk+C2ERpn
+         hRvSrRZmYZd0j9xfQ4WH/lddMca2h/vOnviEUHA8lnukeC0WxVDo7LbO0cr8g/Tgxjmh
+         zk4tNp56KcALdlipoNytEieGSQOXTZxqGDkrIGs0/87NuCtUHn/5Zv9clCst6A8t9rbe
+         9yiA==
+X-Gm-Message-State: APjAAAUrq67PBQFkM89ow0/ulFQ3Hjb1UTUb1obXFK6WFSIbjA99VpDw
+        iZpbf5ceM7CmsjWJcZ3VLFkNEC82auUPiDl44l8R1g==
+X-Google-Smtp-Source: APXvYqxt5HteYlNYSyG0H4Bdm+j8ER0YvN1NzjCzMXnO3nx4gpqpTHXi3q+FUGWL6wetdciOWJ3PzX6gavYgbpYrXeQlmg==
+X-Received: by 2002:a65:6096:: with SMTP id t22mr8991690pgu.204.1565222844769;
+ Wed, 07 Aug 2019 17:07:24 -0700 (PDT)
+Date:   Wed,  7 Aug 2019 17:06:52 -0700
+Message-Id: <20190808000721.124691-1-matthewgarrett@google.com>
 Mime-Version: 1.0
-References: <20190808000721.124691-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-Subject: [PATCH V38 01/29] security: Support early LSMs
+Subject: [PATCH V38 00/29] security: Add support for locking down the kernel
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The lockdown module is intended to allow for kernels to be locked down
-early in boot - sufficiently early that we don't have the ability to
-kmalloc() yet. Add support for early initialisation of some LSMs, and
-then add them to the list of names when we do full initialisation later.
-Early LSMs are initialised in link order and cannot be overridden via
-boot parameters, and cannot make use of kmalloc() (since the allocator
-isn't initialised yet).
+Fixed an unused function parameter in patch 19, otherwise identical to
+V37.
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
----
- include/asm-generic/vmlinux.lds.h |  8 ++++-
- include/linux/lsm_hooks.h         |  6 ++++
- include/linux/security.h          |  1 +
- init/main.c                       |  1 +
- security/security.c               | 50 ++++++++++++++++++++++++++-----
- 5 files changed, 57 insertions(+), 9 deletions(-)
-
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index cd28f63bfbc7..dae64600ccbf 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -215,8 +215,13 @@
- 			__start_lsm_info = .;				\
- 			KEEP(*(.lsm_info.init))				\
- 			__end_lsm_info = .;
-+#define EARLY_LSM_TABLE()	. = ALIGN(8);				\
-+			__start_early_lsm_info = .;			\
-+			KEEP(*(.early_lsm_info.init))			\
-+			__end_early_lsm_info = .;
- #else
- #define LSM_TABLE()
-+#define EARLY_LSM_TABLE()
- #endif
- 
- #define ___OF_TABLE(cfg, name)	_OF_TABLE_##cfg(name)
-@@ -627,7 +632,8 @@
- 	ACPI_PROBE_TABLE(timer)						\
- 	THERMAL_TABLE(governor)						\
- 	EARLYCON_TABLE()						\
--	LSM_TABLE()
-+	LSM_TABLE()							\
-+	EARLY_LSM_TABLE()
- 
- #define INIT_TEXT							\
- 	*(.init.text .init.text.*)					\
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index df1318d85f7d..aebb0e032072 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2104,12 +2104,18 @@ struct lsm_info {
- };
- 
- extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
-+extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
- 
- #define DEFINE_LSM(lsm)							\
- 	static struct lsm_info __lsm_##lsm				\
- 		__used __section(.lsm_info.init)			\
- 		__aligned(sizeof(unsigned long))
- 
-+#define DEFINE_EARLY_LSM(lsm)						\
-+	static struct lsm_info __early_lsm_##lsm			\
-+		__used __section(.early_lsm_info.init)			\
-+		__aligned(sizeof(unsigned long))
-+
- #ifdef CONFIG_SECURITY_SELINUX_DISABLE
- /*
-  * Assuring the safety of deleting a security module is up to
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 5f7441abbf42..66a2fcbe6ab0 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -195,6 +195,7 @@ int unregister_blocking_lsm_notifier(struct notifier_block *nb);
- 
- /* prototypes */
- extern int security_init(void);
-+extern int early_security_init(void);
- 
- /* Security operations */
- int security_binder_set_context_mgr(struct task_struct *mgr);
-diff --git a/init/main.c b/init/main.c
-index 96f8d5af52d6..565af7b963e1 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -593,6 +593,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	boot_cpu_init();
- 	page_address_init();
- 	pr_notice("%s", linux_banner);
-+	early_security_init();
- 	setup_arch(&command_line);
- 	mm_init_cpumask(&init_mm);
- 	setup_command_line(command_line);
-diff --git a/security/security.c b/security/security.c
-index 250ee2d76406..90f1e291c800 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -33,6 +33,7 @@
- 
- /* How many LSMs were built into the kernel? */
- #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
-+#define EARLY_LSM_COUNT (__end_early_lsm_info - __start_early_lsm_info)
- 
- struct security_hook_heads security_hook_heads __lsm_ro_after_init;
- static BLOCKING_NOTIFIER_HEAD(blocking_lsm_notifier_chain);
-@@ -277,6 +278,8 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
- static void __init lsm_early_cred(struct cred *cred);
- static void __init lsm_early_task(struct task_struct *task);
- 
-+static int lsm_append(const char *new, char **result);
-+
- static void __init ordered_lsm_init(void)
- {
- 	struct lsm_info **lsm;
-@@ -323,6 +326,26 @@ static void __init ordered_lsm_init(void)
- 	kfree(ordered_lsms);
- }
- 
-+int __init early_security_init(void)
-+{
-+	int i;
-+	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
-+	struct lsm_info *lsm;
-+
-+	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
-+	     i++)
-+		INIT_HLIST_HEAD(&list[i]);
-+
-+	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
-+		if (!lsm->enabled)
-+			lsm->enabled = &lsm_enabled_true;
-+		prepare_lsm(lsm);
-+		initialize_lsm(lsm);
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * security_init - initializes the security framework
-  *
-@@ -330,14 +353,18 @@ static void __init ordered_lsm_init(void)
-  */
- int __init security_init(void)
- {
--	int i;
--	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
-+	struct lsm_info *lsm;
- 
- 	pr_info("Security Framework initializing\n");
- 
--	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
--	     i++)
--		INIT_HLIST_HEAD(&list[i]);
-+	/*
-+	 * Append the names of the early LSM modules now that kmalloc() is
-+	 * available
-+	 */
-+	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
-+		if (lsm->enabled)
-+			lsm_append(lsm->name, &lsm_names);
-+	}
- 
- 	/* Load LSMs in specified order. */
- 	ordered_lsm_init();
-@@ -384,7 +411,7 @@ static bool match_last_lsm(const char *list, const char *lsm)
- 	return !strcmp(last, lsm);
- }
- 
--static int lsm_append(char *new, char **result)
-+static int lsm_append(const char *new, char **result)
- {
- 	char *cp;
- 
-@@ -422,8 +449,15 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
- 		hooks[i].lsm = lsm;
- 		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
- 	}
--	if (lsm_append(lsm, &lsm_names) < 0)
--		panic("%s - Cannot get early memory.\n", __func__);
-+
-+	/*
-+	 * Don't try to append during early_security_init(), we'll come back
-+	 * and fix this up afterwards.
-+	 */
-+	if (slab_is_available()) {
-+		if (lsm_append(lsm, &lsm_names) < 0)
-+			panic("%s - Cannot get early memory.\n", __func__);
-+	}
- }
- 
- int call_blocking_lsm_notifier(enum lsm_event event, void *data)
--- 
-2.22.0.770.g0f2c4a37fd-goog
 
