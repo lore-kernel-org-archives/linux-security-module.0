@@ -2,117 +2,103 @@ Return-Path: <SRS0=E17M=WI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C8AC0650F
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Aug 2019 00:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F22AC0650F
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Aug 2019 00:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0848B2087B
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Aug 2019 00:18:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="j7ccFO9Q"
+	by mail.kernel.org (Postfix) with ESMTP id DB04B2084D
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Aug 2019 00:28:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbfHLASE (ORCPT
+        id S1726144AbfHLA2h (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 11 Aug 2019 20:18:04 -0400
-Received: from gateway20.websitewelcome.com ([192.185.67.41]:43473 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725870AbfHLASE (ORCPT
+        Sun, 11 Aug 2019 20:28:37 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36268 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725855AbfHLA2h (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 11 Aug 2019 20:18:04 -0400
-X-Greylist: delayed 1373 seconds by postgrey-1.27 at vger.kernel.org; Sun, 11 Aug 2019 20:18:03 EDT
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 95FB0400C5814
-        for <linux-security-module@vger.kernel.org>; Sun, 11 Aug 2019 17:51:00 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id wxg5hoVTOdnCewxg5hFMNN; Sun, 11 Aug 2019 18:55:09 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=yKwbRY2mzkRaJ05KgpOoqO2JTy1EKQ64ZrdyRyqRkM8=; b=j7ccFO9QZypPjQRoMtoJIfjAZR
-        7zJ7WUNAzwhixXYm3tR3Fcf0LU/ZSw/7IcF3SQLgAkz4APb0e23Yab0fYiQH+L9nT2xDDWdMwdQHf
-        Z3K+eNfMR62JKvEQsbqPvWjoDtO/s8limUAlMq1jXbmN0RwMzaBXYLCR5wcS2TPUwaXQqeKUkK2ns
-        Mdt7NVJJjAdnBGRaFMBK3QoJ6PFzM1FlfOr5gA0MkVjsHxfut8kICDpPUPsr7cPJ7VH9oSdG6OTZv
-        vAPAThh3fyiy5SMNFhmIRrt36YXw2LydxWiThy+70zfdSDoGQhxeNccwcjAaf8tSrDNZcazSggRd5
-        5oqGOV0w==;
-Received: from [187.192.11.120] (port=51864 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hwxg4-002Qg0-ID; Sun, 11 Aug 2019 18:55:08 -0500
-Date:   Sun, 11 Aug 2019 18:55:07 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] ima: ima_modsig: Fix use-after-free bug in
- ima_read_modsig
-Message-ID: <20190811235507.GA9587@embeddedor>
+        Sun, 11 Aug 2019 20:28:37 -0400
+Received: from ben by shadbolt.decadent.org.uk with local (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1hwyCQ-0006Uw-8J; Mon, 12 Aug 2019 01:28:34 +0100
+Date:   Mon, 12 Aug 2019 01:28:34 +0100
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Reinhard Karcher <reinhard.karcher@gmx.net>,
+        934304@bugs.debian.org
+Message-ID: <20190812002833.2zij7tfsqtpvqu3a@decadent.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="mww77wncbtnfwvu7"
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1hwxg4-002Qg0-ID
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:51864
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+Subject: [PATCH] tracefs: Fix potential null dereference in
+ default_file_open()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on shadbolt.decadent.org.uk)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-hdr is being freed and then dereferenced by accessing hdr->pkcs7_msg
 
-Fix this by copying the value returned by PTR_ERR(hdr->pkcs7_msg) into
-automatic variable err for its safe use after freeing hdr.
+--mww77wncbtnfwvu7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Addresses-Coverity-ID: 1485813 ("Read from pointer after free")
-Fixes: 39b07096364a ("ima: Implement support for module-style appended signatures")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+The "open" operation in struct file_operations is optional, and
+ftrace_event_id_fops does not set it.  In default_file_open(), after
+all other checks have passed, return 0 if the underlying struct
+file_operations does not implement open.
+
+Fixes: 757ff7244358 ("tracefs: Restrict tracefs when the kernel is =E2=80=
+=A6")
+References: https://bugs.debian.org/934304
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- security/integrity/ima/ima_modsig.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/tracefs/inode.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-index c412e31d1714..e681d4326145 100644
---- a/security/integrity/ima/ima_modsig.c
-+++ b/security/integrity/ima/ima_modsig.c
-@@ -91,8 +91,9 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
- 
- 	hdr->pkcs7_msg = pkcs7_parse_message(buf + buf_len, sig_len);
- 	if (IS_ERR(hdr->pkcs7_msg)) {
-+		int err = PTR_ERR(hdr->pkcs7_msg);
- 		kfree(hdr);
--		return PTR_ERR(hdr->pkcs7_msg);
-+		return err;
- 	}
- 
- 	memcpy(hdr->raw_pkcs7, buf + buf_len, sig_len);
--- 
-2.22.0
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index 34da48036e08..761af8ce4015 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -42,6 +42,8 @@ static int default_open_file(struct inode *inode, struct =
+file *filp)
+ 		return ret;
+=20
+ 	real_fops =3D dentry->d_fsdata;
++	if (!real_fops->open)
++		return 0;
+ 	return real_fops->open(inode, filp);
+ }
+=20
 
+--mww77wncbtnfwvu7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl1Qsq0ACgkQ57/I7JWG
+EQmbcQ/9HmlyXyYK4D0LGsF0m6vg9D4oQV2RUlOPguhwIVLn3YAQTIPwOd82Lwb4
+k+LxGKpdA4BQcYxzr/ldYpJoUK9m1RxlI2qI7Jz4Dm3eQJKcVEHxWhtFmwsnn4Hw
+4m9/4bb4RRJ3zzil5gcxo6/cJEjzZSfqR3ZoUtXGxAMzJbhGSxBlQgn4ZWvEm7WR
+d6kV6FO0FLWtQUQWBnTr2x89otSv99K5sjXdBPk6Mj4Bs3Fib8Y6m9Cp9fhn436t
+vaOiX39Bw6j+cq/fbrPiLmmzPvurQrvf7hlsC2zVpVLttotqFZ/3Fiy8YRahVGn3
+DqrTxJtdzF8nGTIzqL6k0TVbpc7AZ53B/Vi/v9DGqc1j/np/YPiJFwEEmVWCMmEm
+AUoIRCCbTUAIvyZa+bYeceR1urI5hmZLlb25ls6YNgbvDIz/jh1NQxY8Ju0lFc+J
+kkRSS1qbbW4z1NKXPfQvvpPQi2G6TK9INi1OTFQeDJWvOKSZyQFhBjxs7wYKe9ES
+6gNrNmHtgry8JZ5yxpLBZkPKytbRK0+YT6alHS0VvqM9JmbI2GF/J6NCpsLAadk6
+F4ic/Yfd3vYboSDmgedRjRX4hul0hNeq8YslMf/irW6+yD6RSjK2EwEtBnWEGrRB
+nAzs4LEvMMarMOzC/KQD/Q8hi0wHCd0d995d8nUeeOL3QXsAq4s=
+=lJvB
+-----END PGP SIGNATURE-----
+
+--mww77wncbtnfwvu7--
