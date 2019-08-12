@@ -2,116 +2,58 @@ Return-Path: <SRS0=E17M=WI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D09C31E40
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Aug 2019 18:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F800C31E40
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Aug 2019 18:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 327A920663
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Aug 2019 18:01:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZSKZGu9u"
+	by mail.kernel.org (Postfix) with ESMTP id 63A4E206C2
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Aug 2019 18:36:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbfHLSBA (ORCPT
+        id S1726424AbfHLSgK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Aug 2019 14:01:00 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46420 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbfHLSBA (ORCPT
+        Mon, 12 Aug 2019 14:36:10 -0400
+Received: from namei.org ([65.99.196.166]:40086 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726200AbfHLSgK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Aug 2019 14:01:00 -0400
-Received: by mail-pl1-f196.google.com with SMTP id c2so48157716plz.13
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2019 11:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dLHj3SvF7hdFloHcZzw0JRHepLz68RfWYQQBFqIVpoE=;
-        b=ZSKZGu9uZuU83ObgLA3GV7f+7r8FCBuGom77yTA2EjQa6b1KGwLPvZB3WjFZxhY0uv
-         VBPL+0EcoSu3OPwEBU0y7YIAXU4EiDTmzrRrlIedyfHBrRX0Ffs8nx7kKd3/UiLj1GRp
-         KWj8zgul9bpoe3vWzhsH+wpBxBBkypTSxePJI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dLHj3SvF7hdFloHcZzw0JRHepLz68RfWYQQBFqIVpoE=;
-        b=rb/CGnyKLhE+KsO7C5Xl1eWOHT77YREJB9WfYPCKomblVcNaoFwupgmFKuX1ogJl0X
-         nohz/j8dRA+WH+YW1HgxGrC9u0oaQ3VRkf/eJpOtZziCpnfu58RzrIcKmbgpXw/HcEge
-         rXaBgH44y0OWyxQALZ7ToCKWt0SAJR7hGd7G8qJhJNQDFyNq3Ilt6aY/Q25/sDzvTQuY
-         7mz4/SIRF/ONqc0RSitPz7ygIOcmzJiYB3IC9Ejk4LBub5tLDF15p+3K9nFSt3XhiIcw
-         4d4wJOiRiEDicGOdWCmXKoJUvLJnC/6cJKsMT4g6GWRtBflVo1qZSoe0K4GPsXMaXksY
-         ECOQ==
-X-Gm-Message-State: APjAAAVLgy6qnLtp6/lXmUjvNspxCsoh6+11B+xDKurwG78qDctGqPqw
-        sZI0dcSFllBw5ngphFAI6QGoVFIFEPw=
-X-Google-Smtp-Source: APXvYqzukm3oQ9XvO8Yn1s3kAIOGCJJP6Oj967+XiHLa9C/MRFG6CElnSJks6BjT7tT2udH6+F+9Fg==
-X-Received: by 2002:a17:902:be12:: with SMTP id r18mr32556196pls.341.1565632860135;
-        Mon, 12 Aug 2019 11:01:00 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b24sm78451510pfd.91.2019.08.12.11.00.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 11:00:59 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 11:00:58 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Matthew Garrett <matthewgarrett@google.com>, kbuild-all@01.org,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>
-Subject: Re: [PATCH] security: fix ptr_ret.cocci warnings
-Message-ID: <201908121100.B6A6F390@keescook>
-References: <201908101444.zkWryFiG%lkp@intel.com>
- <20190810065846.6giywcprz47xbwij@48261080c7f1>
+        Mon, 12 Aug 2019 14:36:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x7CHdH4p014540;
+        Mon, 12 Aug 2019 17:39:17 GMT
+Date:   Tue, 13 Aug 2019 03:39:17 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Matthew Garrett <mjg59@google.com>
+cc:     LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH V38 00/29] security: Add support for locking down the
+ kernel
+In-Reply-To: <CACdnJusx3N_ZoH4=+tqt85K9J5wmUnC-+bTtG_5qSD_TYu74+A@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1908130339130.14197@namei.org>
+References: <20190808000721.124691-1-matthewgarrett@google.com> <alpine.LRH.2.21.1908101608260.25186@namei.org> <CACdnJusx3N_ZoH4=+tqt85K9J5wmUnC-+bTtG_5qSD_TYu74+A@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190810065846.6giywcprz47xbwij@48261080c7f1>
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Aug 10, 2019 at 02:58:46PM +0800, kbuild test robot wrote:
-> From: kbuild test robot <lkp@intel.com>
-> 
-> security/lockdown/lockdown.c:157:1-3: WARNING: PTR_ERR_OR_ZERO can be used
-> 
-> 
->  Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> 
-> Generated by: scripts/coccinelle/api/ptr_ret.cocci
-> 
-> Fixes: 80d14015a8e3 ("security: Add a static lockdown policy LSM")
-> CC: Matthew Garrett <matthewgarrett@google.com>
-> Signed-off-by: kbuild test robot <lkp@intel.com>
+On Mon, 12 Aug 2019, Matthew Garrett wrote:
 
-Acked-by: Kees Cook <keescook@chromium.org>
+> On Fri, Aug 9, 2019 at 11:08 PM James Morris <jmorris@namei.org> wrote:
+> > Please verify and test, as I had to make a few minor fixups for my v5.2
+> > base.
+> 
+> Thanks James - there's a few small fixups required, would you like
+> those as separate patches or should I just send you a fixed copy of
+> the original patchset?
 
--Kees
-
-> ---
-> 
-> tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/jmorris/linux-security.git next-lockdown
-> head:   05ef41e93e1a40d6b2d9846284824ec6f67fe422
-> commit: 80d14015a8e3109f9b5e3e39b0bc78e1c3a1f315 [3/29] security: Add a static lockdown policy LSM
-> 
->  lockdown.c |    5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -154,10 +154,7 @@ static int __init lockdown_secfs_init(vo
->  
->  	dentry = securityfs_create_file("lockdown", 0600, NULL, NULL,
->  					&lockdown_ops);
-> -	if (IS_ERR(dentry))
-> -		return PTR_ERR(dentry);
-> -
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(dentry);
->  }
->  
->  core_initcall(lockdown_secfs_init);
+Given there are a few, an updated copy of the patchset will be best.
 
 -- 
-Kees Cook
+James Morris
+<jmorris@namei.org>
+
