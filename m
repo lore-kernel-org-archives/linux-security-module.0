@@ -2,58 +2,59 @@ Return-Path: <SRS0=o9Ra=WJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23307C32750
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 07:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D287C32750
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 07:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E47B720665
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 07:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBB6320844
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 07:54:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EUdHy4gM"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HNBfjmha"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfHMHxr (ORCPT
+        id S1727900AbfHMHyB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Aug 2019 03:53:47 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41611 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbfHMHxq (ORCPT
+        Tue, 13 Aug 2019 03:54:01 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38479 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727892AbfHMHyA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Aug 2019 03:53:46 -0400
-Received: by mail-pg1-f194.google.com with SMTP id x15so40485427pgg.8
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Aug 2019 00:53:46 -0700 (PDT)
+        Tue, 13 Aug 2019 03:54:00 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e11so265047pga.5
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Aug 2019 00:53:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=BkX27APDVJ4zeW7H5E4Qx7Yc0d0xGm41vKaV5VvGjbc=;
-        b=EUdHy4gMsfvnN4CUa0oecjGACMAqEVtxiUGdmUM3Ngncip9f6n/2Rw3ZJn3X3l9sZS
-         ny7AGcTCFJ27zwjOfnJYgheFkweH5FQbRnDxSUbatFM1XzLPKIrQ0NsauE3UI+Pn2wN4
-         UE/C03Zfv4d623FqJOP5vQnECBcvuG6mCHsddHNdxCQiCpjZsrsiXlkRAF4EwV8bKEuE
-         eDubrM7GZHn2mlNSjuQ8nRtqxC1F6z4Zpxp6mFZ46jTNGRrarGKsv3ypYdN2n9ojSJNd
-         Ysgt6PpD7gEePDOcIc4ocX6twitoDfuOom2ZT+6tneIx2mXRrQjm58Ql21kdt6VTnIo6
-         YyQw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=XiLT8JJGX9uceLIR/eagArmQGE9PBHPG6APlyqXqF3U=;
+        b=HNBfjmhal70YjiBtzQ8XUCmseT2tpX02DvvqFDMQckJFPPM5ZY0+aqNAv8vDMRw7xE
+         4X8bAXRYqG5Tuv0qnrpDa+3Wav/45ed7MrxaBBVMBXkswGUJ4R+jV91ADtQIW3FGVjGp
+         8efgx/1680z/ufTjoQloSQbggUU1h7jvOfEhi0N1/Oxs5xUHkxJ0PCkkQPgSsi8d/xma
+         pCJzkn0MY08ICp6amgdn/CW6M3gG5vFxBxQyX5sckW8YMjcjWogsij9272CYXWP4mtkW
+         XYlwnZL758aXrYRtKoy3VEY/gdZLfHwgS5AwCbgvwvUijQq06vnbdR8uDNW/zz8jtBaP
+         snWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BkX27APDVJ4zeW7H5E4Qx7Yc0d0xGm41vKaV5VvGjbc=;
-        b=eb9KyAMaos/4pNHRKdxkWX3ewN34aBkoGTW6S8yIq3npglHWjZI9snzfPZ/8K2KvJ/
-         0PrKv9/j0SwTSGMPc175IPyfSRAvxssGP1qbKZA2uLHasGJjbXNRRL6p7i96QDpGbZUX
-         QWuOcXoYpE0Wg0FlmPKNq7WObAv4l+Azx259OdOpLjNA5DKKK8ZDa3GxJ8pwpnQJQMBa
-         U2y9J0Pyt4+DK/MfkPsL7rO3IlYpKMuj9vNFFD+SJmNEq2Ub5J3KLhsM4b06oBSByUou
-         gPZft3gr+rfjSNG5jmp9CrksaqFEtTJKkJ6hMsmjv3racLKu4ze9Dj7Nz/0BzGHZSv9b
-         3/lg==
-X-Gm-Message-State: APjAAAVElmi+FonrLK9Pe2FQ5Hr5kkFw7MuH4i2ucHfhrbU2FJWBwbey
-        5rPsH66iILuoryZDXA029DdEYA==
-X-Google-Smtp-Source: APXvYqxRe3kDEnRmKsgK98qrW7tpR2Jo5TKYlmK35RYqch6gNYKDeSUOOqqDMefeWOISDFFAHhX7kQ==
-X-Received: by 2002:a17:90b:8c1:: with SMTP id ds1mr1040437pjb.114.1565682826009;
-        Tue, 13 Aug 2019 00:53:46 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=XiLT8JJGX9uceLIR/eagArmQGE9PBHPG6APlyqXqF3U=;
+        b=o60Bm2xbNmeyuaPectYNRv1K3D6EKtCtsFNG1bAmYjjCUHilXHEk98Hq5jl/xo/KOC
+         /qiytztyLf3zIahZGv7Xn3IIfAHvJDoq6otZSkf+8wmbrgLscMg38yUKX/Cp/ZbHbSHT
+         Tk69sXBKQHkGhCmf18OW26BEsPmg7rXCmzrf4Cib6ldHslCCcs7e6ZcyQBNJXvz9Whjk
+         JWTJczbPwAkgL9Er0jTS2aeMwh4Zu363WLyV6+TkF5+8w9CKur2F19YMXUHLQjHZMNG9
+         xR7Ugr9bdi2X7L+gVWMqrJaTvIg5FKQnd2vrpiIlvyOtHaQEs3UaYFp4E9uhCxUBfJt+
+         YMMw==
+X-Gm-Message-State: APjAAAVVyxRVSkoK/7KHuqpm+p8ZNn9M6UlJ5jQvWtfckFtJr69WS3YW
+        G6aA5fa3cZ7XBTapxNwJtunugA==
+X-Google-Smtp-Source: APXvYqy96iD4zwQ1qvdYDG5n2OkOROyT+m9niDT2LDtjEztXvTvTPFgMnRmT70M359weDccESwhs8A==
+X-Received: by 2002:a17:90a:109:: with SMTP id b9mr986688pjb.112.1565682838995;
+        Tue, 13 Aug 2019 00:53:58 -0700 (PDT)
 Received: from localhost.localdomain ([45.114.72.100])
-        by smtp.gmail.com with ESMTPSA id l25sm131462563pff.143.2019.08.13.00.53.34
+        by smtp.gmail.com with ESMTPSA id l25sm131462563pff.143.2019.08.13.00.53.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 13 Aug 2019 00:53:45 -0700 (PDT)
+        Tue, 13 Aug 2019 00:53:58 -0700 (PDT)
 From:   Sumit Garg <sumit.garg@linaro.org>
 To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
@@ -65,65 +66,611 @@ Cc:     dhowells@redhat.com, herbert@gondor.apana.org.au,
         ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
         linux-kernel@vger.kernel.org, tee-dev@lists.linaro.org,
         Sumit Garg <sumit.garg@linaro.org>
-Subject: [RFC/RFT v4 0/5] Add generic trusted keys framework/subsystem
-Date:   Tue, 13 Aug 2019 13:22:59 +0530
-Message-Id: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
+Subject: [RFC/RFT v4 1/5] tpm: move tpm_buf code to include/linux/
+Date:   Tue, 13 Aug 2019 13:23:00 +0530
+Message-Id: <1565682784-10234-2-git-send-email-sumit.garg@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
+References: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch-set is an outcome of discussion here [1]. It has evolved very
-much since v1 to create, consolidate and generalize trusted keys
-subsystem.
+Move tpm_buf code to common include/linux/tpm.h header so that it can
+be reused via other subsystems like trusted keys etc.
 
-This framework has been tested with trusted keys support provided via TEE
-but I wasn't able to test it with a TPM device as I don't possess one. It
-would be really helpful if others could test this patch-set using a TPM
-device.
+Also rename trusted keys TPM 1.x buffer implementation to tpm1_buf to
+avoid any compilation errors.
 
-[1] https://www.mail-archive.com/linux-doc@vger.kernel.org/msg30591.html
+Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+---
+ drivers/char/tpm/tpm.h  | 214 ------------------------------------------------
+ include/keys/trusted.h  |  12 +--
+ include/linux/tpm.h     | 214 ++++++++++++++++++++++++++++++++++++++++++++++++
+ security/keys/trusted.c |  12 +--
+ 4 files changed, 226 insertions(+), 226 deletions(-)
 
-Changes in v4:
-1. Separate patch for export of tpm_buf code to include/linux/tpm.h
-2. Change TPM1.x trusted keys code to use common tpm_buf
-3. Keep module name as trusted.ko only
-
-Changes in v3:
-
-Move TPM2 trusted keys code to trusted keys subsystem.
-
-Changes in v2:
-
-Split trusted keys abstraction patch for ease of review.
-
-Sumit Garg (5):
-  tpm: move tpm_buf code to include/linux/
-  KEYS: trusted: use common tpm_buf for TPM1.x code
-  KEYS: trusted: create trusted keys subsystem
-  KEYS: trusted: move tpm2 trusted keys code
-  KEYS: trusted: Add generic trusted keys framework
-
- crypto/asymmetric_keys/asym_tpm.c                  |   2 +-
- drivers/char/tpm/tpm-chip.c                        |   1 +
- drivers/char/tpm/tpm-interface.c                   |  56 ---
- drivers/char/tpm/tpm.h                             | 230 -----------
- drivers/char/tpm/tpm2-cmd.c                        | 308 +--------------
- include/keys/trusted-type.h                        |  45 +++
- include/keys/{trusted.h => trusted_tpm.h}          |  61 +--
- include/linux/tpm.h                                | 270 ++++++++++++-
- security/keys/Makefile                             |   2 +-
- security/keys/trusted-keys/Makefile                |   9 +
- security/keys/trusted-keys/trusted-common.c        | 343 ++++++++++++++++
- .../keys/{trusted.c => trusted-keys/trusted-tpm.c} | 437 +++++----------------
- security/keys/trusted-keys/trusted-tpm2.c          | 378 ++++++++++++++++++
- 13 files changed, 1141 insertions(+), 1001 deletions(-)
- rename include/keys/{trusted.h => trusted_tpm.h} (64%)
- create mode 100644 security/keys/trusted-keys/Makefile
- create mode 100644 security/keys/trusted-keys/trusted-common.c
- rename security/keys/{trusted.c => trusted-keys/trusted-tpm.c} (72%)
- create mode 100644 security/keys/trusted-keys/trusted-tpm2.c
-
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index e503ffc..0b5498a 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -25,7 +25,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/tpm.h>
+-#include <linux/highmem.h>
+ #include <linux/tpm_eventlog.h>
+ 
+ #ifdef CONFIG_X86
+@@ -58,123 +57,6 @@ enum tpm_addr {
+ #define TPM_ERR_DISABLED        0x7
+ #define TPM_ERR_INVALID_POSTINIT 38
+ 
+-#define TPM_HEADER_SIZE		10
+-
+-enum tpm2_const {
+-	TPM2_PLATFORM_PCR       =     24,
+-	TPM2_PCR_SELECT_MIN     = ((TPM2_PLATFORM_PCR + 7) / 8),
+-};
+-
+-enum tpm2_timeouts {
+-	TPM2_TIMEOUT_A          =    750,
+-	TPM2_TIMEOUT_B          =   2000,
+-	TPM2_TIMEOUT_C          =    200,
+-	TPM2_TIMEOUT_D          =     30,
+-	TPM2_DURATION_SHORT     =     20,
+-	TPM2_DURATION_MEDIUM    =    750,
+-	TPM2_DURATION_LONG      =   2000,
+-	TPM2_DURATION_LONG_LONG = 300000,
+-	TPM2_DURATION_DEFAULT   = 120000,
+-};
+-
+-enum tpm2_structures {
+-	TPM2_ST_NO_SESSIONS	= 0x8001,
+-	TPM2_ST_SESSIONS	= 0x8002,
+-};
+-
+-/* Indicates from what layer of the software stack the error comes from */
+-#define TSS2_RC_LAYER_SHIFT	 16
+-#define TSS2_RESMGR_TPM_RC_LAYER (11 << TSS2_RC_LAYER_SHIFT)
+-
+-enum tpm2_return_codes {
+-	TPM2_RC_SUCCESS		= 0x0000,
+-	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
+-	TPM2_RC_HANDLE		= 0x008B,
+-	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
+-	TPM2_RC_FAILURE		= 0x0101,
+-	TPM2_RC_DISABLED	= 0x0120,
+-	TPM2_RC_COMMAND_CODE    = 0x0143,
+-	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+-	TPM2_RC_REFERENCE_H0	= 0x0910,
+-	TPM2_RC_RETRY		= 0x0922,
+-};
+-
+-enum tpm2_command_codes {
+-	TPM2_CC_FIRST		        = 0x011F,
+-	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
+-	TPM2_CC_HIERARCHY_CHANGE_AUTH   = 0x0129,
+-	TPM2_CC_CREATE_PRIMARY          = 0x0131,
+-	TPM2_CC_SEQUENCE_COMPLETE       = 0x013E,
+-	TPM2_CC_SELF_TEST	        = 0x0143,
+-	TPM2_CC_STARTUP		        = 0x0144,
+-	TPM2_CC_SHUTDOWN	        = 0x0145,
+-	TPM2_CC_NV_READ                 = 0x014E,
+-	TPM2_CC_CREATE		        = 0x0153,
+-	TPM2_CC_LOAD		        = 0x0157,
+-	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
+-	TPM2_CC_UNSEAL		        = 0x015E,
+-	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
+-	TPM2_CC_CONTEXT_SAVE	        = 0x0162,
+-	TPM2_CC_FLUSH_CONTEXT	        = 0x0165,
+-	TPM2_CC_VERIFY_SIGNATURE        = 0x0177,
+-	TPM2_CC_GET_CAPABILITY	        = 0x017A,
+-	TPM2_CC_GET_RANDOM	        = 0x017B,
+-	TPM2_CC_PCR_READ	        = 0x017E,
+-	TPM2_CC_PCR_EXTEND	        = 0x0182,
+-	TPM2_CC_EVENT_SEQUENCE_COMPLETE = 0x0185,
+-	TPM2_CC_HASH_SEQUENCE_START     = 0x0186,
+-	TPM2_CC_CREATE_LOADED           = 0x0191,
+-	TPM2_CC_LAST		        = 0x0193, /* Spec 1.36 */
+-};
+-
+-enum tpm2_permanent_handles {
+-	TPM2_RS_PW		= 0x40000009,
+-};
+-
+-enum tpm2_capabilities {
+-	TPM2_CAP_HANDLES	= 1,
+-	TPM2_CAP_COMMANDS	= 2,
+-	TPM2_CAP_PCRS		= 5,
+-	TPM2_CAP_TPM_PROPERTIES = 6,
+-};
+-
+-enum tpm2_properties {
+-	TPM_PT_TOTAL_COMMANDS	= 0x0129,
+-};
+-
+-enum tpm2_startup_types {
+-	TPM2_SU_CLEAR	= 0x0000,
+-	TPM2_SU_STATE	= 0x0001,
+-};
+-
+-enum tpm2_cc_attrs {
+-	TPM2_CC_ATTR_CHANDLES	= 25,
+-	TPM2_CC_ATTR_RHANDLE	= 28,
+-};
+-
+-#define TPM_VID_INTEL    0x8086
+-#define TPM_VID_WINBOND  0x1050
+-#define TPM_VID_STM      0x104A
+-
+-enum tpm_chip_flags {
+-	TPM_CHIP_FLAG_TPM2		= BIT(1),
+-	TPM_CHIP_FLAG_IRQ		= BIT(2),
+-	TPM_CHIP_FLAG_VIRTUAL		= BIT(3),
+-	TPM_CHIP_FLAG_HAVE_TIMEOUTS	= BIT(4),
+-	TPM_CHIP_FLAG_ALWAYS_POWERED	= BIT(5),
+-};
+-
+-#define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
+-
+-struct tpm_header {
+-	__be16 tag;
+-	__be32 length;
+-	union {
+-		__be32 ordinal;
+-		__be32 return_code;
+-	};
+-} __packed;
+-
+ #define TPM_TAG_RQU_COMMAND 193
+ 
+ struct	stclear_flags_t {
+@@ -274,102 +156,6 @@ enum tpm_sub_capabilities {
+  * compiler warnings about stack frame size. */
+ #define TPM_MAX_RNG_DATA	128
+ 
+-/* A string buffer type for constructing TPM commands. This is based on the
+- * ideas of string buffer code in security/keys/trusted.h but is heap based
+- * in order to keep the stack usage minimal.
+- */
+-
+-enum tpm_buf_flags {
+-	TPM_BUF_OVERFLOW	= BIT(0),
+-};
+-
+-struct tpm_buf {
+-	struct page *data_page;
+-	unsigned int flags;
+-	u8 *data;
+-};
+-
+-static inline void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
+-{
+-	struct tpm_header *head = (struct tpm_header *)buf->data;
+-
+-	head->tag = cpu_to_be16(tag);
+-	head->length = cpu_to_be32(sizeof(*head));
+-	head->ordinal = cpu_to_be32(ordinal);
+-}
+-
+-static inline int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
+-{
+-	buf->data_page = alloc_page(GFP_HIGHUSER);
+-	if (!buf->data_page)
+-		return -ENOMEM;
+-
+-	buf->flags = 0;
+-	buf->data = kmap(buf->data_page);
+-	tpm_buf_reset(buf, tag, ordinal);
+-	return 0;
+-}
+-
+-static inline void tpm_buf_destroy(struct tpm_buf *buf)
+-{
+-	kunmap(buf->data_page);
+-	__free_page(buf->data_page);
+-}
+-
+-static inline u32 tpm_buf_length(struct tpm_buf *buf)
+-{
+-	struct tpm_header *head = (struct tpm_header *)buf->data;
+-
+-	return be32_to_cpu(head->length);
+-}
+-
+-static inline u16 tpm_buf_tag(struct tpm_buf *buf)
+-{
+-	struct tpm_header *head = (struct tpm_header *)buf->data;
+-
+-	return be16_to_cpu(head->tag);
+-}
+-
+-static inline void tpm_buf_append(struct tpm_buf *buf,
+-				  const unsigned char *new_data,
+-				  unsigned int new_len)
+-{
+-	struct tpm_header *head = (struct tpm_header *)buf->data;
+-	u32 len = tpm_buf_length(buf);
+-
+-	/* Return silently if overflow has already happened. */
+-	if (buf->flags & TPM_BUF_OVERFLOW)
+-		return;
+-
+-	if ((len + new_len) > PAGE_SIZE) {
+-		WARN(1, "tpm_buf: overflow\n");
+-		buf->flags |= TPM_BUF_OVERFLOW;
+-		return;
+-	}
+-
+-	memcpy(&buf->data[len], new_data, new_len);
+-	head->length = cpu_to_be32(len + new_len);
+-}
+-
+-static inline void tpm_buf_append_u8(struct tpm_buf *buf, const u8 value)
+-{
+-	tpm_buf_append(buf, &value, 1);
+-}
+-
+-static inline void tpm_buf_append_u16(struct tpm_buf *buf, const u16 value)
+-{
+-	__be16 value2 = cpu_to_be16(value);
+-
+-	tpm_buf_append(buf, (u8 *) &value2, 2);
+-}
+-
+-static inline void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value)
+-{
+-	__be32 value2 = cpu_to_be32(value);
+-
+-	tpm_buf_append(buf, (u8 *) &value2, 4);
+-}
+-
+ extern struct class *tpm_class;
+ extern struct class *tpmrm_class;
+ extern dev_t tpm_devt;
+diff --git a/include/keys/trusted.h b/include/keys/trusted.h
+index 0071298..841ae11 100644
+--- a/include/keys/trusted.h
++++ b/include/keys/trusted.h
+@@ -17,7 +17,7 @@
+ #define LOAD32N(buffer, offset)	(*(uint32_t *)&buffer[offset])
+ #define LOAD16(buffer, offset)	(ntohs(*(uint16_t *)&buffer[offset]))
+ 
+-struct tpm_buf {
++struct tpm1_buf {
+ 	int len;
+ 	unsigned char data[MAX_BUF_SIZE];
+ };
+@@ -46,7 +46,7 @@ int TSS_checkhmac1(unsigned char *buffer,
+ 			  unsigned int keylen, ...);
+ 
+ int trusted_tpm_send(unsigned char *cmd, size_t buflen);
+-int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce);
++int oiap(struct tpm1_buf *tb, uint32_t *handle, unsigned char *nonce);
+ 
+ #define TPM_DEBUG 0
+ 
+@@ -110,24 +110,24 @@ static inline void dump_tpm_buf(unsigned char *buf)
+ }
+ #endif
+ 
+-static inline void store8(struct tpm_buf *buf, const unsigned char value)
++static inline void store8(struct tpm1_buf *buf, const unsigned char value)
+ {
+ 	buf->data[buf->len++] = value;
+ }
+ 
+-static inline void store16(struct tpm_buf *buf, const uint16_t value)
++static inline void store16(struct tpm1_buf *buf, const uint16_t value)
+ {
+ 	*(uint16_t *) & buf->data[buf->len] = htons(value);
+ 	buf->len += sizeof value;
+ }
+ 
+-static inline void store32(struct tpm_buf *buf, const uint32_t value)
++static inline void store32(struct tpm1_buf *buf, const uint32_t value)
+ {
+ 	*(uint32_t *) & buf->data[buf->len] = htonl(value);
+ 	buf->len += sizeof value;
+ }
+ 
+-static inline void storebytes(struct tpm_buf *buf, const unsigned char *in,
++static inline void storebytes(struct tpm1_buf *buf, const unsigned char *in,
+ 			      const int len)
+ {
+ 	memcpy(buf->data + buf->len, in, len);
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 53c0ea9..130c167 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -21,6 +21,7 @@
+ #include <linux/acpi.h>
+ #include <linux/cdev.h>
+ #include <linux/fs.h>
++#include <linux/highmem.h>
+ #include <crypto/hash_info.h>
+ 
+ #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
+@@ -161,6 +162,219 @@ struct tpm_chip {
+ 	int locality;
+ };
+ 
++#define TPM_HEADER_SIZE		10
++
++enum tpm2_const {
++	TPM2_PLATFORM_PCR       =     24,
++	TPM2_PCR_SELECT_MIN     = ((TPM2_PLATFORM_PCR + 7) / 8),
++};
++
++enum tpm2_timeouts {
++	TPM2_TIMEOUT_A          =    750,
++	TPM2_TIMEOUT_B          =   2000,
++	TPM2_TIMEOUT_C          =    200,
++	TPM2_TIMEOUT_D          =     30,
++	TPM2_DURATION_SHORT     =     20,
++	TPM2_DURATION_MEDIUM    =    750,
++	TPM2_DURATION_LONG      =   2000,
++	TPM2_DURATION_LONG_LONG = 300000,
++	TPM2_DURATION_DEFAULT   = 120000,
++};
++
++enum tpm2_structures {
++	TPM2_ST_NO_SESSIONS	= 0x8001,
++	TPM2_ST_SESSIONS	= 0x8002,
++};
++
++/* Indicates from what layer of the software stack the error comes from */
++#define TSS2_RC_LAYER_SHIFT	 16
++#define TSS2_RESMGR_TPM_RC_LAYER (11 << TSS2_RC_LAYER_SHIFT)
++
++enum tpm2_return_codes {
++	TPM2_RC_SUCCESS		= 0x0000,
++	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
++	TPM2_RC_HANDLE		= 0x008B,
++	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
++	TPM2_RC_FAILURE		= 0x0101,
++	TPM2_RC_DISABLED	= 0x0120,
++	TPM2_RC_COMMAND_CODE    = 0x0143,
++	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
++	TPM2_RC_REFERENCE_H0	= 0x0910,
++	TPM2_RC_RETRY		= 0x0922,
++};
++
++enum tpm2_command_codes {
++	TPM2_CC_FIRST		        = 0x011F,
++	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
++	TPM2_CC_HIERARCHY_CHANGE_AUTH   = 0x0129,
++	TPM2_CC_CREATE_PRIMARY          = 0x0131,
++	TPM2_CC_SEQUENCE_COMPLETE       = 0x013E,
++	TPM2_CC_SELF_TEST	        = 0x0143,
++	TPM2_CC_STARTUP		        = 0x0144,
++	TPM2_CC_SHUTDOWN	        = 0x0145,
++	TPM2_CC_NV_READ                 = 0x014E,
++	TPM2_CC_CREATE		        = 0x0153,
++	TPM2_CC_LOAD		        = 0x0157,
++	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
++	TPM2_CC_UNSEAL		        = 0x015E,
++	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
++	TPM2_CC_CONTEXT_SAVE	        = 0x0162,
++	TPM2_CC_FLUSH_CONTEXT	        = 0x0165,
++	TPM2_CC_VERIFY_SIGNATURE        = 0x0177,
++	TPM2_CC_GET_CAPABILITY	        = 0x017A,
++	TPM2_CC_GET_RANDOM	        = 0x017B,
++	TPM2_CC_PCR_READ	        = 0x017E,
++	TPM2_CC_PCR_EXTEND	        = 0x0182,
++	TPM2_CC_EVENT_SEQUENCE_COMPLETE = 0x0185,
++	TPM2_CC_HASH_SEQUENCE_START     = 0x0186,
++	TPM2_CC_CREATE_LOADED           = 0x0191,
++	TPM2_CC_LAST		        = 0x0193, /* Spec 1.36 */
++};
++
++enum tpm2_permanent_handles {
++	TPM2_RS_PW		= 0x40000009,
++};
++
++enum tpm2_capabilities {
++	TPM2_CAP_HANDLES	= 1,
++	TPM2_CAP_COMMANDS	= 2,
++	TPM2_CAP_PCRS		= 5,
++	TPM2_CAP_TPM_PROPERTIES = 6,
++};
++
++enum tpm2_properties {
++	TPM_PT_TOTAL_COMMANDS	= 0x0129,
++};
++
++enum tpm2_startup_types {
++	TPM2_SU_CLEAR	= 0x0000,
++	TPM2_SU_STATE	= 0x0001,
++};
++
++enum tpm2_cc_attrs {
++	TPM2_CC_ATTR_CHANDLES	= 25,
++	TPM2_CC_ATTR_RHANDLE	= 28,
++};
++
++#define TPM_VID_INTEL    0x8086
++#define TPM_VID_WINBOND  0x1050
++#define TPM_VID_STM      0x104A
++
++enum tpm_chip_flags {
++	TPM_CHIP_FLAG_TPM2		= BIT(1),
++	TPM_CHIP_FLAG_IRQ		= BIT(2),
++	TPM_CHIP_FLAG_VIRTUAL		= BIT(3),
++	TPM_CHIP_FLAG_HAVE_TIMEOUTS	= BIT(4),
++	TPM_CHIP_FLAG_ALWAYS_POWERED	= BIT(5),
++};
++
++#define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
++
++struct tpm_header {
++	__be16 tag;
++	__be32 length;
++	union {
++		__be32 ordinal;
++		__be32 return_code;
++	};
++} __packed;
++
++/* A string buffer type for constructing TPM commands. This is based on the
++ * ideas of string buffer code in security/keys/trusted.h but is heap based
++ * in order to keep the stack usage minimal.
++ */
++
++enum tpm_buf_flags {
++	TPM_BUF_OVERFLOW	= BIT(0),
++};
++
++struct tpm_buf {
++	struct page *data_page;
++	unsigned int flags;
++	u8 *data;
++};
++
++static inline void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
++{
++	struct tpm_header *head = (struct tpm_header *)buf->data;
++
++	head->tag = cpu_to_be16(tag);
++	head->length = cpu_to_be32(sizeof(*head));
++	head->ordinal = cpu_to_be32(ordinal);
++}
++
++static inline int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
++{
++	buf->data_page = alloc_page(GFP_HIGHUSER);
++	if (!buf->data_page)
++		return -ENOMEM;
++
++	buf->flags = 0;
++	buf->data = kmap(buf->data_page);
++	tpm_buf_reset(buf, tag, ordinal);
++	return 0;
++}
++
++static inline void tpm_buf_destroy(struct tpm_buf *buf)
++{
++	kunmap(buf->data_page);
++	__free_page(buf->data_page);
++}
++
++static inline u32 tpm_buf_length(struct tpm_buf *buf)
++{
++	struct tpm_header *head = (struct tpm_header *)buf->data;
++
++	return be32_to_cpu(head->length);
++}
++
++static inline u16 tpm_buf_tag(struct tpm_buf *buf)
++{
++	struct tpm_header *head = (struct tpm_header *)buf->data;
++
++	return be16_to_cpu(head->tag);
++}
++
++static inline void tpm_buf_append(struct tpm_buf *buf,
++				  const unsigned char *new_data,
++				  unsigned int new_len)
++{
++	struct tpm_header *head = (struct tpm_header *)buf->data;
++	u32 len = tpm_buf_length(buf);
++
++	/* Return silently if overflow has already happened. */
++	if (buf->flags & TPM_BUF_OVERFLOW)
++		return;
++
++	if ((len + new_len) > PAGE_SIZE) {
++		WARN(1, "tpm_buf: overflow\n");
++		buf->flags |= TPM_BUF_OVERFLOW;
++		return;
++	}
++
++	memcpy(&buf->data[len], new_data, new_len);
++	head->length = cpu_to_be32(len + new_len);
++}
++
++static inline void tpm_buf_append_u8(struct tpm_buf *buf, const u8 value)
++{
++	tpm_buf_append(buf, &value, 1);
++}
++
++static inline void tpm_buf_append_u16(struct tpm_buf *buf, const u16 value)
++{
++	__be16 value2 = cpu_to_be16(value);
++
++	tpm_buf_append(buf, (u8 *) &value2, 2);
++}
++
++static inline void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value)
++{
++	__be32 value2 = cpu_to_be32(value);
++
++	tpm_buf_append(buf, (u8 *) &value2, 4);
++}
++
+ #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+ 
+ extern int tpm_is_tpm2(struct tpm_chip *chip);
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index 9a94672..0736671 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -395,7 +395,7 @@ static int pcrlock(const int pcrnum)
+ /*
+  * Create an object specific authorisation protocol (OSAP) session
+  */
+-static int osap(struct tpm_buf *tb, struct osapsess *s,
++static int osap(struct tpm1_buf *tb, struct osapsess *s,
+ 		const unsigned char *key, uint16_t type, uint32_t handle)
+ {
+ 	unsigned char enonce[TPM_NONCE_SIZE];
+@@ -430,7 +430,7 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
+ /*
+  * Create an object independent authorisation protocol (oiap) session
+  */
+-int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
++int oiap(struct tpm1_buf *tb, uint32_t *handle, unsigned char *nonce)
+ {
+ 	int ret;
+ 
+@@ -464,7 +464,7 @@ struct tpm_digests {
+  * Have the TPM seal(encrypt) the trusted key, possibly based on
+  * Platform Configuration Registers (PCRs). AUTH1 for sealing key.
+  */
+-static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
++static int tpm_seal(struct tpm1_buf *tb, uint16_t keytype,
+ 		    uint32_t keyhandle, const unsigned char *keyauth,
+ 		    const unsigned char *data, uint32_t datalen,
+ 		    unsigned char *blob, uint32_t *bloblen,
+@@ -579,7 +579,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
+ /*
+  * use the AUTH2_COMMAND form of unseal, to authorize both key and blob
+  */
+-static int tpm_unseal(struct tpm_buf *tb,
++static int tpm_unseal(struct tpm1_buf *tb,
+ 		      uint32_t keyhandle, const unsigned char *keyauth,
+ 		      const unsigned char *blob, int bloblen,
+ 		      const unsigned char *blobauth,
+@@ -670,7 +670,7 @@ static int tpm_unseal(struct tpm_buf *tb,
+ static int key_seal(struct trusted_key_payload *p,
+ 		    struct trusted_key_options *o)
+ {
+-	struct tpm_buf *tb;
++	struct tpm1_buf *tb;
+ 	int ret;
+ 
+ 	tb = kzalloc(sizeof *tb, GFP_KERNEL);
+@@ -696,7 +696,7 @@ static int key_seal(struct trusted_key_payload *p,
+ static int key_unseal(struct trusted_key_payload *p,
+ 		      struct trusted_key_options *o)
+ {
+-	struct tpm_buf *tb;
++	struct tpm1_buf *tb;
+ 	int ret;
+ 
+ 	tb = kzalloc(sizeof *tb, GFP_KERNEL);
 -- 
 2.7.4
 
