@@ -2,181 +2,170 @@ Return-Path: <SRS0=o9Ra=WJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28556C433FF
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 21:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E9DC433FF
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 21:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06AED2067D
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 21:27:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CE672067D
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 21:58:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/O31lke"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbfHMV1X (ORCPT
+        id S1726557AbfHMV63 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Aug 2019 17:27:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53830 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbfHMV1X (ORCPT
+        Tue, 13 Aug 2019 17:58:29 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43303 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbfHMV63 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Aug 2019 17:27:23 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E9730308FB82;
-        Tue, 13 Aug 2019 21:27:21 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-22.phx2.redhat.com [10.3.112.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 950D31F2;
-        Tue, 13 Aug 2019 21:27:13 +0000 (UTC)
-Date:   Tue, 13 Aug 2019 17:27:10 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Aaron Goidel <acgoide@tycho.nsa.gov>
-Cc:     Paul Moore <paul@paul-moore.com>, mortonm@chromium.org,
-        john.johansen@canonical.com, selinux@vger.kernel.org,
-        James Morris <jmorris@namei.org>, luto@amacapital.net,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        Nicholas Franck <nhfran2@tycho.nsa.gov>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Serge Hallyn <serge@hallyn.com>
-Subject: Re: [Non-DoD Source] Re: [RFC PATCH v2] security, capability: pass
- object information to security_capable
-Message-ID: <20190813212710.wimxgfunrijqwuqt@madcap2.tricolour.ca>
-References: <20190801144313.1014-1-acgoide@tycho.nsa.gov>
- <CAHC9VhTSWiz45vh+M+sgu+ePwgFPZ4Mr8GmRZQjsGWQSzkjbLg@mail.gmail.com>
- <b79617aa-2b40-40bf-9f35-0f5be8e34d3f@tycho.nsa.gov>
+        Tue, 13 Aug 2019 17:58:29 -0400
+Received: by mail-pl1-f195.google.com with SMTP id 4so42826609pld.10;
+        Tue, 13 Aug 2019 14:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/Q+5s20XHMc4iuRDKXdxpzS8kzsfDj5amerE2E4kpDU=;
+        b=l/O31lke/LzDTPiubFahE36gGH9b7sra9UhQHBhE9dvYDQQDTH/b2l9ICZlbOngeiG
+         TegryTsW14+xSSlKqxEJGRUqgLx5Ojuqjzmtd6k9b0DMbr12e7DukO6cgtuKp9DWAGP+
+         hDB/+hGRyZah8sgYEeRYbDdU57uOIysYAP85b8dFxN1CbbOJiqNCj//SyJrwXRe8z3Tq
+         UmjdunPkhf52DO4F8QMLiESq+I3VHo6ECaDvHm3QxoLmlfHGe/pqPEYsy9y5JkrOBhOr
+         6iJJuQ7Dc67i3mai1CfK253Jb5OjmxmkTwQE8W6bSSt5ccQS8oFdMfXb/m6FNLEHV9sg
+         7lNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/Q+5s20XHMc4iuRDKXdxpzS8kzsfDj5amerE2E4kpDU=;
+        b=W3QQj6zIydED18e48pnR66RyYxq0Y/rLn7Szy/2rWKqcTAYA0+KuK7uLaRHV659n8U
+         4bgbzP5LtlgQhzHglQujtWZr1UiBhJSzxOuYIrmUEJ+GUeUzAf7gLEjfh8cYItrWzddq
+         ZTOASATqz4TieK8jOa4/N6fGwMvqAZJoj2pBAIosx8Blea5Q6ExObSqX2W83UZ5aq+FF
+         G8PTF4dH5yeS5ZxQA1q/wIahzwHoAPJvZPbv5oIuRw+6j46tWgFmlDn9I0DMGC0AjHwU
+         fnpwmOHmVsESbA1hgOjHUF2QkMtpdULt2eLqk+/0qBberx+F2J6QBNBZocv7sYI2C8OP
+         4aEw==
+X-Gm-Message-State: APjAAAUctdp5l7nAE0YGC3DkynF/+FlnEZrnnJP0vnhNUTN4X+w8Txzh
+        V5AfWoPXtPUFBr4M7SOuU/E=
+X-Google-Smtp-Source: APXvYqxjiUmkl64G1tHSx+VC7+PCJACU5FiOcdV5TIbEkpKvm5x6v5eoIGUfB+eF3IlCJYHKUNBV0Q==
+X-Received: by 2002:a17:902:9889:: with SMTP id s9mr11519716plp.100.1565733508159;
+        Tue, 13 Aug 2019 14:58:28 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:200::3:8a34])
+        by smtp.gmail.com with ESMTPSA id t6sm35037435pgu.23.2019.08.13.14.58.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Aug 2019 14:58:27 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 14:58:25 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Song Liu <songliubraving@fb.com>,
+        Kees Cook <keescook@chromium.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
+Message-ID: <20190813215823.3sfbakzzjjykyng2@ast-mbp>
+References: <5A2FCD7E-7F54-41E5-BFAE-BB9494E74F2D@fb.com>
+ <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
+ <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
+ <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
+ <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
+ <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
+ <20190805192122.laxcaz75k4vxdspn@ast-mbp>
+ <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
+ <20190806011134.p5baub5l3t5fkmou@ast-mbp>
+ <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b79617aa-2b40-40bf-9f35-0f5be8e34d3f@tycho.nsa.gov>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 13 Aug 2019 21:27:22 +0000 (UTC)
+In-Reply-To: <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019-08-13 11:01, Aaron Goidel wrote:
-> On 8/8/19 12:30 PM, Paul Moore wrote:
-> > On Thu, Aug 1, 2019 at 10:43 AM Aaron Goidel <acgoide@tycho.nsa.gov> wrote:
-> > > From: Nicholas Franck <nhfran2@tycho.nsa.gov>
-> > > 
-> > > At present security_capable does not pass any object information
-> > > and therefore can neither audit the particular object nor take it
-> > > into account. Augment the security_capable interface to support
-> > > passing supplementary data. Use this facility initially to convey
-> > > the inode for capability checks relevant to inodes. This only
-> > > addresses capable_wrt_inode_uidgid calls; other capability checks
-> > > relevant to inodes will be addressed in subsequent changes. In the
-> > > future, this will be further extended to pass object information for
-> > > other capability checks such as the target task for CAP_KILL.
-> > > 
-> > > In SELinux this new information is leveraged here to include the inode
-> > > in the audit message. In the future, it could also be used to perform
-> > > a per inode capability checks.
-> > > 
-> > > It would be possible to fold the existing opts argument into this new
-> > > supplementary data structure. This was omitted from this change to
-> > > minimize changes.
-> > > 
-> > > Signed-off-by: Nicholas Franck <nhfran2@tycho.nsa.gov>
-> > > Signed-off-by: Aaron Goidel <acgoide@tycho.nsa.gov>
-> > > ---
-> > > v2:
-> > > - Changed order of audit prints so optional information comes second
-> > > ---
-> > >   include/linux/capability.h             |  7 ++++++
-> > >   include/linux/lsm_audit.h              |  5 +++-
-> > >   include/linux/lsm_hooks.h              |  3 ++-
-> > >   include/linux/security.h               | 23 +++++++++++++-----
-> > >   kernel/capability.c                    | 33 ++++++++++++++++++--------
-> > >   kernel/seccomp.c                       |  2 +-
-> > >   security/apparmor/capability.c         |  8 ++++---
-> > >   security/apparmor/include/capability.h |  4 +++-
-> > >   security/apparmor/ipc.c                |  2 +-
-> > >   security/apparmor/lsm.c                |  5 ++--
-> > >   security/apparmor/resource.c           |  2 +-
-> > >   security/commoncap.c                   | 11 +++++----
-> > >   security/lsm_audit.c                   | 21 ++++++++++++++--
-> > >   security/safesetid/lsm.c               |  3 ++-
-> > >   security/security.c                    |  5 ++--
-> > >   security/selinux/hooks.c               | 20 +++++++++-------
-> > >   security/smack/smack_access.c          |  2 +-
-> > >   17 files changed, 110 insertions(+), 46 deletions(-)
-> > 
-> > You should CC the linux-audit list, I've added them on this mail.
-> > 
-> > I had hoped to see some thought put into the idea of dynamically
-> > emitting the proper audit records as I mentioned in the previous patch
-> > set, but regardless there are some comments on this code as written
-> > ...
-> > 
-> > > diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-> > > index 33028c098ef3..18cc7c956b69 100644
-> > > --- a/security/lsm_audit.c
-> > > +++ b/security/lsm_audit.c
-> > > @@ -229,9 +229,26 @@ static void dump_common_audit_data(struct audit_buffer *ab,
-> > >          case LSM_AUDIT_DATA_IPC:
-> > >                  audit_log_format(ab, " key=%d ", a->u.ipc_id);
-> > >                  break;
-> > > -       case LSM_AUDIT_DATA_CAP:
-> > > -               audit_log_format(ab, " capability=%d ", a->u.cap);
-> > > +       case LSM_AUDIT_DATA_CAP: {
-> > > +               const struct inode *inode;
-> > > +
-> > > +               audit_log_format(ab, " capability=%d ", a->u.cap_struct.cap);
-> > > +               if (a->u.cap_struct.cad) {
-> > > +                       switch (a->u.cap_struct.cad->type) {
-> > > +                       case CAP_AUX_DATA_INODE: {
-> > > +                               inode = a->u.cap_struct.cad->u.inode;
-> > > +
-> > > +                               audit_log_format(ab, " dev=");
-> > > +                               audit_log_untrustedstring(ab,
-> > > +                                       inode->i_sb->s_id);
-> > > +                               audit_log_format(ab, " ino=%lu",
-> > > +                                       inode->i_ino);
-> > > +                               break;
-> > > +                       }
-> > 
-> > Since you are declaring "inode" further up, there doesn't appear to be
-> > any need for the CAP_AUX_DATA_INODE braces, please remove them.
-> > 
-> > The general recommended practice when it comes to "sometimes" fields
-> > in an audit record, is to always record them in the record, but use a
-> > value of "?" when there is nothing relevant to record.  For example,
-> > when *not* recording inode information you would do something like the
-> > following:
-> > 
-> >    audit_log_format(ab, " dev=? ino=?");
-> > 
-> The issue this brings up is what happens when this is expanded to more
-> cases? Assuming there will be a case here for logging audit data for task
-> based capabilities (CAP_AUX_DATA_TASK), what do we want to have happen if we
-> are recording *neither* inode information nor task information (say a PID)?
-> If we log something in the inode case, we presumably don't want to call
-> audit_log_format(ab, " dev=?, pid=?") as well. (And vice versa for when we
-> log a pid and no inode).
-
-Yup.  This record is already a mess due to that.
-
-The general solution is to either use a new record type for each
-variant, or to use an auxiliary record for each additional piece of
-information.  The long term solution that has been suggested it to move
-away from a text message format.
-
-> > > +                       }
-> > > +               }
-> > >                  break;
-> > > +       }
-> > >          case LSM_AUDIT_DATA_PATH: {
-> > >                  struct inode *inode;
+On Tue, Aug 06, 2019 at 10:24:25PM -0700, Andy Lutomirski wrote:
+> >
+> > Inside containers and inside nested containers we need to start processes
+> > that will use bpf. All of the processes are trusted.
 > 
-> Aaron
+> Trusted by whom?  In a non-nested container, the container manager
+> *might* be trusted by the outside world.  In a *nested* container,
+> unless the inner container management is controlled from outside the
+> outer container, it's not trusted.  I don't know much about how
+> Facebook's containers work, but the LXC/LXD/Podman world is moving
+> very strongly toward user namespaces and maximally-untrusted
+> containers, and I think bpf() should work in that context.
 
-- RGB
+agree that containers (namespaces) reduce amount of trust necessary
+for apps to run, but the end goal is not security though.
+Linux has become a single user system.
+If user can ssh into the host they can become root.
+If arbitrary code can run on the host it will be break out of any sandbox.
+Containers are not providing the level of security that is enough
+to run arbitrary code. VMs can do it better, but cpu bugs don't make it easy.
+Containers are used to make production systems safer.
+Some people call it more 'secure', but it's clearly not secure for
+arbitrary code and that is what kernel.unprivileged_bpf_disabled allows.
+When we say 'unprivileged bpf' we really mean arbitrary malicious bpf program.
+It's been a constant source of pain. The constant blinding, randomization,
+verifier speculative analysis, all spectre v1, v2, v4 mitigations
+are simply not worth it. It's a lot of complex kernel code without users.
+There is not a single use case to allow arbitrary malicious bpf
+program to be loaded and executed.
+As soon as we have /dev/bpf to allow all of bpf to be used without root
+we will set sysctl kernel.unprivileged_bpf_disabled=1
+Hence I prefer this /dev/bpf mechanism to be as simple a possible.
+The applications that will use it are going to be just as trusted as systemd.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+> > To solve your concern of bypassing all capable checks...
+> > How about we do /dev/bpf/full_verifier first?
+> > It will replace capable() checks in the verifier only.
+> 
+> I'm not convinced that "in the verifier" is the right distinction.
+> Telling administrators that some setting lets certain users bypass
+> bpf() verifier checks doesn't have a clear enough meaning.  
+
+linux is a single user system. there are no administrators any more.
+No doubt, folks will disagree, but that game is over.
+At least on bpf side it's done.
+
+> I propose,
+> instead, that the current capable() checks be divided into three
+> categories:
+
+I don't see a use case for these categories.
+All bpf programs extend the kernel in some way.
+The kernel vs user is one category.
+Conceptually CAP_BPF is enough. It would be similar to CAP_NET_ADMIN.
+When application has CAP_NET_ADMIN it covers all of networking knobs.
+There is no use case that would warrant fine grain CAP_ROUTE_ADMIN,
+CAP_ETHTOOL_ADMIN, CAP_ETH0_ADMIN, etc.
+Similarly CAP_BPF as the only knob is enough.
+The only disadvantage of CAP_BPF is that it's not possible to
+pass it from one systemd-like daemon to another systemd-like daemon.
+Hence /dev/bpf idea and passing file descriptor.
+
+> This type of thing actually fits quite nicely into an idea I've been
+> thinking about for a while called "implicit rights". In very brief
+> summary, there would be objects called /dev/rights/xyz, where xyz is
+> the same of a "right".  If there is a readable object of the right
+> type at the literal path "/dev/rights/xyz", then you have right xyz.
+> There's a bit more flexibility on top of this.  BPF could use
+> /dev/rights/bpf/maptypes/lpm and
+> /dev/rights/bpf/verifier/bounded_loops, for example.  Other non-BPF
+> use cases include a biggie:
+> /dev/rights/namespace/create_unprivileged_userns.
+> /dev/rights/bind_port/80 would be nice, too.
+
+The concept of "implicit rights" is very nice and I'm sure it will
+be a good fit somewhere, but I don't see why use it in bpf space.
+There is no use case for fine grain partition of bpf features.
+
