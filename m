@@ -8,97 +8,99 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 865E0C32750
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 19:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211D4C433FF
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 19:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E24A20663
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 19:21:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9A0B205F4
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 19:21:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H3slEEpq"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="auN+J9iy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbfHMTVe (ORCPT
+        id S1726137AbfHMTVg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Aug 2019 15:21:34 -0400
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:56044 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbfHMTVd (ORCPT
+        Tue, 13 Aug 2019 15:21:36 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:46712 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfHMTVg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Aug 2019 15:21:33 -0400
-Received: by mail-pf1-f201.google.com with SMTP id 22so5058682pfn.22
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Aug 2019 12:21:33 -0700 (PDT)
+        Tue, 13 Aug 2019 15:21:36 -0400
+Received: by mail-pg1-f202.google.com with SMTP id u1so67047994pgr.13
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Aug 2019 12:21:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc:content-transfer-encoding;
-        bh=LGoSw8wdPlJ5LZexCtQbX5CILiN8poHoRBIV73YdzEI=;
-        b=H3slEEpqUKKz7YIUBqg/8QpCBvIil0RBF/4+KpAWN1+qD5n2YDQa9WnC78++oRMQc7
-         HRdFJzlZYsRgTZNpKs2esIFI9HtdhG9M4wYO5mGqJl0AMr/fvjn/qHkwffYYSuBIrYlO
-         rR5PlV3rgfW9XnQrPvoIr7BaK49L/ldnKIMj4XVvQyZ9m8yG57UlMNCLkzNFqJOSFof7
-         tv+rqUpPdp94GuSTka+vhaqja66yzDU+w1mPPEsXgfduv5fiPSfcsXwTK/7rB3f881vC
-         mPENoNfW8z/140tEMn/oBnf69iZm4Y++8j6p1kK13pETOapVp9+CAOcCpRLPw25R4AGT
-         isBA==
+         :cc;
+        bh=sHYpjjOSj3cKsZS8LNbuqU4iflCegvGo0YeYfpsqvjM=;
+        b=auN+J9iyrf5OGT56LOVxjtJish8Eymt2JZXIc5dyN7DK1GC267QiVFEHpvxz/rh+6C
+         11D6krWY8TfxuU1h0UThVJJXHmIc8IXt7EKs07xS+44ziHE2VUbaO5s2wBUQ1knAjY/V
+         RBCDLj8oADYUyy2+x8jyM1ATuUxDqkHnITKzn3qlb6a9dODjW5DDxn+1i4LZWzZ6f3lg
+         YNdrgs/T08SSGATVY4mDfiCB2/afZTOYwttVKuKr6HXWuy9sw281eZUwZ2f8IXGedt8K
+         uVHXRzbUKEgp+ac+qyPDqPMXc37jS6g3r9AVF+THw4SqD5FJvbn6nLAoU2j9hsCJCUl8
+         lFVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc:content-transfer-encoding;
-        bh=LGoSw8wdPlJ5LZexCtQbX5CILiN8poHoRBIV73YdzEI=;
-        b=lPwJDLd+Uzxf3PEEApcJcDWTVA2LGt4o/uq4Mf5i8Phdd9vqmTmSgCBu7yyge2EVvE
-         SsZzCjJoUp5Rjoj+2eOgo9PI+C83QqYUysMyBpDuh6Sj9bjnwi1rszCErjwnEHGxSpdg
-         mHMQxSg+uVikfuFgWaaFiNhhdyxuY/t7Lye5IelZ2qWxMKyUCO4gKzXFGbJ0/C1r6wHD
-         c5oO9qBRGvdGMpZSAL3XEW52UmKIykv3O/WW2Jc2z548VVL68rXUPh3vj4K83aZGpDSH
-         /fvaoZuC/RDp+jezm4XGibUecWJTPsQdYTu/r7TeN0WkJiTMYJHzGfyRPG3hyUvEGs9X
-         kWzQ==
-X-Gm-Message-State: APjAAAWS216sPRAw/ZBVca+scu11t7jS5FuCn35/2bnz1YWIgNQB1VBi
-        ZVElkU/kbs60E7x1M6dWqCTeHddXVSUEzPnOAgFgxg==
-X-Google-Smtp-Source: APXvYqwzMe41fY7WVgXRqbj+bDqvVvSfpAGS+es7PR1B9q896RnZLvJbKOMAoWK6X7eFUaSIR9VBjcCvbecldsFqcZeRBw==
-X-Received: by 2002:a65:62cd:: with SMTP id m13mr35560835pgv.437.1565724092836;
- Tue, 13 Aug 2019 12:21:32 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 12:21:21 -0700
+         :references:subject:from:to:cc;
+        bh=sHYpjjOSj3cKsZS8LNbuqU4iflCegvGo0YeYfpsqvjM=;
+        b=bc/75XHEXaOy+gYNOMnNho4loUDgfAnnR5MwguloInPG+n9jMVuHekQTABN8z9F/dt
+         OWAWPOIdPXvPXAWadHkvu/4YJ9PQKZD5AuRTa4Yzpwh0CGgkGxjDvGpJzQGtyLaJ/OyX
+         0s8KnutM2AGhv3A0gcx3wWAK2RgJ1TZUMhqX8JVEEyuKbH2evWn6u66m6bd97jE2J1rB
+         IGpgxaAgSVY837eb3eAPYPa8/oVJd/NPV/xHpxXto0Tshs36ajbAFyau/EfQyEoiHJp8
+         2eX7hpTKEqdUdkA72ZifbnFpaqHE/qsUa8+Q/xaHU6Pr8kgppIaMToxfhVJfdlQ1v29P
+         1/ig==
+X-Gm-Message-State: APjAAAWUQrcMRgkyxbA7lWR0x0k7VcfFa+JV8eDke2AwAoQMsyonjRPc
+        eus6LCZD7OnyQ17vIt0liiiGYCZHyq/qxniBgegQhw==
+X-Google-Smtp-Source: APXvYqwtV/c0ur98YG3sspSS/O1ZIrocbgw2IcEyWMI67fI9fUxJOer3VnMhmBoQKCxa8tTAsmuL7ypg/grobp7Y6ySz4A==
+X-Received: by 2002:a65:514c:: with SMTP id g12mr35833280pgq.76.1565724095535;
+ Tue, 13 Aug 2019 12:21:35 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 12:21:22 -0700
 In-Reply-To: <20190813192126.122370-1-matthewgarrett@google.com>
-Message-Id: <20190813192126.122370-2-matthewgarrett@google.com>
+Message-Id: <20190813192126.122370-3-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190813192126.122370-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH 1/6] tracefs: Fix potential null dereference in default_file_open()
+Subject: [PATCH 2/6] early_security_init() needs a stub got !CONFIG_SECURITY
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
-        Ben Hutchings <ben@decadent.org.uk>
+        Stephen Rothwell <sfr@canb.auug.org.au>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 
-The "open" operation in struct file_operations is optional, and
-ftrace_event_id_fops does not set it.  In default_file_open(), after
-all other checks have passed, return 0 if the underlying struct
-file_operations does not implement open.
+An arm multi_v7_defconfig fails like this:
 
-Fixes: 757ff7244358 ("tracefs: Restrict tracefs when the kernel is =E2=80=
-=A6")
-References: https://bugs.debian.org/934304
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+init/main.c: In function 'start_kernel':
+init/main.c:596:2: error: implicit declaration of function 'early_security_init'; did you mean 'security_init'? [-Werror=implicit-function-declaration]
+  early_security_init();
+  ^~~~~~~~~~~~~~~~~~~
+  security_init
+
+Fixes: 45d29f9e9b8b ("security: Support early LSMs")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- fs/tracefs/inode.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/security.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-index 34da48036e08..761af8ce4015 100644
---- a/fs/tracefs/inode.c
-+++ b/fs/tracefs/inode.c
-@@ -42,6 +42,8 @@ static int default_open_file(struct inode *inode, struct =
-file *filp)
- 		return ret;
-=20
- 	real_fops =3D dentry->d_fsdata;
-+	if (!real_fops->open)
-+		return 0;
- 	return real_fops->open(inode, filp);
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5748ccc2a42e..429f9f03372b 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -473,6 +473,11 @@ static inline int security_init(void)
+ 	return 0;
  }
-=20
---=20
+ 
++static inline int early_security_init(void)
++{
++	return 0;
++}
++
+ static inline int security_binder_set_context_mgr(struct task_struct *mgr)
+ {
+ 	return 0;
+-- 
 2.23.0.rc1.153.gdeed80330f-goog
 
