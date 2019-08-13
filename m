@@ -2,170 +2,90 @@ Return-Path: <SRS0=o9Ra=WJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C09FC32750
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 22:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE44C433FF
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 22:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E0F620843
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 22:27:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EAQJU3V4"
+	by mail.kernel.org (Postfix) with ESMTP id 63A1A20644
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 22:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbfHMW1G (ORCPT
+        id S1727210AbfHMWmW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Aug 2019 18:27:06 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:33268 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbfHMW1G (ORCPT
+        Tue, 13 Aug 2019 18:42:22 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:40528 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbfHMWmW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Aug 2019 18:27:06 -0400
-Received: by mail-ua1-f66.google.com with SMTP id g11so15298722uak.0
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Aug 2019 15:27:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3TAQIgVJ77T2ZHlT5XpZJ5AnvKBJ+GDe2Kn0XBXuch8=;
-        b=EAQJU3V4SVKSDYNeLGqRom0wBQqrQg+C4KhktsSNYgA8Ep3ZWZobNQkC+JW3Ulphjb
-         WQ2zzX2iGpcNA6yWcXIIE9irpmZ1hrqw3dRA2aY3NztaPTzMB6H64uDNSeK0TXDdo3+N
-         MsDO+7b3nzB+AJV+ISLR79xy3AYHwfuowoSuSO8shdoKtDzeXHXTiVqquWDWrCRJht0f
-         d5Nfump0P8UFGugW5EnsuuiOxDx0tPYFML6/vbicqKc58pAu2/WPXn14mY4y8ihMzpvb
-         CeNj74cI5nUYrt6l44+bej4rpvEE7WzkNgNjVwPJfEhOM1P0GOGA8Nu9QF1n9qVb4dqK
-         vNRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3TAQIgVJ77T2ZHlT5XpZJ5AnvKBJ+GDe2Kn0XBXuch8=;
-        b=J8ZERSUDQ+9Ecq4f+iMNVqZlBHzF0JZAWoZlLWivUbLU21yUKDmTXabjpFS+/eQJQA
-         /1qaA2fLMqIWaTpiiV40M0qmEy+Ak0Pz6orL9InURct/k20cJKmNVM2h/EsZvUg3qWkB
-         unsMUqPj3IywWfre3dU1B8N8OUh+ssJBaAZeVQ4d5MlK0Ti+bA/dfM7dWN1cMO27vomJ
-         nBrecdXmjsdj8OjFPAKWBjI6TCndZZrYdekFP+Y8ajkVCKitkTkiJHA+LO4GScFyCm79
-         0hHC608xLdrDMFbJWHe+43J/6BLJZWapimTasIVWZvW4VfO+O6KTQv6A2q/9hvO3ZPo0
-         WkHw==
-X-Gm-Message-State: APjAAAWUV2zkvZEhRs56ZMC5ACwX+MuRxbvMEvUcRMAE6xxp8TdzMVAA
-        WRKeVlz8qN24yqSSGulzm+ClFSczaHIkS6gMPkeG/Q==
-X-Google-Smtp-Source: APXvYqyTUXrjuSmWAEAuLB7sGtL+kdsIoFCnEMIiLLsDSVFLkQHtXYmJXLBlN4Ffm7M0Y4tcGtM+OPCuupGxtyipDw4=
-X-Received: by 2002:ab0:7091:: with SMTP id m17mr40650ual.46.1565735224699;
- Tue, 13 Aug 2019 15:27:04 -0700 (PDT)
+        Tue, 13 Aug 2019 18:42:22 -0400
+Received: by linux.microsoft.com (Postfix, from userid 1029)
+        id CD4FE20B7187; Tue, 13 Aug 2019 11:49:40 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CD4FE20B7187
+Received: from localhost (localhost [127.0.0.1])
+        by linux.microsoft.com (Postfix) with ESMTP id 039FE3005457;
+        Tue, 13 Aug 2019 11:49:40 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 11:49:39 -0700 (PDT)
+From:   Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
+X-X-Sender: jaskarankhurana@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net
+To:     Mike Snitzer <snitzer@redhat.com>
+cc:     gmazyland@gmail.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, scottsh@microsoft.com,
+        ebiggers@google.com, jmorris@namei.org, dm-devel@redhat.com,
+        mpatocka@redhat.com, agk@redhat.com
+Subject: Re: [RFC PATCH v5 1/1] Add dm verity root hash pkcs7 sig
+ validation.
+In-Reply-To: <20190625182004.GA32075@redhat.com>
+Message-ID: <alpine.LRH.2.21.1908131147390.95186@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com> <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com> <20190625182004.GA32075@redhat.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <5A2FCD7E-7F54-41E5-BFAE-BB9494E74F2D@fb.com> <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
- <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
- <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
- <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com> <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
- <20190805192122.laxcaz75k4vxdspn@ast-mbp> <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
- <20190806011134.p5baub5l3t5fkmou@ast-mbp> <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
- <20190813215823.3sfbakzzjjykyng2@ast-mbp>
-In-Reply-To: <20190813215823.3sfbakzzjjykyng2@ast-mbp>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Tue, 13 Aug 2019 15:26:28 -0700
-Message-ID: <CAKOZuev8XY5+shG8SiWcx4z12QnkgzhcUqCHs9t+eV2z-6nzPA@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Kees Cook <keescook@chromium.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 13, 2019 at 2:58 PM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Tue, Aug 06, 2019 at 10:24:25PM -0700, Andy Lutomirski wrote:
-> > >
-> > > Inside containers and inside nested containers we need to start processes
-> > > that will use bpf. All of the processes are trusted.
-> >
-> > Trusted by whom?  In a non-nested container, the container manager
-> > *might* be trusted by the outside world.  In a *nested* container,
-> > unless the inner container management is controlled from outside the
-> > outer container, it's not trusted.  I don't know much about how
-> > Facebook's containers work, but the LXC/LXD/Podman world is moving
-> > very strongly toward user namespaces and maximally-untrusted
-> > containers, and I think bpf() should work in that context.
->
-> agree that containers (namespaces) reduce amount of trust necessary
-> for apps to run, but the end goal is not security though.
-> Linux has become a single user system.
-> If user can ssh into the host they can become root.
-> If arbitrary code can run on the host it will be break out of any sandbox.
-> Containers are not providing the level of security that is enough
-> to run arbitrary code. VMs can do it better, but cpu bugs don't make it easy.
-> Containers are used to make production systems safer.
-> Some people call it more 'secure', but it's clearly not secure for
-> arbitrary code and that is what kernel.unprivileged_bpf_disabled allows.
-> When we say 'unprivileged bpf' we really mean arbitrary malicious bpf program.
-> It's been a constant source of pain. The constant blinding, randomization,
-> verifier speculative analysis, all spectre v1, v2, v4 mitigations
-> are simply not worth it. It's a lot of complex kernel code without users.
-> There is not a single use case to allow arbitrary malicious bpf
-> program to be loaded and executed.
-> As soon as we have /dev/bpf to allow all of bpf to be used without root
-> we will set sysctl kernel.unprivileged_bpf_disabled=1
-> Hence I prefer this /dev/bpf mechanism to be as simple a possible.
-> The applications that will use it are going to be just as trusted as systemd.
->
-> > > To solve your concern of bypassing all capable checks...
-> > > How about we do /dev/bpf/full_verifier first?
-> > > It will replace capable() checks in the verifier only.
-> >
-> > I'm not convinced that "in the verifier" is the right distinction.
-> > Telling administrators that some setting lets certain users bypass
-> > bpf() verifier checks doesn't have a clear enough meaning.
->
-> linux is a single user system. there are no administrators any more.
-> No doubt, folks will disagree, but that game is over.
-> At least on bpf side it's done.
->
-> > I propose,
-> > instead, that the current capable() checks be divided into three
-> > categories:
->
-> I don't see a use case for these categories.
-> All bpf programs extend the kernel in some way.
-> The kernel vs user is one category.
-> Conceptually CAP_BPF is enough. It would be similar to CAP_NET_ADMIN.
-> When application has CAP_NET_ADMIN it covers all of networking knobs.
-> There is no use case that would warrant fine grain CAP_ROUTE_ADMIN,
-> CAP_ETHTOOL_ADMIN, CAP_ETH0_ADMIN, etc.
-> Similarly CAP_BPF as the only knob is enough.
-> The only disadvantage of CAP_BPF is that it's not possible to
-> pass it from one systemd-like daemon to another systemd-like daemon.
-> Hence /dev/bpf idea and passing file descriptor.
->
-> > This type of thing actually fits quite nicely into an idea I've been
-> > thinking about for a while called "implicit rights". In very brief
-> > summary, there would be objects called /dev/rights/xyz, where xyz is
-> > the same of a "right".  If there is a readable object of the right
-> > type at the literal path "/dev/rights/xyz", then you have right xyz.
-> > There's a bit more flexibility on top of this.  BPF could use
-> > /dev/rights/bpf/maptypes/lpm and
-> > /dev/rights/bpf/verifier/bounded_loops, for example.  Other non-BPF
-> > use cases include a biggie:
-> > /dev/rights/namespace/create_unprivileged_userns.
-> > /dev/rights/bind_port/80 would be nice, too.
->
-> The concept of "implicit rights" is very nice and I'm sure it will
-> be a good fit somewhere, but I don't see why use it in bpf space.
-> There is no use case for fine grain partition of bpf features.
 
-Isn't this "implicit rights" model just another kind of ambient
-authority --- one that constrains the otherwise-free filesystem
-namespace to boot? IMHO, the kernel should be moving toward explicit
-authorization tokens modeled by file descriptors and away from
-contextual authorization decisions.
+Hello Mike,
+On Tue, 25 Jun 2019, Mike Snitzer wrote:
+
+> On Wed, Jun 19 2019 at  3:10pm -0400,
+> Jaskaran Khurana <jaskarankhurana@linux.microsoft.com> wrote:
+>
+>> The verification is to support cases where the roothash is not secured by
+>> Trusted Boot, UEFI Secureboot or similar technologies.
+>> One of the use cases for this is for dm-verity volumes mounted after boot,
+>> the root hash provided during the creation of the dm-verity volume has to
+>> be secure and thus in-kernel validation implemented here will be used
+>> before we trust the root hash and allow the block device to be created.
+>>
+>> The signature being provided for verification must verify the root hash and
+>> must be trusted by the builtin keyring for verification to succeed.
+>>
+>> The hash is added as a key of type "user" and the description is passed to
+>> the kernel so it can look it up and use it for verification.
+>>
+>> Kernel commandline parameter will indicate whether to check (only if
+>> specified) or force (for all dm verity volumes) roothash signature
+>> verification.
+>>
+>> Kernel commandline: dm_verity.verify_sig=1 or 2 for check/force root hash
+>> signature validation respectively.
+>>
+>> Signed-off-by: Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+>
+> Milan and/or others: could you please provide review and if you're OK
+> with this patch respond accordingly?
+>
+
+The v7 of this patch was Reviewed and Tested by Milan Broz. Could you tell 
+me when this will be merged/next steps, if required I can post the patches 
+again.
+
+> Thanks,
+> Mike
+>
+Regards,
+Jaskaran
