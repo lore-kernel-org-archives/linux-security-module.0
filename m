@@ -2,108 +2,80 @@ Return-Path: <SRS0=PFxj=WK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72253C433FF
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 07:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD94EC433FF
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 13:24:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46792206C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 07:27:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="a+2XvMTB"
+	by mail.kernel.org (Postfix) with ESMTP id 851D42083B
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 13:24:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565789087;
+	bh=728hr/u8ACkr4eN6s55og0sZZKXT3mgz/+81KVMagtM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=e1YSQAXrU2FZbBUXJjvMMGNjH/AdkRWRFUK/3wtX1U7YtAltB07+pibdfDmvPtyh2
+	 JNy3pL4y8y3ZKDmKf7KQvdi0rYcRAl6EhDbNOEEso+1b27hfmsZMbxugsvEVKd7YaF
+	 jVPT5ODKTMpLGe6Fnr3l60kZg0JUsaEZj+mW3lV0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfHNH14 (ORCPT
+        id S1728049AbfHNNYm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Aug 2019 03:27:56 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:50366 "EHLO mail.skyhub.de"
+        Wed, 14 Aug 2019 09:24:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbfHNH14 (ORCPT
+        id S1727654AbfHNNYm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Aug 2019 03:27:56 -0400
-Received: from zn.tnic (p200300EC2F0BD0001434546E6F7AC9DD.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:d000:1434:546e:6f7a:c9dd])
+        Wed, 14 Aug 2019 09:24:42 -0400
+Received: from localhost.localdomain (ool-18bba523.dyn.optonline.net [24.187.165.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0C72D1EC02FE;
-        Wed, 14 Aug 2019 09:27:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565767675;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=S0pdHUrMZlxeH9o5UwMMdUNK7RCa7z7enuUZ3T7dyxs=;
-        b=a+2XvMTBAV+kdnpbaxN0Sigc8m4vhX0OYPSlG8AU1aS+2M9vD6TsMMsb5+OGv0j5RZU0to
-        b8Kwi73ybojH8SC051Zc330H6/dDjhb+Z9FUnhrIOEnoiBi2TOXgFik1iUAftMyEABQZus
-        jfnyKD47r7Ub1s1LnreXItaO0wuVX2g=
-Date:   Wed, 14 Aug 2019 09:28:44 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Josh Boyer <jwboyer@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Young <dyoung@redhat.com>, linux-acpi@vger.kernel.org,
-        x86-ml <x86@kernel.org>
-Subject: Re: [PATCH V38 15/29] acpi: Ignore acpi_rsdp kernel param when the
- kernel has been locked down
-Message-ID: <20190814072844.GB27836@zn.tnic>
-References: <20190808000721.124691-1-matthewgarrett@google.com>
- <20190808000721.124691-16-matthewgarrett@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190808000721.124691-16-matthewgarrett@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        by mail.kernel.org (Postfix) with ESMTPSA id D46EC206C1;
+        Wed, 14 Aug 2019 13:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565789081;
+        bh=728hr/u8ACkr4eN6s55og0sZZKXT3mgz/+81KVMagtM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=BEaIXEhbN5LobKXpsJugCZtSW+XS2aQg1QUETdq/6yY99Qn/DFfPk0cHVGWNw7TV9
+         9JisrfYyNGp2YtEudUH9o6nFF5oU4tYajzzGay1/9y5T5phTGmX0XMwBVf3n9JPSXu
+         hGVzpbf/flSHs0lNdtZbG0zWWST/1DLSuYP1HPPc=
+Message-ID: <1565789078.10490.10.camel@kernel.org>
+Subject: Re: [RFC/RFT v4 0/5] Add generic trusted keys framework/subsystem
+From:   Mimi Zohar <zohar@kernel.org>
+To:     Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     dhowells@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, peterhuewe@gmx.de, jgg@ziepe.ca,
+        jejb@linux.ibm.com, jarkko.sakkinen@linux.intel.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, ard.biesheuvel@linaro.org,
+        daniel.thompson@linaro.org, linux-kernel@vger.kernel.org,
+        tee-dev@lists.linaro.org
+Date:   Wed, 14 Aug 2019 09:24:38 -0400
+In-Reply-To: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
+References: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 07, 2019 at 05:07:07PM -0700, Matthew Garrett wrote:
-> From: Josh Boyer <jwboyer@redhat.com>
+Hi Sumit,
+
+On Tue, 2019-08-13 at 13:22 +0530, Sumit Garg wrote:
+> This patch-set is an outcome of discussion here [1]. It has evolved very
+> much since v1 to create, consolidate and generalize trusted keys
+> subsystem.
 > 
-> This option allows userspace to pass the RSDP address to the kernel, which
-> makes it possible for a user to modify the workings of hardware. Reject
-> the option when the kernel is locked down. This requires some reworking
-> of the existing RSDP command line logic, since the early boot code also
-> makes use of a command-line passed RSDP when locating the SRAT table
-> before the lockdown code has been initialised. This is achieved by
-> separating the command line RSDP path in the early boot code from the
-> generic RSDP path, and then copying the command line RSDP into boot
-> params in the kernel proper if lockdown is not enabled. If lockdown is
-> enabled and an RSDP is provided on the command line, this will only be
-> used when parsing SRAT (which shouldn't permit kernel code execution)
-> and will be ignored in the rest of the kernel.
-> 
-> (Modified by Matthew Garrett in order to handle the early boot RSDP
-> environment)
-> 
-> Signed-off-by: Josh Boyer <jwboyer@redhat.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> cc: Dave Young <dyoung@redhat.com>
-> cc: linux-acpi@vger.kernel.org
-> ---
->  arch/x86/boot/compressed/acpi.c | 19 +++++++++++++------
->  arch/x86/include/asm/acpi.h     |  9 +++++++++
->  arch/x86/include/asm/x86_init.h |  2 ++
->  arch/x86/kernel/acpi/boot.c     |  5 +++++
->  arch/x86/kernel/x86_init.c      |  1 +
->  drivers/acpi/osl.c              | 14 +++++++++++++-
->  include/linux/acpi.h            |  6 ++++++
->  7 files changed, 49 insertions(+), 7 deletions(-)
+> This framework has been tested with trusted keys support provided via TEE
+> but I wasn't able to test it with a TPM device as I don't possess one. It
+> would be really helpful if others could test this patch-set using a TPM
+> device.
 
-Also, why isn't an x86 person CCed here? This clearly needs an x86
-maintainer's ACK before it goes in?
+With the "CONFIG_HEADER_TEST" and "CONFIG_KERNEL_HEADER_TEST" config
+options enabled, which is required for linux-next, it fails to build.
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Mimi
