@@ -1,69 +1,65 @@
-Return-Path: <SRS0=o9Ra=WJ=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=PFxj=WK=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E1FC32750
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 23:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEE1C433FF
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 00:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBBD220644
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Aug 2019 23:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565738677;
-	bh=IDa79GuxHq7Qqla/PhVad+zrJSyH+Vx2VFX4WK5JGBg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=E3tur7HuCP0baV1E0gAzDLZGROKtb9Ex0o+lXsVTMVfb1lg/t0RmJEPrVMIKLSgNC
-	 p2AGgewvZZorV9zlCkZIqErDmyqUgc+QoRdIIPJpBZ4iPibtoQJbWnTFFPF7SoY2ae
-	 zivSwgzMHCjZdGXBS022UhBCx+A/mzEESzNDPHKU=
+	by mail.kernel.org (Postfix) with ESMTP id 4B932206C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 00:57:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HW9Vw9Ef"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbfHMXYg (ORCPT
+        id S1726597AbfHNA5m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Aug 2019 19:24:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38728 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbfHMXYg (ORCPT
+        Tue, 13 Aug 2019 20:57:42 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36843 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbfHNA5m (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Aug 2019 19:24:36 -0400
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B87EF2070D
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Aug 2019 23:24:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565738675;
-        bh=IDa79GuxHq7Qqla/PhVad+zrJSyH+Vx2VFX4WK5JGBg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=NfeLQjfeq0UtvNcro2xYItSPeN4/6O7CMibcvBIG1MAaNUGFf9jKIDngbUhedcC6/
-         1MAPyO2sJEkhabCi55yGQBvFNbkjvatm9jV4+vmk5KrsbsQdBWarwtKq519WrK7MZn
-         OI2p7kUXsP8cej1B4nvR22iEsdgcPEqbu3ufZrqE=
-Received: by mail-wm1-f50.google.com with SMTP id p77so2075679wme.0
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Aug 2019 16:24:34 -0700 (PDT)
-X-Gm-Message-State: APjAAAXhIXu3j+kzVi/VjhKb8GUrMvaa9w5TvzVT6uMuDhkjGdhEHKNR
-        s7zI+xWKRDG1sQsBWRaAO+q1wPRj/RO5wreLVcR6IQ==
-X-Google-Smtp-Source: APXvYqwgTpjl41fR5CWj/fGmilJy1Egm8dXK/E6Vgtdq+/9WrFEqe15FjCShiOW2cL1g+fL6OZPhjmFPLOCzhHl0UoE=
-X-Received: by 2002:a7b:c4d2:: with SMTP id g18mr5136350wmk.79.1565738673185;
- Tue, 13 Aug 2019 16:24:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <5A2FCD7E-7F54-41E5-BFAE-BB9494E74F2D@fb.com> <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
- <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
- <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
- <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com> <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
- <20190805192122.laxcaz75k4vxdspn@ast-mbp> <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
- <20190806011134.p5baub5l3t5fkmou@ast-mbp> <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
- <20190813215823.3sfbakzzjjykyng2@ast-mbp> <CAKOZuev8XY5+shG8SiWcx4z12QnkgzhcUqCHs9t+eV2z-6nzPA@mail.gmail.com>
-In-Reply-To: <CAKOZuev8XY5+shG8SiWcx4z12QnkgzhcUqCHs9t+eV2z-6nzPA@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 13 Aug 2019 16:24:21 -0700
-X-Gmail-Original-Message-ID: <CALCETrWu_g-hhQeEbq4OCfP9QSreRh3_FAfY-w0s9am0aJ1JAw@mail.gmail.com>
-Message-ID: <CALCETrWu_g-hhQeEbq4OCfP9QSreRh3_FAfY-w0s9am0aJ1JAw@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
+        Tue, 13 Aug 2019 20:57:42 -0400
+Received: by mail-pf1-f196.google.com with SMTP id w2so1747249pfi.3;
+        Tue, 13 Aug 2019 17:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=N3tLc2zSUngAxBVAW1kgKdSzLdJBxY28bPoTKVlgnuI=;
+        b=HW9Vw9Efa59zmv1IGUGUbplGBPWfBcXH1x0jIkn1niagE+aQ9q9QvvyAG5AAyKY7Ng
+         goZxNp1lIXj6+uhVmt1pDdOtYWYqmL9kU1ha28RUvlewVSDXO3SOgIX81M4Q+DqMHNa0
+         g+AUXt90pXab1s+BI1iV76qfXElNtFK1E9ZWf3F/A75uuL3NIfXRNmK/YaHRJQo9fJPs
+         +Mao5QUrRKe2hLO50ytFh98ZiD7NIUJrn3hKDtzuzyxoxq4EZlutchiH1OOAkcyWmeeh
+         tDSpgXyk98EYWT6LX/9y4H2c52GzMcnJ22Mp3KYUNU8jrD9TJzX6M+EWx1hKK6thTLSZ
+         ZHWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N3tLc2zSUngAxBVAW1kgKdSzLdJBxY28bPoTKVlgnuI=;
+        b=ckPpIhqMyU4+hd+LlJggSX8I92hMKr5U9QRLKUKbojKl6s4F+ux/MRxARBmgvt8gcv
+         I4zl7Z4LGZJO3N5xV9GoIzXC+4drdE0TC3fm1zVaJu/1eReX+ganz2a0rR444oPttqTu
+         g5Gj3wqdZ/4dN+gmvfyzwxjynkBdA1grxdWj3nMKXIP/PyCoBWDOYXjC1Nc1r31Bu1m4
+         XQyjtXBJKCnZ2ML+KhXmjL56gzJ7yfHAw7DA6HUiBh1nlWiGe4WnlkE8B5cI+Vx+Bl/n
+         6fsU44/IGyeuyH9pb714gpV1YoZ1jnjBi+1VRIL/Drmre/3fy7M38MMP0KHf3EQGSTxS
+         fb5A==
+X-Gm-Message-State: APjAAAWGPU/PAv9FiwMEgOCp+Dcol7vXiWwiHzW5K9cNxLUvx/b49rGb
+        mjTG9KAX2MEDtgihKn9q234YwIIi
+X-Google-Smtp-Source: APXvYqwK1ny49MrHeS+dyW4hCSOnDlPjOw40NenNIYLOtBvJeficG/7C2zkU8nDJ//Yv22JZWlhtsA==
+X-Received: by 2002:a65:60d3:: with SMTP id r19mr37020279pgv.91.1565744261474;
+        Tue, 13 Aug 2019 17:57:41 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:200::3:8a34])
+        by smtp.gmail.com with ESMTPSA id i14sm19376734pfq.77.2019.08.13.17.57.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Aug 2019 17:57:40 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 17:57:39 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Song Liu <songliubraving@fb.com>,
         Kees Cook <keescook@chromium.org>,
         Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
         Alexei Starovoitov <ast@kernel.org>,
@@ -74,13 +70,28 @@ Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         Linux API <linux-api@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
+Message-ID: <20190814005737.4qg6wh4a53vmso2v@ast-mbp>
+References: <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
+ <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
+ <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
+ <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
+ <20190805192122.laxcaz75k4vxdspn@ast-mbp>
+ <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
+ <20190806011134.p5baub5l3t5fkmou@ast-mbp>
+ <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
+ <20190813215823.3sfbakzzjjykyng2@ast-mbp>
+ <CALCETrVT-dDXQGukGs5S1DkzvQv9_e=axzr_GyEd2c4T4z8Qng@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrVT-dDXQGukGs5S1DkzvQv9_e=axzr_GyEd2c4T4z8Qng@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 13, 2019 at 3:27 PM Daniel Colascione <dancol@google.com> wrote:
->
+On Tue, Aug 13, 2019 at 04:06:00PM -0700, Andy Lutomirski wrote:
 > On Tue, Aug 13, 2019 at 2:58 PM Alexei Starovoitov
 > <alexei.starovoitov@gmail.com> wrote:
 > >
@@ -102,6 +113,21 @@ On Tue, Aug 13, 2019 at 3:27 PM Daniel Colascione <dancol@google.com> wrote:
 > > Linux has become a single user system.
 > > If user can ssh into the host they can become root.
 > > If arbitrary code can run on the host it will be break out of any sandbox.
+> 
+> I would argue that this is a reasonable assumption to make if you're
+> designing a system using Linux, but it's not a valid assumption to
+> make as kernel developers.  Otherwise we should just give everyone
+> CAP_SYS_ADMIN and call it a day.  There really is a difference between
+> root and non-root.
+
+hmm. No. Kernel developers should not make any assumptions.
+They should guide their design by real use cases instead. That includes studing
+what people do now and hacks they use to workaround lack of interfaces.
+Effecitvely bpf is root only. There are no unpriv users.
+This root applications go out of their way to reduce privileges
+while they still want to use bpf. That is the need that /dev/bpf is solving.
+
+> 
 > > Containers are not providing the level of security that is enough
 > > to run arbitrary code. VMs can do it better, but cpu bugs don't make it easy.
 > > Containers are used to make production systems safer.
@@ -111,117 +137,42 @@ On Tue, Aug 13, 2019 at 3:27 PM Daniel Colascione <dancol@google.com> wrote:
 > > It's been a constant source of pain. The constant blinding, randomization,
 > > verifier speculative analysis, all spectre v1, v2, v4 mitigations
 > > are simply not worth it. It's a lot of complex kernel code without users.
-> > There is not a single use case to allow arbitrary malicious bpf
-> > program to be loaded and executed.
-> > As soon as we have /dev/bpf to allow all of bpf to be used without root
-> > we will set sysctl kernel.unprivileged_bpf_disabled=1
+> 
+> Seccomp really will want eBPF some day, and it should work without
+> privilege.  Maybe it should be a restricted subset of eBPF, and
+> Spectre will always be an issue until dramatically better hardware
+> shows up, but I think people will want the ability for regular
+> programs to load eBPF seccomp programs.
+
+I'm absolutely against using eBPF in seccomp.
+Precisely due to discussions like the current one.
+
+> 
 > > Hence I prefer this /dev/bpf mechanism to be as simple a possible.
 > > The applications that will use it are going to be just as trusted as systemd.
-> >
-> > > > To solve your concern of bypassing all capable checks...
-> > > > How about we do /dev/bpf/full_verifier first?
-> > > > It will replace capable() checks in the verifier only.
-> > >
-> > > I'm not convinced that "in the verifier" is the right distinction.
-> > > Telling administrators that some setting lets certain users bypass
-> > > bpf() verifier checks doesn't have a clear enough meaning.
-> >
-> > linux is a single user system. there are no administrators any more.
-> > No doubt, folks will disagree, but that game is over.
-> > At least on bpf side it's done.
-> >
-> > > I propose,
-> > > instead, that the current capable() checks be divided into three
-> > > categories:
-> >
-> > I don't see a use case for these categories.
-> > All bpf programs extend the kernel in some way.
-> > The kernel vs user is one category.
-> > Conceptually CAP_BPF is enough. It would be similar to CAP_NET_ADMIN.
-> > When application has CAP_NET_ADMIN it covers all of networking knobs.
-> > There is no use case that would warrant fine grain CAP_ROUTE_ADMIN,
-> > CAP_ETHTOOL_ADMIN, CAP_ETH0_ADMIN, etc.
-> > Similarly CAP_BPF as the only knob is enough.
-> > The only disadvantage of CAP_BPF is that it's not possible to
-> > pass it from one systemd-like daemon to another systemd-like daemon.
-> > Hence /dev/bpf idea and passing file descriptor.
-> >
-> > > This type of thing actually fits quite nicely into an idea I've been
-> > > thinking about for a while called "implicit rights". In very brief
-> > > summary, there would be objects called /dev/rights/xyz, where xyz is
-> > > the same of a "right".  If there is a readable object of the right
-> > > type at the literal path "/dev/rights/xyz", then you have right xyz.
-> > > There's a bit more flexibility on top of this.  BPF could use
-> > > /dev/rights/bpf/maptypes/lpm and
-> > > /dev/rights/bpf/verifier/bounded_loops, for example.  Other non-BPF
-> > > use cases include a biggie:
-> > > /dev/rights/namespace/create_unprivileged_userns.
-> > > /dev/rights/bind_port/80 would be nice, too.
-> >
-> > The concept of "implicit rights" is very nice and I'm sure it will
-> > be a good fit somewhere, but I don't see why use it in bpf space.
-> > There is no use case for fine grain partition of bpf features.
->
-> Isn't this "implicit rights" model just another kind of ambient
-> authority --- one that constrains the otherwise-free filesystem
-> namespace to boot?
+> 
+> I still don't understand your systemd example.  systemd --users is not
+> trusted systemwide in any respect.  The main PID 1 systemd is root.
+> No matter how you dice it, granting a user systemd instance extra bpf
+> access is tantamount to granting the user extra bpf access in general.
 
-Yes.
+People use systemd --user while their kernel have 'undef CONFIG_USER_NS'.
 
-> IMHO, the kernel should be moving toward explicit
-> authorization tokens modeled by file descriptors and away from
-> contextual authorization decisions.
+> It sounds to me like you're thinking of eBPF as a feature a bit like
+> unprivileged user namespaces: *in principle*, it's supposed to be safe
+> to give any unprivileged process the ability to use it, and you
+> consider security flaws in it to be bugs worth fixing. But you think
+> it's a large attack surface and that most unprivileged programs
+> shouldn't be allowed to use it.  Is that reasonable?
 
-And yes, I agree there too. Here's how I think about it: there are
-really two layers here:
+I think there should be no unprivileged bpf at all,
+because over all these years we've seen zero use cases.
+Hence all new features are root only.
+LPM map is a prime example. There was not a single security bug in there.
+There were few functional bugs, but not security issues.
+These bugs didn't crash the kernel and didn't expose any data.
+Yet we still keep LPM as root only.
+Can we flip the switch and make it non-root? It's trivial single line patch ?
+and security risk is very low?
+Nope, since it will not address the underlying issue.
 
-Rights: these are objects like /dev/rights/bpf/some_bpf_privilege or
-/dev/rights/namespace/unpriv_userns, and you would, ideally, use them
-like genuine capabilities.  You'd pass an fd with appropriate access
-(FMODE_READ, presumably, since exec is awkward to work with for fds)
-into bpf() or similar, and the kernel would say "yep, caller has the
-capability" and do something.  There's nothing really restricting them
-to /dev/rights, but they more or less have to live on a memory-backed
-file system (a real backing store has all kinds of issues), and
-putting them in /dev gets a lot of nifty properties for free.  For
-example, existing container systems that don't know about them will
-automatically deny them to containers, since nothing with an ounce of
-sense passes all of /dev through to a container.  But container
-systems that are aware of them can bind-mount them into the container.
-And /dev is already known to be magical due to things like
-/dev/urandom.
-
-The implicit part on top is less than ideal, but it solves two problems:
-
-1. It keeps compatibility with existing code.  There are programs that
-expect unshare(CLONE_NEWUSER) to work -- with *implicit* rights, it
-will work exactly when it's supposed to.  Also, for cases like
-CLONE_NEWUSER, it does have more or less the right semantics -- if
-they were explicit, most programs would just try to open
-/dev/rights/namespace/unpriv_userns and pass the fd to unshare2, so
-we're not losing much.
-
-2. For things like eBPF where the set of rights could be a moving
-target, implicit rights lets the model evolve without breaking
-userspace.  So if LPM maps eventually become bulletproof and a right
-is no longer needed, it still works.  Or if some feature in the
-verifier that is currently unrestricted were subsequently deemed to
-need restrictions, they could be added without retrofitting all the
-users.
-
-There are cases where implicit rights would be totally inappropriate.
-For example, a CAP_DAC_READ_SEARCH right could not be safely made
-implicit.  In general, I think the implicit model works for system
-calls where it's unambiguous what the caller wants to have happen and
-there, depending on privilege level, it either works or it doesn't.
-So, for accessing a filesystem, it's not at all obvious whether a
-program is accessing it on its own behalf or on a client's behalf, and
-privilege usage should be explicit.  For something like "don't
-Spectre-mitigate this eBPF program", the semantics change and the
-request should IMO be explicit.  For for "create an LPM map", I don't
-see how a confused deputy is likely, and an implicit right seems
-reasonable.  Similarly, for creating a namespace or binding a network
-port, confused deputies seem unlikely.  (For connecting to a network
-address, if such a thing were ever restricted, confused deputies are
-definitely possible and happen all the time, e.g. under a DNS
-rebinding attack.)
