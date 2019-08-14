@@ -2,189 +2,141 @@ Return-Path: <SRS0=PFxj=WK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4918C0650F
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 05:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C3BDC0650F
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 06:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9557D2084F
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 05:24:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 381F1214DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 06:12:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ptEpUAIa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfHNFYJ (ORCPT
+        id S1726947AbfHNGMu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Aug 2019 01:24:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55724 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727363AbfHNFYI (ORCPT
+        Wed, 14 Aug 2019 02:12:50 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:56743 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbfHNGMu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Aug 2019 01:24:08 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D2F463002096;
-        Wed, 14 Aug 2019 05:24:07 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-126.pek2.redhat.com [10.72.12.126])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 53BBB88B31;
-        Wed, 14 Aug 2019 05:24:04 +0000 (UTC)
-Date:   Wed, 14 Aug 2019 13:23:59 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        Wed, 14 Aug 2019 02:12:50 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190814061247euoutp01940243f2888fbc61e0019fcbbc33a6bd~6tU4x736f1566315663euoutp01U
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Aug 2019 06:12:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190814061247euoutp01940243f2888fbc61e0019fcbbc33a6bd~6tU4x736f1566315663euoutp01U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1565763167;
+        bh=zH0H/Am6rFEX7Tq6/Cx8jitdW00s+oXxcueR2OogNUY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ptEpUAIaNgvE1i5zMWM3q2N7x5ytt0Wtv8g9Y2t/LTULSrS0f/2k1Y1MSYnlvEFlM
+         Y8yIUjA6BtVFyz/8fSkC5phA+CgSRWzlomq3M+3FjKpMGx6XZ4pm79et6aHw48PWk1
+         igh8OVS+SSlOr8r1oZy2vLHKLriAeMoYvGNxSmps=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190814061247eucas1p273e1ee2d5ddfd66456a2e5b56a5cf0f7~6tU4AjTkD0131201312eucas1p22;
+        Wed, 14 Aug 2019 06:12:47 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id E3.EC.04469.E56A35D5; Wed, 14
+        Aug 2019 07:12:46 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190814061246eucas1p128cae99a14f27bc79fa2aa72084a0413~6tU3HJw2A1469514695eucas1p1a;
+        Wed, 14 Aug 2019 06:12:46 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190814061245eusmtrp2a1aaa016b1a42773ea640a87ed942faa~6tU23iRIY3153431534eusmtrp2L;
+        Wed, 14 Aug 2019 06:12:45 +0000 (GMT)
+X-AuditID: cbfec7f2-54fff70000001175-af-5d53a65ef895
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C4.70.04166.D56A35D5; Wed, 14
+        Aug 2019 07:12:45 +0100 (BST)
+Received: from AMDC2765.DIGITAL.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190814061245eusmtip1d471fa5f1d7b228d17d85b301acb80cd~6tU2VXBym2287722877eusmtip1W;
+        Wed, 14 Aug 2019 06:12:45 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Matthew Garrett <mjg59@google.com>,
-        Jiri Bohac <jbohac@suse.cz>, kexec@lists.infradead.org
-Subject: Re: [PATCH 3/6] Avoid build warning when !CONFIG_KEXEC_SIG
-Message-ID: <20190814052359.GA10664@dhcp-128-65.nay.redhat.com>
-References: <20190813192126.122370-1-matthewgarrett@google.com>
- <20190813192126.122370-4-matthewgarrett@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190813192126.122370-4-matthewgarrett@google.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 14 Aug 2019 05:24:08 +0000 (UTC)
+        Steven Rostedt <rostedt@goodmis.org>,
+        James Morris <jmorris@namei.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>
+Subject: [PATCH] tracefs: Fix NULL pointer dereference when no lockdown is
+ used
+Date:   Wed, 14 Aug 2019 08:12:37 +0200
+Message-Id: <20190814061237.17406-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <3028ed35-3b6d-459f-f3c8-103c5636fe95@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjleLIzCtJLcpLzFFi42LZduzned24ZcGxBm8mGlhsnLGe1WLd+sVM
+        FufPb2C32Py9g83i8q45bBYfeh6xWaw9cpfd4tULLYt/G96wWOzreMDkwOXRsu8Wu8eCTaUe
+        m1Z1snn0fE/26NuyitHj8ya5ALYoLpuU1JzMstQifbsErow9D26zFMznqLjzp5upgfErWxcj
+        B4eEgIlE93rnLkYuDiGBFYwS//Z/YYFwvjBKPLv7iBXC+cwo0b67j72LkROs40nnVEaIxHJG
+        iQ9r/rLDtXxu+ccGUsUmYCjR9bYLzBYRUJDY3PsMbBSzwEcmiYuHP4AlhAUCJbb/OM4CYrMI
+        qEpMuH8RzOYVsJVY276NDWKdvMTqDQeYQWxOAXuJA1ebwA6UEGhnl/i9ZgIzRJGLxJlDn6Bs
+        YYlXx7dA3Soj8X/nfCaIhmZGiYfn1rJDOD2MEpebZjBCVFlLHD5+kRUUHswCmhLrd+lDhB0l
+        Xh9YyQIJJj6JG28FQcLMQOakbdOZIcK8Eh1tQhDVahKzjq+DW3vwwiWoczwkph87ygwJoUmM
+        Es1HGpkmMMrPQli2gJFxFaN4amlxbnpqsWFearlecWJucWleul5yfu4mRmAqOf3v+KcdjF8v
+        JR1iFOBgVOLhDdgSFCvEmlhWXJl7iFGCg1lJhHfCRaAQb0piZVVqUX58UWlOavEhRmkOFiVx
+        3mqGB9FCAumJJanZqakFqUUwWSYOTqkGxgpGpa+bI/Yq3P+womy1iHLPCYPQ0/7/112c6psd
+        tcf/RITI1uOCiyNa/0YH3xU4dHnKzneNC6zjt3Hsf6fK9DffwYl75dH8zmK3yXazdmhsuJOz
+        Lr5j9YHk1XMU27Y2+Bs4N/5+eHzpNYXca4Z/+W79tirYHCmxK1C03seew8h475uaf81OJ5VY
+        ijMSDbWYi4oTAQejCnohAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsVy+t/xu7qxy4JjDQ5OMrTYOGM9q8W69YuZ
+        LM6f38Busfl7B5vF5V1z2Cw+9Dxis1h75C67xasXWhb/NrxhsdjX8YDJgcujZd8tdo8Fm0o9
+        Nq3qZPPo+Z7s0bdlFaPH501yAWxRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZG
+        pkr6djYpqTmZZalF+nYJehl7HtxmKZjPUXHnTzdTA+NXti5GTg4JAROJJ51TGbsYuTiEBJYy
+        Sryc94wRIiEjcXJaAyuELSzx51oXG0TRJ0aJb/P2gXWzCRhKdL3tArNFBBQkNvc+YwUpYhb4
+        ziRxbtNfZpCEsIC/ROfrp2BTWQRUJSbcv8gCYvMK2Eqsbd8GdYa8xOoNB8DqOQXsJQ5cbQKq
+        4QDaZifx4Lb3BEa+BYwMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQLDetuxn5t3MF7aGHyI
+        UYCDUYmHN2BLUKwQa2JZcWXuIUYJDmYlEd4JF4FCvCmJlVWpRfnxRaU5qcWHGE2BbprILCWa
+        nA+MubySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYxBAs0ma+5N
+        ld1UcSeqUDKx87DxxZOfZ0z8eayz539w/44Dj/LVIh+IivFeYzl2lclLOsa8Y8YTgdfJDHZT
+        5syb3yvC9CUoVmCX8AwF+7T2D5drCzvXvNz1jqF7fktyCrf4xHrNxm0t17Kc+RjqPtXxKu/r
+        Nlmyqy1f+LYUw4q5CelG29hFFymxFGckGmoxFxUnAgAZkavBgQIAAA==
+X-CMS-MailID: 20190814061246eucas1p128cae99a14f27bc79fa2aa72084a0413
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190814061246eucas1p128cae99a14f27bc79fa2aa72084a0413
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190814061246eucas1p128cae99a14f27bc79fa2aa72084a0413
+References: <3028ed35-3b6d-459f-f3c8-103c5636fe95@samsung.com>
+        <CGME20190814061246eucas1p128cae99a14f27bc79fa2aa72084a0413@eucas1p1.samsung.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 08/13/19 at 12:21pm, Matthew Garrett wrote:
-> Refactor the signature validation and lockdown integration a little in
-> order to avoid an unused variable.
-> 
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Cc: Jiri Bohac <jbohac@suse.cz>
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: kexec@lists.infradead.org
-> ---
->  kernel/kexec_file.c | 72 ++++++++++++++++++++++++++++-----------------
->  1 file changed, 45 insertions(+), 27 deletions(-)
-> 
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index be0c13076056..e878587715b9 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -177,36 +177,13 @@ void kimage_file_post_load_cleanup(struct kimage *image)
->  	image->image_loader_data = NULL;
->  }
->  
-> -/*
-> - * In file mode list of segments is prepared by kernel. Copy relevant
-> - * data from user space, do error checking, prepare segment list
-> - */
-> +#ifdef CONFIG_KEXEC_SIG
->  static int
-> -kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
-> -			     const char __user *cmdline_ptr,
-> -			     unsigned long cmdline_len, unsigned flags)
-> +kimage_validate_signature(struct kimage *image)
->  {
->  	const char *reason;
->  	int ret;
-> -	void *ldata;
-> -	loff_t size;
-> -
-> -	ret = kernel_read_file_from_fd(kernel_fd, &image->kernel_buf,
-> -				       &size, INT_MAX, READING_KEXEC_IMAGE);
-> -	if (ret)
-> -		return ret;
-> -	image->kernel_buf_len = size;
-> -
-> -	/* IMA needs to pass the measurement list to the next kernel. */
-> -	ima_add_kexec_buffer(image);
->  
-> -	/* Call arch image probe handlers */
-> -	ret = arch_kexec_kernel_image_probe(image, image->kernel_buf,
-> -					    image->kernel_buf_len);
-> -	if (ret)
-> -		goto out;
-> -
-> -#ifdef CONFIG_KEXEC_SIG
->  	ret = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
->  					   image->kernel_buf_len);
->  	switch (ret) {
-> @@ -228,7 +205,7 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
->  	decide:
->  		if (IS_ENABLED(CONFIG_KEXEC_SIG_FORCE)) {
->  			pr_notice("%s rejected\n", reason);
-> -			goto out;
-> +			break;
->  		}
->  
->  		ret = 0;
-> @@ -251,9 +228,44 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
->  		 */
->  	default:
->  		pr_notice("kernel signature verification failed (%d).\n", ret);
-> -		goto out;
-> +		break;
->  	}
-> +
-> +	return ret;
-> +}
-> +#endif
-> +
-> +/*
-> + * In file mode list of segments is prepared by kernel. Copy relevant
-> + * data from user space, do error checking, prepare segment list
-> + */
-> +static int
-> +kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
-> +			     const char __user *cmdline_ptr,
-> +			     unsigned long cmdline_len, unsigned flags)
-> +{
-> +	int ret;
-> +	void *ldata;
-> +	loff_t size;
-> +
-> +	ret = kernel_read_file_from_fd(kernel_fd, &image->kernel_buf,
-> +				       &size, INT_MAX, READING_KEXEC_IMAGE);
-> +	if (ret)
-> +		return ret;
-> +	image->kernel_buf_len = size;
-> +
-> +	/* Call arch image probe handlers */
-> +	ret = arch_kexec_kernel_image_probe(image, image->kernel_buf,
-> +					    image->kernel_buf_len);
-> +	if (ret)
-> +		goto out;
-> +
-> +#ifdef CONFIG_KEXEC_SIG
-> +	ret = kimage_validate_signature(image);
-> +	if (ret)
-> +		goto out;
->  #endif
-> +
->  	/* It is possible that there no initramfs is being loaded */
->  	if (!(flags & KEXEC_FILE_NO_INITRAMFS)) {
->  		ret = kernel_read_file_from_fd(initrd_fd, &image->initrd_buf,
-> @@ -279,8 +291,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
->  			ret = -EINVAL;
->  			goto out;
->  		}
-> +
-> +		ima_kexec_cmdline(image->cmdline_buf,
-> +				  image->cmdline_buf_len - 1);
->  	}
->  
-> +	/* IMA needs to pass the measurement list to the next kernel. */
-> +	ima_add_kexec_buffer(image);
-> +
->  	/* Call arch image load handlers */
->  	ldata = arch_kexec_kernel_image_load(image);
->  
+Commit 757ff7244358 ("tracefs: Restrict tracefs when the kernel is locked
+down") added infrastructure for restricting tracefs access when lockdown
+is enabled. It however broke tracefs operation when no lockdown is used.
+Fix this issue by adding missing check for a NULL ->open() callback.
 
-I can not get the whole thread, also not sure which tree it should
-apply.
+Fixes: 757ff7244358 ("tracefs: Restrict tracefs when the kernel is locked down")
+Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ fs/tracefs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I assume it is based on your series for lockdown.  But it is really hard
-to review because of no context in this patch.
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index 12a325fb4cbd..8efff7603032 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -43,7 +43,7 @@ static int default_open_file(struct inode *inode, struct file *filp)
+ 		return ret;
+ 
+ 	real_fops = dentry->d_fsdata;
+-	return real_fops->open(inode, filp);
++	return real_fops->open ? real_fops->open(inode, filp) : 0;
+ }
+ 
+ static ssize_t default_read_file(struct file *file, char __user *buf,
+-- 
+2.17.1
 
-Also I think it should be good to split the preparation piece of kexec
-and send them separately.  Since it is improve the signature
-verification logic, they do not necessarily depend on the lockdown
-series.
-
-Thanks
-Dave
