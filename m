@@ -2,92 +2,184 @@ Return-Path: <SRS0=PFxj=WK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D142C433FF
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B86ADC433FF
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10EC32084D
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:46:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="HRoKkCMG"
+	by mail.kernel.org (Postfix) with ESMTP id 83ADE208C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:51:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565805098;
+	bh=XeMnKuoQGUDkp7xm8S6UJpJjinby4CZDL2Le2Uei9CE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=wgBwb6Uzgy78HRNApp1KfzI9aeXAs0ihj+XzzUEIRx7LEeHOlZuKeGMUeAETfD3hn
+	 o7jTisWLXZ+4ahPMjV+PV9Iunpmz9N07fGqim3362Sluw3I7CH4GtN3hBGnN/3vkwX
+	 ajDHKTwZ8CC1+IPiEwstxq1SFys8U91mdK9EfRLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbfHNRqs (ORCPT
+        id S1728670AbfHNRvi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Aug 2019 13:46:48 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33292 "EHLO mail.skyhub.de"
+        Wed, 14 Aug 2019 13:51:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728169AbfHNRqs (ORCPT
+        id S1728684AbfHNRvh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:46:48 -0400
-Received: from zn.tnic (p200300EC2F0BD0003850D0C8BF1AA1C5.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:d000:3850:d0c8:bf1a:a1c5])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 14 Aug 2019 13:51:37 -0400
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BE7B31EC0260;
-        Wed, 14 Aug 2019 19:46:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565804807;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=2SA+6786MPKxV9jdAfB9Q+F1WSWbXybqiA3c/b/Fyek=;
-        b=HRoKkCMGX9XffldZ1bdQh77Ucsh/dkiDimF3tNgLqjK4pzSo/87R66h1SJtgSp22UDqUVe
-        9ystX6lvzqfB/NilBoEtGEhi5N1uAoID2eMpKHUszFuHLpwxwk21JMPBW91lBfiSyzHmC+
-        5xV1UL/PqMyGU66c8NTryZSdeBhaTYY=
-Date:   Wed, 14 Aug 2019 19:47:32 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Josh Boyer <jwboyer@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Young <dyoung@redhat.com>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH V38 15/29] acpi: Ignore acpi_rsdp kernel param when the
- kernel has been locked down
-Message-ID: <20190814174732.GD1841@zn.tnic>
-References: <20190808000721.124691-1-matthewgarrett@google.com>
- <20190808000721.124691-16-matthewgarrett@google.com>
- <20190814072602.GA27836@zn.tnic>
- <CACdnJuuOhuw71GDwQOrPQxUexpvpZNJocr6m0dYzJw+MMaVKWQ@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C6D121851
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Aug 2019 17:51:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565805096;
+        bh=XeMnKuoQGUDkp7xm8S6UJpJjinby4CZDL2Le2Uei9CE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WiYRi47Tr2Fqlupks4B9cf+lvLB1kacoJ0Q04JCq9YaCv9hqgyNuHviPLlddlKKFU
+         f2KkNF5PC/WemKlhMmwI1YaylHBLU+7Vk1tATNiaPGejyFkUlvLAkjAZmYvaSZzylD
+         DuXSMoE9xkRnrxnkdlYeT8tLgOHI+Z4qXNwCdA+M=
+Received: by mail-wr1-f42.google.com with SMTP id b16so15215043wrq.9
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Aug 2019 10:51:36 -0700 (PDT)
+X-Gm-Message-State: APjAAAWgrYbFzTj7dYh6XkRLzXY8fLZcMNfL94K3MIObNUIN9FcY1wsc
+        nRPD9pUpVk7SEVwHvjsLctXJK3wIfO3mZ6LvrE6zpQ==
+X-Google-Smtp-Source: APXvYqwH5OnheHfRnPyM5sjwO/MKMub0DHKkYqC70Uco7FQaSpqnuzFvrFWzsCSoWfUt3UX22oE8QlhZVLqztu9XJxM=
+X-Received: by 2002:adf:f18c:: with SMTP id h12mr952190wro.47.1565805094766;
+ Wed, 14 Aug 2019 10:51:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACdnJuuOhuw71GDwQOrPQxUexpvpZNJocr6m0dYzJw+MMaVKWQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
+ <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
+ <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com> <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
+ <20190805192122.laxcaz75k4vxdspn@ast-mbp> <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
+ <20190806011134.p5baub5l3t5fkmou@ast-mbp> <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
+ <20190813215823.3sfbakzzjjykyng2@ast-mbp> <CALCETrVT-dDXQGukGs5S1DkzvQv9_e=axzr_GyEd2c4T4z8Qng@mail.gmail.com>
+ <20190814005737.4qg6wh4a53vmso2v@ast-mbp>
+In-Reply-To: <20190814005737.4qg6wh4a53vmso2v@ast-mbp>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 14 Aug 2019 10:51:23 -0700
+X-Gmail-Original-Message-ID: <CALCETrUkqUprujww26VxHwkdXQ3DWJH8nnL2VBYpK2EU0oX_YA@mail.gmail.com>
+Message-ID: <CALCETrUkqUprujww26VxHwkdXQ3DWJH8nnL2VBYpK2EU0oX_YA@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Colascione <dancol@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Kees Cook <keescook@chromium.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 14, 2019 at 10:14:54AM -0700, Matthew Garrett wrote:
-> We explicitly don't want to pay attention to the acpi_rsdp kernel
-> parameter in early boot except for the case of finding the SRAT table,
-> and we only need that if CONFIG_RANDOMIZE_BASE and
-> CONFIG_MEMORY_HOTREMOVE are set. However, we *do* want to tell the
-> actual kernel where the RSDP is if we found it via some other means,
-> so we can't just clear the boot parameters value.
+On Tue, Aug 13, 2019 at 5:57 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
 
-Ok.
+> hmm. No. Kernel developers should not make any assumptions.
+> They should guide their design by real use cases instead. That includes studing
+> what people do now and hacks they use to workaround lack of interfaces.
+> Effecitvely bpf is root only. There are no unpriv users.
+> This root applications go out of their way to reduce privileges
+> while they still want to use bpf. That is the need that /dev/bpf is solving.
+>
+> >
+> > > Containers are not providing the level of security that is enough
+> > > to run arbitrary code. VMs can do it better, but cpu bugs don't make it easy.
+> > > Containers are used to make production systems safer.
+> > > Some people call it more 'secure', but it's clearly not secure for
+> > > arbitrary code and that is what kernel.unprivileged_bpf_disabled allows.
+> > > When we say 'unprivileged bpf' we really mean arbitrary malicious bpf program.
+> > > It's been a constant source of pain. The constant blinding, randomization,
+> > > verifier speculative analysis, all spectre v1, v2, v4 mitigations
+> > > are simply not worth it. It's a lot of complex kernel code without users.
+> >
+> > Seccomp really will want eBPF some day, and it should work without
+> > privilege.  Maybe it should be a restricted subset of eBPF, and
+> > Spectre will always be an issue until dramatically better hardware
+> > shows up, but I think people will want the ability for regular
+> > programs to load eBPF seccomp programs.
+>
+> I'm absolutely against using eBPF in seccomp.
+> Precisely due to discussions like the current one.
 
-> The kernel proper will parse the command line again and will then (if
-> lockdown isn't enabled) override the actual value we passed up in boot
-> params.
+I still think I don't really agree with your overall premise.
 
-Yeah, ok, I see what you're doing there. AFAICT, you do that in
+If eBPF is genuinely not usable by programs that are not fully trusted
+by the admin, then no kernel changes at all are needed.  Programs that
+want to reduce their own privileges can easily fork() a privileged
+subprocess or run a little helper to which they delegate BPF
+operations.  This is far more flexible than anything that will ever be
+in the kernel because it allows the helper to verify that the rest of
+the program is doing exactly what it's supposed to and restrict eBPF
+operations to exactly the subset that is needed.  So a container
+manager or network manager that drops some provilege could have a
+little bpf-helper that manages its BPF XDP, firewalling, etc
+configuration.  The two processes would talk over a socketpair.
 
-setup_arch->acpi_boot_table_init-> ... -> acpi_os_get_root_pointer()
+The interesting cases you're talking about really *do* involved
+unprivileged or less privileged eBPF, though.  Let's see:
 
-I hope nothing needs it earlier because then we'll have to restructure
-again...
+systemd --user: systemd --user *is not privileged at all*.  There's no
+issue of reducing privilege, since systemd --user doesn't have any
+privilege to begin with.  But systemd supports some eBPF features, and
+presumably it would like to support them in the systemd --user case.
+This is unprivileged eBPF.
 
-Thx.
+Seccomp.  Seccomp already uses cBPF, which is a form of BPF although
+it doesn't involve the bpf() syscall.  There are some seccomp
+proposals in the works that will want some stuff from eBPF.  In
+particular, the ability to call seccomp-specific bpf functions from a
+seccomp program could be very nice. Similarly, the ability to use the
+enhanced instruction set and maybe even *read* maps would be nice.  I
+do think that seccomp will continue to want its programs to be
+stateless.
 
--- 
-Regards/Gruss,
-    Boris.
+So it's a bit of a chicken-and-egg situation.  There aren't major
+unprivileged eBPF users because the kernel support isn't there.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+> >
+> > > Hence I prefer this /dev/bpf mechanism to be as simple a possible.
+> > > The applications that will use it are going to be just as trusted as systemd.
+> >
+> > I still don't understand your systemd example.  systemd --users is not
+> > trusted systemwide in any respect.  The main PID 1 systemd is root.
+> > No matter how you dice it, granting a user systemd instance extra bpf
+> > access is tantamount to granting the user extra bpf access in general.
+>
+> People use systemd --user while their kernel have 'undef CONFIG_USER_NS'.
+
+I don't know what you're getting at.  I'm typing this email in a
+browser running under a systemd --user instance, and there are no user
+namespaces involved.
+
+$ ps -u luto |grep systemd
+ 1944 ?        00:00:02 systemd
+$ stat /proc/1944
+...
+Access: (0555/dr-xr-xr-x)  Uid: ( 1000/    luto)   Gid: ( 1000/    luto)
+Context: unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+$ gdb -p 1944
+[snipped tons of output, but gdb works fine like this]
+
+systemd --user is not privileged.  Giving it /dev/bpf as imagined by
+the current set of patches would be a gaping security hole.
+
+>
+> I think there should be no unprivileged bpf at all,
+> because over all these years we've seen zero use cases.
+> Hence all new features are root only.
+
+You're the maintainer.  If you feel this way, then I think you should
+just drop the /dev/bpf idea entirely and have userspace manage all of
+this by itself.  It will remain extremely awkward for containers and
+especially nested containers to use eBPF.
+
+--Andy
