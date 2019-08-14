@@ -2,183 +2,125 @@ Return-Path: <SRS0=PFxj=WK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16492C433FF
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 22:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F770C433FF
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 22:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D04A52064A
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 22:31:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="mdyzDvu4"
+	by mail.kernel.org (Postfix) with ESMTP id 1D7DB21721
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 22:41:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565822474;
+	bh=CviwBQybQ73luJx300rF3YLPLShA5l26GwG1n7ro8F0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=q7pNYCx1oLVOJOE6UXZdQpVWqO9IZuAHYDjG5Xs+gtPp447QlTJoC5zWh2kx1Fz/N
+	 5ZTscM3QygnpKAt4jks07oOB7k0umHUcY6XbBKEKFZuJYBcl8e7o1OCZKhFp1UaWR+
+	 BXO3SWc7/RPCxNT7F4F7A23nDPiG8afKJVvKl1+Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbfHNWay (ORCPT
+        id S1728494AbfHNWlK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Aug 2019 18:30:54 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46629 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728262AbfHNWay (ORCPT
+        Wed, 14 Aug 2019 18:41:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbfHNWlJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Aug 2019 18:30:54 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q139so196503pfc.13
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Aug 2019 15:30:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=yFT0DexMwrpcpBksqM27vWgfwGLdGdnJxoa44QNbmXc=;
-        b=mdyzDvu42tTkOsWy6oTPXu18OkStVhbhSoIT/SQap4fGl7XOdtBH5ZFB0bHDYa1y/z
-         nIG/PUjvCypqMuWoHSfsttI9fau5EVlapKeEuOV2JM9Xu7BhrYnpIqEeq9aUx5/xcZv8
-         mEi6tWij5/6vd9gQGKGUeUwwC7mnS84sZfs6oiOuZx90z/9scFOevardh43fJcAjndhO
-         7XbOPsnwVlU9htX6OWr4qG5AYWLTeQjQeYSRqO1jVj5ihkf/BawHcc1xYEe1FGXuxL2y
-         L2Zc2Lh1QA2T7+ehxuiCBbV/8RfmubBfWt8kIW5Kkl4xy5rSfi3onKqL1VkYlha0+6h9
-         qNQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=yFT0DexMwrpcpBksqM27vWgfwGLdGdnJxoa44QNbmXc=;
-        b=HYBWyVmoU152wyWOnVgqkX1c2Ks5vqgAyVteMSW8LYhJlD2G2kzMZr0IwquN3bDFCh
-         G6tAGbiwxvMVi72uxuf9CgaaGSofwTiVPVxag0nKYpA4n053klG8eht9tIZ4eKfQrcEz
-         NUCdtGbbB6G4G3b+5pUqVagoan1hsfrdP1Uc4YCrVotQVmHsovoS1/HftErwC0mWWrnT
-         +QOzgn3TVO5aGAtwFwkbWaLOZx6y42rhHPivg3nflTlE3pTLDOotTTX0FxVfH+B+1A+P
-         +6SBjQsj5ZGxEtCFjNyI7zPvdGyBCaoaxAPbLLr7SH0u5Sv4XZayLfv1uWtMtL9aSBfB
-         VUgw==
-X-Gm-Message-State: APjAAAXLAfM756XZ18IAOExoqDY6n9JtPMjIkGhOQNCAPgZdzUEb6FBI
-        aUGls03E/G7hs66sH2mXKPzfPw==
-X-Google-Smtp-Source: APXvYqzJ31qf7hxB+vYykfcoT3+2aPYGmhoqmEYaHxavvuZTHNyJQKWgpyrk5FWfjptWB1rUiqJeVg==
-X-Received: by 2002:a63:5d54:: with SMTP id o20mr1120079pgm.413.1565821853550;
-        Wed, 14 Aug 2019 15:30:53 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b04e:b450:9121:34aa:70f4:e97c? ([2600:1010:b04e:b450:9121:34aa:70f4:e97c])
-        by smtp.gmail.com with ESMTPSA id 4sm917288pfc.92.2019.08.14.15.30.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Aug 2019 15:30:52 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16G77)
-In-Reply-To: <20190814220545.co5pucyo5jk3weiv@ast-mbp.dhcp.thefacebook.com>
-Date:   Wed, 14 Aug 2019 15:30:51 -0700
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Song Liu <songliubraving@fb.com>,
-        Kees Cook <keescook@chromium.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AD211133-EA60-4B91-AB1B-201713F50AB2@amacapital.net>
-References: <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com> <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com> <20190805192122.laxcaz75k4vxdspn@ast-mbp> <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com> <20190806011134.p5baub5l3t5fkmou@ast-mbp> <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com> <20190813215823.3sfbakzzjjykyng2@ast-mbp> <CALCETrVT-dDXQGukGs5S1DkzvQv9_e=axzr_GyEd2c4T4z8Qng@mail.gmail.com> <20190814005737.4qg6wh4a53vmso2v@ast-mbp> <CALCETrUkqUprujww26VxHwkdXQ3DWJH8nnL2VBYpK2EU0oX_YA@mail.gmail.com> <20190814220545.co5pucyo5jk3weiv@ast-mbp.dhcp.thefacebook.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+        Wed, 14 Aug 2019 18:41:09 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB31821721;
+        Wed, 14 Aug 2019 22:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565822469;
+        bh=CviwBQybQ73luJx300rF3YLPLShA5l26GwG1n7ro8F0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LdMr+6TcuF7TGsEMStQtXS1Uo4pQ1azXbMpF7udi302gAehifXJq3WIG+R/7wcMC9
+         pkpo168tThNMaaY/MSacTx7GdSapjlR5WMtD7JeQ4CQ4f8uqPCXCGlSrrhEqDNbX+i
+         cTwAOHmEL2WxOck5kRRv4imfLfthlQXuzPtxYLts=
+Date:   Wed, 14 Aug 2019 15:41:07 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] KEYS: Replace uid/gid/perm permissions checking with
+ an ACL
+Message-ID: <20190814224106.GG101319@gmail.com>
+Mail-Followup-To: David Howells <dhowells@redhat.com>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <155862710003.24863.11807972177275927370.stgit@warthog.procyon.org.uk>
+ <155862710731.24863.14013725058582750710.stgit@warthog.procyon.org.uk>
+ <20190710011559.GA7973@sol.localdomain>
+ <20190730034956.GB1966@sol.localdomain>
+ <20190731011614.GA687@sol.localdomain>
+ <20190807025814.GA1167@sol.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807025814.GA1167@sol.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Aug 06, 2019 at 07:58:14PM -0700, Eric Biggers wrote:
+> On Tue, Jul 30, 2019 at 06:16:14PM -0700, Eric Biggers wrote:
+> > On Mon, Jul 29, 2019 at 08:49:56PM -0700, Eric Biggers wrote:
+> > > Hi David,
+> > > 
+> > > On Tue, Jul 09, 2019 at 06:16:01PM -0700, Eric Biggers wrote:
+> > > > On Thu, May 23, 2019 at 04:58:27PM +0100, David Howells wrote:
+> > > > > Replace the uid/gid/perm permissions checking on a key with an ACL to allow
+> > > > > the SETATTR and SEARCH permissions to be split.  This will also allow a
+> > > > > greater range of subjects to represented.
+> > > > > 
+> > > > 
+> > > > This patch broke 'keyctl new_session', and hence broke all the fscrypt tests:
+> > > > 
+> > > > $ keyctl new_session
+> > > > keyctl_session_to_parent: Permission denied
+> > > > 
+> > > > Output of 'keyctl show' is
+> > > > 
+> > > > $ keyctl show
+> > > > Session Keyring
+> > > >  605894913 --alswrv      0     0  keyring: _ses
+> > > >  189223103 ----s-rv      0     0   \_ user: invocation_id
+> > > > 
+> > > > - Eric
+> > > 
+> > > This bug is still present in next-20190729.
+> > > 
+> > > - Eric
+> > 
+> > This fixes it:
+> > 
+> > diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+> > index aa3bfcadbc660..519c94f1cc3c2 100644
+> > --- a/security/keys/process_keys.c
+> > +++ b/security/keys/process_keys.c
+> > @@ -58,7 +58,7 @@ static struct key_acl session_keyring_acl = {
+> >  	.possessor_viewable = true,
+> >  	.nr_ace	= 2,
+> >  	.aces = {
+> > -		KEY_POSSESSOR_ACE(KEY_ACE__PERMS & ~KEY_ACE_JOIN),
+> > +		KEY_POSSESSOR_ACE(KEY_ACE__PERMS),
+> >  		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ),
+> >  	}
+> >  };
+> > 
+> > 
+> > The old permissions were KEY_POS_ALL | KEY_USR_VIEW | KEY_USR_READ, so
+> > I'm not sure why JOIN permission was removed?
+> > 
+> > - Eric
+> 
+> Ping.  This is still broken in linux-next.
+> 
 
+David, any comment on this?  This is still broken in linux-next.
 
-> On Aug 14, 2019, at 3:05 PM, Alexei Starovoitov <alexei.starovoitov@gmail.=
-com> wrote:
->=20
->> On Wed, Aug 14, 2019 at 10:51:23AM -0700, Andy Lutomirski wrote:
->>=20
->> If eBPF is genuinely not usable by programs that are not fully trusted
->> by the admin, then no kernel changes at all are needed.  Programs that
->> want to reduce their own privileges can easily fork() a privileged
->> subprocess or run a little helper to which they delegate BPF
->> operations.  This is far more flexible than anything that will ever be
->> in the kernel because it allows the helper to verify that the rest of
->> the program is doing exactly what it's supposed to and restrict eBPF
->> operations to exactly the subset that is needed.  So a container
->> manager or network manager that drops some provilege could have a
->> little bpf-helper that manages its BPF XDP, firewalling, etc
->> configuration.  The two processes would talk over a socketpair.
->=20
-> there were three projects that tried to delegate bpf operations.
-> All of them failed.
-> bpf operational workflow is much more complex than you're imagining.
-> fork() also doesn't work for all cases.
-> I gave this example before: consider multiple systemd-like deamons
-> that need to do bpf operations that want to pass this 'bpf capability'
-> to other deamons written by other teams. Some of them will start
-> non-root, but still need to do bpf. They will be rpm installed
-> and live upgraded while running.
-> We considered to make systemd such centralized bpf delegation
-> authority too. It didn't work. bpf in kernel grows quickly.
-> libbpf part grows independently. llvm keeps evolving.
-> All of them are being changed while system overall has to stay
-> operational. Centralized approach breaks apart.
->=20
->> The interesting cases you're talking about really *do* involved
->> unprivileged or less privileged eBPF, though.  Let's see:
->>=20
->> systemd --user: systemd --user *is not privileged at all*.  There's no
->> issue of reducing privilege, since systemd --user doesn't have any
->> privilege to begin with.  But systemd supports some eBPF features, and
->> presumably it would like to support them in the systemd --user case.
->> This is unprivileged eBPF.
->=20
-> Let's disambiguate the terminology.
-> This /dev/bpf patch set started as describing the feature as 'unprivileged=
- bpf'.
-> I think that was a mistake.
-> Let's call systemd-like deamon usage of bpf 'less privileged bpf'.
-> This is not unprivileged.
-> 'unprivileged bpf' is what sysctl kernel.unprivileged_bpf_disabled control=
-s.
->=20
-> There is a huge difference between the two.
-> I'm against extending 'unprivileged bpf' even a bit more than what it is
-> today for many reasons mentioned earlier.
-> The /dev/bpf is about 'less privileged'.
-> Less privileged than root. We need to split part of full root capability
-> into bpf capability. So that most of the root can be dropped.
-> This is very similar to what cap_net_admin does.
-> cap_net_amdin can bring down eth0 which is just as bad as crashing the box=
-.
-> cap_net_admin is very much privileged. Just 'less privileged' than root.
-> Same thing for cap_bpf.
-
-The new pseudo-capability in this patch set is absurdly broad. I=E2=80=99ve p=
-roposed some finer-grained divisions in this thread. Do you have comments on=
- them?
-
->=20
-> May be we should do both cap_bpf and /dev/bpf to make it clear that
-> this is the same thing. Two interfaces to achieve the same result.
-
-What for?  If there=E2=80=99s a CAP_BPF, then why do you want /dev/bpf? Espe=
-cially if you define it to do the same thing.
-
->=20
->> Seccomp.  Seccomp already uses cBPF, which is a form of BPF although
->> it doesn't involve the bpf() syscall.  There are some seccomp
->> proposals in the works that will want some stuff from eBPF.  In
->=20
-> I'm afraid these proposals won't go anywhere.
-
-Can you explain why?
-
->=20
->> So it's a bit of a chicken-and-egg situation.  There aren't major
->> unprivileged eBPF users because the kernel support isn't there.
->=20
-> As I said before there are zero known use cases of 'unprivileged bpf'.
->=20
-> If I understand you correctly you're refusing to accept that
-> 'less privileged bpf' is a valid use case while pushing for extending
-> scope of 'unprivileged'.
-
-No, I=E2=80=99m not.  I have no objection at all if you try to come up with a=
- clear definition of what the capability checks do and what it means to gran=
-t a new permission to a task.  Changing *all* of the capable checks is needl=
-essly broad.=
+- Eric
