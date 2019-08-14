@@ -7,80 +7,67 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F62C32759
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9646AC32753
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:21:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5D62206C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:18:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A42D206C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:21:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i+RJ4YZ1"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vk5MkWvX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730430AbfHNRSU (ORCPT
+        id S1728490AbfHNRVC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Aug 2019 13:18:20 -0400
-Received: from mail-oi1-f174.google.com ([209.85.167.174]:37815 "EHLO
-        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729705AbfHNRSU (ORCPT
+        Wed, 14 Aug 2019 13:21:02 -0400
+Received: from mail-ot1-f48.google.com ([209.85.210.48]:43609 "EHLO
+        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730560AbfHNRU6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:18:20 -0400
-Received: by mail-oi1-f174.google.com with SMTP id a21so814237oie.4
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Aug 2019 10:18:19 -0700 (PDT)
+        Wed, 14 Aug 2019 13:20:58 -0400
+Received: by mail-ot1-f48.google.com with SMTP id e12so39921966otp.10
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Aug 2019 10:20:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LRQCsPcTpX5yRUIeFvdSARBVTlIiAlejL67+Yf8xjVg=;
-        b=i+RJ4YZ15TO+HN8duwbWS743QimszN9Wm8pGxdOfNKTpNfk/bLHgeUyMR2laUaSwNC
-         jkH92f8hGxvou8/kRTOKuzkFwgOkSEPym8fJ9uVwPtFQLIo+MRHf8U10FEAQTU65YBLG
-         mQrh+u6/r0av9IScMa02QDnTBiKrdAZbS3wJdgiL4XOn4GhgziP4smrvoOgnL8FIvQ83
-         quHr9xVJbWaomkXQht1sYMrPA/wK5XtvV2BS2lAo9vBWhx6JVX0KdI8b6y++/aT/1Frx
-         e3B6mzLvuE0aH/8n4qB04UlDXcVbAcqNRv3fr54uvuFKYcP7eacbyCM2r14L+ssvjJYm
-         ZecQ==
+        bh=CapHB563gTOtizSxiyXbQJVWOCG9VF1tSLv/Lp07kmM=;
+        b=vk5MkWvX0uuNipFn1OWaISBU29AGmOV86RhMeKRZrMV69qHr6poWxkfU8A+uwSZCJf
+         AXDMEt3LfVDRBJ/1RNAgV7oa7LTwMAw2xA0M6odjDxdmW+XCGEKdCs1q1TIV+8lxzHKW
+         Hfmn9LEPGoVIgiLci+4YUlRZqHIEQ+0XNqFv+g9+VRLxkAoX4rkUfe1+7YNS7X31RuKr
+         g/T5lqYfmIXaqnfXhskoXI0/JMo5sftY+yBUXHf2aGSeWmZ3SiuL1puXoOLEkMeSZzLe
+         CoSSF4gpkjMmiwwImnyIvmcGegKlenoCDgB3vNiUPwi9blkiQWLyLyVDgnBFeFb3eFev
+         dpig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LRQCsPcTpX5yRUIeFvdSARBVTlIiAlejL67+Yf8xjVg=;
-        b=nOF9QBhb7ZpBv9eY0KaUdYs3FUWeCP3kqJ4jw/IRw1Jgg0vwON8UI2Sb2gg3/2R0gx
-         REZcPBGf1lbOCHPBkpTQx9ywxJVWd7i9rq0zddpCULDRhHY31OAwmG4ztrxnhMmz/zc1
-         iJlrP3BvG0EpFwy0j+mTgZ/eVFKwrKq4ppTRQl9eiMVssGjKy83d0hxd5fI4njYanGor
-         LVhVeselDfFJeWIY5IY4ZRiXrhREzZtPjcDcwzNsO1so5Pd0elXFAIr7PxbwOyPBdB83
-         h63r7k6iElfgoSwClQMuXgV/RoITU8unmiqXUOwpjACgCopuZGcJBmPzkYd4Fz41yOXP
-         em9g==
-X-Gm-Message-State: APjAAAWeajktAsMF4OwWMH3Xm3KfGg8h6tZl3IRLu+ycQhfoQHYZPyo/
-        6N4YsiKzOKwWaP5uzntzdAF7mGGNeeN9Et537c/qZXp9G0I=
-X-Google-Smtp-Source: APXvYqxO6hrvW6O3ywX1sNo7cI2Ev1FZZfK/oM5JhFKND6LvgRn/TFsa/h0pFjgEsTxR/Ax/nKGU78JXDTSLCAv4Igs=
-X-Received: by 2002:a02:cc8f:: with SMTP id s15mr395071jap.53.1565803098994;
- Wed, 14 Aug 2019 10:18:18 -0700 (PDT)
+        bh=CapHB563gTOtizSxiyXbQJVWOCG9VF1tSLv/Lp07kmM=;
+        b=CIaExPv2LWop29u4ETZ9uQtlsKkWfqNBpMmCRFBkocSQ8/GVFFgEQvb2tfKaDs/zaV
+         Pp9gUND2HX0NHp5C27U35Mf4nwYiaKq8iEYjU1DmTtgN2j9Fm3XPJ0X2RpOIQb+cZTWb
+         x9JymdFlfaupHZVrnbe+heARKaDgMNBweWOqy2tMJCzj7CSxKhnC43BRab17e+rYXx0V
+         TEIxBlPOah66qhW1zQDYDShZm0afTdggPotdIKqdj3XNkPSLaNbm9NMUkhkrYFLohia6
+         SXVqGu7aGq2Fng2dRRCWG/lHB5Bz4cFKpwrEwagSCKwmIPHZZ+5oEGJQmL01FLjA4vmp
+         8sfA==
+X-Gm-Message-State: APjAAAV4Y6EkOxgOCTeoC3z6nUJ3wZgTx9Ib1pdtHwfK0wF7oIVyLLe3
+        jwahtD1g45kJ6ZoG8HF0VXYMSCg5M6g35ffzsG1LsoC+WFk=
+X-Google-Smtp-Source: APXvYqzYB6miyPAG/mOkWvCgKIgmMST0uLDo16MefZqZnlVt+Sc3TUC3Z65Mc7LHtI36zp6DZjKHxHkp4flLBm2vGOw=
+X-Received: by 2002:a6b:d30f:: with SMTP id s15mr1002393iob.169.1565803257162;
+ Wed, 14 Aug 2019 10:20:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190813192126.122370-1-matthewgarrett@google.com>
- <20190813192126.122370-4-matthewgarrett@google.com> <20190814052359.GA10664@dhcp-128-65.nay.redhat.com>
-In-Reply-To: <20190814052359.GA10664@dhcp-128-65.nay.redhat.com>
+References: <20190813192126.122370-1-matthewgarrett@google.com> <alpine.LRH.2.21.1908141503240.27654@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1908141503240.27654@namei.org>
 From:   Matthew Garrett <mjg59@google.com>
-Date:   Wed, 14 Aug 2019 10:18:07 -0700
-Message-ID: <CACdnJuuG8vy37KaoXHU-bzr-VLEwnUWWiCH_zKWuvYdGDDAV5A@mail.gmail.com>
-Subject: Re: [PATCH 3/6] Avoid build warning when !CONFIG_KEXEC_SIG
-To:     Dave Young <dyoung@redhat.com>
-Cc:     James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Jiri Bohac <jbohac@suse.cz>,
-        kexec devel list <kexec@lists.infradead.org>
+Date:   Wed, 14 Aug 2019 10:20:45 -0700
+Message-ID: <CACdnJuvXpJoai+H7WeM_TNk2cjqr8evAm082aJgBRGvsUyaAVw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] lockdown fixups
+To:     James Morris <jmorris@namei.org>
+Cc:     LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 13, 2019 at 10:24 PM Dave Young <dyoung@redhat.com> wrote:
+On Tue, Aug 13, 2019 at 10:06 PM James Morris <jmorris@namei.org> wrote:
+> Which kernel version are these against?
 
-> I can not get the whole thread, also not sure which tree it should
-> apply.
-
-This should be against -next.
-
-> Also I think it should be good to split the preparation piece of kexec
-> and send them separately.  Since it is improve the signature
-> verification logic, they do not necessarily depend on the lockdown
-> series.
-
-Sorry, which preparation piece? There shouldn't be any logic change in
-this patch.
+Crap. Sorry, these ended up derived from HEAD. Let me fix that up and
+resend. Sorry about that!
