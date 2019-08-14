@@ -7,87 +7,80 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45893C32753
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F62C32759
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16CA52084D
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:15:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5D62206C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Aug 2019 17:18:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cUY4bV8z"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i+RJ4YZ1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730131AbfHNRPr (ORCPT
+        id S1730430AbfHNRSU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Aug 2019 13:15:47 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38971 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730566AbfHNRPH (ORCPT
+        Wed, 14 Aug 2019 13:18:20 -0400
+Received: from mail-oi1-f174.google.com ([209.85.167.174]:37815 "EHLO
+        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729705AbfHNRSU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:15:07 -0400
-Received: by mail-ot1-f66.google.com with SMTP id b1so16024089otp.6
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Aug 2019 10:15:06 -0700 (PDT)
+        Wed, 14 Aug 2019 13:18:20 -0400
+Received: by mail-oi1-f174.google.com with SMTP id a21so814237oie.4
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Aug 2019 10:18:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=01Ayf9LgEcMv7V+WI2AsTnek5WUaEhOAgw1TLPT5Lg8=;
-        b=cUY4bV8z98fFrOSFWWEdErQVDghtf844gc08EquK79TWPwgrs8cts9QORhUbmj84w6
-         f6m4/lvh33jikA+ZGM+tRxQ7toWhgXNf/hwvBLPgnKwiBbxG/hNFcYj9+6y8trNIYobL
-         ilhTnpmaW/fEejmEK013Y8FFlYqMK/zF/v1CwFP79IdFl+ufYbogIYsXzDf8W3I4UxKF
-         r8v0YXlyRRhd1ggXnCn4S6QZLyTNrwzaOdCaJg1+ES5vnUy0kZjxLEi49f9BB2aexwxP
-         eHVzRfwa+CreiMnCsgeyIj4Uq36gE0EIt5XlCqU8y22UxzWojnwOuHQRKsdXe9SxFPNa
-         DIWw==
+        bh=LRQCsPcTpX5yRUIeFvdSARBVTlIiAlejL67+Yf8xjVg=;
+        b=i+RJ4YZ15TO+HN8duwbWS743QimszN9Wm8pGxdOfNKTpNfk/bLHgeUyMR2laUaSwNC
+         jkH92f8hGxvou8/kRTOKuzkFwgOkSEPym8fJ9uVwPtFQLIo+MRHf8U10FEAQTU65YBLG
+         mQrh+u6/r0av9IScMa02QDnTBiKrdAZbS3wJdgiL4XOn4GhgziP4smrvoOgnL8FIvQ83
+         quHr9xVJbWaomkXQht1sYMrPA/wK5XtvV2BS2lAo9vBWhx6JVX0KdI8b6y++/aT/1Frx
+         e3B6mzLvuE0aH/8n4qB04UlDXcVbAcqNRv3fr54uvuFKYcP7eacbyCM2r14L+ssvjJYm
+         ZecQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=01Ayf9LgEcMv7V+WI2AsTnek5WUaEhOAgw1TLPT5Lg8=;
-        b=Zt0SWHfYeqHFtzQhEDIEQSxFTe1Ga4YTsWEZ8y+XMcw/CA05cwSk4PMchtn5Cqk64J
-         FVWCnu3DEk6Bv7kIpqdkzpHEkU1BgCINHYFB2iX7c2IYl+qXPaWMl0Yu3tKkk3Fnl/Li
-         mVTryswTjNhL2LqLvbgQDuEV3Evi7c8wdsG0OlwlP70DvVK1wvrbei0/3z07080WI26Q
-         elEaTNXk2x1iX0bMtT/AhyTPwGo8qIaPZRsVjuK9LXk7GzlH90SYsEG/I/6VCcKnFE3g
-         YidX2bG5R/kGQoPt7YPJBiTZaxlArX2b2pPVtso2HemDTbufGqa10To8BaVPQpTGOgo1
-         ekyA==
-X-Gm-Message-State: APjAAAVKmio3gELUMUNFACx51SsDD/erCHQ+QMr6NDbUvXfo6bo58Xbc
-        uvrW5d+wzO418F9fRmWAnk99Az3SkFxoO0LNpm8n9Q==
-X-Google-Smtp-Source: APXvYqx0J+BLly1ZtoTkIyMRX0f+EWksHL1efdejnhvFvA6o4jTrFb7cWvdHrOwDDKU8F7aJNPtUW/N21twPL0yxhHI=
-X-Received: by 2002:a6b:8f47:: with SMTP id r68mr1046835iod.204.1565802905873;
- Wed, 14 Aug 2019 10:15:05 -0700 (PDT)
+        bh=LRQCsPcTpX5yRUIeFvdSARBVTlIiAlejL67+Yf8xjVg=;
+        b=nOF9QBhb7ZpBv9eY0KaUdYs3FUWeCP3kqJ4jw/IRw1Jgg0vwON8UI2Sb2gg3/2R0gx
+         REZcPBGf1lbOCHPBkpTQx9ywxJVWd7i9rq0zddpCULDRhHY31OAwmG4ztrxnhMmz/zc1
+         iJlrP3BvG0EpFwy0j+mTgZ/eVFKwrKq4ppTRQl9eiMVssGjKy83d0hxd5fI4njYanGor
+         LVhVeselDfFJeWIY5IY4ZRiXrhREzZtPjcDcwzNsO1so5Pd0elXFAIr7PxbwOyPBdB83
+         h63r7k6iElfgoSwClQMuXgV/RoITU8unmiqXUOwpjACgCopuZGcJBmPzkYd4Fz41yOXP
+         em9g==
+X-Gm-Message-State: APjAAAWeajktAsMF4OwWMH3Xm3KfGg8h6tZl3IRLu+ycQhfoQHYZPyo/
+        6N4YsiKzOKwWaP5uzntzdAF7mGGNeeN9Et537c/qZXp9G0I=
+X-Google-Smtp-Source: APXvYqxO6hrvW6O3ywX1sNo7cI2Ev1FZZfK/oM5JhFKND6LvgRn/TFsa/h0pFjgEsTxR/Ax/nKGU78JXDTSLCAv4Igs=
+X-Received: by 2002:a02:cc8f:: with SMTP id s15mr395071jap.53.1565803098994;
+ Wed, 14 Aug 2019 10:18:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190808000721.124691-1-matthewgarrett@google.com>
- <20190808000721.124691-16-matthewgarrett@google.com> <20190814072602.GA27836@zn.tnic>
-In-Reply-To: <20190814072602.GA27836@zn.tnic>
+References: <20190813192126.122370-1-matthewgarrett@google.com>
+ <20190813192126.122370-4-matthewgarrett@google.com> <20190814052359.GA10664@dhcp-128-65.nay.redhat.com>
+In-Reply-To: <20190814052359.GA10664@dhcp-128-65.nay.redhat.com>
 From:   Matthew Garrett <mjg59@google.com>
-Date:   Wed, 14 Aug 2019 10:14:54 -0700
-Message-ID: <CACdnJuuOhuw71GDwQOrPQxUexpvpZNJocr6m0dYzJw+MMaVKWQ@mail.gmail.com>
-Subject: Re: [PATCH V38 15/29] acpi: Ignore acpi_rsdp kernel param when the
- kernel has been locked down
-To:     Borislav Petkov <bp@alien8.de>
+Date:   Wed, 14 Aug 2019 10:18:07 -0700
+Message-ID: <CACdnJuuG8vy37KaoXHU-bzr-VLEwnUWWiCH_zKWuvYdGDDAV5A@mail.gmail.com>
+Subject: Re: [PATCH 3/6] Avoid build warning when !CONFIG_KEXEC_SIG
+To:     Dave Young <dyoung@redhat.com>
 Cc:     James Morris <jmorris@namei.org>,
         LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Josh Boyer <jwboyer@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Young <dyoung@redhat.com>, linux-acpi@vger.kernel.org
+        Jiri Bohac <jbohac@suse.cz>,
+        kexec devel list <kexec@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 14, 2019 at 12:25 AM Borislav Petkov <bp@alien8.de> wrote:
-> #if defined(CONFIG_RANDOMIZE_BASE) && defined(CONFIG_MEMORY_HOTREMOVE)
->
-> false and thus not available to early code anymore.
+On Tue, Aug 13, 2019 at 10:24 PM Dave Young <dyoung@redhat.com> wrote:
 
-We explicitly don't want to pay attention to the acpi_rsdp kernel
-parameter in early boot except for the case of finding the SRAT table,
-and we only need that if CONFIG_RANDOMIZE_BASE and
-CONFIG_MEMORY_HOTREMOVE are set. However, we *do* want to tell the
-actual kernel where the RSDP is if we found it via some other means,
-so we can't just clear the boot parameters value. The kernel proper
-will parse the command line again and will then (if lockdown isn't
-enabled) override the actual value we passed up in boot params. So I
-think this is ok?
+> I can not get the whole thread, also not sure which tree it should
+> apply.
 
-(Sorry for not Cc:ing x86, clear oversight on my part)
+This should be against -next.
+
+> Also I think it should be good to split the preparation piece of kexec
+> and send them separately.  Since it is improve the signature
+> verification logic, they do not necessarily depend on the lockdown
+> series.
+
+Sorry, which preparation piece? There shouldn't be any logic change in
+this patch.
