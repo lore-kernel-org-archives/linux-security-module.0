@@ -2,42 +2,61 @@ Return-Path: <SRS0=gKHx=WL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDF6C3A59D
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Aug 2019 18:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E17C3A589
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Aug 2019 19:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB1292086C
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Aug 2019 18:43:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8C7E2089E
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Aug 2019 19:46:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="qwmMlhXr"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H0/RvPSU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731524AbfHOSnS (ORCPT
+        id S1733206AbfHOTqp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Aug 2019 14:43:18 -0400
-Received: from mail-40136.protonmail.ch ([185.70.40.136]:53884 "EHLO
-        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728818AbfHOSnR (ORCPT
+        Thu, 15 Aug 2019 15:46:45 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42570 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729779AbfHOTqo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Aug 2019 14:43:17 -0400
-Date:   Thu, 15 Aug 2019 18:43:06 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
-        s=default; t=1565894593;
-        bh=ND7tBfcYJKAh1WsZTzGacbQjk9haGZQHPo35ShA56Nc=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=qwmMlhXr3hYgLqjAkYZd8zbseVL3j0wedk8zYIV497DuO/fvA+lHvT9x8MwqgvJ1V
-         gzRm5eeJstu9+MkpLhXAVCCfrwtEME3lxyWjzqfCKal7uXI6luIg/wElPp1AkBena2
-         h5UUxSttI4gyShf5i/qvjyBg1cTD0+Z5tLXi4gtc=
+        Thu, 15 Aug 2019 15:46:44 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p3so1734575pgb.9
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Aug 2019 12:46:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=q9R0vNoUpwKLeu2pnfmt46PqrXtqSmivMtowXnYTOZo=;
+        b=H0/RvPSUgkXdfxxI3i5LVxFFjGoQjDU4tEClLQbXRTozuKmyG66rsuwuaQhm6opn8L
+         YfqvyrmFeGimX21lZuHDTTWFEXr8ocu9gR3Jv1WZm6e9nsPzXLaQIup05uukgtM8RKDj
+         XddoB41uZ7kY/ujqgXTjaa5ORKT5c/3HP1uYM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=q9R0vNoUpwKLeu2pnfmt46PqrXtqSmivMtowXnYTOZo=;
+        b=hzpm1/D4/+VVRr8jFgjhS07I1cqwreHLiXp7D/OybZjdAaBRLj3iTQiUY46XU8/Y/I
+         FI2zluLVaVLENKGM05fW1g4Fns9V0pJAYai5rJdsYkmCInhy+CQGLCGRZ9q5yRqLBk3u
+         zrrYrwPove0tZ6i0iARrlRxwbE+hgzcOouTgaSN1iBOIJDx9znpdE//IQxXjKPXVqQRl
+         5jHNgJFu4aMV4qxuHyuPcQArjIR/sfYp32gCIEO3d7+wkvs8PFvxnj4Y1vrl2H3JTpHW
+         BLmlt3tt2zCEdTxEtxqYvqlS1ck9gw3fjObWGWcDz3TPr21oCBrseIwiZqckqS05eKp5
+         a5JA==
+X-Gm-Message-State: APjAAAX/ydHjYaTJdQAvntj76he4QT1PitRoNNrYyRKLmOTHA7We1CF/
+        +V+ZpX2g3zR8RlE4A1lEKgoJUA==
+X-Google-Smtp-Source: APXvYqwkdKiJuv/6WIKEpcaHaZ22PyLLwMhSfjqdJkm4PMqDnc+jsZVtxZmMArS1ytN4WQAQBH5eLg==
+X-Received: by 2002:a63:a302:: with SMTP id s2mr4777940pge.125.1565898403670;
+        Thu, 15 Aug 2019 12:46:43 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y8sm4327185pfr.140.2019.08.15.12.46.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Aug 2019 12:46:42 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 12:46:41 -0700
+From:   Kees Cook <keescook@chromium.org>
 To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-From:   Jordan Glover <Golden_Miller83@protonmail.ch>
 Cc:     Andy Lutomirski <luto@kernel.org>,
-        Daniel Colascione <dancol@google.com>,
         Song Liu <songliubraving@fb.com>,
-        Kees Cook <keescook@chromium.org>,
         Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
@@ -47,128 +66,100 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Linux API <linux-api@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>
-Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
 Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-Message-ID: <eHOd0IhIGMCitkKOPHlXyhVUNtZQ7lj3A1dmxkDQ2ky2tbzfAv1Yp5ZoO3fNXr3GQ3HrEiMNy_n6dncrbVkvUjakh1VCx0vi0nUkNB_PE0Q=@protonmail.ch>
-In-Reply-To: <20190815172856.yoqvgu2yfrgbkowu@ast-mbp.dhcp.thefacebook.com>
-References: <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
+Message-ID: <201908151203.FE87970@keescook>
+References: <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
+ <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
+ <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
+ <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
+ <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
+ <20190805192122.laxcaz75k4vxdspn@ast-mbp>
+ <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
+ <20190806011134.p5baub5l3t5fkmou@ast-mbp>
  <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
  <20190813215823.3sfbakzzjjykyng2@ast-mbp>
- <CALCETrVT-dDXQGukGs5S1DkzvQv9_e=axzr_GyEd2c4T4z8Qng@mail.gmail.com>
- <20190814005737.4qg6wh4a53vmso2v@ast-mbp>
- <CALCETrUkqUprujww26VxHwkdXQ3DWJH8nnL2VBYpK2EU0oX_YA@mail.gmail.com>
- <20190814220545.co5pucyo5jk3weiv@ast-mbp.dhcp.thefacebook.com>
- <HG0x24u69mnaMFKuxHVAzHpyjwsD5-U6RpqFRua87wGWQCHg00Q8ZqPeA_5kJ9l-d6oe0cXa4HyYXMnOO0Aofp_LcPcQdG0WFV21z1MbgcE=@protonmail.ch>
- <20190815172856.yoqvgu2yfrgbkowu@ast-mbp.dhcp.thefacebook.com>
-Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190813215823.3sfbakzzjjykyng2@ast-mbp>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thursday, August 15, 2019 5:28 PM, Alexei Starovoitov <alexei.starovoito=
-v@gmail.com> wrote:
+On Tue, Aug 13, 2019 at 02:58:25PM -0700, Alexei Starovoitov wrote:
+> agree that containers (namespaces) reduce amount of trust necessary
+> for apps to run, but the end goal is not security though.
 
-> On Thu, Aug 15, 2019 at 11:24:54AM +0000, Jordan Glover wrote:
->
-> > On Wednesday, August 14, 2019 10:05 PM, Alexei Starovoitov alexei.staro=
-voitov@gmail.com wrote:
-> >
-> > > On Wed, Aug 14, 2019 at 10:51:23AM -0700, Andy Lutomirski wrote:
-> > >
-> > > > If eBPF is genuinely not usable by programs that are not fully trus=
-ted
-> > > > by the admin, then no kernel changes at all are needed. Programs th=
-at
-> > > > want to reduce their own privileges can easily fork() a privileged
-> > > > subprocess or run a little helper to which they delegate BPF
-> > > > operations. This is far more flexible than anything that will ever =
-be
-> > > > in the kernel because it allows the helper to verify that the rest =
-of
-> > > > the program is doing exactly what it's supposed to and restrict eBP=
-F
-> > > > operations to exactly the subset that is needed. So a container
-> > > > manager or network manager that drops some provilege could have a
-> > > > little bpf-helper that manages its BPF XDP, firewalling, etc
-> > > > configuration. The two processes would talk over a socketpair.
-> > >
-> > > there were three projects that tried to delegate bpf operations.
-> > > All of them failed.
-> > > bpf operational workflow is much more complex than you're imagining.
-> > > fork() also doesn't work for all cases.
-> > > I gave this example before: consider multiple systemd-like deamons
-> > > that need to do bpf operations that want to pass this 'bpf capability=
-'
-> > > to other deamons written by other teams. Some of them will start
-> > > non-root, but still need to do bpf. They will be rpm installed
-> > > and live upgraded while running.
-> > > We considered to make systemd such centralized bpf delegation
-> > > authority too. It didn't work. bpf in kernel grows quickly.
-> > > libbpf part grows independently. llvm keeps evolving.
-> > > All of them are being changed while system overall has to stay
-> > > operational. Centralized approach breaks apart.
-> > >
-> > > > The interesting cases you're talking about really do involved
-> > > > unprivileged or less privileged eBPF, though. Let's see:
-> > > > systemd --user: systemd --user is not privileged at all. There's no
-> > > > issue of reducing privilege, since systemd --user doesn't have any
-> > > > privilege to begin with. But systemd supports some eBPF features, a=
-nd
-> > > > presumably it would like to support them in the systemd --user case=
-.
-> > > > This is unprivileged eBPF.
-> > >
-> > > Let's disambiguate the terminology.
-> > > This /dev/bpf patch set started as describing the feature as 'unprivi=
-leged bpf'.
-> > > I think that was a mistake.
-> > > Let's call systemd-like deamon usage of bpf 'less privileged bpf'.
-> > > This is not unprivileged.
-> > > 'unprivileged bpf' is what sysctl kernel.unprivileged_bpf_disabled co=
-ntrols.
-> > > There is a huge difference between the two.
-> > > I'm against extending 'unprivileged bpf' even a bit more than what it=
- is
-> > > today for many reasons mentioned earlier.
-> > > The /dev/bpf is about 'less privileged'.
-> > > Less privileged than root. We need to split part of full root capabil=
-ity
-> > > into bpf capability. So that most of the root can be dropped.
-> > > This is very similar to what cap_net_admin does.
-> > > cap_net_amdin can bring down eth0 which is just as bad as crashing th=
-e box.
-> > > cap_net_admin is very much privileged. Just 'less privileged' than ro=
-ot.
-> > > Same thing for cap_bpf.
-> > > May be we should do both cap_bpf and /dev/bpf to make it clear that
-> > > this is the same thing. Two interfaces to achieve the same result.
-> >
-> > systemd --user processes aren't "less privileged". The are COMPLETELY u=
-nprivileged.
-> > Granting them cap_bpf is the same as granting it to every other unprivi=
-leged user
-> > process. Also unprivileged user process can start systemd --user proces=
-s with any
-> > command they like.
->
-> systemd itself is trusted. It's the same binary whether it runs as pid=3D=
-1
-> or as pid=3D123. One of the use cases is to make IPAddressDeny=3D work wi=
-th --user.
-> Subset of that feature already works with AmbientCapabilities=3DCAP_NET_A=
-DMIN.
-> CAP_BPF is a natural step in the same direction.
+Unsurprisingly, I totally disagree: this is the very definition of
+improved "security": reduced attack surface, confined trust, etc.
 
-The point was that systemd will run any arbitrary command you'll throw at i=
-t and you want
-to automatically attach CAP_BPF to it. AmbientCapabilities is not valid opt=
-ion for
-systemd --user instance (otherwise it would be nuts).
+> Linux has become a single user system.
 
-I think we may have misunderstanding here. Did you mean systemd "system" se=
-rvice with
-"User=3Dxxx" option instead of "systemd --user" service? It would make sens=
-e then.
+I hope this is just hyperbole, because it's not true in reality. I agree
+that the vast majority of Linux devices are single-user-at-a-time
+systems now (rather than the "shell servers" of yore), but the system
+still has to be expected to confine users from each other, root, and the
+hardware. Switching users on Chrome OS or a distro laptop, etc is still
+very much expected to _mean_ something.
+
+> If user can ssh into the host they can become root.
+> If arbitrary code can run on the host it will be break out of any sandbox.
+> Containers are not providing the level of security that is enough
+> to run arbitrary code. VMs can do it better, but cpu bugs don't make it easy.
+
+I'm not sure why you draw the line for VMs -- they're just as buggy
+as anything else. Regardless, I reject this line of thinking: yes,
+all software is buggy, but that isn't a reason to give up. In fact,
+we should be trying very hard to create safe code (*insert arguments
+for sane languages and toolchains here*).
+
+If you look at software safety as a binary, you will always be
+disappointed. If you look at it as it manifests in the real world,
+then there is some perspective to be had. Reachability of flaws becomes
+a major factor; exploit chain length becomes a factor. There are very
+real impacts to be had from security hardening, sandboxing, etc. Of
+course nothing is perfect, but the current state of the world isn't
+as you describe. (And I say this with the knowledge of how long
+the lifetime of bugs are in the kernel.)
+
+> Containers are used to make production systems safer.
+
+Yes.
+
+> Some people call it more 'secure', but it's clearly not secure for
+> arbitrary code
+
+Perhaps it's just a language issue. "More secure" and "safer" mean
+mostly the same thing to me. I tend to think "safer" is actually
+a superset that includes things that wreck the user experience but
+aren't actually in the privilege manipulation realm. In the traditional
+"security" triad of confidentiality, integrity, and availability, I tend
+to weigh availability less highly, but a bug that stops someone from
+doing their work but doesn't wreck data, let them switch users, etc,
+is still considered a "security" issue by many folks. The fewer bugs
+someone is exposed to improves their security, safety, whatever. The
+easiest way to do that is confinement and its associated attack surface
+reduction. tl;dr: security and safety are very use-case-specific
+continuum, not a binary state.
+
+> When we say 'unprivileged bpf' we really mean arbitrary malicious bpf program.
+> It's been a constant source of pain. The constant blinding, randomization,
+> verifier speculative analysis, all spectre v1, v2, v4 mitigations
+> are simply not worth it. It's a lot of complex kernel code without users.
+> There is not a single use case to allow arbitrary malicious bpf
+> program to be loaded and executed.
+
+The world isn't binary (safe code/malicious code), and we need to build
+systems that can be used safely even when things go wrong. Yes, probably
+no one has a system that _intentionally_ feeds eBPF into the kernel from
+a web form. But there is probably someone who does it unintentionally,
+or has a user login exposed on a system where unpriv BPF is enabled. The
+point is to create primitives as safely as possible so when things DO
+go wrong, they fail safe instead of making things worse.
+
+I'm all for a "less privileged than root" API for eBPF, but I get worried
+when I see "security" being treated as a binary state. Especially when
+it is considered an always-failed state. :)
+
+-- 
+Kees Cook
