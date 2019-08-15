@@ -2,134 +2,166 @@ Return-Path: <SRS0=gKHx=WL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A791C3A589
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Aug 2019 15:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FC5C3A59C
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Aug 2019 17:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7096C2086C
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Aug 2019 15:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565881618;
-	bh=h87oyHb/jDVyBLnySLgKHX4dvlaW3Dq+FlV+2DQZ09w=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
-	b=BUxnkYHTO5wpJkLKBQ7DeMmxXwRdtjnkXS4OQr+LVAB25Y2ss0ffcawXmztoXX7Vp
-	 JxM15AjH7dT6P0omXDgola8MWsXrPOKHjaWKzvgT+lmnkrF6jrA4BlX8w02Om0D7wo
-	 wH5jrOO1J3TlwU42e8aS/BTTVREBVS6Hyt/FYbWs=
+	by mail.kernel.org (Postfix) with ESMTP id 619222064A
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Aug 2019 17:29:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFc99nv7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732384AbfHOPGy (ORCPT
+        id S1730379AbfHOR3C (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Aug 2019 11:06:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51068 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726120AbfHOPGy (ORCPT
+        Thu, 15 Aug 2019 13:29:02 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37772 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbfHOR3C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Aug 2019 11:06:54 -0400
-Received: from localhost.localdomain (ool-18bba523.dyn.optonline.net [24.187.165.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C71D12084D;
-        Thu, 15 Aug 2019 15:06:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565881612;
-        bh=h87oyHb/jDVyBLnySLgKHX4dvlaW3Dq+FlV+2DQZ09w=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=V+dTycUTuRDgALjRVZkxEq9eu2k8qOyjjDRNH92NGSH3VtAHne5cSeWxUl+ec9K9R
-         FrLzSHgQQY/tgqFto8gZ9nYLZ8NSiZir+RRe7GbB3v6Qp06QkLZvUOmkQ5q/KCf8vR
-         tMlXKRCP7uBRl24Wb+xLk7N/MCEfa3iU+XxgblqM=
-Message-ID: <1565881609.9424.7.camel@kernel.org>
-Subject: Re: [RFC/RFT v4 0/5] Add generic trusted keys framework/subsystem
-From:   Mimi Zohar <zohar@kernel.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
-Date:   Thu, 15 Aug 2019 11:06:49 -0400
-In-Reply-To: <CAFA6WYPU0oREaHROhhRsEXJTijvER8G4riBk4e4=Bd5XgGFqtQ@mail.gmail.com>
-References: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
-         <1565789078.10490.10.camel@kernel.org>
-         <CAFA6WYPU0oREaHROhhRsEXJTijvER8G4riBk4e4=Bd5XgGFqtQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 15 Aug 2019 13:29:02 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d1so989421pgp.4;
+        Thu, 15 Aug 2019 10:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FKRKDbU9S4M5oykmChG6j3tcdYNbDh8DcchmeEeC/cM=;
+        b=gFc99nv7p3ZVWxUmr/LNI6Qe2AMMWiYtv3qR70vS6g9di4iWwJE70RltZUXZXx4EY/
+         YK0FTCBv4ybf6DyPHtg2wkFOb8D/OecQxRRr6c/JdJWrZXMh3gOKb/fUq4vhVtWmic06
+         s4/WXyczXn1rcG2w5O+0NJqf/IhuKo9ILKiLt4/gGcuyYGQz+H2iuCUuaDxvRXlu9HFe
+         0/Nnp1KjEgs3Tfim6WPCh9PxjzN0oxdZWShrgigBs3HTPGtJaLzgco+XegfIz6V195e7
+         2lNFPG7RStnIZiwDYPlLsWh1FCfWommugB0DbnWYNarIjsLCAJolZZ2FfXHUvSXS+kZD
+         08nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FKRKDbU9S4M5oykmChG6j3tcdYNbDh8DcchmeEeC/cM=;
+        b=Q0Z1t+OOuL1PdQZ8SOD/zlzdv/f2a2OH9fvIbbVe6+vHTpgkuzjXeN3UybS2HZw753
+         SJUuRs42o2NWZtjwYmaTn0etSqwhU8aVoy16NEUjR86LtFHuW+asGbdLozyJEHIz4lpR
+         lZHad3ADTNo+wM2U1LBijCBfs5HB4mWuD3wuUoyeC06JdBPH0KJKs+amC76FdbjfNhgq
+         HpPlTlYaOKetyF56bq4mIUjo0+SGkyyWZuF15bga01qc7gfFfFxkZT5UzHmI2GyGcPU+
+         quQ9Mo8VOeSWTemcRoOLKvONbIbRWKi01wnnTUHaRhUMlqptwCrkNpHAzyAEhk+7CYx9
+         6qwQ==
+X-Gm-Message-State: APjAAAULOdwxE8Z4rfX/E5iaNQ7Kltn//KlwSpOzXxZgobNaazDrGZ+7
+        BarYdDtNhZ5+pRfrHjqgK14=
+X-Google-Smtp-Source: APXvYqwu7xZzO2Wk+NqvTdSS/nAjz6TALfbZn2ytrJWT5JTYy0nYbx3JzfquRelt3ZoUGhJ+qHAVCQ==
+X-Received: by 2002:a17:90a:b30e:: with SMTP id d14mr3104375pjr.26.1565890140860;
+        Thu, 15 Aug 2019 10:29:00 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::e9c1])
+        by smtp.gmail.com with ESMTPSA id g2sm4919678pfq.88.2019.08.15.10.28.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Aug 2019 10:28:59 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 10:28:58 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Song Liu <songliubraving@fb.com>,
+        Kees Cook <keescook@chromium.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
+Message-ID: <20190815172856.yoqvgu2yfrgbkowu@ast-mbp.dhcp.thefacebook.com>
+References: <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
+ <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
+ <20190806011134.p5baub5l3t5fkmou@ast-mbp>
+ <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
+ <20190813215823.3sfbakzzjjykyng2@ast-mbp>
+ <CALCETrVT-dDXQGukGs5S1DkzvQv9_e=axzr_GyEd2c4T4z8Qng@mail.gmail.com>
+ <20190814005737.4qg6wh4a53vmso2v@ast-mbp>
+ <CALCETrUkqUprujww26VxHwkdXQ3DWJH8nnL2VBYpK2EU0oX_YA@mail.gmail.com>
+ <20190814220545.co5pucyo5jk3weiv@ast-mbp.dhcp.thefacebook.com>
+ <HG0x24u69mnaMFKuxHVAzHpyjwsD5-U6RpqFRua87wGWQCHg00Q8ZqPeA_5kJ9l-d6oe0cXa4HyYXMnOO0Aofp_LcPcQdG0WFV21z1MbgcE=@protonmail.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <HG0x24u69mnaMFKuxHVAzHpyjwsD5-U6RpqFRua87wGWQCHg00Q8ZqPeA_5kJ9l-d6oe0cXa4HyYXMnOO0Aofp_LcPcQdG0WFV21z1MbgcE=@protonmail.ch>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2019-08-15 at 18:33 +0530, Sumit Garg wrote:
-> Hi Mimi,
+On Thu, Aug 15, 2019 at 11:24:54AM +0000, Jordan Glover wrote:
+> On Wednesday, August 14, 2019 10:05 PM, Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
 > 
-> On Wed, 14 Aug 2019 at 18:54, Mimi Zohar <zohar@kernel.org> wrote:
+> > On Wed, Aug 14, 2019 at 10:51:23AM -0700, Andy Lutomirski wrote:
 > >
-> > Hi Sumit,
+> > > If eBPF is genuinely not usable by programs that are not fully trusted
+> > > by the admin, then no kernel changes at all are needed. Programs that
+> > > want to reduce their own privileges can easily fork() a privileged
+> > > subprocess or run a little helper to which they delegate BPF
+> > > operations. This is far more flexible than anything that will ever be
+> > > in the kernel because it allows the helper to verify that the rest of
+> > > the program is doing exactly what it's supposed to and restrict eBPF
+> > > operations to exactly the subset that is needed. So a container
+> > > manager or network manager that drops some provilege could have a
+> > > little bpf-helper that manages its BPF XDP, firewalling, etc
+> > > configuration. The two processes would talk over a socketpair.
 > >
-> > On Tue, 2019-08-13 at 13:22 +0530, Sumit Garg wrote:
-> > > This patch-set is an outcome of discussion here [1]. It has evolved very
-> > > much since v1 to create, consolidate and generalize trusted keys
-> > > subsystem.
-> > >
-> > > This framework has been tested with trusted keys support provided via TEE
-> > > but I wasn't able to test it with a TPM device as I don't possess one. It
-> > > would be really helpful if others could test this patch-set using a TPM
-> > > device.
+> > there were three projects that tried to delegate bpf operations.
+> > All of them failed.
+> > bpf operational workflow is much more complex than you're imagining.
+> > fork() also doesn't work for all cases.
+> > I gave this example before: consider multiple systemd-like deamons
+> > that need to do bpf operations that want to pass this 'bpf capability'
+> > to other deamons written by other teams. Some of them will start
+> > non-root, but still need to do bpf. They will be rpm installed
+> > and live upgraded while running.
+> > We considered to make systemd such centralized bpf delegation
+> > authority too. It didn't work. bpf in kernel grows quickly.
+> > libbpf part grows independently. llvm keeps evolving.
+> > All of them are being changed while system overall has to stay
+> > operational. Centralized approach breaks apart.
 > >
-> > With the "CONFIG_HEADER_TEST" and "CONFIG_KERNEL_HEADER_TEST" config
-> > options enabled, which is required for linux-next, it fails to build.
+> > > The interesting cases you're talking about really do involved
+> > > unprivileged or less privileged eBPF, though. Let's see:
+> > > systemd --user: systemd --user is not privileged at all. There's no
+> > > issue of reducing privilege, since systemd --user doesn't have any
+> > > privilege to begin with. But systemd supports some eBPF features, and
+> > > presumably it would like to support them in the systemd --user case.
+> > > This is unprivileged eBPF.
+> >
+> > Let's disambiguate the terminology.
+> > This /dev/bpf patch set started as describing the feature as 'unprivileged bpf'.
+> > I think that was a mistake.
+> > Let's call systemd-like deamon usage of bpf 'less privileged bpf'.
+> > This is not unprivileged.
+> > 'unprivileged bpf' is what sysctl kernel.unprivileged_bpf_disabled controls.
+> >
+> > There is a huge difference between the two.
+> > I'm against extending 'unprivileged bpf' even a bit more than what it is
+> > today for many reasons mentioned earlier.
+> > The /dev/bpf is about 'less privileged'.
+> > Less privileged than root. We need to split part of full root capability
+> > into bpf capability. So that most of the root can be dropped.
+> > This is very similar to what cap_net_admin does.
+> > cap_net_amdin can bring down eth0 which is just as bad as crashing the box.
+> > cap_net_admin is very much privileged. Just 'less privileged' than root.
+> > Same thing for cap_bpf.
+> >
+> > May be we should do both cap_bpf and /dev/bpf to make it clear that
+> > this is the same thing. Two interfaces to achieve the same result.
 > >
 > 
-> TBH, I wasn't aware about this test feature for headers. 
+> systemd --user processes aren't "less privileged". The are COMPLETELY unprivileged.
+> Granting them cap_bpf is the same as granting it to every other unprivileged user
+> process. Also unprivileged user process can start systemd --user process with any
+> command they like.
 
-It's new to me too.
+systemd itself is trusted. It's the same binary whether it runs as pid=1
+or as pid=123. One of the use cases is to make IPAddressDeny= work with --user.
+Subset of that feature already works with AmbientCapabilities=CAP_NET_ADMIN.
+CAP_BPF is a natural step in the same direction.
 
-> It looks like
-> the header which fails this test is "include/keys/trusted_tpm.h" which
-> is basically a rename of "include/keys/trusted.h" plus changes in this
-> patch-set.
-> 
-> And "include/keys/trusted.h" header is already put under blacklist
-> here: "include/Kbuild +68" as it fails to build. So its that rename
-> due to which build failure is observed now.
-> 
-> It seems to be an easy fix for this build failure via following changes:
-> 
-> diff --git a/include/keys/trusted_tpm.h b/include/keys/trusted_tpm.h
-> index 7b593447920b..ca1bec0ef65d 100644
-> --- a/include/keys/trusted_tpm.h
-> +++ b/include/keys/trusted_tpm.h
-> @@ -2,6 +2,9 @@
->  #ifndef __TRUSTED_TPM_H
->  #define __TRUSTED_TPM_H
-> 
-> +#include <keys/trusted-type.h>
-> +#include <linux/tpm_command.h>
-> +
->  /* implementation specific TPM constants */
->  #define MAX_BUF_SIZE                   1024
->  #define TPM_GETRANDOM_SIZE             14
-> 
-> So I will include above changes in this patch-set and also remove
-> "include/keys/trusted.h" header from the blacklist.
-
-That works, thanks.  With this patch set, at least the EVM trusted key
-is properly being decrypted by the encrypted key with both a TPM 1.2
-and PTT TPM 2.0.  My laptop still boots properly.  Over the weekend
-I'll try to actually review the patches.
-
-Mimi
