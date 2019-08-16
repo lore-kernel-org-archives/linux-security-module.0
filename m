@@ -2,115 +2,104 @@ Return-Path: <SRS0=Rr8+=WM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7802CC3A59D
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 11:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEA6C41514
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 13:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504232133F
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 11:34:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="JmfR8i9m"
+	by mail.kernel.org (Postfix) with ESMTP id E4C6821726
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 13:36:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfHPLeI (ORCPT
+        id S1727303AbfHPNgr convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Aug 2019 07:34:08 -0400
-Received: from mail-40135.protonmail.ch ([185.70.40.135]:20621 "EHLO
-        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbfHPLeI (ORCPT
+        Fri, 16 Aug 2019 09:36:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56118 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726597AbfHPNgq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Aug 2019 07:34:08 -0400
-Date:   Fri, 16 Aug 2019 11:33:57 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
-        s=default; t=1565955243;
-        bh=Yt+i7vUoMC/7exz+6N1Qfx1ezQKcdB81VEBD2vgd94g=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=JmfR8i9mQ9pd0Isp+wfbro4gkLogIvJHS8cTAdzkbaV0V+HlbX6D6OpI/mFq6ZKRr
-         BnYyvP++4dMxYJXBJ0BS4WyODhCoXNaDmmjS30Fk8oK9nfI2N0WtXgZwkPEFKhlRoa
-         Iecmj9CBu2xx+2z/NT9Ktm2V5NKOGsR7u29tEdh8=
-To:     Thomas Gleixner <tglx@linutronix.de>
-From:   Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Song Liu <songliubraving@fb.com>,
-        Kees Cook <keescook@chromium.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-Message-ID: <lGGTLXBsX3V6p1Z4TkdzAjxbNywaPS2HwX5WLleAkmXNcnKjTPpWnP6DnceSsy8NKt5NBRBbuoAb0woKTcDhJXVoFb7Ygk3Skfj8j6rVfMQ=@protonmail.ch>
-In-Reply-To: <alpine.DEB.2.21.1908161158490.1873@nanos.tec.linutronix.de>
-References: <20190806011134.p5baub5l3t5fkmou@ast-mbp>
- <CALCETrUkqUprujww26VxHwkdXQ3DWJH8nnL2VBYpK2EU0oX_YA@mail.gmail.com>
- <20190814220545.co5pucyo5jk3weiv@ast-mbp.dhcp.thefacebook.com>
- <HG0x24u69mnaMFKuxHVAzHpyjwsD5-U6RpqFRua87wGWQCHg00Q8ZqPeA_5kJ9l-d6oe0cXa4HyYXMnOO0Aofp_LcPcQdG0WFV21z1MbgcE=@protonmail.ch>
- <20190815172856.yoqvgu2yfrgbkowu@ast-mbp.dhcp.thefacebook.com>
- <CALCETrUv+g+cb79FJ1S4XuV0K=kowFkPXpzoC99svoOfs4-Kvg@mail.gmail.com>
- <20190815230808.2o2qe7a72cwdce2m@ast-mbp.dhcp.thefacebook.com>
- <fkD3fs46a1YnR4lh0tEG-g3tDnDcyZuzji7bAUR9wujPLLl75ZhI8Yk-H1jZpSugO7qChVeCwxAMmxLdeoF2QFS3ZzuYlh7zmeZOmhDJxww=@protonmail.ch>
- <alpine.DEB.2.21.1908161158490.1873@nanos.tec.linutronix.de>
-Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
+        Fri, 16 Aug 2019 09:36:46 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 335931108;
+        Fri, 16 Aug 2019 13:36:46 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5ED0BA4FAC;
+        Fri, 16 Aug 2019 13:36:43 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <1562814435.4014.11.camel@linux.ibm.com>
+References: <1562814435.4014.11.camel@linux.ibm.com> <28477.1562362239@warthog.procyon.org.uk> <CAHk-=wjxoeMJfeBahnWH=9zShKp2bsVy527vo3_y8HfOdhwAAw@mail.gmail.com> <20190710194620.GA83443@gmail.com> <20190710201552.GB83443@gmail.com> <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, linux-nfs@vger.kernel.org,
+        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Date:   Fri, 16 Aug 2019 14:36:42 +0100
+Message-ID: <23498.1565962602@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 16 Aug 2019 13:36:46 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Friday, August 16, 2019 9:59 AM, Thomas Gleixner <tglx@linutronix.de> wr=
-ote:
+Mimi Zohar <zohar@linux.ibm.com> wrote:
 
-> On Fri, 16 Aug 2019, Jordan Glover wrote:
->
-> > "systemd --user" service? Trying to do so will fail with:
-> > "Failed to apply ambient capabilities (before UID change): Operation no=
-t permitted"
-> > I think it's crucial to clear that point to avoid confusion in this dis=
-cussion
-> > where people are talking about different things.
-> > On the other hand running "systemd --system" service with:
-> > User=3Dnobody
-> > AmbientCapabilities=3DCAP_NET_ADMIN
-> > is perfectly legit and clears some security concerns as only privileged=
- user
-> > can start such service.
->
-> While we are at it, can we please stop looking at this from a systemd onl=
-y
-> perspective. There is a world outside of systemd.
->
-> Thanks,
->
-> tglx
+> Sorry for the delay.  An exception is needed for loading builtin keys
+> "KEY_ALLOC_BUILT_IN" onto a keyring that is not writable by userspace.
+>  The following works, but probably is not how David would handle the
+> exception.
 
-If you define:
+I think the attached is the right way to fix it.
 
-"systemd --user" =3D=3D unprivileged process started by unprivileged user
-"systemd --system" =3D=3D process started by privileged user but run as ano=
-ther
-user which keeps some of parent user privileges and drops others
+load_system_certificate_list(), for example, when it creates keys does this:
 
-you can get rid of "systemd" from the equation.
+	key = key_create_or_update(make_key_ref(builtin_trusted_keys, 1),
 
-"systemd --user" was the example provided by Alexei when asked about the us=
-ecase
-but his description didn't match what it does so it's not obvious what the =
-real
-usecase is. I'm sure there can be many more examples and systemd isn't impo=
-rtant
-here in particular beside to understand this specific example.
+marking the keyring as "possessed" in make_key_ref().  This allows the
+possessor permits to be used - and that's the *only* way to use them for
+internal keyrings like this because you can't link to them and you can't join
+them.
 
-Jordan
+David
+---
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 57be78b5fdfc..1f8f26f7bb05 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -99,7 +99,7 @@ static __init int system_trusted_keyring_init(void)
+ 	builtin_trusted_keys =
+ 		keyring_alloc(".builtin_trusted_keys",
+ 			      KUIDT_INIT(0), KGIDT_INIT(0), current_cred(),
+-			      &internal_key_acl, KEY_ALLOC_NOT_IN_QUOTA,
++			      &internal_keyring_acl, KEY_ALLOC_NOT_IN_QUOTA,
+ 			      NULL, NULL);
+ 	if (IS_ERR(builtin_trusted_keys))
+ 		panic("Can't allocate builtin trusted keyring\n");
+diff --git a/security/keys/permission.c b/security/keys/permission.c
+index fc84d9ef6239..86efd3eaf083 100644
+--- a/security/keys/permission.c
++++ b/security/keys/permission.c
+@@ -47,7 +47,7 @@ struct key_acl internal_keyring_acl = {
+ 	.usage	= REFCOUNT_INIT(1),
+ 	.nr_ace	= 2,
+ 	.aces = {
+-		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH),
++		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH | KEY_ACE_WRITE),
+ 		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ | KEY_ACE_SEARCH),
+ 	}
+ };
