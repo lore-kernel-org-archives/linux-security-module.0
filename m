@@ -2,142 +2,150 @@ Return-Path: <SRS0=Rr8+=WM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64537C3A59C
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 00:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E37ECC3A59E
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 04:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 324BA2089E
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 00:55:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B91092077C
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 04:58:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="aacTW4DY"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pkm0NUQn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbfHPAzD (ORCPT
+        id S1726478AbfHPE6f (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Aug 2019 20:55:03 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37403 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbfHPAzD (ORCPT
+        Fri, 16 Aug 2019 00:58:35 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36068 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbfHPE6e (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Aug 2019 20:55:03 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d1so1479262pgp.4
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Aug 2019 17:55:02 -0700 (PDT)
+        Fri, 16 Aug 2019 00:58:34 -0400
+Received: by mail-lj1-f195.google.com with SMTP id u15so4184275ljl.3
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Aug 2019 21:58:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=IF0jyuisXYKPSxXocSmf9hJgGkzQWtijePSZe+9Ib1E=;
-        b=aacTW4DY/xF/TLNPmr3l/xdylKWJ+mwD/wwKjI0I+zMseIi8TR2/skd2hbKGCp15OU
-         9498d/M7A4eW1ON7xbYdR1zwWqg4ezmxYDd5NsKFfxlA5gjQUvEOhwz+gHNB45bW0hVR
-         /60gYHkY9mgdDKxFuWb4IClJ8Ca+Et+HaA5DHC+kbcj79Tyb0zI7MzWeKMOmHC/Q9vf9
-         yzy2zQTmfTDgYaOeh4qJq6/cM805T8F8Tl+yxEfhlUvh/Cjih6jZya/3oAzmvLn5zQHg
-         svAyJ9wvAwYavsMfk4d1gslJjf9vBICM44T0vCo1nSDrGj5EtL8fT9nhX5p87kNSgll5
-         TuYw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IheryZV9rrbjkhsApKF0cQrN+bCYQHiVbxfyC+R8SPs=;
+        b=Pkm0NUQnQb+EOlq0h2SHmWadPKkaD/lCieO0yl74TZLlE/hgCgdzeCX4S8UkDiGIJ9
+         BJDXA7BSwFx1nj8YDpy96wWOePcZc7DiQoSImn5lsCMjr0P/8rXzMbFPwUkG4bIchl0M
+         3TGiEBV74UlCnVimN3ovM3xBSjDWvCfWp8kQGm7FRAuRDKOdk6IpaHooO8XopSDU2/ZN
+         CGR/BXMk6C3YfQofU4kHRctOCZ8a3R+PWmzsirXmXvXffLwS+ej5SnA7wcjC8AwIjYgp
+         /Wa2TSaGzuCpODuxIvQMKMxXW083gzlu8L5ieGUeWoYdQ1rFSesMW+iNs8b5YFrgiGst
+         CPkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=IF0jyuisXYKPSxXocSmf9hJgGkzQWtijePSZe+9Ib1E=;
-        b=XLf3o7R4xO41Jn43SQrO0IIKZhytYu1InjHUvfpzDm2OHkIyxPJoRyeO8Wzg4Z8DXM
-         MMApum4nkqVvrVBgcafmVWbW/nwn/fuiJLgK9ApkmUTW5dC8IScPeuL0GPDmn+zdRaIx
-         WdtI2H9P4WXK8UkgyY5I91uDOczdfpcLtJ7anrMzXWdFZuN56agjBGuewhQm9UIZjIVW
-         7s5X0EW0xE2BqqGkTHCC1f1QHPGAKukQSGoYtJPko2mGfpkFpiBRxDG1i7uDQAt6/dKB
-         ZfN7tBiHA7kPTPRSyED1ne4iQuI+BtMGZgO5fE/HBeDPQGwLi9fbE7GaeX3RmY5w7tWe
-         ph2Q==
-X-Gm-Message-State: APjAAAVPkoytG8TTi1TkW1kzbEZAN/VUwjv53nl8nD2PYO2ocopAcaWK
-        fpkmLhb16MPZgOAk3JZBmU+0Qw==
-X-Google-Smtp-Source: APXvYqwdU5aqqyiGUpyQI8Y3c3tMMMEnapfMFu9fyEsNFjhIsmoAc6ujEVdkwHSQMyIecx/UIjK64g==
-X-Received: by 2002:a63:b20f:: with SMTP id x15mr5726067pge.453.1565916902350;
-        Thu, 15 Aug 2019 17:55:02 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b04e:b450:9121:34aa:70f4:e97c? ([2600:1010:b04e:b450:9121:34aa:70f4:e97c])
-        by smtp.gmail.com with ESMTPSA id e188sm3994528pfa.76.2019.08.15.17.55.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Aug 2019 17:55:01 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16G77)
-In-Reply-To: <20190815234622.t65oxm5mtfzy6fhg@ast-mbp.dhcp.thefacebook.com>
-Date:   Thu, 15 Aug 2019 17:54:59 -0700
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B0364660-AD6A-4E5C-B04F-3B6DA78B4BBE@amacapital.net>
-References: <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com> <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com> <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com> <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com> <20190805192122.laxcaz75k4vxdspn@ast-mbp> <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com> <20190806011134.p5baub5l3t5fkmou@ast-mbp> <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com> <20190813215823.3sfbakzzjjykyng2@ast-mbp> <201908151203.FE87970@keescook> <20190815234622.t65oxm5mtfzy6fhg@ast-mbp.dhcp.thefacebook.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IheryZV9rrbjkhsApKF0cQrN+bCYQHiVbxfyC+R8SPs=;
+        b=P9lz8eT6wPGQN9o5flsslA09nl8KsZ7ye98YPfnWSgQtoL4Cqz4HNS+05RsQTdpM/Q
+         cOTCT0O3H454/vwuhiI0pQvgXxfXg6JfN/mkCik8aTHFx4ANwgqImAxUPc5Py9tF21yR
+         w2ulTZvTFrwIX4PB225vALmP9YT6WHUDaFtl880K93jCqQ09u1JIjbdPbgGTG+RLCD2j
+         HbS3y/oTo50u6HcS7ikhoJO8q1J5fXaWIpPdUZ/BosLqM+ZsNwLCfFtyn3cDLlzx7N9P
+         JFJZYEq7ZBb30SMSKpkoUV+SXFGaNN313+mUn/rsr7GyLdjRJr5J2gGnsg9psqC1ZHfp
+         fXKQ==
+X-Gm-Message-State: APjAAAWOvfTfnwo9lhMSQ+dT07NLwjTM84xhof2QI6Q0KJXa3KakI0Pj
+        n9bAwl2qsnsMlVxZ+6W6I8RiPGkjAFj2b1ZHSifodA==
+X-Google-Smtp-Source: APXvYqxdE1bhaVDU9yTjzsEua1cP967Nm4UBkfxH/OnLVUEy/YR6cxGtDtFMt3bbGlA7IqY5OwWGuO6PaUbetFnVF7M=
+X-Received: by 2002:a2e:760f:: with SMTP id r15mr4316685ljc.92.1565931512710;
+ Thu, 15 Aug 2019 21:58:32 -0700 (PDT)
+MIME-Version: 1.0
+References: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
+ <1565789078.10490.10.camel@kernel.org> <CAFA6WYPU0oREaHROhhRsEXJTijvER8G4riBk4e4=Bd5XgGFqtQ@mail.gmail.com>
+ <1565881609.9424.7.camel@kernel.org>
+In-Reply-To: <1565881609.9424.7.camel@kernel.org>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Fri, 16 Aug 2019 10:28:20 +0530
+Message-ID: <CAFA6WYOREs37p0TF4=E0=Z66DLGFJi92FfJo9VyAD67cLpALGA@mail.gmail.com>
+Subject: Re: [RFC/RFT v4 0/5] Add generic trusted keys framework/subsystem
+To:     Mimi Zohar <zohar@kernel.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
+        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, 15 Aug 2019 at 20:36, Mimi Zohar <zohar@kernel.org> wrote:
+>
+> On Thu, 2019-08-15 at 18:33 +0530, Sumit Garg wrote:
+> > Hi Mimi,
+> >
+> > On Wed, 14 Aug 2019 at 18:54, Mimi Zohar <zohar@kernel.org> wrote:
+> > >
+> > > Hi Sumit,
+> > >
+> > > On Tue, 2019-08-13 at 13:22 +0530, Sumit Garg wrote:
+> > > > This patch-set is an outcome of discussion here [1]. It has evolved very
+> > > > much since v1 to create, consolidate and generalize trusted keys
+> > > > subsystem.
+> > > >
+> > > > This framework has been tested with trusted keys support provided via TEE
+> > > > but I wasn't able to test it with a TPM device as I don't possess one. It
+> > > > would be really helpful if others could test this patch-set using a TPM
+> > > > device.
+> > >
+> > > With the "CONFIG_HEADER_TEST" and "CONFIG_KERNEL_HEADER_TEST" config
+> > > options enabled, which is required for linux-next, it fails to build.
+> > >
+> >
+> > TBH, I wasn't aware about this test feature for headers.
+>
+> It's new to me too.
+>
+> > It looks like
+> > the header which fails this test is "include/keys/trusted_tpm.h" which
+> > is basically a rename of "include/keys/trusted.h" plus changes in this
+> > patch-set.
+> >
+> > And "include/keys/trusted.h" header is already put under blacklist
+> > here: "include/Kbuild +68" as it fails to build. So its that rename
+> > due to which build failure is observed now.
+> >
+> > It seems to be an easy fix for this build failure via following changes:
+> >
+> > diff --git a/include/keys/trusted_tpm.h b/include/keys/trusted_tpm.h
+> > index 7b593447920b..ca1bec0ef65d 100644
+> > --- a/include/keys/trusted_tpm.h
+> > +++ b/include/keys/trusted_tpm.h
+> > @@ -2,6 +2,9 @@
+> >  #ifndef __TRUSTED_TPM_H
+> >  #define __TRUSTED_TPM_H
+> >
+> > +#include <keys/trusted-type.h>
+> > +#include <linux/tpm_command.h>
+> > +
+> >  /* implementation specific TPM constants */
+> >  #define MAX_BUF_SIZE                   1024
+> >  #define TPM_GETRANDOM_SIZE             14
+> >
+> > So I will include above changes in this patch-set and also remove
+> > "include/keys/trusted.h" header from the blacklist.
+>
+> That works, thanks.  With this patch set, at least the EVM trusted key
+> is properly being decrypted by the encrypted key with both a TPM 1.2
+> and PTT TPM 2.0.  My laptop still boots properly.  Over the weekend
+> I'll try to actually review the patches.
+>
 
+Thanks Mimi for testing this patch-set.
 
-> On Aug 15, 2019, at 4:46 PM, Alexei Starovoitov <alexei.starovoitov@gmail.=
-com> wrote:
+-Sumit
 
-
->>=20
->> I'm not sure why you draw the line for VMs -- they're just as buggy
->> as anything else. Regardless, I reject this line of thinking: yes,
->> all software is buggy, but that isn't a reason to give up.
->=20
-> hmm. are you saying you want kernel community to work towards
-> making containers (namespaces) being able to run arbitrary code
-> downloaded from the internet?
-
-Yes.
-
-As an example, Sandstorm uses a combination of namespaces (user, network, mo=
-unt, ipc) and a moderately permissive seccomp policy to run arbitrary code. N=
-ot just little snippets, either =E2=80=94 node.js, Mongo, MySQL, Meteor, and=
- other fairly heavyweight stacks can all run under Sandstorm, with the whole=
- stack (database engine binaries, etc) supplied by entirely untrusted custom=
-ers.  During the time Sandstorm was under active development, I can recall *=
-one* bug that would have allowed a sandbox escape. That=E2=80=99s a pretty g=
-ood track record.  (Also, Meltdown and Spectre, sigh.)
-
-To be clear, Sandstorm did not allow creation of a userns by the untrusted c=
-ode, and Sandstorm would have heavily restricted bpf(), but that should only=
- be necessary because of the possibility of kernel bugs, not because of the o=
-verall design.
-
-Alexei, I=E2=80=99m trying to encourage you to aim for something even better=
- than you have now. Right now, if you grant a user various very strong capab=
-ilities, that user=E2=80=99s systemd can use bpf network filters.  Your prop=
-osal would allow this with a different, but still very strong, set of capabi=
-lities. There=E2=80=99s nothing wrong with this per se, but I think you can a=
-im much higher:
-
-CAP_NET_ADMIN and your CAP_BPF both effectively allow the holder to take ove=
-r the system, *by design*.  I=E2=80=99m suggesting that you engage the secur=
-ity community (Kees, myself, Aleksa, Jann, Serge, Christian, etc) to aim for=
- something better: make it so that a normal Linux distro would be willing to=
- relax its settings enough so that normal users can use bpf filtering in the=
- systemd units and maybe eventually use even more bpf() capabilities. And le=
-t=E2=80=99s make is to that mainstream container managers (that use userns!)=
- will be willing (as an option) to delegate bpf() to their containers. We=E2=
-=80=99re happy to help design, review, and even write code, but we need you t=
-o be willing to work with us to make a design that seems like it will work a=
-nd then to wait long enough to merge it for us to think about it, try to pok=
-e holes in it, and convince ourselves and each other that it has a good chan=
-ce of being sound.
-
-Obviously there will be many cases where an unprivileged program should *not=
-* be able to use bpf() IP filtering, but let=E2=80=99s make it so that enabl=
-ing these advanced features does not automatically give away the keys to the=
- kingdom.
-
-(Sandstorm still exists but is no longer as actively developed, sadly.)=
+> Mimi
