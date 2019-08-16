@@ -6,130 +6,110 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D0D4C3A59E
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 16:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89735C3A59E
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 16:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 720BD20665
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 16:29:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6157D2171F
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 16:36:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="FWoV0ATs"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="H5BhUsEH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfHPQ3W (ORCPT
+        id S1726690AbfHPQg1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Aug 2019 12:29:22 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43639 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727384AbfHPQ3W (ORCPT
+        Fri, 16 Aug 2019 12:36:27 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34577 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbfHPQg1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Aug 2019 12:29:22 -0400
-Received: by mail-lj1-f196.google.com with SMTP id h15so5806510ljg.10
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Aug 2019 09:29:20 -0700 (PDT)
+        Fri, 16 Aug 2019 12:36:27 -0400
+Received: by mail-lf1-f66.google.com with SMTP id b29so4480753lfq.1
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Aug 2019 09:36:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Pb1dJnMcCuUxqNlEH74lTDGdrP8RS3vLcKTgQoY3yZQ=;
-        b=FWoV0ATs5FGV4ZBl8oQJ/yknE0+N+PGT7v0iE5Ro42XrtEZle8i+DYwWT/ou09MbhF
-         TMShCE9s0yl4vkYMkhVeDsmUQq8hxHyolqQfd9pWEx5FOYhHy8UkMHCbeeMqOc65Cxtg
-         +s40PJdTcOz7M2w3cigXXDLvL51ivCvvmKa5ADm9JWhlNA2dZkQudT2f/p8ba7qH1r3F
-         dXDc2Gb/H277NFrKD49ECjh49cmWL/lfwZe19yhi9DNKA9KyGLRMwltd9jCNJbv2AdpX
-         /sZcC/CVc4Z0yJgRQn2NFNko7Mi/s5jUlWH7GZG8OiuGG2c2gE6gpVh2wnE/tjAAw3/f
-         g/jA==
+        bh=5lHpPSdCyT7Kyd9IXcFuqji9CoKFwycWngQ6LfdZfg0=;
+        b=H5BhUsEHdQ5FzU5Gk3d5ZM8xImwWXVoWJAWrdM3kLZsOeJoUZ3avKESAh1tSeDZ6Ea
+         hVTCFxGqXCkimDn7bP6MI3lVwNGcCDuB/i2EoTFkLFImYFh2pLggPXya/lJAbgxTYXXK
+         J+qeWHgEB4zdRQtaHTstos5ShRNZY3RSuKs+rajrXYDjswCt179GXtFpHvriHjbNkpOm
+         5rLot+GwHZvcR7cSBNSaOFe73ujrtrfrczpr7b24A0jQYXFechzoNzamh/kRq+4MtIk5
+         5N3sYJi9TrrpnqevluuW3pQzGMuLqeZQcnwKjhPSXQlE/pM7kSShuu9j8krYJfDsnjgm
+         yoiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Pb1dJnMcCuUxqNlEH74lTDGdrP8RS3vLcKTgQoY3yZQ=;
-        b=VvdTRMVQK257TdIfAP3auIK6tWEWU5kwZ/w4kHZFPa7j9PR9ffAbGVSLc+z4I6wOPg
-         3Yam0sIvv8Qg1axqShedjrm4GCf3jBgRayRFO9UGxn3zzcPZMTeD+HE4NsCz7lDQi63v
-         Nh/GxiMeDZttr5t4rElS+Fz3aENvG7oHaz17rEWy8N+CnSMYuQWCx+2FcKAXrSeHvQqy
-         KoteQutCh15whX5qE4ddjifhyIvSCpddp83cB+dx4y+P0vb0k9Xiu/XSnoi7ZMItJSiw
-         TkVvflTLN1pdWhnYMX8+xWojVQ6JXH99PTCtizIuAzk4HSROSIgN/It6cTCvcKxaCNKY
-         xq5A==
-X-Gm-Message-State: APjAAAXP7rimG5RusFt7qZRkhMB1nJaChcc5kuIW/ItPGmTUlKGxBkXd
-        ETPMqfjFIgOwysF8XwVSKZ9f7OHraIaYiEunm3f2
-X-Google-Smtp-Source: APXvYqwTo86pc3wtjSRNvwvaVvPzQk1GNxxqKZk/bJrUwU1pnmgHD+hdoXWEmocncfzZBvnR92VFb0IdWgE43DMpiIc=
-X-Received: by 2002:a2e:834e:: with SMTP id l14mr6010790ljh.158.1565972959608;
- Fri, 16 Aug 2019 09:29:19 -0700 (PDT)
+        bh=5lHpPSdCyT7Kyd9IXcFuqji9CoKFwycWngQ6LfdZfg0=;
+        b=BtICW3kFrm+TWZjgD7WjmXqdFlOdrbWCw5/LdCMAwd+EfmiDESVEOOP+iVcZ77Bem6
+         W/n0OFAeV5ZdSd+I146hwAbt1DOD2nwvmRd0RgXzaEjRuxui4VCVcTJqMcf2ynHpyfTV
+         K1OPxPqqELCAlRJDVhVYA2mL78Jt1zXIvk0xXlpinWe2rnGbrjDy95X7tZlA4Hz+Pc9i
+         sAxgSMNC9Iw8dG9eBXd684ZcrS1k0V+v8s+5eWK0XpPBlww9jte//jFHRXkodn3wOmP+
+         Qllo7YIbdI64MR0jQGh05A+ZWdGB9QczYgosTEDenQwXkYNnq9u7PcMMJbeHUqIk4o6Y
+         3EPg==
+X-Gm-Message-State: APjAAAVLMbxcDnmGuxAtU/gwDfg1d97m0/y+oVpQiRSBP7RAVz0d7d4n
+        Wr6Ktewt6CYntYR/OVLd4e+seAcb/ULW6JNFHBy9
+X-Google-Smtp-Source: APXvYqzYbBGmvFQFm936ktOk3rwIm65aWylGP4lmnHHLscikOOcm/+ByQtnYFkBaH0Iqli70i/v+iW3RlhqE02ViCts=
+X-Received: by 2002:ac2:5225:: with SMTP id i5mr4589867lfl.13.1565973385355;
+ Fri, 16 Aug 2019 09:36:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190801144313.1014-1-acgoide@tycho.nsa.gov> <CAHC9VhTSWiz45vh+M+sgu+ePwgFPZ4Mr8GmRZQjsGWQSzkjbLg@mail.gmail.com>
- <b79617aa-2b40-40bf-9f35-0f5be8e34d3f@tycho.nsa.gov> <20190813212710.wimxgfunrijqwuqt@madcap2.tricolour.ca>
- <CAHC9VhTWY4vtsmCn8X3TjR1HdsB1-wqBLs03vZVv0SmWQ-Ab2Q@mail.gmail.com>
- <b47e07bc-1b01-c5f0-305d-e6fe014b00d8@tycho.nsa.gov> <CAHC9VhRzz52bVwMikM7C65vCCSLb0=y1HtB50o-H0G3AMHqRNw@mail.gmail.com>
- <cb2833ee-3a12-9c7d-6c5b-c7944e74b3e9@tycho.nsa.gov>
-In-Reply-To: <cb2833ee-3a12-9c7d-6c5b-c7944e74b3e9@tycho.nsa.gov>
+References: <20190815202357.4238-1-acgoide@tycho.nsa.gov> <alpine.LRH.2.21.1908160817300.22623@namei.org>
+ <cebacde0-5c53-c414-8f27-8d81ed928dfd@tycho.nsa.gov>
+In-Reply-To: <cebacde0-5c53-c414-8f27-8d81ed928dfd@tycho.nsa.gov>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 16 Aug 2019 12:29:08 -0400
-Message-ID: <CAHC9VhT-mmTyHij0MJHBWRjf6YmPBX9LHHaZ0H1sWx7v0O8jPw@mail.gmail.com>
-Subject: Re: [Non-DoD Source] Re: [RFC PATCH v2] security, capability: pass
- object information to security_capable
-To:     Aaron Goidel <acgoide@tycho.nsa.gov>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Richard Guy Briggs <rgb@redhat.com>, mortonm@chromium.org,
-        john.johansen@canonical.com, selinux@vger.kernel.org,
-        James Morris <jmorris@namei.org>, luto@amacapital.net,
+Date:   Fri, 16 Aug 2019 12:36:13 -0400
+Message-ID: <CAHC9VhRLnUO_iiz31z=7wiHf2sNihC7mmi3FhaPCqmW=xt+tRw@mail.gmail.com>
+Subject: Re: [RFC PATCH v3] security, capability: pass object information to security_capable
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     James Morris <jmorris@namei.org>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>, rgb@redhat.com,
+        mortonm@chromium.org, john.johansen@canonical.com,
+        selinux@vger.kernel.org, luto@amacapital.net,
         linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        Nicholas Franck <nhfran2@tycho.nsa.gov>,
-        Serge Hallyn <serge@hallyn.com>
+        nhfran2@tycho.nsa.gov, Serge Hallyn <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 15, 2019 at 9:11 AM Aaron Goidel <acgoide@tycho.nsa.gov> wrote:
-> I'm looking at how to enable LSMs to selectively turn on audit
-> collection. So there seems to be two key points: audit_alloc() and
-> __audit_syscall_entry(). Would it suffice to define a single boolean
-> hook that takes the task and call it from both functions, to decide
-> whether to override an AUDIT_DISABLED state in audit_alloc() and to
-> override a 0 audit_n_rules in __audit_syscall_entry(). In audit_alloc()
-> if audit_filter_task() returned AUDIT_DISABLED and the hook returned
-> true, we would change the state to AUDIT_BUILD_CONTEXT. In
-> __audit_syscall_entry(), if the hook returned true, we would set dummy
-> to 0. Obviously, we could have a more general hook which lets us return
-> arbitrary audit states, but, it isn't clear how we would reconcile
-> conflicting results from audit_filter_task() and the hook for any
-> situation other than AUDIT_DISABLED. We could also potentially use a
-> different hook in __audit_syscall_entry(), though I don't think that we
-> want the LSMs trying to interpret the syscall number or arguments.
+On Fri, Aug 16, 2019 at 10:57 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On 8/15/19 6:32 PM, James Morris wrote:
+> > On Thu, 15 Aug 2019, Aaron Goidel wrote:
+> >
+> >> In SELinux this new information is leveraged here to perform an
+> >> additional inode based check for capabilities relevant to inodes. Since
+> >> the inode provided to capable_wrt_inode_uidgid() is a const argument,
+> >> this also required propagating const down to dump_common_audit_data() and
+> >> dropping the use of d_find_alias() to find an alias for the inode. This
+> >> was sketchy to begin with and should be obsoleted by a separate change
+> >> that will allow LSMs to trigger audit collection for all file-related
+> >> information.
+> >
+> > Will the audit logs look the same once the 2nd patch is applied? We need
+> > to be careful about breaking existing userland.
 >
-> Do you think that is sufficiently general or would you suggest something
-> different?
+> It was already the case that the name= field in the AVC audit record was
+> not guaranteed to be emitted in this case, since d_find_alias could
+> return NULL.  And it was only a hint, since that name might have nothing
+> to do with the name used to look up the inode in the first place. So I
+> don't believe userland could have ever relied upon it being present
+> here.  Removing it also fixes a problem with AVC audit generation under
+> RCU walk; we should be able to drop the code that skips audit generation
+> in that case with this d_find_alias call gone IIUC.
+>
+> With the ability for an LSM to enable collection and generation of
+> AUDIT_PATH and other AUDIT_* records (which is made possible via the
+> other patch), we will get more complete and relevant information in the
+> audit log.  It won't look exactly the same (there will be separate AVC,
+> PATH, ... records that can be correlated based on timestamp/serial and
+> ausearch does this automatically for you).
 
-FWIW, I think treating the per-task audit switch as a boolean is fine;
-I don't think we want other in-kernel callers to have to worry about
-the different audit states.  From their perspective it is either "on"
-or "off".
+Regardless of if it is The Right Thing, changes like this should
+probably be put into a separate, unrelated patch.
 
-However, I think there are two parts of the greater LSM-enables-audit
-discussion, and we're only discussing the first part: collection.  The
-second part is the actual audit record generation, and I think this
-part is going to be less clear.  While the changes to audit_alloc(),
-etc. are necessary to be able to do any meaningful audit later on, I'm
-thinking introducing some granularity and LSM control to what gets
-generated in audit_log_exit() might be very welcome both from a
-performance and log cleanliness perspective.
-
-Some random thoughts on this (some may be way off, but I want to start
-with some expectations):
-* The LSM should never be able to block collection/generation of audit
-records, just enable additional records.
-* The LSM controls should only affect what we call the "syscall
-auditing" bits, e.g. the stuff in auditsc.c.  Audit records that
-happen outside of this should be untouched, the AVC records are an
-example of a record that exists independent of syscall auditing.
-* We should be able to have the LSM set a per-syscall audit enable
-flag which would be checked in audit_log_exit() (or
-audit_free()/__audit_syscall_exit()).
-* It's not clear to me if we want to provide some granularity to the
-LSM regarding what records get generated in audit_log_exit(), for
-example do we allow the LSM to request just PATH records?  I'm
-guessing we wouldn't want to specify record types directly, but
-perhaps record "classes", e.g. "file".
-
-I'm not sure if any of this is going to be a good idea, but I think we
-need to discuss it a bit before we start duplicating things in
-lsm_audit.c.
+I think there are a few things in dump_common_audit_data() that should
+have been done differently, but unfortunately the audit records (and
+IMHO the many stupid design decisions that went into them) are
+effectively part of the kernel API and need to be treated with care.
 
 -- 
 paul moore
