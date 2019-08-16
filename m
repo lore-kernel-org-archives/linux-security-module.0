@@ -2,115 +2,150 @@ Return-Path: <SRS0=Rr8+=WM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89735C3A59E
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 16:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F90C3A59F
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 19:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6157D2171F
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 16:36:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7016C2171F
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 19:52:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="H5BhUsEH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XPVLpvmS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfHPQg1 (ORCPT
+        id S1727588AbfHPTwj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Aug 2019 12:36:27 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34577 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbfHPQg1 (ORCPT
+        Fri, 16 Aug 2019 15:52:39 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41255 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbfHPTwi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Aug 2019 12:36:27 -0400
-Received: by mail-lf1-f66.google.com with SMTP id b29so4480753lfq.1
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Aug 2019 09:36:26 -0700 (PDT)
+        Fri, 16 Aug 2019 15:52:38 -0400
+Received: by mail-pf1-f193.google.com with SMTP id 196so3623812pfz.8;
+        Fri, 16 Aug 2019 12:52:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5lHpPSdCyT7Kyd9IXcFuqji9CoKFwycWngQ6LfdZfg0=;
-        b=H5BhUsEHdQ5FzU5Gk3d5ZM8xImwWXVoWJAWrdM3kLZsOeJoUZ3avKESAh1tSeDZ6Ea
-         hVTCFxGqXCkimDn7bP6MI3lVwNGcCDuB/i2EoTFkLFImYFh2pLggPXya/lJAbgxTYXXK
-         J+qeWHgEB4zdRQtaHTstos5ShRNZY3RSuKs+rajrXYDjswCt179GXtFpHvriHjbNkpOm
-         5rLot+GwHZvcR7cSBNSaOFe73ujrtrfrczpr7b24A0jQYXFechzoNzamh/kRq+4MtIk5
-         5N3sYJi9TrrpnqevluuW3pQzGMuLqeZQcnwKjhPSXQlE/pM7kSShuu9j8krYJfDsnjgm
-         yoiA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BsYRIWt7zgiLsYRkEbHKo3EPHhpbpjVq3H8U3w5nr8I=;
+        b=XPVLpvmSGjDqAepn2Df5xVHA1UUZ9+xOQU2OlgeKUqfIGCBsbEfEy0Zoey7BlQkrxP
+         CzJXdnPEYwh8oebCjhRRR7HCTZnGEE/rOqVAagxXSISdJUy9W2MAf4If6WWkvEXkWCck
+         ymVDHu84P27/6BDid5eyjZWLIk1gQ5WPwy9I5RyJBIK246xZ618VNNL3GdJOSnqdYHm5
+         A/pw57bMUosyPVDSBFrYOCmrjtNnAjQHTNuxW+kKH6AWLQA3ltn1bCzgczbPe12pBTtr
+         oDlKuKhKPMj6G8jOkS8idVDtPeThndVdW6O22sVbM1HXETi2nYA1wdK1SSZEQqVP8yF0
+         k5Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5lHpPSdCyT7Kyd9IXcFuqji9CoKFwycWngQ6LfdZfg0=;
-        b=BtICW3kFrm+TWZjgD7WjmXqdFlOdrbWCw5/LdCMAwd+EfmiDESVEOOP+iVcZ77Bem6
-         W/n0OFAeV5ZdSd+I146hwAbt1DOD2nwvmRd0RgXzaEjRuxui4VCVcTJqMcf2ynHpyfTV
-         K1OPxPqqELCAlRJDVhVYA2mL78Jt1zXIvk0xXlpinWe2rnGbrjDy95X7tZlA4Hz+Pc9i
-         sAxgSMNC9Iw8dG9eBXd684ZcrS1k0V+v8s+5eWK0XpPBlww9jte//jFHRXkodn3wOmP+
-         Qllo7YIbdI64MR0jQGh05A+ZWdGB9QczYgosTEDenQwXkYNnq9u7PcMMJbeHUqIk4o6Y
-         3EPg==
-X-Gm-Message-State: APjAAAVLMbxcDnmGuxAtU/gwDfg1d97m0/y+oVpQiRSBP7RAVz0d7d4n
-        Wr6Ktewt6CYntYR/OVLd4e+seAcb/ULW6JNFHBy9
-X-Google-Smtp-Source: APXvYqzYbBGmvFQFm936ktOk3rwIm65aWylGP4lmnHHLscikOOcm/+ByQtnYFkBaH0Iqli70i/v+iW3RlhqE02ViCts=
-X-Received: by 2002:ac2:5225:: with SMTP id i5mr4589867lfl.13.1565973385355;
- Fri, 16 Aug 2019 09:36:25 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BsYRIWt7zgiLsYRkEbHKo3EPHhpbpjVq3H8U3w5nr8I=;
+        b=VivxObsxO+OiYsZnoyaPOf4+ZDrsGmewuMtBAgBcmzm8WuAQvrXZ7R7HbgPAA15MPd
+         NV0pquuUeNatDoB7hr7yWvYgog77O15k9QIdz+NqwP4CWaUSU2Eu25J0fMgzfqhaNnHk
+         J9N4u4U/Stmpgnsc+TjkXS7DFVu9WUwbiDoZWU22drFwUToheiuiV6FX/G69VAsY8qqK
+         ZxICcVsZtK8lYfwNrhpPqWfM4lN8FwLMug/gEoxKCQozlfaRFJ+2cYbMKc6R0uNomJrS
+         wpBT+q42FloP3B5lMXC6r5GsJ57HprRiKVk5T+UFG9gbybiCYhU4ieEIjzQlXrWkFX6y
+         ck4A==
+X-Gm-Message-State: APjAAAWLV/otEumKgGyn8Mk1UpwP+fJR5mAt/g58jKTTBELd718tywW/
+        PUIUspcMuF4m/dka1V4QRMY=
+X-Google-Smtp-Source: APXvYqzrd7QyPzjL0x3MzSJ9v0FfGA12R+uv7HUBgJeM5ogLLZzOB/z+CjGaACxHJtQGH1TFe78JVA==
+X-Received: by 2002:aa7:9799:: with SMTP id o25mr12431962pfp.74.1565985157546;
+        Fri, 16 Aug 2019 12:52:37 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::2:79ad])
+        by smtp.gmail.com with ESMTPSA id 97sm6005173pjz.12.2019.08.16.12.52.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Aug 2019 12:52:36 -0700 (PDT)
+Date:   Fri, 16 Aug 2019 12:52:35 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Song Liu <songliubraving@fb.com>,
+        Kees Cook <keescook@chromium.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
+Message-ID: <20190816195233.vzqqbqrivnooohq6@ast-mbp.dhcp.thefacebook.com>
+References: <20190806011134.p5baub5l3t5fkmou@ast-mbp>
+ <CALCETrUkqUprujww26VxHwkdXQ3DWJH8nnL2VBYpK2EU0oX_YA@mail.gmail.com>
+ <20190814220545.co5pucyo5jk3weiv@ast-mbp.dhcp.thefacebook.com>
+ <HG0x24u69mnaMFKuxHVAzHpyjwsD5-U6RpqFRua87wGWQCHg00Q8ZqPeA_5kJ9l-d6oe0cXa4HyYXMnOO0Aofp_LcPcQdG0WFV21z1MbgcE=@protonmail.ch>
+ <20190815172856.yoqvgu2yfrgbkowu@ast-mbp.dhcp.thefacebook.com>
+ <CALCETrUv+g+cb79FJ1S4XuV0K=kowFkPXpzoC99svoOfs4-Kvg@mail.gmail.com>
+ <20190815230808.2o2qe7a72cwdce2m@ast-mbp.dhcp.thefacebook.com>
+ <fkD3fs46a1YnR4lh0tEG-g3tDnDcyZuzji7bAUR9wujPLLl75ZhI8Yk-H1jZpSugO7qChVeCwxAMmxLdeoF2QFS3ZzuYlh7zmeZOmhDJxww=@protonmail.ch>
+ <alpine.DEB.2.21.1908161158490.1873@nanos.tec.linutronix.de>
+ <lGGTLXBsX3V6p1Z4TkdzAjxbNywaPS2HwX5WLleAkmXNcnKjTPpWnP6DnceSsy8NKt5NBRBbuoAb0woKTcDhJXVoFb7Ygk3Skfj8j6rVfMQ=@protonmail.ch>
 MIME-Version: 1.0
-References: <20190815202357.4238-1-acgoide@tycho.nsa.gov> <alpine.LRH.2.21.1908160817300.22623@namei.org>
- <cebacde0-5c53-c414-8f27-8d81ed928dfd@tycho.nsa.gov>
-In-Reply-To: <cebacde0-5c53-c414-8f27-8d81ed928dfd@tycho.nsa.gov>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 16 Aug 2019 12:36:13 -0400
-Message-ID: <CAHC9VhRLnUO_iiz31z=7wiHf2sNihC7mmi3FhaPCqmW=xt+tRw@mail.gmail.com>
-Subject: Re: [RFC PATCH v3] security, capability: pass object information to security_capable
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     James Morris <jmorris@namei.org>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>, rgb@redhat.com,
-        mortonm@chromium.org, john.johansen@canonical.com,
-        selinux@vger.kernel.org, luto@amacapital.net,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        nhfran2@tycho.nsa.gov, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lGGTLXBsX3V6p1Z4TkdzAjxbNywaPS2HwX5WLleAkmXNcnKjTPpWnP6DnceSsy8NKt5NBRBbuoAb0woKTcDhJXVoFb7Ygk3Skfj8j6rVfMQ=@protonmail.ch>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 16, 2019 at 10:57 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 8/15/19 6:32 PM, James Morris wrote:
-> > On Thu, 15 Aug 2019, Aaron Goidel wrote:
+On Fri, Aug 16, 2019 at 11:33:57AM +0000, Jordan Glover wrote:
+> On Friday, August 16, 2019 9:59 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+> > On Fri, 16 Aug 2019, Jordan Glover wrote:
 > >
-> >> In SELinux this new information is leveraged here to perform an
-> >> additional inode based check for capabilities relevant to inodes. Since
-> >> the inode provided to capable_wrt_inode_uidgid() is a const argument,
-> >> this also required propagating const down to dump_common_audit_data() and
-> >> dropping the use of d_find_alias() to find an alias for the inode. This
-> >> was sketchy to begin with and should be obsoleted by a separate change
-> >> that will allow LSMs to trigger audit collection for all file-related
-> >> information.
+> > > "systemd --user" service? Trying to do so will fail with:
+> > > "Failed to apply ambient capabilities (before UID change): Operation not permitted"
+> > > I think it's crucial to clear that point to avoid confusion in this discussion
+> > > where people are talking about different things.
+> > > On the other hand running "systemd --system" service with:
+> > > User=nobody
+> > > AmbientCapabilities=CAP_NET_ADMIN
+> > > is perfectly legit and clears some security concerns as only privileged user
+> > > can start such service.
 > >
-> > Will the audit logs look the same once the 2nd patch is applied? We need
-> > to be careful about breaking existing userland.
->
-> It was already the case that the name= field in the AVC audit record was
-> not guaranteed to be emitted in this case, since d_find_alias could
-> return NULL.  And it was only a hint, since that name might have nothing
-> to do with the name used to look up the inode in the first place. So I
-> don't believe userland could have ever relied upon it being present
-> here.  Removing it also fixes a problem with AVC audit generation under
-> RCU walk; we should be able to drop the code that skips audit generation
-> in that case with this d_find_alias call gone IIUC.
->
-> With the ability for an LSM to enable collection and generation of
-> AUDIT_PATH and other AUDIT_* records (which is made possible via the
-> other patch), we will get more complete and relevant information in the
-> audit log.  It won't look exactly the same (there will be separate AVC,
-> PATH, ... records that can be correlated based on timestamp/serial and
-> ausearch does this automatically for you).
+> > While we are at it, can we please stop looking at this from a systemd only
+> > perspective. There is a world outside of systemd.
+> >
+> > Thanks,
+> >
+> > tglx
+> 
+> If you define:
+> 
+> "systemd --user" == unprivileged process started by unprivileged user
+> "systemd --system" == process started by privileged user but run as another
+> user which keeps some of parent user privileges and drops others
+> 
+> you can get rid of "systemd" from the equation.
+> 
+> "systemd --user" was the example provided by Alexei when asked about the usecase
+> but his description didn't match what it does so it's not obvious what the real
+> usecase is. I'm sure there can be many more examples and systemd isn't important
+> here in particular beside to understand this specific example.
 
-Regardless of if it is The Right Thing, changes like this should
-probably be put into a separate, unrelated patch.
+It's both of the above when 'systemd' is not taken literally.
+To earlier Thomas's point: the use case is not only about systemd.
+There are other containers management systems.
+I've used 'systemd-like' terminology as an attempt to explain that such
+daemons are trusted signed binaries that can be run as pid=1.
+Sometimes it's the later:
+"process started by privileged user but run as another user which keeps
+some of parent user privileges and drops others".
+Sometimes capability delegation to another container management daemon
+is too cumbersome, so it's easier to use suid bit on that other daemon.
+So it will become like the former:
+"sort-of unprivileged process started by unprivileged user."
+where daemon has suid and drops most of the capabilities as it starts.
+Let's not focus on the model being good or bad security wise.
+The point that those are the use cases that folks are thinking about.
+That secondary daemon can be full root just fine.
+All outer and inner daemons can be root.
+These daemons need to drop privileges to make the system safer ==
+less prone to corruption due to bugs in themselves. Not necessary security bugs.
 
-I think there are a few things in dump_common_audit_data() that should
-have been done differently, but unfortunately the audit records (and
-IMHO the many stupid design decisions that went into them) are
-effectively part of the kernel API and need to be treated with care.
-
--- 
-paul moore
-www.paul-moore.com
