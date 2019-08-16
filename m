@@ -1,65 +1,70 @@
-Return-Path: <SRS0=gKHx=WL=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=Rr8+=WM=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B677C3A589
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Aug 2019 23:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64537C3A59C
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 00:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 432522064A
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Aug 2019 23:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 324BA2089E
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 00:55:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mmtmm8Q4"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="aacTW4DY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbfHOXq1 (ORCPT
+        id S1726215AbfHPAzD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Aug 2019 19:46:27 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44058 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbfHOXq0 (ORCPT
+        Thu, 15 Aug 2019 20:55:03 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37403 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfHPAzD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Aug 2019 19:46:26 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i18so1987189pgl.11;
-        Thu, 15 Aug 2019 16:46:26 -0700 (PDT)
+        Thu, 15 Aug 2019 20:55:03 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d1so1479262pgp.4
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Aug 2019 17:55:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8GUnlQq7sKH6YO7Fvf/HTqB1Q4SkgeH4IDU1h+ExxLo=;
-        b=Mmtmm8Q4VIDJLlr/kOqAqoc75h4zD4kQQ9Jq94zavSTSqU99jrSLGMrOAhR+ROBUaz
-         CKmJ4V78qEuQ9PHcL9oAcsbps7lQSJePMtEdJgEKgnxkF6ueXF41q/RnB3vkyNnhpVYy
-         8BcZk30FFwPzrd6EyN25ylaSDPK2aG9KGLlVe4bWu8FqJFiKUUC6bIs0EO0lRKj94LLd
-         NCZe0CF2ZTGQ+E8Lg66xwcIzUnL2lQbnEWjZDwb1bbtTgwQk7ztOMfCVBHAOrr0PAasv
-         slYhUCBvN6ugr4BGQWg8i/PfzwqlEeZhCzrrybwVywjw5Y39cGiSm3wgE86TPBZRk29j
-         HNTQ==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=IF0jyuisXYKPSxXocSmf9hJgGkzQWtijePSZe+9Ib1E=;
+        b=aacTW4DY/xF/TLNPmr3l/xdylKWJ+mwD/wwKjI0I+zMseIi8TR2/skd2hbKGCp15OU
+         9498d/M7A4eW1ON7xbYdR1zwWqg4ezmxYDd5NsKFfxlA5gjQUvEOhwz+gHNB45bW0hVR
+         /60gYHkY9mgdDKxFuWb4IClJ8Ca+Et+HaA5DHC+kbcj79Tyb0zI7MzWeKMOmHC/Q9vf9
+         yzy2zQTmfTDgYaOeh4qJq6/cM805T8F8Tl+yxEfhlUvh/Cjih6jZya/3oAzmvLn5zQHg
+         svAyJ9wvAwYavsMfk4d1gslJjf9vBICM44T0vCo1nSDrGj5EtL8fT9nhX5p87kNSgll5
+         TuYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8GUnlQq7sKH6YO7Fvf/HTqB1Q4SkgeH4IDU1h+ExxLo=;
-        b=VNzPJHheDJPIHFviPtmG8GSjIcB6uHF5OWRh/YF/F6vBJw7p1cshrPQnS4mxsagkZp
-         T1aAR+j8gdFpk8kUd7/X7b/A1+esq1O0a3Q40rD+sp4lfa6+7ob5c120hglz+DaBJemh
-         6bdM8jGhGA6orZ4kZMxaZ4LFGsUKCEzqs3u64ORi1VWepCPvgcu7k04Mw40EQSY5CiVJ
-         itHPTWpZS4rgSLOUpvI7np22ZOlBHaN2fzYmtReSmsKxd+OtLvmEZiFcO/0d9c/N6VLu
-         AuP0siVwtUGG7wprT0jpVb+l/UP0c2prpSUMpSSdvQHDWtOeOMPWydK0gc4yjBfj1rSG
-         oKOQ==
-X-Gm-Message-State: APjAAAXO/frmsSXoBi91xJ1VHcl1Z59Kw9UwGB27ts6pC/9pauTS7TZs
-        ScB2hNU0WT/EURUIwUJI7LU=
-X-Google-Smtp-Source: APXvYqw+TyRqIJqEz0VpP1OYRH6xNFHUFVDLVyRM4LnSjcrFeFYcOG7soz0M8pT0kPEDicuBpjgn7w==
-X-Received: by 2002:a63:36cc:: with SMTP id d195mr5308624pga.157.1565912785467;
-        Thu, 15 Aug 2019 16:46:25 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::e9c1])
-        by smtp.gmail.com with ESMTPSA id k25sm3465076pgt.53.2019.08.15.16.46.24
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=IF0jyuisXYKPSxXocSmf9hJgGkzQWtijePSZe+9Ib1E=;
+        b=XLf3o7R4xO41Jn43SQrO0IIKZhytYu1InjHUvfpzDm2OHkIyxPJoRyeO8Wzg4Z8DXM
+         MMApum4nkqVvrVBgcafmVWbW/nwn/fuiJLgK9ApkmUTW5dC8IScPeuL0GPDmn+zdRaIx
+         WdtI2H9P4WXK8UkgyY5I91uDOczdfpcLtJ7anrMzXWdFZuN56agjBGuewhQm9UIZjIVW
+         7s5X0EW0xE2BqqGkTHCC1f1QHPGAKukQSGoYtJPko2mGfpkFpiBRxDG1i7uDQAt6/dKB
+         ZfN7tBiHA7kPTPRSyED1ne4iQuI+BtMGZgO5fE/HBeDPQGwLi9fbE7GaeX3RmY5w7tWe
+         ph2Q==
+X-Gm-Message-State: APjAAAVPkoytG8TTi1TkW1kzbEZAN/VUwjv53nl8nD2PYO2ocopAcaWK
+        fpkmLhb16MPZgOAk3JZBmU+0Qw==
+X-Google-Smtp-Source: APXvYqwdU5aqqyiGUpyQI8Y3c3tMMMEnapfMFu9fyEsNFjhIsmoAc6ujEVdkwHSQMyIecx/UIjK64g==
+X-Received: by 2002:a63:b20f:: with SMTP id x15mr5726067pge.453.1565916902350;
+        Thu, 15 Aug 2019 17:55:02 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b04e:b450:9121:34aa:70f4:e97c? ([2600:1010:b04e:b450:9121:34aa:70f4:e97c])
+        by smtp.gmail.com with ESMTPSA id e188sm3994528pfa.76.2019.08.15.17.55.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Aug 2019 16:46:24 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 16:46:23 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thu, 15 Aug 2019 17:55:01 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16G77)
+In-Reply-To: <20190815234622.t65oxm5mtfzy6fhg@ast-mbp.dhcp.thefacebook.com>
+Date:   Thu, 15 Aug 2019 17:54:59 -0700
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Song Liu <songliubraving@fb.com>,
         Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
         Alexei Starovoitov <ast@kernel.org>,
@@ -70,129 +75,69 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Linux API <linux-api@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-Message-ID: <20190815234622.t65oxm5mtfzy6fhg@ast-mbp.dhcp.thefacebook.com>
-References: <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
- <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
- <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
- <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
- <20190805192122.laxcaz75k4vxdspn@ast-mbp>
- <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
- <20190806011134.p5baub5l3t5fkmou@ast-mbp>
- <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
- <20190813215823.3sfbakzzjjykyng2@ast-mbp>
- <201908151203.FE87970@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201908151203.FE87970@keescook>
-User-Agent: NeoMutt/20180223
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B0364660-AD6A-4E5C-B04F-3B6DA78B4BBE@amacapital.net>
+References: <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com> <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com> <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com> <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com> <20190805192122.laxcaz75k4vxdspn@ast-mbp> <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com> <20190806011134.p5baub5l3t5fkmou@ast-mbp> <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com> <20190813215823.3sfbakzzjjykyng2@ast-mbp> <201908151203.FE87970@keescook> <20190815234622.t65oxm5mtfzy6fhg@ast-mbp.dhcp.thefacebook.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 15, 2019 at 12:46:41PM -0700, Kees Cook wrote:
-> On Tue, Aug 13, 2019 at 02:58:25PM -0700, Alexei Starovoitov wrote:
-> > agree that containers (namespaces) reduce amount of trust necessary
-> > for apps to run, but the end goal is not security though.
-> 
-> Unsurprisingly, I totally disagree: this is the very definition of
-> improved "security": reduced attack surface, confined trust, etc.
 
-there are different ways to define the meaning of the word "security".
-Of course containers reduce attack surface, etc.
-The 'attack surface' as a mitigation from malicious users is not always the goal
-of running containers. Ask yourself why containers are used in the datacenters
-where only root can ssh into a server, only signed packages can
-ever be installed, no browsers running, and no remote code is ever downloaded?
 
-> > Linux has become a single user system.
-> 
-> I hope this is just hyperbole, because it's not true in reality. I agree
-> that the vast majority of Linux devices are single-user-at-a-time
-> systems now (rather than the "shell servers" of yore), but the system
-> still has to be expected to confine users from each other, root, and the
-> hardware. Switching users on Chrome OS or a distro laptop, etc is still
-> very much expected to _mean_ something.
+> On Aug 15, 2019, at 4:46 PM, Alexei Starovoitov <alexei.starovoitov@gmail.=
+com> wrote:
 
-of course.
 
-> 
-> > If user can ssh into the host they can become root.
-> > If arbitrary code can run on the host it will be break out of any sandbox.
-> > Containers are not providing the level of security that is enough
-> > to run arbitrary code. VMs can do it better, but cpu bugs don't make it easy.
-> 
-> I'm not sure why you draw the line for VMs -- they're just as buggy
-> as anything else. Regardless, I reject this line of thinking: yes,
-> all software is buggy, but that isn't a reason to give up.
+>>=20
+>> I'm not sure why you draw the line for VMs -- they're just as buggy
+>> as anything else. Regardless, I reject this line of thinking: yes,
+>> all software is buggy, but that isn't a reason to give up.
+>=20
+> hmm. are you saying you want kernel community to work towards
+> making containers (namespaces) being able to run arbitrary code
+> downloaded from the internet?
 
-hmm. are you saying you want kernel community to work towards
-making containers (namespaces) being able to run arbitrary code
-downloaded from the internet?
-In other words the problems solved by user space sandboxing, gvisor, etc
-should be solved by the kernel?
-I really don't think it's a good idea.
+Yes.
 
-> If you look at software safety as a binary, you will always be
-> disappointed. If you look at it as it manifests in the real world,
-> then there is some perspective to be had. Reachability of flaws becomes
-> a major factor; exploit chain length becomes a factor. There are very
-> real impacts to be had from security hardening, sandboxing, etc. Of
-> course nothing is perfect, but the current state of the world isn't
-> as you describe. (And I say this with the knowledge of how long
-> the lifetime of bugs are in the kernel.)
+As an example, Sandstorm uses a combination of namespaces (user, network, mo=
+unt, ipc) and a moderately permissive seccomp policy to run arbitrary code. N=
+ot just little snippets, either =E2=80=94 node.js, Mongo, MySQL, Meteor, and=
+ other fairly heavyweight stacks can all run under Sandstorm, with the whole=
+ stack (database engine binaries, etc) supplied by entirely untrusted custom=
+ers.  During the time Sandstorm was under active development, I can recall *=
+one* bug that would have allowed a sandbox escape. That=E2=80=99s a pretty g=
+ood track record.  (Also, Meltdown and Spectre, sigh.)
 
-No arguing here. Security today is mainly the number of layers.
-Hardening at all levels, sanboxing do help.
-namespaces is one of the layers provided by the kernel.
-The point that the kernel did its job already.
-All other security layers are in user space.
-Looking for bugs at every layer is still must have.
-In the kernel, systemd, qemu, OS, browsers, etc.
-Containers provide one level of security. VMs have another.
+To be clear, Sandstorm did not allow creation of a userns by the untrusted c=
+ode, and Sandstorm would have heavily restricted bpf(), but that should only=
+ be necessary because of the possibility of kernel bugs, not because of the o=
+verall design.
 
-> > Some people call it more 'secure', but it's clearly not secure for
-> > arbitrary code
-> 
-> Perhaps it's just a language issue. "More secure" and "safer" mean
-> mostly the same thing to me. I tend to think "safer" is actually
-> a superset that includes things that wreck the user experience but
-> aren't actually in the privilege manipulation realm. In the traditional
-> "security" triad of confidentiality, integrity, and availability, I tend
-> to weigh availability less highly, but a bug that stops someone from
-> doing their work but doesn't wreck data, let them switch users, etc,
-> is still considered a "security" issue by many folks. The fewer bugs
-> someone is exposed to improves their security, safety, whatever. The
-> easiest way to do that is confinement and its associated attack surface
-> reduction. tl;dr: security and safety are very use-case-specific
-> continuum, not a binary state.
+Alexei, I=E2=80=99m trying to encourage you to aim for something even better=
+ than you have now. Right now, if you grant a user various very strong capab=
+ilities, that user=E2=80=99s systemd can use bpf network filters.  Your prop=
+osal would allow this with a different, but still very strong, set of capabi=
+lities. There=E2=80=99s nothing wrong with this per se, but I think you can a=
+im much higher:
 
-yep
+CAP_NET_ADMIN and your CAP_BPF both effectively allow the holder to take ove=
+r the system, *by design*.  I=E2=80=99m suggesting that you engage the secur=
+ity community (Kees, myself, Aleksa, Jann, Serge, Christian, etc) to aim for=
+ something better: make it so that a normal Linux distro would be willing to=
+ relax its settings enough so that normal users can use bpf filtering in the=
+ systemd units and maybe eventually use even more bpf() capabilities. And le=
+t=E2=80=99s make is to that mainstream container managers (that use userns!)=
+ will be willing (as an option) to delegate bpf() to their containers. We=E2=
+=80=99re happy to help design, review, and even write code, but we need you t=
+o be willing to work with us to make a design that seems like it will work a=
+nd then to wait long enough to merge it for us to think about it, try to pok=
+e holes in it, and convince ourselves and each other that it has a good chan=
+ce of being sound.
 
-> 
-> > When we say 'unprivileged bpf' we really mean arbitrary malicious bpf program.
-> > It's been a constant source of pain. The constant blinding, randomization,
-> > verifier speculative analysis, all spectre v1, v2, v4 mitigations
-> > are simply not worth it. It's a lot of complex kernel code without users.
-> > There is not a single use case to allow arbitrary malicious bpf
-> > program to be loaded and executed.
-> 
-> The world isn't binary (safe code/malicious code), and we need to build
-> systems that can be used safely even when things go wrong. Yes, probably
-> no one has a system that _intentionally_ feeds eBPF into the kernel from
-> a web form. But there is probably someone who does it unintentionally,
-> or has a user login exposed on a system where unpriv BPF is enabled. The
-> point is to create primitives as safely as possible so when things DO
-> go wrong, they fail safe instead of making things worse.
-> 
-> I'm all for a "less privileged than root" API for eBPF, but I get worried
-> when I see "security" being treated as a binary state. Especially when
-> it is considered an always-failed state. :)
+Obviously there will be many cases where an unprivileged program should *not=
+* be able to use bpf() IP filtering, but let=E2=80=99s make it so that enabl=
+ing these advanced features does not automatically give away the keys to the=
+ kingdom.
 
-'security as always failed state' ? hmm.
-not sure where this impression came from.
-One of the goals here is to do sysctl kernel.unprivileged_bpf_disabled=1
-which will make the system overall _more_ secure.
-I hope we can agree on that.
-
+(Sandstorm still exists but is no longer as actively developed, sadly.)=
