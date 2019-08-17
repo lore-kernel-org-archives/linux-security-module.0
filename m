@@ -1,37 +1,69 @@
-Return-Path: <SRS0=Rr8+=WM=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=k6rB=WN=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA15C3A59D
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 22:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B96F8C3A59B
+	for <linux-security-module@archiver.kernel.org>; Sat, 17 Aug 2019 15:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15600206C2
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Aug 2019 22:23:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BFA0206DF
+	for <linux-security-module@archiver.kernel.org>; Sat, 17 Aug 2019 15:02:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5JD5xwE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbfHPWXA (ORCPT
+        id S1726002AbfHQPCw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Aug 2019 18:23:00 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38047 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727724AbfHPWXA (ORCPT
+        Sat, 17 Aug 2019 11:02:52 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36809 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbfHQPCv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Aug 2019 18:23:00 -0400
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1hykcY-0002ah-Qy; Fri, 16 Aug 2019 22:22:54 +0000
-Date:   Sat, 17 Aug 2019 00:22:53 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Kees Cook <keescook@chromium.org>,
+        Sat, 17 Aug 2019 11:02:51 -0400
+Received: by mail-pf1-f194.google.com with SMTP id w2so4659140pfi.3;
+        Sat, 17 Aug 2019 08:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1yM+3gaDT2rRc0Bnym4V9e44Bftn+Nt4gZNjCRfq0Zc=;
+        b=L5JD5xwE59YvEytmxCvXa0dMfZE56DMqONaXkYB90GeRMd9ciAEL8NDD2MlHS6sQJp
+         xwGbCcUvQjPeEZ5OMM+LLMp+enQYkbUvRd4uVqdFvGwPClNn0df5DyQwTRJqo0bcvJ5j
+         0RCjSr8Oa6Vc31vtOJjyXtSZYIF2RpcCx0hTELf9XvYcHkopAxIk8MydOuH8VojjcXui
+         PogcwXEByTJVk0HRayk6CpeoDeWjlBub9B7btPMSU/y4RbCEQYnBuASXBM/QD9U2k9h4
+         1/buHcPAIxUiX4rePL1p5wOBIlGHf6zXeCJNC4gBPVIUWsoQa9j5GslA//38We/qbrLU
+         lxnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1yM+3gaDT2rRc0Bnym4V9e44Bftn+Nt4gZNjCRfq0Zc=;
+        b=ox3TlWcgJkHNj9zbxbdMMhBCQP5C0ggM76UBHdteh/c7XhqpiBJ20ZNe4vP0b1/Dsi
+         BVww/Tp5tFMY8PYgtsqHJ7umUKljgsL1K7OS0iroaEWR01mvkLQixm14pv4rUL+XpWkN
+         IkR9I9z4w/iq6zgdBEvq9RkKINxQdEzyPOUHtydeJG3632i1OBtFKfGjJ5DP9FUi5ckT
+         viAnvhHVBcVzTDoE2fyjIomRFVpgNc8vF8e7aqkQy1p4b4MzEjHAY8UlJU2/16sm+RNf
+         X6Zg4r5Wi/a3mhI7tGb+pv4+0w74O6dVdMbm/tGLBOwKxCaWMJL4VvbKIWSLbgpwg+4v
+         Jvag==
+X-Gm-Message-State: APjAAAWueqQuNmy8DYITaV59tt9I2hMwhHl7X6+BAWME7hMrZFuLgN94
+        L3MFkUhjob57+HkYiCa9Fk0=
+X-Google-Smtp-Source: APXvYqzL25Fka42KOBCiR2tWbSPJ47nKP4Id6XB3/20akCnmXzBuscYvgcS7HYZh6Zwbdn8j38dDeQ==
+X-Received: by 2002:a63:2043:: with SMTP id r3mr12314709pgm.311.1566054170489;
+        Sat, 17 Aug 2019 08:02:50 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:180::9c96])
+        by smtp.gmail.com with ESMTPSA id d18sm8153411pgi.40.2019.08.17.08.02.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 17 Aug 2019 08:02:49 -0700 (PDT)
+Date:   Sat, 17 Aug 2019 08:02:47 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jordan Glover <Golden_Miller83@protonmail.ch>,
         Andy Lutomirski <luto@kernel.org>,
+        Daniel Colascione <dancol@google.com>,
         Song Liu <songliubraving@fb.com>,
+        Kees Cook <keescook@chromium.org>,
         Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
@@ -42,95 +74,103 @@ Cc:     Andy Lutomirski <luto@amacapital.net>,
         Linux API <linux-api@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>
 Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-Message-ID: <20190816222252.a7zizw7azkxnv3ot@wittgenstein>
-References: <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
- <20190805192122.laxcaz75k4vxdspn@ast-mbp>
- <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
- <20190806011134.p5baub5l3t5fkmou@ast-mbp>
- <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
- <20190813215823.3sfbakzzjjykyng2@ast-mbp>
- <201908151203.FE87970@keescook>
- <20190815234622.t65oxm5mtfzy6fhg@ast-mbp.dhcp.thefacebook.com>
- <B0364660-AD6A-4E5C-B04F-3B6DA78B4BBE@amacapital.net>
- <20190816214542.inpt6p655whc2ejw@ast-mbp.dhcp.thefacebook.com>
+Message-ID: <20190817150245.xxzxqjpvgqsxmloe@ast-mbp>
+References: <20190814220545.co5pucyo5jk3weiv@ast-mbp.dhcp.thefacebook.com>
+ <HG0x24u69mnaMFKuxHVAzHpyjwsD5-U6RpqFRua87wGWQCHg00Q8ZqPeA_5kJ9l-d6oe0cXa4HyYXMnOO0Aofp_LcPcQdG0WFV21z1MbgcE=@protonmail.ch>
+ <20190815172856.yoqvgu2yfrgbkowu@ast-mbp.dhcp.thefacebook.com>
+ <CALCETrUv+g+cb79FJ1S4XuV0K=kowFkPXpzoC99svoOfs4-Kvg@mail.gmail.com>
+ <20190815230808.2o2qe7a72cwdce2m@ast-mbp.dhcp.thefacebook.com>
+ <fkD3fs46a1YnR4lh0tEG-g3tDnDcyZuzji7bAUR9wujPLLl75ZhI8Yk-H1jZpSugO7qChVeCwxAMmxLdeoF2QFS3ZzuYlh7zmeZOmhDJxww=@protonmail.ch>
+ <alpine.DEB.2.21.1908161158490.1873@nanos.tec.linutronix.de>
+ <lGGTLXBsX3V6p1Z4TkdzAjxbNywaPS2HwX5WLleAkmXNcnKjTPpWnP6DnceSsy8NKt5NBRBbuoAb0woKTcDhJXVoFb7Ygk3Skfj8j6rVfMQ=@protonmail.ch>
+ <20190816195233.vzqqbqrivnooohq6@ast-mbp.dhcp.thefacebook.com>
+ <alpine.DEB.2.21.1908162211270.1923@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190816214542.inpt6p655whc2ejw@ast-mbp.dhcp.thefacebook.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <alpine.DEB.2.21.1908162211270.1923@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 16, 2019 at 02:45:44PM -0700, Alexei Starovoitov wrote:
-> On Thu, Aug 15, 2019 at 05:54:59PM -0700, Andy Lutomirski wrote:
-> > 
-> > 
-> > > On Aug 15, 2019, at 4:46 PM, Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> > 
-> > 
-> > >> 
-> > >> I'm not sure why you draw the line for VMs -- they're just as buggy
-> > >> as anything else. Regardless, I reject this line of thinking: yes,
-> > >> all software is buggy, but that isn't a reason to give up.
-> > > 
-> > > hmm. are you saying you want kernel community to work towards
-> > > making containers (namespaces) being able to run arbitrary code
-> > > downloaded from the internet?
-> > 
-> > Yes.
-
-If I may weigh in here too: Yes. In fact, we already do that large
-scale!
-
-> > 
-> > As an example, Sandstorm uses a combination of namespaces (user, network, mount, ipc) and a moderately permissive seccomp policy to run arbitrary code. Not just little snippets, either — node.js, Mongo, MySQL, Meteor, and other fairly heavyweight stacks can all run under Sandstorm, with the whole stack (database engine binaries, etc) supplied by entirely untrusted customers.  During the time Sandstorm was under active development, I can recall *one* bug that would have allowed a sandbox escape. That’s a pretty good track record.  (Also, Meltdown and Spectre, sigh.)
+On Fri, Aug 16, 2019 at 10:28:29PM +0200, Thomas Gleixner wrote:
+> Alexei,
 > 
-> exactly: "meltdown", "spectre", "sigh".
-> Side channels effectively stalled the work on secure containers.
-> And killed projects like sandstorm.
-
-If I may, Sandstorm's death has very likely nothing to do with
-Meltdown/Spectre etc. since that should've also killed Qemu, Crosvm and
-all the others in one fell swoop. It's also not a very good example (no
-offense, Andy :)) and probably a bit dated.
-We have LXD which is a full-fledged container manager that runs
-*unprivileged system* containers on a large scale and is very much
-alive. That is it runs systemd, openrc, what have you, i.e. simply
-unmodifed distro images at this point.
-
-It's used to run Linux workloads on all Chromebooks and in a bunch of
-other places. Since its inception we did not have a single
-*unprivileged* container to init userns/host breakout.
-At this point in time the really bad CVEs are almost exclusively against
-*privileged* containers (see this year's leading nomination for
-container CVE grand mal of the year: CVE-2019-5736) which were never and
-will never be considered root safe despite everyone pretending
-otherwise.
-
-
-> Why work on improving kaslr when there are several ways to
-> get kernel addresses through hw bugs? Patch mouse holes when roof is leaking ?
-> In case of unprivileged bpf I'm confident that all known holes are patched.
-> Until disclosures stop happening with the frequency they do now the time
-> of bpf developers is better spent on something other than unprivileged bpf.
+> On Fri, 16 Aug 2019, Alexei Starovoitov wrote:
+> > It's both of the above when 'systemd' is not taken literally.
+> > To earlier Thomas's point: the use case is not only about systemd.
+> > There are other containers management systems.
 > 
-> > I’m suggesting that you engage the security community ...
-> > .. so that normal users can use bpf filtering
+> <SNIP>
 > 
-> yes, but not soon. unfortunately.
+> > These daemons need to drop privileges to make the system safer == less
+> > prone to corruption due to bugs in themselves. Not necessary security
+> > bugs.
+> 
+> Let's take a step back.
+> 
+> While real usecases are helpful to understand a design decision, the design
+> needs to be usecase independent.
+> 
+> The kernel provides mechanisms, not policies. My impression of this whole
+> discussion is that it is policy driven. That's the wrong approach.
 
-Tbh, I do not have a strong opinion on unprivileged bpf at this moment.
-If the community thinks that the bits and pieces are not in place or the
-timing is not right that's fine with me.
-What we should make sure though is that we don't end up with something
-halfbaked. And this /dev/bpf thing very much feels like a hack. If
-unprivileged bpf is not a thing why bother with /dev/bpf or CAP_BPF at
-all.
+not sure what you mean by 'policy driven'.
+Proposed CAP_BPF is a policy?
 
-(The one usecase I'd care about is to extend seccomp to do pointer-based
-syscall filtering. Whether or not that'd require (unprivileged) ebpf is
-up for discussion at KSummit.)
+My desire to do kernel.unprivileged_bpf_disabled=1 is driven by
+text in Documentation/x86/mds.rst which says:
+"There is one exception, which is untrusted BPF. The functionality of
+untrusted BPF is limited, but it needs to be thoroughly investigated
+whether it can be used to create such a construct."
 
-Christian
+commit 6a9e52927251 ("x86/speculation/mds: Add mds_clear_cpu_buffers()")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Jon Masters <jcm@redhat.com>
+Tested-by: Jon Masters <jcm@redhat.com>
+
+The way I read this text:
+- there is a concern that mds is exploitable via bpf
+- there is a desire to investigate to address this concern
+
+I'm committed to help with the investigation.
+
+In the mean time I propose a path to do
+kernel.unprivileged_bpf_disabled=1 which is CAP_BPF.
+
+Can kernel.unprivileged_bpf_disabled=1 be used now?
+Yes, but it will weaken overall system security because things that
+use unpriv to load bpf and CAP_NET_ADMIN to attach bpf would need
+to move to stronger CAP_SYS_ADMIN.
+
+With CAP_BPF both load and attach would happen under CAP_BPF
+instead of CAP_SYS_ADMIN.
+
+> So let's look at the mechanisms which we have at hand:
+> 
+>  1) Capabilities
+>  
+>  2) SUID and dropping priviledges
+> 
+>  3) Seccomp and LSM
+> 
+> Now the real interesting questions are:
+> 
+>  A) What kind of restrictions does BPF allow? Is it a binary on/off or is
+>     there a more finegrained control of BPF functionality?
+> 
+>     TBH, I can't tell.
+> 
+>  B) Depending on the answer to #A what is the control possibility for
+>     #1/#2/#3 ?
+
+Can any of the mechanisms 1/2/3 address the concern in mds.rst?
+
+I believe Andy wants to expand the attack surface when
+kernel.unprivileged_bpf_disabled=0
+Before that happens I'd like the community to work on addressing the text above.
+
