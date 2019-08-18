@@ -1,141 +1,127 @@
-Return-Path: <SRS0=k6rB=WN=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=Scbz=WO=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBA5C41514
-	for <linux-security-module@archiver.kernel.org>; Sat, 17 Aug 2019 15:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3DBC3A589
+	for <linux-security-module@archiver.kernel.org>; Sun, 18 Aug 2019 23:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 050D42189E
-	for <linux-security-module@archiver.kernel.org>; Sat, 17 Aug 2019 15:44:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="WaP7COrr"
+	by mail.kernel.org (Postfix) with ESMTP id 18CF321873
+	for <linux-security-module@archiver.kernel.org>; Sun, 18 Aug 2019 23:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbfHQPoz (ORCPT
+        id S1726252AbfHRX6Z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 17 Aug 2019 11:44:55 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42841 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbfHQPoz (ORCPT
+        Sun, 18 Aug 2019 19:58:25 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33124 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726028AbfHRX6Z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 17 Aug 2019 11:44:55 -0400
-Received: by mail-pl1-f193.google.com with SMTP id y1so3697322plp.9
-        for <linux-security-module@vger.kernel.org>; Sat, 17 Aug 2019 08:44:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=R2/VJq6nrOFMWOBOgnh5HWjyHIE/BDqFX+S1CeV3qAs=;
-        b=WaP7COrr+38AIFHTYCbpqcx3jLbdYVTtlCWA+1q5UPdXIiVAPDyvZf9DznDc9S8c2u
-         J2urZpD3/44z3m341acVQM9Fd6YpoHb6MV0OC587gacLZPxksqSGGC5P18a+s9X4DrC5
-         glswsfCwPe1MCUkV9D77l52MeDoV/odb8e7K4nf++wuk6JbknP2w+WFaswPoGL/LA1Ea
-         k/enOTcOZq7XAVufNnZKXMAJcjpbnfTcyP/psfuUKkaAKPmN8RMT03nLb++aubNbv05Q
-         PcFbzZBJWsHQEEzMKpsLM2OgRqPkqlP5hVihi3lo369sVowoeJmpga1fVTtsowuIKZZe
-         dmDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=R2/VJq6nrOFMWOBOgnh5HWjyHIE/BDqFX+S1CeV3qAs=;
-        b=onfkCtahhq8+9FZ97+8eBqAh+XY+t715X911wuVXtarhZAXRcb/V1FKz6i2tA0DHdg
-         LXpNCTXpZ5EfLjH5kaYb0mfEGBRl7TgO7w1QD7AQs2NLjYCs5Q93VNpjaQoAbhgYzTzO
-         DZY9rQR5hMbHmmShI6l0qg+ZOFHZtorkBIdtB9x1RrDIPU/invNIoANK6NMKzTre5tYj
-         PuFy/lv1WUOvW5D9rMxDObBRQVRUy9SRbpbypNNJZsooPK/WBerdfjoXR0Bqw9gQDl/s
-         dgbfJcSV1mmrQtE2LJri7+AxUzU82WDGVM33NR5Bela38RqPtveiM/wY/jeMpBrdrNO+
-         BDuw==
-X-Gm-Message-State: APjAAAU0+hJVn/HNdj8VpOS3w3ZQBlcMhDzSOQXBkH0wRaECrMpgQluw
-        IVnx/pK/BzfRHs8Y5SJVzGTCTw==
-X-Google-Smtp-Source: APXvYqxGPZQ32jm+v1QngNi4NkhKo4BrhhWdQ6WcwGGei+2UBkhZw6dczbdrutxMwyo4yOE9YZomEQ==
-X-Received: by 2002:a17:902:2bc8:: with SMTP id l66mr14790994plb.222.1566056694423;
-        Sat, 17 Aug 2019 08:44:54 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b04e:b450:b585:791c:ba5c:79b4? ([2600:1010:b04e:b450:b585:791c:ba5c:79b4])
-        by smtp.gmail.com with ESMTPSA id m13sm9400788pgn.57.2019.08.17.08.44.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 17 Aug 2019 08:44:53 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16G77)
-In-Reply-To: <20190817150245.xxzxqjpvgqsxmloe@ast-mbp>
-Date:   Sat, 17 Aug 2019 08:44:52 -0700
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Song Liu <songliubraving@fb.com>,
-        Kees Cook <keescook@chromium.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <959BAF9B-F2A2-4187-A2A7-C64D675F537B@amacapital.net>
-References: <20190814220545.co5pucyo5jk3weiv@ast-mbp.dhcp.thefacebook.com> <HG0x24u69mnaMFKuxHVAzHpyjwsD5-U6RpqFRua87wGWQCHg00Q8ZqPeA_5kJ9l-d6oe0cXa4HyYXMnOO0Aofp_LcPcQdG0WFV21z1MbgcE=@protonmail.ch> <20190815172856.yoqvgu2yfrgbkowu@ast-mbp.dhcp.thefacebook.com> <CALCETrUv+g+cb79FJ1S4XuV0K=kowFkPXpzoC99svoOfs4-Kvg@mail.gmail.com> <20190815230808.2o2qe7a72cwdce2m@ast-mbp.dhcp.thefacebook.com> <fkD3fs46a1YnR4lh0tEG-g3tDnDcyZuzji7bAUR9wujPLLl75ZhI8Yk-H1jZpSugO7qChVeCwxAMmxLdeoF2QFS3ZzuYlh7zmeZOmhDJxww=@protonmail.ch> <alpine.DEB.2.21.1908161158490.1873@nanos.tec.linutronix.de> <lGGTLXBsX3V6p1Z4TkdzAjxbNywaPS2HwX5WLleAkmXNcnKjTPpWnP6DnceSsy8NKt5NBRBbuoAb0woKTcDhJXVoFb7Ygk3Skfj8j6rVfMQ=@protonmail.ch> <20190816195233.vzqqbqrivnooohq6@ast-mbp.dhcp.thefacebook.com> <alpine.DEB.2.21.1908162211270.1923@nanos.tec.linutronix.de> <20190817150245.xxzxqjpvgqsxmloe@ast-mbp>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+        Sun, 18 Aug 2019 19:58:25 -0400
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 54995DC0C941E6D47D1B;
+        Mon, 19 Aug 2019 00:58:21 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.36) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Mon, 19 Aug 2019 00:58:14 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <linux-integrity@vger.kernel.org>
+CC:     <linux-security-module@vger.kernel.org>, <zohar@linux.ibm.com>,
+        <dmitry.kasatkin@huawei.com>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [WIP][RFC][PATCH 0/3] Introduce Infoflow LSM
+Date:   Mon, 19 Aug 2019 01:57:42 +0200
+Message-ID: <20190818235745.1417-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+This patch set introduces a new security module called Infoflow LSM. Its
+main purpose is to enforce the Clark-Wilson integrity policy, in order
+to protect mutable files against modifications from processes outside the
+Trusted Computing Base (TCB). With this protection, mutable files inside
+the TCB can be safely excluded from measurement by Integrity Measurement
+Architecture (IMA), and their unknown digest won't cause a failure during
+the remote attestation process.
+
+Infoflow LSM takes advantage of the LSM stacking capability and enforces
+security decisions on top of other label-based LSMs such as SELinux and
+SMACK. The main benefit of this design choice is that it is not necessary
+to modify the policy of the existing LSMs.
+
+Infoflow LSM has three main modes of operation:
+- discover: discovers process operations based on which the information
+            flow analysis can be performed and the TCB can be determined;
+- enforce: enforce the Clark-Wilson policy, depending on the TCB previously
+           determined
+- permissive: allow operations that would be denied, but show them in a
+              file in securityfs
+
+Discovered operations can be obtained from
+/sys/kernel/security/infoflow/rules and are in the format:
+
+allow subj obj:class { permissions };
+
+The TCB can be determined from discovered operations with the RA Verifier
+tool available at:
+
+https://github.com/euleros/ra-verifier
+
+The tool takes as input the application that must be protected or the
+initial TCB. It will then tells which subjects violate the Clark-Wilson
+policy. Possible resolution strategies are to add a subject to the TCB or
+to add a filtering interface to the TCB subject that reads a low integrity
+object.
+
+RA Verifier produces a policy for Infoflow LSM, with the list of TCB
+subjects, objects and filtering interfaces.
+
+This patch set can be retrieved at:
+
+https://github.com/euleros/linux
+
+Roberto
 
 
-> On Aug 17, 2019, at 8:02 AM, Alexei Starovoitov <alexei.starovoitov@gmail.=
-com> wrote:
+Roberto Sassu (3):
+  security: introduce call_int_hook_and() macro
+  lsm notifier: distinguish between state change and policy change
+  security: add infoflow LSM
 
->=20
-> Can any of the mechanisms 1/2/3 address the concern in mds.rst?
->=20
+ .../admin-guide/kernel-parameters.txt         |  23 +
+ drivers/infiniband/core/device.c              |   2 +-
+ include/linux/lsm_audit.h                     |   3 +
+ include/linux/security.h                      |   1 +
+ include/uapi/linux/xattr.h                    |   2 +
+ security/Kconfig                              |   1 +
+ security/Makefile                             |   2 +
+ security/infoflow/Kconfig                     |   6 +
+ security/infoflow/Makefile                    |   7 +
+ security/infoflow/infoflow.h                  | 173 ++++
+ security/infoflow/infoflow_access.c           | 182 ++++
+ security/infoflow/infoflow_ctx.c              | 342 ++++++++
+ security/infoflow/infoflow_fs.c               | 479 +++++++++++
+ security/infoflow/infoflow_lsm.c              | 778 ++++++++++++++++++
+ security/integrity/evm/evm_main.c             |   1 +
+ security/security.c                           |  19 +-
+ security/selinux/avc.c                        |   2 +-
+ security/selinux/selinuxfs.c                  |   2 +-
+ 18 files changed, 2020 insertions(+), 5 deletions(-)
+ create mode 100644 security/infoflow/Kconfig
+ create mode 100644 security/infoflow/Makefile
+ create mode 100644 security/infoflow/infoflow.h
+ create mode 100644 security/infoflow/infoflow_access.c
+ create mode 100644 security/infoflow/infoflow_ctx.c
+ create mode 100644 security/infoflow/infoflow_fs.c
+ create mode 100644 security/infoflow/infoflow_lsm.c
 
-seccomp() can. It=E2=80=99s straightforward to use seccomp to disable bpf() o=
-utright for a process tree.  In this regard, bpf() isn=E2=80=99t particularl=
-y unique =E2=80=94 it=E2=80=99s a system call that exposes some attack surfa=
-ce and that isn=E2=80=99t required by most programs for basic functionality.=
-
-
-At LPC this year, there will be a discussion about seccomp improvements that=
- will, among other things, offer fiber-grained control. It=E2=80=99s quite l=
-ikely, for example, that seccomp will soon be able to enable and disable spe=
-cific map types or attach types.  The exact mechanism isn=E2=80=99t decided y=
-et,  but I think everyone expects that this is mostly a design problem, not a=
-n implementation problem.
-
-This is off topic for the current thread, but it could be useful to allow bp=
-f programs to be loaded from files directly (i.e. pass an fd to a file into b=
-pf() to load the program), which would enable LSMs to check that the file is=
- appropriately labeled. This would dramatically raise the bar for exploitati=
-on of verifier bugs or speculation attacks, since anyone trying to exploit i=
-t would need to get the bpf payload through LSM policy first.
-
-> I believe Andy wants to expand the attack surface when
-> kernel.unprivileged_bpf_disabled=3D0
-> Before that happens I'd like the community to work on addressing the text a=
-bove.
->=20
-
-Not by much. BPF maps are already largely exposed to unprivileged code (when=
- unprivileged_bpf_disabled=3D0).  The attack surface is there, and they=E2=80=
-=99re arguably even more exposed than they should be.  My patch 1 earlier wa=
-s about locking these interfaces down.
-
-Similarly, my suggestions about reworking cgroup attach and program load don=
-=E2=80=99t actually allow fully unprivileged users to run arbitrary bpf() pr=
-ograms [0] =E2=80=94 under my proposal, to attach a bpf cgroup program, you n=
-eed a delegated cgroup. The mechanism could be extended by a requirement tha=
-t a privileged cgroup manager explicitly enable certain attach types for a d=
-elegated subtree.
-
-A cgroup knob to turn unprivileged bpf on and off for tasks in the cgroup mi=
-ght actually be quite useful.
-
-[0] on some thought, the test run mechanism should probably remain root-only=
-.
+-- 
+2.17.1
 
