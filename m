@@ -2,130 +2,183 @@ Return-Path: <SRS0=yDeW=WP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4312BC3A59B
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 09:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9594AC3A5A2
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 14:54:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD642184E
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 09:15:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64D402082A
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 14:54:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="al7+rHfU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfHSJPa (ORCPT
+        id S1726905AbfHSOyD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Aug 2019 05:15:30 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:46607 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfHSJPa (ORCPT
+        Mon, 19 Aug 2019 10:54:03 -0400
+Received: from sonic312-56.consmr.mail.gq1.yahoo.com ([98.137.69.238]:44253
+        "EHLO sonic312-56.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726808AbfHSOyD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Aug 2019 05:15:30 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hzdku-00009b-Bv; Mon, 19 Aug 2019 11:15:12 +0200
-Date:   Mon, 19 Aug 2019 11:15:11 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-cc:     Jordan Glover <Golden_Miller83@protonmail.ch>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Song Liu <songliubraving@fb.com>,
-        Kees Cook <keescook@chromium.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via
- /dev/bpf
-In-Reply-To: <20190817150245.xxzxqjpvgqsxmloe@ast-mbp>
-Message-ID: <alpine.DEB.2.21.1908191103130.1923@nanos.tec.linutronix.de>
-References: <20190814220545.co5pucyo5jk3weiv@ast-mbp.dhcp.thefacebook.com> <HG0x24u69mnaMFKuxHVAzHpyjwsD5-U6RpqFRua87wGWQCHg00Q8ZqPeA_5kJ9l-d6oe0cXa4HyYXMnOO0Aofp_LcPcQdG0WFV21z1MbgcE=@protonmail.ch> <20190815172856.yoqvgu2yfrgbkowu@ast-mbp.dhcp.thefacebook.com>
- <CALCETrUv+g+cb79FJ1S4XuV0K=kowFkPXpzoC99svoOfs4-Kvg@mail.gmail.com> <20190815230808.2o2qe7a72cwdce2m@ast-mbp.dhcp.thefacebook.com> <fkD3fs46a1YnR4lh0tEG-g3tDnDcyZuzji7bAUR9wujPLLl75ZhI8Yk-H1jZpSugO7qChVeCwxAMmxLdeoF2QFS3ZzuYlh7zmeZOmhDJxww=@protonmail.ch>
- <alpine.DEB.2.21.1908161158490.1873@nanos.tec.linutronix.de> <lGGTLXBsX3V6p1Z4TkdzAjxbNywaPS2HwX5WLleAkmXNcnKjTPpWnP6DnceSsy8NKt5NBRBbuoAb0woKTcDhJXVoFb7Ygk3Skfj8j6rVfMQ=@protonmail.ch> <20190816195233.vzqqbqrivnooohq6@ast-mbp.dhcp.thefacebook.com>
- <alpine.DEB.2.21.1908162211270.1923@nanos.tec.linutronix.de> <20190817150245.xxzxqjpvgqsxmloe@ast-mbp>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 19 Aug 2019 10:54:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1566226442; bh=fB+7Aa6spLImgQaCe5u8uBi1+r68dF9AANzhbIfNuT8=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=al7+rHfURZVS5DEytTL4ScZYa9TJ+Ns/DkEqwuvWpExQaIrV1VpaM7STfCADVFDS6tosTmVBRO3id34j1BfZjkmSl/DMMH1xIPCzRi6RyBCAtfZbbtbkCi5ayFWEjwLK5BfG9FwdvkmFyaY2aaDQ2IquOYX8wEWZPjRir6lnrvdFwHcLXMd/pbwYZDZm819bd+tSCaQmE1Tn33+RByORCqlQuSC/Nl3Ww/N4GCY+QG+L3wHPomjEkJcJczSAM1faEDtlrxdQGG8k33MU8eolxkKWWM8+22mLN6JUefv9MO00N65yqmrgLia4pjlffWl82Z8tuAyV5A/RsIhp4+k6kg==
+X-YMail-OSG: HIkLjh0VM1mQTIL2qfooEn2QJY0O9LF0cBcRA5EH7XiJwn0Ul40WMz59KjwYHRi
+ WCkCAWVpbDG3xaoYlY4ya7lsC0JtjNV1xVQwHC7.xUSR2UaeYUvVAY_yasjFEV9Wsfzj8a0kHkoU
+ PHm_2EYmZQdXC5GpJElvJ.56kp1CSo_XQ9PLoIqqHvE7nca0MmN1f8TocCZ134QitSJD4S7ZYnPs
+ 7i4.dScD4J0eA8oi4XwpwOQbIK1aAkiDjHO1EZTyNSGJL6OAlb71zN7PF5ZnEqltQR39MXTV0Yrk
+ wVlbNizVF8ouJiXHiMCcXz3iyZrL71ry2nt0wTBibNt6VzG1jSCwWFENT4ab1I1IWOEJ7m3ee0Ta
+ YSsnjEupqgEezWG8bJmNQkN4Ggwbm8DaHRQUgW92n2GlAu_JXW1O10LJiTJ6NR1FVC6RCydMOOf2
+ DCv7wUx04_wNPU.WFGSnFjH8Psz3uTni1qtXlDBOPd3xoXKONUrclwYfnwPWLcTZtSUN.Th1fdtE
+ 1viMg4JYwF44EypFEMiBFMbIMATeZfngv0auZh.YkCcdwZfPpuWseQhDGVufGYkDPA9Uj4UTRvrm
+ S4wioLUekw8UQfkwxSiXf.oc0bxN2bCn_aoW5EkryE.kn5mXtvLFS3RI_aFo7NiGyKl..86sDs5S
+ nJGs1V1NoJEGAm2fp.R_mdvCfg7QBjB8m6Vq28MESnY6ZrDrvBQs2nokMxS4_HjQeaGHZz0RSDWw
+ Tk0X7djxAfXM5Aykkv9VBR__c7Ubq_X626dMMdqy6ZSe.uPny4tuPvJqYh0cE.Bz3OzE_FgkNL_T
+ OphqPbqnEWifayucjKAJAnkua9jCWRouwQP_0pucJz8ofoLlALxUGqZ2hMgupDdk56corrxh1coD
+ P2fbN_3zy1sbSqPPLDHxa5l8.O3sYqkzyNd3g.1Xwb.KzYj8UpUk1HOQeGHu7Qi5jtAkwwKWnzmU
+ SLK5EFqhcnj6bHxs3_4g_7cZo2Y.5WaS4RiDaBqJzMzNUhR7utk3OmVXSYVgPRhY51U5C.OfxGA9
+ h9c_ZWzDaGlyELyLuxkA23PUIIiEqFq_ueHKWA1xb3U.vg1rGOG.MPSe4jBz2aicHFn0gnswzITi
+ yEUU4Jm2q4IU59kzl7uNZ3n09TTVWVb0bQ21fHviCaryqxq6IWMDzBC6Hb_u4pvzu1RfGgt56OOd
+ w2ibuvMSCMQ64iM3rPgTjIBojpQ_dJGgUY6c4iY2hVD_gXluFDmeY7uv75zN2UJyDhVeB5E0Gi_C
+ 4R5hAa6zmWiPCmE7jLHsQeybq_aRRiYXobDA0Wuvzruo2kg9wj.tQwWF4vWfeVpEcgEXS1kiaL5K
+ YwM1vDji3uSYnB8V29n12hP1bSwGxSR98ViLAb0yaA7nc.L6h3qu3
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Mon, 19 Aug 2019 14:54:02 +0000
+Received: by smtp431.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 27ac39f8c39afc0ed4dd7a96fdca8562;
+          Mon, 19 Aug 2019 14:52:01 +0000 (UTC)
+Subject: Re: [WIP][RFC][PATCH 1/3] security: introduce call_int_hook_and()
+ macro
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
+        dmitry.kasatkin@huawei.com, silviu.vlasceanu@huawei.com
+References: <20190818235745.1417-1-roberto.sassu@huawei.com>
+ <20190818235745.1417-2-roberto.sassu@huawei.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <4c13c8a7-e255-a3a8-c19a-cae85a71cae9@schaufler-ca.com>
+Date:   Mon, 19 Aug 2019 07:52:01 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20190818235745.1417-2-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Alexei,
+On 8/18/2019 4:57 PM, Roberto Sassu wrote:
+> The LSM hooks audit_rule_known() and audit_rule_match() define 1 as
+> result for successful operation. However, the security_ functions use
+> call_int_hook() which stops iterating over LSMs if the result is not
+> zero.
+>
+> Introduce call_int_hook_and(), so that the final result returned by the=
 
-On Sat, 17 Aug 2019, Alexei Starovoitov wrote:
-> On Fri, Aug 16, 2019 at 10:28:29PM +0200, Thomas Gleixner wrote:
-> > On Fri, 16 Aug 2019, Alexei Starovoitov wrote:
-> > While real usecases are helpful to understand a design decision, the design
-> > needs to be usecase independent.
-> > 
-> > The kernel provides mechanisms, not policies. My impression of this whole
-> > discussion is that it is policy driven. That's the wrong approach.
-> 
-> not sure what you mean by 'policy driven'.
-> Proposed CAP_BPF is a policy?
+> security_ functions is 1 if all LSMs return 1.
 
-I was referring to the discussion as a whole.
- 
-> Can kernel.unprivileged_bpf_disabled=1 be used now?
-> Yes, but it will weaken overall system security because things that
-> use unpriv to load bpf and CAP_NET_ADMIN to attach bpf would need
-> to move to stronger CAP_SYS_ADMIN.
-> 
-> With CAP_BPF both load and attach would happen under CAP_BPF
-> instead of CAP_SYS_ADMIN.
+I don't think this is what you want. You want an audit record
+generated if any of the security modules want one, not only if
+all of the security modules want one.
 
-I'm not arguing against that.
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  security/security.c | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
+>
+> diff --git a/security/security.c b/security/security.c
+> index cbee0b7915d5..ff1736ee3410 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -634,6 +634,20 @@ static void __init lsm_early_task(struct task_stru=
+ct *task)
+>  	RC;							\
+>  })
+> =20
+> +#define call_int_hook_and(FUNC, IRC, ...) ({			\
+> +	int RC =3D IRC;						\
+> +	do {							\
+> +		struct security_hook_list *P;			\
+> +								\
+> +		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+> +			RC =3D P->hook.FUNC(__VA_ARGS__);		\
+> +			if (!RC)				\
+> +				break;				\
+> +		}						\
+> +	} while (0);						\
+> +	RC;							\
+> +})
+> +
+>  /* Security operations */
+> =20
+>  int security_binder_set_context_mgr(struct task_struct *mgr)
+> @@ -2339,7 +2353,7 @@ int security_audit_rule_init(u32 field, u32 op, c=
+har *rulestr, void **lsmrule)
+> =20
+>  int security_audit_rule_known(struct audit_krule *krule)
+>  {
+> -	return call_int_hook(audit_rule_known, 0, krule);
+> +	return call_int_hook_and(audit_rule_known, 0, krule);
+>  }
+> =20
+>  void security_audit_rule_free(void *lsmrule)
+> @@ -2349,7 +2363,8 @@ void security_audit_rule_free(void *lsmrule)
+> =20
+>  int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmr=
+ule)
+>  {
+> -	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);=
 
-> > So let's look at the mechanisms which we have at hand:
-> > 
-> >  1) Capabilities
-> >  
-> >  2) SUID and dropping priviledges
-> > 
-> >  3) Seccomp and LSM
-> > 
-> > Now the real interesting questions are:
-> > 
-> >  A) What kind of restrictions does BPF allow? Is it a binary on/off or is
-> >     there a more finegrained control of BPF functionality?
-> > 
-> >     TBH, I can't tell.
-> > 
-> >  B) Depending on the answer to #A what is the control possibility for
-> >     #1/#2/#3 ?
-> 
-> Can any of the mechanisms 1/2/3 address the concern in mds.rst?
+> +	return call_int_hook_and(audit_rule_match, 0, secid, field, op,
+> +				 lsmrule);
+>  }
+>  #endif /* CONFIG_AUDIT */
+> =20
 
-Well, that depends. As with any other security policy which is implemented
-via these mechanisms, the policy can be strict enough to prevent it by not
-allowing certain operations. The more fine-grained the control is, it
-allows the administrator who implements the policy to remove the
-'dangerous' parts from an untrusted user.
-
-So really question #A is important for this. Is BPF just providing a binary
-ON/OFF knob or does it allow to disable/enable certain aspects of BPF
-functionality in a more fine grained way? If the latter, then it might be
-possible to control functionality which might be abused for exploits of
-some sorts (including MDS) in a way which allows other parts of BBF to be
-exposed to less priviledged contexts.
-
-> I believe Andy wants to expand the attack surface when
-> kernel.unprivileged_bpf_disabled=0
-> Before that happens I'd like the community to work on addressing the text above.
-
-Well, that text above can be removed when the BPF wizards are entirely sure
-that BPF cannot be abused to exploit stuff. 
-
-Thanks,
-
-	tglx
