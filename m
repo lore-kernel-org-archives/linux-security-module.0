@@ -2,183 +2,117 @@ Return-Path: <SRS0=yDeW=WP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9594AC3A5A2
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 14:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA70C3A5A0
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 15:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D402082A
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 14:54:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="al7+rHfU"
+	by mail.kernel.org (Postfix) with ESMTP id 58DBA2082C
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 15:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbfHSOyD (ORCPT
+        id S1726314AbfHSPCH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Aug 2019 10:54:03 -0400
-Received: from sonic312-56.consmr.mail.gq1.yahoo.com ([98.137.69.238]:44253
-        "EHLO sonic312-56.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726808AbfHSOyD (ORCPT
+        Mon, 19 Aug 2019 11:02:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35339 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726168AbfHSPCH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Aug 2019 10:54:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1566226442; bh=fB+7Aa6spLImgQaCe5u8uBi1+r68dF9AANzhbIfNuT8=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=al7+rHfURZVS5DEytTL4ScZYa9TJ+Ns/DkEqwuvWpExQaIrV1VpaM7STfCADVFDS6tosTmVBRO3id34j1BfZjkmSl/DMMH1xIPCzRi6RyBCAtfZbbtbkCi5ayFWEjwLK5BfG9FwdvkmFyaY2aaDQ2IquOYX8wEWZPjRir6lnrvdFwHcLXMd/pbwYZDZm819bd+tSCaQmE1Tn33+RByORCqlQuSC/Nl3Ww/N4GCY+QG+L3wHPomjEkJcJczSAM1faEDtlrxdQGG8k33MU8eolxkKWWM8+22mLN6JUefv9MO00N65yqmrgLia4pjlffWl82Z8tuAyV5A/RsIhp4+k6kg==
-X-YMail-OSG: HIkLjh0VM1mQTIL2qfooEn2QJY0O9LF0cBcRA5EH7XiJwn0Ul40WMz59KjwYHRi
- WCkCAWVpbDG3xaoYlY4ya7lsC0JtjNV1xVQwHC7.xUSR2UaeYUvVAY_yasjFEV9Wsfzj8a0kHkoU
- PHm_2EYmZQdXC5GpJElvJ.56kp1CSo_XQ9PLoIqqHvE7nca0MmN1f8TocCZ134QitSJD4S7ZYnPs
- 7i4.dScD4J0eA8oi4XwpwOQbIK1aAkiDjHO1EZTyNSGJL6OAlb71zN7PF5ZnEqltQR39MXTV0Yrk
- wVlbNizVF8ouJiXHiMCcXz3iyZrL71ry2nt0wTBibNt6VzG1jSCwWFENT4ab1I1IWOEJ7m3ee0Ta
- YSsnjEupqgEezWG8bJmNQkN4Ggwbm8DaHRQUgW92n2GlAu_JXW1O10LJiTJ6NR1FVC6RCydMOOf2
- DCv7wUx04_wNPU.WFGSnFjH8Psz3uTni1qtXlDBOPd3xoXKONUrclwYfnwPWLcTZtSUN.Th1fdtE
- 1viMg4JYwF44EypFEMiBFMbIMATeZfngv0auZh.YkCcdwZfPpuWseQhDGVufGYkDPA9Uj4UTRvrm
- S4wioLUekw8UQfkwxSiXf.oc0bxN2bCn_aoW5EkryE.kn5mXtvLFS3RI_aFo7NiGyKl..86sDs5S
- nJGs1V1NoJEGAm2fp.R_mdvCfg7QBjB8m6Vq28MESnY6ZrDrvBQs2nokMxS4_HjQeaGHZz0RSDWw
- Tk0X7djxAfXM5Aykkv9VBR__c7Ubq_X626dMMdqy6ZSe.uPny4tuPvJqYh0cE.Bz3OzE_FgkNL_T
- OphqPbqnEWifayucjKAJAnkua9jCWRouwQP_0pucJz8ofoLlALxUGqZ2hMgupDdk56corrxh1coD
- P2fbN_3zy1sbSqPPLDHxa5l8.O3sYqkzyNd3g.1Xwb.KzYj8UpUk1HOQeGHu7Qi5jtAkwwKWnzmU
- SLK5EFqhcnj6bHxs3_4g_7cZo2Y.5WaS4RiDaBqJzMzNUhR7utk3OmVXSYVgPRhY51U5C.OfxGA9
- h9c_ZWzDaGlyELyLuxkA23PUIIiEqFq_ueHKWA1xb3U.vg1rGOG.MPSe4jBz2aicHFn0gnswzITi
- yEUU4Jm2q4IU59kzl7uNZ3n09TTVWVb0bQ21fHviCaryqxq6IWMDzBC6Hb_u4pvzu1RfGgt56OOd
- w2ibuvMSCMQ64iM3rPgTjIBojpQ_dJGgUY6c4iY2hVD_gXluFDmeY7uv75zN2UJyDhVeB5E0Gi_C
- 4R5hAa6zmWiPCmE7jLHsQeybq_aRRiYXobDA0Wuvzruo2kg9wj.tQwWF4vWfeVpEcgEXS1kiaL5K
- YwM1vDji3uSYnB8V29n12hP1bSwGxSR98ViLAb0yaA7nc.L6h3qu3
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Mon, 19 Aug 2019 14:54:02 +0000
-Received: by smtp431.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 27ac39f8c39afc0ed4dd7a96fdca8562;
-          Mon, 19 Aug 2019 14:52:01 +0000 (UTC)
-Subject: Re: [WIP][RFC][PATCH 1/3] security: introduce call_int_hook_and()
- macro
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
-        dmitry.kasatkin@huawei.com, silviu.vlasceanu@huawei.com
-References: <20190818235745.1417-1-roberto.sassu@huawei.com>
- <20190818235745.1417-2-roberto.sassu@huawei.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <4c13c8a7-e255-a3a8-c19a-cae85a71cae9@schaufler-ca.com>
-Date:   Mon, 19 Aug 2019 07:52:01 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 19 Aug 2019 11:02:07 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E22D08D5BB0;
+        Mon, 19 Aug 2019 15:02:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2DFD6871FB;
+        Mon, 19 Aug 2019 15:02:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] keys: Fix description size
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     kernel test robot <rong.a.chen@intel.com>, dhowells@redhat.com,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 19 Aug 2019 16:02:01 +0100
+Message-ID: <156622692131.21558.12335114959426121841.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <20190818235745.1417-2-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Mon, 19 Aug 2019 15:02:07 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/18/2019 4:57 PM, Roberto Sassu wrote:
-> The LSM hooks audit_rule_known() and audit_rule_match() define 1 as
-> result for successful operation. However, the security_ functions use
-> call_int_hook() which stops iterating over LSMs if the result is not
-> zero.
->
-> Introduce call_int_hook_and(), so that the final result returned by the=
+The maximum key description size is 4095.  Commit f771fde82051
+inadvertantly reduced that to 255 and made sizes between 256 and 4095 work
+weirdly, and any size whereby size & 255 == 0 would cause an assertion in
+__key_link_begin() at the following line:
 
-> security_ functions is 1 if all LSMs return 1.
+	BUG_ON(index_key->desc_len == 0);
 
-I don't think this is what you want. You want an audit record
-generated if any of the security modules want one, not only if
-all of the security modules want one.
+This can be fixed by simply increasing the size of desc_len in struct
+keyring_index_key to a u16.
 
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/security.c | 19 +++++++++++++++++--
->  1 file changed, 17 insertions(+), 2 deletions(-)
->
-> diff --git a/security/security.c b/security/security.c
-> index cbee0b7915d5..ff1736ee3410 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -634,6 +634,20 @@ static void __init lsm_early_task(struct task_stru=
-ct *task)
->  	RC;							\
->  })
-> =20
-> +#define call_int_hook_and(FUNC, IRC, ...) ({			\
-> +	int RC =3D IRC;						\
-> +	do {							\
-> +		struct security_hook_list *P;			\
-> +								\
-> +		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
-> +			RC =3D P->hook.FUNC(__VA_ARGS__);		\
-> +			if (!RC)				\
-> +				break;				\
-> +		}						\
-> +	} while (0);						\
-> +	RC;							\
-> +})
-> +
->  /* Security operations */
-> =20
->  int security_binder_set_context_mgr(struct task_struct *mgr)
-> @@ -2339,7 +2353,7 @@ int security_audit_rule_init(u32 field, u32 op, c=
-har *rulestr, void **lsmrule)
-> =20
->  int security_audit_rule_known(struct audit_krule *krule)
->  {
-> -	return call_int_hook(audit_rule_known, 0, krule);
-> +	return call_int_hook_and(audit_rule_known, 0, krule);
->  }
-> =20
->  void security_audit_rule_free(void *lsmrule)
-> @@ -2349,7 +2363,8 @@ void security_audit_rule_free(void *lsmrule)
-> =20
->  int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmr=
-ule)
->  {
-> -	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);=
+Note the argument length test in keyutils only checked empty descriptions
+and descriptions with a size around the limit (ie. 4095) and not for all
+the values in between, so it missed this.  This has been addressed and
 
-> +	return call_int_hook_and(audit_rule_match, 0, secid, field, op,
-> +				 lsmrule);
->  }
->  #endif /* CONFIG_AUDIT */
-> =20
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/commit/?id=066bf56807c26cd3045a25f355b34c1d8a20a5aa
+
+now exhaustively tests all possible lengths of type, description and
+payload and then some.
+
+The assertion failure looks something like:
+
+ kernel BUG at security/keys/keyring.c:1245!
+ ...
+ RIP: 0010:__key_link_begin+0x88/0xa0
+ ...
+ Call Trace:
+  key_create_or_update+0x211/0x4b0
+  __x64_sys_add_key+0x101/0x200
+  do_syscall_64+0x5b/0x1e0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+It can be triggered by:
+
+	keyctl add user "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" a @s
+
+Fixes: f771fde82051 ("keys: Simplify key description management")
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+---
+
+ include/linux/key.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 91f391cd272e..50028338a4cc 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -94,11 +94,11 @@ struct keyring_index_key {
+ 	union {
+ 		struct {
+ #ifdef __LITTLE_ENDIAN /* Put desc_len at the LSB of x */
+-			u8	desc_len;
+-			char	desc[sizeof(long) - 1];	/* First few chars of description */
++			u16	desc_len;
++			char	desc[sizeof(long) - 2];	/* First few chars of description */
+ #else
+-			char	desc[sizeof(long) - 1];	/* First few chars of description */
+-			u8	desc_len;
++			char	desc[sizeof(long) - 2];	/* First few chars of description */
++			u16	desc_len;
+ #endif
+ 		};
+ 		unsigned long x;
 
