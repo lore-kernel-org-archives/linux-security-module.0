@@ -2,117 +2,89 @@ Return-Path: <SRS0=yDeW=WP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA70C3A5A0
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 15:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA34C3A5A0
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 16:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58DBA2082C
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 15:02:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB3E8205ED
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 16:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566233091;
+	bh=Ye/IL7qi7ntpWlo7GGNzyZeXk2i5RgzzrtIV4cW/m+4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=z9twn+E7NwW6aj+P5HsvvTZZIJBGt/2C5FWC+BryvxO+7lS20JwCvp5AYQadezV7l
+	 G039FVvIu58y2RWbSB+8mQnxRLhqfXYaOQPHu4kUGSJqUanqD+21+5Wk75JPbOPrtV
+	 fenD7/8TwwAtelkvP6OEgJT6Jt3AL/XuyRE7Wz0k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbfHSPCH (ORCPT
+        id S1726627AbfHSQov (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Aug 2019 11:02:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35339 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726168AbfHSPCH (ORCPT
+        Mon, 19 Aug 2019 12:44:51 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41011 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbfHSQou (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:02:07 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E22D08D5BB0;
-        Mon, 19 Aug 2019 15:02:06 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2DFD6871FB;
-        Mon, 19 Aug 2019 15:02:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] keys: Fix description size
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     kernel test robot <rong.a.chen@intel.com>, dhowells@redhat.com,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 19 Aug 2019 16:02:01 +0100
-Message-ID: <156622692131.21558.12335114959426121841.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Mon, 19 Aug 2019 12:44:50 -0400
+Received: by mail-lf1-f65.google.com with SMTP id 62so1886852lfa.8
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 09:44:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YTgEEhnQW7rA7Swk7XmZoE/TVWKiM/rYLloBH44I1Y4=;
+        b=HXYiO3uvFIJxP8AzLPiB1vCojk2HYF1PHjHSec/oU/g4xnNPfhabSnJiKWyvKhdvPL
+         PSTBApqcqrNATd12uSC/OSvm8TCRNPUsxfylRETL95enFuQ/shakvQqEAneNqGoKLzuq
+         zpeeR8Q32NiN+R8GM+dAc/To+08EVo1OrugEU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YTgEEhnQW7rA7Swk7XmZoE/TVWKiM/rYLloBH44I1Y4=;
+        b=uReedhZuUIojJEzMOuujMLMtcJUHmib5xvyoxHCBRqHS5XWKiPqSEvCZXa/czJOMuW
+         CWu3kC32QONzDUmiBbE/4d1TvpoSUTi/GplcjUebRNZpWWbksWBlSf4NjTIt1Ir7Ic+W
+         klSO+85ickYwMkDFernf7+EPU3vofFo7uvm+Fy53KXptZ7EcLjhqVmW5JYqPTDLiATyU
+         mwLrG7NrmGHn/+qJC0heqRW9KItHkkq303z3074I9OoQiMC/jwuOdplRI5VXslEhfs4o
+         0WRM2tQM3S7QBX0vApjFNzVk/vGZO3/4MqeAtCSiJua0NEpFOR6RgWxvpnt3Qou44FZu
+         ZhEg==
+X-Gm-Message-State: APjAAAWqpqHKPhVQsTkpyKmrGW96LJDShUBu7rftY91u2cr7TfhV1O+c
+        ZzTgtZDE4V6M3QWl/7eB4sOGK2/58LE=
+X-Google-Smtp-Source: APXvYqzCM/yI3KNIkdTpqlby0475GeDa7yvJuFOG4pDmk7O4pAa/jOV6TU24hF3Y4DbvKky/ytdJWA==
+X-Received: by 2002:ac2:5637:: with SMTP id b23mr13288138lff.186.1566233088340;
+        Mon, 19 Aug 2019 09:44:48 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id y66sm2403694lje.61.2019.08.19.09.44.47
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2019 09:44:48 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id x4so2401444ljj.6
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 09:44:47 -0700 (PDT)
+X-Received: by 2002:a2e:88c7:: with SMTP id a7mr11508843ljk.72.1566233086820;
+ Mon, 19 Aug 2019 09:44:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Mon, 19 Aug 2019 15:02:07 +0000 (UTC)
+References: <156622692131.21558.12335114959426121841.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156622692131.21558.12335114959426121841.stgit@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 19 Aug 2019 09:44:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiP7j+vzthU+wokF-PfR-CtA1YnwT6tYeNO9HK1KWUpiQ@mail.gmail.com>
+Message-ID: <CAHk-=wiP7j+vzthU+wokF-PfR-CtA1YnwT6tYeNO9HK1KWUpiQ@mail.gmail.com>
+Subject: Re: [PATCH] keys: Fix description size
+To:     David Howells <dhowells@redhat.com>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The maximum key description size is 4095.  Commit f771fde82051
-inadvertantly reduced that to 255 and made sizes between 256 and 4095 work
-weirdly, and any size whereby size & 255 == 0 would cause an assertion in
-__key_link_begin() at the following line:
+On Mon, Aug 19, 2019 at 8:02 AM David Howells <dhowells@redhat.com> wrote:
+>
+> This can be fixed by simply increasing the size of desc_len in struct
+> keyring_index_key to a u16.
 
-	BUG_ON(index_key->desc_len == 0);
+Thanks, applied.
 
-This can be fixed by simply increasing the size of desc_len in struct
-keyring_index_key to a u16.
-
-Note the argument length test in keyutils only checked empty descriptions
-and descriptions with a size around the limit (ie. 4095) and not for all
-the values in between, so it missed this.  This has been addressed and
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/commit/?id=066bf56807c26cd3045a25f355b34c1d8a20a5aa
-
-now exhaustively tests all possible lengths of type, description and
-payload and then some.
-
-The assertion failure looks something like:
-
- kernel BUG at security/keys/keyring.c:1245!
- ...
- RIP: 0010:__key_link_begin+0x88/0xa0
- ...
- Call Trace:
-  key_create_or_update+0x211/0x4b0
-  __x64_sys_add_key+0x101/0x200
-  do_syscall_64+0x5b/0x1e0
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-It can be triggered by:
-
-	keyctl add user "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" a @s
-
-Fixes: f771fde82051 ("keys: Simplify key description management")
-Reported-by: kernel test robot <rong.a.chen@intel.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
----
-
- include/linux/key.h |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/key.h b/include/linux/key.h
-index 91f391cd272e..50028338a4cc 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -94,11 +94,11 @@ struct keyring_index_key {
- 	union {
- 		struct {
- #ifdef __LITTLE_ENDIAN /* Put desc_len at the LSB of x */
--			u8	desc_len;
--			char	desc[sizeof(long) - 1];	/* First few chars of description */
-+			u16	desc_len;
-+			char	desc[sizeof(long) - 2];	/* First few chars of description */
- #else
--			char	desc[sizeof(long) - 1];	/* First few chars of description */
--			u8	desc_len;
-+			char	desc[sizeof(long) - 2];	/* First few chars of description */
-+			u16	desc_len;
- #endif
- 		};
- 		unsigned long x;
-
+              Linus
