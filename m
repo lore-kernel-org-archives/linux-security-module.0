@@ -8,107 +8,137 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6991DC3A5A0
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F70DC3A5A0
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BBF822CF8
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D669522D37
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dNREMDP+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KhujlyI2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbfHTASb (ORCPT
+        id S1728944AbfHTAS1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Aug 2019 20:18:31 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:55925 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728947AbfHTAS3 (ORCPT
+        Mon, 19 Aug 2019 20:18:27 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:40522 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728940AbfHTAS1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Aug 2019 20:18:29 -0400
-Received: by mail-pf1-f202.google.com with SMTP id 22so3515343pfn.22
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 17:18:29 -0700 (PDT)
+        Mon, 19 Aug 2019 20:18:27 -0400
+Received: by mail-pl1-f201.google.com with SMTP id s13so2937220plp.7
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 17:18:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=2LlLKA7xilo57KgJ9aBUFbPNJv3YWGuiG9UEU7t1Rzg=;
-        b=dNREMDP+TG2C/LXVb2y5pqTvco3iRS0dhBeVXMI8yStBmDaDACn0KU8WoFg0ZtiOXp
-         +1T4zFY7wH7Hw2KCv+l3gjoQjRE/73lZVZEUW/AxAXh5v8A/u/MA69OZI3mABCI5gjeV
-         HrllyORU7+ymSitKrwkt1XKnOTXejRQnccT/TflwDunzx9Gwi8xnTdCF/J87R4Dcn7wJ
-         zhSsHEU1M6/OXOYC0CsCHnWyZYtewSK+4HWUGPTxGmxYYU+8IZ8m4D7NiVEtuaekKsia
-         XKn86Aw95n02in30KWH/5BMISqdYFuHokAcKWfBMQBNqA6fB+Me65VVB9TyV7Q/5MjKD
-         Zmqg==
+        bh=aETaOEPelySVl3QKK9Qr+qOWAsUAyXrm7SwwhN9vG4c=;
+        b=KhujlyI2R6CEvYLT/F0SfZBAYudHduHuG5bZC22M5mysowFDhbeQ+KtmAa2GL+arTd
+         ftXTboaJS5SyEuwjIFnjLzFD3F1edbJS+pifqs9WbNF9zE/hyk6bk+GHH5cqSmJPImAW
+         9Cavog1sTHJeQrWVJgdqMWImMQMxJFER0njBKXSFJMCBMzAX2DjrIIB05xDViM7bEXC6
+         Tolcpnnock/s2dnEVBo4OaAKzHAQ4bXrZLiRP/b1kKxHg9G0JLEAtNuA8C5e+3eNGEh9
+         yXCIfRVuj2JYvB/WKS9SEa1/3vFVqnmUa8t7IVZi8dFGhhhyFvgweYkxnUpU0ufI66MY
+         ZcpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=2LlLKA7xilo57KgJ9aBUFbPNJv3YWGuiG9UEU7t1Rzg=;
-        b=WnR6rjMtKfTonP+nMttGZIbDrn99GLMIZckrM0ri0UwujyfZ8u50kClAMmlXBe0Q99
-         ztlxMstIfWvoaec1+5JhHhBMASjQYyyyy3Ky5Muh6udWkKFro5wy+mC6pjGOaEXRFTZG
-         MHTNkbLAePncTVAQFsAfxh1hVLYTo+7EthePmkudCNz05kfvIA3Bwehh5qfaRqctRXSZ
-         Xp7KlCkMZh7TaiaUe/1k9ueG9mbGoIZ0CbbkavH5aQ+ydRk1pdKkYQ2cHRG4821jeU07
-         ioDf98gVo7HGV0xYRvqm52DpOYjqKq8taLffmLL/Nw9UVndliP/OU78kt2+/H6PmK4Xe
-         9j6Q==
-X-Gm-Message-State: APjAAAXLrUzNcN3lBufun73OOKKPMFYTUgHzanHgT3skt1+Iet3Lj0yh
-        a2Sr0+qrNvvM1wE9Xw8iyr4wNKBAZnOC7xf2P36/zg==
-X-Google-Smtp-Source: APXvYqys7jvt/D4+3SJ797I1FFI7U+j4sGn8mLnpJ7BQ8OG5PHg/+H0I5jr+bCp39lsh1kkHfvuUfXaGpWqewAvzA3nz+w==
-X-Received: by 2002:a63:5b52:: with SMTP id l18mr22232462pgm.21.1566260308483;
- Mon, 19 Aug 2019 17:18:28 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 17:17:43 -0700
+        bh=aETaOEPelySVl3QKK9Qr+qOWAsUAyXrm7SwwhN9vG4c=;
+        b=hQbmdqfg+H4hRQrYAFQ/qNs7vMAUq3XzisQc2lOc0T+S1a/uYS26f3dkS4gh0quPUw
+         vglD0tMdaFPBdj+whT4KS5iX63QYlHYAkDQIv+FD0A4fMDnOuhGYvw4xiZkuZUzNkC6N
+         5ZCYlgMm2Bb3K0gzpUohR4Q7ezh6Ult8ndaFRzWEqu6SdiwRllJ/vKl7g8C/LmeM9ZqC
+         xWq/vTejQO1Yjs65IVTp9daYmVO39ZsXjteCfk39T3Do3A7AwhaoTASOZb06RSuRO0uo
+         bMxANODZUU6lS8ZI1eEM9GOrUFMWhwph5XYhI4AOSh56YD6DF/cJFKbPHuFEbl5Z4rv4
+         jnJA==
+X-Gm-Message-State: APjAAAUaEBmrJvvucoAMvfH0dTxgPq6ZBZXjXhdXV+PaF5bM1iroyCP9
+        NGIrKVpLVEDIpcGIJ2c7PHpDrh2r7oXYiAOezsuoyg==
+X-Google-Smtp-Source: APXvYqxt9fKQKKi62I+GkCF0wfAZRlblyWdliDLN4eHPxebId9zCOjr5b3+iDLV02ahbYcnIO+WGHbzpGbSnhPlGkECVJA==
+X-Received: by 2002:a63:ff03:: with SMTP id k3mr22704545pgi.40.1566260305794;
+ Mon, 19 Aug 2019 17:18:25 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 17:17:42 -0700
 In-Reply-To: <20190820001805.241928-1-matthewgarrett@google.com>
-Message-Id: <20190820001805.241928-8-matthewgarrett@google.com>
+Message-Id: <20190820001805.241928-7-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190820001805.241928-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH V40 07/29] lockdown: Copy secure_boot flag in boot params
- across kexec reboot
+Subject: [PATCH V40 06/29] kexec_load: Disable at runtime if the kernel is
+ locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Dave Young <dyoung@redhat.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
         David Howells <dhowells@redhat.com>,
         Matthew Garrett <mjg59@google.com>,
+        Dave Young <dyoung@redhat.com>,
         Kees Cook <keescook@chromium.org>, kexec@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Dave Young <dyoung@redhat.com>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-Kexec reboot in case secure boot being enabled does not keep the secure
-boot mode in new kernel, so later one can load unsigned kernel via legacy
-kexec_load.  In this state, the system is missing the protections provided
-by secure boot.
+The kexec_load() syscall permits the loading and execution of arbitrary
+code in ring 0, which is something that lock-down is meant to prevent. It
+makes sense to disable kexec_load() in this situation.
 
-Adding a patch to fix this by retain the secure_boot flag in original
-kernel.
+This does not affect kexec_file_load() syscall which can check for a
+signature on the image to be booted.
 
-secure_boot flag in boot_params is set in EFI stub, but kexec bypasses the
-stub.  Fixing this issue by copying secure_boot flag across kexec reboot.
-
-Signed-off-by: Dave Young <dyoung@redhat.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
+Acked-by: Dave Young <dyoung@redhat.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 cc: kexec@lists.infradead.org
 Signed-off-by: James Morris <jmorris@namei.org>
 ---
- arch/x86/kernel/kexec-bzimage64.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/security.h     | 1 +
+ kernel/kexec.c               | 8 ++++++++
+ security/lockdown/lockdown.c | 1 +
+ 3 files changed, 10 insertions(+)
 
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index f03237e3f192..5d64a22f99ce 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -180,6 +180,7 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
- 	if (efi_enabled(EFI_OLD_MEMMAP))
- 		return 0;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index e5dd446ef35b..b607a8ac97fe 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -105,6 +105,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_NONE,
+ 	LOCKDOWN_MODULE_SIGNATURE,
+ 	LOCKDOWN_DEV_MEM,
++	LOCKDOWN_KEXEC,
+ 	LOCKDOWN_INTEGRITY_MAX,
+ 	LOCKDOWN_CONFIDENTIALITY_MAX,
+ };
+diff --git a/kernel/kexec.c b/kernel/kexec.c
+index 1b018f1a6e0d..bc933c0db9bf 100644
+--- a/kernel/kexec.c
++++ b/kernel/kexec.c
+@@ -205,6 +205,14 @@ static inline int kexec_load_check(unsigned long nr_segments,
+ 	if (result < 0)
+ 		return result;
  
-+	params->secure_boot = boot_params.secure_boot;
- 	ei->efi_loader_signature = current_ei->efi_loader_signature;
- 	ei->efi_systab = current_ei->efi_systab;
- 	ei->efi_systab_hi = current_ei->efi_systab_hi;
++	/*
++	 * kexec can be used to circumvent module loading restrictions, so
++	 * prevent loading in that case
++	 */
++	result = security_locked_down(LOCKDOWN_KEXEC);
++	if (result)
++		return result;
++
+ 	/*
+ 	 * Verify we have a legal set of flags
+ 	 * This leaves us room for future extensions.
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index 240ecaa10a1d..aaf30ad351f9 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -20,6 +20,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_NONE] = "none",
+ 	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
+ 	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
++	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
+ 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+ 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+ };
 -- 
 2.23.0.rc1.153.gdeed80330f-goog
 
