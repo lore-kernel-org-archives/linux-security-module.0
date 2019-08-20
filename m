@@ -8,223 +8,412 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC954C3A5A1
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A050FC3A5A0
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8B7B22CF8
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D97922CF5
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S/h/Sfns"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c7cnMTCq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbfHTASW (ORCPT
+        id S1728896AbfHTASU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Aug 2019 20:18:22 -0400
-Received: from mail-vs1-f73.google.com ([209.85.217.73]:37717 "EHLO
-        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728887AbfHTASW (ORCPT
+        Mon, 19 Aug 2019 20:18:20 -0400
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:43393 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728883AbfHTAST (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Aug 2019 20:18:22 -0400
-Received: by mail-vs1-f73.google.com with SMTP id r17so1392354vsp.4
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 17:18:21 -0700 (PDT)
+        Mon, 19 Aug 2019 20:18:19 -0400
+Received: by mail-qt1-f201.google.com with SMTP id p56so5505403qtb.10
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 17:18:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=010QS9WoWtGoiC1ndkOQ/THJSGP3hTPvp7YVgOrBMsw=;
-        b=S/h/SfnsgFfAPrl/AMQC0M7+bE6qZ2UhyS+NlB+ZHqJgnkxWzZCNeJz6TfFSHpI3b/
-         WNN4+TiYxCgDaDddsL95FRicBBIij+z1M9yenWIJ4HjBjTBspEIFA2vPk0Sz0ipY84t1
-         IlhTIsS429DAEC2qUVfOBOokIi/VJjAeeiiADtx2DDSt8luPO7dOH+jf9NwRpCG3BtFv
-         eEmzOiqiMwwe9DpMtd7xo4xxUaPKi76MJqJqb5M4WQuRh5Hli/DB6P9BQgN8trWC1gL7
-         j4U7P2Yxxv9Ee3ddEPp/VQV1voaUNznzhDu3qaLAzTLpiVxRdQCI2vL/owBk6K3uOtCX
-         wFIw==
+        bh=GpdR12n7rYt+xKYUquK43yf9jnqnYDAVh2zsydRDmxY=;
+        b=c7cnMTCqBpxGa6mtxmSD5UYVRKGed8FFPp7uZdHqlvSVZsVf/97u+HIX7YuWs9HMkB
+         o3d/+6hrVy1CktrdDd1UtOx6jp0GKGTjeS3hD8c7wD9g09oPCDVju4avEfKvGMUEav6U
+         gVrNCtXsLGqHLj6fFzxSMoUmA34FskaSnSo1I6va3obgMuULThlhxt8MzHuEt8E5ffdx
+         U9ZICoZlLcCXfjF5LW4UiBy0zHmdQ8Giha67yaBKdfG1vX2gxEPXPRvbYb0s36UhMRcL
+         YgT64m4GpheSASvnKjkza7WeeVGzDjK4y1xwis2mH/eawICnuySdbNQcnYXSfn1FZWX2
+         1PmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=010QS9WoWtGoiC1ndkOQ/THJSGP3hTPvp7YVgOrBMsw=;
-        b=fL0eg6xX+FUn/UiZLpZqeyMXtO5TuiATgLH7otix8eA8gnE/NYa5exNz4BEUmsL/Fg
-         eDOYydvilQYkWciXxmiQaUQqL/b3rQKJydQhPmDFPPwDrmr3Jh8I7uqdDhIdsrfSMq0S
-         BVLUc28JKSpPwvqovAiVxXv5XSEBePKpbvLi614veuE2swrl8cvWz5FnBixb/ZzDUCHC
-         Z2IFDtmRANex/E/cvkQ9GIS3Rl/mA/g597nTVldMg99FRGYfiA2Ujm463ILs/rzxLOaL
-         v3Q8o2KMW0LnNqIRp2TuWIsevGmMQ708uPDlmhJ4z1YbvM0Hb3pdAqtVX1nsrVdQgSkD
-         Iu/A==
-X-Gm-Message-State: APjAAAVZrlqJgEXDyds9kQvOmxkGJUcQx365FUk7jAgXk60QKpjz+JoT
-        COY74pFBCnmB9p1s0Y0dL9WoSzwSH2MPXeaN3zak7w==
-X-Google-Smtp-Source: APXvYqxAssp7SU+dLaaXmcm2AenK7QOgvuf2jsiQEsQiaYrXPIys5VI0nS54KZNc5aFnofVRdbSADDB+iCNU76/o7QGAhg==
-X-Received: by 2002:a1f:ec41:: with SMTP id k62mr9132584vkh.32.1566260300517;
- Mon, 19 Aug 2019 17:18:20 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 17:17:40 -0700
+        bh=GpdR12n7rYt+xKYUquK43yf9jnqnYDAVh2zsydRDmxY=;
+        b=aCdq+iEDN37RXokIuHXvKd2dLrTZcdWyBd1C/aP+rJSfcCRr7X1Zd88Y7vy0mQZKkF
+         iyRq9K1t1bzTd4azYJ/3FVtF3rvoGzRST5beJAdMVj5nzaYStFlBSSI9yHnc+Gd4ANCd
+         +xT8Mg4zoH4mbpAZZLcOZGa3yzCuVvP1LNqIT6BqtsyQ0uarz6o2jA4qqNPlW99KpFvk
+         9MJcTZjrqo02sRwEU+bnKY/xWJKGnPosRCaQDEugAM2N7PKc1Fc5cIqAS2TUzJSzxny2
+         9a7Ed5hakD/aqxua2kHqby1FWnOgcbmX+OD+SKxdgceHDsnFX5SzP7zHwWexaLOqLDYh
+         8bxw==
+X-Gm-Message-State: APjAAAVLyvZPuYmRBBTxvGoVvj/spZ/cmMAfIXArZS6o8ItQ0U7o1b7f
+        sZ6BRV9aAdKVrmXk4nkZ9l06RO9DpMDZhDRQATb3NA==
+X-Google-Smtp-Source: APXvYqx0zuSTQUYGTLDPVEGQZKaspbEh8HQhCdZYGLqnmasB3a1UTZ1TB/XHMGn5jQ//chyM4HltYH1scsLi4OJzb8h2bQ==
+X-Received: by 2002:ad4:424e:: with SMTP id l14mr12504424qvq.150.1566260297879;
+ Mon, 19 Aug 2019 17:18:17 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 17:17:39 -0700
 In-Reply-To: <20190820001805.241928-1-matthewgarrett@google.com>
-Message-Id: <20190820001805.241928-5-matthewgarrett@google.com>
+Message-Id: <20190820001805.241928-4-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190820001805.241928-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH V40 04/29] lockdown: Enforce module signatures if the kernel
- is locked down
+Subject: [PATCH V40 03/29] security: Add a static lockdown policy LSM
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
         Matthew Garrett <matthewgarrett@google.com>,
-        Kees Cook <keescook@chromium.org>, Jessica Yu <jeyu@kernel.org>
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: David Howells <dhowells@redhat.com>
+While existing LSMs can be extended to handle lockdown policy,
+distributions generally want to be able to apply a straightforward
+static policy. This patch adds a simple LSM that can be configured to
+reject either integrity or all lockdown queries, and can be configured
+at runtime (through securityfs), boot time (via a kernel parameter) or
+build time (via a kconfig option). Based on initial code by David
+Howells.
 
-If the kernel is locked down, require that all modules have valid
-signatures that we can verify.
-
-I have adjusted the errors generated:
-
- (1) If there's no signature (ENODATA) or we can't check it (ENOPKG,
-     ENOKEY), then:
-
-     (a) If signatures are enforced then EKEYREJECTED is returned.
-
-     (b) If there's no signature or we can't check it, but the kernel is
-	 locked down then EPERM is returned (this is then consistent with
-	 other lockdown cases).
-
- (2) If the signature is unparseable (EBADMSG, EINVAL), the signature fails
-     the check (EKEYREJECTED) or a system error occurs (eg. ENOMEM), we
-     return the error we got.
-
-Note that the X.509 code doesn't check for key expiry as the RTC might not
-be valid or might not have been transferred to the kernel's clock yet.
-
- [Modified by Matthew Garrett to remove the IMA integration. This will
-  be replaced with integration with the IMA architecture policy
-  patchset.]
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
+Signed-off-by: Matthew Garrett <mjg59@google.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Jessica Yu <jeyu@kernel.org>
-Signed-off-by: James Morris <jmorris@namei.org>
+Cc: David Howells <dhowells@redhat.com>
 ---
- include/linux/security.h     |  1 +
- init/Kconfig                 |  5 +++++
- kernel/module.c              | 37 +++++++++++++++++++++++++++++-------
- security/lockdown/Kconfig    |  1 +
- security/lockdown/lockdown.c |  1 +
- 5 files changed, 38 insertions(+), 7 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |   9 +
+ include/linux/security.h                      |   3 +
+ security/Kconfig                              |  11 +-
+ security/Makefile                             |   2 +
+ security/lockdown/Kconfig                     |  46 +++++
+ security/lockdown/Makefile                    |   1 +
+ security/lockdown/lockdown.c                  | 169 ++++++++++++++++++
+ 7 files changed, 236 insertions(+), 5 deletions(-)
+ create mode 100644 security/lockdown/Kconfig
+ create mode 100644 security/lockdown/Makefile
+ create mode 100644 security/lockdown/lockdown.c
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 138f6664b2e2..0f28350f1ee6 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2244,6 +2244,15 @@
+ 	lockd.nlm_udpport=M	[NFS] Assign UDP port.
+ 			Format: <integer>
+ 
++	lockdown=	[SECURITY]
++			{ integrity | confidentiality }
++			Enable the kernel lockdown feature. If set to
++			integrity, kernel features that allow userland to
++			modify the running kernel are disabled. If set to
++			confidentiality, kernel features that allow userland
++			to extract confidential information from the kernel
++			are also disabled.
++
+ 	locktorture.nreaders_stress= [KNL]
+ 			Set the number of locking read-acquisition kthreads.
+ 			Defaults to being automatically set based on the
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 74787335d9ce..9e8abb60a99f 100644
+index 04cf48fab15d..74787335d9ce 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -103,6 +103,7 @@ enum lsm_event {
+@@ -97,6 +97,9 @@ enum lsm_event {
+  * potentially a moving target. It is easy to misuse this information
+  * in a way that could break userspace. Please be careful not to do
+  * so.
++ *
++ * If you add to this, remember to extend lockdown_reasons in
++ * security/lockdown/lockdown.c.
   */
  enum lockdown_reason {
  	LOCKDOWN_NONE,
-+	LOCKDOWN_MODULE_SIGNATURE,
- 	LOCKDOWN_INTEGRITY_MAX,
- 	LOCKDOWN_CONFIDENTIALITY_MAX,
- };
-diff --git a/init/Kconfig b/init/Kconfig
-index 0e2344389501..e6069368f278 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1939,6 +1939,11 @@ config MODULE_SIG
- 	  kernel build dependency so that the signing tool can use its crypto
- 	  library.
+diff --git a/security/Kconfig b/security/Kconfig
+index 466cc1f8ffed..7c62d446e209 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -237,6 +237,7 @@ source "security/apparmor/Kconfig"
+ source "security/loadpin/Kconfig"
+ source "security/yama/Kconfig"
+ source "security/safesetid/Kconfig"
++source "security/lockdown/Kconfig"
  
-+	  You should enable this option if you wish to use either
-+	  CONFIG_SECURITY_LOCKDOWN_LSM or lockdown functionality imposed via
-+	  another LSM - otherwise unsigned modules will be loadable regardless
-+	  of the lockdown policy.
-+
- 	  !!!WARNING!!!  If you enable this option, you MUST make sure that the
- 	  module DOES NOT get stripped after being signed.  This includes the
- 	  debuginfo strip done by some packagers (such as rpmbuild) and
-diff --git a/kernel/module.c b/kernel/module.c
-index 80c7c09584cf..2206c08a5e10 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2753,8 +2753,9 @@ static inline void kmemleak_load_module(const struct module *mod,
- #ifdef CONFIG_MODULE_SIG
- static int module_sig_check(struct load_info *info, int flags)
- {
--	int err = -ENOKEY;
-+	int err = -ENODATA;
- 	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
-+	const char *reason;
- 	const void *mod = info->hdr;
+ source "security/integrity/Kconfig"
  
- 	/*
-@@ -2769,16 +2770,38 @@ static int module_sig_check(struct load_info *info, int flags)
- 		err = mod_verify_sig(mod, info);
- 	}
+@@ -276,11 +277,11 @@ endchoice
  
--	if (!err) {
-+	switch (err) {
-+	case 0:
- 		info->sig_ok = true;
- 		return 0;
--	}
- 
--	/* Not having a signature is only an error if we're strict. */
--	if (err == -ENOKEY && !is_module_sig_enforced())
--		err = 0;
-+		/* We don't permit modules to be loaded into trusted kernels
-+		 * without a valid signature on them, but if we're not
-+		 * enforcing, certain errors are non-fatal.
-+		 */
-+	case -ENODATA:
-+		reason = "Loading of unsigned module";
-+		goto decide;
-+	case -ENOPKG:
-+		reason = "Loading of module with unsupported crypto";
-+		goto decide;
-+	case -ENOKEY:
-+		reason = "Loading of module with unavailable key";
-+	decide:
-+		if (is_module_sig_enforced()) {
-+			pr_notice("%s is rejected\n", reason);
-+			return -EKEYREJECTED;
-+		}
- 
--	return err;
-+		return security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
-+
-+		/* All other errors are fatal, including nomem, unparseable
-+		 * signatures and signature check failures - even if signatures
-+		 * aren't required.
-+		 */
-+	default:
-+		return err;
-+	}
- }
- #else /* !CONFIG_MODULE_SIG */
- static int module_sig_check(struct load_info *info, int flags)
-diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
-index 7a1d213227a4..e84ddf484010 100644
---- a/security/lockdown/Kconfig
-+++ b/security/lockdown/Kconfig
-@@ -1,6 +1,7 @@
- config SECURITY_LOCKDOWN_LSM
- 	bool "Basic module for enforcing kernel lockdown"
- 	depends on SECURITY
-+	select MODULE_SIG if MODULES
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor" if DEFAULT_SECURITY_SMACK
+-	default "yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo" if DEFAULT_SECURITY_APPARMOR
+-	default "yama,loadpin,safesetid,integrity,tomoyo" if DEFAULT_SECURITY_TOMOYO
+-	default "yama,loadpin,safesetid,integrity" if DEFAULT_SECURITY_DAC
+-	default "yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
++	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor" if DEFAULT_SECURITY_SMACK
++	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo" if DEFAULT_SECURITY_APPARMOR
++	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo" if DEFAULT_SECURITY_TOMOYO
++	default "lockdown,yama,loadpin,safesetid,integrity" if DEFAULT_SECURITY_DAC
++	default "lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
  	help
- 	  Build support for an LSM that enforces a coarse kernel lockdown
- 	  behaviour.
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 7172ad75496b..d8e42125a5dd 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -18,6 +18,7 @@ static enum lockdown_reason kernel_locked_down;
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list will be ignored. This can be
+diff --git a/security/Makefile b/security/Makefile
+index c598b904938f..be1dd9d2cb2f 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -11,6 +11,7 @@ subdir-$(CONFIG_SECURITY_APPARMOR)	+= apparmor
+ subdir-$(CONFIG_SECURITY_YAMA)		+= yama
+ subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
+ subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
++subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown
  
- static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_NONE] = "none",
-+	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
- 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
- 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
- };
+ # always enable default capabilities
+ obj-y					+= commoncap.o
+@@ -27,6 +28,7 @@ obj-$(CONFIG_SECURITY_APPARMOR)		+= apparmor/
+ obj-$(CONFIG_SECURITY_YAMA)		+= yama/
+ obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
+ obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
++obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
+ 
+ # Object integrity file lists
+diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
+new file mode 100644
+index 000000000000..7a1d213227a4
+--- /dev/null
++++ b/security/lockdown/Kconfig
+@@ -0,0 +1,46 @@
++config SECURITY_LOCKDOWN_LSM
++	bool "Basic module for enforcing kernel lockdown"
++	depends on SECURITY
++	help
++	  Build support for an LSM that enforces a coarse kernel lockdown
++	  behaviour.
++
++config SECURITY_LOCKDOWN_LSM_EARLY
++	bool "Enable lockdown LSM early in init"
++	depends on SECURITY_LOCKDOWN_LSM
++	help
++	  Enable the lockdown LSM early in boot. This is necessary in order
++	  to ensure that lockdown enforcement can be carried out on kernel
++	  boot parameters that are otherwise parsed before the security
++	  subsystem is fully initialised. If enabled, lockdown will
++	  unconditionally be called before any other LSMs.
++
++choice
++	prompt "Kernel default lockdown mode"
++	default LOCK_DOWN_KERNEL_FORCE_NONE
++	depends on SECURITY_LOCKDOWN_LSM
++	help
++	  The kernel can be configured to default to differing levels of
++	  lockdown.
++
++config LOCK_DOWN_KERNEL_FORCE_NONE
++	bool "None"
++	help
++	  No lockdown functionality is enabled by default. Lockdown may be
++	  enabled via the kernel commandline or /sys/kernel/security/lockdown.
++
++config LOCK_DOWN_KERNEL_FORCE_INTEGRITY
++	bool "Integrity"
++	help
++	 The kernel runs in integrity mode by default. Features that allow
++	 the kernel to be modified at runtime are disabled.
++
++config LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY
++	bool "Confidentiality"
++	help
++	 The kernel runs in confidentiality mode by default. Features that
++	 allow the kernel to be modified at runtime or that permit userland
++	 code to read confidential material held inside the kernel are
++	 disabled.
++
++endchoice
+diff --git a/security/lockdown/Makefile b/security/lockdown/Makefile
+new file mode 100644
+index 000000000000..e3634b9017e7
+--- /dev/null
++++ b/security/lockdown/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_SECURITY_LOCKDOWN_LSM) += lockdown.o
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+new file mode 100644
+index 000000000000..7172ad75496b
+--- /dev/null
++++ b/security/lockdown/lockdown.c
+@@ -0,0 +1,169 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Lock down the kernel
++ *
++ * Copyright (C) 2016 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#include <linux/security.h>
++#include <linux/export.h>
++#include <linux/lsm_hooks.h>
++
++static enum lockdown_reason kernel_locked_down;
++
++static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
++	[LOCKDOWN_NONE] = "none",
++	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
++	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
++};
++
++static enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
++						 LOCKDOWN_INTEGRITY_MAX,
++						 LOCKDOWN_CONFIDENTIALITY_MAX};
++
++/*
++ * Put the kernel into lock-down mode.
++ */
++static int lock_kernel_down(const char *where, enum lockdown_reason level)
++{
++	if (kernel_locked_down >= level)
++		return -EPERM;
++
++	kernel_locked_down = level;
++	pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
++		  where);
++	return 0;
++}
++
++static int __init lockdown_param(char *level)
++{
++	if (!level)
++		return -EINVAL;
++
++	if (strcmp(level, "integrity") == 0)
++		lock_kernel_down("command line", LOCKDOWN_INTEGRITY_MAX);
++	else if (strcmp(level, "confidentiality") == 0)
++		lock_kernel_down("command line", LOCKDOWN_CONFIDENTIALITY_MAX);
++	else
++		return -EINVAL;
++
++	return 0;
++}
++
++early_param("lockdown", lockdown_param);
++
++/**
++ * lockdown_is_locked_down - Find out if the kernel is locked down
++ * @what: Tag to use in notice generated if lockdown is in effect
++ */
++static int lockdown_is_locked_down(enum lockdown_reason what)
++{
++	if (kernel_locked_down >= what) {
++		if (lockdown_reasons[what])
++			pr_notice("Lockdown: %s is restricted; see man kernel_lockdown.7\n",
++				  lockdown_reasons[what]);
++		return -EPERM;
++	}
++
++	return 0;
++}
++
++static struct security_hook_list lockdown_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(locked_down, lockdown_is_locked_down),
++};
++
++static int __init lockdown_lsm_init(void)
++{
++#if defined(CONFIG_LOCK_DOWN_KERNEL_FORCE_INTEGRITY)
++	lock_kernel_down("Kernel configuration", LOCKDOWN_INTEGRITY_MAX);
++#elif defined(CONFIG_LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY)
++	lock_kernel_down("Kernel configuration", LOCKDOWN_CONFIDENTIALITY_MAX);
++#endif
++	security_add_hooks(lockdown_hooks, ARRAY_SIZE(lockdown_hooks),
++			   "lockdown");
++	return 0;
++}
++
++static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
++			     loff_t *ppos)
++{
++	char temp[80];
++	int i, offset = 0;
++
++	for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
++		enum lockdown_reason level = lockdown_levels[i];
++
++		if (lockdown_reasons[level]) {
++			const char *label = lockdown_reasons[level];
++
++			if (kernel_locked_down == level)
++				offset += sprintf(temp+offset, "[%s] ", label);
++			else
++				offset += sprintf(temp+offset, "%s ", label);
++		}
++	}
++
++	/* Convert the last space to a newline if needed. */
++	if (offset > 0)
++		temp[offset-1] = '\n';
++
++	return simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
++}
++
++static ssize_t lockdown_write(struct file *file, const char __user *buf,
++			      size_t n, loff_t *ppos)
++{
++	char *state;
++	int i, len, err = -EINVAL;
++
++	state = memdup_user_nul(buf, n);
++	if (IS_ERR(state))
++		return PTR_ERR(state);
++
++	len = strlen(state);
++	if (len && state[len-1] == '\n') {
++		state[len-1] = '\0';
++		len--;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
++		enum lockdown_reason level = lockdown_levels[i];
++		const char *label = lockdown_reasons[level];
++
++		if (label && !strcmp(state, label))
++			err = lock_kernel_down("securityfs", level);
++	}
++
++	kfree(state);
++	return err ? err : n;
++}
++
++static const struct file_operations lockdown_ops = {
++	.read  = lockdown_read,
++	.write = lockdown_write,
++};
++
++static int __init lockdown_secfs_init(void)
++{
++	struct dentry *dentry;
++
++	dentry = securityfs_create_file("lockdown", 0600, NULL, NULL,
++					&lockdown_ops);
++	return PTR_ERR_OR_ZERO(dentry);
++}
++
++core_initcall(lockdown_secfs_init);
++
++#ifdef CONFIG_SECURITY_LOCKDOWN_LSM_EARLY
++DEFINE_EARLY_LSM(lockdown) = {
++#else
++DEFINE_LSM(lockdown) = {
++#endif
++	.name = "lockdown",
++	.init = lockdown_lsm_init,
++};
 -- 
 2.23.0.rc1.153.gdeed80330f-goog
 
