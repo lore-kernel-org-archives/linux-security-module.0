@@ -1,236 +1,72 @@
-Return-Path: <SRS0=yDeW=WP=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=y35J=WQ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D271DC3A5A0
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 17:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1885FC3A5A1
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A22D22CE9
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Aug 2019 17:39:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E26ED22CF6
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:18:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="gg7ZbGjU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CUH1JVMi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbfHSRjA (ORCPT
+        id S1728771AbfHTASL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Aug 2019 13:39:00 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:32944 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726959AbfHSRi7 (ORCPT
+        Mon, 19 Aug 2019 20:18:11 -0400
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:33308 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728351AbfHTASL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Aug 2019 13:38:59 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n190so1625413pgn.0
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 10:38:59 -0700 (PDT)
+        Mon, 19 Aug 2019 20:18:11 -0400
+Received: by mail-vk1-f202.google.com with SMTP id l80so2379802vkl.0
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 17:18:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=XlmO/eodwC71D1bsvJiGJ+8sk3xEUmzJXMjarfbHpdM=;
-        b=gg7ZbGjUDcVLbly6VkVmQCEm7LnkM7/6eeJr1yDs/VllkZKChPUwEdIIM+ASJep+0d
-         eTbcdwDBDnKHjZCSyp5RDqf1TtfMsMh+vt9oAp3e0EwlmkpTYhuHPUHzlHx12lsYMA6B
-         XIIRQq56YHYVfoGZPvdmk762cOlZT9gcyK/DGI1NIT/6fL0go62V36EENoYqRw73qpkm
-         5C2PnhPOmeBcDCPJX69CgCkLcL5fJS0lVZHv0xerYPYlKw0mZqWbnQRyDII2jbC4t9B8
-         ip/abnvN/q+dm8L/8HG5bh9s0yT4UbiWPwqT529QMgGUVn4BaLTKI/S3pAiCSPFXQe6F
-         vLyg==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=VwF/91o4aMHrQL5QM73+22fSApAs/2NiXgYkaBxXzFM=;
+        b=CUH1JVMihclalX5q2seurV8HS9Qtk8nNORqI67CyNzpt8f4YKj9PsBh2yhEiLjpN0N
+         Fknxxgr4PJdGVml+Jh2OhZg5E3JvdD0eGWvF5Fmj48bmwNl5sWVh0boqVtCTRu0mQHas
+         1xR/eyrBcny62z5z0RXhFDmY63lItRvyMCbNrGAku/YYgZEVoLwuK/uqG8c8z1Py5OSr
+         A6r1/J/F5nwciw7FJDr6x0eGnjeLDqYrBnU6tU/LRSjombP6Ii7IjYs4x7MFqzCatoKk
+         c5ORjqJyd7wx6vbPsu0EDtwg03Dm+tZqvDQMHo7P8iZ7nhjRLYSJI6ZiO9T9s7fsnTfy
+         eFPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=XlmO/eodwC71D1bsvJiGJ+8sk3xEUmzJXMjarfbHpdM=;
-        b=cJy4a8MASMnRb9qbE9JN5UI01J0XcOHgNLGueOseqAmZHid0w+HtMUpOvLV0hQcZPv
-         GSARqcXbgTScTliidTnLD0FEfvjbwJatD86+Gyr+ht9IPG0CyC7obXJt9bUN4MYyBpK0
-         +yYW7ybSCEiypUQBExnnGhNmMHTNGmN7bIuFhfNQzXQvgKCQcuZcEw1oroMORNcWeUAz
-         Sud/CxLH76OAHMLD2JRY7esyNrr5ROGF9Hjj3mptzTfcmb8sRPYTgs9GxXN+FR+v3n8t
-         qdK8pQSXoiV8uPMFpL16L3JT+uPNX4RhhsGunbjTBwFDsVbcMyQUs2qaBRqoNs1aAD6O
-         BJlQ==
-X-Gm-Message-State: APjAAAXSik4ScfzGgTD/8mNlt/q6Hs2A9Goj5uRiuTidayNTJjp85y6a
-        DhCkVoGaKJ/ioOA6FLuXMBIBng==
-X-Google-Smtp-Source: APXvYqxPdCTE7oJv0KRum5I0reGZkgvYoxAuvehn29xWjMgxP5kckXF7eMEtwBbvDmFwEEKLk08xug==
-X-Received: by 2002:aa7:9713:: with SMTP id a19mr25281790pfg.64.1566236338926;
-        Mon, 19 Aug 2019 10:38:58 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:f907:f7f1:6354:309? ([2601:646:c200:1ef2:f907:f7f1:6354:309])
-        by smtp.gmail.com with ESMTPSA id br18sm14684454pjb.20.2019.08.19.10.38.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Aug 2019 10:38:57 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16G77)
-In-Reply-To: <20190819172718.jwnvvotssxwhc7m6@ast-mbp.dhcp.thefacebook.com>
-Date:   Mon, 19 Aug 2019 10:38:56 -0700
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Song Liu <songliubraving@fb.com>,
-        Kees Cook <keescook@chromium.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CA2D2573-D90D-4904-A8B5-08C9C5FC7A56@amacapital.net>
-References: <20190815172856.yoqvgu2yfrgbkowu@ast-mbp.dhcp.thefacebook.com> <CALCETrUv+g+cb79FJ1S4XuV0K=kowFkPXpzoC99svoOfs4-Kvg@mail.gmail.com> <20190815230808.2o2qe7a72cwdce2m@ast-mbp.dhcp.thefacebook.com> <fkD3fs46a1YnR4lh0tEG-g3tDnDcyZuzji7bAUR9wujPLLl75ZhI8Yk-H1jZpSugO7qChVeCwxAMmxLdeoF2QFS3ZzuYlh7zmeZOmhDJxww=@protonmail.ch> <alpine.DEB.2.21.1908161158490.1873@nanos.tec.linutronix.de> <lGGTLXBsX3V6p1Z4TkdzAjxbNywaPS2HwX5WLleAkmXNcnKjTPpWnP6DnceSsy8NKt5NBRBbuoAb0woKTcDhJXVoFb7Ygk3Skfj8j6rVfMQ=@protonmail.ch> <20190816195233.vzqqbqrivnooohq6@ast-mbp.dhcp.thefacebook.com> <alpine.DEB.2.21.1908162211270.1923@nanos.tec.linutronix.de> <20190817150245.xxzxqjpvgqsxmloe@ast-mbp> <alpine.DEB.2.21.1908191103130.1923@nanos.tec.linutronix.de> <20190819172718.jwnvvotssxwhc7m6@ast-mbp.dhcp.thefacebook.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=VwF/91o4aMHrQL5QM73+22fSApAs/2NiXgYkaBxXzFM=;
+        b=C4E2e/8tT9xdgNdKVPiuKCDS0GwX8a7NGYOUeU7zWmrZSeOWUAOtDMN+rrNvpSP+gx
+         zqycNYGDw5pTnV8a10RMYWSqpvNrTkHE0+G7yt4vemt5hRI3zXOJuWHXWfG+j0tM3bMf
+         RIL2IQxTRKmkx9QMVLigxo8nPVNoIAHkp7f3cWFyhEFMZeNHEfp3YLBT8i2TWSMCFktQ
+         Dx1W1PYAUwhoQQNfN0FLUp3bK4g3Hqn6PRM2TzMWPSCfP591EkE3skkfuKiqd3yUwOjH
+         TW/HZFf9Qoj0X4y+T7OzW7iGdxvLS1VM+driXOMU7ssOjeUU8c5b313LR54rbPOzvFba
+         Kf1A==
+X-Gm-Message-State: APjAAAW9zYooOGA5ipJAtU58iq0ttpqTUI5zY0+YAQkEqCIqR28GHc9G
+        TYzD7kJu0xiFpaCwzr3mfLoIG+U0YM6puiwp+n+YDA==
+X-Google-Smtp-Source: APXvYqz41WMqs6ZJ50zP00x9Ki+LU6ocf63OApf5Deq/yukX6RTwToHjUAj4ZEXRYb662kA7qgoSvA9acMVNeIZGiXQafw==
+X-Received: by 2002:ac5:c801:: with SMTP id y1mr9262710vkl.41.1566260290111;
+ Mon, 19 Aug 2019 17:18:10 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 17:17:36 -0700
+Message-Id: <20190820001805.241928-1-matthewgarrett@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+Subject: [PATCH V40 00/29] Add kernel lockdown functionality
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+After chatting with James in person, I'm resending the full set with the
+fixes merged in in order to avoid any bisect issues. There should be no
+functional changes other than avoiding build failures with some configs,
+and fixing the oops in tracefs.
 
 
-> On Aug 19, 2019, at 10:27 AM, Alexei Starovoitov <alexei.starovoitov@gmail=
-.com> wrote:
->=20
->> On Mon, Aug 19, 2019 at 11:15:11AM +0200, Thomas Gleixner wrote:
->> Alexei,
->>=20
->>> On Sat, 17 Aug 2019, Alexei Starovoitov wrote:
->>>> On Fri, Aug 16, 2019 at 10:28:29PM +0200, Thomas Gleixner wrote:
->>>> On Fri, 16 Aug 2019, Alexei Starovoitov wrote:
->>>> While real usecases are helpful to understand a design decision, the de=
-sign
->>>> needs to be usecase independent.
->>>>=20
->>>> The kernel provides mechanisms, not policies. My impression of this who=
-le
->>>> discussion is that it is policy driven. That's the wrong approach.
->>>=20
->>> not sure what you mean by 'policy driven'.
->>> Proposed CAP_BPF is a policy?
->>=20
->> I was referring to the discussion as a whole.
->>=20
->>> Can kernel.unprivileged_bpf_disabled=3D1 be used now?
->>> Yes, but it will weaken overall system security because things that
->>> use unpriv to load bpf and CAP_NET_ADMIN to attach bpf would need
->>> to move to stronger CAP_SYS_ADMIN.
->>>=20
->>> With CAP_BPF both load and attach would happen under CAP_BPF
->>> instead of CAP_SYS_ADMIN.
->>=20
->> I'm not arguing against that.
->>=20
->>>> So let's look at the mechanisms which we have at hand:
->>>>=20
->>>> 1) Capabilities
->>>>=20
->>>> 2) SUID and dropping priviledges
->>>>=20
->>>> 3) Seccomp and LSM
->>>>=20
->>>> Now the real interesting questions are:
->>>>=20
->>>> A) What kind of restrictions does BPF allow? Is it a binary on/off or i=
-s
->>>>    there a more finegrained control of BPF functionality?
->>>>=20
->>>>    TBH, I can't tell.
->>>>=20
->>>> B) Depending on the answer to #A what is the control possibility for
->>>>    #1/#2/#3 ?
->>>=20
->>> Can any of the mechanisms 1/2/3 address the concern in mds.rst?
->>=20
->> Well, that depends. As with any other security policy which is implemente=
-d
->> via these mechanisms, the policy can be strict enough to prevent it by no=
-t
->> allowing certain operations. The more fine-grained the control is, it
->> allows the administrator who implements the policy to remove the
->> 'dangerous' parts from an untrusted user.
->>=20
->> So really question #A is important for this. Is BPF just providing a bina=
-ry
->> ON/OFF knob or does it allow to disable/enable certain aspects of BPF
->> functionality in a more fine grained way? If the latter, then it might be=
-
->> possible to control functionality which might be abused for exploits of
->> some sorts (including MDS) in a way which allows other parts of BBF to be=
-
->> exposed to less priviledged contexts.
->=20
-> I see. So the kernel.unprivileged_bpf_disabled knob is binary and I think i=
-t's
-> the right mechanism to expose to users.
-> Having N knobs for every map/prog type won't decrease attack surface.
-> In the other email Andy's quoting seccomp man page...
-> Today seccomp cannot really look into bpf_attr syscall args, but even
-> if it could it won't secure the system.
-> Examples:
-> 1.
-> spectre v2 is using bpf in-kernel interpreter in speculative way.
-> The mere presence of interpreter as part of kernel .text makes the exploit=
-
-> easier to do. That was the reason to do CONFIG_BPF_JIT_ALWAYS_ON.
-> For this case even kernel.unprivileged_bpf_disabled=3D1 was hopeless.
->=20
-> 2.
-> var4 doing store hazard. It doesn't matter which program type is used.
-> load/store instructions are the same across program types.
->=20
-> 3.
-> prog_array was used as part of var1. I guess it was simply more
-> convenient for Jann to do it this way :) All other map types
-> have the same out-of-bounds speculation issue.
->=20
-> In general side channels are cpu bugs that are exploited via sequences
-> of cpu instructions. In that sense bpf infra provides these instructions.
-> So all program types and all maps have the same level of 'side channel ris=
-k'.
->=20
->>> I believe Andy wants to expand the attack surface when
->>> kernel.unprivileged_bpf_disabled=3D0
->>> Before that happens I'd like the community to work on addressing the tex=
-t above.
->>=20
->> Well, that text above can be removed when the BPF wizards are entirely su=
-re
->> that BPF cannot be abused to exploit stuff.=20
->=20
-> Myself and Daniel looked at it in detail. I think we understood
-> MDS mechanism well enough. Right now we're fairly confident that
-> combination of existing mechanisms we did for var4 and
-> verifier speculative analysis protect us from MDS.
-> The thing is that every new cpu bug is looked at through the bpf lenses.
-> Can it be exploited through bpf? Complexity of side channels
-> is growing. Can the most recent swapgs be exploited ?
-> What if we kprobe+bpf somewhere ?
-> I don't think there is an issue, but we will never be 'entirely sure'.
-> Even if myself and Daniel are sure the concern will stay.
-> Unprivileged bpf as a whole is the concern due to side channels.
-> The number of them are not yet disclosed. Who is going to analyze them?
-> imo the only answer to that is kernel.unprivileged_bpf_disabled=3D1
-> which together with CONFIG_BPF_JIT_ALWAYS_ON is secure enough.
-> The other option is to sprinkle every bpf load/store with lfence
-> which will make execution so slow that it will be unusable.
-> Which is effectively the same as unprivileged_bpf_disabled=3D1.
->=20
-> There are other things we can do. Like kasan-style shadow memory
-> for bpf execution. Auto re-JITing the code after it's running.
-> We can do lfences everywhere for some time then re-JIT
-> when kasan-ed shadow memory shows only clean memory accesses.
-> The beauty of BPF that it is analyze-able and JIT-able instruction set.
-> The verifier speculative analysis is an example that the kernel
-> can analyze the speculative execution path that cpu will
-> take before the code starts executing.
-> Unprivileged bpf can made absolutely secure. It can be
-> made more secure than the rest of the kernel.
-> But today we should just go with unprivileged_bpf_disabled=3D1
-
-I=E2=80=99m still okay with this.
-
-> and CAP_BPF.
->=20
-
-I think this needs more design work.  I=E2=80=99m halfway through writing up=
- an actual proposal. I=E2=80=99ll send it soon.=
