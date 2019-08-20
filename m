@@ -7,59 +7,60 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5FCC3A59E
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 05:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 490B8C3A589
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 05:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5219E2087E
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 05:52:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EBFE22CF4
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 05:54:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HQvqSgy0"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TS7SGgjE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729150AbfHTFwT (ORCPT
+        id S1729190AbfHTFyF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 20 Aug 2019 01:52:19 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36007 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729091AbfHTFwT (ORCPT
+        Tue, 20 Aug 2019 01:54:05 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36478 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729000AbfHTFyF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 20 Aug 2019 01:52:19 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j17so3146862lfp.3
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 22:52:18 -0700 (PDT)
+        Tue, 20 Aug 2019 01:54:05 -0400
+Received: by mail-lj1-f195.google.com with SMTP id u15so3933168ljl.3
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 22:54:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vHAQ6sjGHaPokXl9LscA2e05lIoVzw0cNrU4ejp7cLc=;
-        b=HQvqSgy0YUzEMHBgIvYKX0zsNdO2GK/OgcaAI+Yo+QEFURl36YFnDm6QxkYKZLBQfh
-         gl6kpBN477j29o3jAxsyCKqzbbwiKtO8wwumBKw+Fy5bbzHiHTBdZo9vYs2WUaOUFk5C
-         rfgG0y2dLA/qprCRRnLVrD/nZCVXNgya8cNMMDFfIrGMmj5v5uPhthv3gH/tTj9zqGt7
-         2WtXPOqYS6+/elBcXC2Ff66xH3qX8e3ZFThDI6neMyANPzJYKkoNUZUTl+uQUPJQXGYK
-         4pORYYX1dPk/YoJ4PVlrOLRxRF6rtiz5mSvpWxKyh+0Fln7DLrG08nF45fRRUJpa5Dg0
-         qS/w==
+        bh=IaeMGDmGKxX8wxK8cdDbGY1eDp+Ld1z3eVWTJJyayFE=;
+        b=TS7SGgjEzTreybigsAv3qVsuN075oTJVKpFp88ofnjJbbEJZAgthB8vDgLgvRLnLUS
+         ++vjrM9g7gE2SN4igmXwiI7zyfyNMmtdmu3w8qOi/PtuwRPhsGTVmjVqf80oUjz0Gota
+         KLbMPEV3aXizb/qctuOZlv9r2CXJfJWF7uuuHs78yPoxVzArINw/TpZXQhP90Z1WSRqe
+         zB4Oi3RyIcR/OK3OCmRD6nczrw6lo6HvpTS129UjNx1gW4G5bbkeuDsV2cOsphJgjiUm
+         9KFiqRv2wgsOonNC64H6p5NykM5elpfOcC8VJddEJHVgky5Tbc+GOLM3TWgFH7iWMy3U
+         aYPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vHAQ6sjGHaPokXl9LscA2e05lIoVzw0cNrU4ejp7cLc=;
-        b=E2PkELMdY9tgKQSdaZWTrLjK2jNAiZlrEizveVd+MHv5em8EPStDbjiTaZpDxRtzpT
-         67FaRmI+k1uT5p6Yayfmftb6iZukZA41Y95WgqNJ7FR2TAkKHdTbITXpEndof6vcGNGj
-         py8PGt1xTHbxwoEgooNZB+AcC2lVdDU1+1Ownd/kYAcLRMHIc8pEOTxL5xx1FQzJOzJQ
-         r0nOYzErDewue0kspCsWSavWMG713ZPhK9vQhhA+aGtTxEfGZ4e/Pb/lDzGkA1d/otbi
-         FB/uTPj6XVRDzS9VTihkuMFEqjUYiEdu5VDMVA+6CYLO6fkLNTXVHkkNXg8bJ2aSjl1Q
-         +K4Q==
-X-Gm-Message-State: APjAAAWtPM//WvB59XXCT1gGr3cw/mnnt9HMFYBf2m6ty4XP151ZksLM
-        e72BIAOVPWcJMAFoaHoRAvTxafbgUSzF0Z4kXRL2aQ==
-X-Google-Smtp-Source: APXvYqw5VQhpvfJxXd2kxR0GMuYrecMAqIEichsfrIuwkJJya9Bt9H2v7Gsuv+lSVTPHE4s9++DwaiSgqwaVMZmC/x4=
-X-Received: by 2002:ac2:4901:: with SMTP id n1mr14221485lfi.0.1566280337317;
- Mon, 19 Aug 2019 22:52:17 -0700 (PDT)
+        bh=IaeMGDmGKxX8wxK8cdDbGY1eDp+Ld1z3eVWTJJyayFE=;
+        b=j8ECk18vgMRvea4M2x/U2ZBq++DfzXXyBvdep5QWgHea0U5x5WhsgKmU2Z2RSIEqdy
+         Sl7ZA9H/P/o01PVavwqZ/FgS5E/NoynuUelOIU/+leitdIHvbx2DwDr4wR/vscFTAZgC
+         jMH6wrQU5AgTlkaPDY3K5hG2ZxRWriUZT5cmDqW0I7xXewB1MQolp2WqhF0zgsuU/Df/
+         Z5tjLQFYPn4LPkegSylnuRpZyUgOapej8Vovqmg38sThcAzBY4Ui7c2V90/8lFoujSQw
+         8Plwq7vptvsOFWgq0tfHNVDYZhlXi5VDysQt4gemHv/spIdPtYOkF+D/Qks+I40khii0
+         8hcg==
+X-Gm-Message-State: APjAAAVdM+DQ4LczTJhMA7nsROZya6eUe/ct1OG9BL5EK9GpiMWdw3EY
+        ii6VGkyL4ry0VijwwwFrc493SmomLjwMHg6YDHVCkA==
+X-Google-Smtp-Source: APXvYqxDON+ceMUmjzSzpMq37WQzohKgTpxzAYYEzr9bWHlarBKWsHRjGcZO8/n74pOlmwou6eEdk+97uPN2CZG7nig=
+X-Received: by 2002:a2e:87c5:: with SMTP id v5mr13283366ljj.115.1566280443691;
+ Mon, 19 Aug 2019 22:54:03 -0700 (PDT)
 MIME-Version: 1.0
 References: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
- <1565682784-10234-2-git-send-email-sumit.garg@linaro.org> <20190819165629.qv7cmg6kiwb6oxig@linux.intel.com>
-In-Reply-To: <20190819165629.qv7cmg6kiwb6oxig@linux.intel.com>
+ <1565682784-10234-4-git-send-email-sumit.garg@linaro.org> <20190819170458.m7adhkji64kta32d@linux.intel.com>
+ <20190819170635.jlxxi6ogbm4s6gcx@linux.intel.com>
+In-Reply-To: <20190819170635.jlxxi6ogbm4s6gcx@linux.intel.com>
 From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Tue, 20 Aug 2019 11:22:05 +0530
-Message-ID: <CAFA6WYMoX95UcuGb2UdrUMnq=4wYJChwcMgm8pHHPs_Lg=5iNg@mail.gmail.com>
-Subject: Re: [RFC/RFT v4 1/5] tpm: move tpm_buf code to include/linux/
+Date:   Tue, 20 Aug 2019 11:23:51 +0530
+Message-ID: <CAFA6WYOTYhJ3kGYFGU9rxnxqFqMFMhVXfVYq+3bepOax92fLSg@mail.gmail.com>
+Subject: Re: [RFC/RFT v4 3/5] KEYS: trusted: create trusted keys subsystem
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
         "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
@@ -82,30 +83,34 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 19 Aug 2019 at 22:26, Jarkko Sakkinen
+On Mon, 19 Aug 2019 at 22:36, Jarkko Sakkinen
 <jarkko.sakkinen@linux.intel.com> wrote:
 >
-> On Tue, Aug 13, 2019 at 01:23:00PM +0530, Sumit Garg wrote:
-> > Move tpm_buf code to common include/linux/tpm.h header so that it can
-> > be reused via other subsystems like trusted keys etc.
+> On Mon, Aug 19, 2019 at 08:04:58PM +0300, Jarkko Sakkinen wrote:
+> > On Tue, Aug 13, 2019 at 01:23:02PM +0530, Sumit Garg wrote:
+> > > Move existing code to trusted keys subsystem. Also, rename files with
+> > > "tpm" as suffix which provides the underlying implementation.
+> > >
+> > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > > ---
+> > >  crypto/asymmetric_keys/asym_tpm.c                       | 2 +-
+> > >  include/keys/{trusted.h => trusted_tpm.h}               | 4 ++--
+> > >  security/keys/Makefile                                  | 2 +-
+> > >  security/keys/trusted-keys/Makefile                     | 7 +++++++
+> > >  security/keys/{trusted.c => trusted-keys/trusted-tpm.c} | 2 +-
+> > >  5 files changed, 12 insertions(+), 5 deletions(-)
+> > >  rename include/keys/{trusted.h => trusted_tpm.h} (98%)
+> > >  create mode 100644 security/keys/trusted-keys/Makefile
+> > >  rename security/keys/{trusted.c => trusted-keys/trusted-tpm.c} (99%)
 > >
-> > Also rename trusted keys TPM 1.x buffer implementation to tpm1_buf to
-> > avoid any compilation errors.
-> >
-> > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > Would prefer trusted_tpm.c.
 >
-> A question: did you try to do this as mechanically as you ever could
-> or did you do any other code changes? I did go through it but it is
-> possible that I missed something.
+> Actually, trusted_tpm1.c.
 >
 
-There aren't any other code changes apart from "tpm1_buf" rename.
+Okay.
 
 -Sumit
 
-> In this type of changes it is mandatory be extra strict on not doing
-> anything extra (the rename you would was not of course extra because
-> it was necessary to do).
->
 > /Jarkko
