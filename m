@@ -8,149 +8,107 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5035BC3A5A6
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6991DC3A5A0
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24A2E22DA9
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BBF822CF8
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KQBvkuF/"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dNREMDP+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728982AbfHTAUO (ORCPT
+        id S1728880AbfHTASb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Aug 2019 20:20:14 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:49046 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729013AbfHTASm (ORCPT
+        Mon, 19 Aug 2019 20:18:31 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:55925 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728947AbfHTAS3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Aug 2019 20:18:42 -0400
-Received: by mail-pg1-f202.google.com with SMTP id k20so3476052pgg.15
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 17:18:42 -0700 (PDT)
+        Mon, 19 Aug 2019 20:18:29 -0400
+Received: by mail-pf1-f202.google.com with SMTP id 22so3515343pfn.22
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 17:18:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=kCjTIca0P/GJFxU16YX7DQ4xD2nMI3cX2Z/4NQSE/Sc=;
-        b=KQBvkuF/M1dzuAgHwCf82DbbRCvPK9GZf64/jVQ9LTne8ba0vruPyKkUvzKEAV4Do4
-         ldosC+iLz6ETawlccozW8ItJDaAXBXZATeA1nO9KNWC66nLVSi/eQGjxAac7SxWtBt80
-         F9ttqj8ulV04NpJ8P0R7xE+kPWB2SEZJlKpep9r3m0leisPBJgO+H06QZtS1RIQwOUvM
-         aAAycTME7urbUMVzfSxauE7k8SqURCLc0gl2bCAw8gfpHncP4xy8sHCRp5tNJ/ikjNCp
-         SBh93SgFozLEQXaTzHPp0WxbWNcOyZQqp2QWf1ydPAlK7JE3o0wgHP6nnj9xLY5ZbGVr
-         0hEA==
+        bh=2LlLKA7xilo57KgJ9aBUFbPNJv3YWGuiG9UEU7t1Rzg=;
+        b=dNREMDP+TG2C/LXVb2y5pqTvco3iRS0dhBeVXMI8yStBmDaDACn0KU8WoFg0ZtiOXp
+         +1T4zFY7wH7Hw2KCv+l3gjoQjRE/73lZVZEUW/AxAXh5v8A/u/MA69OZI3mABCI5gjeV
+         HrllyORU7+ymSitKrwkt1XKnOTXejRQnccT/TflwDunzx9Gwi8xnTdCF/J87R4Dcn7wJ
+         zhSsHEU1M6/OXOYC0CsCHnWyZYtewSK+4HWUGPTxGmxYYU+8IZ8m4D7NiVEtuaekKsia
+         XKn86Aw95n02in30KWH/5BMISqdYFuHokAcKWfBMQBNqA6fB+Me65VVB9TyV7Q/5MjKD
+         Zmqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=kCjTIca0P/GJFxU16YX7DQ4xD2nMI3cX2Z/4NQSE/Sc=;
-        b=GXDID83Unt4NGEbeWbgG+lfR2KZ9NLf1a7r4JGMIhjR3FEvbXvFp65cGmBEyhSEn1G
-         Fe0Sy0+TduZLSKXsBjnmMHnDoAheRV7lFgF/PFlQ8YMmzqvRvGZLViDTR2/FuRhwIxJ6
-         y/b+T9wQSINJDm41PqQf2luQIxc9jpsqAteiRynK5wg0UIbzu9iCSNkwaQ+0GC4CcpZv
-         87v9BnfPkqQUqBBhsMZQKYQNvI0XGKm9fKFi2adyJSCmFRAJLwb8PtVBcmKpg1i12MzQ
-         RRFtqaHTRHE4jKIsKfeAbkVjwVg5gpTKuCTYuNuZY1wgkgpvpYVZ8an5ybfaW1ccWPh6
-         Gwjw==
-X-Gm-Message-State: APjAAAWMobG3l4DAEs1R6IiyCaBzVr+tNzsbw/AaetYqloe3e/PxT+ek
-        FkZ6neDAGlhY9yT8oJt89C2MSUdK3d42aQeihfS49Q==
-X-Google-Smtp-Source: APXvYqzr6zlVHJzTizaYjQ19faJa7QXUmz9jrhB1Y8s+sfB8qo///FW6Fvqhu5135bQUk3prCTZtpuYEGE383ZOEomAwZw==
-X-Received: by 2002:a63:6a81:: with SMTP id f123mr22683545pgc.348.1566260321339;
- Mon, 19 Aug 2019 17:18:41 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 17:17:48 -0700
+        bh=2LlLKA7xilo57KgJ9aBUFbPNJv3YWGuiG9UEU7t1Rzg=;
+        b=WnR6rjMtKfTonP+nMttGZIbDrn99GLMIZckrM0ri0UwujyfZ8u50kClAMmlXBe0Q99
+         ztlxMstIfWvoaec1+5JhHhBMASjQYyyyy3Ky5Muh6udWkKFro5wy+mC6pjGOaEXRFTZG
+         MHTNkbLAePncTVAQFsAfxh1hVLYTo+7EthePmkudCNz05kfvIA3Bwehh5qfaRqctRXSZ
+         Xp7KlCkMZh7TaiaUe/1k9ueG9mbGoIZ0CbbkavH5aQ+ydRk1pdKkYQ2cHRG4821jeU07
+         ioDf98gVo7HGV0xYRvqm52DpOYjqKq8taLffmLL/Nw9UVndliP/OU78kt2+/H6PmK4Xe
+         9j6Q==
+X-Gm-Message-State: APjAAAXLrUzNcN3lBufun73OOKKPMFYTUgHzanHgT3skt1+Iet3Lj0yh
+        a2Sr0+qrNvvM1wE9Xw8iyr4wNKBAZnOC7xf2P36/zg==
+X-Google-Smtp-Source: APXvYqys7jvt/D4+3SJ797I1FFI7U+j4sGn8mLnpJ7BQ8OG5PHg/+H0I5jr+bCp39lsh1kkHfvuUfXaGpWqewAvzA3nz+w==
+X-Received: by 2002:a63:5b52:: with SMTP id l18mr22232462pgm.21.1566260308483;
+ Mon, 19 Aug 2019 17:18:28 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 17:17:43 -0700
 In-Reply-To: <20190820001805.241928-1-matthewgarrett@google.com>
-Message-Id: <20190820001805.241928-13-matthewgarrett@google.com>
+Message-Id: <20190820001805.241928-8-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190820001805.241928-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH V40 12/29] x86: Lock down IO port access when the kernel is
- locked down
+Subject: [PATCH V40 07/29] lockdown: Copy secure_boot flag in boot params
+ across kexec reboot
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Matthew Garrett <mjg59@google.com>,
+        Dave Young <dyoung@redhat.com>,
         David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>, kexec@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Matthew Garrett <mjg59@srcf.ucam.org>
+From: Dave Young <dyoung@redhat.com>
 
-IO port access would permit users to gain access to PCI configuration
-registers, which in turn (on a lot of hardware) give access to MMIO
-register space. This would potentially permit root to trigger arbitrary
-DMA, so lock it down by default.
+Kexec reboot in case secure boot being enabled does not keep the secure
+boot mode in new kernel, so later one can load unsigned kernel via legacy
+kexec_load.  In this state, the system is missing the protections provided
+by secure boot.
 
-This also implicitly locks down the KDADDIO, KDDELIO, KDENABIO and
-KDDISABIO console ioctls.
+Adding a patch to fix this by retain the secure_boot flag in original
+kernel.
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
+secure_boot flag in boot_params is set in EFI stub, but kexec bypasses the
+stub.  Fixing this issue by copying secure_boot flag across kexec reboot.
+
+Signed-off-by: Dave Young <dyoung@redhat.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Matthew Garrett <mjg59@google.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-cc: x86@kernel.org
+cc: kexec@lists.infradead.org
 Signed-off-by: James Morris <jmorris@namei.org>
 ---
- arch/x86/kernel/ioport.c     | 7 +++++--
- include/linux/security.h     | 1 +
- security/lockdown/lockdown.c | 1 +
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ arch/x86/kernel/kexec-bzimage64.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
-index 0fe1c8782208..61a89d3c0382 100644
---- a/arch/x86/kernel/ioport.c
-+++ b/arch/x86/kernel/ioport.c
-@@ -11,6 +11,7 @@
- #include <linux/errno.h>
- #include <linux/types.h>
- #include <linux/ioport.h>
-+#include <linux/security.h>
- #include <linux/smp.h>
- #include <linux/stddef.h>
- #include <linux/slab.h>
-@@ -31,7 +32,8 @@ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
+diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+index f03237e3f192..5d64a22f99ce 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -180,6 +180,7 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
+ 	if (efi_enabled(EFI_OLD_MEMMAP))
+ 		return 0;
  
- 	if ((from + num <= from) || (from + num > IO_BITMAP_BITS))
- 		return -EINVAL;
--	if (turn_on && !capable(CAP_SYS_RAWIO))
-+	if (turn_on && (!capable(CAP_SYS_RAWIO) ||
-+			security_locked_down(LOCKDOWN_IOPORT)))
- 		return -EPERM;
- 
- 	/*
-@@ -126,7 +128,8 @@ SYSCALL_DEFINE1(iopl, unsigned int, level)
- 		return -EINVAL;
- 	/* Trying to gain more privileges? */
- 	if (level > old) {
--		if (!capable(CAP_SYS_RAWIO))
-+		if (!capable(CAP_SYS_RAWIO) ||
-+		    security_locked_down(LOCKDOWN_IOPORT))
- 			return -EPERM;
- 	}
- 	regs->flags = (regs->flags & ~X86_EFLAGS_IOPL) |
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 2b763f0ee352..cd93fa5d3c6d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -108,6 +108,7 @@ enum lockdown_reason {
- 	LOCKDOWN_KEXEC,
- 	LOCKDOWN_HIBERNATION,
- 	LOCKDOWN_PCI_ACCESS,
-+	LOCKDOWN_IOPORT,
- 	LOCKDOWN_INTEGRITY_MAX,
- 	LOCKDOWN_CONFIDENTIALITY_MAX,
- };
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 410e90eda848..8b7d65dbb086 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -23,6 +23,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
- 	[LOCKDOWN_HIBERNATION] = "hibernation",
- 	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
-+	[LOCKDOWN_IOPORT] = "raw io port access",
- 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
- 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
- };
++	params->secure_boot = boot_params.secure_boot;
+ 	ei->efi_loader_signature = current_ei->efi_loader_signature;
+ 	ei->efi_systab = current_ei->efi_systab;
+ 	ei->efi_systab_hi = current_ei->efi_systab_hi;
 -- 
 2.23.0.rc1.153.gdeed80330f-goog
 
