@@ -8,281 +8,173 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A163C3A5A0
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB541C3A5A2
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 100C622CF5
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:18:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0CDF22CF9
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 00:19:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rFrsVdFy"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mhh4cPNk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbfHTASv (ORCPT
+        id S1729118AbfHTATB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Aug 2019 20:18:51 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:36192 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729060AbfHTASu (ORCPT
+        Mon, 19 Aug 2019 20:19:01 -0400
+Received: from mail-vs1-f74.google.com ([209.85.217.74]:50121 "EHLO
+        mail-vs1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729109AbfHTATA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Aug 2019 20:18:50 -0400
-Received: by mail-pl1-f201.google.com with SMTP id a5so2944054pla.3
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 17:18:49 -0700 (PDT)
+        Mon, 19 Aug 2019 20:19:00 -0400
+Received: by mail-vs1-f74.google.com with SMTP id t76so1385005vst.16
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2019 17:19:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=8MAs1bAHSj1uxDRGspfRRmO6rZPmngolbnzqCoks0Vc=;
-        b=rFrsVdFyDTlYO5eKPhECNudu7viLzyB1MK461YJk3u+HRS1MUeClFo3geJju4v4uUq
-         2igSPKLKcJeNmcr7e8MEE1GCr5CH2FGUfBG3HU5OJKbDCIBzv8TUQeu23Is59KlryJA0
-         Hi5JNAckRaPex3WqBGF9RBKcNyjIhA8JbYxeHVFkQSRIPPcqEc2ZylY40urAzYXkO1gI
-         Oi2dWLqa76HI306IQxZQthmSowv+FWJyG4yA0X0UgrDqGaUVYWS4pCGb7XvBJnGjrL5C
-         G1ZBt5u5ay+Nq5aw1uLGZLVUASS7NTuyYuehjjdi7/8he5y0li/VnUU1TzjlwMaglmBr
-         piHg==
+        bh=WRMzqxGXLNI0SsBdZY8cEvaiXgaE0VA439c0Hio6O3c=;
+        b=Mhh4cPNkmy8sQQ8Xxa6AAQ9jY+vx5NznNoSQsXjJgvPnFoVdCPwv1xnIxLGy8wXOGa
+         Y+QauLaf0LDbBMzar7QnmBa5VhZCshx710U0wHANb09ggoNAPyH9zceRsKiRbEGz0qlu
+         QvTXKIWp1YhLEhIVJ+uBGGcUZsogr6LaPafLxs4ZMANGUX6XfXwcbGuGD0umHIP0TbIE
+         ykMq+1ZXLAn6HbdHiF4uA4bH4kYP3p2OcaBjMtd6lwrj/dSTbS6ccppsiSHGxtEyegpB
+         aDdOBJexX3QW8dhwf9EjxMlcSOXlKXlVj4ox4W2c39ULGab0VcK2dYwnTYmdPBPhuzBs
+         xM1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=8MAs1bAHSj1uxDRGspfRRmO6rZPmngolbnzqCoks0Vc=;
-        b=Hvm7kqzA28by6NWg21li+nemhR8QbKk/hq6d4hMoMH8pirjuWkEY9KoU1HekYiV5LC
-         24bjDsq/6f2Jf3oyIW/MFjtUOvK65v7qZF8RStWavkrPesHJ+hTF4Dkb+FkofWlPxaqj
-         CgKXFu5FG8p88fMghS9osVxJ6t1T1kdi5wx8QXWm/3gd1gJJ/shSAuqvHyML5gfbb3NY
-         4/eWa2owwx1W0BaB83M0JXCs8v0AQHlFdi5m3KOuQIGVngp1hcTxmJgCj9M1JhuNWdz9
-         iUHgHXnpgstm4bBitL/asjP86+QRzPR6tVxIXqjSsxLVif3AI+2PYRLBtZkV7ySduDB2
-         jrlg==
-X-Gm-Message-State: APjAAAUNu+H/Y7QK6hsG8OHwEumXHbMf+D+h+8J0LkMccnDo1FfR+4ss
-        pc3DfJEXD1BDHps1vgn1qYVpDBOLvy/tBHaWI2dFEA==
-X-Google-Smtp-Source: APXvYqw6YXIN+GHBim4aum3qT3VMLDzVvRQpUwmu9FRzM0c77VMoDrplUJm7mjqjIny0voHAmQkBGtVJdqC9VNOMCTQ+6w==
-X-Received: by 2002:a63:a66:: with SMTP id z38mr22941929pgk.247.1566260329023;
- Mon, 19 Aug 2019 17:18:49 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 17:17:51 -0700
+        bh=WRMzqxGXLNI0SsBdZY8cEvaiXgaE0VA439c0Hio6O3c=;
+        b=EhWUFaO5Gzj06PjrtlBMPqoLRVlGJ181/kwSb3MIMcNt1b/4VqRmGF9A609fVCqSEO
+         WgZwapz/Mk7J8pkNINbruWJU0DiY02J9hJPmXUsnNKrnLdM026sXK/zQNbOOfFo4iBF3
+         S4cGbO/P/pDJAs6QrGcgdwBgI9oXhoXI2KWQnEXRdtfyoIM3ToKGSl0mTHzY8vrB/hEz
+         X2Jl0wuOKeE6DRirAj41hGvKLhjKt6R09+JAF2e1TsGGf8C2Z6uFPacVlbBmV0HchClP
+         SexvZSRR0NW7fcvzlR++NXLVug1BOZZJHn068w+dxsyrUTbQP9ALRhv9+rhTnkU5KBpS
+         uTBg==
+X-Gm-Message-State: APjAAAX846sUVnlBPUQL1FSE+/+d7yBEbYCNF50kNVJpUGmbCwrZKikY
+        9ngdW+1MrA0pEyjQrM4GBo4uW1pGamogr8M4rTtwJQ==
+X-Google-Smtp-Source: APXvYqyV4Kgwvl5pQht/U4WWNO2ngHwajMUTquOJOpL/jf7OovZEbp24SlhZhz06vIk33GR7iA5I4Do0Ql2vGMvUJiqKbA==
+X-Received: by 2002:a1f:1654:: with SMTP id 81mr9237922vkw.49.1566260339513;
+ Mon, 19 Aug 2019 17:18:59 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 17:17:55 -0700
 In-Reply-To: <20190820001805.241928-1-matthewgarrett@google.com>
-Message-Id: <20190820001805.241928-16-matthewgarrett@google.com>
+Message-Id: <20190820001805.241928-20-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190820001805.241928-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH V40 15/29] acpi: Ignore acpi_rsdp kernel param when the kernel
- has been locked down
+Subject: [PATCH V40 19/29] lockdown: Lock down module params that specify
+ hardware parameters (eg. ioport)
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Josh Boyer <jwboyer@redhat.com>,
         David Howells <dhowells@redhat.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Young <dyoung@redhat.com>, linux-acpi@vger.kernel.org
+        Kees Cook <keescook@chromium.org>, Jessica Yu <jeyu@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Josh Boyer <jwboyer@redhat.com>
+From: David Howells <dhowells@redhat.com>
 
-This option allows userspace to pass the RSDP address to the kernel, which
-makes it possible for a user to modify the workings of hardware. Reject
-the option when the kernel is locked down. This requires some reworking
-of the existing RSDP command line logic, since the early boot code also
-makes use of a command-line passed RSDP when locating the SRAT table
-before the lockdown code has been initialised. This is achieved by
-separating the command line RSDP path in the early boot code from the
-generic RSDP path, and then copying the command line RSDP into boot
-params in the kernel proper if lockdown is not enabled. If lockdown is
-enabled and an RSDP is provided on the command line, this will only be
-used when parsing SRAT (which shouldn't permit kernel code execution)
-and will be ignored in the rest of the kernel.
+Provided an annotation for module parameters that specify hardware
+parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
+dma buffers and other types).
 
-(Modified by Matthew Garrett in order to handle the early boot RSDP
-environment)
-
-Signed-off-by: Josh Boyer <jwboyer@redhat.com>
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-cc: Dave Young <dyoung@redhat.com>
-cc: linux-acpi@vger.kernel.org
+Cc: Jessica Yu <jeyu@kernel.org>
 Signed-off-by: James Morris <jmorris@namei.org>
 ---
- arch/x86/boot/compressed/acpi.c | 19 +++++++++++++------
- arch/x86/include/asm/acpi.h     |  9 +++++++++
- arch/x86/include/asm/x86_init.h |  2 ++
- arch/x86/kernel/acpi/boot.c     |  5 +++++
- arch/x86/kernel/x86_init.c      |  1 +
- drivers/acpi/osl.c              | 14 +++++++++++++-
- include/linux/acpi.h            |  6 ++++++
- 7 files changed, 49 insertions(+), 7 deletions(-)
+ include/linux/security.h     |  1 +
+ kernel/params.c              | 21 ++++++++++++++++-----
+ security/lockdown/lockdown.c |  1 +
+ 3 files changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-index ad84239e595e..e726e9b44bb1 100644
---- a/arch/x86/boot/compressed/acpi.c
-+++ b/arch/x86/boot/compressed/acpi.c
-@@ -26,7 +26,7 @@ struct mem_vector immovable_mem[MAX_NUMNODES*2];
-  */
- #define MAX_ADDR_LEN 19
- 
--static acpi_physical_address get_acpi_rsdp(void)
-+static acpi_physical_address get_cmdline_acpi_rsdp(void)
- {
- 	acpi_physical_address addr = 0;
- 
-@@ -215,10 +215,7 @@ acpi_physical_address get_rsdp_addr(void)
- {
- 	acpi_physical_address pa;
- 
--	pa = get_acpi_rsdp();
--
--	if (!pa)
--		pa = boot_params->acpi_rsdp_addr;
-+	pa = boot_params->acpi_rsdp_addr;
- 
- 	if (!pa)
- 		pa = efi_get_rsdp_addr();
-@@ -240,7 +237,17 @@ static unsigned long get_acpi_srat_table(void)
- 	char arg[10];
- 	u8 *entry;
- 
--	rsdp = (struct acpi_table_rsdp *)(long)boot_params->acpi_rsdp_addr;
-+	/*
-+	 * Check whether we were given an RSDP on the command line. We don't
-+	 * stash this in boot params because the kernel itself may have
-+	 * different ideas about whether to trust a command-line parameter.
-+	 */
-+	rsdp = (struct acpi_table_rsdp *)get_cmdline_acpi_rsdp();
-+
-+	if (!rsdp)
-+		rsdp = (struct acpi_table_rsdp *)(long)
-+			boot_params->acpi_rsdp_addr;
-+
- 	if (!rsdp)
- 		return 0;
- 
-diff --git a/arch/x86/include/asm/acpi.h b/arch/x86/include/asm/acpi.h
-index aac686e1e005..bc9693c9107e 100644
---- a/arch/x86/include/asm/acpi.h
-+++ b/arch/x86/include/asm/acpi.h
-@@ -117,6 +117,12 @@ static inline bool acpi_has_cpu_in_madt(void)
- 	return !!acpi_lapic;
- }
- 
-+#define ACPI_HAVE_ARCH_SET_ROOT_POINTER
-+static inline void acpi_arch_set_root_pointer(u64 addr)
-+{
-+	x86_init.acpi.set_root_pointer(addr);
-+}
-+
- #define ACPI_HAVE_ARCH_GET_ROOT_POINTER
- static inline u64 acpi_arch_get_root_pointer(void)
- {
-@@ -125,6 +131,7 @@ static inline u64 acpi_arch_get_root_pointer(void)
- 
- void acpi_generic_reduced_hw_init(void);
- 
-+void x86_default_set_root_pointer(u64 addr);
- u64 x86_default_get_root_pointer(void);
- 
- #else /* !CONFIG_ACPI */
-@@ -138,6 +145,8 @@ static inline void disable_acpi(void) { }
- 
- static inline void acpi_generic_reduced_hw_init(void) { }
- 
-+static inline void x86_default_set_root_pointer(u64 addr) { }
-+
- static inline u64 x86_default_get_root_pointer(void)
- {
- 	return 0;
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index b85a7c54c6a1..d584128435cb 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -134,10 +134,12 @@ struct x86_hyper_init {
- 
- /**
-  * struct x86_init_acpi - x86 ACPI init functions
-+ * @set_root_poitner:		set RSDP address
-  * @get_root_pointer:		get RSDP address
-  * @reduced_hw_early_init:	hardware reduced platform early init
-  */
- struct x86_init_acpi {
-+	void (*set_root_pointer)(u64 addr);
- 	u64 (*get_root_pointer)(void);
- 	void (*reduced_hw_early_init)(void);
+diff --git a/include/linux/security.h b/include/linux/security.h
+index b4a85badb03a..1a3404f9c060 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -113,6 +113,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_ACPI_TABLES,
+ 	LOCKDOWN_PCMCIA_CIS,
+ 	LOCKDOWN_TIOCSSERIAL,
++	LOCKDOWN_MODULE_PARAMETERS,
+ 	LOCKDOWN_INTEGRITY_MAX,
+ 	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 17b33ef604f3..04205ce127a1 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -1760,6 +1760,11 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
- 	e820__update_table_print();
- }
- 
-+void x86_default_set_root_pointer(u64 addr)
-+{
-+	boot_params.acpi_rsdp_addr = addr;
-+}
-+
- u64 x86_default_get_root_pointer(void)
- {
- 	return boot_params.acpi_rsdp_addr;
-diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
-index 50a2b492fdd6..d0b8f5585a73 100644
---- a/arch/x86/kernel/x86_init.c
-+++ b/arch/x86/kernel/x86_init.c
-@@ -95,6 +95,7 @@ struct x86_init_ops x86_init __initdata = {
- 	},
- 
- 	.acpi = {
-+		.set_root_pointer	= x86_default_set_root_pointer,
- 		.get_root_pointer	= x86_default_get_root_pointer,
- 		.reduced_hw_early_init	= acpi_generic_reduced_hw_init,
- 	},
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index cc7507091dec..b7c3aeb175dd 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -26,6 +26,7 @@
- #include <linux/list.h>
- #include <linux/jiffies.h>
- #include <linux/semaphore.h>
+diff --git a/kernel/params.c b/kernel/params.c
+index cf448785d058..8e56f8b12d8f 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -12,6 +12,7 @@
+ #include <linux/err.h>
+ #include <linux/slab.h>
+ #include <linux/ctype.h>
 +#include <linux/security.h>
  
- #include <asm/io.h>
- #include <linux/uaccess.h>
-@@ -180,8 +181,19 @@ acpi_physical_address __init acpi_os_get_root_pointer(void)
- 	acpi_physical_address pa;
+ #ifdef CONFIG_SYSFS
+ /* Protects all built-in parameters, modules use their own param_lock */
+@@ -96,13 +97,19 @@ bool parameq(const char *a, const char *b)
+ 	return parameqn(a, b, strlen(a)+1);
+ }
  
- #ifdef CONFIG_KEXEC
--	if (acpi_rsdp)
-+	/*
-+	 * We may have been provided with an RSDP on the command line,
-+	 * but if a malicious user has done so they may be pointing us
-+	 * at modified ACPI tables that could alter kernel behaviour -
-+	 * so, we check the lockdown status before making use of
-+	 * it. If we trust it then also stash it in an architecture
-+	 * specific location (if appropriate) so it can be carried
-+	 * over further kexec()s.
-+	 */
-+	if (acpi_rsdp && !security_locked_down(LOCKDOWN_ACPI_TABLES)) {
-+		acpi_arch_set_root_pointer(acpi_rsdp);
- 		return acpi_rsdp;
-+	}
- #endif
- 	pa = acpi_arch_get_root_pointer();
- 	if (pa)
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index d315d86844e4..268a4d91f54c 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -632,6 +632,12 @@ bool acpi_gtdt_c3stop(int type);
- int acpi_arch_timer_mem_init(struct arch_timer_mem *timer_mem, int *timer_count);
- #endif
- 
-+#ifndef ACPI_HAVE_ARCH_SET_ROOT_POINTER
-+static inline void acpi_arch_set_root_pointer(u64 addr)
-+{
-+}
-+#endif
-+
- #ifndef ACPI_HAVE_ARCH_GET_ROOT_POINTER
- static inline u64 acpi_arch_get_root_pointer(void)
+-static void param_check_unsafe(const struct kernel_param *kp)
++static bool param_check_unsafe(const struct kernel_param *kp)
  {
++	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
++	    security_locked_down(LOCKDOWN_MODULE_PARAMETERS))
++		return false;
++
+ 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+ 		pr_notice("Setting dangerous option %s - tainting kernel\n",
+ 			  kp->name);
+ 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+ 	}
++
++	return true;
+ }
+ 
+ static int parse_one(char *param,
+@@ -132,8 +139,10 @@ static int parse_one(char *param,
+ 			pr_debug("handling %s with %p\n", param,
+ 				params[i].ops->set);
+ 			kernel_param_lock(params[i].mod);
+-			param_check_unsafe(&params[i]);
+-			err = params[i].ops->set(val, &params[i]);
++			if (param_check_unsafe(&params[i]))
++				err = params[i].ops->set(val, &params[i]);
++			else
++				err = -EPERM;
+ 			kernel_param_unlock(params[i].mod);
+ 			return err;
+ 		}
+@@ -553,8 +562,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 		return -EPERM;
+ 
+ 	kernel_param_lock(mk->mod);
+-	param_check_unsafe(attribute->param);
+-	err = attribute->param->ops->set(buf, attribute->param);
++	if (param_check_unsafe(attribute->param))
++		err = attribute->param->ops->set(buf, attribute->param);
++	else
++		err = -EPERM;
+ 	kernel_param_unlock(mk->mod);
+ 	if (!err)
+ 		return len;
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index 771c77f9c04a..0fa434294667 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -28,6 +28,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
+ 	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
+ 	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
++	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
+ 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+ 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+ };
 -- 
 2.23.0.rc1.153.gdeed80330f-goog
 
