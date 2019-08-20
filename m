@@ -2,104 +2,175 @@ Return-Path: <SRS0=y35J=WQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87652C3A59E
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 12:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E87C3A589
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 16:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66CCB22DA9
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 12:25:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2969822DD3
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Aug 2019 16:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566319157;
+	bh=gVkkoN4CalGvrq5CYCxbXHLC/0iPmTUko6ZPtdpSa8s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=k21P0Ujx24HJUZWZQbLaSdn+YbJV2o9ZP2bMmKbJI7bNMyWhuDW2Y7jVEf7IqVc7s
+	 zVZO9Pk+oaTwE1d0O+BsAJSLO0PBrXMFzAF6ric9EM9URZUG5BogXeF003TDmreAUF
+	 4kJkq0FeMQ1TRbxphRb3YVpMnTYFD/Ez3pebswy8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728771AbfHTMZ0 (ORCPT
+        id S1726981AbfHTQjN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 20 Aug 2019 08:25:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57040 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728366AbfHTMZZ (ORCPT
+        Tue, 20 Aug 2019 12:39:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725983AbfHTQjM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 20 Aug 2019 08:25:25 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7KCM7rd144102;
-        Tue, 20 Aug 2019 08:25:23 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ugf4c551r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Aug 2019 08:25:21 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7KCP8O5016306;
-        Tue, 20 Aug 2019 12:25:21 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma03dal.us.ibm.com with ESMTP id 2ue976mucs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Aug 2019 12:25:21 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7KCPJPI56033666
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 20 Aug 2019 12:25:19 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D11FD7805F;
-        Tue, 20 Aug 2019 12:25:19 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 633457805C;
-        Tue, 20 Aug 2019 12:25:19 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 20 Aug 2019 12:25:19 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH] tpm_tis: Fix interrupt probing
-Date:   Tue, 20 Aug 2019 08:25:17 -0400
-Message-Id: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 20 Aug 2019 12:39:12 -0400
+Received: from linux-8ccs (unknown [92.117.154.195])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7653722DD3;
+        Tue, 20 Aug 2019 16:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566319151;
+        bh=gVkkoN4CalGvrq5CYCxbXHLC/0iPmTUko6ZPtdpSa8s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AF0Mw1osWSFyJSa/26kxaUvosUxnCBBLsNLHuH86B9hXg174Dh5przqfV4AJKAYr5
+         Za6oMNuvc/UK2/UNFJQHoD9fn5WPlih6HLg9ngaatGRPvAQVPII+d0J8XWlqWxTaam
+         HSRm6t3uyD+cHCOOMXlLQX0cplroGvHhtgZQ3AE8=
+Date:   Tue, 20 Aug 2019 18:39:05 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH V40 19/29] lockdown: Lock down module params that specify
+ hardware parameters (eg. ioport)
+Message-ID: <20190820163905.GA28158@linux-8ccs>
+References: <20190820001805.241928-1-matthewgarrett@google.com>
+ <20190820001805.241928-20-matthewgarrett@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-20_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=820 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908200130
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190820001805.241928-20-matthewgarrett@google.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Stefan Berger <stefanb@linux.ibm.com>
++++ Matthew Garrett [19/08/19 17:17 -0700]:
+>From: David Howells <dhowells@redhat.com>
+>
+>Provided an annotation for module parameters that specify hardware
+>parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
+>dma buffers and other types).
+>
+>Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+>Signed-off-by: David Howells <dhowells@redhat.com>
+>Signed-off-by: Matthew Garrett <mjg59@google.com>
+>Reviewed-by: Kees Cook <keescook@chromium.org>
+>Cc: Jessica Yu <jeyu@kernel.org>
+>Signed-off-by: James Morris <jmorris@namei.org>
 
-The interrupt probing of the TPM TIS was broken since we are trying to
-run it without an active locality and without the TPM_CHIP_FLAG_IRQ set.
+Acked-by: Jessica Yu <jeyu@kernel.org>
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/tpm_tis_core.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks!
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index c3181ea9f271..270f43acbb77 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -980,6 +980,8 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 			goto out_err;
- 		}
- 
-+		tpm_chip_start(chip);
-+		chip->flags |= TPM_CHIP_FLAG_IRQ;
- 		if (irq) {
- 			tpm_tis_probe_irq_single(chip, intmask, IRQF_SHARED,
- 						 irq);
-@@ -989,6 +991,7 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 		} else {
- 			tpm_tis_probe_irq(chip, intmask);
- 		}
-+		tpm_chip_stop(chip);
- 	}
- 
- 	rc = tpm_chip_register(chip);
--- 
-2.14.5
-
+>---
+> include/linux/security.h     |  1 +
+> kernel/params.c              | 21 ++++++++++++++++-----
+> security/lockdown/lockdown.c |  1 +
+> 3 files changed, 18 insertions(+), 5 deletions(-)
+>
+>diff --git a/include/linux/security.h b/include/linux/security.h
+>index b4a85badb03a..1a3404f9c060 100644
+>--- a/include/linux/security.h
+>+++ b/include/linux/security.h
+>@@ -113,6 +113,7 @@ enum lockdown_reason {
+> 	LOCKDOWN_ACPI_TABLES,
+> 	LOCKDOWN_PCMCIA_CIS,
+> 	LOCKDOWN_TIOCSSERIAL,
+>+	LOCKDOWN_MODULE_PARAMETERS,
+> 	LOCKDOWN_INTEGRITY_MAX,
+> 	LOCKDOWN_CONFIDENTIALITY_MAX,
+> };
+>diff --git a/kernel/params.c b/kernel/params.c
+>index cf448785d058..8e56f8b12d8f 100644
+>--- a/kernel/params.c
+>+++ b/kernel/params.c
+>@@ -12,6 +12,7 @@
+> #include <linux/err.h>
+> #include <linux/slab.h>
+> #include <linux/ctype.h>
+>+#include <linux/security.h>
+>
+> #ifdef CONFIG_SYSFS
+> /* Protects all built-in parameters, modules use their own param_lock */
+>@@ -96,13 +97,19 @@ bool parameq(const char *a, const char *b)
+> 	return parameqn(a, b, strlen(a)+1);
+> }
+>
+>-static void param_check_unsafe(const struct kernel_param *kp)
+>+static bool param_check_unsafe(const struct kernel_param *kp)
+> {
+>+	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
+>+	    security_locked_down(LOCKDOWN_MODULE_PARAMETERS))
+>+		return false;
+>+
+> 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+> 		pr_notice("Setting dangerous option %s - tainting kernel\n",
+> 			  kp->name);
+> 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+> 	}
+>+
+>+	return true;
+> }
+>
+> static int parse_one(char *param,
+>@@ -132,8 +139,10 @@ static int parse_one(char *param,
+> 			pr_debug("handling %s with %p\n", param,
+> 				params[i].ops->set);
+> 			kernel_param_lock(params[i].mod);
+>-			param_check_unsafe(&params[i]);
+>-			err = params[i].ops->set(val, &params[i]);
+>+			if (param_check_unsafe(&params[i]))
+>+				err = params[i].ops->set(val, &params[i]);
+>+			else
+>+				err = -EPERM;
+> 			kernel_param_unlock(params[i].mod);
+> 			return err;
+> 		}
+>@@ -553,8 +562,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
+> 		return -EPERM;
+>
+> 	kernel_param_lock(mk->mod);
+>-	param_check_unsafe(attribute->param);
+>-	err = attribute->param->ops->set(buf, attribute->param);
+>+	if (param_check_unsafe(attribute->param))
+>+		err = attribute->param->ops->set(buf, attribute->param);
+>+	else
+>+		err = -EPERM;
+> 	kernel_param_unlock(mk->mod);
+> 	if (!err)
+> 		return len;
+>diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+>index 771c77f9c04a..0fa434294667 100644
+>--- a/security/lockdown/lockdown.c
+>+++ b/security/lockdown/lockdown.c
+>@@ -28,6 +28,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+> 	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
+> 	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
+> 	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
+>+	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
+> 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+> 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+> };
+>-- 
+>2.23.0.rc1.153.gdeed80330f-goog
+>
