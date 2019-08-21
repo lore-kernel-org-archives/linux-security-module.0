@@ -2,1057 +2,194 @@ Return-Path: <SRS0=EETi=WR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 813DFC3A59E
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 13:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F024C41514
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 13:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 390D0233FC
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 13:00:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00F47233A1
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 13:45:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GCure55r"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gHkey7/P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbfHUNAQ (ORCPT
+        id S1728788AbfHUNp4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Aug 2019 09:00:16 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35715 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728726AbfHUNAP (ORCPT
+        Wed, 21 Aug 2019 09:45:56 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:48857 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728716AbfHUNp4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Aug 2019 09:00:15 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n4so1294646pgv.2
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2019 06:00:15 -0700 (PDT)
+        Wed, 21 Aug 2019 09:45:56 -0400
+Received: by mail-qk1-f202.google.com with SMTP id k5so2138863qke.15
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2019 06:45:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GVWlCVSx1Ef2lbF44j3+Kf2VBwIx7LljZ9+IMt2/YAg=;
-        b=GCure55rg8/bCWCdEl6taJZHBBURoszgbLM+opQ85mt7zl5ZHrF08if2rFSrJMIUAr
-         kiE/ZMJ6XAEoHDPjepJHEAt12Klo0e+BlGW2HulW7z16TJCpwafo9+CKPReHXosCNDrI
-         IRXOR8DSjMQ60nuuSC6UCgweS9CjgVWFyiLaltwpmoJtEWKECz00Yihebo2tgMuyrMTN
-         dB5V58cuaTLHbQpBhBdDcNfjptbRpd86MkwBrudLM5xgvefmYXMtdwMyNZ5vKCaZJ4at
-         LF/fty10HJb3YA9uBIqHaMbx08Jl0vsDhI2wgGdRnUn5VsN2W8OjUMkf5t4ei6e4R1bQ
-         puxA==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=VdxLqqxvQ1VVL4avZcCP2yW2lIouW/66kNiFtbKiPXE=;
+        b=gHkey7/PD0UJhXQQW4Ne8NtSP3Z8k+K80R5bIzurTx910qku1Vp/kva0nYk/9F3YUb
+         WrlMXwuWYDYMRH7FV2Prs8R2WXc9uj+RTVwVQYL4zFV/bS/tAaz2jIph3vMZHchvNMyF
+         81rzpX5DOlmIlnSkNy+wtLoLjrLIJyZuEvOCaw9idbJUDXE3dC11gOv77hNSmF68kgy0
+         dhBcoGTUWHlmNa8EchhunYFu4iNWr12/Mw9mzVAiL1Jgcud8eFpisaRcJjGNXysg9gbi
+         6Pf0t2zmsTvdjfa1t3faLaFs8KMxp1utvD1aPs9RiR14Kpp+n/SX5yQQgdCHFRT/ZvuP
+         NAwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=GVWlCVSx1Ef2lbF44j3+Kf2VBwIx7LljZ9+IMt2/YAg=;
-        b=Yw7bTEe1QBL0cEDecI8hd3rcuE21vrrv/FOZx0ltvWpd+QoBjoA/Jmd2v0W2rUpIm8
-         gYZQqD6xjy0fbKHI6iSe6TQMqmZVxKiAxHPxcEQYMwMvv9bW/IJNVsDKL5Q2qN2derlh
-         XqHZX4Nq38smagEcGz4wEFvHVz3KdOliYiOyr6XBFIzWtAoraEoA7QLGcMWt6YFXQFxZ
-         odkUuVtRcyiJL7633lvWi/xcSpggS2xGUcjBfQI+1NIbCZjOfX6DsHfPfUMKscZgs2uR
-         A96IWOldeJAn/swINmIX+ijo90+cLZsvKCepj+UmKx2GhTpDDzBvafeavLhhuaYXh0FT
-         iJzg==
-X-Gm-Message-State: APjAAAVf9xFlfAiiYhqS8Q2YXHfJOa3IappGbVro0pUSZ9TlhXaYjc7L
-        OZVVTgr+rrHTHpVInbH4crQotQ==
-X-Google-Smtp-Source: APXvYqw/PCuo89FgX9KhEXokVD4TcTUbmsxqMqSH70LC4AN0eJGhIBhxPtdIHp/HHnlQLE0t6StNtg==
-X-Received: by 2002:a63:9249:: with SMTP id s9mr28149003pgn.356.1566392414152;
-        Wed, 21 Aug 2019 06:00:14 -0700 (PDT)
-Received: from localhost.localdomain ([117.252.68.28])
-        by smtp.gmail.com with ESMTPSA id o24sm47377476pfp.135.2019.08.21.06.00.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 21 Aug 2019 06:00:13 -0700 (PDT)
-From:   Sumit Garg <sumit.garg@linaro.org>
-To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc:     dhowells@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, peterhuewe@gmx.de, jgg@ziepe.ca,
-        jejb@linux.ibm.com, jarkko.sakkinen@linux.intel.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, casey@schaufler-ca.com,
-        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
-        linux-kernel@vger.kernel.org, tee-dev@lists.linaro.org,
-        Sumit Garg <sumit.garg@linaro.org>
-Subject: [PATCH v5 4/4] KEYS: trusted: move tpm2 trusted keys code
-Date:   Wed, 21 Aug 2019 18:29:05 +0530
-Message-Id: <1566392345-15419-5-git-send-email-sumit.garg@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1566392345-15419-1-git-send-email-sumit.garg@linaro.org>
-References: <1566392345-15419-1-git-send-email-sumit.garg@linaro.org>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=VdxLqqxvQ1VVL4avZcCP2yW2lIouW/66kNiFtbKiPXE=;
+        b=NTxFlbCAW7w5GmMzUX+H+rX//zMv/wFWCGahGi1pT1tKN2PJ3ynk/EtbCMYlcZQsiW
+         XBKBkhYuSSjKqFUqYlkOO0C9PfX+NCx5NuvQGb3MU+739hi4mbnij52UDKFv2wCJtYo2
+         u9uBIvvuM+z4VDXNCVgGyWPI+lGxB2HgXFuzzUWfacOrv9copQroDNLf3Ek/xxdHD2kM
+         VCLs35FUHSyRhyM8xGPJXMM1sv/nThJTLmCL/0uW1OKqwibnWxrTrqFNswxzO/Lp2AYm
+         FFOHW15fpzNvrpwVxVDCcwbSnZLBoVvuUo1CuxOiohwXpHCmK1N+nChfKZ8ooMMjvx5O
+         rFnA==
+X-Gm-Message-State: APjAAAWMBkC5PljjQh7leHcSTsxiI4Xq20L1W4LrJw+cZSffg4CZTQ7U
+        7TTQi7yRHuvQ4KCvdZ6tGqmUBZbWhw==
+X-Google-Smtp-Source: APXvYqxnhmNIUPYTp4W5dlnL3rMXrWtp2gSX8a3JW01dlQM5PCQUUxjjpcVLLvN0hGeKH2QuSr9cWiZKQg==
+X-Received: by 2002:a37:7404:: with SMTP id p4mr15572175qkc.476.1566395154861;
+ Wed, 21 Aug 2019 06:45:54 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 15:45:47 +0200
+Message-Id: <20190821134547.96929-1-jeffv@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+Subject: [PATCH 1/2] rtnetlink: gate MAC address with an LSM hook
+From:   Jeff Vander Stoep <jeffv@google.com>
+To:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Cc:     Jeff Vander Stoep <jeffv@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Move TPM2 trusted keys code to trusted keys subsystem. The reason
-being it's better to consolidate all the trusted keys code to a single
-location so that it can be maintained sanely.
+MAC addresses are often considered sensitive because they are
+usually unique and can be used to identify/track a device or
+user [1].
 
-Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+The MAC address is accessible via the RTM_NEWLINK message type of a
+netlink route socket[2]. Ideally we could grant/deny access to the
+MAC address on a case-by-case basis without blocking the entire
+RTM_NEWLINK message type which contains a lot of other useful
+information. This can be achieved using a new LSM hook on the netlink
+message receive path. Using this new hook, individual LSMs can select
+which processes are allowed access to the real MAC, otherwise a
+default value of zeros is returned. Offloading access control
+decisions like this to an LSM is convenient because it preserves the
+status quo for most Linux users while giving the various LSMs
+flexibility to make finer grained decisions on access to sensitive
+data based on policy.
+
+[1] https://adamdrake.com/mac-addresses-udids-and-privacy.html
+[2] Other access vectors like ioctl(SIOCGIFHWADDR) are already covered
+by existing LSM hooks.
+
+Signed-off-by: Jeff Vander Stoep <jeffv@google.com>
 ---
- drivers/char/tpm/tpm-chip.c               |   1 +
- drivers/char/tpm/tpm-interface.c          |  56 -----
- drivers/char/tpm/tpm.h                    |  16 --
- drivers/char/tpm/tpm2-cmd.c               | 308 +-----------------------
- include/keys/trusted_tpm.h                |   7 +
- include/linux/tpm.h                       |  56 +++--
- security/keys/trusted-keys/Makefile       |   1 +
- security/keys/trusted-keys/trusted_tpm2.c | 378 ++++++++++++++++++++++++++++++
- 8 files changed, 429 insertions(+), 394 deletions(-)
- create mode 100644 security/keys/trusted-keys/trusted_tpm2.c
+ include/linux/lsm_hooks.h |  8 ++++++++
+ include/linux/security.h  |  6 ++++++
+ net/core/rtnetlink.c      | 12 ++++++++++--
+ security/security.c       |  5 +++++
+ 4 files changed, 29 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index d47ad10..49450c1 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -243,6 +243,7 @@ struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip)
- 		return NULL;
- 	return chip;
- }
-+EXPORT_SYMBOL_GPL(tpm_find_get_ops);
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index df1318d85f7d..dfcb2e11ff43 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -728,6 +728,12 @@
+  *
+  * Security hooks for Netlink messaging.
+  *
++ * @netlink_receive
++ *	Check permissions on a netlink message field before populating it.
++ *	@sk associated sock of task receiving the message.
++ *	@skb contains the sk_buff structure for the netlink message.
++ *	Return 0 if the data should be included in the message.
++ *
+  * @netlink_send:
+  *	Save security information for a netlink message so that permission
+  *	checking can be performed when the message is processed.  The security
+@@ -1673,6 +1679,7 @@ union security_list_options {
+ 	int (*sem_semop)(struct kern_ipc_perm *perm, struct sembuf *sops,
+ 				unsigned nsops, int alter);
  
- /**
-  * tpm_dev_release() - free chip memory and the device number
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1b4f95c..208e5ba 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -454,62 +454,6 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
- }
- EXPORT_SYMBOL_GPL(tpm_get_random);
++	int (*netlink_receive)(struct sock *sk, struct sk_buff *skb);
+ 	int (*netlink_send)(struct sock *sk, struct sk_buff *skb);
  
--/**
-- * tpm_seal_trusted() - seal a trusted key payload
-- * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-- * @options:	authentication values and other options
-- * @payload:	the key data in clear and encrypted form
-- *
-- * Note: only TPM 2.0 chip are supported. TPM 1.x implementation is located in
-- * the keyring subsystem.
-- *
-- * Return: same as with tpm_transmit_cmd()
-- */
--int tpm_seal_trusted(struct tpm_chip *chip, struct trusted_key_payload *payload,
--		     struct trusted_key_options *options)
--{
--	int rc;
--
--	chip = tpm_find_get_ops(chip);
--	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
--		return -ENODEV;
--
--	rc = tpm2_seal_trusted(chip, payload, options);
--
--	tpm_put_ops(chip);
--	return rc;
--}
--EXPORT_SYMBOL_GPL(tpm_seal_trusted);
--
--/**
-- * tpm_unseal_trusted() - unseal a trusted key
-- * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-- * @options:	authentication values and other options
-- * @payload:	the key data in clear and encrypted form
-- *
-- * Note: only TPM 2.0 chip are supported. TPM 1.x implementation is located in
-- * the keyring subsystem.
-- *
-- * Return: same as with tpm_transmit_cmd()
-- */
--int tpm_unseal_trusted(struct tpm_chip *chip,
--		       struct trusted_key_payload *payload,
--		       struct trusted_key_options *options)
--{
--	int rc;
--
--	chip = tpm_find_get_ops(chip);
--	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
--		return -ENODEV;
--
--	rc = tpm2_unseal_trusted(chip, payload, options);
--
--	tpm_put_ops(chip);
--
--	return rc;
--}
--EXPORT_SYMBOL_GPL(tpm_unseal_trusted);
--
- static int __init tpm_init(void)
- {
- 	int rc;
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 0b5498a..1c07ce6 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -164,8 +164,6 @@ extern const struct file_operations tpmrm_fops;
- extern struct idr dev_nums_idr;
- 
- ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz);
--ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
--			 size_t min_rsp_body_length, const char *desc);
- int tpm_get_timeouts(struct tpm_chip *);
- int tpm_auto_startup(struct tpm_chip *chip);
- 
-@@ -192,9 +190,7 @@ static inline void tpm_msleep(unsigned int delay_msec)
- 
- int tpm_chip_start(struct tpm_chip *chip);
- void tpm_chip_stop(struct tpm_chip *chip);
--struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
- __must_check int tpm_try_get_ops(struct tpm_chip *chip);
--void tpm_put_ops(struct tpm_chip *chip);
- 
- struct tpm_chip *tpm_chip_alloc(struct device *dev,
- 				const struct tpm_class_ops *ops);
-@@ -214,24 +210,12 @@ static inline void tpm_add_ppi(struct tpm_chip *chip)
- }
- #endif
- 
--static inline u32 tpm2_rc_value(u32 rc)
--{
--	return (rc & BIT(7)) ? rc & 0xff : rc;
--}
--
- int tpm2_get_timeouts(struct tpm_chip *chip);
- int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
- 		  struct tpm_digest *digest, u16 *digest_size_ptr);
- int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 		    struct tpm_digest *digests);
- int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
--void tpm2_flush_context(struct tpm_chip *chip, u32 handle);
--int tpm2_seal_trusted(struct tpm_chip *chip,
--		      struct trusted_key_payload *payload,
--		      struct trusted_key_options *options);
--int tpm2_unseal_trusted(struct tpm_chip *chip,
--			struct trusted_key_payload *payload,
--			struct trusted_key_options *options);
- ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
- 			u32 *value, const char *desc);
- 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index d103545..8bb34890 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -13,20 +13,6 @@
- 
- #include "tpm.h"
- #include <crypto/hash_info.h>
--#include <keys/trusted-type.h>
--
--enum tpm2_object_attributes {
--	TPM2_OA_USER_WITH_AUTH		= BIT(6),
--};
--
--enum tpm2_session_attributes {
--	TPM2_SA_CONTINUE_SESSION	= BIT(0),
--};
--
--struct tpm2_hash {
--	unsigned int crypto_id;
--	unsigned int tpm_id;
--};
- 
- static struct tpm2_hash tpm2_hash_map[] = {
- 	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
-@@ -376,299 +362,7 @@ void tpm2_flush_context(struct tpm_chip *chip, u32 handle)
- 	tpm_transmit_cmd(chip, &buf, 0, "flushing context");
- 	tpm_buf_destroy(&buf);
- }
--
--/**
-- * tpm_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
-- *
-- * @buf: an allocated tpm_buf instance
-- * @session_handle: session handle
-- * @nonce: the session nonce, may be NULL if not used
-- * @nonce_len: the session nonce length, may be 0 if not used
-- * @attributes: the session attributes
-- * @hmac: the session HMAC or password, may be NULL if not used
-- * @hmac_len: the session HMAC or password length, maybe 0 if not used
-- */
--static void tpm2_buf_append_auth(struct tpm_buf *buf, u32 session_handle,
--				 const u8 *nonce, u16 nonce_len,
--				 u8 attributes,
--				 const u8 *hmac, u16 hmac_len)
--{
--	tpm_buf_append_u32(buf, 9 + nonce_len + hmac_len);
--	tpm_buf_append_u32(buf, session_handle);
--	tpm_buf_append_u16(buf, nonce_len);
--
--	if (nonce && nonce_len)
--		tpm_buf_append(buf, nonce, nonce_len);
--
--	tpm_buf_append_u8(buf, attributes);
--	tpm_buf_append_u16(buf, hmac_len);
--
--	if (hmac && hmac_len)
--		tpm_buf_append(buf, hmac, hmac_len);
--}
--
--/**
-- * tpm2_seal_trusted() - seal the payload of a trusted key
-- *
-- * @chip: TPM chip to use
-- * @payload: the key data in clear and encrypted form
-- * @options: authentication values and other options
-- *
-- * Return: < 0 on error and 0 on success.
-- */
--int tpm2_seal_trusted(struct tpm_chip *chip,
--		      struct trusted_key_payload *payload,
--		      struct trusted_key_options *options)
--{
--	unsigned int blob_len;
--	struct tpm_buf buf;
--	u32 hash;
--	int i;
--	int rc;
--
--	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
--		if (options->hash == tpm2_hash_map[i].crypto_id) {
--			hash = tpm2_hash_map[i].tpm_id;
--			break;
--		}
--	}
--
--	if (i == ARRAY_SIZE(tpm2_hash_map))
--		return -EINVAL;
--
--	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
--	if (rc)
--		return rc;
--
--	tpm_buf_append_u32(&buf, options->keyhandle);
--	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
--			     NULL /* nonce */, 0,
--			     0 /* session_attributes */,
--			     options->keyauth /* hmac */,
--			     TPM_DIGEST_SIZE);
--
--	/* sensitive */
--	tpm_buf_append_u16(&buf, 4 + TPM_DIGEST_SIZE + payload->key_len + 1);
--
--	tpm_buf_append_u16(&buf, TPM_DIGEST_SIZE);
--	tpm_buf_append(&buf, options->blobauth, TPM_DIGEST_SIZE);
--	tpm_buf_append_u16(&buf, payload->key_len + 1);
--	tpm_buf_append(&buf, payload->key, payload->key_len);
--	tpm_buf_append_u8(&buf, payload->migratable);
--
--	/* public */
--	tpm_buf_append_u16(&buf, 14 + options->policydigest_len);
--	tpm_buf_append_u16(&buf, TPM_ALG_KEYEDHASH);
--	tpm_buf_append_u16(&buf, hash);
--
--	/* policy */
--	if (options->policydigest_len) {
--		tpm_buf_append_u32(&buf, 0);
--		tpm_buf_append_u16(&buf, options->policydigest_len);
--		tpm_buf_append(&buf, options->policydigest,
--			       options->policydigest_len);
--	} else {
--		tpm_buf_append_u32(&buf, TPM2_OA_USER_WITH_AUTH);
--		tpm_buf_append_u16(&buf, 0);
--	}
--
--	/* public parameters */
--	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
--	tpm_buf_append_u16(&buf, 0);
--
--	/* outside info */
--	tpm_buf_append_u16(&buf, 0);
--
--	/* creation PCR */
--	tpm_buf_append_u32(&buf, 0);
--
--	if (buf.flags & TPM_BUF_OVERFLOW) {
--		rc = -E2BIG;
--		goto out;
--	}
--
--	rc = tpm_transmit_cmd(chip, &buf, 4, "sealing data");
--	if (rc)
--		goto out;
--
--	blob_len = be32_to_cpup((__be32 *) &buf.data[TPM_HEADER_SIZE]);
--	if (blob_len > MAX_BLOB_SIZE) {
--		rc = -E2BIG;
--		goto out;
--	}
--	if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 4 + blob_len) {
--		rc = -EFAULT;
--		goto out;
--	}
--
--	memcpy(payload->blob, &buf.data[TPM_HEADER_SIZE + 4], blob_len);
--	payload->blob_len = blob_len;
--
--out:
--	tpm_buf_destroy(&buf);
--
--	if (rc > 0) {
--		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
--			rc = -EINVAL;
--		else
--			rc = -EPERM;
--	}
--
--	return rc;
--}
--
--/**
-- * tpm2_load_cmd() - execute a TPM2_Load command
-- *
-- * @chip: TPM chip to use
-- * @payload: the key data in clear and encrypted form
-- * @options: authentication values and other options
-- * @blob_handle: returned blob handle
-- *
-- * Return: 0 on success.
-- *        -E2BIG on wrong payload size.
-- *        -EPERM on tpm error status.
-- *        < 0 error from tpm_transmit_cmd.
-- */
--static int tpm2_load_cmd(struct tpm_chip *chip,
--			 struct trusted_key_payload *payload,
--			 struct trusted_key_options *options,
--			 u32 *blob_handle)
--{
--	struct tpm_buf buf;
--	unsigned int private_len;
--	unsigned int public_len;
--	unsigned int blob_len;
--	int rc;
--
--	private_len = be16_to_cpup((__be16 *) &payload->blob[0]);
--	if (private_len > (payload->blob_len - 2))
--		return -E2BIG;
--
--	public_len = be16_to_cpup((__be16 *) &payload->blob[2 + private_len]);
--	blob_len = private_len + public_len + 4;
--	if (blob_len > payload->blob_len)
--		return -E2BIG;
--
--	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
--	if (rc)
--		return rc;
--
--	tpm_buf_append_u32(&buf, options->keyhandle);
--	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
--			     NULL /* nonce */, 0,
--			     0 /* session_attributes */,
--			     options->keyauth /* hmac */,
--			     TPM_DIGEST_SIZE);
--
--	tpm_buf_append(&buf, payload->blob, blob_len);
--
--	if (buf.flags & TPM_BUF_OVERFLOW) {
--		rc = -E2BIG;
--		goto out;
--	}
--
--	rc = tpm_transmit_cmd(chip, &buf, 4, "loading blob");
--	if (!rc)
--		*blob_handle = be32_to_cpup(
--			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
--
--out:
--	tpm_buf_destroy(&buf);
--
--	if (rc > 0)
--		rc = -EPERM;
--
--	return rc;
--}
--
--/**
-- * tpm2_unseal_cmd() - execute a TPM2_Unload command
-- *
-- * @chip: TPM chip to use
-- * @payload: the key data in clear and encrypted form
-- * @options: authentication values and other options
-- * @blob_handle: blob handle
-- *
-- * Return: 0 on success
-- *         -EPERM on tpm error status
-- *         < 0 error from tpm_transmit_cmd
-- */
--static int tpm2_unseal_cmd(struct tpm_chip *chip,
--			   struct trusted_key_payload *payload,
--			   struct trusted_key_options *options,
--			   u32 blob_handle)
--{
--	struct tpm_buf buf;
--	u16 data_len;
--	u8 *data;
--	int rc;
--
--	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
--	if (rc)
--		return rc;
--
--	tpm_buf_append_u32(&buf, blob_handle);
--	tpm2_buf_append_auth(&buf,
--			     options->policyhandle ?
--			     options->policyhandle : TPM2_RS_PW,
--			     NULL /* nonce */, 0,
--			     TPM2_SA_CONTINUE_SESSION,
--			     options->blobauth /* hmac */,
--			     TPM_DIGEST_SIZE);
--
--	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
--	if (rc > 0)
--		rc = -EPERM;
--
--	if (!rc) {
--		data_len = be16_to_cpup(
--			(__be16 *) &buf.data[TPM_HEADER_SIZE + 4]);
--		if (data_len < MIN_KEY_SIZE ||  data_len > MAX_KEY_SIZE + 1) {
--			rc = -EFAULT;
--			goto out;
--		}
--
--		if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 6 + data_len) {
--			rc = -EFAULT;
--			goto out;
--		}
--		data = &buf.data[TPM_HEADER_SIZE + 6];
--
--		memcpy(payload->key, data, data_len - 1);
--		payload->key_len = data_len - 1;
--		payload->migratable = data[data_len - 1];
--	}
--
--out:
--	tpm_buf_destroy(&buf);
--	return rc;
--}
--
--/**
-- * tpm2_unseal_trusted() - unseal the payload of a trusted key
-- *
-- * @chip: TPM chip to use
-- * @payload: the key data in clear and encrypted form
-- * @options: authentication values and other options
-- *
-- * Return: Same as with tpm_transmit_cmd.
-- */
--int tpm2_unseal_trusted(struct tpm_chip *chip,
--			struct trusted_key_payload *payload,
--			struct trusted_key_options *options)
--{
--	u32 blob_handle;
--	int rc;
--
--	rc = tpm2_load_cmd(chip, payload, options, &blob_handle);
--	if (rc)
--		return rc;
--
--	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
--	tpm2_flush_context(chip, blob_handle);
--	return rc;
--}
-+EXPORT_SYMBOL_GPL(tpm2_flush_context);
- 
- struct tpm2_get_cap_out {
- 	u8 more_data;
-diff --git a/include/keys/trusted_tpm.h b/include/keys/trusted_tpm.h
-index 7b9d7b4..6f6cd3d 100644
---- a/include/keys/trusted_tpm.h
-+++ b/include/keys/trusted_tpm.h
-@@ -40,6 +40,13 @@ int TSS_checkhmac1(unsigned char *buffer,
- int trusted_tpm_send(unsigned char *cmd, size_t buflen);
- int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce);
- 
-+int tpm_seal_trusted(struct tpm_chip *chip,
-+		     struct trusted_key_payload *payload,
-+		     struct trusted_key_options *options);
-+int tpm_unseal_trusted(struct tpm_chip *chip,
-+		       struct trusted_key_payload *payload,
-+		       struct trusted_key_options *options);
-+
- #define TPM_DEBUG 0
- 
- #if TPM_DEBUG
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 130c167..895179f 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -294,6 +294,19 @@ struct tpm_buf {
- 	u8 *data;
- };
- 
-+enum tpm2_object_attributes {
-+	TPM2_OA_USER_WITH_AUTH		= BIT(6),
-+};
-+
-+enum tpm2_session_attributes {
-+	TPM2_SA_CONTINUE_SESSION	= BIT(0),
-+};
-+
-+struct tpm2_hash {
-+	unsigned int crypto_id;
-+	unsigned int tpm_id;
-+};
-+
- static inline void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
- {
- 	struct tpm_header *head = (struct tpm_header *)buf->data;
-@@ -375,6 +388,11 @@ static inline void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value)
- 	tpm_buf_append(buf, (u8 *) &value2, 4);
+ 	void (*d_instantiate)(struct dentry *dentry, struct inode *inode);
+@@ -1952,6 +1959,7 @@ struct security_hook_heads {
+ 	struct hlist_head sem_associate;
+ 	struct hlist_head sem_semctl;
+ 	struct hlist_head sem_semop;
++	struct hlist_head netlink_receive;
+ 	struct hlist_head netlink_send;
+ 	struct hlist_head d_instantiate;
+ 	struct hlist_head getprocattr;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5f7441abbf42..46b5af6de59e 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -382,6 +382,7 @@ int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
+ 			 char **value);
+ int security_setprocattr(const char *lsm, const char *name, void *value,
+ 			 size_t size);
++int security_netlink_receive(struct sock *sk, struct sk_buff *skb);
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+ int security_ismaclabel(const char *name);
+ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+@@ -1162,6 +1163,11 @@ static inline int security_setprocattr(const char *lsm, char *name,
+ 	return -EINVAL;
  }
  
-+static inline u32 tpm2_rc_value(u32 rc)
++static inline int security_netlink_receive(struct sock *sk, struct sk_buff *skb)
 +{
-+	return (rc & BIT(7)) ? rc & 0xff : rc;
++	return 0;
 +}
 +
- #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+ static inline int security_netlink_send(struct sock *sk, struct sk_buff *skb)
+ {
+ 	return 0;
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 1ee6460f8275..7d69fcb8d22e 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -1650,8 +1650,16 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb,
+ 		goto nla_put_failure;
  
- extern int tpm_is_tpm2(struct tpm_chip *chip);
-@@ -384,13 +402,12 @@ extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 			  struct tpm_digest *digests);
- extern int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen);
- extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
--extern int tpm_seal_trusted(struct tpm_chip *chip,
--			    struct trusted_key_payload *payload,
--			    struct trusted_key_options *options);
--extern int tpm_unseal_trusted(struct tpm_chip *chip,
--			      struct trusted_key_payload *payload,
--			      struct trusted_key_options *options);
- extern struct tpm_chip *tpm_default_chip(void);
-+extern struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
-+extern void tpm_put_ops(struct tpm_chip *chip);
-+extern ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
-+				size_t min_rsp_body_length, const char *desc);
-+extern void tpm2_flush_context(struct tpm_chip *chip, u32 handle);
- #else
- static inline int tpm_is_tpm2(struct tpm_chip *chip)
- {
-@@ -418,21 +435,30 @@ static inline int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max)
- 	return -ENODEV;
- }
- 
--static inline int tpm_seal_trusted(struct tpm_chip *chip,
--				   struct trusted_key_payload *payload,
--				   struct trusted_key_options *options)
-+static inline struct tpm_chip *tpm_default_chip(void)
- {
--	return -ENODEV;
-+	return NULL;
- }
--static inline int tpm_unseal_trusted(struct tpm_chip *chip,
--				     struct trusted_key_payload *payload,
--				     struct trusted_key_options *options)
+ 	if (dev->addr_len) {
+-		if (nla_put(skb, IFLA_ADDRESS, dev->addr_len, dev->dev_addr) ||
+-		    nla_put(skb, IFLA_BROADCAST, dev->addr_len, dev->broadcast))
++		if (skb->sk && security_netlink_receive(skb->sk, skb)) {
++			if (!nla_reserve(skb, IFLA_ADDRESS, dev->addr_len))
++				goto nla_put_failure;
 +
-+static inline struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip)
-+{
-+	return NULL;
-+}
-+
-+static inline void tpm_put_ops(struct tpm_chip *chip)
-+{
-+}
-+
-+static inline ssize_t tpm_transmit_cmd(struct tpm_chip *chip,
-+				       struct tpm_buf *buf,
-+				       size_t min_rsp_body_length,
-+				       const char *desc)
- {
- 	return -ENODEV;
- }
--static inline struct tpm_chip *tpm_default_chip(void)
-+
-+static inline void tpm2_flush_context(struct tpm_chip *chip, u32 handle)
- {
--	return NULL;
- }
- #endif
- #endif
-diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
-index 1a24680..7b73ceb 100644
---- a/security/keys/trusted-keys/Makefile
-+++ b/security/keys/trusted-keys/Makefile
-@@ -5,3 +5,4 @@
- 
- obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
- trusted-y += trusted_tpm1.o
-+trusted-y += trusted_tpm2.o
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-new file mode 100644
-index 0000000..98892ed7
---- /dev/null
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -0,0 +1,378 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2004 IBM Corporation
-+ * Copyright (C) 2014 Intel Corporation
-+ *
-+ * Authors:
-+ * Leendert van Doorn <leendert@watson.ibm.com>
-+ * Dave Safford <safford@watson.ibm.com>
-+ * Reiner Sailer <sailer@watson.ibm.com>
-+ * Kylene Hall <kjhall@us.ibm.com>
-+ *
-+ * Maintained by: <tpmdd-devel@lists.sourceforge.net>
-+ *
-+ * Trusted Keys code for TCG/TCPA TPM2 (trusted platform module).
-+ */
-+
-+#include <linux/string.h>
-+#include <linux/err.h>
-+#include <linux/tpm.h>
-+#include <linux/tpm_command.h>
-+
-+#include <keys/trusted-type.h>
-+#include <keys/trusted_tpm.h>
-+
-+static struct tpm2_hash tpm2_hash_map[] = {
-+	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
-+	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
-+	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
-+	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
-+	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
-+};
-+
-+/**
-+ * tpm_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
-+ *
-+ * @buf: an allocated tpm_buf instance
-+ * @session_handle: session handle
-+ * @nonce: the session nonce, may be NULL if not used
-+ * @nonce_len: the session nonce length, may be 0 if not used
-+ * @attributes: the session attributes
-+ * @hmac: the session HMAC or password, may be NULL if not used
-+ * @hmac_len: the session HMAC or password length, maybe 0 if not used
-+ */
-+static void tpm2_buf_append_auth(struct tpm_buf *buf, u32 session_handle,
-+				 const u8 *nonce, u16 nonce_len,
-+				 u8 attributes,
-+				 const u8 *hmac, u16 hmac_len)
-+{
-+	tpm_buf_append_u32(buf, 9 + nonce_len + hmac_len);
-+	tpm_buf_append_u32(buf, session_handle);
-+	tpm_buf_append_u16(buf, nonce_len);
-+
-+	if (nonce && nonce_len)
-+		tpm_buf_append(buf, nonce, nonce_len);
-+
-+	tpm_buf_append_u8(buf, attributes);
-+	tpm_buf_append_u16(buf, hmac_len);
-+
-+	if (hmac && hmac_len)
-+		tpm_buf_append(buf, hmac, hmac_len);
-+}
-+
-+/**
-+ * tpm2_seal_trusted() - seal the payload of a trusted key
-+ *
-+ * @chip: TPM chip to use
-+ * @payload: the key data in clear and encrypted form
-+ * @options: authentication values and other options
-+ *
-+ * Return: < 0 on error and 0 on success.
-+ */
-+int tpm2_seal_trusted(struct tpm_chip *chip,
-+		      struct trusted_key_payload *payload,
-+		      struct trusted_key_options *options)
-+{
-+	unsigned int blob_len;
-+	struct tpm_buf buf;
-+	u32 hash;
-+	int i;
-+	int rc;
-+
-+	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
-+		if (options->hash == tpm2_hash_map[i].crypto_id) {
-+			hash = tpm2_hash_map[i].tpm_id;
-+			break;
++		} else {
++			if (nla_put(skb, IFLA_ADDRESS, dev->addr_len,
++				    dev->dev_addr))
++				goto nla_put_failure;
 +		}
-+	}
-+
-+	if (i == ARRAY_SIZE(tpm2_hash_map))
-+		return -EINVAL;
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
-+	if (rc)
-+		return rc;
-+
-+	tpm_buf_append_u32(&buf, options->keyhandle);
-+	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
-+			     NULL /* nonce */, 0,
-+			     0 /* session_attributes */,
-+			     options->keyauth /* hmac */,
-+			     TPM_DIGEST_SIZE);
-+
-+	/* sensitive */
-+	tpm_buf_append_u16(&buf, 4 + TPM_DIGEST_SIZE + payload->key_len + 1);
-+
-+	tpm_buf_append_u16(&buf, TPM_DIGEST_SIZE);
-+	tpm_buf_append(&buf, options->blobauth, TPM_DIGEST_SIZE);
-+	tpm_buf_append_u16(&buf, payload->key_len + 1);
-+	tpm_buf_append(&buf, payload->key, payload->key_len);
-+	tpm_buf_append_u8(&buf, payload->migratable);
-+
-+	/* public */
-+	tpm_buf_append_u16(&buf, 14 + options->policydigest_len);
-+	tpm_buf_append_u16(&buf, TPM_ALG_KEYEDHASH);
-+	tpm_buf_append_u16(&buf, hash);
-+
-+	/* policy */
-+	if (options->policydigest_len) {
-+		tpm_buf_append_u32(&buf, 0);
-+		tpm_buf_append_u16(&buf, options->policydigest_len);
-+		tpm_buf_append(&buf, options->policydigest,
-+			       options->policydigest_len);
-+	} else {
-+		tpm_buf_append_u32(&buf, TPM2_OA_USER_WITH_AUTH);
-+		tpm_buf_append_u16(&buf, 0);
-+	}
-+
-+	/* public parameters */
-+	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
-+	tpm_buf_append_u16(&buf, 0);
-+
-+	/* outside info */
-+	tpm_buf_append_u16(&buf, 0);
-+
-+	/* creation PCR */
-+	tpm_buf_append_u32(&buf, 0);
-+
-+	if (buf.flags & TPM_BUF_OVERFLOW) {
-+		rc = -E2BIG;
-+		goto out;
-+	}
-+
-+	rc = tpm_transmit_cmd(chip, &buf, 4, "sealing data");
-+	if (rc)
-+		goto out;
-+
-+	blob_len = be32_to_cpup((__be32 *) &buf.data[TPM_HEADER_SIZE]);
-+	if (blob_len > MAX_BLOB_SIZE) {
-+		rc = -E2BIG;
-+		goto out;
-+	}
-+	if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 4 + blob_len) {
-+		rc = -EFAULT;
-+		goto out;
-+	}
-+
-+	memcpy(payload->blob, &buf.data[TPM_HEADER_SIZE + 4], blob_len);
-+	payload->blob_len = blob_len;
-+
-+out:
-+	tpm_buf_destroy(&buf);
-+
-+	if (rc > 0) {
-+		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
-+			rc = -EINVAL;
-+		else
-+			rc = -EPERM;
-+	}
-+
-+	return rc;
-+}
-+
-+/**
-+ * tpm_seal_trusted() - seal a trusted key payload
-+ * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-+ * @options:	authentication values and other options
-+ * @payload:	the key data in clear and encrypted form
-+ *
-+ * Note: only TPM 2.0 chip are supported. TPM 1.x implementation is located in
-+ * the keyring subsystem.
-+ *
-+ * Return: same as with tpm_transmit_cmd()
-+ */
-+int tpm_seal_trusted(struct tpm_chip *chip, struct trusted_key_payload *payload,
-+		     struct trusted_key_options *options)
++		if (nla_put(skb, IFLA_BROADCAST, dev->addr_len, dev->broadcast))
+ 			goto nla_put_failure;
+ 	}
+ 
+diff --git a/security/security.c b/security/security.c
+index 250ee2d76406..35c5929921b2 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1861,6 +1861,11 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
+ 	return -EINVAL;
+ }
+ 
++int security_netlink_receive(struct sock *sk, struct sk_buff *skb)
 +{
-+	int rc;
-+
-+	chip = tpm_find_get_ops(chip);
-+	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
-+		return -ENODEV;
-+
-+	rc = tpm2_seal_trusted(chip, payload, options);
-+
-+	tpm_put_ops(chip);
-+	return rc;
++	return call_int_hook(netlink_receive, 0, sk, skb);
 +}
 +
-+/**
-+ * tpm2_load_cmd() - execute a TPM2_Load command
-+ *
-+ * @chip: TPM chip to use
-+ * @payload: the key data in clear and encrypted form
-+ * @options: authentication values and other options
-+ * @blob_handle: returned blob handle
-+ *
-+ * Return: 0 on success.
-+ *        -E2BIG on wrong payload size.
-+ *        -EPERM on tpm error status.
-+ *        < 0 error from tpm_transmit_cmd.
-+ */
-+static int tpm2_load_cmd(struct tpm_chip *chip,
-+			 struct trusted_key_payload *payload,
-+			 struct trusted_key_options *options,
-+			 u32 *blob_handle)
-+{
-+	struct tpm_buf buf;
-+	unsigned int private_len;
-+	unsigned int public_len;
-+	unsigned int blob_len;
-+	int rc;
-+
-+	private_len = be16_to_cpup((__be16 *) &payload->blob[0]);
-+	if (private_len > (payload->blob_len - 2))
-+		return -E2BIG;
-+
-+	public_len = be16_to_cpup((__be16 *) &payload->blob[2 + private_len]);
-+	blob_len = private_len + public_len + 4;
-+	if (blob_len > payload->blob_len)
-+		return -E2BIG;
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
-+	if (rc)
-+		return rc;
-+
-+	tpm_buf_append_u32(&buf, options->keyhandle);
-+	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
-+			     NULL /* nonce */, 0,
-+			     0 /* session_attributes */,
-+			     options->keyauth /* hmac */,
-+			     TPM_DIGEST_SIZE);
-+
-+	tpm_buf_append(&buf, payload->blob, blob_len);
-+
-+	if (buf.flags & TPM_BUF_OVERFLOW) {
-+		rc = -E2BIG;
-+		goto out;
-+	}
-+
-+	rc = tpm_transmit_cmd(chip, &buf, 4, "loading blob");
-+	if (!rc)
-+		*blob_handle = be32_to_cpup(
-+			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
-+
-+out:
-+	tpm_buf_destroy(&buf);
-+
-+	if (rc > 0)
-+		rc = -EPERM;
-+
-+	return rc;
-+}
-+
-+/**
-+ * tpm2_unseal_cmd() - execute a TPM2_Unload command
-+ *
-+ * @chip: TPM chip to use
-+ * @payload: the key data in clear and encrypted form
-+ * @options: authentication values and other options
-+ * @blob_handle: blob handle
-+ *
-+ * Return: 0 on success
-+ *         -EPERM on tpm error status
-+ *         < 0 error from tpm_transmit_cmd
-+ */
-+static int tpm2_unseal_cmd(struct tpm_chip *chip,
-+			   struct trusted_key_payload *payload,
-+			   struct trusted_key_options *options,
-+			   u32 blob_handle)
-+{
-+	struct tpm_buf buf;
-+	u16 data_len;
-+	u8 *data;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
-+	if (rc)
-+		return rc;
-+
-+	tpm_buf_append_u32(&buf, blob_handle);
-+	tpm2_buf_append_auth(&buf,
-+			     options->policyhandle ?
-+			     options->policyhandle : TPM2_RS_PW,
-+			     NULL /* nonce */, 0,
-+			     TPM2_SA_CONTINUE_SESSION,
-+			     options->blobauth /* hmac */,
-+			     TPM_DIGEST_SIZE);
-+
-+	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
-+	if (rc > 0)
-+		rc = -EPERM;
-+
-+	if (!rc) {
-+		data_len = be16_to_cpup(
-+			(__be16 *) &buf.data[TPM_HEADER_SIZE + 4]);
-+		if (data_len < MIN_KEY_SIZE ||  data_len > MAX_KEY_SIZE + 1) {
-+			rc = -EFAULT;
-+			goto out;
-+		}
-+
-+		if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 6 + data_len) {
-+			rc = -EFAULT;
-+			goto out;
-+		}
-+		data = &buf.data[TPM_HEADER_SIZE + 6];
-+
-+		memcpy(payload->key, data, data_len - 1);
-+		payload->key_len = data_len - 1;
-+		payload->migratable = data[data_len - 1];
-+	}
-+
-+out:
-+	tpm_buf_destroy(&buf);
-+	return rc;
-+}
-+
-+/**
-+ * tpm2_unseal_trusted() - unseal the payload of a trusted key
-+ *
-+ * @chip: TPM chip to use
-+ * @payload: the key data in clear and encrypted form
-+ * @options: authentication values and other options
-+ *
-+ * Return: Same as with tpm_transmit_cmd.
-+ */
-+int tpm2_unseal_trusted(struct tpm_chip *chip,
-+			struct trusted_key_payload *payload,
-+			struct trusted_key_options *options)
-+{
-+	u32 blob_handle;
-+	int rc;
-+
-+	rc = tpm2_load_cmd(chip, payload, options, &blob_handle);
-+	if (rc)
-+		return rc;
-+
-+	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
-+	tpm2_flush_context(chip, blob_handle);
-+	return rc;
-+}
-+
-+/**
-+ * tpm_unseal_trusted() - unseal a trusted key
-+ * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-+ * @options:	authentication values and other options
-+ * @payload:	the key data in clear and encrypted form
-+ *
-+ * Note: only TPM 2.0 chip are supported. TPM 1.x implementation is located in
-+ * the keyring subsystem.
-+ *
-+ * Return: same as with tpm_transmit_cmd()
-+ */
-+int tpm_unseal_trusted(struct tpm_chip *chip,
-+		       struct trusted_key_payload *payload,
-+		       struct trusted_key_options *options)
-+{
-+	int rc;
-+
-+	chip = tpm_find_get_ops(chip);
-+	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
-+		return -ENODEV;
-+
-+	rc = tpm2_unseal_trusted(chip, payload, options);
-+
-+	tpm_put_ops(chip);
-+
-+	return rc;
-+}
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb)
+ {
+ 	return call_int_hook(netlink_send, 0, sk, skb);
 -- 
-2.7.4
+2.23.0.rc1.153.gdeed80330f-goog
 
