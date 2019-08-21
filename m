@@ -2,223 +2,142 @@ Return-Path: <SRS0=EETi=WR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29AE5C41514
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 14:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE85CC41514
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 15:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F032B22D6D
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 14:52:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jhz/MUKY"
+	by mail.kernel.org (Postfix) with ESMTP id 9E38622DD3
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 15:43:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbfHUOwY (ORCPT
+        id S1728445AbfHUPng (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Aug 2019 10:52:24 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44812 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbfHUOwY (ORCPT
+        Wed, 21 Aug 2019 11:43:36 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35406 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727399AbfHUPng (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Aug 2019 10:52:24 -0400
-Received: by mail-lf1-f65.google.com with SMTP id v16so1995252lfg.11
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2019 07:52:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m8OGikSaixqjK3WQyg4Bx+X3Tn+Ncmz++j77OuBZpB8=;
-        b=jhz/MUKY7uKeRcjzaFm99i3aj30dsqg1xL+hv0uZ9ik82O9Fu4SHAUT8Royrnr28+2
-         kFhhKdUJ5rGbTWAfNWG4Q37IsvLP/njEvRWqSXlor8/nSuE/NF5nNHgwYva03MZU+7AQ
-         CGDlCmKtdV1LJrWz813dxmiWnZJFimjzhQ/xdJfA7bzTZnAAqx9Rvmx8I6rQMFfjtDl/
-         BDsyplCMvRevY760csFUWAr511mzEj3IEDks1q9QzM5mS1YuZ8k0rq4r26vMGHrMTQyb
-         79qUcV+YV+xIIjRusPGcfRZJwVqRF9E+mmDUTkoD93L9WKU9tyffDGGN9V77Jw/DeP1e
-         ewiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m8OGikSaixqjK3WQyg4Bx+X3Tn+Ncmz++j77OuBZpB8=;
-        b=T70dlDjd8u6UnXRiDu28PFd9ATY0chTTHDkSHWeOKUfP9f1lwTyFGjZwxGcx6eBZ16
-         K/UQRj1sPGMes/4F2nFP+6rklNW4eSCcQfIL2yZI66bmxcWU8DJYBf3qc8Lpfi/r6Dt4
-         2EYYtW+7leYjApfld7EbOp/cIt3oRtfSWjCAbyFBFvSz1cBP/jf2mejOFxU6UcfBUNXM
-         cK1iFFYtdDH6xx2QqWE4XluGv4DpUsqlIN90Z6mFYmkuQXQkdiFu0WuybIcPi48Gu6m3
-         UcpSX+hyg+JtoMs2+U3jafzGe4e++/BKMh44892Ns6/2aX+4tTVCI5mIkeOhwVoYujTl
-         m7zA==
-X-Gm-Message-State: APjAAAWhz/cU3bEkimwURSbgoDag2y/SIf7Zrxqzaf6NA+UOzORD6a0p
-        WeXP8Dhk+ebuLZCyFRIp6rN5S5vMVKxTOGbSMkcBiw==
-X-Google-Smtp-Source: APXvYqwXkjJ71QGo/C5SHs/4Wb4AWSDFNiG2/fXJvqweCXxS5V0iugevJZ2A1evWvFhNO00DNUuCfVrPvQzzfQ0s+GA=
-X-Received: by 2002:ac2:545b:: with SMTP id d27mr19174978lfn.36.1566399140675;
- Wed, 21 Aug 2019 07:52:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190821134547.96929-1-jeffv@google.com> <e8f9e1ae-f9e4-987f-eb76-ebde8af4f4db@schaufler-ca.com>
-In-Reply-To: <e8f9e1ae-f9e4-987f-eb76-ebde8af4f4db@schaufler-ca.com>
-From:   Jeffrey Vander Stoep <jeffv@google.com>
-Date:   Wed, 21 Aug 2019 16:52:09 +0200
-Message-ID: <CABXk95DnL5EbGzY7UF2VJ0Lo+bavHPVA-1fXN_xUyfS5WQXCuQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] rtnetlink: gate MAC address with an LSM hook
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     netdev@vger.kernel.org,
+        Wed, 21 Aug 2019 11:43:36 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7LFh3Rs142925
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2019 11:43:34 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uh87m23xv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2019 11:43:34 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 21 Aug 2019 16:43:32 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 21 Aug 2019 16:43:29 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7LFhSk936306986
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Aug 2019 15:43:28 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 89B9752050;
+        Wed, 21 Aug 2019 15:43:28 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.219.114])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 2390052054;
+        Wed, 21 Aug 2019 15:43:24 +0000 (GMT)
+Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, linux-nfs@vger.kernel.org,
+        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
         LSM List <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Date:   Wed, 21 Aug 2019 11:43:23 -0400
+In-Reply-To: <23498.1565962602@warthog.procyon.org.uk>
+References: <1562814435.4014.11.camel@linux.ibm.com>
+         <28477.1562362239@warthog.procyon.org.uk>
+         <CAHk-=wjxoeMJfeBahnWH=9zShKp2bsVy527vo3_y8HfOdhwAAw@mail.gmail.com>
+         <20190710194620.GA83443@gmail.com> <20190710201552.GB83443@gmail.com>
+         <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com>
+         <23498.1565962602@warthog.procyon.org.uk>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19082115-0028-0000-0000-0000039227A6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19082115-0029-0000-0000-000024544FC7
+Message-Id: <1566402203.5162.12.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-21_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908210163
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 21, 2019 at 4:34 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 8/21/2019 6:45 AM, Jeff Vander Stoep wrote:
-> > MAC addresses are often considered sensitive because they are
-> > usually unique and can be used to identify/track a device or
-> > user [1].
-> >
-> > The MAC address is accessible via the RTM_NEWLINK message type of a
-> > netlink route socket[2]. Ideally we could grant/deny access to the
-> > MAC address on a case-by-case basis without blocking the entire
-> > RTM_NEWLINK message type which contains a lot of other useful
-> > information. This can be achieved using a new LSM hook on the netlink
-> > message receive path. Using this new hook, individual LSMs can select
-> > which processes are allowed access to the real MAC, otherwise a
-> > default value of zeros is returned. Offloading access control
-> > decisions like this to an LSM is convenient because it preserves the
-> > status quo for most Linux users while giving the various LSMs
-> > flexibility to make finer grained decisions on access to sensitive
-> > data based on policy.
->
-> Is the MAC address the only bit of skb data that you might
-> want to control with MAC? ( Sorry, couldn't help it ;) )
-> Just musing, but might it make more sense to leave the core
-> code unmodified and clear the MAC address in the skb inside
-> the LSM? If you did it that way you could address any other
-> data you want to control using the same hook. I would hate
-> to see separate LSM hooks for each of several bits of data.
-> On the other hand, I wouldn't want you to violate any layering
-> policies in the networking code. That would be wrong.
+On Fri, 2019-08-16 at 14:36 +0100, David Howells wrote:
+> Mimi Zohar <zohar@linux.ibm.com> wrote:
+> 
+> > Sorry for the delay.  An exception is needed for loading builtin keys
+> > "KEY_ALLOC_BUILT_IN" onto a keyring that is not writable by userspace.
+> >  The following works, but probably is not how David would handle the
+> > exception.
+> 
+> I think the attached is the right way to fix it.
+> 
+> load_system_certificate_list(), for example, when it creates keys does this:
+> 
+> 	key = key_create_or_update(make_key_ref(builtin_trusted_keys, 1),
+> 
+> marking the keyring as "possessed" in make_key_ref().  This allows the
+> possessor permits to be used - and that's the *only* way to use them for
+> internal keyrings like this because you can't link to them and you can't join
+> them.
 
-I considered that approach, but having the LSM modifying the skb
-like that without the networking code's knowledge did seem like a layering
-violation, and fragile. It's also different than how LSM hooks typically
-operate - generally they return decisions and the calling code is
-responsible for taking appropriate action.
+In addition, as long as additional keys still can't be added or
+existing keys updated by userspace on the .builtin_trusted_keys, then
+this is fine.
 
-I'm currently only interested in the MAC, but this approach can be extended
-to other fields. The selinux patch just splits up the read permission into two
-levels, privileged and unprivileged which is consistent with how netlink
-audit sockets are handled.
+> 
+> David
+> ---
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 57be78b5fdfc..1f8f26f7bb05 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -99,7 +99,7 @@ static __init int system_trusted_keyring_init(void)
+>  	builtin_trusted_keys =
+>  		keyring_alloc(".builtin_trusted_keys",
+>  			      KUIDT_INIT(0), KGIDT_INIT(0), current_cred(),
+> -			      &internal_key_acl, KEY_ALLOC_NOT_IN_QUOTA,
+> +			      &internal_keyring_acl, KEY_ALLOC_NOT_IN_QUOTA,
+>  			      NULL, NULL);
+>  	if (IS_ERR(builtin_trusted_keys))
+>  		panic("Can't allocate builtin trusted keyring\n");
+> diff --git a/security/keys/permission.c b/security/keys/permission.c
+> index fc84d9ef6239..86efd3eaf083 100644
+> --- a/security/keys/permission.c
+> +++ b/security/keys/permission.c
+> @@ -47,7 +47,7 @@ struct key_acl internal_keyring_acl = {
+>  	.usage	= REFCOUNT_INIT(1),
+>  	.nr_ace	= 2,
+>  	.aces = {
+> -		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH),
+> +		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH | KEY_ACE_WRITE),
+>  		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ | KEY_ACE_SEARCH),
+>  	}
+>  };
 
+Thanks, David.  The builtin keys are now being loaded.
 
+Mimi
 
->
-> >
-> > [1] https://adamdrake.com/mac-addresses-udids-and-privacy.html
-> > [2] Other access vectors like ioctl(SIOCGIFHWADDR) are already covered
-> > by existing LSM hooks.
-> >
-> > Signed-off-by: Jeff Vander Stoep <jeffv@google.com>
-> > ---
-> >  include/linux/lsm_hooks.h |  8 ++++++++
-> >  include/linux/security.h  |  6 ++++++
-> >  net/core/rtnetlink.c      | 12 ++++++++++--
-> >  security/security.c       |  5 +++++
-> >  4 files changed, 29 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index df1318d85f7d..dfcb2e11ff43 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -728,6 +728,12 @@
-> >   *
-> >   * Security hooks for Netlink messaging.
-> >   *
-> > + * @netlink_receive
-> > + *   Check permissions on a netlink message field before populating it.
-> > + *   @sk associated sock of task receiving the message.
-> > + *   @skb contains the sk_buff structure for the netlink message.
-> > + *   Return 0 if the data should be included in the message.
-> > + *
-> >   * @netlink_send:
-> >   *   Save security information for a netlink message so that permission
-> >   *   checking can be performed when the message is processed.  The security
-> > @@ -1673,6 +1679,7 @@ union security_list_options {
-> >       int (*sem_semop)(struct kern_ipc_perm *perm, struct sembuf *sops,
-> >                               unsigned nsops, int alter);
-> >
-> > +     int (*netlink_receive)(struct sock *sk, struct sk_buff *skb);
-> >       int (*netlink_send)(struct sock *sk, struct sk_buff *skb);
-> >
-> >       void (*d_instantiate)(struct dentry *dentry, struct inode *inode);
-> > @@ -1952,6 +1959,7 @@ struct security_hook_heads {
-> >       struct hlist_head sem_associate;
-> >       struct hlist_head sem_semctl;
-> >       struct hlist_head sem_semop;
-> > +     struct hlist_head netlink_receive;
-> >       struct hlist_head netlink_send;
-> >       struct hlist_head d_instantiate;
-> >       struct hlist_head getprocattr;
-> > diff --git a/include/linux/security.h b/include/linux/security.h
-> > index 5f7441abbf42..46b5af6de59e 100644
-> > --- a/include/linux/security.h
-> > +++ b/include/linux/security.h
-> > @@ -382,6 +382,7 @@ int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-> >                        char **value);
-> >  int security_setprocattr(const char *lsm, const char *name, void *value,
-> >                        size_t size);
-> > +int security_netlink_receive(struct sock *sk, struct sk_buff *skb);
-> >  int security_netlink_send(struct sock *sk, struct sk_buff *skb);
-> >  int security_ismaclabel(const char *name);
-> >  int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
-> > @@ -1162,6 +1163,11 @@ static inline int security_setprocattr(const char *lsm, char *name,
-> >       return -EINVAL;
-> >  }
-> >
-> > +static inline int security_netlink_receive(struct sock *sk, struct sk_buff *skb)
-> > +{
-> > +     return 0;
-> > +}
-> > +
-> >  static inline int security_netlink_send(struct sock *sk, struct sk_buff *skb)
-> >  {
-> >       return 0;
-> > diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-> > index 1ee6460f8275..7d69fcb8d22e 100644
-> > --- a/net/core/rtnetlink.c
-> > +++ b/net/core/rtnetlink.c
-> > @@ -1650,8 +1650,16 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb,
-> >               goto nla_put_failure;
-> >
-> >       if (dev->addr_len) {
-> > -             if (nla_put(skb, IFLA_ADDRESS, dev->addr_len, dev->dev_addr) ||
-> > -                 nla_put(skb, IFLA_BROADCAST, dev->addr_len, dev->broadcast))
-> > +             if (skb->sk && security_netlink_receive(skb->sk, skb)) {
-> > +                     if (!nla_reserve(skb, IFLA_ADDRESS, dev->addr_len))
-> > +                             goto nla_put_failure;
-> > +
-> > +             } else {
-> > +                     if (nla_put(skb, IFLA_ADDRESS, dev->addr_len,
-> > +                                 dev->dev_addr))
-> > +                             goto nla_put_failure;
-> > +             }
-> > +             if (nla_put(skb, IFLA_BROADCAST, dev->addr_len, dev->broadcast))
-> >                       goto nla_put_failure;
-> >       }
-> >
-> > diff --git a/security/security.c b/security/security.c
-> > index 250ee2d76406..35c5929921b2 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -1861,6 +1861,11 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
-> >       return -EINVAL;
-> >  }
-> >
-> > +int security_netlink_receive(struct sock *sk, struct sk_buff *skb)
-> > +{
-> > +     return call_int_hook(netlink_receive, 0, sk, skb);
-> > +}
-> > +
-> >  int security_netlink_send(struct sock *sk, struct sk_buff *skb)
-> >  {
-> >       return call_int_hook(netlink_send, 0, sk, skb);
->
