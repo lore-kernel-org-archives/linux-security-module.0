@@ -2,75 +2,77 @@ Return-Path: <SRS0=EETi=WR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBA8C3A59E
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 19:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 015E1C3A5A1
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 22:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E38C62064A
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 19:22:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C146A206DD
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Aug 2019 22:00:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Wv33EjD8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729425AbfHUTWo convert rfc822-to-8bit (ORCPT
+        id S1728190AbfHUWAX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Aug 2019 15:22:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34116 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727998AbfHUTWn (ORCPT
+        Wed, 21 Aug 2019 18:00:23 -0400
+Received: from mail-lj1-f169.google.com ([209.85.208.169]:40072 "EHLO
+        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727923AbfHUWAW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Aug 2019 15:22:43 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F0F5630833CB;
-        Wed, 21 Aug 2019 19:22:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C53C04513;
-        Wed, 21 Aug 2019 19:22:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <1566402203.5162.12.camel@linux.ibm.com>
-References: <1566402203.5162.12.camel@linux.ibm.com> <1562814435.4014.11.camel@linux.ibm.com> <28477.1562362239@warthog.procyon.org.uk> <CAHk-=wjxoeMJfeBahnWH=9zShKp2bsVy527vo3_y8HfOdhwAAw@mail.gmail.com> <20190710194620.GA83443@gmail.com> <20190710201552.GB83443@gmail.com> <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com> <23498.1565962602@warthog.procyon.org.uk>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
-        Netdev <netdev@vger.kernel.org>, linux-nfs@vger.kernel.org,
-        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
+        Wed, 21 Aug 2019 18:00:22 -0400
+Received: by mail-lj1-f169.google.com with SMTP id e27so3594245ljb.7
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2019 15:00:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=UtLPTpmziN33YG4O4Q+fjJadZXwsjUnQKgfuJCB6e30=;
+        b=Wv33EjD8K7IOFULJM+TWEQSabao5/oqiMjnkyfl+6HMstEOSL21yE53KCLaJPidc0q
+         9qQfmolCwTV5Ek7i6WXu9us2CqOrFlqzfDi6IbIeX5BjL9wLsQzc8V1hBpm3xAARaQf+
+         Oga/EyMhUtNF36RfXc/LeFK2p99pwVJ4Le5o3nDYYFhbiY2AjRaNZBXXGQjOAszNS5oK
+         x5kqhOXZTj3hO9PsmEr0X8PmJhX7gtV4ye515mRAs+e0iC0iWEn9/nGXCvOoV2j/dlPU
+         fC5cVbqPsWu16g8XTObBhnsp0ywWzJ2r/i6l7YtdXrK8fZoGJiWCgNeQgFNgLX0lPPv7
+         ASwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=UtLPTpmziN33YG4O4Q+fjJadZXwsjUnQKgfuJCB6e30=;
+        b=BoJau8BV49xK+0PVgG0cgEJjCCdQvwcdrgc12Gp778zWG571cF3lIM2j1v3td2WVVb
+         hljMKed+gEyjyi4V2xWY5dz9B34hQGk3dYEIcdjlWaIu03n8w3j+gu0o30OWLOtOvjCb
+         TPf1lVvW/MsAWZoWg/N+pNd6FqG90oNBBH+PQgpw8OpW6/Bubb4iGdi4OyeDx00Zzoxv
+         1CLipETA717nrMPNqvBzmtQ1ficPc8SlwC9lBdryHfJnrvcxsjCh9GjZ+SpO9pQd0PYg
+         Kc4Aq6b0msyowZZuxr1oLCntnIxUKZHWqApUW2efp31EO8mUoWuOaXcLwoVDr9gkp8xx
+         1z8Q==
+X-Gm-Message-State: APjAAAWFy+ThZe8TYhvS0e+CcFooCPwrUNjRzw35HRQAPTc6+aTho+ce
+        bsvBYZG4TB+QuoHgDlXiUPDAHUhnrKfdh5MYgw9J6GtkqPzz
+X-Google-Smtp-Source: APXvYqzkHSMhD3XMQ8GKHBBdvLF/0nj7DXZcIfPjPF24ezy7vpBJXXOuH0d3+RQVZvlHi4Wx+J41C7uj7eWbUoJtCuA=
+X-Received: by 2002:a05:651c:1111:: with SMTP id d17mr12865350ljo.87.1566424820383;
+ Wed, 21 Aug 2019 15:00:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <19087.1566415359.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 21 Aug 2019 20:22:39 +0100
-Message-ID: <19088.1566415359@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 21 Aug 2019 19:22:43 +0000 (UTC)
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 21 Aug 2019 18:00:09 -0400
+Message-ID: <CAHC9VhSz1_KA1tCJtNjwK26BOkGhKGbPT7v1O82mWPduvWwd4A@mail.gmail.com>
+Subject: New skb extension for use by LSMs (skb "security blob")?
+To:     netdev@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I added a bunch of tests to the keyutils testsuite, currently on my -next
-branch:
+Hello netdev,
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/log/?h=next
+I was just made aware of the skb extension work, and it looks very
+appealing from a LSM perspective.  As some of you probably remember,
+we (the LSM folks) have wanted a proper security blob in the skb for
+quite some time, but netdev has been resistant to this idea thus far.
 
-See:
+If I were to propose a patchset to add a SKB_EXT_SECURITY skb
+extension (a single extension ID to be shared among the different
+LSMs), would that be something that netdev would consider merging, or
+is there still a philosophical objection to things like this?
 
-	Add a keyctl command for granting a permit on a key
-	Handle kernel having key/keyring ACLs
-
-I've added manpages to describe the new bits, but I wonder whether I should
-add a manpage specifically to detail the permissions system.  It'll probably
-be useful when more advanced subjects become available, such as for specific
-UIDs and for containers-as-a-whole.
-
-David
+-- 
+paul moore
+www.paul-moore.com
