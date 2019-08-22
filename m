@@ -2,126 +2,81 @@ Return-Path: <SRS0=h0Om=WS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C14C3A5A1
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 22:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35771C3A5A1
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 23:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19F64205ED
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 22:48:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uUOWA6zA"
+	by mail.kernel.org (Postfix) with ESMTP id 11C152173E
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 23:19:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394127AbfHVWsd (ORCPT
+        id S2394333AbfHVXTO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Aug 2019 18:48:33 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41714 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394107AbfHVWsc (ORCPT
+        Thu, 22 Aug 2019 19:19:14 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:50442 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731662AbfHVXTO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Aug 2019 18:48:32 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 196so4959197pfz.8;
-        Thu, 22 Aug 2019 15:48:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PDYWQC26G85uFe21HzXIGcCDB8NArXzZKACQ42fhc6M=;
-        b=uUOWA6zAPGTpTgg7Rd+TF1com3hB4gUJbLb0PdvIYzSKualdXoorLvEq3WlQNBBvRh
-         tLmz1Esv2pFsO+zfFCoX0U3iiN+xkjnhQK7qoqAOyfy60isuw9jrvQ3q8+geXaxb/0e4
-         GCFHlPjDJCmOAoeA7UltlKSac08qxPW8+rrPlbrLQZeMGLWCB0jG84YFamK3jlhHw8Nv
-         7PYYRiTqERnpSaFA+YmsanbTCcDSeI+2cnQYAbeKNGFq2UlWI3kTXfj2SF5ye7CQE4ZR
-         WWyxLzpq/3/VI7Z7E8PwLvd6GpobsyTmchpIV3DL59TUcM9B0/GOAKJYpCTvJNmO26Ra
-         CKbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PDYWQC26G85uFe21HzXIGcCDB8NArXzZKACQ42fhc6M=;
-        b=aWzELuSPgnFO39WoxQcqRI2bOijRX/EgbLbtIGXfq92gicC8FfYcUOQmPn+CoOGZcd
-         qn423ICBJNk8mWxuEy8WZVSK/+yL0w1FzdInMeBBd/OQEJw/5etvCYxdP0KZqY/fb8N3
-         CVNQ1GYW5T7iQmBPhse4GBdYSizJP21VTizkpIFljd9AtEZZZh8DPz8pU3Zm/PPpYfNQ
-         cKAtxAkrgkrkR6+W+eDPUqp0DYZZ6hZ2ohyXzEpt96sdBA/7/Kkivlt5NInwhUhvTVCP
-         ni1ViUdDrBIZ2uA/m7pmULi4600Z721LcDLxKTaMoMgh9w393SSZGkMM0vRvyeHFbXHA
-         YdBQ==
-X-Gm-Message-State: APjAAAXv19Ma2Kap5NfZQGBhxQsoH00DwHPjo31652TGcqGwg7BkfZQJ
-        wjXstA1MXyyRucQ/4uXu7Vg=
-X-Google-Smtp-Source: APXvYqxXNgjLeBOln1rezZFZ3HnShQ7NStPlJbWY0YLcdouSeNXoATOnRBJrJQWHbNz/HamJHeV/CQ==
-X-Received: by 2002:aa7:9516:: with SMTP id b22mr1723747pfp.106.1566514112000;
-        Thu, 22 Aug 2019 15:48:32 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1070])
-        by smtp.gmail.com with ESMTPSA id e24sm278952pgk.21.2019.08.22.15.48.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Aug 2019 15:48:31 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 15:48:29 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Kees Cook <keescook@chromium.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Chenbo Feng <chenbofeng.kernel@gmail.com>
-Subject: Re: [PATCH v2 bpf-next 1/4] bpf: unprivileged BPF access via /dev/bpf
-Message-ID: <20190822224826.xbovlykhpk4p4ww4@ast-mbp.dhcp.thefacebook.com>
-References: <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
- <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
- <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
- <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
- <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
- <20190805192122.laxcaz75k4vxdspn@ast-mbp>
- <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
- <20190806011134.p5baub5l3t5fkmou@ast-mbp>
- <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
- <98fee747-795a-ff10-fa98-10ddb5afcc03@iogearbox.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <98fee747-795a-ff10-fa98-10ddb5afcc03@iogearbox.net>
-User-Agent: NeoMutt/20180223
+        Thu, 22 Aug 2019 19:19:14 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B84561539D813;
+        Thu, 22 Aug 2019 16:19:13 -0700 (PDT)
+Date:   Thu, 22 Aug 2019 16:19:13 -0700 (PDT)
+Message-Id: <20190822.161913.326746900077543343.davem@davemloft.net>
+To:     jeffv@google.com
+Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH 1/2] rtnetlink: gate MAC address with an LSM hook
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190821134547.96929-1-jeffv@google.com>
+References: <20190821134547.96929-1-jeffv@google.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 22 Aug 2019 16:19:13 -0700 (PDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 22, 2019 at 04:17:43PM +0200, Daniel Borkmann wrote:
-> 
-> > > Hence unprivileged bpf is actually something that can be deprecated.
-> 
-> There is actually a publicly known use-case on unprivileged bpf wrt
-> socket filters, see the SO_ATTACH_BPF on sockets section as an example:
-> 
->   https://blog.cloudflare.com/cloudflare-architecture-and-how-bpf-eats-the-world/
-> 
-> If I'd have to take a good guess, I'd think it's major use-case is in
-> SO_ATTACH_REUSEPORT_EBPF in the wild, I don't think the sysctl can be
-> outright flipped or deprecated w/o breaking existing applications unless
-> it's cleanly modeled into some sort of customizable CAP_BPF* type policy
-> (more below) where this would be the lowest common denominator.
+From: Jeff Vander Stoep <jeffv@google.com>
+Date: Wed, 21 Aug 2019 15:45:47 +0200
 
-The cloudflare use case is the perfect example that a lot of program types
-are used together.
-Do people use SO_ATTACH_BPF ? Of course.
-All program types are used by somebody. Before accepting them we had long
-conversations with authors to understand that the use cases are real.
-Some progs are probably used less than others by now.
-Like cls_bpf without exts_integrated is probably not used at all.
-We still have to support it, of course.
-That cloudflare example demonstrates that kernel.unprivileged_bpf_disabled=1
-is a reality. Companies that care about security already switched it on.
-Different bits in cloudflare setup need different level of capabilities.
-Some (like SO_ATTACH_BPF) need unpriv. Another need CAP_NET_ADMIN.
-But common demoninator for them all is still CAP_SYS_ADMIN.
-And that's why the system as a whole is not as safe as it could have
-been with CAP_BPF. The system needs root in many places.
-Folks going out of the way to reduce that SYS_ADMIN to something less.
-The example with systemd and NET_ADMIN is just one of them.
+> MAC addresses are often considered sensitive because they are
+> usually unique and can be used to identify/track a device or
+> user [1].
+> 
+> The MAC address is accessible via the RTM_NEWLINK message type of a
+> netlink route socket[2]. Ideally we could grant/deny access to the
+> MAC address on a case-by-case basis without blocking the entire
+> RTM_NEWLINK message type which contains a lot of other useful
+> information. This can be achieved using a new LSM hook on the netlink
+> message receive path. Using this new hook, individual LSMs can select
+> which processes are allowed access to the real MAC, otherwise a
+> default value of zeros is returned. Offloading access control
+> decisions like this to an LSM is convenient because it preserves the
+> status quo for most Linux users while giving the various LSMs
+> flexibility to make finer grained decisions on access to sensitive
+> data based on policy.
+> 
+> [1] https://adamdrake.com/mac-addresses-udids-and-privacy.html
+> [2] Other access vectors like ioctl(SIOCGIFHWADDR) are already covered
+> by existing LSM hooks.
+> 
+> Signed-off-by: Jeff Vander Stoep <jeffv@google.com>
 
+I'm sure the MAC address will escape into userspace via other means,
+dumping pieces of networking config in other contexts, etc.  I mean,
+if I can get a link dump, I can dump the neighbor table as well.
+
+I kinda think this is all very silly whack-a-mole kind of stuff, to
+be quite honest.
+
+And like others have said, tomorrow you'll be like "oh crap, we should
+block X too" and we'll get another hook, another config knob, another
+rulset update, etc.
