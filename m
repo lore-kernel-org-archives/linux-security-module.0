@@ -2,262 +2,110 @@ Return-Path: <SRS0=h0Om=WS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E82DC3A5A2
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 15:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BB0C3A5A1
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 15:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA7602089E
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 15:18:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 066D023406
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 15:48:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566487090;
-	bh=YnHYMAFHnhwjWSCmHA1lalHVaWrapDVItQXtXHIh/i4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=mupF8lq1Z+3loipJbhUGJMYxFWoALTZElmuyhMPkG/mJHp1fJyCd6TKu/V7Tqhuss
-	 UmaxV53i5vIQSIE8ITM4QWknerG5JrNg8wYt+xkXUEtPBxdD0+c++sWTaVYhPkBXZH
-	 YewGQ9O/fd/g7YzxLKqOGLMFu42a1IsN8R64ggBY=
+	s=default; t=1566488889;
+	bh=uipZavMt5Z1fZAX+sVlMS1INMUxP9WzC4H4BLym3E3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HBXl0XsmpdPAI63JPfY/rdRtYu++7XLSFf2Pm7BpAVodNzxKF3oDlxNvaNUTBgjJZ
+	 waHKgPIhk9LxbmRxFF2xRT+P8vcWjO3r5rj8OE4C6LV54FW9RdxKPuWtoEY2PjTFG/
+	 GHDY2FFwcKrjF0LPA3SIdeVbQ6TIk1xVfN71zwOI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387448AbfHVPSJ (ORCPT
+        id S2388039AbfHVPsF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Aug 2019 11:18:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44748 "EHLO mail.kernel.org"
+        Thu, 22 Aug 2019 11:48:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732532AbfHVPSJ (ORCPT
+        id S2387880AbfHVPsF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Aug 2019 11:18:09 -0400
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 22 Aug 2019 11:48:05 -0400
+Received: from zzz.localdomain (ip-173-136-158-138.anahca.spcsdns.net [173.136.158.138])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B72623407
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2019 15:18:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 684B523400;
+        Thu, 22 Aug 2019 15:48:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566487087;
-        bh=YnHYMAFHnhwjWSCmHA1lalHVaWrapDVItQXtXHIh/i4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=kKdhidJni9oVHZulnocOvR68S2C9Dn7RJI6j7z0k35Stv5Tl/0SJf3y8lnYLufydW
-         0E15j7zWxkJZXS6m+VGgYaO7wg6+Bj1NABjbev8SizjldorzTqnJvylvbtTEo5urCJ
-         Dyyr/OtGp0n0QrmmPycgLZzYpDfp/wVZ1suX4In0=
-Received: by mail-wr1-f43.google.com with SMTP id t16so5809028wra.6
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2019 08:18:07 -0700 (PDT)
-X-Gm-Message-State: APjAAAX6E4BWraBv1y7XkSKCdoayfyXT5mNgdXgiUHOibzWY3ZSZ8FGG
-        Zyari5Bf6s85sgwa2TzjOoOdHH40eSotKxjXoqyNlA==
-X-Google-Smtp-Source: APXvYqxpiOdLxbwIYHP+AESms9onR8AgvvW9tqQ+YzHqlJl2LsZx76/vthdf207FJITtNteDtAwcawyRgTmchAkN8LU=
-X-Received: by 2002:a05:6000:4f:: with SMTP id k15mr10594496wrx.221.1566487085936;
- Thu, 22 Aug 2019 08:18:05 -0700 (PDT)
+        s=default; t=1566488884;
+        bh=uipZavMt5Z1fZAX+sVlMS1INMUxP9WzC4H4BLym3E3M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jHKmYzwY8waO4dpG6B4Fjk/MSEZD03cPKRGG5tDzo3xWM2ikozg6sh9qTjWAFn9xF
+         Ok+z1PnH1dQl7NBvJDL+TTolIZMAt5KQ2llFU4mxFXKRkZN5zZSj7Nb9imaaBL5XG7
+         36ip3+Y6lJyDNPTuNR2SzLdgobtgHdHxUCsigCe8=
+Date:   Thu, 22 Aug 2019 08:47:59 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
+ sockets.
+Message-ID: <20190822154759.GA2020@zzz.localdomain>
+Mail-Followup-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        "David S. Miller" <davem@davemloft.net>
+References: <201908220655.x7M6tVmv029579@www262.sakura.ne.jp>
+ <20190822070129.GL6111@zzz.localdomain>
+ <201908220742.x7M7gQJW078160@www262.sakura.ne.jp>
 MIME-Version: 1.0
-References: <D4040C0C-47D6-4852-933C-59EB53C05242@fb.com> <CALCETrVoZL1YGUxx3kM-d21TWVRKdKw=f2B8aE5wc2zmX1cQ4g@mail.gmail.com>
- <5A2FCD7E-7F54-41E5-BFAE-BB9494E74F2D@fb.com> <CALCETrU7NbBnXXsw1B+DvTkfTVRBFWXuJ8cZERCCNvdFG6KqRw@mail.gmail.com>
- <CALCETrUjh6DdgW1qSuSRd1_=0F9CqB8+sNj__e_6AHEvh_BaxQ@mail.gmail.com>
- <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
- <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com> <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
- <20190805192122.laxcaz75k4vxdspn@ast-mbp> <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
- <20190806011134.p5baub5l3t5fkmou@ast-mbp> <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
- <98fee747-795a-ff10-fa98-10ddb5afcc03@iogearbox.net> <CALCETrUWQbPK3Pc6P5i_UqHPXJmZVyvuYXfq+VRtD6A3emaRhw@mail.gmail.com>
-In-Reply-To: <CALCETrUWQbPK3Pc6P5i_UqHPXJmZVyvuYXfq+VRtD6A3emaRhw@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 22 Aug 2019 08:17:54 -0700
-X-Gmail-Original-Message-ID: <CALCETrWU4xJh4UBg0BboCwdGrgj+dUShsH5ETpiRgEpXJTEfQA@mail.gmail.com>
-Message-ID: <CALCETrWU4xJh4UBg0BboCwdGrgj+dUShsH5ETpiRgEpXJTEfQA@mail.gmail.com>
-Subject: RFC: very rough draft of a bpf permission model
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Song Liu <songliubraving@fb.com>,
-        Kees Cook <keescook@chromium.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jann Horn <jannh@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Chenbo Feng <chenbofeng.kernel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201908220742.x7M7gQJW078160@www262.sakura.ne.jp>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-BPF security strawman, v0.1
+On Thu, Aug 22, 2019 at 04:42:26PM +0900, Tetsuo Handa wrote:
+> Eric Biggers wrote:
+> > On Thu, Aug 22, 2019 at 03:55:31PM +0900, Tetsuo Handa wrote:
+> > > > Also, isn't the same bug in other places too?:
+> > > > 
+> > > > 	- tomoyo_path_chmod()
+> > > > 	- tomoyo_path_chown()
+> > > > 	- smack_inode_getsecurity()
+> > > > 	- smack_inode_setsecurity()
+> > > 
+> > > What's the bug? The file descriptor returned by open(O_PATH) cannot be
+> > > passed to read(2), write(2), fchmod(2), fchown(2), fgetxattr(2), mmap(2) etc.
+> > > 
+> > 
+> > chmod(2), chown(2), getxattr(2), and setxattr(2) take a path, not a fd.
+> > 
+> 
+> OK. Then, is the correct fix
+> 
+>   inode_lock(inode);
+>   if (SOCKET_I(inode)->sk) {
+>     // Can access SOCKET_I(sock)->sk->*
+>   } else {
+>     // Already close()d. Don't touch.
+>   }
+>   inode_unlock(inode);
+> 
+> thanks to
+> 
+>   commit 6d8c50dcb029872b ("socket: close race condition between sock_close() and sockfs_setattr()")
+>   commit ff7b11aa481f682e ("net: socket: set sock->sk to NULL after calling proto_ops::release()")
+> 
+> changes?
 
-This is very rough.  Most of this, especially the API details, needs
-work before it's ready to implement.  The whole concept also needs
-review.
+inode_lock() is already held during security_path_chmod(),
+security_path_chown(), and security_inode_setxattr().
+So you can't just take it again.
 
-= Goals =
-
-The overall goal is to make it possible to use eBPF without having
-what is effectively administrator access.  For example, an eBPF user
-should not be able to directly tamper with other processes (unless
-this permission is explicitly granted) and should not be able to
-read or write other users' eBPF maps.
-
-It should be possible to use eBPF inside a user namespace without breaking
-the userns security model.
-
-Due to the risk of speculation attacks and such being carried out via
-eBPF, it should not become possible to use too much of eBPF without the
-administrator's permission.  (NB: it is already possible to use
-*classic* BPF without any permission, and classic BPF is translated
-internally to eBPF, so this goal can only be met to a limited extent.)
-
-= Definitions =
-
-Global capability: A capability bit in the caller's effective mask, so
-long as the caller is in the root user namespace.  Tasks in non-root
-user namespaces never have global capabilibies.  This is what capable()
-checks.
-
-Namespace capability: A capability over a specific user namespace.
-Tasks in a user namespace have all the capabilities in their effective
-mask over their user namespace.  A namespace capability generally
-indicates that the capability applies to the user namespace itself and
-to all non-user namespaces that live in the user namespace.  For
-example, CAP_NET_ADMIN means that you can configure all networks
-namespaces in the current user namespace.  This is what ns_capable()
-checks.
-
-Anything that requires a global capability will not work in a non-root
-user namespace.
-
-= unprivileged_bpf_disabled =
-
-Nothing in here supercedes unprivileged_bpf_disabled.  If
-unprivileged_bpf_disabled = 1, then these proposals should not allow anything
-that is disallowed today.  The idea is to make unprivileged_bpf_disabled=0
-both safer and more useful.
-
-= Test runs =
-
-Global CAP_SYS_ADMIN is needed to test-run a program.  Test-running a program
-exposes its own attack surface.  It's also the only way to run a program at
-all if you merely have permission to load the program but not to attach it
-anywhere.  Some of the proposed changes below will make it possible to load
-most program types without
-
-= Access to programs and maps =
-
-There are two basic security concerns when accessing programs and maps:
-the attack surface against the kernel and the ability to access other
-people's maps.
-
-Unprivileged processes may read a map if they have an FMODE_READ descriptor
-for the map.  Unprivileged processes may write a map if they have an
-FMODE_WRITE descriptor to the map.  Unprivileged processes may open a
-persistent map with a mode consistent with the permissions in bpffs.
-
-Unprivileged processes may create a bpffs inode for an existing map
-if the have an RW file descriptor for the map.  (This is a change to
-current behavior.  Daniel, Alexei thought the current behavior was
-intentional.  Do you recall whether this is the case?)
-
-The _BY_ID map APIs inherently have no concept of ownership of maps.  These
-APIs will continue to require global CAP_SYS_ADMIN.
-
-The small number of things that currently require the _BY_ID APIs, e.g.,
-reading maps of maps, can be addressed if needed with new APIs that
-return fds instead of ids.  Otherwise using them will continue to require
-global capabilities.
-
-Unprivileged processes may create exactly the set of maps that they can
-create today.  Future proposals may extend this by a variety of means;
-this current proposal makes no changes.
-
-= Program loading =
-
-Loading a program carries the following risks:
-
- - It exposes the attack surface in the program verifier itself.  That is
-   possible, although unlikely, that merely verifying a malicious program
-   could crash or otherwise cause a kernel malfunction.
-
- - It exposes the attack surface of insufficient checks in the verifier.
-   That is, a verifier bug could allow a malicious program that is dangerous
-   when run.
-
- - It exposes all of the functions that the program type can call.
-   Some functions, e.g. bpf_probe_read(), should require privilege to call.
-
- - It exposes resource attacks.  Currently, privileged users can load programs
-   that use more resources than unprivileged users can load.
-
- - It exposes pointer-to-integer conversions.  This requires global
-   capabilities.
-
- - The program could contain speculation attack gadgets.
-
- - Loading a program is a prerequisite to attaching the program.
-
-I propose the following:
-
-Flag functions that require privilege as such.  Loading a program that calls
-such a function will require a global capability.  The privileged functions are
-mainly used for tracing, I think, and kernel tracing should require global
-capabilities.
-
-Loading a program that uses privileged verifier features (function calls or
-pointer-to-integer-conversions) will continue to require privileges.
-
-Loading a function that uses excessive resources can continue to require
-global capabilities or it could use a new set of cgroup settings that
-adjust the bpf complexity limits.
-
-Loading a function that bypasses the various speculation attack hardening
-features (e.g. constant blinding) requires global capabilities.
-
-Other than this, bpf program types can have a new flag set to allow
-them to be loaded without any privileges.  Some bpf program types
-may need additional care, e.g. perf bpf events.  They can be attached
-without privilege even in current kernels, and this might need to change.
-
-(optional) Add an API to load a program where the program source comes from a
-file specified by id instead of in memory.  This would allow LSMs to require
-that bpf() programs be appropriately labeled.  If LSMs require use of this
-API, it will make it much harder to exploit the verifier or speculation bugs.
-
-As a possible future extension, a way to selectively grant the ability to
-use specific program types without privilege could be useful.  This
-could be done with a cgroup option, for example.
-
-= Cgroup attach =
-
-Cgroups have their own hierarchy that does not necessarily follow the
-namespace hierarchy.  Unless cgroups integrate with namespaces in ways
-that they currently don't, namespace capabilites cannot be used to grant
-permission to operate on cgroups.
-
-I propose that attaching and detaching bpf programs to cgroups use a
-permission model similar to the model for changing non-bpf cgroup
-settings.  In particular, each bpf_attach_type will get a new file in a
-cgroup directory.  So there will be
-/sys/fs/cgroup/cgroup_name/bpf.inet_ingress, bpf.inet_egress, etc.
-
-A new API will be added to bpf() to attach and detach programs.  The new
-API will take an fd to the bpf.attach_type file instead of to the cgroup
-directory.  It will require FMODE_WRITE.  This API will *not* require
-any capability.
-
-To prevent anyone with a delegated cgroup from automatically being
-able to use all bpf program types, the new bpf.attach_type files
-will be opt-in as part of the hierarchy.  This could be done by writing
-"+bpf.*" or "+bpf.inet_ingress" to cgroup.subtree_control to make
-all the bpf.attach_type files or just bpf.inet_ingress available
-in descendents of the cgroup in question.  This could alternatively
-be a new bpf.subtree_control file if that seems better.
-
-The result of these changes will be that root can use the old
-attach API or the new attach API.  Unprivileged programs cannot
-use the old attach API.  Unprivileged programs can use the new
-attach API if they are explicitly granted permission by all their
-ancestor cgroup managers.
-
-
-= Additional mitigations =
-
-Optional: there may be cases where a user can load a bpf program
-but can't attach or otherwise execute it.  Nonetheless, it's plausible
-that such a program could be speculatively executed.  The kernel could
-mitigate this by only marking a JITted bpf program executable when it
-is first attached or test-run.
+- Eric
