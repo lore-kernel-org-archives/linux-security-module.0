@@ -2,81 +2,198 @@ Return-Path: <SRS0=h0Om=WS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35771C3A5A1
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 23:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E61C3A5A1
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 23:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11C152173E
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 23:19:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63C022173E
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 23:31:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kO48W3vz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394333AbfHVXTO (ORCPT
+        id S1726447AbfHVXbu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Aug 2019 19:19:14 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:50442 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731662AbfHVXTO (ORCPT
+        Thu, 22 Aug 2019 19:31:50 -0400
+Received: from mail-io1-f48.google.com ([209.85.166.48]:38750 "EHLO
+        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbfHVXbu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Aug 2019 19:19:14 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id B84561539D813;
-        Thu, 22 Aug 2019 16:19:13 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 16:19:13 -0700 (PDT)
-Message-Id: <20190822.161913.326746900077543343.davem@davemloft.net>
-To:     jeffv@google.com
-Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH 1/2] rtnetlink: gate MAC address with an LSM hook
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190821134547.96929-1-jeffv@google.com>
-References: <20190821134547.96929-1-jeffv@google.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 22 Aug 2019 16:19:13 -0700 (PDT)
+        Thu, 22 Aug 2019 19:31:50 -0400
+Received: by mail-io1-f48.google.com with SMTP id p12so15825673iog.5;
+        Thu, 22 Aug 2019 16:31:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=g5ev4YNyacCPm5TJniJ3SxphrLoEtQ+ucV5R5bFgZog=;
+        b=kO48W3vzJvUqY9+qybTl957Id+ZSNxe0FLDIkqYWgzLeAV5FHgAGu2QDgOy5JiITDK
+         NqfE4bAC8RUFCU4hRRUAJtWjLBZG56P3tOm2YclOQeWzlyfo6Uy9C+gwb1Id8W1hfypZ
+         qROxLZj6YL19xuhnTyj9/wlmS+eMmjjAbt2dTOoUvMwIEP0+EMuHybogaQYSmZNCCIa1
+         bZRtF5bAugZqmnlC1o8AllgKdYt5iV5IDedKt64ZlbBolu8iVSRjGYCUNozw2P1sB0yP
+         d7ww/5C7Z0TTZNgSE4XRY9iENyX514brnwqWJldZiBh+eXszXyD4q7umb+nzVOZsh6dy
+         ijmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=g5ev4YNyacCPm5TJniJ3SxphrLoEtQ+ucV5R5bFgZog=;
+        b=VYHbOCxnLvAWs9P+dnuiVPDbiYw4tgKAXgGO3Y6Yg3sqqBKnK1fu9+ZTL7NE2CsJHT
+         sfSr7H7U0MReVa1ewU54ESQpDs3ABXhIXpPROKe1VVsvKCZEOoQI6NnLfRcI7J2X4qgt
+         8pU2LMDLziTasEE0oIhVuxpNAzvRwMnPtqWjAyCfbiZRwaEkm9CFiXISDnBAdyvrA9cX
+         4/HRlGNJUjQP5SMgc+E65N21XHEZK2WRU8pgyJ7nc9Vvfv62dsIF9tQNITfI+gIv7tMo
+         Tcx3TbKNf8je46j9amMv5vm+S3OsrOlDeeKHxThNL3irinrMqlDjjK6Sx2HKnRM5NEVM
+         NgXQ==
+X-Gm-Message-State: APjAAAXlgArkkUOTYqQWiFXWFW+n+kraoTyI8KqGNlxITYUd8pH3OTYe
+        jCTtJaGIteVOLYIuOKTFdDR1UmB1
+X-Google-Smtp-Source: APXvYqwzhLctk149ll6mMhuP9SbwVeXiU3ERzqdFVfB57YGFcFm3A91KeZ7wSYWB02pl0/ycOfRneA==
+X-Received: by 2002:a63:e148:: with SMTP id h8mr1399523pgk.275.1566516384818;
+        Thu, 22 Aug 2019 16:26:24 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1070])
+        by smtp.gmail.com with ESMTPSA id x10sm586643pjo.4.2019.08.22.16.26.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Aug 2019 16:26:24 -0700 (PDT)
+Date:   Thu, 22 Aug 2019 16:26:21 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Kees Cook <keescook@chromium.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Chenbo Feng <chenbofeng.kernel@gmail.com>
+Subject: Re: RFC: very rough draft of a bpf permission model
+Message-ID: <20190822232620.p5tql4rrlzlk35z7@ast-mbp.dhcp.thefacebook.com>
+References: <CALCETrWtE2U4EvZVYeq8pSmQjBzF2PHH+KxYW8FSeF+W=1FYjw@mail.gmail.com>
+ <EE7B7AE1-3D44-4561-94B9-E97A626A251D@fb.com>
+ <CALCETrXX-Jeb4wiQuL6FUai4wNMmMiUxuLLh_Lb9mT7h=0GgAw@mail.gmail.com>
+ <20190805192122.laxcaz75k4vxdspn@ast-mbp>
+ <CALCETrVtPs8gY-H4gmzSqPboid3CB++n50SvYd6RU9YVde_-Ow@mail.gmail.com>
+ <20190806011134.p5baub5l3t5fkmou@ast-mbp>
+ <CALCETrXEHL3+NAY6P6vUj7Pvd9ZpZsYC6VCLXOaNxb90a_POGw@mail.gmail.com>
+ <98fee747-795a-ff10-fa98-10ddb5afcc03@iogearbox.net>
+ <CALCETrUWQbPK3Pc6P5i_UqHPXJmZVyvuYXfq+VRtD6A3emaRhw@mail.gmail.com>
+ <CALCETrWU4xJh4UBg0BboCwdGrgj+dUShsH5ETpiRgEpXJTEfQA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWU4xJh4UBg0BboCwdGrgj+dUShsH5ETpiRgEpXJTEfQA@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Jeff Vander Stoep <jeffv@google.com>
-Date: Wed, 21 Aug 2019 15:45:47 +0200
-
-> MAC addresses are often considered sensitive because they are
-> usually unique and can be used to identify/track a device or
-> user [1].
+On Thu, Aug 22, 2019 at 08:17:54AM -0700, Andy Lutomirski wrote:
+> BPF security strawman, v0.1
 > 
-> The MAC address is accessible via the RTM_NEWLINK message type of a
-> netlink route socket[2]. Ideally we could grant/deny access to the
-> MAC address on a case-by-case basis without blocking the entire
-> RTM_NEWLINK message type which contains a lot of other useful
-> information. This can be achieved using a new LSM hook on the netlink
-> message receive path. Using this new hook, individual LSMs can select
-> which processes are allowed access to the real MAC, otherwise a
-> default value of zeros is returned. Offloading access control
-> decisions like this to an LSM is convenient because it preserves the
-> status quo for most Linux users while giving the various LSMs
-> flexibility to make finer grained decisions on access to sensitive
-> data based on policy.
+> This is very rough.  Most of this, especially the API details, needs
+> work before it's ready to implement.  The whole concept also needs
+> review.
 > 
-> [1] https://adamdrake.com/mac-addresses-udids-and-privacy.html
-> [2] Other access vectors like ioctl(SIOCGIFHWADDR) are already covered
-> by existing LSM hooks.
+> = Goals =
 > 
-> Signed-off-by: Jeff Vander Stoep <jeffv@google.com>
+> The overall goal is to make it possible to use eBPF without having
+> what is effectively administrator access.  For example, an eBPF user
+> should not be able to directly tamper with other processes (unless
+> this permission is explicitly granted) and should not be able to
+> read or write other users' eBPF maps.
+> 
+> It should be possible to use eBPF inside a user namespace without breaking
+> the userns security model.
+> 
+> Due to the risk of speculation attacks and such being carried out via
+> eBPF, it should not become possible to use too much of eBPF without the
+> administrator's permission.  (NB: it is already possible to use
+> *classic* BPF without any permission, and classic BPF is translated
+> internally to eBPF, so this goal can only be met to a limited extent.)
 
-I'm sure the MAC address will escape into userspace via other means,
-dumping pieces of networking config in other contexts, etc.  I mean,
-if I can get a link dump, I can dump the neighbor table as well.
+agree with the goals.
 
-I kinda think this is all very silly whack-a-mole kind of stuff, to
-be quite honest.
+> = Definitions =
+> 
+> Global capability: A capability bit in the caller's effective mask, so
+> long as the caller is in the root user namespace.  Tasks in non-root
+> user namespaces never have global capabilibies.  This is what capable()
+> checks.
+> 
+> Namespace capability: A capability over a specific user namespace.
+> Tasks in a user namespace have all the capabilities in their effective
+> mask over their user namespace.  A namespace capability generally
+> indicates that the capability applies to the user namespace itself and
+> to all non-user namespaces that live in the user namespace.  For
+> example, CAP_NET_ADMIN means that you can configure all networks
+> namespaces in the current user namespace.  This is what ns_capable()
+> checks.
 
-And like others have said, tomorrow you'll be like "oh crap, we should
-block X too" and we'll get another hook, another config knob, another
-rulset update, etc.
+definitions make sense too.
+
+> Anything that requires a global capability will not work in a non-root
+> user namespace.
+> 
+> = unprivileged_bpf_disabled =
+> 
+> Nothing in here supercedes unprivileged_bpf_disabled.  If
+> unprivileged_bpf_disabled = 1, then these proposals should not allow anything
+> that is disallowed today.  The idea is to make unprivileged_bpf_disabled=0
+> both safer and more useful.
+
+... a bunch of new features skipped for brevity...
+
+You're proposing all of the above in addition to CAP_BPF, right?
+Otherwise I don't see how it addresses the use cases I kept
+explaining for the last few weeks.
+
+I don't mind additional features if people who propose them
+actively help to maintain that new code and address inevitable
+side channel issues in the new code.
+But first things first.
+
+Here is another example of use case that CAP_BPF is solving:
+The daemon X is started by pid=1 and currently runs as root.
+It loads a bunch of tracing progs and attaches them to kprobes
+and tracepoints. It also loads cgroup-bpf progs and attaches them
+to cgroups. All progs are collecting data about the system and
+logging it for further analysis.
+There can be different bugs (not security bugs) in the daemon.
+Simple coding bugs, but due to processing running as root they
+may make the system inoperable. There is a strong desire to
+drop privileges for this daemon. Let it do all BPF things the
+way it does today and drop root, since other operations do not
+require root.
+Essentially a bunch of daemons run as root only because
+they need bpf. This tracing bpf is looking into kernel memory
+and using bpf_probe_read. Clearly it's not _secure_. But it's _safe_.
+The system is not going to crash because of BPF,
+but it can easily crash because of simple coding bugs in the user
+space bits of that daemon.
+
+Flagging functions is not going to help this case.
+bpf_probe_read is necessary.
+pointer-to-integer-conversions is also necessary.
+bypass hardening features is also necessary for speed,
+since this data collection is 24/7.
+cgroup.subtree_control idea can help some of it, but not all.
+
+I still think that CAP_BPF is the best way to split this root privilege
+universe into smaller 'bpf piece'. Just like CAP_NET_ADMIN splits
+all of root into networking specific privileges.
+
+Potentially we can go sysctl_perf_event_paranoid approach, but
+it's less flexible, since it's single sysctl for the whole system.
+
+Loading progs via FD instead of memory is something that android folks
+proposed some time ago. The need is real. Whether it's going to be
+loading via FD or some other form of signing the program is TBD.
+imo this is orthogonal.
+
+I hope I answered all points of your proposal.
+
