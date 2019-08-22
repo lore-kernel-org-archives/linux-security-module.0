@@ -2,58 +2,56 @@ Return-Path: <SRS0=h0Om=WS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A59C3A5A3
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 16:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB99C3A5A1
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 18:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA552341A
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 16:44:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B8E52082F
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 18:50:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="mjgPwxKp"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="c4vVQ+9W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731384AbfHVQoO (ORCPT
+        id S2389109AbfHVSuf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Aug 2019 12:44:14 -0400
-Received: from sonic312-30.consmr.mail.gq1.yahoo.com ([98.137.69.211]:33446
-        "EHLO sonic312-30.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390140AbfHVQoO (ORCPT
+        Thu, 22 Aug 2019 14:50:35 -0400
+Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:41752
+        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730918AbfHVSuf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Aug 2019 12:44:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1566492253; bh=NqtxCPuufzLISW8B2ysYdhaSCNiOJN3WV3ux4y5AJPM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=mjgPwxKpg6kj6UJoU0rSkC0t4ZYxEPIpoGYHpkmkJdUrA/DsWb79y26oVWM7KQm/+FUXseSo8a7xVS69OG5gPIx7DnL9yxJb5sQLUz4+9R5ncL+B+8MFSMznK+wnHzXhneK94rhGaIlXUr1Q8rfnCxaNVoZlCTF64zM1VeMAX3DuKA7DAUXKjpyJ8Lq2kFjxsvGKvCAOOy4KmhM3de6ohsZJUIdY7cbrY5Rhs8TkJN0JvuP9LwsDnT3nldN4JS8xTg+b8KLLTrNNROhVfPGnu90tZkPBYts+d1TJMfqYsBzmtO7sTbuLYrj8Fr6yAuUMfjqIeUWiBWiMxfA76Iww3A==
-X-YMail-OSG: rXX1QYkVM1ll0el.otn8c5g_OqRTptrTy7CwThjsGFISlDkGud1PwRUj98Plst6
- 1DlixBs4Atqn6tkoqXUgbaPgiY0tnh1Umjaid_erFpYupRBLd72jDvs7byWQBXC2rLTevT.zBmS.
- a.lRGL7fO9Kg3x69SKdGTnyRXjbd6u6rpsUxA.553R2YSb_hJ637WJMCWpLHaeAhTs4pnV4yjE0e
- sIYl8kCVLxFCk3bOARr1TxX7oUL1YMgYALoPmcVvobWMsu6AluLUT.lxWy3JaY9LWmmI9L2tFVhX
- Df0r9CKIW5iU6LEAEYTfFIApWKpJ4L8i8UA.0MDfH5A.TsZRgHZfUno12We_KcovAy075IWEGI.i
- pEViCk6teh9X3_vy_TxlFVyjbT0P2T_2DZfMxcrwkKOr3KNr4qkSaslRGoVuYJqkadCOtBJjbc6E
- 8v0qXwmO4Q.h15LZj3TexwqFBWAQ541Gfq3wQLKF62WwAku9N0S78axYqJAVjlBb_nzML04UD4lX
- 6BqqqAMwNBmldkaT.Zmj7xmksQ_wUs7Hk6sZNUcg_hw2tPyPeD3.91yg.nYcuLthPBRyOHdXPQXZ
- 9paS3V5BYDMD7Az1rK1C83fdGYillRSlQyShVMPClgMZaoP.x8wWldKgpS6apF9DbXDYYqbpxrWC
- 65DkJmOx9i0ikocv01XUbDeRtoWRMUJRq8Lh9UuKimBDNGyfCecywI_MTTTvuCn7Z8HTwRtPJaE5
- oCidK.43nnz45mIYo0l_eEY.lYwhItUL.2UOfSjgqI.o7EQvX76dNQDmgLg7YeZwGBw_.l4roStC
- RCM9HhQfQiUi4tC7Ro2dJ5PvkCeEOEipQP4VHq64uAqINWkUrZOMp7rKqboZRXogiSND1iP0QSns
- 3WPwdp6CXL7sTy4n4iJ5P7zZxOaunycYMfSpmJMmEKiYvOfK5hhsq7hHjyeFGh_yjjOrV3puiNGw
- ThiZ2.Cp2eOkpfW3dFc.vXyXxUswr0rZS.ctyhXBYfdslj2.pixDV19mr1j3569F8gQwfhma_R.j
- NLGhjcxtHQSAGfY0hmqfzYvgVIBedyRyM1GPQhrkln9eUGBQG3mXbx._29DM3Z.9pqbS2F2lcjGS
- SA7ClL0w0TX_f.93ulTCBiXxJBbGNfnL36.jQ8XGXgYOw3WzpAFQeoCzEQclz2dRXPpMNq6eyFB9
- 19Iipt4mc4LdKbmxkQC9OE8KWzc_WB_rP60evhLYaYgbONUI7.QEasZcfZQefP2qG02wZZU_KJw8
- 2rIgsfUZteAmMw9fDm6mTfMY4iv_D.teMa0.lOlcEOLev8mkJ8nbMbfT4gauTgcvecvs67_QeEad
- FWpbSet2bAZgi1qtAU7l_pOul8dI-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Thu, 22 Aug 2019 16:44:13 +0000
-Received: by smtp410.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 0b7cdfc00a2384b0a8f0646ddd1e4acf;
-          Thu, 22 Aug 2019 16:44:12 +0000 (UTC)
-Subject: Re: [PATCH] smack: use GFP_NOFS while holding inode_smack::smk_lock
-To:     Eric Biggers <ebiggers@kernel.org>,
-        linux-security-module@vger.kernel.org
-Cc:     syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com,
-        stable@vger.kernel.org, casey@schaufler-ca.com
-References: <CACT4Y+aGjkmq4cEaQXagd_YqjE4a1HoNgcEzqeNj-g0Hg_hQHw@mail.gmail.com>
- <20190822055441.20569-1-ebiggers@kernel.org>
+        Thu, 22 Aug 2019 14:50:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1566499833; bh=iGg+xKs9IWe92dtM6j+aU79MyRSLr1YHffVa8Fw1ZQA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=c4vVQ+9W+THmOw7kEkQ5ja2REV1zMy0T6UJXUThjRGjfex1Hsd/cFwKiyteHsW6ZcTwoUIhPxF/t5HWkWKtd2iXlmdBMGvXy6z+wweJMIDRUCroJQSBnfmb2Xl7cjz6YbXQGz0XdVkhS8xWagmdk9UrW5ybsh7Mepob0le5w21ErpQXcdspd/20FUtYiKubTRFfb4rdkfwj9sUJ4RZH5nhfYOluJ5oaarkH9uVHMubKrcwGPn0rhGXFKxVyOfurxheEFwscfsh8+nXFbw7Yez/FUhU9VyjzqpDeHZHRq+gYjlkeNLkoA4Vk6TZVEqq5Pli5/sSpZGrPm4Mfg0MATxw==
+X-YMail-OSG: d4MmHSIVM1kQNLQN9luXcVEIwCEPEreKRmXjnJ_qerw.F7hDKfWAQX6NbthOkiR
+ chnmOu3A889TbZP1EKbqAYq.T8.GPSGDZvn54UJg4epoarBSXFmJtiwAzVhcxEnYamOZ1PY5ZGv8
+ XwN8Aa7Lc4DAaOWbDE5AkesJIAZl7W61g9X2U5TGd3BJkaeQeSFPerJYbPchd0FEvFU4y1G6KEU7
+ xIRoBHTRTzKkVZ5tgJ20Jpgd_D4up2qrnlSTjlILT4j0huWTHiOAe66wQLb6zMDuxaMstZquBiF_
+ gvBHVYsYmcEgfASMWYPRAI_dKu5nmpix3wgJ8p9We36_9zBx2X2l0fJlN3I2MvoxwewE2w1kf29n
+ D3XfNgO31aCsUFtTn2L6LGMb54FpvpChAyq20umqGAIu2ApBuYDyQ6oYjpZbp2toFJpBOM_eFKuN
+ yHZ.AIunDybSdWRmlBjf6dhCvPz17s2k47199PnBHpPCVJMMduPniREgn1Mg_JuYOM7Nsilf6Ls4
+ Xt3sHFFvk36s_.dBV_Xsyir8If77plnsM_riJc5qKfKgByFMDURGatrEn7nCJLUYdGPXWvUMl5qF
+ I61tsTLZkFpC1.0Ngmm7YW.Q7dJcrk.unroGOOwcV75uBGDsOlriQK2k2bsYvyVQzpSn1GcA1n5v
+ yU6lvfUDlXwrYmr5uqp6EvNRltYXiRkSQdhaoIteBA8jjidDGZ_IypSFXbP0iRjfg6gfxy5tk2KG
+ G5WUP9qL.edecbDBAOgiA95KZJw811uEmXlO..klSKUqaVjMtELIx8gMHiEw_LvF1hJlUNSgCye4
+ U980vDaTmmE35n05uE6aycHxS6GNAokliTRYDXTQN2VIwmmVPMVYYS8mONyY9ShUNq_xhz3qv.oj
+ .6jfp5laVGo_gVATxrcjXf8Zaued06g5RdwZv.su5YckU7v1vp8rcihDWzEqcD6e9O9I4dQTncKH
+ d.fP973_f3uIL7vzYaXOrfeaVZkcqHcsfoYv8ZEqc1KESgNF43.mVe4m7ugDtkTqp0Ft6yDSA.aU
+ DCdJ3WAFzqr3zQi6.QHAdx2bG36UPeQ0O4T01bHN2_ZxA40QyM0KTkUpkhTzWWlIAoc93KTZr6Ol
+ bQ5p3QGN_YYdhJGnCG1z2P73ACgSFWMWYztqph9NrkmG66PmrCJL86ufCTw9pQdr.qtljGXKECjG
+ Ctd3ba2F1ewqE7sLZyn_5xR7lim7MFiF00dZ.RLRU_7dZAfjuiuEDAjRjQemM7_rH3g9dB94WlX5
+ jx59hbFl7UFL8T4T7CFhG0dMpjSALx.MJgEwW5NnPRubqWDE-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Thu, 22 Aug 2019 18:50:33 +0000
+Received: by smtp419.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID fb795a423b8272431beb45d8e1e8aca6;
+          Thu, 22 Aug 2019 18:50:30 +0000 (UTC)
+Subject: Re: New skb extension for use by LSMs (skb "security blob")?
+To:     David Miller <davem@davemloft.net>, paul@paul-moore.com
+Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, casey@schaufler-ca.com
+References: <CAHC9VhSz1_KA1tCJtNjwK26BOkGhKGbPT7v1O82mWPduvWwd4A@mail.gmail.com>
+ <20190821.155013.1723892743521935274.davem@davemloft.net>
+ <CAHC9VhRLexftb5mK8_izVQkv9w46m=aPukws2d2m+yrMvHUF_g@mail.gmail.com>
+ <20190821.205454.2103510420957943248.davem@davemloft.net>
 From:   Casey Schaufler <casey@schaufler-ca.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=casey@schaufler-ca.com; keydata=
@@ -100,81 +98,99 @@ Autocrypt: addr=casey@schaufler-ca.com; keydata=
  wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
  v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
  abzjfg==
-Message-ID: <1406434e-46f4-b80d-b3e9-1c6b05f82c14@schaufler-ca.com>
-Date:   Thu, 22 Aug 2019 09:44:12 -0700
+Message-ID: <36602a25-3a38-8478-d5e0-8d03d52593f3@schaufler-ca.com>
+Date:   Thu, 22 Aug 2019 11:50:31 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190822055441.20569-1-ebiggers@kernel.org>
+In-Reply-To: <20190821.205454.2103510420957943248.davem@davemloft.net>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/21/2019 10:54 PM, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On 8/21/2019 8:54 PM, David Miller wrote:
+> From: Paul Moore <paul@paul-moore.com>
+> Date: Wed, 21 Aug 2019 23:27:03 -0400
 >
-> inode_smack::smk_lock is taken during smack_d_instantiate(), which is
-> called during a filesystem transaction when creating a file on ext4.
-> Therefore to avoid a deadlock, all code that takes this lock must use
-> GFP_NOFS, to prevent memory reclaim from waiting for the filesystem
-> transaction to complete.
->
-> Reported-by: syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+>> On Wed, Aug 21, 2019 at 6:50 PM David Miller <davem@davemloft.net> wro=
+te:
+>>> From: Paul Moore <paul@paul-moore.com>
+>>> Date: Wed, 21 Aug 2019 18:00:09 -0400
+>>>
+>>>> I was just made aware of the skb extension work, and it looks very
+>>>> appealing from a LSM perspective.  As some of you probably remember,=
 
-I will run tests on this, and will take it in the Smack tree
-unless there are unexpected failures.
+>>>> we (the LSM folks) have wanted a proper security blob in the skb for=
 
-> ---
->  security/smack/smack_access.c | 6 +++---
->  security/smack/smack_lsm.c    | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
+>>>> quite some time, but netdev has been resistant to this idea thus far=
+=2E
+>>>>
+>>>> If I were to propose a patchset to add a SKB_EXT_SECURITY skb
+>>>> extension (a single extension ID to be shared among the different
+>>>> LSMs), would that be something that netdev would consider merging, o=
+r
+>>>> is there still a philosophical objection to things like this?
+>>> Unlike it's main intended user (MPTCP), it sounds like LSM's would us=
+e
+>>> this in a way such that it would be enabled on most systems all the
+>>> time.
+
+Only SELinux and Smack use the networking hooks today,
+although I understand that AppArmor has plans to do so
+in the not too distant future. Smack enables labeled
+networking at all times. While Smack doesn't have the
+expansive use that SELinux does because of Android, it
+is used extensively in embedded systems via Tizen and
+Yocto Project deployments.
+
+>>> That really defeats the whole purpose of making it dynamic. :-/
+
+It argues that fulfilling the needs of LSMs ought to be a basic
+feature of the skb, rather than a dynamic extension. When LSMs were
+introduced 20 years ago it was assumed their use would be rare, and
+it was. Today almost all Linux systems use LSMs, and once AppArmor
+adds network labeling it will be quite difficult to find a major
+distribution that doesn't need the support.
+
+>> I would be okay with only adding a skb extension when we needed it,
+>> which I'm currently thinking would only be when we had labeled
+>> networking actually configured at runtime and not just built into the
+>> kernel.  In SELinux we do something similar today when it comes to our=
+
+>> per-packet access controls; if labeled networking is not configured we=
+
+>> bail out of the LSM hooks early to improve performance (we would just
+>> be comparing unlabeled_t to unlabeled_t anyway).  I think the other
+>> LSMs would be okay with this usage as well.
+
+Smack uses labeled (CIPSO now, CALIPSO 'soon') networking by default
+and depends on it heavily for basic system policy enforcement.
+
+>> While a number of distros due enable some form of LSM and the labeled
+>> networking bits at build time, vary few (if any?) provide a default
+>> configuration so I would expect no additional overhead in the common
+>> case.
+
+Tizen isn't a distro, but neither is Android.
+
+>> Would that be acceptable?
+> I honestly don't know, I kinda feared that once the SKB extension went =
+in
+> people would start dumping things there and that's exactly what's happe=
+ning.
+
+As Paul has mentioned, the LSM community (Paul and me in particular)
+have been looking for a better way to deal with the network stack
+for a long time.
+
+> I just so happened to be reviewing:
 >
-> diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-> index f1c93a7be9ec..38ac3da4e791 100644
-> --- a/security/smack/smack_access.c
-> +++ b/security/smack/smack_access.c
-> @@ -465,7 +465,7 @@ char *smk_parse_smack(const char *string, int len)
->  	if (i == 0 || i >= SMK_LONGLABEL)
->  		return ERR_PTR(-EINVAL);
->  
-> -	smack = kzalloc(i + 1, GFP_KERNEL);
-> +	smack = kzalloc(i + 1, GFP_NOFS);
->  	if (smack == NULL)
->  		return ERR_PTR(-ENOMEM);
->  
-> @@ -500,7 +500,7 @@ int smk_netlbl_mls(int level, char *catset, struct netlbl_lsm_secattr *sap,
->  			if ((m & *cp) == 0)
->  				continue;
->  			rc = netlbl_catmap_setbit(&sap->attr.mls.cat,
-> -						  cat, GFP_KERNEL);
-> +						  cat, GFP_NOFS);
->  			if (rc < 0) {
->  				netlbl_catmap_free(sap->attr.mls.cat);
->  				return rc;
-> @@ -536,7 +536,7 @@ struct smack_known *smk_import_entry(const char *string, int len)
->  	if (skp != NULL)
->  		goto freeout;
->  
-> -	skp = kzalloc(sizeof(*skp), GFP_KERNEL);
-> +	skp = kzalloc(sizeof(*skp), GFP_NOFS);
->  	if (skp == NULL) {
->  		skp = ERR_PTR(-ENOMEM);
->  		goto freeout;
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 50c536cad85b..7e4d3145a018 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -288,7 +288,7 @@ static struct smack_known *smk_fetch(const char *name, struct inode *ip,
->  	if (!(ip->i_opflags & IOP_XATTR))
->  		return ERR_PTR(-EOPNOTSUPP);
->  
-> -	buffer = kzalloc(SMK_LONGLABEL, GFP_KERNEL);
-> +	buffer = kzalloc(SMK_LONGLABEL, GFP_NOFS);
->  	if (buffer == NULL)
->  		return ERR_PTR(-ENOMEM);
->  
+> 	https://patchwork.ozlabs.org/patch/1150091/
+>
+> while you were writing this email.
+>
+> It's rediculous, the vultures are out.
+
