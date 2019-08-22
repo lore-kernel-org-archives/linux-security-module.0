@@ -2,74 +2,93 @@ Return-Path: <SRS0=h0Om=WS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8058DC41514
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 06:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CE1C3A59D
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 07:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CEFB2341A
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 06:56:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5900F233A0
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 07:01:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566457293;
+	bh=1xRMbxjyV8ew6m3nfyvNCRRuTi1GhKBMZS5I0/ItEFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TaA9L9G2rTpgnUXn7Snr2nE0qVUrpVD0Qr5cG47kNXf4dPb9om4urSLfXTHbnkYky
+	 Zg/O/41EU+d1TlryJsR8AXf73/YU4sDOWJUCb2BZhhawi0lDoYwhHm0iwBqj7Vt8Ni
+	 uTqYsdFXLe9O8xbSgEZtL8dq6cFPVguctMQffjo0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730257AbfHVG4K (ORCPT
+        id S1731286AbfHVHBc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Aug 2019 02:56:10 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:54722 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbfHVG4K (ORCPT
+        Thu, 22 Aug 2019 03:01:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57630 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728605AbfHVHBc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Aug 2019 02:56:10 -0400
-Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7M6tWIW029585;
-        Thu, 22 Aug 2019 15:55:32 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
- Thu, 22 Aug 2019 15:55:32 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7M6tVCG029581;
-        Thu, 22 Aug 2019 15:55:31 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x7M6tVmv029579;
-        Thu, 22 Aug 2019 15:55:31 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201908220655.x7M6tVmv029579@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on sockets.
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Eric Biggers <ebiggers@kernel.org>
+        Thu, 22 Aug 2019 03:01:32 -0400
+Received: from zzz.localdomain (unknown [67.218.105.90])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F266920870;
+        Thu, 22 Aug 2019 07:01:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566457291;
+        bh=1xRMbxjyV8ew6m3nfyvNCRRuTi1GhKBMZS5I0/ItEFg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mpIBtwgHmHmuv6opUL5a6B6cFIPtk4LNZPdCb6RvShauYyMt3Ayh5SfIFRxP3zzGb
+         oKFNmsRIOROoD9GQGu5F0k3dITGMsA1hEw+aJ70DCXKYFYvt6YZam3NMpGDnxi5VRD
+         MkwFk1Buqa7SbLimpx/sFmShbMNpUPyIHke2XAfc=
+Date:   Thu, 22 Aug 2019 00:01:29 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
         syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
         jmorris@namei.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, serge@hallyn.com,
         syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
         "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
+ sockets.
+Message-ID: <20190822070129.GL6111@zzz.localdomain>
+Mail-Followup-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        "David S. Miller" <davem@davemloft.net>
+References: <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
+ <20190822063018.GK6111@zzz.localdomain>
+ <201908220655.x7M6tVmv029579@www262.sakura.ne.jp>
 MIME-Version: 1.0
-Date:   Thu, 22 Aug 2019 15:55:31 +0900
-References: <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp> <20190822063018.GK6111@zzz.localdomain>
-In-Reply-To: <20190822063018.GK6111@zzz.localdomain>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201908220655.x7M6tVmv029579@www262.sakura.ne.jp>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Eric Biggers wrote:
-> What happened to this patch?
-
-I have to learn how to manage a git tree for sending
-pull requests, but I can't find time to try.
-
+On Thu, Aug 22, 2019 at 03:55:31PM +0900, Tetsuo Handa wrote:
+> Eric Biggers wrote:
+> > What happened to this patch?
 > 
-> Also, isn't the same bug in other places too?:
+> I have to learn how to manage a git tree for sending
+> pull requests, but I can't find time to try.
 > 
-> 	- tomoyo_path_chmod()
-> 	- tomoyo_path_chown()
-> 	- smack_inode_getsecurity()
-> 	- smack_inode_setsecurity()
+> > 
+> > Also, isn't the same bug in other places too?:
+> > 
+> > 	- tomoyo_path_chmod()
+> > 	- tomoyo_path_chown()
+> > 	- smack_inode_getsecurity()
+> > 	- smack_inode_setsecurity()
+> 
+> What's the bug? The file descriptor returned by open(O_PATH) cannot be
+> passed to read(2), write(2), fchmod(2), fchown(2), fgetxattr(2), mmap(2) etc.
+> 
 
-What's the bug? The file descriptor returned by open(O_PATH) cannot be
-passed to read(2), write(2), fchmod(2), fchown(2), fgetxattr(2), mmap(2) etc.
+chmod(2), chown(2), getxattr(2), and setxattr(2) take a path, not a fd.
+
+- Eric
