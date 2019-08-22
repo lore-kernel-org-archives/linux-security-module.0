@@ -2,104 +2,179 @@ Return-Path: <SRS0=h0Om=WS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 474DBC3A5A3
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 16:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A59C3A5A3
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 16:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E21223401
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 16:32:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CA552341A
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 16:44:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="pi6XK9pe"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="mjgPwxKp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388168AbfHVQcc (ORCPT
+        id S1731384AbfHVQoO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Aug 2019 12:32:32 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41669 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733098AbfHVQcc (ORCPT
+        Thu, 22 Aug 2019 12:44:14 -0400
+Received: from sonic312-30.consmr.mail.gq1.yahoo.com ([98.137.69.211]:33446
+        "EHLO sonic312-30.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390140AbfHVQoO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Aug 2019 12:32:32 -0400
-Received: by mail-lf1-f67.google.com with SMTP id 62so4969968lfa.8
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2019 09:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ujwYz/NxPt4KuZjfQpu/cnFqN0PKCiE0M+fWaEKXyzU=;
-        b=pi6XK9pe93bWuyf6pKryFGG43zRe1ZCwwDleYSgufZv9Ci87EtNumSlh81D/RMBUB1
-         SkpQVhfDqHWd+OvxONVKRfKsmHySwguPchGfTt+wRko0hWR9DVzcoHkWnhqNRVJLc463
-         PiOXVl+YsmkFkn5w2u+TMtRHc6qyawh1xi+nxO6St0bc+jI1FT3TA/9k/+Vm2YIdcgGp
-         EBYt5j1wQaaqWleGeWnb3Mw9+6lZSjsrpJAvvXLPTJFHmVqklBrovOL1hU02MgFGeiqX
-         PC7aIX8nX/8P96zUM4rYaQG02bsss1BLzMdmXQ2sZU/WQaDv1/5fphkKSKBF1bFyqIJi
-         4FmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ujwYz/NxPt4KuZjfQpu/cnFqN0PKCiE0M+fWaEKXyzU=;
-        b=uEsHczy5IyNnQgI9bHAmwuJf9JE+b3ZFWZOQzR5BDtthY1DxSP1xucwcnnM22CgDhR
-         DZJyVh7bxIHipGUxu0DZBvgKJESiDTjPRQ/IXusUSxglbW7AzPc+s6Wklbcaco+gAMSR
-         /J0tJ6lKT1VaMr5Vw70+KUaTDROZaxIYRJzVeIMDpSdbrwFbVCjIy+HnQqPJy2fS0URc
-         6BJlNTllaJzx3lvWqeXEfCjK7YqglPdPvFLrc+39CuPNFzuIwKIT6wuV2JSA5Ah7dnHQ
-         cdLp0Vy4/OxiVLHshsKJrwGBNVuQjqwXmGEU6nJDN0Qtga6jdf1lmdAINR5qt+wzrlEK
-         6dHg==
-X-Gm-Message-State: APjAAAULK5oqZ9q7vT5S2Urs46AVVL4RtrR+QwzpzuPEJURKPRVYQGIa
-        egWKAme3CdoB1/nZy8uGGdTx5I8PPk+G8Y2exXr3
-X-Google-Smtp-Source: APXvYqzz2n4ssNU9eUBLNHNiiN1igpCWk1mywwCx6WmTr0Wqj7FtpXsRl6ByHayPfeQfIrJhDa2FjRZ8pjDimCZFisc=
-X-Received: by 2002:a19:4349:: with SMTP id m9mr35378lfj.64.1566491549775;
- Thu, 22 Aug 2019 09:32:29 -0700 (PDT)
+        Thu, 22 Aug 2019 12:44:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1566492253; bh=NqtxCPuufzLISW8B2ysYdhaSCNiOJN3WV3ux4y5AJPM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=mjgPwxKpg6kj6UJoU0rSkC0t4ZYxEPIpoGYHpkmkJdUrA/DsWb79y26oVWM7KQm/+FUXseSo8a7xVS69OG5gPIx7DnL9yxJb5sQLUz4+9R5ncL+B+8MFSMznK+wnHzXhneK94rhGaIlXUr1Q8rfnCxaNVoZlCTF64zM1VeMAX3DuKA7DAUXKjpyJ8Lq2kFjxsvGKvCAOOy4KmhM3de6ohsZJUIdY7cbrY5Rhs8TkJN0JvuP9LwsDnT3nldN4JS8xTg+b8KLLTrNNROhVfPGnu90tZkPBYts+d1TJMfqYsBzmtO7sTbuLYrj8Fr6yAuUMfjqIeUWiBWiMxfA76Iww3A==
+X-YMail-OSG: rXX1QYkVM1ll0el.otn8c5g_OqRTptrTy7CwThjsGFISlDkGud1PwRUj98Plst6
+ 1DlixBs4Atqn6tkoqXUgbaPgiY0tnh1Umjaid_erFpYupRBLd72jDvs7byWQBXC2rLTevT.zBmS.
+ a.lRGL7fO9Kg3x69SKdGTnyRXjbd6u6rpsUxA.553R2YSb_hJ637WJMCWpLHaeAhTs4pnV4yjE0e
+ sIYl8kCVLxFCk3bOARr1TxX7oUL1YMgYALoPmcVvobWMsu6AluLUT.lxWy3JaY9LWmmI9L2tFVhX
+ Df0r9CKIW5iU6LEAEYTfFIApWKpJ4L8i8UA.0MDfH5A.TsZRgHZfUno12We_KcovAy075IWEGI.i
+ pEViCk6teh9X3_vy_TxlFVyjbT0P2T_2DZfMxcrwkKOr3KNr4qkSaslRGoVuYJqkadCOtBJjbc6E
+ 8v0qXwmO4Q.h15LZj3TexwqFBWAQ541Gfq3wQLKF62WwAku9N0S78axYqJAVjlBb_nzML04UD4lX
+ 6BqqqAMwNBmldkaT.Zmj7xmksQ_wUs7Hk6sZNUcg_hw2tPyPeD3.91yg.nYcuLthPBRyOHdXPQXZ
+ 9paS3V5BYDMD7Az1rK1C83fdGYillRSlQyShVMPClgMZaoP.x8wWldKgpS6apF9DbXDYYqbpxrWC
+ 65DkJmOx9i0ikocv01XUbDeRtoWRMUJRq8Lh9UuKimBDNGyfCecywI_MTTTvuCn7Z8HTwRtPJaE5
+ oCidK.43nnz45mIYo0l_eEY.lYwhItUL.2UOfSjgqI.o7EQvX76dNQDmgLg7YeZwGBw_.l4roStC
+ RCM9HhQfQiUi4tC7Ro2dJ5PvkCeEOEipQP4VHq64uAqINWkUrZOMp7rKqboZRXogiSND1iP0QSns
+ 3WPwdp6CXL7sTy4n4iJ5P7zZxOaunycYMfSpmJMmEKiYvOfK5hhsq7hHjyeFGh_yjjOrV3puiNGw
+ ThiZ2.Cp2eOkpfW3dFc.vXyXxUswr0rZS.ctyhXBYfdslj2.pixDV19mr1j3569F8gQwfhma_R.j
+ NLGhjcxtHQSAGfY0hmqfzYvgVIBedyRyM1GPQhrkln9eUGBQG3mXbx._29DM3Z.9pqbS2F2lcjGS
+ SA7ClL0w0TX_f.93ulTCBiXxJBbGNfnL36.jQ8XGXgYOw3WzpAFQeoCzEQclz2dRXPpMNq6eyFB9
+ 19Iipt4mc4LdKbmxkQC9OE8KWzc_WB_rP60evhLYaYgbONUI7.QEasZcfZQefP2qG02wZZU_KJw8
+ 2rIgsfUZteAmMw9fDm6mTfMY4iv_D.teMa0.lOlcEOLev8mkJ8nbMbfT4gauTgcvecvs67_QeEad
+ FWpbSet2bAZgi1qtAU7l_pOul8dI-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Thu, 22 Aug 2019 16:44:13 +0000
+Received: by smtp410.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 0b7cdfc00a2384b0a8f0646ddd1e4acf;
+          Thu, 22 Aug 2019 16:44:12 +0000 (UTC)
+Subject: Re: [PATCH] smack: use GFP_NOFS while holding inode_smack::smk_lock
+To:     Eric Biggers <ebiggers@kernel.org>,
+        linux-security-module@vger.kernel.org
+Cc:     syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com,
+        stable@vger.kernel.org, casey@schaufler-ca.com
+References: <CACT4Y+aGjkmq4cEaQXagd_YqjE4a1HoNgcEzqeNj-g0Hg_hQHw@mail.gmail.com>
+ <20190822055441.20569-1-ebiggers@kernel.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ mQINBFzV9HABEAC/mmv3jeJyF7lR7QhILYg1+PeBLIMZv7KCzBSc/4ZZipoWdmr77Lel/RxQ
+ 1PrNx0UaM5r6Hj9lJmJ9eg4s/TUBSP67mTx+tsZ1RhG78/WFf9aBe8MSXxY5cu7IUwo0J/CG
+ vdSqACKyYPV5eoTJmnMxalu8/oVUHyPnKF3eMGgE0mKOFBUMsb2pLS/enE4QyxhcZ26jeeS6
+ 3BaqDl1aTXGowM5BHyn7s9LEU38x/y2ffdqBjd3au2YOlvZ+XUkzoclSVfSR29bomZVVyhMB
+ h1jTmX4Ac9QjpwsxihT8KNGvOM5CeCjQyWcW/g8LfWTzOVF9lzbx6IfEZDDoDem4+ZiPsAXC
+ SWKBKil3npdbgb8MARPes2DpuhVm8yfkJEQQmuLYv8GPiJbwHQVLZGQAPBZSAc7IidD2zbf9
+ XAw1/SJGe1poxOMfuSBsfKxv9ba2i8hUR+PH7gWwkMQaQ97B1yXYxVEkpG8Y4MfE5Vd3bjJU
+ kvQ/tOBUCw5zwyIRC9+7zr1zYi/3hk+OG8OryZ5kpILBNCo+aePeAJ44znrySarUqS69tuXd
+ a3lMPHUJJpUpIwSKQ5UuYYkWlWwENEWSefpakFAIwY4YIBkzoJ/t+XJHE1HTaJnRk6SWpeDf
+ CreF3+LouP4njyeLEjVIMzaEpwROsw++BX5i5vTXJB+4UApTAQARAQABtChDYXNleSBTY2hh
+ dWZsZXIgPGNhc2V5QHNjaGF1Zmxlci1jYS5jb20+iQJUBBMBCAA+FiEEC+9tH1YyUwIQzUIe
+ OKUVfIxDyBEFAlzV9HACGwMFCRLMAwAFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQOKUV
+ fIxDyBG6ag/6AiRl8yof47YOEVHlrmewbpnlBTaYNfJ5cZflNRKRX6t4bp1B2YV1whlDTpiL
+ vNOwFkh+ZE0eI5M4x8Gw2Oiok+4Q5liA9PHTozQYF+Ia+qdL5EehfbLGoEBqklpGvG3h8JsO
+ 7SvONJuFDgvab/U/UriDYycJwzwKZuhVtK9EMpnTtUDyP3DY+Q8h7MWsniNBLVXnh4yBIEJg
+ SSgDn3COpZoFTPGKE+rIzioo/GJe8CTa2g+ZggJiY/myWTS3quG0FMvwvNYvZ4I2g6uxSl7n
+ bZVqAZgqwoTAv1HSXIAn9muwZUJL03qo25PFi2gQmX15BgJKQcV5RL0GHFHRThDS3IyadOgK
+ P2j78P8SddTN73EmsG5OoyzwZAxXfck9A512BfVESqapHurRu2qvMoUkQaW/2yCeRQwGTsFj
+ /rr0lnOBkyC6wCmPSKXe3dT2mnD5KnCkjn7KxLqexKt4itGjJz4/ynD/qh+gL7IPbifrQtVH
+ JI7cr0fI6Tl8V6efurk5RjtELsAlSR6fKV7hClfeDEgLpigHXGyVOsynXLr59uE+g/+InVic
+ jKueTq7LzFd0BiduXGO5HbGyRKw4MG5DNQvC//85EWmFUnDlD3WHz7Hicg95D+2IjD2ZVXJy
+ x3LTfKWdC8bU8am1fi+d6tVEFAe/KbUfe+stXkgmfB7pxqW5Ag0EXNX0cAEQAPIEYtPebJzT
+ wHpKLu1/j4jQcke06Kmu5RNuj1pEje7kX5IKzQSs+CPH0NbSNGvrA4dNGcuDUTNHgb5Be9hF
+ zVqRCEvF2j7BFbrGe9jqMBWHuWheQM8RRoa2UMwQ704mRvKr4sNPh01nKT52ASbWpBPYG3/t
+ WbYaqfgtRmCxBnqdOx5mBJIBh9Q38i63DjQgdNcsTx2qS7HFuFyNef5LCf3jogcbmZGxG/b7
+ yF4OwmGsVc8ufvlKo5A9Wm+tnRjLr/9Mn9vl5Xa/tQDoPxz26+aWz7j1in7UFzAarcvqzsdM
+ Em6S7uT+qy5jcqyuipuenDKYF/yNOVSNnsiFyQTFqCPCpFihOnuaWqfmdeUOQHCSo8fD4aRF
+ emsuxqcsq0Jp2ODq73DOTsdFxX2ESXYoFt3Oy7QmIxeEgiHBzdKU2bruIB5OVaZ4zWF+jusM
+ Uh+jh+44w9DZkDNjxRAA5CxPlmBIn1OOYt1tsphrHg1cH1fDLK/pDjsJZkiH8EIjhckOtGSb
+ aoUUMMJ85nVhN1EbU/A3DkWCVFEA//Vu1+BckbSbJKE7Hl6WdW19BXOZ7v3jo1q6lWwcFYth
+ esJfk3ZPPJXuBokrFH8kqnEQ9W2QgrjDX3et2WwZFLOoOCItWxT0/1QO4ikcef/E7HXQf/ij
+ Dxf9HG2o5hOlMIAkJq/uLNMvABEBAAGJAjwEGAEIACYWIQQL720fVjJTAhDNQh44pRV8jEPI
+ EQUCXNX0cAIbDAUJEswDAAAKCRA4pRV8jEPIEWkzEACKFUnpp+wIVHpckMfBqN8BE5dUbWJc
+ GyQ7wXWajLtlPdw1nNw0Wrv+ob2RCT7qQlUo6GRLcvj9Fn5tR4hBvR6D3m8aR0AGHbcC62cq
+ I7LjaSDP5j/em4oVL2SMgNTrXgE2w33JMGjAx9oBzkxmKUqprhJomPwmfDHMJ0t7y39Da724
+ oLPTkQDpJL1kuraM9TC5NyLe1+MyIxqM/8NujoJbWeQUgGjn9uxQAil7o/xSCjrWCP3kZDID
+ vd5ZaHpdl8e1mTExQoKr4EWgaMjmD/a3hZ/j3KfTVNpM2cLfD/QwTMaC2fkK8ExMsz+rUl1H
+ icmcmpptCwOSgwSpPY1Zfio6HvEJp7gmDwMgozMfwQuT9oxyFTxn1X3rn1IoYQF3P8gsziY5
+ qtTxy2RrgqQFm/hr8gM78RhP54UPltIE96VywviFzDZehMvuwzW//fxysIoK97Y/KBZZOQs+
+ /T+Bw80Pwk/dqQ8UmIt2ffHEgwCTbkSm711BejapWCfklxkMZDp16mkxSt2qZovboVjXnfuq
+ wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
+ v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
+ abzjfg==
+Message-ID: <1406434e-46f4-b80d-b3e9-1c6b05f82c14@schaufler-ca.com>
+Date:   Thu, 22 Aug 2019 09:44:12 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <CAHC9VhSz1_KA1tCJtNjwK26BOkGhKGbPT7v1O82mWPduvWwd4A@mail.gmail.com>
- <20190822070358.GE20113@breakpoint.cc>
-In-Reply-To: <20190822070358.GE20113@breakpoint.cc>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 22 Aug 2019 12:32:18 -0400
-Message-ID: <CAHC9VhQ_+3ywPu0QRzP3cSgPH2i9Br994wJttp-yXy2GA4FrNg@mail.gmail.com>
-Subject: Re: New skb extension for use by LSMs (skb "security blob")?
-To:     Florian Westphal <fw@strlen.de>
-Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190822055441.20569-1-ebiggers@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 22, 2019 at 3:03 AM Florian Westphal <fw@strlen.de> wrote:
-> Paul Moore <paul@paul-moore.com> wrote:
-> > Hello netdev,
-> >
-> > I was just made aware of the skb extension work, and it looks very
-> > appealing from a LSM perspective.  As some of you probably remember,
-> > we (the LSM folks) have wanted a proper security blob in the skb for
-> > quite some time, but netdev has been resistant to this idea thus far.
+On 8/21/2019 10:54 PM, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 >
-> Is that "blob" in addition to skb->secmark, or a replacement?
+> inode_smack::smk_lock is taken during smack_d_instantiate(), which is
+> called during a filesystem transaction when creating a file on ext4.
+> Therefore to avoid a deadlock, all code that takes this lock must use
+> GFP_NOFS, to prevent memory reclaim from waiting for the filesystem
+> transaction to complete.
+>
+> Reported-by: syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-That's a good question.  While I thought about that, I wasn't sure if
-that was worth bringing up as previous attempts to trade the secmark
-field for a void pointer met with failure.  Last time I played with it
-I was able to take the additional 32-bits from holes in the skb, and
-possibly even improve some of the cacheline groupings (but that is
-always going to be a dependent on use case I think), but that wasn't
-enough.
+I will run tests on this, and will take it in the Smack tree
+unless there are unexpected failures.
 
-I think we could consider freeing up the secmark in the main skb, and
-move it to a skb extension, but this would potentially increase the
-chances that we would need to add an extension to a skb.  I don't have
-any hard numbers, but based on discussions and questions I suspect
-Secmark is more widely used than NetLabel and/or labeled IPsec;
-although I'm confident it is still a minor percentage of the overall
-Linux installed base.
-
-For me the big question is what would it take for us to get a security
-blob associated with the skb?  Would moving the secmark into the skb
-extension be enough?  Something else?  Or is this simply never going
-to happen?  I want to remain optimistic, but I've been trying for this
-off-and-on for over a decade and keep running into a brick wall ;)
-
--- 
-paul moore
-www.paul-moore.com
+> ---
+>  security/smack/smack_access.c | 6 +++---
+>  security/smack/smack_lsm.c    | 2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
+> index f1c93a7be9ec..38ac3da4e791 100644
+> --- a/security/smack/smack_access.c
+> +++ b/security/smack/smack_access.c
+> @@ -465,7 +465,7 @@ char *smk_parse_smack(const char *string, int len)
+>  	if (i == 0 || i >= SMK_LONGLABEL)
+>  		return ERR_PTR(-EINVAL);
+>  
+> -	smack = kzalloc(i + 1, GFP_KERNEL);
+> +	smack = kzalloc(i + 1, GFP_NOFS);
+>  	if (smack == NULL)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> @@ -500,7 +500,7 @@ int smk_netlbl_mls(int level, char *catset, struct netlbl_lsm_secattr *sap,
+>  			if ((m & *cp) == 0)
+>  				continue;
+>  			rc = netlbl_catmap_setbit(&sap->attr.mls.cat,
+> -						  cat, GFP_KERNEL);
+> +						  cat, GFP_NOFS);
+>  			if (rc < 0) {
+>  				netlbl_catmap_free(sap->attr.mls.cat);
+>  				return rc;
+> @@ -536,7 +536,7 @@ struct smack_known *smk_import_entry(const char *string, int len)
+>  	if (skp != NULL)
+>  		goto freeout;
+>  
+> -	skp = kzalloc(sizeof(*skp), GFP_KERNEL);
+> +	skp = kzalloc(sizeof(*skp), GFP_NOFS);
+>  	if (skp == NULL) {
+>  		skp = ERR_PTR(-ENOMEM);
+>  		goto freeout;
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 50c536cad85b..7e4d3145a018 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -288,7 +288,7 @@ static struct smack_known *smk_fetch(const char *name, struct inode *ip,
+>  	if (!(ip->i_opflags & IOP_XATTR))
+>  		return ERR_PTR(-EOPNOTSUPP);
+>  
+> -	buffer = kzalloc(SMK_LONGLABEL, GFP_KERNEL);
+> +	buffer = kzalloc(SMK_LONGLABEL, GFP_NOFS);
+>  	if (buffer == NULL)
+>  		return ERR_PTR(-ENOMEM);
+>  
