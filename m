@@ -2,102 +2,95 @@ Return-Path: <SRS0=h0Om=WS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C0CEC3A59D
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 03:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11F9C3A59D
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 03:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E7B221848
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 03:51:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 804472173E
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 03:54:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730638AbfHVDvo (ORCPT
+        id S1730337AbfHVDyz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Aug 2019 23:51:44 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:58270 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730602AbfHVDvn (ORCPT
+        Wed, 21 Aug 2019 23:54:55 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:37896 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728788AbfHVDyz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Aug 2019 23:51:43 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i0e8M-0002mA-FC; Thu, 22 Aug 2019 03:51:34 +0000
-Date:   Thu, 22 Aug 2019 04:51:34 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-security-module@vger.kernel.org
-Subject: [RFC][PATCH] fix d_absolute_path() interplay with fsmount()
-Message-ID: <20190822035134.GK1131@ZenIV.linux.org.uk>
-References: <20190708131831.GT17978@ZenIV.linux.org.uk>
- <874l3wo3gq.fsf@xmission.com>
- <20190708180132.GU17978@ZenIV.linux.org.uk>
- <20190708202124.GX17978@ZenIV.linux.org.uk>
- <87pnmkhxoy.fsf@xmission.com>
- <5802b8b1-f734-1670-f83b-465eda133936@i-love.sakura.ne.jp>
- <1698ec76-f56c-1e65-2f11-318c0ed225bb@i-love.sakura.ne.jp>
- <e75d4a66-cfcf-2ce8-e82a-fdc80f01723d@canonical.com>
- <7eb7378e-2eb8-c1ba-4e1f-ea8f5611f42b@i-love.sakura.ne.jp>
- <16ae946d-dbbe-9be9-9b22-866b3cd1cd7e@i-love.sakura.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <16ae946d-dbbe-9be9-9b22-866b3cd1cd7e@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        Wed, 21 Aug 2019 23:54:55 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 89ED61522471F;
+        Wed, 21 Aug 2019 20:54:54 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 20:54:54 -0700 (PDT)
+Message-Id: <20190821.205454.2103510420957943248.davem@davemloft.net>
+To:     paul@paul-moore.com
+Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: New skb extension for use by LSMs (skb "security blob")?
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <CAHC9VhRLexftb5mK8_izVQkv9w46m=aPukws2d2m+yrMvHUF_g@mail.gmail.com>
+References: <CAHC9VhSz1_KA1tCJtNjwK26BOkGhKGbPT7v1O82mWPduvWwd4A@mail.gmail.com>
+        <20190821.155013.1723892743521935274.davem@davemloft.net>
+        <CAHC9VhRLexftb5mK8_izVQkv9w46m=aPukws2d2m+yrMvHUF_g@mail.gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 21 Aug 2019 20:54:54 -0700 (PDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[bringing a private thread back to the lists]
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 21 Aug 2019 23:27:03 -0400
 
-There's a bug in interplay of fsmount() and d_absolute_path().
-Namely, the check in d_absolute_path() treats the
-not-yet-attached mount as "reached absolute root".
-AFAICS, the right fix is this
+> On Wed, Aug 21, 2019 at 6:50 PM David Miller <davem@davemloft.net> wrote:
+>> From: Paul Moore <paul@paul-moore.com>
+>> Date: Wed, 21 Aug 2019 18:00:09 -0400
+>>
+>> > I was just made aware of the skb extension work, and it looks very
+>> > appealing from a LSM perspective.  As some of you probably remember,
+>> > we (the LSM folks) have wanted a proper security blob in the skb for
+>> > quite some time, but netdev has been resistant to this idea thus far.
+>> >
+>> > If I were to propose a patchset to add a SKB_EXT_SECURITY skb
+>> > extension (a single extension ID to be shared among the different
+>> > LSMs), would that be something that netdev would consider merging, or
+>> > is there still a philosophical objection to things like this?
+>>
+>> Unlike it's main intended user (MPTCP), it sounds like LSM's would use
+>> this in a way such that it would be enabled on most systems all the
+>> time.
+>>
+>> That really defeats the whole purpose of making it dynamic. :-/
+> 
+> I would be okay with only adding a skb extension when we needed it,
+> which I'm currently thinking would only be when we had labeled
+> networking actually configured at runtime and not just built into the
+> kernel.  In SELinux we do something similar today when it comes to our
+> per-packet access controls; if labeled networking is not configured we
+> bail out of the LSM hooks early to improve performance (we would just
+> be comparing unlabeled_t to unlabeled_t anyway).  I think the other
+> LSMs would be okay with this usage as well.
+> 
+> While a number of distros due enable some form of LSM and the labeled
+> networking bits at build time, vary few (if any?) provide a default
+> configuration so I would expect no additional overhead in the common
+> case.
+> 
+> Would that be acceptable?
 
-diff --git a/fs/d_path.c b/fs/d_path.c
-index a7d0a96b35ce..0f1fc1743302 100644
---- a/fs/d_path.c
-+++ b/fs/d_path.c
-@@ -116,8 +116,10 @@ static int prepend_path(const struct path *path,
- 				vfsmnt = &mnt->mnt;
- 				continue;
- 			}
--			if (!error)
--				error = is_mounted(vfsmnt) ? 1 : 2;
-+			if (is_mounted(vfsmnt) && !is_anon_ns(mnt->mnt_ns))
-+				error = 1;	// absolute root
-+			else
-+				error = 2;	// detached or not attached yet
- 			break;
- 		}
- 		parent = dentry->d_parent;
+I honestly don't know, I kinda feared that once the SKB extension went in
+people would start dumping things there and that's exactly what's happening.
+I just so happened to be reviewing:
 
-but that would slightly change the behaviour in another case.
-Namely, nfs4 mount-time temporary namespaces.  There we have
-the following: mount -t nfs4 server:/foo/bar/baz /mnt
-will
-        * set a temporary namespace, matching the mount tree as
-exported by server
-        * mount the root export there
-        * traverse foo/bar/baz in that namespace, triggering
-automounts when we cross the filesystem boundaries on server.
-        * grab whatever we'd arrived at; that's what we'll
-be mounting.
-        * dissolve the temp namespace.
+	https://patchwork.ozlabs.org/patch/1150091/
 
-If you trigger some LSM hook (e.g. in permission checks on
-that pathname traversal) for objects in that temp namespace,
-do you want d_absolute_path() to succeed (and give a pathname
-relative to server's root export), or should it rather fail?
+while you were writing this email.
 
-AFAICS, apparmor and tomoyo are the only things that might
-care either way; I would go with "fail, it's not an absolute
-path" (and that's what the patch above will end up doing),
-but it's really up to you.
-
-It definitely ought to fail for yet-to-be-attached case, though;
-it doesn't, and that's a bug that needs to be fixed.  Mea culpa.
+It's rediculous, the vultures are out.
