@@ -2,122 +2,205 @@ Return-Path: <SRS0=h0Om=WS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AE9C3A5A2
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 05:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7938C3A59D
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 06:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBC2E20856
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 05:55:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AE24233A0
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Aug 2019 06:30:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566453312;
-	bh=UXY5aSHm+byRBUM+ls6z3ZUmsPSiWC0HIn3XjjSXQHI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CkxSgl1DKznBzT8O4eS3+UBku8fvc3IfnpdoMVNWGviUxhyMmqVzmrXD1H7/qDUjz
-	 oxJGNuJ2pjw7WBHJ3M3e65lDP5jFjcMGGt4I69R3Fym+qk6I3KCp5xX3UAz959HVTr
-	 x/CIVY6WC4KfvXQl6KPrENGKAGHmcUX3u2W4d4C8=
+	s=default; t=1566455422;
+	bh=2DtatxVDW1nKwmkx3HMXXS8CVF6c+oRXWYzMKDp5Fn0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kGFg/Gd4OAuTixriHIcGFF/A/BvXMmTCGEJcxy9Gr855UowrdVMhfWGomj7SbAsvN
+	 phwngUx+oM9CGYf8lPBaj1+EIKyFbDr5F0wc40VrelPOb4jpuezD+Rn+cbp+afbnrZ
+	 mDYfi9jZGXj37hIIUdnsH8ANbcjkjzHzG8Pli1W8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730605AbfHVFzM (ORCPT
+        id S1731705AbfHVGaW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Aug 2019 01:55:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41248 "EHLO mail.kernel.org"
+        Thu, 22 Aug 2019 02:30:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729690AbfHVFzM (ORCPT
+        id S1731704AbfHVGaV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Aug 2019 01:55:12 -0400
+        Thu, 22 Aug 2019 02:30:21 -0400
 Received: from zzz.localdomain (unknown [67.218.105.90])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7A93233A1;
-        Thu, 22 Aug 2019 05:55:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3AFD205ED;
+        Thu, 22 Aug 2019 06:30:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566453310;
-        bh=UXY5aSHm+byRBUM+ls6z3ZUmsPSiWC0HIn3XjjSXQHI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DWGyHVwoPgH4hOCD6UmuFrBV6xmOLF+eJqeyfFje+WyO8JrfqqC5ieRpBSYkTQUjF
-         ZyPLNlfHM3ErgLg+NsQUO3HZRV5T82ODnvCWB0GOq4NITw9ohediCTH4IQJzXppQYm
-         1Rllhs0AGp+vPzf4vXaNXZqfCOTipJ8gCHpXp0U8=
+        s=default; t=1566455420;
+        bh=2DtatxVDW1nKwmkx3HMXXS8CVF6c+oRXWYzMKDp5Fn0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pADeM8o+S9FavrrK1virg0c1+J17cKB/9RHK6QOEgjHnUcAX7K4SVgHhkz3sTh1it
+         vizzqYlJkeKKqx01xW5JKWUm2khks3UKw4w8pI4/U42pScG98m4XwclhTGN9T9s1Sy
+         sTvKgIRzs4Z71KddB7+jkjEKz6gkDo6t8rBH2BQE=
+Date:   Wed, 21 Aug 2019 23:30:18 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org
-Cc:     syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com,
-        stable@vger.kernel.org
-Subject: [PATCH] smack: use GFP_NOFS while holding inode_smack::smk_lock
-Date:   Wed, 21 Aug 2019 22:54:41 -0700
-Message-Id: <20190822055441.20569-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.22.1
-In-Reply-To: <CACT4Y+aGjkmq4cEaQXagd_YqjE4a1HoNgcEzqeNj-g0Hg_hQHw@mail.gmail.com>
-References: <CACT4Y+aGjkmq4cEaQXagd_YqjE4a1HoNgcEzqeNj-g0Hg_hQHw@mail.gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
+ sockets.
+Message-ID: <20190822063018.GK6111@zzz.localdomain>
+Mail-Followup-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        "David S. Miller" <davem@davemloft.net>
+References: <0000000000004f43fa058a97f4d3@google.com>
+ <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
+ <1b5722cc-adbc-035d-5ca1-9aa56e70d312@I-love.SAKURA.ne.jp>
+ <a4ed1778-8b73-49d1-0ff0-59d9c6ac0af8@I-love.SAKURA.ne.jp>
+ <20190618204933.GE17978@ZenIV.linux.org.uk>
+ <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Eric Biggers <ebiggers@google.com>
+Hi Tetsuo,
 
-inode_smack::smk_lock is taken during smack_d_instantiate(), which is
-called during a filesystem transaction when creating a file on ext4.
-Therefore to avoid a deadlock, all code that takes this lock must use
-GFP_NOFS, to prevent memory reclaim from waiting for the filesystem
-transaction to complete.
+On Sat, Jun 22, 2019 at 01:45:30PM +0900, Tetsuo Handa wrote:
+> On 2019/06/19 5:49, Al Viro wrote:
+> > On Sun, Jun 16, 2019 at 03:49:00PM +0900, Tetsuo Handa wrote:
+> >> Hello, Al.
+> >>
+> >> Q1: Do you agree that we should fix TOMOYO side rather than SOCKET_I()->sk
+> >>     management.
+> > 
+> > You do realize that sockets are not unique in that respect, right?
+> > All kinds of interesting stuff can be accessed via /proc/*/fd/*, and
+> > it _can_ be closed under you.  So I'd suggest checking how your code
+> > copes with similar for pipes, FIFOs, epoll, etc., accessed that way...
+> 
+> I know all kinds of interesting stuff can be accessed via /proc/*/fd/*,
+> and it _can_ be closed under me.
+> 
+> Regarding sockets, I was accessing "struct socket" memory and
+> "struct sock" memory which are outside of "struct inode" memory.
+> 
+> But regarding other objects, I am accessing "struct dentry" memory,
+> "struct super_block" memory and "struct inode" memory. I'm expecting
+> that these memory can't be kfree()d as long as "struct path" holds
+> a reference. Is my expectation correct?
+> 
+> > 
+> > We are _not_ going to be checking that in fs/open.c - the stuff found
+> > via /proc/*/fd/* can have the associated file closed by the time
+> > we get to calling ->open() and we won't know that until said call.
+> 
+> OK. Then, fixing TOMOYO side is the correct way.
+> 
+> > 
+> >> Q2: Do you see any problem with using f->f_path.dentry->d_inode ?
+> >>     Do we need to use d_backing_inode() or d_inode() ?
+> > 
+> > Huh?  What's wrong with file_inode(f), in the first place?  And
+> > just when can that be NULL, while we are at it?
+> 
+> Oh, I was not aware of file_inode(). Thanks.
+> 
+> > 
+> >>>  static int tomoyo_inode_getattr(const struct path *path)
+> >>>  {
+> >>> +	/* It is not safe to call tomoyo_get_socket_name(). */
+> >>> +	if (path->dentry->d_inode && S_ISSOCK(path->dentry->d_inode->i_mode))
+> >>> +		return 0;
+> > 
+> > Can that be called for a negative?
+> > 
+> 
+> I check for NULL when I'm not sure it is guaranteed to hold a valid pointer.
+> You meant "we are sure that path->dentry->d_inode is valid", don't you?
+> 
+> By the way, "negative" associates with IS_ERR() range. I guess that
+> "NULL" is the better name...
+> 
+> Anyway, here is V2 patch.
+> 
+> From c63c4074300921d6d1c33c3b8dc9c84ebfededf5 Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Sat, 22 Jun 2019 13:14:26 +0900
+> Subject: [PATCH v2] tomoyo: Don't check open/getattr permission on sockets.
+> 
+> syzbot is reporting that use of SOCKET_I()->sk from open() can result in
+> use after free problem [1], for socket's inode is still reachable via
+> /proc/pid/fd/n despite destruction of SOCKET_I()->sk already completed.
+> 
+> But there is no point with calling security_file_open() on sockets
+> because open("/proc/pid/fd/n", !O_PATH) on sockets fails with -ENXIO.
+> 
+> There is some point with calling security_inode_getattr() on sockets
+> because stat("/proc/pid/fd/n") and fstat(open("/proc/pid/fd/n", O_PATH))
+> are valid. If we want to access "struct sock"->sk_{family,type,protocol}
+> fields, we will need to use security_socket_post_create() hook and
+> security_inode_free() hook in order to remember these fields because
+> security_sk_free() hook is called before the inode is destructed. But
+> since information which can be protected by checking
+> security_inode_getattr() on sockets is trivial, let's not be bothered by
+> "struct inode"->i_security management.
+> 
+> There is point with calling security_file_ioctl() on sockets. Since
+> ioctl(open("/proc/pid/fd/n", O_PATH)) is invalid, security_file_ioctl()
+> on sockets should remain safe.
+> 
+> [1] https://syzkaller.appspot.com/bug?id=73d590010454403d55164cca23bd0565b1eb3b74
+> 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Reported-by: syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>
+> ---
+>  security/tomoyo/tomoyo.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+> index 716c92e..8ea3f5d 100644
+> --- a/security/tomoyo/tomoyo.c
+> +++ b/security/tomoyo/tomoyo.c
+> @@ -126,6 +126,9 @@ static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
+>   */
+>  static int tomoyo_inode_getattr(const struct path *path)
+>  {
+> +	/* It is not safe to call tomoyo_get_socket_name(). */
+> +	if (S_ISSOCK(d_inode(path->dentry)->i_mode))
+> +		return 0;
+>  	return tomoyo_path_perm(TOMOYO_TYPE_GETATTR, path, NULL);
+>  }
+>  
+> @@ -316,6 +319,9 @@ static int tomoyo_file_open(struct file *f)
+>  	/* Don't check read permission here if called from do_execve(). */
+>  	if (current->in_execve)
+>  		return 0;
+> +	/* Sockets can't be opened by open(). */
+> +	if (S_ISSOCK(file_inode(f)->i_mode))
+> +		return 0;
+>  	return tomoyo_check_open_permission(tomoyo_domain(), &f->f_path,
+>  					    f->f_flags);
+>  }
+> -- 
 
-Reported-by: syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- security/smack/smack_access.c | 6 +++---
- security/smack/smack_lsm.c    | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+What happened to this patch?
 
-diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-index f1c93a7be9ec..38ac3da4e791 100644
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -465,7 +465,7 @@ char *smk_parse_smack(const char *string, int len)
- 	if (i == 0 || i >= SMK_LONGLABEL)
- 		return ERR_PTR(-EINVAL);
- 
--	smack = kzalloc(i + 1, GFP_KERNEL);
-+	smack = kzalloc(i + 1, GFP_NOFS);
- 	if (smack == NULL)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -500,7 +500,7 @@ int smk_netlbl_mls(int level, char *catset, struct netlbl_lsm_secattr *sap,
- 			if ((m & *cp) == 0)
- 				continue;
- 			rc = netlbl_catmap_setbit(&sap->attr.mls.cat,
--						  cat, GFP_KERNEL);
-+						  cat, GFP_NOFS);
- 			if (rc < 0) {
- 				netlbl_catmap_free(sap->attr.mls.cat);
- 				return rc;
-@@ -536,7 +536,7 @@ struct smack_known *smk_import_entry(const char *string, int len)
- 	if (skp != NULL)
- 		goto freeout;
- 
--	skp = kzalloc(sizeof(*skp), GFP_KERNEL);
-+	skp = kzalloc(sizeof(*skp), GFP_NOFS);
- 	if (skp == NULL) {
- 		skp = ERR_PTR(-ENOMEM);
- 		goto freeout;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 50c536cad85b..7e4d3145a018 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -288,7 +288,7 @@ static struct smack_known *smk_fetch(const char *name, struct inode *ip,
- 	if (!(ip->i_opflags & IOP_XATTR))
- 		return ERR_PTR(-EOPNOTSUPP);
- 
--	buffer = kzalloc(SMK_LONGLABEL, GFP_KERNEL);
-+	buffer = kzalloc(SMK_LONGLABEL, GFP_NOFS);
- 	if (buffer == NULL)
- 		return ERR_PTR(-ENOMEM);
- 
--- 
-2.22.1
+Also, isn't the same bug in other places too?:
 
+	- tomoyo_path_chmod()
+	- tomoyo_path_chown()
+	- smack_inode_getsecurity()
+	- smack_inode_setsecurity()
+
+- Eric
