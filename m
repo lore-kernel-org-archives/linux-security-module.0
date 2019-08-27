@@ -2,166 +2,226 @@ Return-Path: <SRS0=Rd7N=WX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B44C3A5A3
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 20:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0C4C3A5A4
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 23:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE4A820656
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 20:47:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="wjz2OlUL"
+	by mail.kernel.org (Postfix) with ESMTP id 6932F214DA
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 23:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566946883;
+	bh=HsIuj/1hGmTe3FacQdmSLl1zZrHFZWUqwnDRSSeK2IA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=WWN6thocP2/3QqicD/FdlHAUoXsNhSLMR7ondLyXoVlR8EbxcFXougdELx6sFnqJF
+	 dcaZT2UINynA+LLclbG5I5U+tVrn854zs87j8QHnbZBqfeIM5RknOYdJ7sZB4AzETx
+	 y03yDrOWi10+ET3lmjpIJlJIW3v4h26DQOM+Pvr8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729903AbfH0UrT (ORCPT
+        id S1726232AbfH0XBX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Aug 2019 16:47:19 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39398 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728312AbfH0UrT (ORCPT
+        Tue, 27 Aug 2019 19:01:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726077AbfH0XBW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Aug 2019 16:47:19 -0400
-Received: by mail-lj1-f194.google.com with SMTP id x4so534548ljj.6
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2019 13:47:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=676eBGOMnEbCXdYc2k42Pn3qEQ+iqzW4O3w2nRFpLyY=;
-        b=wjz2OlUL8SBaRIjQe2a3q3lg/KbUwYCbasUcIyh0tUnuwP/DR2Nx/EIcHFqRFsMuov
-         BMbbpB7exp43OZSkAwaHJfxuZd0k8xIREjlTyNSPAz8yw656ub/Sb2ZsX7warBLAVVmy
-         PnEeBerc/wgN7MYukl+57MTdVvVs84Mh3E/EsmTW5eASJGVG8WI+cNcLbUl9ASoS0gJK
-         nEiqqzY4o6eWY45oYImbaodwiaPLHfhMEjXFBbMNBYCd3IcXU9MO/G2qaD6HMM4iDgbN
-         YKNdXvzEusmflmeX0/d2oyJ1RzO3XdoSXxzq8qAz6tc/k1nh5P2QWpLAS9yQ32DvnFIo
-         zg9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=676eBGOMnEbCXdYc2k42Pn3qEQ+iqzW4O3w2nRFpLyY=;
-        b=I/x6rPY4JNh6wTboGoA3cJThjynMkXf5uDjw03xhxHsg8Jn9u5mYC89CqUirRIzDaS
-         up449qejq+MxGg9J0NMF6iNff0OHeNKF0Sd2MxYFQgNQGdFQoYVFEUX64vz8IoxfanUB
-         Gr2DbSJ0ljOEx3Jk33Px6T76Ag8RBliO6VCrNH66bwoDs0kpyb75dBHmXldKWku/do+e
-         YN9LfDqnMmr3VOTX9mPQ9FQTjOp/Aa4+n1aFH5aNhMaRC8HeSIH5iGVjLNkEGPv7CogN
-         sYZvc8qttiLsEBxdFLZ0TeQ9rd+lflPob3Cm+nOpmWRep5yt4I5he73pBYKcJAqTmGh/
-         rnEg==
-X-Gm-Message-State: APjAAAUY8zgUyupbzPuwmR/YknwhS/kOsaWccw2Mz+2Z0tOo21pz/kvr
-        4QWRf5ZOTjldQ02NpQL50DACsrFU/6nK19hGxU9a
-X-Google-Smtp-Source: APXvYqz18ASa+PuVHWeWsueo2BGnqQKKMgfHbJJ8aC+DXkQeY09FG1NoMCLdKpFnC0jdgk4t+vpziyBLozSTThLqkds=
-X-Received: by 2002:a2e:6393:: with SMTP id s19mr135317lje.46.1566938836251;
- Tue, 27 Aug 2019 13:47:16 -0700 (PDT)
+        Tue, 27 Aug 2019 19:01:22 -0400
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35EDC23403
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2019 23:01:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566946881;
+        bh=HsIuj/1hGmTe3FacQdmSLl1zZrHFZWUqwnDRSSeK2IA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Q5nLHkdOUH5steymeMPAAMH8/xu44BLHsIO/HnwC6668ZtaBksi+6Vh9pvfrtB+VL
+         deHeNiY7kVZHbTH6YWN36XN2rxlu1CQ28awK1SMMd59PNPDlUEtoWMXPg0tDn++wfo
+         2NS9LYQ1AJfAKzBlxyJHRqYQDsHi2C/MNYPo/u6E=
+Received: by mail-wm1-f44.google.com with SMTP id c5so743385wmb.5
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2019 16:01:21 -0700 (PDT)
+X-Gm-Message-State: APjAAAWuoFKzJt3xP1JIKw3cnDaLJFWeqbg4XsnPaXBgt7dx+DDz/oU2
+        doL7/7/F8OVSVoVqyDYdodm/A7pyNlgV4LOwhAhLFw==
+X-Google-Smtp-Source: APXvYqwxX6aj+Ymx+62b9ZPWXCfphCCr0vC4ulvY7qH4JEvBOfx6MvOXOniW6CIRGuQYazWncVtTqLvs8HJBAWLUrm8=
+X-Received: by 2002:a7b:c4d2:: with SMTP id g18mr810307wmk.79.1566946879494;
+ Tue, 27 Aug 2019 16:01:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190821134547.96929-1-jeffv@google.com> <20190822.161913.326746900077543343.davem@davemloft.net>
- <CABXk95BF=RfqFSHU_---DRHDoKyFON5kS_vYJbc4ns2OS=_t0w@mail.gmail.com>
-In-Reply-To: <CABXk95BF=RfqFSHU_---DRHDoKyFON5kS_vYJbc4ns2OS=_t0w@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 27 Aug 2019 16:47:04 -0400
-Message-ID: <CAHC9VhRmmEp_nFtOFy_YRa9NwZA4qPnjw7D3JQvqED-tO4Ha1g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] rtnetlink: gate MAC address with an LSM hook
-To:     Jeffrey Vander Stoep <jeffv@google.com>
-Cc:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+References: <20190827205213.456318-1-ast@kernel.org>
+In-Reply-To: <20190827205213.456318-1-ast@kernel.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 27 Aug 2019 16:01:08 -0700
+X-Gmail-Original-Message-ID: <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
+Message-ID: <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
         LSM List <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 23, 2019 at 7:41 AM Jeffrey Vander Stoep <jeffv@google.com> wro=
-te:
-> On Fri, Aug 23, 2019 at 1:19 AM David Miller <davem@davemloft.net> wrote:
-> > From: Jeff Vander Stoep <jeffv@google.com>
-> > Date: Wed, 21 Aug 2019 15:45:47 +0200
-> >
-> > > MAC addresses are often considered sensitive because they are
-> > > usually unique and can be used to identify/track a device or
-> > > user [1].
-> > >
-> > > The MAC address is accessible via the RTM_NEWLINK message type of a
-> > > netlink route socket[2]. Ideally we could grant/deny access to the
-> > > MAC address on a case-by-case basis without blocking the entire
-> > > RTM_NEWLINK message type which contains a lot of other useful
-> > > information. This can be achieved using a new LSM hook on the netlink
-> > > message receive path. Using this new hook, individual LSMs can select
-> > > which processes are allowed access to the real MAC, otherwise a
-> > > default value of zeros is returned. Offloading access control
-> > > decisions like this to an LSM is convenient because it preserves the
-> > > status quo for most Linux users while giving the various LSMs
-> > > flexibility to make finer grained decisions on access to sensitive
-> > > data based on policy.
-> > >
-> > > [1] https://adamdrake.com/mac-addresses-udids-and-privacy.html
-> > > [2] Other access vectors like ioctl(SIOCGIFHWADDR) are already covere=
-d
-> > > by existing LSM hooks.
-> > >
-> > > Signed-off-by: Jeff Vander Stoep <jeffv@google.com>
-> >
-> > I'm sure the MAC address will escape into userspace via other means,
-> > dumping pieces of networking config in other contexts, etc.  I mean,
-> > if I can get a link dump, I can dump the neighbor table as well.
->
-> These are already gated by existing LSM hooks and capability checks.
-> They are not allowed on mandatory access control systems unless explicitl=
-y
-> granted.
->
-> > I kinda think this is all very silly whack-a-mole kind of stuff, to
-> > be quite honest.
->
-> We evaluated mechanisms for the MAC to reach unprivileged apps.
-> A number of researchers have published on this as well such as:
-> https://www.usenix.org/conference/usenixsecurity19/presentation/reardon
->
-> Three "leaks" were identified, two have already been fixed.
-> -ioctl(SIOCGIFHWADDR). Fixed using finer grained LSM checks
-> on socket ioctls (similar to this change).
-> -IPv6 IP addresses. Fixed by no longer including the MAC as part
-> of the IP address.
-> -RTM_NEWLINK netlink route messages. The last mole to be whacked.
->
-> > And like others have said, tomorrow you'll be like "oh crap, we should
-> > block X too" and we'll get another hook, another config knob, another
-> > rulset update, etc.
->
-> This seems like an issue inherent with permissions/capabilities. I don=E2=
-=80=99t
-> think we should abandon the concept of permissions because someone
-> can forget to add a check.  Likewise, if someone adds new code to the
-> kernel and omits a capable(CAP_NET_*) check, I would expect it to be
-> fixed like any other bug without the idea of capability checks being toss=
-ed
-> out.
->
-> We need to do something because this information is being abused. Any
-> recommendations? This seemed like the simplest approach, but I can
-> definitely appreciate that it has downsides.
->
-> I could make this really generic by adding a single hook to the end of
-> sock_msgrecv() which would allow an LSM to modify the message to omit
-> the MAC address and any other information that we deem as sensitive in th=
-e
-> future. Basically what Casey was suggesting. Thoughts on that approach?
+[adding some security and tracing folks to cc]
 
-I apologize for the delay in responding; I'm blaming LSS-NA travel.
+On Tue, Aug 27, 2019 at 1:52 PM Alexei Starovoitov <ast@kernel.org> wrote:
+>
+> Introduce CAP_BPF that allows loading all types of BPF programs,
+> create most map types, load BTF, iterate programs and maps.
+> CAP_BPF alone is not enough to attach or run programs.
+>
+> Networking:
+>
+> CAP_BPF and CAP_NET_ADMIN are necessary to:
+> - attach to cgroup-bpf hooks like INET_INGRESS, INET_SOCK_CREATE, INET4_CONNECT
+> - run networking bpf programs (like xdp, skb, flow_dissector)
+>
+> Tracing:
+>
+> CAP_BPF and perf_paranoid_tracepoint_raw() (which is kernel.perf_event_paranoid == -1)
+> are necessary to:
+> - attach bpf program to raw tracepoint
+> - use bpf_trace_printk() in all program types (not only tracing programs)
+> - create bpf stackmap
+>
+> To attach bpf to perf_events perf_event_open() needs to succeed as usual.
+>
+> CAP_BPF controls BPF side.
+> CAP_NET_ADMIN controls intersection where BPF calls into networking.
+> perf_paranoid_tracepoint_raw controls intersection where BPF calls into tracing.
+>
+> In the future CAP_TRACING could be introduced to control
+> creation of kprobe/uprobe and attaching bpf to perf_events.
+> In such case bpf_probe_read() thin wrapper would be controlled by CAP_BPF.
+> Whereas probe_read() would be controlled by CAP_TRACING.
+> CAP_TRACING would also control generic kprobe+probe_read.
+> CAP_BPF and CAP_TRACING would be necessary for tracing bpf programs
+> that want to use bpf_probe_read.
 
-I'm also not a big fan of inserting the hook in rtnl_fill_ifinfo(); as
-presented it is way too specific for a LSM hook for me to be happy.
-However, I do agree that giving the LSMs some control over netlink
-messages makes sense.  As others have pointed out, it's all a matter
-of where to place the hook.
+First, some high-level review:
 
-If we only care about netlink messages which leverage nlattrs I
-suppose one option that I haven't seen mentioned would be to place a
-hook in nla_put().  While it is a bit of an odd place for a hook, it
-would allow the LSM easy access to the skb and attribute type to make
-decisions, and all of the callers should already be checking the
-return code (although we would need to verify this).  One notable
-drawback (not the only one) is that the hook is going to get hit
-multiple times for each message.
+Can you write up some clear documentation aimed at administrators that
+says what CAP_BPF does?  For example, is it expected that CAP_BPF by
+itself permits reading all kernel memory?  Why might one grant it?
 
---
-paul moore
-www.paul-moore.com
+Can you give at least one fully described use case where CAP_BPF
+solves a real-world problem that is not solved by existing mechanisms?
+
+Changing the capability that some existing operation requires could
+break existing programs.  The old capability may need to be accepted
+as well.
+
+I'm inclined to suggest that CAP_TRACING be figured out or rejected
+before something like this gets applied.
+
+
+>
+> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+> ---
+> I would prefer to introduce CAP_TRACING soon, since it
+> will make tracing and networking permission model symmetrical.
+>
+
+Here's my proposal for CAP_TRACING, documentation-style:
+
+--- begin ---
+
+CAP_TRACING enables a task to use various kernel features to trace
+running user programs and the kernel itself.  CAP_TRACING also enables
+a task to bypass some speculation attack countermeasures.  A task in
+the init user namespace with CAP_TRACING will be able to tell exactly
+what kernel code is executed and when, and will be able to read kernel
+registers and kernel memory.  It will, similarly, be able to read the
+state of other user tasks.
+
+Specifically, CAP_TRACING allows the following operations.  It may
+allow more operations in the future:
+
+ - Full use of perf_event_open(), similarly to the effect of
+kernel.perf_event_paranoid == -1.
+
+ - Loading and attaching tracing BPF programs, including use of BPF
+raw tracepoints.
+
+ - Use of BPF stack maps.
+
+ - Use of bpf_probe_read() and bpf_trace_printk().
+
+ - Use of unsafe pointer-to-integer conversions in BPF.
+
+ - Bypassing of BPF's speculation attack hardening measures and
+constant blinding.  (Note: other mechanisms might also allow this.)
+
+CAP_TRACING does not override normal permissions on sysfs or debugfs.
+This means that, unless a new interface for programming kprobes and
+such is added, it does not directly allow use of kprobes.
+
+If CAP_TRACING, by itself, enables a task to crash or otherwise
+corrupt the kernel or other tasks, this will be considered a kernel
+bug.
+
+CAP_TRACING in a non-init user namespace may, in the future, allow
+tracing of other tasks in that user namespace or its descendants.  It
+will not enable kernel tracing or tracing of tasks outside the user
+namespace in question.
+
+--- end ---
+
+Does this sound good?  The idea here is that CAP_TRACING should be
+very useful even without CAP_BPF, which allows CAP_BPF to be less
+powerful.
+
+> +bool cap_bpf_tracing(void)
+> +{
+> +       return capable(CAP_SYS_ADMIN) ||
+> +              (capable(CAP_BPF) && !perf_paranoid_tracepoint_raw());
+> +}
+
+If auditing is on, this will audit the wrong thing.  James, I think a
+helper like:
+
+bool ns_either_cap(struct user_ns *ns, int preferred_cap, int other_cap);
+
+would help.  ns_either_cap returns true if either cap is held (i.e.
+effective, as usual).  On success, it audits preferred_cap if held and
+other_cap otherwise.  On failure, it audits preferred_cap.  Does this
+sound right?
+
+Also, for reference, perf_paranoid_tracepoint_raw() is this:
+
+static inline bool perf_paranoid_tracepoint_raw(void)
+{
+        return sysctl_perf_event_paranoid > -1;
+}
+
+so the overall effect of cap_bpf_tracing() is rather odd, and it seems
+to control a few things that don't obvious all have similar security
+effects.
+
+
+> @@ -2080,7 +2083,10 @@ static int bpf_prog_test_run(const union bpf_attr *attr,
+>         struct bpf_prog *prog;
+>         int ret = -ENOTSUPP;
+>
+> -       if (!capable(CAP_SYS_ADMIN))
+> +       if (!capable(CAP_NET_ADMIN) || !capable(CAP_BPF))
+> +               /* test_run callback is available for networking progs only.
+> +                * Add cap_bpf_tracing() above when tracing progs become runable.
+> +                */
+
+I think test_run should probably be CAP_SYS_ADMIN forever.  test_run
+is the only way that one can run a bpf program and call helper
+functions via the program if one doesn't have permission to attach the
+program.  Also, if there's a way to run a speculation attack via a bpf
+program, test_run will make it much easier to do in a controlled
+environment.  Finally, when debugging bpf programs, developers can use
+their own computers or a VM.
