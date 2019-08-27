@@ -4,64 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A56C3A5A3
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 13:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E10C3A5A3
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 13:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 738F7214DA
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 13:14:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C249621883
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 13:48:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729616AbfH0NOE (ORCPT
+        id S1727951AbfH0NsP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Aug 2019 09:14:04 -0400
-Received: from mga06.intel.com ([134.134.136.31]:16462 "EHLO mga06.intel.com"
+        Tue, 27 Aug 2019 09:48:15 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16441 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725920AbfH0NOE (ORCPT
+        id S1725825AbfH0NsP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Aug 2019 09:14:04 -0400
+        Tue, 27 Aug 2019 09:48:15 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 06:14:03 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 06:48:14 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,437,1559545200"; 
-   d="scan'208";a="180223331"
+   d="scan'208";a="380922218"
 Received: from jsakkine-mobl1.fi.intel.com (HELO localhost) ([10.237.66.169])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Aug 2019 06:14:01 -0700
-Date:   Tue, 27 Aug 2019 16:14:00 +0300
+  by fmsmga006.fm.intel.com with ESMTP; 27 Aug 2019 06:48:09 -0700
+Date:   Tue, 27 Aug 2019 16:48:08 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH] tpm_tis: Fix interrupt probing
-Message-ID: <20190827131400.qchcwa2act24c47b@linux.intel.com>
-References: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com,
+        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
+        linux-kernel@vger.kernel.org, tee-dev@lists.linaro.org
+Subject: Re: [PATCH v5 1/4] tpm: move tpm_buf code to include/linux/
+Message-ID: <20190827134808.4mtnzugshylnqwss@linux.intel.com>
+References: <1566392345-15419-1-git-send-email-sumit.garg@linaro.org>
+ <1566392345-15419-2-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
+In-Reply-To: <1566392345-15419-2-git-send-email-sumit.garg@linaro.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 20, 2019 at 08:25:17AM -0400, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
+On Wed, Aug 21, 2019 at 06:29:02PM +0530, Sumit Garg wrote:
+> Move tpm_buf code to common include/linux/tpm.h header so that it can
+> be reused via other subsystems like trusted keys etc.
 > 
-> The interrupt probing of the TPM TIS was broken since we are trying to
-> run it without an active locality and without the TPM_CHIP_FLAG_IRQ set.
+> Also rename trusted keys TPM 1.x buffer implementation to tpm1_buf to
+> avoid any compilation errors.
 > 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-
-Need these:
-
-Cc: linux-stable@vger.kernel.org
-Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-
-Thank you. I'll apply this to my tree.
+> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
