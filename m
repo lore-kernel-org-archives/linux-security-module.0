@@ -2,85 +2,85 @@ Return-Path: <SRS0=Rd7N=WX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 245C4C3A5A3
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 15:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF47BC3A5A6
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 19:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECC7F214DA
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 15:19:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 867842184D
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 19:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566933623;
+	bh=qqEBJ2FCME7+AKMx+1k/OFVhUCCoXLnsi7Lbz8oYA/0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=UaPVjoIp7srfrAlZp5S00srFjzKlfasyuSsIMXzESqjBSb1W/zffQo81UPVOkca+g
+	 ac66YImgCQdzwkBDFFErSsMfB4KFxEy4EEOnHo5q3DOHgW2Q+XFZ3kiX6e5TCp8UCa
+	 XdXJ8W4+IoZab4IRJm8LT6lymiMkYf/+kigryYIY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbfH0PTT (ORCPT
+        id S1730421AbfH0TUW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Aug 2019 11:19:19 -0400
-Received: from mga18.intel.com ([134.134.136.126]:49780 "EHLO mga18.intel.com"
+        Tue, 27 Aug 2019 15:20:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbfH0PTT (ORCPT
+        id S1730379AbfH0TUW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:19:19 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 08:19:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,437,1559545200"; 
-   d="scan'208";a="180256291"
-Received: from jsakkine-mobl1.fi.intel.com (HELO localhost) ([10.237.66.169])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Aug 2019 08:19:16 -0700
-Date:   Tue, 27 Aug 2019 18:19:15 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH] tpm_tis: Fix interrupt probing
-Message-ID: <20190827151915.hb4xwr2vik2i5ryb@linux.intel.com>
-References: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
- <20190827131400.qchcwa2act24c47b@linux.intel.com>
+        Tue, 27 Aug 2019 15:20:22 -0400
+Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6D292186A;
+        Tue, 27 Aug 2019 19:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566933621;
+        bh=qqEBJ2FCME7+AKMx+1k/OFVhUCCoXLnsi7Lbz8oYA/0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sw0uke7eJgj4lkXidabR1QbxABgTzQR9wmu2uK1q35Xm+O7l9b8jz5S2GfFk9ROip
+         kO0394JBQlUQiXvmN0JV+ZfZG2U/YWfAJ6peI27TGIuFox1iqZUc161J8rjpBft4Fi
+         9iYaffaGs5Sund73FX03vxUumAtceEETUZCF5zdU=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>
+Subject: [PATCH keys-next] keys: Fix permissions assigned to anonymous session keyrings
+Date:   Tue, 27 Aug 2019 12:18:24 -0700
+Message-Id: <20190827191824.259566-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
+In-Reply-To: <20190814224106.GG101319@gmail.com>
+References: <20190814224106.GG101319@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827131400.qchcwa2act24c47b@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 27, 2019 at 04:14:00PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Aug 20, 2019 at 08:25:17AM -0400, Stefan Berger wrote:
-> > From: Stefan Berger <stefanb@linux.ibm.com>
-> > 
-> > The interrupt probing of the TPM TIS was broken since we are trying to
-> > run it without an active locality and without the TPM_CHIP_FLAG_IRQ set.
-> > 
-> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> Need these:
-> 
-> Cc: linux-stable@vger.kernel.org
-> Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-> 
-> Thank you. I'll apply this to my tree.
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+From: Eric Biggers <ebiggers@google.com>
 
-The commit went in the following form:
+JOIN permission was incorrectly removed from anonymous session keyrings
+when the old-style key permissions were translated to an ACL, thus
+breaking 'keyctl new_session'.
 
-http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/9b558deab2c5d7dc23d5f7a4064892ede482ad32
+Fixes: f802f2b3a991 ("keys: Replace uid/gid/perm permissions checking with an ACL")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ security/keys/process_keys.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I refined the long description as they should be written in imperative
-form. I also changed it to consistently to speak about tpm_tis_core
-instead of using two differing spellings (tpm_tis and TPM TIS). tpm_tis
-is a different module than tpm_tis_core.
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index aa3bfcadbc6600..519c94f1cc3c2c 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -58,7 +58,7 @@ static struct key_acl session_keyring_acl = {
+ 	.possessor_viewable = true,
+ 	.nr_ace	= 2,
+ 	.aces = {
+-		KEY_POSSESSOR_ACE(KEY_ACE__PERMS & ~KEY_ACE_JOIN),
++		KEY_POSSESSOR_ACE(KEY_ACE__PERMS),
+ 		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ),
+ 	}
+ };
+-- 
+2.23.0.187.g17f5b7556c-goog
 
-Unfortunately I had to drop the assignment statement because:
-
-1. Generally speaking, two separate bug fixes should never reside in the
-   same commit. They even need their own fixes tags in this case.
-2. The commit message did not reason the assignment statement.
-
-/Jarkko
