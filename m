@@ -2,85 +2,107 @@ Return-Path: <SRS0=Rd7N=WX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF47BC3A5A6
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 19:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59532C3A5A3
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 19:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 867842184D
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 19:20:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566933623;
-	bh=qqEBJ2FCME7+AKMx+1k/OFVhUCCoXLnsi7Lbz8oYA/0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UaPVjoIp7srfrAlZp5S00srFjzKlfasyuSsIMXzESqjBSb1W/zffQo81UPVOkca+g
-	 ac66YImgCQdzwkBDFFErSsMfB4KFxEy4EEOnHo5q3DOHgW2Q+XFZ3kiX6e5TCp8UCa
-	 XdXJ8W4+IoZab4IRJm8LT6lymiMkYf/+kigryYIY=
+	by mail.kernel.org (Postfix) with ESMTP id 35EDC21881
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Aug 2019 19:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730421AbfH0TUW (ORCPT
+        id S1729626AbfH0Tek (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Aug 2019 15:20:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730379AbfH0TUW (ORCPT
+        Tue, 27 Aug 2019 15:34:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:12866 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726871AbfH0Tek (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Aug 2019 15:20:22 -0400
-Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6D292186A;
-        Tue, 27 Aug 2019 19:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566933621;
-        bh=qqEBJ2FCME7+AKMx+1k/OFVhUCCoXLnsi7Lbz8oYA/0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sw0uke7eJgj4lkXidabR1QbxABgTzQR9wmu2uK1q35Xm+O7l9b8jz5S2GfFk9ROip
-         kO0394JBQlUQiXvmN0JV+ZfZG2U/YWfAJ6peI27TGIuFox1iqZUc161J8rjpBft4Fi
-         9iYaffaGs5Sund73FX03vxUumAtceEETUZCF5zdU=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>
-Subject: [PATCH keys-next] keys: Fix permissions assigned to anonymous session keyrings
-Date:   Tue, 27 Aug 2019 12:18:24 -0700
-Message-Id: <20190827191824.259566-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-In-Reply-To: <20190814224106.GG101319@gmail.com>
-References: <20190814224106.GG101319@gmail.com>
+        Tue, 27 Aug 2019 15:34:40 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7RJW802101530;
+        Tue, 27 Aug 2019 15:34:38 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2un8s8myhg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Aug 2019 15:34:38 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7RJUrfI022776;
+        Tue, 27 Aug 2019 19:34:36 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma01wdc.us.ibm.com with ESMTP id 2ujvv69hx9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Aug 2019 19:34:36 +0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7RJYaqK37618144
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Aug 2019 19:34:37 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DB2AC124055;
+        Tue, 27 Aug 2019 19:34:36 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CB7AD124053;
+        Tue, 27 Aug 2019 19:34:36 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 27 Aug 2019 19:34:36 +0000 (GMT)
+Subject: Re: [PATCH] tpm_tis: Fix interrupt probing
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
+ <20190827131400.qchcwa2act24c47b@linux.intel.com>
+ <20190827151915.hb4xwr2vik2i5ryb@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <797ff54e-dceb-21d2-dd74-e5244f9c6dfd@linux.ibm.com>
+Date:   Tue, 27 Aug 2019 15:34:36 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <20190827151915.hb4xwr2vik2i5ryb@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-27_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=518 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908270184
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Eric Biggers <ebiggers@google.com>
+On 8/27/19 11:19 AM, Jarkko Sakkinen wrote:
+> On Tue, Aug 27, 2019 at 04:14:00PM +0300, Jarkko Sakkinen wrote:
+>> On Tue, Aug 20, 2019 at 08:25:17AM -0400, Stefan Berger wrote:
+>>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>>
+>>> The interrupt probing of the TPM TIS was broken since we are trying to
+>>> run it without an active locality and without the TPM_CHIP_FLAG_IRQ set.
+>>>
+>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>> Need these:
+>>
+>> Cc: linux-stable@vger.kernel.org
+>> Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
+>>
+>> Thank you. I'll apply this to my tree.
+>>
+>> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> The commit went in the following form:
+>
+> http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/9b558deab2c5d7dc23d5f7a4064892ede482ad32
 
-JOIN permission was incorrectly removed from anonymous session keyrings
-when the old-style key permissions were translated to an ACL, thus
-breaking 'keyctl new_session'.
+I saw you dropped the stetting of the IRQ flag - I needed it, otherwise 
+it wouldn't execute certain code paths.
 
-Fixes: f802f2b3a991 ("keys: Replace uid/gid/perm permissions checking with an ACL")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- security/keys/process_keys.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index aa3bfcadbc6600..519c94f1cc3c2c 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -58,7 +58,7 @@ static struct key_acl session_keyring_acl = {
- 	.possessor_viewable = true,
- 	.nr_ace	= 2,
- 	.aces = {
--		KEY_POSSESSOR_ACE(KEY_ACE__PERMS & ~KEY_ACE_JOIN),
-+		KEY_POSSESSOR_ACE(KEY_ACE__PERMS),
- 		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ),
- 	}
- };
--- 
-2.23.0.187.g17f5b7556c-goog
+    Stefan
+
 
