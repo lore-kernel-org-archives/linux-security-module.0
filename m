@@ -2,68 +2,55 @@ Return-Path: <SRS0=Td4Z=WY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA831C3A5A4
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 06:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5939C3A5A1
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 07:15:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82E802173E
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 06:20:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566973235;
-	bh=Kpur9phQ2EXOoC2gEFS6X8rOZ61aH6EJmQNSMTQQzGs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=InyyIBTOKyFwC7cc5zXaXf/+3GF3zMcJq1Kj/k9GBHcC14wJcnXwBd2XMeheVbuAm
-	 zFhQs20VzkkNDIOe4kFwr2AmtJTBOcv4q0/tzkVqW6kRiwcXFf9dxl6K5FqYCnDnxj
-	 UXDTP4eyPhFGqegAcIHdJyp/3pYLc6OO4Hopf28I=
+	by mail.kernel.org (Postfix) with ESMTP id 9BEDA217F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 07:15:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZrBVdurc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbfH1GUe (ORCPT
+        id S1726399AbfH1HPC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Aug 2019 02:20:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbfH1GUe (ORCPT
+        Wed, 28 Aug 2019 03:15:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40878 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbfH1HPC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Aug 2019 02:20:34 -0400
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3E2223407
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2019 06:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566973233;
-        bh=Kpur9phQ2EXOoC2gEFS6X8rOZ61aH6EJmQNSMTQQzGs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WZ16+dZat8HSQqYOrpFahAQH1b6giYUMoAieo690K1+PrXgLHGCqHeWpn3xw5VZQv
-         Wb4oSaRzkHcdxGEW+bBZD8zMj/D9WgXJBpbwWi17Sy3dYfnydPkI15kZh0eWHFKtfD
-         Wo0hm761hBrPvQb2YjSFf8kmW8RA74jWCZ8wXI9c=
-Received: by mail-wm1-f45.google.com with SMTP id t6so1408500wmj.4
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2019 23:20:32 -0700 (PDT)
-X-Gm-Message-State: APjAAAVf+dgt7Gi5ezW8aKoCrC/wpaeBYsGDo/Dqv0w/5vLYl6lPfC0+
-        J3IdX04xNWZToEw7i22d4NT/o6rVcVyOTVzKnl4LvA==
-X-Google-Smtp-Source: APXvYqz3bvX3jRPeqDgNi/vT7/rlVue0wfdhO4v9+En2T98E4aslyf3V6KCSsA7oQXgDYVfTVYOgsIVAIJNxL1477cY=
-X-Received: by 2002:a1c:c5c2:: with SMTP id v185mr2746446wmf.161.1566973231079;
- Tue, 27 Aug 2019 23:20:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190827205213.456318-1-ast@kernel.org> <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
- <20190828003447.htgzsxs5oevn3eys@ast-mbp.dhcp.thefacebook.com>
- <CALCETrVbPPPr=BdPAx=tJKxD3oLXP4OVSgCYrB_E4vb6idELow@mail.gmail.com>
- <CALCETrVVQs1s27y8fB17JtQi-VzTq1YZPTPy3k=fKhQB1X-KKA@mail.gmail.com> <20190828044903.nv3hvinkkolnnxtv@ast-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20190828044903.nv3hvinkkolnnxtv@ast-mbp.dhcp.thefacebook.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 27 Aug 2019 23:20:19 -0700
-X-Gmail-Original-Message-ID: <CALCETrX-bn2SpVzTkPz+A=z_oWDs7PNeouzK7wRWMzyaBd4+7g@mail.gmail.com>
-Message-ID: <CALCETrX-bn2SpVzTkPz+A=z_oWDs7PNeouzK7wRWMzyaBd4+7g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
+        Wed, 28 Aug 2019 03:15:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LCKYQgM1kednGh8zGipmDLqih90IW12ASZGRceJC28s=; b=ZrBVdurcF+KjSFtVBhIaPIsM/
+        PovNxMPCKE8EXwzGkkQdQgyTgQFqZi9Ao2HWKViPP/8HIcSySUsejvVyQQmdN+Yfo9207BqtqKJ+L
+        X4rhbWytrJSTTVPGSipIAIDdmCDGQE4nCy9oBkVxHHtI6Ui93dbGy3lkefgY+WPmeMhHqpCJAdch1
+        rNPivGHLjPuggglOz+vnT3ueExfIo+ZnL+xH26bAqRGAcbHxRZEv22Xc8MT5AB+J0s1b6kVD8Vty0
+        30fecCnsQrHkm4MQ+N/KYyz5NRnsd+SLyyqaat1b4bmHZmuM9wx1pVSdyglx+JGSkCF00LXEXhS86
+        gEOCQJ2Sg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i2s9w-0004Zr-CD; Wed, 28 Aug 2019 07:14:24 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 373B63070F4;
+        Wed, 28 Aug 2019 09:13:47 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 15FE720C74263; Wed, 28 Aug 2019 09:14:21 +0200 (CEST)
+Date:   Wed, 28 Aug 2019 09:14:21 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         "David S. Miller" <davem@davemloft.net>,
@@ -71,79 +58,40 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Network Development <netdev@vger.kernel.org>,
         bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
         Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
+Message-ID: <20190828071421.GK2332@hirez.programming.kicks-ass.net>
+References: <20190827205213.456318-1-ast@kernel.org>
+ <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 27, 2019 at 9:49 PM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Tue, Aug 27, 2019 at 07:00:40PM -0700, Andy Lutomirski wrote:
+On Tue, Aug 27, 2019 at 04:01:08PM -0700, Andy Lutomirski wrote:
+
+> > Tracing:
 > >
-> > Let me put this a bit differently. Part of the point is that
-> > CAP_TRACING should allow a user or program to trace without being able
-> > to corrupt the system. CAP_BPF as you=E2=80=99ve proposed it *can* like=
-ly
-> > crash the system.
->
-> Really? I'm still waiting for your example where bpf+kprobe crashes the s=
-ystem...
->
+> > CAP_BPF and perf_paranoid_tracepoint_raw() (which is kernel.perf_event_paranoid == -1)
+> > are necessary to:
 
-That's not what I meant.  bpf+kprobe causing a crash is a bug.  I'm
-referring to a totally different issue.  On my laptop:
+That's not tracing, that's perf.
 
-$ sudo bpftool map
-48: hash  name foobar  flags 0x0
-    key 8B  value 8B  max_entries 64  memlock 8192B
-181: lpm_trie  flags 0x1
-    key 8B  value 8B  max_entries 1  memlock 4096B
-182: lpm_trie  flags 0x1
-    key 20B  value 8B  max_entries 1  memlock 4096B
-183: lpm_trie  flags 0x1
-    key 8B  value 8B  max_entries 1  memlock 4096B
-184: lpm_trie  flags 0x1
-    key 20B  value 8B  max_entries 1  memlock 4096B
-185: lpm_trie  flags 0x1
-    key 8B  value 8B  max_entries 1  memlock 4096B
-186: lpm_trie  flags 0x1
-    key 20B  value 8B  max_entries 1  memlock 4096B
-187: lpm_trie  flags 0x1
-    key 8B  value 8B  max_entries 1  memlock 4096B
-188: lpm_trie  flags 0x1
-    key 20B  value 8B  max_entries 1  memlock 4096B
+> > +bool cap_bpf_tracing(void)
+> > +{
+> > +       return capable(CAP_SYS_ADMIN) ||
+> > +              (capable(CAP_BPF) && !perf_paranoid_tracepoint_raw());
+> > +}
 
-$ sudo bpftool map dump id 186
-key:
-00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
-00 00 00 00
-value:
-02 00 00 00 00 00 00 00
-Found 1 element
+A whole long time ago, I proposed we introduce CAP_PERF or something
+along those lines; as a replacement for that horrible crap Android and
+Debian ship. But nobody was ever interested enough.
 
-$ sudo bpftool map delete id 186 key hex 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00
-[this worked]
+The nice thing about that is that you can then disallow perf/tracing in
+general, but tag the perf executable (and similar tools) with the
+capability so that unpriv users can still use it, but only limited
+through the tool, not the syscalls directly.
 
-I don't know what my laptop was doing with map id 186 in particular,
-but, whatever it was, I definitely broke it.  If a BPF firewall is in
-use on something important enough, this could easily remove
-connectivity from part or all of the system.  Right now, this needs
-CAP_SYS_ADMIN.  With your patch, CAP_BPF is sufficient to do this, but
-you *also* need CAP_BPF to trace the system using BPF.  Tracing with
-BPF is 'safe' in the absence of bugs.  Modifying other peoples' maps
-is not.
-
-One possible answer to this would be to limit CAP_BPF to the subset of
-BPF that is totaly safe in the absence of bugs (e.g. loading most
-program types if they don't have dangerous BPF_CALL instructions but
-not *_BY_ID).  Another answer would be to say that CAP_BPF will not be
-needed by future unprivileged bpf mechanisms, and that CAP_TRACING
-plus unprivileged bpf will be enough to do most or all interesting BPF
-tracing operations.
-
-If the answer is the latter, then maybe it would make sense to try to
-implement some of the unprivileged bpf stuff and then to see whether
-CAP_BPF is still needed.
