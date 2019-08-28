@@ -2,147 +2,204 @@ Return-Path: <SRS0=Td4Z=WY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92023C3A5A1
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 05:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D35C3A5A1
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 06:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66BE622CF4
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 05:28:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JxQ/DhDP"
+	by mail.kernel.org (Postfix) with ESMTP id C6D902339E
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 06:12:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566972770;
+	bh=ODzQkK6y27HTo68G01A4Bfylvnf3Ipj6FoWEYUVyD1k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=PDWFLH6b/KL6gvtUPIJGpumYCw69Zii9jc2+Z46CBqq35C/LSA4DgzHJ7LMvzheGW
+	 JtUMo1DEetlRpV9TmTGEPcpJYe1cqBsK55n5LwkOMQebH5Gijp21OiofeDHCBRb+7B
+	 oWKKHXmtmDuHDlDxb5fMshdR+5dNGKnY8i7vluSQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbfH1F2Y (ORCPT
+        id S1726052AbfH1GMp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Aug 2019 01:28:24 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38226 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbfH1F2Y (ORCPT
+        Wed, 28 Aug 2019 02:12:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51532 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726212AbfH1GMo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Aug 2019 01:28:24 -0400
-Received: by mail-lj1-f196.google.com with SMTP id x3so1371391lji.5
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2019 22:28:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wuD+47oBthIHQumcqd0YN679T72WGLTDD4hOsKbpLxE=;
-        b=JxQ/DhDP05PNcJhHPHt2GrZ/B8VfZ53oE6THwxTahk32Tsn0TFdadeMPol+lFd4P1A
-         ZSNr/mSN4jHxlMDbHl9zDZxG22Ec4vfh7ClgirOkCZvTjA6NTfc7GF6QpnMJoq3yf1Tf
-         jZJPmiBUgmxrpi3fZHzpuAAhDEbJIGpkDmyqW77n0f4dC+Kdoog+2dPGysHFHolJFQYJ
-         dKWrRA+dbT0VHyb3+C39xtvli41mc53RQaVl4B3RnrOVhuH3KUKlLJ1X9oNXIVZroUOV
-         ysRIXcz2GlsRxWYVmoX0DOS+xB7rY3Uuf0nRqv9lrREvMrwVG+NiTKs3C3JiDAFCeUsa
-         253w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wuD+47oBthIHQumcqd0YN679T72WGLTDD4hOsKbpLxE=;
-        b=M55fRolJWlZCWcGAXxfx9w8o3SlmD16bmXo/MI3eoRZ4O77M2h2MV4+Sc7qXYwDzQM
-         3rikkufl81ttRwmvv4LKcKwm2VEC5bZHq+Z6ddGmmlIOJiGvjpSzF050ESRv2YVvJeW0
-         2nJCRnKBvBG86v1jxnzW+br/1YvcY/TyIeA2wQSG0hYEvRNrWdB7ZkExE+gnZ3YgabgV
-         CvV8rPMvL1mnGWdAKnCwsYWBvBOTwuEclHnVKlkr3+IOFNrDx5PxfuRChPhMNa5v4f/j
-         F2so30qlfmpMNNg2vGWmxJk9nPc6GJgrgJe3w8TZWPlX0c9aV1vwZWbpmgjn0gsOuCs0
-         WSdQ==
-X-Gm-Message-State: APjAAAXBOvq+w1PwDpBAC1oHDyG4BGEOmHPaJSyGDj18hehH3YQxM91s
-        K7Y9Iz9jo/MHHLXB+CdZGiscPYDxGb0xdBeeLvJDYw==
-X-Google-Smtp-Source: APXvYqzP6WVBc3SIpSbwvH+PA6Ta0a7UKTqmsXsZbvFWOoRZR8d2RevgeN/WfpPSOG2xP4CPkCq1nfyajuFEu/pawkk=
-X-Received: by 2002:a2e:819:: with SMTP id 25mr987414lji.142.1566970102465;
- Tue, 27 Aug 2019 22:28:22 -0700 (PDT)
+        Wed, 28 Aug 2019 02:12:44 -0400
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 339652341E
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2019 06:12:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566972763;
+        bh=ODzQkK6y27HTo68G01A4Bfylvnf3Ipj6FoWEYUVyD1k=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yv6jQRLFdWGyyb5DKLDWI4t2UfhKj784gNv9AAHwaPaPDqXlVUckEmII5IcnMwuwL
+         oeoN4MQtrfedcHvyrtZ+3C4G6tIzoUqgHXmGYh2e5XoffCSUf5ypfOAoAPMlUKjbbm
+         ZIJ0FMdKEC7PWV/QS4W+Ii+fT2s7wv9kq2q1OGN8=
+Received: by mail-wr1-f53.google.com with SMTP id z11so1170776wrt.4
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2019 23:12:43 -0700 (PDT)
+X-Gm-Message-State: APjAAAU+PcB56ZVjxVX2CaZRBY9JtAduGojI9z8gc3oEZyqkKZm42zSz
+        Mm0h+b6f8MHPxdqXyap/9Fnc1J4uXrGosACZuveeug==
+X-Google-Smtp-Source: APXvYqwm8CdxDaqnZvTy7LYUZZA5fEy5yH/c41ZCti/xj4ypzoZ14FdW4nC0tYfmE9AtKy6W6kkpjlDxGD49ApJoba4=
+X-Received: by 2002:adf:f18c:: with SMTP id h12mr2179606wro.47.1566972761352;
+ Tue, 27 Aug 2019 23:12:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <1566392345-15419-1-git-send-email-sumit.garg@linaro.org>
- <1566392345-15419-5-git-send-email-sumit.garg@linaro.org> <20190827141742.6qxowsigqolxaod4@linux.intel.com>
-In-Reply-To: <20190827141742.6qxowsigqolxaod4@linux.intel.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Wed, 28 Aug 2019 10:58:11 +0530
-Message-ID: <CAFA6WYPnoDoMWd=PT4mgXPhg1Wp0=AFDnWd_44UMP7sijXzAZA@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] KEYS: trusted: move tpm2 trusted keys code
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+References: <20190827205213.456318-1-ast@kernel.org> <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
+ <20190828003447.htgzsxs5oevn3eys@ast-mbp.dhcp.thefacebook.com>
+ <CALCETrVbPPPr=BdPAx=tJKxD3oLXP4OVSgCYrB_E4vb6idELow@mail.gmail.com> <20190828044340.zeha3k3cmmxgfqj7@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20190828044340.zeha3k3cmmxgfqj7@ast-mbp.dhcp.thefacebook.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 27 Aug 2019 23:12:29 -0700
+X-Gmail-Original-Message-ID: <CALCETrW1o+Lazi2Ng6b9JN6jeJffgdW9f3HvqYhNo4TpHRXW=g@mail.gmail.com>
+Message-ID: <CALCETrW1o+Lazi2Ng6b9JN6jeJffgdW9f3HvqYhNo4TpHRXW=g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 27 Aug 2019 at 19:47, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
+On Tue, Aug 27, 2019 at 9:43 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
 >
-> On Wed, Aug 21, 2019 at 06:29:05PM +0530, Sumit Garg wrote:
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (C) 2004 IBM Corporation
-> > + * Copyright (C) 2014 Intel Corporation
+> On Tue, Aug 27, 2019 at 05:55:41PM -0700, Andy Lutomirski wrote:
+> >
+> > I was hoping for something in Documentation/admin-guide, not in a
+> > changelog that's hard to find.
 >
-> Everything below can be dropped from this new file. Git has the most
-> accurate authority information.
+> eventually yes.
 >
-> I'm not sure why I added the authors-list in the first place to the
-> header when I implemented these functions as none of those folks have
-> contributed to this particular piece of work.
+> > >
+> > > > Changing the capability that some existing operation requires could
+> > > > break existing programs.  The old capability may need to be accepted
+> > > > as well.
+> > >
+> > > As far as I can see there is no ABI breakage. Please point out
+> > > which line of the patch may break it.
+> >
+> > As a more or less arbitrary selection:
+> >
+> >  void bpf_prog_kallsyms_add(struct bpf_prog *fp)
+> >  {
+> >         if (!bpf_prog_kallsyms_candidate(fp) ||
+> > -           !capable(CAP_SYS_ADMIN))
+> > +           !capable(CAP_BPF))
+> >                 return;
+> >
+> > Before your patch, a task with CAP_SYS_ADMIN could do this.  Now it
+> > can't.  Per the usual Linux definition of "ABI break", this is an ABI
+> > break if and only if someone actually did this in a context where they
+> > have CAP_SYS_ADMIN but not all capabilities.  How confident are you
+> > that no one does things like this?
+> >  void bpf_prog_kallsyms_add(struct bpf_prog *fp)
+> >  {
+> >         if (!bpf_prog_kallsyms_candidate(fp) ||
+> > -           !capable(CAP_SYS_ADMIN))
+> > +           !capable(CAP_BPF))
+> >                 return;
 >
-> > + * Authors:
-> > + * Leendert van Doorn <leendert@watson.ibm.com>
-> > + * Dave Safford <safford@watson.ibm.com>
-> > + * Reiner Sailer <sailer@watson.ibm.com>
-> > + * Kylene Hall <kjhall@us.ibm.com>
-> > + *
-> > + * Maintained by: <tpmdd-devel@lists.sourceforge.net>
-> > + *
-> > + * Trusted Keys code for TCG/TCPA TPM2 (trusted platform module).
-> > + */
+> Yes. I'm confident that apps don't drop everything and
+> leave cap_sys_admin only before doing bpf() syscall, since it would
+> break their own use of networking.
+> Hence I'm not going to do the cap_syslog-like "deprecated" message mess
+> because of this unfounded concern.
+> If I turn out to be wrong we will add this "deprecated mess" later.
 >
-> To summarize, I think this would be sufficient:
+> >
+> > From the previous discussion, you want to make progress toward solving
+> > a lot of problems with CAP_BPF.  One of them was making BPF
+> > firewalling more generally useful. By making CAP_BPF grant the ability
+> > to read kernel memory, you will make administrators much more nervous
+> > to grant CAP_BPF.
 >
-> // SPDX-License-Identifier: GPL-2.0-only
-> /*
->  * Copyright (C) 2004 IBM Corporation
->  * Copyright (C) 2014 Intel Corporation
->  */
+> Andy, were your email hacked?
+> I explained several times that in this proposal
+> CAP_BPF _and_ CAP_TRACING _both_ are necessary to read kernel memory.
+> CAP_BPF alone is _not enough_.
 
-Sounds good to me.
+You have indeed said this many times.  You've stated it as a matter of
+fact as though it cannot possibly discussed.  I'm asking you to
+justify it.
+
+> > Similarly, and correct me if I'm wrong, most of
+> > these capabilities are primarily or only useful for tracing, so I
+> > don't see why users without CAP_TRACING should get them.
+> > bpf_trace_printk(), in particular, even has "trace" in its name :)
+> >
+> > Also, if a task has CAP_TRACING, it's expected to be able to trace the
+> > system -- that's the whole point.  Why shouldn't it be able to use BPF
+> > to trace the system better?
+>
+> CAP_TRACING shouldn't be able to do BPF because BPF is not tracing only.
+
+What does "do BPF" even mean?  seccomp() does BPF.  SO_ATTACH_FILTER
+does BPF.  Saying that using BPF should require a specific capability
+seems kind of like saying that using the network should require a
+specific capability.  Linux (and Unixy systems in general) distinguish
+between binding low-number ports, binding high-number ports, using raw
+sockets, and changing the system's IP address.  These have different
+implications and require different capabilities.
+
+It seems like you are specifically trying to add a new switch to turn
+as much of BPF as possible on and off.  Why?
+
+> >
+> > test_run allows fully controlled inputs, in a context where a program
+> > can trivially flush caches, mistrain branch predictors, etc first.  It
+> > seems to me that, if a JITted bpf program contains an exploitable
+> > speculation gadget (MDS, Spectre v1, RSB, or anything else),
+>
+> speaking of MDS... I already asked you to help investigate its
+> applicability with existing bpf exposure. Are you going to do that?
+
+I am blissfully uninvolved in MDS, and I don't know all that much more
+about the overall mechanism than a random reader of tech news :)  ISTM
+there are two meaningful ways that BPF could be involved: a BPF
+program could leak info into the state exposed by MDS, or a BPF
+program could try to read that state.  From what little I understand,
+it's essentially inevitable that BPF leaks information into MDS state,
+and this is probably even controllable by an attacker that understands
+MDS in enough detail.    So the interesting questions are: can BPF be
+used to read MDS state and can BPF be used to leak information in a
+more useful way than the rest of the kernel to an attacker.
+
+Keeping in mind that the kernel will flush MDS state on every exit to
+usermode, I think the most likely attack is to try to read MDS state
+with BPF.  This could happen, I suppose -- BPF programs can easily
+contain the usual speculation gadgets of "do something and read an
+address that depends on the outcome".  Fortunately, outside of
+bpf_probe_read(), AFAIK BPF programs can't directly touch user memory,
+and an attacker that is allowed to use bpf_probe_read() doesn't need
+MDS to read things.
+
+So it's not entirely obvious to me how an attack would be mounted.
+test_run would make it a lot easier, I think.
 
 >
-> I think there should never be such a rush that acronym could not be
-> written with the correct spelling. I'm referring to 'tpm2' in the short
-> summary.
-
-So you mean to say we should use upper-case letters for 'TPM2' acronym?
-
-> I'm sorry, I had to say it, just can't help myself with those
-> kind of details :-) I can take care of fixing those once I apply these
-> patches.
+> > it will
+> > be *much* easier to exploit it using test_run than using normal
+> > network traffic.  Similarly, normal network traffic will have network
+> > headers that are valid enough to have caused the BPF program to be
+> > invoked in the first place.  test_run can inject arbitrary garbage.
 >
-> You've done an awesome job. Thank you.
+> Please take a look at Jann's var1 exploit. Was it hard to run bpf prog
+> in controlled environment without test_run command ?
 >
 
-You are welcome.
-
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->
-
-Thanks for your review.
-
--Sumit
-
-> Unfortunately I'm not yet sure if I have time to test these before going
-> to Linux Plumbers but these would be anyway too close to the next merge
-> window to be added to the v5.4 PR.
->
-> /Jarkko
+Can you send me a link?
