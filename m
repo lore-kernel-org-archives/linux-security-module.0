@@ -2,32 +2,46 @@ Return-Path: <SRS0=Td4Z=WY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAE7C3A5A6
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 02:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B03C3A5A3
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 03:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5ABC22CBB
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 02:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF46B21883
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 03:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566963050;
+	bh=QwBtkl1IG8fVTvlSF50wiwwTEzxi3t44fFqpGmTznss=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=cTm5zmVKgJpHcAr30Xzl0mFqhuZEJc8hW5CKRR6bv52NEoOWyk+xRZK8LAlSWqD7/
+	 lhU40Oeewg6S2Rhtfl87ZznB8y1wQCtVUPXwNZ09OeGaTeA11oQrkTS5qwoDfHBcDf
+	 vV2H8/IDOlKqNnf+E0/1kvQ8uEIjLljk6WphuCxk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726272AbfH1CWj (ORCPT
+        id S1726227AbfH1Dat (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Aug 2019 22:22:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33780 "EHLO mail.kernel.org"
+        Tue, 27 Aug 2019 23:30:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbfH1CWj (ORCPT
+        id S1726206AbfH1Dat (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Aug 2019 22:22:39 -0400
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        Tue, 27 Aug 2019 23:30:49 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A62D214DA;
-        Wed, 28 Aug 2019 02:22:37 +0000 (UTC)
-Date:   Tue, 27 Aug 2019 22:22:36 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Andy Lutomirski <luto@amacapital.net>
+        by mail.kernel.org (Postfix) with ESMTPSA id E43AB217F5;
+        Wed, 28 Aug 2019 03:30:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566963048;
+        bh=QwBtkl1IG8fVTvlSF50wiwwTEzxi3t44fFqpGmTznss=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PlKZdbng3HaPSeMSMuTn/q7fDeuMCIcNgcagEmqFg8UkACtVF7d4RGuTbMtljfY5j
+         dMrw4idt7ZYU1EK1yn31eKwtzhqQWClquZcg6cV0PxHSKsqnoKhMlCuOp3FTi95Otl
+         Je+5JUJ8rCcOqDxsNvpYC0bIyg5Yi9Rvpq43rss8=
+Date:   Wed, 28 Aug 2019 12:30:41 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     Andy Lutomirski <luto@kernel.org>,
         Alexei Starovoitov <ast@kernel.org>,
         Kees Cook <keescook@chromium.org>,
@@ -41,31 +55,77 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
         Linux API <linux-api@vger.kernel.org>
 Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
-Message-ID: <20190827222236.297855a1@oasis.local.home>
-In-Reply-To: <A95DA1BC-E2A1-4CC3-B17F-36C494FB7540@amacapital.net>
+Message-Id: <20190828123041.c0c90c15865897461ee819a2@kernel.org>
+In-Reply-To: <20190827192144.3b38b25a@gandalf.local.home>
 References: <20190827205213.456318-1-ast@kernel.org>
         <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
         <20190827192144.3b38b25a@gandalf.local.home>
-        <CALCETrUOHRMkBRJi_s30CjZdOLDGtdMOEgqfgPf+q0x+Fw7LtQ@mail.gmail.com>
-        <20190827204433.3af91faf@gandalf.local.home>
-        <A95DA1BC-E2A1-4CC3-B17F-36C494FB7540@amacapital.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 27 Aug 2019 18:12:59 -0700
-Andy Lutomirski <luto@amacapital.net> wrote:
+On Tue, 27 Aug 2019 19:21:44 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> Too many slashes :/
+
+> > Here's my proposal for CAP_TRACING, documentation-style:
+> > 
+> > --- begin ---
+> > 
+> > CAP_TRACING enables a task to use various kernel features to trace
+> > running user programs and the kernel itself.  CAP_TRACING also enables
+> > a task to bypass some speculation attack countermeasures.  A task in
+> > the init user namespace with CAP_TRACING will be able to tell exactly
+> > what kernel code is executed and when, and will be able to read kernel
+> > registers and kernel memory.  It will, similarly, be able to read the
+> > state of other user tasks.
+> > 
+> > Specifically, CAP_TRACING allows the following operations.  It may
+> > allow more operations in the future:
+> > 
+> >  - Full use of perf_event_open(), similarly to the effect of
+> > kernel.perf_event_paranoid == -1.
+> > 
+> >  - Loading and attaching tracing BPF programs, including use of BPF
+> > raw tracepoints.
+> > 
+> >  - Use of BPF stack maps.
+> > 
+> >  - Use of bpf_probe_read() and bpf_trace_printk().
+> > 
+> >  - Use of unsafe pointer-to-integer conversions in BPF.
+> > 
+> >  - Bypassing of BPF's speculation attack hardening measures and
+> > constant blinding.  (Note: other mechanisms might also allow this.)
+> > 
+> > CAP_TRACING does not override normal permissions on sysfs or debugfs.
+> > This means that, unless a new interface for programming kprobes and
+> > such is added, it does not directly allow use of kprobes.
 > 
-> A group could work for v1.  Maybe all the tools should get updated to use this path?
+> kprobes can be created in the tracefs filesystem (which is separate from
+> debugfs, tracefs just gets automatically mounted
+> in /sys/kernel/debug/tracing when debugfs is mounted) from the
+> kprobe_events file. /sys/kernel/tracing is just the tracefs
+> directory without debugfs, and was created specifically to allow
+> tracing to be access without opening up the can of worms in debugfs.
 
-trace-cmd now does. In fact, if run as root, it will first check if
-tracefs is mounted, and if not, it will try to mount it at this
-location.
+I like the CAP_TRACING for tracefs. Can we make the tracefs itself
+check the CAP_TRACING and call file_ops? or each tracefs file-ops
+handlers must check it?
 
--- Steve
+> Should we allow CAP_TRACING access to /proc/kallsyms? as it is helpful
+> to convert perf and trace-cmd's function pointers into names. Once you
+> allow tracing of the kernel, hiding /proc/kallsyms is pretty useless.
+
+Also, there is a blacklist of kprobes under debugfs. If CAP_TRACING
+introduced and it allows to access kallsyms, I would like to move the
+blacklist under tracefs, or make an alias of blacklist entry on tracefs.
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
