@@ -2,100 +2,147 @@ Return-Path: <SRS0=Td4Z=WY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31AF8C3A5A1
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 04:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92023C3A5A1
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 05:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 023072173E
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 04:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66BE622CF4
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 05:28:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nm7UJeT8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JxQ/DhDP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbfH1EtI (ORCPT
+        id S1726165AbfH1F2Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Aug 2019 00:49:08 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34636 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbfH1EtI (ORCPT
+        Wed, 28 Aug 2019 01:28:24 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38226 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbfH1F2Y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Aug 2019 00:49:08 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n9so729078pgc.1;
-        Tue, 27 Aug 2019 21:49:08 -0700 (PDT)
+        Wed, 28 Aug 2019 01:28:24 -0400
+Received: by mail-lj1-f196.google.com with SMTP id x3so1371391lji.5
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2019 22:28:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Wqg7s2VUiWnCXp5xHQk0TWcvmJznRH+GklDYl3ugIDI=;
-        b=nm7UJeT8VU8VVcVNeCtyOXAcJCJMMtDOitRvkRUTUjYR2y0wLqfAcohps+3AX2vzEu
-         2Ss8vu8CtJlLsRaDk5hEdiHwQ2JdXSkblDRgTc0Syx0KjAJsynvr6QgqPvBTiDCmh7j5
-         OnxERo8Vt+LBNFgQrzRKHokekpEYBL5lA0nr4F0rSp8r+Gm/k4ZWyukryWWNzixQgZdF
-         I+lfmWz5NQOimMpCk2reWHe+SaLmE2zisVXUKlJr3uJ94edlxQ1Ipbh9HYlcYjT2Kr6L
-         tOUQ/wk+yE1x8eHzdE4mzeYEwIeENLEyefpxFKjipDmnp4fFRkiJW9GUHcdrVQjU9P6L
-         Z9GQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wuD+47oBthIHQumcqd0YN679T72WGLTDD4hOsKbpLxE=;
+        b=JxQ/DhDP05PNcJhHPHt2GrZ/B8VfZ53oE6THwxTahk32Tsn0TFdadeMPol+lFd4P1A
+         ZSNr/mSN4jHxlMDbHl9zDZxG22Ec4vfh7ClgirOkCZvTjA6NTfc7GF6QpnMJoq3yf1Tf
+         jZJPmiBUgmxrpi3fZHzpuAAhDEbJIGpkDmyqW77n0f4dC+Kdoog+2dPGysHFHolJFQYJ
+         dKWrRA+dbT0VHyb3+C39xtvli41mc53RQaVl4B3RnrOVhuH3KUKlLJ1X9oNXIVZroUOV
+         ysRIXcz2GlsRxWYVmoX0DOS+xB7rY3Uuf0nRqv9lrREvMrwVG+NiTKs3C3JiDAFCeUsa
+         253w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Wqg7s2VUiWnCXp5xHQk0TWcvmJznRH+GklDYl3ugIDI=;
-        b=mZnw1/kbEyEpFrisDiX4Ew71usXxBoVwY4bjRze0UDbxjH/PuU+W+26DRNUwH87oi2
-         +SBaq2Swl0f40n71kjm8EoM7QDmO8CiH4hPqhyl0OBAheowPMvSBCTUTcLhl2g4qOfe2
-         dcf6LZDPYlT+9fcp3ouyIRI04zk0tqtytrRXbjXPudvPErb9sHK25+Axwo/PCmB8V1ds
-         xOEoDbTn+lqlxiTJhZvqnim+oTZJ08dhuHfgSfM03iUIALvmAr0r5mNtEeTOCiGPN51H
-         98Lb/YL+LT2euM7utSxCd8Xf6TgeyP2AqEY9p8LulXJCm8s8dCxJUvXoCxSZ4KQ7Wgvw
-         g88w==
-X-Gm-Message-State: APjAAAXL7r5Xg+r/XDOE7pMvF0/RwjAJk0uM5NJmbmETyLV0tyxxfco6
-        vA2TRONaFI5/NbFFnt1J2eg=
-X-Google-Smtp-Source: APXvYqwqTRMDD2PNZbsRspgzW5nn2Eh6VJ2YQhL/gbSvytSSyRLGjMMEPHEzLxNmt8FgDx+JlCv94g==
-X-Received: by 2002:a63:dc4f:: with SMTP id f15mr1803659pgj.227.1566967747577;
-        Tue, 27 Aug 2019 21:49:07 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::86a2])
-        by smtp.gmail.com with ESMTPSA id r3sm1155539pfr.101.2019.08.27.21.49.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Aug 2019 21:49:06 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 21:49:05 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
-Message-ID: <20190828044903.nv3hvinkkolnnxtv@ast-mbp.dhcp.thefacebook.com>
-References: <20190827205213.456318-1-ast@kernel.org>
- <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
- <20190828003447.htgzsxs5oevn3eys@ast-mbp.dhcp.thefacebook.com>
- <CALCETrVbPPPr=BdPAx=tJKxD3oLXP4OVSgCYrB_E4vb6idELow@mail.gmail.com>
- <CALCETrVVQs1s27y8fB17JtQi-VzTq1YZPTPy3k=fKhQB1X-KKA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wuD+47oBthIHQumcqd0YN679T72WGLTDD4hOsKbpLxE=;
+        b=M55fRolJWlZCWcGAXxfx9w8o3SlmD16bmXo/MI3eoRZ4O77M2h2MV4+Sc7qXYwDzQM
+         3rikkufl81ttRwmvv4LKcKwm2VEC5bZHq+Z6ddGmmlIOJiGvjpSzF050ESRv2YVvJeW0
+         2nJCRnKBvBG86v1jxnzW+br/1YvcY/TyIeA2wQSG0hYEvRNrWdB7ZkExE+gnZ3YgabgV
+         CvV8rPMvL1mnGWdAKnCwsYWBvBOTwuEclHnVKlkr3+IOFNrDx5PxfuRChPhMNa5v4f/j
+         F2so30qlfmpMNNg2vGWmxJk9nPc6GJgrgJe3w8TZWPlX0c9aV1vwZWbpmgjn0gsOuCs0
+         WSdQ==
+X-Gm-Message-State: APjAAAXBOvq+w1PwDpBAC1oHDyG4BGEOmHPaJSyGDj18hehH3YQxM91s
+        K7Y9Iz9jo/MHHLXB+CdZGiscPYDxGb0xdBeeLvJDYw==
+X-Google-Smtp-Source: APXvYqzP6WVBc3SIpSbwvH+PA6Ta0a7UKTqmsXsZbvFWOoRZR8d2RevgeN/WfpPSOG2xP4CPkCq1nfyajuFEu/pawkk=
+X-Received: by 2002:a2e:819:: with SMTP id 25mr987414lji.142.1566970102465;
+ Tue, 27 Aug 2019 22:28:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrVVQs1s27y8fB17JtQi-VzTq1YZPTPy3k=fKhQB1X-KKA@mail.gmail.com>
-User-Agent: NeoMutt/20180223
+References: <1566392345-15419-1-git-send-email-sumit.garg@linaro.org>
+ <1566392345-15419-5-git-send-email-sumit.garg@linaro.org> <20190827141742.6qxowsigqolxaod4@linux.intel.com>
+In-Reply-To: <20190827141742.6qxowsigqolxaod4@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Wed, 28 Aug 2019 10:58:11 +0530
+Message-ID: <CAFA6WYPnoDoMWd=PT4mgXPhg1Wp0=AFDnWd_44UMP7sijXzAZA@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] KEYS: trusted: move tpm2 trusted keys code
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
+        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 27, 2019 at 07:00:40PM -0700, Andy Lutomirski wrote:
-> 
-> Let me put this a bit differently. Part of the point is that
-> CAP_TRACING should allow a user or program to trace without being able
-> to corrupt the system. CAP_BPF as you’ve proposed it *can* likely
-> crash the system.
+On Tue, 27 Aug 2019 at 19:47, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Wed, Aug 21, 2019 at 06:29:05PM +0530, Sumit Garg wrote:
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (C) 2004 IBM Corporation
+> > + * Copyright (C) 2014 Intel Corporation
+>
+> Everything below can be dropped from this new file. Git has the most
+> accurate authority information.
+>
+> I'm not sure why I added the authors-list in the first place to the
+> header when I implemented these functions as none of those folks have
+> contributed to this particular piece of work.
+>
+> > + * Authors:
+> > + * Leendert van Doorn <leendert@watson.ibm.com>
+> > + * Dave Safford <safford@watson.ibm.com>
+> > + * Reiner Sailer <sailer@watson.ibm.com>
+> > + * Kylene Hall <kjhall@us.ibm.com>
+> > + *
+> > + * Maintained by: <tpmdd-devel@lists.sourceforge.net>
+> > + *
+> > + * Trusted Keys code for TCG/TCPA TPM2 (trusted platform module).
+> > + */
+>
+> To summarize, I think this would be sufficient:
+>
+> // SPDX-License-Identifier: GPL-2.0-only
+> /*
+>  * Copyright (C) 2004 IBM Corporation
+>  * Copyright (C) 2014 Intel Corporation
+>  */
 
-Really? I'm still waiting for your example where bpf+kprobe crashes the system...
+Sounds good to me.
 
+>
+> I think there should never be such a rush that acronym could not be
+> written with the correct spelling. I'm referring to 'tpm2' in the short
+> summary.
+
+So you mean to say we should use upper-case letters for 'TPM2' acronym?
+
+> I'm sorry, I had to say it, just can't help myself with those
+> kind of details :-) I can take care of fixing those once I apply these
+> patches.
+>
+> You've done an awesome job. Thank you.
+>
+
+You are welcome.
+
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>
+
+Thanks for your review.
+
+-Sumit
+
+> Unfortunately I'm not yet sure if I have time to test these before going
+> to Linux Plumbers but these would be anyway too close to the next merge
+> window to be added to the v5.4 PR.
+>
+> /Jarkko
