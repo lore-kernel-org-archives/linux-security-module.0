@@ -2,34 +2,34 @@ Return-Path: <SRS0=Td4Z=WY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D50FC3A5A1
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 18:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A40E6C3A5A1
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 19:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14C6D208C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 18:50:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 625ED233A1
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 19:18:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="CsSzg4pF"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="sdeyZstJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbfH1Sub (ORCPT
+        id S1726785AbfH1TSa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Aug 2019 14:50:31 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.178]:32701 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726541AbfH1Sub (ORCPT
+        Wed, 28 Aug 2019 15:18:30 -0400
+Received: from gateway20.websitewelcome.com ([192.185.59.4]:48021 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727087AbfH1TS3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Aug 2019 14:50:31 -0400
-X-Greylist: delayed 1271 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Aug 2019 14:50:30 EDT
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 5102D1156BFC
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2019 13:29:19 -0500 (CDT)
+        Wed, 28 Aug 2019 15:18:29 -0400
+X-Greylist: delayed 1360 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Aug 2019 15:18:28 EDT
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id D2D7E400D0DA2
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2019 12:50:46 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 32h5i8icS90on32h5iul5F; Wed, 28 Aug 2019 13:29:19 -0500
+        id 336hi9nYa3Qi0336hip560; Wed, 28 Aug 2019 13:55:47 -0500
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
@@ -37,25 +37,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ewILt52ANbAo0/SJyy4fWKVEQWsG7Vl+LCU+2RXicqU=; b=CsSzg4pFPdVgp+yZgmkWLU+yLP
-        7Oel84hpT38RBNEyMamLet85i08wdlPJJ2MQVFrbhR4GdHBooX1at7o+D4Si0F0SAJixI70a7M1N+
-        eBDEPdwbCZe9EYoUhpwubfLEymSGmmlqYfO0ic50dyW4GMSL/1OO14R/2fU9fpD+O+jg5ydvTO5TS
-        ePIHPWynjVvm39jd44MfuyL5HGDdgAttNru2JUyRzK0U7c1HBd6V7MFqa3XX21ZRBZnfTdFiYa+EM
-        RSzZAYU5NOqptdCmd2biDzHmRHr/kjzZ24ULj0O0bmDpTs66MR3YfIhz5r2/Z0pShCztlBT5O0e9r
-        ANAFurPw==;
-Received: from [189.152.216.116] (port=47944 helo=[192.168.43.131])
+        bh=x3EkMbvY5M+F0ZgkMKWKuEnvOd5+O3JVELt30UQ3AWI=; b=sdeyZstJ0en07fGkSm+barpXKA
+        forS5aUufqtOOza91wiQ6H1Z+87jwubOLF5b/2nmSVEm0nheOms69+OMJ++wbcwvO2+gtT1z8MKZ0
+        3GzHMCwQEFvEyBrzQQ4QvgIiyTEYdSK3gMbEJZmar38I+gXEubZtPDzQvnJaUzSHPAeIDMjVXWDWU
+        lLQqbK2ibTDe+drgvVr8yw2ddAgDWAMseqc3Fpfkbk5acxLbolpzUN15peP6GZjZs2Xjj+nquX7Np
+        9JDk8pkErkBWnVv8U/Nng0fpHplu1SZCh4H7cgsEQAMRcDGSMEDMBTMYluwBa+nZ3M+rtYP50HFYj
+        ZvoWys+Q==;
+Received: from [189.152.216.116] (port=50314 helo=[192.168.43.131])
         by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1i32h4-003pFp-Ox; Wed, 28 Aug 2019 13:29:18 -0500
-Subject: Re: [PATCH] ima: use struct_size() in kzalloc()
+        id 1i336h-000dPQ-2m; Wed, 28 Aug 2019 13:55:47 -0500
+Subject: Re: [PATCH][next] ima: ima_modsig: Fix use-after-free bug in
+ ima_read_modsig
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190529165343.GA2584@embeddedor>
+References: <20190811235507.GA9587@embeddedor>
+ <1567000215.6115.19.camel@linux.ibm.com>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=gustavo@embeddedor.com; keydata=
@@ -101,12 +104,12 @@ Autocrypt: addr=gustavo@embeddedor.com; keydata=
  YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
  GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
  VtSixD1uOgytAP7RWS474w==
-Message-ID: <671185b9-5c91-5235-b5ea-96d3449bf716@embeddedor.com>
-Date:   Wed, 28 Aug 2019 13:29:16 -0500
+Message-ID: <cc5b4371-0386-fac8-e1f0-9f29a23a15ed@embeddedor.com>
+Date:   Wed, 28 Aug 2019 13:55:45 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190529165343.GA2584@embeddedor>
+In-Reply-To: <1567000215.6115.19.camel@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -118,67 +121,45 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.152.216.116
 X-Source-L: No
-X-Exim-ID: 1i32h4-003pFp-Ox
+X-Exim-ID: 1i336h-000dPQ-2m
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [189.152.216.116]:47944
+X-Source-Sender: ([192.168.43.131]) [189.152.216.116]:50314
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 17
+X-Email-Count: 47
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi all,
 
-Friendly ping:
 
-Who can take this, please?
+On 8/28/19 8:50 AM, Mimi Zohar wrote:
+> Hi Gustavo,
+> 
+> On Sun, 2019-08-11 at 18:55 -0500, Gustavo A. R. Silva wrote:
+>> hdr is being freed and then dereferenced by accessing hdr->pkcs7_msg
+>>
+>> Fix this by copying the value returned by PTR_ERR(hdr->pkcs7_msg) into
+>> automatic variable err for its safe use after freeing hdr.
+>>
+>> Addresses-Coverity-ID: 1485813 ("Read from pointer after free")
+>> Fixes: 39b07096364a ("ima: Implement support for module-style appended signatures")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> This bug was reported Julia and addressed by Thiago on 8/7. If you
+> would like to add your Review/Tested-by, the patch can be found in the
+> linux-integrity next-queued-testing branch.
+> 
+
+I'm glad this is fixed now. :)
+
+Yeah, you can add my:
+
+Reviewed-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
 Thanks
 --
 Gustavo
-
-On 5/29/19 11:53 AM, Gustavo A. R. Silva wrote:
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
-> 
-> struct foo {
->    int stuff;
->    struct boo entry[];
-> };
-> 
-> instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
-> 
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
-> 
-> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  security/integrity/ima/ima_template.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-> index b631b8bc7624..b945dff2ed14 100644
-> --- a/security/integrity/ima/ima_template.c
-> +++ b/security/integrity/ima/ima_template.c
-> @@ -281,9 +281,8 @@ static int ima_restore_template_data(struct ima_template_desc *template_desc,
->  	int ret = 0;
->  	int i;
->  
-> -	*entry = kzalloc(sizeof(**entry) +
-> -		    template_desc->num_fields * sizeof(struct ima_field_data),
-> -		    GFP_NOFS);
-> +	*entry = kzalloc(struct_size(*entry, template_data,
-> +				     template_desc->num_fields), GFP_NOFS);
->  	if (!*entry)
->  		return -ENOMEM;
->  
-> 
