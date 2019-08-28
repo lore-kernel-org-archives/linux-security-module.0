@@ -2,96 +2,127 @@ Return-Path: <SRS0=Td4Z=WY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5939C3A5A1
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 07:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D61C3A5A1
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 13:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BEDA217F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 07:15:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZrBVdurc"
+	by mail.kernel.org (Postfix) with ESMTP id 0381520828
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 13:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbfH1HPC (ORCPT
+        id S1726341AbfH1Nnz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Aug 2019 03:15:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40878 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbfH1HPC (ORCPT
+        Wed, 28 Aug 2019 09:43:55 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33406 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726432AbfH1Nnz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Aug 2019 03:15:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LCKYQgM1kednGh8zGipmDLqih90IW12ASZGRceJC28s=; b=ZrBVdurcF+KjSFtVBhIaPIsM/
-        PovNxMPCKE8EXwzGkkQdQgyTgQFqZi9Ao2HWKViPP/8HIcSySUsejvVyQQmdN+Yfo9207BqtqKJ+L
-        X4rhbWytrJSTTVPGSipIAIDdmCDGQE4nCy9oBkVxHHtI6Ui93dbGy3lkefgY+WPmeMhHqpCJAdch1
-        rNPivGHLjPuggglOz+vnT3ueExfIo+ZnL+xH26bAqRGAcbHxRZEv22Xc8MT5AB+J0s1b6kVD8Vty0
-        30fecCnsQrHkm4MQ+N/KYyz5NRnsd+SLyyqaat1b4bmHZmuM9wx1pVSdyglx+JGSkCF00LXEXhS86
-        gEOCQJ2Sg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i2s9w-0004Zr-CD; Wed, 28 Aug 2019 07:14:24 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 373B63070F4;
-        Wed, 28 Aug 2019 09:13:47 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 15FE720C74263; Wed, 28 Aug 2019 09:14:21 +0200 (CEST)
-Date:   Wed, 28 Aug 2019 09:14:21 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        Wed, 28 Aug 2019 09:43:55 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7SDdvib115379
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2019 09:43:54 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2unrh35ngt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2019 09:43:53 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 28 Aug 2019 14:43:51 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 28 Aug 2019 14:43:46 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7SDhjxr37879864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Aug 2019 13:43:45 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D0A311C052;
+        Wed, 28 Aug 2019 13:43:45 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8A6C111C05C;
+        Wed, 28 Aug 2019 13:43:42 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.129.156])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Aug 2019 13:43:42 +0000 (GMT)
+Subject: Re: [PATCH v12 00/11] Appended signatures support for IMA appraisal
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jordan Hand <jorhand@linux.microsoft.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
-Message-ID: <20190828071421.GK2332@hirez.programming.kicks-ass.net>
-References: <20190827205213.456318-1-ast@kernel.org>
- <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Jonathan Corbet <corbet@lwn.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
+Date:   Wed, 28 Aug 2019 09:43:41 -0400
+In-Reply-To: <9682b5d0-1634-2dd0-2cbb-eb1fa8ba7423@linux.microsoft.com>
+References: <20190628021934.4260-1-bauerman@linux.ibm.com>
+         <9682b5d0-1634-2dd0-2cbb-eb1fa8ba7423@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19082813-4275-0000-0000-0000035E558B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19082813-4276-0000-0000-0000387089DF
+Message-Id: <1566999821.6115.14.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-28_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=853 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908280144
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 27, 2019 at 04:01:08PM -0700, Andy Lutomirski wrote:
+Hi Jordan,
 
-> > Tracing:
-> >
-> > CAP_BPF and perf_paranoid_tracepoint_raw() (which is kernel.perf_event_paranoid == -1)
-> > are necessary to:
+On Mon, 2019-08-26 at 15:46 -0700, Jordan Hand wrote:
+> On 6/27/19 7:19 PM, Thiago Jung Bauermann wrote:
+> > On the OpenPOWER platform, secure boot and trusted boot are being
+> > implemented using IMA for taking measurements and verifying signatures.
+> > Since the kernel image on Power servers is an ELF binary, kernels are
+> > signed using the scripts/sign-file tool and thus use the same signature
+> > format as signed kernel modules.
+> > 
+> > This patch series adds support in IMA for verifying those signatures.
+> > It adds flexibility to OpenPOWER secure boot, because it allows it to boot
+> > kernels with the signature appended to them as well as kernels where the
+> > signature is stored in the IMA extended attribute.
+> 
+> I know this is pretty late, but I just wanted to let you know that I
+> tested this patch set on x86_64 with QEMU.
+> 
+> That is, I enrolled a key to _ima keyring, signed my kernel and modules
+> with appended signatures (with scripts/sign-file), set the IMA policy to
+> appraise and measure my kernel and modules. Also tested kexec appraisal.
+> 
+> You can add my tested-by if you'd like.
 
-That's not tracing, that's perf.
+I really appreciate your testing.  Based on the recent
+Documentation/maintainer/rebasing-and-merging.rst,  I'm trying not to
+rebase patches already staged in linux-next.  Patches are first being
+staged in the next-queued-testing branch.
 
-> > +bool cap_bpf_tracing(void)
-> > +{
-> > +       return capable(CAP_SYS_ADMIN) ||
-> > +              (capable(CAP_BPF) && !perf_paranoid_tracepoint_raw());
-> > +}
+FYI, I just posted a patch that adds IMA appended signature support to
+test_kexec_file_load.sh.
 
-A whole long time ago, I proposed we introduce CAP_PERF or something
-along those lines; as a replacement for that horrible crap Android and
-Debian ship. But nobody was ever interested enough.
+thanks,
 
-The nice thing about that is that you can then disallow perf/tracing in
-general, but tag the perf executable (and similar tools) with the
-capability so that unpriv users can still use it, but only limited
-through the tool, not the syscalls directly.
+Mimi
 
