@@ -2,151 +2,147 @@ Return-Path: <SRS0=Td4Z=WY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0EDC3A5A1
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 19:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2981DC3A5A6
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 22:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F255B22DA7
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 19:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F05ED2189D
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Aug 2019 22:08:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="f01vjnZl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XMEMXzpj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfH1Tgw (ORCPT
+        id S1727026AbfH1WIc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Aug 2019 15:36:52 -0400
-Received: from gateway30.websitewelcome.com ([50.116.127.1]:28591 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726567AbfH1Tgw (ORCPT
+        Wed, 28 Aug 2019 18:08:32 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43365 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727020AbfH1WIc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Aug 2019 15:36:52 -0400
-X-Greylist: delayed 1500 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Aug 2019 15:36:51 EDT
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 6CC92328CC
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2019 13:51:12 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 332GiAehP2qH7332Gi7RIf; Wed, 28 Aug 2019 13:51:12 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=luqKYGJu+KofvWlAiQtrPtmwibeUX7kl9Aljx5sEuBY=; b=f01vjnZlkXWcXmkDBhWMItzoZl
-        tFHdK5YZ814Y3LjXwQ6n1U2H1WWGQn/Im8RjfJyY06Kgu6uTm2ozXSAm1L3Z5R2eNEOU9ilA36rSc
-        95G4gQTt6WrQwNcle/Ilas22CQYw4VFksrlcVcP8x6KGtB5c/0jrnAV9T8vsdnSqI7x6B0ctHwukS
-        7rLaaSYaFPtyVRoILg5C0nzTP+wObAo0o7fYnhNLxI+GeL5bYWav1TMAVc0XIgquEJ4OGnd+e3meF
-        R+IPapUe2I5kizvdHPOzStBEH+wEoA47zlMJbyv16Ie/rj9JzlGS2WsVc+QUBLuK18DgjpuJ9dVq1
-        YBAdR8FA==;
-Received: from [189.152.216.116] (port=50252 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1i332F-000QYW-Vu; Wed, 28 Aug 2019 13:51:12 -0500
-Subject: Re: [PATCH] ima: use struct_size() in kzalloc()
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190529165343.GA2584@embeddedor>
- <671185b9-5c91-5235-b5ea-96d3449bf716@embeddedor.com>
- <1567018017.6115.61.camel@linux.ibm.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <6e5871f0-70ff-eda5-5fd6-b8fd327f10c6@embeddedor.com>
-Date:   Wed, 28 Aug 2019 13:51:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 28 Aug 2019 18:08:32 -0400
+Received: by mail-pg1-f193.google.com with SMTP id k3so425044pgb.10;
+        Wed, 28 Aug 2019 15:08:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6X3gVkrOkSh07fF2QBrnXgjAV6GqAqVzRBOyJnnlCsc=;
+        b=XMEMXzpjRbv78M/7RIbt6Ker6NLG81lMeXuGSIW2C+kCV2pu6xIUSbsKTuy2XYhfMo
+         jyerJBU7KRDahKo2CfaMQI147LOJ+gpSI8SFVxX09nnjsG5amGN0mcZXSWIRiZU04p6r
+         nsfyRyNq5lFdcrVRIMGUN30Usrkjl6NCJhK3kMq7knk9zcgFC4Mw8MXTxPhXMIlvaie6
+         dyp3Irr6DQWobNpeUp1kuPdEwTP0uB71Ct1XrJ8royu+XKP1Mwy7uqrmJzflSwdy2gs6
+         NljsT9HrVxlObxvIHAjpqsDGk3Zhh1LZpxCPXPs8GGp+Uxowd0p0TDZzqym/4n2IZ2Xw
+         z+gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6X3gVkrOkSh07fF2QBrnXgjAV6GqAqVzRBOyJnnlCsc=;
+        b=gM0clnH3Yi8dmp9Ak/cAOJ3Pqd0vjaeATPqFd27hgZHzVk+ldyQ3nEeEV3xvm2kmPZ
+         A5zBY8tsn7gfPoXJ9Q0NOF2mvQOAj2vnSQsG5osGI0Z2AkgG5pHG/l9et1FdDopOaU3K
+         gp1di4V40q+2x2mKREIPIgoJ68hO40QUfK9UhoRVq+KQspJhOvE/5zeQI0RYNq7sqOWZ
+         7h+8wqA9570k4MvUO9ydxAM4pkV+e9nwySTE8ZBZeBdxITnWbt2IlXI08lbxRQ4ozhD1
+         wFRpn8dNt7ZTD+EH4/N0YtS5s57MDYuH9mAeiV2qUgUI6JCecv5FGooU835fgJOzN9qB
+         NxvA==
+X-Gm-Message-State: APjAAAWkV/KJJXC89I2cP8BeLU4oQ4pxA8LclTDqZMVkF+PGqjsoFUt0
+        012RxZ3tj2wiwIK8jGBgfto=
+X-Google-Smtp-Source: APXvYqy3gGKj8gWziVg4E09JVnbLn6ZOFG4q2CDDKrl/vre359CP3azlfThIpQhzhpykvvKhEdP67g==
+X-Received: by 2002:a63:6686:: with SMTP id a128mr5276547pgc.361.1567030111078;
+        Wed, 28 Aug 2019 15:08:31 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::5983])
+        by smtp.gmail.com with ESMTPSA id h197sm400102pfe.67.2019.08.28.15.08.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Aug 2019 15:08:30 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 15:08:28 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
+Message-ID: <20190828220826.nlkpp632rsomocve@ast-mbp.dhcp.thefacebook.com>
+References: <20190827205213.456318-1-ast@kernel.org>
+ <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
+ <20190828071421.GK2332@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <1567018017.6115.61.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.216.116
-X-Source-L: No
-X-Exim-ID: 1i332F-000QYW-Vu
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [189.152.216.116]:50252
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 39
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828071421.GK2332@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 8/28/19 1:46 PM, Mimi Zohar wrote:
-> On Wed, 2019-08-28 at 13:29 -0500, Gustavo A. R. Silva wrote:
->> Hi all,
->>
->> Friendly ping:
->>
->> Who can take this, please?
+On Wed, Aug 28, 2019 at 09:14:21AM +0200, Peter Zijlstra wrote:
+> On Tue, Aug 27, 2019 at 04:01:08PM -0700, Andy Lutomirski wrote:
 > 
-> Thank you for the reminder.  I'm just getting back from LSS and a very
-> short vacation.  I'll look at it shortly.
+> > > Tracing:
+> > >
+> > > CAP_BPF and perf_paranoid_tracepoint_raw() (which is kernel.perf_event_paranoid == -1)
+> > > are necessary to:
 > 
+> That's not tracing, that's perf.
+> 
+> > > +bool cap_bpf_tracing(void)
+> > > +{
+> > > +       return capable(CAP_SYS_ADMIN) ||
+> > > +              (capable(CAP_BPF) && !perf_paranoid_tracepoint_raw());
+> > > +}
+> 
+> A whole long time ago, I proposed we introduce CAP_PERF or something
+> along those lines; as a replacement for that horrible crap Android and
+> Debian ship. But nobody was ever interested enough.
+> 
+> The nice thing about that is that you can then disallow perf/tracing in
+> general, but tag the perf executable (and similar tools) with the
+> capability so that unpriv users can still use it, but only limited
+> through the tool, not the syscalls directly.
 
-Thanks, Mimi.
+Exactly.
+Similar motivation for CAP_BPF as well.
 
---
-Gustavo
+re: your first comment above.
+I'm not sure what difference you see in words 'tracing' and 'perf'.
+I really hope we don't partition the overall tracing category
+into CAP_PERF and CAP_FTRACE only because these pieces are maintained
+by different people.
+On one side perf_event_open() isn't really doing tracing (as step by
+step ftracing of function sequences), but perf_event_open() opens
+an event and the sequence of events (may include IP) becomes a trace.
+imo CAP_TRACING is the best name to descibe the privileged space
+of operations possible via perf_event_open, ftrace, kprobe, stack traces, etc.
+
+Another reason are kuprobes. They can be crated via perf_event_open
+and via tracefs. Are they in CAP_PERF or in CAP_FTRACE ? In both, right?
+Should then CAP_KPROBE be used ? that would be an overkill.
+It would partition the space even further without obvious need.
+
+Looking from BPF angle... BPF doesn't have integration with ftrace yet.
+bpf_trace_printk is using ftrace mechanism, but that's 1% of ftrace.
+In the long run I really like to see bpf using all of ftrace.
+Whereas bpf is using a lot of 'perf'.
+And extending some perf things in bpf specific way.
+Take a look at how BPF_F_STACK_BUILD_ID. It's clearly perf/stack_tracing
+feature that generic perf can use one day.
+Currently it sits in bpf land and accessible via bpf only.
+Though its bpf only today I categorize it under CAP_TRACING.
+
+I think CAP_TRACING privilege should allow task to do all of perf_event_open,
+kuprobe, stack trace, ftrace, and kallsyms.
+We can think of some exceptions that should stay under CAP_SYS_ADMIN,
+but most of the functionality available by 'perf' binary should be
+usable with CAP_TRACING. 'perf' can do bpf too.
+With CAP_BPF it would be all set.
+
