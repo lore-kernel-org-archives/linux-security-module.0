@@ -2,188 +2,108 @@ Return-Path: <SRS0=+AtZ=WZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9205EC3A59F
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 18:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA8EC3A59F
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 18:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 742EE21874
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 18:30:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F4BC21874
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 18:30:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="isJCPHV3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730119AbfH2SaM (ORCPT
+        id S1729137AbfH2Sab (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Aug 2019 14:30:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50608 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728426AbfH2SaM (ORCPT
+        Thu, 29 Aug 2019 14:30:31 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33493 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729197AbfH2Saa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:30:12 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 337D4308402E;
-        Thu, 29 Aug 2019 18:30:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 38B8719D7A;
-        Thu, 29 Aug 2019 18:30:08 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 02/11] security: Add hooks to rule on setting a watch [ver
- #6]
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 29 Aug 2019 19:30:07 +0100
-Message-ID: <156710340735.10009.5077888091140004991.stgit@warthog.procyon.org.uk>
-In-Reply-To: <156710338860.10009.12524626894838499011.stgit@warthog.procyon.org.uk>
-References: <156710338860.10009.12524626894838499011.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Thu, 29 Aug 2019 14:30:30 -0400
+Received: by mail-pf1-f194.google.com with SMTP id g2so2654535pfq.0
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2019 11:30:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=t7rGaqUzAk36ILWcKr/jrH6Y9v6WlXTDUlDGIYS/FWg=;
+        b=isJCPHV3UCx5mYklMoclrNYYLuiDQl8rOsozhV+AOuvC+A2RL6Of1dXi59VVYyJ8Yh
+         nbEhIdofSeqRVf4HCfoE6ntd1M93ZOHul+nGhedXl4X/3a2yARQ0GOzfEQ15nzNgQYPB
+         1qKP8GgA9JnCgMRJQUtSXxcy4vfrkx21r3RNVe3qyvObBnL8kD7niQLjxUF4okFXNipE
+         xH4SbLpar4QTNbuR639sRK9Rl7AjtvDaXh7RxA2QQ5TQMMwH7Jvn/lt+jb0pKjCbx2kA
+         nIW6xVEvasZpHC5rUvv6GxUt4FvYgKMyRkjbLb/Yai1SwPEGGgtc9v1G/s23AMVOJplX
+         pIfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=t7rGaqUzAk36ILWcKr/jrH6Y9v6WlXTDUlDGIYS/FWg=;
+        b=IBgBbqcRlz1JXvK+F8MasSnZH9VoUrzlSXWb74idfSysyq/KRArG9vv8q2vfhz+z6X
+         vap/aebyrD/h1gnGmMyn4jVacF6arFyIYDahBTE3FMG+5xej1a5l+Rqr/EDPdfEjDYRj
+         tjPO7rlrrSr4Du7I/zgLMtgXV4xh6oZSTU9/71trSo33Zp2aUOjrdZ8efnqi0jc9ZuQA
+         32/Y2for1XFq1qqTZBj+9Ajba/u1Z6QguZYskW4B+ikpZqOUHeb6lg5Wx8WwH7fZL1Uv
+         rQqfYNN2PQ3pN0SgqN9vFlW+BxUDbVBwHc4em8pzi6nnelmEMoAIpC7MpPihcxk8a3h5
+         DapQ==
+X-Gm-Message-State: APjAAAUJkosABRqSxHgskR2pb75XWazWX/WgWH3pmO7+MVX2OWl+i752
+        nYVZuJehFpEBCf3BtOh8R820gw==
+X-Google-Smtp-Source: APXvYqw/vXkr0PEX/jzpgnhtbh7cvLECq0WihqgmP+dtE4STT7/cXn7PqLsTujfn/flbDd+wdX6iYg==
+X-Received: by 2002:a63:c84d:: with SMTP id l13mr9620053pgi.154.1567103429436;
+        Thu, 29 Aug 2019 11:30:29 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.gmail.com with ESMTPSA id y16sm4090168pfc.36.2019.08.29.11.30.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 11:30:28 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
+        linux-kernel@vger.kernel.orga,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org
+Subject: [PATCH] overlayfs: filter of trusted xattr results in audit.
+Date:   Thu, 29 Aug 2019 11:30:14 -0700
+Message-Id: <20190829183021.87586-1-salyzyn@android.com>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 29 Aug 2019 18:30:11 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add security hooks that will allow an LSM to rule on whether or not a watch
-may be set.  More than one hook is required as the watches watch different
-types of object.
+When filtering xattr list for reading, presence of trusted xattr
+results in a security audit log.  However, if there is other content
+no errno will be set, and if there isn't, the errno will be -ENODATA
+and not -EPERM as is usually associated with a lack of capability.
+The check does not block the request to list the xattrs present.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Casey Schaufler <casey@schaufler-ca.com>
-cc: Stephen Smalley <sds@tycho.nsa.gov>
-cc: linux-security-module@vger.kernel.org
+Switch to ns_capable_noaudit to reflect a more appropriate check.
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: linux-kernel@vger.kernel.orga
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: stable@vger.kernel.org # 4.4, 4.9, 4.14 & 4.19
 ---
+ fs/overlayfs/inode.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- include/linux/lsm_hooks.h |   22 ++++++++++++++++++++++
- include/linux/security.h  |   15 +++++++++++++++
- security/security.c       |   13 +++++++++++++
- 3 files changed, 50 insertions(+)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index df1318d85f7d..19108185b254 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1413,6 +1413,20 @@
-  *	@ctx is a pointer in which to place the allocated security context.
-  *	@ctxlen points to the place to put the length of @ctx.
-  *
-+ * Security hooks for the general notification queue:
-+ *
-+ * @watch_key:
-+ *	Check to see if a process is allowed to watch for event notifications
-+ *	from a key or keyring.
-+ *	@watch: The watch object
-+ *	@key: The key to watch.
-+ *
-+ * @watch_devices:
-+ *	Check to see if a process is allowed to watch for event notifications
-+ *	from devices (as a global set).
-+ *	@watch: The watch object
-+ *
-+ *
-  * Security hooks for using the eBPF maps and programs functionalities through
-  * eBPF syscalls.
-  *
-@@ -1688,6 +1702,10 @@ union security_list_options {
- 	int (*inode_notifysecctx)(struct inode *inode, void *ctx, u32 ctxlen);
- 	int (*inode_setsecctx)(struct dentry *dentry, void *ctx, u32 ctxlen);
- 	int (*inode_getsecctx)(struct inode *inode, void **ctx, u32 *ctxlen);
-+#ifdef CONFIG_WATCH_QUEUE
-+	int (*watch_key)(struct watch *watch, struct key *key);
-+	int (*watch_devices)(struct watch *watch);
-+#endif /* CONFIG_WATCH_QUEUE */
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index 7663aeb85fa3..bc14781886bf 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -383,7 +383,8 @@ static bool ovl_can_list(const char *s)
+ 		return true;
  
- #ifdef CONFIG_SECURITY_NETWORK
- 	int (*unix_stream_connect)(struct sock *sock, struct sock *other,
-@@ -1964,6 +1982,10 @@ struct security_hook_heads {
- 	struct hlist_head inode_notifysecctx;
- 	struct hlist_head inode_setsecctx;
- 	struct hlist_head inode_getsecctx;
-+#ifdef CONFIG_WATCH_QUEUE
-+	struct hlist_head watch_key;
-+	struct hlist_head watch_devices;
-+#endif /* CONFIG_WATCH_QUEUE */
- #ifdef CONFIG_SECURITY_NETWORK
- 	struct hlist_head unix_stream_connect;
- 	struct hlist_head unix_may_send;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 5f7441abbf42..feeade454308 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -57,6 +57,7 @@ struct mm_struct;
- struct fs_context;
- struct fs_parameter;
- enum fs_value_type;
-+struct watch;
- 
- /* Default (no) options for the capable function */
- #define CAP_OPT_NONE 0x0
-@@ -392,6 +393,10 @@ void security_inode_invalidate_secctx(struct inode *inode);
- int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
-+#ifdef CONFIG_WATCH_QUEUE
-+int security_watch_key(struct watch *watch, struct key *key);
-+int security_watch_devices(struct watch *watch);
-+#endif /* CONFIG_WATCH_QUEUE */
- #else /* CONFIG_SECURITY */
- 
- static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-@@ -1204,6 +1209,16 @@ static inline int security_inode_getsecctx(struct inode *inode, void **ctx, u32
- {
- 	return -EOPNOTSUPP;
+ 	/* Never list trusted.overlay, list other trusted for superuser only */
+-	return !ovl_is_private_xattr(s) && capable(CAP_SYS_ADMIN);
++	return !ovl_is_private_xattr(s) &&
++	       ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN);
  }
-+#ifdef CONFIG_WATCH_QUEUE
-+static inline int security_watch_key(struct watch *watch, struct key *key)
-+{
-+	return 0;
-+}
-+static inline int security_watch_devices(struct watch *watch)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_WATCH_QUEUE */
- #endif	/* CONFIG_SECURITY */
  
- #ifdef CONFIG_SECURITY_NETWORK
-diff --git a/security/security.c b/security/security.c
-index 250ee2d76406..1ebd2c936a57 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1916,6 +1916,19 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
- }
- EXPORT_SYMBOL(security_inode_getsecctx);
- 
-+#ifdef CONFIG_WATCH_QUEUE
-+int security_watch_key(struct watch *watch, struct key *key)
-+{
-+	return call_int_hook(watch_key, 0, watch, key);
-+}
-+
-+int security_watch_devices(struct watch *watch)
-+{
-+	return call_int_hook(watch_devices, 0, watch);
-+}
-+
-+#endif /* CONFIG_WATCH_QUEUE */
-+
- #ifdef CONFIG_SECURITY_NETWORK
- 
- int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk)
+ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
+-- 
+2.23.0.187.g17f5b7556c-goog
 
