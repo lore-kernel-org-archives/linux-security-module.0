@@ -2,176 +2,87 @@ Return-Path: <SRS0=+AtZ=WZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5FEC3A5A6
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 15:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB28C3A59F
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 16:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C572A2166E
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 15:43:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567093418;
-	bh=Bf7qPlGUF5ncgGF7xPwWfoZ96AH0GQTONCGSJJO0ILM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=sfc544Ns7HAd9UOuXo8UH+3tQILar/7eWPDwu5M+AkdYMg7qb2/JSI+xEd3eNrczv
-	 Uu5dr71xkQ4oC7Oyrdp+axMObWcF6uZdRr2F6blajDsfIZzun5JnnTgmwkJ7Wr6Dzw
-	 yJ5Ye4xvtKua2POhBu70GIbhhRjrLUnH+97fkSQo=
+	by mail.kernel.org (Postfix) with ESMTP id EE19B2073F
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 16:11:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfH2Pni (ORCPT
+        id S1727388AbfH2QLI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Aug 2019 11:43:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50928 "EHLO mail.kernel.org"
+        Thu, 29 Aug 2019 12:11:08 -0400
+Received: from mga02.intel.com ([134.134.136.20]:55966 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727118AbfH2Pni (ORCPT
+        id S1727257AbfH2QLH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:43:38 -0400
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1A672166E
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2019 15:43:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567093417;
-        bh=Bf7qPlGUF5ncgGF7xPwWfoZ96AH0GQTONCGSJJO0ILM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dB1NAEDT11NVk8mh8gwwVkr7ucDrdCe+aft7g9cEI3COyzU7wKZAlCjzp74TBAyVK
-         slA4H/afXPvKvukQqpuRXEykZpQsK5ndXudmb0fvQPB7NuoH0SA9y3dU8126pMeASm
-         gHCc04SuW8Pn0dpoarGsWK8P8jzEHrDS3EbJgMpo=
-Received: by mail-wm1-f50.google.com with SMTP id y135so2359934wmc.1
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2019 08:43:36 -0700 (PDT)
-X-Gm-Message-State: APjAAAVj2fQYmjgtVrwyRss3/scDZuV3nlN7sS9Op1jHM7CLixZSH7dD
-        07w1GRNmNn8PtgV4tlQSy0OHwZWKrr4WWKDfAK9JcQ==
-X-Google-Smtp-Source: APXvYqzRkyS1nWJSFtXBAeKXiKlI+EhmvqeWKaGcIIDOMF6gTOsTy80m0M5IDFc3+xAboKNjq3vs7k/iFGpPWRUG3HM=
-X-Received: by 2002:a05:600c:24cf:: with SMTP id 15mr12397339wmu.76.1567093415251;
- Thu, 29 Aug 2019 08:43:35 -0700 (PDT)
+        Thu, 29 Aug 2019 12:11:07 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 09:11:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,444,1559545200"; 
+   d="scan'208";a="380819693"
+Received: from friedlmi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.54.26])
+  by fmsmga005.fm.intel.com with ESMTP; 29 Aug 2019 09:11:03 -0700
+Date:   Thu, 29 Aug 2019 19:10:57 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm_tis: Fix interrupt probing
+Message-ID: <20190829161057.22l72j55jy3dyib7@linux.intel.com>
+References: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
+ <20190827131400.qchcwa2act24c47b@linux.intel.com>
+ <20190827151915.hb4xwr2vik2i5ryb@linux.intel.com>
+ <797ff54e-dceb-21d2-dd74-e5244f9c6dfd@linux.ibm.com>
+ <20190829132021.6vfc535ecb62jokf@linux.intel.com>
 MIME-Version: 1.0
-References: <20190827205213.456318-1-ast@kernel.org> <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
- <20190828071421.GK2332@hirez.programming.kicks-ass.net> <20190828220826.nlkpp632rsomocve@ast-mbp.dhcp.thefacebook.com>
- <20190829093434.36540972@gandalf.local.home>
-In-Reply-To: <20190829093434.36540972@gandalf.local.home>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 29 Aug 2019 08:43:23 -0700
-X-Gmail-Original-Message-ID: <CALCETrWYu0XB_d-MhXFgopEmBu-pog493G1e+KsE3dS32UULgA@mail.gmail.com>
-Message-ID: <CALCETrWYu0XB_d-MhXFgopEmBu-pog493G1e+KsE3dS32UULgA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829132021.6vfc535ecb62jokf@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 29, 2019 at 6:34 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Wed, 28 Aug 2019 15:08:28 -0700
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
->
-> > On Wed, Aug 28, 2019 at 09:14:21AM +0200, Peter Zijlstra wrote:
-> > > On Tue, Aug 27, 2019 at 04:01:08PM -0700, Andy Lutomirski wrote:
-> > >
-> > > > > Tracing:
-> > > > >
-> > > > > CAP_BPF and perf_paranoid_tracepoint_raw() (which is kernel.perf_event_paranoid == -1)
-> > > > > are necessary to:
-> > >
-> > > That's not tracing, that's perf.
-> > >
->
-> > re: your first comment above.
-> > I'm not sure what difference you see in words 'tracing' and 'perf'.
-> > I really hope we don't partition the overall tracing category
-> > into CAP_PERF and CAP_FTRACE only because these pieces are maintained
-> > by different people.
->
-> I think Peter meant: It's not tracing, it's profiling.
->
-> And there is a bit of separation between the two, although there is an
-> overlap.
->
-> Yes, perf can do tracing but it's designed more for profiling.
+On Thu, Aug 29, 2019 at 04:20:21PM +0300, Jarkko Sakkinen wrote:
+> On Tue, Aug 27, 2019 at 03:34:36PM -0400, Stefan Berger wrote:
+> > On 8/27/19 11:19 AM, Jarkko Sakkinen wrote:
+> > > On Tue, Aug 27, 2019 at 04:14:00PM +0300, Jarkko Sakkinen wrote:
+> > > > On Tue, Aug 20, 2019 at 08:25:17AM -0400, Stefan Berger wrote:
+> > > > > From: Stefan Berger <stefanb@linux.ibm.com>
+> > > > > 
+> > > > > The interrupt probing of the TPM TIS was broken since we are trying to
+> > > > > run it without an active locality and without the TPM_CHIP_FLAG_IRQ set.
+> > > > > 
+> > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > > Need these:
+> > > > 
+> > > > Cc: linux-stable@vger.kernel.org
+> > > > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
+> > > > 
+> > > > Thank you. I'll apply this to my tree.
+> > > > 
+> > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > The commit went in the following form:
+> > > 
+> > > http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/9b558deab2c5d7dc23d5f7a4064892ede482ad32
+> > 
+> > I saw you dropped the stetting of the IRQ flag - I needed it, otherwise it
+> > wouldn't execute certain code paths.
+> 
+> I explained why I removed that part. There was no any reasoning for
+> it. Also, it cannot be in the same commit if it fixes a diffent
+> issue.
 
-As I see it, there are a couple of reasons to split something into
-multiple capabilities.  If they allow users to do well-defined things
-that have materially different risks from the perspective of the
-person granting the capabilities, then they can usefully be different.
-Similarly, if one carries a risk of accidental use that another does
-not, they should usefully be different.  An example of the first is
-that CAP_NET_BIND_SERVICE has very different powers from
-CAP_NET_ADMIN, whereas CAP_SYS_ADMIN and CAP_PTRACE are really quite
-similar from a security perspective.  An example of the latter is that
-CAP_DAC_OVERRIDE changes overall open() semantics and CAP_SYS_ADMIN
-does not, at least not outside of /proc.
+AFAIK they go with different fixes-tags.
 
-Things having different development histories and different
-maintainers doesn't seem like a good reason to split the capabilities
-IMO.
-
->
-> > On one side perf_event_open() isn't really doing tracing (as step by
-> > step ftracing of function sequences), but perf_event_open() opens
-> > an event and the sequence of events (may include IP) becomes a trace.
-> > imo CAP_TRACING is the best name to descibe the privileged space
-> > of operations possible via perf_event_open, ftrace, kprobe, stack traces, etc.
->
-> I have no issue with what you suggest. I guess it comes down to how
-> fine grain people want to go. Do we want it to be all or nothing?
-> Should CAP_TRACING allow for write access to tracefs? Or should we go
-> with needing both CAP_TRACING and permissions in that directory
-> (like changing the group ownership of the files at every boot).
->
-> Perhaps we should have a CAP_TRACING_RO, that gives read access to
-> tracefs (and write if the users have permissions). And have CAP_TRACING
-> to allow full write access as well (allowing for users to add kprobe
-> events and enabling tracers like the function tracer).
-
-I can imagine splitting it into three capabilities:
-
-CAP_TRACE_KERNEL: learn which kernel functions are called when.  This
-would allow perf profiling, for example, but not sampling of kernel
-regs.
-
-CAP_TRACE_READ_KERNEL_DATA: allow the tracing, profiling, etc features
-that can read the kernel's data.  So you get function arguments via
-kprobe, kernel regs, and APIs that expose probe_kernel_read()
-
-CAP_TRACE_USER: trace unrelated user processes
-
-I'm not sure the code is written in a way that makes splitting
-CAP_TRACE_KERNEL and CAP_TRACE_READ_KERNEL_DATA, and I'm not sure that
-CAP_TRACE_KERNEL is all that useful except for plain perf record
-without CAP_TRACE_READ_KERNEL_DATA.  What do you all think?  I suppose
-it could also be:
-
-CAP_PROFILE_KERNEL: Use perf with events that aren't kprobes or
-tracepoints.  Does not grant the ability to sample regs or the kernel
-stack directly.
-
-CAP_TRACE_KERNEL: Use all of perf, ftrace, kprobe, etc.
-
-CAP_TRACE_USER: Use all of perf with scope limited to user mode and uprobes.
-
-> As the above seems to favor the idea of CAP_TRACING allowing write
-> access to tracefs, should we have a CAP_TRACING_RO for just read access
-> and limited perf abilities?
-
-How about making a separate cap for limited perf capabilities along
-the lines of the above?
-
-For what it's worth, it should be straightforward using full tracing
-to read out the kernel's random number pool, for example, but it would
-be difficult or impossible to do that using just perf record -e
-cycles.
+/Jarkko
