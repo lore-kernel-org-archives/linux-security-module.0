@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECE6C3A5A9
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 23:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F750C3A5A7
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 23:29:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8125A2189D
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 23:29:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12AE92189D
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 23:29:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="rLnF65pr"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="VC87Umaz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725848AbfH2X3s (ORCPT
+        id S1727226AbfH2X3v (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Aug 2019 19:29:48 -0400
-Received: from sonic312-30.consmr.mail.gq1.yahoo.com ([98.137.69.211]:32867
-        "EHLO sonic312-30.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727059AbfH2X3s (ORCPT
+        Thu, 29 Aug 2019 19:29:51 -0400
+Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:38645
+        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727544AbfH2X3v (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Aug 2019 19:29:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1567121387; bh=jeAwtj61x3mTeiR+JjReHIO7CbjGJFrxN2vWv0bqU0U=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=rLnF65prC5+rOuJo1RNiWKtICQmbH1dgsyw9n0s28mHBM2iU9KB1CIpKJWmhHtrxWKOOa3bUEvnafeRAmjoGl2wqu9waC2H6eSg17lHQkL1D1VEmVoS4QfM8H7XgSOxnP9Lxnx/faECTHfZiKAJn9Xqz+MQ/nY1rwvw7tmZXy/j64zMEvt+4kZIbs5n6UuY65F/iFUQvlGnpDBQIzxaDkbUYGbHcInggg+dkdrnuLiSb6Wt+DvJkKSUHZfmEaktJU44FgV1Q/tQdAKmDrRZkc6gIN+12+he4OQL6wtbmsa59c/DqSMs+BMNYl8VCeIPePsK4WDc99LxJSlsK0K4q4w==
-X-YMail-OSG: _9zE_pMVM1lW9024D7DkPbExPSOJvmO0M45eb1U3k8WErKu_KIpLTNxmt0K3rVg
- mUu5cNz.5c_OcgJ36MUtTYoUQtjzi3CTm5ijGoTYr1WdhlW4ynPRslYBAkEdbmAwcuaJGfhNJmkg
- 4WG.jP4X.E3HWi1SxN.iDHO3I9Cmj4O6MSQ0M70IBno08ztQ0rsI1Uze_AYIl_eOLkQDfiQPzBwF
- D3N_vYD9DP1ppWN032t_86_ji75uX8k4Seg9ByC.WL5DnPHlZoPZhLA8Ra7WCWxX2T_GDrAMno.Z
- N7gwyBNTFnv5cAC1vHkmAv_QOreST7zneFLabh5lxUYoB9iRuBeZtSqjpeeXoZELLHogOlw2Q13w
- Ytkyb_IAGyDbk97CGrISP6jaG7U_3zLeHsxQI7PMh5bXuzmRS8GlQkN0QnxxysBSUzqoCNDg9PF1
- 6ASn8j6lf3XAh3uv12Y5Bad60McTSojPy7jDn5SZ.MvTpIJM4KEQ2l.J5fjvgaZ9FWpZUsKPH2gH
- Dpbo4YmswnhV2HD_fRS4b.xfzxq0DpyGVlhrhFmyAGLorZcScSFffdSNz0x0nvcrWdJU2NPD96A9
- OsyuvC0fHow_GDkxNHi2TtVhgcuA_NvrCcAgvjd3xNy7pUXVRl9wyEIveZrupFmMCkEDi4L0AcWS
- bk4p7Aqe6KHGqMJ2qOyPUncxuF1RGYSxWT5MuZEzZPjnx8oslwjNMm9FJ2QvO7ijVHsCFmRqU.DK
- O1PQK9R53PAmnOxa1_M.oL.3x9hQWNneyces_dNzBNQ3924Z7PPhSQcfW_gPwrLLaRCanAQSs_.g
- TbPj23_8bK.HJ.hZGRcISoXirPMNTOgE1dsuoiTcvEM8WEDliDn107uPyUWVMJadg4VTdZ776o.Z
- oLniIiwaDJhtB9OLpbHeYEAtLcnvidcWwW1XNM80DzgwZU08xAQ6Cw5Hw0E4x.RS5uC8EcT_efPV
- 2kF6eWEmXtMXdRprNMb0h0xZMty0BGu0GUJXZ.QhX2Fguw2OQZMcLuDsDfmK20T_2C4vOx18tlly
- xZVUPcjPwEo79HIlGgfTdVzzF0JZ9tjREueRfazcJ5wCMlOj0h42XZ6g6dOxTQz9Fw7WpqbroXFp
- cYZ5YzTw0CKG5F2o8K8QqjCMWjhAA2srcj0uA0r1QGiDvSWFnL0B4r9DMuIg8YK9S9TprEjHWE_z
- Z14HkgFkxI9PCYpAHw7o3w1qaFxZNb8TGw2YOYHrUbBm8yrQkUdIfafMOecod0GcTuOUvndmTX02
- qR9J1kczEQ4K4wPl9uVY7Ln9pqu6UApJm0FVEiC.d0KWSnJ7CFLrJZSbyX9imCx2mvNIc68t4wY.
- cUV0BbroI
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Thu, 29 Aug 2019 23:29:47 +0000
+        Thu, 29 Aug 2019 19:29:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1567121389; bh=pBDl/1vQPZOTGhA3y1ZBLm/3xBXXHuqBGnmdEc2nJIk=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=VC87UmazrUBVMSm2Vmz/vC38xd4Ws3sPO9/QuEEZ2jJIOeUhaMSmIFDtkoZJRDuInPRJ2f8MwGGKsvA3cpahPYDyLMW1TOfTiiDKFNa9W1HK6017EQ4adGx91w9xOZ4aJqcSt81RQ5MSIEBGl1KgLD28uHwnBvV7qBIBE10p0+mkBQ4qh5U3Fl+2QIxhIFaPeR3+y7UpXCdEG2TR4Qtyf7+WmAQzktb6ukbYxx/jO8K3YLT46ld31jE2SLsG3czVkC7gCokIKhHRTRESIqBpB7RbxfQMfaomPS4nAQoUeKol1TxfjJ3xt8bd8Kf4ZYmB5IVvng1YadJtYHVk7Tl4lQ==
+X-YMail-OSG: d1li1tIVM1lYiojYCV00XIT2qJomg8n9N6WiWjGtfYBZHPq62KMMZb4gI9F_L1O
+ .umAnpNqphLzA_zhIy7RQL3qouG3TFPUKbCqL.DxnJM6GUetezXPKM53lfvDb4fd_Z6L8v1D2.Wn
+ lQmws.mUkf6DRfD2iQ9sD6LcSmBu0fJ2rBXmJY3D7_YfYN2MbcgzX90IfF.bYpnPj0dLPiiYGCGX
+ MseO3._PFIp8pIPWnTqd3YR_TZBTmSWAyF4H.vy8D5hQgeLyhiWHaup0tMfzP243ySPC5.VI92Kb
+ FZEAZWS0PpjgPXuR26kaCfRQMub_U46R8RIIwNYGkn6C9BqPO6hUg0eFaAMMST6RwUMrVVJejy_1
+ dxlX_nI0r47FuqifXYf7A97ffG9Wh8gWN9Kbf_6LPnW3idO47pr6Br_LpklYoXPOVk12f4W96PTE
+ h0f5CQ.M6jyK18jC6RdxZW8w8cIUMIfpgeNeSq_amoQvqGdyfdzloX3joqD.aek2pWLoww.5o7Hi
+ zEKt1zWi6jsOjKoGJmMtIcNgPZ3rUEmbNtG9G3BksgHy0S5Mp6G5oL2aKr9nyPmHQ5DM5UjgTOi9
+ cORRI9gviwEIosZH0hQ.6zn5iszjUY.PFUOHGgFzg1X13N8wqxVItpGoMCi3M7sTGvqjj7Uhrp2.
+ O8Q7PFd0H1Paf.gBdNJOXqEW8tcI1KLo9ldYgkeRevwUfkh9pF2itW_ec.dCtUJ9QP6n4Ywd1V3v
+ dSbjDoBZFAxm1ZMR2RAyr7m00p61KVveRpQWuugDoPKbHKg2.dHvA3.9LCmHEp5nOrviir1lTKlz
+ AJoJRmbqEKjGlZYQldIS4KYQEh97k4vs.wx7becEKJELpKce9lRKsvMNLrDBSiSh8uLv1ck03ovP
+ FoVYoe5eg.K679krV84thIreSpSbhPRopbG7530BC2UORD6kH5yB9EsrRmqGcynQE6hosw9RF_XL
+ 7zB4VOF8X_jKiPJ87A4JbaOxcePCs6OVKco30A2EKOZ_HNfGodeOnSD5OmusU0X3XMDt14EDbtos
+ vTHNn7Vqi0I9UhQjN1Y_I6wYmjncF6INReQZolMQT4Cn5zOrvJMdJ5kZ1Le74StHUrB7dBcRGGq6
+ 6TV2nfEfrIVdENim9SZVgZke3Nu2OS.JJecXCAUF9H4bhBjee2FHvogZh8907FgOAMcRykWZb8_s
+ yWBY2VG3EPHJaL7Vzu7Gnw.DUgG7sgpnVZjjLcIokp7zmpOp201Rl9pC1OImGTGZ3RqiW.GyYuBn
+ 00Z1mTCbisgdihPmmmweCMaobS36g15ozsF0TW2HLWby9bHjYSWz9QasCFJXGGkFyZ.0J2AsaL9G
+ niD0Qzco-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Thu, 29 Aug 2019 23:29:49 +0000
 Received: by smtp412.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ded9e12cc42d2f561e2af538140d1439;
-          Thu, 29 Aug 2019 23:29:46 +0000 (UTC)
+          Thu, 29 Aug 2019 23:29:44 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     casey@schaufler-ca.com, keescook@chromium.org,
         john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
         paul@paul-moore.com, sds@tycho.nsa.gov
-Subject: [PATCH v8 08/28] LSM: Use lsmblob in security_secctx_to_secid
-Date:   Thu, 29 Aug 2019 16:29:15 -0700
-Message-Id: <20190829232935.7099-9-casey@schaufler-ca.com>
+Subject: [PATCH v8 06/28] LSM: Use lsmblob in security_kernel_act_as
+Date:   Thu, 29 Aug 2019 16:29:13 -0700
+Message-Id: <20190829232935.7099-7-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829232935.7099-1-casey@schaufler-ca.com>
 References: <20190829232935.7099-1-casey@schaufler-ca.com>
@@ -64,212 +64,133 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Change security_secctx_to_secid() to fill in a lsmblob instead
-of a u32 secid. Multiple LSMs may be able to interpret the
-string, and this allows for setting whichever secid is
-appropriate. In some cases there is scaffolding where other
-interfaces have yet to be converted.
+Change the security_kernel_act_as interface to use a lsmblob
+structure in place of the single u32 secid in support of
+module stacking. Change it's only caller, set_security_override,
+to do the same. Change that one's only caller,
+set_security_override_from_ctx, to call it with the new
+parameter type.
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/security.h          |  5 +++--
- kernel/cred.c                     |  4 +---
- net/netfilter/nft_meta.c          | 13 ++++++-------
- net/netfilter/xt_SECMARK.c        |  5 ++++-
- net/netlabel/netlabel_unlabeled.c | 14 ++++++++------
- security/security.c               | 18 +++++++++++++++---
- 6 files changed, 37 insertions(+), 22 deletions(-)
+ include/linux/cred.h     |  3 ++-
+ include/linux/security.h |  5 +++--
+ kernel/cred.c            | 10 ++++++----
+ security/security.c      | 14 ++++++++++++--
+ 4 files changed, 23 insertions(+), 9 deletions(-)
 
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index efb6edf32de7..9a21c376ed97 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -22,6 +22,7 @@
+ 
+ struct cred;
+ struct inode;
++struct lsmblob;
+ 
+ /*
+  * COW Supplementary groups list
+@@ -165,7 +166,7 @@ extern const struct cred *override_creds(const struct cred *);
+ extern void revert_creds(const struct cred *);
+ extern struct cred *prepare_kernel_cred(struct task_struct *);
+ extern int change_create_files_as(struct cred *, struct inode *);
+-extern int set_security_override(struct cred *, u32);
++extern int set_security_override(struct cred *, struct lsmblob *);
+ extern int set_security_override_from_ctx(struct cred *, const char *);
+ extern int set_create_files_as(struct cred *, struct inode *);
+ extern int cred_fscmp(const struct cred *, const struct cred *);
 diff --git a/include/linux/security.h b/include/linux/security.h
-index dcf20da87d1b..30337f1a9056 100644
+index 4f8b478bc3a1..313e45a3cac3 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -447,7 +447,8 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
- int security_netlink_send(struct sock *sk, struct sk_buff *skb);
- int security_ismaclabel(const char *name);
- int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
--int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
-+int security_secctx_to_secid(const char *secdata, u32 seclen,
-+			     struct lsmblob *blob);
- void security_release_secctx(char *secdata, u32 seclen);
- 
- void security_inode_invalidate_secctx(struct inode *inode);
-@@ -1230,7 +1231,7 @@ static inline int security_secid_to_secctx(u32 secid, char **secdata, u32 *secle
- 
- static inline int security_secctx_to_secid(const char *secdata,
- 					   u32 seclen,
--					   u32 *secid)
-+					   struct lsmblob *blob)
+@@ -388,7 +388,7 @@ void security_cred_free(struct cred *cred);
+ int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp);
+ void security_transfer_creds(struct cred *new, const struct cred *old);
+ void security_cred_getsecid(const struct cred *c, u32 *secid);
+-int security_kernel_act_as(struct cred *new, u32 secid);
++int security_kernel_act_as(struct cred *new, struct lsmblob *blob);
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+ int security_kernel_module_request(char *kmod_name);
+ int security_kernel_load_data(enum kernel_load_data_id id);
+@@ -971,7 +971,8 @@ static inline void security_transfer_creds(struct cred *new,
  {
- 	return -EOPNOTSUPP;
+ }
+ 
+-static inline int security_kernel_act_as(struct cred *cred, u32 secid)
++static inline int security_kernel_act_as(struct cred *cred,
++					 struct lsmblob *blob)
+ {
+ 	return 0;
  }
 diff --git a/kernel/cred.c b/kernel/cred.c
-index 71c14dda107e..d70a2c02ced4 100644
+index 45d77284aed0..71c14dda107e 100644
 --- a/kernel/cred.c
 +++ b/kernel/cred.c
-@@ -725,14 +725,12 @@ EXPORT_SYMBOL(set_security_override);
+@@ -701,14 +701,14 @@ EXPORT_SYMBOL(prepare_kernel_cred);
+ /**
+  * set_security_override - Set the security ID in a set of credentials
+  * @new: The credentials to alter
+- * @secid: The LSM security ID to set
++ * @blob: The LSM security information to set
+  *
+  * Set the LSM security ID in a set of credentials so that the subjective
+  * security is overridden when an alternative set of credentials is used.
+  */
+-int set_security_override(struct cred *new, u32 secid)
++int set_security_override(struct cred *new, struct lsmblob *blob)
+ {
+-	return security_kernel_act_as(new, secid);
++	return security_kernel_act_as(new, blob);
+ }
+ EXPORT_SYMBOL(set_security_override);
+ 
+@@ -724,6 +724,7 @@ EXPORT_SYMBOL(set_security_override);
+  */
  int set_security_override_from_ctx(struct cred *new, const char *secctx)
  {
- 	struct lsmblob blob;
--	u32 secid;
++	struct lsmblob blob;
+ 	u32 secid;
  	int ret;
  
--	ret = security_secctx_to_secid(secctx, strlen(secctx), &secid);
-+	ret = security_secctx_to_secid(secctx, strlen(secctx), &blob);
+@@ -731,7 +732,8 @@ int set_security_override_from_ctx(struct cred *new, const char *secctx)
  	if (ret < 0)
  		return ret;
  
--	lsmblob_init(&blob, secid);
- 	return set_security_override(new, &blob);
+-	return set_security_override(new, secid);
++	lsmblob_init(&blob, secid);
++	return set_security_override(new, &blob);
  }
  EXPORT_SYMBOL(set_security_override_from_ctx);
-diff --git a/net/netfilter/nft_meta.c b/net/netfilter/nft_meta.c
-index 987d2d6ce624..054fb4b48d51 100644
---- a/net/netfilter/nft_meta.c
-+++ b/net/netfilter/nft_meta.c
-@@ -576,21 +576,20 @@ static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
- 
- static int nft_secmark_compute_secid(struct nft_secmark *priv)
- {
--	u32 tmp_secid = 0;
-+	struct lsmblob blob;
- 	int err;
- 
--	err = security_secctx_to_secid(priv->ctx, strlen(priv->ctx), &tmp_secid);
-+	err = security_secctx_to_secid(priv->ctx, strlen(priv->ctx), &blob);
- 	if (err)
- 		return err;
- 
--	if (!tmp_secid)
--		return -ENOENT;
--
--	err = security_secmark_relabel_packet(tmp_secid);
-+	/* Using le[0] is scaffolding */
-+	err = security_secmark_relabel_packet(blob.secid[0]);
- 	if (err)
- 		return err;
- 
--	priv->secid = tmp_secid;
-+	/* Using le[0] is scaffolding */
-+	priv->secid = blob.secid[0];
- 	return 0;
- }
- 
-diff --git a/net/netfilter/xt_SECMARK.c b/net/netfilter/xt_SECMARK.c
-index f16202d26c20..8081fadc30e9 100644
---- a/net/netfilter/xt_SECMARK.c
-+++ b/net/netfilter/xt_SECMARK.c
-@@ -49,13 +49,14 @@ secmark_tg(struct sk_buff *skb, const struct xt_action_param *par)
- 
- static int checkentry_lsm(struct xt_secmark_target_info *info)
- {
-+	struct lsmblob blob;
- 	int err;
- 
- 	info->secctx[SECMARK_SECCTX_MAX - 1] = '\0';
- 	info->secid = 0;
- 
- 	err = security_secctx_to_secid(info->secctx, strlen(info->secctx),
--				       &info->secid);
-+				       &blob);
- 	if (err) {
- 		if (err == -EINVAL)
- 			pr_info_ratelimited("invalid security context \'%s\'\n",
-@@ -63,6 +64,8 @@ static int checkentry_lsm(struct xt_secmark_target_info *info)
- 		return err;
- 	}
- 
-+	/* scaffolding during the transition */
-+	info->secid = blob.secid[0];
- 	if (!info->secid) {
- 		pr_info_ratelimited("unable to map security context \'%s\'\n",
- 				    info->secctx);
-diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-index c92894c3e40a..2976370e41aa 100644
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -895,7 +895,7 @@ static int netlbl_unlabel_staticadd(struct sk_buff *skb,
- 	void *addr;
- 	void *mask;
- 	u32 addr_len;
--	u32 secid;
-+	struct lsmblob blob;
- 	struct netlbl_audit audit_info;
- 
- 	/* Don't allow users to add both IPv4 and IPv6 addresses for a
-@@ -919,12 +919,13 @@ static int netlbl_unlabel_staticadd(struct sk_buff *skb,
- 	ret_val = security_secctx_to_secid(
- 		                  nla_data(info->attrs[NLBL_UNLABEL_A_SECCTX]),
- 				  nla_len(info->attrs[NLBL_UNLABEL_A_SECCTX]),
--				  &secid);
-+				  &blob);
- 	if (ret_val != 0)
- 		return ret_val;
- 
-+	/* scaffolding with the [0] */
- 	return netlbl_unlhsh_add(&init_net,
--				 dev_name, addr, mask, addr_len, secid,
-+				 dev_name, addr, mask, addr_len, blob.secid[0],
- 				 &audit_info);
- }
- 
-@@ -946,7 +947,7 @@ static int netlbl_unlabel_staticadddef(struct sk_buff *skb,
- 	void *addr;
- 	void *mask;
- 	u32 addr_len;
--	u32 secid;
-+	struct lsmblob blob;
- 	struct netlbl_audit audit_info;
- 
- 	/* Don't allow users to add both IPv4 and IPv6 addresses for a
-@@ -968,12 +969,13 @@ static int netlbl_unlabel_staticadddef(struct sk_buff *skb,
- 	ret_val = security_secctx_to_secid(
- 		                  nla_data(info->attrs[NLBL_UNLABEL_A_SECCTX]),
- 				  nla_len(info->attrs[NLBL_UNLABEL_A_SECCTX]),
--				  &secid);
-+				  &blob);
- 	if (ret_val != 0)
- 		return ret_val;
- 
-+	/* scaffolding with the [0] */
- 	return netlbl_unlhsh_add(&init_net,
--				 NULL, addr, mask, addr_len, secid,
-+				 NULL, addr, mask, addr_len, blob.secid[0],
- 				 &audit_info);
- }
  
 diff --git a/security/security.c b/security/security.c
-index fe76dfa0f2fd..e231fbfd68f2 100644
+index fa6e425e6f29..fa7ab1334f22 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -1982,10 +1982,22 @@ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+@@ -1627,9 +1627,19 @@ void security_cred_getsecid(const struct cred *c, u32 *secid)
  }
- EXPORT_SYMBOL(security_secid_to_secctx);
+ EXPORT_SYMBOL(security_cred_getsecid);
  
--int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
-+int security_secctx_to_secid(const char *secdata, u32 seclen,
-+			     struct lsmblob *blob)
+-int security_kernel_act_as(struct cred *new, u32 secid)
++int security_kernel_act_as(struct cred *new, struct lsmblob *blob)
  {
--	*secid = 0;
--	return call_int_hook(secctx_to_secid, 0, secdata, seclen, secid);
+-	return call_int_hook(kernel_act_as, 0, new, secid);
 +	struct security_hook_list *hp;
 +	int rc;
 +
-+	lsmblob_init(blob, 0);
-+	hlist_for_each_entry(hp, &security_hook_heads.secctx_to_secid, list) {
++	hlist_for_each_entry(hp, &security_hook_heads.kernel_act_as, list) {
 +		if (WARN_ON(hp->lsmid->slot < 0 || hp->lsmid->slot >= lsm_slot))
 +			continue;
-+		rc = hp->hook.secctx_to_secid(secdata, seclen,
-+					      &blob->secid[hp->lsmid->slot]);
++		rc = hp->hook.kernel_act_as(new, blob->secid[hp->lsmid->slot]);
 +		if (rc != 0)
 +			return rc;
 +	}
 +	return 0;
  }
- EXPORT_SYMBOL(security_secctx_to_secid);
  
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode)
 -- 
 2.20.1
 
