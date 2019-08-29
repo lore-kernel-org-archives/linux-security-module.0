@@ -2,134 +2,166 @@ Return-Path: <SRS0=+AtZ=WZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6B5C3A59F
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 03:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37007C3A59F
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 04:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6B5D23403
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 03:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 040FE22CED
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 04:07:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qhzOR9cJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbfH2DqF (ORCPT
+        id S1725823AbfH2EH2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Aug 2019 23:46:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:6578 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726514AbfH2DqF (ORCPT
+        Thu, 29 Aug 2019 00:07:28 -0400
+Received: from mail-pf1-f177.google.com ([209.85.210.177]:45472 "EHLO
+        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfH2EH2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Aug 2019 23:46:05 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7T3gZhh146024
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2019 23:46:03 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2up5ruhwp5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2019 23:46:03 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 29 Aug 2019 04:46:01 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 29 Aug 2019 04:45:57 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7T3juQf51839122
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 03:45:56 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BED444204C;
-        Thu, 29 Aug 2019 03:45:56 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0A8342041;
-        Thu, 29 Aug 2019 03:45:55 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.163.216])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 29 Aug 2019 03:45:55 +0000 (GMT)
-Subject: Re: [PATCH] ima: use struct_size() in kzalloc()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 28 Aug 2019 23:45:55 -0400
-In-Reply-To: <671185b9-5c91-5235-b5ea-96d3449bf716@embeddedor.com>
-References: <20190529165343.GA2584@embeddedor>
-         <671185b9-5c91-5235-b5ea-96d3449bf716@embeddedor.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Thu, 29 Aug 2019 00:07:28 -0400
+Received: by mail-pf1-f177.google.com with SMTP id w26so1125252pfq.12;
+        Wed, 28 Aug 2019 21:07:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=w0kt/ZUsbjTm2T8fFDi3JgxkmlUidJXSFufUbXNNKCE=;
+        b=qhzOR9cJ6L7DZn1HkdBMFCRqg/z+yoqvDqSweHrPdaz6+PZL2QPpWblX0pPUHjMZTQ
+         7zbIceM7lFnWxlqr+lWpgCbe2rr95iHOall7VH87dj235uRsoOwSJoe4rJJbxu8YlvSw
+         WjC7vA+pgTOfKsH9gIO1IieiiEP4xTJiq0Zts4hsbevNxP2dsN5xioHuUDJpzI3vRXJS
+         0qfKFjI6M2VS/85HEw1Gjcb2I9FSxvRQ5RC1iikYapMkGmjsg3j+THXf0kf3gLkY338M
+         +zaSyJ/mrt7+IWekig9GofhMHjfGa3uHIAWiwDt3w/5Y1u+thX+aJykyMf5KBUlMLVWR
+         dbVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=w0kt/ZUsbjTm2T8fFDi3JgxkmlUidJXSFufUbXNNKCE=;
+        b=QnoardO0SPx6fOb+hrEynIoVdT001907JeCN0ZDnV9i42Zl9vqdh9CG5W0P1nz9HNz
+         vgUFBzLsAlYH1bMAhUVK1K2jwRltcp2+nrkjTT5pShplNKAQN6bnZHBp2I9cWL0gGMI3
+         2txMs6NAvE7+/tXWvNkZuOgCLxapTLtegTNfwrfxbgLV2NVhX9LtA6J9xxvAVmn4nH75
+         SB9ACsgZKgzIzNgSLv93DaAjuvi7PsPEAm1FGAQIqeoqzM730ktMOZjUyGrot9F2ETRd
+         qVjwm9ah1ztXgEvfvzSLM79gYt6Uoej3Iu8+g6WuTcaRoO4obpznnyMXWUq7+Yqd19fU
+         cQ6g==
+X-Gm-Message-State: APjAAAXfUouDLhxDROmwOxxQJYwX/NlULbOHqv+WATTk3xTTnxRsutv1
+        n3t+sSzRlBlO4655JKIjnUE=
+X-Google-Smtp-Source: APXvYqyPHkJAYhQSNPZHuxydg9VayItwubA4Zdtoip62p7IyAUioHvt20v/oeofIyrsg/afivZqLcw==
+X-Received: by 2002:a63:10a:: with SMTP id 10mr6495671pgb.281.1567051646997;
+        Wed, 28 Aug 2019 21:07:26 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1e41])
+        by smtp.gmail.com with ESMTPSA id a186sm679089pge.0.2019.08.28.21.07.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Aug 2019 21:07:26 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 21:07:24 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
+Message-ID: <20190829040721.ef6rumbaunkavyrr@ast-mbp.dhcp.thefacebook.com>
+References: <20190827205213.456318-1-ast@kernel.org>
+ <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
+ <20190828003447.htgzsxs5oevn3eys@ast-mbp.dhcp.thefacebook.com>
+ <CALCETrVbPPPr=BdPAx=tJKxD3oLXP4OVSgCYrB_E4vb6idELow@mail.gmail.com>
+ <20190828044340.zeha3k3cmmxgfqj7@ast-mbp.dhcp.thefacebook.com>
+ <CALCETrW1o+Lazi2Ng6b9JN6jeJffgdW9f3HvqYhNo4TpHRXW=g@mail.gmail.com>
+ <20190828225512.q6qbvkdiqih2iewk@ast-mbp.dhcp.thefacebook.com>
+ <DA52992F-4862-4945-8482-FE619A04C753@amacapital.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19082903-4275-0000-0000-0000035E859E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19082903-4276-0000-0000-00003870BB55
-Message-Id: <1567050355.11493.3.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-29_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=930 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908290038
+In-Reply-To: <DA52992F-4862-4945-8482-FE619A04C753@amacapital.net>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Gustavo,
+On Wed, Aug 28, 2019 at 05:45:47PM -0700, Andy Lutomirski wrote:
+> > 
+> >> It seems like you are specifically trying to add a new switch to turn
+> >> as much of BPF as possible on and off.  Why?
+> > 
+> > Didn't I explain it several times already with multiple examples
+> > from systemd, daemons, bpftrace ?
+> > 
+> > Let's try again.
+> > Take your laptop with linux distro.
+> > You're the only user there. I'm assuming you're not sharing it with
+> > partner and kids. This is my definition of 'single user system'.
+> > You can sudo on it at any time, but obviously prefer to run as many
+> > apps as possible without cap_sys_admin.
+> > Now you found some awesome open source app on the web that monitors
+> > the health of the kernel and will pop a nice message on a screen if
+> > something is wrong. Currently this app needs root. You hesitate,
+> > but the apps is so useful and it has strong upstream code review process
+> > that you keep running it 24/7.
+> > This is open source app. New versions come. You upgrade.
+> > You have enough trust in that app that you keep running it as root.
+> > But there is always a chance that new version doing accidentaly
+> > something stupid as 'kill -9 -1'. It's an open source app at the end.
+> > 
+> > Now I come with this CAP* proposal to make this app safer.
+> > I'm not making your system more secure and not making this app
+> > more secure. I can only make your laptop safer for day to day work
+> > by limiting the operations this app can do.
+> > This particular app monitros the kernel via bpf and tracing.
+> > Hence you can give it CAP_TRACING and CAP_BPF and drop the rest.
+> 
+> This won’t make me much more comfortable, since CAP_BPF lets it do an ever-growing set of nasty things. I’d much rather one or both of two things happen:
+> 
+> 1. Give it CAP_TRACING only. It can leak my data, but it’s rather hard for it to crash my laptop, lose data, or cause other shenanigans.
+> 
+> 2. Improve it a bit do all the privileged ops are wrapped by capset().
+> 
+> Does this make sense?  I’m a security person on occasion. I find vulnerabilities and exploit them deliberately and I break things by accident on a regular basis. In my considered opinion, CAP_TRACING alone, even extended to cover part of BPF as I’ve described, is decently safe. Getting root with just CAP_TRACING will be decently challenging, especially if I don’t get to read things like sshd’s memory, and improvements to mitigate even that could be added.  I am quite confident that attacks starting with CAP_TRACING will have clear audit signatures if auditing is on.  I am also confident that CAP_BPF *will* allow DoS and likely privilege escalation, and this will only get more likely as BPF gets more widely used. And, if BPF-based auditing ever becomes a thing, writing to the audit daemon’s maps will be a great way to cover one’s tracks.
 
-On Wed, 2019-08-28 at 13:29 -0500, Gustavo A. R. Silva wrote:
-> On 5/29/19 11:53 AM, Gustavo A. R. Silva wrote:
-> > One of the more common cases of allocation size calculations is finding
-> > the size of a structure that has a zero-sized array at the end, along
-> > with memory for some number of elements for that array. For example:
-> > 
-> > struct foo {
-> >    int stuff;
-> >    struct boo entry[];
-> > };
-> > 
-> > instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
-> > 
-> > Instead of leaving these open-coded and prone to type mistakes, we can
-> > now use the new struct_size() helper:
-> > 
-> > instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-> > 
-> > This code was detected with the help of Coccinelle.
-> > 
-> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> > ---
-> >  security/integrity/ima/ima_template.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-> > index b631b8bc7624..b945dff2ed14 100644
-> > --- a/security/integrity/ima/ima_template.c
-> > +++ b/security/integrity/ima/ima_template.c
-> > @@ -281,9 +281,8 @@ static int ima_restore_template_data(struct ima_template_desc *template_desc,
-> >  	int ret = 0;
-> >  	int i;
-> >  
-> > -	*entry = kzalloc(sizeof(**entry) +
-> > -		    template_desc->num_fields * sizeof(struct ima_field_data),
-> > -		    GFP_NOFS);
-> > +	*entry = kzalloc(struct_size(*entry, template_data,
-> > +				     template_desc->num_fields), GFP_NOFS);
-> >  	if (!*entry)
-> >  		return -ENOMEM;
-> >  
-> > 
+CAP_TRACING, as I'm proposing it, will allow full tracefs access.
+I think Steven and Massami prefer that as well.
+That includes kprobe with probe_kernel_read.
+That also means mini-DoS by installing kprobes everywhere or running too much ftrace.
 
-The same usage exists in ima_api.c: ima_alloc_init_template().  Did
-you want to make the change there as well?
+CAP_TRACING will allow perf_event_open() too.
+Which also means mini-DoS with too many events.
 
-thanks,
+CAP_TRACING with or without CAP_BPF is safe, but it's not secure.
+And that's what I need to make above 'open source kernel health app' to be safe.
 
-Mimi
+In real world we have tens of such apps and they use all of the things that
+I'm allowing via CAP_BPF + CAP_NET_ADMIN + CAP_TRACING.
+Some apps will need only two out of three.
+I don't see any further possibility to shrink the scope of the proposal.
+
+> I’m trying to convince you that bpf’s security model can be made better
+> than what you’re proposing. I’m genuinely not trying to get in your way.
+> I’m trying to help you improve bpf.
+
+If you really want to help please don't reject the real use cases
+just because they don't fit into your proposal.
+
+There is not a single feature in BPF land that we did because we simply
+wanted to. For every feature we drilled into use cases to make sure
+there is a real user behind it.
+Same thing with CAP_BPF. I'm defining it to include GET_FD_BY_ID because
+apps use it and they need to made safer.
+
+Anyway the v2 version of the patch with CAP_TRACING and CAP_BPF is on the way.
+Hopefully later tonight or tomorrow.
 
