@@ -4,65 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MIME_QP_LONG_LINE,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B67CC3A5A1
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 00:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B52CC41514
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 00:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD551215EA
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 00:45:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE74C22CF5
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 00:53:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="DJYSK7HP"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="knbrg7HZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbfH2Apv (ORCPT
+        id S1727124AbfH2Axz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Aug 2019 20:45:51 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42879 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbfH2Apu (ORCPT
+        Wed, 28 Aug 2019 20:53:55 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38784 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbfH2Axz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Aug 2019 20:45:50 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y1so733656plp.9
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2019 17:45:50 -0700 (PDT)
+        Wed, 28 Aug 2019 20:53:55 -0400
+Received: by mail-pl1-f193.google.com with SMTP id w11so754972plp.5
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2019 17:53:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amacapital-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=+e9P4o5owFVnHx2r+zK7dVFJy7ZPl+QBIWM88iu0HTo=;
-        b=DJYSK7HPVgnMorDAM7rcRou0qAutsGZ60241mi9S8V9e2tAbdtvi7ZhAFgP44HhguJ
-         GdTo6qvQpJTVKjRrrkzYodw82l440c1gap2x28NXcpBcR1k8oqe1VqoiLE0AyV1DcM6w
-         OAmDIxtjytNDGcz5gav8svpQ1d9yBt1lVOIE8TRVqIEyhSE3g8gZJ7QxOOLE4exl8NuW
-         rX9VL7iHcmL5FBZ1yrNbs0MY1Gk+a+v0QJ1vWol9lA0succ31vzRqLld148fCWoDkSzn
-         KLPWU0AjQMTh9YVgxR9pwHLwChZ+6ZQrvXyEZp9m2kQgh8Qlcj5r0IxZCT7C3Ig4dZdG
-         TbQQ==
+        bh=niV0Vp7x3UxpuQqmhDXSp6GQ0LY7VPID2j1WUvmosog=;
+        b=knbrg7HZ9zD6jAR0pDXbT2QWHN9HyskXUA7IVXeZZeEaJqEmeYmxu0BoaA29JsT3dZ
+         VWDjqum4FBYePzmTFQ9O0n6FW5X+pvRAUBuxuLGIiiLmA8OVjSbAWv7WB09cj2ikuq4F
+         c9iQ0ye+bdv5n+rc1uZc6hg1jJvSm/gL8JT+jVh01JPAJgm+zv9agsjBW1CpWbacA7BS
+         XMGiyxvQ28cgo/eGLMG6Eo+LmOb9S2dXvq3B2n4mUDRuUarRRhD71RwKg1Ju9Hz6yA+0
+         W7cuJsRrgA4a6assCKbfcAz0N2xCa2YEbNZpch9IjN2rnn1iTHAAHEmCqkFVEGfsBtxP
+         Dmkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=+e9P4o5owFVnHx2r+zK7dVFJy7ZPl+QBIWM88iu0HTo=;
-        b=izH+VmmjIQSYIyrOi8q+EFM8KGBLLsdn/IdvLeQUT6905e9IQ01WX1MRsQ9AxndTqZ
-         mIk29eXLn5Vsz9IDF9eSQgYEHW37vueqWIGM+lJIlYbx7HuB583+kGOU2mQ9Itrzcx7X
-         DcKiHpo+x5BWoDghnxkv4nsM0WMoA14b7eow4/MPZx+ZcuEIlbtn3RIvHSWZo5hzCEUE
-         Fa0rQ+3/YTj44OTGSPBxip64aRImVT4T8mvivo+brm6mdSlKxWTq6ZMpdXwU7a67XvzS
-         cmWKgRGyWVU6rS1cKE+hczWdGUCo04j3HTEjTKetu24Ke9QWl9Rai7EIfdcRfYbSW2Uw
-         edAQ==
-X-Gm-Message-State: APjAAAWcLS++wGiEd7X+M9l0pMf6vGfunPl6+zwfsS+Oml0j/M7nqv3p
-        nfEIxAsUwzu43zc/P7Kx0uFIAQ==
-X-Google-Smtp-Source: APXvYqx9wttmQeUmstj9YDTRQe3NyQVC+a4+iSYRSGL4a3Ho6GdVSRdPvUsYd/BTGlovXk16q2l4iQ==
-X-Received: by 2002:a17:902:f217:: with SMTP id gn23mr7067878plb.21.1567039549870;
-        Wed, 28 Aug 2019 17:45:49 -0700 (PDT)
+        bh=niV0Vp7x3UxpuQqmhDXSp6GQ0LY7VPID2j1WUvmosog=;
+        b=fvchrHV3RMdoUHa75Rk0VeZ3j1BqcDacORyamxvklS6SPQ3+59N2wMX0jX90KaZIk3
+         /0FJtq8fC+R7e4azcwuiFDhPA5vmiCelA0yTjp8zdkZ7VJ1q6/JLA112DbB2Tp/xJNpn
+         YbCoXTQv0uuq27KmhMl5A1XPHGDFddVwqCBRFMIB+3puKjF485Llte+XKSe/pVzNaube
+         XoFua1w4rFG34cMPPLKQV9bRBQry4naOY5kumAy0LFKN6ZgyrfEBuYXbKBVqrcg0dhOT
+         QXcs5uA7tyCUq6FInAbWRAK2x7U8dE59EcXPGGj5pd7+rxQRyM2DYDoAFUZqmK66ClRg
+         qcEA==
+X-Gm-Message-State: APjAAAXvUlouUONh+HAGGAc0t5SB/iBcvclBCRRjZRRZgEX4t5gPzi8V
+        U1TcJmOf0hKOGz7fFgS0APZ9dQ==
+X-Google-Smtp-Source: APXvYqxjc9+Ihkedt5ExbUSYmi7pmtCngCxCmmQGbFSk9d8ssSE6C5rOe8vY9FBLF6/lXy4xrM/Irw==
+X-Received: by 2002:a17:902:a715:: with SMTP id w21mr6774701plq.274.1567040033758;
+        Wed, 28 Aug 2019 17:53:53 -0700 (PDT)
 Received: from ?IPv6:2601:646:c200:1ef2:9437:f332:3e4c:f05b? ([2601:646:c200:1ef2:9437:f332:3e4c:f05b])
-        by smtp.gmail.com with ESMTPSA id o67sm632953pfb.39.2019.08.28.17.45.48
+        by smtp.gmail.com with ESMTPSA id e24sm336834pgk.21.2019.08.28.17.53.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Aug 2019 17:45:48 -0700 (PDT)
+        Wed, 28 Aug 2019 17:53:52 -0700 (PDT)
 Content-Type: text/plain;
         charset=utf-8
 Mime-Version: 1.0 (1.0)
 Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
 From:   Andy Lutomirski <luto@amacapital.net>
 X-Mailer: iPhone Mail (16G77)
-In-Reply-To: <20190828225512.q6qbvkdiqih2iewk@ast-mbp.dhcp.thefacebook.com>
-Date:   Wed, 28 Aug 2019 17:45:47 -0700
+In-Reply-To: <DA52992F-4862-4945-8482-FE619A04C753@amacapital.net>
+Date:   Wed, 28 Aug 2019 17:53:52 -0700
 Cc:     Andy Lutomirski <luto@kernel.org>,
         Alexei Starovoitov <ast@kernel.org>,
         Kees Cook <keescook@chromium.org>,
@@ -77,113 +78,119 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
         Linux API <linux-api@vger.kernel.org>
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <DA52992F-4862-4945-8482-FE619A04C753@amacapital.net>
-References: <20190827205213.456318-1-ast@kernel.org> <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com> <20190828003447.htgzsxs5oevn3eys@ast-mbp.dhcp.thefacebook.com> <CALCETrVbPPPr=BdPAx=tJKxD3oLXP4OVSgCYrB_E4vb6idELow@mail.gmail.com> <20190828044340.zeha3k3cmmxgfqj7@ast-mbp.dhcp.thefacebook.com> <CALCETrW1o+Lazi2Ng6b9JN6jeJffgdW9f3HvqYhNo4TpHRXW=g@mail.gmail.com> <20190828225512.q6qbvkdiqih2iewk@ast-mbp.dhcp.thefacebook.com>
+Message-Id: <260ADB71-A11C-4BFA-997E-9ECB2AE5D0D7@amacapital.net>
+References: <20190827205213.456318-1-ast@kernel.org> <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com> <20190828003447.htgzsxs5oevn3eys@ast-mbp.dhcp.thefacebook.com> <CALCETrVbPPPr=BdPAx=tJKxD3oLXP4OVSgCYrB_E4vb6idELow@mail.gmail.com> <20190828044340.zeha3k3cmmxgfqj7@ast-mbp.dhcp.thefacebook.com> <CALCETrW1o+Lazi2Ng6b9JN6jeJffgdW9f3HvqYhNo4TpHRXW=g@mail.gmail.com> <20190828225512.q6qbvkdiqih2iewk@ast-mbp.dhcp.thefacebook.com> <DA52992F-4862-4945-8482-FE619A04C753@amacapital.net>
 To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-> On Aug 28, 2019, at 3:55 PM, Alexei Starovoitov <alexei.starovoitov@gmail.=
-com> wrote:
+
+> On Aug 28, 2019, at 5:45 PM, Andy Lutomirski <luto@amacapital.net> wrote:
 >=20
->> On Tue, Aug 27, 2019 at 11:12:29PM -0700, Andy Lutomirski wrote:
->>>>=20
->>>>=20
->>>> =46rom the previous discussion, you want to make progress toward solvin=
-g
->>>> a lot of problems with CAP_BPF.  One of them was making BPF
->>>> firewalling more generally useful. By making CAP_BPF grant the ability
->>>> to read kernel memory, you will make administrators much more nervous
->>>> to grant CAP_BPF.
+>=20
+>>> On Aug 28, 2019, at 3:55 PM, Alexei Starovoitov <alexei.starovoitov@gmai=
+l.com> wrote:
 >>>=20
->>> Andy, were your email hacked?
->>> I explained several times that in this proposal
->>> CAP_BPF _and_ CAP_TRACING _both_ are necessary to read kernel memory.
->>> CAP_BPF alone is _not enough_.
+>>> On Tue, Aug 27, 2019 at 11:12:29PM -0700, Andy Lutomirski wrote:
+>>>>>=20
+>>>>>=20
+>>>>> =46rom the previous discussion, you want to make progress toward solvi=
+ng
+>>>>> a lot of problems with CAP_BPF.  One of them was making BPF
+>>>>> firewalling more generally useful. By making CAP_BPF grant the ability=
+
+>>>>> to read kernel memory, you will make administrators much more nervous
+>>>>> to grant CAP_BPF.
+>>>>=20
+>>>> Andy, were your email hacked?
+>>>> I explained several times that in this proposal
+>>>> CAP_BPF _and_ CAP_TRACING _both_ are necessary to read kernel memory.
+>>>> CAP_BPF alone is _not enough_.
+>>>=20
+>>> You have indeed said this many times.  You've stated it as a matter of
+>>> fact as though it cannot possibly discussed.  I'm asking you to
+>>> justify it.
 >>=20
->> You have indeed said this many times.  You've stated it as a matter of
->> fact as though it cannot possibly discussed.  I'm asking you to
->> justify it.
->=20
-> That's not how I see it.
-> I kept stating that both CAP_BPF and CAP_TRACING are necessary to read
-> kernel memory whereas you kept distorting my statement by dropping second
-> part and then making claims that "CAP_BPF grant the ability to read
-> kernel memory, you will make administrators much more nervous".
+>> That's not how I see it.
+>> I kept stating that both CAP_BPF and CAP_TRACING are necessary to read
+>> kernel memory whereas you kept distorting my statement by dropping second=
 
-Mea culpa. CAP_BPF does, however, appear to permit breaking kASLR due to uns=
-afe pointer conversions, and it allows reading and writing everyone=E2=80=99=
+>> part and then making claims that "CAP_BPF grant the ability to read
+>> kernel memory, you will make administrators much more nervous".
+>=20
+> Mea culpa. CAP_BPF does, however, appear to permit breaking kASLR due to u=
+nsafe pointer conversions, and it allows reading and writing everyone=E2=80=99=
 s maps.  I stand by my overall point.
-
 >=20
-> Just s/CAP_BPF/CAP_BPF and CAP_TRACING/ in this above sentence.
-> See that meaning suddenly changes?
-> Now administrators would be worried about tasks that have both at once.
-> They also would be worried about tasks that have CAP_TRACING alone,
-> because that's what allows probe_kernel_read().
-
-This is not all what I meant. Of course granting CAP_BPF+CAP_TRACING allows r=
-eading kernel memory. This is not at all a problem.  Here is a problem I see=
-:
-
-CAP_TRACING + CAP_BPF allows modification of other people=E2=80=99s maps and=
- potentially other things that should not be implied by CAP_TRACING alone an=
-d that don=E2=80=99t need to be available to tracers. So CAP_TRACING, which i=
-s powerful but has somewhat limited scope, isn=E2=80=99t fully useful withou=
-t CAP_BPF, and giving CAP_TRACING *and* CAP_BPF allows things that teachers s=
-houldn=E2=80=99t be able to do. I think this would make the whole mechanism l=
-ess useful to Android, for example.
-
-(Also, I=E2=80=99m not sure quite what you mean by =E2=80=9CCAP_TRACING ... a=
-llows probe_kernel_read()=E2=80=9D. probe_kernel_read() is a kernel function=
- that can=E2=80=99t be directly called by userspace. CAP_TRACING allows read=
-ing kernel memory in plenty of ways regardless.)
-
+>>=20
+>> Just s/CAP_BPF/CAP_BPF and CAP_TRACING/ in this above sentence.
+>> See that meaning suddenly changes?
+>> Now administrators would be worried about tasks that have both at once.
+>> They also would be worried about tasks that have CAP_TRACING alone,
+>> because that's what allows probe_kernel_read().
 >=20
->> It seems like you are specifically trying to add a new switch to turn
->> as much of BPF as possible on and off.  Why?
+> This is not all what I meant. Of course granting CAP_BPF+CAP_TRACING allow=
+s reading kernel memory. This is not at all a problem.  Here is a problem I s=
+ee:
 >=20
-> Didn't I explain it several times already with multiple examples
-> from systemd, daemons, bpftrace ?
+> CAP_TRACING + CAP_BPF allows modification of other people=E2=80=99s maps a=
+nd potentially other things that should not be implied by CAP_TRACING alone a=
+nd that don=E2=80=99t need to be available to tracers. So CAP_TRACING, which=
+ is powerful but has somewhat limited scope, isn=E2=80=99t fully useful with=
+out CAP_BPF, and giving CAP_TRACING *and* CAP_BPF allows things that teacher=
+s shouldn=E2=80=99t be able to do. I think this would make the whole mechani=
+sm less useful to Android, for example.
 >=20
-> Let's try again.
-> Take your laptop with linux distro.
-> You're the only user there. I'm assuming you're not sharing it with
-> partner and kids. This is my definition of 'single user system'.
-> You can sudo on it at any time, but obviously prefer to run as many
-> apps as possible without cap_sys_admin.
-> Now you found some awesome open source app on the web that monitors
-> the health of the kernel and will pop a nice message on a screen if
-> something is wrong. Currently this app needs root. You hesitate,
-> but the apps is so useful and it has strong upstream code review process
-> that you keep running it 24/7.
-> This is open source app. New versions come. You upgrade.
-> You have enough trust in that app that you keep running it as root.
-> But there is always a chance that new version doing accidentaly
-> something stupid as 'kill -9 -1'. It's an open source app at the end.
+> (Also, I=E2=80=99m not sure quite what you mean by =E2=80=9CCAP_TRACING ..=
+. allows probe_kernel_read()=E2=80=9D. probe_kernel_read() is a kernel funct=
+ion that can=E2=80=99t be directly called by userspace. CAP_TRACING allows r=
+eading kernel memory in plenty of ways regardless.)
 >=20
-> Now I come with this CAP* proposal to make this app safer.
-> I'm not making your system more secure and not making this app
-> more secure. I can only make your laptop safer for day to day work
-> by limiting the operations this app can do.
-> This particular app monitros the kernel via bpf and tracing.
-> Hence you can give it CAP_TRACING and CAP_BPF and drop the rest.
-
-This won=E2=80=99t make me much more comfortable, since CAP_BPF lets it do a=
-n ever-growing set of nasty things. I=E2=80=99d much rather one or both of t=
-wo things happen:
-
-1. Give it CAP_TRACING only. It can leak my data, but it=E2=80=99s rather ha=
-rd for it to crash my laptop, lose data, or cause other shenanigans.
-
-2. Improve it a bit do all the privileged ops are wrapped by capset().
-
-Does this make sense?  I=E2=80=99m a security person on occasion. I find vul=
-nerabilities and exploit them deliberately and I break things by accident on=
- a regular basis. In my considered opinion, CAP_TRACING alone, even extended=
- to cover part of BPF as I=E2=80=99ve described, is decently safe. Getting r=
+>>=20
+>>> It seems like you are specifically trying to add a new switch to turn
+>>> as much of BPF as possible on and off.  Why?
+>>=20
+>> Didn't I explain it several times already with multiple examples
+>> from systemd, daemons, bpftrace ?
+>>=20
+>> Let's try again.
+>> Take your laptop with linux distro.
+>> You're the only user there. I'm assuming you're not sharing it with
+>> partner and kids. This is my definition of 'single user system'.
+>> You can sudo on it at any time, but obviously prefer to run as many
+>> apps as possible without cap_sys_admin.
+>> Now you found some awesome open source app on the web that monitors
+>> the health of the kernel and will pop a nice message on a screen if
+>> something is wrong. Currently this app needs root. You hesitate,
+>> but the apps is so useful and it has strong upstream code review process
+>> that you keep running it 24/7.
+>> This is open source app. New versions come. You upgrade.
+>> You have enough trust in that app that you keep running it as root.
+>> But there is always a chance that new version doing accidentaly
+>> something stupid as 'kill -9 -1'. It's an open source app at the end.
+>>=20
+>> Now I come with this CAP* proposal to make this app safer.
+>> I'm not making your system more secure and not making this app
+>> more secure. I can only make your laptop safer for day to day work
+>> by limiting the operations this app can do.
+>> This particular app monitros the kernel via bpf and tracing.
+>> Hence you can give it CAP_TRACING and CAP_BPF and drop the rest.
+>=20
+> This won=E2=80=99t make me much more comfortable, since CAP_BPF lets it do=
+ an ever-growing set of nasty things. I=E2=80=99d much rather one or both of=
+ two things happen:
+>=20
+> 1. Give it CAP_TRACING only. It can leak my data, but it=E2=80=99s rather h=
+ard for it to crash my laptop, lose data, or cause other shenanigans.
+>=20
+> 2. Improve it a bit do all the privileged ops are wrapped by capset().
+>=20
+> Does this make sense?  I=E2=80=99m a security person on occasion. I find v=
+ulnerabilities and exploit them deliberately and I break things by accident o=
+n a regular basis. In my considered opinion, CAP_TRACING alone, even extende=
+d to cover part of BPF as I=E2=80=99ve described, is decently safe. Getting r=
 oot with just CAP_TRACING will be decently challenging, especially if I don=E2=
 =80=99t get to read things like sshd=E2=80=99s memory, and improvements to m=
 itigate even that could be added.  I am quite confident that attacks startin=
@@ -192,17 +199,37 @@ g with CAP_TRACING will have clear audit signatures if auditing is on.  I am=
 n, and this will only get more likely as BPF gets more widely used. And, if B=
 PF-based auditing ever becomes a thing, writing to the audit daemon=E2=80=99=
 s maps will be a great way to cover one=E2=80=99s tracks.
+>=20
+>=20
+>> I think they have no choice but to do kernel.unprivileged_bpf_disabled=3D=
+1.
+>> We, as a kernel community, are forcing the users into it.
+>> Hence I really do not see a value in any proposal today that expands
+>> unprivileged bpf usage.
+>=20
+> I think you=E2=80=99re overemphasizing bpf=E2=80=99s role in the whole spe=
+culation mess. I realize that you=E2=80=99ve spent an insane amount of time o=
+n mitigations to stupid issues. I=E2=80=99ve spent a less insane amount of t=
+ime on mitigating similar issues outside of bpf.  It=E2=80=99s a mess.  At t=
+he end of the day, the kernel does its best, and new bugs show up. New CPUs w=
+ill be less buggy.
 
+Bah, accidentally hit send.
 
-> I think they have no choice but to do kernel.unprivileged_bpf_disabled=3D1=
-.
-> We, as a kernel community, are forcing the users into it.
-> Hence I really do not see a value in any proposal today that expands
-> unprivileged bpf usage.
+If the kernel=E2=80=99s mitigations aren=E2=80=99t good enough or you=E2=80=99=
+re subject to direct user attack (e.g. via insufficient IBPB, SMT attack, et=
+c) then you=E2=80=99re vulnerable. Otherwise you=E2=80=99re less vulnerable.=
+ BPF is by no means the whole story. Heck, the kernel *could*, at unfortunat=
+e performance cost, more aggressively flush around BPF and effectively treat=
+ it like user code.
 
-I think you=E2=80=99re overemphasizing bpf=E2=80=99s role in the whole specu=
-lation mess. I realize that you=E2=80=99ve spent an insane amount of time on=
- mitigations to stupid issues. I=E2=80=99ve spent a less insane amount of ti=
-me on mitigating similar issues outside of bpf.  It=E2=80=99s a mess.  At th=
-e end of the day, the kernel does its best, and new bugs show up. New CPUs w=
-ill be less buggy.=20=
+So I think we should design bpf=E2=80=99s API=E2=80=99s security with the ph=
+ilosophy that speculation attacks are just one more type of bug, and we shou=
+ld make sure that real-world useful configurations don=E2=80=99t give BPF to=
+ tasks that don=E2=80=99t need it. My unpriv proposal tries to do this. This=
+ is *why* my proposal keeps test_run locked down and restricts running each p=
+rogram type to tasks that are explicitly granted the ability to attach it.
+
+So let=E2=80=99s let CAP_TRACING use bpf. Speculation attacks are mostly irr=
+elevant to tracers anyway, but all the rest of the stuff I=E2=80=99ve been t=
+alking is relevant.=
