@@ -2,87 +2,97 @@ Return-Path: <SRS0=+AtZ=WZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB28C3A59F
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 16:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F41C3A59F
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 17:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE19B2073F
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 16:11:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 792132189D
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 17:19:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUmghiQE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbfH2QLI (ORCPT
+        id S1727483AbfH2RT1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Aug 2019 12:11:08 -0400
-Received: from mga02.intel.com ([134.134.136.20]:55966 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727257AbfH2QLH (ORCPT
+        Thu, 29 Aug 2019 13:19:27 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33616 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727415AbfH2RT1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:11:07 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 09:11:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,444,1559545200"; 
-   d="scan'208";a="380819693"
-Received: from friedlmi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.54.26])
-  by fmsmga005.fm.intel.com with ESMTP; 29 Aug 2019 09:11:03 -0700
-Date:   Thu, 29 Aug 2019 19:10:57 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm_tis: Fix interrupt probing
-Message-ID: <20190829161057.22l72j55jy3dyib7@linux.intel.com>
-References: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
- <20190827131400.qchcwa2act24c47b@linux.intel.com>
- <20190827151915.hb4xwr2vik2i5ryb@linux.intel.com>
- <797ff54e-dceb-21d2-dd74-e5244f9c6dfd@linux.ibm.com>
- <20190829132021.6vfc535ecb62jokf@linux.intel.com>
+        Thu, 29 Aug 2019 13:19:27 -0400
+Received: by mail-pf1-f196.google.com with SMTP id g2so2525175pfq.0;
+        Thu, 29 Aug 2019 10:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=z/fGCxw/3ULoIT8aORRfLQ9r2Znk6cE0sQKUHWa/d1E=;
+        b=FUmghiQEpDcO4QEONWqCc+1OnmPyqcytwzVa3vrUELq5t1//ULsMpFn2ACMheVdLG4
+         5hZknocFq1SuoJz+HN191Y1utAi+T1blJ0h+l2Up43A3RUSnrf61AAxnUldGc5O4MZil
+         Y8c1IWNV0TIPYGPgj7HhKNba4P4g/xghmnuZMRpxootHqt+PyazaxcpgiyIHHTZ7uK3G
+         DqzW40+zcGcPNXVZlPDN0c5RKdwlkwMraVyRpDVX48F37NCTowh4Ryex3W6j5PJpQCCp
+         P0wK7Bpat2chIGiGsFrYfiZQycazYSXsoKOhf1KY+9a+kqtSmyIAsLLvB4eQ6qUQMsIq
+         gNgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=z/fGCxw/3ULoIT8aORRfLQ9r2Znk6cE0sQKUHWa/d1E=;
+        b=No3zRjWrIS7fjZsp04YSd2JUYH+FhPfma9KosMZl6iodWiasIQ1lUPSjruDDdnjBls
+         76xh2buU3Jifm3ttW0Pyr4oLDbnTWVQPRSd8QwSXQdzqBZH3VpL7n74pqFQZrRJ7BALL
+         djcTjCk5/q/62PeR7wUGpProGZbl5Iz+g27J/j+gRIwOeJFQesAxarSCzLiGz8/kh1rU
+         t6e0ByqLKz2COtTARJgYhKov62qhhi6DwqMqgTFbqPzlEURECc2TT0XsGnIcxWHGQGLW
+         6H3jIU/MbEiY0c1waO5cDx8MrsS9ZuEyW3VBCxSaYKTdAeaK+UNN6NoQEgHv3g1bbyEg
+         VGiQ==
+X-Gm-Message-State: APjAAAVEbTkmwoXYR0GIaDuw35rGDA6DN6tlklKkj5+7OUuSH5qjn/V1
+        l6k8Z7bLbvroLE24uPBidzc=
+X-Google-Smtp-Source: APXvYqwHILu4ZjnB0oHEehfMQtW1wWrlXUk091CIB1fkI5Mf/yPUYl8pahKP80qBGz6khJ8oE6Crzg==
+X-Received: by 2002:a63:e20a:: with SMTP id q10mr9173763pgh.24.1567099166174;
+        Thu, 29 Aug 2019 10:19:26 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::2:1347])
+        by smtp.gmail.com with ESMTPSA id s16sm4664059pfs.6.2019.08.29.10.19.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Aug 2019 10:19:25 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 10:19:24 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
+Message-ID: <20190829171922.hkuceiurscsxk5jq@ast-mbp.dhcp.thefacebook.com>
+References: <20190827205213.456318-1-ast@kernel.org>
+ <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
+ <20190828071421.GK2332@hirez.programming.kicks-ass.net>
+ <20190828220826.nlkpp632rsomocve@ast-mbp.dhcp.thefacebook.com>
+ <20190829093434.36540972@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190829132021.6vfc535ecb62jokf@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190829093434.36540972@gandalf.local.home>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 29, 2019 at 04:20:21PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Aug 27, 2019 at 03:34:36PM -0400, Stefan Berger wrote:
-> > On 8/27/19 11:19 AM, Jarkko Sakkinen wrote:
-> > > On Tue, Aug 27, 2019 at 04:14:00PM +0300, Jarkko Sakkinen wrote:
-> > > > On Tue, Aug 20, 2019 at 08:25:17AM -0400, Stefan Berger wrote:
-> > > > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > 
-> > > > > The interrupt probing of the TPM TIS was broken since we are trying to
-> > > > > run it without an active locality and without the TPM_CHIP_FLAG_IRQ set.
-> > > > > 
-> > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > Need these:
-> > > > 
-> > > > Cc: linux-stable@vger.kernel.org
-> > > > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-> > > > 
-> > > > Thank you. I'll apply this to my tree.
-> > > > 
-> > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > The commit went in the following form:
-> > > 
-> > > http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/9b558deab2c5d7dc23d5f7a4064892ede482ad32
-> > 
-> > I saw you dropped the stetting of the IRQ flag - I needed it, otherwise it
-> > wouldn't execute certain code paths.
+On Thu, Aug 29, 2019 at 09:34:34AM -0400, Steven Rostedt wrote:
 > 
-> I explained why I removed that part. There was no any reasoning for
-> it. Also, it cannot be in the same commit if it fixes a diffent
-> issue.
+> As the above seems to favor the idea of CAP_TRACING allowing write
+> access to tracefs, should we have a CAP_TRACING_RO for just read access
+> and limited perf abilities?
 
-AFAIK they go with different fixes-tags.
+read only vs writeable is an attribute of the file system.
+Bringing such things into caps seem wrong to me.
 
-/Jarkko
