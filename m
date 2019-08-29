@@ -2,77 +2,126 @@ Return-Path: <SRS0=+AtZ=WZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85221C3A5A6
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 17:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D598C3A59F
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 18:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F20822CF5
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 17:49:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13CCB21874
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 18:12:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="L2GNazUZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbfH2RtK (ORCPT
+        id S1727125AbfH2SMy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Aug 2019 13:49:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45240 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727234AbfH2RtK (ORCPT
+        Thu, 29 Aug 2019 14:12:54 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.130]:34838 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726661AbfH2SMy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:49:10 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35F9321726;
-        Thu, 29 Aug 2019 17:49:08 +0000 (UTC)
-Date:   Thu, 29 Aug 2019 13:49:06 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
-Message-ID: <20190829134906.7ecae4e2@gandalf.local.home>
-In-Reply-To: <20190829172309.xd73ax4wgsjmv6zg@ast-mbp.dhcp.thefacebook.com>
-References: <20190827205213.456318-1-ast@kernel.org>
-        <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
-        <20190828071421.GK2332@hirez.programming.kicks-ass.net>
-        <20190828220826.nlkpp632rsomocve@ast-mbp.dhcp.thefacebook.com>
-        <20190829093434.36540972@gandalf.local.home>
-        <CALCETrWYu0XB_d-MhXFgopEmBu-pog493G1e+KsE3dS32UULgA@mail.gmail.com>
-        <20190829172309.xd73ax4wgsjmv6zg@ast-mbp.dhcp.thefacebook.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 29 Aug 2019 14:12:54 -0400
+X-Greylist: delayed 1484 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Aug 2019 14:12:53 EDT
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 321E457D59
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2019 12:29:19 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 3OEZik3nAdnCe3OEZi7g54; Thu, 29 Aug 2019 12:29:19 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=aJiyb7UI2K/+R2F5a3fw1EU55SbvNGjQFMYnPqg0Gq4=; b=L2GNazUZvM+5uFV9vAPkne/b+V
+        VCYDR6dk/keOSuL7t2Ng6N1LuKCPYSDSgz3Q29kbR5AbTVVHhqfnlixvTZ+l59IE2T416t9h/2Ehk
+        dPWLzEDR/sdRSe9+UUwp0iqG3rq7WkiU4O+jzUngKmVQBTcJJRyzPtGdmEh1gxVcjkRKtibbxpHau
+        Yq7XwKT+IRk9FTtAs0NtZfp1/0KuvasEG9iEbH5p8OxCYHbRZmiP+3OYkVrz104HNV+n16cLndP9Z
+        aaG3M/FVu/869oXP0fQ22APe6+XNNVUntMVC+DCeeU0zhbSW/WBIXLvwCkVT49oyH6kRqq3A0xjFk
+        ec85EGXA==;
+Received: from [189.152.216.116] (port=41274 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1i3OEX-000tZz-V9; Thu, 29 Aug 2019 12:29:18 -0500
+Date:   Thu, 29 Aug 2019 12:29:16 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ima: ima_api: Use struct_size() in kzalloc()
+Message-ID: <20190829172916.GA10261@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.216.116
+X-Source-L: No
+X-Exim-ID: 1i3OEX-000tZz-V9
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.152.216.116]:41274
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 29 Aug 2019 10:23:10 -0700
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-> > CAP_TRACE_KERNEL: Use all of perf, ftrace, kprobe, etc.
-> > 
-> > CAP_TRACE_USER: Use all of perf with scope limited to user mode and uprobes.  
-> 
-> imo that makes little sense from security pov, since
-> such CAP_TRACE_KERNEL (ex kprobe) can trace "unrelated user process"
-> just as well. Yet not letting it do cleanly via uprobe.
-> Sort of like giving a spare key for back door of the house and
-> saying no, you cannot have main door key.
+struct ima_template_entry {
+	...
+        struct ima_field_data template_data[0]; /* template related data */
+};
 
-I took it as CAP_TRACE_KERNEL as a superset of CAP_TRACE_USER. That is,
-if you have CAP_TRACE_KERNEL, by default you get USER. Where as
-CAP_TRACE_USER, is much more limiting.
+instance = kzalloc(sizeof(struct ima_template_entry) + count * sizeof(struct ima_field_data), GFP_NOFS);
 
--- Steve
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = kzalloc(struct_size(instance, entry, count), GFP_NOFS);
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ security/integrity/ima/ima_api.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 65224474675b..610759fe63b8 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -45,8 +45,8 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 	else
+ 		template_desc = ima_template_desc_current();
+ 
+-	*entry = kzalloc(sizeof(**entry) + template_desc->num_fields *
+-			 sizeof(struct ima_field_data), GFP_NOFS);
++	*entry = kzalloc(struct_size(*entry, template_data,
++				     template_desc->num_fields), GFP_NOFS);
+ 	if (!*entry)
+ 		return -ENOMEM;
+ 
+-- 
+2.23.0
+
