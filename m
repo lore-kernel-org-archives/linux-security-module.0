@@ -2,120 +2,147 @@ Return-Path: <SRS0=+AtZ=WZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A762C3A59F
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 17:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31129C3A59F
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 17:40:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E76AA2189D
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 17:36:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567100217;
-	bh=ea0FkmH8PXzRBW7RcDTQEVccdf8hPAz7TZuLpvzvZaI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=xQX+JspymdjspTzW7O2R8U3YnZt7iy7bLAJWJ/AIlZGNhqvBJM6O3MI+VkhpW7lS1
-	 2ztTCDZ8Bn+wXQmONviRLuTKCRfcudlu4oj3PtbY2CdP+HKkQFK8Hx4Z+MLBhx0Y+I
-	 HW1NFG2RsZipfQdTN4a1jKwLsriVSUym4PQ1g3E4=
+	by mail.kernel.org (Postfix) with ESMTP id F393721726
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 17:40:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="Or/9/iBr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbfH2Rg4 (ORCPT
+        id S1727483AbfH2Rkk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Aug 2019 13:36:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39500 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727437AbfH2Rgy (ORCPT
+        Thu, 29 Aug 2019 13:40:40 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.48]:42467 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727736AbfH2Rkj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:36:54 -0400
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 788882341B
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2019 17:36:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567100213;
-        bh=ea0FkmH8PXzRBW7RcDTQEVccdf8hPAz7TZuLpvzvZaI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IKM+nPQ+alg5O5IVfRE/2QO9Ec0GcIu8gegQg/3+boqUxCn4co39iaJ06oHWkQxvS
-         vWx+Lu8Ru7lcoA6KM0RLotpwO2EtGh8dBFlUeXLBGnnjFLxMnTU4jYWwD5ml+o/upZ
-         YJv/5M2koVM/zHgvNSpL6VbAuEo5Rr3UjkNsAaTY=
-Received: by mail-wm1-f41.google.com with SMTP id k1so4589957wmi.1
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2019 10:36:53 -0700 (PDT)
-X-Gm-Message-State: APjAAAVhSlucMNM2ORjf0ftJi6T7qiytqnAIzujxrEy+6ekD2saeZaO4
-        U7BFV47jvrI88CZZqX4Ok0n5ghw4CxJ5GVPl6D3bxg==
-X-Google-Smtp-Source: APXvYqygGVqJ1zS6mVlVm9RUh+IxDMWHbVhAGM9wKUXsszCSiT4u/WM3d1Iy9ZTHTQB+lr9p94LELbHNcWUtCs4z3mI=
-X-Received: by 2002:a05:600c:24cf:: with SMTP id 15mr13061992wmu.76.1567100211920;
- Thu, 29 Aug 2019 10:36:51 -0700 (PDT)
+        Thu, 29 Aug 2019 13:40:39 -0400
+X-Greylist: delayed 1419 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Aug 2019 13:40:38 EDT
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 2BAE8118FF
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2019 12:16:59 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 3O2diwVMYiQer3O2diFq7l; Thu, 29 Aug 2019 12:16:59 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=MOSc5GBHUs5PIGML2+f2XXQt+oLYxzpaPEYOGylzKSM=; b=Or/9/iBroqiVy5TUVe76myUerB
+        eegJNPXRJmLFR9ef8RtXYgFJ9VB4EBUYUuorF3wlgegSpe7dcjYmxE2RmNBgEs7tfx7+R66Zj0bnf
+        N+tCZMg4cjTl2ArSI2jEpEQgLBkihrEz08y6X1M1Dx1B/UiOPDBUmM1uN3js/rMwUZ5sz4ra+R1BS
+        ngNBOhRCLmoa9cqbFQTQzQ72YdhPNG2HebiMaj7Q+qMAe+HgnV+JhCVjpzpTqeH+LYPJloNpNIet9
+        jqEF7OuycxqUF2HR3T4g7KwphMVW8OK5Y70CrsWYQs2dIhZRtvkIGcRYYCEqmEVHAMv01oM1cP3Vo
+        oU9Jw1CQ==;
+Received: from [189.152.216.116] (port=46000 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1i3O2c-000nC0-JW; Thu, 29 Aug 2019 12:16:58 -0500
+Subject: Re: [PATCH] ima: use struct_size() in kzalloc()
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190529165343.GA2584@embeddedor>
+ <671185b9-5c91-5235-b5ea-96d3449bf716@embeddedor.com>
+ <1567050355.11493.3.camel@linux.ibm.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <cb5743ed-aca0-8546-74bf-a8903e0dd518@embeddedor.com>
+Date:   Thu, 29 Aug 2019 12:16:55 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190827205213.456318-1-ast@kernel.org> <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
- <20190828071421.GK2332@hirez.programming.kicks-ass.net> <20190828220826.nlkpp632rsomocve@ast-mbp.dhcp.thefacebook.com>
- <20190829093434.36540972@gandalf.local.home> <CALCETrWYu0XB_d-MhXFgopEmBu-pog493G1e+KsE3dS32UULgA@mail.gmail.com>
- <20190829172309.xd73ax4wgsjmv6zg@ast-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20190829172309.xd73ax4wgsjmv6zg@ast-mbp.dhcp.thefacebook.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 29 Aug 2019 10:36:39 -0700
-X-Gmail-Original-Message-ID: <CALCETrUJt9YgV_q2EuqS0-u0HzLrTopkMkvO+NC05C13xUnDxw@mail.gmail.com>
-Message-ID: <CALCETrUJt9YgV_q2EuqS0-u0HzLrTopkMkvO+NC05C13xUnDxw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1567050355.11493.3.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.216.116
+X-Source-L: No
+X-Exim-ID: 1i3O2c-000nC0-JW
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.152.216.116]:46000
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 29, 2019 at 10:23 AM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Thu, Aug 29, 2019 at 08:43:23AM -0700, Andy Lutomirski wrote:
-> >
-> > I can imagine splitting it into three capabilities:
-> >
-> > CAP_TRACE_KERNEL: learn which kernel functions are called when.  This
-> > would allow perf profiling, for example, but not sampling of kernel
-> > regs.
-> >
-> > CAP_TRACE_READ_KERNEL_DATA: allow the tracing, profiling, etc features
-> > that can read the kernel's data.  So you get function arguments via
-> > kprobe, kernel regs, and APIs that expose probe_kernel_read()
-> >
-> > CAP_TRACE_USER: trace unrelated user processes
-> >
-> > I'm not sure the code is written in a way that makes splitting
-> > CAP_TRACE_KERNEL and CAP_TRACE_READ_KERNEL_DATA, and I'm not sure that
-> > CAP_TRACE_KERNEL is all that useful except for plain perf record
-> > without CAP_TRACE_READ_KERNEL_DATA.  What do you all think?  I suppose
-> > it could also be:
-> >
-> > CAP_PROFILE_KERNEL: Use perf with events that aren't kprobes or
-> > tracepoints.  Does not grant the ability to sample regs or the kernel
-> > stack directly.
-> >
-> > CAP_TRACE_KERNEL: Use all of perf, ftrace, kprobe, etc.
-> >
-> > CAP_TRACE_USER: Use all of perf with scope limited to user mode and uprobes.
->
-> imo that makes little sense from security pov, since
-> such CAP_TRACE_KERNEL (ex kprobe) can trace "unrelated user process"
-> just as well. Yet not letting it do cleanly via uprobe.
-> Sort of like giving a spare key for back door of the house and
-> saying no, you cannot have main door key.
->
+Hi Mimi,
 
-Not all combinations of capabilities make total sense.  CAP_SETUID,
-for example, generally lets you get all the other capabilities.
-CAP_TRACE_KERNEL + CAP_TRACE_USER makes sense.  CAP_TRACE_USER by
-itself makes sense.  CAP_TRACE_READ_KERNEL_DATA without
-CAP_TRACE_KERNEL does not.  I don't think this is a really a problem.
+On 8/28/19 10:45 PM, Mimi Zohar wrote:
+
+> 
+> The same usage exists in ima_api.c: ima_alloc_init_template().  Did
+> you want to make the change there as well?
+> 
+
+Yep. I'll write a patch for that one too.
+
+Thanks
+--
+Gustavo
