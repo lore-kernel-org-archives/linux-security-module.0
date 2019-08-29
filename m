@@ -2,85 +2,128 @@ Return-Path: <SRS0=+AtZ=WZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C144C3A59F
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 13:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AD3C3A5A6
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 13:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F246E215EA
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 13:20:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3567623404
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Aug 2019 13:34:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbfH2NU0 (ORCPT
+        id S1727252AbfH2Nei (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Aug 2019 09:20:26 -0400
-Received: from mga04.intel.com ([192.55.52.120]:40105 "EHLO mga04.intel.com"
+        Thu, 29 Aug 2019 09:34:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfH2NU0 (ORCPT
+        id S1726739AbfH2Nei (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:20:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 06:20:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,443,1559545200"; 
-   d="scan'208";a="205714694"
-Received: from friedlmi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.54.26])
-  by fmsmga004.fm.intel.com with ESMTP; 29 Aug 2019 06:20:23 -0700
-Date:   Thu, 29 Aug 2019 16:20:21 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm_tis: Fix interrupt probing
-Message-ID: <20190829132021.6vfc535ecb62jokf@linux.intel.com>
-References: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
- <20190827131400.qchcwa2act24c47b@linux.intel.com>
- <20190827151915.hb4xwr2vik2i5ryb@linux.intel.com>
- <797ff54e-dceb-21d2-dd74-e5244f9c6dfd@linux.ibm.com>
+        Thu, 29 Aug 2019 09:34:38 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA6CE2339E;
+        Thu, 29 Aug 2019 13:34:35 +0000 (UTC)
+Date:   Thu, 29 Aug 2019 09:34:34 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
+Message-ID: <20190829093434.36540972@gandalf.local.home>
+In-Reply-To: <20190828220826.nlkpp632rsomocve@ast-mbp.dhcp.thefacebook.com>
+References: <20190827205213.456318-1-ast@kernel.org>
+        <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
+        <20190828071421.GK2332@hirez.programming.kicks-ass.net>
+        <20190828220826.nlkpp632rsomocve@ast-mbp.dhcp.thefacebook.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <797ff54e-dceb-21d2-dd74-e5244f9c6dfd@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 27, 2019 at 03:34:36PM -0400, Stefan Berger wrote:
-> On 8/27/19 11:19 AM, Jarkko Sakkinen wrote:
-> > On Tue, Aug 27, 2019 at 04:14:00PM +0300, Jarkko Sakkinen wrote:
-> > > On Tue, Aug 20, 2019 at 08:25:17AM -0400, Stefan Berger wrote:
-> > > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > > 
-> > > > The interrupt probing of the TPM TIS was broken since we are trying to
-> > > > run it without an active locality and without the TPM_CHIP_FLAG_IRQ set.
-> > > > 
-> > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > Need these:
-> > > 
-> > > Cc: linux-stable@vger.kernel.org
-> > > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-> > > 
-> > > Thank you. I'll apply this to my tree.
-> > > 
-> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > The commit went in the following form:
+On Wed, 28 Aug 2019 15:08:28 -0700
+Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+
+> On Wed, Aug 28, 2019 at 09:14:21AM +0200, Peter Zijlstra wrote:
+> > On Tue, Aug 27, 2019 at 04:01:08PM -0700, Andy Lutomirski wrote:
+> >   
+> > > > Tracing:
+> > > >
+> > > > CAP_BPF and perf_paranoid_tracepoint_raw() (which is kernel.perf_event_paranoid == -1)
+> > > > are necessary to:  
 > > 
-> > http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/9b558deab2c5d7dc23d5f7a4064892ede482ad32
+> > That's not tracing, that's perf.
+> >   
+
+> re: your first comment above.
+> I'm not sure what difference you see in words 'tracing' and 'perf'.
+> I really hope we don't partition the overall tracing category
+> into CAP_PERF and CAP_FTRACE only because these pieces are maintained
+> by different people.
+
+I think Peter meant: It's not tracing, it's profiling.
+
+And there is a bit of separation between the two, although there is an
+overlap.
+
+Yes, perf can do tracing but it's designed more for profiling.
+
+> On one side perf_event_open() isn't really doing tracing (as step by
+> step ftracing of function sequences), but perf_event_open() opens
+> an event and the sequence of events (may include IP) becomes a trace.
+> imo CAP_TRACING is the best name to descibe the privileged space
+> of operations possible via perf_event_open, ftrace, kprobe, stack traces, etc.
+
+I have no issue with what you suggest. I guess it comes down to how
+fine grain people want to go. Do we want it to be all or nothing?
+Should CAP_TRACING allow for write access to tracefs? Or should we go
+with needing both CAP_TRACING and permissions in that directory
+(like changing the group ownership of the files at every boot). 
+
+Perhaps we should have a CAP_TRACING_RO, that gives read access to
+tracefs (and write if the users have permissions). And have CAP_TRACING
+to allow full write access as well (allowing for users to add kprobe
+events and enabling tracers like the function tracer).
+
 > 
-> I saw you dropped the stetting of the IRQ flag - I needed it, otherwise it
-> wouldn't execute certain code paths.
+> Another reason are kuprobes. They can be crated via perf_event_open
+> and via tracefs. Are they in CAP_PERF or in CAP_FTRACE ? In both, right?
+> Should then CAP_KPROBE be used ? that would be an overkill.
+> It would partition the space even further without obvious need.
+> 
+> Looking from BPF angle... BPF doesn't have integration with ftrace yet.
+> bpf_trace_printk is using ftrace mechanism, but that's 1% of ftrace.
+> In the long run I really like to see bpf using all of ftrace.
+> Whereas bpf is using a lot of 'perf'.
+> And extending some perf things in bpf specific way.
+> Take a look at how BPF_F_STACK_BUILD_ID. It's clearly perf/stack_tracing
+> feature that generic perf can use one day.
+> Currently it sits in bpf land and accessible via bpf only.
+> Though its bpf only today I categorize it under CAP_TRACING.
+> 
+> I think CAP_TRACING privilege should allow task to do all of perf_event_open,
+> kuprobe, stack trace, ftrace, and kallsyms.
+> We can think of some exceptions that should stay under CAP_SYS_ADMIN,
+> but most of the functionality available by 'perf' binary should be
+> usable with CAP_TRACING. 'perf' can do bpf too.
+> With CAP_BPF it would be all set.
 
-I explained why I removed that part. There was no any reasoning for
-it. Also, it cannot be in the same commit if it fixes a diffent
-issue.
+As the above seems to favor the idea of CAP_TRACING allowing write
+access to tracefs, should we have a CAP_TRACING_RO for just read access
+and limited perf abilities?
 
-
-/Jarkko
+-- Steve
