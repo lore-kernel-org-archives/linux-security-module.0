@@ -2,80 +2,151 @@ Return-Path: <SRS0=wEfZ=W2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98468C3A59B
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 17:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E301C3A59B
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 17:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78BA52342E
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 17:24:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07FB223426
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 17:44:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="KED8qxWK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfH3RY0 (ORCPT
+        id S1727791AbfH3RoH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Aug 2019 13:24:26 -0400
-Received: from mga01.intel.com ([192.55.52.88]:45902 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727791AbfH3RYZ (ORCPT
+        Fri, 30 Aug 2019 13:44:07 -0400
+Received: from smtp95.iad3a.emailsrvr.com ([173.203.187.95]:50681 "EHLO
+        smtp95.iad3a.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727304AbfH3RoH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Aug 2019 13:24:25 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 10:24:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="193397728"
-Received: from floriank-mobl.ger.corp.intel.com (HELO localhost) ([10.252.38.77])
-  by orsmga002.jf.intel.com with ESMTP; 30 Aug 2019 10:24:07 -0700
-Date:   Fri, 30 Aug 2019 20:24:05 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
-        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
-Subject: Re: [RFC/RFT v4 5/5] KEYS: trusted: Add generic trusted keys
- framework
-Message-ID: <20190830172405.rafhm362tsuufbqb@linux.intel.com>
-References: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
- <1565682784-10234-6-git-send-email-sumit.garg@linaro.org>
- <CAFA6WYO7Z-Enmnqt8zA_+VV_p=mAc+AotTetv9hhf2xHm0mR9g@mail.gmail.com>
- <20190830172031.dm5icfyakko6eqak@linux.intel.com>
+        Fri, 30 Aug 2019 13:44:07 -0400
+X-Greylist: delayed 532 seconds by postgrey-1.27 at vger.kernel.org; Fri, 30 Aug 2019 13:44:06 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+        s=20190130-41we5z8j; t=1567186514;
+        bh=n7hTUdN9s4PvV8dF+MWb216T+hESknP4YQTOjf2fNtE=;
+        h=Subject:To:From:Date:From;
+        b=KED8qxWK62KE8kUFWHKGaaUvlef8HI/ljERlj0tbpOeEodtWAKQ8H7bAweWIelJvn
+         KgswDYkF5Nmr/eUhR649yI2K70dNNdsWatfVD0uknW3TZuvrfypiribZ9LdYPYesT9
+         HUSq05I7y635uP6fItlu2r3cF92bBw9YXW8i+L3g=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp28.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id ADA61517B;
+        Fri, 30 Aug 2019 13:35:13 -0400 (EDT)
+X-Sender-Id: abbotti@mev.co.uk
+Received: from [10.0.0.173] (remote.quintadena.com [81.133.34.160])
+        (using TLSv1.2 with cipher AES128-SHA)
+        by 0.0.0.0:465 (trex/5.7.12);
+        Fri, 30 Aug 2019 13:35:14 -0400
+Subject: Re: [PATCH 1/2] staging: comedi: Restrict COMEDI_DEVCONFIG when the
+ kernel is locked down
+To:     Ben Hutchings <ben@decadent.org.uk>, jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        Matthew Garrett <mjg59@google.com>,
+        David Howells <dhowells@redhat.com>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>
+References: <20190830154549.vss6h5tlrl6d5r5y@decadent.org.uk>
+From:   Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+Message-ID: <ea330943-9d3e-d01d-a6cf-8de08e042ec6@mev.co.uk>
+Date:   Fri, 30 Aug 2019 18:35:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190830172031.dm5icfyakko6eqak@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190830154549.vss6h5tlrl6d5r5y@decadent.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 30, 2019 at 08:20:31PM +0300, Jarkko Sakkinen wrote:
-> On Fri, Aug 30, 2019 at 02:49:31PM +0530, Sumit Garg wrote:
-> > Any comments/feedback on this patch before I send next version of TEE
-> > patch-set with this patch included?
-> 
-> Unfortunately don't have time before LPC to go deep with the follow up.
-> 
-> I will look into this in detail after LPC.
+On 30/08/2019 16:45, Ben Hutchings wrote:
+> The COMEDI_DEVCONFIG ioctl can be used to configure I/O addresses and
+> other hardware settings for non plug-and-play devices such as ISA
+> cards.  This should be disabled to preserve the kernel's integrity
+> when it is locked down.
 
-I'll ping you once your first row of patches are in my tree so you
-can rebase these on top of that.
+I haven't boned up on the lockdown mechanism yet, but just FYI, this is 
+only possible if the "comedi_num_legacy_minors" module parameter is 
+non-zero (which it isn't by default).
 
-/JArkko
+> 
+> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+> Cc: Matthew Garrett <mjg59@google.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Ian Abbott <abbotti@mev.co.uk>
+> Cc: H Hartley Sweeten <hsweeten@visionengravers.com>
+> ---
+>   drivers/staging/comedi/comedi_fops.c | 6 ++++++
+>   include/linux/security.h             | 1 +
+>   security/lockdown/lockdown.c         | 1 +
+>   3 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
+> index f6d1287c7b83..fdf030e53035 100644
+> --- a/drivers/staging/comedi/comedi_fops.c
+> +++ b/drivers/staging/comedi/comedi_fops.c
+> @@ -27,6 +27,7 @@
+>   
+>   #include <linux/io.h>
+>   #include <linux/uaccess.h>
+> +#include <linux/security.h>
+>   
+>   #include "comedi_internal.h"
+>   
+> @@ -813,11 +814,16 @@ static int do_devconfig_ioctl(struct comedi_device *dev,
+>   			      struct comedi_devconfig __user *arg)
+>   {
+>   	struct comedi_devconfig it;
+> +	int ret;
+>   
+>   	lockdep_assert_held(&dev->mutex);
+>   	if (!capable(CAP_SYS_ADMIN))
+>   		return -EPERM;
+>   
+> +	ret = security_locked_down(LOCKDOWN_COMEDI_DEVCONFIG);
+> +	if (ret)
+> +		return ret;
+> +
+
+You might consider moving that check to be done after the following 'if 
+(!arg)' block, since that should be safe.  (It detaches an already 
+configured device from the comedi core.)
+
+>   	if (!arg) {
+>   		if (is_device_busy(dev))
+>   			return -EBUSY;
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 429f9f03372b..b16365dccfc5 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -113,6 +113,7 @@ enum lockdown_reason {
+>   	LOCKDOWN_ACPI_TABLES,
+>   	LOCKDOWN_PCMCIA_CIS,
+>   	LOCKDOWN_TIOCSSERIAL,
+> +	LOCKDOWN_COMEDI_DEVCONFIG,
+>   	LOCKDOWN_MODULE_PARAMETERS,
+>   	LOCKDOWN_MMIOTRACE,
+>   	LOCKDOWN_DEBUGFS,
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index 0068cec77c05..971bb99b9051 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -28,6 +28,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+>   	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
+>   	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
+>   	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
+> +	[LOCKDOWN_COMEDI_DEVCONFIG] = "reconfiguration of Comedi legacy device",
+>   	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
+>   	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
+>   	[LOCKDOWN_DEBUGFS] = "debugfs access",
+> 
+
+
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
