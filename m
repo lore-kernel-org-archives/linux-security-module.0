@@ -2,79 +2,74 @@ Return-Path: <SRS0=wEfZ=W2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A88C3A59B
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 15:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DE1C3A5A6
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 16:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6E602341B
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 15:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 548F223428
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 16:28:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbfH3Pw2 (ORCPT
+        id S1727888AbfH3Q22 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Aug 2019 11:52:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43012 "EHLO mx1.redhat.com"
+        Fri, 30 Aug 2019 12:28:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37600 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727791AbfH3Pw2 (ORCPT
+        id S1727809AbfH3Q22 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:52:28 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        Fri, 30 Aug 2019 12:28:28 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8D9A8307D985;
-        Fri, 30 Aug 2019 15:52:28 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 80220882EA;
+        Fri, 30 Aug 2019 16:28:28 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6DC145EE1D;
-        Fri, 30 Aug 2019 15:52:27 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB8CA60166;
+        Fri, 30 Aug 2019 16:28:26 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] keys: ensure that ->match_free() is called in
- request_key_and_link()
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Eric Biggers <ebiggers@google.com>, dhowells@redhat.com,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 30 Aug 2019 16:52:26 +0100
-Message-ID: <156718034654.6899.18350327020509594564.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+In-Reply-To: <20190820001805.241928-4-matthewgarrett@google.com>
+References: <20190820001805.241928-4-matthewgarrett@google.com> <20190820001805.241928-1-matthewgarrett@google.com>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     dhowells@redhat.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH V40 03/29] security: Add a static lockdown policy LSM
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 30 Aug 2019 15:52:28 +0000 (UTC)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3439.1567182506.1@warthog.procyon.org.uk>
+Date:   Fri, 30 Aug 2019 17:28:26 +0100
+Message-ID: <3440.1567182506@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 30 Aug 2019 16:28:28 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Eric Biggers <ebiggers@google.com>
+Matthew Garrett <matthewgarrett@google.com> wrote:
 
-If check_cached_key() returns a non-NULL value, we still need to call
-key_type::match_free() to undo key_type::match_preparse().
+> +static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
 
-Fixes: 7743c48e54ee ("keys: Cache result of request_key*() temporarily in task_struct")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+const char *const maybe?
 
- security/keys/request_key.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +static enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+> +						 LOCKDOWN_INTEGRITY_MAX,
+> +						 LOCKDOWN_CONFIDENTIALITY_MAX};
+> +
 
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 7325f382dbf4..957b9e3e1492 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -595,7 +595,7 @@ struct key *request_key_and_link(struct key_type *type,
- 
- 	key = check_cached_key(&ctx);
- 	if (key)
--		return key;
-+		goto error_free;
- 
- 	/* search all the process keyrings for a key */
- 	rcu_read_lock();
+const?
 
+Isn't this also a 1:1 mapping?
+
+> +static int lock_kernel_down(const char *where, enum lockdown_reason level)
+
+Is the last parameter the reason or the level?  You're mixing the terms.
+
+David
