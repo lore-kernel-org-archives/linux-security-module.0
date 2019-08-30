@@ -2,75 +2,96 @@ Return-Path: <SRS0=wEfZ=W2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FFAC3A59B
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 16:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6B2C3A59B
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 17:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2F6A23428
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 16:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D14023427
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 17:00:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfH3QdC (ORCPT
+        id S1727876AbfH3RAJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Aug 2019 12:33:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:19665 "EHLO mx1.redhat.com"
+        Fri, 30 Aug 2019 13:00:09 -0400
+Received: from mga01.intel.com ([192.55.52.88]:43516 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727792AbfH3QdB (ORCPT
+        id S1726183AbfH3RAJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:33:01 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 485CC3001839;
-        Fri, 30 Aug 2019 16:33:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D562160BF7;
-        Fri, 30 Aug 2019 16:32:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190820001805.241928-24-matthewgarrett@google.com>
-References: <20190820001805.241928-24-matthewgarrett@google.com> <20190820001805.241928-1-matthewgarrett@google.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     dhowells@redhat.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>, netdev@vger.kernel.org,
-        Chun-Yi Lee <jlee@suse.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: [PATCH V40 23/29] bpf: Restrict bpf when kernel lockdown is in confidentiality mode
+        Fri, 30 Aug 2019 13:00:09 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 10:00:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
+   d="scan'208";a="356846778"
+Received: from floriank-mobl.ger.corp.intel.com (HELO localhost) ([10.252.38.77])
+  by orsmga005.jf.intel.com with ESMTP; 30 Aug 2019 10:00:04 -0700
+Date:   Fri, 30 Aug 2019 20:00:01 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm_tis: Fix interrupt probing
+Message-ID: <20190830170001.ii3r2sugwl2iogjt@linux.intel.com>
+References: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
+ <20190827131400.qchcwa2act24c47b@linux.intel.com>
+ <20190827151915.hb4xwr2vik2i5ryb@linux.intel.com>
+ <797ff54e-dceb-21d2-dd74-e5244f9c6dfd@linux.ibm.com>
+ <20190829132021.6vfc535ecb62jokf@linux.intel.com>
+ <20190829161057.22l72j55jy3dyib7@linux.intel.com>
+ <039601c6-e22a-d113-0eb2-ee2a206f5b73@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3801.1567182778.1@warthog.procyon.org.uk>
-Date:   Fri, 30 Aug 2019 17:32:58 +0100
-Message-ID: <3802.1567182778@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 30 Aug 2019 16:33:01 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <039601c6-e22a-d113-0eb2-ee2a206f5b73@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Matthew Garrett <matthewgarrett@google.com> wrote:
-
-> From: David Howells <dhowells@redhat.com>
+On Thu, Aug 29, 2019 at 08:11:27PM -0400, Stefan Berger wrote:
+> On 8/29/19 12:10 PM, Jarkko Sakkinen wrote:
+> > On Thu, Aug 29, 2019 at 04:20:21PM +0300, Jarkko Sakkinen wrote:
+> > > On Tue, Aug 27, 2019 at 03:34:36PM -0400, Stefan Berger wrote:
+> > > > On 8/27/19 11:19 AM, Jarkko Sakkinen wrote:
+> > > > > On Tue, Aug 27, 2019 at 04:14:00PM +0300, Jarkko Sakkinen wrote:
+> > > > > > On Tue, Aug 20, 2019 at 08:25:17AM -0400, Stefan Berger wrote:
+> > > > > > > From: Stefan Berger <stefanb@linux.ibm.com>
+> > > > > > > 
+> > > > > > > The interrupt probing of the TPM TIS was broken since we are trying to
+> > > > > > > run it without an active locality and without the TPM_CHIP_FLAG_IRQ set.
+> > > > > > > 
+> > > > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > > > > Need these:
+> > > > > > 
+> > > > > > Cc: linux-stable@vger.kernel.org
+> > > > > > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
+> > > > > > 
+> > > > > > Thank you. I'll apply this to my tree.
+> > > > > > 
+> > > > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > > The commit went in the following form:
+> > > > > 
+> > > > > http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/9b558deab2c5d7dc23d5f7a4064892ede482ad32
+> > > > I saw you dropped the stetting of the IRQ flag - I needed it, otherwise it
+> > > > wouldn't execute certain code paths.
+> > > I explained why I removed that part. There was no any reasoning for
+> > > it. Also, it cannot be in the same commit if it fixes a diffent
+> > > issue.
+> > AFAIK they go with different fixes-tags.
 > 
-> bpf_read() and bpf_read_str() could potentially be abused to (eg) allow
-> private keys in kernel memory to be leaked. Disable them if the kernel
-> has been locked down in confidentiality mode.
-> 
-> Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> cc: netdev@vger.kernel.org
-> cc: Chun-Yi Lee <jlee@suse.com>
-> cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Signed-off-by: James Morris <jmorris@namei.org>
+> I sent a separate patch for this. It looks like this bug goes back to when
+> the TPM_CHIP_FLAG_IRQ was introduced in March 2019?!
 
-Signed-off-by: David Howells <dhowells@redhat.com>
+Thank you!
+
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+/Jarkko
