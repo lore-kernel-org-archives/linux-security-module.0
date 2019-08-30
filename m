@@ -2,131 +2,106 @@ Return-Path: <SRS0=wEfZ=W2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C20C3A5A4
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 19:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8269BC3A59B
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 21:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C80DC22CE9
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 19:40:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50D762343A
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Aug 2019 21:36:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="X1gvas1I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbfH3TkI (ORCPT
+        id S1728178AbfH3Vge (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Aug 2019 15:40:08 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:46451 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728094AbfH3TkI (ORCPT
+        Fri, 30 Aug 2019 17:36:34 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37604 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728079AbfH3Vge (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Aug 2019 15:40:08 -0400
-Received: by mail-io1-f71.google.com with SMTP id e17so9736471ioh.13
-        for <linux-security-module@vger.kernel.org>; Fri, 30 Aug 2019 12:40:08 -0700 (PDT)
+        Fri, 30 Aug 2019 17:36:34 -0400
+Received: by mail-lj1-f193.google.com with SMTP id t14so7758792lji.4
+        for <linux-security-module@vger.kernel.org>; Fri, 30 Aug 2019 14:36:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XMZWKko+ASVT2TCnNlqNttXBAJkFIN4ztuF0Hu7LsTw=;
+        b=X1gvas1I05qTsw5aRndWhgeH4Sd1K8y15NLruTKX0LLi0JhaMtpud1ERzMvci5sod0
+         XtPdY+yepT0CP/gIm+y2XhimptqhGFQD0MxuA0yQRE96uebkXhYlHtOGxm8EFJqoA3Z2
+         6UD0lSO1AHGsEGq1RxU+QAtdl2+9k3X0hnwqToiBd9Qbwr0PHnHGHSFx9A5WLdxZUxVZ
+         /tlVKIZWrfjgHp0xsLbWH7COEUckRAPQzKErC9pU5btdOgc+7C+Rz8kMKxVihzQIGso9
+         BYQl+jQ+gsEHx6Kqa8o3MF/KNOx1xmsUz5wwxUxMBfa2WLL2en+iAmHMazsmXOT1ubAu
+         iCNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=LDURaq94pIzQxK22mYkgcKgSQclgsRJtddjOgIvUBiU=;
-        b=d58td9CmGn8xYA4Ez5JoyVqOr/eGuYcnURG2Z/Z42asgNq+7dvSLZBNJB+OVW1Ezcb
-         QCsjhzkj8304YzeTwKSJlDfTc9ZIGRZl5AZGJrOcLQSjNrEu98oWo04pikd9SeIOeC6m
-         XyCeHeVHdxdGGzXvEjK/FdcPeO2vGyISxHHS20MQveEt0a5rm+jLDTDMCrmqviBrWza0
-         Q65emENWed1xI/hmMxpUx7Y5QTR8ctDEYUmzhqcnWZnFjgRswyqSjXCvp55mHAymWjY2
-         F8fo7RliKEgqHyn2Nak77oEOgjqr6+ajHF8pqZ3zDBlj+LFH9jAIHEWNLTFTBvqdBBAF
-         9VuA==
-X-Gm-Message-State: APjAAAVHkgk74QM7/NPQvcPoqyYMHe84AO+thUmniytGJgyuo/EsHy5K
-        9bQIsiR6H6jZ6HSYQQ2emxCiENG69VDJmGkPM5RtQNrW4lPw
-X-Google-Smtp-Source: APXvYqwQBhVQ4p9xmtE+5ZuFOt/A/n9KlsYNZYRM1fRWGlnrU8ZEvVVe+aHHk3wo8k8L9toxirSnqJPOaa198A4NzQwHofsKt7ar
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XMZWKko+ASVT2TCnNlqNttXBAJkFIN4ztuF0Hu7LsTw=;
+        b=fPyiz0nYKMp2cibUAXuhg4Z76AB/b6YWycPEpStEplVKQW8G1P8G6kmLH9xU02RRWp
+         SMTuxx1COJurtlrs1Sx/VZwaKgGdn5AcgeyUK60jO8GmubU6wtZi7Nsd1z2L0yKdaW1b
+         4I8F9nZVlw/TQLkQlHJ7wpbwBOV24eD3NGgmD6Wm5Q5j+hlZt3BZB5+p/leKAUqfTtfn
+         0cYPLqUob/gdtvZgI1hJjF1DGHXreSYG6+7WwT+lBg7vNjQB3UCL8N7JM+q2l4q6epQT
+         uGl543nlO2kXlcD9q7Q3kVBgKOZrcXUmGX9jGVDdEXNO3VZ0fLzlBqt+PXdiqKkA61hz
+         vvzg==
+X-Gm-Message-State: APjAAAWIHHayZYBuwY1lttPSgbTEN5HIwdo1i6z6o/wVHABCz4L5WHea
+        3qtHg+SLsJfYYaNrd9ocbTz8ds64IvJo5ruErDmL
+X-Google-Smtp-Source: APXvYqxN58iqSTPhCSXTXwCNYVxXTgrmsQQzuBl6M6p3v3BOy43vHoXsjfgnk4HjmSAUeq/WqHoa7HIAVHKNOFpWmyA=
+X-Received: by 2002:a05:651c:1111:: with SMTP id d17mr9362023ljo.87.1567200992082;
+ Fri, 30 Aug 2019 14:36:32 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a5e:c914:: with SMTP id z20mr19531323iol.272.1567194007240;
- Fri, 30 Aug 2019 12:40:07 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 12:40:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000018875105915aca1d@google.com>
-Subject: general protection fault in smack_socket_sendmsg
-From:   syzbot <syzbot+5fd781d646d4fcbdfeb0@syzkaller.appspotmail.com>
-To:     casey@schaufler-ca.com, jmorris@namei.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20190815174111.6309-1-acgoide@tycho.nsa.gov> <edfe85bc-108a-f0cb-8678-67dc143284d5@tycho.nsa.gov>
+ <c5156aaf-e361-65e6-3ca5-89f17fee54bd@schaufler-ca.com>
+In-Reply-To: <c5156aaf-e361-65e6-3ca5-89f17fee54bd@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 30 Aug 2019 17:36:21 -0400
+Message-ID: <CAHC9VhQhDQ1TQcdEmTNsgZUgMLWpFm38U1D4GwungW7xPb1X_w@mail.gmail.com>
+Subject: Re: [RFC PATCH] audit, security: allow LSMs to selectively enable
+ audit collection
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>, keescook@chromium.org,
+        rgb@redhat.com, linux-audit@redhat.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On Fri, Aug 30, 2019 at 11:31 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 8/30/2019 6:44 AM, Stephen Smalley wrote:
+> > On 8/15/19 1:41 PM, Aaron Goidel wrote:
+> >> Presently, there is no way for LSMs to enable collection of supplemental
+> >> audit records such as path and inode information when a permission denial
+> >> occurs. Provide a LSM hook to allow LSMs to selectively enable collection
+> >> on a per-task basis, even if the audit configuration would otherwise
+> >> disable auditing of a task and/or contains no audit filter rules. If the
+> >> hook returns a non-zero result, collect all available audit information. If
+> >> the hook generates its own audit record, then supplemental audit
+> >> information will be emitted at syscall exit.
+> >>
+> >> In SELinux, we implement this hook by returning the result of a permission
+> >> check on the process. If the new process2:audit_enable permission is
+> >> allowed by the policy, then audit collection will be enabled for that
+> >> process. Otherwise, SELinux will defer to the audit configuration.
+> >
+> > Any feedback on this RFC patch?  I know Paul provided some thoughts on the general topic of LSM/audit enablement in the other patch thread but I haven't seen any response to this patch.
+>
+> Audit policy should be independent of security module policy.
+> I shouldn't have to change SELinux policy to enable this data
+> collection. I should be able to change the audit configuration
+> to get this if I want it.
 
-syzbot found the following crash on:
+The idea is that the LSM can request that the audit subsystem
+selectively enable auditing (per-task, and hopefully per-record-type);
+the audit policy can still be configured as you normally.  This is to
+work around people (and distros) that disable audit, yet still want to
+audit some information (yeah, I know ...).
 
-HEAD commit:    6525771f Merge tag 'arc-5.3-rc7' of git://git.kernel.org/p..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11486cea600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=58485246ad14eafe
-dashboard link: https://syzkaller.appspot.com/bug?extid=5fd781d646d4fcbdfeb0
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5fd781d646d4fcbdfeb0@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 11983 Comm: kworker/0:0 Not tainted 5.3.0-rc6+ #94
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: krxrpcd rxrpc_peer_keepalive_worker
-RIP: 0010:smack_socket_sendmsg+0x5b/0x480 security/smack/smack_lsm.c:3677
-Code: e8 6a 07 71 fe 4c 89 e8 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 ef e8  
-b4 ff a9 fe 4d 8b 65 00 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00  
-74 08 48 89 df e8 96 ff a9 fe 4c 8b 33 49 8d 9e 08
-RSP: 0018:ffff8881daa1f9c8 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff888048882500
-RDX: 0000000000000000 RSI: ffff8881daa1fb18 RDI: 0000000000000000
-RBP: ffff8881daa1fa80 R08: ffffffff8350cc90 R09: ffff8881daa1fb86
-R10: ffffed103b543f72 R11: 0000000000000000 R12: ffff88803704c594
-R13: ffff8881daa1fb18 R14: dffffc0000000000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7d4f2b5028 CR3: 000000005e835000 CR4: 00000000001426f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  security_socket_sendmsg+0x6c/0xd0 security/security.c:1973
-  sock_sendmsg net/socket.c:654 [inline]
-  kernel_sendmsg+0x77/0x140 net/socket.c:677
-  rxrpc_send_keepalive+0x254/0x3c0 net/rxrpc/output.c:655
-  rxrpc_peer_keepalive_dispatch net/rxrpc/peer_event.c:369 [inline]
-  rxrpc_peer_keepalive_worker+0x76e/0xb40 net/rxrpc/peer_event.c:430
-  process_one_work+0x7ef/0x10e0 kernel/workqueue.c:2269
-  worker_thread+0xc01/0x1630 kernel/workqueue.c:2415
-  kthread+0x332/0x350 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 61235a384085b26a ]---
-RIP: 0010:smack_socket_sendmsg+0x5b/0x480 security/smack/smack_lsm.c:3677
-Code: e8 6a 07 71 fe 4c 89 e8 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 ef e8  
-b4 ff a9 fe 4d 8b 65 00 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00  
-74 08 48 89 df e8 96 ff a9 fe 4c 8b 33 49 8d 9e 08
-RSP: 0018:ffff8881daa1f9c8 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff888048882500
-RDX: 0000000000000000 RSI: ffff8881daa1fb18 RDI: 0000000000000000
-RBP: ffff8881daa1fa80 R08: ffffffff8350cc90 R09: ffff8881daa1fb86
-R10: ffffed103b543f72 R11: 0000000000000000 R12: ffff88803704c594
-R13: ffff8881daa1fb18 R14: dffffc0000000000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000960004 CR3: 0000000022fd0000 CR4: 00000000001426f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+paul moore
+www.paul-moore.com
