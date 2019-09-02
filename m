@@ -8,434 +8,385 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0B2C3A5A7
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Sep 2019 09:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2EBC3A5A8
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Sep 2019 09:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B5A22D6D
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Sep 2019 09:49:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 689E3217F4
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Sep 2019 09:49:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iOOIHbKm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i+OQAUFh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731049AbfIBJt3 (ORCPT
+        id S1730070AbfIBJtb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Sep 2019 05:49:29 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45394 "EHLO
+        Mon, 2 Sep 2019 05:49:31 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37875 "EHLO
         mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730106AbfIBJt3 (ORCPT
+        with ESMTP id S1731048AbfIBJtb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Sep 2019 05:49:29 -0400
-Received: by mail-lf1-f66.google.com with SMTP id r134so9064108lff.12;
-        Mon, 02 Sep 2019 02:49:26 -0700 (PDT)
+        Mon, 2 Sep 2019 05:49:31 -0400
+Received: by mail-lf1-f66.google.com with SMTP id w67so9961649lff.4;
+        Mon, 02 Sep 2019 02:49:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=QJuAQt/XUMIom/d81kq3bcx8r6RamswX/ci8IkeZCJw=;
-        b=iOOIHbKmD+IliVaZSmQgss+nNXec88E4aI/HwGeKXVCt6kgQ2cqPo2CMfKjdwoLEjf
-         FKGuHX009GGKpay8ofYPKd5GVsKjkyMthdiqz9ZNxuRy8KRpKR7Ns2BiaM/J9NF9o29B
-         Mhwsb4OTWVN0tSM/BMae16HxEWywenMObNJmscB3VbqnAXD4zo+3IqZUGv7mIQ9rZjT+
-         Wtt7ltLtdqz0oXoMYIHaTRVuWu30mwwqLpN6pCam9lquTkBKcr3yYgdSQ2EUTFuTRvbQ
-         M+Tcmtt6FfMuvWQzuupDxtdv5UEd29mN3fqwhxkcExJ85M5ExoaLTS+sN1MhN2i8IOyK
-         8YwA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ELliIk7mN48lnwHRYxrs10D4uhKnpdq+0nyt4G1gwJ0=;
+        b=i+OQAUFhY8Wd+kthYeDIJL4u+/OzryQp/vydJ19qUbDNUvPkT5Ue8OVrOp6jcogf2h
+         HUXcZKW11h5aKztw6EtlXuEgC3vnfquviSECHvyAlfEdik9Vd5eAUlH3HRm3Nw9xrhIH
+         YbH6VOcsi8gIHJmAudmc777rD0V+buG7MCjVuCLuNGNx/iVygWoUihSHNU7TyPdY4O4e
+         hbBnbykvR09xf9ANHudMl+kL1pT+TdyYj8u2BeSHexwGIsftvK4vUphWZtzg8Hg0ssNL
+         WC3k+Q9Z7cIQbWlZXyGO/fDtyhBCOg92YidEtWw+baAgKDyKKAdZhJaERWEPhoUGpa53
+         khhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QJuAQt/XUMIom/d81kq3bcx8r6RamswX/ci8IkeZCJw=;
-        b=WN026AF2F+b418LqdUhj3cXVylTXqFZxcmM5CLzSxfn4PSMibdZLpzIEAMsUN+Uyhp
-         QexCi3tmvTuniGpiKCqpTQ5gHeI4B0209Y4AO3dRZPgxTUjka8LRrCuwy/N1hfxlAHK+
-         C0UXU+whSGrYL24YnuzGqJcDjWgzwISZyBelEXIAnU7lFkjR6cNu9nbWbWY8WKoBosHW
-         p7GPEmCwh6lFCdNsZrXjbEWPeMg6gZNuE3zO0oh+c4900DjwoEAkny4q527Bu+/i+Ho9
-         z90f4mOuPOtBd/IVoDPVcUL5gV+paZ6KQks3TjcKGQdKrP6g/AUARALWOucGPVutsE2j
-         XWSQ==
-X-Gm-Message-State: APjAAAXLWl1bsQSD5F95pJyIvySfIaXX1pkPOK63jC+nKeaHfjFtaapo
-        8BBZEUMchWT8+iMYY3jh+8kjBK6b
-X-Google-Smtp-Source: APXvYqx8LOOWlNASKilY50R8Lt91xLH0u9Ggaw5V9x+24+s+tpXpNr4Xi/MoK3HLZ0ekIbd9wDMRSQ==
-X-Received: by 2002:ac2:5181:: with SMTP id u1mr4539430lfi.114.1567417765798;
-        Mon, 02 Sep 2019 02:49:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ELliIk7mN48lnwHRYxrs10D4uhKnpdq+0nyt4G1gwJ0=;
+        b=frLXqfKP7EAps41aJA41NZyHOHqUBKM7Y0rBAwbNmLETUh15uS7rMatDP7hvNShYE9
+         cwpZfMeDoOmHcUkp7bknI/PIH7BtSPAZZwKLciAQS9zXWy+CizJJfNxSFowej85+Jx+G
+         ITl8zGftMTmZKm8VA9j6yusao4+7a9an6EdOrObrRThDf46KJkuxRpkrT3AoXl5UAnG7
+         mK0ovoYtyvuPXk1+L04O+mvH1jnb04zGlHGePgTDZGthKYGk4Nc1jzhV8F9H7TBG4Fxf
+         277S1i1cuxytA1EW3q9X/yUshBYNbths4PmzuG1N4LmAHTvDprzPfQ1j8C/c3GC2FQyw
+         wRdg==
+X-Gm-Message-State: APjAAAUK9I7MDOYGaVmS8SDXEW2yVNrOzJwUNaFtw3Y0+Tehx9HMt1fG
+        svTH633wFffUzCyywNmBO7yMfKJhLk0=
+X-Google-Smtp-Source: APXvYqzYCrNKqPmTeHZPYpeOscWBYdlZNz/5Hbcjgpkiy7KqtzCugnERLE9eqBaOhhekEge9dXU9ow==
+X-Received: by 2002:ac2:5633:: with SMTP id b19mr623473lff.103.1567417768085;
+        Mon, 02 Sep 2019 02:49:28 -0700 (PDT)
 Received: from localhost.localdomain (mobile-user-2e84ba-175.dhcp.inet.fi. [46.132.186.175])
-        by smtp.gmail.com with ESMTPSA id h1sm771635lja.18.2019.09.02.02.49.24
+        by smtp.gmail.com with ESMTPSA id h1sm771635lja.18.2019.09.02.02.49.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 02:49:24 -0700 (PDT)
+        Mon, 02 Sep 2019 02:49:27 -0700 (PDT)
 From:   Janne Karhunen <janne.karhunen@gmail.com>
 To:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
         linux-mm@kvack.org, viro@zeniv.linux.org.uk
-Cc:     Janne Karhunen <janne.karhunen@gmail.com>,
-        Konsta Karsisto <konsta.karsisto@gmail.com>
-Subject: [PATCH 1/3] ima: keep the integrity state of open files up to date
-Date:   Mon,  2 Sep 2019 12:45:38 +0300
-Message-Id: <20190902094540.12786-1-janne.karhunen@gmail.com>
+Cc:     Konsta Karsisto <konsta.karsisto@gmail.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>
+Subject: [PATCH 3/3] ima: update the file measurement on writes
+Date:   Mon,  2 Sep 2019 12:45:40 +0300
+Message-Id: <20190902094540.12786-3-janne.karhunen@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190902094540.12786-1-janne.karhunen@gmail.com>
+References: <20190902094540.12786-1-janne.karhunen@gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When a file is open for writing, kernel crash or power outage
-is guaranteed to corrupt the inode integrity state leading to
-file appraisal failure on the subsequent boot. Add some basic
-infrastructure to keep the integrity measurements up to date
-as the files are written to.
+From: Konsta Karsisto <konsta.karsisto@gmail.com>
 
-Core file operations (open, close, sync, msync, truncate) are
-now allowed to update the measurement immediately. In order
-to maintain sufficient write performance for writes, add a
-latency tunable delayed work workqueue for computing the
-measurements.
+Hook do_writepages() in order to do IMA measurement of an inode
+that is written out.
 
-Changelog v2:
-- Make write measurements optional
-- Add support for MMIO measurements
-- Handle all writes via page flush
-- Add work cancellation support, files are properly closed
-  after last_writer checks out. This fixes a userspace break
-  where the file was still open for writing after closing it.
-- Fix/unify IMA_UPDATE_XATTR usage
+Depends on commit 72649b7862a7 ("ima: keep the integrity state of open files up to date")'
 
-Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
 Signed-off-by: Konsta Karsisto <konsta.karsisto@gmail.com>
+Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
 ---
- include/linux/ima.h                   |  14 +++
- security/integrity/ima/Kconfig        |  30 ++++++
- security/integrity/ima/ima.h          |  13 +++
- security/integrity/ima/ima_appraise.c |  13 ++-
- security/integrity/ima/ima_main.c     | 128 +++++++++++++++++++++++++-
- security/integrity/integrity.h        |  18 ++++
- 6 files changed, 213 insertions(+), 3 deletions(-)
+ include/linux/ima.h               |  10 +++
+ mm/page-writeback.c               |   7 ++
+ security/integrity/iint.c         |   3 +
+ security/integrity/ima/ima.h      |  14 ++++
+ security/integrity/ima/ima_main.c | 115 ++++++++++++++++++++++++++++--
+ security/integrity/integrity.h    |   6 ++
+ 6 files changed, 150 insertions(+), 5 deletions(-)
 
 diff --git a/include/linux/ima.h b/include/linux/ima.h
-index a20ad398d260..6736844e90d3 100644
+index 6736844e90d3..9d83f4beac7f 100644
 --- a/include/linux/ima.h
 +++ b/include/linux/ima.h
-@@ -93,6 +93,20 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
- static inline void ima_kexec_cmdline(const void *buf, int size) {}
- #endif /* CONFIG_IMA */
+@@ -96,6 +96,8 @@ static inline void ima_kexec_cmdline(const void *buf, int size) {}
+ #if ((defined CONFIG_IMA) && defined(CONFIG_IMA_MEASURE_WRITES))
+ void ima_file_update(struct file *file);
+ void ima_file_delayed_update(struct file *file);
++void ima_inode_update(struct inode *inode);
++void ima_inode_delayed_update(struct inode *inode);
+ #else
+ static inline void ima_file_update(struct file *file)
+ {
+@@ -105,6 +107,14 @@ static inline void ima_file_delayed_update(struct file *file)
+ {
+ 	return;
+ }
++static inline void ima_inode_update(struct inode *inode)
++{
++	return;
++}
++static inline void ima_inode_delayed_update(struct inode *inode)
++{
++	return;
++}
+ #endif
  
-+#if ((defined CONFIG_IMA) && defined(CONFIG_IMA_MEASURE_WRITES))
-+void ima_file_update(struct file *file);
-+void ima_file_delayed_update(struct file *file);
-+#else
-+static inline void ima_file_update(struct file *file)
-+{
-+	return;
-+}
-+static inline void ima_file_delayed_update(struct file *file)
-+{
-+	return;
-+}
-+#endif
-+
  #ifndef CONFIG_IMA_KEXEC
- struct kimage;
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 1804f64ff43c..d5041c625529 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -38,6 +38,7 @@
+ #include <linux/sched/rt.h>
+ #include <linux/sched/signal.h>
+ #include <linux/mm_inline.h>
++#include <linux/ima.h>
+ #include <trace/events/writeback.h>
  
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 897bafc59a33..df1cf684a442 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -310,3 +310,33 @@ config IMA_APPRAISE_SIGNED_INIT
- 	default n
- 	help
- 	   This option requires user-space init to be signed.
-+
-+config IMA_MEASURE_WRITES
-+	bool "Measure file writes (EXPERIMENTAL)"
-+	depends on IMA
-+	depends on EVM
-+	default n
-+	help
-+	   By default IMA measures files only when they close or sync.
-+	   Choose this option if you want the integrity measurements on
-+	   the disk to update when the files are still open for writing.
-+
-+config IMA_MEASUREMENT_LATENCY
-+	int
-+	depends on IMA
-+	range 0 60000
-+	default 50
-+	help
-+	   This value defines the measurement interval when files are
-+	   being written. Value is in milliseconds.
-+
-+config IMA_MEASUREMENT_LATENCY_CEILING
-+	int
-+	depends on IMA
-+	range 100 60000
-+	default 5000
-+	help
-+	   In order to maintain high write performance for large files,
-+	   IMA increases the measurement interval as the file size grows.
-+	   This value defines the ceiling for the measurement delay in
-+	   milliseconds.
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 19769bf5f6ab..195e67631f70 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -160,6 +160,19 @@ void ima_init_template_list(void);
- int __init ima_init_digests(void);
- int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
- 			  void *lsm_data);
-+#if ((defined CONFIG_IMA) && defined(CONFIG_IMA_MEASURE_WRITES))
-+void ima_cancel_measurement(struct integrity_iint_cache *iint);
-+#else
-+static inline void ima_cancel_measurement(struct integrity_iint_cache *iint)
-+{
-+	return;
-+}
-+static inline void ima_init_measurement(struct integrity_iint_cache *iint,
-+					struct dentry *dentry)
-+{
-+	return;
-+}
-+#endif
- 
- /*
-  * used to protect h_table and sha_table
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 136ae4e0ee92..6c137fb5289b 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -78,6 +78,15 @@ static int ima_fix_xattr(struct dentry *dentry,
- 	return rc;
+ #include "internal.h"
+@@ -2347,6 +2348,12 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ 		cond_resched();
+ 		congestion_wait(BLK_RW_ASYNC, HZ/50);
+ 	}
++	if (ret == 0) {
++		if (wbc->sync_mode == WB_SYNC_ALL)
++			ima_inode_update(mapping->host);
++		else
++			ima_inode_delayed_update(mapping->host);
++	}
+ 	return ret;
  }
  
-+#ifdef CONFIG_IMA_MEASURE_WRITES
-+inline void ima_init_measurement(struct integrity_iint_cache *iint,
-+				 struct dentry *dentry)
-+{
-+	if (test_bit(IMA_UPDATE_XATTR, &iint->atomic_flags))
-+		ima_fix_xattr(dentry, iint);
-+}
-+#endif
-+
- /* Return specific func appraised cached result */
- enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
- 					   enum ima_hooks func)
-@@ -341,8 +350,10 @@ int ima_appraise_measurement(enum ima_hooks func,
- 			iint->flags |= IMA_NEW_FILE;
- 		if ((iint->flags & IMA_NEW_FILE) &&
- 		    (!(iint->flags & IMA_DIGSIG_REQUIRED) ||
--		     (inode->i_size == 0)))
-+		    (inode->i_size == 0))) {
-+			ima_init_measurement(iint, dentry);
- 			status = INTEGRITY_PASS;
-+		}
- 		goto out;
- 	}
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index e12c4900510f..bac15a2b8bee 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -82,6 +82,8 @@ static void iint_free(struct integrity_iint_cache *iint)
+ 	iint->ima_creds_status = INTEGRITY_UNKNOWN;
+ 	iint->evm_status = INTEGRITY_UNKNOWN;
+ 	iint->measured_pcrs = 0;
++	WARN_ON(iint->ima_work.file);
++	WARN_ON(!list_empty(&iint->file_list));
+ 	kmem_cache_free(iint_cache, iint);
+ }
  
+@@ -161,6 +163,7 @@ static void init_once(void *foo)
+ 	iint->ima_read_status = INTEGRITY_UNKNOWN;
+ 	iint->ima_creds_status = INTEGRITY_UNKNOWN;
+ 	iint->evm_status = INTEGRITY_UNKNOWN;
++	INIT_LIST_HEAD(&iint->file_list);
+ 	mutex_init(&iint->mutex);
+ }
+ 
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 195e67631f70..04ba4888b764 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -162,6 +162,10 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+ 			  void *lsm_data);
+ #if ((defined CONFIG_IMA) && defined(CONFIG_IMA_MEASURE_WRITES))
+ void ima_cancel_measurement(struct integrity_iint_cache *iint);
++void ima_get_file(struct integrity_iint_cache *iint,
++		  struct file *file);
++void ima_put_file(struct integrity_iint_cache *iint,
++		  struct file *file);
+ #else
+ static inline void ima_cancel_measurement(struct integrity_iint_cache *iint)
+ {
+@@ -172,6 +176,16 @@ static inline void ima_init_measurement(struct integrity_iint_cache *iint,
+ {
+ 	return;
+ }
++static inline void ima_get_file(struct integrity_iint_cache *iint,
++				struct file *file)
++{
++	return;
++}
++static inline void ima_put_file(struct integrity_iint_cache *iint,
++				struct file *file)
++{
++	return;
++}
+ #endif
+ 
+ /*
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 79c01516211b..46d28cdb6466 100644
+index 46d28cdb6466..affc74a07125 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -12,7 +12,7 @@
+@@ -12,7 +12,8 @@
   *
   * File: ima_main.c
   *	implements the IMA hooks: ima_bprm_check, ima_file_mmap,
-- *	and ima_file_check.
-+ *	ima_file_delayed_update, ima_file_update and ima_file_check.
+- *	ima_file_delayed_update, ima_file_update and ima_file_check.
++ *	ima_file_update, ima_file_delayed_update, ima_inode_update,
++ *	ima_inode_delayed_update and ima_file_check.
   */
  
  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-@@ -26,6 +26,8 @@
- #include <linux/xattr.h>
- #include <linux/ima.h>
- #include <linux/iversion.h>
-+#include <linux/workqueue.h>
-+#include <linux/sizes.h>
- #include <linux/fs.h>
- 
- #include "ima.h"
-@@ -42,6 +44,7 @@ static int hash_setup_done;
- static struct notifier_block ima_lsm_policy_notifier = {
- 	.notifier_call = ima_lsm_policy_change,
- };
-+static struct workqueue_struct *ima_update_wq;
- 
- static int __init hash_setup(char *str)
- {
-@@ -151,6 +154,7 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
- 
- 	if (!(mode & FMODE_WRITE))
- 		return;
-+	ima_cancel_measurement(iint);
+@@ -157,6 +158,7 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
+ 	ima_cancel_measurement(iint);
  
  	mutex_lock(&iint->mutex);
++	ima_put_file(iint, file);
  	if (atomic_read(&inode->i_writecount) == 1) {
-@@ -420,6 +424,117 @@ int ima_bprm_check(struct linux_binprm *bprm)
- 				   MAY_EXEC, CREDS_CHECK);
+ 		update = test_and_clear_bit(IMA_UPDATE_XATTR,
+ 					    &iint->atomic_flags);
+@@ -295,6 +297,12 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 		set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
+ 	}
+ 
++	if (must_appraise && (file->f_mode & FMODE_WRITE))
++		set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
++
++	/* Cache file for measurements triggered from inode writeback */
++	ima_get_file(iint, file);
++
+ 	/* Nothing to do, just return existing appraised status */
+ 	if (!action) {
+ 		if (must_appraise) {
+@@ -362,12 +370,9 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ out:
+ 	if (pathbuf)
+ 		__putname(pathbuf);
+-	if (must_appraise) {
++	if (must_appraise)
+ 		if (rc && (ima_appraise & IMA_APPRAISE_ENFORCE))
+ 			return -EACCES;
+-		if (file->f_mode & FMODE_WRITE)
+-			set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
+-	}
+ 	return 0;
  }
  
-+#ifdef CONFIG_IMA_MEASURE_WRITES
-+static unsigned long ima_inode_update_delay(struct inode *inode)
-+{
-+	unsigned long blocks, msecs;
-+
-+	blocks = i_size_read(inode) / SZ_1M + 1;
-+	msecs = blocks * IMA_LATENCY_INCREMENT;
-+	if (msecs > CONFIG_IMA_MEASUREMENT_LATENCY_CEILING)
-+		msecs = CONFIG_IMA_MEASUREMENT_LATENCY_CEILING;
-+
-+	return msecs;
-+}
-+
-+static void ima_delayed_update_handler(struct work_struct *work)
-+{
-+	struct ima_work_entry *entry;
-+
-+	entry = container_of(work, typeof(*entry), work.work);
-+
-+	ima_file_update(entry->file);
-+	entry->file = NULL;
-+	entry->state = IMA_WORK_INACTIVE;
-+}
-+
-+void ima_cancel_measurement(struct integrity_iint_cache *iint)
-+{
-+	if (iint->ima_work.state != IMA_WORK_ACTIVE)
-+		return;
-+
-+	cancel_delayed_work_sync(&iint->ima_work.work);
-+	iint->ima_work.state = IMA_WORK_CANCELLED;
-+}
-+
-+/**
-+ * ima_file_delayed_update
-+ * @file: pointer to file structure being updated
-+ */
-+void ima_file_delayed_update(struct file *file)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct integrity_iint_cache *iint;
-+	unsigned long msecs;
-+	bool creq;
-+
-+	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
-+		return;
-+
-+	iint = integrity_iint_find(inode);
-+	if (!iint)
-+		return;
-+
-+	if (!test_bit(IMA_UPDATE_XATTR, &iint->atomic_flags))
-+		return;
-+
-+	mutex_lock(&iint->mutex);
-+	if (iint->ima_work.state == IMA_WORK_ACTIVE)
-+		goto out;
-+
-+	msecs = ima_inode_update_delay(inode);
-+	iint->ima_work.file = file;
-+	iint->ima_work.state = IMA_WORK_ACTIVE;
-+	INIT_DELAYED_WORK(&iint->ima_work.work, ima_delayed_update_handler);
-+
-+	creq = queue_delayed_work(ima_update_wq,
-+				  &iint->ima_work.work,
-+				  msecs_to_jiffies(msecs));
-+	if (creq == false) {
-+		iint->ima_work.file = NULL;
-+		iint->ima_work.state = IMA_WORK_INACTIVE;
-+	}
-+out:
-+	mutex_unlock(&iint->mutex);
-+}
-+EXPORT_SYMBOL_GPL(ima_file_delayed_update);
-+
-+/**
-+ * ima_file_update - update the file measurement
-+ * @file: pointer to file structure being updated
-+ */
-+void ima_file_update(struct file *file)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct integrity_iint_cache *iint;
-+	bool should_measure = true;
-+	u64 i_version;
-+
-+	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
-+		return;
-+
-+	iint = integrity_iint_find(inode);
-+	if (!iint)
-+		return;
-+
-+	if (!test_bit(IMA_UPDATE_XATTR, &iint->atomic_flags))
-+		return;
-+
-+	mutex_lock(&iint->mutex);
-+	if (IS_I_VERSION(inode)) {
-+		i_version = inode_query_iversion(inode);
-+		if (i_version == iint->version)
-+			should_measure = false;
-+	}
-+	if (should_measure) {
-+		iint->flags &= ~IMA_COLLECTED;
-+		ima_update_xattr(iint, file);
-+	}
-+	mutex_unlock(&iint->mutex);
-+}
-+EXPORT_SYMBOL_GPL(ima_file_update);
-+#endif /* CONFIG_IMA_MEASURE_WRITES */
-+
- /**
-  * ima_path_check - based on policy, collect/store measurement.
-  * @file: pointer to the file to be measured
-@@ -716,9 +831,18 @@ static int __init init_ima(void)
- 	if (error)
- 		pr_warn("Couldn't register LSM notifier, error %d\n", error);
+@@ -425,6 +430,42 @@ int ima_bprm_check(struct linux_binprm *bprm)
+ }
  
--	if (!error)
-+	if (!error) {
- 		ima_update_policy_flag();
- 
-+		ima_update_wq = alloc_workqueue("ima-update-wq",
-+						WQ_MEM_RECLAIM |
-+						WQ_CPU_INTENSIVE,
-+						0);
-+		if (!ima_update_wq) {
-+			pr_err("Failed to allocate write measurement workqueue\n");
-+			error = -ENOMEM;
+ #ifdef CONFIG_IMA_MEASURE_WRITES
++void ima_get_file(struct integrity_iint_cache *iint,
++		  struct file *file)
++{
++	struct ima_fl_entry *e;
++
++	if (!iint || !file)
++		return;
++	if (!(file->f_mode & FMODE_WRITE) ||
++	    !test_bit(IMA_UPDATE_XATTR, &iint->atomic_flags))
++		return;
++
++	list_for_each_entry(e, &iint->file_list, list) {
++		if (e->file == file)
++			return;
++	}
++	e = kmalloc(sizeof(*e), GFP_KERNEL);
++	if (!e)
++		return;
++	e->file = file;
++	list_add(&e->list, &iint->file_list);
++}
++
++void ima_put_file(struct integrity_iint_cache *iint,
++		  struct file *file)
++{
++	struct ima_fl_entry *e;
++
++	list_for_each_entry(e, &iint->file_list, list) {
++		if (e->file == file) {
++			list_del(&e->list);
++			kfree(e);
++			break;
 +		}
 +	}
- 	return error;
++}
++
+ static unsigned long ima_inode_update_delay(struct inode *inode)
+ {
+ 	unsigned long blocks, msecs;
+@@ -454,6 +495,7 @@ void ima_cancel_measurement(struct integrity_iint_cache *iint)
+ 		return;
+ 
+ 	cancel_delayed_work_sync(&iint->ima_work.work);
++	iint->ima_work.file = NULL;
+ 	iint->ima_work.state = IMA_WORK_CANCELLED;
  }
  
+@@ -499,6 +541,69 @@ void ima_file_delayed_update(struct file *file)
+ }
+ EXPORT_SYMBOL_GPL(ima_file_delayed_update);
+ 
++/**
++ * ima_inode_delayed_update - delayed measurement update of an inode
++ * @inode: dirty inode chosen for writeback
++ *
++ * Schedule work to measure the first available 'struct file' cached
++ * in the iint entry that references this inode. This allows IMA to
++ * track inode writebacks.
++ *
++ * Note that we haven't incremented the refcount for the files we keep
++ * track of in order to not mess up the normal file refcounting. If we
++ * see a file whose f_count is already zero, we simply skip it. If we
++ * fail to find any available file reference, the measurement will be
++ * handled by the ima_check_last_writer().
++ */
++void ima_inode_delayed_update(struct inode *inode)
++{
++	struct integrity_iint_cache *iint;
++	struct ima_fl_entry *e;
++	bool found = false;
++
++	iint = integrity_iint_find(inode);
++	if (!iint)
++		return;
++
++	if (iint->ima_work.state == IMA_WORK_ACTIVE)
++		return;
++
++	mutex_lock(&iint->mutex);
++	list_for_each_entry(e, &iint->file_list, list) {
++		if (file_count(e->file) == 0)
++			continue;
++		found = true;
++		break;
++	}
++	mutex_unlock(&iint->mutex);
++	if (found && e->file)
++		ima_file_delayed_update(e->file);
++}
++EXPORT_SYMBOL_GPL(ima_inode_delayed_update);
++
++void ima_inode_update(struct inode *inode)
++{
++	struct integrity_iint_cache *iint;
++	struct ima_fl_entry *e;
++	bool found = false;
++
++	iint = integrity_iint_find(inode);
++	if (!iint)
++		return;
++
++	mutex_lock(&iint->mutex);
++	list_for_each_entry(e, &iint->file_list, list) {
++		if (file_count(e->file) == 0)
++			continue;
++		found = true;
++		break;
++	}
++	mutex_unlock(&iint->mutex);
++	if (found && e->file)
++		ima_file_update(e->file);
++}
++EXPORT_SYMBOL_GPL(ima_inode_update);
++
+ /**
+  * ima_file_update - update the file measurement
+  * @file: pointer to file structure being updated
 diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index d9323d31a3a8..0f80c3d2e079 100644
+index 0f80c3d2e079..17af72683b87 100644
 --- a/security/integrity/integrity.h
 +++ b/security/integrity/integrity.h
-@@ -64,6 +64,11 @@
- #define IMA_DIGSIG		3
- #define IMA_MUST_MEASURE	4
+@@ -132,6 +132,11 @@ struct ima_work_entry {
+ 	uint8_t state;
+ };
  
-+/* delayed measurement job state */
-+#define IMA_WORK_INACTIVE	0
-+#define IMA_WORK_ACTIVE		1
-+#define IMA_WORK_CANCELLED	2
-+
- enum evm_ima_xattr_type {
- 	IMA_XATTR_DIGEST = 0x01,
- 	EVM_XATTR_HMAC,
-@@ -115,6 +120,18 @@ struct signature_v2_hdr {
- 	uint8_t sig[0];		/* signature payload */
- } __packed;
- 
-+#if CONFIG_IMA_MEASUREMENT_LATENCY == 0
-+#define IMA_LATENCY_INCREMENT	100
-+#else
-+#define IMA_LATENCY_INCREMENT	CONFIG_IMA_MEASUREMENT_LATENCY
-+#endif
-+
-+struct ima_work_entry {
-+	struct delayed_work work;
++struct ima_fl_entry {
++	struct list_head list;
 +	struct file *file;
-+	uint8_t state;
 +};
 +
  /* integrity data associated with an inode */
  struct integrity_iint_cache {
  	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
-@@ -131,6 +148,7 @@ struct integrity_iint_cache {
- 	enum integrity_status ima_creds_status:4;
+@@ -149,6 +154,7 @@ struct integrity_iint_cache {
  	enum integrity_status evm_status:4;
  	struct ima_digest_data *ima_hash;
-+	struct ima_work_entry ima_work;
+ 	struct ima_work_entry ima_work;
++	struct list_head file_list;
  };
  
  /* rbtree tree calls to lookup, insert, delete
