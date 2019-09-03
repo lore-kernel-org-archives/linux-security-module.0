@@ -2,282 +2,275 @@ Return-Path: <SRS0=NhOO=W6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57645C3A5A7
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 12:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF977C3A5A2
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 14:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 255D020870
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 12:51:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlkqjMBp"
+	by mail.kernel.org (Postfix) with ESMTP id C609D206B8
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 14:29:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbfICMve (ORCPT
+        id S1729113AbfICO3C (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 Sep 2019 08:51:34 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35610 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbfICMve (ORCPT
+        Tue, 3 Sep 2019 10:29:02 -0400
+Received: from mga11.intel.com ([192.55.52.93]:49729 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729079AbfICO3C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Sep 2019 08:51:34 -0400
-Received: by mail-pl1-f195.google.com with SMTP id gn20so7847605plb.2;
-        Tue, 03 Sep 2019 05:51:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TNk9IGlPVK1NdSpsB9QxgWnU7LxyXG6TJSpdCnPvcps=;
-        b=PlkqjMBpGaEEopswRSqx1ppklTkOOKC5tczf/NyjD0+LP/6o1/tXcZMCaVC40Gh46Z
-         +0toRojAC547HzfHdAYcGCoc38jSHKMM3oAr2xSEFNn3ESjD15bTY7tbD6RAJNTG7cS3
-         wJEvoNYLXl0VIhWmtaOGLzRyU1Etw8o/LzwBKeP5SCjkqSHq2js6XN8lC4fFkco7Wz6P
-         0s6pP4N1Zj+uWoGRFxtK8AIyr1QkZYQG/g6iH1AYFrrIXNvYscILxZfrsyiYWcg1Ew9Y
-         65CxNuY46rJAiNeG/BwTZYYCZLThPItBDhusyGI4gQgawTn+ifwjAX+v8CB7EFHuqt97
-         xzFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TNk9IGlPVK1NdSpsB9QxgWnU7LxyXG6TJSpdCnPvcps=;
-        b=sc7a13a0rIMama0z/9bQKOJKc0wB2o6e3751E7GW+a97I+4rQ8VL74WmJVeaYfR317
-         HPp3ejzafVDuZ2YJc1bsCJPBb2ntxRTCeoaxvtKvQGJslG66QV7zS50WJLC5AwWukS0O
-         iNsALDk61rkh1kniesd/fTuJrYRWJjWVyw4tPlMoaucmmxMa21fx3InkArZbjOl5sZb8
-         mvpe+LO2pR7WPUrhSh8ELj5YihADcVpbLjBOAbDT0BfyUG74nAgw5dTTJNrusX5upy+8
-         vUbnTkpEzIHa38avKivkHPWvLvUUfBv3h6A4P+8P7MuB+E41F31/FcN9CHNqo2hOJGNu
-         QDBg==
-X-Gm-Message-State: APjAAAUYaojL+Dix+LBA9fNIfakVhluyupFQIJVzTugynZrr2seQlZaZ
-        d7rUw8MmDbn5rG4F7Q+MM0A=
-X-Google-Smtp-Source: APXvYqwKqxznM6zQU3HZTapz8CigzSVKi3gwBMTP0WSJy/KSSehiI9IBnjYNqmxFn6WeFDq4F2/zxA==
-X-Received: by 2002:a17:902:9689:: with SMTP id n9mr35703585plp.3.1567515092655;
-        Tue, 03 Sep 2019 05:51:32 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 71sm4293971pfw.147.2019.09.03.05.51.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Sep 2019 05:51:31 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 05:51:29 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/11] usb: Add USB subsystem notifications [ver #7]
-Message-ID: <20190903125129.GA18838@roeck-us.net>
-References: <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk>
- <156717350329.2204.7056537095039252263.stgit@warthog.procyon.org.uk>
+        Tue, 3 Sep 2019 10:29:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 07:29:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,463,1559545200"; 
+   d="scan'208";a="189826072"
+Received: from vkuppusa-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.39.67])
+  by FMSMGA003.fm.intel.com with ESMTP; 03 Sep 2019 07:28:52 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v22 13/24] x86/sgx: Add provisioning
+Date:   Tue,  3 Sep 2019 17:26:44 +0300
+Message-Id: <20190903142655.21943-14-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
+References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <156717350329.2204.7056537095039252263.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=a
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 30, 2019 at 02:58:23PM +0100, David Howells wrote:
-> Add a USB subsystem notification mechanism whereby notifications about
-> hardware events such as device connection, disconnection, reset and I/O
-> errors, can be reported to a monitoring process asynchronously.
-> 
-> Firstly, an event queue needs to be created:
-> 
-> 	fd = open("/dev/event_queue", O_RDWR);
-> 	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, page_size << n);
-> 
-> then a notification can be set up to report USB notifications via that
-> queue:
-> 
-> 	struct watch_notification_filter filter = {
-> 		.nr_filters = 1,
-> 		.filters = {
-> 			[0] = {
-> 				.type = WATCH_TYPE_USB_NOTIFY,
-> 				.subtype_filter[0] = UINT_MAX;
-> 			},
-> 		},
-> 	};
-> 	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
-> 	notify_devices(fd, 12);
-> 
-> After that, records will be placed into the queue when events occur on a
-> USB device or bus.  Records are of the following format:
-> 
-> 	struct usb_notification {
-> 		struct watch_notification watch;
-> 		__u32	error;
-> 		__u32	reserved;
-> 		__u8	name_len;
-> 		__u8	name[0];
-> 	} *n;
-> 
-> Where:
-> 
-> 	n->watch.type will be WATCH_TYPE_USB_NOTIFY
-> 
-> 	n->watch.subtype will be the type of notification, such as
-> 	NOTIFY_USB_DEVICE_ADD.
-> 
-> 	n->watch.info & WATCH_INFO_LENGTH will indicate the length of the
-> 	record.
-> 
-> 	n->watch.info & WATCH_INFO_ID will be the second argument to
-> 	device_notify(), shifted.
-> 
-> 	n->error and n->reserved are intended to convey information such as
-> 	error codes, but are currently not used
-> 
-> 	n->name_len and n->name convey the USB device name as an
-> 	unterminated string.  This may be truncated - it is currently
-> 	limited to a maximum 63 chars.
-> 
-> Note that it is permissible for event records to be of variable length -
-> or, at least, the length may be dependent on the subtype.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> cc: linux-usb@vger.kernel.org
-> ---
-> 
->  Documentation/watch_queue.rst    |    9 ++++++
->  drivers/usb/core/Kconfig         |    9 ++++++
->  drivers/usb/core/devio.c         |   56 ++++++++++++++++++++++++++++++++++++++
->  drivers/usb/core/hub.c           |    4 +++
->  include/linux/usb.h              |   18 ++++++++++++
->  include/uapi/linux/watch_queue.h |   30 ++++++++++++++++++++
->  6 files changed, 125 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/watch_queue.rst b/Documentation/watch_queue.rst
-> index 5cc9c6924727..4087a8e670a8 100644
-> --- a/Documentation/watch_queue.rst
-> +++ b/Documentation/watch_queue.rst
-> @@ -11,6 +11,8 @@ receive notifications from the kernel.  This can be used in conjunction with::
->  
->      * Block layer event notifications
->  
-> +    * USB subsystem event notifications
-> +
->  
->  The notifications buffers can be enabled by:
->  
-> @@ -315,6 +317,13 @@ Any particular buffer can be fed from multiple sources.  Sources include:
->      or temporary link loss.  Watches of this type are set on the global device
->      watch list.
->  
-> +  * WATCH_TYPE_USB_NOTIFY
-> +
-> +    Notifications of this type indicate USB subsystem events, such as
-> +    attachment, removal, reset and I/O errors.  Separate events are generated
-> +    for buses and devices.  Watchpoints of this type are set on the global
-> +    device watch list.
-> +
->  
->  Event Filtering
->  ===============
-> diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
-> index ecaacc8ed311..57e7b649e48b 100644
-> --- a/drivers/usb/core/Kconfig
-> +++ b/drivers/usb/core/Kconfig
-> @@ -102,3 +102,12 @@ config USB_AUTOSUSPEND_DELAY
->  	  The default value Linux has always had is 2 seconds.  Change
->  	  this value if you want a different delay and cannot modify
->  	  the command line or module parameter.
-> +
-> +config USB_NOTIFICATIONS
-> +	bool "Provide USB hardware event notifications"
-> +	depends on USB && DEVICE_NOTIFICATIONS
-> +	help
-> +	  This option provides support for getting hardware event notifications
-> +	  on USB devices and interfaces.  This makes use of the
-> +	  /dev/watch_queue misc device to handle the notification buffer.
-> +	  device_notify(2) is used to set/remove watches.
-> diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-> index 9063ede411ae..b8572e4d6a1b 100644
-> --- a/drivers/usb/core/devio.c
-> +++ b/drivers/usb/core/devio.c
-> @@ -41,6 +41,7 @@
->  #include <linux/dma-mapping.h>
->  #include <asm/byteorder.h>
->  #include <linux/moduleparam.h>
-> +#include <linux/watch_queue.h>
->  
->  #include "usb.h"
->  
-> @@ -2660,13 +2661,68 @@ static void usbdev_remove(struct usb_device *udev)
->  	}
->  }
->  
-> +#ifdef CONFIG_USB_NOTIFICATIONS
-> +static noinline void post_usb_notification(const char *devname,
-> +					   enum usb_notification_type subtype,
-> +					   u32 error)
-> +{
-> +	unsigned int gran = WATCH_LENGTH_GRANULARITY;
-> +	unsigned int name_len, n_len;
-> +	u64 id = 0; /* Might want to put a dev# here. */
-> +
-> +	struct {
-> +		struct usb_notification n;
-> +		char more_name[USB_NOTIFICATION_MAX_NAME_LEN -
-> +			       (sizeof(struct usb_notification) -
-> +				offsetof(struct usb_notification, name))];
-> +	} n;
-> +
-> +	name_len = strlen(devname);
-> +	name_len = min_t(size_t, name_len, USB_NOTIFICATION_MAX_NAME_LEN);
-> +	n_len = round_up(offsetof(struct usb_notification, name) + name_len,
-> +			 gran) / gran;
-> +
-> +	memset(&n, 0, sizeof(n));
-> +	memcpy(n.n.name, devname, n_len);
-> +
-> +	n.n.watch.type		= WATCH_TYPE_USB_NOTIFY;
-> +	n.n.watch.subtype	= subtype;
-> +	n.n.watch.info		= n_len;
-> +	n.n.error		= error;
-> +	n.n.name_len		= name_len;
-> +
-> +	post_device_notification(&n.n.watch, id);
-> +}
-> +
-> +void post_usb_device_notification(const struct usb_device *udev,
-> +				  enum usb_notification_type subtype, u32 error)
-> +{
-> +	post_usb_notification(dev_name(&udev->dev), subtype, error);
-> +}
-> +
-> +void post_usb_bus_notification(const struct usb_bus *ubus,
-> +			       enum usb_notification_type subtype, u32 error)
-> +{
-> +	post_usb_notification(ubus->bus_name, subtype, error);
-> +}
-> +#endif
-> +
->  static int usbdev_notify(struct notifier_block *self,
->  			       unsigned long action, void *dev)
->  {
->  	switch (action) {
->  	case USB_DEVICE_ADD:
-> +		post_usb_device_notification(dev, NOTIFY_USB_DEVICE_ADD, 0);
->  		break;
->  	case USB_DEVICE_REMOVE:
-> +		post_usb_device_notification(dev, NOTIFY_USB_DEVICE_REMOVE, 0);
-> +		usbdev_remove(dev);
-> +		break;
-> +	case USB_BUS_ADD:
-> +		post_usb_bus_notification(dev, NOTIFY_USB_BUS_ADD, 0);
-> +		break;
-> +	case USB_BUS_REMOVE:
-> +		post_usb_bus_notification(dev, NOTIFY_USB_BUS_REMOVE, 0);
->  		usbdev_remove(dev);
+In order to provide a mechanism for devilering provisoning rights:
 
-This added call to usbdev_remove() results in a crash when running
-the qemu "tosa" emulation. Removing the call fixes the problem.
+1. Add a new device file /dev/sgx/provision that works as a token for
+   allowing an enclave to have the provisioning privileges.
+2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
+   following data structure:
 
-Guenter
+   struct sgx_enclave_set_attribute {
+           __u64 addr;
+           __u64 attribute_fd;
+   };
+
+A daemon could sit on top of /dev/sgx/provision and send a file
+descriptor of this file to a process that needs to be able to provision
+enclaves.
+
+The way this API is used is straight-forward. Lets assume that dev_fd is
+a handle to /dev/sgx/enclave and prov_fd is a handle to
+/dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
+initialize an enclave with the PROVISIONKEY attribute by
+
+params.addr = <enclave address>;
+params.token_fd = prov_fd;
+
+ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
+
+Cc: James Morris <jmorris@namei.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/uapi/asm/sgx.h  | 11 +++++++
+ arch/x86/kernel/cpu/sgx/driver.c | 23 ++++++++++++++-
+ arch/x86/kernel/cpu/sgx/driver.h |  2 +-
+ arch/x86/kernel/cpu/sgx/ioctl.c  | 49 +++++++++++++++++++++++++++++++-
+ 4 files changed, 82 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index c45eeed68144..420001ac205e 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -16,6 +16,8 @@
+ 	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
+ #define SGX_IOC_ENCLAVE_INIT \
+ 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
++#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
++	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
+ 
+ /**
+  * struct sgx_enclave_create - parameter structure for the
+@@ -52,4 +54,13 @@ struct sgx_enclave_init {
+ 	__u64 sigstruct;
+ };
+ 
++/**
++ * struct sgx_enclave_set_attribute - parameter structure for the
++ *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
++ * @attribute_fd:	file handle of the attribute file in the securityfs
++ */
++struct sgx_enclave_set_attribute {
++	__u64 attribute_fd;
++};
++
+ #endif /* _UAPI_ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index 3eb45bdf9826..f046518cbdf6 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -140,12 +140,18 @@ static const struct file_operations sgx_encl_fops = {
+ 	.get_unmapped_area	= sgx_get_unmapped_area,
+ };
+ 
++const struct file_operations sgx_provision_fops = {
++	.owner			= THIS_MODULE,
++};
++
+ static struct bus_type sgx_bus_type = {
+ 	.name	= "sgx",
+ };
+ 
+ static struct device sgx_encl_dev;
+ static struct cdev sgx_encl_cdev;
++static struct device sgx_provision_dev;
++static struct cdev sgx_provision_cdev;
+ static dev_t sgx_devt;
+ 
+ static void sgx_dev_release(struct device *dev)
+@@ -222,22 +228,37 @@ int __init sgx_drv_init(void)
+ 	if (ret)
+ 		goto err_chrdev_region;
+ 
++	ret = sgx_dev_init("sgx/provision", &sgx_provision_dev,
++			   &sgx_provision_cdev, &sgx_provision_fops, 1);
++	if (ret)
++		goto err_encl_dev;
++
+ 	sgx_encl_wq = alloc_workqueue("sgx-encl-wq",
+ 				      WQ_UNBOUND | WQ_FREEZABLE, 1);
+ 	if (!sgx_encl_wq) {
+ 		ret = -ENOMEM;
+-		goto err_encl_dev;
++		goto err_provision_dev;
+ 	}
+ 
+ 	ret = cdev_device_add(&sgx_encl_cdev, &sgx_encl_dev);
+ 	if (ret)
+ 		goto err_encl_wq;
+ 
++	ret = cdev_device_add(&sgx_provision_cdev, &sgx_provision_dev);
++	if (ret)
++		goto err_encl_cdev;
++
+ 	return 0;
+ 
++err_encl_cdev:
++	cdev_device_del(&sgx_encl_cdev, &sgx_encl_dev);
++
+ err_encl_wq:
+ 	destroy_workqueue(sgx_encl_wq);
+ 
++err_provision_dev:
++	put_device(&sgx_provision_dev);
++
+ err_encl_dev:
+ 	put_device(&sgx_encl_dev);
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
+index b045b1fcf258..1e35933cf8a4 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.h
++++ b/arch/x86/kernel/cpu/sgx/driver.h
+@@ -28,7 +28,7 @@ extern u64 sgx_attributes_reserved_mask;
+ extern u64 sgx_xfrm_reserved_mask;
+ extern u32 sgx_xsave_size_tbl[64];
+ 
+-extern const struct file_operations sgx_fs_provision_fops;
++extern const struct file_operations sgx_provision_fops;
+ 
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index b2603db60c43..2fcdd080158e 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -159,7 +159,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 
+ 	encl->secs.encl = encl;
+ 	encl->secs_attributes = secs->attributes;
+-	encl->allowed_attributes = SGX_ATTR_ALLOWED_MASK;
++	encl->allowed_attributes |= SGX_ATTR_ALLOWED_MASK;
+ 	encl->base = secs->base;
+ 	encl->size = secs->size;
+ 	encl->ssaframesize = secs->ssa_frame_size;
+@@ -578,6 +578,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+ 	return ret;
+ }
+ 
++/**
++ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
++ * @filep:	open file to /dev/sgx
++ * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
++ *
++ * Mark the enclave as being allowed to access a restricted attribute bit.
++ * The requested attribute is specified via the attribute_fd field in the
++ * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
++ * handle to an SGX attribute file, e.g. “/dev/sgx/provision".
++ *
++ * Failure to explicitly request access to a restricted attribute will cause
++ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
++ * is access to the PROVISION_KEY.
++ *
++ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
++ *
++ * Return: 0 on success, -errno otherwise
++ */
++static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
++					  void __user *arg)
++{
++	struct sgx_enclave_set_attribute params;
++	struct file *attribute_file;
++	int ret;
++
++	if (copy_from_user(&params, arg, sizeof(params)))
++		return -EFAULT;
++
++	attribute_file = fget(params.attribute_fd);
++	if (!attribute_file)
++		return -EINVAL;
++
++	if (attribute_file->f_op != &sgx_provision_fops) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
++	ret = 0;
++
++out:
++	fput(attribute_file);
++	return ret;
++}
+ 
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ {
+@@ -601,6 +645,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	case SGX_IOC_ENCLAVE_INIT:
+ 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
+ 		break;
++	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
++		ret = sgx_ioc_enclave_set_attribute(encl, (void __user *)arg);
++		break;
+ 	default:
+ 		ret = -ENOIOCTLCMD;
+ 		break;
+-- 
+2.20.1
+
