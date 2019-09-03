@@ -2,73 +2,208 @@ Return-Path: <SRS0=NhOO=W6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE02C3A5A7
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 16:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BC3C3A5A2
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 16:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 060A52343A
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 16:29:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0D0423789
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 16:30:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1567528243;
+	bh=Zl6Q1JD1N7GFogmeP7CbaHh/ulm0hljSif2nM3HtHDI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=SvQdHByKzDyJsm3eOh+/eykSVKvWOybGjEClKnGYKJ7BEU4TbpS51aKD47Kt1Fl47
+	 81ezdmB9m7WJgGJQ9kGaTLCeYx2/r9i0GqwCq2NbN5hgCs2tgtiwZc8Rt73fcC3gIU
+	 Q/gPx6TLd+tx06auo8Ej9x903CX0GtV/tvFqzKaY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731358AbfICQ30 (ORCPT
+        id S1731175AbfICQ2t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 Sep 2019 12:29:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34172 "EHLO mx1.redhat.com"
+        Tue, 3 Sep 2019 12:28:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730333AbfICQ30 (ORCPT
+        id S1731163AbfICQ2s (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:29:26 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 3 Sep 2019 12:28:48 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 563E187521B;
-        Tue,  3 Sep 2019 16:29:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 57C0A19C78;
-        Tue,  3 Sep 2019 16:29:22 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190903161202.GB22754@roeck-us.net>
-References: <20190903161202.GB22754@roeck-us.net> <20190903125129.GA18838@roeck-us.net> <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk> <156717350329.2204.7056537095039252263.stgit@warthog.procyon.org.uk> <7481.1567526867@warthog.procyon.org.uk>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/11] usb: Add USB subsystem notifications [ver #7]
+        by mail.kernel.org (Postfix) with ESMTPSA id B3027215EA;
+        Tue,  3 Sep 2019 16:28:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567528127;
+        bh=Zl6Q1JD1N7GFogmeP7CbaHh/ulm0hljSif2nM3HtHDI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QZqbsR+FJ7JPRT6obLmEmH8Hx2vCfIkkzYaATSfEtNRcnSKpDC/9K/oAKn5tKx1C6
+         uAhPoQAqEIgyrw68BrKyVDEQkGJpf015Ni+HjoOLZa9OT6b2ti/xHPxe+GOnoPGV8F
+         Xhml6sfkJCuUdyFlwJrkJtgQv593r0pnV63tbFiQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Mike Salvatore <mike.salvatore@canonical.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 123/167] apparmor: reset pos on failure to unpack for various functions
+Date:   Tue,  3 Sep 2019 12:24:35 -0400
+Message-Id: <20190903162519.7136-123-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
+References: <20190903162519.7136-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <29418.1567528161.1@warthog.procyon.org.uk>
-Date:   Tue, 03 Sep 2019 17:29:21 +0100
-Message-ID: <29419.1567528161@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Tue, 03 Sep 2019 16:29:25 +0000 (UTC)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Guenter Roeck <linux@roeck-us.net> wrote:
+From: Mike Salvatore <mike.salvatore@canonical.com>
 
-> > > This added call to usbdev_remove() results in a crash when running
-> > > the qemu "tosa" emulation. Removing the call fixes the problem.
-> > 
-> > Yeah - I'm going to drop the bus notification messages for now.
-> > 
-> It is not the bus notification itself causing problems. It is the
-> call to usbdev_remove().
+[ Upstream commit 156e42996bd84eccb6acf319f19ce0cb140d00e3 ]
 
-Unfortunately, I don't know how to fix it and don't have much time to
-investigate it right now - and it's something that can be added back later.
+Each function that manipulates the aa_ext struct should reset it's "pos"
+member on failure. This ensures that, on failure, no changes are made to
+the state of the aa_ext struct.
 
-David
+There are paths were elements are optional and the error path is
+used to indicate the optional element is not present. This means
+instead of just aborting on error the unpack stream can become
+unsynchronized on optional elements, if using one of the affected
+functions.
+
+Cc: stable@vger.kernel.org
+Fixes: 736ec752d95e ("AppArmor: policy routines for loading and unpacking policy")
+Signed-off-by: Mike Salvatore <mike.salvatore@canonical.com>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/apparmor/policy_unpack.c | 40 +++++++++++++++++++++++++------
+ 1 file changed, 33 insertions(+), 7 deletions(-)
+
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index 088ea2ac85706..612f737cee836 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -223,16 +223,21 @@ static void *kvmemdup(const void *src, size_t len)
+ static size_t unpack_u16_chunk(struct aa_ext *e, char **chunk)
+ {
+ 	size_t size = 0;
++	void *pos = e->pos;
+ 
+ 	if (!inbounds(e, sizeof(u16)))
+-		return 0;
++		goto fail;
+ 	size = le16_to_cpu(get_unaligned((__le16 *) e->pos));
+ 	e->pos += sizeof(__le16);
+ 	if (!inbounds(e, size))
+-		return 0;
++		goto fail;
+ 	*chunk = e->pos;
+ 	e->pos += size;
+ 	return size;
++
++fail:
++	e->pos = pos;
++	return 0;
+ }
+ 
+ /* unpack control byte */
+@@ -294,49 +299,66 @@ static bool unpack_nameX(struct aa_ext *e, enum aa_code code, const char *name)
+ 
+ static bool unpack_u32(struct aa_ext *e, u32 *data, const char *name)
+ {
++	void *pos = e->pos;
++
+ 	if (unpack_nameX(e, AA_U32, name)) {
+ 		if (!inbounds(e, sizeof(u32)))
+-			return 0;
++			goto fail;
+ 		if (data)
+ 			*data = le32_to_cpu(get_unaligned((__le32 *) e->pos));
+ 		e->pos += sizeof(u32);
+ 		return 1;
+ 	}
++
++fail:
++	e->pos = pos;
+ 	return 0;
+ }
+ 
+ static bool unpack_u64(struct aa_ext *e, u64 *data, const char *name)
+ {
++	void *pos = e->pos;
++
+ 	if (unpack_nameX(e, AA_U64, name)) {
+ 		if (!inbounds(e, sizeof(u64)))
+-			return 0;
++			goto fail;
+ 		if (data)
+ 			*data = le64_to_cpu(get_unaligned((__le64 *) e->pos));
+ 		e->pos += sizeof(u64);
+ 		return 1;
+ 	}
++
++fail:
++	e->pos = pos;
+ 	return 0;
+ }
+ 
+ static size_t unpack_array(struct aa_ext *e, const char *name)
+ {
++	void *pos = e->pos;
++
+ 	if (unpack_nameX(e, AA_ARRAY, name)) {
+ 		int size;
+ 		if (!inbounds(e, sizeof(u16)))
+-			return 0;
++			goto fail;
+ 		size = (int)le16_to_cpu(get_unaligned((__le16 *) e->pos));
+ 		e->pos += sizeof(u16);
+ 		return size;
+ 	}
++
++fail:
++	e->pos = pos;
+ 	return 0;
+ }
+ 
+ static size_t unpack_blob(struct aa_ext *e, char **blob, const char *name)
+ {
++	void *pos = e->pos;
++
+ 	if (unpack_nameX(e, AA_BLOB, name)) {
+ 		u32 size;
+ 		if (!inbounds(e, sizeof(u32)))
+-			return 0;
++			goto fail;
+ 		size = le32_to_cpu(get_unaligned((__le32 *) e->pos));
+ 		e->pos += sizeof(u32);
+ 		if (inbounds(e, (size_t) size)) {
+@@ -345,6 +367,9 @@ static size_t unpack_blob(struct aa_ext *e, char **blob, const char *name)
+ 			return size;
+ 		}
+ 	}
++
++fail:
++	e->pos = pos;
+ 	return 0;
+ }
+ 
+@@ -361,9 +386,10 @@ static int unpack_str(struct aa_ext *e, const char **string, const char *name)
+ 			if (src_str[size - 1] != 0)
+ 				goto fail;
+ 			*string = src_str;
++
++			return size;
+ 		}
+ 	}
+-	return size;
+ 
+ fail:
+ 	e->pos = pos;
+-- 
+2.20.1
+
