@@ -2,55 +2,67 @@ Return-Path: <SRS0=NhOO=W6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E73C3A5A2
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 20:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 424A6C3A5A2
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 22:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF61C21883
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 20:56:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F7DD21883
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Sep 2019 22:16:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="t88U9RV2"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Lx0my6aI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfICU4p (ORCPT
+        id S1725977AbfICWQP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 Sep 2019 16:56:45 -0400
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com ([66.163.188.211]:35614
-        "EHLO sonic311-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726640AbfICU4o (ORCPT
+        Tue, 3 Sep 2019 18:16:15 -0400
+Received: from sonic307-16.consmr.mail.ne1.yahoo.com ([66.163.190.39]:35337
+        "EHLO sonic307-16.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726619AbfICWQO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Sep 2019 16:56:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1567544202; bh=i5/1Kidhfx8yCcDqTfoKbAVXtBe1GNrO4nCYULPd0K0=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=t88U9RV2oiRtLX6FDFktteMZwEmbRCJv0g4UDRbxxcX8MczzYXBdEDRh3UlKosVNQSNcVpA2fINoWxswyK8MVLzFbGAlv4YHqV/+magIAk/xWVeJyAE8lVO+qeVlxYTtVGmeEQ9L4A74N8dP5HQqnjwYdWDZNBVqYaEVbh/TbwAw6l7FlKLdSmAHgaA4jZZ82vaSRez9w2PuuJuj5EFic7M3fUtYKuL8ByAGVZEy/VWhe+9eT7fGXFliXIwa7jLvTL7xqC3eMlihR4IvSrWshKSvFOkYQifkxnElicCnIib02KC0fwGTR8NRrO0FZ0cmMeT+IxnF355X+b4jlXVYCA==
-X-YMail-OSG: vDDqrJYVM1loAZ79mPJLK.ZkhNyXnqWRsp_zBfNo1d.sj8ZPa79E.5MwOGyE897
- wlfEz94ao8J52jSHo9mdn1aj6lSQ76KrhRNTfMEvIGog6dru.Q_4_lgINpWNQaIE5olV2kF8Agcl
- hBZxDtY.LLxZZSuQpcLeIu2KjYj_IioOq4COOxbi4JBi88YWTCHm_ZD8BnA3FJqhaHDm.pkpyyac
- kZkozxp42egIQgtVIdmRY_659d.3oURsfa5ceziFqpM486Q88uQ3cSwgnph85LiJ8xfyjdOYyFyM
- ed6fQofoT0AnbgF7vYshhVARihRuAB1nBiQAdkjqs.uXOi2slXdCFIjh0q_u2orHHh9Y74wwDGCw
- jWdUL.mmKbsPZndek2vBfbmnpGRSSDGJ5NdGfcNzCGZNcCaZ48hi70BZSx6TeHcSXTCL399k2Yh3
- OUArX0lkG1T7VQ.90ez7.Ag3C65.ixUYR4Pg6Mud6aXUBA6hH9bQY0WuSb8y8U3YEJxMLEMZkuDb
- GIGDO0jd0mHZI3AoQ8GG5z9L93gg0MRdwP0gVON2akRkuVkYhyueuoIhhQRncOU62pFtqW6zZW3L
- 80dME7D9iig.rDNq6EOMDWhGD_ucQi5rq7vIZ3NJfKL2kBjfu7eBEjsD4F1glfiF2Z_OLWcd5CQp
- g7VpNQgQHqOFbOfrOn78KODwVk0F8tJAgnVkqu1sqjMadp4YW0ILr51Q2r.SSy3EhQNSz6A_Z68b
- oJf1j9iC1CxRFHh7nSmC4cLR8lqsFnk3DB2xztkDMQW_90YlnwmH.AQiABnFSVdl1WY71MxlO8VC
- APyFfQyh.deR35azgc3phG3WwrgoXQWw.xAKlEQoTAgiODYIWgL8fDr.iml2H40abdO1Zv0tYK5f
- vJSyKpPJmEu.iNu.oXLqryPV..Vd1VydhPyxwReudJxkRLilAHtflo4QySHh2uGFBkH2QaxVewwJ
- IK023.AzJfZaOmyX72XEQqGpNGiYgd7o3hNySpg0jorbuNpcDXkm_2yoPYdMloi6Iwx7UWJxBjsH
- rm28YZ_1gWBhr0DH168OdVbBYimO4XnvbtQ20DQr82wTu4JjIsiUkXVukDB5dc8Ov8IADpfdqFVU
- YSskU8cofAkSdbEla10lLYE3afcLRKwcVmAsV0cHeCMYBB_w4w8.VFRS7_KeiWn6Bnq91G16ej7.
- xTAk7DsJn4tIIO1WA5Pzi821LiMn2Y6mKD4riE98XAc9H6ia7.jNwDpkdtU5ZOcbm8Utw0VxVflk
- y83Z9DDxKoUE1kKiWC74vCYrlNVVYd.UnylaCYqgEghq.fOZnN71ituo-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Tue, 3 Sep 2019 20:56:42 +0000
-Received: by smtp405.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID cf50a1e79dee65fab01d83b412b83375;
-          Tue, 03 Sep 2019 20:56:38 +0000 (UTC)
-Subject: Re: [PATCH] Smack: Move request_buffer from stack to smack_audit_data
-To:     Denis Efremov <efremov@linux.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Tue, 3 Sep 2019 18:16:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1567548973; bh=fha3TjWoq7T+FaehvmjeV2B4PeIjuHcxcWYFtyVJWFE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Lx0my6aIH/Cg1sxMHPeI3XP/XUQJzSTqU0nXgkGK/gOh/yi/qmrs5AeEhcLlu3H8AxRNIM6Vk/F8QFy5oPWr0kOqE03bFr3QL9VMqGqX0boDFD8CliuOPA+HtuLL1FAQPUitGF0O1fbGQhaSZ/6ltXux9o8h/7Qri+k3Nu8DivxalB4zawKW/poiuCTshe7qn+7dEwcMZIZjq3oSiVMq/vz2CxLgtutuzaoEmVx9Vl+epO23HVOc7KRotP4Y2SxXBOcFPC4r4Vu7L2+C7ShoNM2kyLHjqGR7RQ9gLZIjWfx7X97p+vnqhbMG41v+Pj9DHR+ugmLzy94XeQoPXglLyQ==
+X-YMail-OSG: TdI9FxgVM1nYGzUJuT5BfwvBPLfFq_R1rUEfbVcG3oHD6iiI.B99ULNdd_Lx5fK
+ 80mFchTSt6.8HD1fr2iMnmOXCVBsKlYqy8laJz0i2lh3sGIATZYlYLKH1cdwittUZgSE7UMhvC74
+ ronJiEqp62ZRrkZ59n5S7_kCQ9DRkH.MsC3uM_iA55t_g3ioCOBItuuBhoZ0.kIQnn9oRW9YgyfM
+ hY_y3g7jjz6aMzernUXCzxWTrqNj6D1b3QUe5ZrGvS3mbNxiavXjXQ.0rM7Rh410t7GnXTm3ZOrT
+ EP_sOwe0hthexUVRBIHnRRj5GA5vnRIeUa_sFyLTmA0A77zzyS5KR04IE4k3368v1KqHSHFz0_6E
+ 7SfLuqWQntKKz6GoV_AyLp5osYnYr0zhdS1qXCM6BxJhXSCr_EPYVqYyUAxplSJBih5xmOkZU5Mn
+ hOlXNI9vFhPN7zx7LAceTeVarI31vBviSsq2_Q3uF9XljGvLV1.Khunm5HMpMDxDZ8dpkVCvU0Bv
+ 2S1NKamu4jIQoZUkXrZjam6Ynl0.Iqk9jHFGFY8EXR3a1HU5juqjJXa6mNJNebfjhlX5r4Ky.K_W
+ RNpIqYRO1q6uaejpt_edYfBz0aLW.DM1ONFB4FJGsnHWUqW.EMwCPLBbjvyukmK8_GJyKlwXYym4
+ hR6zCm2D9ZGafE4aZgg05xpSUg5vzDz.EK0Ypve5r89ebOwUx4lZ6snJrGChU4DoT2JD3fDHCCn2
+ BJPRO7hsNiIZqpv1cbCNoxSZG8gbw9YSG6qBpVAaYVF_ilKbY1Xp8FlRkKKfFmIVwP6e9n_FSWw1
+ 3l_xZXY15auhhzGcJ7vVYcPF0HzHrax7EHQuKmQ_6AP_pHfEMClbCxSwvgAOhXSQ93M3GG58O_WJ
+ _LgVZ44oms9gNcpqdbOa.Ujg5m4BLbQ3YZYBecYQe_2SK_ygeKjqIo1fVnJwwRU8ftoF4CMIakXW
+ wvsJYLi36mlpx7i5RqfF.DybSiLkMYpQLp0viEXvYNW8nS7.1sIt4gDk.pHSUkkIGcnqka1uP958
+ ui3c7G3CXILYUoC5kaqot9zIcZdjEbG6lQ83Jq8dbtqZkaafimWjw7A9jXgNAXrqaF4hqgpSm9EL
+ T2ctQko37V0lKVUb8yEzjdtHN.2ya9KoBIbI1XBzoFavR3OnaiXCrhghkoXXfCaQuAS8XA67jhpD
+ VUZLmtV3TqeYSHJB5uQhMRTQv7PmjLb5TVKuu7lSz5EzMuSFRbCV58EDBNTWNCRLlTeSb4WJA7iK
+ NNNB9lSOC.YRF7Lx3ryTqGM1dXJsC3i6e.64_mgIrM1iSirvmKd8qqbrBps2hjLyRwgZ9.LAWOW1
+ AODHGOWewFj4ADTWnfHg2_cxAHjwR_gCrtP17YQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Tue, 3 Sep 2019 22:16:13 +0000
+Received: by smtp424.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 31589db2a53534d815576f1e840a33f6;
+          Tue, 03 Sep 2019 22:16:09 +0000 (UTC)
+Subject: Re: [PATCH 11/11] smack: Implement the watch_key and
+ post_notification hooks [untested] [ver #7]
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, casey@schaufler-ca.com
-References: <20190903180134.16176-1-efremov@linux.com>
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        casey@schaufler-ca.com
+References: <87bf0363-af77-1e5a-961f-72730e39e3a6@schaufler-ca.com>
+ <e36fa722-a300-2abf-ae9c-a0246fc66d0e@schaufler-ca.com>
+ <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk>
+ <156717352917.2204.17206219813087348132.stgit@warthog.procyon.org.uk>
+ <4910.1567525310@warthog.procyon.org.uk>
+ <11467.1567534014@warthog.procyon.org.uk>
 From:   Casey Schaufler <casey@schaufler-ca.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=casey@schaufler-ca.com; keydata=
@@ -97,120 +109,46 @@ Autocrypt: addr=casey@schaufler-ca.com; keydata=
  wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
  v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
  abzjfg==
-Message-ID: <abb71a39-b90f-5384-44e6-dcc01fa8f20b@schaufler-ca.com>
-Date:   Tue, 3 Sep 2019 13:56:37 -0700
+Message-ID: <23d61564-026e-b37a-8b16-ce68d5949f6c@schaufler-ca.com>
+Date:   Tue, 3 Sep 2019 15:16:08 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190903180134.16176-1-efremov@linux.com>
+In-Reply-To: <11467.1567534014@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/3/2019 11:01 AM, Denis Efremov wrote:
-> request_buffer is required to describe an access type in a string for
-> the audit. The problem here is that the string is saved on the stack
-> and then passed by reference to the next function in request field of
-> the smack_audit_data structure. Referencing variables on a stack
-> and saving them in external data structures is usually considered
-> as bad and error-prone practice.
+On 9/3/2019 11:06 AM, David Howells wrote:
+> Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+>> Built from your tree.
+> What branch?  keys-next?
 
-You're adding space to the smack_audit_data structure on the
-off chance that the stack might disappear out from under something
-this function is calling. If you trace the code path, you'll find
-that doesn't happen. I can't say that I see any real value to this
-change.
-
->  Thus, this commit simply moves
-> the request_buffer from the stack to the stack_audit_data structure
-> and removes the necessity of stack referencing. strcat calls are
-> replaced with strlcat calls - a safer analog for strings concatenation
-> with bounds checking.
-
-Changing strcat to strlcat (or any variant, for that matter) when
-the source is a string constant and the destination size is known
-is completely pointless.
+I rebuilt with keys-next, updated the tests again, and now
+the suite looks to be running trouble free. I do see a message
+SKIP DUE TO DISABLED SELINUX which I take to mean that there
+is an SELinux specific test.
 
 >
-> Signed-off-by: Denis Efremov <efremov@linux.com>
-
-I appreciate the intention, but I don't see any real value here.
-I won't be taking this.
-
-> ---
->  security/smack/smack.h        |  6 +++++-
->  security/smack/smack_access.c | 12 +++---------
->  2 files changed, 8 insertions(+), 10 deletions(-)
+>> keyctl move 483362336 1065401533 @s
+>> keyctl_move: Operation not supported
+> Odd.  That should be unconditional if you have CONFIG_KEYS and v5.3-rc1.  Can
+> you try:
 >
-> diff --git a/security/smack/smack.h b/security/smack/smack.h
-> index 62529f382942..9eeefb865dfd 100644
-> --- a/security/smack/smack.h
-> +++ b/security/smack/smack.h
-> @@ -278,7 +278,11 @@ struct smack_audit_data {
->  	const char *function;
->  	char *subject;
->  	char *object;
-> -	char *request;
-> +#ifdef CONFIG_SECURITY_SMACK_BRINGUP
-> +	char request[SMK_NUM_ACCESS_TYPE + 5];
-> +#else
-> +	char request[SMK_NUM_ACCESS_TYPE + 1];
-> +#endif
->  	int result;
->  };
-> =20
-> diff --git a/security/smack/smack_access.c b/security/smack/smack_acces=
-s.c
-> index f1c93a7be9ec..99e58d4a9980 100644
-> --- a/security/smack/smack_access.c
-> +++ b/security/smack/smack_access.c
-> @@ -340,11 +340,6 @@ static void smack_log_callback(struct audit_buffer=
- *ab, void *a)
->  void smack_log(char *subject_label, char *object_label, int request,
->  	       int result, struct smk_audit_info *ad)
->  {
-> -#ifdef CONFIG_SECURITY_SMACK_BRINGUP
-> -	char request_buffer[SMK_NUM_ACCESS_TYPE + 5];
-> -#else
-> -	char request_buffer[SMK_NUM_ACCESS_TYPE + 1];
-> -#endif
->  	struct smack_audit_data *sad;
->  	struct common_audit_data *a =3D &ad->a;
-> =20
-> @@ -360,7 +355,7 @@ void smack_log(char *subject_label, char *object_la=
-bel, int request,
->  		sad->function =3D "unknown";
-> =20
->  	/* end preparing the audit data */
-> -	smack_str_from_perm(request_buffer, request);
-> +	smack_str_from_perm(sad->request, request);
->  	sad->subject =3D subject_label;
->  	sad->object  =3D object_label;
->  #ifdef CONFIG_SECURITY_SMACK_BRINGUP
-> @@ -371,14 +366,13 @@ void smack_log(char *subject_label, char *object_=
-label, int request,
->  	 * the logging policy says to do so.
->  	 */
->  	if (result =3D=3D SMACK_UNCONFINED_SUBJECT)
-> -		strcat(request_buffer, "(US)");
-> +		strlcat(sad->request, "(US)", sizeof(sad->request));
-
-Have you ever heard of a C compiler that would not correctly
-terminate a constant string? I've been using them for over 40
-years and have never seen a case where this was a problem.
-
->  	else if (result =3D=3D SMACK_UNCONFINED_OBJECT)
-> -		strcat(request_buffer, "(UO)");
-> +		strlcat(sad->request, "(UO)", sizeof(sad->request));
-> =20
->  	if (result > 0)
->  		result =3D 0;
->  #endif
-> -	sad->request =3D request_buffer;
->  	sad->result  =3D result;
-> =20
->  	common_lsm_audit(a, smack_log_callback, NULL);
-
+> 	keyctl supports
+>
+> or just:
+>
+> 	keyctl add user a a @s
+>
+> which will give you an id, say 1234, then:
+>
+> 	keyctl move 1234 @s @u
+>
+> see if that works.
+>
+> David
