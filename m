@@ -2,65 +2,67 @@ Return-Path: <SRS0=4koF=W7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E48C3A5A7
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Sep 2019 10:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B4EC3A5A7
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Sep 2019 12:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D2172339D
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Sep 2019 10:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4F1D22CED
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Sep 2019 12:09:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725938AbfIDKQR (ORCPT
+        id S1729928AbfIDMJE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Sep 2019 06:16:17 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:53118 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfIDKQR (ORCPT
+        Wed, 4 Sep 2019 08:09:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41892 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbfIDMJD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Sep 2019 06:16:17 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x84AGEi7062946;
-        Wed, 4 Sep 2019 19:16:14 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Wed, 04 Sep 2019 19:16:14 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126227201116.bbtec.net [126.227.201.116])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x84AGEGF062937
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 4 Sep 2019 19:16:14 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: general protection fault in smack_socket_sendmsg
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+5fd781d646d4fcbdfeb0@syzkaller.appspotmail.com>
-Cc:     jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-References: <20190831053311.15704-1-hdanton@sina.com>
- <5f34b914-ca5b-e527-9183-64dc0d83ec9f@schaufler-ca.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <b2a7cbb6-2243-d591-41e7-955e1e1e4785@I-love.SAKURA.ne.jp>
-Date:   Wed, 4 Sep 2019 19:16:14 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 4 Sep 2019 08:09:03 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 13C2185542;
+        Wed,  4 Sep 2019 12:09:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E9D2F5C219;
+        Wed,  4 Sep 2019 12:08:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <23d61564-026e-b37a-8b16-ce68d5949f6c@schaufler-ca.com>
+References: <23d61564-026e-b37a-8b16-ce68d5949f6c@schaufler-ca.com> <87bf0363-af77-1e5a-961f-72730e39e3a6@schaufler-ca.com> <e36fa722-a300-2abf-ae9c-a0246fc66d0e@schaufler-ca.com> <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk> <156717352917.2204.17206219813087348132.stgit@warthog.procyon.org.uk> <4910.1567525310@warthog.procyon.org.uk> <11467.1567534014@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/11] smack: Implement the watch_key and post_notification hooks [untested] [ver #7]
 MIME-Version: 1.0
-In-Reply-To: <5f34b914-ca5b-e527-9183-64dc0d83ec9f@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <31204.1567598939.1@warthog.procyon.org.uk>
+Date:   Wed, 04 Sep 2019 13:08:59 +0100
+Message-ID: <31205.1567598939@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 04 Sep 2019 12:09:03 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/09/04 8:17, Casey Schaufler wrote:
-> On 8/30/2019 10:33 PM, Hillf Danton wrote:
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=5fd781d646d4fcbdfeb0
-> If you want to add a description and signed-off-by I will take this.
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Excuse me, but this bug was already closed as dup of "KASAN: use-after-free Read in rxrpc_send_keepalive".
+> I rebuilt with keys-next, updated the tests again, and now
+> the suite looks to be running trouble free.
 
+Can I put you down as an Acked-by or something on this patch?
+
+Thanks,
+David
