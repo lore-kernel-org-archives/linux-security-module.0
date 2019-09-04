@@ -2,69 +2,57 @@ Return-Path: <SRS0=4koF=W7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A939C3A5A7
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Sep 2019 14:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD74DC3A5A7
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Sep 2019 15:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7ADA23400
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Sep 2019 14:56:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A80921883
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Sep 2019 15:16:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="kdTM8h4S"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="QnrixGyC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730244AbfIDO4u (ORCPT
+        id S1730065AbfIDPQI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Sep 2019 10:56:50 -0400
-Received: from sonic303-27.consmr.mail.ne1.yahoo.com ([66.163.188.153]:41206
+        Wed, 4 Sep 2019 11:16:08 -0400
+Received: from sonic303-27.consmr.mail.ne1.yahoo.com ([66.163.188.153]:37205
         "EHLO sonic303-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729398AbfIDO4u (ORCPT
+        by vger.kernel.org with ESMTP id S1729919AbfIDPQH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Sep 2019 10:56:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1567609008; bh=ZiZUpa4OlflpyykovNV00Zn2esYZ6QcbKLYZHtiNUds=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=kdTM8h4SvoXCtFh3aPtY0+13TysL9zTXW0z6Uyd1g2MFYlhcPLO2YfsD6a0NAY0n2a3JYANIy+7Xq0IpDlYqA1knU2FqmA4Ap3QGaUE0pKnXr82qfDdispihs+/LILi8RoBIGnO4XpN6B0kAneSe1e0W6sZHxAkrf+ZUCzp4NIPakTEpO/j4qQNaZ7FGbjPky5QN0Za6nAVc5XCtyNL3RXAAkvzrvUc+00Dnpv/kmOKXQfUC0lcd3EWV6sLr8g7jCcRUkPc4bUuCDymw6sko1oFXUjMgaJRx+EnXhNAlmWsKIJZbKEMklDfBAF8/SXfmMqp3cuLuZWJy/I54rhjFIA==
-X-YMail-OSG: opM.IoIVM1nmPQ6ac22krzy3RhYyjsKlAXH..fafy0u1.b.v4c6Wst5wl4gwQZc
- kTsSvw7BqxrCGP075bn_ZMxZyduB5r90n5msR5B.4wDeABhoJ.3RTEnqSFut0Z3EfqvbzGwChUOj
- vGoA6QuK8NdhfCpXute0rpFHFYe3eL4hwWpyDPs6IRLZISdWGTmAzNwTowydw6lcfHIU.1g0z8UU
- CRlmnVLWjQu1z3SkDGcbympDZVRFuToMqECjO8z_KS6pFdwsaLy_HnU.t.80TejK_fVp5QRVJlj_
- oCtQGdLcBeS27MCucR1UpAG08DnBN3Pbqzi9vaWvjKqybLI9XvX.FBlfB2QC6_Fpkr70gQ6P4ZFu
- h7VqGy4vsVr1_cvw1EnARMfx25zEtF.JF2S6xpoloa1_5iVSRoglSF7bS2NIyEd8WY4e1xFKWxFj
- w24.V2AGGGUk302jPO4igK_HwxmYiTPjuamXwJ12Sm.ex2WwJfYzkiVmUkL5l.1zIH72QMKOcEkq
- 5KQ8uAxX68oxn29eJeAlmdYutg4Dci1N2iwekXXGBDCw5hMpYnwTgKbaGho5LKedUrp4eQc8c.3V
- 8wnq.qXjXR0rZfSCoB4Sm26kjGBUCAd5rBKstuXAvye7CrVm.s.cluybTF9O2A.9VghbGUhKmr_A
- _JSSQQ_Icmi9OS.OSwnvv_yCzRUAcd1sVyUsrA1btQYDLZhMSHMeD3sYCXMOFC6dqXpqGWrW9luN
- TX3mmwu6FPEGTWllORiJl.32.NS1AHeEvAkG0rxPhMaQkzGwdM_dx7okQg9_TBhjvsY6X3r8XR09
- Ln37Ne_gowGu6dOwpxwctC9wbOj7pZieFbDKf3Fp4wGIOdICbcCau63OrD23pwBpVkSoEgnjrBb4
- ZFOoKA_VKSGeh36umXadTqlQilhU74H0B.WXxfDYWbOZjfkQ3A0sBpsFyJNf95PgTDTp0C.UlQkg
- .QebP8aRAsp1nSPb3s9opmOlrlHpI2utLb1nYAnP9x1bIZTRgfTJBUp8L8psdwVdmLuz.OI.2rv.
- rOA7BtAsrSO3ycuHqALj4oIjugzd5xb8TKM1pvyc2W9ZKYO9uAYZ2BAtAQ6E5iiHEoWbPXdNrI.P
- lrnDg.f85u3yS2KtyAE61rvvgfzpVibnwGG7s1TboD47CVhhtsoYY_TxONC6fE9Knv.u1VHLII2F
- _F_rFz6nxKn6Ucj6UbtCvccxj7COilwe9s44nClkdUY7dfvV6WWXANRYApOeksAvpuw9C_A6S4FP
- NHe03IUfHxPXKv7DrtFvolZZAn8NfmznWc7U8MfHaqkysw4GG71Q9HGKrm3wiVCbRCJjCHT5k4ly
- b4bW5Pzp_1BYTK2AOZ2ib.gmWOs.nTzrfjjJp
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Wed, 4 Sep 2019 14:56:48 +0000
-Received: by smtp431.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ab143955ae61667d238fde3beed8cf6c;
-          Wed, 04 Sep 2019 14:56:47 +0000 (UTC)
-Subject: Re: [PATCH 11/11] smack: Implement the watch_key and
- post_notification hooks [untested] [ver #7]
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        casey@schaufler-ca.com
-References: <23d61564-026e-b37a-8b16-ce68d5949f6c@schaufler-ca.com>
- <87bf0363-af77-1e5a-961f-72730e39e3a6@schaufler-ca.com>
- <e36fa722-a300-2abf-ae9c-a0246fc66d0e@schaufler-ca.com>
- <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk>
- <156717352917.2204.17206219813087348132.stgit@warthog.procyon.org.uk>
- <4910.1567525310@warthog.procyon.org.uk>
- <11467.1567534014@warthog.procyon.org.uk>
- <31205.1567598939@warthog.procyon.org.uk>
+        Wed, 4 Sep 2019 11:16:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1567610166; bh=R2SpcOFSfSxnXasA1iCUbEqBgcZ1kI59YtSsJdElbLE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=QnrixGyCzrjMwXStVUIgS+lnOEe5tYR7O/Pv6GX0+wnfb8euwYm7I9MURQtxBoWVGlmghhKkmwk5i2UfkaOfwmICCVFRGPoaATgVBYVmmaQRPBIwnbFixFDSrRjWsdeBXPxKnhleszIoDCc3atc3y2fsTO0kTYcrX8abCEzP4iL0TRura+0/B1iDBp2w1zJ1u1KKfRLZi9Yodou4EyJQhPvrkgEuurC7APHieQS4IX9snjaZtXgcGI1yE7uLKGrucFp+BxfbxHmgSxxaNwWSmMuLC7eUqlYYXLxoez97RI3EdwIA/hfYjruDeuHprbQRf2QQ1xiVpWCNTwriHmZz0A==
+X-YMail-OSG: TmOEjXgVM1nub_Jjl9QW8Sjc3WbzTmANNCCe79xTLNmB8uxtmMSpB9uUlEK2GVi
+ iLt8tNfnj3xB0VSoRp9uA2NtKMPoaVHgruZtaPhWBeXnGNJ3C_veddHnPl1u5721cnpX2ChCvXIT
+ 0wMT743eQPHkC3GS0dlXgmKI.EgVey8gXMwy2kfD0vtjMwW_Gd6d9pUETPPOnbtgc5RhFeCdVrmf
+ 7z0kVp.KlMcbZ48oPivOWEgESSkNwYtZSBXgmVsZ0CRN0.3tBCWoCcpKmDswh893HjyKg91C3vFc
+ fHauAR3JhLEJw9uBeMXMNFnEas_QI0G5Q_K3TzkCMJcAW2t._IdXljrAsa_HU0gx.T3sz4KAfTx7
+ 0LDkz.OVlejH6IORUwOe2qOpDJMxjSu5Gd5G29mPeYufHT9lVCIehJWS61XuTiCPvjT69kuctG1D
+ KDXMCGIRBv34hiIDXxOwy1sgLRDXknrnB6QS1K575qyHSMYzrQeggCbqu1_p1K0VAX2LxH_.KIdp
+ cNOEZd9.X5xxGYt.p3VJkTp4yJxiGDL8pYl1fHXsrOhpm2YfuYwFXCEKPyceqrdBLHkNFRZXPvIn
+ 3SypJE4z41qlxdUnxFlgAkGeygK5gjlpG7dqHvDVqyJ6ySMl3PxQgVap6bFG_5bTsJjqABRzUYyF
+ cHurHJdtY4n2uNIxfYfnZZUXuugY1kKSMMmJ9xznVgiw07I57fH5hKLo14PMNSk7v9.mKp4V509L
+ GkYiCDu06xFKSNdjXAEY4riSgNcVgvVnCK64QQo20o4Kfvr0fzsymVVwvSGbjh6_1RqursEuvVPx
+ jO2U6nB8p6VRg5atZOWdvhbI.DvBOfm.BYmoJvltv0D9ZHDUaEJXmo_zK4JiFQoesr5B5I_Y8l_X
+ _PD3i6U5T_SPCnnj.j2Nt3CsZS5JhgnojVMNf.qAQ8R_0nbApGp.4SDRvbmkDTxOEgs7PKNFgZoP
+ 3jWA7Jxmdt6CD5W99wve9NEhMrXtUl7XSL7y1.1sSrvt6y8xUpQP7DRVRWSBPZIZUeRimlv.XwrB
+ Z46OMeqw.RJjkbMUHMbxXIbuu7TR.EQ4TkWueyUil1fM3lkQ8hLE2kvXJgcCrnXXeqPDj4ukcWdM
+ a0t7b79Qrqt1NcnAD4Q6IBfWjrCE.WTH0T6UmglzNuZahv6CBCnkgi50kjK9mvMeKMksoo7r.Pj1
+ T.yIx6TPEL_iHoESEikD6238SY5IwGqm3wA57AxZ8mgvsur.VRCRAGimNvpVUG826UpqiF5lfckD
+ oEfIDUZauLuHYgO0U4qnJmgKAvd0OR7c1wK780dlzp_loLjhQVebbjS6u0cQKF4McmzGXnxA_lgi
+ Jr.XCM.7DJpYT.6_dudqee048jEo0dQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Wed, 4 Sep 2019 15:16:06 +0000
+Received: by smtp403.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 0ffca9b564eea69d38a8f998eb2a3aa1;
+          Wed, 04 Sep 2019 15:16:01 +0000 (UTC)
+Subject: Re: [PATCH] selinux: fix residual uses of current_security() for the
+ SELinux blob
+To:     Stephen Smalley <sds@tycho.nsa.gov>, paul@paul-moore.com
+Cc:     keescook@chromium.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        dhowells@redhat.com, casey@schaufler-ca.com
+References: <20190904143248.7003-1-sds@tycho.nsa.gov>
 From:   Casey Schaufler <casey@schaufler-ca.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=casey@schaufler-ca.com; keydata=
@@ -111,12 +99,12 @@ Autocrypt: addr=casey@schaufler-ca.com; keydata=
  wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
  v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
  abzjfg==
-Message-ID: <5be00881-258a-d888-e544-0d14ac496dcf@schaufler-ca.com>
-Date:   Wed, 4 Sep 2019 07:56:46 -0700
+Message-ID: <0edb10a8-7c6a-bee1-b6d4-382ee1ed51ee@schaufler-ca.com>
+Date:   Wed, 4 Sep 2019 08:16:00 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <31205.1567598939@warthog.procyon.org.uk>
+In-Reply-To: <20190904143248.7003-1-sds@tycho.nsa.gov>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -124,18 +112,79 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/4/2019 5:08 AM, David Howells wrote:
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
->
->> I rebuilt with keys-next, updated the tests again, and now
->> the suite looks to be running trouble free.
-> Can I put you down as an Acked-by or something on this patch?
+On 9/4/2019 7:32 AM, Stephen Smalley wrote:
+> We need to use selinux_cred() to fetch the SELinux cred blob instead
+> of directly using current->security or current_security().  There
+> were a couple of lingering uses of current_security() in the SELinux code
+> that were apparently missed during the earlier conversions.
 
-I haven't done anything to see if the patch is actually useful.
-I don't have much (read: anything) in the way of key tests for
-Smack, so I can't say if this is what I want long term. But as
-it does appear harmless, yes, you can add my Acked-by on this.
+Thank you for finding this.
+
+>  IIUC, this
+> would only manifest as a bug if multiple security modules including
+> SELinux are enabled and SELinux is not first in the lsm order. After
+> this change, there appear to be no other users of current_security()
+> in-tree; perhaps we should remove it altogether.
+
+I agree.
 
 >
-> Thanks,
-> David
+> Fixes: bbd3662a8348 ("Infrastructure management of the cred security blob")
+> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
+
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+
+> ---
+>  security/selinux/hooks.c          |  2 +-
+>  security/selinux/include/objsec.h | 20 ++++++++++----------
+>  2 files changed, 11 insertions(+), 11 deletions(-)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index d55571c585ff..f1b763eceef9 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -3435,7 +3435,7 @@ static int selinux_inode_copy_up_xattr(const char *name)
+>  static int selinux_kernfs_init_security(struct kernfs_node *kn_dir,
+>  					struct kernfs_node *kn)
+>  {
+> -	const struct task_security_struct *tsec = current_security();
+> +	const struct task_security_struct *tsec = selinux_cred(current_cred());
+>  	u32 parent_sid, newsid, clen;
+>  	int rc;
+>  	char *context;
+> diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+> index 231262d8eac9..d2e00c7595dd 100644
+> --- a/security/selinux/include/objsec.h
+> +++ b/security/selinux/include/objsec.h
+> @@ -40,16 +40,6 @@ struct task_security_struct {
+>  	u32 sockcreate_sid;	/* fscreate SID */
+>  };
+>  
+> -/*
+> - * get the subjective security ID of the current task
+> - */
+> -static inline u32 current_sid(void)
+> -{
+> -	const struct task_security_struct *tsec = current_security();
+> -
+> -	return tsec->sid;
+> -}
+> -
+>  enum label_initialized {
+>  	LABEL_INVALID,		/* invalid or not initialized */
+>  	LABEL_INITIALIZED,	/* initialized */
+> @@ -188,4 +178,14 @@ static inline struct ipc_security_struct *selinux_ipc(
+>  	return ipc->security + selinux_blob_sizes.lbs_ipc;
+>  }
+>  
+> +/*
+> + * get the subjective security ID of the current task
+> + */
+> +static inline u32 current_sid(void)
+> +{
+> +	const struct task_security_struct *tsec = selinux_cred(current_cred());
+> +
+> +	return tsec->sid;
+> +}
+> +
+>  #endif /* _SELINUX_OBJSEC_H_ */
