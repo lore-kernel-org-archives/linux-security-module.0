@@ -2,75 +2,134 @@ Return-Path: <SRS0=QiH2=XA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A87A2C00306
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 20:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6A8C43331
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 21:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E79206CD
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 20:55:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44FF720828
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 21:32:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731378AbfIEUzl (ORCPT
+        id S2390614AbfIEVcu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Sep 2019 16:55:41 -0400
-Received: from namei.org ([65.99.196.166]:42760 "EHLO namei.org"
+        Thu, 5 Sep 2019 17:32:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:8816 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726936AbfIEUzl (ORCPT
+        id S1731418AbfIEVct (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Sep 2019 16:55:41 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x85KtRe6002717;
-        Thu, 5 Sep 2019 20:55:27 GMT
-Date:   Fri, 6 Sep 2019 06:55:27 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-cc:     Paul Moore <paul@paul-moore.com>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH] selinux: fix residual uses of current_security() for
- the SELinux blob
-In-Reply-To: <b5705661-089a-cb9c-53b5-21b855937638@tycho.nsa.gov>
-Message-ID: <alpine.LRH.2.21.1909060644570.1710@namei.org>
-References: <20190904143248.7003-1-sds@tycho.nsa.gov> <CAHC9VhTdv2C2MbNb7p-cPAW8ZeY+tmcz1c77qXmvowSxrWbw4g@mail.gmail.com> <b5705661-089a-cb9c-53b5-21b855937638@tycho.nsa.gov>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Thu, 5 Sep 2019 17:32:49 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 37A8C18C4266;
+        Thu,  5 Sep 2019 21:32:49 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A7BBA60BE1;
+        Thu,  5 Sep 2019 21:32:45 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjcsxQ8QB_v=cwBQw4pkJg7pp-bBsdWyPivFO_OeF-y+g@mail.gmail.com>
+References: <CAHk-=wjcsxQ8QB_v=cwBQw4pkJg7pp-bBsdWyPivFO_OeF-y+g@mail.gmail.com> <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk> <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com> <17703.1567702907@warthog.procyon.org.uk> <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com> <CAKCoTu7ms_Mr-q08d9XB3uascpzwBa5LF9JTT2aq8uUsoFE8aQ@mail.gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Ray Strode <rstrode@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Ray, Debarshi" <debarshi.ray@gmail.com>,
+        Robbie Harwood <rharwood@redhat.com>
+Subject: Re: Why add the general notification queue and its sources
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <5395.1567719164.1@warthog.procyon.org.uk>
+Date:   Thu, 05 Sep 2019 22:32:44 +0100
+Message-ID: <5396.1567719164@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Thu, 05 Sep 2019 21:32:49 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 5 Sep 2019, Stephen Smalley wrote:
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> For the next and any future rounds of stacking support, I'm hoping we can be a
-> bit more rigorous in our code review and testing requirements.
+> Also, what is the security model here? Open a special character
+> device, and you get access to random notifications from random
+> sources?
+>
+> That makes no sense. Do they have the same security permissions?
 
-After the 5th iteration of the patchset and with everything having at 
-least one trusted reviewer, I did ask the list if there were any 
-objections and stated I would otherwise merge to v4.21:
+Sigh.  It doesn't work like that.  I tried to describe this in the manpages I
+referred to in the cover note.  Obviously I didn't do a good enough job.  Let
+me try and explain the general workings and the security model here.
 
-http://kernsec.org/pipermail/linux-security-module-archive/2018-December/010209.html
+ (1) /dev/watch_queue just implements locked-in-memory buffers.  It gets you
+     no events by simply opening it.
 
-Regardless, from now I'll also require signoffs from all of the major LSMs 
-on these kinds of changes.
+     Each time you open it you get your own private buffer.  Buffers are not
+     shares.  Creation of buffers is limited by ENFILE, EMFILE and
+     RLIMIT_MEMLOCK.
 
-I'd have to say I also have concerns about the direction of LSM stacking 
-and what its final goal is.  It seems to makes sense to be able to stack 
-Apparmor inside SELinux or Smack, so that folk can use AA system 
-containers on an SELinux or Smack host.
+ (2) A buffer is implemented as a pollable ring buffer, with the head pointer
+     belonging to the kernel and the tail pointer belonging to userspace.
+     Userspace mmaps the buffer.
 
-We've not seen other proposed use-cases for full stacking materialize in a 
-sustained and viable manner.
+     The kernel *only ever* reads the head and tail pointer from a buffer; it
+     never reads anything else.
 
-Are there really any beyond AA inside a labeling LSM?  Because if not I 
-think this is a reasonable goal state for LSM stacking until we concretely 
-know otherwise.
+     When it wants to post a message to a buffer, the kernel reads the
+     pointers and then does one of three things:
 
+	(a) If the pointers were incoherent it drops the message.
 
--- 
-James Morris
-<jmorris@namei.org>
+	(b) If the buffer was full the kernel writes a flag to indicate this
+	    and drops the message.
 
+	(c) Otherwise, the kernel writes a message and maybe padding at the
+     	    place(s) it expects and writes the head pointer.  If userspace was
+     	    busy trashing the place, that should not cause a problem for the
+     	    kernel.
+
+     The buffer pointers are expected to run to the end and wrap naturally;
+     they're only masked off at the point of actually accessing the buffer.
+
+ (3) You connect event sources to your buffer, e.g.:
+
+	fd = open("/dev/watch_queue", ...);
+	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, ...);
+
+     or:
+
+	watch_mount(AT_FDCWD, "/net", 0, fd, ...);
+
+     Security is checked at the point of connection to make sure you have
+     permission to access that source.  You have to have View permission on a
+     key/keyring for key events, for example, and you have to have execute
+     permission on a directory for mount events.
+
+     The LSM gets a look-in too: Smack checks you have read permission on a
+     key for example.
+
+ (4) You can connect multiple sources of different types to your buffer and a
+     source can be connected to multiple buffers at a time.
+
+ (5) Security is checked when an event is delivered to make sure the triggerer
+     of the event has permission to give you that event.  Smack requires that
+     the triggerer has write permission on the opener of the buffer for
+     example.
+
+ (6) poll() signals POLLIN|POLLRDNORM if there is stuff in the buffer and
+     POLLERR if the pointers are incoherent.
+
+David
