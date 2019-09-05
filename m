@@ -2,88 +2,137 @@ Return-Path: <SRS0=QiH2=XA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C58C43331
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 18:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E3FC43331
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 18:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88BAC20825
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 18:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567708398;
-	bh=jVlKfCd+qY1ZMlZKQZC0N52YZ/f64nAiresv87D2w18=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=eu5t/I24yAr1ORtHADLapEcpadAnVuTreRsS12sC7ZDczrKpego270KxV55MCLslF
-	 jo+WMZR7fwN+vaw0dABXaGPluZAOLkTjgFynNM1wHyboDy9WtK08bvEMLfFMxCQrwE
-	 sKaNJiy6GZTvRJ4206nGG1lbDonWjvuRTma5MlYk=
+	by mail.kernel.org (Postfix) with ESMTP id DC15C20825
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 18:33:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390084AbfIESdJ (ORCPT
+        id S2391294AbfIESd0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Sep 2019 14:33:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41460 "EHLO mail.kernel.org"
+        Thu, 5 Sep 2019 14:33:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33828 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730223AbfIESdJ (ORCPT
+        id S2391293AbfIESdT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Sep 2019 14:33:09 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 5 Sep 2019 14:33:19 -0400
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC4E02070C;
-        Thu,  5 Sep 2019 18:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567708389;
-        bh=jVlKfCd+qY1ZMlZKQZC0N52YZ/f64nAiresv87D2w18=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UhI+Y9mhigPn0bUCjMQereobGTo3zyer/TQE6Tnsf04J8cctxB0llAFNgQzshmgrQ
-         M6BvzjTPQGymnf7SrY1tLgz1eu3m06iQgAPqRpt36Q6sWGGqm/kq5fFWudAhTsFYQg
-         vdELB8xvMqEI9muuvwe1UlG0MhMO4T0SDSNK2A1Q=
-Date:   Thu, 5 Sep 2019 20:33:05 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>, rstrode@redhat.com,
-        swhiteho@redhat.com, nicolas.dichtel@6wind.com, raven@themaw.net,
+        by mx1.redhat.com (Postfix) with ESMTPS id BB8F57CBB1
+        for <linux-security-module@vger.kernel.org>; Thu,  5 Sep 2019 18:33:18 +0000 (UTC)
+Received: by mail-wr1-f70.google.com with SMTP id s5so1358676wrv.23
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Sep 2019 11:33:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JkgFvZx1SpfRB54bm11+3DOumUuDokZW525XdQCPb+E=;
+        b=jM+vDQf7BbR/e7yxHdUfREl95QkW0PIBvmWnpi7X1Y0Bk6vSqiB8ULBD/AwTFmOuC8
+         Yjnwnpp01F38IzRY7PLokM8EdF2szN7NuuiJcrKGY9WVCsL1IRtveby9oB+98izCsc9S
+         khRlina7vHmn4DnS4/Q7crJobp1LfBXeMKtBg3CQT8LNgTl4POnjfVZLtENBAu0Dg9Pi
+         n5mucRZdgr87gWwJyLkRgl6JAWcbyNq6G3t4Q9mqwz8yGgEmC2j/8qqwE9LjYBXpQ4yb
+         uxYi0Onh4btDf7VQqHM3P4UYLaIA0OIBRkqRGtAOj1gTyu0S5kaeyALdHrcTa6y5seh9
+         49Nw==
+X-Gm-Message-State: APjAAAVlsFaA8WnZ2h4kyVRBkSPTBpgSrF9RBWClKn8I7/HQQwr53dR6
+        uSrVahVpbIseNww9jYaWs9tLlv76uAmy9vTeDcbmBxOMH05cYGRVqDrcJkvgyA5MaKgjQHKr/uu
+        4QRwBN2bHYwxTXNBtCAk8b7QChZWM1P1OAq68WD3HlNGa2ws3DAer
+X-Received: by 2002:a5d:568c:: with SMTP id f12mr3942172wrv.248.1567708397319;
+        Thu, 05 Sep 2019 11:33:17 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzmOECwYwtvafDfOc5sH/mM1xRRq5odIdcrX+xDOVM3wNnjyolmP+riNwHwlSKTnHua2vRyqquS9BP4i+1k7Ig=
+X-Received: by 2002:a5d:568c:: with SMTP id f12mr3942141wrv.248.1567708396973;
+ Thu, 05 Sep 2019 11:33:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+ <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
+ <17703.1567702907@warthog.procyon.org.uk> <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
+From:   Ray Strode <rstrode@redhat.com>
+Date:   Thu, 5 Sep 2019 14:32:40 -0400
+Message-ID: <CAKCoTu7ms_Mr-q08d9XB3uascpzwBa5LF9JTT2aq8uUsoFE8aQ@mail.gmail.com>
+Subject: Re: Why add the general notification queue and its sources
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
         keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-block <linux-block@vger.kernel.org>,
         Christian Brauner <christian@brauner.io>,
         LSM List <linux-security-module@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: Why add the general notification queue and its sources
-Message-ID: <20190905183305.GA22877@kroah.com>
-References: <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
- <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
- <17703.1567702907@warthog.procyon.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17703.1567702907@warthog.procyon.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Ray, Debarshi" <debarshi.ray@gmail.com>,
+        Robbie Harwood <rharwood@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 05, 2019 at 06:01:47PM +0100, David Howells wrote:
->  (2) USB notifications.
-> 
->      GregKH was looking for a way to do USB notifications as I was looking to
->      find additional sources to implement.  I'm not sure how he wants to use
->      them, but I'll let him speak to that himself.
+Hi,
 
-We are getting people asking for all sorts of "error reporting" events
-that can happen in the USB subsystem that we have started to abuse the
-KOBJ_CHANGE uevent notification for.  At the same time your patches were
-submitted, someone else submitted yet-another-USB-error patchset.  This
-type of user/kernel interface is much easier to use than abusing uevents
-for USB errors and general notifications about what happened with USB
-devices (more than just add/remove that uevents have).
+On Thu, Sep 5, 2019 at 1:20 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> You've at least now answered part of the "Why", but you didn't
+> actually answer the whole "another developer" part.
+It's certainly something we've wanted in the GNOME world for a long time:
 
-So yes, I would like this, and I am sure the ChromeOS people would like
-it too given that I rejected their patcheset with the assumption that
-this could be done with the notification queue api "soon" :)
+See for instance
 
-thanks,
+https://bugzilla.redhat.com/show_bug.cgi?id=991110
 
-greg k-h
+and
+
+https://bugzilla.gnome.org/show_bug.cgi?id=707402
+
+from all the way back 2013.  These are the alternatives I can think of:
+
+- poll? status quo, but not great for obvious wakeup reasons
+- use a different credential cache collection type that does support
+change notification?
+some of the other types do support change notification, but have their
+own set of
+problems. But maybe we should just go back to DIR type credential
+cache collections
+and try to figure out the life cycle problems they pose, i don't
+know... or get more
+man power behind KCM...
+- manage change notification entirely from userspace.  assume credentials will
+always be put in place from krb5-libs entry points, and just skip
+notification if
+it happens out from under the libraries. maybe upstream kerberos guys would
+be onboard with this, I don't know. This seems less robust than having
+the kernel
+in the loop, though.
+
+> I really don't like how nobody else than you seems to even look at any
+> of the key handling patches. Because nobody else seems to care.
+I've got no insight here, so i'll just throw a dart...
+
+viro, is this something you have any interest in watching closer?
+
+> See what I'm saying? This whole "David Howells does his own features
+> that nobody else uses" needs to stop. You need to have a champion. I
+> just don't feel safe pulling these kinds of changes from you, because
+> I get the feeling that ABSOLUTELY NOBODY ELSE ever really looked at it
+> or really cared.
+I get the "one man is not enough for proper maintenance" argument, and
+maybe it's true.  I don't know.
+
+But I just want to point out, I have been asking dhowells for this change
+notification API for years, so it's not something he did on his own and for
+no particularly good reason. It solves a real problem and has a real-world
+use case.
+
+He kindly did it because I (and Robbie Harwood and others) asked him about
+it, off and on, and  he was able to fit it onto his priority list for us.
+From this thread, it sounds like he solved a problem for Greg too, killing a
+couple birds with one stone?
+
+--Ray
