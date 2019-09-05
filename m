@@ -2,111 +2,87 @@ Return-Path: <SRS0=QiH2=XA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD707C00307
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 20:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E65C00306
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 20:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FB9220692
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 20:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D0242082E
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Sep 2019 20:27:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="bHZ8uJcq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388606AbfIEUKC (ORCPT
+        id S1732433AbfIEU1M (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Sep 2019 16:10:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39844 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732468AbfIEUKC (ORCPT
+        Thu, 5 Sep 2019 16:27:12 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34039 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731552AbfIEU1L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Sep 2019 16:10:02 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5C742300BEAE;
-        Thu,  5 Sep 2019 20:10:01 +0000 (UTC)
-Received: from ovpn-124-235.rdu2.redhat.com (ovpn-124-235.rdu2.redhat.com [10.10.124.235])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 26E605C1D4;
-        Thu,  5 Sep 2019 20:09:59 +0000 (UTC)
-Message-ID: <d19e8783e7fe47e51fbc12bf33c95fea16c93070.camel@redhat.com>
-Subject: Re: Why add the general notification queue and its sources
-From:   David Lehman <dlehman@redhat.com>
-To:     Ray Strode <rstrode@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ian Kent <ikent@redhat.com>
-Date:   Thu, 05 Sep 2019 16:09:58 -0400
-In-Reply-To: <CAKCoTu7ms4ckwDA_-onuJg+famnMzGZE9gGUcqqMz0kCAAECRg@mail.gmail.com>
-References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
-         <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
-         <17703.1567702907@warthog.procyon.org.uk>
-         <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
-         <11667f69-fbb5-28d2-3c31-7f865f2b93e5@redhat.com>
-         <CAKCoTu7ms4ckwDA_-onuJg+famnMzGZE9gGUcqqMz0kCAAECRg@mail.gmail.com>
-Organization: Red Hat, Inc.
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Thu, 5 Sep 2019 16:27:11 -0400
+Received: by mail-lf1-f67.google.com with SMTP id z21so3146223lfe.1
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Sep 2019 13:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RVsYT5LiDmTkAuyzoCSrPPZFZ3YwCseupt2r60psf1I=;
+        b=bHZ8uJcq2zcPozORM+OzqAQ0bUd3F3XQYjLPmB7yusYpkag+KiR64E1V3jWDbDycP2
+         vOrw5bkSrr+36y6niHqNRzPtMJQ6GSjsiuF+UC4uv855LXZNJ4rgsMRT28AlJ+Cp1/hI
+         rUDkTms10z6P/y2UpO/FxewO0gHi1hYSi2RKoU6ZYGm9DfXNhEHaepUXf2esHvoMzb/E
+         5wPof8VuXMSlT7sthHMqWPY/4pBi2Jk3nTZe+3Pl6UM51Yk71NvLz0SWI7qiwWWgTxzw
+         LGWlSPIwqjbYVjWl9dR0iGioUGl3k87QExGfIHBFkkfaLW3Ee5e7FIkMaQ84U/vICuA0
+         sWtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RVsYT5LiDmTkAuyzoCSrPPZFZ3YwCseupt2r60psf1I=;
+        b=r/2CnIqVMQGjHIM1sIDLnNJfB98iJkl31tAfPiPCdrOV8CgITlSDL6k+FK/HiJ5Gfe
+         /LrM5DDDNFV5styfbUOBzHamdZS/y+XMUuBshgzI329xE06ZC0yVIirvY7xH4yW5KCtN
+         phZtIk0KfQIgkMp2LMVKQ0lCgEHwETWID9ReKVSzo9Ih55GKfQMcdtDPK6lkyYDUZJAO
+         uSRT0/Fn9OsWXVhEH3gn2JymKxbuNvtJ3aEBNNAyPV9SqRJWWvTOhcPcXRn9ZRkNC3Pc
+         pb5b4BdYrLNR1ifSXB2Q/oqCJGSRg7BnhYEooAOVopf6wz7GCvumm6LGYPGKnJRUX7aD
+         c43g==
+X-Gm-Message-State: APjAAAX0YrzVxz0+LLZgkBcPb+selghoZmSHAC02RM6t6q3p3jPOs8Zw
+        GRK114JZXizGeZpYkG+saqHDEL949sqIKaqATOSD
+X-Google-Smtp-Source: APXvYqy9TN7/1cq1Af9uGfhXRRn5jIXAUcggtttorgLfQcc8cNyky0AkBfXNplb8OsogBH6JhvMh7RQCbDI4mrQL/QI=
+X-Received: by 2002:a19:8c14:: with SMTP id o20mr3712142lfd.158.1567715229715;
+ Thu, 05 Sep 2019 13:27:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 05 Sep 2019 20:10:01 +0000 (UTC)
+References: <156763801639.13084.2856415198922787618.stgit@chester> <alpine.LRH.2.21.1909051134200.30667@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1909051134200.30667@namei.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 5 Sep 2019 16:26:58 -0400
+Message-ID: <CAHC9VhS9Rz2T0W=g_e0a5Jn7XxSjXAA7nTHSEi3z__PQN3oxTg@mail.gmail.com>
+Subject: Re: [PATCH] lsm: remove current_security()
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2019-09-05 at 14:51 -0400, Ray Strode wrote:
-> Hi,
-> 
-> On Thu, Sep 5, 2019 at 2:37 PM Steven Whitehouse <swhiteho@redhat.com
-> > wrote:
-> > The original reason for the mount notification mechanism was so
-> > that we
-> > are able to provide information to GUIs and similar filesystem and
-> > storage management tools, matching the state of the filesystem with
-> > the
-> > state of the underlying devices. This is part of a larger project
-> > entitled "Project Springfield" to try and provide better management
-> > tools for storage and filesystems. I've copied David Lehman in,
-> > since he
-> > can provide a wider view on this topic.
-> So one problem that I've heard discussed before is what happens in a
-> thinp
-> setup when the disk space is overallocated and gets used up. IIRC,
-> the
-> volumes just sort of eat themselves?
-> 
-> Getting proper notification of looming catastrophic failure to the
-> workstation user
-> before it's too late would be useful, indeed.
-> 
-> I don't know if this new mechanism dhowells has development can help
-> with that,
+On Wed, Sep 4, 2019 at 9:34 PM James Morris <jmorris@namei.org> wrote:
+> On Wed, 4 Sep 2019, Paul Moore wrote:
+>
+> > There are no remaining callers and it really is unsafe in the brave
+> > new world of LSM stacking.
+> >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+>
+> Acked-by: James Morris <jamorris@linux.microsoft.com>
 
-My understanding is that there is already a dm devent that gets sent
-when the low water mark is crossed for a thin pool, but there is
-nothing in userspace that knows how to effectively get the user's
-attention at that time.
+Thanks.
 
-> and/or if solving that problem is part of the Project Springfield
-> initiative or not. Do you
-> know off hand?
+> You might as well push this through with the SELinux changes.
 
-We have been looking into building a userspace event notification
-service (for storage, initially) to aggregate and add context to low-
-level events such as these, providing a single source for all kinds of
-storage events with an excellent signal:noise ratio. Thin pool
-exhaustion is high on the list of problems we would want to address.
+That is what I was planning, it will break the build if merged via
+another tree without Stephen's patch.  Merged into selinux/next to be
+sent upstream during the next merge window.
 
-
-David
-
+-- 
+paul moore
+www.paul-moore.com
