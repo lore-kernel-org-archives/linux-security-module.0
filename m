@@ -2,46 +2,51 @@ Return-Path: <SRS0=Mc7W=XB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1272C43331
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Sep 2019 16:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B08FDC00307
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Sep 2019 16:49:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B66A5214E0
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Sep 2019 16:14:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="rvdNIvMb"
+	by mail.kernel.org (Postfix) with ESMTP id 8940F20842
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Sep 2019 16:49:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1567788548;
+	bh=xWpSJFUS4h9orrA331aLGvjdzbINh7yeaGYKw2j49vE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=hVWlXHZE63dUo/rrEG4UiJ3DRKHnprNCEvM9+2p/RPzSBSCxcszk3ZWOlHXb3x1qC
+	 rjB24ng1I4CiQfOz2AedeMutuYZtiZWgF4PBoJ/qCqx4eZg7R4yjSUbDPsxTIo7sVk
+	 ISJpZqLB3uarDbq1JvhPRSSRdLqj3gbhHV5qrsco=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbfIFQO1 (ORCPT
+        id S2405938AbfIFQtE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Sep 2019 12:14:27 -0400
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:59907 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726012AbfIFQO0 (ORCPT
+        Fri, 6 Sep 2019 12:49:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55288 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405934AbfIFQtE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Sep 2019 12:14:26 -0400
-X-Greylist: delayed 476 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Sep 2019 12:14:25 EDT
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 9EB54D0007D;
-        Fri,  6 Sep 2019 18:06:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1567785987;
-        bh=FwyTlVCqm8aP3xoN7suXSpGig40n/ST/gCqz/6H+pJg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=rvdNIvMbXElr2pL5DlaPYCAoEQ4gCJcigMVtxhzkc9XgVjWGP5lDlgpwyRzEDC11D
-         ozsDEfHCHPNwt6IIN/rFneyehInkshXlhaj88Mm7rEZ6fa3os/yGNCRaPfZzGt3Oe0
-         QG1Ercf9tHLDWoaBsG6/ukDLiBPrjB5Myyg4MBP0oz1q31qbtXmyp88E1gnMvKcFw2
-         LvEYL4upJAai1Aciu/tyNFtf0ptWrKOyzgVkh3LWlh6EfljZ3aS6z8I8elg+KYIquS
-         4AEBbUxmUEW87/C2ueqmJvbBNuMEWI5F+APrdwiTW9qYjGwMROhUju0SOQsCZt9+br
-         fhTtuqPfDzn2Q==
+        Fri, 6 Sep 2019 12:49:04 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE05620644;
+        Fri,  6 Sep 2019 16:49:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567788543;
+        bh=xWpSJFUS4h9orrA331aLGvjdzbINh7yeaGYKw2j49vE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=f2hfBkg1hv++7RhCjFnGYFYZ7UpLwMTDlXmWlwYszll17PrezP1cyi1PEEmnh+HNN
+         pnFT3OLPKxEOE5McxRb6hxqaoesj0DEtnoHNAQbAtp1/Ro9WmKNQ4jdHnENi4ZBFiz
+         IKixR/rSalsZdHuMF3yJ3i0ZTpyfCcai5ni0Vlng=
+Message-ID: <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org>
 Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
  sys_open()
-To:     Florian Weimer <fweimer@redhat.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
+From:   Jeff Layton <jlayton@kernel.org>
+To:     =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Florian Weimer <fweimer@redhat.com>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Andy Lutomirski <luto@kernel.org>,
@@ -55,7 +60,7 @@ CC:     <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
         Matthew Wilcox <willy@infradead.org>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
         <philippe.trebuchet@ssi.gouv.fr>,
         Scott Shell <scottsh@microsoft.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
@@ -66,68 +71,71 @@ CC:     <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
         Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
         Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
         Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Fri, 06 Sep 2019 12:48:59 -0400
+In-Reply-To: <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
 References: <20190906152455.22757-1-mic@digikod.net>
- <20190906152455.22757-2-mic@digikod.net>
- <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
-Date:   Fri, 6 Sep 2019 18:06:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+         <20190906152455.22757-2-mic@digikod.net>
+         <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
+         <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, 2019-09-06 at 18:06 +0200, Mickaël Salaün wrote:
+> On 06/09/2019 17:56, Florian Weimer wrote:
+> > Let's assume I want to add support for this to the glibc dynamic loader,
+> > while still being able to run on older kernels.
+> > 
+> > Is it safe to try the open call first, with O_MAYEXEC, and if that fails
+> > with EINVAL, try again without O_MAYEXEC?
+> 
+> The kernel ignore unknown open(2) flags, so yes, it is safe even for
+> older kernel to use O_MAYEXEC.
+> 
 
-On 06/09/2019 17:56, Florian Weimer wrote:
-> Let's assume I want to add support for this to the glibc dynamic loader,
-> while still being able to run on older kernels.
->
-> Is it safe to try the open call first, with O_MAYEXEC, and if that fails
-> with EINVAL, try again without O_MAYEXEC?
+Well...maybe. What about existing programs that are sending down bogus
+open flags? Once you turn this on, they may break...or provide a way to
+circumvent the protections this gives.
 
-The kernel ignore unknown open(2) flags, so yes, it is safe even for
-older kernel to use O_MAYEXEC.
+Maybe this should be a new flag that is only usable in the new openat2()
+syscall that's still under discussion? That syscall will enforce that
+all flags are recognized. You presumably wouldn't need the sysctl if you
+went that route too.
 
->
-> Or do I risk disabling this security feature if I do that?
+Anyone that wants to use this will have to recompile anyway. If the
+kernel doesn't support openat2 or if the flag is rejected then you know
+that you have no O_MAYEXEC support and can decide what to do.
 
-It is only a security feature if the kernel support it, otherwise it is
-a no-op.
+> > Or do I risk disabling this security feature if I do that?
+> 
+> It is only a security feature if the kernel support it, otherwise it is
+> a no-op.
+> 
 
->
-> Do we need a different way for recognizing kernel support.  (Note that
-> we cannot probe paths in /proc for various reasons.)
+With a security feature, I think we really want userland to aware of
+whether it works.
 
-There is no need to probe for kernel support.
+> > Do we need a different way for recognizing kernel support.  (Note that
+> > we cannot probe paths in /proc for various reasons.)
+> 
+> There is no need to probe for kernel support.
+> 
+> > Thanks,
+> > Florian
+> > 
+> 
+> --
+> Mickaël Salaün
+> 
+> Les données à caractère personnel recueillies et traitées dans le cadre de cet échange, le sont à seule fin d’exécution d’une relation professionnelle et s’opèrent dans cette seule finalité et pour la durée nécessaire à cette relation. Si vous souhaitez faire usage de vos droits de consultation, de rectification et de suppression de vos données, veuillez contacter contact.rgpd@sgdsn.gouv.fr. Si vous avez reçu ce message par erreur, nous vous remercions d’en informer l’expéditeur et de détruire le message. The personal data collected and processed during this exchange aims solely at completing a business relationship and is limited to the necessary duration of that relationship. If you wish to use your rights of consultation, rectification and deletion of your data, please contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message in error, we thank you for informing the sender and destroying the message.
 
->
-> Thanks,
-> Florian
->
+-- 
+Jeff Layton <jlayton@kernel.org>
 
---
-Micka=C3=ABl Sala=C3=BCn
-
-Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
-es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
-=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
-nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
-=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
-tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
-acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
-eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
-t de d=C3=A9truire le message. The personal data collected and processed du=
-ring this exchange aims solely at completing a business relationship and is=
- limited to the necessary duration of that relationship. If you wish to use=
- your rights of consultation, rectification and deletion of your data, plea=
-se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
-n error, we thank you for informing the sender and destroying the message.
