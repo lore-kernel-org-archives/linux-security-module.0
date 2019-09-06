@@ -2,178 +2,126 @@ Return-Path: <SRS0=Mc7W=XB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62AB5C00307
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Sep 2019 17:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD859C43331
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Sep 2019 17:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A3EF21670
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Sep 2019 17:14:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="FxaYGxPo"
+	by mail.kernel.org (Postfix) with ESMTP id B5D1320842
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Sep 2019 17:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1567790111;
+	bh=Pdd5X5KdmhTY3zVAeyGvUCWFX8Plc6Z4m96rFXEwVAk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=GxL41qzM1unxlu1Pc5iJsW+446mX6DZKz5E7Mmg/JrogOKtiPJ6UP3Mi/pg5hnV4m
+	 4qjjVeoUx2mrjwbfBeEw2/048of7G66FXYzLy8/YCQbQ0DtnPlMzc7P1TwUHLV7o9X
+	 yTEGPkaRvdW5Q03hCN3MemA0e05GYd50z8F/Coog=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395149AbfIFROR (ORCPT
+        id S2404096AbfIFRPL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Sep 2019 13:14:17 -0400
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:50125 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731344AbfIFROR (ORCPT
+        Fri, 6 Sep 2019 13:15:11 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46193 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391025AbfIFRPI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Sep 2019 13:14:17 -0400
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 3E026D0007F;
-        Fri,  6 Sep 2019 19:14:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1567790055;
-        bh=cLdOiE54zKyAjOHLoAwzZPgDyl0aVvM/gUvpCeq4S7g=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=FxaYGxPomU3H6XZ3g9gaFaWPW3F6a/Yn38emhmc3YLQXr9bsQzK0Jfo88sUl0z/il
-         HS7+Z7kORFesl0y4ZjpYo5aaKLoMZ/OIJWz1iuqDcjAM8XkR8luHMLNgkLcDPsbRHG
-         OSo6l4mrrCUaiEJvRgJxuQqbw7n4xVxKZLmhP/H+47q48e7OyIDCMNkWdIhAOulvWP
-         t9mk7IK8G3/E71JHC2cXmRAlYuOkcQeZJWRpB9RqMeF7dSARiOHT/iO1+VKaYUl2xR
-         KElwe8V2DtWOWSx4NqUbBZsPxOIwPTmta+EHU/8O3rlPzuE6Ey3Ak9yTlS0TJabKWK
-         CZm8Tw6ByN6hw==
-Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
- sys_open()
-To:     Jeff Layton <jlayton@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20190906152455.22757-1-mic@digikod.net>
- <20190906152455.22757-2-mic@digikod.net>
- <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
- <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
- <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <1fbf54f6-7597-3633-a76c-11c4b2481add@ssi.gouv.fr>
-Date:   Fri, 6 Sep 2019 19:14:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Fri, 6 Sep 2019 13:15:08 -0400
+Received: by mail-lf1-f65.google.com with SMTP id t8so5631033lfc.13
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Sep 2019 10:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HgnD7xuPPV7kJPJv1y/oxrmL+dxJJMuTrQ4Q4FChOdU=;
+        b=S6FXIRgesHQioG8oGxLk5Tjwzb4SPiDI6TQkN/1PfVNUkJMeUM47+DjxmFZZnsgnqF
+         aVUh5gjMjdVeG3Ez1LdJPa9NKOGaCIHQumkrSOBf3OS+YC+yfMLrM6/zSsHJRG8ghrAg
+         d5Mr3bY5beGZhlJwy9YNIxLVtQzi4ydOFbhE4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HgnD7xuPPV7kJPJv1y/oxrmL+dxJJMuTrQ4Q4FChOdU=;
+        b=bAsV2jTKjT8cqZ2o8OYERUtK0ik9VM5y4PiWVAg+VMIHm7Bc4ZnST+cvKwShOXuRIc
+         HNkJS1Bk7Nz0Aj1PBQcFugsvAuzG0RczlhljGOwDKKHtgbMRnlqtxa87s4QRdwVyc+I5
+         KpEyqEWjsAcLZKm6drQ2d2Y89hH64Vodoj0nzgave4fXw4ySfc+IMqVxD/Di6LZ7Jrlp
+         NjYmxi0OEuM4sIjGLwthgT7MrXezpZMPQdJQ8n20x44jL/3T5+f6JCC3E0wAmvZXADhU
+         HOCcqEn6aM9XchXGpjci+v1o1wsiFjVlMHQqvLTAYAjMfj2jFPJWPJHStg8/PUFWyKxU
+         /asA==
+X-Gm-Message-State: APjAAAX/cmHkUOIAr3Yt4xwOxe8HOgMx1mwpOC0EMBbXHI3sfKuT1XpM
+        QEmrzUKMGYmMqvz13QTZXZE5lGrKNWE=
+X-Google-Smtp-Source: APXvYqwkj8Eq/zQ08jSu7+Tp0P85ye2lipR/sBPp+mKEWcNXyXk6UWQyfmu/tHhvKfAJXLpJpDtYkA==
+X-Received: by 2002:ac2:54a9:: with SMTP id w9mr7565225lfk.49.1567790106877;
+        Fri, 06 Sep 2019 10:15:06 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id u8sm1403592lfb.36.2019.09.06.10.15.04
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2019 10:15:04 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id a4so6684521ljk.8
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Sep 2019 10:15:04 -0700 (PDT)
+X-Received: by 2002:a2e:8507:: with SMTP id j7mr6626752lji.156.1567790104003;
+ Fri, 06 Sep 2019 10:15:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+ <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
+ <17703.1567702907@warthog.procyon.org.uk> <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
+ <CAKCoTu7ms_Mr-q08d9XB3uascpzwBa5LF9JTT2aq8uUsoFE8aQ@mail.gmail.com>
+ <CAHk-=wjcsxQ8QB_v=cwBQw4pkJg7pp-bBsdWyPivFO_OeF-y+g@mail.gmail.com>
+ <5396.1567719164@warthog.procyon.org.uk> <CAHk-=wgbCXea1a9OTWgMMvcsCGGiNiPp+ty-edZrBWn63NCYdw@mail.gmail.com>
+ <14883.1567725508@warthog.procyon.org.uk> <CAHk-=wjt2Eb+yEDOcQwCa0SrZ4cWu967OtQG8Vz21c=n5ZP1Nw@mail.gmail.com>
+ <27732.1567764557@warthog.procyon.org.uk> <CAHk-=wiR1fpahgKuxSOQY6OfgjWD+MKz8UF6qUQ6V_y2TC_V6w@mail.gmail.com>
+ <CAHk-=wioHmz69394xKRqFkhK8si86P_704KgcwjKxawLAYAiug@mail.gmail.com>
+ <8e60555e-9247-e03f-e8b4-1d31f70f1221@redhat.com> <CAHk-=wg6=qhw0-F=2_8y=VdT+fj8k7G1+t2XNSkRYimXhampVg@mail.gmail.com>
+In-Reply-To: <CAHk-=wg6=qhw0-F=2_8y=VdT+fj8k7G1+t2XNSkRYimXhampVg@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 6 Sep 2019 10:14:47 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjaSzdzYNuQXUSZNkT75Wmfw2v96tekgnV8nOwBQ3h0ig@mail.gmail.com>
+Message-ID: <CAHk-=wjaSzdzYNuQXUSZNkT75Wmfw2v96tekgnV8nOwBQ3h0ig@mail.gmail.com>
+Subject: Re: Why add the general notification queue and its sources
+To:     Steven Whitehouse <swhiteho@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Ray Strode <rstrode@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Ray, Debarshi" <debarshi.ray@gmail.com>,
+        Robbie Harwood <rharwood@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 06/09/2019 18:48, Jeff Layton wrote:
-> On Fri, 2019-09-06 at 18:06 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
->> On 06/09/2019 17:56, Florian Weimer wrote:
->>> Let's assume I want to add support for this to the glibc dynamic loader=
-,
->>> while still being able to run on older kernels.
->>>
->>> Is it safe to try the open call first, with O_MAYEXEC, and if that fail=
-s
->>> with EINVAL, try again without O_MAYEXEC?
->>
->> The kernel ignore unknown open(2) flags, so yes, it is safe even for
->> older kernel to use O_MAYEXEC.
->>
+On Fri, Sep 6, 2019 at 10:07 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Well...maybe. What about existing programs that are sending down bogus
-> open flags? Once you turn this on, they may break...or provide a way to
-> circumvent the protections this gives.
+> Hmm. Maybe somebody can come up with a good legacy signaling solution
+> (and "just use another pipe for error notification and OOB data" for
+> the first one may _work_, but that sounds pretty hacky and just not
+> very convenient).
 
-Well, I don't think we should nor could care about bogus programs that
-do not conform to the Linux ABI.
+... actually, maybe the trivial solution for at least some prototyping
+cases is to make any user mode writers never drop messages. Don't use
+a non-blocking fd for the write direction.
 
->
-> Maybe this should be a new flag that is only usable in the new openat2()
-> syscall that's still under discussion? That syscall will enforce that
-> all flags are recognized. You presumably wouldn't need the sysctl if you
-> went that route too.
+That's obviously *not* acceptable for a kernel writer, and it's not
+acceptable for an actual system daemon writer (that you could block by
+just not reading the notifications), but it's certainly acceptable for
+the "let's prototype having kernel support for /proc/mounts
+notifications using a local thread that just polls for it every few
+seconds".
 
-Here is a thread about a new syscall:
-https://lore.kernel.org/lkml/1544699060.6703.11.camel@linux.ibm.com/
+So at least for _some_ prototypes you can probably just ignore the
+overflow issue. It won't get you full test coverage, but it will get
+you a working legacy solution and a "look, if we have kernel support
+for this, we can do better".
 
-I don't think it fit well with auditing nor integrity. Moreover using
-the current open(2) behavior of ignoring unknown flags fit well with the
-usage of O_MAYEXEC (because it is only a hint to the kernel about the
-use of the *opened* file).
-
->
-> Anyone that wants to use this will have to recompile anyway. If the
-> kernel doesn't support openat2 or if the flag is rejected then you know
-> that you have no O_MAYEXEC support and can decide what to do.
-
-If we want to enforce a security policy, we need to either be the system
-administrator or the distro developer. If a distro ship interpreters
-using this flag, we don't need to recompile anything, but we need to be
-able to control the enforcement according to the mount point
-configuration (or an advanced MAC, or an IMA config). I don't see why an
-userspace process should check if this flag is supported or not, it
-should simply use it, and the sysadmin will enable an enforcement if it
-makes sense for the whole system.
-
->
->>> Or do I risk disabling this security feature if I do that?
->>
->> It is only a security feature if the kernel support it, otherwise it is
->> a no-op.
->>
->
-> With a security feature, I think we really want userland to aware of
-> whether it works.
-
-If userland would like to enforce something, it can already do it
-without any kernel modification. The goal of the O_MAYEXEC flag is to
-enable the kernel, hence sysadmins or system designers, to enforce a
-global security policy that makes sense.
-
->
->>> Do we need a different way for recognizing kernel support.  (Note that
->>> we cannot probe paths in /proc for various reasons.)
->>
->> There is no need to probe for kernel support.
->>
->>> Thanks,
->>> Florian
->>>
-Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
-es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
-=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
-nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
-=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
-tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
-acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
-eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
-t de d=C3=A9truire le message. The personal data collected and processed du=
-ring this exchange aims solely at completing a business relationship and is=
- limited to the necessary duration of that relationship. If you wish to use=
- your rights of consultation, rectification and deletion of your data, plea=
-se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
-n error, we thank you for informing the sender and destroying the message.
+                 Linus
