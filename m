@@ -1,81 +1,139 @@
-Return-Path: <SRS0=+l0E=XC=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=zudm=XD=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E385C43331
-	for <linux-security-module@archiver.kernel.org>; Sat,  7 Sep 2019 21:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FDBC433EF
+	for <linux-security-module@archiver.kernel.org>; Sun,  8 Sep 2019 15:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7450C2173B
-	for <linux-security-module@archiver.kernel.org>; Sat,  7 Sep 2019 21:21:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37999214DB
+	for <linux-security-module@archiver.kernel.org>; Sun,  8 Sep 2019 15:38:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfIGVVt (ORCPT
+        id S1726316AbfIHPih (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 7 Sep 2019 17:21:49 -0400
-Received: from mga06.intel.com ([134.134.136.31]:8834 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727008AbfIGVVt (ORCPT
+        Sun, 8 Sep 2019 11:38:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55892 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726443AbfIHPih (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 7 Sep 2019 17:21:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2019 14:21:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,478,1559545200"; 
-   d="scan'208";a="195779075"
-Received: from dpotapen-mobl1.ger.corp.intel.com ([10.252.53.110])
-  by orsmga002.jf.intel.com with ESMTP; 07 Sep 2019 14:21:46 -0700
-Message-ID: <5403fb1ecdee5c2443c8389ffd7b25e800340565.camel@linux.intel.com>
-Subject: Re: [PATCH] tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for
- interrupts
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jan =?ISO-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        linux-stable@vger.kernel.org
-Date:   Sun, 08 Sep 2019 00:21:46 +0300
-In-Reply-To: <b19179168421eb511856f0ec5fd328d97f06a68c.camel@pengutronix.de>
-References: <20190830000906.2369009-1-stefanb@linux.vnet.ibm.com>
-         <b19179168421eb511856f0ec5fd328d97f06a68c.camel@pengutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Sun, 8 Sep 2019 11:38:37 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x88FbFom022245
+        for <linux-security-module@vger.kernel.org>; Sun, 8 Sep 2019 11:38:36 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uvt2uvqsa-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Sun, 08 Sep 2019 11:38:36 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 8 Sep 2019 16:38:33 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 8 Sep 2019 16:38:29 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x88FcSkX29950086
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 8 Sep 2019 15:38:29 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0277FA405E;
+        Sun,  8 Sep 2019 15:38:28 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 21D7FA405F;
+        Sun,  8 Sep 2019 15:38:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.159.93])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun,  8 Sep 2019 15:38:26 +0000 (GMT)
+Subject: Re: [PATCH 2/3] ima: update the file measurement on truncate
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Janne Karhunen <janne.karhunen@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        viro@zeniv.linux.org.uk
+Cc:     Konsta Karsisto <konsta.karsisto@gmail.com>
+Date:   Sun, 08 Sep 2019 11:38:26 -0400
+In-Reply-To: <20190902094540.12786-2-janne.karhunen@gmail.com>
+References: <20190902094540.12786-1-janne.karhunen@gmail.com>
+         <20190902094540.12786-2-janne.karhunen@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2-1 
-MIME-Version: 1.0
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19090815-0008-0000-0000-00000312BFF6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090815-0009-0000-0000-00004A3120D3
+Message-Id: <1567957106.4614.162.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-08_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909080170
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2019-09-06 at 14:37 +0200, Jan Lübbe wrote:
-> This is due to the SPI accesses performed by tis_int_handler (which
-> will sleep). Switching to devm_request_threaded_irq fixes this and
-> leads to a successful IRQ probe.
+On Mon, 2019-09-02 at 12:45 +0300, Janne Karhunen wrote:
+> Let IMA know when a file is being opened with truncate
+> or truncated directly.
+> 
+> Depends on commit 72649b7862a7 ("ima: keep the integrity state of open files up to date")'
+> 
+> Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
+> Signed-off-by: Konsta Karsisto <konsta.karsisto@gmail.com>
+> ---
+>  fs/namei.c | 5 ++++-
+>  fs/open.c  | 3 +++
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 209c51a5226c..0994fe26bef1 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3418,8 +3418,11 @@ static int do_last(struct nameidata *nd,
+>  		goto out;
+>  opened:
+>  	error = ima_file_check(file, op->acc_mode);
+> -	if (!error && will_truncate)
+> +	if (!error && will_truncate) {
+>  		error = handle_truncate(file);
+> +		if (!error)
+> +			ima_file_update(file);
 
-Aah, right through tpm_tis_read32/write32(). This is definitely a new
-regression. Thanks for reporting this! This was completely missed when
-the support for other than TCG MMIO was implemented for the TIS driver.
+Security and IMA hooks are normally named after the function.  For
+example, there's a security hook named security_path_truncate() in
+handle_truncate().  The new hook after the truncate would either be
+named security_post_path_truncate() or ima_post_path_truncate().
 
-This should have a patch of it own with your reported-by unless you
-care to send bug fix for it.
+> +	}
+>  out:
+>  	if (unlikely(error > 0)) {
+>  		WARN_ON(1);
+> diff --git a/fs/open.c b/fs/open.c
+> index a59abe3c669a..98c2d4629371 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -63,6 +63,9 @@ int do_truncate(struct dentry *dentry, loff_t length, unsigned int time_attrs,
+>  	/* Note any delegations or leases have already been broken: */
+>  	ret = notify_change(dentry, &newattrs, NULL);
+>  	inode_unlock(dentry->d_inode);
+> +
+> +	if (filp)
+> +		ima_file_update(filp);
+>  	return ret;
+>  }
+>  
 
-> But: It seems that the IRQ is not acked correctly, as the interrupt
-> line stays low. I suspect this is because the tpm_chip_stop from
-> http://git.infradead.org/users/jjs/linux-tpmdd.git/commitdiff/9b558deab2c5d7dc23d5f7a4064892ede482ad32
-> happens before the threaded handler runs. I'm currently unable to
-> verify that though, as my build machine's disk just died. :/
+do_truncate() is called from a number of places.  Are you sure that
+the call to IMA should be in all of them?  security_path_truncate()
+isn't in all of the callers.
 
-I cannot recall all the nyances related to interrupt probing but with a
-quick look I wonder why it does not utilize int_queue. Then
-tpm_chip_stop() could be done synchronously.
+Mimi
 
-> Regards,
-> Jan
-
-/Jarkko
 
