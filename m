@@ -2,163 +2,123 @@ Return-Path: <SRS0=KGDz=XE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E063C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 11:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFBCC4740A
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 12:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 007AD218DE
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 11:55:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 315E921924
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 12:05:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="FxXgmurF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404505AbfIILy4 (ORCPT
+        id S2390846AbfIIMF5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Sep 2019 07:54:56 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:34966 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730901AbfIILy4 (ORCPT
+        Mon, 9 Sep 2019 08:05:57 -0400
+Received: from condef-10.nifty.com ([202.248.20.75]:23753 "EHLO
+        condef-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387569AbfIIMF5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Sep 2019 07:54:56 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id BAB3BA01CD;
-        Mon,  9 Sep 2019 13:54:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id v88C_yIZE0OA; Mon,  9 Sep 2019 13:54:46 +0200 (CEST)
-Date:   Mon, 9 Sep 2019 21:54:37 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>
-Cc:     James Morris <jmorris@namei.org>, Jeff Layton <jlayton@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
- sys_open()
-Message-ID: <20190909115437.jwpyslcdhhvzo7g5@yavin>
-References: <20190906152455.22757-1-mic@digikod.net>
- <20190906152455.22757-2-mic@digikod.net>
- <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
- <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
- <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org>
- <1fbf54f6-7597-3633-a76c-11c4b2481add@ssi.gouv.fr>
- <5a59b309f9d0603d8481a483e16b5d12ecb77540.camel@kernel.org>
- <alpine.LRH.2.21.1909061202070.18660@namei.org>
- <49e98ece-e85f-3006-159b-2e04ba67019e@ssi.gouv.fr>
+        Mon, 9 Sep 2019 08:05:57 -0400
+X-Greylist: delayed 529 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Sep 2019 08:05:55 EDT
+Received: from conssluserg-01.nifty.com ([10.126.8.80])by condef-10.nifty.com with ESMTP id x89BiGdp022438;
+        Mon, 9 Sep 2019 20:44:16 +0900
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x89BiAUR018670;
+        Mon, 9 Sep 2019 20:44:11 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x89BiAUR018670
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1568029451;
+        bh=of2s0vFLHh9Xp+TAKb4j4quIC4aFs7+CQ9EVWEBoOXY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FxXgmurF6mxeDS60G1oeYiUS9P/0FdqK3IuE6+pNylWWl0JC9YTccp3nDkDjoghYm
+         HJRy8imvWFb9FJvmthHjPNCpObFu89E8cNKvpkvYdFaphQFN1ytFPKlOWTpFMq/REG
+         UX6Sr1xQqj5P4F8OI0coJlWuZLV96XyNDDo9oTxoD2md5vA6vOvEliQhXVg8Q9oKMa
+         6mS4RTZavsxHL4BatlyaahCO7qGmKODsNVBUQo5XLv0JP5vSiojJHL1BxHePZW+sML
+         r5jUPN2YcalUSFF6lNt5xXr/ETxtUOrO35I3eHRXQStPPEKUAKzROuvnu2JjXEiYEf
+         apYKZ+1vMUM7A==
+X-Nifty-SrcIP: [209.85.222.50]
+Received: by mail-ua1-f50.google.com with SMTP id k12so4133631uan.13;
+        Mon, 09 Sep 2019 04:44:10 -0700 (PDT)
+X-Gm-Message-State: APjAAAXsONBP+ovDwCYZotbtyQIkyK/s3ka6wO8GbnGsz0ig47gHHn5t
+        fRTwc4S8h9Wmo6xc7qMr/o1j0T2q6ezJfZu59U4=
+X-Google-Smtp-Source: APXvYqyiuOyxhpYGNWsBUxwx3KfspUmCoygmqcgVBTNco1JFlWrzoMv8KeT07F5nk5pp3m3XjunIkVE3l/KQjpoLVjk=
+X-Received: by 2002:a9f:2213:: with SMTP id 19mr10805775uad.25.1568029449667;
+ Mon, 09 Sep 2019 04:44:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ez37ojmvznisdz5u"
-Content-Disposition: inline
-In-Reply-To: <49e98ece-e85f-3006-159b-2e04ba67019e@ssi.gouv.fr>
+References: <20190726021058.4212-1-yamada.masahiro@socionext.com> <20190726021058.4212-2-yamada.masahiro@socionext.com>
+In-Reply-To: <20190726021058.4212-2-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 9 Sep 2019 20:43:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT1KfUb5vkU7r=fUWqo+YoavzuirT050+8z9T4FpOYOQg@mail.gmail.com>
+Message-ID: <CAK7LNAT1KfUb5vkU7r=fUWqo+YoavzuirT050+8z9T4FpOYOQg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] integrity: remove unneeded, broken attempt to add -fshort-wchar
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     Dave Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Jul 26, 2019 at 11:11 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> I guess commit 15ea0e1e3e18 ("efi: Import certificates from UEFI Secure
+> Boot") attempted to add -fshort-wchar for building load_uefi.o, but it
+> has never worked as intended.
+>
+> load_uefi.o is created in the platform_certs/ sub-directory. If you
+> really want to add -fshort-wchar, the correct code is:
+>
+>   $(obj)/platform_certs/load_uefi.o: KBUILD_CFLAGS += -fshort-wchar
+>
+> or, in a more Kbuild-ish way:
+>
+>   CFLAGS_load_uefi.o := -fshort-wchar
+>
+> But, you do not need to fix it.
+>
+> Commit 8c97023cf051 ("Kbuild: use -fshort-wchar globally") had already
+> added -fshort-wchar globally. This code was unneeded in the first place.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
---ez37ojmvznisdz5u
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ping.
 
-On 2019-09-09, Micka=EBl Sala=FCn <mickael.salaun@ssi.gouv.fr> wrote:
-> On 06/09/2019 21:03, James Morris wrote:
-> > On Fri, 6 Sep 2019, Jeff Layton wrote:
-> >
-> >> The fact that open and openat didn't vet unknown flags is really a bug.
-> >>
-> >> Too late to fix it now, of course, and as Aleksa points out, we've
-> >> worked around that in the past. Now though, we have a new openat2
-> >> syscall on the horizon. There's little need to continue these sorts of
-> >> hacks.
-> >>
-> >> New open flags really have no place in the old syscalls, IMO.
-> >
-> > Agree here. It's unfortunate but a reality and Linus will reject any su=
-ch
-> > changes which break existing userspace.
->=20
-> Do you mean that adding new flags to open(2) is not possible?
 
-It is possible, as long as there is no case where a program that works
-today (and passes garbage to the unused bits in flags) works with the
-change.
 
-O_TMPFILE was okay because it's actually two flags (one is O_DIRECTORY)
-and no working program does file IO to a directory (there are also some
-other tricky things done there, I'll admit I don't fully understand it).
+>
+>  security/integrity/Makefile | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+> index 19faace69644..b6d6273a4176 100644
+> --- a/security/integrity/Makefile
+> +++ b/security/integrity/Makefile
+> @@ -13,7 +13,6 @@ integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyrin
+>  integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+>                                         platform_certs/load_uefi.o
+>  integrity-$(CONFIG_LOAD_IPL_KEYS) += platform_certs/load_ipl_s390.o
+> -$(obj)/load_uefi.o: KBUILD_CFLAGS += -fshort-wchar
+>
+>  subdir-$(CONFIG_IMA)                   += ima
+>  obj-$(CONFIG_IMA)                      += ima/
+> --
+> 2.17.1
+>
 
-O_EMPTYPATH works because it's a no-op with non-empty path strings, and
-empty path strings have always given an error (so no working program
-does it today).
 
-However, O_MAYEXEC will result in programs that pass garbage bits to
-potentially get -EACCES that worked previously.
-
-> As I said, O_MAYEXEC should be ignored if it is not supported by the
-> kernel, which perfectly fit with the current open(2) flags behavior, and
-> should also behave the same with openat2(2).
-
-NACK on having that behaviour with openat2(2). -EINVAL on unknown flags
-is how all other syscalls work (any new syscall proposed today that
-didn't do that would be rightly rejected), and is a quirk of open(2)
-which unfortunately cannot be fixed. The fact that *every new O_ flag
-needs to work around this problem* should be an indication that this
-interface mis-design should not be allowed to infect any more syscalls.
-
-Note that this point is regardless of the fact that O_MAYEXEC is a
-*security* flag -- if userspace wants to have a secure fallback on
-old kernels (which is "the right thing" to do) they would have to do
-more work than necessary. And programs that don't care don't have to do
-anything special.
-
-However with -EINVAL, the programs doing "the right thing" get an easy
--EINVAL check. And programs that don't care can just un-set O_MAYEXEC
-and retry. You should be forced to deal with the case where a flag is
-not supported -- and this is doubly true of security flags!
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---ez37ojmvznisdz5u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXXY9egAKCRCdlLljIbnQ
-EjqNAQDvCWENjLmSU64mc7qWEe/HYDu0pcFBvD0dJVUnIZyr0QD/dtKaeEjccIWh
-RCZTPOrv97U5RjHt3IPWeWSeHVLCcAo=
-=tOAG
------END PGP SIGNATURE-----
-
---ez37ojmvznisdz5u--
+-- 
+Best Regards
+Masahiro Yamada
