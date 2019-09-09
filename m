@@ -2,252 +2,142 @@ Return-Path: <SRS0=KGDz=XE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F35C4740A
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 15:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4615BC4740A
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 16:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A62BD2171F
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 15:49:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A2C32084D
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 16:00:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="pyj6eZzO"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sBYGIqJs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729792AbfIIPtj (ORCPT
+        id S2388422AbfIIQAz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Sep 2019 11:49:39 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:32926 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388944AbfIIPti (ORCPT
+        Mon, 9 Sep 2019 12:00:55 -0400
+Received: from sonic311-7.consmr.mail.ir2.yahoo.com ([77.238.176.250]:34229
+        "EHLO sonic311-7.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729881AbfIIQAz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Sep 2019 11:49:38 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n190so8079424pgn.0
-        for <linux-security-module@vger.kernel.org>; Mon, 09 Sep 2019 08:49:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=TcpVRxPvSCJBDeMrd2YTMRp8Rl8PbIZu3n0i+gvGrs0=;
-        b=pyj6eZzOMQKgCMAnu5hk7YcUQt/XRn56h4r0IMODI0hyM9G9CYPIi2I36Xh8bWAswe
-         HQ69epbn6Uf9ynM4L80OZwNVT7+NKwhsVjbbBOdgZ3Sno+ciFri39Kli05LwVBVwXMO4
-         WPQPuPR8PH4DNpoQm9XN6dklzcVFGdNXqpu0a1NtCG6oZM5UZY52+iEmc5U+69aWMSDD
-         TtFXWImbrKRvBbStNAPXOn384l3qdIeXuF90JziftEWHMPomjRynDL5FJz+grsE1Ojux
-         M7UMm0N5iJ2ogZ3iHxqnGcVPcNf5bXqHXW4l+fPAohZq2BPjtEtmzX37Gd63Ig1oZN85
-         4jrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=TcpVRxPvSCJBDeMrd2YTMRp8Rl8PbIZu3n0i+gvGrs0=;
-        b=LaSPuxthBZd6CCjhn2h/i0rUqltVbsZUmZhymkfl447ttDuopSW2pdc466oNUSxCCE
-         u3DfMalqCIc7ftC6LyUQWPdG80C17XALNBB7wEm1+tjVI7ko8bgl82m0oRmoTncuT9gY
-         Ld4s8VhfG0WZqh4oD42YfIsHkBNbjNM4hG4wFIkGR6kFm9QcPw1sM8ubPk1BRG/NllS4
-         dw9szg2dU7pzx6o/5vcgRoAFcCntOjpGa+4/fxDie+yliXScecE8jDrO3y46OZe8rQlg
-         upO0ioRWbE9zHJT8+xwvJY9Od1t6J3qF3EmS7LfqcjSByJX6B7rJyoppgdG8pSeSCUZS
-         toWQ==
-X-Gm-Message-State: APjAAAXSdkMBFqfKVyTRze3EhifAZDjXLfqsDWrSoIz65M9RBQrRF9fs
-        uU6c0P/UfsEXzGGyCKvh+TulMw==
-X-Google-Smtp-Source: APXvYqySGg+p3Dw7cgCsaiUZVu10eDMnz9rdqxHXA7Nhsj2dAxRpToTiDCtfq8sckKTaoarNWjC1Vw==
-X-Received: by 2002:a63:df06:: with SMTP id u6mr21484642pgg.96.1568044176881;
-        Mon, 09 Sep 2019 08:49:36 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:75ae:6074:df59:7e95? ([2601:646:c200:1ef2:75ae:6074:df59:7e95])
-        by smtp.gmail.com with ESMTPSA id d15sm15407841pfo.118.2019.09.09.08.49.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Sep 2019 08:49:33 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on sys_open()
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16G102)
-In-Reply-To: <9e43ca3f-04c0-adba-1ab4-bbc8ed487934@ssi.gouv.fr>
-Date:   Mon, 9 Sep 2019 08:49:32 -0700
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?utf-8?Q?Philippe_Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
+        Mon, 9 Sep 2019 12:00:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1568044853; bh=Xj6owETe0qrf7GCSYZt7kxdL4q4YHxZnBDMS69wJb4g=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=sBYGIqJsNaFoVL5TPNk0tKrNFmuxR5SfyjoCJcZSMFqcDEDOtgBmX62alm6Dsz/P82glfRUJNNOaT4WMqknw2qRb5Yewa/qCyzAmd5B+5hi+WT7vkz1x1rbMJgRRiPdo2/GY2MS3rfDfw9MyjLQWesrZlLuwAgld1V++KtK642j9N4kDclOZfr678ZxKhVnbkcXc5UuM36xhkLgLPCUG/VKkvJ47a5xdsB58WrPCb1KT3lfL54S38/dFETjTC+OaoRMods2McpWtr2GI8uYKSZLQGb1zo5m0tByotkR/PF3QiZosjnzOkZzu/nIyjU7LxqHGJNDrGXgy/XmL12DqDA==
+X-YMail-OSG: 9gnusFIVM1kcJq40QfvAzRUt6elJbug3apdMKeDHNhoIkH0xtYZteI.53LIls1T
+ 0dwYDJAmVNNlUmFXUbZ4_PQlKO9EgMGdAkCRXIQ9SGIaRCJRTzFgiULCm.SD10Hy7pmv356TcD9C
+ iZAogPuiGjAQsmxhWTefqxyKenana_qCJcLVp91326ISB6jgcR7jcHD54bbFFoVXyQ18qfrDJV3.
+ 4CnovNjkfa72J6Th.OciHl52ALR7o7AtwxEpL9klJ.jL_1uYhHz6pVH7alCZ.rbayGrOgPwbNyJu
+ 6D5V6fLBoMXpG0N4lx_MRiiWATiqXmt31aeCSd36caXn4AhhKQS.95FJ9blKiCSTfxBLhlDcVXm.
+ 9HOQFxLTqQnQda7psZ.kmTC2VyjhBZ6FSlveSQPGGyE3bsVrzd972NJp5_fhjdIfBdImLKsq_fis
+ 5Ez_cEyAzAzMhzGxdNhKMfd1O9MGi6PWB7lDfLCjMrf1WuhctzbSTmJJsWFm3Spnum.itO7xNcB6
+ HOOSH_gpeHhxHRxR2vPOK7HOnjSO2aIZLlFN3ivjvh4FQlWC2qbJo2v_KsyVhtt1QE9p.bc1x8ez
+ 12i_.MOuU1GzhWt8zi6MPqC8hmpC1TsFH8OxETzTNcBvrUTZMOFTvNv9NMYrCa86KRKDiv7Tveg9
+ 1PIh1m9IUcPr5qbwcvbYF3ZTFBshyirFjLPHeCskJSvgi54nsvQl0AywOwRUITBGD_WfjqKue7zD
+ uGZIB24BHVmCwWEzBDCgH1D4bAouh4MW6a6K4WFggG.be1G4tWzBWHHldLMiNiUeE91Hrz48LdgF
+ NHo9NFQg5wIzz3dI2xPB2RBS3lXE7r5h1TGjuS1JV_wOqkORVIOKBgEMfxb0uBPH0lDnrLHILe9Q
+ A6ONdgEVp37evRdZy40dh5n6sBB9g2cVKxtJcrBgNXmAsqhm_Oyl6AVvG3AFCrTQsX0jION2T6KG
+ 7itpjlMPf0Xh2OB7wfBJ.P09qIiLENqLqF2Huo3sJm_rWMX5qKJWnA7jUTvik5NIxYeT4JmJbHuM
+ V2NQ_CAKFpkfXNbD6lZd7N4oVQtdjgxRaHMCDHJWdKR7Nr_Yu7YQdEoxzkoxAW8ipWpu2srVCOlm
+ O3937UVFzhPvIxBJkvoWdT9ILhunBmrqxkW7bHMY9VzW9JyA3ip4KG4Ze4WmfGkb9wwfWkZbp9c1
+ U8wC7zWUl7UCk3BjYyx97DDucEzqrczfdBJxJjM.JyMFoxGn2GX_AesuAPvmAvvLu4WyaUCaJ5ie
+ 09kl0MyVmQWUetRa2Yji4JBwkvRirV.5HJLIe4wBGLMj1_VfN7Y0WCEwoUaYQO9q22UuxJryyCsI
+ m0uWDcU5KRHR3cA.r5eXki6hIuPoiOjck_hnQm9HdE1dv5w_0iqynahj75DR4810DGrdnfOVrY8F
+ P5hLkvGgiyhw-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ir2.yahoo.com with HTTP; Mon, 9 Sep 2019 16:00:53 +0000
+Received: by smtp414.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d19967bce1726bf2544e96d77b5ebebc;
+          Mon, 09 Sep 2019 15:58:52 +0000 (UTC)
+Subject: Re: [PATCH] lsm: remove current_security()
+To:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+References: <156763801639.13084.2856415198922787618.stgit@chester>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <3fb46173-5be2-4e83-3074-0f66b6edd632@schaufler-ca.com>
+Date:   Mon, 9 Sep 2019 08:58:49 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <156763801639.13084.2856415198922787618.stgit@chester>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <D3D3F165-F562-4090-831D-D8E39F9C5246@amacapital.net>
-References: <20190906152455.22757-1-mic@digikod.net> <20190906152455.22757-2-mic@digikod.net> <87ef0te7v3.fsf@oldenburg2.str.redhat.com> <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr> <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org> <1fbf54f6-7597-3633-a76c-11c4b2481add@ssi.gouv.fr> <5a59b309f9d0603d8481a483e16b5d12ecb77540.camel@kernel.org> <D1212E06-773B-42B9-B7C3-C4C1C2A6111D@amacapital.net> <9e43ca3f-04c0-adba-1ab4-bbc8ed487934@ssi.gouv.fr>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 9/4/2019 4:00 PM, Paul Moore wrote:
+> There are no remaining callers and it really is unsafe in the brave
+> new world of LSM stacking.
+>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
 
-> On Sep 9, 2019, at 2:18 AM, Micka=C3=ABl Sala=C3=BCn <mickael.salaun@ssi.g=
-ouv.fr> wrote:
->=20
->=20
->> On 06/09/2019 20:41, Andy Lutomirski wrote:
->>=20
->>=20
->>>> On Sep 6, 2019, at 11:38 AM, Jeff Layton <jlayton@kernel.org> wrote:
->>>>=20
->>>>> On Fri, 2019-09-06 at 19:14 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
->>>>>> On 06/09/2019 18:48, Jeff Layton wrote:
->>>>>>> On Fri, 2019-09-06 at 18:06 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
->>>>>>> On 06/09/2019 17:56, Florian Weimer wrote:
->>>>>>> Let's assume I want to add support for this to the glibc dynamic loa=
-der,
->>>>>>> while still being able to run on older kernels.
->>>>>>>=20
->>>>>>> Is it safe to try the open call first, with O_MAYEXEC, and if that f=
-ails
->>>>>>> with EINVAL, try again without O_MAYEXEC?
->>>>>>=20
->>>>>> The kernel ignore unknown open(2) flags, so yes, it is safe even for
->>>>>> older kernel to use O_MAYEXEC.
->>>>>>=20
->>>>>=20
->>>>> Well...maybe. What about existing programs that are sending down bogus=
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
->>>>> open flags? Once you turn this on, they may break...or provide a way t=
-o
->>>>> circumvent the protections this gives.
->>>>=20
->>>> Well, I don't think we should nor could care about bogus programs that
->>>> do not conform to the Linux ABI.
->>>>=20
->>>=20
->>> But they do conform. The ABI is just undefined here. Unknown flags are
->>> ignored so we never really know if $random_program may be setting them.
->>>=20
->>>>> Maybe this should be a new flag that is only usable in the new openat2=
-()
->>>>> syscall that's still under discussion? That syscall will enforce that
->>>>> all flags are recognized. You presumably wouldn't need the sysctl if y=
-ou
->>>>> went that route too.
->>>>=20
->>>> Here is a thread about a new syscall:
->>>> https://lore.kernel.org/lkml/1544699060.6703.11.camel@linux.ibm.com/
->>>>=20
->>>> I don't think it fit well with auditing nor integrity. Moreover using
->>>> the current open(2) behavior of ignoring unknown flags fit well with th=
-e
->>>> usage of O_MAYEXEC (because it is only a hint to the kernel about the
->>>> use of the *opened* file).
->>>>=20
->>>=20
->>> The fact that open and openat didn't vet unknown flags is really a bug.
->>>=20
->>> Too late to fix it now, of course, and as Aleksa points out, we've
->>> worked around that in the past. Now though, we have a new openat2
->>> syscall on the horizon. There's little need to continue these sorts of
->>> hacks.
->>>=20
->>> New open flags really have no place in the old syscalls, IMO.
->>>=20
->>>>> Anyone that wants to use this will have to recompile anyway. If the
->>>>> kernel doesn't support openat2 or if the flag is rejected then you kno=
-w
->>>>> that you have no O_MAYEXEC support and can decide what to do.
->>>>=20
->>>> If we want to enforce a security policy, we need to either be the syste=
-m
->>>> administrator or the distro developer. If a distro ship interpreters
->>>> using this flag, we don't need to recompile anything, but we need to be=
+Thanks for this. It should have gone in with the last
+set of stacking patches.
 
->>>> able to control the enforcement according to the mount point
->>>> configuration (or an advanced MAC, or an IMA config). I don't see why a=
-n
->>>> userspace process should check if this flag is supported or not, it
->>>> should simply use it, and the sysadmin will enable an enforcement if it=
+> ---
+>  include/linux/cred.h |    1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/include/linux/cred.h b/include/linux/cred.h
+> index efb6edf32de7..98b0a23ddd23 100644
+> --- a/include/linux/cred.h
+> +++ b/include/linux/cred.h
+> @@ -384,7 +384,6 @@ static inline void put_cred(const struct cred *_cre=
+d)
+>  #define current_fsgid() 	(current_cred_xxx(fsgid))
+>  #define current_cap()		(current_cred_xxx(cap_effective))
+>  #define current_user()		(current_cred_xxx(user))
+> -#define current_security()	(current_cred_xxx(security))
+> =20
+>  extern struct user_namespace init_user_ns;
+>  #ifdef CONFIG_USER_NS
+>
+>
 
->>>> makes sense for the whole system.
->>>>=20
->>>=20
->>> A userland program may need to do other risk mitigation if it sets
->>> O_MAYEXEC and the kernel doesn't recognize it.
->>>=20
->>> Personally, here's what I'd suggest:
->>>=20
->>> - Base this on top of the openat2 set
->>> - Change it that so that openat2() files are non-executable by default. A=
-nyone wanting to do that needs to set O_MAYEXEC or upgrade the fd somehow.
->>> - Only have the openat2 syscall pay attention to O_MAYEXEC. Let open and=
- openat continue ignoring the new flag.
->>>=20
->>> That works around a whole pile of potential ABI headaches. Note that
->>> we'd need to make that decision before the openat2 patches are merged.
->>>=20
->>> Even better would be to declare the new flag in some openat2-only flag
->>> space, so there's no confusion about it being supported by legacy open
->>> calls.
->>>=20
->>> If glibc wants to implement an open -> openat2 wrapper in userland
->>> later, it can set that flag in the wrapper implicitly to emulate the old=
-
->>> behavior.
->>>=20
->>> Given that you're going to have to recompile software to take advantage
->>> of this anyway, what's the benefit to changing legacy syscalls?
->>>=20
->>>>>>> Or do I risk disabling this security feature if I do that?
->>>>>>=20
->>>>>> It is only a security feature if the kernel support it, otherwise it i=
-s
->>>>>> a no-op.
->>>>>>=20
->>>>>=20
->>>>> With a security feature, I think we really want userland to aware of
->>>>> whether it works.
->>>>=20
->>>> If userland would like to enforce something, it can already do it
->>>> without any kernel modification. The goal of the O_MAYEXEC flag is to
->>>> enable the kernel, hence sysadmins or system designers, to enforce a
->>>> global security policy that makes sense.
->>>>=20
->>>=20
->>> I don't see how this helps anything if you can't tell whether the kernel=
-
->>> recognizes the damned thing. Also, our track record with global sysctl
->>> switches like this is pretty poor. They're an administrative headache as=
-
->>> well as a potential attack vector.
->>=20
->> I tend to agree. The sysctl seems like it=E2=80=99s asking for trouble. I=
- can see an ld.so.conf option to turn this thing off making sense.
->=20
-> The sysctl is required to enable the adoption of this flag without
-> breaking existing systems. Current systems may have "noexec" on mount
-> points containing scripts. Without giving the ability to the sysadmin to
-> control that behavior, updating to a newer version of an interpreter
-> using O_MAYEXEC may break such systems.
->=20
-> How would you do this with ld.so.conf ?
->=20
-
-By telling user code not to use O_MAYEXEC?
-
-Alternatively, you could allow O_MAYEXEC even on a noexec mount and have a s=
-trong_noexec option that blocks it.=
