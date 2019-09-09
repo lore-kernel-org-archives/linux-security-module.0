@@ -2,153 +2,106 @@ Return-Path: <SRS0=KGDz=XE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD259C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 10:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B61C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 11:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A405321479
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 10:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26E93218AF
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 11:45:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="bsPrfe3f"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="JnJGdpWX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388670AbfIIKyU (ORCPT
+        id S1732041AbfIILpB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Sep 2019 06:54:20 -0400
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:53148 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728358AbfIIKyU (ORCPT
+        Mon, 9 Sep 2019 07:45:01 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:44706 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731989AbfIILpA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:54:20 -0400
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 68FEDD00069;
-        Mon,  9 Sep 2019 12:54:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1568026458;
-        bh=lsE8Nf8H8eP9Ra9FaOYEExhywlR7G0uudTTjxz1hvFc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=bsPrfe3facITGSy7DMYPy8YYzwh1VjblL+C13Jn98z/Ykyq4WF4HusFGQluS1lRBd
-         QYYlffK04WUyhAEq8eXB0G3SbxesMMAAm5maeRLiYC+OGgwGm/UFnzGlEJmS5yTjgv
-         eDWHr12JCE7LIy1AnpTqixcRdqDzgwzq7JGzTrSFVJXeir6LdPgy/jMps6OeNW1+Ba
-         aChlFqI2Rwdfl7KYY82HfNbR9YLCc/r3WdWUMbTIopvQs4RYI2ecpdxUeyJYeoZrak
-         hYdIFTmBcuxxlC16cK/J4YqCEyLJQ1AbFThzUt7fkCISGm2XqYe9FM8OenXBMO8HEi
-         fKi53bdY2BZXA==
-Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
- sys_open()
-To:     James Morris <jmorris@namei.org>
-CC:     Jeff Layton <jlayton@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20190906152455.22757-1-mic@digikod.net>
- <20190906152455.22757-2-mic@digikod.net>
- <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
- <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
- <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org>
- <1fbf54f6-7597-3633-a76c-11c4b2481add@ssi.gouv.fr>
- <5a59b309f9d0603d8481a483e16b5d12ecb77540.camel@kernel.org>
- <alpine.LRH.2.21.1909061202070.18660@namei.org>
- <49e98ece-e85f-3006-159b-2e04ba67019e@ssi.gouv.fr>
- <alpine.LRH.2.21.1909090309260.27895@namei.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <073cb831-7c6b-1882-9b7d-eb810a2ef955@ssi.gouv.fr>
-Date:   Mon, 9 Sep 2019 12:54:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Mon, 9 Sep 2019 07:45:00 -0400
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x89BiilT010794;
+        Mon, 9 Sep 2019 20:44:45 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x89BiilT010794
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1568029485;
+        bh=I3CsomKgu9imQxkvjbyNpxE/dZyao6xzfj9/GBFFAeg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JnJGdpWX656H/7JUXEDl6GjrR8XxkO/uv90E/8WhpSNDAQlPRfhHyfpe4QxQ4VL8G
+         aEZ+DGxuzXyCefb059uPDNngUiOoBPYaZHoYri9J/QM/wdbaYMCy7IZjqxfLWDXu/4
+         8yhLceDcRouc1pKQum5E1mbBxNuNJ9Be5TDeP8wRoXbP1BWNYJM5rnjLzKB+Ccjj8T
+         aeRO15Fqv0qP/AhHcbi4UJSbHKMRflU+KigBR47OdnNS04UCtopoo+NKNJXuWRA2j5
+         T4GJ45qVOw0WXu0XagbLXPvKopOScIxcVoqvr9fdLdb9pkvXEgQUbIYknVYYsmr5GI
+         5o3G/bKd/wrBw==
+X-Nifty-SrcIP: [209.85.221.169]
+Received: by mail-vk1-f169.google.com with SMTP id 82so2622132vkf.11;
+        Mon, 09 Sep 2019 04:44:45 -0700 (PDT)
+X-Gm-Message-State: APjAAAWzPA6iwnbR2PfkUvqSgu8LeaI0hVnqszguD5uZJTVPccy8Jjq8
+        OUGjsub8tiQGXcbnoH8hsq9FS01P3NNXsZjNARo=
+X-Google-Smtp-Source: APXvYqx6xE3Ak7n9uhq+LlGdwoa0XIG2mkHcWi624WGm18rnlIfGcU/3qQByUAHVhIiDsRFOUb28reEwcs4bOx4373k=
+X-Received: by 2002:a1f:998f:: with SMTP id b137mr10651098vke.0.1568029484310;
+ Mon, 09 Sep 2019 04:44:44 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1909090309260.27895@namei.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+References: <20190726021058.4212-1-yamada.masahiro@socionext.com> <20190726021058.4212-3-yamada.masahiro@socionext.com>
+In-Reply-To: <20190726021058.4212-3-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 9 Sep 2019 20:44:08 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASdBGk+xQDe3Q+MhE++unwfiRcuVEhNsmMffY7AMwf7Pw@mail.gmail.com>
+Message-ID: <CAK7LNASdBGk+xQDe3Q+MhE++unwfiRcuVEhNsmMffY7AMwf7Pw@mail.gmail.com>
+Subject: Re: [PATCH 2/5] integrity: remove pointless subdir-$(CONFIG_...)
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     Dave Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 09/09/2019 12:12, James Morris wrote:
-> On Mon, 9 Sep 2019, Micka=C3=ABl Sala=C3=BCn wrote:
+On Fri, Jul 26, 2019 at 11:12 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
->>
->> On 06/09/2019 21:03, James Morris wrote:
->>> On Fri, 6 Sep 2019, Jeff Layton wrote:
->>>
->>>> The fact that open and openat didn't vet unknown flags is really a bug=
-.
->>>>
->>>> Too late to fix it now, of course, and as Aleksa points out, we've
->>>> worked around that in the past. Now though, we have a new openat2
->>>> syscall on the horizon. There's little need to continue these sorts of
->>>> hacks.
->>>>
->>>> New open flags really have no place in the old syscalls, IMO.
->>>
->>> Agree here. It's unfortunate but a reality and Linus will reject any su=
-ch
->>> changes which break existing userspace.
->>
->> Do you mean that adding new flags to open(2) is not possible?
->>
->> Does it means that unspecified behaviors are definitely part of the
->> Linux specification and can't be fixed?
+> The ima/ and evm/ sub-directories contain built-in objects, so
+> obj-$(CONFIG_...) is the correct way to descend into them.
 >
-> This is my understanding.
+> subdir-$(CONFIG_...) is redundant.
 >
->>
->> As I said, O_MAYEXEC should be ignored if it is not supported by the
->> kernel, which perfectly fit with the current open(2) flags behavior, and
->> should also behave the same with openat2(2).
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+
+Ping.
+
+
 >
-> The problem here is programs which are already using the value of
-> O_MAYEXEC, which will break.  Hence, openat2(2).
+>  security/integrity/Makefile | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+> index b6d6273a4176..35e6ca773734 100644
+> --- a/security/integrity/Makefile
+> +++ b/security/integrity/Makefile
+> @@ -14,7 +14,5 @@ integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+>                                         platform_certs/load_uefi.o
+>  integrity-$(CONFIG_LOAD_IPL_KEYS) += platform_certs/load_ipl_s390.o
+>
+> -subdir-$(CONFIG_IMA)                   += ima
+>  obj-$(CONFIG_IMA)                      += ima/
+> -subdir-$(CONFIG_EVM)                   += evm
+>  obj-$(CONFIG_EVM)                      += evm/
+> --
+> 2.17.1
+>
 
-Well, it still depends on the sysctl, which doesn't enforce anything by
-default, hence doesn't break existing behavior, and this unused flags
-could be fixed/removed or reported by sysadmins or distro developers.
 
-
---
-Micka=C3=ABl Sala=C3=BCn
-
-Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
-es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
-=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
-nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
-=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
-tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
-acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
-eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
-t de d=C3=A9truire le message. The personal data collected and processed du=
-ring this exchange aims solely at completing a business relationship and is=
- limited to the necessary duration of that relationship. If you wish to use=
- your rights of consultation, rectification and deletion of your data, plea=
-se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
-n error, we thank you for informing the sender and destroying the message.
+-- 
+Best Regards
+Masahiro Yamada
