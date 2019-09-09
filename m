@@ -2,82 +2,132 @@ Return-Path: <SRS0=KGDz=XE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_PAST_06_12,
+	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FFAC4740C
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 21:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9690C49ED9
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 22:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A4821D6C
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 21:39:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C983222C4
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 22:16:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568065182;
-	bh=+nUsbZO4jDJQKcj0U8bhaPUEL9Ppt9f9/QlIFDNBlZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jYKkBOrf8a0uYd8wbn8YoPR+0oxnts07WWx/+nhpbcDsOKQtiSTq/j61JPZpFgm3w
-	 nPbEH3xlJOw/T5aJS+xK/FQQptG/SBwVxXoYmJOVk5HmsxHZzZDBCx4khgcVSb/itl
-	 yIbThu9V1t7eg4wSjGqV+UV1cujukto7T1RWKG8c=
+	s=default; t=1568067412;
+	bh=dHaNzdX8RhfYNR3G9kvpasvBZPNiOdCFP+q6x9pJ5Pw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=BfrqcNwteCogzb7ZRZAeE0xz/PwYS6XNkX30lcFCC7bp+HEPd0FzYiniCt+g6d8Wn
+	 bAGqL0+0ZuSJkWJWMTtxEt3VeutTr73FHbP5ke283v4iA7L1HBBlvxlBOe1KEPQP+C
+	 TrujpG9dsIUFXCeYDUwV08M8V9xmW2Z5CxSTGAFM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfIIVjm (ORCPT
+        id S2406250AbfIIWQv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Sep 2019 17:39:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36718 "EHLO mail.kernel.org"
+        Mon, 9 Sep 2019 18:16:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726804AbfIIVjm (ORCPT
+        id S2406244AbfIIWQu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Sep 2019 17:39:42 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 9 Sep 2019 18:16:50 -0400
+Received: from sasha-vm.mshome.net (unknown [62.28.240.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 272BD21924;
-        Mon,  9 Sep 2019 21:39:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3231321D7B;
+        Mon,  9 Sep 2019 22:16:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568065181;
-        bh=+nUsbZO4jDJQKcj0U8bhaPUEL9Ppt9f9/QlIFDNBlZo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=twaohtH3xoKch2HMq/i9HVENozwbITC9sJ5WAC3reHThd59txrZjOMIerExBu/7lH
-         /HgH1sJXxuUEdsP07RzvjWwjSJETSWH2zvTKHSYF0vpC6JlCf9IULO11R0YtGM6IDg
-         AoFd4c7VbvrhRjQ7ONfdhd7hLZEIgVn9KCXA+JbA=
-Date:   Mon, 9 Sep 2019 14:39:39 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Janne Karhunen <janne.karhunen@gmail.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
-        linux-mm@kvack.org, viro@zeniv.linux.org.uk,
-        Konsta Karsisto <konsta.karsisto@gmail.com>
-Subject: Re: [PATCH 1/3] ima: keep the integrity state of open files up to
- date
-Message-ID: <20190909213938.GA105935@gmail.com>
-Mail-Followup-To: Janne Karhunen <janne.karhunen@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
-        linux-mm@kvack.org, viro@zeniv.linux.org.uk,
-        Konsta Karsisto <konsta.karsisto@gmail.com>
-References: <20190902094540.12786-1-janne.karhunen@gmail.com>
+        s=default; t=1568067409;
+        bh=dHaNzdX8RhfYNR3G9kvpasvBZPNiOdCFP+q6x9pJ5Pw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=bhWOWDD3cRCpoB41CXfxQMg2kdSoIBWb5gHkJKlfsWNl+UdRQICHKa6XmdJiUxBSm
+         bu5ap3fHYYciq6R29JFvuYq7l+QYTcpXPkgQqiYdgQjdj6D7M8/gqo5uJJETpVZhzj
+         VJTYVN82Xr0EvAJZBG1itFH8OiBHZYTmHDtuYkJ8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Hillf Danton <hdanton@sina.com>,
+        Sachin Sant <sachinp@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 6/8] keys: Fix missing null pointer check in request_key_auth_describe()
+Date:   Mon,  9 Sep 2019 11:41:21 -0400
+Message-Id: <20190909154124.31146-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190909154124.31146-1-sashal@kernel.org>
+References: <20190909154124.31146-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902094540.12786-1-janne.karhunen@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 02, 2019 at 12:45:38PM +0300, Janne Karhunen wrote:
-> When a file is open for writing, kernel crash or power outage
-> is guaranteed to corrupt the inode integrity state leading to
-> file appraisal failure on the subsequent boot. Add some basic
-> infrastructure to keep the integrity measurements up to date
-> as the files are written to.
-> 
-> Core file operations (open, close, sync, msync, truncate) are
-> now allowed to update the measurement immediately. In order
-> to maintain sufficient write performance for writes, add a
-> latency tunable delayed work workqueue for computing the
-> measurements.
-> 
+From: Hillf Danton <hdanton@sina.com>
 
-This still doesn't make it crash-safe.  So why is it okay?
+[ Upstream commit d41a3effbb53b1bcea41e328d16a4d046a508381 ]
 
-- Eric
+If a request_key authentication token key gets revoked, there's a window in
+which request_key_auth_describe() can see it with a NULL payload - but it
+makes no check for this and something like the following oops may occur:
+
+	BUG: Kernel NULL pointer dereference at 0x00000038
+	Faulting instruction address: 0xc0000000004ddf30
+	Oops: Kernel access of bad area, sig: 11 [#1]
+	...
+	NIP [...] request_key_auth_describe+0x90/0xd0
+	LR [...] request_key_auth_describe+0x54/0xd0
+	Call Trace:
+	[...] request_key_auth_describe+0x54/0xd0 (unreliable)
+	[...] proc_keys_show+0x308/0x4c0
+	[...] seq_read+0x3d0/0x540
+	[...] proc_reg_read+0x90/0x110
+	[...] __vfs_read+0x3c/0x70
+	[...] vfs_read+0xb4/0x1b0
+	[...] ksys_read+0x7c/0x130
+	[...] system_call+0x5c/0x70
+
+Fix this by checking for a NULL pointer when describing such a key.
+
+Also make the read routine check for a NULL pointer to be on the safe side.
+
+[DH: Modified to not take already-held rcu lock and modified to also check
+ in the read routine]
+
+Fixes: 04c567d9313e ("[PATCH] Keys: Fix race between two instantiators of a key")
+Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Signed-off-by: Hillf Danton <hdanton@sina.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Tested-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/keys/request_key_auth.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+index 5e515791ccd11..1d34b2a5f485e 100644
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -71,6 +71,9 @@ static void request_key_auth_describe(const struct key *key,
+ {
+ 	struct request_key_auth *rka = get_request_key_auth(key);
+ 
++	if (!rka)
++		return;
++
+ 	seq_puts(m, "key:");
+ 	seq_puts(m, key->description);
+ 	if (key_is_positive(key))
+@@ -88,6 +91,9 @@ static long request_key_auth_read(const struct key *key,
+ 	size_t datalen;
+ 	long ret;
+ 
++	if (!rka)
++		return -EKEYREVOKED;
++
+ 	datalen = rka->callout_len;
+ 	ret = datalen;
+ 
+-- 
+2.20.1
+
