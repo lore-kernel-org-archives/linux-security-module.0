@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_PAST_06_12,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65BFC49ED6
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 22:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78ECFC49ED9
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 22:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D6D21A4A
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 22:18:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B62221D79
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 22:18:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568067494;
-	bh=dHaNzdX8RhfYNR3G9kvpasvBZPNiOdCFP+q6x9pJ5Pw=;
+	s=default; t=1568067509;
+	bh=e1h3js1akksNSdN7MbHfoSgbNrAbeyQ3zCDjASU0y00=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OGOD7ow0/WIhvHmP8mgrU0EC1iDL4uOWO/AmCmqsU6rkR2lpV4uVCs1pxNBH39VKM
-	 XLWlyJwH+t0yOWiKuWeVCOOBjvo1C9AxnxVYyZI5IzJKpwYjttVx2nbU+uoB1ejEtu
-	 mwEK0cg3T/OLD9lswoms+v2Ig/w8/rJiUv+roQjs=
+	b=zHIGeP9C6s3jpMjhVwyBz/4Ff3HDLnwh/S+nIynMDAjlRBEEh9PO5y/YYU9mdgEXX
+	 2DG6p/oSqVfz6OK4MNX81HLGzCgooQ9FDIZ6DTVPvWwhf04ioj3uS5VPzFlGcs1i3q
+	 IJISc6ZQoKYsG/OsdnJs2oqOGkLOUoZkvF/EybQE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392142AbfIIWSK (ORCPT
+        id S2406185AbfIIWQj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Sep 2019 18:18:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46164 "EHLO mail.kernel.org"
+        Mon, 9 Sep 2019 18:16:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392116AbfIIWRK (ORCPT
+        id S2406141AbfIIWQ1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Sep 2019 18:17:10 -0400
+        Mon, 9 Sep 2019 18:16:27 -0400
 Received: from sasha-vm.mshome.net (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5628B21A4A;
-        Mon,  9 Sep 2019 22:17:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DE292171F;
+        Mon,  9 Sep 2019 22:16:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568067430;
-        bh=dHaNzdX8RhfYNR3G9kvpasvBZPNiOdCFP+q6x9pJ5Pw=;
+        s=default; t=1568067387;
+        bh=e1h3js1akksNSdN7MbHfoSgbNrAbeyQ3zCDjASU0y00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ax39/VFZxdJmES5KGL6q78BkOveA1gHv+bLy8/9QE3pI5CNhAI2JLvE3+CYhkjPLk
-         svNfVIPwYhyn27OhzEmVE2/f8MRiEHEYnyN2j/HNi7KuUTUCAtZWfBNB0xUh4CJEP7
-         ETRp6SFlbd6OymVgBNITK+rrzbp0DQ5Ouqk2HhY4=
+        b=A0hMFG1jEQMDske5iVUdteeo8Pbl3A/5BzfHDREPMRlC8VqD6Ux2WTRdRnYUsxgm7
+         3CCRzzmhA0/WPmwNbh1HfoRD/hUbAfn3nFb4UCra757OrPAjvRP/Rv9rNIAV2fY3DC
+         mBk59k8XDTdUXdps6I6ulZcIcjiyR3/ZTXR/QmQ8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Hillf Danton <hdanton@sina.com>,
@@ -48,12 +48,12 @@ Cc:     Hillf Danton <hdanton@sina.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 6/8] keys: Fix missing null pointer check in request_key_auth_describe()
-Date:   Mon,  9 Sep 2019 11:41:43 -0400
-Message-Id: <20190909154145.31263-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 10/12] keys: Fix missing null pointer check in request_key_auth_describe()
+Date:   Mon,  9 Sep 2019 11:40:50 -0400
+Message-Id: <20190909154052.30941-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190909154145.31263-1-sashal@kernel.org>
-References: <20190909154145.31263-1-sashal@kernel.org>
+In-Reply-To: <20190909154052.30941-1-sashal@kernel.org>
+References: <20190909154052.30941-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -105,10 +105,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+)
 
 diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index 5e515791ccd11..1d34b2a5f485e 100644
+index e45b5cf3b97fd..8491becb57270 100644
 --- a/security/keys/request_key_auth.c
 +++ b/security/keys/request_key_auth.c
-@@ -71,6 +71,9 @@ static void request_key_auth_describe(const struct key *key,
+@@ -66,6 +66,9 @@ static void request_key_auth_describe(const struct key *key,
  {
  	struct request_key_auth *rka = get_request_key_auth(key);
  
@@ -118,7 +118,7 @@ index 5e515791ccd11..1d34b2a5f485e 100644
  	seq_puts(m, "key:");
  	seq_puts(m, key->description);
  	if (key_is_positive(key))
-@@ -88,6 +91,9 @@ static long request_key_auth_read(const struct key *key,
+@@ -83,6 +86,9 @@ static long request_key_auth_read(const struct key *key,
  	size_t datalen;
  	long ret;
  
