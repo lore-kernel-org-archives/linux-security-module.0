@@ -2,132 +2,175 @@ Return-Path: <SRS0=KGDz=XE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_PAST_06_12,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78ECFC49ED9
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 22:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC34C4740A
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 22:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B62221D79
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 22:18:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFB04218DE
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Sep 2019 22:52:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568067509;
-	bh=e1h3js1akksNSdN7MbHfoSgbNrAbeyQ3zCDjASU0y00=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zHIGeP9C6s3jpMjhVwyBz/4Ff3HDLnwh/S+nIynMDAjlRBEEh9PO5y/YYU9mdgEXX
-	 2DG6p/oSqVfz6OK4MNX81HLGzCgooQ9FDIZ6DTVPvWwhf04ioj3uS5VPzFlGcs1i3q
-	 IJISc6ZQoKYsG/OsdnJs2oqOGkLOUoZkvF/EybQE=
+	s=default; t=1568069561;
+	bh=KQdOtep/fJtO4YL+FRc2frDHqd9PIOzbuU5ucWQl2UQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=2K2HW3uX+OpR5UYtr5UzOJ2vLiSXr9d1tXOvrnRbw9YNWeHV7NjlCMOEvpwGvH8gr
+	 6BGhbiikILM8N+HaUB5YMtT3ix4It9+lG+fy5NSGImhyMORSBl2kpfVGIyYNj3baVR
+	 3kAIOkZoMM7azZpdq2bvFjAa8j/SiZtXpiV6e8cw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406185AbfIIWQj (ORCPT
+        id S1729030AbfIIWwl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Sep 2019 18:16:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45344 "EHLO mail.kernel.org"
+        Mon, 9 Sep 2019 18:52:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406141AbfIIWQ1 (ORCPT
+        id S1726231AbfIIWwl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Sep 2019 18:16:27 -0400
-Received: from sasha-vm.mshome.net (unknown [62.28.240.114])
+        Mon, 9 Sep 2019 18:52:41 -0400
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DE292171F;
-        Mon,  9 Sep 2019 22:16:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B4A2218DE
+        for <linux-security-module@vger.kernel.org>; Mon,  9 Sep 2019 22:52:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568067387;
-        bh=e1h3js1akksNSdN7MbHfoSgbNrAbeyQ3zCDjASU0y00=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A0hMFG1jEQMDske5iVUdteeo8Pbl3A/5BzfHDREPMRlC8VqD6Ux2WTRdRnYUsxgm7
-         3CCRzzmhA0/WPmwNbh1HfoRD/hUbAfn3nFb4UCra757OrPAjvRP/Rv9rNIAV2fY3DC
-         mBk59k8XDTdUXdps6I6ulZcIcjiyR3/ZTXR/QmQ8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hillf Danton <hdanton@sina.com>,
-        Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 10/12] keys: Fix missing null pointer check in request_key_auth_describe()
-Date:   Mon,  9 Sep 2019 11:40:50 -0400
-Message-Id: <20190909154052.30941-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190909154052.30941-1-sashal@kernel.org>
-References: <20190909154052.30941-1-sashal@kernel.org>
+        s=default; t=1568069560;
+        bh=KQdOtep/fJtO4YL+FRc2frDHqd9PIOzbuU5ucWQl2UQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=aW6ay5Q8op/HZa/5vNXr2/suTkKSE3Q58tm2lo/KOu+l5ryRSyMxiQStM2Ne3W26V
+         Uw9XMcbsamtNuNlcG82q5AepsZc2U2Hq5OzHnsjnShO16kNRGn/eOUha36EfFl9ygd
+         9Ezdyqj9UOqOOtfYWF6Gmq7+Vh3Y14mgYSWqy6b4=
+Received: by mail-wr1-f41.google.com with SMTP id l16so16236767wrv.12
+        for <linux-security-module@vger.kernel.org>; Mon, 09 Sep 2019 15:52:40 -0700 (PDT)
+X-Gm-Message-State: APjAAAWI968AjDYo8q0FxyC5KS6Nq9S8I2eE08UL5yz9BLVeJ/UnJ+T8
+        SA4BZDnrEBVqVwOG8bFY+gqn1kAW2Qpzj9Pg5SIvXg==
+X-Google-Smtp-Source: APXvYqxjXu9tLKEeidry8TRnmvMaltITLyIhvUtZf50njewqCflxdMPyZxPcqVEhtg99777/tMeAYnKT6NblO0sboVA=
+X-Received: by 2002:adf:fe0f:: with SMTP id n15mr886881wrr.343.1568069558803;
+ Mon, 09 Sep 2019 15:52:38 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20190906231053.1276792-1-ast@kernel.org> <20190906231053.1276792-2-ast@kernel.org>
+In-Reply-To: <20190906231053.1276792-2-ast@kernel.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 9 Sep 2019 15:52:27 -0700
+X-Gmail-Original-Message-ID: <CALCETrVCimrLCzdZ2Jgb-AFd-Ptjd+MmyD-XW=baSt6uOOTtEg@mail.gmail.com>
+Message-ID: <CALCETrVCimrLCzdZ2Jgb-AFd-Ptjd+MmyD-XW=baSt6uOOTtEg@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 1/4] capability: introduce CAP_BPF and CAP_TRACING
+To:     Alexei Starovoitov <ast@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Hillf Danton <hdanton@sina.com>
+On Fri, Sep 6, 2019 at 4:10 PM Alexei Starovoitov <ast@kernel.org> wrote:
+>
+> Split BPF and perf/tracing operations that are allowed under
+> CAP_SYS_ADMIN into corresponding CAP_BPF and CAP_TRACING.
+> For backward compatibility include them in CAP_SYS_ADMIN as well.
+>
+> The end result provides simple safety model for applications that use BPF:
+> - for tracing program types
+>   BPF_PROG_TYPE_{KPROBE, TRACEPOINT, PERF_EVENT, RAW_TRACEPOINT, etc}
+>   use CAP_BPF and CAP_TRACING
+> - for networking program types
+>   BPF_PROG_TYPE_{SCHED_CLS, XDP, CGROUP_SKB, SK_SKB, etc}
+>   use CAP_BPF and CAP_NET_ADMIN
+>
+> There are few exceptions from this simple rule:
+> - bpf_trace_printk() is allowed in networking programs, but it's using
+>   ftrace mechanism, hence this helper needs additional CAP_TRACING.
+> - cpumap is used by XDP programs. Currently it's kept under CAP_SYS_ADMIN,
+>   but could be relaxed to CAP_NET_ADMIN in the future.
+> - BPF_F_ZERO_SEED flag for hash/lru map is allowed under CAP_SYS_ADMIN only
+>   to discourage production use.
+> - BPF HW offload is allowed under CAP_SYS_ADMIN.
+> - cg_sysctl, cg_device, lirc program types are neither networking nor tracing.
+>   They can be loaded under CAP_BPF, but attach is allowed under CAP_NET_ADMIN.
+>   This will be cleaned up in the future.
+>
+> userid=nobody + (CAP_TRACING | CAP_NET_ADMIN) + CAP_BPF is safer than
+> typical setup with userid=root and sudo by existing bpf applications.
+> It's not secure, since these capabilities:
+> - allow bpf progs access arbitrary memory
+> - let tasks access any bpf map
+> - let tasks attach/detach any bpf prog
+>
+> bpftool, bpftrace, bcc tools binaries should not be installed with
+> cap_bpf+cap_tracing, since unpriv users will be able to read kernel secrets.
+>
+> CAP_BPF, CAP_NET_ADMIN, CAP_TRACING are roughly equal in terms of
+> damage they can make to the system.
+> Example:
+> CAP_NET_ADMIN can stop network traffic. CAP_BPF can write into map
+> and if that map is used by firewall-like bpf prog the network traffic
+> may stop.
+> CAP_BPF allows many bpf prog_load commands in parallel. The verifier
+> may consume large amount of memory and significantly slow down the system.
+> CAP_TRACING allows many kprobes that can slow down the system.
 
-[ Upstream commit d41a3effbb53b1bcea41e328d16a4d046a508381 ]
+Do we want to split CAP_TRACE_KERNEL and CAP_TRACE_USER?  It's not
+entirely clear to me that it's useful.
 
-If a request_key authentication token key gets revoked, there's a window in
-which request_key_auth_describe() can see it with a NULL payload - but it
-makes no check for this and something like the following oops may occur:
+>
+> In the future more fine-grained bpf permissions may be added.
+>
+> Existing unprivileged BPF operations are not affected.
+> In particular unprivileged users are allowed to load socket_filter and cg_skb
+> program types and to create array, hash, prog_array, map-in-map map types.
+>
+> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+> ---
+>  include/linux/capability.h          | 18 +++++++++++
+>  include/uapi/linux/capability.h     | 49 ++++++++++++++++++++++++++++-
+>  security/selinux/include/classmap.h |  4 +--
+>  3 files changed, 68 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/capability.h b/include/linux/capability.h
+> index ecce0f43c73a..13eb49c75797 100644
+> --- a/include/linux/capability.h
+> +++ b/include/linux/capability.h
+> @@ -247,6 +247,24 @@ static inline bool ns_capable_setid(struct user_namespace *ns, int cap)
+>         return true;
+>  }
+>  #endif /* CONFIG_MULTIUSER */
+> +
+> +static inline bool capable_bpf(void)
+> +{
+> +       return capable(CAP_SYS_ADMIN) || capable(CAP_BPF);
+> +}
+> +static inline bool capable_tracing(void)
+> +{
+> +       return capable(CAP_SYS_ADMIN) || capable(CAP_TRACING);
+> +}
+> +static inline bool capable_bpf_tracing(void)
+> +{
+> +       return capable(CAP_SYS_ADMIN) || (capable(CAP_BPF) && capable(CAP_TRACING));
+> +}
+> +static inline bool capable_bpf_net_admin(void)
+> +{
+> +       return (capable(CAP_SYS_ADMIN) || capable(CAP_BPF)) && capable(CAP_NET_ADMIN);
+> +}
+> +
 
-	BUG: Kernel NULL pointer dereference at 0x00000038
-	Faulting instruction address: 0xc0000000004ddf30
-	Oops: Kernel access of bad area, sig: 11 [#1]
-	...
-	NIP [...] request_key_auth_describe+0x90/0xd0
-	LR [...] request_key_auth_describe+0x54/0xd0
-	Call Trace:
-	[...] request_key_auth_describe+0x54/0xd0 (unreliable)
-	[...] proc_keys_show+0x308/0x4c0
-	[...] seq_read+0x3d0/0x540
-	[...] proc_reg_read+0x90/0x110
-	[...] __vfs_read+0x3c/0x70
-	[...] vfs_read+0xb4/0x1b0
-	[...] ksys_read+0x7c/0x130
-	[...] system_call+0x5c/0x70
+These helpers are all wrong, unfortunately, since they will produce
+inappropriate audit events.  capable_bpf() should look more like this:
 
-Fix this by checking for a NULL pointer when describing such a key.
+if (capable_noaudit(CAP_BPF))
+  return capable(CAP_BPF);
+if (capable_noaudit(CAP_SYS_ADMIN))
+  return capable(CAP_SYS_ADMIN);
 
-Also make the read routine check for a NULL pointer to be on the safe side.
+return capable(CAP_BPF);
 
-[DH: Modified to not take already-held rcu lock and modified to also check
- in the read routine]
-
-Fixes: 04c567d9313e ("[PATCH] Keys: Fix race between two instantiators of a key")
-Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Signed-off-by: Hillf Danton <hdanton@sina.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/keys/request_key_auth.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index e45b5cf3b97fd..8491becb57270 100644
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -66,6 +66,9 @@ static void request_key_auth_describe(const struct key *key,
- {
- 	struct request_key_auth *rka = get_request_key_auth(key);
- 
-+	if (!rka)
-+		return;
-+
- 	seq_puts(m, "key:");
- 	seq_puts(m, key->description);
- 	if (key_is_positive(key))
-@@ -83,6 +86,9 @@ static long request_key_auth_read(const struct key *key,
- 	size_t datalen;
- 	long ret;
- 
-+	if (!rka)
-+		return -EKEYREVOKED;
-+
- 	datalen = rka->callout_len;
- 	ret = datalen;
- 
--- 
-2.20.1
-
+James, etc: should there instead be new helpers to do this more
+generically rather than going through the noaudit contortions?  My
+code above is horrible.
