@@ -2,74 +2,72 @@ Return-Path: <SRS0=YGRx=XF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84054C49ED7
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 15:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA9AC49ED7
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 16:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 665E5208E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 15:17:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84B7A21670
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 16:21:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730177AbfIJPRv (ORCPT
+        id S2394141AbfIJQVf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Sep 2019 11:17:51 -0400
-Received: from namei.org ([65.99.196.166]:43666 "EHLO namei.org"
+        Tue, 10 Sep 2019 12:21:35 -0400
+Received: from mga18.intel.com ([134.134.136.126]:21091 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726060AbfIJPRu (ORCPT
+        id S2394113AbfIJQVf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Sep 2019 11:17:50 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x8AFHQtv003782;
-        Tue, 10 Sep 2019 15:17:26 GMT
-Date:   Tue, 10 Sep 2019 08:17:26 -0700 (PDT)
-From:   James Morris <jmorris@namei.org>
-To:     Matthew Garrett <mjg59@google.com>
-cc:     Ben Hutchings <ben@decadent.org.uk>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Joern Engel <joern@lazybastard.org>,
-        linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 2/2] mtd: phram,slram: Disable when the kernel is locked
- down
-In-Reply-To: <CACdnJuutzv+0nPKeizsiaix5YtYHU4RSoH-hPFfG1Z8sW_yy2w@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1909100816170.3709@namei.org>
-References: <20190830154549.vss6h5tlrl6d5r5y@decadent.org.uk> <20190830154720.eekfjt6c4jzvlbfz@decadent.org.uk> <CACdnJuutzv+0nPKeizsiaix5YtYHU4RSoH-hPFfG1Z8sW_yy2w@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Tue, 10 Sep 2019 12:21:35 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 09:21:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
+   d="scan'208";a="335968855"
+Received: from bhobinca-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.53.13])
+  by orsmga004.jf.intel.com with ESMTP; 10 Sep 2019 09:21:33 -0700
+Date:   Tue, 10 Sep 2019 17:21:32 +0100
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v6 00/12] add integrity and security to TPM2 transactions
+Message-ID: <20190910162132.GA11338@linux.intel.com>
+References: <1568031408.6613.29.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1568031408.6613.29.camel@HansenPartnership.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 10 Sep 2019, Matthew Garrett wrote:
-
-> On Fri, Aug 30, 2019 at 11:47 AM Ben Hutchings <ben@decadent.org.uk> wrote:
-> >
-> > These drivers allow mapping arbitrary memory ranges as MTD devices.
-> > This should be disabled to preserve the kernel's integrity when it is
-> > locked down.
-> >
-> > * Add the HWPARAM flag to the module parameters
-> > * When slram is built-in, it uses __setup() to read kernel parameters,
-> >   so add an explicit check security_locked_down() check
-> >
-> > Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-> > Cc: Matthew Garrett <mjg59@google.com>
-> > Cc: David Howells <dhowells@redhat.com>
-> > Cc: Joern Engel <joern@lazybastard.org>
-> > Cc: linux-mtd@lists.infradead.org
+On Mon, Sep 09, 2019 at 01:16:48PM +0100, James Bottomley wrote:
+> Link to previous cover letter:
 > 
-> Reviewed-by: Matthew Garrett <mjg59@google.com>
+> https://lore.kernel.org/linux-integrity/1540193596.3202.7.camel@HansenPartnership.com/
 > 
-> James, should I pick patches like this up and send them to you, or
-> will you queue them directly after they're acked?
+> This is marked v6 instead of v5 because I did a v5 after feedback on v4
+> but didn't get around to posting it and then had to rework the whole of
+> the kernel space handling while I was on holiday.  I also added the
+> documentation of how the whole thing works and the rationale for doing
+> it in tpm-security.rst (patch 11).  The main reason for doing this now
+> is so we have something to discuss at Plumbers.
+> 
+> The new patch set implements the various splits requested, but the main
+> changes are that the kernel space is gone and is replaced by a context
+> save and restore of the generated null seed.  This is easier to handle
+> than a full kernel space given the new threading for TPM spaces, but
+> conceptually it is still very like a space.  I've also made whether
+> integrity and encryption is turned on a Kconfig option.
+> 
+> James
 
-As long as I'm on the to or cc when they're acked, I can grab them.
+So... is there a changelog for the revisions?
 
-
--- 
-James Morris
-<jmorris@namei.org>
-
+/Jarkko
