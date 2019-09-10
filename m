@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE419C3A5A2
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 11:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B91DC3A5A2
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 11:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C50CF21019
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 11:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1130421019
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 11:57:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CHldEZZf"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L/JcmoL9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729357AbfIJL5R (ORCPT
+        id S1726575AbfIJL5S (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Sep 2019 07:57:17 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36089 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388259AbfIJL4n (ORCPT
+        Tue, 10 Sep 2019 07:57:18 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45302 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731955AbfIJL4m (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Sep 2019 07:56:43 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y19so19629789wrd.3
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Sep 2019 04:56:42 -0700 (PDT)
+        Tue, 10 Sep 2019 07:56:42 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l16so19551847wrv.12
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Sep 2019 04:56:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=goHxQO5WE56PjZrElqp9mWD4UyL0ez4HVWRIM6UzU3c=;
-        b=CHldEZZfNkVRxXOpA/ZEWOkGHLNYox5M0eQi+ih3ANNwJcZssMhLi1RvrKo6pFLpIu
-         O0krOoKt/DkqNYVlPOFbFJ/LCVr2AyI88WBCpVC/zADylr9USKLI3of2dqtzmKkjm1EM
-         AkCKEJMXkpFGE+nb6HJM6DAYeR0LzGOGEhFgg=
+        bh=Xx8OQzLGeYj3y8P8kHo1vFFB3UBFSHmtM6b5jQ7aUbc=;
+        b=L/JcmoL9YFbmK7b5Ew8OA1Fu7G6qYLk08zlfibWCYa5wLOBEtncRKjJHOAC/3GgUNH
+         tyH4p/RGx2W8u2s5Z5zmnBfGz80YsBhI+p+vULHEpkDHhJg+ymK5RN5K/0jBPlXyb2Yh
+         0Dwg1BkJ5ku6v9PobnKdYpGahlhHlgU675J58=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=goHxQO5WE56PjZrElqp9mWD4UyL0ez4HVWRIM6UzU3c=;
-        b=WPy2Z/DPz4w9zqoNCDw24OZ3EGbOOkeUXVakCUYjUyYQ9mciQzMWK/Zx4l++JMWfrK
-         05jWs/vQNLi0q9JJPdbDriNYm2GtgP67DaU+znpyaBbtxwSoAhV1532NoZ7yMayhWMw7
-         ZT/EIopHT/59kBoCBdXpd5LQxlVKk0+hbu/u2q8iHYW5nv7dW8NJ/rdTKblkW7pU4Qsk
-         G98sUs0zt3mqOToFhhCSu02KEx3oKykhoOBjYYrzBmFXaspjCPKUYFuW8KNBRnZksKAr
-         XSQQPTu6Wn70mklnp0hg8cfWmMCTBeZwJkppw9TsrArVtq+/sYXrLB9kTfSSx2WgQHKR
-         KIjQ==
-X-Gm-Message-State: APjAAAXajzs3SwroMB1eHSzv1Zy8SRU0M2uG7+ErznxPxdLLFR2o8CDv
-        V05FZvH4JH8upw7wMqWTDL8HUQ==
-X-Google-Smtp-Source: APXvYqy41deBTxwWe2+aWhU+4LiCXFDvi6WI4YCLje4OsKhs9MTrTG1c6KpCz0h80p4KZoQRWYOFwg==
-X-Received: by 2002:a5d:4fcf:: with SMTP id h15mr25996339wrw.237.1568116602133;
-        Tue, 10 Sep 2019 04:56:42 -0700 (PDT)
+        bh=Xx8OQzLGeYj3y8P8kHo1vFFB3UBFSHmtM6b5jQ7aUbc=;
+        b=nuUsE1GJUm+64Zy3cLi2LTONwMnsJ6TxLoIDoWg2TczqqGL6dTqtn5SHhCVGtpmsD+
+         cZ9xP15RmbYEj3tpFVdJmlNk9ebWrRd5J7qFtLK6M30P+GX+8F8z4bs7NazpHj+BKsUF
+         d+SkjMJ2jj4NlmG8orBjeFiiaEof3FnB9u27+aN9PJsdWWvxGSf5KUxIpZ8Qah52t7PT
+         jAR2EPN0vY2G6v+8xF3UzFXRHUHb044SfRSFkqtqbi6o/yfRONwJ7yqwraNe3F7MgA8B
+         2Ee5zUytBwW9QGGwkyQ74VpxSwB/+1PyYrTO42STBp41lBhewDezMNuKGV3KdbKewo1Y
+         vSvA==
+X-Gm-Message-State: APjAAAXjlB0spNQ7qSeDjcrRMfno+uLAFStnxhIMoqKq+2liFHKNqlGo
+        DcVeixNGqPoLKP0vJowiS30ilQ==
+X-Google-Smtp-Source: APXvYqwNk6DvXrD4yaS/Fc0Y482stWXQP2rzXiEmcLEygo6h6UhjTxAsjVjo58V1vhNDVNYvKl8pLw==
+X-Received: by 2002:adf:e852:: with SMTP id d18mr24404287wrn.225.1568116600270;
+        Tue, 10 Sep 2019 04:56:40 -0700 (PDT)
 Received: from kpsingh-kernel.c.hoisthospitality.com (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id q19sm23732935wra.89.2019.09.10.04.56.40
+        by smtp.gmail.com with ESMTPSA id q19sm23732935wra.89.2019.09.10.04.56.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 04:56:41 -0700 (PDT)
+        Tue, 10 Sep 2019 04:56:39 -0700 (PDT)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
@@ -79,9 +79,9 @@ Cc:     Alexei Starovoitov <ast@kernel.org>,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
         Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [RFC v1 11/14] krsi: Pin argument pages in bprm_check_security hook
-Date:   Tue, 10 Sep 2019 13:55:24 +0200
-Message-Id: <20190910115527.5235-12-kpsingh@chromium.org>
+Subject: [RFC v1 10/14] krsi: Handle attachment of the same program
+Date:   Tue, 10 Sep 2019 13:55:23 +0200
+Message-Id: <20190910115527.5235-11-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190910115527.5235-1-kpsingh@chromium.org>
 References: <20190910115527.5235-1-kpsingh@chromium.org>
@@ -93,123 +93,114 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: KP Singh <kpsingh@google.com>
 
-Pin the memory allocated to the the argv + envv for the new
-process and passes it in the context to the eBPF programs attached to
-the hook.
+Allow the userspace to attach a newer version of a program without
+having duplicates of the same program.
 
-The get_user_pages_remote cannot be called from an eBPF helper because
-the helpers run in atomic context and the get_user_pages_remote function
-can sleep.
+If BPF_F_ALLOW_OVERRIDE is passed, the attachment logic compares the
+name of the new program to the names of existing attached programs. The
+names are only compared till a "__" (or '\0', if there is no "__"). If
+a successful match is found, the existing program is replaced with the
+newer attachment.
 
-The following heuristics can be added as an optimization:
+./krsi Attaches "env_dumper__v1" followed by "env_dumper__v2"
+to the process_execution hook of the KRSI LSM.
 
-- Don't pin the pages if no eBPF programs are attached.
-- Don't pin the pages if none of the eBPF programs depend on the
-  information. This would require introspection of the byte-code and
-  checking if certain helpers are called.
+./krsi
+./krsi
+
+Before:
+
+  cat /sys/kernel/security/krsi/process_execution
+  env_dumper__v1
+  env_dumper__v2
+
+After:
+
+  cat /sys/kernel/security/krsi/process_execution
+  env_dumper__v2
 
 Signed-off-by: KP Singh <kpsingh@google.com>
 ---
- security/krsi/include/krsi_init.h |  3 ++
- security/krsi/krsi.c              | 56 +++++++++++++++++++++++++++++++
- 2 files changed, 59 insertions(+)
+ security/krsi/ops.c | 53 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 52 insertions(+), 1 deletion(-)
 
-diff --git a/security/krsi/include/krsi_init.h b/security/krsi/include/krsi_init.h
-index 4e17ecacd4ed..6152847c3b08 100644
---- a/security/krsi/include/krsi_init.h
-+++ b/security/krsi/include/krsi_init.h
-@@ -16,6 +16,9 @@ extern int krsi_fs_initialized;
- 
- struct krsi_bprm_ctx {
- 	struct linux_binprm *bprm;
-+	char *arg_pages;
-+	unsigned long num_arg_pages;
-+	unsigned long max_arg_offset;
- };
- 
- /*
-diff --git a/security/krsi/krsi.c b/security/krsi/krsi.c
-index d3a4a361c192..00a7150c1b22 100644
---- a/security/krsi/krsi.c
-+++ b/security/krsi/krsi.c
-@@ -4,6 +4,8 @@
- #include <linux/filter.h>
- #include <linux/bpf.h>
- #include <linux/binfmts.h>
-+#include <linux/highmem.h>
-+#include <linux/mm.h>
- 
- #include "krsi_init.h"
- 
-@@ -17,6 +19,53 @@ struct krsi_hook krsi_hooks_list[] = {
- 	#undef KRSI_HOOK_INIT
- };
- 
-+static int pin_arg_pages(struct krsi_bprm_ctx *ctx)
-+{
-+	int ret = 0;
-+	char *kaddr;
-+	struct page *page;
-+	unsigned long i, pos, num_arg_pages;
-+	struct linux_binprm *bprm = ctx->bprm;
-+	char *buf;
-+
-+	/*
-+	 * The bprm->vma_pages does not have the correct count
-+	 * for execution that is done by a kernel thread using the UMH.
-+	 * vm_pages is updated in acct_arg_size and bails
-+	 * out if current->mm is NULL (which is the case for a kernel thread).
-+	 * It's safer to use vma_pages(struct linux_binprm*) to get the
-+	 * actual number
-+	 */
-+	num_arg_pages = vma_pages(bprm->vma);
-+	if (!num_arg_pages)
-+		return -ENOMEM;
-+
-+	buf = kmalloc_array(num_arg_pages, PAGE_SIZE, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < num_arg_pages; i++) {
-+		pos = ALIGN_DOWN(bprm->p, PAGE_SIZE) + i * PAGE_SIZE;
-+		ret = get_user_pages_remote(current, bprm->mm, pos, 1,
-+					    FOLL_FORCE, &page, NULL, NULL);
-+		if (ret <= 0) {
-+			kfree(buf);
-+			return -ENOMEM;
-+		}
-+
-+		kaddr = kmap(page);
-+		memcpy(buf + i * PAGE_SIZE, kaddr, PAGE_SIZE);
-+		kunmap(page);
-+		put_page(page);
-+	}
-+
-+	ctx->arg_pages = buf;
-+	ctx->num_arg_pages = num_arg_pages;
-+	ctx->max_arg_offset = num_arg_pages * PAGE_SIZE;
-+
-+	return 0;
-+}
-+
- static int krsi_process_execution(struct linux_binprm *bprm)
- {
- 	int ret;
-@@ -26,7 +75,14 @@ static int krsi_process_execution(struct linux_binprm *bprm)
- 		.bprm = bprm,
- 	};
- 
-+	ret = pin_arg_pages(&ctx.bprm_ctx);
-+	if (ret < 0)
-+		goto out_arg_pages;
-+
- 	ret = krsi_run_progs(PROCESS_EXECUTION, &ctx);
-+	kfree(ctx.bprm_ctx.arg_pages);
-+
-+out_arg_pages:
- 	return ret;
+diff --git a/security/krsi/ops.c b/security/krsi/ops.c
+index 57bd304a03f4..1f4df920139c 100644
+--- a/security/krsi/ops.c
++++ b/security/krsi/ops.c
+@@ -65,11 +65,52 @@ static struct krsi_hook *get_hook_from_fd(int fd)
+ 	return ERR_PTR(ret);
  }
  
++/*
++ * match_prog_name matches the name of the program till "__"
++ * or the end of the string is encountered. This allows
++ * a different version of the same program to be loaded.
++ *
++ * For example:
++ *
++ *	env_dumper__v1 is matched with env_dumper__v2
++ *
++ */
++static bool match_prog_name(char *a, char *b)
++{
++	int m, n;
++	char *end;
++
++	end = strstr(a, "__");
++	n = end ? end - a : strlen(a);
++
++	end = strstr(b, "__");
++	m = end ? end - b : strlen(b);
++
++	if (m != n)
++		return false;
++
++	return strncmp(a, b, n) == 0;
++}
++
++static struct bpf_prog *find_attached_prog(struct bpf_prog_array *array,
++					   struct bpf_prog *prog)
++{
++	struct bpf_prog_array_item *item = array->items;
++
++	for (; item->prog; item++) {
++		if (match_prog_name(item->prog->aux->name, prog->aux->name))
++			return item->prog;
++	}
++
++	return NULL;
++}
++
+ int krsi_prog_attach(const union bpf_attr *attr, struct bpf_prog *prog)
+ {
+ 	struct bpf_prog_array *old_array;
+ 	struct bpf_prog_array *new_array;
+ 	struct krsi_hook *h;
++	struct bpf_prog *old_prog;
+ 	int ret = 0;
+ 
+ 	h = get_hook_from_fd(attr->target_fd);
+@@ -79,8 +120,18 @@ int krsi_prog_attach(const union bpf_attr *attr, struct bpf_prog *prog)
+ 	mutex_lock(&h->mutex);
+ 	old_array = rcu_dereference_protected(h->progs,
+ 					      lockdep_is_held(&h->mutex));
++	/*
++	 * Check if a matching program with already exists and replace
++	 * the existing program will be overridden if BPF_F_ALLOW_OVERRIDE
++	 * is specified in the attach flags.
++	 */
++	old_prog = find_attached_prog(old_array, prog);
++	if (old_prog && !(attr->attach_flags & BPF_F_ALLOW_OVERRIDE)) {
++		ret = -EEXIST;
++		goto unlock;
++	}
+ 
+-	ret = bpf_prog_array_copy(old_array, NULL, prog, &new_array);
++	ret = bpf_prog_array_copy(old_array, old_prog, prog, &new_array);
+ 	if (ret < 0) {
+ 		ret = -ENOMEM;
+ 		goto unlock;
 -- 
 2.20.1
 
