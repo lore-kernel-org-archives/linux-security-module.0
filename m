@@ -2,54 +2,86 @@ Return-Path: <SRS0=YGRx=XF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCC8C3A5A2
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 12:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1554FC4740A
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 14:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A2B020872
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 12:30:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E00CC20863
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 14:25:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388426AbfIJMaF (ORCPT
+        id S1733038AbfIJOZJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Sep 2019 08:30:05 -0400
-Received: from namei.org ([65.99.196.166]:43636 "EHLO namei.org"
+        Tue, 10 Sep 2019 10:25:09 -0400
+Received: from mga02.intel.com ([134.134.136.20]:48030 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729868AbfIJMaF (ORCPT
+        id S1729390AbfIJOZJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Sep 2019 08:30:05 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x8ACTxV6027709;
-        Tue, 10 Sep 2019 12:30:00 GMT
-Date:   Tue, 10 Sep 2019 05:29:59 -0700 (PDT)
-From:   James Morris <jmorris@namei.org>
-To:     Matthew Garrett <matthewgarrett@google.com>
-cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH 0/2] Minor lockdown fixups
-In-Reply-To: <20190910100318.204420-1-matthewgarrett@google.com>
-Message-ID: <alpine.LRH.2.21.1909100529300.27252@namei.org>
-References: <20190910100318.204420-1-matthewgarrett@google.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Tue, 10 Sep 2019 10:25:09 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 07:25:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
+   d="scan'208";a="196564634"
+Received: from agreppma-mobl.ger.corp.intel.com (HELO localhost) ([10.252.53.7])
+  by orsmga002.jf.intel.com with ESMTP; 10 Sep 2019 07:25:05 -0700
+Date:   Tue, 10 Sep 2019 15:25:04 +0100
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v3] KEYS: trusted: correctly initialize digests and fix
+ locking issue
+Message-ID: <20190910142504.GA3768@linux.intel.com>
+References: <20190908174542.509-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190908174542.509-1-roberto.sassu@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 10 Sep 2019, Matthew Garrett wrote:
+On Sun, Sep 08, 2019 at 07:45:42PM +0200, Roberto Sassu wrote:
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 1b4f95c13e00..1fffa91fc148 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -316,14 +316,14 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+>  	int rc;
+>  	int i;
+>  
+> -	chip = tpm_find_get_ops(chip);
+> -	if (!chip)
+> -		return -ENODEV;
+> -
+>  	for (i = 0; i < chip->nr_allocated_banks; i++)
+>  		if (digests[i].alg_id != chip->allocated_banks[i].alg_id)
+>  			return -EINVAL;
+>  
+> +	chip = tpm_find_get_ops(chip);
+> +	if (!chip)
+> +		return -ENODEV;
+> +
+>  	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+>  		rc = tpm2_pcr_extend(chip, pcr_idx, digests);
+>  		tpm_put_ops(chip);
 
-> Constify some arrays and fix an #ifdef that I typoed.
-> 
+You can only access chip's field when you hold the lock and have a legit
+refcount. This would add a potential race. The bug is very much valid
+and thank you for spotting that.
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-lockdown
-and next-testing
+I sent a patch the fix the 2nd issue with your reported-by.
 
+[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#separate-your-changes
 
--- 
-James Morris
-<jmorris@namei.org>
+/Jarkko
+
 
