@@ -2,86 +2,91 @@ Return-Path: <SRS0=YGRx=XF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1554FC4740A
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 14:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C11E0C4740A
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 14:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E00CC20863
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 14:25:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 861FE20872
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 14:27:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CDI61Cau"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733038AbfIJOZJ (ORCPT
+        id S1727359AbfIJO1u (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Sep 2019 10:25:09 -0400
-Received: from mga02.intel.com ([134.134.136.20]:48030 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729390AbfIJOZJ (ORCPT
+        Tue, 10 Sep 2019 10:27:50 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36620 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbfIJO1u (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Sep 2019 10:25:09 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 07:25:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
-   d="scan'208";a="196564634"
-Received: from agreppma-mobl.ger.corp.intel.com (HELO localhost) ([10.252.53.7])
-  by orsmga002.jf.intel.com with ESMTP; 10 Sep 2019 07:25:05 -0700
-Date:   Tue, 10 Sep 2019 15:25:04 +0100
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v3] KEYS: trusted: correctly initialize digests and fix
- locking issue
-Message-ID: <20190910142504.GA3768@linux.intel.com>
-References: <20190908174542.509-1-roberto.sassu@huawei.com>
+        Tue, 10 Sep 2019 10:27:50 -0400
+Received: by mail-io1-f67.google.com with SMTP id b136so37982511iof.3
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Sep 2019 07:27:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iAJWigFQogCgXqw0GlIr6H4PJdXWKqg0KkSpMrQT/7M=;
+        b=CDI61CautrcOJ596e6Ocyme/zhgxyGSPizFMEyCjc8zFk/4DmZGZuLcPRV8DX63sSy
+         QfOWqPKSEDO+PN+kXadppYN6yN0ZYWSCnK8k21Pj1s30YvqJwymMQxEDYGbpEqkgCNkO
+         0ff0l9JiWvTuQOzERjuVt4drIbh5FliYa9zHxcWtzXgwk7qOP1JZ5mDPzksaQjMRMDXN
+         N0RuubgU/kLpA4t0q5+olIg6IQepEutG6lcPLoSy1ICNhoes3eld3+BXnFc48Jxs2DJC
+         4RulZJ3sw3Ve7oUPlq5zQVUF0+r0FSs5Yo7FXP6yk+xR44XDLDLz/fPotT9tGv/Z1vg1
+         ShbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iAJWigFQogCgXqw0GlIr6H4PJdXWKqg0KkSpMrQT/7M=;
+        b=ZAAx0d+dkXfRy919bLhNzOyXdhzb11oZ3EeTGv121Y6fMPsLJHV5ST9w37QMzehYcI
+         pdmJap6GbMgACsqOK1oOnn8hILYWW4PJsL2uuTm9lypzeD/VnG3AP+BAH4DpvLVIm2hW
+         AJkgF+916uHkQxis12m/u3cqAIMGfeFZEvIDliVMW8wOdSj0lNZ+uokMEFhdgKedZRGZ
+         rJ2mnkrclVjCfJE6V1LTKGDV5dt7MD3h2sTMoXNbYMKGwUVy3ktcRKVucjK3e0mo8Axu
+         caTvXy6lUMEk8LAshzrwQibXF6bMPaF8SBgXoOFMJLHpQskXsh2Y27Kf7lIZfmEwGeWQ
+         0Vmg==
+X-Gm-Message-State: APjAAAVcEKvP/tw9znS0AmNG0yYDBdcY/Jisx2qXt0dzOv/DamESrSO7
+        zyAAlnc57BTWoB366+PRnhovk5U9jiGyV/9+YJCbhg==
+X-Google-Smtp-Source: APXvYqwEMQEv8abs86qQwB4owkSshjlRdWMduOGeS/BxXi7DyYcvUMQBqShvZAQJ/9H8nlqE9ZM0BxWO8eLyqm2UHOo=
+X-Received: by 2002:a05:6602:2256:: with SMTP id o22mr7092227ioo.104.1568125669479;
+ Tue, 10 Sep 2019 07:27:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190908174542.509-1-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190830154549.vss6h5tlrl6d5r5y@decadent.org.uk> <20190830154720.eekfjt6c4jzvlbfz@decadent.org.uk>
+In-Reply-To: <20190830154720.eekfjt6c4jzvlbfz@decadent.org.uk>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Tue, 10 Sep 2019 10:27:37 -0400
+Message-ID: <CACdnJuutzv+0nPKeizsiaix5YtYHU4RSoH-hPFfG1Z8sW_yy2w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mtd: phram,slram: Disable when the kernel is locked down
+To:     Ben Hutchings <ben@decadent.org.uk>
+Cc:     James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Joern Engel <joern@lazybastard.org>,
+        linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Sep 08, 2019 at 07:45:42PM +0200, Roberto Sassu wrote:
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 1b4f95c13e00..1fffa91fc148 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -316,14 +316,14 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
->  	int rc;
->  	int i;
->  
-> -	chip = tpm_find_get_ops(chip);
-> -	if (!chip)
-> -		return -ENODEV;
-> -
->  	for (i = 0; i < chip->nr_allocated_banks; i++)
->  		if (digests[i].alg_id != chip->allocated_banks[i].alg_id)
->  			return -EINVAL;
->  
-> +	chip = tpm_find_get_ops(chip);
-> +	if (!chip)
-> +		return -ENODEV;
-> +
->  	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->  		rc = tpm2_pcr_extend(chip, pcr_idx, digests);
->  		tpm_put_ops(chip);
+On Fri, Aug 30, 2019 at 11:47 AM Ben Hutchings <ben@decadent.org.uk> wrote:
+>
+> These drivers allow mapping arbitrary memory ranges as MTD devices.
+> This should be disabled to preserve the kernel's integrity when it is
+> locked down.
+>
+> * Add the HWPARAM flag to the module parameters
+> * When slram is built-in, it uses __setup() to read kernel parameters,
+>   so add an explicit check security_locked_down() check
+>
+> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+> Cc: Matthew Garrett <mjg59@google.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Joern Engel <joern@lazybastard.org>
+> Cc: linux-mtd@lists.infradead.org
 
-You can only access chip's field when you hold the lock and have a legit
-refcount. This would add a potential race. The bug is very much valid
-and thank you for spotting that.
+Reviewed-by: Matthew Garrett <mjg59@google.com>
 
-I sent a patch the fix the 2nd issue with your reported-by.
-
-[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#separate-your-changes
-
-/Jarkko
-
-
+James, should I pick patches like this up and send them to you, or
+will you queue them directly after they're acked?
