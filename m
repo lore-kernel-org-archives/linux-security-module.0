@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A761CC49ED6
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 11:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57757C4740A
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 11:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A2CB21019
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 11:56:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 248D621019
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Sep 2019 11:56:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PnzCgXjN"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bTp1PUS3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732008AbfIJL4g (ORCPT
+        id S2392954AbfIJL4w (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Sep 2019 07:56:36 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33515 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732563AbfIJL4f (ORCPT
+        Tue, 10 Sep 2019 07:56:52 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38047 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392952AbfIJL4s (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Sep 2019 07:56:35 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u16so19660240wrr.0
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Sep 2019 04:56:33 -0700 (PDT)
+        Tue, 10 Sep 2019 07:56:48 -0400
+Received: by mail-wr1-f65.google.com with SMTP id l11so19606622wrx.5
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Sep 2019 04:56:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=khTLae9RCwkUqy9+7uO8vTkotEuqqfm01bDE7aGuRNw=;
-        b=PnzCgXjNvnuPNnTWHRjmLY/R+M3PqGR3Yjz+BOo6oYQ/vgpY2KdtwLmOY34jos2X0H
-         X3rOTwaix0gt/O6HYjtB2s8QAbKS5Tpe2mzz7c305PYW4/zqsnVcjd1V6fP+pL3S0Yri
-         w/9zPw+SNOhM23ea/k4eAC3E1R2AUiDZNF0r4=
+        bh=s9oggadqo//5FtNHKx2jdFdUWzoATro1ikb31coyYYI=;
+        b=bTp1PUS3Z5bMMkdNcaOM8y5T4F95uMErsTVg+BHYorLfez9asaBj35Nw53EDM9sdT/
+         zXW1RzFperDXJiDwvRRF4nStFyFc7fxonUqN8MDZNtgFzsGokPc7C318EssXZhVkv4pL
+         EFTPPlfz0Q2d1J/WJs6mVW8E2jXTWOhd8wNyc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=khTLae9RCwkUqy9+7uO8vTkotEuqqfm01bDE7aGuRNw=;
-        b=a0VL/KnC29Khf4r72Fgx7s2345t2EiX4iHFoPSSO9Y0VRI0T/nFh6zzkzfIWlT2lRx
-         hXLGCFT/2e4ePHUT4gWYeFNIv6VTHReY6/d0X5be5Pbr5zROaHYFshGqBBIK8WqquN+R
-         91sg2o7yVLLmLjGvM6N9IAPPNn4/EjZTo1wADUpIGeTN8tKZlrE3gj2v7Ouufx5Q+klb
-         bplPbir6TKDOsorP9+fxDXep9R6aD8JxGWhox+uGFgGJdmLHxoMODuC5e5jlGrd3iYHb
-         J82DG37ZRyedW8qanfZehl/t+QDO1qbqDoCvELi+DCJpK+7YXIEo+tIvE9aT8AapJQQD
-         VtXw==
-X-Gm-Message-State: APjAAAXg4zVLg8fsN+eqQqXLemmNmFCMLrtiRPXLfTAdF16DJXuSUIY3
-        kre2EzyCYvx/xu0wYVR9NcGHNw==
-X-Google-Smtp-Source: APXvYqxOn37aSDhqXLhP48ScKpNZDRSV1bh9pheAfKkJ1p3R44n3jR0uNlENRSQPjhBnLLFHHeyaFA==
-X-Received: by 2002:adf:ee10:: with SMTP id y16mr22300305wrn.47.1568116592680;
-        Tue, 10 Sep 2019 04:56:32 -0700 (PDT)
+        bh=s9oggadqo//5FtNHKx2jdFdUWzoATro1ikb31coyYYI=;
+        b=gDfFi3nuiGbL4CnHmtRg3PjL5G3ooxWcGszmTAPUPJL7Q9zY8Za0B/HWOC82Xk4r3G
+         TIjkCqGOtEDnh1my0WEjJFrPxvjJB5PYuuQMSB5MW2Ig09eGYWaAdMTLTmZ99ItGppTI
+         cLh9VaVR5ojOz/uHW6FIC3VbK1mNC7F8KqDMIy7oTsTZksPk7iOnXzHDWrUmc6qNNkB0
+         g3Cw/KZZxqjUo0H2Z1bj96ce0krNwtG5QorGdsE97TAdBu0p5l+XIe8eFjTmoLU3nJ3I
+         /+GGE8sgcNPbVsWscc29W1eP1TH8ZxexRE86jIgiFAv5e9mENmc5UsgCzSdLRHqDPgbV
+         PTRw==
+X-Gm-Message-State: APjAAAXupqcsDI3I+09G4M5oayDjLquoCEOii7V90BeMjL80HwpUfmch
+        5IV7eUrdHpFicJ6CJY13w7uUrA==
+X-Google-Smtp-Source: APXvYqxVfjrIddTA8bsV5am8Cb4uN3Xue2sI0Y2t94RDurY57DjHjCKpgbH0KcvKK5FQZimJkzyHsg==
+X-Received: by 2002:adf:e7cc:: with SMTP id e12mr25354235wrn.299.1568116605922;
+        Tue, 10 Sep 2019 04:56:45 -0700 (PDT)
 Received: from kpsingh-kernel.c.hoisthospitality.com (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id q19sm23732935wra.89.2019.09.10.04.56.30
+        by smtp.gmail.com with ESMTPSA id q19sm23732935wra.89.2019.09.10.04.56.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 04:56:32 -0700 (PDT)
+        Tue, 10 Sep 2019 04:56:45 -0700 (PDT)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
@@ -79,9 +79,9 @@ Cc:     Alexei Starovoitov <ast@kernel.org>,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
         Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [RFC v1 06/14] krsi: Implement eBPF operations, attachment and execution
-Date:   Tue, 10 Sep 2019 13:55:19 +0200
-Message-Id: <20190910115527.5235-7-kpsingh@chromium.org>
+Subject: [RFC v1 13/14] krsi: Provide an example to read and log environment variables
+Date:   Tue, 10 Sep 2019 13:55:26 +0200
+Message-Id: <20190910115527.5235-14-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190910115527.5235-1-kpsingh@chromium.org>
 References: <20190910115527.5235-1-kpsingh@chromium.org>
@@ -93,362 +93,411 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: KP Singh <kpsingh@google.com>
 
-A user space program can attach an eBPF program by:
+	*  The program takes the name of an environment variable as an
+	   argument.
+	*  An eBPF program is loaded and attached to the
+	   process_execution hook.
+	*  The name of the environment variable passed is updated in a
+	   eBPF per-cpu map.
+	*  The eBPF program uses the krsi_get_env_var helper to get the
+	   the value of this variable and logs the result to the perf
+	   events buffer.
+	*  The user-space program listens to the perf events and prints
+	   the values.
 
-  hook_fd = open("/sys/kernel/security/krsi/process_execution", O_RDWR)
-  prog_fd = bpf(BPF_PROG_LOAD, ...)
-  bpf(BPF_PROG_ATTACH, hook_fd, prog_fd)
+Example execution:
 
-When such an attach call is received, the attachment logic looks up the
-dentry and appends the program to the bpf_prog_array.
+	./krsi LD_PRELOAD
 
-The BPF programs are stored in a bpf_prog_array and writes to the array
-are guarded by a mutex. The eBPF programs are executed as a part of the
-LSM hook they are attached to. If any of the eBPF programs return
-an error (-ENOPERM) the action represented by the hook is denied.
+	[p_pid=123] LD_PRELOAD is not set
+	[p_pid=456] LD_PRELOAD=/lib/bad.so
+	[p_pid=789] WARNING! LD_PRELOAD is set 2 times
+	[p_pid=789] LD_PRELOAD=/lib/decoy.so
+	[p_pid=789] LD_PRELOAD=/lib/bad.so
+
+In a separate session the following [1, 2, 3] exec system calls
+are made where:
+
+	[1, 2, 3] char *argv[] = {"/bin/ls", 0};
+
+	[1] char *envp = {0};
+	[2] char *envp = {"LD_PRELOAD=/lib/bad.so", 0};
+	[3] char *envp = {"LD_PRELOAD=/lib/decoy.so, "LD_PRELOAD=/lib/bad.so", 0};
+
+This example demonstrates that user-space is free to choose the format
+in which the data is logged and can use very specific helpers like
+krsi_get_env_var to populate only the data that is required.
 
 Signed-off-by: KP Singh <kpsingh@google.com>
 ---
- include/linux/krsi.h              |  18 ++++++
- kernel/bpf/syscall.c              |   3 +-
- security/krsi/include/krsi_init.h |  51 +++++++++++++++
- security/krsi/krsi.c              |  13 +++-
- security/krsi/krsi_fs.c           |  28 ++++++++
- security/krsi/ops.c               | 102 ++++++++++++++++++++++++++++++
- 6 files changed, 213 insertions(+), 2 deletions(-)
- create mode 100644 include/linux/krsi.h
+ MAINTAINERS                |   3 +
+ samples/bpf/.gitignore     |   1 +
+ samples/bpf/Makefile       |   3 +
+ samples/bpf/krsi_helpers.h |  31 ++++++
+ samples/bpf/krsi_kern.c    |  52 ++++++++++
+ samples/bpf/krsi_user.c    | 202 +++++++++++++++++++++++++++++++++++++
+ 6 files changed, 292 insertions(+)
+ create mode 100644 samples/bpf/krsi_helpers.h
+ create mode 100644 samples/bpf/krsi_kern.c
+ create mode 100644 samples/bpf/krsi_user.c
 
-diff --git a/include/linux/krsi.h b/include/linux/krsi.h
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8e0364391d8b..ec378abb4c23 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9005,6 +9005,9 @@ F:	kernel/kprobes.c
+ KRSI SECURITY MODULE
+ M:	KP Singh <kpsingh@chromium.org>
+ S:	Supported
++F:	samples/bpf/krsi_helpers.h
++F:	samples/bpf/krsi_kern.c
++F:	samples/bpf/krsi_user.c
+ F:	security/krsi/
+ 
+ KS0108 LCD CONTROLLER DRIVER
+diff --git a/samples/bpf/.gitignore b/samples/bpf/.gitignore
+index 74d31fd3c99c..6bbf5a04877f 100644
+--- a/samples/bpf/.gitignore
++++ b/samples/bpf/.gitignore
+@@ -2,6 +2,7 @@ cpustat
+ fds_example
+ hbm
+ ibumad
++krsi
+ lathist
+ lwt_len_hist
+ map_perf_test
+diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
+index 1d9be26b4edd..33d3bef17549 100644
+--- a/samples/bpf/Makefile
++++ b/samples/bpf/Makefile
+@@ -8,6 +8,7 @@ hostprogs-y := test_lru_dist
+ hostprogs-y += sock_example
+ hostprogs-y += fds_example
+ hostprogs-y += sockex1
++hostprogs-y += krsi
+ hostprogs-y += sockex2
+ hostprogs-y += sockex3
+ hostprogs-y += tracex1
+@@ -62,6 +63,7 @@ TRACE_HELPERS := ../../tools/testing/selftests/bpf/trace_helpers.o
+ 
+ fds_example-objs := fds_example.o
+ sockex1-objs := sockex1_user.o
++krsi-objs := krsi_user.o $(TRACE_HELPERS)
+ sockex2-objs := sockex2_user.o
+ sockex3-objs := bpf_load.o sockex3_user.o
+ tracex1-objs := bpf_load.o tracex1_user.o
+@@ -113,6 +115,7 @@ hbm-objs := bpf_load.o hbm.o $(CGROUP_HELPERS)
+ # Tell kbuild to always build the programs
+ always := $(hostprogs-y)
+ always += sockex1_kern.o
++always += krsi_kern.o
+ always += sockex2_kern.o
+ always += sockex3_kern.o
+ always += tracex1_kern.o
+diff --git a/samples/bpf/krsi_helpers.h b/samples/bpf/krsi_helpers.h
 new file mode 100644
-index 000000000000..c7d1790d0c1f
+index 000000000000..3007bfd6212e
 --- /dev/null
-+++ b/include/linux/krsi.h
-@@ -0,0 +1,18 @@
++++ b/samples/bpf/krsi_helpers.h
+@@ -0,0 +1,31 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +
-+#ifndef _KRSI_H
-+#define _KRSI_H
++#ifndef _KRSI_HELPERS_H
++#define _KRSI_HELPERS_H
 +
-+#include <linux/bpf.h>
++#define __bpf_percpu_val_align __aligned(8)
 +
-+#ifdef CONFIG_SECURITY_KRSI
-+int krsi_prog_attach(const union bpf_attr *attr, struct bpf_prog *prog);
-+#else
-+static inline int krsi_prog_attach(const union bpf_attr *attr,
-+				   struct bpf_prog *prog)
++#define ENV_VAR_NAME_MAX_LEN 48
++#define ENV_VAR_VAL_MAX_LEN 4096
++
++#define MAX_CPUS 128
++
++#define __LOWER(x) (x & 0xffffffff)
++#define __UPPER(x) (x >> 32)
++
++struct krsi_env_value {
++	// The name of the environment variable.
++	char name[ENV_VAR_NAME_MAX_LEN];
++	// The value of the environment variable (if set).
++	char value[ENV_VAR_VAL_MAX_LEN];
++	// Indicates if an overflow occurred while reading the value of the
++	// of the environment variable. This means that an -E2BIG was received
++	// from the krsi_get_env_var helper.
++	bool overflow;
++	// The number of times the environment variable was set.
++	__u32 times;
++	// The PID of the parent process.
++	__u32 p_pid;
++} __bpf_percpu_val_align;
++
++#endif // _KRSI_HELPERS_H
+diff --git a/samples/bpf/krsi_kern.c b/samples/bpf/krsi_kern.c
+new file mode 100644
+index 000000000000..087a6f0cc81d
+--- /dev/null
++++ b/samples/bpf/krsi_kern.c
+@@ -0,0 +1,52 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/ptrace.h>
++#include <uapi/linux/bpf.h>
++#include <uapi/linux/ip.h>
++#include "bpf_helpers.h"
++#include "krsi_helpers.h"
++
++#define MAX_CPUS 128
++
++struct bpf_map_def SEC("maps") env_map = {
++	.type = BPF_MAP_TYPE_PERCPU_ARRAY,
++	.key_size = sizeof(u32),
++	.value_size = sizeof(struct krsi_env_value),
++	.max_entries = 1,
++};
++
++struct bpf_map_def SEC("maps") perf_map = {
++	.type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
++	.key_size = sizeof(int),
++	.value_size = sizeof(u32),
++	.max_entries = MAX_CPUS,
++};
++
++SEC("krsi")
++int env_dumper(void *ctx)
 +{
-+	return -EINVAL;
++	u64 times_ret;
++	s32 ret;
++	u32 map_id = 0;
++	char *map_value;
++	struct krsi_env_value *env;
++
++	env = bpf_map_lookup_elem(&env_map, &map_id);
++	if (!env)
++		return -ENOMEM;
++	times_ret = krsi_get_env_var(ctx, env->name, ENV_VAR_NAME_MAX_LEN,
++				     env->value, ENV_VAR_VAL_MAX_LEN);
++	ret = __LOWER(times_ret);
++	if (ret == -E2BIG)
++		env->overflow = true;
++	else if (ret < 0)
++		return ret;
++
++	env->times = __UPPER(times_ret);
++	env->p_pid = bpf_get_current_pid_tgid();
++	bpf_perf_event_output(ctx, &perf_map, BPF_F_CURRENT_CPU, env,
++			      sizeof(struct krsi_env_value));
++
++	return 0;
 +}
-+#endif /* CONFIG_SECURITY_KRSI */
++char _license[] SEC("license") = "GPL";
+diff --git a/samples/bpf/krsi_user.c b/samples/bpf/krsi_user.c
+new file mode 100644
+index 000000000000..1fad29bf017a
+--- /dev/null
++++ b/samples/bpf/krsi_user.c
+@@ -0,0 +1,202 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+#endif /* _KRSI_H */
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index f38a539f7e67..ab063ed84258 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -4,6 +4,7 @@
- #include <linux/bpf.h>
- #include <linux/bpf_trace.h>
- #include <linux/bpf_lirc.h>
-+#include <linux/krsi.h>
- #include <linux/btf.h>
- #include <linux/syscalls.h>
- #include <linux/slab.h>
-@@ -1950,7 +1951,7 @@ static int bpf_prog_attach(const union bpf_attr *attr)
- 		ret = lirc_prog_attach(attr, prog);
- 		break;
- 	case BPF_PROG_TYPE_KRSI:
--		ret = -EINVAL;
-+		ret = krsi_prog_attach(attr, prog);
- 		break;
- 	case BPF_PROG_TYPE_FLOW_DISSECTOR:
- 		ret = skb_flow_dissector_bpf_prog_attach(attr, prog);
-diff --git a/security/krsi/include/krsi_init.h b/security/krsi/include/krsi_init.h
-index 68755182a031..4e17ecacd4ed 100644
---- a/security/krsi/include/krsi_init.h
-+++ b/security/krsi/include/krsi_init.h
-@@ -5,12 +5,29 @@
- 
- #include "krsi_fs.h"
- 
-+#include <linux/binfmts.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <errno.h>
++#include <err.h>
++#include <assert.h>
++#include <linux/limits.h>
++#include <linux/bpf.h>
++#include <bpf/bpf.h>
++#include "bpf/libbpf.h"
++#include <unistd.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/sysinfo.h>
++#include <sys/ioctl.h>
++#include <fcntl.h>
++#include <sys/resource.h>
 +
- enum krsi_hook_type {
- 	PROCESS_EXECUTION,
- 	__MAX_KRSI_HOOK_TYPE, /* delimiter */
- };
- 
- extern int krsi_fs_initialized;
++#include "perf-sys.h"
++#include "trace_helpers.h"
++#include "krsi_helpers.h"
 +
-+struct krsi_bprm_ctx {
-+	struct linux_binprm *bprm;
-+};
++#define LSM_HOOK_PATH "/sys/kernel/security/krsi/process_execution"
 +
-+/*
-+ * krsi_ctx is the context that is passed to all KRSI eBPF
-+ * programs.
-+ */
-+struct krsi_ctx {
-+	union {
-+		struct krsi_bprm_ctx bprm_ctx;
-+	};
-+};
++static int pmu_fds[MAX_CPUS];
++static struct perf_event_mmap_page *headers[MAX_CPUS];
 +
- /*
-  * The LSM creates one file per hook.
-  *
-@@ -33,10 +50,44 @@ struct krsi_hook {
- 	 * The dentry of the file created in securityfs.
- 	 */
- 	struct dentry *h_dentry;
-+	/*
-+	 * The mutex must be held when updating the progs attached to the hook.
-+	 */
-+	struct mutex mutex;
-+	/*
-+	 * The eBPF programs that are attached to this hook.
-+	 */
-+	struct bpf_prog_array __rcu	*progs;
- };
- 
- extern struct krsi_hook krsi_hooks_list[];
- 
-+static inline int krsi_run_progs(enum krsi_hook_type t, struct krsi_ctx *ctx)
++static int print_env(void *d, int size)
 +{
-+	struct bpf_prog_array_item *item;
-+	struct bpf_prog *prog;
-+	struct krsi_hook *h = &krsi_hooks_list[t];
-+	int ret, retval = 0;
++	struct krsi_env_value *env = d;
++	int times = env->times;
++	char *next = env->value;
++	size_t total = 0;
 +
-+	preempt_disable();
-+	rcu_read_lock();
++	if (env->times > 1)
++		printf("[p_pid=%u] WARNING! %s is set %u times\n",
++			env->p_pid, env->name, env->times);
 +
-+	item = rcu_dereference(h->progs)->items;
-+	while ((prog = READ_ONCE(item->prog))) {
-+		ret = BPF_PROG_RUN(prog, ctx);
-+		if (ret < 0) {
-+			retval = ret;
-+			goto out;
-+		}
-+		item++;
++	/*
++	 * krsi_get_env_var ensures that even overflows
++	 * are null terminated. Incase of an overflow,
++	 * this logic tries to print as much information
++	 * that was gathered.
++	 */
++	while (times && total < ENV_VAR_NAME_MAX_LEN) {
++		next += total;
++		if (env->overflow)
++			printf("[p_pid=%u] OVERFLOW! %s=%s\n",
++			       env->p_pid, env->name, next);
++		else
++			printf("[p_pid=%u] %s=%s\n",
++			       env->p_pid, env->name, next);
++		times--;
++		total += strlen(next) + 1;
 +	}
++
++	if (!env->times)
++		printf("p_pid=%u] %s is not set\n",
++		       env->p_pid, env->name);
++
++	return LIBBPF_PERF_EVENT_CONT;
++}
++
++static int open_perf_events(int map_fd, int num)
++{
++	int i;
++	struct perf_event_attr attr = {
++		.sample_type = PERF_SAMPLE_RAW,
++		.type = PERF_TYPE_SOFTWARE,
++		.config = PERF_COUNT_SW_BPF_OUTPUT,
++		.wakeup_events = 1, /* get an fd notification for every event */
++	};
++
++	for (i = 0; i < num; i++) {
++		int key = i;
++		int ret;
++
++		ret = sys_perf_event_open(&attr, -1 /*pid*/, i/*cpu*/,
++					 -1/*group_fd*/, 0);
++		if (ret < 0)
++			return ret;
++		pmu_fds[i] = ret;
++		ret = bpf_map_update_elem(map_fd, &key, &pmu_fds[i], BPF_ANY);
++		if (ret < 0)
++			return ret;
++		ioctl(pmu_fds[i], PERF_EVENT_IOC_ENABLE, 0);
++	}
++	return 0;
++}
++
++static int update_env_map(struct bpf_object *prog_obj, const char *env_var_name,
++			  int numcpus)
++{
++	struct bpf_map *map;
++	struct krsi_env_value *env;
++	int map_fd;
++	int key = 0, ret = 0, i;
++
++	map = bpf_object__find_map_by_name(prog_obj, "env_map");
++	if (!map)
++		return -EINVAL;
++
++	map_fd = bpf_map__fd(map);
++	if (map_fd < 0)
++		return map_fd;
++
++	env = malloc(numcpus * sizeof(struct krsi_env_value));
++	if (!env) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	for (i = 0; i < numcpus; i++)
++		strcpy(env[i].name, env_var_name);
++
++	ret = bpf_map_update_elem(map_fd, &key, env, BPF_ANY);
++	if (ret < 0)
++		goto out;
 +
 +out:
-+	rcu_read_unlock();
-+	preempt_enable();
-+	return IS_ENABLED(CONFIG_SECURITY_KRSI_ENFORCE) ? retval : 0;
-+}
-+
- #define krsi_for_each_hook(hook) \
- 	for ((hook) = &krsi_hooks_list[0]; \
- 	     (hook) < &krsi_hooks_list[__MAX_KRSI_HOOK_TYPE]; \
-diff --git a/security/krsi/krsi.c b/security/krsi/krsi.c
-index 77d7e2f91172..d3a4a361c192 100644
---- a/security/krsi/krsi.c
-+++ b/security/krsi/krsi.c
-@@ -1,6 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/lsm_hooks.h>
-+#include <linux/filter.h>
-+#include <linux/bpf.h>
-+#include <linux/binfmts.h>
- 
- #include "krsi_init.h"
- 
-@@ -16,7 +19,15 @@ struct krsi_hook krsi_hooks_list[] = {
- 
- static int krsi_process_execution(struct linux_binprm *bprm)
- {
--	return 0;
-+	int ret;
-+	struct krsi_ctx ctx;
-+
-+	ctx.bprm_ctx = (struct krsi_bprm_ctx) {
-+		.bprm = bprm,
-+	};
-+
-+	ret = krsi_run_progs(PROCESS_EXECUTION, &ctx);
-+	return ret;
- }
- 
- static struct security_hook_list krsi_hooks[] __lsm_ro_after_init = {
-diff --git a/security/krsi/krsi_fs.c b/security/krsi/krsi_fs.c
-index 604f826cee5c..3ba18b52ce85 100644
---- a/security/krsi/krsi_fs.c
-+++ b/security/krsi/krsi_fs.c
-@@ -5,6 +5,8 @@
- #include <linux/file.h>
- #include <linux/fs.h>
- #include <linux/types.h>
-+#include <linux/filter.h>
-+#include <linux/bpf.h>
- #include <linux/security.h>
- 
- #include "krsi_fs.h"
-@@ -27,12 +29,29 @@ bool is_krsi_hook_file(struct file *f)
- 
- static void __init krsi_free_hook(struct krsi_hook *h)
- {
-+	struct bpf_prog_array_item *item;
-+	/*
-+	 * This function is __init so we are guarranteed that there will be
-+	 * no concurrent access.
-+	 */
-+	struct bpf_prog_array *progs = rcu_dereference_raw(h->progs);
-+
-+	if (progs) {
-+		item = progs->items;
-+		while (item->prog) {
-+			bpf_prog_put(item->prog);
-+			item++;
-+		}
-+		bpf_prog_array_free(progs);
-+	}
-+
- 	securityfs_remove(h->h_dentry);
- 	h->h_dentry = NULL;
- }
- 
- static int __init krsi_init_hook(struct krsi_hook *h, struct dentry *parent)
- {
-+	struct bpf_prog_array __rcu     *progs;
- 	struct dentry *h_dentry;
- 	int ret;
- 
-@@ -41,6 +60,15 @@ static int __init krsi_init_hook(struct krsi_hook *h, struct dentry *parent)
- 
- 	if (IS_ERR(h_dentry))
- 		return PTR_ERR(h_dentry);
-+
-+	mutex_init(&h->mutex);
-+	progs = bpf_prog_array_alloc(0, GFP_KERNEL);
-+	if (!progs) {
-+		ret = -ENOMEM;
-+		goto error;
-+	}
-+
-+	RCU_INIT_POINTER(h->progs, progs);
- 	h_dentry->d_fsdata = h;
- 	h->h_dentry = h_dentry;
- 	return 0;
-diff --git a/security/krsi/ops.c b/security/krsi/ops.c
-index f2de3bd9621e..cf4d06189aa1 100644
---- a/security/krsi/ops.c
-+++ b/security/krsi/ops.c
-@@ -1,10 +1,112 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+#include <linux/err.h>
-+#include <linux/types.h>
- #include <linux/filter.h>
- #include <linux/bpf.h>
-+#include <linux/security.h>
-+#include <linux/krsi.h>
-+
-+#include "krsi_init.h"
-+#include "krsi_fs.h"
-+
-+extern struct krsi_hook krsi_hooks_list[];
-+
-+static struct krsi_hook *get_hook_from_fd(int fd)
-+{
-+	struct fd f = fdget(fd);
-+	struct krsi_hook *h;
-+	int ret;
-+
-+	if (!f.file) {
-+		ret = -EBADF;
-+		goto error;
-+	}
-+
-+	if (!is_krsi_hook_file(f.file)) {
-+		ret = -EINVAL;
-+		goto error;
-+	}
-+
-+	/*
-+	 * The securityfs dentry never disappears, so we don't need to take a
-+	 * reference to it.
-+	 */
-+	h = file_dentry(f.file)->d_fsdata;
-+	if (WARN_ON(!h)) {
-+		ret = -EINVAL;
-+		goto error;
-+	}
-+	fdput(f);
-+	return h;
-+
-+error:
-+	fdput(f);
-+	return ERR_PTR(ret);
-+}
-+
-+int krsi_prog_attach(const union bpf_attr *attr, struct bpf_prog *prog)
-+{
-+	struct bpf_prog_array *old_array;
-+	struct bpf_prog_array *new_array;
-+	struct krsi_hook *h;
-+	int ret = 0;
-+
-+	h = get_hook_from_fd(attr->target_fd);
-+	if (IS_ERR(h))
-+		return PTR_ERR(h);
-+
-+	mutex_lock(&h->mutex);
-+	old_array = rcu_dereference_protected(h->progs,
-+					      lockdep_is_held(&h->mutex));
-+
-+	ret = bpf_prog_array_copy(old_array, NULL, prog, &new_array);
-+	if (ret < 0) {
-+		ret = -ENOMEM;
-+		goto unlock;
-+	}
-+
-+	rcu_assign_pointer(h->progs, new_array);
-+	bpf_prog_array_free(old_array);
-+
-+unlock:
-+	mutex_unlock(&h->mutex);
++	free(env);
 +	return ret;
 +}
- 
- const struct bpf_prog_ops krsi_prog_ops = {
- };
- 
-+static bool krsi_prog_is_valid_access(int off, int size,
-+				      enum bpf_access_type type,
-+				      const struct bpf_prog *prog,
-+				      struct bpf_insn_access_aux *info)
-+{
-+	/*
-+	 * KRSI is conservative about any direct access in eBPF to
-+	 * prevent the users from depending on the internals of the kernel and
-+	 * aims at providing a rich eco-system of safe eBPF helpers as an API
-+	 * for accessing relevant information from the context.
-+	 */
-+	return false;
-+}
 +
-+static const struct bpf_func_proto *krsi_prog_func_proto(enum bpf_func_id
-+							 func_id,
-+							 const struct bpf_prog
-+							 *prog)
++int main(int argc, char **argv)
 +{
-+	switch (func_id) {
-+	case BPF_FUNC_map_lookup_elem:
-+		return &bpf_map_lookup_elem_proto;
-+	case BPF_FUNC_get_current_pid_tgid:
-+		return &bpf_get_current_pid_tgid_proto;
-+	default:
-+		return NULL;
++	struct bpf_object *prog_obj;
++	const char *env_var_name;
++	struct bpf_prog_load_attr attr;
++	int prog_fd, target_fd, map_fd;
++	int ret, i, numcpus;
++	struct bpf_map *map;
++	char filename[PATH_MAX];
++	struct rlimit r = {RLIM_INFINITY, RLIM_INFINITY};
++
++
++	if (argc != 2)
++		errx(EXIT_FAILURE, "Usage %s env_var_name\n", argv[0]);
++
++	env_var_name = argv[1];
++	if (strlen(env_var_name) > ENV_VAR_NAME_MAX_LEN - 1)
++		errx(EXIT_FAILURE,
++		     "<env_var_name> cannot be more than %d in length",
++		     ENV_VAR_NAME_MAX_LEN - 1);
++
++
++	setrlimit(RLIMIT_MEMLOCK, &r);
++	snprintf(filename, sizeof(filename), "%s_kern.o", argv[0]);
++
++	memset(&attr, 0, sizeof(struct bpf_prog_load_attr));
++	attr.prog_type = BPF_PROG_TYPE_KRSI;
++	attr.expected_attach_type = BPF_KRSI;
++	attr.file = filename;
++
++	/* Attach the BPF program to the given hook */
++	target_fd = open(LSM_HOOK_PATH, O_RDWR);
++	if (target_fd < 0)
++		err(EXIT_FAILURE, "Failed to open target file");
++
++	if (bpf_prog_load_xattr(&attr, &prog_obj, &prog_fd))
++		err(EXIT_FAILURE, "Failed to load eBPF program");
++
++	numcpus = get_nprocs();
++	if (numcpus > MAX_CPUS)
++		numcpus = MAX_CPUS;
++
++	ret = update_env_map(prog_obj, env_var_name, numcpus);
++	if (ret < 0)
++		err(EXIT_FAILURE, "Failed to update env map");
++
++	map = bpf_object__find_map_by_name(prog_obj, "perf_map");
++	if (!map)
++		err(EXIT_FAILURE,
++		    "Finding the perf event map in obj file failed");
++
++	map_fd = bpf_map__fd(map);
++	if (map_fd < 0)
++		err(EXIT_FAILURE, "Failed to get fd for perf events map");
++
++	ret = bpf_prog_attach(prog_fd, target_fd, BPF_KRSI,
++			      BPF_F_ALLOW_OVERRIDE);
++	if (ret < 0)
++		err(EXIT_FAILURE, "Failed to attach prog to LSM hook");
++
++	ret = open_perf_events(map_fd, numcpus);
++	if (ret < 0)
++		err(EXIT_FAILURE, "Failed to open perf events handler");
++
++	for (i = 0; i < numcpus; i++) {
++		ret = perf_event_mmap_header(pmu_fds[i], &headers[i]);
++		if (ret < 0)
++			err(EXIT_FAILURE, "perf_event_mmap_header");
 +	}
-+}
 +
- const struct bpf_verifier_ops krsi_verifier_ops = {
-+	.get_func_proto = krsi_prog_func_proto,
-+	.is_valid_access = krsi_prog_is_valid_access,
- };
++	ret = perf_event_poller_multi(pmu_fds, headers, numcpus, print_env);
++	if (ret < 0)
++		err(EXIT_FAILURE, "Failed to poll perf events");
++
++	return EXIT_SUCCESS;
++}
 -- 
 2.20.1
 
