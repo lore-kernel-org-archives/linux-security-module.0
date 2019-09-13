@@ -2,109 +2,124 @@ Return-Path: <SRS0=6YUp=XI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EA1C4CEC7
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Sep 2019 16:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC579C4CEC9
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Sep 2019 18:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF2322084F
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Sep 2019 16:35:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WDywiucK"
+	by mail.kernel.org (Postfix) with ESMTP id 95A2120830
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Sep 2019 18:52:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388716AbfIMQfV (ORCPT
+        id S2389964AbfIMSwC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Sep 2019 12:35:21 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40664 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387822AbfIMQfV (ORCPT
+        Fri, 13 Sep 2019 14:52:02 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33303 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389946AbfIMSwC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Sep 2019 12:35:21 -0400
-Received: by mail-pg1-f194.google.com with SMTP id w10so15533829pgj.7;
-        Fri, 13 Sep 2019 09:35:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=U1A+7K7DBCYzZ10LaOWX7DewnzC97b4Covgem9tPITc=;
-        b=WDywiucKcTd0TVEp5ZnkILQ3wgFeKxmG4pJuqgS4DyzPjMacxPh4ZxfK8KjJHI+iXP
-         zmlKc+R7wpq+uJM57/COIqb9U7qbCJGVk3yxz8BP9Kv8B5CkktfoGswxvL4zE/PXOL91
-         Q0cYM1ZHnEZWUQcXweTJA6zJWDTf9ZrGrilmKZyz0JVO+Vstxc6G88AsEtpZO6BK+mXq
-         DtvlrHN+SlH4eMhNh9gsB/bF/k0neI1OPvHCn/H48KeaIDC0kNX5/lFrKVGuO/s+dnnf
-         x9w33nx6mfwNk0ApBaRG+WXN1oMC6tEW/D58bHZTFgbIsxPIgfjVfR7DI7ZmbwWAPS/4
-         mOxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=U1A+7K7DBCYzZ10LaOWX7DewnzC97b4Covgem9tPITc=;
-        b=rtK9s8JvqWf7nr8wuG6rzP2SDkm9sx1khi26fZ8RzKUAlSpYy31szL9tMrDp8KxJ6Y
-         RwUKMhzBQUcgg5QmABNKeNr+i1x4lKOMiz6zl4fftPI34rvZTAb/Tx+52L6YxlntEKlM
-         VxoW2PAOirETQ38gez2BMRbPfW+S9KpLV9IBOrF/p9Hm//2mrVFGuSFPBQFRYFDMSj75
-         dir5Y/+XDdIeDxb9h5v04xQIv8AyluP0C3mMPLEc/OyP2/S3N4DAMHUSOvWvl5OK8oNc
-         E8/5yCP1HYeoG1qWn/be+iQJ5B6WBbQGTyzY9gMf77nKeJYX+E7ZD6+CAQw39pvwhJ+C
-         mANw==
-X-Gm-Message-State: APjAAAUc2pVcYf7EtX0Qd1FeOKdKZiAA2GFniLpzs88I63BIRBeLalN4
-        gpg2W+24O6IeY48BlzP5I/s=
-X-Google-Smtp-Source: APXvYqw2x57TgLuZYyv7s+sdwpz6y9pno7nl9Tn8GS7DnHpyGJ6XnIwjsmPewtoeMUodWUryGoKfIw==
-X-Received: by 2002:a17:90a:eac7:: with SMTP id ev7mr6337926pjb.61.1568392519733;
-        Fri, 13 Sep 2019 09:35:19 -0700 (PDT)
-Received: from SD ([106.222.13.126])
-        by smtp.gmail.com with ESMTPSA id c62sm40785154pfa.92.2019.09.13.09.35.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2019 09:35:19 -0700 (PDT)
-Date:   Fri, 13 Sep 2019 22:05:06 +0530
-From:   Saiyam Doshi <saiyamdoshi.in@gmail.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] security: ima: make use of kmemdup
-Message-ID: <20190913163506.GA30916@SD>
+        Fri, 13 Sep 2019 14:52:02 -0400
+Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 7C8E0838EB7978359F1B;
+        Fri, 13 Sep 2019 19:51:59 +0100 (IST)
+Received: from A170120444-LP.china.huawei.com (10.47.67.210) by
+ smtpsuk.huawei.com (10.201.108.42) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 13 Sep 2019 19:51:49 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <jsnitsel@redhat.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v4] KEYS: trusted: correctly initialize digests and fix locking issue
+Date:   Fri, 13 Sep 2019 20:51:36 +0200
+Message-ID: <20190913185136.780-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.47.67.210]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Replace call to kmalloc followed by memcpy with a direct call
-to kmemdup to achieve same functionality.
+Commit 0b6cf6b97b7e ("tpm: pass an array of tpm_extend_digest structures to
+tpm_pcr_extend()") modifies tpm_pcr_extend() to accept a digest for each
+PCR bank. After modification, tpm_pcr_extend() expects that digests are
+passed in the same order as the algorithms set in chip->allocated_banks.
 
-Signed-off-by: Saiyam Doshi <saiyamdoshi.in@gmail.com>
+This patch fixes two issues introduced in the last iterations of the patch
+set: missing initialization of the TPM algorithm ID in the tpm_digest
+structures passed to tpm_pcr_extend() by the trusted key module, and
+unreleased locks in the TPM driver due to returning from tpm_pcr_extend()
+without calling tpm_put_ops().
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Fixes: 0b6cf6b97b7e ("tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()")
 ---
- security/integrity/ima/ima_policy.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 14 +++++++++-----
+ security/keys/trusted.c          |  5 +++++
+ 2 files changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 6df7f641ff66..1bd77c5eaeb7 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -262,15 +262,14 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
- 	struct ima_rule_entry *nentry;
- 	int i, result;
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 1b4f95c13e00..d9ace5480665 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -320,18 +320,22 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+ 	if (!chip)
+ 		return -ENODEV;
  
--	nentry = kmalloc(sizeof(*nentry), GFP_KERNEL);
--	if (!nentry)
--		return NULL;
--
- 	/*
- 	 * Immutable elements are copied over as pointers and data; only
- 	 * lsm rules can change
- 	 */
--	memcpy(nentry, entry, sizeof(*nentry));
-+	nentry = kmemdup(entry, sizeof(*nentry), GFP_KERNEL);
-+	if (!nentry)
-+		return NULL;
+-	for (i = 0; i < chip->nr_allocated_banks; i++)
+-		if (digests[i].alg_id != chip->allocated_banks[i].alg_id)
+-			return -EINVAL;
++	for (i = 0; i < chip->nr_allocated_banks; i++) {
++		if (digests[i].alg_id != chip->allocated_banks[i].alg_id) {
++			rc = EINVAL;
++			goto out;
++		}
++	}
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+ 		rc = tpm2_pcr_extend(chip, pcr_idx, digests);
+-		tpm_put_ops(chip);
+-		return rc;
++		goto out;
+ 	}
+ 
+ 	rc = tpm1_pcr_extend(chip, pcr_idx, digests[0].digest,
+ 			     "attempting extend a PCR value");
 +
- 	memset(nentry->lsm, 0, FIELD_SIZEOF(struct ima_rule_entry, lsm));
++out:
+ 	tpm_put_ops(chip);
+ 	return rc;
+ }
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index ade699131065..1fbd77816610 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -1228,11 +1228,16 @@ static int __init trusted_shash_alloc(void)
  
- 	for (i = 0; i < MAX_LSM_RULES; i++) {
+ static int __init init_digests(void)
+ {
++	int i;
++
+ 	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
+ 			  GFP_KERNEL);
+ 	if (!digests)
+ 		return -ENOMEM;
+ 
++	for (i = 0; i < chip->nr_allocated_banks; i++)
++		digests[i].alg_id = chip->allocated_banks[i].alg_id;
++
+ 	return 0;
+ }
+ 
 -- 
-2.20.1
+2.17.1
 
