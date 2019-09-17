@@ -1,116 +1,116 @@
-Return-Path: <SRS0=zxlL=XL=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=UPBk=XM=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AF0C49ED7
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 Sep 2019 22:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE3DC4CEC9
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Sep 2019 04:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85424214D9
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 Sep 2019 22:14:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA47E2184D
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Sep 2019 04:23:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1568694218;
+	bh=n6FYeZsdtZqdYPBfiuj7zkiWZJbqq5vut9hKGoQNdiU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vGQnh/RasW/CguHb/wB4kXOOK+7tHeCMfWFIbT9H4vPnNjUhgmSIY6oW14AKe3DdU
+	 2J4hkpowHi6l/KyC8cruEkukalABTyzQJi9U8xxF9ObgBdVLsQDY4Z/nrYvfw8aogc
+	 X8cmRrS8PeCiC7y8fgA+QtAs559REGdS+zoKmrOQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbfIPWNM (ORCPT
+        id S2390743AbfIQEXh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 16 Sep 2019 18:13:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51806 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729069AbfIPWNM (ORCPT
+        Tue, 17 Sep 2019 00:23:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33598 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726500AbfIQEXh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 16 Sep 2019 18:13:12 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8GM2K56092365
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Sep 2019 18:13:11 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v2hkbap4u-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Sep 2019 18:13:10 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 16 Sep 2019 23:13:08 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 16 Sep 2019 23:13:04 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8GMCcq642664314
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 16 Sep 2019 22:12:38 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E69394C046;
-        Mon, 16 Sep 2019 22:13:03 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 60F084C040;
-        Mon, 16 Sep 2019 22:13:03 +0000 (GMT)
-Received: from dhcp-9-31-103-196.watson.ibm.com (unknown [9.31.103.196])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 16 Sep 2019 22:13:03 +0000 (GMT)
-Subject: Re: [GIT PULL] integrity subsystem updates for v5.4
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Mon, 16 Sep 2019 18:13:02 -0400
-In-Reply-To: <CAHk-=whuzoK+sP+feizU520p7ChHqdX8pmwyCnnKTyUNJKngZA@mail.gmail.com>
-References: <1568237365.5783.39.camel@linux.ibm.com>
-         <CAHk-=whuzoK+sP+feizU520p7ChHqdX8pmwyCnnKTyUNJKngZA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19091622-0028-0000-0000-0000039DCB45
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091622-0029-0000-0000-0000246041D0
-Message-Id: <1568671982.4975.145.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-16_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=990 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909160210
+        Tue, 17 Sep 2019 00:23:37 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2449B21670;
+        Tue, 17 Sep 2019 04:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568694216;
+        bh=n6FYeZsdtZqdYPBfiuj7zkiWZJbqq5vut9hKGoQNdiU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bRxiM1DvlUlUAkis4iWI5cYUQ+WzRB08OyX9VOH33zckqzx3rhKGGklpiUdrPgORN
+         n2oKPG3gWmsgtVTkNTjvbCpzQ+YQkGxVRYbTr9qn3LhaycE6bbcs/toSxgh6ZHPnsF
+         CPWQBQYozwOvFAaPKvvhAr3Yc5MGnPZuYewe9FxA=
+Date:   Mon, 16 Sep 2019 21:23:34 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Janne Karhunen <janne.karhunen@gmail.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>, linux-mm@kvack.org,
+        viro@zeniv.linux.org.uk,
+        Konsta Karsisto <konsta.karsisto@gmail.com>
+Subject: Re: [PATCH 1/3] ima: keep the integrity state of open files up to
+ date
+Message-ID: <20190917042334.GA1436@sol.localdomain>
+Mail-Followup-To: Janne Karhunen <janne.karhunen@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>, linux-mm@kvack.org,
+        viro@zeniv.linux.org.uk,
+        Konsta Karsisto <konsta.karsisto@gmail.com>
+References: <20190902094540.12786-1-janne.karhunen@gmail.com>
+ <20190909213938.GA105935@gmail.com>
+ <CAE=NcraXOhGcPHh3cPxfaNjFXtPyDdSFa9hSrUSPfpFUmsxyMA@mail.gmail.com>
+ <20190915202433.GC1704@sol.localdomain>
+ <CAE=NcrbaJD4CaUvg1tmNSSKjkG-EizNM7GUaztA0=fiUCo03Cg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE=NcrbaJD4CaUvg1tmNSSKjkG-EizNM7GUaztA0=fiUCo03Cg@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2019-09-16 at 13:38 -0700, Linus Torvalds wrote:
-> On Wed, Sep 11, 2019 at 2:29 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+On Mon, Sep 16, 2019 at 02:45:56PM +0300, Janne Karhunen wrote:
+> On Sun, Sep 15, 2019 at 11:24 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> 
+> > > > This still doesn't make it crash-safe.  So why is it okay?
+> > >
+> > > If Android is the load, this makes it crash safe 99% of the time and
+> > > that is considerably better than 0% of the time.
+> > >
 > >
-> > The major feature in this pull request is IMA support for measuring
-> > and appraising appended file signatures.  In addition are a couple of
-> > bug fixes and code cleanup to use struct_size().
+> > Who will use it if it isn't 100% safe?
 > 
-> How is the file signature any different from (and/or better than) the
-> fs-verity support?
+> I suppose anyone using mutable data with IMA appraise should, unless
+> they have a redundant power supply and a kernel that never crashes. In
+> a way this is like asking if the ima-appraise should be there for
+> mutable data at all. All this is doing is that it improves the crash
+> recovery reliability without taking anything away.
+
+Okay, so why would anyone use mutable data with IMA appraise if it corrupts your
+files by design, both with and without this patchset?
+
 > 
-> The fs-verity support got fairly extensively discussed, and is
-> apparently going to actually be widely used by Android, and it an
-> independent feature of any security model.
+> Anyway, I think I'm getting along with my understanding of the page
+> writeback slowly and the journal support will eventually be there at
+> least as an add-on patch for those that want to use it and really need
+> the last 0.n% reliability. Note that even without that patch you can
+> build ima-appraise based systems that are 99.999% reliable just by
+
+On what storage devices, workloads, and filesystems is this number for?
+
+> having the patch we're discussing here. Without it you would be orders
+> of magnitude worse off. All we are doing is that we give it a fairly
+> good chance to recover instead of giving up without even trying.
 > 
-> What does the IMA version bring to the table?
+> That said, I'm not sure the 100% crash recovery is ever guaranteed in
+> any Linux system. We just have to do what we can, no?
+> 
 
-IMA currently defines a system wide policy for measuring, verifying a
-file's integrity (both mutable/immutable files) against known good
-values, and adding audit records containing the file hashes.  The
-policy isn't hard coded in the kernel, allowing people/companies to
-configure it as desired for their specific use case.
+Filesystems implement consistency mechanisms, e.g. journalling or copy-on-write,
+to recover from crashes by design.  This patchset doesn't implement or use any
+such mechanism, so it's not crash-safe.  It's not clear that it's even a step in
+the right direction, as no patches have been proposed for a correct solution so
+we can see what it actually involves.
 
-Support for appended signatures already exists in the kernel for
-kernel modules.  This pull request adds IMA support for appended
-signatures in order to verify the kexec kernel image on OpenPOWER, as
-part of Secure and Trusted boot enablement.  This would allow distros
-to sign kernel images similar to how they currently sign kernel
-modules.
-
-IMA verifies file signatures up front, before allowing access to the
-file.  fs-verity verifies the signature of the Merkle tree (and other
-info), but does not verify the file data at the time of first use.
- There are pros and cons to each of these approaches.
-
-Mimi
-
+- Eric
