@@ -2,123 +2,156 @@ Return-Path: <SRS0=oQDc=XN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDA7C4CEC9
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Sep 2019 06:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44449C4CEC9
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Sep 2019 07:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0136921906
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Sep 2019 06:31:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xv6lI474"
+	by mail.kernel.org (Postfix) with ESMTP id 251AB218AE
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Sep 2019 07:19:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729862AbfIRGbe (ORCPT
+        id S1728030AbfIRHTI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Sep 2019 02:31:34 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38173 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729573AbfIRGXU (ORCPT
+        Wed, 18 Sep 2019 03:19:08 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38497 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbfIRHTI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:23:20 -0400
-Received: by mail-ot1-f67.google.com with SMTP id e11so4168952otl.5
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Sep 2019 23:23:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wK9VKPT5PALGow0s1AD18j7lV+EvX5g7BMBWsTpeIng=;
-        b=xv6lI474DYSgaSu5RV4eJEBRp8AAJwvehRoTTpWaCo2J8ub7oPk4fmWmvkg1ZEyHq+
-         TtxFAJNA+CkO15cIf36iqqP9X57G/JNY3Jb2I187WuFFnZsD/6zxHIOCkgH6EgYA1jfH
-         YFSSbCekS/IoziCPiLuxaZHnZq5wzOhwRethzETOZxKFgUsGwW/D4ZLudka0rLN2bOSj
-         SAypaAGTp5bpQL5XY1Q813yX/HmVuGih8Q5wEvBX1r4lbpI+8QupHhP+fcbRFrASg2mL
-         7pMs60vrA8DXbpmTG++BM1jE99VkeCVDR9xwYrqoLW/I0P3yuAd+Xz5+qsRpoB02XtZC
-         WfkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wK9VKPT5PALGow0s1AD18j7lV+EvX5g7BMBWsTpeIng=;
-        b=XXeCz1G8WVyU+4wtC9uUKfii4Ej99F7nfjHYFCiCH6I6HwcRkTVlg8ZYFh089Uc5Gj
-         dGRonHMY59pHAwIZPYvkcXhm9QsuHKmQUGqgMRVHpfWEi9Wrh5o8OIDKQhXVKmZlAJYG
-         uuCXoPMGYEw4yEB89p5SOgSSnaP1c2PS8oBH3UeaP6B1chy3spG2UlZ4RFquOXVkcsyX
-         SsftWDOyA4Ta5+gYb068dhbI7B6qGm0VKhl2QmuZHoZRCcS4tjLF5lsrQkyPLHPiQM1L
-         3R88mjohFoV8JOjuuSl3DIXebEL+cVjSsmhyGq/kUlHqjXmbuIBK1owd7YwHbkTcEmq5
-         cbVA==
-X-Gm-Message-State: APjAAAWLWpdefMrg+0U5Xe27XHErD2/WdeH+zLu6G6xwsna3uFh7ZgFs
-        vX2VZ2Tw9eJHu+0c8OGOMiJ3ufXD5dB2m7pR/3PVCUAg29c=
-X-Google-Smtp-Source: APXvYqyy689jL78FRCBaToum4k1f1kK7Ku7U2vf7SNBEYUwL9xj0w29sOcLAmo488CIy0XySfEE42rIulH1rHL8wJvo=
-X-Received: by 2002:a9d:24e4:: with SMTP id z91mr1722754ota.41.1568787800000;
- Tue, 17 Sep 2019 23:23:20 -0700 (PDT)
+        Wed, 18 Sep 2019 03:19:08 -0400
+Received: from static-dcd-cqq-121001.business.bouyguestelecom.com ([212.194.121.1] helo=[10.155.2.218])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1iAUEx-0004ts-Dl; Wed, 18 Sep 2019 07:19:03 +0000
+Subject: Re: [PATCH v8 02/28] LSM: Infrastructure management of the sock
+ security
+To:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     keescook@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com
+References: <20190829232935.7099-1-casey@schaufler-ca.com>
+ <20190829232935.7099-3-casey@schaufler-ca.com>
+ <5fde58fe-3925-c9d6-39bf-9adb318f7186@tycho.nsa.gov>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ xsFNBE5mrPoBEADAk19PsgVgBKkImmR2isPQ6o7KJhTTKjJdwVbkWSnNn+o6Up5knKP1f49E
+ BQlceWg1yp/NwbR8ad+eSEO/uma/K+PqWvBptKC9SWD97FG4uB4/caomLEU97sLQMtnvGWdx
+ rxVRGM4anzWYMgzz5TZmIiVTZ43Ou5VpaS1Vz1ZSxP3h/xKNZr/TcW5WQai8u3PWVnbkjhSZ
+ PHv1BghN69qxEPomrJBm1gmtx3ZiVmFXluwTmTgJOkpFol7nbJ0ilnYHrA7SX3CtR1upeUpM
+ a/WIanVO96WdTjHHIa43fbhmQube4txS3FcQLOJVqQsx6lE9B7qAppm9hQ10qPWwdfPy/+0W
+ 6AWtNu5ASiGVCInWzl2HBqYd/Zll93zUq+NIoCn8sDAM9iH+wtaGDcJywIGIn+edKNtK72AM
+ gChTg/j1ZoWH6ZeWPjuUfubVzZto1FMoGJ/SF4MmdQG1iQNtf4sFZbEgXuy9cGi2bomF0zvy
+ BJSANpxlKNBDYKzN6Kz09HUAkjlFMNgomL/cjqgABtAx59L+dVIZfaF281pIcUZzwvh5+JoG
+ eOW5uBSMbE7L38nszooykIJ5XrAchkJxNfz7k+FnQeKEkNzEd2LWc3QF4BQZYRT6PHHga3Rg
+ ykW5+1wTMqJILdmtaPbXrF3FvnV0LRPcv4xKx7B3fGm7ygdoowARAQABzR1Kb2huIEpvaGFu
+ c2VuIDxqb2huQGpqbXgubmV0PsLBegQTAQoAJAIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIX
+ gAUCTo0YVwIZAQAKCRAFLzZwGNXD2LxJD/9TJZCpwlncTgYeraEMeDfkWv8c1IsM1j0AmE4V
+ tL+fE780ZVP9gkjgkdYSxt7ecETPTKMaZSisrl1RwqU0oogXdXQSpxrGH01icu/2n0jcYSqY
+ KggPxy78BGs2LZq4XPfJTZmHZGnXGq/eDr/mSnj0aavBJmMZ6jbiPz6yHtBYPZ9fdo8btczw
+ P41YeWoIu26/8II6f0Xm3VC5oAa8v7Rd+RWZa8TMwlhzHExxel3jtI7IzzOsnmE9/8Dm0ARD
+ 5iTLCXwR1cwI/J9BF/S1Xv8PN1huT3ItCNdatgp8zqoJkgPVjmvyL64Q3fEkYbfHOWsaba9/
+ kAVtBNz9RTFh7IHDfECVaToujBd7BtPqr+qIjWFadJD3I5eLCVJvVrrolrCATlFtN3YkQs6J
+ n1AiIVIU3bHR8Gjevgz5Ll6SCGHgRrkyRpnSYaU/uLgn37N6AYxi/QAL+by3CyEFLjzWAEvy
+ Q8bq3Iucn7JEbhS/J//dUqLoeUf8tsGi00zmrITZYeFYARhQMtsfizIrVDtz1iPf/ZMp5gRB
+ niyjpXn131cm3M3gv6HrQsAGnn8AJru8GDi5XJYIco/1+x/qEiN2nClaAOpbhzN2eUvPDY5W
+ 0q3bA/Zp2mfG52vbRI+tQ0Br1Hd/vsntUHO903mMZep2NzN3BZ5qEvPvG4rW5Zq2DpybWc7B
+ TQROZqz6ARAAoqw6kkBhWyM1fvgamAVjeZ6nKEfnRWbkC94L1EsJLup3Wb2X0ABNOHSkbSD4
+ pAuC2tKF/EGBt5CP7QdVKRGcQzAd6b2c1Idy9RLw6w4gi+nn/d1Pm1kkYhkSi5zWaIg0m5RQ
+ Uk+El8zkf5tcE/1N0Z5OK2JhjwFu5bX0a0l4cFGWVQEciVMDKRtxMjEtk3SxFalm6ZdQ2pp2
+ 822clnq4zZ9mWu1d2waxiz+b5Ia4weDYa7n41URcBEUbJAgnicJkJtCTwyIxIW2KnVyOrjvk
+ QzIBvaP0FdP2vvZoPMdlCIzOlIkPLgxE0IWueTXeBJhNs01pb8bLqmTIMlu4LvBELA/veiaj
+ j5s8y542H/aHsfBf4MQUhHxO/BZV7h06KSUfIaY7OgAgKuGNB3UiaIUS5+a9gnEOQLDxKRy/
+ a7Q1v9S+Nvx+7j8iH3jkQJhxT6ZBhZGRx0gkH3T+F0nNDm5NaJUsaswgJrqFZkUGd2Mrm1qn
+ KwXiAt8SIcENdq33R0KKKRC80Xgwj8Jn30vXLSG+NO1GH0UMcAxMwy/pvk6LU5JGjZR73J5U
+ LVhH4MLbDggD3mPaiG8+fotTrJUPqqhg9hyUEPpYG7sqt74Xn79+CEZcjLHzyl6vAFE2W0kx
+ lLtQtUZUHO36afFv8qGpO3ZqPvjBUuatXF6tvUQCwf3H6XMAEQEAAcLBXwQYAQoACQUCTmas
+ +gIbDAAKCRAFLzZwGNXD2D/XD/0ddM/4ai1b+Tl1jznKajX3kG+MeEYeI4f40vco3rOLrnRG
+ FOcbyyfVF69MKepie4OwoI1jcTU0ADecnbWnDNHpr0SczxBMro3bnrLhsmvjunTYIvssBZtB
+ 4aVJjuLILPUlnhFqa7fbVq0ZQjbiV/rt2jBENdm9pbJZ6GjnpYIcAbPCCa/ffL4/SQRSYHXo
+ hGiiS4y5jBTmK5ltfewLOw02fkexH+IJFrrGBXDSg6n2Sgxnn++NF34fXcm9piaw3mKsICm+
+ 0hdNh4afGZ6IWV8PG2teooVDp4dYih++xX/XS8zBCc1O9w4nzlP2gKzlqSWbhiWpifRJBFa4
+ WtAeJTdXYd37j/BI4RWWhnyw7aAPNGj33ytGHNUf6Ro2/jtj4tF1y/QFXqjJG/wGjpdtRfbt
+ UjqLHIsvfPNNJq/958p74ndACidlWSHzj+Op26KpbFnmwNO0psiUsnhvHFwPO/vAbl3RsR5+
+ 0Ro+hvs2cEmQuv9r/bDlCfpzp2t3cK+rhxUqisOx8DZfz1BnkaoCRFbvvvk+7L/fomPntGPk
+ qJciYE8TGHkZw1hOku+4OoM2GB5nEDlj+2TF/jLQ+EipX9PkPJYvxfRlC6dK8PKKfX9KdfmA
+ IcgHfnV1jSn+8yH2djBPtKiqW0J69aIsyx7iV/03paPCjJh7Xq9vAzydN5U/UA==
+Organization: Canonical
+Message-ID: <e82206ce-c37d-b8e4-1ba4-c7c49afb5221@canonical.com>
+Date:   Wed, 18 Sep 2019 00:19:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <1568630064-14887-1-git-send-email-sumit.garg@linaro.org>
- <1568630064-14887-5-git-send-email-sumit.garg@linaro.org> <20190917181415.GA8472@linux.intel.com>
- <20190917181507.GB8472@linux.intel.com>
-In-Reply-To: <20190917181507.GB8472@linux.intel.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Wed, 18 Sep 2019 11:53:08 +0530
-Message-ID: <CAFA6WYMbUGQ6+-XvR9_qSc=oVe1QSTg4kB-+y6rBmQLq+B6skg@mail.gmail.com>
-Subject: Re: [Patch v6 4/4] KEYS: trusted: Move TPM2 trusted keys code
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     dhowells@redhat.com, peterhuewe@gmx.de, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-        jgg@ziepe.ca, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        jejb@linux.ibm.com, Mimi Zohar <zohar@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5fde58fe-3925-c9d6-39bf-9adb318f7186@tycho.nsa.gov>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 17 Sep 2019 at 23:45, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Tue, Sep 17, 2019 at 09:14:15PM +0300, Jarkko Sakkinen wrote:
-> > On Mon, Sep 16, 2019 at 04:04:24PM +0530, Sumit Garg wrote:
-> > > Move TPM2 trusted keys code to trusted keys subsystem. The reason
-> > > being it's better to consolidate all the trusted keys code to a single
-> > > location so that it can be maintained sanely.
-> > >
-> > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> >
-> > This commit has couple of issues that I only noticed when looking into
-> > bug reported by Mimi.
-> >
-> > Right now tpm_send() is the exported function that is used by other
-> > subsystems. tpm_transmit_cmd() is an internal function. This commit adds
-> > two unrelated code paths to send TPM commands, which is unacceptable.
+On 9/16/19 11:42 AM, Stephen Smalley wrote:
+> On 8/29/19 7:29 PM, Casey Schaufler wrote:
+>> Move management of the sock->sk_security blob out
+>> of the individual security modules and into the security
+>> infrastructure. Instead of allocating the blobs from within
+>> the modules the modules tell the infrastructure how much
+>> space is required, and the space is allocated there.
+>>
+>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>> Reviewed-by: John Johansen <john.johansen@canonical.com>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> 
+> One oddity noted below, but it isn't introduced by this patch so you can add my:
+> 
+> Reviewed-by: Stephen Smalley <sds@tycho.nsa.gov>
+> 
+>> ---
+>>   include/linux/lsm_hooks.h         |  1 +
+>>   security/apparmor/include/net.h   |  6 ++-
+>>   security/apparmor/lsm.c           | 38 ++++-----------
+>>   security/security.c               | 36 +++++++++++++-
+>>   security/selinux/hooks.c          | 78 +++++++++++++++----------------
+>>   security/selinux/include/objsec.h |  5 ++
+>>   security/selinux/netlabel.c       | 23 ++++-----
+>>   security/smack/smack.h            |  5 ++
+>>   security/smack/smack_lsm.c        | 64 ++++++++++++-------------
+>>   security/smack/smack_netfilter.c  |  8 ++--
+>>   10 files changed, 144 insertions(+), 120 deletions(-)
+>>
+>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>> index f9222a04968d..b353482ea348 100644
+>> --- a/include/linux/lsm_hooks.h
+>> +++ b/include/linux/lsm_hooks.h
+>> @@ -2047,6 +2047,7 @@ struct lsm_blob_sizes {
+>>       int    lbs_cred;
+>>       int    lbs_file;
+>>       int    lbs_inode;
+>> +    int    lbs_sock;
+>>       int    lbs_superblock;
+>>       int    lbs_ipc;
+>>       int    lbs_msg_msg;
+>> diff --git a/security/apparmor/include/net.h b/security/apparmor/include/net.h
+>> index 7334ac966d01..adac04e3b3cc 100644
+>> --- a/security/apparmor/include/net.h
+>> +++ b/security/apparmor/include/net.h
+>> @@ -55,7 +55,11 @@ struct aa_sk_ctx {
+>>       struct aa_label *peer;
+>>   };
+>>   -#define SK_CTX(X) ((X)->sk_security)
+>> +static inline struct aa_sk_ctx *aa_sock(const struct sock *sk)
+>> +{
+>> +    return sk->sk_security + apparmor_blob_sizes.lbs_sock;
+>> +}
+>> +
+>>   #define SOCK_ctx(X) SOCK_INODE(X)->i_security
+> 
+> This use of i_security looks suspicious, but SOCK_ctx doesn't appear to be used presently.  Probably should be removed in a separate patch.
+> 
 
-Makes sense, will update.
-
-> >
-> > You should make tpm2 functionality to use tpm_send() instead and remove
-> > tpm_seal_trusted() and tpm_unseal_trusted() completely in this commit.
-
-Okay.
-
->
-> The consequence is that the result needs unfortunately re-review. Sorry
-> about that, just took this time to notice this glitch.
-
-No worries :). I will send next version of patch-set.
-
-FYI, I will be travelling for Linaro Connect next week so you could
-expect some delays in my responses.
-
--Sumit
-
->
-> /Jarkko
+yes this leaked is from some in dev patches that leaked into the base socket mediation patch. I can put together a patch to remove it
