@@ -2,156 +2,168 @@ Return-Path: <SRS0=oQDc=XN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44449C4CEC9
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Sep 2019 07:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 495CCC4CEC4
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Sep 2019 08:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 251AB218AE
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Sep 2019 07:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 203F320882
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Sep 2019 08:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbfIRHTI (ORCPT
+        id S1728196AbfIRIFI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Sep 2019 03:19:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38497 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfIRHTI (ORCPT
+        Wed, 18 Sep 2019 04:05:08 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:48831 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726814AbfIRIFI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Sep 2019 03:19:08 -0400
-Received: from static-dcd-cqq-121001.business.bouyguestelecom.com ([212.194.121.1] helo=[10.155.2.218])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1iAUEx-0004ts-Dl; Wed, 18 Sep 2019 07:19:03 +0000
-Subject: Re: [PATCH v8 02/28] LSM: Infrastructure management of the sock
- security
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     keescook@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com
-References: <20190829232935.7099-1-casey@schaufler-ca.com>
- <20190829232935.7099-3-casey@schaufler-ca.com>
- <5fde58fe-3925-c9d6-39bf-9adb318f7186@tycho.nsa.gov>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <e82206ce-c37d-b8e4-1ba4-c7c49afb5221@canonical.com>
-Date:   Wed, 18 Sep 2019 00:19:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 18 Sep 2019 04:05:08 -0400
+Received: by mail-io1-f69.google.com with SMTP id w16so10024784ioc.15
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Sep 2019 01:05:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ubJJB30ecHhfDnwFouG6Yr0iuss4T3eoAZ0lI9nGqK0=;
+        b=QNbazjQVw+TQRGTDePicYOCvaD3UXSps1hX9qp+Cnje9eAFBIVA/+aJrKZwPkJsEuo
+         tPX3w4Bd3ccJi12hMhJWpiEugO5nV8ks22U8dItOhNtXTHjWRpYL4i1N7/+W88+A0Byi
+         PlKZBoTvUfVJ4kPbiKAjkg2uZ4ec/RR7uHGoJx17XAoqPjFX+kxSCVAUJx90ObEl9hz3
+         wes9dimN9lTpVxaJw+RNrG07DwGAYL0W+JdWw0lAOPXZw9vFa08Q53j+LkUlTJjLUVIf
+         9tWoQF/eqFmoLGqSoHMOKKKwnHyXqIY2SEuxZDGGb+e840J42jB9QIK3RUsS0v5VTCfK
+         pkpw==
+X-Gm-Message-State: APjAAAXoY65vD25qO5nyQNLmfuYeLL2g6AX5qbpQB+S2JX4B1piYhdQc
+        ZNgYj484p0SNUi2xFIUeKkXNrBWfPFhtFni31ou2L1wthPxj
+X-Google-Smtp-Source: APXvYqzpxHtMg+BUgJCSyFiebeV4rxOlfbcNLIE/bfKzlleXz/ZHoVr1hhiQ7d0r8V22inRFPnBNOnIL4yNrGD5IuSYUaSqRjI3S
 MIME-Version: 1.0
-In-Reply-To: <5fde58fe-3925-c9d6-39bf-9adb318f7186@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:2596:: with SMTP id p22mr3691745ioo.251.1568793906918;
+ Wed, 18 Sep 2019 01:05:06 -0700 (PDT)
+Date:   Wed, 18 Sep 2019 01:05:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008c3e590592cf4b7f@google.com>
+Subject: KASAN: use-after-free Read in key_put
+From:   syzbot <syzbot+f3745a1dc2a5eb5040ef@syzkaller.appspotmail.com>
+To:     dhowells@redhat.com, jmorris@namei.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/16/19 11:42 AM, Stephen Smalley wrote:
-> On 8/29/19 7:29 PM, Casey Schaufler wrote:
->> Move management of the sock->sk_security blob out
->> of the individual security modules and into the security
->> infrastructure. Instead of allocating the blobs from within
->> the modules the modules tell the infrastructure how much
->> space is required, and the space is allocated there.
->>
->> Reviewed-by: Kees Cook <keescook@chromium.org>
->> Reviewed-by: John Johansen <john.johansen@canonical.com>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> 
-> One oddity noted below, but it isn't introduced by this patch so you can add my:
-> 
-> Reviewed-by: Stephen Smalley <sds@tycho.nsa.gov>
-> 
->> ---
->>   include/linux/lsm_hooks.h         |  1 +
->>   security/apparmor/include/net.h   |  6 ++-
->>   security/apparmor/lsm.c           | 38 ++++-----------
->>   security/security.c               | 36 +++++++++++++-
->>   security/selinux/hooks.c          | 78 +++++++++++++++----------------
->>   security/selinux/include/objsec.h |  5 ++
->>   security/selinux/netlabel.c       | 23 ++++-----
->>   security/smack/smack.h            |  5 ++
->>   security/smack/smack_lsm.c        | 64 ++++++++++++-------------
->>   security/smack/smack_netfilter.c  |  8 ++--
->>   10 files changed, 144 insertions(+), 120 deletions(-)
->>
->> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->> index f9222a04968d..b353482ea348 100644
->> --- a/include/linux/lsm_hooks.h
->> +++ b/include/linux/lsm_hooks.h
->> @@ -2047,6 +2047,7 @@ struct lsm_blob_sizes {
->>       int    lbs_cred;
->>       int    lbs_file;
->>       int    lbs_inode;
->> +    int    lbs_sock;
->>       int    lbs_superblock;
->>       int    lbs_ipc;
->>       int    lbs_msg_msg;
->> diff --git a/security/apparmor/include/net.h b/security/apparmor/include/net.h
->> index 7334ac966d01..adac04e3b3cc 100644
->> --- a/security/apparmor/include/net.h
->> +++ b/security/apparmor/include/net.h
->> @@ -55,7 +55,11 @@ struct aa_sk_ctx {
->>       struct aa_label *peer;
->>   };
->>   -#define SK_CTX(X) ((X)->sk_security)
->> +static inline struct aa_sk_ctx *aa_sock(const struct sock *sk)
->> +{
->> +    return sk->sk_security + apparmor_blob_sizes.lbs_sock;
->> +}
->> +
->>   #define SOCK_ctx(X) SOCK_INODE(X)->i_security
-> 
-> This use of i_security looks suspicious, but SOCK_ctx doesn't appear to be used presently.  Probably should be removed in a separate patch.
-> 
+Hello,
 
-yes this leaked is from some in dev patches that leaked into the base socket mediation patch. I can put together a patch to remove it
+syzbot found the following crash on:
+
+HEAD commit:    a7f89616 Merge branch 'for-5.3-fixes' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=175eae11600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=861a6f31647968de
+dashboard link: https://syzkaller.appspot.com/bug?extid=f3745a1dc2a5eb5040ef
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f3745a1dc2a5eb5040ef@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in atomic_read  
+include/asm-generic/atomic-instrumented.h:26 [inline]
+BUG: KASAN: use-after-free in refcount_sub_and_test_checked+0x87/0x200  
+lib/refcount.c:182
+Read of size 4 at addr ffff88805b89fc80 by task kworker/1:1/23
+
+CPU: 1 PID: 23 Comm: kworker/1:1 Not tainted 5.3.0-rc8+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events key_garbage_collector
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0xd4/0x306 mm/kasan/report.c:351
+  __kasan_report.cold+0x1b/0x36 mm/kasan/report.c:482
+  kasan_report+0x12/0x17 mm/kasan/common.c:618
+  check_memory_region_inline mm/kasan/generic.c:185 [inline]
+  check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
+  __kasan_check_read+0x11/0x20 mm/kasan/common.c:92
+  atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
+  refcount_sub_and_test_checked+0x87/0x200 lib/refcount.c:182
+  refcount_dec_and_test_checked+0x1b/0x20 lib/refcount.c:220
+  key_put+0x20/0x90 security/keys/key.c:646
+  keyring_free_object+0x19/0x20 security/keys/keyring.c:389
+  assoc_array_destroy_subtree.part.0+0x1c5/0x4b0 lib/assoc_array.c:393
+  assoc_array_destroy_subtree lib/assoc_array.c:354 [inline]
+  assoc_array_destroy+0x43/0x90 lib/assoc_array.c:444
+  keyring_destroy+0x259/0x2f0 security/keys/keyring.c:431
+  key_gc_unused_keys.constprop.0+0x313/0x5b0 security/keys/gc.c:136
+  key_garbage_collector+0x3f3/0x940 security/keys/gc.c:292
+  process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+Allocated by task 28788:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc mm/kasan/common.c:493 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:466
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:501
+  slab_post_alloc_hook mm/slab.h:520 [inline]
+  slab_alloc mm/slab.c:3319 [inline]
+  kmem_cache_alloc+0x121/0x710 mm/slab.c:3483
+  kmem_cache_zalloc include/linux/slab.h:738 [inline]
+  key_alloc+0x426/0x1110 security/keys/key.c:276
+  key_create_or_update+0x652/0xbe0 security/keys/key.c:924
+  __do_sys_add_key security/keys/keyctl.c:132 [inline]
+  __se_sys_add_key security/keys/keyctl.c:72 [inline]
+  __x64_sys_add_key+0x2bd/0x4f0 security/keys/keyctl.c:72
+  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 10344:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:455
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:463
+  __cache_free mm/slab.c:3425 [inline]
+  kmem_cache_free+0x86/0x320 mm/slab.c:3693
+  key_gc_unused_keys.constprop.0+0x192/0x5b0 security/keys/gc.c:157
+  key_garbage_collector+0x3f3/0x940 security/keys/gc.c:292
+  process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+The buggy address belongs to the object at ffff88805b89fc80
+  which belongs to the cache key_jar of size 304
+The buggy address is located 0 bytes inside of
+  304-byte region [ffff88805b89fc80, ffff88805b89fdb0)
+The buggy address belongs to the page:
+page:ffffea00016e27c0 refcount:1 mapcount:0 mapping:ffff88821bc461c0  
+index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea00025c63c8 ffffea00023378c8 ffff88821bc461c0
+raw: 0000000000000000 ffff88805b89f080 000000010000000a 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88805b89fb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88805b89fc00: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
+> ffff88805b89fc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                    ^
+  ffff88805b89fd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88805b89fd80: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
