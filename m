@@ -2,69 +2,106 @@ Return-Path: <SRS0=2B8k=XS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83658C4CEC4
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Sep 2019 19:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C4EC4CEC4
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Sep 2019 19:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57E2820B7C
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Sep 2019 19:05:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10ABB2089F
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Sep 2019 19:17:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569265531;
-	bh=4i1mDkQpn+NxkorEyO1huigSz3zIiOzOMCYXV3BOc2s=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=KOZDAR7Ed77Gy4ub83+N6/kgUPyqnHnkViNqaEm5tP3KlmT8jEVje5uf6N5MdpjUb
-	 58TilfA9x9ocsWoeppkmxLVFP1OkKaqNgkrmVG4bKvAvnOUrwYgu7Vwl4SYETmtYf7
-	 4Q9BncJcyfHwSeL3yGOE5sDjWWkg7tMyjKlK1bno=
+	s=default; t=1569266263;
+	bh=HSTtGYfqyQ7E2gn/3lA+KpauEkGyRLGkzwWNcYJ0b6c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=wQDvQumlgcfQfyltVC6nEXCntsoLOXnt3ydh103a880fJkwTw7rJoTolQt33ESpax
+	 HLdWfkpovQLOh3aXgciooFnVjmrj5flBCzCbNsVQiCccULs2fkCtF6pa0dabb3NF81
+	 GW7T0WspqcDXvLZsmwOzb12sjXJ0iAwdAQO5amJA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733212AbfIWTFZ (ORCPT
+        id S1733277AbfIWTRm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Sep 2019 15:05:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733093AbfIWTFZ (ORCPT
+        Mon, 23 Sep 2019 15:17:42 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37500 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727284AbfIWTRm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Sep 2019 15:05:25 -0400
-Subject: Re: [GIT PULL] SafeSetID LSM changes for 5.4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569265524;
-        bh=4i1mDkQpn+NxkorEyO1huigSz3zIiOzOMCYXV3BOc2s=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=xS9DWXUOuw8o+nWWg+sw2hjcVdhp37fQDMgWonnsVO6sfxNZTv1B/bl6vRGseeN9P
-         mMX8sjvea818/HH2yAGKnhKROTGChRBTh5blCpOpQzDGDXQnwBJzbAY7my1s1uK5PT
-         qpHqTkrpplf3IaMC7gROdO+lCKgqldrJFMnHtjxc=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJ-EccM49yBA+xgkR+3m5pEAJqmH_+FxfuAjijrQxaxxMUAt3Q@mail.gmail.com>
-References: <CAJ-EccM49yBA+xgkR+3m5pEAJqmH_+FxfuAjijrQxaxxMUAt3Q@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJ-EccM49yBA+xgkR+3m5pEAJqmH_+FxfuAjijrQxaxxMUAt3Q@mail.gmail.com>
-X-PR-Tracked-Remote: https://github.com/micah-morton/linux.git
- tags/safesetid-bugfix-5.4
-X-PR-Tracked-Commit-Id: 21ab8580b383f27b7f59b84ac1699cb26d6c3d69
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1b5fb415442eb3ec946d48afe8c87b0f2fd42d7c
-Message-Id: <156926552481.25044.1975414003602724525.pr-tracker-bot@kernel.org>
-Date:   Mon, 23 Sep 2019 19:05:24 +0000
-To:     Micah Morton <mortonm@chromium.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+        Mon, 23 Sep 2019 15:17:42 -0400
+Received: by mail-lj1-f195.google.com with SMTP id l21so14878332lje.4
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Sep 2019 12:17:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vrRLQn3RzqvLOL/i6mhPpJ10+RmKd1euOe+YMl2OYp0=;
+        b=f1ffZU2sPanOCuHiBceitjTlbhQE9vji8lZ1iD711xp+ldw6uJgEuKLN8+GC7Byalb
+         nwAAiPg7+uP3R5SZCV+80m9S4HOJl9DPeuyxvFQv5NWy9NXmONOgY1hB9hDLeuHfYCdW
+         +1/jkugNzglnZ4KwGRBl0e6c1DD4gcxsNkFuY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vrRLQn3RzqvLOL/i6mhPpJ10+RmKd1euOe+YMl2OYp0=;
+        b=lEPw7NKC4NNlBJemYep7/3q/1hjkMP5D/QlOWs43pglofd0G2oZ13TIjPCSF/0HAUG
+         fAvU5hu4RVCxt8H+v6MS9L/cPgAC5Ajlrx+WzU0HNVrgxWmFYczMgoAYjRk8bZuSgWG0
+         or0a+rhLrfuR+vzMnPasvYIRsE5F2WxqcqrPdvJQC9lFNjwZWPR2x0mdlRl1oimPg3VL
+         H4uJMGD3mDoAhNLMeuVoiGu3xagB1fFO3FWsC8HgM1UTGJZ6ZzkKnB2vrcWaZ65imxkE
+         hlTJJJ83p4pUmXa2N0L9klRFVdPVDyGO5jLbzAH9unQ7NkZi5Ueed6ORndS285l5Nop2
+         ksbw==
+X-Gm-Message-State: APjAAAVG+hfPb/4/rA0n1ODVv/xAhi+t3DellT09jsy1Juo0woCtgyf9
+        V634dJWUuO0B8ik/62FxWYCcv99o+4A=
+X-Google-Smtp-Source: APXvYqyNC6HZXpJERT3JaXvw15RKisz1HBVH8uq5at8nkfH53iOFWiRxqK78esGq9hTLNITqW6yAmg==
+X-Received: by 2002:a2e:a17b:: with SMTP id u27mr548759ljl.65.1569266259914;
+        Mon, 23 Sep 2019 12:17:39 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 202sm2509327ljf.75.2019.09.23.12.17.38
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2019 12:17:39 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id c195so11002045lfg.9
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Sep 2019 12:17:38 -0700 (PDT)
+X-Received: by 2002:ac2:47f8:: with SMTP id b24mr684575lfp.134.1569266258665;
+ Mon, 23 Sep 2019 12:17:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <d2418da0-056b-2e6f-ae40-acdfa842e341@schaufler-ca.com>
+In-Reply-To: <d2418da0-056b-2e6f-ae40-acdfa842e341@schaufler-ca.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 23 Sep 2019 12:17:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whNEGetrwyShSLP_5nCA2+YTR9kdNFw7aLua9jaR-YvJg@mail.gmail.com>
+Message-ID: <CAHk-=whNEGetrwyShSLP_5nCA2+YTR9kdNFw7aLua9jaR-YvJg@mail.gmail.com>
+Subject: Re: [GIT PULL] Smack patches for v5.4
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Wed, 18 Sep 2019 10:41:06 -0700:
+On Mon, Sep 23, 2019 at 10:24 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> This is my first direct pull request. I think I have followed process
+> correctly, but if not I will attend to my error as required.
 
-> https://github.com/micah-morton/linux.git tags/safesetid-bugfix-5.4
+The contents look fine.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1b5fb415442eb3ec946d48afe8c87b0f2fd42d7c
+However, it's from an open hosting site - github. Which is fine, I
+take pull requests from github all the time.  But I require that they
+be sent using a signed tag, so that I can verify that yes, it's really
+from you.
 
-Thank you!
+And no, I don't do pgp email, even t hough I see that there's a
+signature on your email itself.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+git uses pgp too, but unlike pgp email signatures, the git support for
+pgp signing is useful and user-friendly and just _works_, rather than
+the complete and useless disaster that is pgp email [1].
+
+So please make it a signed tag with "git tag -s" and ask me to pull
+that tag instead.
+
+                        Linus
+
+[1] https://www.vice.com/en_us/article/vvbw9a/even-the-inventor-of-pgp-doesnt-use-pgp
