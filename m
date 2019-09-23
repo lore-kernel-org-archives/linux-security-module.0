@@ -1,92 +1,77 @@
-Return-Path: <SRS0=TFGu=XP=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=2B8k=XS=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6292C4CEC9
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Sep 2019 15:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3DFC3A5A6
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Sep 2019 03:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A47B620B7C
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Sep 2019 15:53:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="c9fcWv65";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="YMyChGGA"
+	by mail.kernel.org (Postfix) with ESMTP id 4806420640
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Sep 2019 03:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404633AbfITPxc (ORCPT
+        id S2404746AbfIWDUK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Sep 2019 11:53:32 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:37706 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404583AbfITPxb (ORCPT
+        Sun, 22 Sep 2019 23:20:10 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2704 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2404564AbfIWDUK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Sep 2019 11:53:31 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 16E368EE19C;
-        Fri, 20 Sep 2019 08:53:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1568994811;
-        bh=pLZxfGnwgV0W/U6tVbXsrcOVpVeJXJ9PgmIXKjKhaM8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=c9fcWv65wre+1MQv9uN6OJoZ6S0aOhkxGirxDTPiEn176gszxlr6Crn/jEg2IsgXu
-         pC+cyPwLIOZF4iTtMV1+gK8hbKo58QvkHMzbXi6lahMZkpra3QJYZw2ZxRjI9K9kr4
-         TgHgLxL36O7QkpMcIMerf4GO1umAGocE2Wuvb17c=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 03Zw01ncXwbb; Fri, 20 Sep 2019 08:53:30 -0700 (PDT)
-Received: from jarvis.lan (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 71CE28EE109;
-        Fri, 20 Sep 2019 08:53:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1568994810;
-        bh=pLZxfGnwgV0W/U6tVbXsrcOVpVeJXJ9PgmIXKjKhaM8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=YMyChGGA6Y6XBcqBUTwwugNdf1tWlhLBz1IpNw8w2wgyfVjlb3YcQDISwHhQXDPiN
-         Ohw1uZ4qSsCGP9Zhbg0Orl0GDBpyb+ZqgY6R4OsAUgUf6BSi4KkwsO/otzsvQON3cT
-         h309a/0Dw652hHHGqIFNGeXoB+mdSieh6ivHV8Ks=
-Message-ID: <1568994809.3645.2.camel@HansenPartnership.com>
-Subject: Re: [PATCH v6 01/12] tpm-buf: move from static inlines to real
- functions
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Fri, 20 Sep 2019 08:53:29 -0700
-In-Reply-To: <20190920140642.GB9578@linux.intel.com>
-References: <1568031408.6613.29.camel@HansenPartnership.com>
-         <1568031476.6613.30.camel@HansenPartnership.com>
-         <20190920140459.GA9578@linux.intel.com>
-         <20190920140642.GB9578@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 22 Sep 2019 23:20:10 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 80629B436215A611CC56;
+        Mon, 23 Sep 2019 11:20:07 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 23 Sep 2019 11:19:57 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <casey@schaufler-ca.com>
+CC:     <jmorris@namei.org>, <serge@hallyn.com>,
+        <linux-security-module@vger.kernel.org>, <zhongjiang@huawei.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] smack: fix an compile error in smack_post_notification
+Date:   Mon, 23 Sep 2019 11:16:47 +0800
+Message-ID: <1569208607-23263-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2019-09-20 at 17:06 +0300, Jarkko Sakkinen wrote:
-> On Fri, Sep 20, 2019 at 05:06:15PM +0300, Jarkko Sakkinen wrote:
-> > On Mon, Sep 09, 2019 at 01:17:56PM +0100, James Bottomley wrote:
-> > > This separates out the old tpm_buf_... handling functions from
-> > > static
-> > > inlines in tpm.h and makes them their own tpm-buf.c file.  This
-> > > is a
-> > > precursor so we can add new functions for other TPM type handling
-> > > 
-> > > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership
-> > > .com>
-> > 
-> > What about TPM_BUF_2B that gets added in this commit?
-> 
-> Probably just a glitch in rebasing/squashing?
+I hit the following error when compile the kernel.
 
-Well a glitch in splitting one patch into three, yes.  I'll fix it up.
+security/smack/smack_lsm.c: In function smack_post_notification:
+security/smack/smack_lsm.c:4383:7: error: dereferencing pointer to incomplete type struct watch_notification
+  if (n->type == WATCH_TYPE_META)
+       ^~
+security/smack/smack_lsm.c:4383:17: error: WATCH_TYPE_META undeclared (first use in this function); did you mean TCA_PIE_BETA?
+  if (n->type == WATCH_TYPE_META)
+                 ^~~~~~~~~~~~~~~
+                 TCA_PIE_BETA
+security/smack/smack_lsm.c:4383:17: note: each undeclared identifier is reported only once for each function it appears in
 
-James
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ security/smack/smack.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index 62529f3..02b05a2 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -21,6 +21,7 @@
+ #include <linux/rculist.h>
+ #include <linux/lsm_audit.h>
+ #include <linux/msg.h>
++#include <linux/watch_queue.h>
+ 
+ /*
+  * Use IPv6 port labeling if IPv6 is enabled and secmarks
+-- 
+1.7.12.4
 
