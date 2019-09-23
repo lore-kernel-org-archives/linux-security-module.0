@@ -2,148 +2,465 @@ Return-Path: <SRS0=2B8k=XS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF4DC432C1
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Sep 2019 21:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA0BC432C1
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Sep 2019 23:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF4F6207FD
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Sep 2019 21:50:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="YeYAgY7a"
+	by mail.kernel.org (Postfix) with ESMTP id 5DF3221D6C
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Sep 2019 23:30:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569281444;
+	bh=sQDrHAdQ3l8FiIGsg2kwACUcZTsLaduecTDDsqnCmS8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:List-ID:
+	 From;
+	b=McZnfBw2q59hzg4XC7suJaGHTg6cpLF8C0bpiQMJmyeS0nqT1QKslSRM52IDbLuuA
+	 mHeIO7QJ86WSeQnDRuyaA5q6QWwFViSbbg4cC8LmKkS18QrG4NbSmtmSLJWCPsr9MU
+	 4OmB2OmUf7B41A1SiGAWo/IhAil5S8YHKYNmf0So=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503172AbfIWVu6 (ORCPT
+        id S1729286AbfIWXan (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Sep 2019 17:50:58 -0400
-Received: from sonic313-22.consmr.mail.bf2.yahoo.com ([74.6.133.196]:36190
-        "EHLO sonic313-22.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389663AbfIWVuz (ORCPT
+        Mon, 23 Sep 2019 19:30:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58794 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729152AbfIWXan (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Sep 2019 17:50:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1569275453; bh=GHWSj3JfbrqwEoVYU22hKmb42OaRWOoxDaLUUGAr8+o=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=YeYAgY7axWi89WRlHc1vbYk1rvItQueWlE4eDWkVvRB4GluascfWy9aMTuEB/HZ8OxEdC/jVEG1I3Wpu3AMbFwddd5bF61z9DeqLH4wrWaio7BehUJUuR1vppQ31nK1oYv46Jwe7bc8aH/sFbeYWM8gfnv5ZbCpSIkDzCllXWk3K0KhYW9PYFDD/We3/fjal6v0SR2SRf4MXtu3/9o+kYRUxN1kfP1r0UO9rT5NvfeQv70UzTrMZgL3XV0S/JKrEalc+cnRO/FU0XKYHowsvtB0waRVr+quveviPkm93wJbs6FfmRdE+iNblIV+eY9UGlKQUxloEi0CWL59IVC6E0A==
-X-YMail-OSG: g2EXaCAVM1m0Tm5k22ryCQuLS18WAl919fv1xcx3Ed8Qb6Sb_RXGZ2jaE23L4MJ
- bJz0KvB95iwoE4GsDIrslyrYX4eJUMEI4oOmVqB2h1rKeY4lsLJyErHqwUK8Pcg3WmfAjhLDS0p0
- fVOSMEqpcmnJUb_x_RaX49nxF95pINg47m1ycy4YZhxsWAD9WM5kOFCPgleLR5FVnMOdPI7vsvdz
- JLsJQOyDKgYw5iVH1woFm5Y.Uu7FJasR4vKC8lmQiX8nwVZ07.zH177nEMyzcSIP2c1ocUfwyVmc
- GjokF_YjPDMssvXqdVjrAjFUptCNParkO.zIr3zfNaU_d67O0VZ_oEUC5erJORe_OVjPwKD_ruKA
- ITtZadddYLFIA7vx7nnNEmXzM1ucP8tk7vN_JnfSHYKWTvVe11wg5FGFOzwYNHvkTDq9FMm8SAkT
- uJxpXGTEXK_RPne8Kzh75q44RJ4fuKS0I4JgGN3LJN6aNUNpwTcXrQVrV.y.QhaZ4hCHE5LWwndd
- urAiRampUIqNwm27Elv9iLiUh6O84jF34txjbxnO1X7BFsjnxbOtp9gvvfXVPoIXZZI0B0O2eOl2
- 3D1dYRWXUJUGKKeF6BRRHdgRf5h7ZBPF00Ep3BAZlKefrod.XkuV9lVIOy_X6.9BoMG.T5SOvgTi
- _9JSZyORagmGCOR0CqwdJoQxE_3UWJvkDlrTUWPuhh4NLPkotPMifNbKX7zbgy0nMLsQxYuEavVm
- LHKWcDpbNTuMsteoia3mjeBbFISL41Y0ibWaTvwTCuA3T7w1xEsJARhPwfBpReZcu1dCHV_oYVIq
- 1G92prWVr5LaKYESTP58FP_PmFX.lT1FnF8OlretYOelXV9IKXbSTUNSyW5IhZgily_QfPwZFNg3
- GUCIoFF7XIeZt8QBAAJyWoOrIFW2lRHlywQisiU4kvElMIOH6UBHnaSjVGDtUtiUhyNolTYGVwT8
- .R_WwNP90ok1eFyTvdwW2eaELn.azP8hpVBKfIDIpPKd2DTE6zTKpk8QSIW4KCHz3vySAeQEfFxq
- Ku_R668TV_xqSS4JdpueIL_9KwmOO.Akf1YJOzytBCIVNVEDj5N3DxlFWADosuZsgoghhsy5x9wp
- JYBhsHoAf5IUHB3kLaVG0IezPbGvHiMDBAvTkVetLVwkYvDwUagJdxehd47BADtrw.kPQGzThM8Q
- QeoosFzlNLrCMKv7tuHQszMWm.GZ92WhSmYBb512ArqNTHbpMK5xrSrdntvw9U3H_02oO0idN_rU
- UQ5x4NveE3mDMSWuWAhOdzcf8SOvZAcD8Wcs8VUerkBGKb8oGkEnRYMeJ2QpLbhDh4SYiQsvsEAj
- XSRBTUOZTocL2o31pYdqYNnbqZjQMRQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Mon, 23 Sep 2019 21:50:53 +0000
-Received: by smtp432.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 74a8ede47fc77833356b263ef188a647;
-          Mon, 23 Sep 2019 21:50:49 +0000 (UTC)
-Subject: Re: [PATCH] smack: include linux/watch_queue.h
-To:     Arnd Bergmann <arnd@arndb.de>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190909204631.1076624-1-arnd@arndb.de>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <dbbf0b7a-125c-9517-4232-dd88bea139dd@schaufler-ca.com>
-Date:   Mon, 23 Sep 2019 14:50:48 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 23 Sep 2019 19:30:43 -0400
+Received: from paulmck-ThinkPad-P72 (unknown [170.225.9.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 358092064A;
+        Mon, 23 Sep 2019 23:30:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569281441;
+        bh=sQDrHAdQ3l8FiIGsg2kwACUcZTsLaduecTDDsqnCmS8=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=nxJQyb7jymP1OSEO8PXXzJh6q5DKzU+pwxN8NscTMKcavORfsVQAyv7fU5B/PjEyP
+         C/v8nFzXPBAhTSletQq+gjHN44aLwoSQJZezFa0CX73n9zIZBdgQKnM66Lfkce3dKe
+         n9GzoZ1JDML22PYORku4E14XyIXWu7+u52skas2w=
+Date:   Mon, 23 Sep 2019 16:30:38 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Micah Morton <mortonm@chromium.org>, Jann Horn <jannh@google.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [GIT PULL] SafeSetID LSM changes for 5.4
+Message-ID: <20190923233038.GE7828@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <CAJ-EccM49yBA+xgkR+3m5pEAJqmH_+FxfuAjijrQxaxxMUAt3Q@mail.gmail.com>
+ <CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190909204631.1076624-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/9/2019 1:46 PM, Arnd Bergmann wrote:
-> In some randconfig builds, the lack of an explicit #include
-> in smack_lsm.c causes a build failure:
+On Mon, Sep 23, 2019 at 12:01:49PM -0700, Linus Torvalds wrote:
+> On Wed, Sep 18, 2019 at 10:41 AM Micah Morton <mortonm@chromium.org> wrote:
+> >
+> > Fix for SafeSetID bug that was introduced in 5.3
+> 
+> So this seems to be a good fix, but the bug itself came from the fact that
+> 
+>     rcu_swap_protected(..)
+> 
+> is so hard to read, and I don't see *why* it's so pointlessly hard to read.
+> 
+> Yes, we have some macros that change their arguments, but they have a
+> _reason_ to do so (ie they return two different values) and they tend
+> to be very special in other ways too.
+> 
+> But rcu_swap_protected() has no reason for it's odd semantics.
+> 
+> Looking at that 'handle_policy_update()' function, it's entirely
+> reasonable to think "pol cannot possibly be NULL". When I looked at
+> the fix patch, that was my initial reaction too, and it's probably the
+> reason Jann's commit 03638e62f55f ("LSM: SafeSetID: rewrite userspace
+> API to atomic updates") had that bug to begin with.
+> 
+> I don't see the original discussion at all, it's not on
+> Linux-Security-Module for some reason, so I can't tell when/if the
+> NULL pointer test got deleted.
+> 
+> Anyway, this bug would likely had been avoided if rcu_swap_protected()
+> just returned the old pointer instead of changing the argument.
+> 
+> There are only a handful or users of that macro, maybe this could be fixed?
 
-What tree/branch are you working with? I don't see this.
+I pushed some (untested) commits out to the dev branch of -rcu, the
+overall effect of which is shown in the patch below.  The series
+adds a new rcu_replace() to avoid confusion with swap(), replaces
+uses of rcu_swap_protected() with rcu_replace(), and finally removes
+rcu_swap_protected().
 
->
-> security/smack/smack_lsm.c:4384:7: error: incomplete definition of type 'struct watch_notification'
->         if (n->type == WATCH_TYPE_META)
->             ~^
-> include/linux/device.h:46:8: note: forward declaration of 'struct watch_notification'
-> struct watch_notification;
->        ^
-> security/smack/smack_lsm.c:4384:17: error: use of undeclared identifier 'WATCH_TYPE_META'
->         if (n->type == WATCH_TYPE_META)
->
-> Fixes: 5301fef8ca60 ("smack: Implement the watch_key and post_notification hooks [untested]")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  security/smack/smack_lsm.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index a15e76489683..5120dd9c6335 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -42,6 +42,7 @@
->  #include <linux/parser.h>
->  #include <linux/fs_context.h>
->  #include <linux/fs_parser.h>
-> +#include <linux/watch_queue.h>
->  #include "smack.h"
->  
->  #define TRANS_TRUE	"TRUE"
+Is this what you had in mind?
+
+Unless you tell me otherwise, I will assume that this change is important
+but not violently urgent.  (As in not for the current merge window.)
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+ 
+diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+index 46875bb..4c37266 100644
+--- a/arch/x86/kvm/pmu.c
++++ b/arch/x86/kvm/pmu.c
+@@ -416,8 +416,8 @@ int kvm_vm_ioctl_set_pmu_event_filter(struct kvm *kvm, void __user *argp)
+ 	*filter = tmp;
+ 
+ 	mutex_lock(&kvm->lock);
+-	rcu_swap_protected(kvm->arch.pmu_event_filter, filter,
+-			   mutex_is_locked(&kvm->lock));
++	filter = rcu_replace(kvm->arch.pmu_event_filter, filter,
++			     mutex_is_locked(&kvm->lock));
+ 	mutex_unlock(&kvm->lock);
+ 
+ 	synchronize_srcu_expedited(&kvm->srcu);
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_context.c b/drivers/gpu/drm/i915/gem/i915_gem_context.c
+index 0f2c22a..ebb4f15 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_context.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_context.c
+@@ -1683,7 +1683,7 @@ set_engines(struct i915_gem_context *ctx,
+ 		i915_gem_context_set_user_engines(ctx);
+ 	else
+ 		i915_gem_context_clear_user_engines(ctx);
+-	rcu_swap_protected(ctx->engines, set.engines, 1);
++	set.engines = rcu_replace(ctx->engines, set.engines, 1);
+ 	mutex_unlock(&ctx->engines_mutex);
+ 
+ 	call_rcu(&set.engines->rcu, free_engines_rcu);
+diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
+index 1f5b5c8..6a38d4a 100644
+--- a/drivers/scsi/scsi.c
++++ b/drivers/scsi/scsi.c
+@@ -434,8 +434,8 @@ static void scsi_update_vpd_page(struct scsi_device *sdev, u8 page,
+ 		return;
+ 
+ 	mutex_lock(&sdev->inquiry_mutex);
+-	rcu_swap_protected(*sdev_vpd_buf, vpd_buf,
+-			   lockdep_is_held(&sdev->inquiry_mutex));
++	vpd_buf = rcu_replace(*sdev_vpd_buf, vpd_buf,
++			      lockdep_is_held(&sdev->inquiry_mutex));
+ 	mutex_unlock(&sdev->inquiry_mutex);
+ 
+ 	if (vpd_buf)
+diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
+index 64c96c7..8d17779 100644
+--- a/drivers/scsi/scsi_sysfs.c
++++ b/drivers/scsi/scsi_sysfs.c
+@@ -466,10 +466,10 @@ static void scsi_device_dev_release_usercontext(struct work_struct *work)
+ 	sdev->request_queue = NULL;
+ 
+ 	mutex_lock(&sdev->inquiry_mutex);
+-	rcu_swap_protected(sdev->vpd_pg80, vpd_pg80,
+-			   lockdep_is_held(&sdev->inquiry_mutex));
+-	rcu_swap_protected(sdev->vpd_pg83, vpd_pg83,
+-			   lockdep_is_held(&sdev->inquiry_mutex));
++	vpd_pg80 = rcu_replace(sdev->vpd_pg80, vpd_pg80,
++			       lockdep_is_held(&sdev->inquiry_mutex));
++	vpd_pg83 = rcu_replace(sdev->vpd_pg83, vpd_pg83,
++			       lockdep_is_held(&sdev->inquiry_mutex));
+ 	mutex_unlock(&sdev->inquiry_mutex);
+ 
+ 	if (vpd_pg83)
+diff --git a/fs/afs/vl_list.c b/fs/afs/vl_list.c
+index 21eb0c0..e594598 100644
+--- a/fs/afs/vl_list.c
++++ b/fs/afs/vl_list.c
+@@ -279,8 +279,8 @@ struct afs_vlserver_list *afs_extract_vlserver_list(struct afs_cell *cell,
+ 			struct afs_addr_list *old = addrs;
+ 
+ 			write_lock(&server->lock);
+-			rcu_swap_protected(server->addresses, old,
+-					   lockdep_is_held(&server->lock));
++			old = rcu_replace(server->addresses, old,
++					  lockdep_is_held(&server->lock));
+ 			write_unlock(&server->lock);
+ 			afs_put_addrlist(old);
+ 		}
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 80d6056..968d258 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -383,20 +383,22 @@ do {									      \
+ } while (0)
+ 
+ /**
+- * rcu_swap_protected() - swap an RCU and a regular pointer
+- * @rcu_ptr: RCU pointer
++ * rcu_replace() - replace an RCU pointer, returning its old value
++ * @rcu_ptr: RCU pointer, whose old value is returned
+  * @ptr: regular pointer
+- * @c: the conditions under which the dereference will take place
++ * @c: the lockdep conditions under which the dereference will take place
+  *
+- * Perform swap(@rcu_ptr, @ptr) where @rcu_ptr is an RCU-annotated pointer and
+- * @c is the argument that is passed to the rcu_dereference_protected() call
+- * used to read that pointer.
++ * Perform a replacement, where @rcu_ptr is an RCU-annotated
++ * pointer and @c is the lockdep argument that is passed to the
++ * rcu_dereference_protected() call used to read that pointer.  The old
++ * value of @rcu_ptr is returned, and @rcu_ptr is set to @ptr.
+  */
+-#define rcu_swap_protected(rcu_ptr, ptr, c) do {			\
++#define rcu_replace(rcu_ptr, ptr, c)					\
++({									\
+ 	typeof(ptr) __tmp = rcu_dereference_protected((rcu_ptr), (c));	\
+ 	rcu_assign_pointer((rcu_ptr), (ptr));				\
+-	(ptr) = __tmp;							\
+-} while (0)
++	__tmp;								\
++})
+ 
+ /**
+  * rcu_access_pointer() - fetch RCU pointer with no dereferencing
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index 0a00eac..cee7f08 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -180,8 +180,8 @@ static void activate_effective_progs(struct cgroup *cgrp,
+ 				     enum bpf_attach_type type,
+ 				     struct bpf_prog_array *old_array)
+ {
+-	rcu_swap_protected(cgrp->bpf.effective[type], old_array,
+-			   lockdep_is_held(&cgroup_mutex));
++	old_array = rcu_replace(cgrp->bpf.effective[type], old_array,
++				lockdep_is_held(&cgroup_mutex));
+ 	/* free prog array after grace period, since __cgroup_bpf_run_*()
+ 	 * might be still walking the array
+ 	 */
+diff --git a/net/core/dev.c b/net/core/dev.c
+index fc676b2..c60454d 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -1288,8 +1288,8 @@ int dev_set_alias(struct net_device *dev, const char *alias, size_t len)
+ 	}
+ 
+ 	mutex_lock(&ifalias_mutex);
+-	rcu_swap_protected(dev->ifalias, new_alias,
+-			   mutex_is_locked(&ifalias_mutex));
++	new_alias = rcu_replace(dev->ifalias, new_alias,
++				mutex_is_locked(&ifalias_mutex));
+ 	mutex_unlock(&ifalias_mutex);
+ 
+ 	if (new_alias)
+diff --git a/net/core/sock_reuseport.c b/net/core/sock_reuseport.c
+index 9408f92..635d202 100644
+--- a/net/core/sock_reuseport.c
++++ b/net/core/sock_reuseport.c
+@@ -345,8 +345,8 @@ int reuseport_detach_prog(struct sock *sk)
+ 	spin_lock_bh(&reuseport_lock);
+ 	reuse = rcu_dereference_protected(sk->sk_reuseport_cb,
+ 					  lockdep_is_held(&reuseport_lock));
+-	rcu_swap_protected(reuse->prog, old_prog,
+-			   lockdep_is_held(&reuseport_lock));
++	old_prog = rcu_replace(reuse->prog, old_prog,
++			       lockdep_is_held(&reuseport_lock));
+ 	spin_unlock_bh(&reuseport_lock);
+ 
+ 	if (!old_prog)
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 605a7cf..ea8f7cf 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -1456,8 +1456,9 @@ static void nft_chain_stats_replace(struct nft_trans *trans)
+ 	if (!nft_trans_chain_stats(trans))
+ 		return;
+ 
+-	rcu_swap_protected(chain->stats, nft_trans_chain_stats(trans),
+-			   lockdep_commit_lock_is_held(trans->ctx.net));
++	nft_trans_chain_stats(trans) =
++		rcu_replace(chain->stats, nft_trans_chain_stats(trans),
++			    lockdep_commit_lock_is_held(trans->ctx.net));
+ 
+ 	if (!nft_trans_chain_stats(trans))
+ 		static_branch_inc(&nft_counters_enabled);
+diff --git a/net/sched/act_api.c b/net/sched/act_api.c
+index 3397122..56fe6f8 100644
+--- a/net/sched/act_api.c
++++ b/net/sched/act_api.c
+@@ -88,7 +88,7 @@ struct tcf_chain *tcf_action_set_ctrlact(struct tc_action *a, int action,
+ 					 struct tcf_chain *goto_chain)
+ {
+ 	a->tcfa_action = action;
+-	rcu_swap_protected(a->goto_chain, goto_chain, 1);
++	goto_chain = rcu_replace(a->goto_chain, goto_chain, 1);
+ 	return goto_chain;
+ }
+ EXPORT_SYMBOL(tcf_action_set_ctrlact);
+diff --git a/net/sched/act_csum.c b/net/sched/act_csum.c
+index 621fb22..d4c5713 100644
+--- a/net/sched/act_csum.c
++++ b/net/sched/act_csum.c
+@@ -100,8 +100,8 @@ static int tcf_csum_init(struct net *net, struct nlattr *nla,
+ 
+ 	spin_lock_bh(&p->tcf_lock);
+ 	goto_ch = tcf_action_set_ctrlact(*a, parm->action, goto_ch);
+-	rcu_swap_protected(p->params, params_new,
+-			   lockdep_is_held(&p->tcf_lock));
++	params_new = rcu_replace(p->params, params_new,
++				 lockdep_is_held(&p->tcf_lock));
+ 	spin_unlock_bh(&p->tcf_lock);
+ 
+ 	if (goto_ch)
+diff --git a/net/sched/act_ct.c b/net/sched/act_ct.c
+index b501ce0..167baaf 100644
+--- a/net/sched/act_ct.c
++++ b/net/sched/act_ct.c
+@@ -721,7 +721,7 @@ static int tcf_ct_init(struct net *net, struct nlattr *nla,
+ 
+ 	spin_lock_bh(&c->tcf_lock);
+ 	goto_ch = tcf_action_set_ctrlact(*a, parm->action, goto_ch);
+-	rcu_swap_protected(c->params, params, lockdep_is_held(&c->tcf_lock));
++	params = rcu_replace(c->params, params, lockdep_is_held(&c->tcf_lock));
+ 	spin_unlock_bh(&c->tcf_lock);
+ 
+ 	if (goto_ch)
+diff --git a/net/sched/act_ctinfo.c b/net/sched/act_ctinfo.c
+index 10eb2bb..6d5a34d 100644
+--- a/net/sched/act_ctinfo.c
++++ b/net/sched/act_ctinfo.c
+@@ -256,8 +256,8 @@ static int tcf_ctinfo_init(struct net *net, struct nlattr *nla,
+ 
+ 	spin_lock_bh(&ci->tcf_lock);
+ 	goto_ch = tcf_action_set_ctrlact(*a, actparm->action, goto_ch);
+-	rcu_swap_protected(ci->params, cp_new,
+-			   lockdep_is_held(&ci->tcf_lock));
++	cp_new = rcu_replace(ci->params, cp_new,
++			     lockdep_is_held(&ci->tcf_lock));
+ 	spin_unlock_bh(&ci->tcf_lock);
+ 
+ 	if (goto_ch)
+diff --git a/net/sched/act_ife.c b/net/sched/act_ife.c
+index 41d5398..eea4772 100644
+--- a/net/sched/act_ife.c
++++ b/net/sched/act_ife.c
+@@ -587,7 +587,7 @@ static int tcf_ife_init(struct net *net, struct nlattr *nla,
+ 		spin_lock_bh(&ife->tcf_lock);
+ 	/* protected by tcf_lock when modifying existing action */
+ 	goto_ch = tcf_action_set_ctrlact(*a, parm->action, goto_ch);
+-	rcu_swap_protected(ife->params, p, 1);
++	p = rcu_replace(ife->params, p, 1);
+ 
+ 	if (exists)
+ 		spin_unlock_bh(&ife->tcf_lock);
+diff --git a/net/sched/act_mirred.c b/net/sched/act_mirred.c
+index 055faa2..72ec97c 100644
+--- a/net/sched/act_mirred.c
++++ b/net/sched/act_mirred.c
+@@ -177,8 +177,8 @@ static int tcf_mirred_init(struct net *net, struct nlattr *nla,
+ 			goto put_chain;
+ 		}
+ 		mac_header_xmit = dev_is_mac_header_xmit(dev);
+-		rcu_swap_protected(m->tcfm_dev, dev,
+-				   lockdep_is_held(&m->tcf_lock));
++		dev = rcu_replace(m->tcfm_dev, dev,
++				  lockdep_is_held(&m->tcf_lock));
+ 		if (dev)
+ 			dev_put(dev);
+ 		m->tcfm_mac_header_xmit = mac_header_xmit;
+diff --git a/net/sched/act_mpls.c b/net/sched/act_mpls.c
+index ca2597c..e33ce9c 100644
+--- a/net/sched/act_mpls.c
++++ b/net/sched/act_mpls.c
+@@ -256,7 +256,7 @@ static int tcf_mpls_init(struct net *net, struct nlattr *nla,
+ 
+ 	spin_lock_bh(&m->tcf_lock);
+ 	goto_ch = tcf_action_set_ctrlact(*a, parm->action, goto_ch);
+-	rcu_swap_protected(m->mpls_p, p, lockdep_is_held(&m->tcf_lock));
++	p = rcu_replace(m->mpls_p, p, lockdep_is_held(&m->tcf_lock));
+ 	spin_unlock_bh(&m->tcf_lock);
+ 
+ 	if (goto_ch)
+diff --git a/net/sched/act_police.c b/net/sched/act_police.c
+index a065f62..6d4817e 100644
+--- a/net/sched/act_police.c
++++ b/net/sched/act_police.c
+@@ -182,9 +182,9 @@ static int tcf_police_init(struct net *net, struct nlattr *nla,
+ 		police->tcfp_ptoks = new->tcfp_mtu_ptoks;
+ 	spin_unlock_bh(&police->tcfp_lock);
+ 	goto_ch = tcf_action_set_ctrlact(*a, parm->action, goto_ch);
+-	rcu_swap_protected(police->params,
+-			   new,
+-			   lockdep_is_held(&police->tcf_lock));
++	new = rcu_replace(police->params,
++			  new,
++			  lockdep_is_held(&police->tcf_lock));
+ 	spin_unlock_bh(&police->tcf_lock);
+ 
+ 	if (goto_ch)
+diff --git a/net/sched/act_skbedit.c b/net/sched/act_skbedit.c
+index 215a067..8ca1b8a 100644
+--- a/net/sched/act_skbedit.c
++++ b/net/sched/act_skbedit.c
+@@ -205,8 +205,8 @@ static int tcf_skbedit_init(struct net *net, struct nlattr *nla,
+ 
+ 	spin_lock_bh(&d->tcf_lock);
+ 	goto_ch = tcf_action_set_ctrlact(*a, parm->action, goto_ch);
+-	rcu_swap_protected(d->params, params_new,
+-			   lockdep_is_held(&d->tcf_lock));
++	params_new = rcu_replace(d->params, params_new,
++				 lockdep_is_held(&d->tcf_lock));
+ 	spin_unlock_bh(&d->tcf_lock);
+ 	if (params_new)
+ 		kfree_rcu(params_new, rcu);
+diff --git a/net/sched/act_tunnel_key.c b/net/sched/act_tunnel_key.c
+index 10dffda..a1f6ede 100644
+--- a/net/sched/act_tunnel_key.c
++++ b/net/sched/act_tunnel_key.c
+@@ -379,8 +379,8 @@ static int tunnel_key_init(struct net *net, struct nlattr *nla,
+ 
+ 	spin_lock_bh(&t->tcf_lock);
+ 	goto_ch = tcf_action_set_ctrlact(*a, parm->action, goto_ch);
+-	rcu_swap_protected(t->params, params_new,
+-			   lockdep_is_held(&t->tcf_lock));
++	params_new = rcu_replace(t->params, params_new,
++				 lockdep_is_held(&t->tcf_lock));
+ 	spin_unlock_bh(&t->tcf_lock);
+ 	tunnel_key_release_params(params_new);
+ 	if (goto_ch)
+diff --git a/net/sched/act_vlan.c b/net/sched/act_vlan.c
+index 9269d35..d5db65f 100644
+--- a/net/sched/act_vlan.c
++++ b/net/sched/act_vlan.c
+@@ -218,7 +218,7 @@ static int tcf_vlan_init(struct net *net, struct nlattr *nla,
+ 
+ 	spin_lock_bh(&v->tcf_lock);
+ 	goto_ch = tcf_action_set_ctrlact(*a, parm->action, goto_ch);
+-	rcu_swap_protected(v->vlan_p, p, lockdep_is_held(&v->tcf_lock));
++	p = rcu_replace(v->vlan_p, p, lockdep_is_held(&v->tcf_lock));
+ 	spin_unlock_bh(&v->tcf_lock);
+ 
+ 	if (goto_ch)
+diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
+index d568e17..3d5ee77 100644
+--- a/security/safesetid/securityfs.c
++++ b/security/safesetid/securityfs.c
+@@ -179,15 +179,16 @@ static ssize_t handle_policy_update(struct file *file,
+ 	 * doesn't currently exist, just use a spinlock for now.
+ 	 */
+ 	mutex_lock(&policy_update_lock);
+-	rcu_swap_protected(safesetid_setuid_rules, pol,
+-			   lockdep_is_held(&policy_update_lock));
++	pol = rcu_replace(safesetid_setuid_rules, pol,
++			  lockdep_is_held(&policy_update_lock));
+ 	mutex_unlock(&policy_update_lock);
+ 	err = len;
+ 
+ out_free_buf:
+ 	kfree(buf);
+ out_free_pol:
+-	release_ruleset(pol);
++	if (pol)
++		release_ruleset(pol);
+ 	return err;
+ }
+ 
