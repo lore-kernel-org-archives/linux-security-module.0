@@ -2,72 +2,69 @@ Return-Path: <SRS0=XWg0=XT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96219C432C2
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Sep 2019 01:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D6EC432C1
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Sep 2019 01:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68516207FD
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Sep 2019 01:24:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A60482089F
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Sep 2019 01:25:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569288324;
+	bh=RTBIkV8Ln/WwqAEQWqooPniHxtNFp5/G5rR7rAAk/3g=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=nnT0ILVimtoWXBPd15F72mtXvCmphdijrsxiR80zehzlP7bkIHGA9FpEf+ZUaFESd
+	 4CHKrb7FExhOj6eQ9vPFWW1gi/n/2UeyKC7KISeI5AiTOrAi9JVqgpFhNnO64ZVWif
+	 R+9kYnoKyAjTpfs11utF0e9hsbaC060f4f0luwUo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392211AbfIXBY0 (ORCPT
+        id S2392263AbfIXBZY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Sep 2019 21:24:26 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:44466 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391923AbfIXBYZ (ORCPT
+        Mon, 23 Sep 2019 21:25:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388857AbfIXBZY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Sep 2019 21:24:25 -0400
-Received: by mail-qt1-f195.google.com with SMTP id u40so204445qth.11;
-        Mon, 23 Sep 2019 18:24:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4/Mgf6jP/KxSO8yzRBY5wpIujbsiN+nIajcNpr3DS3o=;
-        b=XjW/cvcRaK8wzxU4DYxbU5EJONbMiybNvukw4dHl9MMNFIcOyUa8uWKYvan9DrVnOu
-         RJ2FwK3DJHXtB9OjrCg1oWYbPggmsfUb+tPc+ASvxWH695NOH53XZOVvX9VBkMKMGE4x
-         T2mqoA8wTmRDtZD0oVz/jobbdFzuUSIaPoDGiM3WkgqyaADzZI7rhnwtpt2d/iUgOxCK
-         7+Ld+OQI8VsKb647JBuzfuztN3sfufF2dh9NvBEKuFQgM/2qi9LbdHoQl7C5zMxGSVQ2
-         SYVUtB3GFHs6uxHhtX6d2pWzxMAhFKhCpRIUyzmTzni8ojr90RqmOC2b3ky8xlITJCGB
-         4nrg==
-X-Gm-Message-State: APjAAAUYdhgKaIeLKaAW+MUMRAqXqiG6LSFe/5ng4sMBppSU9iPNMn9s
-        mvzXvcKlSjcDU7XAVRQiG/6/VxK3RTaEwYSDS3nOivZYOtM=
-X-Google-Smtp-Source: APXvYqzmFX0InSZVXOLQka/aXrR7Eu6XO692C9zN1BAodHRLk5phJcCwmFqVOgHrvZQB52JistbkwbO/FjfNfrpZtnI=
-X-Received: by 2002:ac8:342a:: with SMTP id u39mr379911qtb.7.1569288264799;
- Mon, 23 Sep 2019 18:24:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190909204631.1076624-1-arnd@arndb.de> <dbbf0b7a-125c-9517-4232-dd88bea139dd@schaufler-ca.com>
-In-Reply-To: <dbbf0b7a-125c-9517-4232-dd88bea139dd@schaufler-ca.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 23 Sep 2019 18:24:08 -0700
-Message-ID: <CAK8P3a1xY9Ez=04yiFpv1JRAJxwC7ay2chKG2SMVg3d=HejB-g@mail.gmail.com>
-Subject: Re: [PATCH] smack: include linux/watch_queue.h
+        Mon, 23 Sep 2019 21:25:24 -0400
+Subject: Re: [GIT PULL] Smack patches for v5.4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569288323;
+        bh=RTBIkV8Ln/WwqAEQWqooPniHxtNFp5/G5rR7rAAk/3g=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=r+YflSVjI7VQx/lY3355EvodQct5eDrML+CP/ICojjxtg6FXuKVuqNH+nOvjQ8pQy
+         jMfLLLD3vGeP1PiQo/tIWdyOtZh1uGRzllnAI8U3m6oXVFMU2jcSMg7NmMVKd5Cyzn
+         L3q9Kyki5bo9YpcGsPXRLOWrc/3wGQGnaYaZXEwU=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <d2418da0-056b-2e6f-ae40-acdfa842e341@schaufler-ca.com>
+References: <d2418da0-056b-2e6f-ae40-acdfa842e341@schaufler-ca.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <d2418da0-056b-2e6f-ae40-acdfa842e341@schaufler-ca.com>
+X-PR-Tracked-Remote: https://github.com/cschaufler/smack-next.git smack-for-5.4
+X-PR-Tracked-Commit-Id: e5bfad3d7acc5702f32aafeb388362994f4d7bd0
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e94f8ccde4710f9a3e51dd3bc6134c96e33f29b3
+Message-Id: <156928832348.12932.6115301261032637406.pr-tracker-bot@kernel.org>
+Date:   Tue, 24 Sep 2019 01:25:23 +0000
 To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, casey@schaufler-ca.com
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 23, 2019 at 2:50 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 9/9/2019 1:46 PM, Arnd Bergmann wrote:
-> > In some randconfig builds, the lack of an explicit #include
-> > in smack_lsm.c causes a build failure:
->
-> What tree/branch are you working with? I don't see this.
+The pull request you sent on Mon, 23 Sep 2019 10:24:21 -0700:
 
-It was in the latest linux-next at the time I posted the patch. It's
-possible that
-the patch causing the problem got removed in the meantime.
+> https://github.com/cschaufler/smack-next.git smack-for-5.4
 
-      Arnd
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e94f8ccde4710f9a3e51dd3bc6134c96e33f29b3
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
