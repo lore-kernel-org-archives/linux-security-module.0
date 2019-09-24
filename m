@@ -2,113 +2,120 @@ Return-Path: <SRS0=XWg0=XT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF23EC432C2
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Sep 2019 03:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D5AC432C2
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Sep 2019 11:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86CEC206C2
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Sep 2019 03:31:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60BF8214D9
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Sep 2019 11:12:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DvZFu4Ph"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="d8vGZgqM";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Gvkj3Ct1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409006AbfIXDbJ (ORCPT
+        id S2408252AbfIXLMn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Sep 2019 23:31:09 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45947 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408868AbfIXDbI (ORCPT
+        Tue, 24 Sep 2019 07:12:43 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35492 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388764AbfIXLMn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Sep 2019 23:31:08 -0400
-Received: by mail-io1-f66.google.com with SMTP id c25so839484iot.12
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Sep 2019 20:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TEueK3CR530Cn8YwvlpswATDviFm42G64mVpbmzRlU0=;
-        b=DvZFu4PhLqNkQifEHPCTm8AzcdIc5wXbzz/cLcFIqSUlaU06CXDVV2lpreOn70UcPc
-         uQAMp1TtvZ/IIQ/M+wyycdhlTmptZ8be3gluSJLsBEB/VPDPoXvAu/LJGyFG31V/9Q/O
-         nQVdJdICfjCmj4ZopxyIiAoE+ObpZRpoS4oJ0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TEueK3CR530Cn8YwvlpswATDviFm42G64mVpbmzRlU0=;
-        b=tt0Ev/ZEDQjP/DvVRHdeaXxCjSdYPZsDKZp4QNtgN5b6tR4p1MALdEQ/hHUMkAG1ni
-         Z1yLnO1VmEWl3lFpmcL9pYJ7+NZdSSMG3LtWi2soDHnmpjYQM49Od8l5piT3YE8gHg9H
-         EYb/wk8uWGe6+BR8/OaXPLPiISXZlMzrgb2cWMeY47y+GH5qghx0KbOEM+WWEB9KEOcT
-         O6fwBvmKQom9kiRsdg1E4ywOO+d5I8uz97Fq7JLuFSR9HQQFmGJ4fnCOoWuUkylppj8y
-         L7Jaqvb51werv8bS+PNMTkBfyvDsaoYqfrjdlrWFBceZtog4m/XgAB2oqPkiiccxd6/l
-         mAkQ==
-X-Gm-Message-State: APjAAAUriuzu6tlN+iW6+v8ssK2nTV2SfgcQQ/6vsWH76ASnetNQBvEG
-        JXjgze94TZOknLarQrRzZdfGtPRF1G5+ChYT2BQzLbpqeUs=
-X-Google-Smtp-Source: APXvYqz0WKVcfAtIDnOv8+vZOsCQbnc4AlcTrWDoQGlP5KcmtkDB+q77PwCxqlr7szAGoWsuneUbSv5kn57gIprr7Ig=
-X-Received: by 2002:a5d:9441:: with SMTP id x1mr933357ior.160.1569295866351;
- Mon, 23 Sep 2019 20:31:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAJ-EccM49yBA+xgkR+3m5pEAJqmH_+FxfuAjijrQxaxxMUAt3Q@mail.gmail.com>
- <CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com>
- <CAHk-=wh_CHD9fQOyF6D2q3hVdAhFOmR8vNzcq5ZPcxKW3Nc+2Q@mail.gmail.com>
- <alpine.LRH.2.21.1909231633400.54130@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
- <CAHk-=wh4cuHsE8jFHO7XVatdXa=M2f4RHL3VwnSkAf5UNHUJ-Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wh4cuHsE8jFHO7XVatdXa=M2f4RHL3VwnSkAf5UNHUJ-Q@mail.gmail.com>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Mon, 23 Sep 2019 20:30:54 -0700
-Message-ID: <CAJ-EccMy=tNPp3=PQZxLT7eovojoAdpfQmqhAyv7XO3GwPQBMg@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID LSM changes for 5.4
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     James Morris <jamorris@linuxonhyperv.com>,
-        Jann Horn <jannh@google.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+        Tue, 24 Sep 2019 07:12:43 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 0164A8EE175;
+        Tue, 24 Sep 2019 04:12:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1569323563;
+        bh=7Ai2qtIntMWNVtxwe6qQsuPbjf6XjGDzBQonHyILHuw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=d8vGZgqMBZ+hp7FMGmptBoxa8NuFaKkrg/uzwOKm4OZx0cNPSP663Txtd6GSPLDw7
+         x8DW4Y8HwWJx3JcmQ2uYIo34hrrmgWgs86kHzw7Utkfxfr1VFXp5U9zqjdwEvSx6eU
+         12TEraBTRT3/PXU0i0hzasp4Q2jq9yf//aMYIPl8=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id eNmijRz7YiHK; Tue, 24 Sep 2019 04:12:42 -0700 (PDT)
+Received: from [192.168.101.242] (unknown [24.246.103.29])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 414818EE12C;
+        Tue, 24 Sep 2019 04:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1569323562;
+        bh=7Ai2qtIntMWNVtxwe6qQsuPbjf6XjGDzBQonHyILHuw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Gvkj3Ct1bv3ybOgiYNYVi1SsR3Fw32GIY4wFNu7MKT+1NsUscSTrhidl5RXHvHNRs
+         co00JrvFBOZ45m/8k/8O7UE33+tRCU0Kf40Xq1JtjmlrL13kwCi1OTMO8vEhoxSVpZ
+         qacEs5VJTkGzU9iTxYMJUcNCrn0i7dS82RNtkbsk=
+Message-ID: <1569323560.24519.6.camel@HansenPartnership.com>
+Subject: Re: [PATCH v6 02/12] tpm-buf: add handling for TPM2B types
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Tue, 24 Sep 2019 07:12:40 -0400
+In-Reply-To: <20190920141826.GC9578@linux.intel.com>
+References: <1568031408.6613.29.camel@HansenPartnership.com>
+         <1568031515.6613.31.camel@HansenPartnership.com>
+         <20190920141826.GC9578@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 23, 2019 at 5:45 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, Sep 23, 2019 at 4:35 PM James Morris <jamorris@linuxonhyperv.com> wrote:
-> >
-> > My understanding is that SafeSetID is shipping in ChromeOS -- this was
-> > part of the rationale for merging it.
->
-> Well, if even the developer didn't test it for two months, I don't
-> think "it's in upstream" makes any sense or difference.
->
->                      Linus
+On Fri, 2019-09-20 at 17:18 +0300, Jarkko Sakkinen wrote:
+> On Mon, Sep 09, 2019 at 01:18:35PM +0100, James Bottomley wrote:
+> > Most complex TPM commands require appending TPM2B buffers to the
+> > command body.  Since TPM2B types are essentially variable size
+> > arrays,it makes it impossible to represent these complex command
+> > arguments as structures and we simply have to build them up using
+> > append primitives like these.
+> > 
+> > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.c
+> > om>
+> 
+> I think a better idea would be to have headerless TPM buffers
 
-Yes, SafeSetID is shipping on Chrome OS, although I agree having that
-bug in 5.3 without anyone noticing is bad. When Jann sent the last
-round of patches for 5.3 he had tested the code and everything looked
-good, although I unfortunately neglected to test it again after a
-tweak to one of the patches, which of course broke stuff when the
-patches ultimately went in.
+I thought about that.  The main problem is that most of the
+construct/append functions use the header, and these are the functions
+most useful to the TPM2B operation.
 
-Even though this is enabled in production for Chrome OS, none of the
-Chrome OS devices are using version 5.3 yet, so it went unnoticed on
-Chrome OS so far. In general the fact that a kernel feature is
-shipping on Chrome OS isn't an up-to-date assurance that the feature
-works in the most recent Linux release, as it would likely be months
-(at least) from when a change makes it into the kernel until that
-kernel release is ever run on a Chrome OS device (right now the most
-recent kernel we ship on Chrome OS is 4.19, so I've had to backport
-the SafeSetID stuff).
+The other thing that argues against this is that the TPM2B case would
+save nothing if we eliminated the header, because we allocate a page
+for all the data regardless.
 
-We've found this SafeSetID LSM to be pretty useful on Chrome OS, and
-more use cases have popped up than we had in mind when writing it,
-which suggests others would potentially find it useful as well. But I
-understand for it to be useful to others it needs to be stable and
-functional on every release. The best way I know of ensuring this is
-for me to personally run the SafeSetID selftest (in
-tools/testing/selftests/safesetid/) every release, regardless of
-whether we make any changes to SafeSetID itself. Does this sound
-sufficient or are there more formal guidelines/processes here that I'm
-not aware of?
+>  and also it makes sense to have a separate length field in the
+> struct to keep the code sane given that sometimes the buffer does not
+> store the length.
+
+I'm really not sure about that one.  The header length has to be filled
+in for the non-TPM2B case but right at the moment we have no finish
+function for the buf where it could be, so we'd end up having to
+maintain two lengths in every update operation on non-TPM2B buffers. 
+That seems inefficient and the only slight efficiency we get in the
+TPM2B case is not having to do the big endian conversion from the
+header which doesn't seem to be worth the added complexity.
+
+James
+
+> E.g.
+> 
+> enum tpm_buf_flags {
+> 	TPM_BUF_OVERFLOW	= BIT(0),
+> 	TPM_BUF_HEADERLESS	= BIT(1),
+> };
+> 
+> struct tpm_buf {
+> 	unsigned int length;
+> 	struct page *data_page;
+> 	unsigned int flags;
+> 	u8 *data;
+> };
+> 
+> /Jarkko
+> 
+
