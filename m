@@ -2,98 +2,114 @@ Return-Path: <SRS0=elJ9=XU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0C6C432C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Sep 2019 22:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9246FC432C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Sep 2019 23:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2811B20673
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Sep 2019 22:10:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C4FF208C3
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Sep 2019 23:27:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XRgnktXh"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="gTi2p0HM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbfIYWKU (ORCPT
+        id S1728764AbfIYX1a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Sep 2019 18:10:20 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44090 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbfIYWKU (ORCPT
+        Wed, 25 Sep 2019 19:27:30 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34874 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728762AbfIYX13 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Sep 2019 18:10:20 -0400
-Received: by mail-io1-f67.google.com with SMTP id j4so954776iog.11;
-        Wed, 25 Sep 2019 15:10:20 -0700 (PDT)
+        Wed, 25 Sep 2019 19:27:29 -0400
+Received: by mail-lj1-f195.google.com with SMTP id m7so169709lji.2
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Sep 2019 16:27:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=O0oSKhXEOzcFKjIBbLlMltGKt1P3oZHAsL4yEuhL7wA=;
-        b=XRgnktXh+11PNGpyISrs+IVtdJnkKTtOPaDxUCJNdaLB9LEVgJ2Z5AyhKg+go7pqTj
-         Djhi4R+afAv+OOE0dR6LXgvYFwrYfurYDD4wStjOBcqhkd11b+SkHow8OyxUSCPjgBCb
-         lq8nkYcn49Jy6UEBRDBO+5s6LqmGGU802zAuVAH6zmGz8fOPWdDeu1rqs7MsaQ/V3B3s
-         yq5d2sY7H5eekfgzEtN4niRLbLYgj08nONboPeQ2FuuRyIHwlJ8ojgzkIEQoJPbZTYJH
-         rzsXKt2PBl5tf23F8YVHIlPTMuGOCC4DVTojNQQzQxFya6MNaR6rDr6VqP0L3agM/XFT
-         m5+g==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9sqCXdxl+Of7jf6rJsO8rQ0SGF0MvqeTX3//lE6sq48=;
+        b=gTi2p0HMuFn+258nhleL02ZvNEY402U9LWCy+tdYU2Sk6btSfKw/0ugF12eXEQMJDD
+         AiCUx2NMw7R2DUnRcunLUwriIwf9m41Jih9BtKp8M0EHefP2r6DzFrUAGM7LRzQBKG6V
+         D5qHVcJgrSgHazrW0ieVDxpwzxQmX4JftqmeGr7jsTQ2Jf6wNBm8ptZr84U/ix/TNddQ
+         LaFAdntoNdWv4qcPbmmGTKSyXOnItU2ydsiZdwDgwyXzcn/Du2bLeosUtPqaBdKbbdz8
+         8ReWy4Tx7TCiwaWLV6F9ULLUyVDiw+SQx3kT8FV4RIWv59mFrauIHVcU5yZdQicd/cy0
+         0zAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=O0oSKhXEOzcFKjIBbLlMltGKt1P3oZHAsL4yEuhL7wA=;
-        b=eIs5EvdSfD0es0QAGNz2GGNdaoCYYr+7t4PV1WU9e0SEeBq84c1Ny7zYcvR60o+vvv
-         zdV/jUrDvAyM7VgJihX3OeFNHOHn/O1cdZB+06INYeWHLTJ/hRy+E7M18CrWfBls20Ze
-         A4B9drxcqcfAY6iynAWQohljdvLK4FjU4XFxHeyLCiwWdPchFBeQ0JT/QeIrZ2qbos36
-         fZSULq3bF0mS3H6++7ODCuHXC/OSg1bg4AKo9djGNvBTx6IF7VZeYEBzhjsY46oODQ8X
-         U/z1bNLaS/hmIo8f18RMjsKWtNxptqbdDYabunn5JKv0Vk/fUclqdIq/ByhpJmdY8Wo5
-         bAVA==
-X-Gm-Message-State: APjAAAV4AAWZiot73Z+CAdZCjWF9gvZzT6Szm3L0oWi1a256AP91JgiX
-        4HEIkRsp56gnx0y0YheYFew=
-X-Google-Smtp-Source: APXvYqySrKwE7cmfckFerADDb8snKLOdGcDCCwiOFB8XYIPL/o6gqCx5rXBJqY7/wY/i3GBjpA6nxw==
-X-Received: by 2002:a5e:c241:: with SMTP id w1mr270445iop.36.1569449419584;
-        Wed, 25 Sep 2019 15:10:19 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id q17sm58357ile.5.2019.09.25.15.10.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 15:10:19 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9sqCXdxl+Of7jf6rJsO8rQ0SGF0MvqeTX3//lE6sq48=;
+        b=qgGigmID/fs6nPbebDhr+vkRJCLppaah5pqHipeRx2+Cp2pHriKT5gGa23yZDSp4r0
+         HgxWwgy71xavrzsOHcDnZQx/yD3JE9fPRFAx2c23iwRALQaOIcs7D0yFrgsYE1NLeido
+         7CxZvRVUNbXUIiF689yaQIO1qyqEtoPrtJ3PILtBKBIJbCpyDqRfoPUi9mgA04PjdA2f
+         lTeloWCf7zHflzKiRWuBAjiq+HTbeyksTFT+fLwZPRjPHZIwebyUbBEIEBZEQipkxkm4
+         4kja4VdaA4thMHrTM3bx6yb30k4+8g8ERjdyhXDDK+CaEc3L+RJi++6L3YZM6ON0iBG5
+         H31g==
+X-Gm-Message-State: APjAAAXr8KLZ10sgN70kT5iqoMknf33Ode5b6QzFD4l7HCYlGISRpYt1
+        jgonUjbpf6ccrCggJxtQCfYcWOEzCk5IQtWCZiYMOeQ=
+X-Google-Smtp-Source: APXvYqz+rc3PxdRkC9XVh7Yo8Mkknz6GnwWo3ELRdvf9CffUm4W0C9Axdhbp4gFE431jFa9hhWXIevuLhkMI2c4paW4=
+X-Received: by 2002:a2e:890c:: with SMTP id d12mr490009lji.85.1569454047520;
+ Wed, 25 Sep 2019 16:27:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190925221009.15523-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190925221009.15523-1-navid.emamdoost@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 25 Sep 2019 19:27:16 -0400
+Message-ID: <CAHC9VhR+4pZObDz7kG+rxnox2ph4z_wpZdyOL=WmdnRvdQNH9A@mail.gmail.com>
+Subject: Re: [PATCH] genetlink: prevent memory leak in netlbl_unlabel_defconf
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
 Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
         "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] genetlink: prevent memory leak in netlbl_unlabel_defconf
-Date:   Wed, 25 Sep 2019 17:10:08 -0500
-Message-Id: <20190925221009.15523-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In netlbl_unlabel_defconf if netlbl_domhsh_add_default fails the
-allocated entry should be released.
+On Wed, Sep 25, 2019 at 6:10 PM Navid Emamdoost
+<navid.emamdoost@gmail.com> wrote:
+>
+> In netlbl_unlabel_defconf if netlbl_domhsh_add_default fails the
+> allocated entry should be released.
+>
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> ---
+>  net/netlabel/netlabel_unlabeled.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- net/netlabel/netlabel_unlabeled.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+It is worth noting that netlbl_unlabel_defconf() is only called during
+kernel boot by netlbl_init() and if netlbl_unlabel_defconf() returns
+an error code the system panics, so this isn't currently a very
+practical concern.
 
-diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-index d2e4ab8d1cb1..c63ec480ee4e 100644
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -1541,8 +1541,10 @@ int __init netlbl_unlabel_defconf(void)
- 	entry->family = AF_UNSPEC;
- 	entry->def.type = NETLBL_NLTYPE_UNLABELED;
- 	ret_val = netlbl_domhsh_add_default(entry, &audit_info);
--	if (ret_val != 0)
-+	if (ret_val != 0) {
-+		kfree(entry);
- 		return ret_val;
-+	}
- 
- 	netlbl_unlabel_acceptflg_set(1, &audit_info);
- 
+That said, netlbl_unlabel_defconf() *should* clean up here just on
+principal if nothing else.
+
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+> diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+> index d2e4ab8d1cb1..c63ec480ee4e 100644
+> --- a/net/netlabel/netlabel_unlabeled.c
+> +++ b/net/netlabel/netlabel_unlabeled.c
+> @@ -1541,8 +1541,10 @@ int __init netlbl_unlabel_defconf(void)
+>         entry->family = AF_UNSPEC;
+>         entry->def.type = NETLBL_NLTYPE_UNLABELED;
+>         ret_val = netlbl_domhsh_add_default(entry, &audit_info);
+> -       if (ret_val != 0)
+> +       if (ret_val != 0) {
+> +               kfree(entry);
+>                 return ret_val;
+> +       }
+>
+>         netlbl_unlabel_acceptflg_set(1, &audit_info);
+>
+> --
+> 2.17.1
+>
+
+
 -- 
-2.17.1
-
+paul moore
+www.paul-moore.com
