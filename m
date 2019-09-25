@@ -2,74 +2,98 @@ Return-Path: <SRS0=elJ9=XU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F7CC432C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Sep 2019 14:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0C6C432C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Sep 2019 22:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C62421D7E
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Sep 2019 14:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569423297;
-	bh=ufDqngKJheA3l0EFHLMClCKQHtuH325dj1as7X9Pcaw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=is94SgWiVc+vupSe6QQCspDTmB1dhNTE/9cnw7wmq8Ly+Do8fpGex+o8gsxsv15um
-	 NTMxhsEXJ2E8w2d38hjOxCIWwOZI0aPhMNtNlISCgpJZl7eCSSUuIGM0wrmejFFHsX
-	 o9UlF0v61j0dw/2uyd8Bs/2Ha4BYDBqJWoLJ+X9c=
+	by mail.kernel.org (Postfix) with ESMTP id 2811B20673
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Sep 2019 22:10:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XRgnktXh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732535AbfIYOy5 (ORCPT
+        id S1728422AbfIYWKU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Sep 2019 10:54:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52170 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730729AbfIYOy4 (ORCPT
+        Wed, 25 Sep 2019 18:10:20 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44090 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727735AbfIYWKU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Sep 2019 10:54:56 -0400
-Received: from [10.33.87.18] (twin.jikos.cz [91.219.245.39])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86DAD21D7C;
-        Wed, 25 Sep 2019 14:54:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569423296;
-        bh=ufDqngKJheA3l0EFHLMClCKQHtuH325dj1as7X9Pcaw=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=UpTCUFrrg/Ujrshxgdzvr0Te+irMSosPMxL6RL0SRyOWZVB98yD2whLjFxhPsdIQu
-         EebKZFr5ghPEa884wa3dZJq5JU8B3JiBgIa3H/pxHWhKM0m+g/lBvC9tNLyiCn2vSV
-         kPlDy2nO8j4AsVIznfSXDw9BGAH5FX0XPA+eCZyI=
-Date:   Wed, 25 Sep 2019 16:54:41 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     James Morris <jmorris@namei.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Matthew Garrett <mjg59@google.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [GIT PULL][SECURITY] Kernel lockdown patches for v5.4
-In-Reply-To: <alpine.LRH.2.21.1909101402230.20291@namei.org>
-Message-ID: <nycvar.YEU.7.76.1909251652360.15418@gjva.wvxbf.pm>
-References: <alpine.LRH.2.21.1909101402230.20291@namei.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 25 Sep 2019 18:10:20 -0400
+Received: by mail-io1-f67.google.com with SMTP id j4so954776iog.11;
+        Wed, 25 Sep 2019 15:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=O0oSKhXEOzcFKjIBbLlMltGKt1P3oZHAsL4yEuhL7wA=;
+        b=XRgnktXh+11PNGpyISrs+IVtdJnkKTtOPaDxUCJNdaLB9LEVgJ2Z5AyhKg+go7pqTj
+         Djhi4R+afAv+OOE0dR6LXgvYFwrYfurYDD4wStjOBcqhkd11b+SkHow8OyxUSCPjgBCb
+         lq8nkYcn49Jy6UEBRDBO+5s6LqmGGU802zAuVAH6zmGz8fOPWdDeu1rqs7MsaQ/V3B3s
+         yq5d2sY7H5eekfgzEtN4niRLbLYgj08nONboPeQ2FuuRyIHwlJ8ojgzkIEQoJPbZTYJH
+         rzsXKt2PBl5tf23F8YVHIlPTMuGOCC4DVTojNQQzQxFya6MNaR6rDr6VqP0L3agM/XFT
+         m5+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=O0oSKhXEOzcFKjIBbLlMltGKt1P3oZHAsL4yEuhL7wA=;
+        b=eIs5EvdSfD0es0QAGNz2GGNdaoCYYr+7t4PV1WU9e0SEeBq84c1Ny7zYcvR60o+vvv
+         zdV/jUrDvAyM7VgJihX3OeFNHOHn/O1cdZB+06INYeWHLTJ/hRy+E7M18CrWfBls20Ze
+         A4B9drxcqcfAY6iynAWQohljdvLK4FjU4XFxHeyLCiwWdPchFBeQ0JT/QeIrZ2qbos36
+         fZSULq3bF0mS3H6++7ODCuHXC/OSg1bg4AKo9djGNvBTx6IF7VZeYEBzhjsY46oODQ8X
+         U/z1bNLaS/hmIo8f18RMjsKWtNxptqbdDYabunn5JKv0Vk/fUclqdIq/ByhpJmdY8Wo5
+         bAVA==
+X-Gm-Message-State: APjAAAV4AAWZiot73Z+CAdZCjWF9gvZzT6Szm3L0oWi1a256AP91JgiX
+        4HEIkRsp56gnx0y0YheYFew=
+X-Google-Smtp-Source: APXvYqySrKwE7cmfckFerADDb8snKLOdGcDCCwiOFB8XYIPL/o6gqCx5rXBJqY7/wY/i3GBjpA6nxw==
+X-Received: by 2002:a5e:c241:: with SMTP id w1mr270445iop.36.1569449419584;
+        Wed, 25 Sep 2019 15:10:19 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id q17sm58357ile.5.2019.09.25.15.10.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 15:10:19 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] genetlink: prevent memory leak in netlbl_unlabel_defconf
+Date:   Wed, 25 Sep 2019 17:10:08 -0500
+Message-Id: <20190925221009.15523-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 10 Sep 2019, James Morris wrote:
+In netlbl_unlabel_defconf if netlbl_domhsh_add_default fails the
+allocated entry should be released.
 
-> Hi Linus,
-> 
-> This is the latest iteration of the kernel lockdown patchset, from Matthew 
-> Garrett, David Howells and others.
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ net/netlabel/netlabel_unlabeled.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Seems like this didn't happen (yet) ... are there any plans to either drop 
-it for good, or merge it?
-
-Thanks,
-
+diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+index d2e4ab8d1cb1..c63ec480ee4e 100644
+--- a/net/netlabel/netlabel_unlabeled.c
++++ b/net/netlabel/netlabel_unlabeled.c
+@@ -1541,8 +1541,10 @@ int __init netlbl_unlabel_defconf(void)
+ 	entry->family = AF_UNSPEC;
+ 	entry->def.type = NETLBL_NLTYPE_UNLABELED;
+ 	ret_val = netlbl_domhsh_add_default(entry, &audit_info);
+-	if (ret_val != 0)
++	if (ret_val != 0) {
++		kfree(entry);
+ 		return ret_val;
++	}
+ 
+ 	netlbl_unlabel_acceptflg_set(1, &audit_info);
+ 
 -- 
-Jiri Kosina
-SUSE Labs
+2.17.1
+
