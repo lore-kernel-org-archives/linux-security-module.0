@@ -1,105 +1,135 @@
-Return-Path: <SRS0=rS9t=XV=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=6wZ9=XW=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 287CAC4360C
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Sep 2019 18:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43887C388F3
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 13:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0235A222BF
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Sep 2019 18:21:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569522115;
-	bh=AXXrhWbwsofC1rmf8TbGYx+/8aqKnOhwDk1OD2n0Btc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=emDbe3ZjrAb2GTrw+sJItLk+hxEGJ1X2kILi760cd+ve5T3+VNYrOZxTzXBn1TJKD
-	 Xm7PqJzulFIte32JK8qXjVOXJbTH23jgjAGfa63qGR97pYq1hr6UGcVmsUn1ybrxIr
-	 HcQLo7D+0aOhsAC7tQORgHsEl/kmSv7Dp4B3LCs0=
+	by mail.kernel.org (Postfix) with ESMTP id 0B10D207FF
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 13:15:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="KCGDieft"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfIZSVy (ORCPT
+        id S1727416AbfI0NPX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Sep 2019 14:21:54 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34187 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbfIZSVy (ORCPT
+        Fri, 27 Sep 2019 09:15:23 -0400
+Received: from mout.web.de ([212.227.15.4]:38389 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727376AbfI0NPW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Sep 2019 14:21:54 -0400
-Received: by mail-lj1-f193.google.com with SMTP id j19so3210132lja.1
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Sep 2019 11:21:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rrcu3G8Duy/FeUjbYtKJnhs5/UkfjjDxGs8XQQZjFoU=;
-        b=gzGIbnTBRa0MWz7TFhp8ocJz4Lh2yp/shAcSeubrA6fuXKkzxeQIMSMNUPYdBFXJYn
-         /j0pV7SWgvNqO2g+oiezYX4Vi4visN26kdNsSZ+7eBfZXMOInvLGEWdmfAdWBQVuPnk5
-         706kND9Z6EULVBwuXFq61uGYcokd+0OZjjggU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rrcu3G8Duy/FeUjbYtKJnhs5/UkfjjDxGs8XQQZjFoU=;
-        b=nBk3Y3QArJ1A6UelwBBB8tgC/WiM202+deYR6mbohmI0usI060w0M+HS4MI6x09HqR
-         46n8F+/3YLcjcLO8yrLxeHoQvE+Z1Bfqt6iIgcueGmCGXg3MXN+r761XanLUA3XxfKrU
-         NwcxGhmsxBT9AwFwc8Ul71nhsDlNdphha5kGVUBORBQ1ckHNDKaVB4D/Roy88ngXrNPa
-         7dq9/L9XSksHmhR8dbMXws5Gz949ZPWrA73m8qvtrD22TnV0xrr5J0BeeyzqeCmky6t4
-         kIaDtisxmUmOcqgmJqhWWRA8YP/UItBDsKPwpGkr3L9IV6/F3RCYEgpZ4pLdX1TnmQ+/
-         XpGg==
-X-Gm-Message-State: APjAAAUSoNCXlmG1nWXXVS25w7A7cRy4ckXEmfU9JrneJRfhfGAalAZt
-        JKDMnZko2wM53xyApje4Pq1cuiMc8Us=
-X-Google-Smtp-Source: APXvYqzHpTOfFzOyY4ew7ufN/WOSuXhmc51OHDraVILw0k+6ju9iNGZlgx30dmaH/8OHj6FP//EvVg==
-X-Received: by 2002:a2e:9059:: with SMTP id n25mr26841ljg.134.1569522111431;
-        Thu, 26 Sep 2019 11:21:51 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id q11sm659266lje.52.2019.09.26.11.21.49
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2019 11:21:50 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id y127so2452940lfc.0
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Sep 2019 11:21:49 -0700 (PDT)
-X-Received: by 2002:a19:2489:: with SMTP id k131mr3025988lfk.52.1569522109593;
- Thu, 26 Sep 2019 11:21:49 -0700 (PDT)
+        Fri, 27 Sep 2019 09:15:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1569590108;
+        bh=77LlS4dssunQjdsq0f1LknYiQqkHDEPQzLkskhHSDyg=;
+        h=X-UI-Sender-Class:To:Cc:References:Subject:From:Date:In-Reply-To;
+        b=KCGDieftIA0oVt/RDKgSoTMzao3B7rAHThu3zW87ao36zLEMezBdrmNLTj2XofU+/
+         0v2JOWqfzckPOqw/nkUxFhbhU4aJoa708rKO+Yhm6aEyqLimhSXhAW0SPr0oymcwuz
+         KJULyD8AR/35F2m+9Gyd1tSBOskmPSVsmWLSY/OA=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.133.191.8]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LnSKE-1hfL8s1m3i-00hbxm; Fri, 27
+ Sep 2019 15:15:08 +0200
+To:     Paul Moore <paul@paul-moore.com>,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Stephen A McCamant <smccaman@umn.edu>,
+        "David S. Miller" <davem@davemloft.net>
+References: <CAHC9VhR+4pZObDz7kG+rxnox2ph4z_wpZdyOL=WmdnRvdQNH9A@mail.gmail.com>
+Subject: Re: genetlink: prevent memory leak in netlbl_unlabel_defconf
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <c490685a-c7d6-5c95-5bf4-ed71f3c60cb6@web.de>
+Date:   Fri, 27 Sep 2019 15:15:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <CAJ-EccM49yBA+xgkR+3m5pEAJqmH_+FxfuAjijrQxaxxMUAt3Q@mail.gmail.com>
- <CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com>
- <CAHk-=wh_CHD9fQOyF6D2q3hVdAhFOmR8vNzcq5ZPcxKW3Nc+2Q@mail.gmail.com>
- <alpine.LRH.2.21.1909231633400.54130@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
- <CAHk-=wh4cuHsE8jFHO7XVatdXa=M2f4RHL3VwnSkAf5UNHUJ-Q@mail.gmail.com> <CAJ-EccMy=tNPp3=PQZxLT7eovojoAdpfQmqhAyv7XO3GwPQBMg@mail.gmail.com>
-In-Reply-To: <CAJ-EccMy=tNPp3=PQZxLT7eovojoAdpfQmqhAyv7XO3GwPQBMg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 26 Sep 2019 11:21:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjH25fp_9oMMi+1GxUR1h+WyXQRvW+GuNVq7vC9Kaad2g@mail.gmail.com>
-Message-ID: <CAHk-=wjH25fp_9oMMi+1GxUR1h+WyXQRvW+GuNVq7vC9Kaad2g@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID LSM changes for 5.4
-To:     Micah Morton <mortonm@chromium.org>
-Cc:     James Morris <jamorris@linuxonhyperv.com>,
-        Jann Horn <jannh@google.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHC9VhR+4pZObDz7kG+rxnox2ph4z_wpZdyOL=WmdnRvdQNH9A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rjJKQfBm9V5MbGJysp5lHeJ/MAt7se96rJzW4qvj/ZsuJblz24o
+ LZDmhOPv4CQDyOOo/4gyDYqNm4Z1NFIqRpW2I6SqE9YlqX0mXzCtYPciMJF1SAfXGON3fRX
+ i943t9/SUZTW+tPhyqtZ9HMT3ipRkcsa/yEl8Mq6Jnk3G1IzZlbEv5GazNUGqWGe89rgcFm
+ NGLvvHGH4Y0207mWz8MkQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:o+CJJ5F4WQ4=:I0dAVsJcWpFwoSvsImSEj3
+ gLBfrADCxSttv7bU8vzswnSFRtcFOgTJkY5A87mn7g/2aPXvO0KFMVsl+ewRlSbQSRLp10sC9
+ av0cIh6POV04/slLQ1BpRHG1wJIq2epj7jsDt59nIJsrGS66QRIqQzaZC1DtcaaFi8qUWQ2TW
+ 2PrImgFVfqp9osEqzJImnMgxC7ceA2hM1vHh8pM5pAmpeJrYaKH0UjBRpn6XXgajlEOATWXLd
+ BuXpqxPlb/ziaLtt7Pu0Qs2c9wXCQO7ZOx/xl87azI+Ff5F8jMtYkvyhUosZ3T6uBXBGACntV
+ APyp69YKwInn5QsH4p1+voPwZf8+SD4jkGeG6v5OztMqVLWcY2sUKpR/5lzIbrwEy/m1XifjA
+ cd1hUix0+JG3ZftEe+sZLS55Bi0wAI4M1YwR7cNOkBXjlZ2C8OinSM8jXW+wqcHavMc81bky9
+ AQ/WEANaFRpiYugcoEFVbXIKsXoNA9xdh1I34nKJzYBy7kP/TyTA8oAX9A1q2SCqOWUtzW6VB
+ ZoOTCuVBdPZ6fM2Ub2WiZ23WJogqID8ghL6Wnjr4F7FNlKdRLCHOb9GBxoCG+omlTNwUc3Uza
+ UJy05A5CG7XODDMpofPooNVe1Q6+V1cWdzgNj5+PFmku4+9DLbjG8zGd11xL6PpE8AZs7rS9c
+ eu2xJZXVzJjTVWVqF5LvPIlZxnvMBVnHjbyi+S1neNFOQtDnyeNT/ogwZZZWYU7C1odHDne33
+ zLQlBOQnBoExJ+2kZZZdNhe9IWxAFb7mL3OuDdSs8g7e+uvmmw3Lj/7af262UJrnpYUya4hEG
+ MlIFiz3GcSxdTrFDLLHLIHQP0qC1UG42Y1XM8V+w/0NAzWdZ46vPSw8rdPz97B2sZs/5mgjc/
+ lOsatG2KntyZZJtI73bsY5rpFrT3JxggxgZB7JICYUJnWGj6lUu9piRGCTZAILFv0dfCK4LEz
+ pC+yh6xpmb2UcJnzBeSynHCiYD7V2H3uWar9YCfTQi1yXJF/zywwwXURoJiqm1JSK5FrxLOLx
+ ALTy/FUmoqCBCVsIV/iJNt1yQExOaHInsWl8Br5U7wqoroxV1YLDfoxNQiMyPAAS+P3i8gqP5
+ 0rjiarFfYQAD7Q6AouXQZH22FWxQQgjiOSAky4KetyWPfA/zqlQevNUrUzMAYRzqn5pOrFi70
+ BO17g+PatdZ6+qW1typuu43jz4tGF2ljuRXSsJ/HeGv9p/zZXlQFyujzuQqrQxsREVamGbgLO
+ 1+vPCHgu5582fkk/5wNZbGhhsLP2rOD8xeFHmbXLlGa/xjDNRkdtFSsjvQG8=
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 23, 2019 at 8:31 PM Micah Morton <mortonm@chromium.org> wrote:
->
->                The best way I know of ensuring this is
-> for me to personally run the SafeSetID selftest (in
-> tools/testing/selftests/safesetid/) every release, regardless of
-> whether we make any changes to SafeSetID itself. Does this sound
-> sufficient or are there more formal guidelines/processes here that I'm
-> not aware of?
+> > In netlbl_unlabel_defconf if netlbl_domhsh_add_default fails the
+> > allocated entry should be released.
+=E2=80=A6
+> That said, netlbl_unlabel_defconf() *should* clean up here just on
+> principal if nothing else.
 
-I think that would help, but I wopuld also hope that somebody actually
-runs Chromium / Chrome OS with a modern kernel.
+How do you think about to add the tag =E2=80=9CFixes=E2=80=9D then?
 
-Even if *standard* device installs don't end up having recent kernels,
-I would assume there are people who are testing development setups?
-
-              Linus
+Regards,
+Markus
