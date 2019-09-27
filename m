@@ -2,107 +2,148 @@ Return-Path: <SRS0=6wZ9=XW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7031C4360C
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 14:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C566BC388F4
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 16:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B57E217D7
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 14:49:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="UL3FcFE2"
+	by mail.kernel.org (Postfix) with ESMTP id A0E2B21841
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 16:08:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbfI0OtI (ORCPT
+        id S1727517AbfI0QIS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Sep 2019 10:49:08 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:32818 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727668AbfI0OtH (ORCPT
+        Fri, 27 Sep 2019 12:08:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:7900 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727447AbfI0QIS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Sep 2019 10:49:07 -0400
-Received: by mail-lj1-f194.google.com with SMTP id a22so2814031ljd.0
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2019 07:49:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KY62cZcmvsX3xM03mBE6HBbDYvpNvwvQeq59nLOyZl0=;
-        b=UL3FcFE2NfXwtjvIvldZ2MUHIneNoq+mJEDmSgWEOp1dFr4eIlKaEqUNo+C3YqExFG
-         mV39oyx+CARY2Od6aZhcw0xcNCszg5/Q3S+h7ceTavOyGJif5F+TDzGJfY15EoWKVtvv
-         +eNRqBqk5d655UGD36nFXLsuwmoMmc/PkD048FcYSe0eksgJAssGG0k1HQP8uA1DKysm
-         NepqPDU7b4JBqK8O0OnE56UKcCbC0y2Hbh8R9CU+73UeGD7CFQvTn7K9wRy5N3iE431p
-         9Z6fexvTVsiZbqocbA0BOPVkySpbQ1yku2nvPHOXnsgPFJ5P7Uva3wrozBj2yu1Ci55H
-         DC4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KY62cZcmvsX3xM03mBE6HBbDYvpNvwvQeq59nLOyZl0=;
-        b=bHhbWVdHQm8rfzoCEZtIMoqk5UeudAGCIX+USivTfJZWsEXAUgf/mXqESZu8yiQxLx
-         5z7SF16dPTIShnxLCFPuMWUmKx7B67WmOLjdKl8gkcSmxg5LHt8OCgr9vAL1GxjUKnjt
-         DKQqDcNuPgZkksw1YaO+ATdoq7PZuqyWfESSuX1Ztump+OqhhRzaE8KlLf9iPcIUruE2
-         C1DostchftBwTt5rdMKmxCxMJD/iV0JYlXQak7FJbh/+9GEX1a1yK7+tE7eJE8bO98D/
-         mIjkFCDxYJE5fMRdaBftTOAnZhQYv/Ddd3FBuBUV78JdEpmk3m+YTcCOu5su9+Pyb2Eg
-         CtCA==
-X-Gm-Message-State: APjAAAVLr6eVTJGSjFsw/Zkf2dwwZt6DXWOHT79zKVCNG40ne8e7ZCMI
-        ep8KtiioLtPT8UmLsjqQuOIZNR9SHt89aijk/zZ9
-X-Google-Smtp-Source: APXvYqwkLzs8wOmvCMGAVfW9UfG3yFSgEhQJ4PJF36b0OQ8ayRelEpR7nbkBPFNaMcT8MMXULnm3ONsYWWGQxckK3Pg=
-X-Received: by 2002:a2e:890c:: with SMTP id d12mr3273555lji.85.1569595745451;
- Fri, 27 Sep 2019 07:49:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHC9VhR+4pZObDz7kG+rxnox2ph4z_wpZdyOL=WmdnRvdQNH9A@mail.gmail.com>
- <c490685a-c7d6-5c95-5bf4-ed71f3c60cb6@web.de>
-In-Reply-To: <c490685a-c7d6-5c95-5bf4-ed71f3c60cb6@web.de>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 27 Sep 2019 10:48:54 -0400
-Message-ID: <CAHC9VhRk8Gc_Yexrjz5uif+Vj7d+b=uMUytbrmbm2Yv+zoM05w@mail.gmail.com>
-Subject: Re: genetlink: prevent memory leak in netlbl_unlabel_defconf
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Stephen A McCamant <smccaman@umn.edu>,
-        "David S. Miller" <davem@davemloft.net>
+        Fri, 27 Sep 2019 12:08:18 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8RFvLN5138034
+        for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2019 12:08:17 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v9kjs54wy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2019 12:08:16 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 27 Sep 2019 17:08:14 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 27 Sep 2019 17:08:12 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8RG8Brx51904738
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 27 Sep 2019 16:08:11 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EEE7C4C040;
+        Fri, 27 Sep 2019 16:08:10 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 47C984C046;
+        Fri, 27 Sep 2019 16:08:10 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.141.201])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 27 Sep 2019 16:08:10 +0000 (GMT)
+Subject: Re: [GIT PULL] integrity subsystem updates for v5.4
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 27 Sep 2019 12:08:09 -0400
+In-Reply-To: <1568671982.4975.145.camel@linux.ibm.com>
+References: <1568237365.5783.39.camel@linux.ibm.com>
+         <CAHk-=whuzoK+sP+feizU520p7ChHqdX8pmwyCnnKTyUNJKngZA@mail.gmail.com>
+         <1568671982.4975.145.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19092716-0016-0000-0000-000002B15DC2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19092716-0017-0000-0000-000033123110
+Message-Id: <1569600489.10820.77.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-27_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=977 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909270144
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 27, 2019 at 9:15 AM Markus Elfring <Markus.Elfring@web.de> wrot=
-e:
->
-> > > In netlbl_unlabel_defconf if netlbl_domhsh_add_default fails the
-> > > allocated entry should be released.
-> =E2=80=A6
-> > That said, netlbl_unlabel_defconf() *should* clean up here just on
-> > principal if nothing else.
->
-> How do you think about to add the tag =E2=80=9CFixes=E2=80=9D then?
+On Mon, 2019-09-16 at 18:13 -0400, Mimi Zohar wrote:
+> On Mon, 2019-09-16 at 13:38 -0700, Linus Torvalds wrote:
+> > On Wed, Sep 11, 2019 at 2:29 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > >
+> > > The major feature in this pull request is IMA support for measuring
+> > > and appraising appended file signatures.  In addition are a couple of
+> > > bug fixes and code cleanup to use struct_size().
+> > 
+> > How is the file signature any different from (and/or better than) the
+> > fs-verity support?
+> > 
+> > The fs-verity support got fairly extensively discussed, and is
+> > apparently going to actually be widely used by Android, and it an
+> > independent feature of any security model.
+> > 
+> > What does the IMA version bring to the table?
+> 
+> IMA currently defines a system wide policy for measuring, verifying a
+> file's integrity (both mutable/immutable files) against known good
+> values, and adding audit records containing the file hashes.  The
+> policy isn't hard coded in the kernel, allowing people/companies to
+> configure it as desired for their specific use case.
+> 
+> Support for appended signatures already exists in the kernel for
+> kernel modules.  This pull request adds IMA support for appended
+> signatures in order to verify the kexec kernel image on OpenPOWER, as
+> part of Secure and Trusted boot enablement.  This would allow distros
+> to sign kernel images similar to how they currently sign kernel
+> modules.
+> 
+> IMA verifies file signatures up front, before allowing access to the
+> file.  fs-verity verifies the signature of the Merkle tree (and other
+> info), but does not verify the file data at the time of first use.
+>  There are pros and cons to each of these approaches.
 
-From what I've seen the "Fixes" tag is typically used by people who
-are backporting patches, e.g. the -stable folks, to help decide what
-they need to backport.  As I mentioned in my previous email this
-missing free doesn't actually manifest itself as a practical leak on
-any of the existing kernels so there isn't a need to backport this
-patch.  For that reason I would probably skip the "Fixes" metadata
-here, but I don't feel strongly enough about it to object if others
-want it.  FWIW, I play things very conservatively when talking about
-backporting patches to stable kernels; if it doesn't fix a serious
-user-visible bug it shouldn't be backported IMHO.
+My writing tends to be brief, hopefully concise.  I assume if you had
+further questions you would have asked.
 
-This patch is more of a conceptual fix than a practical fix.  Not that
-there is anything wrong with this patch, I just think it isn't as
-critical as most people would think from reading "memory leak" in the
-subject line.  Yes, there is a memory leak, but the kernel panics soon
-after so it's a bit moot.  Further, even if the panic was somehow
-skipped (?) the memory leak only happens once during boot; the failed
-initialization is undoubtedly going to be far more damaging to the
-system than a few lost bytes of memory.
+This pull request contained a lot of refactoring of the existing
+appended signature verification code, so that IMA could retain the
+existing framework of calculating the file hash once, storing it in
+the IMA measurement list and extending the TPM, verifying the file's
+integrity based on a file hash or signature (eg. xattrs), and adding
+an audit record containing the file hash, all based on policy.  (The
+IMA support for appended signatures patch set was posted and reviewed
+11 times.)
 
---=20
-paul moore
-www.paul-moore.com
+The support for appended signature paves the way for adding other
+signature verification methods, such as fs-verity, based on a single
+system-wide policy.  The file hash used for verifying the signature
+and the signature, itself, can be included in the IMA measurement
+list.
+
+Originally, IMA & EVM were limited to local kernel file systems, based
+on i_version, but have been extended to support filesystems that don't
+support i_version and for FUSE.  There are additional discussions for
+extending IMA to support remote filesystems (eg. IETF NFS draft).  IMA
+by itself isn't enough, since the remote file isn't pinned in memory,
+but will need to be dependent on fs-verity.
+
+Nayna Jain re-posted a patch set (v6) titled "powerpc: Enabling IMA
+arch specific secure boot policies".  The changes are based on Michael
+Ellerman's review.
+
+thanks,
+
+Mimi
+
