@@ -2,148 +2,61 @@ Return-Path: <SRS0=6wZ9=XW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C566BC388F4
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 16:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AD2C4360C
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 16:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0E2B21841
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 16:08:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 478AB21906
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 16:14:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbfI0QIS (ORCPT
+        id S1727683AbfI0QOp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Sep 2019 12:08:18 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:7900 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727447AbfI0QIS (ORCPT
+        Fri, 27 Sep 2019 12:14:45 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:33744 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727273AbfI0QOp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Sep 2019 12:08:18 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8RFvLN5138034
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2019 12:08:17 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v9kjs54wy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2019 12:08:16 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 27 Sep 2019 17:08:14 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 27 Sep 2019 17:08:12 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8RG8Brx51904738
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Sep 2019 16:08:11 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EEE7C4C040;
-        Fri, 27 Sep 2019 16:08:10 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 47C984C046;
-        Fri, 27 Sep 2019 16:08:10 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.141.201])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 27 Sep 2019 16:08:10 +0000 (GMT)
-Subject: Re: [GIT PULL] integrity subsystem updates for v5.4
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Fri, 27 Sep 2019 12:08:09 -0400
-In-Reply-To: <1568671982.4975.145.camel@linux.ibm.com>
-References: <1568237365.5783.39.camel@linux.ibm.com>
-         <CAHk-=whuzoK+sP+feizU520p7ChHqdX8pmwyCnnKTyUNJKngZA@mail.gmail.com>
-         <1568671982.4975.145.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+        Fri, 27 Sep 2019 12:14:45 -0400
+Received: from localhost (231-157-167-83.reverse.alphalink.fr [83.167.157.231])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 87A46153BD1DB;
+        Fri, 27 Sep 2019 09:14:42 -0700 (PDT)
+Date:   Fri, 27 Sep 2019 18:14:38 +0200 (CEST)
+Message-Id: <20190927.181438.1266274829431178042.davem@davemloft.net>
+To:     paul@paul-moore.com
+Cc:     Markus.Elfring@web.de, navid.emamdoost@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        emamd001@umn.edu, kjlu@umn.edu, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, smccaman@umn.edu
+Subject: Re: genetlink: prevent memory leak in netlbl_unlabel_defconf
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <CAHC9VhRk8Gc_Yexrjz5uif+Vj7d+b=uMUytbrmbm2Yv+zoM05w@mail.gmail.com>
+References: <CAHC9VhR+4pZObDz7kG+rxnox2ph4z_wpZdyOL=WmdnRvdQNH9A@mail.gmail.com>
+        <c490685a-c7d6-5c95-5bf4-ed71f3c60cb6@web.de>
+        <CAHC9VhRk8Gc_Yexrjz5uif+Vj7d+b=uMUytbrmbm2Yv+zoM05w@mail.gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.2
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19092716-0016-0000-0000-000002B15DC2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19092716-0017-0000-0000-000033123110
-Message-Id: <1569600489.10820.77.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-27_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=977 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909270144
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 27 Sep 2019 09:14:44 -0700 (PDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2019-09-16 at 18:13 -0400, Mimi Zohar wrote:
-> On Mon, 2019-09-16 at 13:38 -0700, Linus Torvalds wrote:
-> > On Wed, Sep 11, 2019 at 2:29 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > >
-> > > The major feature in this pull request is IMA support for measuring
-> > > and appraising appended file signatures.  In addition are a couple of
-> > > bug fixes and code cleanup to use struct_size().
-> > 
-> > How is the file signature any different from (and/or better than) the
-> > fs-verity support?
-> > 
-> > The fs-verity support got fairly extensively discussed, and is
-> > apparently going to actually be widely used by Android, and it an
-> > independent feature of any security model.
-> > 
-> > What does the IMA version bring to the table?
-> 
-> IMA currently defines a system wide policy for measuring, verifying a
-> file's integrity (both mutable/immutable files) against known good
-> values, and adding audit records containing the file hashes.  The
-> policy isn't hard coded in the kernel, allowing people/companies to
-> configure it as desired for their specific use case.
-> 
-> Support for appended signatures already exists in the kernel for
-> kernel modules.  This pull request adds IMA support for appended
-> signatures in order to verify the kexec kernel image on OpenPOWER, as
-> part of Secure and Trusted boot enablement.  This would allow distros
-> to sign kernel images similar to how they currently sign kernel
-> modules.
-> 
-> IMA verifies file signatures up front, before allowing access to the
-> file.  fs-verity verifies the signature of the Merkle tree (and other
-> info), but does not verify the file data at the time of first use.
->  There are pros and cons to each of these approaches.
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 27 Sep 2019 10:48:54 -0400
 
-My writing tends to be brief, hopefully concise.  I assume if you had
-further questions you would have asked.
+> From what I've seen the "Fixes" tag is typically used by people who
+> are backporting patches, e.g. the -stable folks, to help decide what
+> they need to backport.
 
-This pull request contained a lot of refactoring of the existing
-appended signature verification code, so that IMA could retain the
-existing framework of calculating the file hash once, storing it in
-the IMA measurement list and extending the TPM, verifying the file's
-integrity based on a file hash or signature (eg. xattrs), and adding
-an audit record containing the file hash, all based on policy.  (The
-IMA support for appended signatures patch set was posted and reviewed
-11 times.)
+Fixes: tags say what commit introduced the code being fixed, whether
+it manifests in a real problem or not.
 
-The support for appended signature paves the way for adding other
-signature verification methods, such as fs-verity, based on a single
-system-wide policy.  The file hash used for verifying the signature
-and the signature, itself, can be included in the IMA measurement
-list.
-
-Originally, IMA & EVM were limited to local kernel file systems, based
-on i_version, but have been extended to support filesystems that don't
-support i_version and for FUSE.  There are additional discussions for
-extending IMA to support remote filesystems (eg. IETF NFS draft).  IMA
-by itself isn't enough, since the remote file isn't pinned in memory,
-but will need to be dependent on fs-verity.
-
-Nayna Jain re-posted a patch set (v6) titled "powerpc: Enabling IMA
-arch specific secure boot policies".  The changes are based on Michael
-Ellerman's review.
-
-thanks,
-
-Mimi
-
+It has nothing directly to do with -stable and exists in it's own right
+whether a change gets backported to -stable or not.
