@@ -2,61 +2,76 @@ Return-Path: <SRS0=6wZ9=XW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AD2C4360C
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 16:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB7C7C4360C
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 18:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 478AB21906
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 16:14:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F6B0207FF
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Sep 2019 18:10:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mp3UDsZO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbfI0QOp (ORCPT
+        id S1727079AbfI0SKi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Sep 2019 12:14:45 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:33744 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727273AbfI0QOp (ORCPT
+        Fri, 27 Sep 2019 14:10:38 -0400
+Received: from mail-io1-f49.google.com ([209.85.166.49]:33447 "EHLO
+        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbfI0SKi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Sep 2019 12:14:45 -0400
-Received: from localhost (231-157-167-83.reverse.alphalink.fr [83.167.157.231])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 87A46153BD1DB;
-        Fri, 27 Sep 2019 09:14:42 -0700 (PDT)
-Date:   Fri, 27 Sep 2019 18:14:38 +0200 (CEST)
-Message-Id: <20190927.181438.1266274829431178042.davem@davemloft.net>
-To:     paul@paul-moore.com
-Cc:     Markus.Elfring@web.de, navid.emamdoost@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        emamd001@umn.edu, kjlu@umn.edu, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, smccaman@umn.edu
-Subject: Re: genetlink: prevent memory leak in netlbl_unlabel_defconf
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <CAHC9VhRk8Gc_Yexrjz5uif+Vj7d+b=uMUytbrmbm2Yv+zoM05w@mail.gmail.com>
-References: <CAHC9VhR+4pZObDz7kG+rxnox2ph4z_wpZdyOL=WmdnRvdQNH9A@mail.gmail.com>
-        <c490685a-c7d6-5c95-5bf4-ed71f3c60cb6@web.de>
-        <CAHC9VhRk8Gc_Yexrjz5uif+Vj7d+b=uMUytbrmbm2Yv+zoM05w@mail.gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 27 Sep 2019 09:14:44 -0700 (PDT)
+        Fri, 27 Sep 2019 14:10:38 -0400
+Received: by mail-io1-f49.google.com with SMTP id z19so18757692ior.0
+        for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2019 11:10:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BYk9mRIq/jh9VV5noRENjJQsBnI4Smg5QE7TL9jRjao=;
+        b=Mp3UDsZOTz8bsKP10tTFd6YfBAMN8ENDSpF6d8hkAB4m0QJGlsP6hQAuwAC4KqqO/A
+         +G2OHxdppJ2FsJ92wdtJqi40gnR1ZVo4z0O9vgxlvkssW6XlSQdkW8se/QQK8bKobCx0
+         MZzzIyIHv/1BYixVnxckE+DmM4+t/1eQdjJZ2pGL24yIz86Q2AOMg7Fc7Mds25n+fWel
+         pVNqBYTP5IHK5FoQ0QiBcev3eBc7B1ZMM8XfAg0uJ4xBmgSzQkvI/gkcC8NSzznsul2Y
+         kcpbIs7xzjp8p644iEeOKZ0AkynXv8zofY2JDTMYh4yvPWXdN9Kid5z8c/jMGsx6UWul
+         s+ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BYk9mRIq/jh9VV5noRENjJQsBnI4Smg5QE7TL9jRjao=;
+        b=pZf/Efli1gK6Tq/ZJRrwi5nsv+QeIq+J41kpUQ+F2lnzTg5tcd96Xol3Dus1y6lSwF
+         svHtaCt/m8go74MkkO7t9T4gGmTaccupIiPFP/2Do78/KolXzZax5WzirR0KuD2QviD0
+         S7+9Ha8EzorvpPE9gM5ij8ZdNhgwd7IWnfpPSUxShcrqHy0GKqXZJP9QWyW91pk9ZZFv
+         FyhsQSzOtSU03tzzGE310B0qavIHsIxBK/DVhRbM7CxhylUvqDuvxRl0DHXfU7gkfX1L
+         S3d5oPRBPRf6jllpn534F7DWMfUU1QyXkEQtblOBzOMfAvBMqy9CbigT/wPhbFBSMmuB
+         2+xg==
+X-Gm-Message-State: APjAAAW2nDYzuKZMoKuysKxwV3ZDjdWQcJBxfcWUetL9Cod0GJAIJUUT
+        2KmZwtrQdfo41+m2Gh5L2gqvxDZb79OBtM1XmLNpJw==
+X-Google-Smtp-Source: APXvYqzYtIW8RWj3bdieK8wgYSUW8tStp9tdO2aVLkSp/Y2NjItqiRAPv6GUjiQP7REWRp4BXNbGPS/VLlsVe37Kc1E=
+X-Received: by 2002:a6b:720a:: with SMTP id n10mr9320899ioc.64.1569607837423;
+ Fri, 27 Sep 2019 11:10:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <alpine.LRH.2.21.1909101402230.20291@namei.org> <nycvar.YEU.7.76.1909251652360.15418@gjva.wvxbf.pm>
+In-Reply-To: <nycvar.YEU.7.76.1909251652360.15418@gjva.wvxbf.pm>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Fri, 27 Sep 2019 11:10:26 -0700
+Message-ID: <CACdnJuvi=MgSxatpKOrENzU-By0T3_dxGV6Gb2qEQuhb+B1B8A@mail.gmail.com>
+Subject: Re: [GIT PULL][SECURITY] Kernel lockdown patches for v5.4
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     James Morris <jmorris@namei.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 27 Sep 2019 10:48:54 -0400
+On Wed, Sep 25, 2019 at 7:54 AM Jiri Kosina <jikos@kernel.org> wrote:
+> Seems like this didn't happen (yet) ... are there any plans to either drop
+> it for good, or merge it?
 
-> From what I've seen the "Fixes" tag is typically used by people who
-> are backporting patches, e.g. the -stable folks, to help decide what
-> they need to backport.
-
-Fixes: tags say what commit introduced the code being fixed, whether
-it manifests in a real problem or not.
-
-It has nothing directly to do with -stable and exists in it's own right
-whether a change gets backported to -stable or not.
+rc1 isn't out yet, so I'm just waiting to see what happens.
