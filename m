@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6877DC4360C
-	for <linux-security-module@archiver.kernel.org>; Sun, 29 Sep 2019 17:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C129C4360C
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Sep 2019 17:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39D3E21906
-	for <linux-security-module@archiver.kernel.org>; Sun, 29 Sep 2019 17:37:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C66E21925
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Sep 2019 17:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569778653;
-	bh=6VxObvtBRK/ilQU5VcaKho9SLGs2TFTb6Cc+yDAzb9M=;
+	s=default; t=1569778680;
+	bh=b1pw3I7anKjMaltyEWcE2OML/koA6Q4UK/0WEWlOycg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BEndJ21cBs8Av9b+YSSGyl1NYlbODfh5o4MI0yKbwe7wPuHoWu7kp7IMuUuCmFXxZ
-	 i2pCsHp8rWVyKCVIn9Hx1xM31Qj3qPGQUrDS+rkxxt+iu1kdxXPZ7BtL829ako9jxG
-	 CAdqYPbt9UUHhjjp1SqbtCUbMVLu2l6x0mEGwV8w=
+	b=ga7Aa2RCROS6gHw+POTQxbBJikDgyZacyxtwm7jEJ03JdAD9GtyNT5cDdkG1RCOjD
+	 A8kCaWT0CLY0pczN3Dd3GwYFgVIRE+3VFzQu40a5PYqb9V6V+ZEa8CiDzgiFxqY1pn
+	 5BzJkZfH11dzbAGQnK19LXa45nOOvphUCCS7HyEk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbfI2Rh2 (ORCPT
+        id S1729740AbfI2Rh7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 29 Sep 2019 13:37:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50024 "EHLO mail.kernel.org"
+        Sun, 29 Sep 2019 13:37:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730313AbfI2RhG (ORCPT
+        id S1730898AbfI2Rgn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 29 Sep 2019 13:37:06 -0400
+        Sun, 29 Sep 2019 13:36:43 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4117B21D71;
-        Sun, 29 Sep 2019 17:37:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3D3721A4A;
+        Sun, 29 Sep 2019 17:36:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569778625;
-        bh=6VxObvtBRK/ilQU5VcaKho9SLGs2TFTb6Cc+yDAzb9M=;
+        s=default; t=1569778602;
+        bh=b1pw3I7anKjMaltyEWcE2OML/koA6Q4UK/0WEWlOycg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EH1JxedZpB1X7Z8TFN4SlOUSBh9LfkFrl4BoOo15b4KIp9bg36PiQdfyIsU2Evp1P
-         GmDyd3SRdxhOjkW54wQgSMDzonjX/YKwJqQ+rDWm8+QXsdzvRSy1REuwjRKq1g2j9X
-         bw0vu6P63wtWgrjYKRSWEyUuxdJQt+/9kfkcPDi4=
+        b=clnhs5PJqyYhH6hIRV2Q7qwJAKMZacUsHlunyezk06Ko2jESMRv2FCVoT8A7HLyYF
+         W2u59s19TSOKXYJP1j/YsrrSMT2DtILfvZGg7x2ONiwgh7y0Z35JNaCXVOJ+5BueXJ
+         2iGAdzQyt4KJVr8x8Fy31+KovnACok+7R/QAjAOI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 5/9] security: smack: Fix possible null-pointer dereferences in smack_socket_sock_rcv_skb()
-Date:   Sun, 29 Sep 2019 13:36:50 -0400
-Message-Id: <20190929173655.10178-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 08/13] security: smack: Fix possible null-pointer dereferences in smack_socket_sock_rcv_skb()
+Date:   Sun, 29 Sep 2019 13:36:18 -0400
+Message-Id: <20190929173625.10003-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190929173655.10178-1-sashal@kernel.org>
-References: <20190929173655.10178-1-sashal@kernel.org>
+In-Reply-To: <20190929173625.10003-1-sashal@kernel.org>
+References: <20190929173625.10003-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -88,10 +88,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 9db7c80a74aa5..b76075dbd6fc8 100644
+index aeb3ba70f9077..19d1702aa9856 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -3986,6 +3986,8 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+@@ -4037,6 +4037,8 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
  			skp = smack_ipv6host_label(&sadd);
  		if (skp == NULL)
  			skp = smack_net_ambient;
@@ -99,7 +99,7 @@ index 9db7c80a74aa5..b76075dbd6fc8 100644
 +			break;
  #ifdef CONFIG_AUDIT
  		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
- 		ad.a.u.net->family = sk->sk_family;
+ 		ad.a.u.net->family = family;
 -- 
 2.20.1
 
