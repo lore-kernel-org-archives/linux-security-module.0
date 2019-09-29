@@ -1,111 +1,105 @@
-Return-Path: <SRS0=1aQ2=XX=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=T0qu=XY=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36212C388F3
-	for <linux-security-module@archiver.kernel.org>; Sat, 28 Sep 2019 23:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C47C4360C
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Sep 2019 17:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13D1E214D8
-	for <linux-security-module@archiver.kernel.org>; Sat, 28 Sep 2019 23:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBBA221D56
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Sep 2019 17:36:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569778570;
+	bh=zhxvTAlmsZKSS7jpSeHn3u1UG03P6G5MH4amv/FmMXQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=2hbz9Sul0QIqxwI083V55Xf8jZxWoWb3WWjlKSI4HtIvctP5V3P5235NWSHa08wgg
+	 IK1PpXSc47XiSKLpXlT1HTmfBlG2bqKeIXfAQOT3eom6G4HOtYnOXpMhprkdDLy3HA
+	 BA/u1yGGz97mYBZBpRjj/Z9ijp0IpVLrI5hLhf6E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728898AbfI1Xhb convert rfc822-to-8bit (ORCPT
+        id S1730753AbfI2RgJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 28 Sep 2019 19:37:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47554 "EHLO mail.kernel.org"
+        Sun, 29 Sep 2019 13:36:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728666AbfI1Xhb (ORCPT
+        id S1730750AbfI2RgI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 28 Sep 2019 19:37:31 -0400
-Received: from oasis.local.home (unknown [12.174.139.122])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sun, 29 Sep 2019 13:36:08 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 132A920866;
-        Sat, 28 Sep 2019 23:37:29 +0000 (UTC)
-Date:   Sat, 28 Sep 2019 19:37:27 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
-Message-ID: <20190928193727.1769e90c@oasis.local.home>
-In-Reply-To: <20190829040721.ef6rumbaunkavyrr@ast-mbp.dhcp.thefacebook.com>
-References: <20190827205213.456318-1-ast@kernel.org>
-        <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
-        <20190828003447.htgzsxs5oevn3eys@ast-mbp.dhcp.thefacebook.com>
-        <CALCETrVbPPPr=BdPAx=tJKxD3oLXP4OVSgCYrB_E4vb6idELow@mail.gmail.com>
-        <20190828044340.zeha3k3cmmxgfqj7@ast-mbp.dhcp.thefacebook.com>
-        <CALCETrW1o+Lazi2Ng6b9JN6jeJffgdW9f3HvqYhNo4TpHRXW=g@mail.gmail.com>
-        <20190828225512.q6qbvkdiqih2iewk@ast-mbp.dhcp.thefacebook.com>
-        <DA52992F-4862-4945-8482-FE619A04C753@amacapital.net>
-        <20190829040721.ef6rumbaunkavyrr@ast-mbp.dhcp.thefacebook.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75A6921925;
+        Sun, 29 Sep 2019 17:36:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569778568;
+        bh=zhxvTAlmsZKSS7jpSeHn3u1UG03P6G5MH4amv/FmMXQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=odGRG7QYRja8g9X+bl+V2vPcM9KHIQUStyYQSTqEhRC8+ASH1jx/cWhsPa0CQI+2W
+         KSCXT3s05809Fe1MvsSbz6vOk88PShixzCEPe11jok7qDnQnoCB8hmw6HivmOorESB
+         bzw42qFUo0SKg358h6zBDSp269nzkq74CS4n6LYY=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 16/23] security: smack: Fix possible null-pointer dereferences in smack_socket_sock_rcv_skb()
+Date:   Sun, 29 Sep 2019 13:35:26 -0400
+Message-Id: <20190929173535.9744-16-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190929173535.9744-1-sashal@kernel.org>
+References: <20190929173535.9744-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 28 Aug 2019 21:07:24 -0700
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> > 
-> > This won’t make me much more comfortable, since CAP_BPF lets it do an ever-growing set of nasty things. I’d much rather one or both of two things happen:
-> > 
-> > 1. Give it CAP_TRACING only. It can leak my data, but it’s rather hard for it to crash my laptop, lose data, or cause other shenanigans.
-> > 
-> > 2. Improve it a bit do all the privileged ops are wrapped by capset().
-> > 
-> > Does this make sense?  I’m a security person on occasion. I find
-> > vulnerabilities and exploit them deliberately and I break things by
-> > accident on a regular basis. In my considered opinion, CAP_TRACING
-> > alone, even extended to cover part of BPF as I’ve described, is
-> > decently safe. Getting root with just CAP_TRACING will be decently
-> > challenging, especially if I don’t get to read things like sshd’s
-> > memory, and improvements to mitigate even that could be added.  I
-> > am quite confident that attacks starting with CAP_TRACING will have
-> > clear audit signatures if auditing is on.  I am also confident that
-> > CAP_BPF *will* allow DoS and likely privilege escalation, and this
-> > will only get more likely as BPF gets more widely used. And, if
-> > BPF-based auditing ever becomes a thing, writing to the audit
-> > daemon’s maps will be a great way to cover one’s tracks.  
-> 
-> CAP_TRACING, as I'm proposing it, will allow full tracefs access.
-> I think Steven and Massami prefer that as well.
-> That includes kprobe with probe_kernel_read.
-> That also means mini-DoS by installing kprobes everywhere or running
-> too much ftrace.
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-I was talking with Kees at Plumbers about this, and we were talking
-about just using simple file permissions. I started playing with some
-patches to allow the tracefs be visible but by default it would only be
-visible by root.
+[ Upstream commit 3f4287e7d98a2954f20bf96c567fdffcd2b63eb9 ]
 
- rwx------
+In smack_socket_sock_rcv_skb(), there is an if statement
+on line 3920 to check whether skb is NULL:
+    if (skb && skb->secmark != 0)
 
-Then a start up script (or perhaps mount options) could change the
-group owner, and change this to:
+This check indicates skb can be NULL in some cases.
 
- rwxrwx---
+But on lines 3931 and 3932, skb is used:
+    ad.a.u.net->netif = skb->skb_iif;
+    ipv6_skb_to_auditdata(skb, &ad.a, NULL);
 
-Where anyone in the group assigned (say "tracing") gets full access to
-the file system.
+Thus, possible null-pointer dereferences may occur when skb is NULL.
 
-The more I was playing with this, the less I see the need for
-CAP_TRACING for ftrace and reading the format files.
+To fix these possible bugs, an if statement is added to check skb.
 
--- Steve
+These bugs are found by a static analysis tool STCheck written by us.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/smack/smack_lsm.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 0d5ce7190b17e..09119c43525ed 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4031,6 +4031,8 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ 			skp = smack_ipv6host_label(&sadd);
+ 		if (skp == NULL)
+ 			skp = smack_net_ambient;
++		if (skb == NULL)
++			break;
+ #ifdef CONFIG_AUDIT
+ 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
+ 		ad.a.u.net->family = family;
+-- 
+2.20.1
+
