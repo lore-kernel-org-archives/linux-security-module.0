@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5524ECE58C
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Oct 2019 16:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B9CECE58A
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Oct 2019 16:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A29BB2190F
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Oct 2019 16:54:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D345421855
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Oct 2019 16:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569948852;
-	bh=yKGquLgQJM6xHAVIyQdIcYLEBg8ctH6tGylCXrJKmP4=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=MtMokeF+jvEXUs/XIdZZVSYDiQapRnNEtcvwJf7uuk1yuHlBSbEBaz0x86rd3Wsuz
-	 PFRMeFsyXGb35fvJ1gWkEULKCcWCd7M9jSc5wAEmho4K+KrsCyctKtbAYWvAno5x45
-	 fvjxXAhjAbZQDnZO9dUKi8BK4F2d9901u3FcWzK4=
+	s=default; t=1569949133;
+	bh=6vs+mxOj8LdnxQhig/ZrlnZJRypReXhz9Lk/p8RpLM8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=paggsNB8ZNrpPGx2OdLg6Bq6IVmPJp7gCsbnOyhubqrBsR3LdPGrn1Sz3e98973zm
+	 AjkoU0Az1KYT3IUkDpq7rnaxIWOJytAU0SMUxXgWzQsSCt6bqSfohC9+1UsYBGOR/I
+	 d5g8vPn2GdC+o5nslRY3WJHSnVZ4fQCx7SkXbsk0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732517AbfJAQnO (ORCPT
+        id S1729564AbfJAQ6w (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Oct 2019 12:43:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55242 "EHLO mail.kernel.org"
+        Tue, 1 Oct 2019 12:58:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726109AbfJAQnO (ORCPT
+        id S1730941AbfJAQl3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:43:14 -0400
+        Tue, 1 Oct 2019 12:41:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD9A320B7C;
-        Tue,  1 Oct 2019 16:43:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1DB32168B;
+        Tue,  1 Oct 2019 16:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948193;
-        bh=yKGquLgQJM6xHAVIyQdIcYLEBg8ctH6tGylCXrJKmP4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VmdYgCHZrI9gjTnJcvOrjWE/UpMMwBODtzJ3sAQJT40lZP6w9RAomHmaPJN77Nqrh
-         QKoyIFgguRH4oTk9Rhdk4OB2/lJrWNFN36mBHDZaji5WMHucki3VFikGzQtwjHts0M
-         fQjZzkoHkGcgUu1SJnNiD2HYFtBO0LOpW9JuZKH0=
+        s=default; t=1569948088;
+        bh=6vs+mxOj8LdnxQhig/ZrlnZJRypReXhz9Lk/p8RpLM8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qbfGs+npIO3cHCmu/sZF3MGlvzQ6LFbAjW91OpFuWCtHHw9jzaaSyORfWmBOp+hKl
+         zcJflDo8YglPt6bCt1Wqfr1XD3DplK171SeRucuM2vYUj3KBr9dKkQz2pckScYTkzm
+         c12DH/4sx3BCTZrdcHaHMeyNk0F/tD5SQD+GOLIQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
@@ -47,10 +47,12 @@ Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 01/43] ima: always return negative code for error
-Date:   Tue,  1 Oct 2019 12:42:29 -0400
-Message-Id: <20191001164311.15993-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 02/63] ima: always return negative code for error
+Date:   Tue,  1 Oct 2019 12:40:24 -0400
+Message-Id: <20191001164125.15398-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
+References: <20191001164125.15398-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -79,10 +81,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index d9e7728027c6c..b7822d2b79736 100644
+index d4c7b8e1b083d..7532b062be594 100644
 --- a/security/integrity/ima/ima_crypto.c
 +++ b/security/integrity/ima/ima_crypto.c
-@@ -271,8 +271,11 @@ static int ima_calc_file_hash_atfm(struct file *file,
+@@ -268,8 +268,11 @@ static int ima_calc_file_hash_atfm(struct file *file,
  		rbuf_len = min_t(loff_t, i_size - offset, rbuf_size[active]);
  		rc = integrity_kernel_read(file, offset, rbuf[active],
  					   rbuf_len);
