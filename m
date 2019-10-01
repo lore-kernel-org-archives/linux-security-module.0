@@ -2,167 +2,99 @@ Return-Path: <SRS0=tahD=X2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0EBC32792
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Oct 2019 01:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B93E2ECE587
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Oct 2019 16:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87DB420842
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Oct 2019 01:22:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJCmptb/"
+	by mail.kernel.org (Postfix) with ESMTP id 852D72168B
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Oct 2019 16:47:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569948424;
+	bh=nc5ULy0TFrTcGfOM1GDNpdTbbJKQWQYLHky46hqyIBk=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=sa9z9hgvp2eagmsmnX5XOxGADXjd9W/m5aY0a0Cy9508Y5S8aJqEncB8k6N5jiwYc
+	 ypM5Bca7Cthijrq5HXWk+J88RtMW8qNiv5XBSCElSmRGziYvXGfP7j7ZzBWrRPM4ir
+	 KBkgi51wWjyTLw1NDBL9oXnDygScF6oEdjw0W6qo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728942AbfJABWc (ORCPT
+        id S2388403AbfJAQq7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Sep 2019 21:22:32 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40925 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728217AbfJABWc (ORCPT
+        Tue, 1 Oct 2019 12:46:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58132 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390334AbfJAQpf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Sep 2019 21:22:32 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d26so2981545pgl.7;
-        Mon, 30 Sep 2019 18:22:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=MXvCTFZX8iSPk2vvATyDXImBAz+PzNSrzftt/mv+u6c=;
-        b=LJCmptb/PRN7KCppGIVot1/c6ujLs+Bv+s45nPpSBvLW8foWP3xkwRWkh7YIozy9xH
-         4PAGfeJP5YfvOAT3Ryg1rhBCFlfw/a7731y+X+uV3JOOOaQ2yEjZTiW40govJEiAJCCq
-         +qqqBOAqMw9PKfr3mmkIhkrD5WT8BYo75kVAACZmoNVhnoCiqoLUEf5RFQaKk17sMZ89
-         N70xlrIAvMPM6AS5y1AyGkaLFTDJvnU19K5vMdeEtq7WEga2QR+7xzTUWkMmyPLe/X8a
-         0xa1LP1ox3YwHtOj1331wj68oSyEcxymY0Z5xFPkqAhINkBKU8SHXt117lYpUsbxHiPH
-         fjwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=MXvCTFZX8iSPk2vvATyDXImBAz+PzNSrzftt/mv+u6c=;
-        b=ko8cD6iyU0vhwIYmBb+yHdZCms9NnewrK831Q1WLPVpDLNeSJXUJcmg2Ll3IX6NO1Z
-         xHfs7vB95OnPbZuWO60MIwCrPlkGZTzIOYmzGyjiZOIm8/t7WrLBV8448P185H4vGBtE
-         M6hQHBShQckRxLa6OK9jm79Q/Fq4rrQPTlSg3mtlwAayXKPzWKhqD+ZeDb1FAYjkvJND
-         a6vcXYFbqbHJrC+xEWQlJaIrLTDHEq8qS7o97cZStqAvWBp5Wvonm8nceXeIPkxk//xk
-         A3WduOOKILjTXnIpPNx3S8eN3ftmIbon3bSIq/c7pqhqhTD2RJGQXSo+wj9GA1gi1vwi
-         uD5w==
-X-Gm-Message-State: APjAAAXGTTWKevDJTKyG1R1vjDvmMNWxd231+2PIYlMcwrcNf71vsKpQ
-        7OL26bjnNHH/bj0iU2Zv7XY=
-X-Google-Smtp-Source: APXvYqxngZaWfzy18fBCjfA06mYyRHg2DLXhmKrXXZ0DpoarRB5Vh1Kc1rcVHetbIvO3llzJ/cy9BA==
-X-Received: by 2002:a63:d20f:: with SMTP id a15mr27254294pgg.130.1569892951294;
-        Mon, 30 Sep 2019 18:22:31 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::f760])
-        by smtp.gmail.com with ESMTPSA id b11sm15330078pgr.20.2019.09.30.18.22.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Sep 2019 18:22:30 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 18:22:28 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
-Message-ID: <20191001012226.vwpe56won5r7gbrz@ast-mbp.dhcp.thefacebook.com>
-References: <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
- <20190828003447.htgzsxs5oevn3eys@ast-mbp.dhcp.thefacebook.com>
- <CALCETrVbPPPr=BdPAx=tJKxD3oLXP4OVSgCYrB_E4vb6idELow@mail.gmail.com>
- <20190828044340.zeha3k3cmmxgfqj7@ast-mbp.dhcp.thefacebook.com>
- <CALCETrW1o+Lazi2Ng6b9JN6jeJffgdW9f3HvqYhNo4TpHRXW=g@mail.gmail.com>
- <20190828225512.q6qbvkdiqih2iewk@ast-mbp.dhcp.thefacebook.com>
- <DA52992F-4862-4945-8482-FE619A04C753@amacapital.net>
- <20190829040721.ef6rumbaunkavyrr@ast-mbp.dhcp.thefacebook.com>
- <20190928193727.1769e90c@oasis.local.home>
- <201909301129.5A1129C@keescook>
+        Tue, 1 Oct 2019 12:45:35 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42AA4205C9;
+        Tue,  1 Oct 2019 16:45:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569948335;
+        bh=nc5ULy0TFrTcGfOM1GDNpdTbbJKQWQYLHky46hqyIBk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RrKFp3HGKwMAeOeTcQVCvCaWUqb0qA+w6uZs/RFucHh1gMy5TnUcaSyOqL5cS2sfC
+         Tg1LlQgKczfmQAEXviAksVo8OxuE0sZRkQ9R4n+F+5yCY5sGIgx70QykL/uXtS/tuS
+         00Uy77CwgPyH/bscHxSF1/En3ySD61CDTBgnrEbc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 01/15] ima: always return negative code for error
+Date:   Tue,  1 Oct 2019 12:45:19 -0400
+Message-Id: <20191001164533.16915-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <201909301129.5A1129C@keescook>
-User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 30, 2019 at 11:31:29AM -0700, Kees Cook wrote:
-> On Sat, Sep 28, 2019 at 07:37:27PM -0400, Steven Rostedt wrote:
-> > On Wed, 28 Aug 2019 21:07:24 -0700
-> > Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> > > > 
-> > > > This won’t make me much more comfortable, since CAP_BPF lets it do an ever-growing set of nasty things. I’d much rather one or both of two things happen:
-> > > > 
-> > > > 1. Give it CAP_TRACING only. It can leak my data, but it’s rather hard for it to crash my laptop, lose data, or cause other shenanigans.
-> > > > 
-> > > > 2. Improve it a bit do all the privileged ops are wrapped by capset().
-> > > > 
-> > > > Does this make sense?  I’m a security person on occasion. I find
-> > > > vulnerabilities and exploit them deliberately and I break things by
-> > > > accident on a regular basis. In my considered opinion, CAP_TRACING
-> > > > alone, even extended to cover part of BPF as I’ve described, is
-> > > > decently safe. Getting root with just CAP_TRACING will be decently
-> > > > challenging, especially if I don’t get to read things like sshd’s
-> > > > memory, and improvements to mitigate even that could be added.  I
-> > > > am quite confident that attacks starting with CAP_TRACING will have
-> > > > clear audit signatures if auditing is on.  I am also confident that
-> > > > CAP_BPF *will* allow DoS and likely privilege escalation, and this
-> > > > will only get more likely as BPF gets more widely used. And, if
-> > > > BPF-based auditing ever becomes a thing, writing to the audit
-> > > > daemon’s maps will be a great way to cover one’s tracks.  
-> > > 
-> > > CAP_TRACING, as I'm proposing it, will allow full tracefs access.
-> > > I think Steven and Massami prefer that as well.
-> > > That includes kprobe with probe_kernel_read.
-> > > That also means mini-DoS by installing kprobes everywhere or running
-> > > too much ftrace.
-> > 
-> > I was talking with Kees at Plumbers about this, and we were talking
-> > about just using simple file permissions. I started playing with some
-> > patches to allow the tracefs be visible but by default it would only be
-> > visible by root.
-> > 
-> >  rwx------
-> > 
-> > Then a start up script (or perhaps mount options) could change the
-> > group owner, and change this to:
-> > 
-> >  rwxrwx---
-> > 
-> > Where anyone in the group assigned (say "tracing") gets full access to
-> > the file system.
-> > 
-> > The more I was playing with this, the less I see the need for
-> > CAP_TRACING for ftrace and reading the format files.
-> 
-> Nice! Thanks for playing with this. I like it because it gives us a way
-> to push policy into userspace (group membership, etc), and provides a
-> clean way (hopefully) do separate "read" (kernel memory confidentiality)
-> from "write" (kernel memory integrity), which wouldn't have been possible
-> with a single new CAP_...
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
-tracefs is a file system, so clearly file based acls are much better fit
-for all tracefs operations.
-But that is not the case for ftrace overall.
-bpf_trace_printk() calls trace_printk() that dumps into trace pipe.
-Technically it's ftrace operation, but it cannot be controlled by tracefs
-and by file permissions. That's the motivation to guard bpf_trace_printk()
-usage from bpf program with CAP_TRACING.
+[ Upstream commit f5e1040196dbfe14c77ce3dfe3b7b08d2d961e88 ]
 
-Both 'trace' and 'trace_pipe' have quirky side effects.
-Like opening 'trace' file will make all parallel trace_printk() to be ignored.
-While reading 'trace_pipe' file will clear it.
-The point that traditional 'read' and 'write' ACLs don't map as-is
-to tracefs, so I would be careful categorizing things into
-confidentiality vs integrity only based on access type.
+integrity_kernel_read() returns the number of bytes read. If this is
+a short read then this positive value is returned from
+ima_calc_file_hash_atfm(). Currently this is only indirectly called from
+ima_calc_file_hash() and this function only tests for the return value
+being zero or nonzero and also doesn't forward the return value.
+Nevertheless there's no point in returning a positive value as an error,
+so translate a short read into -EINVAL.
+
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/integrity/ima/ima_crypto.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index a29209fa56746..5c87baaefafb6 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -298,8 +298,11 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 		rbuf_len = min_t(loff_t, i_size - offset, rbuf_size[active]);
+ 		rc = integrity_kernel_read(file, offset, rbuf[active],
+ 					   rbuf_len);
+-		if (rc != rbuf_len)
++		if (rc != rbuf_len) {
++			if (rc >= 0)
++				rc = -EINVAL;
+ 			goto out3;
++		}
+ 
+ 		if (rbuf[1] && offset) {
+ 			/* Using two buffers, and it is not the first
+-- 
+2.20.1
 
