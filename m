@@ -2,112 +2,166 @@ Return-Path: <SRS0=xhHr=X3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B75C4360C
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Oct 2019 22:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B4AC47404
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Oct 2019 23:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99CBF222BE
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Oct 2019 22:25:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WA0EGMUe"
+	by mail.kernel.org (Postfix) with ESMTP id 1F68E21A4C
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Oct 2019 23:00:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbfJBWZr (ORCPT
+        id S1728272AbfJBXAb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Oct 2019 18:25:47 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:45249 "EHLO ozlabs.org"
+        Wed, 2 Oct 2019 19:00:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbfJBWZq (ORCPT
+        id S1728208AbfJBXAb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Oct 2019 18:25:46 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Wed, 2 Oct 2019 19:00:31 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46k9h839bPz9sN1;
-        Thu,  3 Oct 2019 08:25:44 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1570055144;
-        bh=5F3yOR0bmW3ouqVx4pf6U+ZCPWzBAV6g6y7UGFVV+Rs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=WA0EGMUePzcp+WogcKNby1RwDQ/aVqLtnHbdrihx6Vy8gqEjuUbPtu1SZho/bkA+W
-         nneAs4EQjBUoYUsYayPy/8Gtxxufk51HdC6R6Zsb6/jeHtbUW+fQG0s6PZ4N+MmLJu
-         MJ8h3HtYHhW7Ck13EEbFfIsSjxqmzK3GFMBbdiiuDNosjfjUaKS3TS0y58v8rrt6gH
-         aN6E04q785zZLL4oNtUJ+Q90b+oePA03tWapTxpXQs1yid6fqmJL87A4avb4gK0O6y
-         /YjGMJCwm6kw3HB+SmEvgVTIrwivVKrF/k1GHizZTYTe9noqmXn2BlBI0FA5VIrWDR
-         xgfEBj9NBhi0A==
-Date:   Thu, 3 Oct 2019 08:25:43 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
- sockets.
-Message-ID: <20191003082543.5e1e25dd@canb.auug.org.au>
-In-Reply-To: <36906718-d2ae-3514-c6b2-371037c98da5@i-love.sakura.ne.jp>
-References: <0000000000004f43fa058a97f4d3@google.com>
-        <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
-        <1b5722cc-adbc-035d-5ca1-9aa56e70d312@I-love.SAKURA.ne.jp>
-        <a4ed1778-8b73-49d1-0ff0-59d9c6ac0af8@I-love.SAKURA.ne.jp>
-        <20190618204933.GE17978@ZenIV.linux.org.uk>
-        <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
-        <bc146372-764d-93a9-af27-666d73ed3af5@i-love.sakura.ne.jp>
-        <alpine.LRH.2.21.1907061944050.2662@namei.org>
-        <alpine.LRH.2.21.1907061949040.2662@namei.org>
-        <289ebc65-8444-37e3-e54e-21b55d2c9192@i-love.sakura.ne.jp>
-        <a28f2680-bafc-5e23-4eea-6b432f561cd4@i-love.sakura.ne.jp>
-        <A9CE5147-4047-4C42-B772-F0ED510FA283@canb.auug.org.au>
-        <36906718-d2ae-3514-c6b2-371037c98da5@i-love.sakura.ne.jp>
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CC4F21848;
+        Wed,  2 Oct 2019 23:00:28 +0000 (UTC)
+Date:   Wed, 2 Oct 2019 19:00:27 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Alexei Starovoitov <ast@fb.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Masami Hiramatsu" <mhiramat@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, Kernel Team <Kernel-team@fb.com>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
+Message-ID: <20191002190027.4e204ea8@gandalf.local.home>
+In-Reply-To: <a98725c6-a7db-1d9f-7033-5ecd96438c8d@fb.com>
+References: <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
+        <20190828003447.htgzsxs5oevn3eys@ast-mbp.dhcp.thefacebook.com>
+        <CALCETrVbPPPr=BdPAx=tJKxD3oLXP4OVSgCYrB_E4vb6idELow@mail.gmail.com>
+        <20190828044340.zeha3k3cmmxgfqj7@ast-mbp.dhcp.thefacebook.com>
+        <CALCETrW1o+Lazi2Ng6b9JN6jeJffgdW9f3HvqYhNo4TpHRXW=g@mail.gmail.com>
+        <20190828225512.q6qbvkdiqih2iewk@ast-mbp.dhcp.thefacebook.com>
+        <DA52992F-4862-4945-8482-FE619A04C753@amacapital.net>
+        <20190829040721.ef6rumbaunkavyrr@ast-mbp.dhcp.thefacebook.com>
+        <20190928193727.1769e90c@oasis.local.home>
+        <201909301129.5A1129C@keescook>
+        <20191001012226.vwpe56won5r7gbrz@ast-mbp.dhcp.thefacebook.com>
+        <20191001181052.43c9fabb@gandalf.local.home>
+        <6e8b910c-a739-857d-4867-395bd369bc6a@fb.com>
+        <20191001184731.0ec98c7a@gandalf.local.home>
+        <a98725c6-a7db-1d9f-7033-5ecd96438c8d@fb.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/S.1i3Bsngmv4bP0LfpnwO4z";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---Sig_/S.1i3Bsngmv4bP0LfpnwO4z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2 Oct 2019 17:18:21 +0000
+Alexei Starovoitov <ast@fb.com> wrote:
 
-Hi Tetsuo,
+> >> It's an interesting idea, but I don't think it can work.
+> >> Please see bpf_trace_printk implementation in kernel/trace/bpf_trace.c
+> >> It's a lot more than string printing.  
+> > 
+> > Well, trace_printk() is just string printing. I was thinking that the
+> > bpf_trace_printk() could just use a vsnprintf() into a temporary buffer
+> > (like trace_printk() does), and then call the trace event to write it
+> > out.  
+> 
+> are you proposing to replicate get_trace_buf() functionality
+> into bpf_trace_printk?
 
-On Wed, 2 Oct 2019 19:50:48 +0900 Tetsuo Handa <penguin-kernel@i-love.sakur=
-a.ne.jp> wrote:
->
-> On 2019/09/14 16:36, Stephen Rothwell wrote:
-> >=20
-> > I am on vacation until after the merge window closes, so I will add it =
-then.
-> > Please remind me if I don't. =20
->=20
-> Did you return from the vacation?
+No, do you need bpf_trace_printk() to run in all contexts?
+trace_printk() does the get_trace_buf() dance so that it can be called
+without locks and from any context including NMIs.
 
-I knew I'd missed one (but I have too much email :-().
+> So print into temp string buffer is done twice?
+> I'm not excited about such hack.
+> And what's the goal? so that trace_bpf_print(string_msg);
+> can go through _run-time_ check whether that particular trace event
+> was allowed in tracefs ?
 
-I don't think the back merges of Linus' tree add anything useful to
-your tree.  At this point it probably makes sense to just rebase the
-single patch onto v5.4-rc1 and then not back merge Linus' tree at all
-(unless some really complex conflict arises).
---=20
-Cheers,
-Stephen Rothwell
+No, just to use a standard event instead of hacking into
+trace_printk().
 
---Sig_/S.1i3Bsngmv4bP0LfpnwO4z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> That's not how file system acls are typically designed.
+> The permission check is at open(). Not at write().
+> If I understood you correctly you're proposing to check permissions
+> at bpf program run-time which is no good.
+> 
+> bpf_trace_printk() already has one small buffer for
+> probe_kernel_read-ing an unknown string to pass into %s.
+> That's not ftrace. That's core tracing. That aspect is covered by 
+> CAP_TRACING as well.
 
------BEGIN PGP SIGNATURE-----
+Then use that buffer.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2VI+cACgkQAVBC80lX
-0GzjuQf+Nv0uCgSclrxv1CaknxthZtvyIGF0LKhJk7l0aLdI0IFKReWeOT/q31Yn
-FQ4YBgt/aIS3aQ+Ur31Ih7pCe/19j/bS277/dt/r9j2L/0c9gN2L/4ZTAR6HTT6K
-jkgJhf3VN60xy6jcaKNrK8XYBZwJSyfdh0f6a4qqyf2TgfMjRSFXKky6S/epJCHc
-RDWrRP499KTeNQnWCkA319UqIP1AtpS8er7VDCQMV8zKhFOxctaqPwsJUtVLFLei
-7WipMMMXTVt/k5eH1ntSPp2DtXK1iUjrYpo152P7C4Hl4UrBN7dxNR+M+P6eDwRt
-EV4vQMv+Y7i2mrrsZIyG87sfz+9JAQ==
-=nexe
------END PGP SIGNATURE-----
+> 
+> 
+> >>  
+> >>> The user could then just enable the trace event from the file system. I
+> >>> could also work on making instances work like /tmp does (with the
+> >>> sticky bit) in creation. That way people with write access to the
+> >>> instances directory, can make their own buffers that they can use (and
+> >>> others can't access).  
+> >>
+> >> We tried instances in bcc in the past and eventually removed all the
+> >> support. The overhead of instances is too high to be usable.  
+> > 
+> > What overhead? An ftrace instance should not have any more overhead than
+> > the root one does (it's the same code). Or are you talking about memory
+> > overhead?  
+> 
+> Yes. Memory overhead. Human users doing cat/echo into tracefs won't be
+> creating many instances, so that's the only practical usage of them.
 
---Sig_/S.1i3Bsngmv4bP0LfpnwO4z--
+If it's a real event, it can go into any of the ftrace buffers (top
+level or instance), but it gives you the choice.
+
+> 
+> >   
+> >>  
+> >>>
+> >>>      
+> >>>>
+> >>>> Both 'trace' and 'trace_pipe' have quirky side effects.
+> >>>> Like opening 'trace' file will make all parallel trace_printk() to be ignored.
+> >>>> While reading 'trace_pipe' file will clear it.
+> >>>> The point that traditional 'read' and 'write' ACLs don't map as-is
+> >>>> to tracefs, so I would be careful categorizing things into
+> >>>> confidentiality vs integrity only based on access type.  
+> >>>
+> >>> What exactly is the bpf_trace_printk() used for? I may have other ideas
+> >>> that can help.  
+> >>
+> >> It's debugging of bpf programs. Same is what printk() is used for
+> >> by kernel developers.
+> >>  
+> > 
+> > How is it extracted? Just read from the trace or trace_pipe file?  
+> 
+> yep. Just like kernel devs look at dmesg when they sprinkle printk.
+> btw, if you can fix 'trace' file issue that stops all trace_printk
+> while 'trace' file is open that would be great.
+> Some users have been bitten by this behavior. We even documented it.
+
+The behavior is documented as well in the ftrace documentation. That's
+why we suggest the trace_pipe redirected into a file so that you don't
+lose data (unless the writer goes too fast). If you prefer a producer
+consumer where you lose newer events (like perf does), you can turn off
+overwrite mode, and it will drop events when the buffer is full (see
+options/overwrite).
+
+-- Steve
