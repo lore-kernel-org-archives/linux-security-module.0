@@ -6,57 +6,79 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C87B3C352AA
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Oct 2019 08:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C782C352AA
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Oct 2019 10:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3941218DE
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Oct 2019 08:59:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 478E7218DE
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Oct 2019 10:51:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfJBI7U (ORCPT
+        id S1726852AbfJBKvL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Oct 2019 04:59:20 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:58125 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbfJBI7T (ORCPT
+        Wed, 2 Oct 2019 06:51:11 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:61743 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbfJBKvL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Oct 2019 04:59:19 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1iFaTa-0006Ku-3E; Wed, 02 Oct 2019 10:59:14 +0200
-Date:   Wed, 2 Oct 2019 10:59:14 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, tglx@linutronix.de
-Subject: Re: [PATCH v4] apparmor: Use a memory pool instead per-CPU caches
-Message-ID: <20191002085913.xs3oglbegsjrrrcq@linutronix.de>
-References: <02d7772b-5d06-1c32-b089-454547fbe08b@canonical.com>
- <20190502105158.2hluemukrdz5hbus@linutronix.de>
- <7b41609f-2592-93c1-55f7-6026ff6dba26@I-love.SAKURA.ne.jp>
- <20190502134730.d3ya46ave6a7bvom@linutronix.de>
- <001f651f-c544-c3fa-c0c2-f2a2b1ed565a@i-love.sakura.ne.jp>
- <20190503114827.yky7r2cjq7zy4dfm@linutronix.de>
- <20190503115145.anv7z4kk7okydthm@linutronix.de>
- <56de7347-b119-155d-675c-23a227ffd516@i-love.sakura.ne.jp>
- <20190503141221.qvqdfbfmmmzc7gfr@linutronix.de>
- <b2bb1be2-2130-3d77-2430-1de526accf2a@canonical.com>
+        Wed, 2 Oct 2019 06:51:11 -0400
+Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x92Ap0xH091030;
+        Wed, 2 Oct 2019 19:51:00 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
+ Wed, 02 Oct 2019 19:51:00 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126227201116.bbtec.net [126.227.201.116])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x92Aoru9090973
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Wed, 2 Oct 2019 19:51:00 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
+ sockets.
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org
+References: <0000000000004f43fa058a97f4d3@google.com>
+ <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
+ <1b5722cc-adbc-035d-5ca1-9aa56e70d312@I-love.SAKURA.ne.jp>
+ <a4ed1778-8b73-49d1-0ff0-59d9c6ac0af8@I-love.SAKURA.ne.jp>
+ <20190618204933.GE17978@ZenIV.linux.org.uk>
+ <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
+ <bc146372-764d-93a9-af27-666d73ed3af5@i-love.sakura.ne.jp>
+ <alpine.LRH.2.21.1907061944050.2662@namei.org>
+ <alpine.LRH.2.21.1907061949040.2662@namei.org>
+ <289ebc65-8444-37e3-e54e-21b55d2c9192@i-love.sakura.ne.jp>
+ <a28f2680-bafc-5e23-4eea-6b432f561cd4@i-love.sakura.ne.jp>
+ <A9CE5147-4047-4C42-B772-F0ED510FA283@canb.auug.org.au>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <36906718-d2ae-3514-c6b2-371037c98da5@i-love.sakura.ne.jp>
+Date:   Wed, 2 Oct 2019 19:50:48 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <A9CE5147-4047-4C42-B772-F0ED510FA283@canb.auug.org.au>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b2bb1be2-2130-3d77-2430-1de526accf2a@canonical.com>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019-05-07 12:57:04 [-0700], John Johansen wrote:
-> I am going to pull this into my tree and let it sit in linux-next
-> for a cycle so we can get better testing on this before it is pushed
-> out
+On 2019/09/14 16:36, Stephen Rothwell wrote:
+> Hi,
+> 
+> I am on vacation until after the merge window closes, so I will add it then.
+> Please remind me if I don't.
 
-We talked about this during the merge window for 5.2-rc1. These changes
-were not part of 5.4-rc1. Was there a fallout, anything I can help with?
+Did you return from the vacation?
 
-Sebastian
+> 
+> Cheers,
+> Stephen Rothwell 
+> 
+> On 13 September 2019 2:41:24 pm GMT+01:00, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>> Hello, Stephen Rothwell.
+>>
+>> Can you add https://scm.osdn.net/gitroot/tomoyo/tomoyo-test1.git#master
+>> into the list for linux-next.git tree?
