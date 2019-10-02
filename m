@@ -1,120 +1,62 @@
-Return-Path: <SRS0=tahD=X2=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=xhHr=X3=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D33E1ECE587
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Oct 2019 22:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C87B3C352AA
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Oct 2019 08:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACE7721906
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Oct 2019 22:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3941218DE
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Oct 2019 08:59:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728320AbfJAWrg (ORCPT
+        id S1726593AbfJBI7U (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Oct 2019 18:47:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48860 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727111AbfJAWrg (ORCPT
+        Wed, 2 Oct 2019 04:59:20 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:58125 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725765AbfJBI7T (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Oct 2019 18:47:36 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33E40215EA;
-        Tue,  1 Oct 2019 22:47:33 +0000 (UTC)
-Date:   Tue, 1 Oct 2019 18:47:31 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Alexei Starovoitov <ast@fb.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "LSM List" <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, Kernel Team <Kernel-team@fb.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH bpf-next] bpf, capabilities: introduce CAP_BPF
-Message-ID: <20191001184731.0ec98c7a@gandalf.local.home>
-In-Reply-To: <6e8b910c-a739-857d-4867-395bd369bc6a@fb.com>
-References: <CALCETrV8iJv9+Ai11_1_r6MapPhhwt9hjxi=6EoixytabTScqg@mail.gmail.com>
-        <20190828003447.htgzsxs5oevn3eys@ast-mbp.dhcp.thefacebook.com>
-        <CALCETrVbPPPr=BdPAx=tJKxD3oLXP4OVSgCYrB_E4vb6idELow@mail.gmail.com>
-        <20190828044340.zeha3k3cmmxgfqj7@ast-mbp.dhcp.thefacebook.com>
-        <CALCETrW1o+Lazi2Ng6b9JN6jeJffgdW9f3HvqYhNo4TpHRXW=g@mail.gmail.com>
-        <20190828225512.q6qbvkdiqih2iewk@ast-mbp.dhcp.thefacebook.com>
-        <DA52992F-4862-4945-8482-FE619A04C753@amacapital.net>
-        <20190829040721.ef6rumbaunkavyrr@ast-mbp.dhcp.thefacebook.com>
-        <20190928193727.1769e90c@oasis.local.home>
-        <201909301129.5A1129C@keescook>
-        <20191001012226.vwpe56won5r7gbrz@ast-mbp.dhcp.thefacebook.com>
-        <20191001181052.43c9fabb@gandalf.local.home>
-        <6e8b910c-a739-857d-4867-395bd369bc6a@fb.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 2 Oct 2019 04:59:19 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iFaTa-0006Ku-3E; Wed, 02 Oct 2019 10:59:14 +0200
+Date:   Wed, 2 Oct 2019 10:59:14 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, tglx@linutronix.de
+Subject: Re: [PATCH v4] apparmor: Use a memory pool instead per-CPU caches
+Message-ID: <20191002085913.xs3oglbegsjrrrcq@linutronix.de>
+References: <02d7772b-5d06-1c32-b089-454547fbe08b@canonical.com>
+ <20190502105158.2hluemukrdz5hbus@linutronix.de>
+ <7b41609f-2592-93c1-55f7-6026ff6dba26@I-love.SAKURA.ne.jp>
+ <20190502134730.d3ya46ave6a7bvom@linutronix.de>
+ <001f651f-c544-c3fa-c0c2-f2a2b1ed565a@i-love.sakura.ne.jp>
+ <20190503114827.yky7r2cjq7zy4dfm@linutronix.de>
+ <20190503115145.anv7z4kk7okydthm@linutronix.de>
+ <56de7347-b119-155d-675c-23a227ffd516@i-love.sakura.ne.jp>
+ <20190503141221.qvqdfbfmmmzc7gfr@linutronix.de>
+ <b2bb1be2-2130-3d77-2430-1de526accf2a@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b2bb1be2-2130-3d77-2430-1de526accf2a@canonical.com>
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 1 Oct 2019 22:18:18 +0000
-Alexei Starovoitov <ast@fb.com> wrote:
+On 2019-05-07 12:57:04 [-0700], John Johansen wrote:
+> I am going to pull this into my tree and let it sit in linux-next
+> for a cycle so we can get better testing on this before it is pushed
+> out
 
-> > And then you can just format the string from the bpf_trace_printk()
-> > into msg, and then have:
-> > 
-> > 	trace_bpf_print(msg);  
-> 
-> It's an interesting idea, but I don't think it can work.
-> Please see bpf_trace_printk implementation in kernel/trace/bpf_trace.c
-> It's a lot more than string printing.
+We talked about this during the merge window for 5.2-rc1. These changes
+were not part of 5.4-rc1. Was there a fallout, anything I can help with?
 
-Well, trace_printk() is just string printing. I was thinking that the
-bpf_trace_printk() could just use a vsnprintf() into a temporary buffer
-(like trace_printk() does), and then call the trace event to write it
-out.
-
-> 
-> > The user could then just enable the trace event from the file system. I
-> > could also work on making instances work like /tmp does (with the
-> > sticky bit) in creation. That way people with write access to the
-> > instances directory, can make their own buffers that they can use (and
-> > others can't access).  
-> 
-> We tried instances in bcc in the past and eventually removed all the 
-> support. The overhead of instances is too high to be usable.
-
-What overhead? An ftrace instance should not have any more overhead than
-the root one does (it's the same code). Or are you talking about memory
-overhead?
-
-> 
-> > 
-> >   
-> >>
-> >> Both 'trace' and 'trace_pipe' have quirky side effects.
-> >> Like opening 'trace' file will make all parallel trace_printk() to be ignored.
-> >> While reading 'trace_pipe' file will clear it.
-> >> The point that traditional 'read' and 'write' ACLs don't map as-is
-> >> to tracefs, so I would be careful categorizing things into
-> >> confidentiality vs integrity only based on access type.  
-> > 
-> > What exactly is the bpf_trace_printk() used for? I may have other ideas
-> > that can help.  
-> 
-> It's debugging of bpf programs. Same is what printk() is used for
-> by kernel developers.
-> 
-
-How is it extracted? Just read from the trace or trace_pipe file?
-
--- Steve
+Sebastian
