@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1D0C10F14
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 16:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0EB8C10F14
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 16:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF2D92086A
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 16:36:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC3AB2054F
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 16:54:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570120603;
+	s=default; t=1570121663;
 	bh=ppvgryPXoAV87FTYKqBMl7LfUlYuP5FSY5V3yCvro1c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vOceMSq8CQix4XFpqy9auNJqV6Qw2zgX8sgLRqh42HkFeBkTQIfOglxALB/klrGfF
-	 daiHUYFeqRM+ojhKi5uiuxRwoKubgdav2NGpVfAJ7nE0GoHkPi1QUvwQ1JE4/8gTTh
-	 T0/VSRH9iA3mvT/9oDmsCCS+omHSpHQ8fOU3l5P4=
+	b=IaERe33A4xgUO04C2KwN9UMRZtUHL8i1HDa4rtXAYVHpL/PCd/Fm2hchvXSP53XE1
+	 SWzvVruRdQD0GaSq2ffbSBF2RHmmduwAxbXTULn/9gSIl5Oqj4D0eRLFK/LAM5i3R/
+	 WcQoa0wG4VrtEF41HNcv2Cm6YDhr3g0iHLGXz93A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392238AbfJCQgl (ORCPT
+        id S2393205AbfJCQxn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Oct 2019 12:36:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45922 "EHLO mail.kernel.org"
+        Thu, 3 Oct 2019 12:53:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391750AbfJCQgk (ORCPT
+        id S1732255AbfJCQxi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:36:40 -0400
+        Thu, 3 Oct 2019 12:53:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66A4E2070B;
-        Thu,  3 Oct 2019 16:36:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C50620862;
+        Thu,  3 Oct 2019 16:53:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120599;
+        s=default; t=1570121617;
         bh=ppvgryPXoAV87FTYKqBMl7LfUlYuP5FSY5V3yCvro1c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ALKHEYHhbk999a26bF7YJAQYy8VsG8mJUUub/Omgx8eS/IJKw0FCzVbVPkamX54NC
-         p5L7ope6lF09al7OUAO5S69kAl8EzT0UScdjjccnGFXG2P4xMMCoBSpu+iRGmbSWGy
-         NCQ+ZqCB/yUw0Hm0wIBqv4y4tgDp7gou7zWZdrdg=
+        b=f71YjRlFTpy3K74cONVnCxRD2XOvbRPELlFdIgHtaoN+Q4l7XxJGQAXNv/5iiE9Hk
+         xDURYDrQ72LhJ9dNvyK4sQQCGWsUIhoDdHsXcNkiE8BkeXXAU4Pb/RRcHn4T7G5hPN
+         A4mPc8vlvBmwoQLKstvEO/wsQwF2g6mrUJzOHi3k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Mark Salyzyn <salyzyn@android.com>,
         linux-security-module@vger.kernel.org, kernel-team@android.com,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.2 281/313] ovl: filter of trusted xattr results in audit
-Date:   Thu,  3 Oct 2019 17:54:19 +0200
-Message-Id: <20191003154600.730861390@linuxfoundation.org>
+Subject: [PATCH 5.3 308/344] ovl: filter of trusted xattr results in audit
+Date:   Thu,  3 Oct 2019 17:54:33 +0200
+Message-Id: <20191003154609.636796606@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
