@@ -2,120 +2,99 @@ Return-Path: <SRS0=tIjr=X4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B135AC10F14
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 10:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1D0C10F14
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 16:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EBF1217D7
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 10:00:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF2D92086A
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 16:36:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1570120603;
+	bh=ppvgryPXoAV87FTYKqBMl7LfUlYuP5FSY5V3yCvro1c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=vOceMSq8CQix4XFpqy9auNJqV6Qw2zgX8sgLRqh42HkFeBkTQIfOglxALB/klrGfF
+	 daiHUYFeqRM+ojhKi5uiuxRwoKubgdav2NGpVfAJ7nE0GoHkPi1QUvwQ1JE4/8gTTh
+	 T0/VSRH9iA3mvT/9oDmsCCS+omHSpHQ8fOU3l5P4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729189AbfJCKAW (ORCPT
+        id S2392238AbfJCQgl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Oct 2019 06:00:22 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:59034 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729155AbfJCKAW (ORCPT
+        Thu, 3 Oct 2019 12:36:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391750AbfJCQgk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Oct 2019 06:00:22 -0400
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x93A04ZN016716;
-        Thu, 3 Oct 2019 19:00:04 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
- Thu, 03 Oct 2019 19:00:04 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126227201116.bbtec.net [126.227.201.116])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x939xvg5016659
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 3 Oct 2019 19:00:04 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
- sockets.
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <0000000000004f43fa058a97f4d3@google.com>
- <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
- <1b5722cc-adbc-035d-5ca1-9aa56e70d312@I-love.SAKURA.ne.jp>
- <a4ed1778-8b73-49d1-0ff0-59d9c6ac0af8@I-love.SAKURA.ne.jp>
- <20190618204933.GE17978@ZenIV.linux.org.uk>
- <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
- <bc146372-764d-93a9-af27-666d73ed3af5@i-love.sakura.ne.jp>
- <alpine.LRH.2.21.1907061944050.2662@namei.org>
- <alpine.LRH.2.21.1907061949040.2662@namei.org>
- <289ebc65-8444-37e3-e54e-21b55d2c9192@i-love.sakura.ne.jp>
- <a28f2680-bafc-5e23-4eea-6b432f561cd4@i-love.sakura.ne.jp>
- <A9CE5147-4047-4C42-B772-F0ED510FA283@canb.auug.org.au>
- <36906718-d2ae-3514-c6b2-371037c98da5@i-love.sakura.ne.jp>
- <20191003082543.5e1e25dd@canb.auug.org.au>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <b175f451-4e76-84aa-48fa-e3ee9490c579@i-love.sakura.ne.jp>
-Date:   Thu, 3 Oct 2019 18:59:56 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 3 Oct 2019 12:36:40 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66A4E2070B;
+        Thu,  3 Oct 2019 16:36:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570120599;
+        bh=ppvgryPXoAV87FTYKqBMl7LfUlYuP5FSY5V3yCvro1c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ALKHEYHhbk999a26bF7YJAQYy8VsG8mJUUub/Omgx8eS/IJKw0FCzVbVPkamX54NC
+         p5L7ope6lF09al7OUAO5S69kAl8EzT0UScdjjccnGFXG2P4xMMCoBSpu+iRGmbSWGy
+         NCQ+ZqCB/yUw0Hm0wIBqv4y4tgDp7gou7zWZdrdg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Mark Salyzyn <salyzyn@android.com>,
+        linux-security-module@vger.kernel.org, kernel-team@android.com,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 5.2 281/313] ovl: filter of trusted xattr results in audit
+Date:   Thu,  3 Oct 2019 17:54:19 +0200
+Message-Id: <20191003154600.730861390@linuxfoundation.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-In-Reply-To: <20191003082543.5e1e25dd@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello.
+From: Mark Salyzyn <salyzyn@android.com>
 
-On 2019/10/03 7:25, Stephen Rothwell wrote:
-> Hi Tetsuo,
-> 
-> On Wed, 2 Oct 2019 19:50:48 +0900 Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>
->> On 2019/09/14 16:36, Stephen Rothwell wrote:
->>>
->>> I am on vacation until after the merge window closes, so I will add it then.
->>> Please remind me if I don't.  
->>
->> Did you return from the vacation?
-> 
-> I knew I'd missed one (but I have too much email :-().
+commit 5c2e9f346b815841f9bed6029ebcb06415caf640 upstream.
 
-Thank you for adding my tree.
+When filtering xattr list for reading, presence of trusted xattr
+results in a security audit log.  However, if there is other content
+no errno will be set, and if there isn't, the errno will be -ENODATA
+and not -EPERM as is usually associated with a lack of capability.
+The check does not block the request to list the xattrs present.
 
-> 
-> I don't think the back merges of Linus' tree add anything useful to
-> your tree.  At this point it probably makes sense to just rebase the
-> single patch onto v5.4-rc1 and then not back merge Linus' tree at all
-> (unless some really complex conflict arises).
-> 
+Switch to ns_capable_noaudit to reflect a more appropriate check.
 
-This is my first time using persistent git tree.
-I made my tree using the sequence shown below.
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: stable@vger.kernel.org # v3.18+
+Fixes: a082c6f680da ("ovl: filter trusted xattr for non-admin")
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-  # Upon initialization
-  git clone https://scm.osdn.net/gitroot/tomoyo/tomoyo-test1.git
-  cd tomoyo-test1/
-  git remote add upstream git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-  git remote update upstream
-  git merge upstream/master
-  git push -u origin master
+---
+ fs/overlayfs/inode.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-According to
-https://lkml.kernel.org/r/CAHk-=wg=io4rX2qzupdd4XdYy6okMx5jjzEwXe_UvLQgLsSUFA@mail.gmail.com
-I should not try "git rebase" and "git merge" because I don't understand what they do. But
-I guess I need to use "git merge" in order to update my tree before making changes.
-Is the sequence shown below appropriate?
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -383,7 +383,8 @@ static bool ovl_can_list(const char *s)
+ 		return true;
+ 
+ 	/* Never list trusted.overlay, list other trusted for superuser only */
+-	return !ovl_is_private_xattr(s) && capable(CAP_SYS_ADMIN);
++	return !ovl_is_private_xattr(s) &&
++	       ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN);
+ }
+ 
+ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
 
-  # When making changes
-  git remote update upstream
-  git merge upstream/master
-  edit files
-  git commit
-  git push -u origin master
 
-Since I'm not familiar with git management, I want to use only master branch.
-Do I need to make branches or another git tree for asking Linus to pull for linux.git ?
