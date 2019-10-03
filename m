@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDE7ECE58B
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 17:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D84EC32792
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 17:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CAC820865
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 17:28:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D01D20865
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 17:35:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570123685;
-	bh=yj49ZFTGd94w6BIGaonON0vn7CB2KRR7SGrVAmFkRp0=;
+	s=default; t=1570124136;
+	bh=/hNYO7OwP1ns9IydcyK7+oKU9B/j5I0pC2OP9X9GgJE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j1klPDjh6gosP7HLb+sV381WYEZiV6DYS0CBh4XZHhWDivFAKGEGDt9o4Ev5bCHmu
-	 H/tFVjdrzT8fOBLbEr3RhbstEXFYgxIb4WAfB1e20XGMWl8jpq1lz9cZtgIkJMItNu
-	 jsQ5vhWzgPhWnrmHrsysKx5YfaCkM3ZaCcKA8nRg=
+	b=bx9B8OJg1chX6fnib+F3uc2M9ZcDMocXbRmqYsMfd7Bnw7KpmvtmRkl79JT2J4m/s
+	 FD1UldJ/mEX/UiwXjLBxnH2NGFNSxE87k4tT7+f6EITx/jj+eG3XUGTtYyjT8klEyf
+	 yAt3QxyiCxKOFfvVkbonT6tpzZhTveGCaH0ETqQ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388551AbfJCQOQ (ORCPT
+        id S1732668AbfJCQGC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Oct 2019 12:14:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37452 "EHLO mail.kernel.org"
+        Thu, 3 Oct 2019 12:06:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729087AbfJCQOP (ORCPT
+        id S1732666AbfJCQGC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:14:15 -0400
+        Thu, 3 Oct 2019 12:06:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 832032054F;
-        Thu,  3 Oct 2019 16:14:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D00FD20865;
+        Thu,  3 Oct 2019 16:06:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119255;
-        bh=yj49ZFTGd94w6BIGaonON0vn7CB2KRR7SGrVAmFkRp0=;
+        s=default; t=1570118761;
+        bh=/hNYO7OwP1ns9IydcyK7+oKU9B/j5I0pC2OP9X9GgJE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iRbGsAJKKPzTuE6TLy7BthvDIVFl7RUwsq5c5t4kp7/+vJR/fWRb6Uqu/LHXhIwpO
-         rj69LRBukA8fHuRFvSCWmG04p/Czc1m0AceNbybIEcIwXBIM/XMW6fMmKJxbZOcglv
-         vrP06HpiaMzZ6H5nnmaWoBhQqocXOd37zBl5Rjls=
+        b=zfaol7yfvJl1fZjCZvKlgijC+nDNwcIZz/akxxmPsVqbb0pPqZJh012V50Pb/7/ta
+         xf3rrMYhgPpsRv7PIRxjbmBqnfx9DMnVYbOwXxDcP6VZr8Yaqk/Iv8SBmxIgOwyh3c
+         ezquYVr+L3WNVsg/8Q0t8gh+ohB5sFEs8Q8ia+vQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Mark Salyzyn <salyzyn@android.com>,
         linux-security-module@vger.kernel.org, kernel-team@android.com,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.14 166/185] ovl: filter of trusted xattr results in audit
-Date:   Thu,  3 Oct 2019 17:54:04 +0200
-Message-Id: <20191003154516.782998221@linuxfoundation.org>
+Subject: [PATCH 4.9 115/129] ovl: filter of trusted xattr results in audit
+Date:   Thu,  3 Oct 2019 17:53:58 +0200
+Message-Id: <20191003154411.608470733@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -86,7 +86,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/overlayfs/inode.c
 +++ b/fs/overlayfs/inode.c
-@@ -265,7 +265,8 @@ static bool ovl_can_list(const char *s)
+@@ -234,7 +234,8 @@ static bool ovl_can_list(const char *s)
  		return true;
  
  	/* Never list trusted.overlay, list other trusted for superuser only */
