@@ -1,100 +1,110 @@
-Return-Path: <SRS0=tIjr=X4=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=xGoV=X5=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD3AC32792
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 17:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 170D1C47404
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Oct 2019 06:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2BDC20865
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Oct 2019 17:40:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570124439;
-	bh=M5k0BU5EeWicDdY1kbiDXTopE3+Q1rOXUHpx4wMdFFg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y6bwdJsPlz2IKIcTgOybOrB3M3/DvxpzLxcfouPJVBnStOJYfmRtannje1SF/DEiy
-	 b/GfKXs7s83gQygaFj5h8aFEaR5fFelD0uBfIOlmjrcexqssmryZof5KPTnL5zHUta
-	 YcLNxw1meLkui1hIovQGIBXBKrueURM3yf2FUw1Y=
+	by mail.kernel.org (Postfix) with ESMTP id E180C21D81
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Oct 2019 06:05:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E5cgxXBo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730331AbfJCP7z (ORCPT
+        id S2387729AbfJDGFn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Oct 2019 11:59:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731447AbfJCP7z (ORCPT
+        Fri, 4 Oct 2019 02:05:43 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33155 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387400AbfJDGFn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:59:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C441720700;
-        Thu,  3 Oct 2019 15:59:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118394;
-        bh=M5k0BU5EeWicDdY1kbiDXTopE3+Q1rOXUHpx4wMdFFg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CqJOsLlA57YvIQtyiNmMxH/ILJQ4lmXO9FdsziGMEew/X07/dBE8NNPqn3BMJWPLD
-         LHvrCaSdAU4u4xvTq9PsDH+wTbUwP0E2CA5SEngclPPv643JGqpS/8HD4w0LzpvPVL
-         0MiAFVI0timWAPl6CWfNlmWhya+GUhutdYi0JK/I=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Salyzyn <salyzyn@android.com>,
-        linux-security-module@vger.kernel.org, kernel-team@android.com,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.4 96/99] ovl: filter of trusted xattr results in audit
-Date:   Thu,  3 Oct 2019 17:53:59 +0200
-Message-Id: <20191003154342.358048872@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
-References: <20191003154252.297991283@linuxfoundation.org>
-User-Agent: quilt/0.66
+        Fri, 4 Oct 2019 02:05:43 -0400
+Received: by mail-lf1-f67.google.com with SMTP id y127so3626437lfc.0
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Oct 2019 23:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EU9R+5FiiHK6S3OotBSx2d3JfkCttfp0JrSBfeNFZw0=;
+        b=E5cgxXBoyb8zX4QHuz2jpJiJdjkmfhiPf/UhRcJhTWcvhFZgsCHhIG7wvWGbfV4Tjp
+         tlvfGq1CLfDKjW4LYCSFNua/12JLIHfZmeolGQm4izmsfj4MckCXFe1scuUE+LKqGUFo
+         xdoIa5PqJiOVQxSX2gXYPoSyf3vEdYcemX3cVLdX72A4jL+bUtd4HUO6Hw+G+uw5BgJ3
+         5OmDbr+ZKnLqQvxHBOU1h7/4eCMI33vmyK2NLwMzTdFGOfj7+CZFNvrpXtSRDOO9Xcet
+         /e6ikm3bUq9G2HQ0KIltjbt3c90iRJMOb05eqRPfbhiWQOEr/iSAhWpcIB1WF3rslfvo
+         00UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EU9R+5FiiHK6S3OotBSx2d3JfkCttfp0JrSBfeNFZw0=;
+        b=UxigwPt29yJp4pLf4OEf5fGIEH51/WxnkU2AJu8mExWnlCuUiXtqacN+yxA9EEuSOp
+         25SZfZ7om7rAPstd6tZR882u3i2ZbMATcPARAC2A88TrffZfSqSaPNM6i2CITv1Ao5TW
+         YJiSUGR8mBZpnONcc8FF+KvlX8y/Z8JIwa/DSl02RiCyFpycsQSAxXTHI6ipow39jtWh
+         uvVMbIJouPh7l8eZX9uAUCIXiU4xBTwjAHyXye+cjClQin8b+SW8AHwiig6vdFQNMFc+
+         o+BTY0tTTQfouVsVxTBNTnJza2ir3pDIxzRThF1vBRoOYoOrqom9wEde8un/NxrChL8B
+         KrHQ==
+X-Gm-Message-State: APjAAAXzTM5eR2wU3/r6lgnAmK3pZa+mNRCDAy7DzsEYfKLKfFUP+O2d
+        wu3YLLGb12TfksuPwoO8e85H9hnm1OfBW4CRPvUAD0k4
+X-Google-Smtp-Source: APXvYqyq2FvAZvTgBm3+gpy5P/cRr2HwVYDfJso9MydHHmgwPIYW710QEgz60hWhE4T18Hf3DjpERdAgdVudsGS9Ufg=
+X-Received: by 2002:ac2:4902:: with SMTP id n2mr8069346lfi.0.1570169140928;
+ Thu, 03 Oct 2019 23:05:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1568630064-14887-1-git-send-email-sumit.garg@linaro.org>
+ <1568630064-14887-5-git-send-email-sumit.garg@linaro.org> <20190917181415.GA8472@linux.intel.com>
+ <20190917181507.GB8472@linux.intel.com> <CAFA6WYMbUGQ6+-XvR9_qSc=oVe1QSTg4kB-+y6rBmQLq+B6skg@mail.gmail.com>
+ <20190925011115.GA3503@linux.intel.com>
+In-Reply-To: <20190925011115.GA3503@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Fri, 4 Oct 2019 11:35:29 +0530
+Message-ID: <CAFA6WYObsZnTptYg1Qorxt0FMaxHKoZ6D53Wjsj05OEGNhpckg@mail.gmail.com>
+Subject: Re: [Patch v6 4/4] KEYS: trusted: Move TPM2 trusted keys code
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     dhowells@redhat.com, peterhuewe@gmx.de, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
+        jgg@ziepe.ca, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        jejb@linux.ibm.com, Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mark Salyzyn <salyzyn@android.com>
+Hi Jarkko,
 
-commit 5c2e9f346b815841f9bed6029ebcb06415caf640 upstream.
+On Wed, 25 Sep 2019 at 06:41, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Wed, Sep 18, 2019 at 11:53:08AM +0530, Sumit Garg wrote:
+> > No worries :). I will send next version of patch-set.
+> >
+> > FYI, I will be travelling for Linaro Connect next week so you could
+> > expect some delays in my responses.
+>
+> These patches will go to v5.5. There is nothing to rush.
 
-When filtering xattr list for reading, presence of trusted xattr
-results in a security audit log.  However, if there is other content
-no errno will be set, and if there isn't, the errno will be -ENODATA
-and not -EPERM as is usually associated with a lack of capability.
-The check does not block the request to list the xattrs present.
+I am back now on my regular schedule after Linaro Connect. And I see
+your patch-set [1] to detach page allocation from tpm_buf. It seems
+like either this patch-set needs rebase over yours or vice-versa.
 
-Switch to ns_capable_noaudit to reflect a more appropriate check.
+So should I wait to send next version of this patch-set until your
+patch-set arrives in tpmdd master/next branch or would you like to
+rebase your patch-set over this?
 
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Cc: linux-security-module@vger.kernel.org
-Cc: kernel-team@android.com
-Cc: stable@vger.kernel.org # v3.18+
-Fixes: a082c6f680da ("ovl: filter trusted xattr for non-admin")
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg2119910.html
 
----
- fs/overlayfs/inode.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+-Sumit
 
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -292,7 +292,8 @@ static bool ovl_can_list(const char *s)
- 		return true;
- 
- 	/* Never list trusted.overlay, list other trusted for superuser only */
--	return !ovl_is_private_xattr(s) && capable(CAP_SYS_ADMIN);
-+	return !ovl_is_private_xattr(s) &&
-+	       ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN);
- }
- 
- ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
-
-
+>
+> /Jarkko
