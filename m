@@ -2,66 +2,37 @@ Return-Path: <SRS0=xGoV=X5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 170D1C47404
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Oct 2019 06:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE1EC47404
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Oct 2019 18:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E180C21D81
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Oct 2019 06:05:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E5cgxXBo"
+	by mail.kernel.org (Postfix) with ESMTP id 3C9862084D
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Oct 2019 18:49:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387729AbfJDGFn (ORCPT
+        id S1727647AbfJDStL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Oct 2019 02:05:43 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33155 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387400AbfJDGFn (ORCPT
+        Fri, 4 Oct 2019 14:49:11 -0400
+Received: from mga17.intel.com ([192.55.52.151]:38274 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725775AbfJDStK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Oct 2019 02:05:43 -0400
-Received: by mail-lf1-f67.google.com with SMTP id y127so3626437lfc.0
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Oct 2019 23:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EU9R+5FiiHK6S3OotBSx2d3JfkCttfp0JrSBfeNFZw0=;
-        b=E5cgxXBoyb8zX4QHuz2jpJiJdjkmfhiPf/UhRcJhTWcvhFZgsCHhIG7wvWGbfV4Tjp
-         tlvfGq1CLfDKjW4LYCSFNua/12JLIHfZmeolGQm4izmsfj4MckCXFe1scuUE+LKqGUFo
-         xdoIa5PqJiOVQxSX2gXYPoSyf3vEdYcemX3cVLdX72A4jL+bUtd4HUO6Hw+G+uw5BgJ3
-         5OmDbr+ZKnLqQvxHBOU1h7/4eCMI33vmyK2NLwMzTdFGOfj7+CZFNvrpXtSRDOO9Xcet
-         /e6ikm3bUq9G2HQ0KIltjbt3c90iRJMOb05eqRPfbhiWQOEr/iSAhWpcIB1WF3rslfvo
-         00UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EU9R+5FiiHK6S3OotBSx2d3JfkCttfp0JrSBfeNFZw0=;
-        b=UxigwPt29yJp4pLf4OEf5fGIEH51/WxnkU2AJu8mExWnlCuUiXtqacN+yxA9EEuSOp
-         25SZfZ7om7rAPstd6tZR882u3i2ZbMATcPARAC2A88TrffZfSqSaPNM6i2CITv1Ao5TW
-         YJiSUGR8mBZpnONcc8FF+KvlX8y/Z8JIwa/DSl02RiCyFpycsQSAxXTHI6ipow39jtWh
-         uvVMbIJouPh7l8eZX9uAUCIXiU4xBTwjAHyXye+cjClQin8b+SW8AHwiig6vdFQNMFc+
-         o+BTY0tTTQfouVsVxTBNTnJza2ir3pDIxzRThF1vBRoOYoOrqom9wEde8un/NxrChL8B
-         KrHQ==
-X-Gm-Message-State: APjAAAXzTM5eR2wU3/r6lgnAmK3pZa+mNRCDAy7DzsEYfKLKfFUP+O2d
-        wu3YLLGb12TfksuPwoO8e85H9hnm1OfBW4CRPvUAD0k4
-X-Google-Smtp-Source: APXvYqyq2FvAZvTgBm3+gpy5P/cRr2HwVYDfJso9MydHHmgwPIYW710QEgz60hWhE4T18Hf3DjpERdAgdVudsGS9Ufg=
-X-Received: by 2002:ac2:4902:: with SMTP id n2mr8069346lfi.0.1570169140928;
- Thu, 03 Oct 2019 23:05:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <1568630064-14887-1-git-send-email-sumit.garg@linaro.org>
- <1568630064-14887-5-git-send-email-sumit.garg@linaro.org> <20190917181415.GA8472@linux.intel.com>
- <20190917181507.GB8472@linux.intel.com> <CAFA6WYMbUGQ6+-XvR9_qSc=oVe1QSTg4kB-+y6rBmQLq+B6skg@mail.gmail.com>
- <20190925011115.GA3503@linux.intel.com>
-In-Reply-To: <20190925011115.GA3503@linux.intel.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Fri, 4 Oct 2019 11:35:29 +0530
-Message-ID: <CAFA6WYObsZnTptYg1Qorxt0FMaxHKoZ6D53Wjsj05OEGNhpckg@mail.gmail.com>
-Subject: Re: [Patch v6 4/4] KEYS: trusted: Move TPM2 trusted keys code
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        Fri, 4 Oct 2019 14:49:10 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 11:49:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,257,1566889200"; 
+   d="scan'208";a="191670432"
+Received: from nzaki1-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.4.57])
+  by fmsmga008.fm.intel.com with ESMTP; 04 Oct 2019 11:49:03 -0700
+Date:   Fri, 4 Oct 2019 21:49:02 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
 Cc:     dhowells@redhat.com, peterhuewe@gmx.de, keyrings@vger.kernel.org,
         linux-integrity@vger.kernel.org,
         "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
@@ -76,35 +47,49 @@ Cc:     dhowells@redhat.com, peterhuewe@gmx.de, keyrings@vger.kernel.org,
         Jerry Snitselaar <jsnitsel@redhat.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Daniel Thompson <daniel.thompson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [Patch v6 4/4] KEYS: trusted: Move TPM2 trusted keys code
+Message-ID: <20191004184902.GG6945@linux.intel.com>
+References: <1568630064-14887-1-git-send-email-sumit.garg@linaro.org>
+ <1568630064-14887-5-git-send-email-sumit.garg@linaro.org>
+ <20190917181415.GA8472@linux.intel.com>
+ <20190917181507.GB8472@linux.intel.com>
+ <CAFA6WYMbUGQ6+-XvR9_qSc=oVe1QSTg4kB-+y6rBmQLq+B6skg@mail.gmail.com>
+ <20190925011115.GA3503@linux.intel.com>
+ <CAFA6WYObsZnTptYg1Qorxt0FMaxHKoZ6D53Wjsj05OEGNhpckg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFA6WYObsZnTptYg1Qorxt0FMaxHKoZ6D53Wjsj05OEGNhpckg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jarkko,
-
-On Wed, 25 Sep 2019 at 06:41, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Wed, Sep 18, 2019 at 11:53:08AM +0530, Sumit Garg wrote:
-> > No worries :). I will send next version of patch-set.
+On Fri, Oct 04, 2019 at 11:35:29AM +0530, Sumit Garg wrote:
+> Hi Jarkko,
+> 
+> On Wed, 25 Sep 2019 at 06:41, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
 > >
-> > FYI, I will be travelling for Linaro Connect next week so you could
-> > expect some delays in my responses.
->
-> These patches will go to v5.5. There is nothing to rush.
+> > On Wed, Sep 18, 2019 at 11:53:08AM +0530, Sumit Garg wrote:
+> > > No worries :). I will send next version of patch-set.
+> > >
+> > > FYI, I will be travelling for Linaro Connect next week so you could
+> > > expect some delays in my responses.
+> >
+> > These patches will go to v5.5. There is nothing to rush.
+> 
+> I am back now on my regular schedule after Linaro Connect. And I see
+> your patch-set [1] to detach page allocation from tpm_buf. It seems
+> like either this patch-set needs rebase over yours or vice-versa.
+> 
+> So should I wait to send next version of this patch-set until your
+> patch-set arrives in tpmdd master/next branch or would you like to
+> rebase your patch-set over this?
 
-I am back now on my regular schedule after Linaro Connect. And I see
-your patch-set [1] to detach page allocation from tpm_buf. It seems
-like either this patch-set needs rebase over yours or vice-versa.
+For me either way works. If you patch set is earlier ready for
+merge I'll rework mine. Doing it otherwise would be unnecessary
+micromanagement.
 
-So should I wait to send next version of this patch-set until your
-patch-set arrives in tpmdd master/next branch or would you like to
-rebase your patch-set over this?
-
-[1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg2119910.html
-
--Sumit
-
->
-> /Jarkko
+/Jarkko
