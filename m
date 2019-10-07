@@ -1,116 +1,137 @@
-Return-Path: <SRS0=QZwJ=X7=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=9mRN=YA=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,GAPPY_SUBJECT,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E8AC10F14
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Oct 2019 16:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB86CC47404
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Oct 2019 05:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D88320835
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Oct 2019 16:49:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 900F62166E
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Oct 2019 05:26:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRCGlzEt"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oJvL03CN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbfJFQth (ORCPT
+        id S1727170AbfJGF0o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 6 Oct 2019 12:49:37 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44067 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfJFQth (ORCPT
+        Mon, 7 Oct 2019 01:26:44 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39880 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbfJGF0o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 6 Oct 2019 12:49:37 -0400
-Received: by mail-io1-f65.google.com with SMTP id w12so23545798iol.11;
-        Sun, 06 Oct 2019 09:49:36 -0700 (PDT)
+        Mon, 7 Oct 2019 01:26:44 -0400
+Received: by mail-pl1-f196.google.com with SMTP id s17so6297578plp.6
+        for <linux-security-module@vger.kernel.org>; Sun, 06 Oct 2019 22:26:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gitR6prE2tnQKW2d8vwg8C75oWlKUdv67rXVU7q0QOQ=;
-        b=DRCGlzEtnAKAXsK/2hn1rAPa+00ur0pwb7bfnsPV4inoX1EZo9f+x/DVaJh3kTSbvi
-         EwRDB6fUbQk1/rsy5egGmgH7bYlcXmGHzRajWercwPT1mZvXWa4HpuUmfY4pFtU0/3IC
-         Somjz9/4ecpl/+/yIkZ7GAORqGj8k8bdBaTZWXsRp4KXVc2ycIcMdGM2IbFKi+Pxg31W
-         kFatCmY+0Dy9QUmOdHaVpCrY2A2KPq+lIYzAbToHi0nxs6dptrLB9wgohM3H3Zr/nZm/
-         PVEq146Ba46kpeaoXCqP1UbN7ZSRrQsxVJailmMq0xQbY9qTMOUGx0WvMQvJoH86IJJl
-         s7ig==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=1XpgQPoN+UcClVgrIlyON95HaUMJi3oZGyVlHRQ7/YE=;
+        b=oJvL03CNiwIGAzVCpkxpmmFYefUdYS0uFbWbKHzkPIngh4gEhMZaLviuWrACXgMGom
+         seIcuVppGarffY4hbgKKh5GD7rtMulaDxxX90phKlid3B8oUIgax+rSsFse06hI5uvbH
+         adrSchEYYl6H1gOGEmAjd1vb/s5/h5HhhUQxzbOmu+WJnAcrOTYeMGGPdCm92QEqPF1Q
+         N0mgSzfXePsz1O5/seTaS6Hp/rbmyWz+DhAs2G7qpmsY9C23yaA4aZVFlg3mLzZBmU6B
+         aUturVn/FXN49wkjO9INicdodor6bW8K3JCk7H8XowXPN5IWb0+ER18dzeAqt5j4pgjE
+         Z+AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gitR6prE2tnQKW2d8vwg8C75oWlKUdv67rXVU7q0QOQ=;
-        b=pMdL3V28vLn9ZtqkpSocDzFkeHmnRkYHTo7s4Dp0k5RbeiFlfgOgA64/gsssRKKfVe
-         uLrd6hEZgZx1O2YtJUgowLJmW8ysPmY3YqGJ+UNVdHW11Y2SaPiTAKXeN8CZn8oVIVOI
-         mBfKerZCaR6ysnXFx7SVz/j0ph6IrNELmSUZvo7zmj1w5Q/OIQss7cw8GuWuUsp8UfZt
-         nUFb8P2z4JgX71E+ZJSG19eii4hppneJgBvQqsIDjBXSAiDFSE5v7a6cUMiQZp7sEd7J
-         ISlpJZtWbNJiK1U8X+hQZuBDE4+BeiwkceskIfcyU8w7T3iLEjteEcKYYwR7TXSrBD34
-         hjWA==
-X-Gm-Message-State: APjAAAUa/JM2JkZNE/nimvipfWYLG+SWlJwHE9eGooIxW4IdmnbEIHfs
-        Quqh6ha6AMo7H1aIkYmkccKyz1R1DMAAxPbJ/Kg=
-X-Google-Smtp-Source: APXvYqzGZYdzHVT/2p6rnwPtcBhy8+JdFhrM+z5AfNJSgF/qYn5iG9mbEGZsWcc2vspca5ATINmbfjn4WGtO7qG9mW4=
-X-Received: by 2002:a05:6602:10d:: with SMTP id s13mr12183510iot.244.1570380576506;
- Sun, 06 Oct 2019 09:49:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
- <1562410493-8661-5-git-send-email-s.mesoraca16@gmail.com> <CAG48ez35oJhey5WNzMQR14ko6RPJUJp+nCuAHVUJqX7EPPPokA@mail.gmail.com>
- <CAJHCu1+35GhGJY8jDMPEU8meYhJTVgvzY5sJgVCuLrxCoGgHEg@mail.gmail.com>
-In-Reply-To: <CAJHCu1+35GhGJY8jDMPEU8meYhJTVgvzY5sJgVCuLrxCoGgHEg@mail.gmail.com>
-From:   Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date:   Sun, 6 Oct 2019 17:49:24 +0100
-Message-ID: <CAJHCu1JobL7aj51=4gvaoXPfWH8aNdYXgcBDq90wV4_jN2iUfw@mail.gmail.com>
-Subject: Re: [PATCH v5 04/12] S.A.R.A.: generic DFA for string matching
-To:     Jann Horn <jannh@google.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Brad Spengler <spender@grsecurity.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        PaX Team <pageexec@freemail.hu>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1XpgQPoN+UcClVgrIlyON95HaUMJi3oZGyVlHRQ7/YE=;
+        b=dMOyMKkr3sH6ECi44aZiN/1qq43c6vqYgc/mEojFmECJVtPJVtIDAjZ3bX//iIlGMi
+         Q2zl3lbxF+hTj3f9LTqVqireP9O4Z29Z/vaSwxyxvlKKJEMkRV+yP2auggnvN72LCHjV
+         unynRj82eyqfANOb3MfBIsXR7j/jBWJuHwGk3Y1/271TCLXMy5nH+W8LruZj5G72vpTS
+         Xh0kr8NMBpfC7JKdjNpiIBO2y0jDItu3/AR95JHMel7PkeMugrakwzF5HxjdAZiMYP8A
+         1EQWZbo3ZYkNexBdAja7RCSLJH2T3XJ9ogpgBx9M/XV2tvStYfuClPLT7wjExUA2swYI
+         2Uqw==
+X-Gm-Message-State: APjAAAXXLn0A2p9XLrUPD7NQIpPgKlQ0pbirDCxbam02WWSr2t/virHT
+        UTqTOTpYpjnPUHExdpcSDgKMqA==
+X-Google-Smtp-Source: APXvYqwVrP1ltr11Rwk/RorG9/LvEAH0DFK23AAsbW8dKkGfRlTDdGdcPLHN0IHpS9aXB1RSf96pSw==
+X-Received: by 2002:a17:902:a706:: with SMTP id w6mr27735596plq.138.1570426003313;
+        Sun, 06 Oct 2019 22:26:43 -0700 (PDT)
+Received: from localhost.localdomain ([117.252.65.194])
+        by smtp.gmail.com with ESMTPSA id x9sm15895448pje.27.2019.10.06.22.26.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 06 Oct 2019 22:26:42 -0700 (PDT)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     jarkko.sakkinen@linux.intel.com, dhowells@redhat.com,
+        peterhuewe@gmx.de
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        jsnitsel@redhat.com, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org, Sumit Garg <sumit.garg@linaro.org>
+Subject: [Patch v7 0/4] Create and consolidate trusted keys subsystem
+Date:   Mon,  7 Oct 2019 10:55:31 +0530
+Message-Id: <1570425935-7435-1-git-send-email-sumit.garg@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Salvatore Mesoraca <s.mesoraca16@gmail.com> wrote:
->
-> Jann Horn <jannh@google.com> wrote:
-> >
-> > On Sat, Jul 6, 2019 at 12:55 PM Salvatore Mesoraca
-> > <s.mesoraca16@gmail.com> wrote:
-> > > Creation of a generic Discrete Finite Automata implementation
-> > > for string matching. The transition tables have to be produced
-> > > in user-space.
-> > > This allows us to possibly support advanced string matching
-> > > patterns like regular expressions, but they need to be supported
-> > > by user-space tools.
-> >
-> > AppArmor already has a DFA implementation that takes a DFA machine
-> > from userspace and runs it against file paths; see e.g.
-> > aa_dfa_match(). Did you look into whether you could move their DFA to
-> > some place like lib/ and reuse it instead of adding yet another
-> > generic rule interface to the kernel?
->
-> Yes, using AppArmor DFA cloud be a possibility.
-> Though, I didn't know how AppArmor's maintainers feel about this.
-> I thought that was easier to just implement my own.
-> Anyway I understand that re-using that code would be the optimal solution.
-> I'm adding in CC AppArmor's maintainers, let's see what they think about this.
+This patch-set does restructuring of trusted keys code to create and
+consolidate trusted keys subsystem.
 
-I don't want this to prevent SARA from being up-streamed.
-Do you think that having another DFA here could be acceptable anyway?
-Would it be better if I just drop the DFA an go back to simple string
-matching to speed up things?
+Also, patch #2 replaces tpm1_buf code used in security/keys/trusted.c and
+crypto/asymmertic_keys/asym_tpm.c files to use the common tpm_buf code.
 
-Thank you,
+Changes in v7:
+1. Rebased to top of tpmdd/master
+2. Patch #4: update tpm2 trusted keys code to use tpm_send() instead of
+   tpm_transmit_cmd() which is an internal function.
 
-Salvatore
+Changes in v6:
+1. Switch TPM asymmetric code also to use common tpm_buf code. These
+   changes required patches #1 and #2 update, so I have dropped review
+   tags from those patches.
+2. Incorporated miscellaneous comments from Jarkko.
+
+Changes in v5:
+1. Drop 5/5 patch as its more relavant along with TEE patch-set.
+2. Add Reviewed-by tag for patch #2.
+3. Fix build failure when "CONFIG_HEADER_TEST" and
+   "CONFIG_KERNEL_HEADER_TEST" config options are enabled.
+4. Misc changes to rename files.
+
+Changes in v4:
+1. Separate patch for export of tpm_buf code to include/linux/tpm.h
+2. Change TPM1.x trusted keys code to use common tpm_buf
+3. Keep module name as trusted.ko only
+
+Changes in v3:
+
+Move TPM2 trusted keys code to trusted keys subsystem.
+
+Changes in v2:
+
+Split trusted keys abstraction patch for ease of review.
+
+Sumit Garg (4):
+  tpm: Move tpm_buf code to include/linux/
+  KEYS: Use common tpm_buf for trusted and asymmetric keys
+  KEYS: trusted: Create trusted keys subsystem
+  KEYS: trusted: Move TPM2 trusted keys code
+
+ crypto/asymmetric_keys/asym_tpm.c                  | 101 +++----
+ drivers/char/tpm/tpm-interface.c                   |  56 ----
+ drivers/char/tpm/tpm.h                             | 226 ---------------
+ drivers/char/tpm/tpm2-cmd.c                        | 307 --------------------
+ include/Kbuild                                     |   1 -
+ include/keys/{trusted.h => trusted_tpm.h}          |  49 +---
+ include/linux/tpm.h                                | 251 ++++++++++++++--
+ security/keys/Makefile                             |   2 +-
+ security/keys/trusted-keys/Makefile                |   8 +
+ .../{trusted.c => trusted-keys/trusted_tpm1.c}     |  96 +++----
+ security/keys/trusted-keys/trusted_tpm2.c          | 314 +++++++++++++++++++++
+ 11 files changed, 652 insertions(+), 759 deletions(-)
+ rename include/keys/{trusted.h => trusted_tpm.h} (77%)
+ create mode 100644 security/keys/trusted-keys/Makefile
+ rename security/keys/{trusted.c => trusted-keys/trusted_tpm1.c} (94%)
+ create mode 100644 security/keys/trusted-keys/trusted_tpm2.c
+
+-- 
+2.7.4
+
