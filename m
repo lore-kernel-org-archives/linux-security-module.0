@@ -2,114 +2,115 @@ Return-Path: <SRS0=9mRN=YA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B29ECE58C
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Oct 2019 12:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD98ECE58C
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Oct 2019 16:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF81921655
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Oct 2019 12:40:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AF3E205C9
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Oct 2019 16:09:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dDiR8orV"
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="WclQk7Cq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbfJGMkl (ORCPT
+        id S1728352AbfJGQJ1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Oct 2019 08:40:41 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45511 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbfJGMkl (ORCPT
+        Mon, 7 Oct 2019 12:09:27 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40900 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727947AbfJGQJ1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:40:41 -0400
-Received: by mail-oi1-f193.google.com with SMTP id o205so11455103oib.12
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Oct 2019 05:40:40 -0700 (PDT)
+        Mon, 7 Oct 2019 12:09:27 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x127so8944276pfb.7
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Oct 2019 09:09:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4omqkgEsOa3d7dDrSHEj0fGIcb4u6Z71IZA7jxrxpXA=;
-        b=dDiR8orVa3DeLfGPRt48FE0G85MRTPusWnInVoCHTm00UIfVXwiV/+Te1Locr2IaNc
-         MzWbl8tv0imbIGqQtxu0ALEcZC1N9Or2EThj5AmzPSVpmoDMVs1i8SsmJ9wVcwlzZkYN
-         qBxVgOHEYzZGQe/JFirWQ3b6bW9Kri0w3T2G2dSxfyxekUK0in8Zjncbv0YSi1etbce0
-         JUNEKfAP/FqN5fdqbNVuyaE9cVFfymuJwKGB1Puf/w4zhnazPVVK+ecB9rVjdHkGy5Kq
-         ofuDjgblAoF8uO+Q0NR67UqHDMKQh/+YhcweREO6rBJatoR9tulV3qfPcv/ObTO73w60
-         Slmw==
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aeEaJtarLqJ/0FUJVYNbwn+6HPdzfTKq5CySN2cpkL8=;
+        b=WclQk7CqmZhdOvOLCv7bcbzhzQmzjahDqMBGbnnQMbfR+9Qr5Xtu2s4Pq3udBWYK3e
+         GoWCLwm019+p9dKJnQT6RlhXwMB+3RrjdnZn6tx2kl/ylqM4mc/PyUyNj+lU7/yQ9NZJ
+         KxYS/aSvd4bWsbKruGsMqIUZefM9aluM+5oFIv3S1DJ10bNO52A06lGf57EBsnVJKZ0w
+         XMcJ9xAC8U2/pLfmvcFKcJzaUjo3yIi/b5PT2TuOq3N4yoK93MDj3/3JFcpF/FkTgRJz
+         KovVEYC9Ir32aKghqE1WmmCNMId/lP6/3CiNDL0nw91hNfed+TIH1o2+/PCmnwpeNlCh
+         ZRpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4omqkgEsOa3d7dDrSHEj0fGIcb4u6Z71IZA7jxrxpXA=;
-        b=nXOUq/RFElOLtwOdyaoq3lj+9/0JbZFdmreFfkCqDU4/Chx5oq7xj0YdFwwykg9NWx
-         qRAhGePC0KqMYxx8CQtnIHutXeoW3d+SaUnf70E9jMXU1xEgejIaCJHIX7dAokPEtHS1
-         JBJshWzGfLQInUoDGZBtuMlL9WIg/o/3zAc8Jo6Wjw2g8h/SNii/WCVrkHvndi2/8rpK
-         DykBJ59QLBpJoeDPRXRC1l/mZu/QAKmm90n+P9z8h3veY/79Trgsg9wEmnBReVQnm1Js
-         WFdKAQ6zz8rkEYs4Cs+pr2iBbza00K2ACxCZvt/97zxjvvmxCeESBYFUlDG5WaTHyY59
-         1mWQ==
-X-Gm-Message-State: APjAAAXA211D0pX+sBgPdCK++sGSWkdcDXGhB0bvrqIw7qz+ZNzM9SCh
-        58yjcLjMolRlSaxk3IMwt+h8molNWfUo+Xw9rmUcwg==
-X-Google-Smtp-Source: APXvYqwhR+z+UIZ4jgopakgOCjtQfQIV/2FB/mG9OzRVEd9xbqmcvQS251+v4BMhDWqCxWTMsQGJ/FkT4gtdl54+U4k=
-X-Received: by 2002:aca:ed52:: with SMTP id l79mr17312662oih.47.1570452039482;
- Mon, 07 Oct 2019 05:40:39 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aeEaJtarLqJ/0FUJVYNbwn+6HPdzfTKq5CySN2cpkL8=;
+        b=dk1f+1GEfYRXRgzGgIRiH3/fSEdgh8WMvUDMErVOv5cyNj8pm/tDfgdoLw2pv996z9
+         ge4gl4GJ2iKGxfcKmgC9V9PitOkNlq7rb5+L9e+AosdXE+vXMFjbmNLsos3T61y/i4GU
+         0Chr+nAaXKw3e89/lvOF6qxnVbYr0BhHs/u6wGINlEC6alxc5vLcSwvza3PDlr089Zlt
+         +smiFIlB1eC2P573CkVP8p39C5aCnGidIlsh5rbVaQRfSh2XXMsihG4wxaAomX9h9N4d
+         /xw0zouUiiltgi5M2t5sosin02nrxa/qCxZ2p451KlEIbL1kM6KKMA5ldJk7WauTjHF6
+         /dKQ==
+X-Gm-Message-State: APjAAAVFXOwq9ejz/2fql6uhkKLhAZeExyXfAv6+EibVjYqVQvtpBLBt
+        LF1FeeTX5RmaBPcpfkJS8Hnq0w==
+X-Google-Smtp-Source: APXvYqxOwvzzrjEtteWgmzgIWO6ke9wfqYA06v+6RaJ5Zxl0ufcPdavUTQcVgAmJgyYhl4ADnqIDlA==
+X-Received: by 2002:a17:90a:e008:: with SMTP id u8mr81782pjy.46.1570464566766;
+        Mon, 07 Oct 2019 09:09:26 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.gmail.com with ESMTPSA id v13sm17660512pgo.79.2019.10.07.09.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2019 09:09:26 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
+        linux-security-module@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org
+Subject: [PATCH] ovl: filter of trusted xattr results in audit
+Date:   Mon,  7 Oct 2019 09:09:16 -0700
+Message-Id: <20191007160918.29504-1-salyzyn@android.com>
+X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 MIME-Version: 1.0
-References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
- <1562410493-8661-5-git-send-email-s.mesoraca16@gmail.com> <CAG48ez35oJhey5WNzMQR14ko6RPJUJp+nCuAHVUJqX7EPPPokA@mail.gmail.com>
- <CAJHCu1+35GhGJY8jDMPEU8meYhJTVgvzY5sJgVCuLrxCoGgHEg@mail.gmail.com> <CAJHCu1JobL7aj51=4gvaoXPfWH8aNdYXgcBDq90wV4_jN2iUfw@mail.gmail.com>
-In-Reply-To: <CAJHCu1JobL7aj51=4gvaoXPfWH8aNdYXgcBDq90wV4_jN2iUfw@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 7 Oct 2019 14:40:13 +0200
-Message-ID: <CAG48ez3v4dpCGBUc16FQDbGEAXtnDDvTq2GQpVax0rLgHEM3_g@mail.gmail.com>
-Subject: Re: [PATCH v5 04/12] S.A.R.A.: generic DFA for string matching
-To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Brad Spengler <spender@grsecurity.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        PaX Team <pageexec@freemail.hu>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Oct 6, 2019 at 6:49 PM Salvatore Mesoraca
-<s.mesoraca16@gmail.com> wrote:
-> Salvatore Mesoraca <s.mesoraca16@gmail.com> wrote:
-> > Jann Horn <jannh@google.com> wrote:
-> > > On Sat, Jul 6, 2019 at 12:55 PM Salvatore Mesoraca
-> > > <s.mesoraca16@gmail.com> wrote:
-> > > > Creation of a generic Discrete Finite Automata implementation
-> > > > for string matching. The transition tables have to be produced
-> > > > in user-space.
-> > > > This allows us to possibly support advanced string matching
-> > > > patterns like regular expressions, but they need to be supported
-> > > > by user-space tools.
-> > >
-> > > AppArmor already has a DFA implementation that takes a DFA machine
-> > > from userspace and runs it against file paths; see e.g.
-> > > aa_dfa_match(). Did you look into whether you could move their DFA to
-> > > some place like lib/ and reuse it instead of adding yet another
-> > > generic rule interface to the kernel?
-> >
-> > Yes, using AppArmor DFA cloud be a possibility.
-> > Though, I didn't know how AppArmor's maintainers feel about this.
-> > I thought that was easier to just implement my own.
-> > Anyway I understand that re-using that code would be the optimal solution.
-> > I'm adding in CC AppArmor's maintainers, let's see what they think about this.
->
-> I don't want this to prevent SARA from being up-streamed.
-> Do you think that having another DFA here could be acceptable anyway?
-> Would it be better if I just drop the DFA an go back to simple string
-> matching to speed up things?
+When filtering xattr list for reading, presence of trusted xattr
+results in a security audit log.  However, if there is other content
+no errno will be set, and if there isn't, the errno will be -ENODATA
+and not -EPERM as is usually associated with a lack of capability.
+The check does not block the request to list the xattrs present.
 
-While I think that it would be nicer not to have yet another
-implementation of the same thing, I don't feel strongly about it.
+Switch to has_capability_noaudit to reflect a more appropriate check.
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org # v3.18
+Fixes: upstream a082c6f680da ("ovl: filter trusted xattr for non-admin")
+Fixes: 3.18 4bcc9b4b3a0a ("ovl: filter trusted xattr for non-admin")
+---
+Replaced ns_capable_noaudit with 3.18.y tree specific
+has_capability_noaudit present in original submission to kernel.org
+commit 5c2e9f346b815841f9bed6029ebcb06415caf640
+("ovl: filter of trusted xattr results in audit")
+
+ fs/overlayfs/inode.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index a01ec1836a72..1175efa5e956 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -265,7 +265,8 @@ static bool ovl_can_list(const char *s)
+ 		return true;
+ 
+ 	/* Never list trusted.overlay, list other trusted for superuser only */
+-	return !ovl_is_private_xattr(s) && capable(CAP_SYS_ADMIN);
++	return !ovl_is_private_xattr(s) &&
++	       has_capability_noaudit(current, CAP_SYS_ADMIN);
+ }
+ 
+ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
+-- 
+2.23.0.581.g78d2f28ef7-goog
+
