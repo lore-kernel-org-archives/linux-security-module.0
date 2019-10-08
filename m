@@ -2,166 +2,214 @@ Return-Path: <SRS0=PiJA=YB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF62AC10F14
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Oct 2019 10:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF72C4360C
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Oct 2019 12:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A39D221721
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Oct 2019 10:55:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8C45206C2
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Oct 2019 12:04:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EMiC6VlZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730106AbfJHKzS (ORCPT
+        id S1730156AbfJHMEH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Oct 2019 06:55:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44302 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729790AbfJHKzR (ORCPT
+        Tue, 8 Oct 2019 08:04:07 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:45046 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730729AbfJHMEH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Oct 2019 06:55:17 -0400
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E92B34DB1F
-        for <linux-security-module@vger.kernel.org>; Tue,  8 Oct 2019 10:55:16 +0000 (UTC)
-Received: by mail-wr1-f72.google.com with SMTP id c17so8666616wro.18
-        for <linux-security-module@vger.kernel.org>; Tue, 08 Oct 2019 03:55:16 -0700 (PDT)
+        Tue, 8 Oct 2019 08:04:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1570536245;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FbJLDy1ZPYHNz2LrI3z0iA4CSqhVHSIrwsz5DE58ic0=;
+        b=EMiC6VlZNA9UuItgoZlXiolubZab4wexcT/tWhO/W2ARbE1i7wvpSNod+6WcCbyyyk2RRX
+        CcVSS8m/Y7TimqOYpYWAzLW6Fn14qnSJGJ3dymuYGSP61Ctim4HBCs0tC/84xz074qzADR
+        JcEOYQQHD/P+CaGqapdfUBTPejWgdg0=
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
+ [209.85.167.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-302-e7ubXjrIM5KPA9CQ-X9HQw-1; Tue, 08 Oct 2019 08:04:03 -0400
+Received: by mail-oi1-f197.google.com with SMTP id i20so10210253oib.5
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Oct 2019 05:04:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Jr4VyvH8+nrlZUaxZqpcfLSaXw2hE019wUytfSWb3rI=;
-        b=DIFKAGgCyys2l2luDYRlVsPzH8ZaYHJEwGeZWxmIVvO21U0IgF0vhQpDp0zSXDZ/F5
-         myMjI+DS+r465EXMqnxN9pGvzzOoEHL0h7DPzo0qksArH0tlW4XjTJKtCb8I/N4/27OA
-         /jKjSYDlwMFiA3zwKIsFLjouIT3S2zQYtyfZ8e912lv/bP5EDUUkcZsYsX0mSVgR7NDo
-         tQYNfdZxhMJ6mbj+BZ9iDdHR/y7Bfhe9OdzuuJ/VBxxtnx/fbs4kMsqJSQZZp/elCl/4
-         j6zEX7uBBbue3lHcEtBrircAG8k9uhw/N/KL6wUZ8rUUNTgFxesPGmSRe5B+GD4rfPQZ
-         ZVQQ==
-X-Gm-Message-State: APjAAAXaXkLEuQf+yDN9DIS3TQKljx2l1c62UH/oKcifuoDoCKfaJcBQ
-        su/0s1dLGIPsT/J8+Q0kVqokyhgH6D1UyBZU++oWN7jJ+XKDSI8SwtK8pDSxM57isFRIjZJxpaP
-        2mWAN3hJMdIb9tlWiUiulo4DJSVQUi3BtOvAK
-X-Received: by 2002:a05:600c:2107:: with SMTP id u7mr3475179wml.86.1570532115643;
-        Tue, 08 Oct 2019 03:55:15 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyGrNSa6gwRjEcpPPQ0ut0maTS6ToIdDTt4FYqN4se+LW3SVXdX7p8JCpIZiHgUMmIRnNeuGQ==
-X-Received: by 2002:a05:600c:2107:: with SMTP id u7mr3475154wml.86.1570532115396;
-        Tue, 08 Oct 2019 03:55:15 -0700 (PDT)
-Received: from minerva.home ([90.168.169.92])
-        by smtp.gmail.com with ESMTPSA id c132sm3877095wme.27.2019.10.08.03.55.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 03:55:14 -0700 (PDT)
-From:   Javier Martinez Canillas <javierm@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ivan Hu <ivan.hu@canonical.com>, Laszlo Ersek <lersek@redhat.com>,
-        linux-efi@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Josh Boyer <jwboyer@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Micah Morton <mortonm@chromium.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        James Morris <jmorris@namei.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: [PATCH v2] efi/efi_test: lock down /dev/efi_test and require CAP_SYS_ADMIN
-Date:   Tue,  8 Oct 2019 12:55:10 +0200
-Message-Id: <20191008105510.6975-1-javierm@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hZ3wKA1psc8IuEMyxTFIHivEE24aloWcVuBR0kLF7VU=;
+        b=d21QJNnVkSmz79i+NaO5hUDkxgMBwoforDioEVeEPavcvaPpsWGKvRSBNBxt4M5sd+
+         jZLff82foFUWC7cTEj8pU9BMLfyVmOxGhczaAQL23qfcswEAFICj7Sj785pCVxpHx/Fk
+         9KpshQtQYZ1r0NdHZcKImlttEpL+jv0Ap2YpCDBrvZbPRJ4OeO4c5VGLVF+Z5Ol1jV/1
+         5wYno7W/izHPJz+o5i2K3T1ux78EcRd1jGCiQKi7+gA4nIdglpxG4qBvFIJ9b4ljNFGX
+         DydPgsylSycZZvIVXQQPdhLYtIdT8fey0h2FQE07W6woBtnV4l1+JAN0a8QqGq8sdrWM
+         /slQ==
+X-Gm-Message-State: APjAAAU7rGwM3He67a0kRZwvi7vMMLsv+IjZ2hjbdRBtm8vsYyfjur6H
+        P9cyhq4Xn9EnS7HLI1mS9wLzRDeHnc/NouKX5b5WWUK6YOhauiuOVZQuSe69OToAyfkTJ12kUVm
+        z5ggGdB/cN33nvQcUloIscJORTNfryBKYrxuNKhjaKHpQVuebEcDS
+X-Received: by 2002:a9d:19e2:: with SMTP id k89mr25208998otk.197.1570536242864;
+        Tue, 08 Oct 2019 05:04:02 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzppXdnja8FupoG4zqGbhP+Wg9Igxeu6F+ydYIOK40i2kalVoBoZO3n6CAXDyz/uMWKz+QmQsP1Jr4VTk0HAKI=
+X-Received: by 2002:a9d:19e2:: with SMTP id k89mr25208970otk.197.1570536242483;
+ Tue, 08 Oct 2019 05:04:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <d8dd0065232e5c3629bf55e54e3a998110ec1aef.1570532963.git.lucien.xin@gmail.com>
+In-Reply-To: <d8dd0065232e5c3629bf55e54e3a998110ec1aef.1570532963.git.lucien.xin@gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 8 Oct 2019 14:03:51 +0200
+Message-ID: <CAFqZXNu9dFc4uros8CTe7SxJPABzppAir9bpGnVMHge_MqMueQ@mail.gmail.com>
+Subject: Re: [PATCH net] sctp: add chunks to sk_backlog when the newsk
+ sk_socket is not set
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     network dev <netdev@vger.kernel.org>, linux-sctp@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+X-MC-Unique: e7ubXjrIM5KPA9CQ-X9HQw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The driver exposes EFI runtime services to user-space through an IOCTL
-interface, calling the EFI services function pointers directly without
-using the efivar API.
+On Tue, Oct 8, 2019 at 1:09 PM Xin Long <lucien.xin@gmail.com> wrote:
+> This patch is to fix a NULL-ptr deref in selinux_socket_connect_helper:
+>
+>   [...] kasan: GPF could be caused by NULL-ptr deref or user memory acces=
+s
+>   [...] RIP: 0010:selinux_socket_connect_helper+0x94/0x460
+>   [...] Call Trace:
+>   [...]  selinux_sctp_bind_connect+0x16a/0x1d0
+>   [...]  security_sctp_bind_connect+0x58/0x90
+>   [...]  sctp_process_asconf+0xa52/0xfd0 [sctp]
+>   [...]  sctp_sf_do_asconf+0x785/0x980 [sctp]
+>   [...]  sctp_do_sm+0x175/0x5a0 [sctp]
+>   [...]  sctp_assoc_bh_rcv+0x285/0x5b0 [sctp]
+>   [...]  sctp_backlog_rcv+0x482/0x910 [sctp]
+>   [...]  __release_sock+0x11e/0x310
+>   [...]  release_sock+0x4f/0x180
+>   [...]  sctp_accept+0x3f9/0x5a0 [sctp]
+>   [...]  inet_accept+0xe7/0x720
+>
+> It was caused by that the 'newsk' sk_socket was not set before going to
+> security sctp hook when processing asconf chunk with SCTP_PARAM_ADD_IP
+> or SCTP_PARAM_SET_PRIMARY:
+>
+>   inet_accept()->
+>     sctp_accept():
+>       lock_sock():
+>           lock listening 'sk'
+>                                           do_softirq():
+>                                             sctp_rcv():  <-- [1]
+>                                                 asconf chunk arrives and
+>                                                 enqueued in 'sk' backlog
+>       sctp_sock_migrate():
+>           set asoc's sk to 'newsk'
+>       release_sock():
+>           sctp_backlog_rcv():
+>             lock 'newsk'
+>             sctp_process_asconf()  <-- [2]
+>             unlock 'newsk'
+>     sock_graft():
+>         set sk_socket  <-- [3]
+>
+> As it shows, at [1] the asconf chunk would be put into the listening 'sk'
+> backlog, as accept() was holding its sock lock. Then at [2] asconf would
+> get processed with 'newsk' as asoc's sk had been set to 'newsk'. However,
+> 'newsk' sk_socket is not set until [3], while selinux_sctp_bind_connect()
+> would deref it, then kernel crashed.
+>
+> Here to fix it by adding the chunk to sk_backlog until newsk sk_socket is
+> set when .accept() is done.
+>
+> Note that sk->sk_socket can be NULL when the sock is closed, so SOCK_DEAD
+> flag is also needed to check in sctp_newsk_ready().
+>
+> Thanks to Ondrej for reviewing the code.
 
-Disallow access to the /dev/efi_test character device when the kernel is
-locked down to prevent arbitrary user-space to call EFI runtime services.
+And thank you, Long, for tracking it down and finding a fix :)
 
-Also require CAP_SYS_ADMIN to open the chardev to prevent unprivileged
-users to call the EFI runtime services, instead of just relying on the
-chardev file mode bits for this.
+Cc'ing also SELinux and LSM mailing lists as a heads-up.
 
-The main user of this driver is the fwts [0] tool that already checks if
-the effective user ID is 0 and fails otherwise. So this change shouldn't
-cause any regression to this tool.
+>
+> Fixes: d452930fd3b9 ("selinux: Add SCTP support")
+> Reported-by: Ying Xu <yinxu@redhat.com>
+> Suggested-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+> Signed-off-by: Xin Long <lucien.xin@gmail.com>
+> ---
+>  include/net/sctp/sctp.h |  5 +++++
+>  net/sctp/input.c        | 12 +++++++++---
+>  2 files changed, 14 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/net/sctp/sctp.h b/include/net/sctp/sctp.h
+> index 5d60f13..3ab5c6b 100644
+> --- a/include/net/sctp/sctp.h
+> +++ b/include/net/sctp/sctp.h
+> @@ -610,4 +610,9 @@ static inline __u32 sctp_min_frag_point(struct sctp_s=
+ock *sp, __u16 datasize)
+>         return sctp_mtu_payload(sp, SCTP_DEFAULT_MINSEGMENT, datasize);
+>  }
+>
+> +static inline bool sctp_newsk_ready(const struct sock *sk)
+> +{
+> +       return sock_flag(sk, SOCK_DEAD) || sk->sk_socket;
+> +}
+> +
+>  #endif /* __net_sctp_h__ */
+> diff --git a/net/sctp/input.c b/net/sctp/input.c
+> index 5a070fb..f277137 100644
+> --- a/net/sctp/input.c
+> +++ b/net/sctp/input.c
+> @@ -243,7 +243,7 @@ int sctp_rcv(struct sk_buff *skb)
+>                 bh_lock_sock(sk);
+>         }
+>
+> -       if (sock_owned_by_user(sk)) {
+> +       if (sock_owned_by_user(sk) || !sctp_newsk_ready(sk)) {
+>                 if (sctp_add_backlog(sk, skb)) {
+>                         bh_unlock_sock(sk);
+>                         sctp_chunk_free(chunk);
+> @@ -321,7 +321,7 @@ int sctp_backlog_rcv(struct sock *sk, struct sk_buff =
+*skb)
+>                 local_bh_disable();
+>                 bh_lock_sock(sk);
+>
+> -               if (sock_owned_by_user(sk)) {
+> +               if (sock_owned_by_user(sk) || !sctp_newsk_ready(sk)) {
+>                         if (sk_add_backlog(sk, skb, sk->sk_rcvbuf))
+>                                 sctp_chunk_free(chunk);
+>                         else
+> @@ -336,7 +336,13 @@ int sctp_backlog_rcv(struct sock *sk, struct sk_buff=
+ *skb)
+>                 if (backloged)
+>                         return 0;
+>         } else {
+> -               sctp_inq_push(inqueue, chunk);
+> +               if (!sctp_newsk_ready(sk)) {
+> +                       if (!sk_add_backlog(sk, skb, sk->sk_rcvbuf))
+> +                               return 0;
+> +                       sctp_chunk_free(chunk);
+> +               } else {
+> +                       sctp_inq_push(inqueue, chunk);
+> +               }
+>         }
+>
+>  done:
+> --
+> 2.1.0
+>
 
-[0]: https://wiki.ubuntu.com/FirmwareTestSuite/Reference/uefivarinfo
-
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Acked-by: Laszlo Ersek <lersek@redhat.com>
-
----
-
-Changes in v2:
-- Also disable /dev/efi_test access when the kernel is locked down as
-  suggested by Matthew Garrett.
-- Add Acked-by tag from Laszlo Ersek.
-
- drivers/firmware/efi/test/efi_test.c | 8 ++++++++
- include/linux/security.h             | 1 +
- security/lockdown/lockdown.c         | 1 +
- 3 files changed, 10 insertions(+)
-
-diff --git a/drivers/firmware/efi/test/efi_test.c b/drivers/firmware/efi/test/efi_test.c
-index 877745c3aaf..7baf48c01e7 100644
---- a/drivers/firmware/efi/test/efi_test.c
-+++ b/drivers/firmware/efi/test/efi_test.c
-@@ -14,6 +14,7 @@
- #include <linux/init.h>
- #include <linux/proc_fs.h>
- #include <linux/efi.h>
-+#include <linux/security.h>
- #include <linux/slab.h>
- #include <linux/uaccess.h>
- 
-@@ -717,6 +718,13 @@ static long efi_test_ioctl(struct file *file, unsigned int cmd,
- 
- static int efi_test_open(struct inode *inode, struct file *file)
- {
-+	int ret = security_locked_down(LOCKDOWN_EFI_TEST);
-+
-+	if (ret)
-+		return ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EACCES;
- 	/*
- 	 * nothing special to do here
- 	 * We do accept multiple open files at the same time as we
-diff --git a/include/linux/security.h b/include/linux/security.h
-index a8d59d612d2..9df7547afc0 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -105,6 +105,7 @@ enum lockdown_reason {
- 	LOCKDOWN_NONE,
- 	LOCKDOWN_MODULE_SIGNATURE,
- 	LOCKDOWN_DEV_MEM,
-+	LOCKDOWN_EFI_TEST,
- 	LOCKDOWN_KEXEC,
- 	LOCKDOWN_HIBERNATION,
- 	LOCKDOWN_PCI_ACCESS,
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 8a10b43daf7..40b790536de 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -20,6 +20,7 @@ static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_NONE] = "none",
- 	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
- 	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
-+	[LOCKDOWN_EFI_TEST] = "/dev/efi_test access",
- 	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
- 	[LOCKDOWN_HIBERNATION] = "hibernation",
- 	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
--- 
-2.21.0
+--
+Ondrej Mosnacek <omosnace at redhat dot com>
+Software Engineer, Security Technologies
+Red Hat, Inc.
 
