@@ -1,100 +1,167 @@
-Return-Path: <SRS0=9mRN=YA=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=PiJA=YB=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E34EECE58C
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Oct 2019 22:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF62AC10F14
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Oct 2019 10:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1904C20867
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Oct 2019 22:52:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="V7oSDnKy"
+	by mail.kernel.org (Postfix) with ESMTP id A39D221721
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Oct 2019 10:55:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbfJGWwK (ORCPT
+        id S1730106AbfJHKzS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Oct 2019 18:52:10 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43468 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729252AbfJGWwK (ORCPT
+        Tue, 8 Oct 2019 06:55:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44302 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729790AbfJHKzR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Oct 2019 18:52:10 -0400
-Received: by mail-lj1-f195.google.com with SMTP id n14so15407668ljj.10
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Oct 2019 15:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=FVwCMABg99tdlNx6emr/YdtOOEDE07gvzo7XLhdzGn4=;
-        b=V7oSDnKyrOIIH1lEp/sZO38TFu/EZpj9S6PVOsbW+YUVG6TXoA6nnSvv+1IowrVkrO
-         oEpxaTepVnV/Au8RTXdfGWonG11LjAsM9pra//9xN26bn3nOJy5iESRsCc2/Tq7v0TVl
-         bq1F9kB1oeio/YZeioER9QWM/T3OgqgX47vKR8MQNZssgj2rCstFoGzlT0j1/IZ3KECj
-         x3K2tH7ZwXNzlqc/CZnKEf4/D+nOnuzF+3y6Ke8lYq0+b5W2UWzdVpIBJyGuhpKIpRPZ
-         I6bds1F3YH+e/LdURJlBDDnqNMn3pH+RyREcWw5qG880D57NHkqtOVqMwu6Du66jQjth
-         BQHA==
+        Tue, 8 Oct 2019 06:55:17 -0400
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E92B34DB1F
+        for <linux-security-module@vger.kernel.org>; Tue,  8 Oct 2019 10:55:16 +0000 (UTC)
+Received: by mail-wr1-f72.google.com with SMTP id c17so8666616wro.18
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Oct 2019 03:55:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=FVwCMABg99tdlNx6emr/YdtOOEDE07gvzo7XLhdzGn4=;
-        b=hm497GXTp1x/o4pcVKMXx0IWP+r05imHvjoQmo6PxkwOs7rCBkDQ2bByGh+nfMMu/o
-         FY+bkQwzPTf3dEXKF5i9iL+mNYpwCa/er6uKGs+qj/gJy4bILXbPxZV4ePAEI9A+9u0m
-         UVKCwgMQKFOAU4oL702CQ1QRS+RxOxHrr99u85uF3uTSIlDEcZceiBnWuqrc/VPawb1H
-         xZN80jk4mo7mZsExdTXpRx2f1nDzbI6EqIrx+DGqBH2LSMKhEDpnHLBob5TqFsbllAk1
-         6PgVmtXCD0icZ3L/f4K8wVMn27XAaImQcOPUKOWJ2m1JO1rRgA9SARngt/xDg3EDuN+p
-         IrTw==
-X-Gm-Message-State: APjAAAUq723/zNgKntzB4oBPf/LokXAsz0cf3o1P63Jc7xZ2e5avyNfm
-        sS+Wht2+MQsDeFXr1IIBE76C81/Yi81oXIjcaCTZ
-X-Google-Smtp-Source: APXvYqxg+H1tip5gK9A7b7kI8GMbzy7+jVDELfMGMJgxAbv8kx7evCyysHRIFhzMqjo61LplPKBpIS/ZMq1ij+j30Yk=
-X-Received: by 2002:a2e:5418:: with SMTP id i24mr18422510ljb.126.1570488726917;
- Mon, 07 Oct 2019 15:52:06 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Jr4VyvH8+nrlZUaxZqpcfLSaXw2hE019wUytfSWb3rI=;
+        b=DIFKAGgCyys2l2luDYRlVsPzH8ZaYHJEwGeZWxmIVvO21U0IgF0vhQpDp0zSXDZ/F5
+         myMjI+DS+r465EXMqnxN9pGvzzOoEHL0h7DPzo0qksArH0tlW4XjTJKtCb8I/N4/27OA
+         /jKjSYDlwMFiA3zwKIsFLjouIT3S2zQYtyfZ8e912lv/bP5EDUUkcZsYsX0mSVgR7NDo
+         tQYNfdZxhMJ6mbj+BZ9iDdHR/y7Bfhe9OdzuuJ/VBxxtnx/fbs4kMsqJSQZZp/elCl/4
+         j6zEX7uBBbue3lHcEtBrircAG8k9uhw/N/KL6wUZ8rUUNTgFxesPGmSRe5B+GD4rfPQZ
+         ZVQQ==
+X-Gm-Message-State: APjAAAXaXkLEuQf+yDN9DIS3TQKljx2l1c62UH/oKcifuoDoCKfaJcBQ
+        su/0s1dLGIPsT/J8+Q0kVqokyhgH6D1UyBZU++oWN7jJ+XKDSI8SwtK8pDSxM57isFRIjZJxpaP
+        2mWAN3hJMdIb9tlWiUiulo4DJSVQUi3BtOvAK
+X-Received: by 2002:a05:600c:2107:: with SMTP id u7mr3475179wml.86.1570532115643;
+        Tue, 08 Oct 2019 03:55:15 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyGrNSa6gwRjEcpPPQ0ut0maTS6ToIdDTt4FYqN4se+LW3SVXdX7p8JCpIZiHgUMmIRnNeuGQ==
+X-Received: by 2002:a05:600c:2107:: with SMTP id u7mr3475154wml.86.1570532115396;
+        Tue, 08 Oct 2019 03:55:15 -0700 (PDT)
+Received: from minerva.home ([90.168.169.92])
+        by smtp.gmail.com with ESMTPSA id c132sm3877095wme.27.2019.10.08.03.55.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2019 03:55:14 -0700 (PDT)
+From:   Javier Martinez Canillas <javierm@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ivan Hu <ivan.hu@canonical.com>, Laszlo Ersek <lersek@redhat.com>,
+        linux-efi@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Josh Boyer <jwboyer@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        David Howells <dhowells@redhat.com>,
+        linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Micah Morton <mortonm@chromium.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        James Morris <jmorris@namei.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: [PATCH v2] efi/efi_test: lock down /dev/efi_test and require CAP_SYS_ADMIN
+Date:   Tue,  8 Oct 2019 12:55:10 +0200
+Message-Id: <20191008105510.6975-1-javierm@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 7 Oct 2019 18:51:56 -0400
-Message-ID: <CAHC9VhR6KFR+1F1eWyYEHnRfJyYhUP7RYf6=FsZOX=_m24btbg@mail.gmail.com>
-Subject: [GIT PULL] SELinux fixes for v5.4 (#1)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+The driver exposes EFI runtime services to user-space through an IOCTL
+interface, calling the EFI services function pointers directly without
+using the efivar API.
 
-One patch for SELinux to ensure we don't copy bad memory up into
-userspace, please merge for the next v5.4-rc.
+Disallow access to the /dev/efi_test character device when the kernel is
+locked down to prevent arbitrary user-space to call EFI runtime services.
 
-Thanks,
--Paul
---
-The following changes since commit 15322a0d90b6fd62ae8f22e5b87f735c3fdfeff7:
+Also require CAP_SYS_ADMIN to open the chardev to prevent unprivileged
+users to call the EFI runtime services, instead of just relying on the
+chardev file mode bits for this.
 
- lsm: remove current_security() (2019-09-04 18:53:39 -0400)
+The main user of this driver is the fwts [0] tool that already checks if
+the effective user ID is 0 and fails otherwise. So this change shouldn't
+cause any regression to this tool.
 
-are available in the Git repository at:
+[0]: https://wiki.ubuntu.com/FirmwareTestSuite/Reference/uefivarinfo
 
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20191007
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Acked-by: Laszlo Ersek <lersek@redhat.com>
 
-for you to fetch changes up to 2a5243937c700ffe6a28e6557a4562a9ab0a17a4:
+---
 
- selinux: fix context string corruption in convert_context()
-   (2019-10-03 14:13:36 -0400)
+Changes in v2:
+- Also disable /dev/efi_test access when the kernel is locked down as
+  suggested by Matthew Garrett.
+- Add Acked-by tag from Laszlo Ersek.
 
-----------------------------------------------------------------
-selinux/stable-5.4 PR 20191007
+ drivers/firmware/efi/test/efi_test.c | 8 ++++++++
+ include/linux/security.h             | 1 +
+ security/lockdown/lockdown.c         | 1 +
+ 3 files changed, 10 insertions(+)
 
-----------------------------------------------------------------
-Ondrej Mosnacek (1):
-     selinux: fix context string corruption in convert_context()
-
-security/selinux/ss/services.c | 9 ++++++++-
-1 file changed, 8 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/firmware/efi/test/efi_test.c b/drivers/firmware/efi/test/efi_test.c
+index 877745c3aaf..7baf48c01e7 100644
+--- a/drivers/firmware/efi/test/efi_test.c
++++ b/drivers/firmware/efi/test/efi_test.c
+@@ -14,6 +14,7 @@
+ #include <linux/init.h>
+ #include <linux/proc_fs.h>
+ #include <linux/efi.h>
++#include <linux/security.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+ 
+@@ -717,6 +718,13 @@ static long efi_test_ioctl(struct file *file, unsigned int cmd,
+ 
+ static int efi_test_open(struct inode *inode, struct file *file)
+ {
++	int ret = security_locked_down(LOCKDOWN_EFI_TEST);
++
++	if (ret)
++		return ret;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EACCES;
+ 	/*
+ 	 * nothing special to do here
+ 	 * We do accept multiple open files at the same time as we
+diff --git a/include/linux/security.h b/include/linux/security.h
+index a8d59d612d2..9df7547afc0 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -105,6 +105,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_NONE,
+ 	LOCKDOWN_MODULE_SIGNATURE,
+ 	LOCKDOWN_DEV_MEM,
++	LOCKDOWN_EFI_TEST,
+ 	LOCKDOWN_KEXEC,
+ 	LOCKDOWN_HIBERNATION,
+ 	LOCKDOWN_PCI_ACCESS,
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index 8a10b43daf7..40b790536de 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -20,6 +20,7 @@ static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_NONE] = "none",
+ 	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
+ 	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
++	[LOCKDOWN_EFI_TEST] = "/dev/efi_test access",
+ 	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
+ 	[LOCKDOWN_HIBERNATION] = "hibernation",
+ 	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
 -- 
-paul moore
-www.paul-moore.com
+2.21.0
+
