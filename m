@@ -1,54 +1,61 @@
-Return-Path: <SRS0=X4hF=YC=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=K8Fz=YD=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D08C47404
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Oct 2019 22:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE56C47404
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Oct 2019 00:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12C15218DE
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Oct 2019 22:42:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A55612067B
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Oct 2019 00:40:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KzOz1Koc"
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="CQBl48C9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732443AbfJIWmF (ORCPT
+        id S1732489AbfJJAk1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Oct 2019 18:42:05 -0400
-Received: from sonic314-22.consmr.mail.bf2.yahoo.com ([74.6.132.196]:33386
-        "EHLO sonic314-22.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732326AbfJIWmF (ORCPT
+        Wed, 9 Oct 2019 20:40:27 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42809 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731155AbfJJAk1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Oct 2019 18:42:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1570660923; bh=v2Td2tc3Nuu9Fc2xrrxwO1PuJo7R10+DQaMFtPQaX8c=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=KzOz1Koc+TOuKQ2k/Qa8QagwDUC7rNO7FF6BEvHVMTOdxVEMi7sgUZ2C8DmoNvkJfcU3Ts4nl9tgA/eNObk+0576S0EebfbXitThTng3rFJMrDn37aLZVpDcPvj7uB2W44MzAOZQPbU1a93ZnGi9pJFQ/ORNhzHeG85+hRC1skVZ9xvyQVRWU79BCizl/q7LYxHIPkz/cJdd+O7fcj5L1xg3GbatCt7KWfwtWN98lIixxzhB7wlIi+mqtSEtrVtsylQM1vmFXK+0Of4bxH+3Vjbd5x+FD8KW6MPon4htvWbIXq2lvQXS3mCHfKnW+YubJvioWGDnAUY4u44OWevGSw==
-X-YMail-OSG: cb5l.uMVM1n7IEPuUgCmpaAAts0o.YjV9DpB2qZbNr.Jd4Ffg9LTsfJcGTGzApO
- kCJJb4D15F5fETLAjkqPG3GY6a5.3Kx3yA1lYNeOBVtrt..SYYX5WBxm9T_mkGUNvMx3ZjQvaexT
- KMu8P2ZNPAfYC79bZ6.w19D19jvFyaayR9_lqy6EOjW_CwaZHUa5MR9GBCaIn.s2q4wO6bbtQM4X
- we5iHQvQRjW6sky4uRwZg2Mb19ty5arY2yMwujRFWR0EIYRccFnFTAB9TWeRoOf2xhg0L437Tseh
- 9xjFK53akif_tyXfNmYUXpw33kI5wXJeRgtS2LOnLC.DQuETXk0a3iyIA8Z.kbyom06iCSl.cQ9s
- OwXcllFkOPPrzPSoPr.1R202qL_SltYfDakFDtC7eGJyKW3CiX4WvME07ZsitP1i5CK9kdTpgKES
- rUp_9onzQSHKonoqdwH9MXF3u_MIxPz1G67m4L6Hx6Y22hAYxF2Iit8dz3Weuxxt6N7QCs4JUvCU
- PCdm28kBXNieNH.oL6qvS5zt0uRQ8XYJS_Bu2N3pkN8N3tfPSvucgfX6uuciW8VkAUFpyrzXMeSn
- 9wvTuwmMjZzpSum5olHn0gSh1ZBzKIdrO12a8Cdm4y9EJpgaxn5pbcQZPvZYCYtagUjelXqRkP6J
- 1smds1o1Lv1.ZdoAZbEphjlKBwg_bRWdteJDpOu2HyzgLthDbTCz9d2pIrJQaADfzeOdG8d.8yhr
- OfGGXxyILX6D4SfFQkVsgt5EBLmTX3xtIrfalFWOlelwwq64oWc13.K85AQ2oQs1mq3LC1wevLHy
- pS29JrJpRjsaODC5nhX9ExW1sLrjz45vaHkuy2gvatIUt1dgUIJHFCml0BcteqI6hho_T3t2n41z
- u6ZhRaokAN08hmsH0rj9k0p0BohUJsFRasuAlmeKwmZf9fGg6mk4w1YeJuu4AZo9kai7_ja8xHlR
- 7QVUthIf1IdWHNYIpGO8xrXNvJW1wv.oTTmeUZ4c1_avqa5dVoQDKdMfsVSvP8mg685iT978LAZW
- N68o052Qu4swRG2gszod9_V5JSKvaYBXMZjz23mm0MbdelzF4IGnPU5KmIT7t10zTi6TGSzCjFIN
- Ttk7IXlNAqtJfVrhiiLEzbRQGZ22.hQJs7HpTOLTvSiwmJNJR1cQ4CNXmfX.Pb9x0K5JOmpEc32k
- t4BcsfBeAT7ajbCChIClRmyB2geDkV1m89rWDlPTyxAlMGw64dDD0C4URAvgSjVGJiS_e0jRdRVP
- E7C4HHVOlCyeCpuKZ9SlkYZFBNVLSW1PHDbU1pedL8M1Xig5bbFhRrsN5P_c_w8x6vuffE4OpdO6
- LvgPPJnOKtdg10NbiZctxkjO.6j8nQ5UTdgZ6rmyRuw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.bf2.yahoo.com with HTTP; Wed, 9 Oct 2019 22:42:03 +0000
-Received: by smtp409.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID f2244bd4f33168a3179553ba54d0c5c4;
-          Wed, 09 Oct 2019 22:41:58 +0000 (UTC)
-Subject: Re: [PATCH RFC] perf_event: Add support for LSM and SELinux checks
-To:     James Morris <jmorris@namei.org>
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org,
+        Wed, 9 Oct 2019 20:40:27 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q12so2722080pff.9
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Oct 2019 17:40:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UcPd5Jny5aY5aMsPzhLMHUk3eBTerZnA6THOQx3YHYM=;
+        b=CQBl48C9FQrJE5k703Kev1+BQ/3whfu6HOkubrefsdeM3B2i5ly4Dw9keO2geTEGUV
+         s+Ui79CGMEi8TyPD6oEqp7cslGqZKhXLLTCoggJ/CPYtMcY9bWkjwact3xZFKaXvWZYO
+         u5JLNe8rCmmBk2yB39UHSrBbn2Uo+Ciiic/jw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UcPd5Jny5aY5aMsPzhLMHUk3eBTerZnA6THOQx3YHYM=;
+        b=FJ16OSwJg8X+/cPdI9aiCUubt3rPafXRkcAyKiF2TMXvEiqdU3/Sqf5p1QBFHAv29x
+         vyJa/mV+1/mkhuUraMcE6KsuzizuMTsgw0qzy90aouePKztRY7l0H5SYi9lndmYkn22L
+         fpF1bc9GfVc/XJy8TUfsjBXiIy4jRNgxOdcr2YVORNQDVJ2vKdYfT/TeISZMfSsNSo9+
+         s0AoNtcyJRACVRujxxDxbfNPkEUapVMIoDUpMqGtcoy129laZd2CMbY77hFEwWRmdJPA
+         JnD/bc8bUHlGUsO0BH07+VOAF4QRFtkpVIQKArLkGksV/yWfOosWGtv8YXwNPDKGPkPM
+         C/AQ==
+X-Gm-Message-State: APjAAAUFACDQLbGSyh4kiff5YO+NVd4aMGc79MopOEVKnLlWAekUsNY8
+        lY+RIosGilbfyQKamYp8Fz+JXA==
+X-Google-Smtp-Source: APXvYqwiMuTGGeU2xAhSzgcNonr+8WNtJueMfhMlVoTbDTnimhgmwYn+zScwE00Wpmxe8o7Phci6AA==
+X-Received: by 2002:aa7:93a9:: with SMTP id x9mr6675538pff.81.1570668025033;
+        Wed, 09 Oct 2019 17:40:25 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id 22sm3415597pfo.131.2019.10.09.17.40.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 17:40:24 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 20:40:23 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org,
         primiano@google.com, rsavitski@google.com, jeffv@google.com,
         kernel-team@android.com, Alexei Starovoitov <ast@kernel.org>,
@@ -61,85 +68,49 @@ Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
         Song Liu <songliubraving@fb.com>,
         "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Yonghong Song <yhs@fb.com>, casey@schaufler-ca.com
+        Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH RFC] perf_event: Add support for LSM and SELinux checks
+Message-ID: <20191010004023.GC96813@google.com>
 References: <20191009203657.6070-1-joel@joelfernandes.org>
  <710c5bc0-deca-2649-8351-678e177214e9@schaufler-ca.com>
  <alpine.LRH.2.21.1910100912210.29840@namei.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <2b94802d-12ea-4f2d-bb65-eda3b3542bb2@schaufler-ca.com>
-Date:   Wed, 9 Oct 2019 15:41:56 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ <2b94802d-12ea-4f2d-bb65-eda3b3542bb2@schaufler-ca.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1910100912210.29840@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b94802d-12ea-4f2d-bb65-eda3b3542bb2@schaufler-ca.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/9/2019 3:14 PM, James Morris wrote:
-> On Wed, 9 Oct 2019, Casey Schaufler wrote:
->
->> Please consider making the perf_alloc security blob maintained
->> by the infrastructure rather than the individual modules. This
->> will save it having to be changed later.
-> Is anyone planning on using this with full stacking?
->
-> If not, we don't need the extra code & complexity. Stacking should only=
-=20
-> cover what's concretely required by in-tree users.
+On Wed, Oct 09, 2019 at 03:41:56PM -0700, Casey Schaufler wrote:
+> On 10/9/2019 3:14 PM, James Morris wrote:
+> > On Wed, 9 Oct 2019, Casey Schaufler wrote:
+> >
+> >> Please consider making the perf_alloc security blob maintained
+> >> by the infrastructure rather than the individual modules. This
+> >> will save it having to be changed later.
+> > Is anyone planning on using this with full stacking?
+> >
+> > If not, we don't need the extra code & complexity. Stacking should only 
+> > cover what's concretely required by in-tree users.
+> 
+> I don't believe it's any simpler for SELinux to do the allocation
+> than for the infrastructure to do it. I don't see anyone's head
+> exploding over the existing infrastructure allocation of blobs.
+> We're likely to want it at some point, so why not avoid the hassle
+> and delay by doing it the "new" way up front?
+> 
 
-I don't believe it's any simpler for SELinux to do the allocation
-than for the infrastructure to do it. I don't see anyone's head
-exploding over the existing infrastructure allocation of blobs.
-We're likely to want it at some point, so why not avoid the hassle
-and delay by doing it the "new" way up front?
+I don't see how it can be maintained by the users (assuming you meant
+infrastructure as perf_event subsystem). The blob contains a SID which as far
+as I know, is specific to SELinux. Do you have an in-tree example of this?
 
+Further, this is also exactly it is done for BPF objects which I used as a
+reference.
+
+thanks,
+
+ - Joel
 
