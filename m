@@ -2,91 +2,129 @@ Return-Path: <SRS0=K8Fz=YD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4121C4360C
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Oct 2019 15:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EB1C4360C
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Oct 2019 17:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C960F208C3
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Oct 2019 15:24:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FB2D2067B
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Oct 2019 17:10:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LcUUdF9y"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Do8hAovh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726075AbfJJPYa (ORCPT
+        id S1726628AbfJJRKS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Oct 2019 11:24:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55182 "EHLO
+        Thu, 10 Oct 2019 13:10:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51610 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfJJPYa (ORCPT
+        with ESMTP id S1726291AbfJJRKS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Oct 2019 11:24:30 -0400
+        Thu, 10 Oct 2019 13:10:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WS71rIpoUQoMlhWYH2+T6RbpZuX/AIM2quo5SoNq10A=; b=LcUUdF9yYBPmKwJ4mHbvnW4kF
-        BN0N+hWBeffPdMa108MFOrcBUekK333ztf3KLM97bz1zxt002Grd5Fr1RM0lR7yMck1hV7qHKMdZm
-        N2oAediNP909LTHhYalXmULuldWZDpdLPkAcqLibq1Q8foUbBsgXQUyqwIeW8K/H75h1WigKNQs8K
-        kQN5pOEFSDxTStiaCQV/iO6fWCqKhhybI9UdROGJpg0IfG07WCHFJdVw3dEk2Tb87xwmNEwsv+Uax
-        n8DmmqZuSSAg28zmoVvFOxsMarhB2FUbIPjDT/OaUpXFLg95qIFy/h1Z0AUUrHNzi1B62DqqFMz1d
-        0fUGgCrTw==;
-Received: from [2601:1c0:6280:3f0::9ef4]
+         bh=2ORhkw5GPRBxZuF/xlv/BjcMDmGKtcdp+AMxb3+giRk=; b=Do8hAovh7JWYg3ucRGcXnRKlp
+        Hk/Mdo6HvHbjjzVB2oeN73Lg3ScBEwJ7yLS2xEExgXEBE42Ov7eTrryiUc+6flTBzVMEVyngCfmr0
+        7DveBBO5dhInqtgUEe9a8uF1I+nODwJYoFohx1pWitYKqMGQnFzbQK9pZt+qPCF7MLYHxa6iEwG/W
+        8B6jY4hY9N4UfA4dnrnri9GsVVNzoPzINpuJzJ263r3CONhT24WWKWVS0iUkTf0g+msab95XEwsqm
+        robs5JYWD7vsNoTe5jx1EFbG3TPye9jJ4o0v+nT1wPbMgJAT9He3Ach8nHO3p/htt4/oIuFjVH/eV
+        AslgJc8fw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iIaIm-0003OR-CJ; Thu, 10 Oct 2019 15:24:28 +0000
-To:     linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] security: smack: add watch_queue.h header to fix build
- errors
-Message-ID: <0f9adf0a-36b2-81a2-acee-1f9b24cea0bd@infradead.org>
-Date:   Thu, 10 Oct 2019 08:24:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id 1iIbwl-0004bm-V5; Thu, 10 Oct 2019 17:09:52 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E0E243013A4;
+        Thu, 10 Oct 2019 19:08:56 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 29D5A21492B14; Thu, 10 Oct 2019 19:09:49 +0200 (CEST)
+Date:   Thu, 10 Oct 2019 19:09:49 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        primiano@google.com, rsavitski@google.com, jeffv@google.com,
+        kernel-team@android.com, Alexei Starovoitov <ast@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH RFC] perf_event: Add support for LSM and SELinux checks
+Message-ID: <20191010170949.GR2328@hirez.programming.kicks-ass.net>
+References: <20191009203657.6070-1-joel@joelfernandes.org>
+ <20191010081251.GP2311@hirez.programming.kicks-ass.net>
+ <20191010151333.GE96813@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191010151333.GE96813@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Thu, Oct 10, 2019 at 11:13:33AM -0400, Joel Fernandes wrote:
+> On Thu, Oct 10, 2019 at 10:12:51AM +0200, Peter Zijlstra wrote:
+> > +static inline int perf_allow_tracepoint(struct perf_event_attr *attr)
+> >  {
+> > -	return sysctl_perf_event_paranoid > 1;
+> > +	if (sysctl_perf_event_paranoid > -1 && !capable(CAP_SYS_ADMIN))
+> > +		return -EPERM;
+> > +
+> 
+> Here the sysctl check of > -1 also is now coupled with a CAP_SYS_ADMIN check.
+> However..
+> 
+> > +	return security_perf_event_open(attr, PERF_SECURITY_TRACEPOINT);
+> 
+> >  }
+> >  
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
 
-Fix build errors when CONFIG_WATCH_QUEUE=y by adding the
-appropriate header file.
+> > @@ -5862,14 +5859,8 @@ static int perf_mmap(struct file *file,
+> >  	lock_limit >>= PAGE_SHIFT;
+> >  	locked = atomic64_read(&vma->vm_mm->pinned_vm) + extra;
+> >  
+> > -	if (locked > lock_limit) {
+> > -		if (perf_paranoid_tracepoint_raw() && !capable(CAP_IPC_LOCK)) {
+> > -			ret = -EPERM;
+> > -			goto unlock;
+> > -		}
+> > -
+> > -		ret = security_perf_event_open(&event->attr,
+> > -					       PERF_SECURITY_TRACEPOINT);
+> > +	if (locked > lock_limit && !capable(CAP_IPC_LOCK)) {
+> > +		ret = perf_allow_tracepoint(&event->attr);
+> 
+> In previous code, this check did not involve a check for CAP_SYS_ADMIN.
+> 
+> I am Ok with adding the CAP_SYS_ADMIN check as well which does make sense to
+> me for tracepoint access. But it is still a change in the logic so I wanted
+> to bring it up.
+> 
+> Let me know any other thoughts and then I'll post a new patch.
 
-../security/smack/smack_lsm.c: In function ‘smack_post_notification’:
-../security/smack/smack_lsm.c:4384:7: error: dereferencing pointer to incomplete type ‘struct watch_notification’
-  if (n->type == WATCH_TYPE_META)
-       ^~
-../security/smack/smack_lsm.c:4384:17: error: ‘WATCH_TYPE_META’ undeclared (first use in this function); did you mean ‘TCA_PIE_BETA’?
-  if (n->type == WATCH_TYPE_META)
-                 ^~~~~~~~~~~~~~~
-                 TCA_PIE_BETA
+Yes, I did notice, I found it weird.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: linux-security-module@vger.kernel.org
----
- security/smack/smack_lsm.c |    1 +
- 1 file changed, 1 insertion(+)
+If you have CAP_IPC_LIMIT you should be able to bust mlock memory
+limits, so I don't see why we should further relate that to paranoid.
 
---- linux-next-20191010.orig/security/smack/smack_lsm.c
-+++ linux-next-20191010/security/smack/smack_lsm.c
-@@ -42,6 +42,7 @@
- #include <linux/parser.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/watch_queue.h>
- #include "smack.h"
- 
- #define TRANS_TRUE	"TRUE"
+The way I wrote it, we also allow to bust the limit if we have disabled
+all paranoid checks. Which makes some sense I suppose.
 
+The original commit is this:
+
+  459ec28ab404 ("perf_counter: Allow mmap if paranoid checks are turned off")
