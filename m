@@ -2,60 +2,61 @@ Return-Path: <SRS0=K8Fz=YD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE56C47404
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Oct 2019 00:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D764C47404
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Oct 2019 00:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A55612067B
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Oct 2019 00:40:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09629218AC
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Oct 2019 00:43:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="CQBl48C9"
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="m4iCbyyu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732489AbfJJAk1 (ORCPT
+        id S1732572AbfJJAnz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Oct 2019 20:40:27 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42809 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731155AbfJJAk1 (ORCPT
+        Wed, 9 Oct 2019 20:43:55 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40911 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731959AbfJJAnz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Oct 2019 20:40:27 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q12so2722080pff.9
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Oct 2019 17:40:25 -0700 (PDT)
+        Wed, 9 Oct 2019 20:43:55 -0400
+Received: by mail-pl1-f195.google.com with SMTP id d22so1890428pll.7
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Oct 2019 17:43:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=UcPd5Jny5aY5aMsPzhLMHUk3eBTerZnA6THOQx3YHYM=;
-        b=CQBl48C9FQrJE5k703Kev1+BQ/3whfu6HOkubrefsdeM3B2i5ly4Dw9keO2geTEGUV
-         s+Ui79CGMEi8TyPD6oEqp7cslGqZKhXLLTCoggJ/CPYtMcY9bWkjwact3xZFKaXvWZYO
-         u5JLNe8rCmmBk2yB39UHSrBbn2Uo+Ciiic/jw=
+        bh=XTaq5/1iuX7y8HNzbxl3CPoidWluv+Gq3TUzaOzRrgc=;
+        b=m4iCbyyuGcBMekG4jEeTZ+JSwscPAmHNJrKiyykzCU1YYzbgLoypNsggMRiKoIm+nq
+         S94I27UoURdArgHG6X2igS+CAXa4Fex07lm5t/Gak6VIgPLHp4AhbQBSr1I9gD/yScq1
+         sX3jOQ4l8OhZyiYgWGZ3s2KKWz5jWGoWQdUfA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UcPd5Jny5aY5aMsPzhLMHUk3eBTerZnA6THOQx3YHYM=;
-        b=FJ16OSwJg8X+/cPdI9aiCUubt3rPafXRkcAyKiF2TMXvEiqdU3/Sqf5p1QBFHAv29x
-         vyJa/mV+1/mkhuUraMcE6KsuzizuMTsgw0qzy90aouePKztRY7l0H5SYi9lndmYkn22L
-         fpF1bc9GfVc/XJy8TUfsjBXiIy4jRNgxOdcr2YVORNQDVJ2vKdYfT/TeISZMfSsNSo9+
-         s0AoNtcyJRACVRujxxDxbfNPkEUapVMIoDUpMqGtcoy129laZd2CMbY77hFEwWRmdJPA
-         JnD/bc8bUHlGUsO0BH07+VOAF4QRFtkpVIQKArLkGksV/yWfOosWGtv8YXwNPDKGPkPM
-         C/AQ==
-X-Gm-Message-State: APjAAAUFACDQLbGSyh4kiff5YO+NVd4aMGc79MopOEVKnLlWAekUsNY8
-        lY+RIosGilbfyQKamYp8Fz+JXA==
-X-Google-Smtp-Source: APXvYqwiMuTGGeU2xAhSzgcNonr+8WNtJueMfhMlVoTbDTnimhgmwYn+zScwE00Wpmxe8o7Phci6AA==
-X-Received: by 2002:aa7:93a9:: with SMTP id x9mr6675538pff.81.1570668025033;
-        Wed, 09 Oct 2019 17:40:25 -0700 (PDT)
+        bh=XTaq5/1iuX7y8HNzbxl3CPoidWluv+Gq3TUzaOzRrgc=;
+        b=hF7Yx2CHqV57VbUEDEqnN8x+ssEFe45q4ElSP9VsXy90HVIn0U2CHuUq4zf2B/TRdo
+         MnDD+qdm05/UqvAuxK8JNvFns/VNEbXM3cFGWOZbQCM7/Bnx4rNq+MU3PARoFySQGpxw
+         ihRMVqNUPBLvf1E1998y2qSqtryW82/cb5PqTsrli0LW2/FjfvP0yZRew9Y1ZHqVHlX8
+         PDsgoR3HGmLkqrYjQJU7a0e3IjifxC3/y96oeGMXxv40uoiW4epQgWnzaFvJg4TejNmn
+         xjEQQHo/s3RrSzoeJoOxg0fkv9eL1A0nfRBeSlgF0/aNnHzK0KrMLP9amG4SW0QF+bUR
+         d6Qg==
+X-Gm-Message-State: APjAAAXnQp2tA12VETFu2LX26fbVFMaP9ODLiCsYeWcVUiu9UHxv01cr
+        OfoFcsr+tJDrcwsppHdUzn11dg==
+X-Google-Smtp-Source: APXvYqwYcwFV08f82JUgcEcWcaOEQCDSgJsWNG9DOwYNRCdMDvFp2biCtXO4IjsvieIMMljYoBvAyQ==
+X-Received: by 2002:a17:902:524:: with SMTP id 33mr6045429plf.123.1570668234782;
+        Wed, 09 Oct 2019 17:43:54 -0700 (PDT)
 Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id 22sm3415597pfo.131.2019.10.09.17.40.24
+        by smtp.gmail.com with ESMTPSA id d76sm3624114pfd.185.2019.10.09.17.43.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 17:40:24 -0700 (PDT)
-Date:   Wed, 9 Oct 2019 20:40:23 -0400
+        Wed, 09 Oct 2019 17:43:54 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 20:43:53 -0400
 From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org,
         primiano@google.com, rsavitski@google.com, jeffv@google.com,
         kernel-team@android.com, Alexei Starovoitov <ast@kernel.org>,
@@ -70,45 +71,79 @@ Cc:     James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
         "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
         Yonghong Song <yhs@fb.com>
 Subject: Re: [PATCH RFC] perf_event: Add support for LSM and SELinux checks
-Message-ID: <20191010004023.GC96813@google.com>
+Message-ID: <20191010004353.GD96813@google.com>
 References: <20191009203657.6070-1-joel@joelfernandes.org>
- <710c5bc0-deca-2649-8351-678e177214e9@schaufler-ca.com>
- <alpine.LRH.2.21.1910100912210.29840@namei.org>
- <2b94802d-12ea-4f2d-bb65-eda3b3542bb2@schaufler-ca.com>
+ <alpine.LRH.2.21.1910100908260.29840@namei.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2b94802d-12ea-4f2d-bb65-eda3b3542bb2@schaufler-ca.com>
+In-Reply-To: <alpine.LRH.2.21.1910100908260.29840@namei.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 09, 2019 at 03:41:56PM -0700, Casey Schaufler wrote:
-> On 10/9/2019 3:14 PM, James Morris wrote:
-> > On Wed, 9 Oct 2019, Casey Schaufler wrote:
-> >
-> >> Please consider making the perf_alloc security blob maintained
-> >> by the infrastructure rather than the individual modules. This
-> >> will save it having to be changed later.
-> > Is anyone planning on using this with full stacking?
-> >
-> > If not, we don't need the extra code & complexity. Stacking should only 
-> > cover what's concretely required by in-tree users.
+On Thu, Oct 10, 2019 at 09:11:39AM +1100, James Morris wrote:
+> On Wed, 9 Oct 2019, Joel Fernandes (Google) wrote:
 > 
-> I don't believe it's any simpler for SELinux to do the allocation
-> than for the infrastructure to do it. I don't see anyone's head
-> exploding over the existing infrastructure allocation of blobs.
-> We're likely to want it at some point, so why not avoid the hassle
-> and delay by doing it the "new" way up front?
+> >  
+> > +#ifdef CONFIG_SECURITY
+> > +	err = security_perf_event_alloc(event);
+> > +	if (err)
+> > +		goto err_security;
+> > +#endif
 > 
+> You should not need this ifdef.
 
-I don't see how it can be maintained by the users (assuming you meant
-infrastructure as perf_event subsystem). The blob contains a SID which as far
-as I know, is specific to SELinux. Do you have an in-tree example of this?
+Fixed.
 
-Further, this is also exactly it is done for BPF objects which I used as a
-reference.
+> > diff --git a/security/security.c b/security/security.c
+> > index 1bc000f834e2..7639bca1db59 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -2373,26 +2373,32 @@ int security_bpf(int cmd, union bpf_attr *attr, unsigned int size)
+> >  {
+> >  	return call_int_hook(bpf, 0, cmd, attr, size);
+> >  }
+> > +
+> >  int security_bpf_map(struct bpf_map *map, fmode_t fmode)
+> >  {
+> >  	return call_int_hook(bpf_map, 0, map, fmode);
+> >  }
+> > +
+> >  int security_bpf_prog(struct bpf_prog *prog)
+> >  {
+> >  	return call_int_hook(bpf_prog, 0, prog);
+> >  }
+> > +
+> >  int security_bpf_map_alloc(struct bpf_map *map)
+> >  {
+> >  	return call_int_hook(bpf_map_alloc_security, 0, map);
+> >  }
+> > +
+> >  int security_bpf_prog_alloc(struct bpf_prog_aux *aux)
+> >  {
+> >  	return call_int_hook(bpf_prog_alloc_security, 0, aux);
+> >  }
+> > +
+> >  void security_bpf_map_free(struct bpf_map *map)
+> >  {
+> >  	call_void_hook(bpf_map_free_security, map);
+> >  }
+> > +
+> >  void security_bpf_prog_free(struct bpf_prog_aux *aux)
+> >  {
+> >  	call_void_hook(bpf_prog_free_security, aux);
+> > @@ -2404,3 +2410,30 @@ int security_locked_down(enum lockdown_reason what)
+> >  	return call_int_hook(locked_down, 0, what);
+> >  }
+> >  EXPORT_SYMBOL(security_locked_down);
+> 
+> Please avoid unrelated whitespace changes.
+
+The author of the BPF security hooks forgot to add a newline between function
+definitions and I was just cleaning the style issue since it is very close to
+the parts I touched. But I will drop it from the patch per your suggestion.
 
 thanks,
 
