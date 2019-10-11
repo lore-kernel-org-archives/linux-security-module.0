@@ -2,118 +2,56 @@ Return-Path: <SRS0=883h=YE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C3CC47404
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 07:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D7FCECE58C
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 07:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C50121D71
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 07:06:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GvnBbSeR"
+	by mail.kernel.org (Postfix) with ESMTP id 7C79920679
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 07:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfJKHGL (ORCPT
+        id S1726755AbfJKHya (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Oct 2019 03:06:11 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:40260 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbfJKHGK (ORCPT
+        Fri, 11 Oct 2019 03:54:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45482 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726461AbfJKHy3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Oct 2019 03:06:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=B7tSt4++AeNClEYMJ6vFiBHpS1WJihxuciejr2hX7bs=; b=GvnBbSeRL2D7Djol5QJK4MqT+
-        f5pua78F2o9VGO8YAmoQv16DV8cOvHSqAM9e+4JIHcuJk2nKDeKvCJgnjYK3SQmzdBKk/2cWLMjoP
-        pqAr/BidNI3as9nX/sJ7HaZqkEUiPCJGbFRFWV43iqClh+ek5Zjd5NrBpLm9I3OBWbx3fFeSgpjPZ
-        3HFr+5JoDrvRlwuZm1pms3rRyfSGcNJfzUjfRAw364CFb46QXZD81LBxKBMsyJSDD+zBjU7daKMVD
-        1mOylo3pTqay0R17ca4hZEsnO/6nJZdOUAJMyDqQ3vsoeecqLMGUu0QG3I3eSmhNIyAVAAMK79Ql9
-        tk4BJxQ0w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iIozh-0004C0-Du; Fri, 11 Oct 2019 07:05:45 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C6927301224;
-        Fri, 11 Oct 2019 09:04:50 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4FEF021492B15; Fri, 11 Oct 2019 09:05:43 +0200 (CEST)
-Date:   Fri, 11 Oct 2019 09:05:43 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        primiano@google.com, rsavitski@google.com, jeffv@google.com,
-        kernel-team@android.com, Alexei Starovoitov <ast@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH RFC] perf_event: Add support for LSM and SELinux checks
-Message-ID: <20191011070543.GV2328@hirez.programming.kicks-ass.net>
-References: <20191009203657.6070-1-joel@joelfernandes.org>
- <20191010081251.GP2311@hirez.programming.kicks-ass.net>
- <20191010151333.GE96813@google.com>
- <20191010170949.GR2328@hirez.programming.kicks-ass.net>
- <20191010183114.GF96813@google.com>
+        Fri, 11 Oct 2019 03:54:29 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B53861017C12;
+        Fri, 11 Oct 2019 07:54:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-84.rdu2.redhat.com [10.10.121.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B56F60BE1;
+        Fri, 11 Oct 2019 07:54:28 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <0f9adf0a-36b2-81a2-acee-1f9b24cea0bd@infradead.org>
+References: <0f9adf0a-36b2-81a2-acee-1f9b24cea0bd@infradead.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     dhowells@redhat.com,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH -next] security: smack: add watch_queue.h header to fix build errors
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191010183114.GF96813@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4517.1570780467.1@warthog.procyon.org.uk>
+Date:   Fri, 11 Oct 2019 08:54:27 +0100
+Message-ID: <4518.1570780467@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Fri, 11 Oct 2019 07:54:29 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 10, 2019 at 02:31:14PM -0400, Joel Fernandes wrote:
-> On Thu, Oct 10, 2019 at 07:09:49PM +0200, Peter Zijlstra wrote:
+I've folded in this patch.
 
-> > Yes, I did notice, I found it weird.
-> > 
-> > If you have CAP_IPC_LIMIT you should be able to bust mlock memory
-> > limits, so I don't see why we should further relate that to paranoid.
-> > 
-> > The way I wrote it, we also allow to bust the limit if we have disabled
-> > all paranoid checks. Which makes some sense I suppose.
-> > 
-> > The original commit is this:
-> > 
-> >   459ec28ab404 ("perf_counter: Allow mmap if paranoid checks are turned off")
-> 
-> I am thinking we can just a new function perf_is_paranoid() that has nothing
-> to do with the CAP_SYS_ADMIN check and doesn't have tracepoint wording:
-> 
-> static inline int perf_is_paranoid(void)
-> {
-> 	return sysctl_perf_event_paranoid > -1;
-> }
-> 
-> And then call that from the mmap() code:
-> if (locked > lock_limit && perf_is_paranoid() && !capable(CAP_IPC_LOCK)) {
-> 	return -EPERM;
-> }
-> 
-> I don't think we need to add selinux security checks here since we are
-> already adding security checks earlier in mmap(). This will make the code and
-> its intention more clear and in line with the commit 459ec28ab404 you
-> mentioned. Thoughts?
-
-Mostly that I'm confused by the current code ;-)
-
-Like I said, CAP_IPC_LIMIT on its own should already allow busting the
-limit, I don't really see why we should make it conditional on paranoid.
-
-But if you want to preserve behaviour (arguably a sane thing for your
-patch) then yes, feel free to do as you propose.
+David
