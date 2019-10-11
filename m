@@ -2,56 +2,78 @@ Return-Path: <SRS0=883h=YE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D7FCECE58C
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 07:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D33C47404
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 11:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C79920679
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 07:54:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB5712084C
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 11:41:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfJKHya (ORCPT
+        id S1727928AbfJKLlT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Oct 2019 03:54:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45482 "EHLO mx1.redhat.com"
+        Fri, 11 Oct 2019 07:41:19 -0400
+Received: from mga07.intel.com ([134.134.136.100]:47805 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726461AbfJKHy3 (ORCPT
+        id S1727883AbfJKLlT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Oct 2019 03:54:29 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B53861017C12;
-        Fri, 11 Oct 2019 07:54:29 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-84.rdu2.redhat.com [10.10.121.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B56F60BE1;
-        Fri, 11 Oct 2019 07:54:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <0f9adf0a-36b2-81a2-acee-1f9b24cea0bd@infradead.org>
-References: <0f9adf0a-36b2-81a2-acee-1f9b24cea0bd@infradead.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     dhowells@redhat.com,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH -next] security: smack: add watch_queue.h header to fix build errors
+        Fri, 11 Oct 2019 07:41:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2019 04:41:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,284,1566889200"; 
+   d="scan'208";a="200765694"
+Received: from mkaltenb-mobl.ger.corp.intel.com (HELO localhost) ([10.251.83.92])
+  by FMSMGA003.fm.intel.com with ESMTP; 11 Oct 2019 04:41:11 -0700
+Date:   Fri, 11 Oct 2019 14:41:05 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     dhowells@redhat.com, peterhuewe@gmx.de, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        jsnitsel@redhat.com, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org
+Subject: Re: [Patch v7 1/4] tpm: Move tpm_buf code to include/linux/
+Message-ID: <20191011114105.GA3129@linux.intel.com>
+References: <1570425935-7435-1-git-send-email-sumit.garg@linaro.org>
+ <1570425935-7435-2-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4517.1570780467.1@warthog.procyon.org.uk>
-Date:   Fri, 11 Oct 2019 08:54:27 +0100
-Message-ID: <4518.1570780467@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Fri, 11 Oct 2019 07:54:29 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1570425935-7435-2-git-send-email-sumit.garg@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I've folded in this patch.
+On Mon, Oct 07, 2019 at 10:55:32AM +0530, Sumit Garg wrote:
+> Move tpm_buf code to common include/linux/tpm.h header so that it can
+> be reused via other subsystems like trusted keys etc.
+> 
+> Also rename trusted keys and asymmetric keys usage of TPM 1.x buffer
+> implementation to tpm1_buf to avoid any compilation errors.
+> 
+> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> ---
+>  crypto/asymmetric_keys/asym_tpm.c |  12 +--
+>  drivers/char/tpm/tpm.h            | 215 --------------------------------------
+>  include/keys/trusted.h            |  12 +--
+>  include/linux/tpm.h               | 215 ++++++++++++++++++++++++++++++++++++++
+>  security/keys/trusted.c           |  12 +--
+>  5 files changed, 233 insertions(+), 233 deletions(-)
 
-David
+Looks clean.
+
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+/Jarkko
