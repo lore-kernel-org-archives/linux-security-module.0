@@ -2,102 +2,158 @@ Return-Path: <SRS0=883h=YE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B97ECE58D
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 21:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F44C47404
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 21:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45D0C2084C
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 21:01:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570827673;
-	bh=knd0f8yCPR6Ky+R1X+NQQa8VVFtwb+8x5S62C5Kz22U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=oVTdkbuDjSy4Ze8CVEiY/qQjG98B4CqMORj95LOxWrgroqOKbTX4I+RICKKjWeAlA
-	 uXa6IOOXUH4djacKEyOSkL46pY5GO8oR1QYh0PZQzvC937C/6Cu8ct9CjUUHDVj9NB
-	 qhSgHCDxOWgVfRR6H4s+BsSAQ8NJ7jqhXzQkrdCs=
+	by mail.kernel.org (Postfix) with ESMTP id 3CBF52084C
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 21:05:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbfJKVBM (ORCPT
+        id S1727973AbfJKVFV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Oct 2019 17:01:12 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:32999 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbfJKVBM (ORCPT
+        Fri, 11 Oct 2019 17:05:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41050 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726205AbfJKVFV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Oct 2019 17:01:12 -0400
-Received: by mail-lj1-f195.google.com with SMTP id a22so11147145ljd.0
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2019 14:01:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SKr4WHC3iR8iedd+96HoEDT1mA0iwz01QLINNBDqvTA=;
-        b=AjD32CNEE5D2mrL1SxTGTAcIg8rDu5TsWXuC3JWTpw/d7RSutnwDdzYzC2ZDXXNEQs
-         xbRUdI2G9Bdey7J+lF7C19PmyyR/h7paQAvoZ3B7DeLBGHQM7JosujRghPkyJaObtcaK
-         WflPEvqjO32pHzc6ziczhzVrcfZHPdGY8qVxg=
+        Fri, 11 Oct 2019 17:05:21 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D0568796EB
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2019 21:05:20 +0000 (UTC)
+Received: by mail-io1-f69.google.com with SMTP id q18so16248949ios.8
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2019 14:05:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SKr4WHC3iR8iedd+96HoEDT1mA0iwz01QLINNBDqvTA=;
-        b=mRWyui2J2TiBxt+aRSKiCgQpmBaJABm41Hk13/9C1O8Rch2y9GzrAUxhDmlXFU4Bk7
-         Pa9dQrTcs0KldrCoKKGHKbThH5vvQrbYgEyay3TwKmYs76yciVlbGMhzxGAVvXbAhcuc
-         MwL/KU/AcmTHj5GOgBV45QRzNNFYzOHfELAqXGN6jSMhjT19N2+eT8n4Ir7IhmNe5Hng
-         9oGkLbHGyuLT9sI9DmHQU3Gw456kx7OMiuNW/diHKojEEdW+7moC6gGAYqN+mFpGETsC
-         amAvaBdSrJ6zWpprzPzMvmBRf08Vc7yesapv6murDAd8ieXvnVW2SWIXJzpQOkPTL75t
-         Zqjw==
-X-Gm-Message-State: APjAAAUo0f84yQ9sHgJoPD/3SNLskeYpSkRXj4us3iqsqs4+MVilLbxP
-        MDTjh4QYs+lbMEqYdWA2Z+fiVQnnyfM=
-X-Google-Smtp-Source: APXvYqwLz6ONJspwgb1XUDp3tK8zjo+ba4gptDTGYacB6cn9AY1yRUTj7j4Kn8RiB2YveMi5MkWklg==
-X-Received: by 2002:a2e:9bcb:: with SMTP id w11mr10091867ljj.11.1570827668425;
-        Fri, 11 Oct 2019 14:01:08 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id q14sm2180161ljc.7.2019.10.11.14.01.07
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2019 14:01:07 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id r22so7979076lfm.1
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2019 14:01:07 -0700 (PDT)
-X-Received: by 2002:ac2:5924:: with SMTP id v4mr9785397lfi.29.1570827666846;
- Fri, 11 Oct 2019 14:01:06 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=T6nN5QVk09gIDvkOFTEMQ2zlhiOadfEsIkZwkKFcinc=;
+        b=WfAk4Y4RJW8wwRWTugo4OXbPaV5XYGna0kcdgSLFukgogT8X0z02nx/qZv1O/z6+6D
+         XqKZ3pbbYFK2U+3R0kovVArbA12O3tuU6oFG58tkJ0i+6m6rZZSKwgVPB7XAmxt/kEeS
+         Ygf7y+xPfLl06Kz0wubkKS48PaSE30USdcC/PjQPSM56cXkVeBTlDxcFZHn7AurgNZHX
+         dMK70eai0/9YXxUOsup8vIErOOEiY0ucZagL/v2hN7XNqPX6UZ10tBIb0tNf/QOt1C2B
+         D4uEOWPnRFFpXZ5s4w/PvrBYNL1q7Ur6MPn1LOobRBx10eXkFrBn/LA5gUjIKLERpQWA
+         +2+w==
+X-Gm-Message-State: APjAAAWumoZFbyuynuswK7wugibdmanhpAPS6VNFvFPzENmy68xrtFh5
+        +P71CbGksx1pNAO0O4ajRMWAL9ZuzwFiSZov+acfN/7Dk727XxscwBYgtGgXA/zmz8YzV4sTFGR
+        QU7ZoGPm52vwO8fguZAJrAurESk1CLjFRkJGa
+X-Received: by 2002:a02:cb52:: with SMTP id k18mr19911871jap.97.1570827920182;
+        Fri, 11 Oct 2019 14:05:20 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxEVW3IbyR5eo7Y7vjH1MySickb9sECy4da7QTB9xvqhAM+inaAIj9NElVpvE+wQ+LlOfYACg==
+X-Received: by 2002:a02:cb52:: with SMTP id k18mr19911826jap.97.1570827919801;
+        Fri, 11 Oct 2019 14:05:19 -0700 (PDT)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id a25sm5765883iod.62.2019.10.11.14.05.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2019 14:05:19 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 14:05:17 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Sumit Garg <sumit.garg@linaro.org>, dhowells@redhat.com,
+        peterhuewe@gmx.de, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        linux-kernel@vger.kernel.org, daniel.thompson@linaro.org
+Subject: Re: [Patch v7 0/4] Create and consolidate trusted keys subsystem
+Message-ID: <20191011210517.qxjemugqczsvscu6@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sumit Garg <sumit.garg@linaro.org>, dhowells@redhat.com,
+        peterhuewe@gmx.de, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, jejb@linux.ibm.com, zohar@linux.ibm.com,
+        jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org
+References: <1570425935-7435-1-git-send-email-sumit.garg@linaro.org>
+ <20191011123757.GD3129@linux.intel.com>
 MIME-Version: 1.0
-References: <20191011135458.7399da44@gandalf.local.home> <CAHk-=wj7fGPKUspr579Cii-w_y60PtRaiDgKuxVtBAMK0VNNkA@mail.gmail.com>
- <20191011162518.2f8c99ca@gandalf.local.home> <20191011165455.32666d53@gandalf.local.home>
-In-Reply-To: <20191011165455.32666d53@gandalf.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 11 Oct 2019 14:00:50 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiGtEDhwJab7+tQzmjDssynBruRvgj9NJY2bzNrVzw+0Q@mail.gmail.com>
-Message-ID: <CAHk-=wiGtEDhwJab7+tQzmjDssynBruRvgj9NJY2bzNrVzw+0Q@mail.gmail.com>
-Subject: Re: [PATCH] tracefs: Do not allocate and free proxy_ops for lockdown
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        James Morris James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191011123757.GD3129@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 11, 2019 at 1:55 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+On Fri Oct 11 19, Jarkko Sakkinen wrote:
+>On Mon, Oct 07, 2019 at 10:55:31AM +0530, Sumit Garg wrote:
+>> This patch-set does restructuring of trusted keys code to create and
+>> consolidate trusted keys subsystem.
+>>
+>> Also, patch #2 replaces tpm1_buf code used in security/keys/trusted.c and
+>> crypto/asymmertic_keys/asym_tpm.c files to use the common tpm_buf code.
+>>
+>> Changes in v7:
+>> 1. Rebased to top of tpmdd/master
+>> 2. Patch #4: update tpm2 trusted keys code to use tpm_send() instead of
+>>    tpm_transmit_cmd() which is an internal function.
+>>
+>> Changes in v6:
+>> 1. Switch TPM asymmetric code also to use common tpm_buf code. These
+>>    changes required patches #1 and #2 update, so I have dropped review
+>>    tags from those patches.
+>> 2. Incorporated miscellaneous comments from Jarkko.
+>>
+>> Changes in v5:
+>> 1. Drop 5/5 patch as its more relavant along with TEE patch-set.
+>> 2. Add Reviewed-by tag for patch #2.
+>> 3. Fix build failure when "CONFIG_HEADER_TEST" and
+>>    "CONFIG_KERNEL_HEADER_TEST" config options are enabled.
+>> 4. Misc changes to rename files.
+>>
+>> Changes in v4:
+>> 1. Separate patch for export of tpm_buf code to include/linux/tpm.h
+>> 2. Change TPM1.x trusted keys code to use common tpm_buf
+>> 3. Keep module name as trusted.ko only
+>>
+>> Changes in v3:
+>>
+>> Move TPM2 trusted keys code to trusted keys subsystem.
+>>
+>> Changes in v2:
+>>
+>> Split trusted keys abstraction patch for ease of review.
+>>
+>> Sumit Garg (4):
+>>   tpm: Move tpm_buf code to include/linux/
+>>   KEYS: Use common tpm_buf for trusted and asymmetric keys
+>>   KEYS: trusted: Create trusted keys subsystem
+>>   KEYS: trusted: Move TPM2 trusted keys code
+>>
+>>  crypto/asymmetric_keys/asym_tpm.c                  | 101 +++----
+>>  drivers/char/tpm/tpm-interface.c                   |  56 ----
+>>  drivers/char/tpm/tpm.h                             | 226 ---------------
+>>  drivers/char/tpm/tpm2-cmd.c                        | 307 --------------------
+>>  include/Kbuild                                     |   1 -
+>>  include/keys/{trusted.h => trusted_tpm.h}          |  49 +---
+>>  include/linux/tpm.h                                | 251 ++++++++++++++--
+>>  security/keys/Makefile                             |   2 +-
+>>  security/keys/trusted-keys/Makefile                |   8 +
+>>  .../{trusted.c => trusted-keys/trusted_tpm1.c}     |  96 +++----
+>>  security/keys/trusted-keys/trusted_tpm2.c          | 314 +++++++++++++++++++++
+>>  11 files changed, 652 insertions(+), 759 deletions(-)
+>>  rename include/keys/{trusted.h => trusted_tpm.h} (77%)
+>>  create mode 100644 security/keys/trusted-keys/Makefile
+>>  rename security/keys/{trusted.c => trusted-keys/trusted_tpm1.c} (94%)
+>>  create mode 100644 security/keys/trusted-keys/trusted_tpm2.c
+>>
+>> --
+>> 2.7.4
+>>
 >
-> I guess I can keep it this way. Thoughts?
+>I fixed a merge conflict caused by James' commit. Already pushed.
+>Compiling test kernel ATM i.e. tested-by's will follow later.
+>
+>/Jarkko
 
-That looks fine to me. I'm still not sure you actually need to do all
-this, but it doesn't look _wrong_.
-
-That said, I still do think that if things are locked down from the
-very get-go, tracefs_create_file() shouldn't even create the files.
-
-That's mostly an independent thing from the "what about if they exists
-and things got locked down afterwards", though.
-
-I do wonder about the whole "well, if you started tracing before
-locking things down, don't you want to see the end results"?
-
-             Linus
+Are you missing patch 4 on master?
