@@ -2,124 +2,133 @@ Return-Path: <SRS0=883h=YE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C720DC47404
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 12:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9283BECE58C
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 15:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6EEA206CD
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 12:38:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67A462089F
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 15:47:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="DSwaEoz+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbfJKMiH (ORCPT
+        id S1727890AbfJKPrh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Oct 2019 08:38:07 -0400
-Received: from mga05.intel.com ([192.55.52.43]:26504 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbfJKMiH (ORCPT
+        Fri, 11 Oct 2019 11:47:37 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40770 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbfJKPrh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Oct 2019 08:38:07 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2019 05:38:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,284,1566889200"; 
-   d="scan'208";a="206436900"
-Received: from mkaltenb-mobl.ger.corp.intel.com (HELO localhost) ([10.251.83.92])
-  by orsmga002.jf.intel.com with ESMTP; 11 Oct 2019 05:37:58 -0700
-Date:   Fri, 11 Oct 2019 15:37:57 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     dhowells@redhat.com, peterhuewe@gmx.de, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, jgg@ziepe.ca, arnd@arndb.de,
-        gregkh@linuxfoundation.org, jejb@linux.ibm.com,
-        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        jsnitsel@redhat.com, linux-kernel@vger.kernel.org,
-        daniel.thompson@linaro.org
-Subject: Re: [Patch v7 0/4] Create and consolidate trusted keys subsystem
-Message-ID: <20191011123757.GD3129@linux.intel.com>
-References: <1570425935-7435-1-git-send-email-sumit.garg@linaro.org>
+        Fri, 11 Oct 2019 11:47:37 -0400
+Received: by mail-pl1-f193.google.com with SMTP id d22so4641821pll.7
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2019 08:47:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=L8nfwXCisRm1qePDK4SMx1pjknBpWa94Qxj1sS8u5kA=;
+        b=DSwaEoz+bD4qFKZIKz/Konam440PIDOX1fNFO3xJHi77xdNlftLPxyfvp0UwWKgZ+4
+         HI+lCnFhy2XKfM4ammZOptEEr8v11ae+4A9A04ZH8cEH5w9V2o08IDcb5lTnT0n7li0f
+         KJJwrWCiiZDuDfS9eMbKCAn2qytH5+UyHaXoE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=L8nfwXCisRm1qePDK4SMx1pjknBpWa94Qxj1sS8u5kA=;
+        b=AGRmjcRaOw4I5pNGJgcf9Pbaw+YahkzsRzyMobr1wjFvt8cpooNzjF3EoyvHoo8fp8
+         24QCuciQ42LcaSvLx45dcnoR10A75QvVeJigG6RstuzgQ3IVMwvtJOcI+N6hayP6jgDw
+         1No5jxtjyNkGXnZbrVe1K0wYy8kPIxsLLHOWAU6lL8jdbJgjFrNJWWp45KFlWBOampsk
+         1kyCt62IFxMPAA2AQhWWjo9erTQoPht9OSOmIMe7jqkZV1a+p1y7Mc5nt2TxMggiPNH/
+         vIGpViAQwLiE8jiUzF1V/RIxXOPlO/Ponk4rCD3GncjLlv2uQNj4CkYk4F8TCptNEMz+
+         Mc4w==
+X-Gm-Message-State: APjAAAXoi3HoQPZkwSl7P5thYNDLUzfqMlODLmKCKnq9SyeFE769SK8i
+        joZdgoF7EoIHNFP1Cr9Ku4Bnzw==
+X-Google-Smtp-Source: APXvYqyZB1iwpECmMrQ/nKWm2V0v/043bP3KVsuGonJdp/o/3FFZ2TVnzLm6gdCdqIIWB8mQFahKJw==
+X-Received: by 2002:a17:902:a985:: with SMTP id bh5mr15414239plb.184.1570808856657;
+        Fri, 11 Oct 2019 08:47:36 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id u65sm3019972pgb.36.2019.10.11.08.47.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2019 08:47:35 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 11:47:34 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        primiano@google.com, rsavitski@google.com, jeffv@google.com,
+        kernel-team@android.com, Alexei Starovoitov <ast@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH RFC] perf_event: Add support for LSM and SELinux checks
+Message-ID: <20191011154734.GA105106@google.com>
+References: <20191009203657.6070-1-joel@joelfernandes.org>
+ <20191010081251.GP2311@hirez.programming.kicks-ass.net>
+ <20191010151333.GE96813@google.com>
+ <20191010170949.GR2328@hirez.programming.kicks-ass.net>
+ <20191010183114.GF96813@google.com>
+ <20191011070543.GV2328@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1570425935-7435-1-git-send-email-sumit.garg@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20191011070543.GV2328@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 07, 2019 at 10:55:31AM +0530, Sumit Garg wrote:
-> This patch-set does restructuring of trusted keys code to create and
-> consolidate trusted keys subsystem.
+On Fri, Oct 11, 2019 at 09:05:43AM +0200, Peter Zijlstra wrote:
+> On Thu, Oct 10, 2019 at 02:31:14PM -0400, Joel Fernandes wrote:
+> > On Thu, Oct 10, 2019 at 07:09:49PM +0200, Peter Zijlstra wrote:
 > 
-> Also, patch #2 replaces tpm1_buf code used in security/keys/trusted.c and
-> crypto/asymmertic_keys/asym_tpm.c files to use the common tpm_buf code.
+> > > Yes, I did notice, I found it weird.
+> > > 
+> > > If you have CAP_IPC_LIMIT you should be able to bust mlock memory
+> > > limits, so I don't see why we should further relate that to paranoid.
+> > > 
+> > > The way I wrote it, we also allow to bust the limit if we have disabled
+> > > all paranoid checks. Which makes some sense I suppose.
+> > > 
+> > > The original commit is this:
+> > > 
+> > >   459ec28ab404 ("perf_counter: Allow mmap if paranoid checks are turned off")
+> > 
+> > I am thinking we can just a new function perf_is_paranoid() that has nothing
+> > to do with the CAP_SYS_ADMIN check and doesn't have tracepoint wording:
+> > 
+> > static inline int perf_is_paranoid(void)
+> > {
+> > 	return sysctl_perf_event_paranoid > -1;
+> > }
+> > 
+> > And then call that from the mmap() code:
+> > if (locked > lock_limit && perf_is_paranoid() && !capable(CAP_IPC_LOCK)) {
+> > 	return -EPERM;
+> > }
+> > 
+> > I don't think we need to add selinux security checks here since we are
+> > already adding security checks earlier in mmap(). This will make the code and
+> > its intention more clear and in line with the commit 459ec28ab404 you
+> > mentioned. Thoughts?
 > 
-> Changes in v7:
-> 1. Rebased to top of tpmdd/master
-> 2. Patch #4: update tpm2 trusted keys code to use tpm_send() instead of
->    tpm_transmit_cmd() which is an internal function.
+> Mostly that I'm confused by the current code ;-)
 > 
-> Changes in v6:
-> 1. Switch TPM asymmetric code also to use common tpm_buf code. These
->    changes required patches #1 and #2 update, so I have dropped review
->    tags from those patches.
-> 2. Incorporated miscellaneous comments from Jarkko.
+> Like I said, CAP_IPC_LIMIT on its own should already allow busting the
+> limit, I don't really see why we should make it conditional on paranoid.
 > 
-> Changes in v5:
-> 1. Drop 5/5 patch as its more relavant along with TEE patch-set.
-> 2. Add Reviewed-by tag for patch #2.
-> 3. Fix build failure when "CONFIG_HEADER_TEST" and
->    "CONFIG_KERNEL_HEADER_TEST" config options are enabled.
-> 4. Misc changes to rename files.
-> 
-> Changes in v4:
-> 1. Separate patch for export of tpm_buf code to include/linux/tpm.h
-> 2. Change TPM1.x trusted keys code to use common tpm_buf
-> 3. Keep module name as trusted.ko only
-> 
-> Changes in v3:
-> 
-> Move TPM2 trusted keys code to trusted keys subsystem.
-> 
-> Changes in v2:
-> 
-> Split trusted keys abstraction patch for ease of review.
-> 
-> Sumit Garg (4):
->   tpm: Move tpm_buf code to include/linux/
->   KEYS: Use common tpm_buf for trusted and asymmetric keys
->   KEYS: trusted: Create trusted keys subsystem
->   KEYS: trusted: Move TPM2 trusted keys code
-> 
->  crypto/asymmetric_keys/asym_tpm.c                  | 101 +++----
->  drivers/char/tpm/tpm-interface.c                   |  56 ----
->  drivers/char/tpm/tpm.h                             | 226 ---------------
->  drivers/char/tpm/tpm2-cmd.c                        | 307 --------------------
->  include/Kbuild                                     |   1 -
->  include/keys/{trusted.h => trusted_tpm.h}          |  49 +---
->  include/linux/tpm.h                                | 251 ++++++++++++++--
->  security/keys/Makefile                             |   2 +-
->  security/keys/trusted-keys/Makefile                |   8 +
->  .../{trusted.c => trusted-keys/trusted_tpm1.c}     |  96 +++----
->  security/keys/trusted-keys/trusted_tpm2.c          | 314 +++++++++++++++++++++
->  11 files changed, 652 insertions(+), 759 deletions(-)
->  rename include/keys/{trusted.h => trusted_tpm.h} (77%)
->  create mode 100644 security/keys/trusted-keys/Makefile
->  rename security/keys/{trusted.c => trusted-keys/trusted_tpm1.c} (94%)
->  create mode 100644 security/keys/trusted-keys/trusted_tpm2.c
-> 
-> -- 
-> 2.7.4
-> 
+> But if you want to preserve behaviour (arguably a sane thing for your
+> patch) then yes, feel free to do as you propose.
 
-I fixed a merge conflict caused by James' commit. Already pushed.
-Compiling test kernel ATM i.e. tested-by's will follow later.
+Ok, I will do it as I proposed above and resend patch today. Thanks!
 
-/Jarkko
+ - Joel
+
