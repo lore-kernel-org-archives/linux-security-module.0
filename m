@@ -1,98 +1,152 @@
-Return-Path: <SRS0=883h=YE=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=bMKJ=YF=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D795CECE58D
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 22:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D274C47404
+	for <linux-security-module@archiver.kernel.org>; Sat, 12 Oct 2019 00:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72D52196E
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Oct 2019 22:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB58A21D82
+	for <linux-security-module@archiver.kernel.org>; Sat, 12 Oct 2019 00:59:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbfJKWew (ORCPT
+        id S1727594AbfJLA7W (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Oct 2019 18:34:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59154 "EHLO mx1.redhat.com"
+        Fri, 11 Oct 2019 20:59:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727606AbfJKWev (ORCPT
+        id S1726903AbfJLA7W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Oct 2019 18:34:51 -0400
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 11 Oct 2019 20:59:22 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D43F4862A
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2019 22:34:51 +0000 (UTC)
-Received: by mail-io1-f69.google.com with SMTP id g8so16564870iop.19
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2019 15:34:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=pb2kd2/UeXZLZxX2NPDVZ505qaor0AU6e6HZyZ5Nf/0=;
-        b=cCy3LWakBoM45nx2iHN+6KLGvCHUi57rHFUu+pb7RL+FwnJ5S2KqM/p+zqOiV4tLT8
-         ngIVT1BeUpaHwbCHlNuTmxs2GeutbM4QHqnKnC3YW5Z7kY1OwHusUehKiBZBXatAfH1Y
-         pHrr1wzW2aSFlfawtvwhD4l81xDtGvifzEv6uChcW3QjvwX/ymbSDOmsntHDvVs4Zl4F
-         uyauNFh4rfiPOGTgsPNJU/1Fd+LewPxp1eS7p/PsJDEOuBtXPiPic9WvjEQaZSfjM+h8
-         us8f5EwM0KLUrNOnrfdnnkvsMY3SYyE52DYKCZQBH/hLLpUCxSjzFpGGIT1g0CnVSkkB
-         1hNg==
-X-Gm-Message-State: APjAAAWuRhY61d9rK6ooDayY/a1Up5Tubd9H3nTA/vGABtDeQkHbmBUh
-        TVfpiRnHHuzoN/hTULTqXpV/elBWbxUk3iOLKRjXMMyqfrKpESfJYkzFpb37MIKcnPDh6QkPTHF
-        Q4DJNIP4+oqtY0/CW5T6uzX6C/3ZQI1HONPcF
-X-Received: by 2002:a5d:8b12:: with SMTP id k18mr3790083ion.133.1570833291146;
-        Fri, 11 Oct 2019 15:34:51 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwpN+irjTZ41pWeVOF+4kudnO11CT6u7HGkC68Z1Xz7WWUQxPTXop0tLsor9iDJHIHBYs/Qjg==
-X-Received: by 2002:a5d:8b12:: with SMTP id k18mr3790056ion.133.1570833290974;
-        Fri, 11 Oct 2019 15:34:50 -0700 (PDT)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id u11sm8534708iof.22.2019.10.11.15.34.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 15:34:50 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 15:34:49 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     jarkko.sakkinen@linux.intel.com, dhowells@redhat.com,
-        peterhuewe@gmx.de, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, jgg@ziepe.ca, arnd@arndb.de,
-        gregkh@linuxfoundation.org, jejb@linux.ibm.com,
-        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        linux-kernel@vger.kernel.org, daniel.thompson@linaro.org
-Subject: Re: [Patch v7 2/4] KEYS: Use common tpm_buf for trusted and
- asymmetric keys
-Message-ID: <20191011223448.7kycskba5mfsbvvw@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Sumit Garg <sumit.garg@linaro.org>,
-        jarkko.sakkinen@linux.intel.com, dhowells@redhat.com,
-        peterhuewe@gmx.de, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, jgg@ziepe.ca, arnd@arndb.de,
-        gregkh@linuxfoundation.org, jejb@linux.ibm.com, zohar@linux.ibm.com,
-        jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org,
-        daniel.thompson@linaro.org
-References: <1570425935-7435-1-git-send-email-sumit.garg@linaro.org>
- <1570425935-7435-3-git-send-email-sumit.garg@linaro.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id B462421835;
+        Sat, 12 Oct 2019 00:59:21 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1iJ5ke-0004Dy-T1; Fri, 11 Oct 2019 20:59:20 -0400
+Message-Id: <20191012005920.780394471@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Fri, 11 Oct 2019 20:57:49 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        James Morris James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Al Viro <viro@zeniv.linux.org.uk>, stable@vger.kernel.org
+Subject: [PATCH 2/7 v2] ftrace: Get a reference counter for the trace_array on filter files
+References: <20191012005747.210722465@goodmis.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1570425935-7435-3-git-send-email-sumit.garg@linaro.org>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon Oct 07 19, Sumit Garg wrote:
->Switch to utilize common heap based tpm_buf code for TPM based trusted
->and asymmetric keys rather than using stack based tpm1_buf code. Also,
->remove tpm1_buf code.
->
->Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
->---
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+The ftrace set_ftrace_filter and set_ftrace_notrace files are specific for
+an instance now. They need to take a reference to the instance otherwise
+there could be a race between accessing the files and deleting the instance.
+
+It wasn't until the :mod: caching where these file operations stated
+referencing the trace_arry directly.
+
+Cc: stable@vger.kernel.org
+Fixes: 673feb9d76ab3 ("ftrace: Add :mod: caching infrastructure to trace_array")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/ftrace.c | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 62a50bf399d6..32c2eb167de0 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -3540,21 +3540,22 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
+ 	struct ftrace_hash *hash;
+ 	struct list_head *mod_head;
+ 	struct trace_array *tr = ops->private;
+-	int ret = 0;
++	int ret = -ENOMEM;
+ 
+ 	ftrace_ops_init(ops);
+ 
+ 	if (unlikely(ftrace_disabled))
+ 		return -ENODEV;
+ 
++	if (tr && trace_array_get(tr) < 0)
++		return -ENODEV;
++
+ 	iter = kzalloc(sizeof(*iter), GFP_KERNEL);
+ 	if (!iter)
+-		return -ENOMEM;
++		goto out;
+ 
+-	if (trace_parser_get_init(&iter->parser, FTRACE_BUFF_MAX)) {
+-		kfree(iter);
+-		return -ENOMEM;
+-	}
++	if (trace_parser_get_init(&iter->parser, FTRACE_BUFF_MAX))
++		goto out;
+ 
+ 	iter->ops = ops;
+ 	iter->flags = flag;
+@@ -3584,13 +3585,13 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
+ 
+ 		if (!iter->hash) {
+ 			trace_parser_put(&iter->parser);
+-			kfree(iter);
+-			ret = -ENOMEM;
+ 			goto out_unlock;
+ 		}
+ 	} else
+ 		iter->hash = hash;
+ 
++	ret = 0;
++
+ 	if (file->f_mode & FMODE_READ) {
+ 		iter->pg = ftrace_pages_start;
+ 
+@@ -3602,7 +3603,6 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
+ 			/* Failed */
+ 			free_ftrace_hash(iter->hash);
+ 			trace_parser_put(&iter->parser);
+-			kfree(iter);
+ 		}
+ 	} else
+ 		file->private_data = iter;
+@@ -3610,6 +3610,13 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
+  out_unlock:
+ 	mutex_unlock(&ops->func_hash->regex_lock);
+ 
++ out:
++	if (ret) {
++		kfree(iter);
++		if (tr)
++			trace_array_put(tr);
++	}
++
+ 	return ret;
+ }
+ 
+@@ -5037,6 +5044,8 @@ int ftrace_regex_release(struct inode *inode, struct file *file)
+ 
+ 	mutex_unlock(&iter->ops->func_hash->regex_lock);
+ 	free_ftrace_hash(iter->hash);
++	if (iter->tr)
++		trace_array_put(iter->tr);
+ 	kfree(iter);
+ 
+ 	return 0;
+-- 
+2.23.0
+
+
