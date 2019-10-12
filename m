@@ -2,35 +2,35 @@ Return-Path: <SRS0=bMKJ=YF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7C7ECE58D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB14C47404
 	for <linux-security-module@archiver.kernel.org>; Sat, 12 Oct 2019 00:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 047502064A
+	by mail.kernel.org (Postfix) with ESMTP id 64D2B2064A
 	for <linux-security-module@archiver.kernel.org>; Sat, 12 Oct 2019 00:59:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbfJLA7W (ORCPT
+        id S1728769AbfJLA7r (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Oct 2019 20:59:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57038 "EHLO mail.kernel.org"
+        Fri, 11 Oct 2019 20:59:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726269AbfJLA7W (ORCPT
+        id S1727345AbfJLA7W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 11 Oct 2019 20:59:22 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 836EA2064A;
+        by mail.kernel.org (Postfix) with ESMTPSA id D4A20218AC;
         Sat, 12 Oct 2019 00:59:21 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iJ5ke-0004Cx-IR; Fri, 11 Oct 2019 20:59:20 -0400
-Message-Id: <20191012005747.210722465@goodmis.org>
+        id 1iJ5kf-0004ES-1m; Fri, 11 Oct 2019 20:59:21 -0400
+Message-Id: <20191012005920.942012497@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 11 Oct 2019 20:57:47 -0400
+Date:   Fri, 11 Oct 2019 20:57:50 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -41,50 +41,76 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
         Ben Hutchings <ben@decadent.org.uk>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 0/7 v2] tracing: Fix tracefs lockdown and various clean ups
+        Al Viro <viro@zeniv.linux.org.uk>, stable@vger.kernel.org
+Subject: [PATCH 3/7 v2] tracing: Get trace_array reference for available_tracers files
+References: <20191012005747.210722465@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-It appears that using destroy_inode() to clean up the proxy_ops that was
-used by the lockdown code to have all open calls to the tracefs directory
-was totally broken. It caused the inodes to not be cleaned up as the
-destroy_inode() method is expected to clean up the inode, and not just what
-it allocated as extra.
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Linus suggested to get rid of the proxy_ops in tracefs, and just put the
-checks in the open functions themselves. This also gives us a bit more fine
-grain control to what exactly can be accessed.
+As instances may have different tracers available, we need to look at the
+trace_array descriptor that shows lists the available tracers for the
+instance. But there's a race between opening the file and the admin from
+deleting the instance. The trace_array_get() needs to be called before
+accessing the trace_array.
 
-Currently, I left the event format files (as they may need to be used by
-something other than tracing), and enabled_functions, which shows what
-functions are currently being traced. Not sure it is wise to not display
-that information.
+Cc: stable@vger.kernel.org
+Fixes: 607e2ea167e56 ("tracing: Set up infrastructure to allow tracers for instances")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-They can always be locked down later if need be.
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 252f79c435f8..fa7d813b04c6 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4355,9 +4355,14 @@ static int show_traces_open(struct inode *inode, struct file *file)
+ 	if (tracing_disabled)
+ 		return -ENODEV;
+ 
++	if (trace_array_get(tr) < 0)
++		return -ENODEV;
++
+ 	ret = seq_open(file, &show_traces_seq_ops);
+-	if (ret)
++	if (ret) {
++		trace_array_put(tr);
+ 		return ret;
++	}
+ 
+ 	m = file->private_data;
+ 	m->private = tr;
+@@ -4365,6 +4370,14 @@ static int show_traces_open(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
++static int show_traces_release(struct inode *inode, struct file *file)
++{
++	struct trace_array *tr = inode->i_private;
++
++	trace_array_put(tr);
++	return seq_release(inode, file);
++}
++
+ static ssize_t
+ tracing_write_stub(struct file *filp, const char __user *ubuf,
+ 		   size_t count, loff_t *ppos)
+@@ -4395,8 +4408,8 @@ static const struct file_operations tracing_fops = {
+ static const struct file_operations show_traces_fops = {
+ 	.open		= show_traces_open,
+ 	.read		= seq_read,
+-	.release	= seq_release,
+ 	.llseek		= seq_lseek,
++	.release	= show_traces_release,
+ };
+ 
+ static ssize_t
+-- 
+2.23.0
 
-Steven Rostedt (VMware) (7):
-      tracefs: Revert ccbd54ff54e8 ("tracefs: Restrict tracefs when the kernel is locked down")
-      ftrace: Get a reference counter for the trace_array on filter files
-      tracing: Get trace_array reference for available_tracers files
-      tracing: Have trace events system open call tracing_open_generic_tr()
-      tracing: Add tracing_check_open_get_tr()
-      tracing: Add some more locked_down checks
-      tracing: Do not create tracefs files if tracefs lockdown is in effect
 
-----
- fs/tracefs/inode.c                  |  46 ++----------
- kernel/trace/ftrace.c               |  55 ++++++++++----
- kernel/trace/trace.c                | 138 ++++++++++++++++++++++--------------
- kernel/trace/trace.h                |   2 +
- kernel/trace/trace_dynevent.c       |   4 ++
- kernel/trace/trace_events.c         |  49 +++++--------
- kernel/trace/trace_events_hist.c    |  13 +++-
- kernel/trace/trace_events_trigger.c |   8 ++-
- kernel/trace/trace_kprobe.c         |  12 +++-
- kernel/trace/trace_printk.c         |   7 ++
- kernel/trace/trace_stack.c          |   8 +++
- kernel/trace/trace_stat.c           |   6 +-
- kernel/trace/trace_uprobe.c         |  11 +++
- 13 files changed, 220 insertions(+), 139 deletions(-)
