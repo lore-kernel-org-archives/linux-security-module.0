@@ -2,112 +2,161 @@ Return-Path: <SRS0=8Vjb=YH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65AEBECE587
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Oct 2019 08:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B42AECE58D
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Oct 2019 09:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B4D220663
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Oct 2019 08:21:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24568206A3
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Oct 2019 09:36:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q94TPx9m"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XvAnoRVK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730368AbfJNIVp (ORCPT
+        id S1731009AbfJNJg0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Oct 2019 04:21:45 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:40197 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729923AbfJNIVp (ORCPT
+        Mon, 14 Oct 2019 05:36:26 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55190 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730667AbfJNJg0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Oct 2019 04:21:45 -0400
-Received: by mail-vs1-f68.google.com with SMTP id v10so10261501vsc.7
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Oct 2019 01:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=qkwYhsUckf7+4PwNb5NLbq4ut4I6iHnrpcqJjRVh4Co=;
-        b=Q94TPx9mwCbFfuj+46CEZV5V/OtvL7+M331PFGXXsnZ/866GBQiqzvmCa7AJnB6W5t
-         4+GIZMfiXxqYuV1gAyoX1nX+qg4se72WmcvI2cgRhEgQxnquDfgMz+bqRKePdqmPZHOZ
-         XNeDOIXBHHLw1EFcPWGADYT4D0b7+zl1FQwpHeweGQmAPx3e3qfUol2FB9JBQzZ4qn4l
-         8OzdRYvF5j6Ool8dzQG1OIEyBVt3vpwckhteZWbHbrIDL+aNRz9AtyFc4zq+O+JN2tSe
-         T38JzPz/wmRJ5hBSASoywlOvL+amlBmHqebn2qOt6YralK3yKZqIDmwj+HGBLPpPZKCo
-         XF+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=qkwYhsUckf7+4PwNb5NLbq4ut4I6iHnrpcqJjRVh4Co=;
-        b=bWuVXmld9Sfz2uCKOo13HuSu1dZIcmuO3g9A5gPRqeJirg2erIfEFMIylaWrBWiJ8A
-         8aj35s6bzQpnO+zShhf2ZMZUxT5mJK9xwVjGVQ3bznKV7JJrYdZBfjNr+qpa0JCwGChC
-         8jzT3+bbti9bme7wQN6HYeU2Zs0Q3+mMSKU6rk6+j9TZT5tuakEhfxr0gZHKxv/DHtaD
-         xcnn7X4zjRNFutB5K7c1meyT1+Yhlq9EBJaqAf7fFVr/BvWCxmjzsUI0x2JuxRtjSZun
-         riWVAvG7m7Fq69ft8EQ25WPsLZqbXQDyFwDoMUtsZr0374KIU2xHk5OFm3UlkqHDrw44
-         lN6w==
-X-Gm-Message-State: APjAAAXD+ui1amhf1l2dLsmtoI644muwDM0XJE3RLdXzBfeMC6ufL3U1
-        GLwfZM0bhOPoKym0RxSiIeaWb4/LTczWrZ6ktr0U4n6o
-X-Google-Smtp-Source: APXvYqwMu8oYztNIGZ0RkeWKz0iAgcwbzwiMFaNTb30+Z/+wiHJtgJ2b4/2JW2oTZ5vYaji31ko6X3DWc662HE8AkQY=
-X-Received: by 2002:a67:f288:: with SMTP id m8mr16248667vsk.223.1571041304470;
- Mon, 14 Oct 2019 01:21:44 -0700 (PDT)
+        Mon, 14 Oct 2019 05:36:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LsMYLS/Y8cXFlMO0GSn0Yr3BGu1XV5VAX95XcUxBpz0=; b=XvAnoRVKvYRsEt/t8d+FAEQPl
+        B2q8swT9UjlU8sRDS9hAToqyHzJLXEvw6tO47ML5EE88nfG6Cs+/lglrJiXTvJsdGiwk7Gn3B+fOg
+        d/KVk71GetGtHjFPkZmmNP9hpm3XNZPvZKHXKJtyG7MXCIxjQO+9ogr3UoyhzPcBvUkXJ/2FGwzjo
+        MT6aDZxByHv6N7QmSF865+Q8m+FdLf45V1GFwZm+UvbwvUKCoYXYwRB7Z7buZsr8Uk/Y1Vjd9nu88
+        SBtwYHS6X1OCWrTuYhgDYfYKmmcGs4/l3uPYqMJ7urLlxx9FG5EHeWRdIq4jHkLNqjUvIcQ2btmcQ
+        ytw851Dow==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iJwlY-0005EW-2w; Mon, 14 Oct 2019 09:35:48 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 717FC300F3F;
+        Mon, 14 Oct 2019 11:34:50 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 555A926530285; Mon, 14 Oct 2019 11:35:44 +0200 (CEST)
+Date:   Mon, 14 Oct 2019 11:35:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        primiano@google.com, rsavitski@google.com, jeffv@google.com,
+        kernel-team@android.com, Alexei Starovoitov <ast@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH] perf_event: Add support for LSM and SELinux checks
+Message-ID: <20191014093544.GB2328@hirez.programming.kicks-ass.net>
+References: <20191011160330.199604-1-joel@joelfernandes.org>
 MIME-Version: 1.0
-From:   Temp Sha <temp.sha@gmail.com>
-Date:   Mon, 14 Oct 2019 13:51:31 +0530
-Message-ID: <CANe=CUmBHF=L8EUVvupGSYKY_m2PH_4aH=pL7Fky57BY4JQdvA@mail.gmail.com>
-Subject: kernel panic while using get_random_bytes
-To:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191011160330.199604-1-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-hi,
+On Fri, Oct 11, 2019 at 12:03:30PM -0400, Joel Fernandes (Google) wrote:
 
-i use get_random_bytes() function for my randomness requirement in
-kernel version 4.14.142
-however is gives panic as soon as I call   get_random_bytes() in my module.
+> @@ -4761,6 +4762,7 @@ int perf_event_release_kernel(struct perf_event *event)
+>  	}
+>  
+>  no_ctx:
+> +	security_perf_event_free(event);
+>  	put_event(event); /* Must be the 'last' reference */
+>  	return 0;
+>  }
 
+> @@ -10553,11 +10568,16 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+>  		}
+>  	}
+>  
+> +	err = security_perf_event_alloc(event);
+> +	if (err)
+> +		goto err_security;
+> +
+>  	/* symmetric to unaccount_event() in _free_event() */
+>  	account_event(event);
+>  
+>  	return event;
+>  
+> +err_security:
+>  err_addr_filters:
+>  	kfree(event->addr_filter_ranges);
+>  
 
-Oct 10 07:20:18 BUG: unable to handle kernel paging request at 00007f5563ced000
-IP: chacha20_block+0x24d/0x280
-PGD 800000010f7f8067 P4D 800000010f7f8067 PUD 161316067 PMD 1015a8067 PTE 0
-Oops: 0002 [#1] PREEMPT SMP PTI
-Modules linked in: ipi_hsl(PO) mymod(PO) e1000 ipv6 ftdi_sio usbserial
-xt_tcpudp xt_mark iptable_nat nf_nat_ipv4 nf_conntrack_ipv4
-nf_defrag_ipv4 nf_nat xt_connlimit nf_conntrack iptable_filter
-ip_tables x_tables
-CPU: 0 PID: 1841 Comm: hexdump Tainted: P           O    4.14.142-ws-symbol #1
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-task: ffff8881611da000 task.stack: ffffc900504c4000
-RIP: 0010:chacha20_block+0x24d/0x280
-RSP: 0018:ffffc900504c7c70 EFLAGS: 00010886
-RAX: 0000000000000000 RBX: 00000000a88c95b0 RCX: 00007f5563ced000
-RDX: ffff88810f79da00 RSI: 0000000015c4332e RDI: 000000007613f298
-RBP: ffffc900504c7d00 R08: 000000009d39d68d R09: 00000000bfbdb51f
-R10: 00000000ed798a26 R11: 0000000083c184dc R12: 0000000036fc61e0
-R13: 00000000f9004639 R14: 0000000042c0d351 R15: 000000008a6cef0f
-FS:  00007f5563cef700(0000) GS:ffff888167e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5563ced000 CR3: 000000016117c000 CR4: 00000000000006b0
-Call Trace:
- _extract_crng+0x6d/0xc0
- extract_crng+0x3a/0x40
- _get_random_bytes+0x56/0x1c0
- ? vprintk_func+0x3f/0xd0
- ? printk+0x3e/0x46
- get_random_bytes+0x2f/0x40
- xyz_packets+0x1110/0x11e0 [mymod]
- proc_reg_read+0x3d/0x60
- __vfs_read+0x23/0x120
- ? vm_mmap_pgoff+0x9d/0xd0
- vfs_read+0x8e/0x110
- SyS_read+0x48/0xc0
- do_syscall_64+0x5c/0x260
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x7f55631f
+There's a bunch of problems here I think:
+
+ - err_security is named wrong; the naming scheme is to name the label
+   after the last thing that succeeded / first thing that needs to be
+   undone.
+
+ - per that, you're forgetting to undo 'get_callchain_buffers()'
+
+ - perf_event_release_kernel() is not a full match to
+   perf_event_alloc(), inherited events get created by
+   perf_event_alloc() but never pass through
+   perf_event_release_kernel().
 
 
-what could be the problem?
+I'm thinking the below patch on top should ammend these issues; please
+verify.
 
-
-thanks
+---
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4540,6 +4540,8 @@ static void _free_event(struct perf_even
+ 
+ 	unaccount_event(event);
+ 
++	security_perf_event_free(event);
++
+ 	if (event->rb) {
+ 		/*
+ 		 * Can happen when we close an event with re-directed output.
+@@ -4774,7 +4776,6 @@ int perf_event_release_kernel(struct per
+ 	}
+ 
+ no_ctx:
+-	security_perf_event_free(event);
+ 	put_event(event); /* Must be the 'last' reference */
+ 	return 0;
+ }
+@@ -10595,14 +10596,18 @@ perf_event_alloc(struct perf_event_attr
+ 
+ 	err = security_perf_event_alloc(event);
+ 	if (err)
+-		goto err_security;
++		goto err_callchain_buffer;
+ 
+ 	/* symmetric to unaccount_event() in _free_event() */
+ 	account_event(event);
+ 
+ 	return event;
+ 
+-err_security:
++err_callchain_buffer:
++	if (!event->parent) {
++		if (event->attr.sample_type & PERF_SAMPLE_CALLCHAIN)
++			put_callchain_buffers();
++	}
+ err_addr_filters:
+ 	kfree(event->addr_filter_ranges);
+ 
