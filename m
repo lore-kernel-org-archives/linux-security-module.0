@@ -2,129 +2,170 @@ Return-Path: <SRS0=Ziay=YI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35137C10F14
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Oct 2019 08:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8197FECE58F
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Oct 2019 08:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AC0B2064B
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Oct 2019 08:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55F2521927
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Oct 2019 08:32:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YbFbFpEk"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ORou6M+V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbfJOIap (ORCPT
+        id S1729025AbfJOIca (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Oct 2019 04:30:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42826 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbfJOIap (ORCPT
+        Tue, 15 Oct 2019 04:32:30 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33676 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729014AbfJOIca (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Oct 2019 04:30:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nde+rVxrbKGORynbc7srtKQrRn/wfiVC6y4tD1FT7B0=; b=YbFbFpEk4DpWY6RLhaLCvmJiX
-        Aux8/sNbH48tsLFO5JH6caRTG0co+m0pmYYidLAW8/Lla9Ygzk0kpPQr9UvMWWAxylSf9bNlQB9BW
-        7w7HkmmJ6GBaPp0Om+i17i7ed9q7icxuLV9zpcLLmRNv/5VspmqDE7gMu22tjcHUnmeDpU8VNDHjY
-        KO+y7VmPxVO1I1MlZjm9p4Idv0lnNtxhNH/mOmvzD45K44F/RuNRVgko6j6rkccPhgot44PNlvIwB
-        jocNU+1j2OpQHEWDy5tT9leSUdXiNvXaQpdagTRQ9Ssnk3I5RvxVJ8xgt0vpvqoInIiFI4AmF1BOC
-        Ked5/SBpw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iKIDe-0005F7-3A; Tue, 15 Oct 2019 08:30:14 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A4E8A303807;
-        Tue, 15 Oct 2019 10:29:14 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F3CD0284DE58D; Tue, 15 Oct 2019 10:30:08 +0200 (CEST)
-Date:   Tue, 15 Oct 2019 10:30:08 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        primiano@google.com, rsavitski@google.com, jeffv@google.com,
-        kernel-team@android.com, James Morris <jmorris@namei.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH v2] perf_event: Add support for LSM and SELinux checks
-Message-ID: <20191015083008.GC2311@hirez.programming.kicks-ass.net>
-References: <20191014170308.70668-1-joel@joelfernandes.org>
+        Tue, 15 Oct 2019 04:32:30 -0400
+Received: by mail-lj1-f196.google.com with SMTP id a22so19330594ljd.0
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Oct 2019 01:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iqc7TL4ZCr8iG1KRxAEVdDujqelnE0lYSvI39NYB58s=;
+        b=ORou6M+VQm37RcWZSBf+3eRqxFtkcZeczsKeNWcAWPwbiqHzYP3Ur9KiB9UMEd3Lto
+         EoEQpQ3RKxucy9m96KaqlT52jWOyIdtxMJg9nvXjEG0bWLtxNYS5vIyzfQQyBASKjoJO
+         qupfVGIPm1FO80oJCZxaNFclo8qLzzM9dW8Sx96n3kT/eFuwFB9OceQV6omhjxyMkFGz
+         a6Ufa4iTgdyC+zlKaESyzDnFop4NnLupEVuRofGYvRYCidXxRBamHowRUOIXXRndk+Hk
+         Wc/siRy083KIQubV8OoCGsZK1dkvjTQ7eKGU+nF0pFCJblZJTUSG5AspIUsuQeE0fZgE
+         UiIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iqc7TL4ZCr8iG1KRxAEVdDujqelnE0lYSvI39NYB58s=;
+        b=ra5baLPX5HcZCG17SwDyiY1b1c9FAC+bg2WWIKHkmNDsMx1E1QPtJ+Et97owmPyQSN
+         1wsjXcle7gJCxnrrrHFzK3LQXoI/dEagegRYjsJbahycSX0KU9w3h+xFi+09HFojpQrM
+         kvI8TaYng2vOKxNgS0Hz+cxi9qcDIyRfzg11Njr1mPcYo/O+eMimCPxyPLdZPapnHVPY
+         jpVD07SE5Oxw0hNLhO29OfK/S2V5aRFEAB7rEGjLIK56Rm51YpebOwSOxe6AkwJ4imZS
+         LScqa2DvRSZSejykZ+aDfTsDXIzur2VzSSpz2rcAVUE6BVtEPkAfyEx5TOGqe1rSfbrK
+         JzoQ==
+X-Gm-Message-State: APjAAAXgCQxMQPJYT5PUdf8NRJKMImD+e8j3kd8JY5TjYUwh11/tRkV+
+        SEliEkO8GdLERXjOwFlxvXCTftHj4gShpiCzFvLyFg==
+X-Google-Smtp-Source: APXvYqxazDgrooIQclEs7kygQ2crMsb2qqnTnpLdD1E5sie5oddglXjpLaPSJSrZAAYLQpj1tBFHnzGFpI/tNX842Mc=
+X-Received: by 2002:a2e:1214:: with SMTP id t20mr21151298lje.191.1571128347374;
+ Tue, 15 Oct 2019 01:32:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014170308.70668-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1570425935-7435-1-git-send-email-sumit.garg@linaro.org>
+ <20191011123757.GD3129@linux.intel.com> <20191011210517.qxjemugqczsvscu6@cantor>
+ <20191014201604.GN15552@linux.intel.com>
+In-Reply-To: <20191014201604.GN15552@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Tue, 15 Oct 2019 14:02:15 +0530
+Message-ID: <CAFA6WYM1AfYfk1+eJeDJeaRddF7kQ8mi+-DKbcND1gkOzkF6=Q@mail.gmail.com>
+Subject: Re: [Patch v7 0/4] Create and consolidate trusted keys subsystem
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     dhowells@redhat.com, peterhuewe@gmx.de, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
+        jgg@ziepe.ca, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        jejb@linux.ibm.com, Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 14, 2019 at 01:03:08PM -0400, Joel Fernandes (Google) wrote:
-> In current mainline, the degree of access to perf_event_open(2) system
-> call depends on the perf_event_paranoid sysctl.  This has a number of
-> limitations:
-> 
-> 1. The sysctl is only a single value. Many types of accesses are controlled
->    based on the single value thus making the control very limited and
->    coarse grained.
-> 2. The sysctl is global, so if the sysctl is changed, then that means
->    all processes get access to perf_event_open(2) opening the door to
->    security issues.
-> 
-> This patch adds LSM and SELinux access checking which will be used in
-> Android to access perf_event_open(2) for the purposes of attaching BPF
-> programs to tracepoints, perf profiling and other operations from
-> userspace. These operations are intended for production systems.
-> 
-> 5 new LSM hooks are added:
-> 1. perf_event_open: This controls access during the perf_event_open(2)
->    syscall itself. The hook is called from all the places that the
->    perf_event_paranoid sysctl is checked to keep it consistent with the
->    systctl. The hook gets passed a 'type' argument which controls CPU,
->    kernel and tracepoint accesses (in this context, CPU, kernel and
->    tracepoint have the same semantics as the perf_event_paranoid sysctl).
->    Additionally, I added an 'open' type which is similar to
->    perf_event_paranoid sysctl == 3 patch carried in Android and several other
->    distros but was rejected in mainline [1] in 2016.
-> 
-> 2. perf_event_alloc: This allocates a new security object for the event
->    which stores the current SID within the event. It will be useful when
->    the perf event's FD is passed through IPC to another process which may
->    try to read the FD. Appropriate security checks will limit access.
-> 
-> 3. perf_event_free: Called when the event is closed.
-> 
-> 4. perf_event_read: Called from the read(2) and mmap(2) syscalls for the event.
-> 
-> 5. perf_event_write: Called from the ioctl(2) syscalls for the event.
-> 
-> [1] https://lwn.net/Articles/696240/
-> 
-> Since Peter had suggest LSM hooks in 2016 [1], I am adding his
-> Suggested-by tag below.
+On Tue, 15 Oct 2019 at 01:46, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Fri, Oct 11, 2019 at 02:05:17PM -0700, Jerry Snitselaar wrote:
+> > On Fri Oct 11 19, Jarkko Sakkinen wrote:
+> > > On Mon, Oct 07, 2019 at 10:55:31AM +0530, Sumit Garg wrote:
+> > > > This patch-set does restructuring of trusted keys code to create and
+> > > > consolidate trusted keys subsystem.
+> > > >
+> > > > Also, patch #2 replaces tpm1_buf code used in security/keys/trusted.c and
+> > > > crypto/asymmertic_keys/asym_tpm.c files to use the common tpm_buf code.
+> > > >
+> > > > Changes in v7:
+> > > > 1. Rebased to top of tpmdd/master
+> > > > 2. Patch #4: update tpm2 trusted keys code to use tpm_send() instead of
+> > > >    tpm_transmit_cmd() which is an internal function.
+> > > >
+> > > > Changes in v6:
+> > > > 1. Switch TPM asymmetric code also to use common tpm_buf code. These
+> > > >    changes required patches #1 and #2 update, so I have dropped review
+> > > >    tags from those patches.
+> > > > 2. Incorporated miscellaneous comments from Jarkko.
+> > > >
+> > > > Changes in v5:
+> > > > 1. Drop 5/5 patch as its more relavant along with TEE patch-set.
+> > > > 2. Add Reviewed-by tag for patch #2.
+> > > > 3. Fix build failure when "CONFIG_HEADER_TEST" and
+> > > >    "CONFIG_KERNEL_HEADER_TEST" config options are enabled.
+> > > > 4. Misc changes to rename files.
+> > > >
+> > > > Changes in v4:
+> > > > 1. Separate patch for export of tpm_buf code to include/linux/tpm.h
+> > > > 2. Change TPM1.x trusted keys code to use common tpm_buf
+> > > > 3. Keep module name as trusted.ko only
+> > > >
+> > > > Changes in v3:
+> > > >
+> > > > Move TPM2 trusted keys code to trusted keys subsystem.
+> > > >
+> > > > Changes in v2:
+> > > >
+> > > > Split trusted keys abstraction patch for ease of review.
+> > > >
+> > > > Sumit Garg (4):
+> > > >   tpm: Move tpm_buf code to include/linux/
+> > > >   KEYS: Use common tpm_buf for trusted and asymmetric keys
+> > > >   KEYS: trusted: Create trusted keys subsystem
+> > > >   KEYS: trusted: Move TPM2 trusted keys code
+> > > >
+> > > >  crypto/asymmetric_keys/asym_tpm.c                  | 101 +++----
+> > > >  drivers/char/tpm/tpm-interface.c                   |  56 ----
+> > > >  drivers/char/tpm/tpm.h                             | 226 ---------------
+> > > >  drivers/char/tpm/tpm2-cmd.c                        | 307 --------------------
+> > > >  include/Kbuild                                     |   1 -
+> > > >  include/keys/{trusted.h => trusted_tpm.h}          |  49 +---
+> > > >  include/linux/tpm.h                                | 251 ++++++++++++++--
+> > > >  security/keys/Makefile                             |   2 +-
+> > > >  security/keys/trusted-keys/Makefile                |   8 +
+> > > >  .../{trusted.c => trusted-keys/trusted_tpm1.c}     |  96 +++----
+> > > >  security/keys/trusted-keys/trusted_tpm2.c          | 314 +++++++++++++++++++++
+> > > >  11 files changed, 652 insertions(+), 759 deletions(-)
+> > > >  rename include/keys/{trusted.h => trusted_tpm.h} (77%)
+> > > >  create mode 100644 security/keys/trusted-keys/Makefile
+> > > >  rename security/keys/{trusted.c => trusted-keys/trusted_tpm1.c} (94%)
+> > > >  create mode 100644 security/keys/trusted-keys/trusted_tpm2.c
+> > > >
+> > > > --
+> > > > 2.7.4
+> > > >
+> > >
+> > > I fixed a merge conflict caused by James' commit. Already pushed.
+> > > Compiling test kernel ATM i.e. tested-by's will follow later.
+> > >
+> > > /Jarkko
+> >
+> > Are you missing patch 4 on master?
+>
+> Already removed the patch set given the sparse issues.
 
-Thanks, I've queued the patch!
+The sparse issues weren't due to this patch-set but they already
+existed in "security/keys/trusted.c" and this patch-set only did a
+rename for that file. So I think we should have a separate patch to
+fix sparse issues.
 
-> To use this patch, we set the perf_event_paranoid sysctl to -1 and then
-> apply selinux checking as appropriate (default deny everything, and then
-> add policy rules to give access to domains that need it). In the future
-> we can remove the perf_event_paranoid sysctl altogether.
+-Sumit
 
-This I'm not sure about; the sysctl is only redundant when you actually
-use a security thingy, not everyone is. I always find them things to be
-mightily unfriendly.
-
+> Read this email
+> after doing that. Thanks anyway for pointing that out.
+>
+> /Jarkko
