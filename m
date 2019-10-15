@@ -6,74 +6,73 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B205CECE59E
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Oct 2019 22:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46276ECE58F
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Oct 2019 22:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7893E2168B
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Oct 2019 22:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A9452064A
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Oct 2019 22:21:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571177674;
-	bh=rPbTSoHNEIC5WjuGfABGhzt2oAh6+ric+JzfcxM3/x4=;
+	s=default; t=1571178069;
+	bh=rkQXlFDsFSyesOcjvZcFxgz+cNH1rBDwoJ21bgZxyKA=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=0s6/jEHhh/QPbxy1pinMtw+ZVm2qRw4292Q5Lfg6BmtIhjB1gKvMTdZsc9Vl81ql9
-	 KPKqmBYwWmwR6ax8Xu+50vKldBOhC9yD/QgaZZbzTMIN0NYMkpZDrqMWYgGe0bjbow
-	 f5vSTGjk3PsvrCtoFx/l+LrjvEVNDgDe4ksqga3E=
+	b=AGBRwmpblh1qXzeMznSIuuhHc2sA4plPjUbGTW5EKrtncCLVnxI7PHPvsKATlJ8Bn
+	 NDQ9G13d+SvPYV/7wVaL7j2/9aiJqxRL6DmEWVChsO37bLAKombHqOFy16AX0awLQU
+	 xyWrZbWK3T67+EcOAQzke12uhpbxqGdnJllQ4oNo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387678AbfJOWOd (ORCPT
+        id S1730578AbfJOWVI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Oct 2019 18:14:33 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38749 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389079AbfJOWOd (ORCPT
+        Tue, 15 Oct 2019 18:21:08 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37493 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbfJOWVI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Oct 2019 18:14:33 -0400
-Received: by mail-lj1-f194.google.com with SMTP id b20so21893814ljj.5
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Oct 2019 15:14:31 -0700 (PDT)
+        Tue, 15 Oct 2019 18:21:08 -0400
+Received: by mail-lj1-f196.google.com with SMTP id l21so21915186lje.4
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Oct 2019 15:21:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=d/Zz9M4vXV5ymfLbgnz4oj5mAYZiyyFZ4Ij6h9abXFA=;
-        b=AlIXJO/ZLBv/p7d/ORSQnj90qcyxXZ/L4tcwMN1ksd4hi9eaymWS714WViotqQRLhk
-         vIRHrilEHfQt3hkm1+JjO4o2Ud7MKCdkuXafJuo44Fo4GYyzQ/9AmESct2Xx7IfOK7Ok
-         haqnjvvfI/PnFSGBeuzLe9ZId2U0u1ulJkPj0=
+        bh=igJfeABa6M5mmcDSZ9XAWyfxDlpeT34TBKS5Vu4WYQ8=;
+        b=LIYdbK/WEFGMNdD+uIGw2BasCdPDikOSk/1C31c/6KJAoWeweWvBbkEnJF4PHN8TkH
+         BgZdUCf/ZYXj115hlOqd/koyMkdZG6Il9yGalmukOiV4kTIOYCVZSlLQpLqR2NWtyVYg
+         nGZ/n1OZmV0DBw+aQ4pzCSwYlzFEdDM+SUZEQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=d/Zz9M4vXV5ymfLbgnz4oj5mAYZiyyFZ4Ij6h9abXFA=;
-        b=bEGnODejOOEg7TSvIPOcofu7qq4saAYKrNp5on479do1JBjvV8x8PVElk75bsmTXRT
-         ZlB7VmbJNrx9riNnB4Kc28KcDNRjyqujSbD/EmFn1prxmapxcbdO3ltsm9RrsKxoVtYO
-         FhGw94HZRNYOwq4K+MU8sysktfxPB2gzZgwaU4myx4OwrCY45Cb8P1udAwmzBKnHd0zj
-         X4B5CrDolWoiLj0VkL8zPckVV5btT6a7lfhaxOAub3/2tFfRX5mOXKWxPMfCbf1FeuEE
-         X/7tJEiYzjmj1pfxSRcYYX3oZQeXIsu5RjXEggCbKxbWFydz+W8ojuQxYaToL9FP/qn4
-         jzTw==
-X-Gm-Message-State: APjAAAUINNwtlW7stGugEwCBPQgSyDyY9EzlslquWcUnMXDLXcoT/6mf
-        PbTgtONy2DFtciR9eiFXSUjI1cKH3w8=
-X-Google-Smtp-Source: APXvYqxOa346AwqoaBEAFJgs0Sq+YGCGmPybzQ51LFfu/xmWpiFhdriqxUoNgeQdKpLPiDx6wFW12A==
-X-Received: by 2002:a2e:9890:: with SMTP id b16mr21635646ljj.153.1571177670443;
-        Tue, 15 Oct 2019 15:14:30 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id a6sm1030060lfi.24.2019.10.15.15.14.27
+        bh=igJfeABa6M5mmcDSZ9XAWyfxDlpeT34TBKS5Vu4WYQ8=;
+        b=c/5cr90clMH+0JoV/P9+FY8aforf2+/Qb8vftucAK4azWbk2py9DT38WERPiWQFpwY
+         D3QcBVTSEYj2FzK+NlgSUt4QIDc6DC70z/yaE+2DV3hinIyi2avq7yhu+74GYJpxtej6
+         hpHBzvOG9WsqCU1isDptcGe3cz6xTCjWN1XYzxs22Op4+AVF4xqyuhviexy/vnGqKjuQ
+         kgyPj/fgeRy0xHuq5yu0dpPBLoEGYSHtkM204ww1YKsu9hHDT3bCFuE+2njFp0vWnVCl
+         Dndt+xSEy60ZFSz3FzOoIlUeYEjCg482SsI5wQBfW1DS6CgNoo6tdzFqtyrtRo0VcTi0
+         odPg==
+X-Gm-Message-State: APjAAAWM1tx7ISzIcWJlCzUcQYQM0wZiNqvLjghZG5/WEDJpmc+xJJO/
+        TcWyCN5bO9bDoPbnCje8jIvzghAlqVk=
+X-Google-Smtp-Source: APXvYqzhQBv2Qx13vUJ1XAs3ysR3rJfO8PyKOtnJ1ioIZu3bpIv/T9b8dOLAnwDyy5+Xjd1Q6/UNNg==
+X-Received: by 2002:a2e:1b52:: with SMTP id b79mr23996731ljb.225.1571178065822;
+        Tue, 15 Oct 2019 15:21:05 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id x30sm5416445ljd.39.2019.10.15.15.21.03
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2019 15:14:28 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id l21so21902882lje.4
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Oct 2019 15:14:27 -0700 (PDT)
-X-Received: by 2002:a2e:6a04:: with SMTP id f4mr23595993ljc.97.1571177667184;
- Tue, 15 Oct 2019 15:14:27 -0700 (PDT)
+        Tue, 15 Oct 2019 15:21:03 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id a19so2833050lfg.12
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Oct 2019 15:21:03 -0700 (PDT)
+X-Received: by 2002:ac2:43a8:: with SMTP id t8mr22573654lfl.134.1571178063150;
+ Tue, 15 Oct 2019 15:21:03 -0700 (PDT)
 MIME-Version: 1.0
 References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
- <157117608708.15019.1998141309054662114.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157117608708.15019.1998141309054662114.stgit@warthog.procyon.org.uk>
+ <157117614109.15019.15677943675625422728.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157117614109.15019.15677943675625422728.stgit@warthog.procyon.org.uk>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 15 Oct 2019 15:14:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whiz1sHXu8SVZKEC2dup=r5JMrftPtEt6ff9Ea8dyH8yQ@mail.gmail.com>
-Message-ID: <CAHk-=whiz1sHXu8SVZKEC2dup=r5JMrftPtEt6ff9Ea8dyH8yQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 02/21] Add a prelocked wake-up
-To:     David Howells <dhowells@redhat.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>
+Date:   Tue, 15 Oct 2019 15:20:47 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wivjB8Va7K_eK_fx+Z1vpbJ82DW=eVfyP33ZDusaK44EA@mail.gmail.com>
+Message-ID: <CAHk-=wivjB8Va7K_eK_fx+Z1vpbJ82DW=eVfyP33ZDusaK44EA@mail.gmail.com>
+Subject: Re: [RFC PATCH 08/21] pipe: Check for ring full inside of the
+ spinlock in pipe_write()
+To:     David Howells <dhowells@redhat.com>
 Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -90,39 +89,13 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 15, 2019 at 2:48 PM David Howells <dhowells@redhat.com> wrote:
+On Tue, Oct 15, 2019 at 2:49 PM David Howells <dhowells@redhat.com> wrote:
 >
-> Add a wakeup call for a case whereby the caller already has the waitqueue
-> spinlock held.
+> +                       if (head - pipe->tail == buffers) {
 
-That naming is crazy.
+Can we just have helper inline functions for these things?
 
-We already have helper functions like this, and they are just called
-"wake_up_locked()".
+You describe them in the commit message of 03/21 (good), but it would
+be even better if the code was just self-describing..
 
-So the "prelocked" naming is just odd. Make it be
-wake_up_interruptible_sync_poll_locked().
-
-The helper function should likely be
-
-  void __wake_up_locked_sync_key(struct wait_queue_head *wq_head,
-unsigned int mode, void *key)
-  {
-        __wake_up_common(wq_head, mode, 1, WF_SYNC, key, NULL);
-  }
-  EXPORT_SYMBOL_GPL(__wake_up_locked_sync_key);
-
-to match the other naming patterns there.
-
-[ Unrelated ]
-
-Looking at that mess of functions, I also wonder if we should try to
-just remove the bookmark code again. It was cute, and it was useful,
-but I think the problem with the page lock list may have been fixed by
-commit 9a1ea439b16b ("mm: put_and_wait_on_page_locked() while page is
-migrated") which avoids the retry condition with
-migrate_page_move_mapping().
-
-Tim/Kan? Do you have the problematic load still?
-
-              Linus
+           Linus
