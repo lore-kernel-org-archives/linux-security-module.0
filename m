@@ -2,155 +2,140 @@ Return-Path: <SRS0=7mfq=YJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 715F1ECE58F
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Oct 2019 00:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7120EECE58E
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Oct 2019 05:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 462E120663
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Oct 2019 00:35:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4557F20872
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Oct 2019 05:15:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="IRP9Gp/c"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BwXQgkLN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390271AbfJPAfE (ORCPT
+        id S1727764AbfJPFPU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Oct 2019 20:35:04 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36238 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbfJPAfD (ORCPT
+        Wed, 16 Oct 2019 01:15:20 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40516 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbfJPFPU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Oct 2019 20:35:03 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 23so13175181pgk.3
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Oct 2019 17:35:02 -0700 (PDT)
+        Wed, 16 Oct 2019 01:15:20 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x127so13924497pfb.7
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Oct 2019 22:15:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rf4qoYyym4OwL8++6P6U9mCaO/3P2myy/Ny/GVBd60Q=;
-        b=IRP9Gp/cJhpFJaURX7/ZJIIpkjlkzVHyKeR3E6m4jvjUm9XRNardXfNdATdaX4UJf9
-         5vhyJYmrai6Gy+w9n12CYH1PbhelsdACD9X+14BQhtRJ20IxkwAKlsjZrn5hYV2J+DNy
-         zs9JK3H+/n4EgWykXOS1pB1s2AOMDv6Mq7YoY=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=t9/za3FSNI+nWYnls/YkfcKZQCH6Udse6CzJVH/I/fg=;
+        b=BwXQgkLN2RA+shEgesXS9BP68Z3xU+nrV7SdKCEZB4oOqm58QVTMQnF0TZHVe49p5l
+         7nUcBVWCJECdmMiOY1vGnfKYV8xqgwHOnFfbeItVMtV5pKp0/MgpEj0KO1gcWqy/F8PK
+         exYsHgtPjBABP3K9tNaDAQehQqaD3ukHrulUiBIB8uyz6W7I1betj6joG27BYNOHD1RP
+         btRV07EjrwaH6H0oadoicz5CVziQU4QWGrKelwoRcn3IqcwNSHfo3Fqo897cnkMcCHwg
+         pjWz2OmqdQAVjR0YY5LktzGiss0vzgcPQXCaNHP4lTEpJP4Jg3RGtYXB9axtEmjYgwwq
+         KFDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rf4qoYyym4OwL8++6P6U9mCaO/3P2myy/Ny/GVBd60Q=;
-        b=Buak+w1x+Vmybo7SDs8XpB3MdWNbfvgl4RqMle5VEg7CtGdAyqncPgDlQ0nh3pUHaQ
-         oHq8RP5wg+7QASuhsXq+LYHyJSdfDzRalix2Jz5kZNfO2F6mN0UfqCNf8uklm4JVEhuR
-         KHAGP6uzQElja+biP06Lll7dp2s76+7+sczr7PFrEzyJduoLsubIyjVfzBZjB7wg3sh2
-         N7PR9ovYsGmfrXwDj2AxGrT1LitDsaLIBXJAHF47iL3K4iHgK1MBQwU0z0N6aeaInznH
-         Rj1Y/EFC6KjUyebCAlT3ksp707nALjfBhNPZAEQHin8mJ1Jc2mzavGN0ZhF5DfB8tY+3
-         TUNQ==
-X-Gm-Message-State: APjAAAWnujSiS+4E9aOLmFh2GVk4neIfVV4CqxW19Oy2BGnLVfcXpGB7
-        5eMjOjxR+wgEQR8tffl7PlqF5A==
-X-Google-Smtp-Source: APXvYqyPPkyjiknKmvJtBVlA6uQdX3TqmCgOcloVhb3YghiCNtEgFx94uDlnXbKNkyFOOguf0p6now==
-X-Received: by 2002:a63:1e5f:: with SMTP id p31mr22515386pgm.291.1571186101558;
-        Tue, 15 Oct 2019 17:35:01 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id j10sm21326993pfn.128.2019.10.15.17.35.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 17:35:01 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 20:35:00 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org,
-        primiano@google.com, rsavitski@google.com, jeffv@google.com,
-        kernel-team@android.com, James Morris <jmorris@namei.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH v2] perf_event: Add support for LSM and SELinux checks
-Message-ID: <20191016003500.GC89937@google.com>
-References: <20191014170308.70668-1-joel@joelfernandes.org>
- <c5bd06a4-54a4-b56e-457c-df36f05d2e3f@tycho.nsa.gov>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5bd06a4-54a4-b56e-457c-df36f05d2e3f@tycho.nsa.gov>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=t9/za3FSNI+nWYnls/YkfcKZQCH6Udse6CzJVH/I/fg=;
+        b=DhTsg4sCo3YrNH+c5McBLgHm+yb0oUa2Tnvz7klzv7WDjXVwah8Z2fiwzoeURqcaOZ
+         Vwkqxpd0hczZbnUpDEVmhZByYbRgJNtILElpJbudnwoJqrJZlCaG1aD0FhfXoqzsZ5AB
+         dtk3LZ/G20twR2JTrY2bZUwv2PN0kHQ3hlUtmEmcQQX+JWxs1lQhDmbq8w4IHGDhCUZc
+         DC2zaEH3ZXprVEE/k3Q/JiC8/dkndJJ0TcKkeKu0/nb6kZBQcFLD/jqfNAfsuP0dEA9Q
+         8bWze1tedcJnu07xorLZCMtQ8HI9xP2ulzD7rV7T/qxyGsW7axqeNsm/HMGWOLyvljxV
+         /yKw==
+X-Gm-Message-State: APjAAAU73Xp/fH9PrU1gRNLNmhZAAMfs4AV0gtUYq2oBBT8FKXIkQAtT
+        c5veQWlCrDqg7FJdLdNriKsTWA==
+X-Google-Smtp-Source: APXvYqzkWIM3jmKMEoadF765aTKzSZAJGrbaiP36VpGJPmBFt9PYn/hz61qsJUZzgNhb/7L+a8j1Kw==
+X-Received: by 2002:a62:ab02:: with SMTP id p2mr42986356pff.92.1571202919655;
+        Tue, 15 Oct 2019 22:15:19 -0700 (PDT)
+Received: from localhost.localdomain ([117.252.65.194])
+        by smtp.gmail.com with ESMTPSA id r81sm953297pgr.17.2019.10.15.22.15.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 15 Oct 2019 22:15:18 -0700 (PDT)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     jarkko.sakkinen@linux.intel.com, dhowells@redhat.com,
+        peterhuewe@gmx.de
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        jsnitsel@redhat.com, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org, Sumit Garg <sumit.garg@linaro.org>
+Subject: [Patch v8 0/4] Create and consolidate trusted keys subsystem
+Date:   Wed, 16 Oct 2019 10:44:51 +0530
+Message-Id: <1571202895-32651-1-git-send-email-sumit.garg@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> > diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-> > index bb7b271397a6..2af95f937a5b 100644
-> > --- a/include/uapi/linux/perf_event.h
-> > +++ b/include/uapi/linux/perf_event.h
-> > @@ -427,6 +427,15 @@ struct perf_event_attr {
-> >   	__u16	__reserved_2;	/* align to __u64 */
-> >   };
-> > +
-> > +/* Access to perf_event_open(2) syscall. */
-> > +#define PERF_SECURITY_OPEN		0
-> > +
-> > +/* Finer grained perf_event_open(2) access control. */
-> > +#define PERF_SECURITY_CPU		1
-> > +#define PERF_SECURITY_KERNEL		2
-> > +#define PERF_SECURITY_TRACEPOINT	3
-> > +
-> 
-> Why are these definitions part of the uapi header and not private to the
-> kernel?
+This patch-set does restructuring of trusted keys code to create and
+consolidate trusted keys subsystem.
 
-No reason but I agree it is better to put them in the private header.
+Also, patch #2 replaces tpm1_buf code used in security/keys/trusted.c and
+crypto/asymmertic_keys/asym_tpm.c files to use the common tpm_buf code.
 
-Peter, if you are Ok with it, could you squash the below diff into my
-original patch? But let me know if you want me to resend the whole patch
-again. Thanks.
+Changes in v8:
+1. Rebased to latest tpmdd/master.
+2. Added Reviewed-by tags.
 
----8<-----------------------
+Changes in v7:
+1. Rebased to top of tpmdd/master
+2. Patch #4: update tpm2 trusted keys code to use tpm_send() instead of
+   tpm_transmit_cmd() which is an internal function.
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 664bb7f99c46..587ae4d002f5 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1245,6 +1245,14 @@ extern int perf_cpu_time_max_percent_handler(struct ctl_table *table, int write,
- int perf_event_max_stack_handler(struct ctl_table *table, int write,
- 				 void __user *buffer, size_t *lenp, loff_t *ppos);
- 
-+/* Access to perf_event_open(2) syscall. */
-+#define PERF_SECURITY_OPEN		0
-+
-+/* Finer grained perf_event_open(2) access control. */
-+#define PERF_SECURITY_CPU		1
-+#define PERF_SECURITY_KERNEL		2
-+#define PERF_SECURITY_TRACEPOINT	3
-+
- static inline int perf_is_paranoid(void)
- {
- 	return sysctl_perf_event_paranoid > -1;
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 2af95f937a5b..bb7b271397a6 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -427,15 +427,6 @@ struct perf_event_attr {
- 	__u16	__reserved_2;	/* align to __u64 */
- };
- 
--
--/* Access to perf_event_open(2) syscall. */
--#define PERF_SECURITY_OPEN		0
--
--/* Finer grained perf_event_open(2) access control. */
--#define PERF_SECURITY_CPU		1
--#define PERF_SECURITY_KERNEL		2
--#define PERF_SECURITY_TRACEPOINT	3
--
- /*
-  * Structure used by below PERF_EVENT_IOC_QUERY_BPF command
-  * to query bpf programs attached to the same perf tracepoint
+Changes in v6:
+1. Switch TPM asymmetric code also to use common tpm_buf code. These
+   changes required patches #1 and #2 update, so I have dropped review
+   tags from those patches.
+2. Incorporated miscellaneous comments from Jarkko.
+
+Changes in v5:
+1. Drop 5/5 patch as its more relavant along with TEE patch-set.
+2. Add Reviewed-by tag for patch #2.
+3. Fix build failure when "CONFIG_HEADER_TEST" and
+   "CONFIG_KERNEL_HEADER_TEST" config options are enabled.
+4. Misc changes to rename files.
+
+Changes in v4:
+1. Separate patch for export of tpm_buf code to include/linux/tpm.h
+2. Change TPM1.x trusted keys code to use common tpm_buf
+3. Keep module name as trusted.ko only
+
+Changes in v3:
+
+Move TPM2 trusted keys code to trusted keys subsystem.
+
+Changes in v2:
+
+Split trusted keys abstraction patch for ease of review.
+
+Sumit Garg (4):
+  tpm: Move tpm_buf code to include/linux/
+  KEYS: Use common tpm_buf for trusted and asymmetric keys
+  KEYS: trusted: Create trusted keys subsystem
+  KEYS: trusted: Move TPM2 trusted keys code
+
+ crypto/asymmetric_keys/asym_tpm.c                  | 101 +++----
+ drivers/char/tpm/tpm-interface.c                   |  56 ----
+ drivers/char/tpm/tpm.h                             | 223 ---------------
+ drivers/char/tpm/tpm2-cmd.c                        | 307 --------------------
+ include/Kbuild                                     |   1 -
+ include/keys/{trusted.h => trusted_tpm.h}          |  49 +---
+ include/linux/tpm.h                                | 248 ++++++++++++++--
+ security/keys/Makefile                             |   2 +-
+ security/keys/trusted-keys/Makefile                |   8 +
+ .../{trusted.c => trusted-keys/trusted_tpm1.c}     |  96 +++----
+ security/keys/trusted-keys/trusted_tpm2.c          | 314 +++++++++++++++++++++
+ 11 files changed, 649 insertions(+), 756 deletions(-)
+ rename include/keys/{trusted.h => trusted_tpm.h} (77%)
+ create mode 100644 security/keys/trusted-keys/Makefile
+ rename security/keys/{trusted.c => trusted-keys/trusted_tpm1.c} (94%)
+ create mode 100644 security/keys/trusted-keys/trusted_tpm2.c
+
 -- 
-2.23.0.700.g56cf767bdb-goog
+2.7.4
 
