@@ -2,267 +2,89 @@ Return-Path: <SRS0=7mfq=YJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E018C4360C
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Oct 2019 07:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6F5ECE588
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Oct 2019 08:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F121217D6
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Oct 2019 07:46:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBD412064B
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Oct 2019 08:11:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="RU4N7tUw"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GY891JeY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391271AbfJPHqQ (ORCPT
+        id S2391446AbfJPILT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Oct 2019 03:46:16 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38847 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391266AbfJPHqP (ORCPT
+        Wed, 16 Oct 2019 04:11:19 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:42686 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389335AbfJPILS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Oct 2019 03:46:15 -0400
-Received: by mail-lf1-f65.google.com with SMTP id u28so16602465lfc.5
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Oct 2019 00:46:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QvRi7PNoggQszDfre8D+FBzcsSh0CBoNlDWz8tev6yQ=;
-        b=RU4N7tUwuMfI1VibR44SQ9yks8vKVb5eF1y46S/6t3LFTW4cFYnE80Pk+GUbw9adiY
-         7pkUda9TFfJCZh0Qnm9cHSUhUFa+fL1/80R0Qg8cq0fEMSiE/3ZYOfVy582xWOfe7GAx
-         BtuoalHwtq4x9rd3dhU0C8u0WLYIKTsURlQ7Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QvRi7PNoggQszDfre8D+FBzcsSh0CBoNlDWz8tev6yQ=;
-        b=TTBNNuPSoblcOSO1mUwQtmdLCW9bfxDVrSkPik7r0yxP4GXfguWAK0+YkgFwGl+CPa
-         WbHUnL7awo4svJFwfJuqMSDHT0rWRU+bkDZFLfoORdKMgmfxSBdcZTChkE6s5WIMEUdC
-         8lm2WTFRelRHcaSc3xEDfYY627WAupSBtooNojuEYdiqZIEBnVbImdhL0+BkkBMxj36a
-         VLPRDywSjco2+Of+VXSgO/vQ63nNO+FPMfqk6uwNcPd7+FsEuL17ipZb53Nr3/ud+T4n
-         obQqf2eunOSCqcvkkCZZRLSiQ0W4uQ77RYp5u8YBOuSL41iDZwjEK8JvI6klU/CdmUq4
-         pdXg==
-X-Gm-Message-State: APjAAAU46mN3mpi7zP5N+pYawAXpgKtUIN8mEIb0uqUSdyvOCnrnGhnK
-        c6GE2ZtEdd3azY/H5JtZ9lnTZQ==
-X-Google-Smtp-Source: APXvYqyBmqGfoeKFBJH4OrBLDBFGebGhLmDfJwIYHLGKut9DDipI1Qyw/3UVrk5mWZI3oDJFyaWWGQ==
-X-Received: by 2002:a19:6759:: with SMTP id e25mr3829669lfj.80.1571211973028;
-        Wed, 16 Oct 2019 00:46:13 -0700 (PDT)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id q26sm5650578lfd.53.2019.10.16.00.46.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Oct 2019 00:46:12 -0700 (PDT)
-Subject: Re: [RFC PATCH 03/21] pipe: Use head and tail pointers for the ring,
- not cursor and length
-To:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
- <157117609543.15019.17103851546424902507.stgit@warthog.procyon.org.uk>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <b8799179-d389-8005-4f6d-845febc3bb23@rasmusvillemoes.dk>
-Date:   Wed, 16 Oct 2019 09:46:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 16 Oct 2019 04:11:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yhp7/wioyWdXQ41hYrVkjHUb5LQ88gTZsVFVxqZKTWk=; b=GY891JeYC2clnL7e+YPp0VCD4
+        rHxKPcTwcGHFJ4Jdkx8VbhwuvztYlZ5GVzfxjhY66QeRmebKcEc/rwaxjbO1G1NDuWAo7UMD5Yyma
+        fm/dQx5Eu6TdhNaymWtYNr0vu9QCqFiZtWaQNiLRewZGRuJWBscXxOE3q/TyYih0/EzM1iXEc7QgT
+        D7Jl9mW+p5tfUYF8L4IaOJVmBwzIS7A7e9O6M4sMDqFGefPIppiuThSr3rhY7kZKaeWClElJ/kI/A
+        j5yDOsZIr0jmreVFFVXnOyO5V9GGhHyDqGuHUlCYXCNedfsSE2ngWoapfXC97wvkTSv2Qaeg2vsA2
+        k/H4sivjA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iKeOH-0003kn-Al; Wed, 16 Oct 2019 08:10:41 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id EFB60305BD3;
+        Wed, 16 Oct 2019 10:09:41 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B806020B972E4; Wed, 16 Oct 2019 10:10:36 +0200 (CEST)
+Date:   Wed, 16 Oct 2019 10:10:36 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>, linux-kernel@vger.kernel.org,
+        rostedt@goodmis.org, primiano@google.com, rsavitski@google.com,
+        jeffv@google.com, kernel-team@android.com,
+        James Morris <jmorris@namei.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH v2] perf_event: Add support for LSM and SELinux checks
+Message-ID: <20191016081036.GN2328@hirez.programming.kicks-ass.net>
+References: <20191014170308.70668-1-joel@joelfernandes.org>
+ <c5bd06a4-54a4-b56e-457c-df36f05d2e3f@tycho.nsa.gov>
+ <20191016003500.GC89937@google.com>
 MIME-Version: 1.0
-In-Reply-To: <157117609543.15019.17103851546424902507.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016003500.GC89937@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 15/10/2019 23.48, David Howells wrote:
-> Convert pipes to use head and tail pointers for the buffer ring rather than
-> pointer and length as the latter requires two atomic ops to update (or a
-> combined op) whereas the former only requires one.
-> 
->  (1) The head pointer is the point at which production occurs and points to
->      the slot in which the next buffer will be placed.  This is equivalent
->      to pipe->curbuf + pipe->nrbufs.
-> 
->      The head pointer belongs to the write-side.
-> 
->  (2) The tail pointer is the point at which consumption occurs.  It points
->      to the next slot to be consumed.  This is equivalent to pipe->curbuf.
-> 
->      The tail pointer belongs to the read-side.
-> 
->  (3) head and tail are allowed to run to UINT_MAX and wrap naturally.  They
->      are only masked off when the array is being accessed, e.g.:
-> 
-> 	pipe->bufs[head & mask]
-> 
->      This means that it is not necessary to have a dead slot in the ring as
->      head == tail isn't ambiguous.
-> 
->  (4) The ring is empty if "head == tail".
-> 
->  (5) The occupancy of the ring is "head - tail".
-> 
->  (6) The number of free slots in the ring is "(tail + pipe->ring_size) -
->      head".
+On Tue, Oct 15, 2019 at 08:35:00PM -0400, Joel Fernandes wrote:
+> Peter, if you are Ok with it, could you squash the below diff into my
+> original patch? But let me know if you want me to resend the whole patch
+> again. Thanks.
 
-Seems an odd way of writing pipe->ring_size - (head - tail) ; i.e.
-obviously #free slots is #size minus #occupancy.
+Folded thanks!
 
->  (7) The ring is full if "head >= (tail + pipe->ring_size)", which can also
->      be written as "head - tail >= pipe->ring_size".
->
+I had assumed it was required such that selinux/apparmour/etc.. could
+use these values from their policy.
 
-No it cannot, it _must_ be written in the latter form. Assuming
-sizeof(int)==1 for simplicity, consider ring_size = 16, tail = 240.
-Regardless whether head is 240, 241, ..., 255, 0, tail + ring_size wraps
-to 0, so the former expression states the ring is full in all cases.
-
-Better spell out somewhere that while head and tail are free-running, at
-any point in time they satisfy the invariant head - tail <= pipe_size
-(and also 0 <= head - tail, but that's a tautology for unsigned
-ints...). Then it's a matter of taste if one wants to write "full" as
-head-tail == pipe_size or head-tail >= pipe_size.
-
-> Also split pipe->buffers into pipe->ring_size (which indicates the size of the
-> ring) and pipe->max_usage (which restricts the amount of ring that write() is
-> allowed to fill).  This allows for a pipe that is both writable by the kernel
-> notification facility and by userspace, allowing plenty of ring space for
-> notifications to be added whilst preventing userspace from being able to use
-> up too much buffer space.
-
-That seems like something that should be added in a separate patch -
-adding ->max_usage and switching appropriate users of ->ring_size over,
-so it's more clear where you're using one or the other.
-
-> @@ -1949,8 +1950,12 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->  
->  	pipe_lock(pipe);
->  
-> -	bufs = kvmalloc_array(pipe->nrbufs, sizeof(struct pipe_buffer),
-> -			      GFP_KERNEL);
-> +	head = pipe->head;
-> +	tail = pipe->tail;
-> +	mask = pipe->ring_size - 1;
-> +	count = head - tail;
-> +
-> +	bufs = kvmalloc_array(count, sizeof(struct pipe_buffer), GFP_KERNEL);
->  	if (!bufs) {
->  		pipe_unlock(pipe);
->  		return -ENOMEM;
-> @@ -1958,8 +1963,8 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->  
->  	nbuf = 0;
->  	rem = 0;
-> -	for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
-> -		rem += pipe->bufs[(pipe->curbuf + idx) & (pipe->buffers - 1)].len;
-> +	for (idx = tail; idx < head && rem < len; idx++)
-> +		rem += pipe->bufs[idx & mask].len;
->  
->  	ret = -EINVAL;
->  	if (rem < len)
-> @@ -1970,16 +1975,16 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->  		struct pipe_buffer *ibuf;
->  		struct pipe_buffer *obuf;
->  
-> -		BUG_ON(nbuf >= pipe->buffers);
-> -		BUG_ON(!pipe->nrbufs);
-> -		ibuf = &pipe->bufs[pipe->curbuf];
-> +		BUG_ON(nbuf >= pipe->ring_size);
-> +		BUG_ON(tail == head);
-> +		ibuf = &pipe->bufs[tail];
-
-I don't see where tail gets masked between tail = pipe->tail; above and
-here, but I may be missing it. In any case, how about seeding head and
-tail with something like 1<<20 when creating the pipe so bugs like that
-are hit more quickly.
-
-> @@ -515,17 +525,19 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
->  static long pipe_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  {
->  	struct pipe_inode_info *pipe = filp->private_data;
-> -	int count, buf, nrbufs;
-> +	int count, head, tail, mask;
->  
->  	switch (cmd) {
->  		case FIONREAD:
->  			__pipe_lock(pipe);
->  			count = 0;
-> -			buf = pipe->curbuf;
-> -			nrbufs = pipe->nrbufs;
-> -			while (--nrbufs >= 0) {
-> -				count += pipe->bufs[buf].len;
-> -				buf = (buf+1) & (pipe->buffers - 1);
-> +			head = pipe->head;
-> +			tail = pipe->tail;
-> +			mask = pipe->ring_size - 1;
-> +
-> +			while (tail < head) {
-> +				count += pipe->bufs[tail & mask].len;
-> +				tail++;
->  			}
-
-This is broken if head has wrapped but tail has not. It has to be "while
-(head - tail)" or perhaps just "while (tail != head)" or something along
-those lines.
-
-> @@ -1086,17 +1104,21 @@ static long pipe_set_size(struct pipe_inode_info *pipe, unsigned long arg)
->  	}
->  
->  	/*
-> -	 * We can shrink the pipe, if arg >= pipe->nrbufs. Since we don't
-> -	 * expect a lot of shrink+grow operations, just free and allocate
-> -	 * again like we would do for growing. If the pipe currently
-> +	 * We can shrink the pipe, if arg is greater than the ring occupancy.
-> +	 * Since we don't expect a lot of shrink+grow operations, just free and
-> +	 * allocate again like we would do for growing.  If the pipe currently
->  	 * contains more buffers than arg, then return busy.
->  	 */
-> -	if (nr_pages < pipe->nrbufs) {
-> +	mask = pipe->ring_size - 1;
-> +	head = pipe->head & mask;
-> +	tail = pipe->tail & mask;
-> +	n = pipe->head - pipe->tail;
-
-I think it's confusing to "premask" head and tail here. Can you either
-drop that (pipe_set_size should hardly be a hot path?), or perhaps call
-them something else to avoid a future reader seeing an unmasked
-bufs[head] and thinking that's a bug?
-
-> @@ -1254,9 +1290,10 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
->  		   struct page **pages, size_t maxsize, unsigned maxpages,
->  		   size_t *start)
->  {
-> +	unsigned int p_tail;
-> +	unsigned int i_head;
->  	unsigned npages;
->  	size_t capacity;
-> -	int idx;
->  
->  	if (!maxsize)
->  		return 0;
-> @@ -1264,12 +1301,15 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
->  	if (!sanity(i))
->  		return -EFAULT;
->  
-> -	data_start(i, &idx, start);
-> -	/* some of this one + all after this one */
-> -	npages = ((i->pipe->curbuf - idx - 1) & (i->pipe->buffers - 1)) + 1;
-> -	capacity = min(npages,maxpages) * PAGE_SIZE - *start;
-> +	data_start(i, &i_head, start);
-> +	p_tail = i->pipe->tail;
-> +	/* Amount of free space: some of this one + all after this one */
-> +	npages = (p_tail + i->pipe->ring_size) - i_head;
-
-Hm, it's not clear that this is equivalent to the old computation. Since
-it seems repeated in a few places, could it be factored to a little
-helper (before this patch) and the "some of this one + all after this
-one" comment perhaps expanded to explain what is going on?
-
-Rasmus
+If that is not required, then moving them private is indeed the right
+thing.
