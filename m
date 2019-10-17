@@ -2,133 +2,111 @@ Return-Path: <SRS0=Cjvm=YK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC5FFA3728
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Oct 2019 01:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D37ECE599
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Oct 2019 01:46:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C94121D7C
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Oct 2019 01:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB3D420854
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Oct 2019 01:46:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e18t10U4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394879AbfJQBmf (ORCPT
+        id S1726480AbfJQBqj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Oct 2019 21:42:35 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:41855 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbfJQBmM (ORCPT
+        Wed, 16 Oct 2019 21:46:39 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:43614 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727387AbfJQBqj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Oct 2019 21:42:12 -0400
-Received: by mail-io1-f69.google.com with SMTP id m25so964234ioo.8
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Oct 2019 18:42:12 -0700 (PDT)
+        Wed, 16 Oct 2019 21:46:39 -0400
+Received: by mail-il1-f195.google.com with SMTP id t5so420609ilh.10;
+        Wed, 16 Oct 2019 18:46:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=C2efsFizgVT25garqduHjyuFt9iWInxP4xT7VjbjnDk=;
+        b=e18t10U4nw9RnbPkZAOn3y7deMeJ+ww9/LymVula1j/TQgPm8NheGWHHwSh4f3AI53
+         QTjaan4HF7ZUS4sqFWT7JB+dqwwQ8SUoQXL4Fce1xAHW9TO5Iwx+giUj0y1jqEqBBenb
+         d2bI3yKILEcIk8UcbX+dw2Us9mtXCgMTcpQBGt0XFqPtexa5sCjH/ZxGDvlg94KdfLU+
+         kX9kTcHcQJXuaOyrdFORey72399cEkOT+Tl0eSwxFpB6O+HEMuydXB/iNlspoYqvAD4L
+         tUE238iVnwa4grrnnrdI1KaHAaoAqB8Q0hqQx1tnobpXlWSwT+85N/y/SA+3QFu7QQB2
+         ++8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=pdOKNCOT2iOd0L50ws0JTyqK1/1Fhbj5YOUIjEEtEeY=;
-        b=AU/jFbBZknvAWhuZNbFvkQQJfAKKBsk1KxvGA+iKlTI3ITkfLxC3G69kV68nap5RTO
-         DylcpjNGG0iPk/FSf6y697vULJUmQGwcLb358cmXG7WUivn2OFfYg8JUwnyKp0NNx0Ox
-         Hzj8csrmQs2N2VM3nsUJhd/Ap9H4FEQuzGoR73hHXxR8ynAw/MUqwPOe6mC+RonuYpZh
-         EjcjEtum9voIFXrHT+zaMoH9w/888u2yjmZQO/n7Sa6tvo+23Ng05wCG6UDfXIPMy4zJ
-         MmdPqgCEa0R4BGXkivUQyafVlEqjoShIyhhgCh8OoaUf8esAVc81cMsxDXOB2HSr7dDA
-         Xghw==
-X-Gm-Message-State: APjAAAU/r1lkCa6ilx1S0CXM64DYnI/r36x4SH2ysTxzh1YzLKrcfbHD
-        hFuTnaPfluGNqmxieYY9XHojTeGzntgXt6x2sU8l/7ujNpVi
-X-Google-Smtp-Source: APXvYqxRmR24P4tLC5wLsEg00RDdkwn7cpnlNWTm+TEe/kShLT//SftvZNePTw+Nh4AATG5JiMrDivqjLxZEhJOqaYYkYY/P7gSW
-MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3f2:: with SMTP id s18mr958868jaq.91.1571276531630;
- Wed, 16 Oct 2019 18:42:11 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 18:42:11 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000830fe50595115344@google.com>
-Subject: WARNING: refcount bug in find_key_to_update
-From:   syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>
-To:     dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=C2efsFizgVT25garqduHjyuFt9iWInxP4xT7VjbjnDk=;
+        b=VqSkj++DELEL6gtkMGJCeNsLAOwCO+B7FiKhHRQUo5oFdqLnAB8QML6tu2aY2xPo9B
+         bKXypyEAYxxVdVEbvMlaYuUYLeAeNu/XIAXvLWVelklQjci+GnNmc+vtZey4biQ57hPB
+         D7jMlzi8rnL4A/A82dcWmwOz7X2hEgdfEtHWwiVSAZ7P7k7N8ybVusc//b8eCLnAIF/R
+         Tgue1+dXI9ZpErSrzdMd6ok9PEm4xFGYWXAlBMgAR/am+jP4bQozNfyb9Dblpl5KsHQi
+         XgzDzIV/5Qt3Q4So/e16lAYtvNX0Ni3AbEvr81OMm9EBYtNoZDi+7euBVWNCCvIVNZmA
+         G4Lg==
+X-Gm-Message-State: APjAAAUkMpgNmjfZpEwEGln3X77U9CsTLiRITYXolk3zaCQ+vr+lgV7C
+        zrygoOe4CwZDpCFxh5iDUKQ=
+X-Google-Smtp-Source: APXvYqyRMab6Jz+a+ZJ9RUdCBHIpko2ylTHktOoajg+JrW1s14BeuKaUXgetFur+DkmRgTL4Xkb0vQ==
+X-Received: by 2002:a92:4144:: with SMTP id o65mr1068182ila.206.1571276796906;
+        Wed, 16 Oct 2019 18:46:36 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id h17sm254867ilq.66.2019.10.16.18.46.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 18:46:35 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] apparmor: Fix use-after-free in aa_audit_rule_init
+Date:   Wed, 16 Oct 2019 20:46:18 -0500
+Message-Id: <20191017014619.26708-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+In the implementation of aa_audit_rule_init(), when aa_label_parse()
+fails the allocated memory for rule is released using
+aa_audit_rule_free(). But after this release the the return statement
+tries to access the label field of the rule which results in
+use-after-free. Before releaseing the rule, copy errNo and return it
+after releasing rule.
 
-syzbot found the following crash on:
-
-HEAD commit:    bc88f85c kthread: make __kthread_queue_delayed_work static
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1730584b600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e0ac4d9b35046343
-dashboard link: https://syzkaller.appspot.com/bug?extid=6455648abc28dbdd1e7f
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c8adab600000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-refcount_t: increment on 0; use-after-free.
-WARNING: CPU: 1 PID: 9064 at lib/refcount.c:156 refcount_inc_checked  
-lib/refcount.c:156 [inline]
-WARNING: CPU: 1 PID: 9064 at lib/refcount.c:156  
-refcount_inc_checked+0x61/0x70 lib/refcount.c:154
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 9064 Comm: syz-executor.5 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  panic+0x2e3/0x75c kernel/panic.c:221
-  __warn.cold+0x2f/0x35 kernel/panic.c:582
-  report_bug+0x289/0x300 lib/bug.c:195
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:refcount_inc_checked lib/refcount.c:156 [inline]
-RIP: 0010:refcount_inc_checked+0x61/0x70 lib/refcount.c:154
-Code: 1d 58 46 7e 06 31 ff 89 de e8 0b cb 2e fe 84 db 75 dd e8 c2 c9 2e fe  
-48 c7 c7 40 ad e6 87 c6 05 38 46 7e 06 01 e8 67 0c 00 fe <0f> 0b eb c1 90  
-90 90 90 90 90 90 90 90 90 90 55 48 89 e5 41 57 41
-RSP: 0018:ffff888081447c68 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815cb646 RDI: ffffed1010288f7f
-RBP: ffff888081447c78 R08: ffff8880a231a080 R09: ffffed1015d26159
-R10: ffffed1015d26158 R11: ffff8880ae930ac7 R12: ffff8880a4518940
-R13: 0000000000000000 R14: ffff888081447e10 R15: ffff8880a4518c40
-  __key_get include/linux/key.h:281 [inline]
-  find_key_to_update+0x8b/0xc0 security/keys/keyring.c:1127
-  key_create_or_update+0x588/0xbe0 security/keys/key.c:905
-  __do_sys_add_key security/keys/keyctl.c:132 [inline]
-  __se_sys_add_key security/keys/keyctl.c:72 [inline]
-  __x64_sys_add_key+0x2bd/0x4f0 security/keys/keyctl.c:72
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459a59
-Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f22e3171c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000f8
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000459a59
-RDX: 0000000020000440 RSI: 0000000020000000 RDI: 0000000020000040
-RBP: 000000000075bf20 R08: fffffffffffffffe R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000246 R12: 00007f22e31726d4
-R13: 00000000004bfab8 R14: 00000000004d1ad8 R15: 00000000ffffffff
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Fixes: 52e8c38001d8 ("apparmor: Fix memory leak of rule on error exit path")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ security/apparmor/audit.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+index 5a98661a8b46..48c15fb0aafe 100644
+--- a/security/apparmor/audit.c
++++ b/security/apparmor/audit.c
+@@ -178,6 +178,7 @@ void aa_audit_rule_free(void *vrule)
+ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+ {
+ 	struct aa_audit_rule *rule;
++	int err;
+ 
+ 	switch (field) {
+ 	case AUDIT_SUBJ_ROLE:
+@@ -197,8 +198,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+ 	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
+ 				     GFP_KERNEL, true, false);
+ 	if (IS_ERR(rule->label)) {
++		err = rule->label;
+ 		aa_audit_rule_free(rule);
+-		return PTR_ERR(rule->label);
++		return PTR_ERR(err);
+ 	}
+ 
+ 	*vrule = rule;
+-- 
+2.17.1
+
