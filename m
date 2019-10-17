@@ -1,159 +1,134 @@
-Return-Path: <SRS0=7mfq=YJ=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=Cjvm=YK=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FADFA3728
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Oct 2019 17:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC5FFA3728
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Oct 2019 01:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5AA221D7A
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Oct 2019 17:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C94121D7C
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Oct 2019 01:42:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436493AbfJPRC1 (ORCPT
+        id S2394879AbfJQBmf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Oct 2019 13:02:27 -0400
-Received: from mga05.intel.com ([192.55.52.43]:14328 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729913AbfJPRC0 (ORCPT
+        Wed, 16 Oct 2019 21:42:35 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:41855 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725818AbfJQBmM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Oct 2019 13:02:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 10:02:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,304,1566889200"; 
-   d="scan'208";a="199012720"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
-  by orsmga003.jf.intel.com with ESMTP; 16 Oct 2019 10:02:25 -0700
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Kan Liang <kan.liang@intel.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
- <157117608708.15019.1998141309054662114.stgit@warthog.procyon.org.uk>
- <CAHk-=whiz1sHXu8SVZKEC2dup=r5JMrftPtEt6ff9Ea8dyH8yQ@mail.gmail.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
- l50q2K/r651xphs7CGEdKi1nU0YJVbQxJQ==
-Subject: Re: [RFC PATCH 02/21] Add a prelocked wake-up
-Message-ID: <533ca3c5-1592-e59b-eafe-bc4a352a442d@linux.intel.com>
-Date:   Wed, 16 Oct 2019 10:02:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 16 Oct 2019 21:42:12 -0400
+Received: by mail-io1-f69.google.com with SMTP id m25so964234ioo.8
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Oct 2019 18:42:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=pdOKNCOT2iOd0L50ws0JTyqK1/1Fhbj5YOUIjEEtEeY=;
+        b=AU/jFbBZknvAWhuZNbFvkQQJfAKKBsk1KxvGA+iKlTI3ITkfLxC3G69kV68nap5RTO
+         DylcpjNGG0iPk/FSf6y697vULJUmQGwcLb358cmXG7WUivn2OFfYg8JUwnyKp0NNx0Ox
+         Hzj8csrmQs2N2VM3nsUJhd/Ap9H4FEQuzGoR73hHXxR8ynAw/MUqwPOe6mC+RonuYpZh
+         EjcjEtum9voIFXrHT+zaMoH9w/888u2yjmZQO/n7Sa6tvo+23Ng05wCG6UDfXIPMy4zJ
+         MmdPqgCEa0R4BGXkivUQyafVlEqjoShIyhhgCh8OoaUf8esAVc81cMsxDXOB2HSr7dDA
+         Xghw==
+X-Gm-Message-State: APjAAAU/r1lkCa6ilx1S0CXM64DYnI/r36x4SH2ysTxzh1YzLKrcfbHD
+        hFuTnaPfluGNqmxieYY9XHojTeGzntgXt6x2sU8l/7ujNpVi
+X-Google-Smtp-Source: APXvYqxRmR24P4tLC5wLsEg00RDdkwn7cpnlNWTm+TEe/kShLT//SftvZNePTw+Nh4AATG5JiMrDivqjLxZEhJOqaYYkYY/P7gSW
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=whiz1sHXu8SVZKEC2dup=r5JMrftPtEt6ff9Ea8dyH8yQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:3f2:: with SMTP id s18mr958868jaq.91.1571276531630;
+ Wed, 16 Oct 2019 18:42:11 -0700 (PDT)
+Date:   Wed, 16 Oct 2019 18:42:11 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000830fe50595115344@google.com>
+Subject: WARNING: refcount bug in find_key_to_update
+From:   syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>
+To:     dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/15/19 3:14 PM, Linus Torvalds wrote:
-> On Tue, Oct 15, 2019 at 2:48 PM David Howells <dhowells@redhat.com> wrote:
->>
->> Add a wakeup call for a case whereby the caller already has the waitqueue
->> spinlock held.
-> 
-> That naming is crazy.
-> 
-> We already have helper functions like this, and they are just called
-> "wake_up_locked()".
-> 
-> So the "prelocked" naming is just odd. Make it be
-> wake_up_interruptible_sync_poll_locked().
-> 
-> The helper function should likely be
-> 
->   void __wake_up_locked_sync_key(struct wait_queue_head *wq_head,
-> unsigned int mode, void *key)
->   {
->         __wake_up_common(wq_head, mode, 1, WF_SYNC, key, NULL);
->   }
->   EXPORT_SYMBOL_GPL(__wake_up_locked_sync_key);
-> 
-> to match the other naming patterns there.
-> 
-> [ Unrelated ]
-> 
-> Looking at that mess of functions, I also wonder if we should try to
-> just remove the bookmark code again. It was cute, and it was useful,
-> but I think the problem with the page lock list may have been fixed by
-> commit 9a1ea439b16b ("mm: put_and_wait_on_page_locked() while page is
-> migrated") which avoids the retry condition with
-> migrate_page_move_mapping().
-> 
-> Tim/Kan? Do you have the problematic load still?
-> 
+Hello,
 
-Unfortunately, we do not have ready access to that problematic load
-which was run by a customer on 8 socket system.  They were not
-willing to give the workload to us, and have not responded to my
-request to rerun their load with commit 9a1ea439b16b.
+syzbot found the following crash on:
 
-The commit greatly reduced migration failures with concurrent page faulting.
-And successful migrations could have prevented the big
-pile up of waiters faulting and waiting on the page, which was the
-problem the bookmark code was trying to solve.
+HEAD commit:    bc88f85c kthread: make __kthread_queue_delayed_work static
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1730584b600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e0ac4d9b35046343
+dashboard link: https://syzkaller.appspot.com/bug?extid=6455648abc28dbdd1e7f
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c8adab600000
 
-So I also tend to think that the problem should have been resolved.
-But unfortunately I don't have a ready workload to confirm.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com
 
-Tim
+------------[ cut here ]------------
+refcount_t: increment on 0; use-after-free.
+WARNING: CPU: 1 PID: 9064 at lib/refcount.c:156 refcount_inc_checked  
+lib/refcount.c:156 [inline]
+WARNING: CPU: 1 PID: 9064 at lib/refcount.c:156  
+refcount_inc_checked+0x61/0x70 lib/refcount.c:154
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 9064 Comm: syz-executor.5 Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2e3/0x75c kernel/panic.c:221
+  __warn.cold+0x2f/0x35 kernel/panic.c:582
+  report_bug+0x289/0x300 lib/bug.c:195
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+RIP: 0010:refcount_inc_checked lib/refcount.c:156 [inline]
+RIP: 0010:refcount_inc_checked+0x61/0x70 lib/refcount.c:154
+Code: 1d 58 46 7e 06 31 ff 89 de e8 0b cb 2e fe 84 db 75 dd e8 c2 c9 2e fe  
+48 c7 c7 40 ad e6 87 c6 05 38 46 7e 06 01 e8 67 0c 00 fe <0f> 0b eb c1 90  
+90 90 90 90 90 90 90 90 90 90 55 48 89 e5 41 57 41
+RSP: 0018:ffff888081447c68 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815cb646 RDI: ffffed1010288f7f
+RBP: ffff888081447c78 R08: ffff8880a231a080 R09: ffffed1015d26159
+R10: ffffed1015d26158 R11: ffff8880ae930ac7 R12: ffff8880a4518940
+R13: 0000000000000000 R14: ffff888081447e10 R15: ffff8880a4518c40
+  __key_get include/linux/key.h:281 [inline]
+  find_key_to_update+0x8b/0xc0 security/keys/keyring.c:1127
+  key_create_or_update+0x588/0xbe0 security/keys/key.c:905
+  __do_sys_add_key security/keys/keyctl.c:132 [inline]
+  __se_sys_add_key security/keys/keyctl.c:72 [inline]
+  __x64_sys_add_key+0x2bd/0x4f0 security/keys/keyctl.c:72
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459a59
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f22e3171c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000f8
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000459a59
+RDX: 0000000020000440 RSI: 0000000020000000 RDI: 0000000020000040
+RBP: 000000000075bf20 R08: fffffffffffffffe R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000246 R12: 00007f22e31726d4
+R13: 00000000004bfab8 R14: 00000000004d1ad8 R15: 00000000ffffffff
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
