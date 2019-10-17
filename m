@@ -2,186 +2,126 @@ Return-Path: <SRS0=Cjvm=YK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE98EFA372A
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Oct 2019 10:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5487FA372A
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Oct 2019 15:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF4BD21835
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Oct 2019 10:53:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8CEE222BE
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Oct 2019 15:53:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571327609;
+	bh=XsEievKWg41Ej4+tPR0ePPLUNXudjwrs03DC2R4PGp4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=1bb9slcw8B8IxW9YmyKZItnqUL7vbprYbsZZ8ZmrVlrdoea9hKcg+g5QaEnuLPXqX
+	 PgqjihytpGeEztjCsEnn0ERzhgWTqX6EFUfENpJbtk5nZbAW7iDYdvJjcaJAdMOqGh
+	 Qmi8ZiDgVQ+1JfVPZ+7QiVrYlvaSmEdLsvh2TAJ8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393167AbfJQKxY convert rfc822-to-8bit (ORCPT
+        id S2393440AbfJQPx3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Oct 2019 06:53:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44520 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391322AbfJQKxY (ORCPT
+        Thu, 17 Oct 2019 11:53:29 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41492 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393697AbfJQPx1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Oct 2019 06:53:24 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DFFC78553F;
-        Thu, 17 Oct 2019 10:53:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-84.rdu2.redhat.com [10.10.121.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 70158600C4;
-        Thu, 17 Oct 2019 10:53:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <b8799179-d389-8005-4f6d-845febc3bb23@rasmusvillemoes.dk>
-References: <b8799179-d389-8005-4f6d-845febc3bb23@rasmusvillemoes.dk> <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk> <157117609543.15019.17103851546424902507.stgit@warthog.procyon.org.uk>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 03/21] pipe: Use head and tail pointers for the ring, not cursor and length
+        Thu, 17 Oct 2019 11:53:27 -0400
+Received: by mail-lf1-f67.google.com with SMTP id r2so2300478lfn.8
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Oct 2019 08:53:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cIzDy9DTfDNRhN7LSYB97ye4DVyGrDXll/MmImkgT6U=;
+        b=BVpF6LyRGlHDFAruswmAHbv0+pLGUbDhV9wcN5xE8WS8g+zUh4x5jXcUYAsmzaIB6g
+         YMEX8gjoO+3WdmFLQuP7Ko+nM3JcFnx6Odu1iLGo112V8bGqq9akNkXniU0XB2vYqP2h
+         zo3E/L5G8PzgPvTprfyPmfiSP4luH/eHr1DuA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cIzDy9DTfDNRhN7LSYB97ye4DVyGrDXll/MmImkgT6U=;
+        b=PpGsrPUOunZdKzgCzU/O0CSrSllFlmuo+VKXVZEtUKaM4nI9Us8fncwTtaV50dIH8t
+         IX/ujeHT5LserSmgcbmw7DMlWCaS2kq/mgncN3VeI8pF0ePGInq60NlcUXi3KWq98f6k
+         WSwGCk9qy6cFQxKmFKjcIzoq2jOFkZ9rf5U4adH4MPhHMJc/69PEwxxfDLqT2xK6jOi2
+         6cysy6KXzZSXH9dVfAqsPY42+3Ko8i0b0WhImggirUyDFafOcf8yUyFjsTwWSKrgDax8
+         wwhMZ4bEK27hQWqevrpztGF1JyQEuvKwtCjMDPEFuRtq4OkK1iyq+ME0TuDqadGMxVW7
+         kdrA==
+X-Gm-Message-State: APjAAAXORwCiq98d3SKrQ8t7cLwcX6rIYFkOMU11V300sYk1tOJq62ta
+        5eiOQeZm5dDjKsmFMFxE9V2SZOMPWaA=
+X-Google-Smtp-Source: APXvYqwjXQTwomrdFKjF8XYQbVBvl1Ng/LV/F+fsYilGzaf4YAkvHxlGthmofJ6LtAOlTPd5Ru68UA==
+X-Received: by 2002:ac2:4888:: with SMTP id x8mr2815355lfc.90.1571327604640;
+        Thu, 17 Oct 2019 08:53:24 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id q16sm1108460lfb.74.2019.10.17.08.53.22
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2019 08:53:23 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 195so2295470lfj.6
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Oct 2019 08:53:22 -0700 (PDT)
+X-Received: by 2002:a19:5504:: with SMTP id n4mr2890741lfe.106.1571327602667;
+ Thu, 17 Oct 2019 08:53:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <8693.1571309599.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Thu, 17 Oct 2019 11:53:19 +0100
-Message-ID: <8694.1571309599@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 17 Oct 2019 10:53:24 +0000 (UTC)
+References: <000000000000830fe50595115344@google.com> <00000000000071e2fc05951229ad@google.com>
+In-Reply-To: <00000000000071e2fc05951229ad@google.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 17 Oct 2019 08:53:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjFozfjV34_qy3_Z155uz_Z7qFVfE8h=_9ceGU-SVk9hA@mail.gmail.com>
+Message-ID: <CAHk-=wjFozfjV34_qy3_Z155uz_Z7qFVfE8h=_9ceGU-SVk9hA@mail.gmail.com>
+Subject: Re: WARNING: refcount bug in find_key_to_update
+To:     syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>
+Cc:     aou@eecs.berkeley.edu, David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris James Morris <jmorris@namei.org>,
+        keyrings@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
+On Wed, Oct 16, 2019 at 7:42 PM syzbot
+<syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has bisected this bug to 0570bc8b7c9b ("Merge tag
+>  'riscv/for-v5.3-rc1' ...")
 
-> >  (6) The number of free slots in the ring is "(tail + pipe->ring_size) -
-> >      head".
-> 
-> Seems an odd way of writing pipe->ring_size - (head - tail) ; i.e.
-> obviously #free slots is #size minus #occupancy.
+Yeah, that looks unlikely. The only non-riscv changes are from
+documentation updates and moving a config variable around.
 
-Perhaps so.  The way I was looking at it is the window into which things can
-be written is tail...tail+ring_size; the number of free slots is the distance
-from head to the end of the window.
+Looks like the crash is quite unlikely, and only happens in one out of
+ten runs for the ones it has happened to.
 
-Anyway, I now have a helper that does it your way.
+The backtrace looks simple enough, though:
 
-> >  (7) The ring is full if "head >= (tail + pipe->ring_size)", which can also
-> >      be written as "head - tail >= pipe->ring_size".
-> >
-> 
-> No it cannot, it _must_ be written in the latter form.
+  RIP: 0010:refcount_inc_checked+0x2b/0x30 lib/refcount.c:156
+   __key_get include/linux/key.h:281 [inline]
+   find_key_to_update+0x67/0x80 security/keys/keyring.c:1127
+   key_create_or_update+0x4e5/0xb20 security/keys/key.c:905
+   __do_sys_add_key security/keys/keyctl.c:132 [inline]
+   __se_sys_add_key security/keys/keyctl.c:72 [inline]
+   __x64_sys_add_key+0x219/0x3f0 security/keys/keyctl.c:72
+   do_syscall_64+0xd0/0x540 arch/x86/entry/common.c:296
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Ah, you're right.  I have a helper now for that too.
+which to me implies that there's some locking bug, and somebody
+released the key without holding a lock.
 
-> head-tail == pipe_size or head-tail >= pipe_size
+That code looks a bit confused to me. Releasing a key without holding
+a lock looks permitted, but if that's the case then __key_get() is
+complete garbage. It would need to use 'refcount_inc_not_zero()' and
+failure would require failing the caller.
 
-In general, I'd prefer ">=" just in case tail gets in front of head.
+But I haven't followed the key locking rules, so who knows. That "put
+without lock" scenario would explain the crash, though.
 
-Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
+David?
 
-> > Also split pipe->buffers into pipe->ring_size (which indicates the size of
-> > the ring) and pipe->max_usage (which restricts the amount of ring that
-> > write() is allowed to fill).  This allows for a pipe that is both writable
-> > by the kernel notification facility and by userspace, allowing plenty of
-> > ring space for notifications to be added whilst preventing userspace from
-> > being able to use up too much buffer space.
-> 
-> That seems like something that should be added in a separate patch -
-> adding ->max_usage and switching appropriate users of ->ring_size over,
-> so it's more clear where you're using one or the other.
-
-Okay.
-
-> > +		ibuf = &pipe->bufs[tail];
-> 
-> I don't see where tail gets masked between tail = pipe->tail;
-
-Yeah - I missed that one.
-
-> In any case, how about seeding head and tail with something like 1<<20 when
-> creating the pipe so bugs like that are hit more quickly.
-
-That's sounds like a good idea.
-
-> > +			while (tail < head) {
-> > +				count += pipe->bufs[tail & mask].len;
-> > +				tail++;
-> >  			}
-> 
-> This is broken if head has wrapped but tail has not. It has to be "while
-> (head - tail)" or perhaps just "while (tail != head)" or something along
-> those lines.
-
-Yeah...  It's just too easy to overlook this and use ordinary comparisons.
-I've switched to "while (tail != head)".
-
-> > +	mask = pipe->ring_size - 1;
-> > +	head = pipe->head & mask;
-> > +	tail = pipe->tail & mask;
-> > +	n = pipe->head - pipe->tail;
-> 
-> I think it's confusing to "premask" head and tail here. Can you either
-> drop that (pipe_set_size should hardly be a hot path?), or perhaps call
-> them something else to avoid a future reader seeing an unmasked
-> bufs[head] and thinking that's a bug?
-
-I've made it now do the masking right before doing the memcpy calls and used
-different variable names for it:
-
-	if (n > 0) {
-		unsigned int h = head & mask;
-		unsigned int t = tail & mask;
-		if (h > t) {
-			memcpy(bufs, &pipe->bufs + t,
-			       n * sizeof(struct pipe_buffer));
-		} else {
-			unsigned int tsize = pipe->ring_size - t;
-			if (h > 0)
-				memcpy(bufs + tsize, pipe->bufs,
-				       h * sizeof(struct pipe_buffer));
-			memcpy(bufs, pipe->bufs + t,
-			       tsize * sizeof(struct pipe_buffer));
-		}
-
-> > -	data_start(i, &idx, start);
-> > -	/* some of this one + all after this one */
-> > -	npages = ((i->pipe->curbuf - idx - 1) & (i->pipe->buffers - 1)) + 1;
-> > -	capacity = min(npages,maxpages) * PAGE_SIZE - *start;
-> > +	data_start(i, &i_head, start);
-> > +	p_tail = i->pipe->tail;
-> > +	/* Amount of free space: some of this one + all after this one */
-> > +	npages = (p_tail + i->pipe->ring_size) - i_head;
-> 
-> Hm, it's not clear that this is equivalent to the old computation. Since
-> it seems repeated in a few places, could it be factored to a little
-> helper (before this patch) and the "some of this one + all after this
-> one" comment perhaps expanded to explain what is going on?
-
-Yeah...  It's a bit weird, even before my changes.
-
-However, looking at it again, it seems data_start() does the appropriate
-calculations.  If there's space in the current head buffer, it returns the
-offset to that and the head of that buffer, otherwise it advances the head
-pointer and sets the offset to 0.
-
-So I think the comment may actually be retrospective - referring to the state
-that data_start() has given us, rather than talking about the next bit of
-code.
-
-I also wonder if pipe_get_pages_alloc() is broken.  It doesn't check to see
-whether the buffer is full at the point it calls data_start().  However,
-data_start() doesn't check either and, without this patch, will simply advance
-and mask off the ring index - which may wrap.
-
-The maths in the unpatched version is pretty icky and I'm not convinced it's
-correct.
-
-David
+              Linus
