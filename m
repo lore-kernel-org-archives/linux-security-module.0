@@ -2,89 +2,93 @@ Return-Path: <SRS0=SGYN=YL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAF5CA9EA0
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Oct 2019 10:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE83CA9EA1
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Oct 2019 12:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E456321D7C
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Oct 2019 10:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83E5221835
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Oct 2019 12:29:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571401796;
+	bh=lJ5kUtRn5NruRHhyO8BWJiTgqPoQRpIgTHfTH+S2qdc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xHvXH2cem+vRiuR16ySWoJ+bNR7zaUr1GiMIWln4WUq6fiuFsKsYxjVqyCRLoQZmh
+	 +aZjrXd/+FBmsyqOhyoVc5Rttxc+eThp9YLmcWeez4YWMrHH8Vm+1j5RhYhtDgPn0R
+	 PJL5JZLLp6t040jJC6mg2Of3ii76Z4ytkxBo8Hpw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395462AbfJRKyY (ORCPT
+        id S2393326AbfJRM34 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Oct 2019 06:54:24 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:62409 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392070AbfJRKyY (ORCPT
+        Fri, 18 Oct 2019 08:29:56 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40921 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389585AbfJRM3z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:54:24 -0400
-Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x9IAsC3W078907;
-        Fri, 18 Oct 2019 19:54:12 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav106.sakura.ne.jp);
- Fri, 18 Oct 2019 19:54:12 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav106.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126227201116.bbtec.net [126.227.201.116])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x9IAs7gO078895
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 18 Oct 2019 19:54:12 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: WARNING: refcount bug in find_key_to_update
-To:     Eric Biggers <ebiggers@kernel.org>
-References: <000000000000830fe50595115344@google.com>
- <00000000000071e2fc05951229ad@google.com>
- <CAHk-=wjFozfjV34_qy3_Z155uz_Z7qFVfE8h=_9ceGU-SVk9hA@mail.gmail.com>
- <20191017160028.GA726@sol.localdomain>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <b211005b-75de-7936-c97a-817f7100415a@I-love.SAKURA.ne.jp>
-Date:   Fri, 18 Oct 2019 19:54:07 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 18 Oct 2019 08:29:55 -0400
+Received: by mail-pg1-f193.google.com with SMTP id e13so3302010pga.7;
+        Fri, 18 Oct 2019 05:29:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=288Pc59lRoS3fTQSgHjqYaeNRECTkwE7sqDzfLhbInk=;
+        b=tgTBt4GJ/POV5hcHCQCb0YtrRxdKN2/JJgZcfOgJ1dh/QM8ZRHcSCJ13o7k4DkwfUB
+         DpPgxmiGCRW97wFtG0rk8gDJqrJ1BNj6e/A26zh9lBrww2PLlK1tOyJ+09Tcnf+mpqq/
+         wenvCfaHz+9hdkzgfMlRgF9j2nPC6yDWeHqb7KgOm8y2n3NLaUyHZ/T4Uu8Apz6mUg0Z
+         UyNwYmc705OCG43Jjia7ZDD2FD6Hs/X5WLpvKkvDfb17Bp/9sz/n7m9jxwr70AbaYTBo
+         fY/heRXdZvteZPy96Qf6IfqCz/UXKFX/7YfYfC17FoB5KkCpOpDOhKQi2EmeS8jUg9KI
+         VQwg==
+X-Gm-Message-State: APjAAAXAWti8fL1fKQKWrDsjOyu+mdlGSOUIaOf0umuxDjmk1K9PeHMe
+        tLTPsPR8IlqWfgsRStoeZNk=
+X-Google-Smtp-Source: APXvYqyU19z0Xj8JJM7pjylF4zyrZhqpa+ZWU/DJy10UMIdreem6ukIh9uAUDKQz52Pnc+nuZA4exQ==
+X-Received: by 2002:a17:90a:6283:: with SMTP id d3mr11196594pjj.27.1571401794127;
+        Fri, 18 Oct 2019 05:29:54 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id v68sm6390357pfv.47.2019.10.18.05.29.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2019 05:29:50 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id B9F394042C; Fri, 18 Oct 2019 12:29:49 +0000 (UTC)
+Date:   Fri, 18 Oct 2019 12:29:49 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Matthias Maennich <maennich@google.com>
+Cc:     shuah@kernel.org, john.johansen@canonical.com, jmorris@namei.org,
+        serge@hallyn.com, keescook@chromium.org, alan.maguire@oracle.com,
+        yzaikin@google.com, davidgow@google.com, tytso@mit.edu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kselftest@vger.kernel.org,
+        Mike Salvatore <mike.salvatore@canonical.com>
+Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
+ tests for policy unpack
+Message-ID: <20191018122949.GD11244@42.do-not-panic.com>
+References: <20191018001816.94460-1-brendanhiggins@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20191017160028.GA726@sol.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018001816.94460-1-brendanhiggins@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/10/18 1:00, Eric Biggers wrote:
-> The key is supposed to have refcount >= 1 since it's in a keyring.
-> So some bug is causing it to have refcount 0.  Perhaps some place calling
-> key_put() too many times.
+On Thu, Oct 17, 2019 at 05:18:16PM -0700, Brendan Higgins wrote:
+> From: Mike Salvatore <mike.salvatore@canonical.com>
 > 
-> Unfortunately I can't get the reproducer to work locally.
-> 
-> Note that there are 2 other syzbot reports that look related.
-> No reproducers for them, though:
-> 
-> Title:              KASAN: use-after-free Read in key_put
-> Last occurred:      1 day ago
-> Reported:           28 days ago
-> Branches:           Mainline
-> Dashboard link:     https://syzkaller.appspot.com/bug?id=f13750b1124e01191250cf930086dcc40740fa30
-> Original thread:    https://lore.kernel.org/lkml/0000000000008c3e590592cf4b7f@google.com/T/#u
-> 
-> Title:              KASAN: use-after-free Read in keyring_compare_object
-> Last occurred:      49 days ago
-> Reported:           84 days ago
-> Branches:           Mainline
-> Dashboard link:     https://syzkaller.appspot.com/bug?id=529ab6a98286c2a97c445988a62760a58d4a1d4b
-> Original thread:    https://lore.kernel.org/lkml/000000000000038ef6058e6f3592@google.com/T/#u
-> 
+> In order to write the tests against the policy unpacking code, some
+> static functions needed to be exposed for testing purposes. One of the
+> goals of this patch is to establish a pattern for which testing these
+> kinds of functions should be done in the future.
 
-I don't know about keys, but I rather suspect lack of serialization locks between
-"looking up for checking existing keys" versus "looking up for garbage collection".
-Can we dump locks held by current thread when panic() is called?
+And you'd run into the same situation expressed elsewhere with kunit of
+an issue of the kunit test as built-in working but if built as a module
+then it would not work, given the lack of exports. Symbols namespaces
+should resolve this [0], and we'd be careful where a driver imports this
+namespace.
 
+[0] https://lwn.net/Articles/798254/
+
+  Luis
