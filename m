@@ -2,84 +2,107 @@ Return-Path: <SRS0=SGYN=YL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC30CA9EA9
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Oct 2019 16:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6C8CA9EA9
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Oct 2019 16:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C744820869
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Oct 2019 16:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBA0D2070B
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Oct 2019 16:38:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437270AbfJRQZq (ORCPT
+        id S2406070AbfJRQiN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Oct 2019 12:25:46 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:59526 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2395015AbfJRQZq (ORCPT
+        Fri, 18 Oct 2019 12:38:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45428 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729010AbfJRQiN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Oct 2019 12:25:46 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x9IGPKlL018043
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Oct 2019 12:25:20 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id D1513420458; Fri, 18 Oct 2019 12:25:19 -0400 (EDT)
-Date:   Fri, 18 Oct 2019 12:25:19 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     shuah@kernel.org, john.johansen@canonical.com, jmorris@namei.org,
-        serge@hallyn.com, keescook@chromium.org, alan.maguire@oracle.com,
-        yzaikin@google.com, davidgow@google.com, mcgrof@kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kselftest@vger.kernel.org,
-        Mike Salvatore <mike.salvatore@canonical.com>
-Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
- tests for policy unpack
-Message-ID: <20191018162519.GH21137@mit.edu>
-References: <20191018001816.94460-1-brendanhiggins@google.com>
- <20191018004307.GA95597@google.com>
+        Fri, 18 Oct 2019 12:38:13 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 80F98307D98A;
+        Fri, 18 Oct 2019 16:38:09 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-84.rdu2.redhat.com [10.10.121.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4F90660600;
+        Fri, 18 Oct 2019 16:38:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjFozfjV34_qy3_Z155uz_Z7qFVfE8h=_9ceGU-SVk9hA@mail.gmail.com>
+References: <CAHk-=wjFozfjV34_qy3_Z155uz_Z7qFVfE8h=_9ceGU-SVk9hA@mail.gmail.com> <000000000000830fe50595115344@google.com> <00000000000071e2fc05951229ad@google.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com,
+        syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>,
+        aou@eecs.berkeley.edu,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris James Morris <jmorris@namei.org>,
+        keyrings@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: WARNING: refcount bug in find_key_to_update
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018004307.GA95597@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <31179.1571416685.1@warthog.procyon.org.uk>
+Date:   Fri, 18 Oct 2019 17:38:05 +0100
+Message-ID: <31180.1571416685@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 18 Oct 2019 16:38:13 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 17, 2019 at 05:43:07PM -0700, Brendan Higgins wrote:
-> > +config SECURITY_APPARMOR_TEST
-> > +	bool "Build KUnit tests for policy_unpack.c"
-> > +	default n
-> > +	depends on KUNIT && SECURITY_APPARMOR
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> The backtrace looks simple enough, though:
 > 
-> Ted, here is an example where doing select on direct dependencies is
-> tricky because SECURITY_APPARMOR has a number of indirect dependencies.
+>   RIP: 0010:refcount_inc_checked+0x2b/0x30 lib/refcount.c:156
+>    __key_get include/linux/key.h:281 [inline]
+>    find_key_to_update+0x67/0x80 security/keys/keyring.c:1127
+>    key_create_or_update+0x4e5/0xb20 security/keys/key.c:905
+>    __do_sys_add_key security/keys/keyctl.c:132 [inline]
+>    __se_sys_add_key security/keys/keyctl.c:72 [inline]
+>    __x64_sys_add_key+0x219/0x3f0 security/keys/keyctl.c:72
+>    do_syscall_64+0xd0/0x540 arch/x86/entry/common.c:296
+>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> which to me implies that there's some locking bug, and somebody
+> released the key without holding a lock.
+>
+> That code looks a bit confused to me. Releasing a key without holding
+> a lock looks permitted, but if that's the case then __key_get() is
+> complete garbage. It would need to use 'refcount_inc_not_zero()' and
+> failure would require failing the caller.
 
-Well, that could be solved by adding a select on all of the indirect
-dependencies.  I did get your point about the fact that we could have
-cases where the indirect dependencies might conflict with one another.
-That's going to be a tough situation regardless of whether we have a
-sat-solver or a human who has to struggle with that situation.
+find_key_to_update() must be called with the keyring-to-be-searched locked, as
+stated in the comment on that function.
 
-It's also going to be a bit sad because it means that we won't be able
-to create a single config that could be used to run all the kunit
-tests when a user pushes a change to a Gerrit server for review.  :-/
+If a key-to-be-updated can be found in that keyring, then the keyring must be
+holding a ref on that key already, so it's refcount must be > 0, so it
+shouldn't be necessary to use refcount_inc_not_zero().
 
-I suppose that if we use a strict definition of "unit tests", and we
-assume that all of the tests impacted by a change in foo/bar/baz.c
-will be found in foo/bar/baz-test.c, or maybe foo/bar/*-test.c, we can
-automate the generation of the kunitconfig file, perhaps?
+There shouldn't be a race with key_link(), key_unlink(), key_move(),
+keyring_clear() or keyring_gc() (garbage collection) as all of those take a
+write-lock on the keyring.
 
-The other sad bit about having mutually exclusive config options is
-that we can't easily "run all KUinit tests" for some kind of test
-spinner or zero-day bot.
+> But I haven't followed the key locking rules, so who knows. That "put
+> without lock" scenario would explain the crash, though.
 
-I'm not sure there's a good solution to that issue, though.
+That shouldn't explain it.  When key_put() reduces the refcount to 0, it just
+schedules the garbage collector.  It doesn't touch the key again directly.
 
-    	     	       	    	     - Ted
+I would guess that something incorrectly put a ref when it shouldn't have.  Do
+we know which type of key is involved?  Looking at the syzkaller reproducer,
+it's adding an encrypted key and a user key to the process keyring -
+presumably repeating the procedure within the same process, hence how it finds
+something to update.
+
+David
