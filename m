@@ -2,159 +2,140 @@ Return-Path: <SRS0=w2wk=YN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA06CA9EAD
-	for <linux-security-module@archiver.kernel.org>; Sun, 20 Oct 2019 14:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5319ACA9EAD
+	for <linux-security-module@archiver.kernel.org>; Sun, 20 Oct 2019 18:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED2792190F
-	for <linux-security-module@archiver.kernel.org>; Sun, 20 Oct 2019 14:16:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="RUsW1Yl+"
+	by mail.kernel.org (Postfix) with ESMTP id 3848421929
+	for <linux-security-module@archiver.kernel.org>; Sun, 20 Oct 2019 18:51:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfJTOQo (ORCPT
+        id S1726702AbfJTSvL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 20 Oct 2019 10:16:44 -0400
-Received: from mout.web.de ([212.227.17.11]:34333 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbfJTOQn (ORCPT
+        Sun, 20 Oct 2019 14:51:11 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36399 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726281AbfJTSvL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 20 Oct 2019 10:16:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1571580983;
-        bh=neiNXpq2gExAgXOAcUsnHmBM+tC0ymwFnq2XSxyqe7c=;
-        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
-        b=RUsW1Yl+UUiSOtwQtIuYRD7KrgJhrGS/yKSkmalXSDv7tFdT3SDKnyAtEx6Xn4561
-         E0kcd/y0Evxdyg6VbdgGpTsqPAY7mMXzWFQgjjd8F3FLANAHWhNEUkXbYgyYUnx7Jg
-         0TC4Mfoo9UjNlNTN7Yqme4eQ8idfxQDZWtGmWfTA=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([78.48.112.181]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MeBDG-1ifNZx2f3G-00Puqv; Sun, 20
- Oct 2019 16:16:23 +0200
+        Sun, 20 Oct 2019 14:51:11 -0400
+Received: from static-50-53-33-191.bvtn.or.frontiernet.net ([50.53.33.191] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1iMGGs-00035d-7A; Sun, 20 Oct 2019 18:49:42 +0000
+Subject: Re: [PATCH] apparmor: Fix use-after-free in aa_audit_rule_init
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        linux-security-module@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
         Stephen McCamant <smccaman@umn.edu>,
         James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Tyler Hicks <tyhicks@canonical.com>
 References: <20191017014619.26708-1-navid.emamdoost@gmail.com>
-Subject: Re: [PATCH] apparmor: Fix use-after-free in aa_audit_rule_init
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        linux-security-module@vger.kernel.org
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <83dcacc2-a820-fe63-a1b9-1809e8f14f2f@web.de>
-Date:   Sun, 20 Oct 2019 16:16:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+ <83dcacc2-a820-fe63-a1b9-1809e8f14f2f@web.de>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
+Date:   Sun, 20 Oct 2019 11:49:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191017014619.26708-1-navid.emamdoost@gmail.com>
+In-Reply-To: <83dcacc2-a820-fe63-a1b9-1809e8f14f2f@web.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NKPjIAHdAWmE7ymm724jjg8Fh/+QqRUENKgKBemUKxV/mgFbB2C
- c+LbIcr9wWY8vB+2AomoVpNJktj9QQ+65fBFbNIlkfp59SsB9RhgSp942OhzX6Y8hTxZ9AU
- TT1WWSyV2iRf/MswEL4hohNpiRVjG+knnvrc1umH6oSIsT1clGgGtF5EI1EgWZEhm3xrEjZ
- Bu0v2IStBptbQ9AdVrOOA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0/XNbgdHIc0=:IMI/5WKmhUbGOA3Q2UUnNC
- fGqyzQxwx+nOlU7yuwSjQt6X1DYYPqbpRDG+bRHl5Q9l+4xIifittfEU03gfUBGgbdnTGqvBE
- QVKHFdaPRl5CWGWdqQrc2RUjoiDdQELiPuPfF7Oiz25LF/XfO1ys8iOvZdQBNWnAPYE9f2a1U
- ZbIG4UjrF0bfr3K7+cr0+xTPtOyfkEvEcoR65bysVy+aqgpi113xcMNvCCJjbkoVZqSyKCygx
- 5UD54UvSsB6X3znxeSTeY6l9C8eqLoE0gRO8p986zVzQCb7y2Fba+U46TeMG4z4XDwP+c3eu4
- 5av/Sk2Wnv+Gpd5qCLPDmkHdr1lk8J2G8z3tMrdv1bNx6iOIVc5NNhXylGWo9UlvQ0tj53ab2
- guo9pp49FJM5UK7E5aPjjBTa+lYr/nY7x8hAcVj1MRtDoAp7BcLEi4FXFCAnfeknLPe/B6Dv7
- eejSq8R+p/HkNbsDvRITfFf/lPBpuAshRZTECGrErCGTfsW0hVD3M6lSEYHq/TP3OkmPdjn7R
- foImBOr5gIpXOqmg4dcQ8UhjGr/nCxeNUZRY1E305fHn/UZkteHLVlbQq5rr8ApWL6uDK00up
- pZdXh12dRo7Tz4RkchbqrZwnlEEpzorg1lUBiNqqZYGGe5myjXLhwDRukDLMoEG6Yn3HxDyeo
- J/ntOh4YbJcFX4G1WVkkFZ8BNR1Fh52ckZ67hZN7Cjma1wLDeMNdYQB6FRj6qq867dvlxQprb
- h5wi83XnEnlgXCD2GUo5t2+1TxyOj6obkjTascy8Kg2VuIcGBCvHqS6ZThSNPb76/mY9n8O0w
- sjsdKr5yAh29lwf1OWOsmTHlU8ooh4fhW79S0+LCf041gCLM98jBWPH4h2FUbqL8jvIKJa7g8
- QGzNzI5vl6mubB2q+sJLtuPMiBlvi9T/ixVbMJo9q1wK4LZ6cGgpwBOnT7Bka8n5401T6k2S7
- WZsUGNLCIj+FkOVPIGbx/uM5Si0qjEZj+Rluwd4pvaIjmGO6rluajcKY+8h+SQ+1H0xmXPEwf
- pjNRTr4iUaLOhkJ20CLqHi71HoFribs7TmldrvI3YhXdEZFiVqN4GZ1bqlHyuAANj8m7spz3F
- PVvDrj1nB+SI201h7avnPKdiEUa0IYzZ8eR3Qdo3pXwqbt6jPZ9NHKXhfMvB++RBP9BQPx8Zn
- 8wPQSj17Sjs77TFHq1PNaMuq2AMz9uZK/XXJrLCLwl7UDSpDHlfufmAk2uRF4jKDm3YKYGrpK
- ck/gBokfLmzbvxVZEiwMHermMaq1mJn9AyBuJXJGjK7KCw9oIN/9c20tVuAI=
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> =E2=80=A6 But after this release the the return statement
-> tries to access the label field of the rule which results in
-> use-after-free. Before releaseing the rule, copy errNo and return it
-> after releasing rule.
+On 10/20/19 7:16 AM, Markus Elfring wrote:
+>> … But after this release the the return statement
+>> tries to access the label field of the rule which results in
+>> use-after-free. Before releaseing the rule, copy errNo and return it
+>> after releasing rule.
+> 
+Navid thanks for finding this, and Markus thanks for the review
 
-Please avoid a duplicate word and a typo in this change description.
+> Please avoid a duplicate word and a typo in this change description.
+> My preference would be a v2 version of the patch with the small clean-ups
+that Markus has pointed out.
 
+If I don't see a v2 this week I can pull this one in and do the revisions
+myself adding a little fix-up note.
 
-=E2=80=A6
-> +++ b/security/apparmor/audit.c
-=E2=80=A6
-> @@ -197,8 +198,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rule=
-str, void **vrule)
->  	rule->label =3D aa_label_parse(&root_ns->unconfined->label, rulestr,
->  				     GFP_KERNEL, true, false);
->  	if (IS_ERR(rule->label)) {
-> +		err =3D rule->label;
+> 
+> …
+>> +++ b/security/apparmor/audit.c
+> …
+>> @@ -197,8 +198,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+>>  	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
+>>  				     GFP_KERNEL, true, false);
+>>  	if (IS_ERR(rule->label)) {
+>> +		err = rule->label;
+> 
+> How do you think about to define the added local variable in this if branch directly?
+> 
+> +		int err = rule->label;
+> 
 
-How do you think about to define the added local variable in this if branc=
-h directly?
+yes, since err isn't defined or in use else where this would be preferable
 
-+		int err =3D rule->label;
+>>  		aa_audit_rule_free(rule);
+>> -		return PTR_ERR(rule->label);
+>> +		return PTR_ERR(err);
+>>  	}
+>>
+>>  	*vrule = rule;
+> 
+> 
+> Regards,
+> Markus
+> 
 
->  		aa_audit_rule_free(rule);
-> -		return PTR_ERR(rule->label);
-> +		return PTR_ERR(err);
->  	}
->
->  	*vrule =3D rule;
-
-
-Regards,
-Markus
