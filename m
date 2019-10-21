@@ -1,141 +1,130 @@
-Return-Path: <SRS0=w2wk=YN=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=Btf7=YO=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5319ACA9EAD
-	for <linux-security-module@archiver.kernel.org>; Sun, 20 Oct 2019 18:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD11CA9EB5
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 06:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3848421929
-	for <linux-security-module@archiver.kernel.org>; Sun, 20 Oct 2019 18:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90B182086D
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 06:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571641097;
+	bh=AIAxBuaIRG9FJxlnE8yMLaE933Srk04IPBo8vooOqUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qPvXq/oLi6v0bKVtwDEXdb8vsDIXXR8U6JNdlA1o7RojDi3m7lJljp9T9+WUmss8E
+	 YZmezdDXIOBp7xNwaQeHogXS2FJWcXQkLHtWCp9qoVeHWDMiN3y96atnGFEJPHRYO1
+	 18O7IHPMmert95EhDQIGL5123x8FGExFCewlcj/Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbfJTSvL (ORCPT
+        id S1726424AbfJUG6R (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 20 Oct 2019 14:51:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36399 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbfJTSvL (ORCPT
+        Mon, 21 Oct 2019 02:58:17 -0400
+Received: from mail-wm1-f43.google.com ([209.85.128.43]:34740 "EHLO
+        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbfJUG6Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 20 Oct 2019 14:51:11 -0400
-Received: from static-50-53-33-191.bvtn.or.frontiernet.net ([50.53.33.191] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1iMGGs-00035d-7A; Sun, 20 Oct 2019 18:49:42 +0000
-Subject: Re: [PATCH] apparmor: Fix use-after-free in aa_audit_rule_init
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
-        Stephen McCamant <smccaman@umn.edu>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <tyhicks@canonical.com>
-References: <20191017014619.26708-1-navid.emamdoost@gmail.com>
- <83dcacc2-a820-fe63-a1b9-1809e8f14f2f@web.de>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
-Date:   Sun, 20 Oct 2019 11:49:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 21 Oct 2019 02:58:16 -0400
+Received: by mail-wm1-f43.google.com with SMTP id v3so949050wmh.1;
+        Sun, 20 Oct 2019 23:58:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mERVdcaabbZ+RvMpGbS0z6Z3nUjRdN4OI0NdeA+OOR4=;
+        b=HBZp3Vv63r7qWNzhZZo/J1iBwBRP00R3PaQRH/bIsI3unpSAfuZ9cqZJrKPvZnabih
+         uWD94+v5UMRwZ7GxMCrqnFChgFfiKGHykz16CWicQ81nA1iieM15R0bdNjUxFUH9kFNe
+         rNZcXSjWzzJFWPcn4U6KyqCvbmE8bsKSqFaZv83BwGM0/lxqp4T916hOn/nrdMMVlczC
+         v9cSubA3O0ZqrPyNRnIXfwHzvjuYpVTIRM7TP6hOG6e/ZqDNuQFWK8tM/gn14xLHxXF9
+         3wVMdn7iS3wFl1HNp4spfRdVawMUBRNzP6KEwZIK5YhCLnJWQmINvjFfF+sT/VYRT+nx
+         Ve+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mERVdcaabbZ+RvMpGbS0z6Z3nUjRdN4OI0NdeA+OOR4=;
+        b=syVw3vDxDqu34BDp34tpidKpmG36EWSzDvKINwTLhuWrRaXtuNTSd/ihdCpC2mn+Xu
+         kwhsm4pXBcxvb9bk/pFpWTwrWPYf1FupPvKsy/AXLL2ABHVAY/UWKHlrd5IpOTLVdl1t
+         PUU9BfhD4QYVx45sI5s7YlJbVE2rsklN1LNsA6QTkRXXHYo/dCGfmXvk9gwH+N/Aw5oe
+         ouCbQUKcPXdOj/P95m5f0l/hynkkeRDpXt6Jb8U6QfKrWF65uIiDwYUC8Q8A7S1kFD4X
+         3kT9p08zBK8sBzQBtmmixP414PsjQSY1otOVoerOkDFVJ4rbl/IOpKKhgbBt4P2RZQGQ
+         JUXA==
+X-Gm-Message-State: APjAAAV/44/Ubs3SewpZhUzU5HgafRkxjAKMx55xsHGpzVChvGiCeqc1
+        frkiUW69olKwUrJV1dJBcCw=
+X-Google-Smtp-Source: APXvYqzXQPg7XyemOX/s7mVyBUJ2KZpv8Kd4wG9xlKHcZIW9h1X21edPHRzToz3pc0bCmiPgshwxQw==
+X-Received: by 2002:a05:600c:294c:: with SMTP id n12mr16751201wmd.99.1571641094964;
+        Sun, 20 Oct 2019 23:58:14 -0700 (PDT)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id d11sm15924646wrf.80.2019.10.20.23.58.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2019 23:58:14 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 08:58:11 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Micah Morton <mortonm@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [GIT PULL] SafeSetID LSM changes for 5.4
+Message-ID: <20191021065811.GA17098@gmail.com>
+References: <CAJ-EccM49yBA+xgkR+3m5pEAJqmH_+FxfuAjijrQxaxxMUAt3Q@mail.gmail.com>
+ <CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com>
+ <20190923233038.GE7828@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
-In-Reply-To: <83dcacc2-a820-fe63-a1b9-1809e8f14f2f@web.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190923233038.GE7828@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/20/19 7:16 AM, Markus Elfring wrote:
->> … But after this release the the return statement
->> tries to access the label field of the rule which results in
->> use-after-free. Before releaseing the rule, copy errNo and return it
->> after releasing rule.
-> 
-Navid thanks for finding this, and Markus thanks for the review
 
-> Please avoid a duplicate word and a typo in this change description.
-> My preference would be a v2 version of the patch with the small clean-ups
-that Markus has pointed out.
+* Paul E. McKenney <paulmck@kernel.org> wrote:
 
-If I don't see a v2 this week I can pull this one in and do the revisions
-myself adding a little fix-up note.
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -383,20 +383,22 @@ do {									      \
+>  } while (0)
+>  
+>  /**
+> - * rcu_swap_protected() - swap an RCU and a regular pointer
+> - * @rcu_ptr: RCU pointer
+> + * rcu_replace() - replace an RCU pointer, returning its old value
+> + * @rcu_ptr: RCU pointer, whose old value is returned
+>   * @ptr: regular pointer
+> - * @c: the conditions under which the dereference will take place
+> + * @c: the lockdep conditions under which the dereference will take place
+>   *
+> - * Perform swap(@rcu_ptr, @ptr) where @rcu_ptr is an RCU-annotated pointer and
+> - * @c is the argument that is passed to the rcu_dereference_protected() call
+> - * used to read that pointer.
+> + * Perform a replacement, where @rcu_ptr is an RCU-annotated
+> + * pointer and @c is the lockdep argument that is passed to the
+> + * rcu_dereference_protected() call used to read that pointer.  The old
+> + * value of @rcu_ptr is returned, and @rcu_ptr is set to @ptr.
+>   */
+> -#define rcu_swap_protected(rcu_ptr, ptr, c) do {			\
+> +#define rcu_replace(rcu_ptr, ptr, c)					\
+> +({									\
+>  	typeof(ptr) __tmp = rcu_dereference_protected((rcu_ptr), (c));	\
+>  	rcu_assign_pointer((rcu_ptr), (ptr));				\
+> -	(ptr) = __tmp;							\
+> -} while (0)
+> +	__tmp;								\
+> +})
 
-> 
-> …
->> +++ b/security/apparmor/audit.c
-> …
->> @@ -197,8 +198,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
->>  	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
->>  				     GFP_KERNEL, true, false);
->>  	if (IS_ERR(rule->label)) {
->> +		err = rule->label;
-> 
-> How do you think about to define the added local variable in this if branch directly?
-> 
-> +		int err = rule->label;
-> 
+One small suggestion, would it make sense to name it "rcu_replace_pointer()"?
 
-yes, since err isn't defined or in use else where this would be preferable
+This would make it fit into the pointer handling family of RCU functions: 
+rcu_assign_pointer(), rcu_access_pointer(), RCU_INIT_POINTER() et al?
 
->>  		aa_audit_rule_free(rule);
->> -		return PTR_ERR(rule->label);
->> +		return PTR_ERR(err);
->>  	}
->>
->>  	*vrule = rule;
-> 
-> 
-> Regards,
-> Markus
-> 
+rcu_swap() would also look a bit weird if used in MM code. ;-)
 
+Thanks,
+
+	Ingo
