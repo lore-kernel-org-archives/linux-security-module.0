@@ -2,80 +2,109 @@ Return-Path: <SRS0=Btf7=YO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB97CA9EB7
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02769CA9EAF
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 16:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9B1F20B7C
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:59:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C74BD214AE
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 16:05:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hgclhPRT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="El1z6SHT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729597AbfJUP7Z (ORCPT
+        id S1727140AbfJUQFw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Oct 2019 11:59:25 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:48767 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729842AbfJUP7V (ORCPT
+        Mon, 21 Oct 2019 12:05:52 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:42780 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbfJUQFw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Oct 2019 11:59:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571673560;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gB3h1+rX6SwZqtoY3Kw85+CkKWUkDR1tjhYDoTIgQqI=;
-        b=hgclhPRTLu8iogpwdpISRXnnz+2xYH7IbErEnFwkSGzSSEYo7HG8NWRNBxwR7HTSngWs/z
-        yIg71MnN3MDBixReQQ/d2UOUPr62p72rzFXsAlFyv86FAqjbuQVejOAdx0WyXDzMENhVD6
-        z6AWzA3RCMiPmcq3o4OB7i/Q2aQ7AKY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-304-ZRM1CcYIMe2Hn_ko3VmGjA-1; Mon, 21 Oct 2019 11:59:16 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7CBA01005500;
-        Mon, 21 Oct 2019 15:59:15 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BD4756012E;
-        Mon, 21 Oct 2019 15:59:13 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <000000000000830fe50595115344@google.com>
-References: <000000000000830fe50595115344@google.com>
-To:     syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>
-Cc:     dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: WARNING: refcount bug in find_key_to_update
-MIME-Version: 1.0
-Content-ID: <8508.1571673553.1@warthog.procyon.org.uk>
-Date:   Mon, 21 Oct 2019 16:59:13 +0100
-Message-ID: <8509.1571673553@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: ZRM1CcYIMe2Hn_ko3VmGjA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        Mon, 21 Oct 2019 12:05:52 -0400
+Received: by mail-il1-f196.google.com with SMTP id o16so4425646ilq.9;
+        Mon, 21 Oct 2019 09:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=+9Fw9C3VNmrkj4O0SxMaQ6+MpbqTvqoB6rYX9UMgB/Q=;
+        b=El1z6SHTX7CqiaLgncFAg/FvJ1ExE/Im2uEY3oUmCkZF5hwFGBPBCmNjKk6PTUha23
+         KEPoJBnSq7ZW+6tqenfQL/J/zIwFtJIZ+YA0kjV6XqFEfwUOUxFJK5+HvXosbRl9hjCi
+         DauRXVF/sa4FufQZmYsUkaw6+ZgF915p7bQTj9klNgAHViC6q8yiiMxtj7Y0JGoEKWko
+         YOxQhpaPKYrTiWyrfHTzUG1+pqJE2LXVFjwqOFCGm7D7ummtUomWGRlNxCc9HYmy95TV
+         4VlTypk1b4QE0EOQdkNQV3zPgPkI+XFQLYYQbSoCnPTWjk/bKgp6DDbUK/jQRDTicKvz
+         N6mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=+9Fw9C3VNmrkj4O0SxMaQ6+MpbqTvqoB6rYX9UMgB/Q=;
+        b=aK6PF4842SNgYr2bMiiCLM+OupPfVV4f0FO3sQwzBCmJ0FBxWsx5mli0KsoyioOSK8
+         BvsmK8JbL4ksB+Mvg9en+H5UNQCOAqmALmAtbENzj6+2/0TB8yc9yI7S7A46VN5+PARf
+         KvHlMlSh1dz0qD9XXXIslAtWnuIhhRR05QZnHFe3WI2hOgUvSJQP5VDkjKJYHIoz6fJM
+         kqnlEFZVF/mHeZv+PAa84qLA1mSC3uzqyOVsWmjG9ocjw8eisYvjPsRO8FTmpZwDKhhH
+         gv0FtD7qqa5bY5oaK/+3NiBdMmcjCFTBr2vw4aEODG2cSW5Ts6fb3gXtgbVv9yLRAoWK
+         6d8Q==
+X-Gm-Message-State: APjAAAXIZahFJizZyxzktTNsNKrSOBxsx+ttCHzEWT5e2sGI+8Db8w6Z
+        JLVdfNZy6VqD3f6+Lr7eHLA=
+X-Google-Smtp-Source: APXvYqz9Imm6P88RdnmB8s87ECVZmRmwVokZUw4Id0w7IF2XQdSetobkXMjZKb7YPJn1eCaxxbYelw==
+X-Received: by 2002:a92:6f08:: with SMTP id k8mr25825599ilc.57.1571673949954;
+        Mon, 21 Oct 2019 09:05:49 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id l7sm589694ilq.57.2019.10.21.09.05.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 09:05:48 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+To:     tyhicks@canonical.com
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] apparmor: Fix use-after-free in aa_audit_rule_init
+Date:   Mon, 21 Oct 2019 11:05:31 -0500
+Message-Id: <20191021160532.7719-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191021154533.GB12140@elm>
+References: <20191021154533.GB12140@elm>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com> wrote:
+In the implementation of aa_audit_rule_init(), when aa_label_parse()
+fails the allocated memory for rule is released using
+aa_audit_rule_free(). But after this release, the return statement
+tries to access the label field of the rule which results in
+use-after-free. Before releasing the rule, copy errNo and return it
+after release.
 
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11c8adab600=
-000
+Fixes: 52e8c38001d8 ("apparmor: Fix memory leak of rule on error exit path")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+Changes in v3:
+	-- applied Tyler Hicks recommendation on err initialization.
 
-How do I tell what's been passed into the add_key for the encrypted key?
+ security/apparmor/audit.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-David
+diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+index 5a98661a8b46..597732503815 100644
+--- a/security/apparmor/audit.c
++++ b/security/apparmor/audit.c
+@@ -197,8 +197,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+ 	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
+ 				     GFP_KERNEL, true, false);
+ 	if (IS_ERR(rule->label)) {
++		int err = PTR_ERR(rule->label);
+ 		aa_audit_rule_free(rule);
+-		return PTR_ERR(rule->label);
++		return err;
+ 	}
+ 
+ 	*vrule = rule;
+-- 
+2.17.1
 
