@@ -2,87 +2,109 @@ Return-Path: <SRS0=Btf7=YO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A64C9CA9EAF
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 14:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C1BCA9EAF
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77E3C2053B
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 14:43:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAC5020B7C
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:24:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=temperror (0-bit key) header.d=phytec.de header.i=@phytec.de header.b="KtVtnMwZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="inbN/c7b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbfJUOnG (ORCPT
+        id S1728205AbfJUPYQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Oct 2019 10:43:06 -0400
-Received: from mickerik.phytec.de ([195.145.39.210]:51406 "EHLO
-        mickerik.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbfJUOnG (ORCPT
+        Mon, 21 Oct 2019 11:24:16 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37833 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728052AbfJUPYQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Oct 2019 10:43:06 -0400
-X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Oct 2019 10:43:06 EDT
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a1; c=relaxed/simple;
-        q=dns/txt; i=@phytec.de; t=1571668084; x=1574260084;
-        h=From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/C2547h8FH/9AUJSr3wxTE+CTEe9v03CyHuI44s0KHo=;
-        b=KtVtnMwZqLnuPegFQur0I6bErgnp4ZIYFmk34Ls9QzHGPBne6egsDXX7IrN0gpCF
-        wougE3MsB9NgMPEcUSRamFSRiVUTAG2OLfB6mlOKxQ38dsTi6f7PAwsHN6X5si+d
-        2wTOSYou7FBwr9RsHEOC2mDeKJwzmI7J9M0Hw/I2H5c=;
-X-AuditID: c39127d2-df9ff7000000408f-74-5dadc0735781
-Received: from idefix.phytec.de (Unknown_Domain [172.16.0.10])
-        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id E7.97.16527.370CDAD5; Mon, 21 Oct 2019 16:28:03 +0200 (CEST)
-Received: from [172.16.20.247] ([172.16.20.247])
-          by idefix.phytec.de (IBM Domino Release 9.0.1FP7)
-          with ESMTP id 2019102116280399-141259 ;
-          Mon, 21 Oct 2019 16:28:03 +0200 
-From:   =?UTF-8?Q?Stefan_M=c3=bcller-Klieser?= 
-        <s.mueller-klieser@phytec.de>
-Subject: CAAM hw key support status
-To:     franck.lenormand@nxp.com
-Cc:     horia.geanta@nxp.com, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Message-ID: <2171b6f9-8e80-8f79-fffb-5a5b641ad196@phytec.de>
-Date:   Mon, 21 Oct 2019 16:28:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 21.10.2019 16:28:03,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 21.10.2019 16:28:04,
-        Serialize complete at 21.10.2019 16:28:04
-X-TNEFEvaluated: 1
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJLMWRmVeSWpSXmKPExsWyRoCBS7fkwNpYg5YJXBZNq98zW3w4f5jJ
-        4v69n0wWH3oesTmweGx8t4PJ4/MmuQCmKC6blNSczLLUIn27BK6Mx9vfsxesZqrYP2EFSwPj
-        e8YuRk4OCQETiXsrlrN1MXJxCAlsY5T4Mv0AI4RzhlHiZPN5NpAqNgEviXvbG5lAbGEBZYlz
-        F38xdzFycIgIyEgseWEPEmYWiJX4uOUkWDmvgI3E98WrmUFsFgFViW9fP4AtExWIkHi+/QYj
-        RI2gxMmZT1hAdkkINDJJfF+wjBniIiGJ04vPMkMMlZfY/nYOlG0mMW/zQyhbXOLWk/lMExgF
-        ZiGZNQtJyywkLbOQtCxgZFnFKJSbmZydWpSZrVeQUVmSmqyXkrqJERi8hyeqX9rB2DfH4xAj
-        EwfjIUYJDmYlEd47BmtjhXhTEiurUovy44tKc1KLDzFKc7AoifNu4C0JExJITyxJzU5NLUgt
-        gskycXBKNTCWVJ592H1J+r+f3YbuqF/hgmobPgpOvrl9UdIqZSW/uZEBrxTLVin8T9oYZxoZ
-        aPdy3U7nxStjTy7/3vb48HTumBNvG2a2em4X3dl2bsZux4kcAVvtTb4n58XImB1ZplN42P1p
-        CMdf2Xc7zBtTrgTMOFxx0O158+UF2Wc+v4lS8ZnG6BQ9Y6qyEktxRqKhFnNRcSIAjhkQ+UwC
-        AAA=
+        Mon, 21 Oct 2019 11:24:16 -0400
+Received: by mail-io1-f65.google.com with SMTP id 1so5047085iou.4;
+        Mon, 21 Oct 2019 08:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3P+aBDo0ELSsFt8nCKFHScePQc27b2VSrL87S+QPBsU=;
+        b=inbN/c7buo+FoE6Dk6EAnrg8ORKRrFdixSmEroAn9vkrHOGV2OF7X+KnCKCLDz1FBo
+         Op0aI8hSOoy5A7ciprqD8+Ss8WrJY15q5EQ/YuoWkA96CyKkwV3AwVzPX3k0UDTvj/Vx
+         oMhkhmTj1RTF9zzZwALy4yLUi/N0u+/l+weT/H81oKL2vSYCpjep5E25XQW2rbvC/qXH
+         bI2WnZ2KrzBkf68EBgJEH6LLC5o44cfZf6a2wFWFNhs7tN5XMHPPWSzAeOa8Ltr4yl/7
+         DTChh4sLLiEZvmjbG/2hv0inoeTsnvW3W9acY5hFc7wyH+eyfg7P6gcQNH6ths7h1dxr
+         ydFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3P+aBDo0ELSsFt8nCKFHScePQc27b2VSrL87S+QPBsU=;
+        b=KNSkd3pZIPsSs0k7RERiy8QiTozoQ+rXzUMgfk/YOfw+JUJNMNTRASHZtMiASzs+QE
+         jIiLDF1Q/kZeiRa2GUoygAxG0SRtJcgfbJ+551OA3ZMCcUnjtMLkKzNJlhEcm9QjTXtB
+         ss3eMrStTKPnN/kizNx32ty6OTz23aH6dwKWPq8fW1nHLcmsiwqyT5ftY2M19hxvERVf
+         qHJCTVwi4ilOQwCsO3RjWLwooT69gP1KhqhIKswfSHGlSVcWrI1vSlhDcDW47+WHsv+o
+         00St0aiEIcRYad3mm1nPsHheyUpzpaaC7D+pDd4eLBqKMhDK3oW/3HAGiB6CnM35mYZc
+         no4w==
+X-Gm-Message-State: APjAAAXxUOBg4fNBemXT3Zl5q/uXAwIy6Te2AyOgWEsG8lYn3VLixWPC
+        U6weM3HZwbcartC91HJYUrE=
+X-Google-Smtp-Source: APXvYqwqC3FNN0SgZe4VhLQX6Z6RdX7ParI/Or2Bl+4oBAvPlu2BndYD4qtUpntFEl3ejY72uMnUPg==
+X-Received: by 2002:a5d:8185:: with SMTP id u5mr15715116ion.147.1571671453827;
+        Mon, 21 Oct 2019 08:24:13 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id n123sm3872105iod.62.2019.10.21.08.24.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 08:24:13 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+To:     john.johansen@canonical.com
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] apparmor: Fix use-after-free in aa_audit_rule_init
+Date:   Mon, 21 Oct 2019 10:23:47 -0500
+Message-Id: <20191021152348.3906-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
+References: <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Franck,
+In the implementation of aa_audit_rule_init(), when aa_label_parse()
+fails the allocated memory for rule is released using
+aa_audit_rule_free(). But after this release, the return statement
+tries to access the label field of the rule which results in
+use-after-free. Before releasing the rule, copy errNo and return it
+after release.
 
-you sent an RFC to the linux-security-module list:
+Fixes: 52e8c38001d8 ("apparmor: Fix memory leak of rule on error exit path")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+Changes in v2:
+	-- Fix typo in description
+	-- move err definition inside the if statement.
 
-March 1, 2019, 4:09 p.m. UTC
-[RFC,0/2] Create CAAM HW key in linux keyring and use in dmcrypt
-https://patchwork.kernel.org/cover/10835635/
+ security/apparmor/audit.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Is there any update on this work? How do you want to move forward?
+diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+index 5a98661a8b46..334065302fb6 100644
+--- a/security/apparmor/audit.c
++++ b/security/apparmor/audit.c
+@@ -197,8 +197,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+ 	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
+ 				     GFP_KERNEL, true, false);
+ 	if (IS_ERR(rule->label)) {
++		int err = rule->label;
+ 		aa_audit_rule_free(rule);
+-		return PTR_ERR(rule->label);
++		return PTR_ERR(err);
+ 	}
+ 
+ 	*vrule = rule;
+-- 
+2.17.1
 
-Regards, Stefan
