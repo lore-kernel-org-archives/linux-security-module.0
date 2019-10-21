@@ -2,137 +2,98 @@ Return-Path: <SRS0=Btf7=YO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C51CA9EAF
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D29CA9EAF
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:45:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE562053B
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:25:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXs+Kf83"
+	by mail.kernel.org (Postfix) with ESMTP id ACB9920873
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:45:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbfJUPZy (ORCPT
+        id S1729629AbfJUPpo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Oct 2019 11:25:54 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43843 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbfJUPZy (ORCPT
+        Mon, 21 Oct 2019 11:45:44 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37835 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbfJUPpn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Oct 2019 11:25:54 -0400
-Received: by mail-io1-f67.google.com with SMTP id c11so7308250iom.10;
-        Mon, 21 Oct 2019 08:25:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=CCsbvZ28JC46guXF6O4rYjXW3fCXuWIxBOZSISvE6SU=;
-        b=DXs+Kf83VRyzYDoF+84qUhVH6tRXNDr0QO+onaMzRs+jWfWCKba194bx2vNLFKaW23
-         22sPLYAevEV+a2VJniEYOih1eiUPqdK97WcmZszjQxL5LdWnj7U5uq3BXo+8HCLCz1F3
-         tDnfWc9UbtuyBCh/4+1kVSj09Vf2DJTCUwh2ccctfnGKrBBXRhMX4Lnm6eWFkQyzM6Hu
-         XtL7lN4frPNmjMdsNWNhdSk2Nnu4OJTZUBBK6j4UaiKf2rGvsxkUzpLCCWCmmEEId4KE
-         ENzpzylEoU18yDIwO0GCugDI/TQexsiI1TiYeUCy0BPV6YE/c4XH3E73H19i7IwyDscK
-         r2+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=CCsbvZ28JC46guXF6O4rYjXW3fCXuWIxBOZSISvE6SU=;
-        b=HiCi47xgrrHOahaSzHNcce9eLXdFO0Fly+9XLjnXjI6KFlq4nUwPN/h9DoD7jn3rh/
-         XIjy1GeKhPqSmeSjf/2Mj9rogPC/iRdOJe3yB9/2SFbEMgByN9I6cR7OmKckCKNpRKfm
-         dJ11xvkLYv+qkOydjCbbKqbHo3XgFfBKqnyxRBm7sVFEwS+HHwriFXKF8stYrdlSs5MB
-         NClllg9XorCl6XK8qdS6RKLPG423Uno/2APEkhU8yP5FOqhy0oJELNsrJGuXkiT9l94C
-         PgcbkBEKQdXemPX/KAN8Ceh59U0nRVaSGYN0i1m6qzYthIVtViMjtfME/6A7Z3Kdrc77
-         FYAw==
-X-Gm-Message-State: APjAAAXiLCSYSWWwpo12WHu8rhTKlHI6aZaCnXh1S4zdSDAfaD010DFw
-        wRu2MX8Fu6rnW4xTLArkoCnNKNgwmO0ntrvnA+I=
-X-Google-Smtp-Source: APXvYqylqhFAt+QkJvYPFTPhVmwmF4yLwcIEkwyyC9O8N4n+Syf/Y9fPxrrern7uh9qkFWpM4NfDPpHAFarXvCDXm+4=
-X-Received: by 2002:a5e:9706:: with SMTP id w6mr19915934ioj.252.1571671552835;
- Mon, 21 Oct 2019 08:25:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191017014619.26708-1-navid.emamdoost@gmail.com>
- <83dcacc2-a820-fe63-a1b9-1809e8f14f2f@web.de> <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
-In-Reply-To: <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Date:   Mon, 21 Oct 2019 10:25:41 -0500
-Message-ID: <CAEkB2EQgv9_niKU0dagjZH-wRoHc=6+X4O7nGoVbaz9LWPwy6g@mail.gmail.com>
-Subject: Re: [PATCH] apparmor: Fix use-after-free in aa_audit_rule_init
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        linux-security-module@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
-        Stephen McCamant <smccaman@umn.edu>,
-        James Morris <jmorris@namei.org>,
+        Mon, 21 Oct 2019 11:45:43 -0400
+Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=elm)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <tyhicks@canonical.com>)
+        id 1iMZsI-0001pK-3G; Mon, 21 Oct 2019 15:45:38 +0000
+Date:   Mon, 21 Oct 2019 10:45:34 -0500
+From:   Tyler Hicks <tyhicks@canonical.com>
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     john.johansen@canonical.com, emamd001@umn.edu, smccaman@umn.edu,
+        kjlu@umn.edu, James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <tyhicks@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] apparmor: Fix use-after-free in aa_audit_rule_init
+Message-ID: <20191021154533.GB12140@elm>
+References: <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
+ <20191021152348.3906-1-navid.emamdoost@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021152348.3906-1-navid.emamdoost@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Oct 20, 2019 at 1:51 PM John Johansen
-<john.johansen@canonical.com> wrote:
->
-> On 10/20/19 7:16 AM, Markus Elfring wrote:
-> >> =E2=80=A6 But after this release the the return statement
-> >> tries to access the label field of the rule which results in
-> >> use-after-free. Before releaseing the rule, copy errNo and return it
-> >> after releasing rule.
-> >
-> Navid thanks for finding this, and Markus thanks for the review
->
-> > Please avoid a duplicate word and a typo in this change description.
-> > My preference would be a v2 version of the patch with the small clean-u=
-ps
-> that Markus has pointed out.
+On 2019-10-21 10:23:47, Navid Emamdoost wrote:
+> In the implementation of aa_audit_rule_init(), when aa_label_parse()
+> fails the allocated memory for rule is released using
+> aa_audit_rule_free(). But after this release, the return statement
+> tries to access the label field of the rule which results in
+> use-after-free. Before releasing the rule, copy errNo and return it
+> after release.
+> 
+> Fixes: 52e8c38001d8 ("apparmor: Fix memory leak of rule on error exit path")
 
-John and Markus, I updated and submitted v2.
+Ugh! I'm not sure what I was thinking when I authored that patch. :/
 
->
-> If I don't see a v2 this week I can pull this one in and do the revisions
-> myself adding a little fix-up note.
->
-> >
-> > =E2=80=A6
-> >> +++ b/security/apparmor/audit.c
-> > =E2=80=A6
-> >> @@ -197,8 +198,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *ru=
-lestr, void **vrule)
-> >>      rule->label =3D aa_label_parse(&root_ns->unconfined->label, rules=
-tr,
-> >>                                   GFP_KERNEL, true, false);
-> >>      if (IS_ERR(rule->label)) {
-> >> +            err =3D rule->label;
-> >
-> > How do you think about to define the added local variable in this if br=
-anch directly?
-> >
-> > +             int err =3D rule->label;
-> >
->
-> yes, since err isn't defined or in use else where this would be preferabl=
-e
->
-> >>              aa_audit_rule_free(rule);
-> >> -            return PTR_ERR(rule->label);
-> >> +            return PTR_ERR(err);
-> >>      }
-> >>
-> >>      *vrule =3D rule;
-> >
-> >
-> > Regards,
-> > Markus
-> >
->
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> ---
+> Changes in v2:
+> 	-- Fix typo in description
+> 	-- move err definition inside the if statement.
+> 
+>  security/apparmor/audit.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+> index 5a98661a8b46..334065302fb6 100644
+> --- a/security/apparmor/audit.c
+> +++ b/security/apparmor/audit.c
+> @@ -197,8 +197,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+>  	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
+>  				     GFP_KERNEL, true, false);
+>  	if (IS_ERR(rule->label)) {
+> +		int err = rule->label;
+
+Since rule->label is a pointer, I'd like to see this:
+
+ int err = PTR_ERR(rule->label);
+
+>  		aa_audit_rule_free(rule);
+> -		return PTR_ERR(rule->label);
+> +		return PTR_ERR(err);
+
+This line would change to:
+
+ return err;
 
 
---=20
-Thanks,
-Navid.
+Tyler
+
+>  	}
+>  
+>  	*vrule = rule;
+> -- 
+> 2.17.1
+> 
