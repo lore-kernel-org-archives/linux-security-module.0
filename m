@@ -2,98 +2,111 @@ Return-Path: <SRS0=Btf7=YO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D29CA9EAF
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E39DCA9EB7
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACB9920873
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:45:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7136C20B7C
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 15:46:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZdcZ2Wvk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbfJUPpo (ORCPT
+        id S1727101AbfJUPqZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Oct 2019 11:45:44 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37835 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbfJUPpn (ORCPT
+        Mon, 21 Oct 2019 11:46:25 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:50948 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729305AbfJUPqZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Oct 2019 11:45:43 -0400
-Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=elm)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <tyhicks@canonical.com>)
-        id 1iMZsI-0001pK-3G; Mon, 21 Oct 2019 15:45:38 +0000
-Date:   Mon, 21 Oct 2019 10:45:34 -0500
-From:   Tyler Hicks <tyhicks@canonical.com>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     john.johansen@canonical.com, emamd001@umn.edu, smccaman@umn.edu,
-        kjlu@umn.edu, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] apparmor: Fix use-after-free in aa_audit_rule_init
-Message-ID: <20191021154533.GB12140@elm>
-References: <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
- <20191021152348.3906-1-navid.emamdoost@gmail.com>
+        Mon, 21 Oct 2019 11:46:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571672784;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2lkud/2TuzM7NRL3rKWrW5AaADyBWycW62jzc8xlk8I=;
+        b=ZdcZ2WvkziNPTXPI48e8tX7DQFUJwnZFHWhu7+xy8VsoZBoaphCeaeEZys5L1LXtKdKV5A
+        sC51eMvMWKvTTHr7+nqDyRaSIw3o+6M53NcQ/1VuSgJPwK6VotP33mQF4s4nqSeP3roAVs
+        cQYcF/8o6EXH1d1QF+ThaftvRcNDAII=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-120-bkuGxsfZNyqjQfSe_fmrHA-1; Mon, 21 Oct 2019 11:46:21 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 445EA47B;
+        Mon, 21 Oct 2019 15:46:19 +0000 (UTC)
+Received: from crecklin.bos.csb (ovpn-125-176.rdu2.redhat.com [10.10.125.176])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 932254144;
+        Mon, 21 Oct 2019 15:46:16 +0000 (UTC)
+Reply-To: crecklin@redhat.com
+Subject: Re: [PATCH] security/keyring: avoid pagefaults in
+ keyring_read_iterator
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
+References: <20191018184030.8407-1-crecklin@redhat.com>
+ <30309.1571667719@warthog.procyon.org.uk>
+From:   Chris von Recklinghausen <crecklin@redhat.com>
+Organization: Red Hat
+Message-ID: <b8aa0f7c-0a90-efae-9fb7-aa85b19a0d9a@redhat.com>
+Date:   Mon, 21 Oct 2019 11:46:15 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191021152348.3906-1-navid.emamdoost@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <30309.1571667719@warthog.procyon.org.uk>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: bkuGxsfZNyqjQfSe_fmrHA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019-10-21 10:23:47, Navid Emamdoost wrote:
-> In the implementation of aa_audit_rule_init(), when aa_label_parse()
-> fails the allocated memory for rule is released using
-> aa_audit_rule_free(). But after this release, the return statement
-> tries to access the label field of the rule which results in
-> use-after-free. Before releasing the rule, copy errNo and return it
-> after release.
-> 
-> Fixes: 52e8c38001d8 ("apparmor: Fix memory leak of rule on error exit path")
+On 10/21/2019 10:21 AM, David Howells wrote:
+> Chris von Recklinghausen <crecklin@redhat.com> wrote:
+>
+>> The put_user call from keyring_read_iterator caused a page fault which
+>> attempts to lock mm->mmap_sem and type->lock_class (key->sem) in the rev=
+erse
+>> order that keyring_read_iterator did, thus causing the circular locking
+>> dependency.
+>>
+>> Remedy this by using access_ok and __put_user instead of put_user so we'=
+ll
+>> return an error instead of faulting in the page.
+> I wonder if it's better to create a kernel buffer outside of the lock in
+> keyctl_read_key().  Hmmm...  The reason I didn't want to do that is that
+> keyrings have don't have limits on the size.  Maybe that's not actually a
+> problem, since 1MiB would be able to hold a list of a quarter of a millio=
+n
+> keys.
+>
+> David
+>
 
-Ugh! I'm not sure what I was thinking when I authored that patch. :/
+Hi David,
 
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-> ---
-> Changes in v2:
-> 	-- Fix typo in description
-> 	-- move err definition inside the if statement.
-> 
->  security/apparmor/audit.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
-> index 5a98661a8b46..334065302fb6 100644
-> --- a/security/apparmor/audit.c
-> +++ b/security/apparmor/audit.c
-> @@ -197,8 +197,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
->  	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
->  				     GFP_KERNEL, true, false);
->  	if (IS_ERR(rule->label)) {
-> +		int err = rule->label;
+Thanks for the feedback.
 
-Since rule->label is a pointer, I'd like to see this:
+I can try to prototype that, but regardless of where the kernel buffer
+is allocated, the important part is causing the initial pagefault in the
+read path outside the lock so __put_user won't fail due to a valid user
+address but page backing the user address isn't in-core.
 
- int err = PTR_ERR(rule->label);
+I'll start work on v2.
 
->  		aa_audit_rule_free(rule);
-> -		return PTR_ERR(rule->label);
-> +		return PTR_ERR(err);
+Thanks,
 
-This line would change to:
+Chris
 
- return err;
-
-
-Tyler
-
->  	}
->  
->  	*vrule = rule;
-> -- 
-> 2.17.1
-> 
