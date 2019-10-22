@@ -1,90 +1,117 @@
-Return-Path: <SRS0=Btf7=YO=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=mxYi=YP=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 975A1CA9EB0
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 16:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CAACA9EAF
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Oct 2019 02:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 695282173B
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Oct 2019 16:08:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59D2F20882
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Oct 2019 02:13:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571710391;
+	bh=S/2WtQMt9L/0ZoLF2YR0k3YeJsSzQfW7/ml8EXtJZvQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:List-ID:
+	 From;
+	b=B9o62azdJRwXzaytBZurQ77O7NUhhdFQeWnvlNbPNuJkWelQiipxrIY9VUnjNbt4B
+	 wZMhbW0BaUPVxExNqHUd4TvmYegnBgJaIvB6Mh35ryimQJjX9QteR48UsHn4//YZFi
+	 0EADS5UAx2LgKjCu/UsZYgzfPtTouLRtHuVZDGBU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729919AbfJUQIW (ORCPT
+        id S1730084AbfJVCNK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Oct 2019 12:08:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38911 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729905AbfJUQIW (ORCPT
+        Mon, 21 Oct 2019 22:13:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727264AbfJVCNK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:08:22 -0400
-Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=elm)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <tyhicks@canonical.com>)
-        id 1iMaEF-0000sX-Ga; Mon, 21 Oct 2019 16:08:19 +0000
-Date:   Mon, 21 Oct 2019 11:08:14 -0500
-From:   Tyler Hicks <tyhicks@canonical.com>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] apparmor: Fix use-after-free in aa_audit_rule_init
-Message-ID: <20191021160814.GC12140@elm>
-References: <20191021154533.GB12140@elm>
- <20191021160532.7719-1-navid.emamdoost@gmail.com>
+        Mon, 21 Oct 2019 22:13:10 -0400
+Received: from paulmck-ThinkPad-P72 (cpe-67-241-73-101.twcny.res.rr.com [67.241.73.101])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 873D12086D;
+        Tue, 22 Oct 2019 02:13:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571710389;
+        bh=S/2WtQMt9L/0ZoLF2YR0k3YeJsSzQfW7/ml8EXtJZvQ=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=W2+pqJsXZVCDf8qWvoR27cJI/6f5uG2gCB5k8Ghad9Zr7D2VIHYSdll/wRwZqRLFd
+         UbKo85vILq3YxvjNwmzn0pBvbtBvPflDFTDPKcElEKh/h2kH4hnuXnZjumRLMbQxpl
+         OH6GT+HydvwSq7LrueUKv9geSOaxXaQGAo4OLsG4=
+Date:   Mon, 21 Oct 2019 19:13:06 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Micah Morton <mortonm@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [GIT PULL] SafeSetID LSM changes for 5.4
+Message-ID: <20191022021306.GB2479@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <CAJ-EccM49yBA+xgkR+3m5pEAJqmH_+FxfuAjijrQxaxxMUAt3Q@mail.gmail.com>
+ <CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com>
+ <20190923233038.GE7828@paulmck-ThinkPad-P72>
+ <20191021065811.GA17098@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191021160532.7719-1-navid.emamdoost@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191021065811.GA17098@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019-10-21 11:05:31, Navid Emamdoost wrote:
-> In the implementation of aa_audit_rule_init(), when aa_label_parse()
-> fails the allocated memory for rule is released using
-> aa_audit_rule_free(). But after this release, the return statement
-> tries to access the label field of the rule which results in
-> use-after-free. Before releasing the rule, copy errNo and return it
-> after release.
+On Mon, Oct 21, 2019 at 08:58:11AM +0200, Ingo Molnar wrote:
 > 
-> Fixes: 52e8c38001d8 ("apparmor: Fix memory leak of rule on error exit path")
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-
-Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
-
-Thanks!
-
-Tyler
-
-> ---
-> Changes in v3:
-> 	-- applied Tyler Hicks recommendation on err initialization.
+> * Paul E. McKenney <paulmck@kernel.org> wrote:
 > 
->  security/apparmor/audit.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> > --- a/include/linux/rcupdate.h
+> > +++ b/include/linux/rcupdate.h
+> > @@ -383,20 +383,22 @@ do {									      \
+> >  } while (0)
+> >  
+> >  /**
+> > - * rcu_swap_protected() - swap an RCU and a regular pointer
+> > - * @rcu_ptr: RCU pointer
+> > + * rcu_replace() - replace an RCU pointer, returning its old value
+> > + * @rcu_ptr: RCU pointer, whose old value is returned
+> >   * @ptr: regular pointer
+> > - * @c: the conditions under which the dereference will take place
+> > + * @c: the lockdep conditions under which the dereference will take place
+> >   *
+> > - * Perform swap(@rcu_ptr, @ptr) where @rcu_ptr is an RCU-annotated pointer and
+> > - * @c is the argument that is passed to the rcu_dereference_protected() call
+> > - * used to read that pointer.
+> > + * Perform a replacement, where @rcu_ptr is an RCU-annotated
+> > + * pointer and @c is the lockdep argument that is passed to the
+> > + * rcu_dereference_protected() call used to read that pointer.  The old
+> > + * value of @rcu_ptr is returned, and @rcu_ptr is set to @ptr.
+> >   */
+> > -#define rcu_swap_protected(rcu_ptr, ptr, c) do {			\
+> > +#define rcu_replace(rcu_ptr, ptr, c)					\
+> > +({									\
+> >  	typeof(ptr) __tmp = rcu_dereference_protected((rcu_ptr), (c));	\
+> >  	rcu_assign_pointer((rcu_ptr), (ptr));				\
+> > -	(ptr) = __tmp;							\
+> > -} while (0)
+> > +	__tmp;								\
+> > +})
 > 
-> diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
-> index 5a98661a8b46..597732503815 100644
-> --- a/security/apparmor/audit.c
-> +++ b/security/apparmor/audit.c
-> @@ -197,8 +197,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
->  	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
->  				     GFP_KERNEL, true, false);
->  	if (IS_ERR(rule->label)) {
-> +		int err = PTR_ERR(rule->label);
->  		aa_audit_rule_free(rule);
-> -		return PTR_ERR(rule->label);
-> +		return err;
->  	}
->  
->  	*vrule = rule;
-> -- 
-> 2.17.1
+> One small suggestion, would it make sense to name it "rcu_replace_pointer()"?
 > 
+> This would make it fit into the pointer handling family of RCU functions: 
+> rcu_assign_pointer(), rcu_access_pointer(), RCU_INIT_POINTER() et al?
+
+Easy enough to make the change.  I will do that tomorrow and test over
+the following night.
+
+> rcu_swap() would also look a bit weird if used in MM code. ;-)
+
+How much RCU swap should we configure on this system?  About same amount
+as reader-writer swap!  ;-)
+
+							Thanx, Paul
