@@ -2,116 +2,101 @@ Return-Path: <SRS0=mxYi=YP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB59FCA9EA0
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Oct 2019 13:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFCECA9EA0
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Oct 2019 19:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80D1521783
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Oct 2019 13:17:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I46S3I2K"
+	by mail.kernel.org (Postfix) with ESMTP id D6ABB21783
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Oct 2019 19:12:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571771562;
+	bh=Okum0wathcf1ScrSzrZsCiqUTVvdU9caLoqJnp5U0KY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=NvEV9Sjw05uk2qs5874O5pgrc++CuRbJXlNBpjg5XzcCP3gU+BHmR7hKKHsHYJMaS
+	 kVjGwqks8qUgEub+DgRN/hwvpdKnheLqVgee3s9X/0WzGe8VideoJSdpWEG472IwDs
+	 80i+0VFOrJUf+/LKs30XSnuQJim39jPoUU3P5200=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389224AbfJVNRs (ORCPT
+        id S2388619AbfJVTMk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Oct 2019 09:17:48 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:43872 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387489AbfJVNRr (ORCPT
+        Tue, 22 Oct 2019 15:12:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388467AbfJVTMj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Oct 2019 09:17:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571750266;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=efljvJ2w2MdjEO93WQa9AoZJv0D+nIyDWGfcRPbJ1Lo=;
-        b=I46S3I2Kg8s9JJT5urqKeI/DLMb1CaIVpy4w1dn6sabF8+A6ey4wpiJAcva95x1QDPqORq
-        WCiSDzKeEtp3/0m2/YqCCDUPKAmH5pfJ50X5OnLVmLkwL7EzRlbHWnjozhVltKa4Y7RXr2
-        F5fTLGerNX6moC9ki7HD8uPJ2TqRBIE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-330-HLyXQWEwMU2neTojI_a1xg-1; Tue, 22 Oct 2019 09:17:41 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 22 Oct 2019 15:12:39 -0400
+Received: from localhost.localdomain (rrcs-50-75-166-42.nys.biz.rr.com [50.75.166.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 38012800D4E;
-        Tue, 22 Oct 2019 13:17:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CAEDD1001B20;
-        Tue, 22 Oct 2019 13:17:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <11434.1571740533@warthog.procyon.org.uk>
-References: <11434.1571740533@warthog.procyon.org.uk> <CAHk-=wjFozfjV34_qy3_Z155uz_Z7qFVfE8h=_9ceGU-SVk9hA@mail.gmail.com> <000000000000830fe50595115344@google.com> <00000000000071e2fc05951229ad@google.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>,
-        aou@eecs.berkeley.edu,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris James Morris <jmorris@namei.org>,
-        keyrings@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 06965222CD;
+        Tue, 22 Oct 2019 19:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571771558;
+        bh=Okum0wathcf1ScrSzrZsCiqUTVvdU9caLoqJnp5U0KY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PROCQPtZDZmaKyYXPxYHvgKsVUd/icvfFR9ashemkF8b/cixY0p8T5H1q9SF38sBr
+         8iri0bC7CQke9mmhPYmo4U1NgsMRLbOQQabuABTlzoaPZa8D4+ShipM7VUQ0Rqj8Nj
+         o4TNk7r5ZBTlxeytc81cjTk1hXuefFEPw5RjLaqg=
+From:   paulmck@kernel.org
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Micah Morton <mortonm@chromium.org>,
+        James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: WARNING: refcount bug in find_key_to_update
-MIME-Version: 1.0
-Content-ID: <24776.1571750256.1@warthog.procyon.org.uk>
-Date:   Tue, 22 Oct 2019 14:17:36 +0100
-Message-ID: <24777.1571750256@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: HLyXQWEwMU2neTojI_a1xg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        linux-security-module@vger.kernel.org
+Subject: [PATCH tip/core/rcu 10/10] security/safesetid: Replace rcu_swap_protected() with rcu_replace()
+Date:   Tue, 22 Oct 2019 12:12:15 -0700
+Message-Id: <20191022191215.25781-10-paulmck@kernel.org>
+X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20191022191136.GA25627@paulmck-ThinkPad-P72>
+References: <20191022191136.GA25627@paulmck-ThinkPad-P72>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Okay, I managed to catch a backtrace for this line:
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
-=09encrypted_key: key user:syz not found (-126)
+This commit replaces the use of rcu_swap_protected() with the more
+intuitively appealing rcu_replace() as a step towards removing
+rcu_swap_protected().
 
-looking like:
+Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Reported-by: kbuild test robot <lkp@intel.com>
+[ paulmck: From rcu_replace() to rcu_replace_pointer() per Ingo Molnar. ]
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Micah Morton <mortonm@chromium.org>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: <linux-security-module@vger.kernel.org>
+---
+ security/safesetid/securityfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-=09CPU: 0 PID: 8878 Comm: syz-executor.0 Not tainted 5.4.0-rc3+ #0
-=09Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS =
-Google 01/01/2011
-=09Call Trace:
-=09 dump_stack+0x172/0x1f0
-=09 request_master_key.isra.0.cold+0x62/0xc3
-=09 encrypted_read+0x221/0x830
-=09 ? get_derived_key+0xf0/0xf0
-=09 ? keyctl_read_key+0x1c2/0x2b0
-=09 ? __kasan_check_write+0x14/0x20
-=09 ? down_read+0x109/0x430
-=09 ? security_key_permission+0x8d/0xc0
-=09 ? down_read_killable+0x490/0x490
-=09 ? key_task_permission+0x1b5/0x3a0
-=09 keyctl_read_key+0x231/0x2b0
-=09 __x64_sys_keyctl+0x171/0x470
-=09 do_syscall_64+0xfa/0x760
-=09entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-So something somewhere is calling keyctl_read() in userspace on the encrypt=
-ed
-key and that is then referring across to the user key added.
-
-Also, the encrypted key is being given the following payload:
-
-=09ENCRYPTED: 'new default user:syz 04096'
-
-in at least one of the cases that encrypted_update() being called.
-
-David
+diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
+index 74a13d4..f8bc574 100644
+--- a/security/safesetid/securityfs.c
++++ b/security/safesetid/securityfs.c
+@@ -179,8 +179,8 @@ static ssize_t handle_policy_update(struct file *file,
+ 	 * doesn't currently exist, just use a spinlock for now.
+ 	 */
+ 	mutex_lock(&policy_update_lock);
+-	rcu_swap_protected(safesetid_setuid_rules, pol,
+-			   lockdep_is_held(&policy_update_lock));
++	pol = rcu_replace_pointer(safesetid_setuid_rules, pol,
++				  lockdep_is_held(&policy_update_lock));
+ 	mutex_unlock(&policy_update_lock);
+ 	err = len;
+ 
+-- 
+2.9.5
 
