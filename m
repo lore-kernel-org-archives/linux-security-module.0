@@ -2,38 +2,38 @@ Return-Path: <SRS0=rnvW=YQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B26CA9EB7
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 00:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE31CA9EB7
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 00:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E361C2184C
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 00:18:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA12820650
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 00:18:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fCvq9SD+"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="P8bvY4cv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732367AbfJWAS0 (ORCPT
+        id S1732229AbfJWASc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Oct 2019 20:18:26 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:45286 "EHLO
+        Tue, 22 Oct 2019 20:18:32 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:45238 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732229AbfJWASZ (ORCPT
+        with ESMTP id S1727154AbfJWAS0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Oct 2019 20:18:25 -0400
+        Tue, 22 Oct 2019 20:18:26 -0400
 Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C1AEE2010AC6;
+        by linux.microsoft.com (Postfix) with ESMTPSA id 2682E20106BF;
         Tue, 22 Oct 2019 17:18:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C1AEE2010AC6
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2682E20106BF
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1571789904;
-        bh=3EEDwTWXlit7lCdzWaSZuvopxoV1OJ3w7wj1bKW7mGw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fCvq9SD+Gw3CmY/a9mWTsF8csnkUdjg9+cJSNEbSLuHnfd2f0J+x1CSzcSQtQchdX
-         LvwX4jJDS8W19f6E0yq8crBIim2Jo27zlfzJaGloQGtvBjP3Bm2an1wOHpWfnO5xdB
-         ymFlHTDtuCS56mtCOSoQDpwqGxr7EGonKHTXvPJk=
+        bh=yN+05eDxlyUx+/PSnyI5Tf50fzgj6nYfjELjevr3FFI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=P8bvY4cvKZSjlaVvNSM+9d/74tuzUvvblCk/oKsfWq7wWqhZP0CjN5q7qDe2eZ2vj
+         EPu40TA456SIvJbqzz1KibHRB7LV2ccHvFJKlPetnsi9pXZgf8q66VL2BZlOte4Pmo
+         1F78hCiXlyvS/8OD4PTQJThjeMrVTiZVN6PVTqaM=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, dhowells@redhat.com, casey@schaufler-ca.com,
         sashal@kernel.org, jamorris@linux.microsoft.com,
@@ -41,254 +41,209 @@ To:     zohar@linux.ibm.com, dhowells@redhat.com, casey@schaufler-ca.com,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         keyrings@vger.kernel.org
 Cc:     nramas@linux.microsoft.com
-Subject: [PATCH v1 4/6] KEYS: ima functions to queue and dequeue keys to measure
-Date:   Tue, 22 Oct 2019 17:18:16 -0700
-Message-Id: <20191023001818.3684-5-nramas@linux.microsoft.com>
+Subject: [PATCH v1 0/6] KEYS: measure keys when they are created or updated
+Date:   Tue, 22 Oct 2019 17:18:12 -0700
+Message-Id: <20191023001818.3684-1-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191023001818.3684-1-nramas@linux.microsoft.com>
-References: <20191023001818.3684-1-nramas@linux.microsoft.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Implement functions to queue a key for measurement if ima is not yet
-initialized. And, when ima initialization is complete, process
-any queued key measurement requests.
+Problem Statement:
 
-This change set implements the functions to queue and de-queue requests.
-The change to actually measure the keys is in another patch.
+Keys created or updated in the system are currently not being measured.
+Therefore an attestation service, for instance, would not be able to
+attest whether or not the trusted keys keyring(s), for instance, contain
+only known good (trusted) keys.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima.h       |  15 ++++
- security/integrity/ima/ima_init.c  |  11 ++-
- security/integrity/ima/ima_queue.c | 128 +++++++++++++++++++++++++++++
- 3 files changed, 153 insertions(+), 1 deletion(-)
+ima measures system files, command line arguments passed to kexec, and
+boot aggregate. It can be used to measure keys as well. But there is
+no mechanism available in the kernel for ima to know when a key is
+created or updated.
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 0d2908036882..7e4d4169798d 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -21,6 +21,7 @@
- #include <linux/tpm.h>
- #include <linux/audit.h>
- #include <crypto/hash_info.h>
-+#include <keys/asymmetric-type.h>
+This change aims to address measuring keys created or updated
+in the system.
+
+To achieve the above the following changes have been made:
+
+ - A new LSM function namely, security_key_create_or_update, has
+   been added. This function is called by key_create_or_update
+   function when a new key is created or an existing key is updated.
+   This call is made when the key has been instantiated and linked
+   to the target keyring.
+
+   security_key_create_or_update is passed the target keyring, key,
+   key creation flags, and a boolean flag indicating whether
+   the key was newly created or an existing key was updated.
+
+ - Added a new ima hook namely, ima_post_key_create_or_update, which
+   measures the key. The measurement can be controlled through ima policy.
+
+   In this change set a new ima policy BUILTIN_TRUSTED_KEYS has been
+   added to measure keys added to the builtin_trusted_keys keyring.
+   In future, this can be extended to measure keys added to
+   other keyrings.
+
+Change Log:
+
+  v1:
+
+  => LSM function for key_create_or_update. It calls ima.
+  => Added ima hook for measuring keys
+  => ima measures keys based on ima policy.
+
+  v0:
+
+  => Added LSM hook for key_create_or_update.
+  => Measure keys added to builtin or secondary trusted keys keyring.
+
+Background:
+
+Currently ima measures file hashes and .ima signatures. ima signatures
+are validated against keys in the ".ima" keyring. If the kernel is built
+with CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY enabled,
+then all keys in ".ima" keyring must be signed by a key in
+".builtin_trusted_keys" or ".secondary_trusted_keys" keyrings.
+
+Although ima supports the above configuration, not having an insight
+into what keys are present in these trusted keys keyrings would prevent
+an attestation service from validating a client machine.
  
- #include "../integrity.h"
- 
-@@ -52,6 +53,7 @@ extern int ima_policy_flag;
- extern int ima_hash_algo;
- extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
-+extern bool ima_initialized;
- 
- /* IMA event related data */
- struct ima_event_data {
-@@ -158,6 +160,8 @@ void ima_init_template_list(void);
- int __init ima_init_digests(void);
- int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
- 			  void *lsm_data);
-+int ima_measure_key(struct key *keyring, struct key *key);
-+void ima_measure_queued_trusted_keys(void);
- 
- /*
-  * used to protect h_table and sha_table
-@@ -197,6 +201,17 @@ enum ima_hooks {
- 	__ima_hooks(__ima_hook_enumify)
- };
- 
-+/*
-+ * To track trusted keys that need to be measured when IMA is initialized.
-+ */
-+struct ima_trusted_key_entry {
-+	struct list_head list;
-+	void *public_key;
-+	u32  public_key_len;
-+	char *key_description;
-+	enum ima_hooks func;
-+};
-+
- /* LIM API function definitions */
- int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
- 		   int mask, enum ima_hooks func, int *pcr,
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 5d55ade5f3b9..32b9147fe410 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -23,6 +23,7 @@
- /* name for boot aggregate entry */
- static const char boot_aggregate_name[] = "boot_aggregate";
- struct tpm_chip *ima_tpm_chip;
-+bool ima_initialized;
- 
- /* Add the boot aggregate to the IMA measurement list and extend
-  * the PCR register.
-@@ -131,5 +132,13 @@ int __init ima_init(void)
- 
- 	ima_init_policy();
- 
--	return ima_fs_init();
-+	rc = ima_fs_init();
-+	if (rc != 0)
-+		return rc;
-+
-+	ima_initialized = true;
-+
-+	ima_measure_queued_trusted_keys();
-+
-+	return 0;
- }
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 1ce8b1701566..a262e289615b 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -19,6 +19,8 @@
- 
- #include <linux/rculist.h>
- #include <linux/slab.h>
-+#include <crypto/public_key.h>
-+#include <keys/system_keyring.h>
- #include "ima.h"
- 
- #define AUDIT_CAUSE_LEN_MAX 32
-@@ -46,6 +48,13 @@ struct ima_h_table ima_htable = {
-  */
- static DEFINE_MUTEX(ima_extend_list_mutex);
- 
-+/*
-+ * Used to synchronize access to the list of trusted keys (ima_trusted_keys)
-+ * that need to be measured when IMA is initialized.
-+ */
-+static DEFINE_MUTEX(ima_trusted_keys_mutex);
-+static LIST_HEAD(ima_trusted_keys);
-+
- /* lookup up the digest value in the hash table, and return the entry */
- static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 						       int pcr)
-@@ -232,3 +241,122 @@ int __init ima_init_digests(void)
- 
- 	return 0;
- }
-+
-+/*
-+ * Maps the given keyring to a IMA Hook.
-+ * @keyring: A keyring to which a key maybe linked to.
-+ *
-+ * This function currently handles only builtin_trusted_keys.
-+ * To handle more keyrings, this function, ima hook and
-+ * ima policy handler need to be updated.
-+ */
-+static enum ima_hooks keyring_policy_map(struct key *keyring)
-+{
-+	enum ima_hooks func = NONE;
-+
-+	if (is_builtin_trusted_keyring(keyring))
-+		func = BUILTIN_TRUSTED_KEYS;
-+
-+	return func;
-+}
-+
-+static void ima_free_trusted_key_entry(struct ima_trusted_key_entry *entry)
-+{
-+	if (entry != NULL) {
-+		if (entry->public_key != NULL)
-+			kzfree(entry->public_key);
-+		if (entry->key_description != NULL)
-+			kzfree(entry->key_description);
-+		kzfree(entry);
-+	}
-+}
-+
-+static struct ima_trusted_key_entry *ima_alloc_trusted_queue_entry(
-+	struct key *key,
-+	enum ima_hooks func)
-+{
-+	int rc = 0;
-+	const struct public_key *pk;
-+	size_t key_description_len;
-+	struct ima_trusted_key_entry *entry = NULL;
-+
-+	pk = key->payload.data[asym_crypto];
-+	key_description_len = strlen(key->description) + 1;
-+	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-+	if (entry != NULL) {
-+		entry->public_key = kzalloc(pk->keylen, GFP_KERNEL);
-+		entry->key_description =
-+			kzalloc(key_description_len, GFP_KERNEL);
-+	}
-+
-+	if ((entry == NULL) || (entry->public_key == NULL) ||
-+	    (entry->key_description == NULL)) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
-+
-+	strcpy(entry->key_description, key->description);
-+	memcpy(entry->public_key, pk->key, pk->keylen);
-+	entry->public_key_len = pk->keylen;
-+	entry->func = func;
-+	rc = 0;
-+
-+out:
-+	if (rc) {
-+		ima_free_trusted_key_entry(entry);
-+		entry = NULL;
-+	}
-+
-+	return entry;
-+}
-+
-+/*
-+ * ima_measure_key
-+ *     @keyring the keyring to which the key is linked to.
-+ *     @key the key being created or updated
-+ * Measure keys created or updated in the system
-+ *
-+ * On success return 0.
-+ * Return appropriate error code on error
-+ */
-+int ima_measure_key(struct key *keyring, struct key *key)
-+{
-+	int rc = 0;
-+	struct ima_trusted_key_entry *entry = NULL;
-+	enum ima_hooks func;
-+	bool queued = false;
-+
-+	func = keyring_policy_map(keyring);
-+	if (func == NONE)
-+		return 0;
-+
-+	mutex_lock(&ima_trusted_keys_mutex);
-+
-+	if (!ima_initialized) {
-+		entry = ima_alloc_trusted_queue_entry(key, func);
-+		if (entry != NULL) {
-+			INIT_LIST_HEAD(&entry->list);
-+			list_add_tail(&entry->list, &ima_trusted_keys);
-+			queued = true;
-+		} else
-+			rc = -ENOMEM;
-+	}
-+
-+	mutex_unlock(&ima_trusted_keys_mutex);
-+
-+	return rc;
-+}
-+
-+void ima_measure_queued_trusted_keys(void)
-+{
-+	struct ima_trusted_key_entry *entry, *tmp;
-+
-+	mutex_lock(&ima_trusted_keys_mutex);
-+
-+	list_for_each_entry_safe(entry, tmp, &ima_trusted_keys, list) {
-+		list_del(&entry->list);
-+		ima_free_trusted_key_entry(entry);
-+	}
-+
-+	mutex_unlock(&ima_trusted_keys_mutex);
-+}
+On systems with CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
+enabled, measuring keys in the  ".builtin_trusted_keys" keyring provides
+a mechanism to attest that the client's system binaries are indeed signed
+by signers that chain to known trusted keys.
+
+Without this change, to attest the clients one needs to maintain
+an "allowed list" of file hashes of all versions of all client binaries
+that are deployed on the clients in the enterprise. That is a huge
+operational challenge in a large scale environment of clients with
+heterogenous builds. This also limits scalability and agility of
+rolling out frequent client binary updates.
+
+Testing performed:
+
+  * Booted the kernel with this change.
+  * Executed keyctl tests from the Linux Test Project (LTP)
+  * Added a new key to a keyring and verified "key create" code path.
+    => In this case added a key to builtin_trusted_keys keyring.
+    => Verified ima measured this key only when a policy is set.
+  * Added the same key again and verified "key update" code path.
+    => Add the same key to builtin_trusted_keys keyring.
+    => Verified ima measured the key only when a policy is set.
+  * Forced the LSM function security_key_create_or_update to
+    return an error and verified that the key was not added to
+    the keyring ("keyctl list <keyring>" does not list the key).
+
+Questions and concerns raised by reviewers on this patch set:
+
+Question 1:
+Is "Signed with a trusted key" equal to "Trusted file"?
+Doesn't the service need the hashes of the system files to determine
+whether a file is trusted or not?
+"Signed with a trusted key" does not equal "Trusted"
+
+Answer:
+Agree "Signed with a trusted key" may not equal "Trusted".
+To address this, the attesting service can maintain a small
+manageable set of bad hashes (a "Blocked list") and a list of
+trusted keys expected in client's .builtin_trusted_keys" keyring.
+Using this data, the service can detect the presence of
+"Disallowed (untrusted) version of client binaries".
+
+Question 2:
+Providing more data to the service (such as ".builtin_trusted_keys"),
+empowers the service  to deny access to clients (block clients).
+IMA walks a fine line in enforcing and measuring file integrity.
+This patchset breaches that fine line and in doing so brings back
+the fears of trusted computing.
+
+Answer:
+Any new measurement we add in IMA will provide more data to service
+and can enable it to deny access to clients. It is not clear why this patch
+set would breach the fine line between measuring and enforcing.
+Since this patch set is disabled by default and enabled through
+CONFIG_IMA_MEASURE_TRUSTED_KEYS, only those enterprises that
+require this new measurement can opt-in for it. Since it is disabled
+by default, it does not restrict the autonomy of independent users
+who are unaffected by attestation.
+
+Question 3:
+IMA log already contains a pointer to the IMA keys used for signature
+verification. Why does the service need to care what keys were used
+to sign (install) the IMA keys? What is gained by measuring the keys
+in the ".builtin_trusted_keys"
+
+
+Answer:
+To attest the clients using the current IMA log, service needs to maintain
+hashes of all the deployed versions of all the system binaries for their
+enterprise. This will introduce a very high operational overhead in
+a large scale environment of clients with heterogenous builds.
+This limits scalability and agility of rolling out frequent client
+binary updates.
+
+
+On the other hand, with the current patch set, we will have IMA
+validate the file signature on the clients and the service validate
+that the IMA keys were installed using trusted keys.
+
+
+This provides a chain of trust:
+    => IMA Key validates file signature on the client
+    => Built-In trusted key attests IMA key on the client
+    => Attestation service attests the Built-In trusted keys
+         reported by the client in the IMA log
+
+
+This approach, therefore, would require the service to maintain
+a manageble set of trusted keys that it receives from a trusted source.
+And, verify if the clients only have keys from that set of trusted keys.
+
+Question 4:
+Where will the attestation service receive the keys to validate against?
+
+Answer:
+Attestation service will receive the keys from a trusted source such as
+the enterprise build services that provides the client builds.
+The service will use this set of keys to verify that the keys reported by
+the clients in the IMA log contains only keys from this trusted list.
+
+
+Question 5:
+What is changing in the IMA log through this patch set?
+
+
+Answer:
+This patch set does not remove any data that is currently included
+in the IMA log. It only adds more data to the IMA log - the data on
+".builtin_trusted_keys"
+
+Lakshmi Ramasubramanian (6):
+  KEYS: Helper function to check if the given keyring is
+    builtin_trusted_keys
+  ima: Refactored process_buffer_measurement function so that it can
+    measure any buffer (and not just KEXEC_CMDLINE one)
+  KEYS: ima hook to measure builtin_trusted_keys
+  KEYS: ima functions to queue and dequeue keys to measure
+  KEYS: measure queued keys
+  KEYS: measure keys when they are created or updated
+
+ Documentation/ABI/testing/ima_policy |   1 +
+ certs/system_keyring.c               |   5 +
+ include/keys/system_keyring.h        |   2 +
+ include/linux/ima.h                  |  15 ++-
+ include/linux/security.h             |  13 ++-
+ security/integrity/ima/ima.h         |  19 ++++
+ security/integrity/ima/ima_api.c     |   1 +
+ security/integrity/ima/ima_init.c    |  11 +-
+ security/integrity/ima/ima_main.c    |  52 ++++++---
+ security/integrity/ima/ima_policy.c  |   5 +-
+ security/integrity/ima/ima_queue.c   | 160 +++++++++++++++++++++++++++
+ security/keys/key.c                  |  78 +++++++++++--
+ security/security.c                  |  10 ++
+ 13 files changed, 344 insertions(+), 28 deletions(-)
+
 -- 
 2.17.1
 
