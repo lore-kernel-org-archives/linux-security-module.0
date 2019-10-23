@@ -2,147 +2,229 @@ Return-Path: <SRS0=rnvW=YQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99146CA9EBA
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 00:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F8ECA9EB7
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 06:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6730E21872
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 00:18:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEAE8214B2
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 06:40:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BlBqLSaB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ah8A6oKb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfJWASo (ORCPT
+        id S2389090AbfJWGkA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Oct 2019 20:18:44 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:45260 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732221AbfJWASZ (ORCPT
+        Wed, 23 Oct 2019 02:40:00 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:38345 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387946AbfJWGkA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Oct 2019 20:18:25 -0400
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 746FA2010AC4;
-        Tue, 22 Oct 2019 17:18:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 746FA2010AC4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1571789904;
-        bh=XMnesZyw0QRVpbTGsE9Hc/rqUu5GYJWuVQuZdKM+XUs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BlBqLSaBU2u6bMM8N2CJLmtSSyrj8x+DxdgP4YQcrsfxPrZOnClZCgPZOYF2YcAHc
-         3ppV4GSQ+xO1NVy1kN7rB4MTn03tNVepQIOL/FALEZqDoaOoHL3eoArCEClDX+gfEL
-         zRe+Ml5aK0gq0sJyT3c3XZGCdwsAMuJmUBdQ2lRY=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, dhowells@redhat.com, casey@schaufler-ca.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Cc:     nramas@linux.microsoft.com
-Subject: [PATCH v1 2/6] KEYS: ima: Refactored process_buffer_measurement function so that it can measure any buffer (and not just KEXEC_CMDLINE one)
-Date:   Tue, 22 Oct 2019 17:18:14 -0700
-Message-Id: <20191023001818.3684-3-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191023001818.3684-1-nramas@linux.microsoft.com>
-References: <20191023001818.3684-1-nramas@linux.microsoft.com>
+        Wed, 23 Oct 2019 02:40:00 -0400
+Received: by mail-yb1-f194.google.com with SMTP id r68so5981516ybf.5;
+        Tue, 22 Oct 2019 23:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GsRmmy8kO0r1yWjAMGmPFWzuU6qtFEhb9ZOIoYR8bqI=;
+        b=ah8A6oKbZMJU0gw9xfPeocFp3eXf7lI+zU+AJDWNiCwdRCULkp+9BDeAmtpZYH3lMY
+         EKE9L5k6t6fwLilnlvkd+MO5RLsmpKF7PMuBAjDyb5oLnRN2GZ8UgoO3xJctNpkm6U2H
+         uYanhg0bHOeACWodS7wXKQ6V/zpZguzlXQ367/Kstm7cNK7dEAPl2WkSnlrCOF9sVSXC
+         4CoJBE2dpLqBd0fMfC/jE8p4Q5msr5EeWQYRIDKdh8SpQLBwjWwT7ux/X25PZF2ap2Mw
+         9idSJxJEMvYp7Ukc+tRm4FzD092+uxZOm9Yf4IDIizo8S3hMHRzmpLBcqWSJuFyJQwK6
+         Mcuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GsRmmy8kO0r1yWjAMGmPFWzuU6qtFEhb9ZOIoYR8bqI=;
+        b=eCPGJhpdCX2jW7K4QUMlH6m1TUlE+hEHAWxPfKd5bD1YWYtWbucCS3ql7EDBI+M3U4
+         KJQtU+MCYXf9Chs9EeLNvE7OKLPmhnfvaJrmb9nKh8jSo4sBfpeboQElIstbcHcQmHNd
+         lkE5VadpJyA3jX7wQmniim0iZ34QEOR/6ZOIJmp3jdPht3twrwn4GHaZ7hC6aawuBLXk
+         2gbQzxB1t1lddk4moSTs3ETHHPuLQsoGJO5Asgz0N+hcfYr9h1YTp1QexPq0+Ksp38jd
+         xv3cyX9yp/lUA4piA0Ns0ciCPt/+tac9Hkfind1fZrWzZG5ke74JlHfapzxdK8lNvlnq
+         o96g==
+X-Gm-Message-State: APjAAAVWdwEX4TihwMaDonsa/y/KenFGP6gdTq8tcc4ORIlj66A75sqm
+        CkP3oP0FOJMEZk2xZEmQU5ByZjkamSr3hH1E5PQ=
+X-Google-Smtp-Source: APXvYqyEfIXS1YE02Mcv67dN7iXghA3NKnUKoWWnlXbuVJEjLidLeAzeaD6xfSscivEuXqFzslSUfPde/2zcn8Ccszs=
+X-Received: by 2002:a25:8308:: with SMTP id s8mr4983149ybk.126.1571812797949;
+ Tue, 22 Oct 2019 23:39:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191022204453.97058-1-salyzyn@android.com> <20191022204453.97058-5-salyzyn@android.com>
+In-Reply-To: <20191022204453.97058-5-salyzyn@android.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 23 Oct 2019 09:39:47 +0300
+Message-ID: <CAOQ4uxgWOmV_x5gRZ9tR+u86GE6JoXn-MSxKkvi87e9owMApZw@mail.gmail.com>
+Subject: Re: [PATCH v14 4/5] overlayfs: internal getxattr operations without
+ sepolicy checking
+To:     Mark Salyzyn <salyzyn@android.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-process_buffer_measurement currently supports measuring kexec command line
-only. This function has been refactored to support more than kexec_cmdline.
-With this change this function can be used for measuring any buffer.
-This function is now also used by ima to measure keys besides used for
-measuring kexec command line.
+On Tue, Oct 22, 2019 at 11:46 PM Mark Salyzyn <salyzyn@android.com> wrote:
+>
+> Check impure, opaque, origin & meta xattr with no sepolicy audit
+> (using __vfs_getxattr) since these operations are internal to
+> overlayfs operations and do not disclose any data.  This became
+> an issue for credential override off since sys_admin would have
+> been required by the caller; whereas would have been inherently
+> present for the creator since it performed the mount.
+>
+> This is a change in operations since we do not check in the new
+> ovl_do_vfs_getxattr function if the credential override is off or
+> not.  Reasoning is that the sepolicy check is unnecessary overhead,
+> especially since the check can be expensive.
+>
+> Because for override credentials off, this affects _everyone_ that
+> underneath performs private xattr calls without the appropriate
+> sepolicy permissions and sys_admin capability.  Providing blanket
+> support for sys_admin would be bad for all possible callers.
+>
+> For the override credentials on, this will affect only the mounter,
+> should it lack sepolicy permissions. Not considered a security
+> problem since mounting by definition has sys_admin capabilities,
+> but sepolicy contexts would still need to be crafted.
+>
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima.h      |  3 +++
- security/integrity/ima/ima_main.c | 29 ++++++++++++++---------------
- 2 files changed, 17 insertions(+), 15 deletions(-)
+It sounds reasonable to me, but I am not a "security person".
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 011b91c79351..b6847ee1f47a 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -209,6 +209,9 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
- 			   struct evm_ima_xattr_data *xattr_value,
- 			   int xattr_len, int pcr,
- 			   struct ima_template_desc *template_desc);
-+void process_buffer_measurement(const void *buf, int size,
-+				const char *eventname, int pcr,
-+				struct ima_template_desc *template_desc);
- void ima_audit_measurement(struct integrity_iint_cache *iint,
- 			   const unsigned char *filename);
- int ima_alloc_init_template(struct ima_event_data *event_data,
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 584019728660..8e965d18fb21 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -610,14 +610,14 @@ int ima_load_data(enum kernel_load_data_id id)
-  * @buf: pointer to the buffer that needs to be added to the log.
-  * @size: size of buffer(in bytes).
-  * @eventname: event name to be used for the buffer entry.
-- * @cred: a pointer to a credentials structure for user validation.
-- * @secid: the secid of the task to be validated.
-+ * @pcr: pcr to extend the measurement
-+ * @template_desc: template description
-  *
-  * Based on policy, the buffer is measured into the ima log.
-  */
--static void process_buffer_measurement(const void *buf, int size,
--				       const char *eventname,
--				       const struct cred *cred, u32 secid)
-+void process_buffer_measurement(const void *buf, int size,
-+				const char *eventname, int pcr,
-+				struct ima_template_desc *template_desc)
- {
- 	int ret = 0;
- 	struct ima_template_entry *entry = NULL;
-@@ -626,19 +626,11 @@ static void process_buffer_measurement(const void *buf, int size,
- 					    .filename = eventname,
- 					    .buf = buf,
- 					    .buf_len = size};
--	struct ima_template_desc *template_desc = NULL;
- 	struct {
- 		struct ima_digest_data hdr;
- 		char digest[IMA_MAX_DIGEST_SIZE];
- 	} hash = {};
- 	int violation = 0;
--	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
--	int action = 0;
--
--	action = ima_get_action(NULL, cred, secid, 0, KEXEC_CMDLINE, &pcr,
--				&template_desc);
--	if (!(action & IMA_MEASURE))
--		return;
- 
- 	iint.ima_hash = &hash.hdr;
- 	iint.ima_hash->algo = ima_hash_algo;
-@@ -670,12 +662,19 @@ static void process_buffer_measurement(const void *buf, int size,
-  */
- void ima_kexec_cmdline(const void *buf, int size)
- {
-+	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
-+	struct ima_template_desc *template_desc = ima_template_desc_current();
-+	int action;
- 	u32 secid;
- 
- 	if (buf && size != 0) {
- 		security_task_getsecid(current, &secid);
--		process_buffer_measurement(buf, size, "kexec-cmdline",
--					   current_cred(), secid);
-+		action = ima_get_action(NULL, current_cred(), secid, 0,
-+					KEXEC_CMDLINE, &pcr, &template_desc);
-+		if (!(action & IMA_MEASURE))
-+			return;
-+		process_buffer_measurement(buf, size, "kexec-cmdline", pcr,
-+					   template_desc);
- 	}
- }
- 
--- 
-2.17.1
+> It should be noted that there is precedence, __vfs_getxattr is used
+> in other filesystems for their own internal trusted xattr management.
+>
 
+Urgh! "other" filesystems meaning ecryptfs_getxattr()?
+That looks like a loop hole to read any trusted xattr without any
+security checks. Not sure its a good example...
+
+> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Stephen Smalley <sds@tycho.nsa.gov>
+> Cc: linux-unionfs@vger.kernel.org
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: kernel-team@android.com
+> Cc: linux-security-module@vger.kernel.org
+>
+> ---
+> v14 - rebase to use xattr_gs_args.
+>
+> v13 - rebase to use __vfs_getxattr flags option
+>
+> v12 - rebase
+>
+> v11 - switch name to ovl_do_vfs_getxattr, fortify comment
+>
+> v10 - added to patch series
+>
+> ---
+>  fs/overlayfs/namei.c     | 12 +++++++-----
+>  fs/overlayfs/overlayfs.h |  2 ++
+>  fs/overlayfs/util.c      | 32 +++++++++++++++++++++++---------
+>  3 files changed, 32 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+> index 9702f0d5309d..a4a452c489fa 100644
+> --- a/fs/overlayfs/namei.c
+> +++ b/fs/overlayfs/namei.c
+> @@ -106,10 +106,11 @@ int ovl_check_fh_len(struct ovl_fh *fh, int fh_len)
+>
+>  static struct ovl_fh *ovl_get_fh(struct dentry *dentry, const char *name)
+>  {
+> -       int res, err;
+> +       ssize_t res;
+> +       int err;
+>         struct ovl_fh *fh = NULL;
+>
+> -       res = vfs_getxattr(dentry, name, NULL, 0);
+> +       res = ovl_do_vfs_getxattr(dentry, name, NULL, 0);
+>         if (res < 0) {
+>                 if (res == -ENODATA || res == -EOPNOTSUPP)
+>                         return NULL;
+> @@ -123,7 +124,7 @@ static struct ovl_fh *ovl_get_fh(struct dentry *dentry, const char *name)
+>         if (!fh)
+>                 return ERR_PTR(-ENOMEM);
+>
+> -       res = vfs_getxattr(dentry, name, fh, res);
+> +       res = ovl_do_vfs_getxattr(dentry, name, fh, res);
+>         if (res < 0)
+>                 goto fail;
+>
+> @@ -141,10 +142,11 @@ static struct ovl_fh *ovl_get_fh(struct dentry *dentry, const char *name)
+>         return NULL;
+>
+>  fail:
+> -       pr_warn_ratelimited("overlayfs: failed to get origin (%i)\n", res);
+> +       pr_warn_ratelimited("overlayfs: failed to get origin (%zi)\n", res);
+>         goto out;
+>  invalid:
+> -       pr_warn_ratelimited("overlayfs: invalid origin (%*phN)\n", res, fh);
+> +       pr_warn_ratelimited("overlayfs: invalid origin (%*phN)\n",
+> +                           (int)res, fh);
+>         goto out;
+>  }
+>
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index c6a8ec049099..72762642b247 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -205,6 +205,8 @@ int ovl_want_write(struct dentry *dentry);
+>  void ovl_drop_write(struct dentry *dentry);
+>  struct dentry *ovl_workdir(struct dentry *dentry);
+>  const struct cred *ovl_override_creds(struct super_block *sb);
+> +ssize_t ovl_do_vfs_getxattr(struct dentry *dentry, const char *name, void *buf,
+> +                           size_t size);
+>  struct super_block *ovl_same_sb(struct super_block *sb);
+>  int ovl_can_decode_fh(struct super_block *sb);
+>  struct dentry *ovl_indexdir(struct super_block *sb);
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index f5678a3f8350..bed12aed902c 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -40,6 +40,20 @@ const struct cred *ovl_override_creds(struct super_block *sb)
+>         return override_creds(ofs->creator_cred);
+>  }
+>
+> +ssize_t ovl_do_vfs_getxattr(struct dentry *dentry, const char *name, void *buf,
+> +                           size_t size)
+> +{
+> +       struct xattr_gs_args args = {};
+> +
+> +       args.dentry = dentry;
+> +       args.inode = d_inode(dentry);
+> +       args.name = name;
+> +       args.buffer = buf;
+> +       args.size = size;
+> +       args.flags = XATTR_NOSECURITY;
+> +       return __vfs_getxattr(&args);
+> +}
+> +
+
+We do not understand each other.
+I commented on this several times.
+please put the wrapper helper ovl_do_getxattr() in overlayfs.h
+next to the other ovl_do_ wrapper helpers and add pr_debug()
+as all other wrappers have.
+
+Thanks,
+Amir.
