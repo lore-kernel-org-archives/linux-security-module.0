@@ -2,107 +2,244 @@ Return-Path: <SRS0=rnvW=YQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 216BBCA9EBC
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 20:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CABE4CA9EB9
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 23:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB9542064A
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 20:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 902212084B
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Oct 2019 23:40:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aMF3H5Iz"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YD86IyjK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406028AbfJWUSq (ORCPT
+        id S2408045AbfJWXj6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Oct 2019 16:18:46 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:40243 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407488AbfJWUSq (ORCPT
+        Wed, 23 Oct 2019 19:39:58 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:51372 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392752AbfJWXj5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Oct 2019 16:18:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571861925;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Pfelg5hi6R03mZ1vLzjmM92WqqQzhNWSQkGO0kPCCJs=;
-        b=aMF3H5Izte9cm8ahEdm9eAAreVhSy7vK3LbSb8/FLtgZXXtKhQHI7He3ZPAPQGpm41AE+y
-        8GKylcpzZEjLEdjLmWF1SZ6PhPg3vU29+sonb+Lzp+NBXD6yF1fcyKWiaUVw2fus5CLwA3
-        k4OIPsnvmLu+H1tEjmJCSd6njY2xM/E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-15-jlueH4OLP0adVaz8-ap9CA-1; Wed, 23 Oct 2019 16:18:41 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 04489100551A;
-        Wed, 23 Oct 2019 20:18:40 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F5615DC18;
-        Wed, 23 Oct 2019 20:18:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 10/10] pipe: Check for ring full inside of the spinlock
- in pipe_write() [ver #2]
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 23 Oct 2019 21:18:36 +0100
-Message-ID: <157186191654.3995.6474781916564747415.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: jlueH4OLP0adVaz8-ap9CA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        Wed, 23 Oct 2019 19:39:57 -0400
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 36CA42010AC3;
+        Wed, 23 Oct 2019 16:39:56 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 36CA42010AC3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1571873996;
+        bh=TjZgExhOyS9lfgObayA5QjipEv197/miPQlmIXuI1sA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YD86IyjKkhcI2P1ZCoFpu3HtiH16eqctPx7rSgxp5L+9pPxQtOiKu2JCUk4j7lX8r
+         +ySdN4SKkhxI7FX8RHT4MzbVHbmAl+HC7rltIXVFeaUS2AywG4DZ70864VbM/n2+3T
+         dNDhG7EAoEJxHfh5hzgvHBpebuptE6TEhzbOADA0=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, dhowells@redhat.com, casey@schaufler-ca.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+Cc:     nramas@linux.microsoft.com
+Subject: [PATCH v2 2/4] KEYS: Queue key for measurement if ima is not initialized. Measure queued keys when ima is initialized
+Date:   Wed, 23 Oct 2019 16:39:48 -0700
+Message-Id: <20191023233950.22072-3-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191023233950.22072-1-nramas@linux.microsoft.com>
+References: <20191023233950.22072-1-nramas@linux.microsoft.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Make pipe_write() check to see if the ring has become full between it
-taking the pipe mutex, checking the ring status and then taking the
-spinlock.
+Defined functions to queue key for measurement if ima is not yet
+initialized. ima hook function ima_post_key_create_or_update will
+queue the key if ima is not yet initialized.
 
-This can happen if a notification is written into the pipe as that happens
-without the pipe mutex.
+Process queued keys and measure them when ima initialization
+is completed.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
+ security/integrity/ima/ima.h       | 13 +++++
+ security/integrity/ima/ima_init.c  |  9 ++-
+ security/integrity/ima/ima_main.c  |  4 +-
+ security/integrity/ima/ima_queue.c | 94 ++++++++++++++++++++++++++++++
+ 4 files changed, 118 insertions(+), 2 deletions(-)
 
- fs/pipe.c |    5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 3df93990dd9d..6a982a88f658 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -462,6 +462,11 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- =09=09=09spin_lock_irq(&pipe->wait.lock);
-=20
- =09=09=09head =3D pipe->head;
-+=09=09=09if (pipe_full(head, pipe->tail, max_usage)) {
-+=09=09=09=09spin_unlock_irq(&pipe->wait.lock);
-+=09=09=09=09continue;
-+=09=09=09}
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 2d4130ff5655..38279707632a 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -199,6 +199,17 @@ enum ima_hooks {
+ 	__ima_hooks(__ima_hook_enumify)
+ };
+ 
++/*
++ * To track trusted keys that need to be measured when IMA is initialized.
++ */
++struct ima_trusted_key_entry {
++	struct list_head list;
++	void *public_key;
++	u32  public_key_len;
++	char *key_description;
++	enum ima_hooks func;
++};
 +
- =09=09=09pipe_commit_write(pipe, head + 1);
-=20
- =09=09=09/* Always wake up, even if the copy fails. Otherwise
+ /* LIM API function definitions */
+ int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+ 		   int mask, enum ima_hooks func, int *pcr,
+@@ -225,6 +236,8 @@ int ima_store_template(struct ima_template_entry *entry, int violation,
+ 		       const unsigned char *filename, int pcr);
+ void ima_free_template_entry(struct ima_template_entry *entry);
+ const char *ima_d_path(const struct path *path, char **pathbuf, char *filename);
++int ima_queue_key_for_measurement(struct key *key, enum ima_hooks func);
++void ima_measure_queued_keys(void);
+ 
+ /* IMA policy related functions */
+ int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 52847ce765a4..8734ed5322c7 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -132,5 +132,12 @@ int __init ima_init(void)
+ 
+ 	ima_init_policy();
+ 
+-	return ima_fs_init();
++	rc = ima_fs_init();
++	if (rc != 0)
++		return rc;
++
++	ima_initialized = true;
++
++	ima_measure_queued_keys();
++	return 0;
+ }
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 8bde12385912..bce430b3386e 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -710,8 +710,10 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+ 	if (key->type != &key_type_asymmetric)
+ 		return;
+ 
+-	if (!ima_initialized)
++	if (!ima_initialized) {
++		ima_queue_key_for_measurement(key, NONE);
+ 		return;
++	}
+ 
+ 	pk = key->payload.data[asym_crypto];
+ 	process_buffer_measurement(pk->key, pk->keylen,
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index 1ce8b1701566..d42987022c12 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -46,6 +46,13 @@ struct ima_h_table ima_htable = {
+  */
+ static DEFINE_MUTEX(ima_extend_list_mutex);
+ 
++/*
++ * Used to synchronize access to the list of trusted keys (ima_trusted_keys)
++ * that need to be measured when IMA is initialized.
++ */
++static DEFINE_MUTEX(ima_trusted_keys_mutex);
++static LIST_HEAD(ima_trusted_keys);
++
+ /* lookup up the digest value in the hash table, and return the entry */
+ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+ 						       int pcr)
+@@ -232,3 +239,90 @@ int __init ima_init_digests(void)
+ 
+ 	return 0;
+ }
++
++static void ima_free_trusted_key_entry(struct ima_trusted_key_entry *entry)
++{
++	if (entry != NULL) {
++		if (entry->public_key != NULL)
++			kzfree(entry->public_key);
++		if (entry->key_description != NULL)
++			kzfree(entry->key_description);
++		kzfree(entry);
++	}
++}
++
++static struct ima_trusted_key_entry *ima_alloc_trusted_queue_entry(
++	struct key *key,
++	enum ima_hooks func)
++{
++	int rc = 0;
++	const struct public_key *pk;
++	size_t key_description_len;
++	struct ima_trusted_key_entry *entry = NULL;
++
++	pk = key->payload.data[asym_crypto];
++	key_description_len = strlen(key->description) + 1;
++	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
++	if (entry != NULL) {
++		entry->public_key = kzalloc(pk->keylen, GFP_KERNEL);
++		entry->key_description =
++			kzalloc(key_description_len, GFP_KERNEL);
++	}
++
++	if ((entry == NULL) || (entry->public_key == NULL) ||
++	    (entry->key_description == NULL)) {
++		rc = -ENOMEM;
++		goto out;
++	}
++
++	strcpy(entry->key_description, key->description);
++	memcpy(entry->public_key, pk->key, pk->keylen);
++	entry->public_key_len = pk->keylen;
++	entry->func = func;
++	rc = 0;
++
++out:
++	if (rc) {
++		ima_free_trusted_key_entry(entry);
++		entry = NULL;
++	}
++
++	return entry;
++}
++
++int ima_queue_key_for_measurement(struct key *key, enum ima_hooks func)
++{
++	int rc = 0;
++	struct ima_trusted_key_entry *entry = NULL;
++
++	mutex_lock(&ima_trusted_keys_mutex);
++
++	entry = ima_alloc_trusted_queue_entry(key, func);
++	if (entry != NULL) {
++		INIT_LIST_HEAD(&entry->list);
++		list_add_tail(&entry->list, &ima_trusted_keys);
++	} else
++		rc = -ENOMEM;
++
++	mutex_unlock(&ima_trusted_keys_mutex);
++
++	return rc;
++}
++
++void ima_measure_queued_keys(void)
++{
++	struct ima_trusted_key_entry *entry, *tmp;
++
++	mutex_lock(&ima_trusted_keys_mutex);
++
++	list_for_each_entry_safe(entry, tmp, &ima_trusted_keys, list) {
++		process_buffer_measurement(entry->public_key,
++					   entry->public_key_len,
++					   entry->key_description,
++					   NONE, 0);
++		list_del(&entry->list);
++		ima_free_trusted_key_entry(entry);
++	}
++
++	mutex_unlock(&ima_trusted_keys_mutex);
++}
+-- 
+2.17.1
 
