@@ -2,316 +2,147 @@ Return-Path: <SRS0=mqlx=YR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F0ACA9EAF
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 16:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FECCA9EBB
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 18:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF888205C9
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 16:57:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9C2D21906
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 18:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hpbu6utc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECo9AIei"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410003AbfJXQ5r (ORCPT
+        id S1726155AbfJXSfh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Oct 2019 12:57:47 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27526 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2410011AbfJXQ5q (ORCPT
+        Thu, 24 Oct 2019 14:35:37 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36491 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2504082AbfJXSfh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Oct 2019 12:57:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571936265;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NYl4FrLbBWaBG1625TSNrJR25CyJ2Un0Gw1Isq0q23I=;
-        b=hpbu6utcg3EbBFzZbS/dRnVGuV40kL4RX7b7lNhVvS3o+ouXRb0WoWrD5XC/n7Cnn1n/Ph
-        Q3PDdXpbuEejwMaxWhtvA4lhyC8KlTwwgNhiotYo8UoMx6I4ltR7gbqb2TPZMn96N9pOw8
-        r6gnAoGQvyyzBg05lk1PlcewOXOtkZk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-377-1QOKCWTXMqehQKb2ajkHSg-1; Thu, 24 Oct 2019 12:57:38 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 14C19801E66;
-        Thu, 24 Oct 2019 16:57:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2966B5888;
-        Thu, 24 Oct 2019 16:57:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
+        Thu, 24 Oct 2019 14:35:37 -0400
+Received: by mail-io1-f67.google.com with SMTP id c16so10877622ioc.3;
+        Thu, 24 Oct 2019 11:35:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qxI2DuhK3zOVoysZfJnxdcvpsN8qp9TCcsVnGEAYJmg=;
+        b=ECo9AIei6Q87z3VdpFYKEmxBFPmAD5SoxsjHkkfSB4a6UrDlagS+q6oL8plddaVYdg
+         A9gfYOa+6r5pFo/Bti8QjyZOhV3m7FklUMHsG9KL9LHD8duCpjD4P5fD/kOae5wy3G0p
+         Kfm7DDmr1iw9fM2e8PZwKOE3pPaEVyG+oGz6raCBxPWEQ3JLCEwP5PhxwD+MfakEXyQh
+         maYDoATesnnX4IWlLs3y0Q1nlPnuNYJqdM9rPf20wbWQeyOh8sh3oChaA0Crn0ignJin
+         j9jL4R7QjFqX2OYw/eOejvoB+rYK5ZL8Q4YrDil7Jq7eSRsbD0tndKQiHhB/UzJiKF1o
+         lcAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qxI2DuhK3zOVoysZfJnxdcvpsN8qp9TCcsVnGEAYJmg=;
+        b=AZCLYRbSyVbJE+XhHpx0K67NjhiUBXCODsXMKHCFrxVMOMyF8CrXJmJgPOOizrXdo/
+         CxLzhyxG1aq9ZVMW4sZASd8VMA76sZ8kcZAwUhaU0Lp2JXqP1FAnoP8UdpSX9LtKduH2
+         oR56DdBh2R4juUzpGD1Na87gyYkIgPCdLc+Vo04vUTMrIEkJuNS+ubxLOEg0N/6AZDr3
+         YkVyEHCzZZ85qiqv9/sAeGxwsGkXVtNbTkrtkuzfuUS3P0ghya4D0KSpUEiWvo8/IJRE
+         oVR0g7+J2rBsQ//8Uz+uxeUSd/YJImYwFpRYImEWZxfT3WROJrn1Xxnn7+BS14hbKezQ
+         6GAA==
+X-Gm-Message-State: APjAAAU9atR5aai7BUStHaPeBHv1qr+tj5/AZ1MHahUL/8jYkhEPQFVe
+        ambUtzylNSPD+Byn7+bzP81tG5GWDDWIg95H5JE=
+X-Google-Smtp-Source: APXvYqyV3j6Nj0JO8s/edvZRPXjfgtVRy4383ka1fR/X8RRAqT7EZ2eepZ/RhR+0nbA8U2xrMeF4oMWueyzrjyFn7G4=
+X-Received: by 2002:a5e:9e0a:: with SMTP id i10mr10755511ioq.172.1571942135778;
+ Thu, 24 Oct 2019 11:35:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-ID: <30392.1571936252.1@warthog.procyon.org.uk>
-Date:   Thu, 24 Oct 2019 17:57:32 +0100
-Message-ID: <30394.1571936252@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: 1QOKCWTXMqehQKb2ajkHSg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+References: <alpine.DEB.2.21.1910241326470.9562@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1910241326470.9562@hadrien>
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Date:   Thu, 24 Oct 2019 13:35:24 -0500
+Message-ID: <CAEkB2ER5TOviwk4teTVLJO=jFEbi_NWVqjMEg2jYzL7x4027gg@mail.gmail.com>
+Subject: Re: [PATCH] apparmor: fix odd_ptr_err.cocci warnings (fwd)
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tyler Hicks <tyhicks@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-pipe: Add fsync() support
+Hello,
 
-The keyrings testsuite needs the ability to wait for all the outstanding
-notifications in the queue to have been processed so that it can then go
-through them to find out whether the notifications it expected have been
-emitted.
-
-Implement fsync() support for pipes to provide this.  The tailmost buffer
-at the point of calling is marked and fsync adds itself to the list of
-waiters, noting the tail position to be waited for and marking the buffer
-as no longer mergeable.  Then when the buffer is consumed, if the flag is
-set, any matching waiters are woken up.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
- fs/fuse/dev.c             |    1=20
- fs/pipe.c                 |   61 +++++++++++++++++++++++++++++++++++++++++=
-+++++
- fs/splice.c               |    3 ++
- include/linux/pipe_fs_i.h |   22 ++++++++++++++++
- lib/iov_iter.c            |    2 -
- 5 files changed, 88 insertions(+), 1 deletion(-)
+I added Tyler to this conversation.
+I believe v3 of the patch addresses this issue:
+https://lore.kernel.org/patchwork/patch/1142523/
 
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 5ef57a322cb8..9617a35579cb 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1983,6 +1983,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inod=
-e_info *pipe,
- =09=09if (rem >=3D ibuf->len) {
- =09=09=09*obuf =3D *ibuf;
- =09=09=09ibuf->ops =3D NULL;
-+=09=09=09pipe_wake_fsync(pipe, ibuf, tail);
- =09=09=09tail++;
- =09=09=09pipe_commit_read(pipe, tail);
- =09=09} else {
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 6a982a88f658..8e5fd7314be1 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -30,6 +30,12 @@
-=20
- #include "internal.h"
-=20
-+struct pipe_fsync {
-+=09struct list_head=09link;=09=09/* Link in pipe->fsync */
-+=09struct completion=09done;
-+=09unsigned int=09=09tail;=09=09/* The buffer being waited for */
-+};
-+
- /*
-  * The max size that a non-root user is allowed to grow the pipe. Can
-  * be set by root in /proc/sys/fs/pipe-max-size
-@@ -269,6 +275,58 @@ static bool pipe_buf_can_merge(struct pipe_buffer *buf=
-)
- =09return buf->ops =3D=3D &anon_pipe_buf_ops;
- }
-=20
-+/*
-+ * Wait for all the data currently in the pipe to be consumed.
-+ */
-+static int pipe_fsync(struct file *file, loff_t a, loff_t b, int datasync)
-+{
-+=09struct pipe_inode_info *pipe =3D file->private_data;
-+=09struct pipe_buffer *buf;
-+=09struct pipe_fsync fsync;
-+=09unsigned int head, tail, mask;
-+
-+=09pipe_lock(pipe);
-+
-+=09head =3D pipe->head;
-+=09tail =3D pipe->tail;
-+=09mask =3D pipe->ring_size - 1;
-+
-+=09if (pipe_empty(head, tail)) {
-+=09=09pipe_unlock(pipe);
-+=09=09return 0;
-+=09}
-+
-+=09init_completion(&fsync.done);
-+=09fsync.tail =3D tail;
-+=09buf =3D &pipe->bufs[tail & mask];
-+=09buf->flags |=3D PIPE_BUF_FLAG_FSYNC;
-+=09pipe_buf_mark_unmergeable(buf);
-+=09list_add_tail(&fsync.link, &pipe->fsync);
-+=09pipe_unlock(pipe);
-+
-+=09if (wait_for_completion_interruptible(&fsync.done) < 0) {
-+=09=09pipe_lock(pipe);
-+=09=09list_del(&fsync.link);
-+=09=09pipe_unlock(pipe);
-+=09=09return -EINTR;
-+=09}
-+
-+=09return 0;
-+}
-+
-+void __pipe_wake_fsync(struct pipe_inode_info *pipe, unsigned int tail)
-+{
-+=09struct pipe_fsync *fsync, *p;
-+
-+=09list_for_each_entry_safe(fsync, p, &pipe->fsync, link) {
-+=09=09if (fsync->tail =3D=3D tail) {
-+=09=09=09list_del_init(&fsync->link);
-+=09=09=09complete(&fsync->done);
-+=09=09}
-+=09}
-+}
-+EXPORT_SYMBOL(__pipe_wake_fsync);
-+
- static ssize_t
- pipe_read(struct kiocb *iocb, struct iov_iter *to)
- {
-@@ -325,6 +383,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- =09=09=09if (!buf->len) {
- =09=09=09=09pipe_buf_release(pipe, buf);
- =09=09=09=09spin_lock_irq(&pipe->wait.lock);
-+=09=09=09=09pipe_wake_fsync(pipe, buf, tail);
- =09=09=09=09tail++;
- =09=09=09=09pipe_commit_read(pipe, tail);
- =09=09=09=09do_wakeup =3D 1;
-@@ -717,6 +776,7 @@ struct pipe_inode_info *alloc_pipe_info(void)
- =09=09pipe->ring_size =3D pipe_bufs;
- =09=09pipe->user =3D user;
- =09=09mutex_init(&pipe->mutex);
-+=09=09INIT_LIST_HEAD(&pipe->fsync);
- =09=09return pipe;
- =09}
-=20
-@@ -1060,6 +1120,7 @@ const struct file_operations pipefifo_fops =3D {
- =09.llseek=09=09=3D no_llseek,
- =09.read_iter=09=3D pipe_read,
- =09.write_iter=09=3D pipe_write,
-+=09.fsync=09=09=3D pipe_fsync,
- =09.poll=09=09=3D pipe_poll,
- =09.unlocked_ioctl=09=3D pipe_ioctl,
- =09.release=09=3D pipe_release,
-diff --git a/fs/splice.c b/fs/splice.c
-index 3f72bc31b6ec..e106367e1be6 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -523,6 +523,7 @@ static int splice_from_pipe_feed(struct pipe_inode_info=
- *pipe, struct splice_des
-=20
- =09=09if (!buf->len) {
- =09=09=09pipe_buf_release(pipe, buf);
-+=09=09=09pipe_wake_fsync(pipe, buf, tail);
- =09=09=09tail++;
- =09=09=09pipe_commit_read(pipe, tail);
- =09=09=09if (pipe->files)
-@@ -771,6 +772,7 @@ iter_file_splice_write(struct pipe_inode_info *pipe, st=
-ruct file *out,
- =09=09=09=09ret -=3D buf->len;
- =09=09=09=09buf->len =3D 0;
- =09=09=09=09pipe_buf_release(pipe, buf);
-+=09=09=09=09pipe_wake_fsync(pipe, buf, tail);
- =09=09=09=09tail++;
- =09=09=09=09pipe_commit_read(pipe, tail);
- =09=09=09=09if (pipe->files)
-@@ -1613,6 +1615,7 @@ static int splice_pipe_to_pipe(struct pipe_inode_info=
- *ipipe,
- =09=09=09 */
- =09=09=09*obuf =3D *ibuf;
- =09=09=09ibuf->ops =3D NULL;
-+=09=09=09pipe_wake_fsync(ipipe, ibuf, i_tail);
- =09=09=09i_tail++;
- =09=09=09pipe_commit_read(ipipe, i_tail);
- =09=09=09input_wakeup =3D true;
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 90055ff16550..1a3027089558 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -8,6 +8,7 @@
- #define PIPE_BUF_FLAG_ATOMIC=090x02=09/* was atomically mapped */
- #define PIPE_BUF_FLAG_GIFT=090x04=09/* page is a gift */
- #define PIPE_BUF_FLAG_PACKET=090x08=09/* read() as a packet */
-+#define PIPE_BUF_FLAG_FSYNC=090x10=09/* fsync() is waiting for this buffer=
- to die */
-=20
- /**
-  *=09struct pipe_buffer - a linux kernel pipe buffer
-@@ -43,6 +44,7 @@ struct pipe_buffer {
-  *=09@w_counter: writer counter
-  *=09@fasync_readers: reader side fasync
-  *=09@fasync_writers: writer side fasync
-+ *=09@fsync: Waiting fsyncs
-  *=09@bufs: the circular array of pipe buffers
-  *=09@user: the user who created this pipe
-  **/
-@@ -62,6 +64,7 @@ struct pipe_inode_info {
- =09struct page *tmp_page;
- =09struct fasync_struct *fasync_readers;
- =09struct fasync_struct *fasync_writers;
-+=09struct list_head fsync;
- =09struct pipe_buffer *bufs;
- =09struct user_struct *user;
- };
-@@ -268,6 +271,25 @@ extern const struct pipe_buf_operations nosteal_pipe_b=
-uf_ops;
- long pipe_fcntl(struct file *, unsigned int, unsigned long arg);
- struct pipe_inode_info *get_pipe_info(struct file *file);
-=20
-+void __pipe_wake_fsync(struct pipe_inode_info *pipe, unsigned int tail);
-+
-+/**
-+ * pipe_wake_fsync - Wake up anyone waiting with fsync for this point
-+ * @pipe: The pipe that owns the buffer
-+ * @buf: The pipe buffer in question
-+ * @tail: The index in the ring of the buffer
-+ *
-+ * Check to see if anyone is waiting for the pipe ring to clear up to and
-+ * including this buffer, and, if they are, wake them up.
-+ */
-+static inline void pipe_wake_fsync(struct pipe_inode_info *pipe,
-+=09=09=09=09   struct pipe_buffer *buf,
-+=09=09=09=09   unsigned int tail)
-+{
-+=09if (unlikely(buf->flags & PIPE_BUF_FLAG_FSYNC))
-+=09=09__pipe_wake_fsync(pipe, tail);
-+}
-+
- int create_pipe_files(struct file **, int);
- unsigned int round_pipe_size(unsigned long size);
-=20
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index e22f4e283f6d..38d52524cd21 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -404,7 +404,7 @@ static size_t copy_page_to_iter_pipe(struct page *page,=
- size_t offset, size_t by
- =09buf->offset =3D offset;
- =09buf->len =3D bytes;
-=20
--=09pipe_commit_read(pipe, i_head);
-+=09pipe_commit_write(pipe, i_head);
- =09i->iov_offset =3D offset + bytes;
- =09i->head =3D i_head;
- out:
+On Thu, Oct 24, 2019 at 6:28 AM Julia Lawall <julia.lawall@lip6.fr> wrote:
+>
+> Hello,
+>
+> The change suggested by Coccinelle is not correct, but the original code
+> is not correct either because the argument to PTR_ERR should be a pointer,
+> not an integer.
+>
+> julia
+>
+> ---------- Forwarded message ----------
+> Date: Thu, 24 Oct 2019 18:21:57 +0800
+> From: kbuild test robot <lkp@intel.com>
+> To: kbuild@lists.01.org
+> Cc: Julia Lawall <julia.lawall@lip6.fr>
+> Subject: [PATCH] apparmor: fix odd_ptr_err.cocci warnings
+>
+> CC: kbuild-all@lists.01.org
+> In-Reply-To: <20191021152348.3906-1-navid.emamdoost@gmail.com>
+> References: <20191021152348.3906-1-navid.emamdoost@gmail.com>
+> TO: Navid Emamdoost <navid.emamdoost@gmail.com>
+>
+> From: kbuild test robot <lkp@intel.com>
+>
+> security/apparmor/audit.c:199:5-11: inconsistent IS_ERR and PTR_ERR on line 202.
+>
+>  PTR_ERR should access the value just tested by IS_ERR
+>
+> Semantic patch information:
+>  There can be false positives in the patch case, where it is the call to
+>  IS_ERR that is wrong.
+>
+> Generated by: scripts/coccinelle/tests/odd_ptr_err.cocci
+>
+> Fixes: 6f939f24599c ("apparmor: Fix use-after-free in aa_audit_rule_init")
+> CC: Navid Emamdoost <navid.emamdoost@gmail.com>
+> Signed-off-by: kbuild test robot <lkp@intel.com>
+> ---
+>
+> url:    https://github.com/0day-ci/linux/commits/Navid-Emamdoost/apparmor-Fix-use-after-free-in-aa_audit_rule_init/20191024-123239
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-testing
+> :::::: branch date: 6 hours ago
+> :::::: commit date: 6 hours ago
+>
+> Please take the patch only if it's a positive warning. Thanks!
+>
+>  audit.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- a/security/apparmor/audit.c
+> +++ b/security/apparmor/audit.c
+> @@ -199,7 +199,7 @@ int aa_audit_rule_init(u32 field, u32 op
+>         if (IS_ERR(rule->label)) {
+>                 int err = rule->label;
+>                 aa_audit_rule_free(rule);
+> -               return PTR_ERR(err);
+> +               return PTR_ERR(rule->label);
+>         }
+>
+>         *vrule = rule;
 
+
+
+--
+Navid.
