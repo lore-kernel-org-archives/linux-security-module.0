@@ -2,198 +2,81 @@ Return-Path: <SRS0=mqlx=YR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E96CA9EAF
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 10:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A803CA9EBB
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 10:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D651A20684
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 10:15:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571912135;
-	bh=ykuhvQfu/VEVWx1RZHP9jfoG51/2VUniR+juAvfcWEw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=N6cZoPEzRwAzTqblxpKTjEOZEAS7cYG/DOgmP/0w3rbFKOcfd3ajbciu248HvOMII
-	 Wy0ClG+tXZjDPI8FC+pQr/v3nGacUKTxUzu/5f4CVOAkBL2JLqHltxhCiZ856dmG1z
-	 csXZDdoCMUmWaemm+IqSP4kH7bQXQfKae+8UUGXo=
+	by mail.kernel.org (Postfix) with ESMTP id 58E822166E
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 10:32:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KIlXMDOM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392612AbfJXKPe (ORCPT
+        id S2438858AbfJXKch (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Oct 2019 06:15:34 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33947 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391807AbfJXKPd (ORCPT
+        Thu, 24 Oct 2019 06:32:37 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36994 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2438840AbfJXKcd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Oct 2019 06:15:33 -0400
-Received: by mail-qt1-f196.google.com with SMTP id e14so17265623qto.1;
-        Thu, 24 Oct 2019 03:15:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8Jg0HC2V0TUACAR0qAG1JtmCPUTiqlxxEMeEIEXx1r8=;
-        b=ewwQeIZJ7evve1w34HVzCkmXfpYvvm8figi2RlLP9K1LypO3IE+6UbWvbmBjLcrFiL
-         6kuZ6tjw5v6zBA7i+ANnqEgWaBvafufHq4h103rpDGnxcGOs47cfCkShBQRdBd3srqLv
-         UilmcNwTsYrJ2veKGosp0LrFh1pVOj4CUcMbIsgfuaZxElIyM3d0kXNVo+Tdmj24vCuf
-         hBAXzti4fAdNBbc6pXO9PrHHnnvUotPtAFebRMb60FsreyI+5id3yX1XuQcy/SC+8mbZ
-         3VwWLaaW9b/D9dL7H0aoKNSzJRzQsstllmFdBSqaJYe8wbJ2u5kPHIgAjTr8WkNAHPu4
-         Ghjw==
-X-Gm-Message-State: APjAAAWhX8eVKjiqy3KV91YLKguL9OlD9L04DX3dzDTqYGxGEZZeg9Os
-        mQhtEsy6JqUrKI6JmGdG1U4=
-X-Google-Smtp-Source: APXvYqwl1B9XBw0idLxLI//GAYXh+9vvmuxm/t9cdkKcX3KSrJE8Z2wYTpUkvL+buzZUu9VpYYjuAg==
-X-Received: by 2002:ac8:4750:: with SMTP id k16mr3189652qtp.288.1571912132146;
-        Thu, 24 Oct 2019 03:15:32 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id v4sm12508055qkj.28.2019.10.24.03.15.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2019 03:15:31 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id C6A2A40244; Thu, 24 Oct 2019 10:15:29 +0000 (UTC)
-Date:   Thu, 24 Oct 2019 10:15:29 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Alan Maguire <alan.maguire@oracle.com>,
-        Matthias Maennich <maennich@google.com>,
-        shuah <shuah@kernel.org>,
-        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        serge@hallyn.com, Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        David Gow <davidgow@google.com>, Theodore Ts'o <tytso@mit.edu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Mike Salvatore <mike.salvatore@canonical.com>
-Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
- tests for policy unpack
-Message-ID: <20191024101529.GK11244@42.do-not-panic.com>
-References: <20191018001816.94460-1-brendanhiggins@google.com>
- <20191018122949.GD11244@42.do-not-panic.com>
- <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
- <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
+        Thu, 24 Oct 2019 06:32:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571913152;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LIKdOL11Ozx/PWJsb0Bia7eThEnrLMvgCNlbfPe+qhE=;
+        b=KIlXMDOMxKPSSAvg9kGz3sda5MqOHLHENWTns7LnTsjwebdSxKGRoLNaWyjz+ZKiMlapdy
+        ET9+jUDhssh/nyvu2t8dZ9AX9r28x9DJtvhtLC88fsX92D8kRAtL4Ma0bqqj+CP2BNn08a
+        Sr3vaii5XfMX/UDj3tx4+drhz/ejacI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-52-kf6BhbzrPzCAs2tEP3KZ1A-1; Thu, 24 Oct 2019 06:32:29 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C9DA8107AD33;
+        Thu, 24 Oct 2019 10:32:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 14CB41001B30;
+        Thu, 24 Oct 2019 10:32:23 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+References: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring, not cursor and length [ver #2]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-ID: <13193.1571913143.1@warthog.procyon.org.uk>
+Date:   Thu, 24 Oct 2019 11:32:23 +0100
+Message-ID: <13194.1571913143@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: kf6BhbzrPzCAs2tEP3KZ1A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 23, 2019 at 05:42:18PM -0700, Brendan Higgins wrote:
-> On Sat, Oct 19, 2019 at 5:56 AM Alan Maguire <alan.maguire@oracle.com> wrote:
-> >
-> > On Fri, 18 Oct 2019, Luis Chamberlain wrote:
-> >
-> > > On Thu, Oct 17, 2019 at 05:18:16PM -0700, Brendan Higgins wrote:
-> > > > From: Mike Salvatore <mike.salvatore@canonical.com>
-> > > >
-> > > > In order to write the tests against the policy unpacking code, some
-> > > > static functions needed to be exposed for testing purposes. One of the
-> > > > goals of this patch is to establish a pattern for which testing these
-> > > > kinds of functions should be done in the future.
-> > >
-> > > And you'd run into the same situation expressed elsewhere with kunit of
-> > > an issue of the kunit test as built-in working but if built as a module
-> > > then it would not work, given the lack of exports. Symbols namespaces
-> > > should resolve this [0], and we'd be careful where a driver imports this
-> > > namespace.
-> > >
-> > > [0] https://lwn.net/Articles/798254/
-> 
-> Maybe I am not understanding how the symbol namespaces work, but it
-> seems that it doesn't actually solve our problem, at least not all of
-> it.
-> 
-> First off this doesn't solve the problem for when a piece of code is
-> included as a module; it also does not address the problem for symbols
-> that would not normally be exported.
+I've pushed to git a new version that fixes an incomplete conversion in
+pipe_zero(), ports the powerpc virtio_console driver and fixes a comment in
+splice.
 
-The suggestion is that since exporting certain symbols may not be wise,
-exporting them for say a test namespace may make more sense. Then
-the hacks don't need to be used for the lookup, therefore decreasing
-test / complexity time. This would only make sense if there really is
-no performance penalty known for having the symbol be exported.
+David
 
-> > WRT adding tests, I think what we're aiming at is a set of best practices
-> > to advise test developers using KUnit, while attempting to minimize
-> > side-effects of any changes we need to make to support testability.
-> >
-> > One aspect of this we probably have to consider is inlining of code. For
-> > cases like this where the functions are small and are called in a small
-> > number of cases, any testability changes we make may push a
-> > previously-inlined function to not be inlined, with potential performance
-> > side-effects for the subsystem.  In such cases, I wonder if the right
-> > answer would be to suggest actually defining the functions as
-> > inline in the header file? That way the compiler still gets to decide (as
-> > opposed to __always_inline), and we don't perturb performance too much.
-> 
-> That's a really good point. Okay, so it seems that making the symbols
-> public when not testing is probably not okay on its own. If we are
-> going to do that, we probably need to do something like what you are
-> suggesting.
-
-If namespaces were to be used, and a consideration is that certain
-symbols should not be public as otherwise there would be a real
-perfomance hit, having a macro which only exports the namespace
-if a build option is enabled would suffice as well. That is, a
-no-op if the test feature is disabled, exported into a namespace
-otherwise. But if a new build option were to be considered to help build
-a different test kernel it begs the question if we just want or not a
-full sweaping -fno-inline could be considered on the top level
-Makefile when testing. The cost is a bloat the kernel, and it may
-also produce slightly different runtimes. With a test specific
-symbol namespace thing, we'd only export to a namespace those
-symbols being tested.
-
-FWIW we currently only enable -fno-inline-functions-called-once when we
-have CONFIG_DEBUG_SECTION_MISMATCH enabled.
-
-Your suggestion below with __visible_for_testing aligns with the gcc
-flags I mentioned.
-
-> With that, I think the best solution in this case will be the
-> "__visible_for_testing" route. It has no overhead when testing is
-> turned off (in fact it is no different in anyway when testing is
-> turned off). The downsides I see are:
-> 
-> 1) You may not be able to test non-module code not compiled for
-> testing later with the test modules that Alan is working on (But the
-> only way I think that will work is by preventing the symbol from being
-> inlined, right?).
-> 
-> 2) I think "__visible_for_testing" will be prone to abuse. Here, I
-> think there are reasons why we might want to expose these symbols for
-> testing, but not otherwise. Nevertheless, I think most symbols that
-> should be tested should probably be made visible by default. Since you
-> usually only want to test your public interfaces. I could very well
-> see this getting used as a kludge that gets used far too frequently.
-
-There are two parts to your statement on 2):
-
-  a) possible abuse of say __visible_for_testing
-  b) you typically only want to test your public interfaces
-
-For a) I think a proper module testing namespace thing would less
-likely be prone to abuse over somethingmore generic. It has the
-penalty of always being enabled (unless you kconfig it to allow
-you to disable it).
-
-While I don't fully agree with b) I think for the most part it remains
-true. But I'd agree more with this:
-
-  Most functions you want to test likely don't have a performance
-  criteria to be kept inline
-
-And for those situations I think a wrapper kconfig to convert a
-subsystem specific namespace call to be a nop would make sense.
-
-  Luis
-
-> Nevertheless, based on Alan's point, I suspect it, for this case at
-> least, will likely be the least painful.
-> 
-> How do people feel about that?
