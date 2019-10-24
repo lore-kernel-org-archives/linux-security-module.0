@@ -5,67 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.2 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA0ACA9EBB
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 18:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69B9CA9EAF
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 18:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E25E21929
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 18:39:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81ED521906
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 18:40:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437068AbfJXSjZ (ORCPT
+        id S2440124AbfJXSkQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Oct 2019 14:39:25 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:44299
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2440077AbfJXSjY (ORCPT
+        Thu, 24 Oct 2019 14:40:16 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48390 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2440123AbfJXSkQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Oct 2019 14:39:24 -0400
-X-IronPort-AV: E=Sophos;i="5.68,225,1569276000"; 
-   d="scan'208";a="324184383"
-Received: from ip-121.net-89-2-166.rev.numericable.fr (HELO hadrien) ([89.2.166.121])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 20:39:22 +0200
-Date:   Thu, 24 Oct 2019 20:39:21 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
+        Thu, 24 Oct 2019 14:40:16 -0400
+Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=elm)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <tyhicks@canonical.com>)
+        id 1iNi1j-00084R-70; Thu, 24 Oct 2019 18:40:03 +0000
+Date:   Thu, 24 Oct 2019 13:39:59 -0500
+From:   Tyler Hicks <tyhicks@canonical.com>
 To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-cc:     John Johansen <john.johansen@canonical.com>,
+Cc:     Julia Lawall <julia.lawall@lip6.fr>,
+        John Johansen <john.johansen@canonical.com>,
         Navid Emamdoost <emamd001@umn.edu>,
         Stephen McCamant <smccaman@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tyler Hicks <tyhicks@canonical.com>
+        LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] apparmor: fix odd_ptr_err.cocci warnings (fwd)
-In-Reply-To: <CAEkB2ER5TOviwk4teTVLJO=jFEbi_NWVqjMEg2jYzL7x4027gg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1910242038540.2621@hadrien>
-References: <alpine.DEB.2.21.1910241326470.9562@hadrien> <CAEkB2ER5TOviwk4teTVLJO=jFEbi_NWVqjMEg2jYzL7x4027gg@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+Message-ID: <20191024183958.GA29190@elm>
+References: <alpine.DEB.2.21.1910241326470.9562@hadrien>
+ <CAEkB2ER5TOviwk4teTVLJO=jFEbi_NWVqjMEg2jYzL7x4027gg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEkB2ER5TOviwk4teTVLJO=jFEbi_NWVqjMEg2jYzL7x4027gg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On Thu, 24 Oct 2019, Navid Emamdoost wrote:
-
+On 2019-10-24 13:35:24, Navid Emamdoost wrote:
 > Hello,
->
+> 
 > I added Tyler to this conversation.
 > I believe v3 of the patch addresses this issue:
 > https://lore.kernel.org/patchwork/patch/1142523/
 
-It looks ok like that, thanks.
+Yes, I agree. v3 is the fix.
 
-Please don't top post.
+Tyler
 
-julia
-
->
->
+> 
+> 
 > On Thu, Oct 24, 2019 at 6:28 AM Julia Lawall <julia.lawall@lip6.fr> wrote:
 > >
 > > Hello,
@@ -126,9 +123,8 @@ julia
 > >         }
 > >
 > >         *vrule = rule;
->
->
->
+> 
+> 
+> 
 > --
 > Navid.
->
