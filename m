@@ -2,103 +2,82 @@ Return-Path: <SRS0=mqlx=YR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B70CA9EAF
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 11:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C32ECA9EBC
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 13:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29C1B2166E
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 11:28:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0725020659
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 13:15:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j7YKjbvj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392305AbfJXL2h (ORCPT
+        id S2502460AbfJXNPA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Oct 2019 07:28:37 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:1820 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390184AbfJXL2h (ORCPT
+        Thu, 24 Oct 2019 09:15:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45050 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502438AbfJXNPA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Oct 2019 07:28:37 -0400
-X-IronPort-AV: E=Sophos;i="5.68,224,1569276000"; 
-   d="scan'208";a="407955595"
-Received: from portablejulia.rsr.lip6.fr ([132.227.76.63])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 13:28:35 +0200
-Date:   Thu, 24 Oct 2019 13:28:35 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: julia@hadrien
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-cc:     john.johansen@canonical.com, emamd001@umn.edu, smccaman@umn.edu,
-        kjlu@umn.edu, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, emamd001@umn.edu, smccaman@umn.edu,
-        kjlu@umn.edu
-Subject: [PATCH] apparmor: fix odd_ptr_err.cocci warnings (fwd)
-Message-ID: <alpine.DEB.2.21.1910241326470.9562@hadrien>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 24 Oct 2019 09:15:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Jr+KH6TpggeektbjDpZIF11RXPqlwCVR55VLMJFPOz8=; b=j7YKjbvjp/ypi4i4koJ318A42
+        d4C0/CCa01kd9EjOIu9zw0/atJE16DTEyTp45ZSWBNSWlc0g+z2PyF+/6pzkSAY3WRUdm70WN7mSz
+        6me42ElrJoWnV27r1xOSBoHPRQg+jeTOQnmVigwvcGJFgO6JkCrEqEFayteNfRbb5OLE4e8yx1BIg
+        bzrmoJ/4AaVJi0vB5CE5jYkuBHOj+j1m41vxDZc0BS7HPtIdD6fVgsSUy5igabNFG7bt7Pt1bEJ4A
+        gbX86oq8hvlyHJy0RibiCU0XNgLI3amTKX1KHXyIj1x9ony+LGASM8qFYMOp7tGg+6mAV8XNOaTik
+        deajIeL1g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iNcx6-0005MS-Mb; Thu, 24 Oct 2019 13:14:56 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A53C3300489;
+        Thu, 24 Oct 2019 15:13:55 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0CF8B2B1C8A31; Thu, 24 Oct 2019 15:14:54 +0200 (CEST)
+Date:   Thu, 24 Oct 2019 15:14:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/10] pipe: Notification queue preparation [ver #2]
+Message-ID: <20191024131454.GB4114@hirez.programming.kicks-ass.net>
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On Wed, Oct 23, 2019 at 09:17:04PM +0100, David Howells wrote:
 
-The change suggested by Coccinelle is not correct, but the original code
-is not correct either because the argument to PTR_ERR should be a pointer,
-not an integer.
+>  (1) It removes the nr_exclusive argument from __wake_up_sync_key() as this
+>      is always 1.  This prepares for step 2.
+> 
+>  (2) Adds wake_up_interruptible_sync_poll_locked() so that poll can be
+>      woken up from a function that's holding the poll waitqueue spinlock.
 
-julia
+>  include/linux/wait.h       |   11 +-
+>  kernel/sched/wait.c        |   37 ++++--
+> 
 
----------- Forwarded message ----------
-Date: Thu, 24 Oct 2019 18:21:57 +0800
-From: kbuild test robot <lkp@intel.com>
-To: kbuild@lists.01.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH] apparmor: fix odd_ptr_err.cocci warnings
-
-CC: kbuild-all@lists.01.org
-In-Reply-To: <20191021152348.3906-1-navid.emamdoost@gmail.com>
-References: <20191021152348.3906-1-navid.emamdoost@gmail.com>
-TO: Navid Emamdoost <navid.emamdoost@gmail.com>
-
-From: kbuild test robot <lkp@intel.com>
-
-security/apparmor/audit.c:199:5-11: inconsistent IS_ERR and PTR_ERR on line 202.
-
- PTR_ERR should access the value just tested by IS_ERR
-
-Semantic patch information:
- There can be false positives in the patch case, where it is the call to
- IS_ERR that is wrong.
-
-Generated by: scripts/coccinelle/tests/odd_ptr_err.cocci
-
-Fixes: 6f939f24599c ("apparmor: Fix use-after-free in aa_audit_rule_init")
-CC: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
-
-url:    https://github.com/0day-ci/linux/commits/Navid-Emamdoost/apparmor-Fix-use-after-free-in-aa_audit_rule_init/20191024-123239
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-testing
-:::::: branch date: 6 hours ago
-:::::: commit date: 6 hours ago
-
-Please take the patch only if it's a positive warning. Thanks!
-
- audit.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/security/apparmor/audit.c
-+++ b/security/apparmor/audit.c
-@@ -199,7 +199,7 @@ int aa_audit_rule_init(u32 field, u32 op
- 	if (IS_ERR(rule->label)) {
- 		int err = rule->label;
- 		aa_audit_rule_free(rule);
--		return PTR_ERR(err);
-+		return PTR_ERR(rule->label);
- 	}
-
- 	*vrule = rule;
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
