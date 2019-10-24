@@ -2,81 +2,103 @@ Return-Path: <SRS0=mqlx=YR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A803CA9EBB
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 10:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B70CA9EAF
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 11:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58E822166E
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 10:32:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KIlXMDOM"
+	by mail.kernel.org (Postfix) with ESMTP id 29C1B2166E
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 11:28:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438858AbfJXKch (ORCPT
+        id S2392305AbfJXL2h (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Oct 2019 06:32:37 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36994 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2438840AbfJXKcd (ORCPT
+        Thu, 24 Oct 2019 07:28:37 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:1820 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390184AbfJXL2h (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Oct 2019 06:32:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571913152;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LIKdOL11Ozx/PWJsb0Bia7eThEnrLMvgCNlbfPe+qhE=;
-        b=KIlXMDOMxKPSSAvg9kGz3sda5MqOHLHENWTns7LnTsjwebdSxKGRoLNaWyjz+ZKiMlapdy
-        ET9+jUDhssh/nyvu2t8dZ9AX9r28x9DJtvhtLC88fsX92D8kRAtL4Ma0bqqj+CP2BNn08a
-        Sr3vaii5XfMX/UDj3tx4+drhz/ejacI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-52-kf6BhbzrPzCAs2tEP3KZ1A-1; Thu, 24 Oct 2019 06:32:29 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C9DA8107AD33;
-        Thu, 24 Oct 2019 10:32:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 14CB41001B30;
-        Thu, 24 Oct 2019 10:32:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
-References: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring, not cursor and length [ver #2]
+        Thu, 24 Oct 2019 07:28:37 -0400
+X-IronPort-AV: E=Sophos;i="5.68,224,1569276000"; 
+   d="scan'208";a="407955595"
+Received: from portablejulia.rsr.lip6.fr ([132.227.76.63])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 13:28:35 +0200
+Date:   Thu, 24 Oct 2019 13:28:35 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: julia@hadrien
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+cc:     john.johansen@canonical.com, emamd001@umn.edu, smccaman@umn.edu,
+        kjlu@umn.edu, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, emamd001@umn.edu, smccaman@umn.edu,
+        kjlu@umn.edu
+Subject: [PATCH] apparmor: fix odd_ptr_err.cocci warnings (fwd)
+Message-ID: <alpine.DEB.2.21.1910241326470.9562@hadrien>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-ID: <13193.1571913143.1@warthog.procyon.org.uk>
-Date:   Thu, 24 Oct 2019 11:32:23 +0100
-Message-ID: <13194.1571913143@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: kf6BhbzrPzCAs2tEP3KZ1A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I've pushed to git a new version that fixes an incomplete conversion in
-pipe_zero(), ports the powerpc virtio_console driver and fixes a comment in
-splice.
+Hello,
 
-David
+The change suggested by Coccinelle is not correct, but the original code
+is not correct either because the argument to PTR_ERR should be a pointer,
+not an integer.
 
+julia
+
+---------- Forwarded message ----------
+Date: Thu, 24 Oct 2019 18:21:57 +0800
+From: kbuild test robot <lkp@intel.com>
+To: kbuild@lists.01.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: [PATCH] apparmor: fix odd_ptr_err.cocci warnings
+
+CC: kbuild-all@lists.01.org
+In-Reply-To: <20191021152348.3906-1-navid.emamdoost@gmail.com>
+References: <20191021152348.3906-1-navid.emamdoost@gmail.com>
+TO: Navid Emamdoost <navid.emamdoost@gmail.com>
+
+From: kbuild test robot <lkp@intel.com>
+
+security/apparmor/audit.c:199:5-11: inconsistent IS_ERR and PTR_ERR on line 202.
+
+ PTR_ERR should access the value just tested by IS_ERR
+
+Semantic patch information:
+ There can be false positives in the patch case, where it is the call to
+ IS_ERR that is wrong.
+
+Generated by: scripts/coccinelle/tests/odd_ptr_err.cocci
+
+Fixes: 6f939f24599c ("apparmor: Fix use-after-free in aa_audit_rule_init")
+CC: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: kbuild test robot <lkp@intel.com>
+---
+
+url:    https://github.com/0day-ci/linux/commits/Navid-Emamdoost/apparmor-Fix-use-after-free-in-aa_audit_rule_init/20191024-123239
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-testing
+:::::: branch date: 6 hours ago
+:::::: commit date: 6 hours ago
+
+Please take the patch only if it's a positive warning. Thanks!
+
+ audit.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/security/apparmor/audit.c
++++ b/security/apparmor/audit.c
+@@ -199,7 +199,7 @@ int aa_audit_rule_init(u32 field, u32 op
+ 	if (IS_ERR(rule->label)) {
+ 		int err = rule->label;
+ 		aa_audit_rule_free(rule);
+-		return PTR_ERR(err);
++		return PTR_ERR(rule->label);
+ 	}
+
+ 	*vrule = rule;
