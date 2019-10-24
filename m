@@ -2,113 +2,161 @@ Return-Path: <SRS0=mqlx=YR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B6CBCA9EBC
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 03:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB23CA9EBD
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 04:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F33DD21872
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 03:39:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1826321655
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 04:57:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="T2bbeZtv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+iU1lVJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408339AbfJXDjF (ORCPT
+        id S2408369AbfJXE5Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Oct 2019 23:39:05 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45896 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408268AbfJXDjF (ORCPT
+        Thu, 24 Oct 2019 00:57:16 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:41658 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfJXE5Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Oct 2019 23:39:05 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y24so7196877plr.12
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Oct 2019 20:39:04 -0700 (PDT)
+        Thu, 24 Oct 2019 00:57:16 -0400
+Received: by mail-yw1-f68.google.com with SMTP id o195so3404768ywd.8;
+        Wed, 23 Oct 2019 21:57:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=W8sgLGjMxM6EuY1mpsS+9Tn33OqsmcrGz0uhv99VAHA=;
-        b=T2bbeZtvsO039PfGe+EjPR125EqRdU9mKD894GYoR0zBnNNVcSR1u3DGiXZFKGUrwF
-         Q1L4mEl5u7aBDGEgAvXjkzTOXSSGhbHMY7JwyTtpuA/1lUXfeioaDSSD5DwpPF81FKT1
-         ajJMYUZOWHJQq3Czs4YHreOwy2CVWx9lD7yEqbXak5+nnWYpgJsNSp3cviar/kEx8g3A
-         JL2eoJFhv69W7IpzFJO3QBiRSBRWpD2PYo0i6gZ0SVVJGOTgtJG3panMDXQqq/fdjcQQ
-         JYHL/HihPBR2U1KB50B+TI1h2RA9YPd7A7tX1ZQWp7kanwYzwZ3TCAZYt7pKgxi2zf4H
-         C+5w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Qp4ylpFjT2NK5D3YlCPCDZfnUsSpfLeB6JcWlmTT8JE=;
+        b=f+iU1lVJ+8MXE0YjXhbzT4Z+QZTKEVbpSj7I64WEMcxAgcUOKckEALuDnxjfop1KDz
+         /GEuxtdqM/gAmg/8rUQcbM54P8ZvUqXo23LCox8OZKBVBlVoDn1p5gmEXxfQnAWBfBHW
+         uZZaGVOWsT//cwHGlbqENLvAYitmYf5NxnxRGYapcBJVSV1rP+NlFCXZHqVZ6fsYCVwo
+         HiL1fAZTVAeLbnNXS5YnMp44jrRgVnpRxhkGyVWlHqmqFFsCMZbuTBKjna3CheOTh8v8
+         hD6hfXAtyLGGlQqfHMdlsFiQ1XgpXWIL5nune/Pgn/JF3P1WqL13u+LVKHRsnQpi/3uP
+         Pzow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=W8sgLGjMxM6EuY1mpsS+9Tn33OqsmcrGz0uhv99VAHA=;
-        b=drX9NFC4s5TNArSl66qlAVmLVfxgHJrPul8ipZhe2xKX3hqlTG/OOLZWAc3GCjJcE5
-         yRoemHoGMjfDgSAu0XHmTw2OOr3qIwz6nAP7tQ9Mp+v9TbghPjOU3CHbKvNLPTGVZbl3
-         bs5LzJjJnYOdk84BRLr/8I2UfBpbgD5Ux/3X9UZeIMoOGN7o3j0VJEVqRrHhQo3qQEeB
-         z/tVd+rtrdkwWeEewVdALo9V/LOx+mfz/lja5Zv8wQzuYUfDNbjim9JIen21ZY3TMqcT
-         qo1Zgg62Futi1CGWXK9HafCivDWkDdpW8pP3OvPQUF9YoWQtiZ8Aeo5G0PGq+MmOf9aw
-         LJ6g==
-X-Gm-Message-State: APjAAAV4SC6JOpbr8BFksdPC8m1Nm9XPPNuzqj6E28JSSEFhoO62RAlZ
-        9CUjGi8Xo2gaQ+y64BDtv0AEjQ==
-X-Google-Smtp-Source: APXvYqzjuWYGP5CVydefv3aAYM4Zf7GeakbWEIFeuKC0sgKLKckuazE4qo+gNK3oOsra0rup9w7uiQ==
-X-Received: by 2002:a17:902:968f:: with SMTP id n15mr13304176plp.191.1571888344349;
-        Wed, 23 Oct 2019 20:39:04 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.79])
-        by smtp.gmail.com with ESMTPSA id b17sm9759144pfr.17.2019.10.23.20.39.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Oct 2019 20:39:03 -0700 (PDT)
-Subject: Re: [Kgdb-bugreport] [PATCH] kernel: convert switch/case fallthrough
- comments to fallthrough;
-To:     Joe Perches <joe@perches.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-pm@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-References: <f31b38b9ad515a138edaecf85701b1e3db064114.camel@perches.com>
- <20191021090909.yjyed4qodjjcioqc@holly.lan>
- <bff0a1c4fc69b83c763ffbce42a0152e1573499a.camel@perches.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <2808c960-6178-17b8-23d7-a6945987a658@kernel.dk>
-Date:   Wed, 23 Oct 2019 21:39:01 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qp4ylpFjT2NK5D3YlCPCDZfnUsSpfLeB6JcWlmTT8JE=;
+        b=t2MGTIc8mTc7xW5/p/CK16Ve9OEKmiR3Bt1eoB5Z7AoMwDnIldppJFs4AQlRg5rSTa
+         q12+rvFQWnsBdLRSERRYnp2UD56h9Ed7dygSLlsN0K+KpagF9fNJEIyKLAZLanO3WOPf
+         xM/lf7xUbla/jk3vlTj9s1KC4BPrPrpH5tFKq9eB/9V+W/lhbBMXJOZIyvrB5aDeJJ6t
+         C+eN3/HhTt2oLPFy4NmgSsOa9Izgi1LmAXlmxlOybOx4Ju3ogFv6LeWPgiB0NsBh1iZd
+         fM7e68NeYec1KF3EY1ABYuene9koRVfxcXINUYEd59XIU70IQZHgjxsu/Ak2dZoAh9dB
+         jjbg==
+X-Gm-Message-State: APjAAAX2taqOZp6Wh4uI+eNoiHVcayhSQURKPdVWJQhiiAase5zce9Le
+        cDp9IVjonZ/SxmlpoPcPLJDkSfLsNotmk4dR8To=
+X-Google-Smtp-Source: APXvYqzpUv8fnfcjV1KksbDdhWbx31x/A6CcO3wQjALxaBgCfUkMkcsChuqQOOuA9702g94fFIVsWA6cYWlyk5yi/8s=
+X-Received: by 2002:a81:6c58:: with SMTP id h85mr5010753ywc.88.1571893034732;
+ Wed, 23 Oct 2019 21:57:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <bff0a1c4fc69b83c763ffbce42a0152e1573499a.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191022204453.97058-1-salyzyn@android.com> <20191022204453.97058-2-salyzyn@android.com>
+ <8CE5B6E8-DCB7-4F0B-91C1-48030947F585@dilger.ca>
+In-Reply-To: <8CE5B6E8-DCB7-4F0B-91C1-48030947F585@dilger.ca>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 24 Oct 2019 07:57:03 +0300
+Message-ID: <CAOQ4uxis-oQSjKrtBDi-8BQ2M3ve3w8o-YVGRwWLnq+5JLUttA@mail.gmail.com>
+Subject: Re: [PATCH v14 1/5] Add flags option to get xattr method paired to __vfs_getxattr
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Mark Salyzyn <salyzyn@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, CIFS <linux-cifs@vger.kernel.org>,
+        kernel-team@android.com, selinux@vger.kernel.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        ecryptfs@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/23/19 12:49 PM, Joe Perches wrote:
-> On Mon, 2019-10-21 at 10:09 +0100, Daniel Thompson wrote:
->> On Fri, Oct 18, 2019 at 09:35:08AM -0700, Joe Perches wrote:
->>> Use the new pseudo keyword "fallthrough;" and not the
->>> various /* fallthrough */ style comments.
->>>
->>> Signed-off-by: Joe Perches <joe@perches.com>
->>> ---
->>>
->>> This is a single patch for the kernel/ source tree,
->>> which would otherwise be sent through as separate
->>> patches to 19 maintainer sections.
->>
->> For the kernel/debug/ files:
->>
->> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
->>
->> Will you be putting this in an immutable branch once you've collected
->> enough acks?
-> 
-> No, I expect Linus will either run the script
-> or apply this patch one day.
+[excessive CC list reduced]
 
-Please coordinate and get something like this run/applied a few days
-before -rc1 to cause the least amount of needless merge issues.
+On Wed, Oct 23, 2019 at 11:07 AM Andreas Dilger via samba-technical
+<samba-technical@lists.samba.org> wrote:
+>
+>
+> On Oct 22, 2019, at 2:44 PM, Mark Salyzyn <salyzyn@android.com> wrote:
+> >
+> > Replace arguments for get and set xattr methods, and __vfs_getxattr
+> > and __vfs_setaxtr functions with a reference to the following now
+> > common argument structure:
+> >
+> > struct xattr_gs_args {
+> >       struct dentry *dentry;
+> >       struct inode *inode;
+> >       const char *name;
+> >       union {
+> >               void *buffer;
+> >               const void *value;
+> >       };
+> >       size_t size;
+> >       int flags;
+> > };
+>
 
--- 
-Jens Axboe
+> > Mark,
+> >
+> > I do not see the first patch on fsdevel
+> > and I am confused from all the suggested APIs
+> > I recall Christoph's comment on v8 for not using xattr_gs_args
+> > and just adding flags to existing get() method.
+> > I agree to that comment.
+>
+> As already responded, third (?) patch version was like that,
 
+The problem is that because of the waaay too long CC list, most revisions
+of the patch and discussion were bounced from fsdevel, most emails
+I did not get and cannot find in archives, so the discussion around
+them is not productive.
+
+Please resend patch to fsdevel discarding the auto added CC list
+of all fs maintainers.
+
+> gregkh@
+> said it passed the limit for number of arguments, is looking a bit silly
+
+Well, you just matched get() to set() args list, so this is not a strong
+argument IMO.
+
+> (my paraphrase), and that it should be passed as a structure. Two others
+> agreed. We gained because both set and get use the same structure after
+> this change (this allows a simplified read-modify-write cycle).
+
+That sounds like a nice benefit if this was user API, but are there any
+kernel users that intend to make use of that read-modify-write cycle?
+I don't think so.
+
+>
+> We will need a quorum on this, 3 (structure) to 2 (flag) now (but really
+> basically between Greg and Christoph?). Coding style issue: Add a flag,
+> or switch to a common xattr argument  structure?
+>
+
+IIRC, Christoph was asking why the silly struct and not simply add flags
+(as did I). He probably did not see Greg's comments due to the list bounce
+issue. If I read your second hand description of Greg's reaction correctly,
+it doesn't sound so strong opinionated as well.
+Me, I can live with flags or struct - I don't care, but...
+
+Be prepared that if you are going ahead with struct you are going to
+suffer from bike shedding, which has already started and you will be
+instructed (just now) to also fix all the relevant and missing Documentation.
+If, on the other hand, you can get Greg and the rest to concede to adding
+flags arg and match get() arg list to set() arg list, you will have a much
+easier job and the patch line count, especially in fs code will be *much*
+smaller - just saying.
+
+Thanks,
+Amir.
