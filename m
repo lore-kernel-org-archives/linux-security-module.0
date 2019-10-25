@@ -2,125 +2,96 @@ Return-Path: <SRS0=FO2U=YS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C25FCA9EA0
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Oct 2019 11:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1882CA9EA0
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Oct 2019 16:45:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F40E2084C
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Oct 2019 11:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A155B21872
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Oct 2019 16:45:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MBGdJF/t"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FE/GwmYd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439095AbfJYLKo (ORCPT
+        id S2505728AbfJYQpW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Oct 2019 07:10:44 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56509 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2439027AbfJYLKo (ORCPT
+        Fri, 25 Oct 2019 12:45:22 -0400
+Received: from mail-il1-f175.google.com ([209.85.166.175]:43552 "EHLO
+        mail-il1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2633101AbfJYQoX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Oct 2019 07:10:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572001843;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TdJfsRTRsop6kJ0wm+muChXm7G7utcbXCoWG3VUu7rE=;
-        b=MBGdJF/tD3D9VfPkkQDbNX2KoRprIJoV8nqD8eYR8oYGT6heoJMKpr3TN7KdNMAt5nzE6H
-        7OYDcVEKZErGZgg1TPq+oc9AZ8fkIblBDtTTRoSNlzOsHXc5MZDiq+6xrc4sNV3q92lrkg
-        IYpcZb7s3At0mvnGZx0EfhWLmELKXWw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-216-861dr80_ONCLLYjyGzsS9w-1; Fri, 25 Oct 2019 07:10:39 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8F765801E6F;
-        Fri, 25 Oct 2019 11:10:35 +0000 (UTC)
-Received: from crecklin.bos.csb (ovpn-125-176.rdu2.redhat.com [10.10.125.176])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D5711001B2D;
-        Fri, 25 Oct 2019 11:10:29 +0000 (UTC)
-Reply-To: crecklin@redhat.com
-Subject: Re: [PATCH] security/keyring: avoid pagefaults in
- keyring_read_iterator
-From:   Chris von Recklinghausen <crecklin@redhat.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
-References: <20191018184030.8407-1-crecklin@redhat.com>
- <30309.1571667719@warthog.procyon.org.uk>
- <b8aa0f7c-0a90-efae-9fb7-aa85b19a0d9a@redhat.com>
-Organization: Red Hat
-Message-ID: <3c87bfba-9dc9-665f-17e8-0656e87c658b@redhat.com>
-Date:   Fri, 25 Oct 2019 07:10:29 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 25 Oct 2019 12:44:23 -0400
+Received: by mail-il1-f175.google.com with SMTP id t5so2393291ilh.10
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Oct 2019 09:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=FnNCWhzA8wzAQcW3IvtMxmOw0mIYmbzhbuz8jcog3z0=;
+        b=FE/GwmYd89R7oOACf+gouF5/sDJA7KfixcIXlgu0Zy2xBlflmjGhsPtumrOF2/chO7
+         ukgC7RpX2WU0ieTsoaIEsugTNO9IxVY55sHdmI8YDpkuFlrYNj3TJ3Yyh4TkMX3TEZVP
+         euzKnHoQXH1CnnfPJ8ycKy7wwlV1V2ytUcp0U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=FnNCWhzA8wzAQcW3IvtMxmOw0mIYmbzhbuz8jcog3z0=;
+        b=q7GjWvpfmVsARBmf9sl2T2Q48TSebOhHGpgh70RLHpHncE88rYOwkj3MVZ14bNTFyZ
+         +o7/2pD/ygwboWswQHmLeThBal5lvYIQMz9C8mEsjGWAh5y2oBjbV3vai8IT157KPUoz
+         3WAfnZnqm2RQohyhmB8bwvRxIV7f/FEtU/PdfvSWTRGDmtZyzc7IgNqZOgtHWUIhV7Uc
+         FB9g2P+Ff5X45eUerJYpLqO8Um9+9h52c9kog8B2q8ZExzJsqovrSILXjch6W5Ffm9/c
+         lJRefg9XSAWcsT7uDLU6IJ9dfYLyBp32HKWMWeg79c4P1efHU4kWWWjN33hNaf/YM33G
+         R4pw==
+X-Gm-Message-State: APjAAAVnSu0LR31+6I20jWpmofdsX3jzIwiyF9ZujCn/bbFuA2E2ha+L
+        iQOMbnIVvlYvLeJLxOW7jYWapr1xF9c=
+X-Google-Smtp-Source: APXvYqwplTp4urBExPhvW25l2L+/Ju3JVHBS2+uFvGllPrRfHCui0ndNyVgsV/dJodnzbqd+6w7Ttw==
+X-Received: by 2002:a92:c8ca:: with SMTP id c10mr5418488ilq.229.1572021862266;
+        Fri, 25 Oct 2019 09:44:22 -0700 (PDT)
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com. [209.85.166.173])
+        by smtp.gmail.com with ESMTPSA id t16sm333490iol.12.2019.10.25.09.44.20
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2019 09:44:21 -0700 (PDT)
+Received: by mail-il1-f173.google.com with SMTP id z10so2399911ilo.8
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Oct 2019 09:44:20 -0700 (PDT)
+X-Received: by 2002:a92:d101:: with SMTP id a1mr5273789ilb.142.1572021860411;
+ Fri, 25 Oct 2019 09:44:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b8aa0f7c-0a90-efae-9fb7-aa85b19a0d9a@redhat.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: 861dr80_ONCLLYjyGzsS9w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 25 Oct 2019 09:44:09 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Uui+a6TS85VNv3XVApq7xYifd8m_ZTmShTC2jeGEO4jg@mail.gmail.com>
+Message-ID: <CAD=FV=Uui+a6TS85VNv3XVApq7xYifd8m_ZTmShTC2jeGEO4jg@mail.gmail.com>
+Subject: Please pick ("LSM: SafeSetID: Stop releasing uninitialized ruleset")
+ to 5.3 stable
+To:     "stable@vger.kernel.org" <stable@vger.kernel.org>
+Cc:     Guenter Roeck <groeck@chromium.org>,
+        Micah Morton <mortonm@chromium.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/21/2019 11:46 AM, Chris von Recklinghausen wrote:
-> On 10/21/2019 10:21 AM, David Howells wrote:
->> Chris von Recklinghausen <crecklin@redhat.com> wrote:
->>
->>> The put_user call from keyring_read_iterator caused a page fault which
->>> attempts to lock mm->mmap_sem and type->lock_class (key->sem) in the re=
-verse
->>> order that keyring_read_iterator did, thus causing the circular locking
->>> dependency.
->>>
->>> Remedy this by using access_ok and __put_user instead of put_user so we=
-'ll
->>> return an error instead of faulting in the page.
->> I wonder if it's better to create a kernel buffer outside of the lock in
->> keyctl_read_key().  Hmmm...  The reason I didn't want to do that is that
->> keyrings have don't have limits on the size.  Maybe that's not actually =
-a
->> problem, since 1MiB would be able to hold a list of a quarter of a milli=
-on
->> keys.
->>
->> David
->>
-> Hi David,
->
-> Thanks for the feedback.
->
-> I can try to prototype that, but regardless of where the kernel buffer
-> is allocated, the important part is causing the initial pagefault in the
-> read path outside the lock so __put_user won't fail due to a valid user
-> address but page backing the user address isn't in-core.
->
-> I'll start work on v2.
+If you're still taking things for 5.3 stable, I humbly request picking
+up commit 21ab8580b383 ("LSM: SafeSetID: Stop releasing uninitialized
+ruleset").  While bisecting other problems this crash tripped me up
+and I would have been able to bisect faster had the fix been in
+linux-stable.  Only kernel 5.3 is affected.
 
-Actually I'm going to back off on a v2 effort at this point and request
-that folks comment on the code as-is. Changing keyctl_read_key to use
-its own kernel buffer might be a worthwhile effort, but it doesn't
-appear to me to have any effects on preventing pagefaults on user pages
-at inopportune points of the code.
+For reference, the crash for me looked like:
 
-Thanks,
+Call trace:
+ __call_rcu+0x2c/0x1ac
+ call_rcu+0x28/0x34
+ safesetid_file_write+0x344/0x350
+ __vfs_write+0x54/0x18c
+ vfs_write+0xcc/0x18c
+ ksys_write+0x7c/0xe4
+ __arm64_sys_write+0x20/0x2c
+ el0_svc_common+0x9c/0x14c
+ el0_svc_compat_handler+0x28/0x34
+ el0_svc_compat+0x8/0x10
 
-Chris
+Thanks much.
 
->
-> Thanks,
->
-> Chris
->
-
+-Doug
