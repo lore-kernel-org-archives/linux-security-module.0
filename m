@@ -1,78 +1,57 @@
-Return-Path: <SRS0=mqlx=YR=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=FO2U=YS=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4455CA9EAF
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 21:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C84C47E49
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Oct 2019 08:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8561F21A4C
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Oct 2019 21:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571952618;
-	bh=e00/yHSlXvXqqf/JB2YJn64yA5+CxFA09Oq6zHURRsU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=iENkDeOM0wZzBzC793xVwUKcGuqJxNqTGQ4Atdz8yLU2MxP7VtTLjDd4fmDQGMWU9
-	 B/u+AxrmIUaCgiopE2OX7F3kCTJwzk2QclowROm5bqUe0t1uk8GNnb5EbR7wYGg+Zw
-	 dMRF0aTXmII963geGKt/Z9kbh90RWqTuBnWvX+qc=
+	by mail.kernel.org (Postfix) with ESMTP id 7C94021929
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Oct 2019 08:35:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NOPUEBQc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728957AbfJXVaR (ORCPT
+        id S1730668AbfJYIfL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Oct 2019 17:30:17 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43724 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729297AbfJXVaP (ORCPT
+        Fri, 25 Oct 2019 04:35:11 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:45838 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2404539AbfJYIfL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Oct 2019 17:30:15 -0400
-Received: by mail-lf1-f66.google.com with SMTP id v24so303425lfe.10
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Oct 2019 14:30:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h5FP/voiQdxeaQU3Va8HH5cRZmi1OHTMwBKcRrrOo6E=;
-        b=G+CKE+0sNMbBuosjchwhgzz8NQwfbV/8kKBYcW1zgIA+wCHZXB0W4xnrddKNkrujly
-         nBXQf8TMFFxtwDaqAlubm1WQBu/DIP2jq0ClHTeKxpnxD8j4n3vqHGpl41RLHFrD0jXc
-         jfdzDY5G/0JxiPvAj8Pc7cihC14c7Kl2f6hiQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h5FP/voiQdxeaQU3Va8HH5cRZmi1OHTMwBKcRrrOo6E=;
-        b=BWnmU66FzPAcabS2DGLQZw9fjCtPxLuTUlORRBncgc2hymF52IQwqZfZC2ZEvKyXAb
-         sRP/0USe30iqSrL5rT0UROQdf3EjHfcpU9uxquai/9PkSQ3LIrY6X8FujILdBTC43J6l
-         uqc62nVUEETB7yc12jfNNwqhpDcRBt+FogdTk+uyFVm6kRuuiiip6S6XCrm8wRu3CKp3
-         ToQwWWEblDk0ffbAw//bbIpYEFnL1uCggjqPe9y36ctECkLiGupXmMOW3k68LSm0+SgG
-         2eI8O7+Lg44S5M8DuYuolT/uMfZidYtUE4R+6yVK6hNsb6SfxFyKB6aJK6V+xgJyDshD
-         oegg==
-X-Gm-Message-State: APjAAAW133BtJQnGFRlN9MRd1hVAGLQPPLh3OIj+EJx1/SrO4VxHItXj
-        2ZKGsv6m9hggj7nWF7wm4i8LoimyHNMP6A==
-X-Google-Smtp-Source: APXvYqwE2RUejjiYFx80DwJB5Oxq1JZ2FFvMatNPok9TWrlDtcsYznT+HGnL14dKMpF5muDyKx/l6g==
-X-Received: by 2002:ac2:554d:: with SMTP id l13mr202721lfk.116.1571952611975;
-        Thu, 24 Oct 2019 14:30:11 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id t24sm11266794ljc.23.2019.10.24.14.30.08
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2019 14:30:08 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id l21so270390lje.4
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Oct 2019 14:30:08 -0700 (PDT)
-X-Received: by 2002:a05:651c:331:: with SMTP id b17mr3303284ljp.133.1571952607809;
- Thu, 24 Oct 2019 14:30:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <30394.1571936252@warthog.procyon.org.uk>
-In-Reply-To: <30394.1571936252@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 24 Oct 2019 17:29:51 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wiMho2AhcTWC3-3zGK7639XL9UT=AheMXY0pxGHDACn6g@mail.gmail.com>
-Message-ID: <CAHk-=wiMho2AhcTWC3-3zGK7639XL9UT=AheMXY0pxGHDACn6g@mail.gmail.com>
-Subject: Re: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Fri, 25 Oct 2019 04:35:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571992510;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gsc+0cnWp+SeXo5Ab/Z5m/x0oLsQUzNBoPuLzeohPH8=;
+        b=NOPUEBQcEdYBmqATxtXkRECvwvwTFH+9JO5ZYGM6BHmE/mluTOZi+2GQUBQyru2lR6UaZ4
+        1iYY5FOhu12pgVbavx/TQkfDfBV9WRRAe37Mf0+MJSFznfgbKUMPSOo0gbGPEnZC7mPyq3
+        dUL/Jzb7wLq4cjMVOw5lX8zi5Dp5tlg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-331-Yt-flKkyMo6CKNT7t3AOmw-1; Fri, 25 Oct 2019 04:35:05 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C5E9E800D41;
+        Fri, 25 Oct 2019 08:35:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AFDF84100;
+        Fri, 25 Oct 2019 08:35:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wiMho2AhcTWC3-3zGK7639XL9UT=AheMXY0pxGHDACn6g@mail.gmail.com>
+References: <CAHk-=wiMho2AhcTWC3-3zGK7639XL9UT=AheMXY0pxGHDACn6g@mail.gmail.com> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk> <30394.1571936252@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
@@ -83,25 +62,53 @@ Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
+MIME-Version: 1.0
+Content-ID: <9190.1571992499.1@warthog.procyon.org.uk>
+Date:   Fri, 25 Oct 2019 09:34:59 +0100
+Message-ID: <9191.1571992499@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: Yt-flKkyMo6CKNT7t3AOmw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 24, 2019 at 12:57 PM David Howells <dhowells@redhat.com> wrote:
->
-> pipe: Add fsync() support
->
-> The keyrings testsuite needs the ability to wait for all the outstanding
-> notifications in the queue to have been processed so that it can then go
-> through them to find out whether the notifications it expected have been
-> emitted.
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Can't you just do
+> > The keyrings testsuite needs the ability to wait for all the outstandin=
+g
+> > notifications in the queue to have been processed so that it can then g=
+o
+> > through them to find out whether the notifications it expected have bee=
+n
+> > emitted.
+>=20
+> Can't you just do
+>=20
+>     ioctl(fd, FIONREAD, &count);
+>=20
+> in a loop instead? "No paperwork. Just sprinkle some msleep() crack on
+> him, and let's get out of here"
 
-    ioctl(fd, FIONREAD, &count);
+Using FIONREAD like this means that I would have to quiesce the tests in or=
+der
+to sync up.  For the moment that's fine, but at some point I would like to =
+be
+able to stress test the system by running tests in parallel against the sam=
+e
+keyring.  Each test needs to check with the monitor whether its keys have
+generated the appropriate notifications against a backdrop of events being
+continuously generated by other tests.
 
-in a loop instead? "No paperwork. Just sprinkle some msleep() crack on
-him, and let's get out of here"
+I can hold this patch for now.  Let me see if I can come up with a better w=
+ay
+to do it.  Maybe it can be done by dead reckoning, holding up until either
+we've counted out a complete ring-full of notifications or read() has come =
+up
+empty.
 
-               Linus
+David
+
