@@ -2,73 +2,71 @@ Return-Path: <SRS0=3yFQ=YW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB4DCA9EAE
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Oct 2019 14:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C86B1CA9EC4
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Oct 2019 14:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E27420659
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Oct 2019 14:19:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E74521721
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Oct 2019 14:44:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389151AbfJ2OS7 (ORCPT
+        id S2389439AbfJ2OoN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Oct 2019 10:18:59 -0400
-Received: from mga07.intel.com ([134.134.136.100]:14091 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388871AbfJ2OS7 (ORCPT
+        Tue, 29 Oct 2019 10:44:13 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:51742 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388712AbfJ2OoM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Oct 2019 10:18:59 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 07:18:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,244,1569308400"; 
-   d="scan'208";a="193618177"
-Received: from jkenneal-mobl.ger.corp.intel.com (HELO localhost) ([10.252.31.252])
-  by orsmga008.jf.intel.com with ESMTP; 29 Oct 2019 07:18:53 -0700
-Date:   Tue, 29 Oct 2019 16:18:52 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     zhengbin <zhengbin13@huawei.com>
-Cc:     dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
-        sumit.garg@linaro.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, yi.zhang@huawei.com
-Subject: Re: [PATCH] KEYS: trusted: Remove set but not used variable 'keyhndl'
-Message-ID: <20191029141852.GB7415@linux.intel.com>
-References: <1572341612-31893-1-git-send-email-zhengbin13@huawei.com>
- <20191029141637.GA7415@linux.intel.com>
+        Tue, 29 Oct 2019 10:44:12 -0400
+Received: from localhost (unknown [IPv6:2a00:5f00:102:0:3aba:f8ff:fe58:9ca1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: smcv)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 4617D28FC84;
+        Tue, 29 Oct 2019 14:44:11 +0000 (GMT)
+Date:   Tue, 29 Oct 2019 14:44:08 +0000
+From:   Simon McVittie <smcv@collabora.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        sds@tycho.nsa.gov
+Subject: Re: [PATCH v10 13/25] LSM: Specify which LSM to display
+Message-ID: <20191029144408.GA26815@horizon>
+References: <20191024205228.6922-1-casey@schaufler-ca.com>
+ <20191024205228.6922-14-casey@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191029141637.GA7415@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20191024205228.6922-14-casey@schaufler-ca.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 29, 2019 at 04:16:37PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Oct 29, 2019 at 05:33:32PM +0800, zhengbin wrote:
-> > Fixes gcc '-Wunused-but-set-variable' warning:
-> > 
-> > security/keys/trusted-keys/trusted_tpm1.c: In function tpm_unseal:
-> > security/keys/trusted-keys/trusted_tpm1.c:588:11: warning: variable keyhndl set but not used [-Wunused-but-set-variable]
-> > 
-> > It is introduced by commit 00aa975bd031 ("KEYS: trusted:
-> > Create trusted keys subsystem"), but never used, so remove it.
-> > 
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: zhengbin <zhengbin13@huawei.com>
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> I'll pick this to my tree.
+On Thu, 24 Oct 2019 at 13:52:16 -0700, Casey Schaufler wrote:
+> Create a new entry "display" in /proc/.../attr for controlling
+> which LSM security information is displayed for a process.
 
-Please use fixes tag next time instead of ad hoc.
+It still isn't immediately obvious to me from the commit message whether
+the "..." stands for the pid of the process that will read LSM information,
+or the pid of the process whose LSM information will be read.
 
-Anyway, applied, thanks.
+I believe the intended meaning was the former? So perhaps
 
-/Jarkko
+    Create a new entry "display" in /proc/$reader/attr that controls
+    which LSM security information will be displayed when the process
+    $reader reads LSM information.
+
+    (Note that when $reader reads /proc/$subject/attr/current for
+    $reader != $subject, it is /proc/$reader/attr/display that controls
+    what is displayed there, not /proc/$subject/attr/display.)
+
+The commit that introduces /proc/.../attr/context could probably
+benefit from similar treatment - maybe it could be referred to as
+/proc/$subject/attr/context?
+
+    smcv
