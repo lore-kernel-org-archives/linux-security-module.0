@@ -2,346 +2,284 @@ Return-Path: <SRS0=3yFQ=YW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6EECA9EC4
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Oct 2019 15:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28104CA9EAE
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Oct 2019 17:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36C9821721
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Oct 2019 15:51:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="t1wJjaXz"
+	by mail.kernel.org (Postfix) with ESMTP id E326320679
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Oct 2019 17:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390118AbfJ2Pv2 (ORCPT
+        id S1728423AbfJ2Rfy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Oct 2019 11:51:28 -0400
-Received: from sonic306-26.consmr.mail.gq1.yahoo.com ([98.137.68.89]:44695
-        "EHLO sonic306-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390139AbfJ2Pv2 (ORCPT
+        Tue, 29 Oct 2019 13:35:54 -0400
+Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:55501 "EHLO
+        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbfJ2Rfx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Oct 2019 11:51:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1572364286; bh=KTqsCOFQPgDsxSMjAolu/0TFSGepVZzrmYtjociN4qY=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=t1wJjaXzCo1vR/6fw49mtbtBKM7oH06bwt8QzWB2fgRGP0BLJsnB+ncaXuIVliTZ1H48KgUQnkEFcpsTeP9mpxRHZvIeO11l5AFHm/x3qDxuVTqMnHWQJ/fRqLUmaIcMTvGaf+UYWRde6LStnrV9g8wUdEANJkCBNmwiIEL8c4YyZybvm80zftXkkIoV0oD2NfqaEUr0mRj+97s5KjtJ9lsPKUAjie9WImlMa6jzazPl+40DvJwHA3PPQxqAoVwD2Isn57uvZKYyjNF4MnpZ2D03/Qix258RTNB168hzjhqohk6ryjNxyN0JjQ33z91f1NitDuNCy2NGdBTrj1kxBQ==
-X-YMail-OSG: bLR5ExwVM1knRoaznmupXanJU9CZY6xP.hSfg_d_TbkjKLHUQEuNSTMZ4UUOxq9
- Jeis8Awesf_LghM4lF_qR.Q8B9yC6MjfmTelfP42CU3bi0zADHKcANsh5a5mVZ7b4AL6rD.4ZCDe
- SrbKFwqxJLBZ1egU7KS7HRBZhM9U0UxZWA63UB5r2PK7pQpPAyMJX4Q5uLbil7WYPJyfhRCiA4kb
- Ej5nLvlXTcVLvvy3SuG7suGP9qqVZpJpnvrmfdb3ONLfpgmXM4gmrnEMqHFHs.UbdX6CdFBlM.D3
- AA6EeyyaB6ueXrG2dUq1LffgQtr.TUfm9u9lp92VIj6fOl3KMDOYxM_wEhx6BNpPQ9x7XwsQ3CS3
- JDDGZsZpr1LAIhqauTjLJom7NWYGhl4goFmMWuMJHqmGuTNpJe.QpbvKwHdlM0HEhF3IU.HoPCgr
- GVk5JOi1m2UCK8ff.nVukC2xeP5TeXk9v7Ag93WyC.po8._2nfV1WFRDxABzegGFOgeXw1HH2mo4
- 51oCzRiEjYgoS_WJmezueKgoBeN5C1j_azpScI8JSnFK16yQTvTtLI0kF_YE.HUQNliX7kuGCjbW
- chpSqzJPCO5wA4nCr.SnVxqV2Na0peSV8.qsz.jA1tLjgADJbxsTKKasjdrKTl_BhKiwkssJoD0p
- Wevp_MJdzYACcT_uIH5eyChJJG9MKSMurH45_AzqmLivTY5DLzS_M5mJuHCbX8wd7U8By55S0ByM
- ld5Jwt0zORPC3K23C0_PhVuToLTwvZVpvcLKEYPiKNQD4WomNT9cO0fS9rikcxpRkXe5_blRbm5E
- wM_14QYufvHfNBNdIXK1NKNUXsnDKuiSWwBaaYTOJPhSgB5Rx4W_ZQdD79XGP4_xGceZpGTUu.26
- dplLYHHnqvTuH1cI7TIMKXX18g1ljWNcEIpiHFiItgBYC2R_QfUGTqnXbs0JVMgbmSjjz7H46WfU
- HzWNFM5qv0CJ.TsxpLNhGlKhAPCKH6MEZ8e_9yknVmDnp54LWtF8CGSfZISUIjciDHcaFHPIjCtd
- NwG6ABTlWztVMbFhdhaAyT1hYY7sCMv4fKDZU.BBZouaAdjwFeXJDRKEYYWACKjBKQwQyuGqeZ7c
- L8SM59HVrW4cyL.T.Q2ZHmYA5oQwuwMm1zseXGiYVwS3DU.rQszsFmoJk_dp85AkrxSBIde_qojH
- dPdzQFcT2A9izczuXTk0lU4tm4HlDdksugEpblFyjxNlhw7SJkN.OiGDELyZvcibyuAkAPd9AB_L
- 6XyCdBywsEOWCQBx8Ct6E28Wp7QqRwwpF9hHHKhnhHaNs8W0PSBR7aeREg4smm6sW1Oj59yCY0.S
- mE4ah_sXR__MVJDQZYXFQmEiJBfyGIHxzicZThh7F5lNYPkgt4L3XozZmA8yrKZ.o6mXvSKuOd8g
- SJNla3DwzIReBKodhix05k4IZnTl0
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.gq1.yahoo.com with HTTP; Tue, 29 Oct 2019 15:51:26 +0000
-Received: by smtp426.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 52b79302aa99703fcd89f9705bf5b90b;
-          Tue, 29 Oct 2019 15:51:22 +0000 (UTC)
-Subject: Re: [PATCH v10 00/25] LSM: Module stacking for AppArmor
-To:     Stephen Smalley <sds@tycho.nsa.gov>, casey.schaufler@intel.com,
-        jmorris@namei.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Cc:     keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        casey@schaufler-ca.com
-References: <20191024205228.6922-1-casey@schaufler-ca.com>
- <ce6c4861-2767-89ab-bad5-f633a67b3fc9@tycho.nsa.gov>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <19e2696d-ab07-21e5-ba22-4ffdcae3c97c@schaufler-ca.com>
-Date:   Tue, 29 Oct 2019 08:51:20 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 29 Oct 2019 13:35:53 -0400
+X-Greylist: delayed 1166 seconds by postgrey-1.27 at vger.kernel.org; Tue, 29 Oct 2019 13:35:48 EDT
+Received: from smtp8.infomaniak.ch (smtp8.infomaniak.ch [83.166.132.38])
+        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x9THFTwF006296
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 18:15:29 +0100
+Received: from localhost (ns3096276.ip-94-23-54.eu [94.23.54.103])
+        (authenticated bits=0)
+        by smtp8.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x9THFS47168713;
+        Tue, 29 Oct 2019 18:15:28 +0100
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        Florent Revest <revest@chromium.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        KP Singh <kpsingh@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH bpf-next v11 5/7] bpf,landlock: Add task_landlock_ptrace_ancestor() helper
+Date:   Tue, 29 Oct 2019 18:15:03 +0100
+Message-Id: <20191029171505.6650-6-mic@digikod.net>
+X-Mailer: git-send-email 2.24.0.rc1
+In-Reply-To: <20191029171505.6650-1-mic@digikod.net>
+References: <20191029171505.6650-1-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <ce6c4861-2767-89ab-bad5-f633a67b3fc9@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-T24gMTAvMjkvMjAxOSA3OjUzIEFNLCBTdGVwaGVuIFNtYWxsZXkgd3JvdGU6DQo+IE9uIDEw
-LzI0LzE5IDQ6NTIgUE0sIENhc2V5IFNjaGF1ZmxlciB3cm90ZToNCj4+IFRoaXMgcGF0Y2hz
-ZXQgcHJvdmlkZXMgdGhlIGNoYW5nZXMgcmVxdWlyZWQgZm9yDQo+PiB0aGUgQXBwQXJtb3Ig
-c2VjdXJpdHkgbW9kdWxlIHRvIHN0YWNrIHNhZmVseSB3aXRoIGFueSBvdGhlci4NCj4+DQo+
-PiB2MTA6IEFzayB0aGUgc2VjdXJpdHkgbW9kdWxlcyBpZiB0aGUgZGlzcGxheSBjYW4gYmUg
-Y2hhbmdlZC4NCj4+DQo+PiB2OTogVGhlcmUgaXMgbm8gdmVyc2lvbiA5DQo+Pg0KPj4gdjg6
-IEluY29ycG9yYXRlIGZlZWRiYWNrIGZyb20gdjcNCj4+IMKgwqDCoMKgIC0gTWlub3IgY2xl
-YW4tdXAgaW4gZGlzcGxheSB2YWx1ZSBtYW5hZ2VtZW50DQo+PiDCoMKgwqDCoCAtIHJlZmFj
-dG9yICJjb21wb3VuZCIgY29udGV4dCBjcmVhdGlvbiB0byB1c2UgYSBjb21tb24NCj4+IMKg
-wqDCoMKgwqDCoCBhcHBlbmRfY3R4KCkgZnVuY3Rpb24uDQo+Pg0KPj4gdjc6IEluY29ycG9y
-YXRlIGZlZWRiYWNrIGZyb20gdjYNCj4+IMKgwqDCoMKgIC0gTWFrZSBzZXR0aW5nIHRoZSBk
-aXNwbGF5IGEgcHJpdmlsZWdlZCBvcGVyYXRpb24uIFRoZQ0KPj4gwqDCoMKgwqDCoMKgIGF2
-YWlsYWJpbGl0eSBvZiBjb21wb3VuZCBjb250ZXh0cyByZWR1Y2VzIHRoZSBuZWVkIGZvcg0K
-Pj4gwqDCoMKgwqDCoMKgIHNldHRpbmcgdGhlIGRpc3BsYXkuDQo+Pg0KPj4gdjY6IEluY29y
-cG9yYXRlIGZlZWRiYWNrIGZyb20gdjUNCj4+IMKgwqDCoMKgIC0gQWRkIHN1YmpfPGxzbT49
-IGFuZCBvYmpfPGxzbT49IGZpZWxkcyB0byBhdWRpdCByZWNvcmRzDQo+PiDCoMKgwqDCoCAt
-IEFkZCAvcHJvYy8uLi4vYXR0ci9jb250ZXh0IHRvIGdldCB0aGUgZnVsbCBjb250ZXh0IGlu
-DQo+PiDCoMKgwqDCoMKgwqAgbHNtbmFtZVwwdmFsdWVcMC4uLiBmb3JtYXQgYXMgc3VnZ2Vz
-dGVkIGJ5IFNpbW9uIE1jVml0dGllDQo+PiDCoMKgwqDCoCAtIEFkZCBTT19QRUVSQ09OVEVY
-VCBmb3IgZ2V0c29ja29wdCgpIHRvIGdldCB0aGUgZnVsbCBjb250ZXh0DQo+PiDCoMKgwqDC
-oMKgwqAgaW4gdGhlIHNhbWUgZm9ybWF0LCBhbHNvIHN1Z2dlc3RlZCBieSBTaW1vbiBNY1Zp
-dHRpZS4NCj4+IMKgwqDCoMKgIC0gQWRkIC9zeXMva2VybmVsL3NlY3VyaXR5L2xzbV9kaXNw
-bGF5X2RlZmF1bHQgdG8gcHJvdmlkZQ0KPj4gwqDCoMKgwqDCoMKgIHRoZSBkaXNwbGF5IGRl
-ZmF1bHQgdmFsdWUuDQo+Pg0KPj4gdjU6IEluY29ycG9yYXRlIGZlZWRiYWNrIGZyb20gdjQN
-Cj4+IMKgwqDCoMKgIC0gSW5pdGlhbGl6ZSB0aGUgbHNtY29udGV4dCBpbiBzZWN1cml0eV9z
-ZWNpZF90b19zZWNjdHgoKQ0KPj4gwqDCoMKgwqAgLSBDbGVhciB0aGUgbHNtY29udGV4dCBp
-biBhbGwgc2VjdXJpdHlfcmVsZWFzZV9zZWNjdHgoKSBjYXNlcw0KPj4gwqDCoMKgwqAgLSBE
-b24ndCB1c2UgdGhlICJkaXNwbGF5IiBvbiBzdHJpY3RseSBpbnRlcm5hbCBjb250ZXh0DQo+
-PiDCoMKgwqDCoMKgwqAgaW50ZXJmYWNlcy4NCj4+IMKgwqDCoMKgIC0gVGhlIFNFTGludXgg
-YmluZGVyIGhvb2tzIGNoZWNrIGZvciBjYXNlcyB3aGVyZSB0aGUgY29udGV4dA0KPj4gwqDC
-oMKgwqDCoMKgICJkaXNwbGF5IiBpc24ndCBjb21wYXRpYmxlIHdpdGggU0VMaW51eC4NCj4+
-DQo+PiB2NDogSW5jb3Jwb3JhdGUgZmVlZGJhY2sgZnJvbSB2Mw0KPj4gwqDCoMKgwqAgLSBN
-YXJrIG5ldyBsc21fPGJsb2I+X2FsbG9jIGZ1bmN0aW9ucyBzdGF0aWMNCj4+IMKgwqDCoMKg
-IC0gUmVwbGFjZSB0aGUgbHNtIGFuZCBzbG90IGZpZWxkcyBvZiB0aGUgc2VjdXJpdHlfaG9v
-a19saXN0DQo+PiDCoMKgwqDCoMKgwqAgd2l0aCBhIHBvaW50ZXIgdG8gYSBMU00gYWxsb2Nh
-dGVkIGxzbV9pZCBzdHJ1Y3R1cmUuIFRoZQ0KPj4gwqDCoMKgwqDCoMKgIExTTSBpZGVudGlm
-aWVzIGlmIGl0IG5lZWRzIGEgc2xvdCBleHBsaWNpdGx5LiBVc2UgdGhlDQo+PiDCoMKgwqDC
-oMKgwqAgbHNtX2lkIHJhdGhlciB0aGFuIG1ha2Ugc2VjdXJpdHlfYWRkX2hvb2tzIHJldHVy
-biB0aGUNCj4+IMKgwqDCoMKgwqDCoCBzbG90IHZhbHVlLg0KPj4gwqDCoMKgwqAgLSBWYWxp
-ZGF0ZSBzbG90IHZhbHVlcyB1c2VkIGluIHNlY3VyaXR5LmMNCj4+IMKgwqDCoMKgIC0gUmV3
-b3JrZWQgdGhlICJkaXNwbGF5IiBwcm9jZXNzIGF0dHJpYnV0ZSBoYW5kbGluZyBzbyB0aGF0
-DQo+PiDCoMKgwqDCoMKgwqAgaXQgd29ya3MgcmlnaHQgYW5kIGRvZXNuJ3QgdXNlIGdvb2Z5
-IGxpc3QgcHJvY2Vzc2luZy4NCj4+IMKgwqDCoMKgIC0gZml4IGRpc3BsYXkgdmFsdWUgY2hl
-Y2sgaW4gZGVudHJ5X2luaXRfc2VjdXJpdHkNCj4+IMKgwqDCoMKgIC0gUmVwbGFjZSBhdWRp
-dF9sb2cgb2Ygc2VjaWRzIHdpdGggJz8nIGluc3RlYWQgb2YgZGVsZXRpbmcNCj4+IMKgwqDC
-oMKgwqDCoCB0aGUgYXVkaXQgbG9nDQo+Pg0KPj4gdjM6IEluY29ycG9yYXRlIGZlZWRiYWNr
-IGZyb20gdjINCj4+IMKgwqDCoMKgIC0gTWFrZSBsc21ibG9iIHBhcmFtZXRlciBhbmQgdmFy
-aWFibGUgbmFtZXMgbW9yZQ0KPj4gwqDCoMKgwqDCoMKgIG1lYW5pbmdmdWwsIGNoYW5naW5n
-ICJsZSIgYW5kICJsIiB0byAiYmxvYiIuDQo+PiDCoMKgwqDCoCAtIEltcHJvdmUgY29uc2lz
-dGVuY3kgb2YgY29uc3RhbnQgbmFtaW5nLg0KPj4gwqDCoMKgwqAgLSBEbyBtb3JlIHNhbml0
-eSBjaGVja2luZyBkdXJpbmcgTFNNIGluaXRpYWxpemF0aW9uLg0KPj4gwqDCoMKgwqAgLSBC
-ZSBhIGJpdCBjbGVhcmVyIGFib3V0IHdoYXQgaXMgdGVtcG9yYXJ5IHNjYWZmb2xkaW5nLg0K
-Pj4gwqDCoMKgwqAgLSBSYXRoZXIgdGhhbiBjbHV0dGVyIHNlY3VyaXR5X2dldHBlZXJzZWNf
-ZGdyYW0gd2l0aA0KPj4gwqDCoMKgwqDCoMKgIG90aGVyd2lzZSB1bm5lY2Vzc2FyeSBjaGVj
-a3MgcmVtb3ZlIHRoZSBhcHBhcm1vcg0KPj4gwqDCoMKgwqDCoMKgIHN0dWIsIHdoaWNoIGRv
-ZXMgbm90aGluZyB1c2VmdWwuDQo+Pg0KPj4gUGF0Y2hlIDAwMDEgbW92ZXMgbWFuYWdlbWVu
-dCBvZiB0aGUgc29jayBzZWN1cml0eSBibG9iIGZyb20gdGhlIGluZGl2aWR1YWwNCj4+IG1v
-ZHVsZXMgdG8gdGhlIGluZnJhc3RydWN0dXJlLg0KPj4NCj4+IFBhdGNoZXMgMDAwMi0wMDEy
-IHJlcGxhY2Ugc3lzdGVtIHVzZSBvZiBhICJzZWNpZCIgd2l0aA0KPj4gYSBzdHJ1Y3R1cmUg
-ImxzbWJsb2IiIGNvbnRhaW5pbmcgaW5mb3JtYXRpb24gZnJvbSB0aGUNCj4+IHNlY3VyaXR5
-IG1vZHVsZXMgdG8gYmUgaGVsZCBhbmQgcmV1c2VkIGxhdGVyLiBBdCB0aGlzDQo+PiBwb2lu
-dCBsc21ibG9iIGNvbnRhaW5zIGFuIGFycmF5IG9mIHUzMiBzZWNpZHMsIG9uZSAic2xvdCIN
-Cj4+IGZvciBlYWNoIG9mIHRoZSBzZWN1cml0eSBtb2R1bGVzIGNvbXBpbGVkIGludG8gdGhl
-DQo+PiBrZXJuZWwgdGhhdCB1c2VkIHNlY2lkcy4gQSAic2xvdCIgaXMgYWxsb2NhdGVkIHdo
-ZW4NCj4+IGEgc2VjdXJpdHkgbW9kdWxlIHJlcXVlc3RzIG9uZS4NCj4+IFRoZSBpbmZyYXN0
-cnVjdHVyZSBpcyBjaGFuZ2VkIHRvIHVzZSB0aGUgc2xvdCBudW1iZXINCj4+IHRvIHBhc3Mg
-dGhlIGNvcnJlY3Qgc2VjaWQgdG8gb3IgZnJvbSB0aGUgc2VjdXJpdHkgbW9kdWxlDQo+PiBo
-b29rcy4NCj4+DQo+PiBJdCBpcyBpbXBvcnRhbnQgdGhhdCB0aGUgbHNtYmxvYiBiZSBhIGZp
-eGVkIHNpemUgZW50aXR5DQo+PiB0aGF0IGRvZXMgbm90IGhhdmUgdG8gYmUgYWxsb2NhdGVk
-LiBTZXZlcmFsIG9mIHRoZSBwbGFjZXMNCj4+IHdoZXJlIGl0IGlzIHVzZWQgd291bGQgaGF2
-ZSBwZXJmb3JtYW5jZSBhbmQvb3IgbG9ja2luZw0KPj4gaXNzdWVzIHdpdGggZHluYW1pYyBh
-bGxvY2F0aW9uLg0KPj4NCj4+IFBhdGNoIDAwMTMgcHJvdmlkZXMgYSBtZWNoYW5pc20gZm9y
-IGEgcHJvY2VzcyB0bw0KPj4gaWRlbnRpZnkgd2hpY2ggc2VjdXJpdHkgbW9kdWxlJ3MgaG9v
-a3Mgc2hvdWxkIGJlIHVzZWQNCj4+IHdoZW4gZGlzcGxheWluZyBvciBjb252ZXJ0aW5nIGEg
-c2VjdXJpdHkgY29udGV4dCBzdHJpbmcuDQo+PiBBIG5ldyBpbnRlcmZhY2UgL3Byb2MvLi4u
-L2F0dHIvZGlzcGxheSBjb250YWlucyB0aGUgbmFtZQ0KPj4gb2YgdGhlIHNlY3VyaXR5IG1v
-ZHVsZSB0byBzaG93LiBSZWFkaW5nIGZyb20gdGhpcyBmaWxlDQo+PiB3aWxsIHByZXNlbnQg
-dGhlIG5hbWUgb2YgdGhlIG1vZHVsZSwgd2hpbGUgd3JpdGluZyB0bw0KPj4gaXQgd2lsbCBz
-ZXQgdGhlIHZhbHVlLiBPbmx5IG5hbWVzIG9mIGFjdGl2ZSBzZWN1cml0eQ0KPj4gbW9kdWxl
-cyBhcmUgYWNjZXB0ZWQuIEludGVybmFsbHksIHRoZSBuYW1lIGlzIHRyYW5zbGF0ZWQNCj4+
-IHRvIHRoZSBhcHByb3ByaWF0ZSAic2xvdCIgbnVtYmVyIGZvciB0aGUgbW9kdWxlIHdoaWNo
-DQo+PiBpcyB0aGVuIHN0b3JlZCBpbiB0aGUgdGFzayBzZWN1cml0eSBibG9iLiBTZXR0aW5n
-IHRoZQ0KPj4gZGlzcGxheSByZXF1aXJlcyB0aGF0IGFsbCBtb2R1bGVzIHVzaW5nIHRoZSAv
-cHJvYyBpbnRlcmZhY2VzDQo+PiBhbGxvdyB0aGUgdHJhbnNpdGlvbi4NCj4+DQo+PiBQYXRj
-aCAwMDE0IFN0YXJ0cyB0aGUgcHJvY2VzcyBvZiBjaGFuZ2luZyBob3cgYSBzZWN1cml0eQ0K
-Pj4gY29udGV4dCBpcyByZXByZXNlbnRlZC4gU2luY2UgaXQgaXMgcG9zc2libGUgZm9yIGEN
-Cj4+IHNlY3VyaXR5IGNvbnRleHQgdG8gaGF2ZSBiZWVuIGdlbmVyYXRlZCBieSBtb3JlIHRo
-YW4gb25lDQo+PiBzZWN1cml0eSBtb2R1bGUgaXQgaXMgbm93IG5lY2Vzc2FyeSB0byBub3Rl
-IHdoaWNoIG1vZHVsZQ0KPj4gY3JlYXRlZCBhIHNlY3VyaXR5IGNvbnRleHQgc28gdGhhdCB0
-aGUgY29ycmVjdCAicmVsZWFzZSINCj4+IGhvb2sgY2FuIGJlIGNhbGxlZC4gVGhlcmUgYXJl
-IHNldmVyYWwgcGxhY2VzIHdoZXJlIHRoZQ0KPj4gbW9kdWxlIHRoYXQgY3JlYXRlZCBhIHNl
-Y3VyaXR5IGNvbnRleHQgY2Fubm90IGJlIGluZmVycmVkLg0KPj4NCj4+IFRoaXMgaXMgYWNo
-aWV2ZWQgYnkgaW50cm9kdWNpbmcgYSAibHNtY29udGV4dCIgc3RydWN0dXJlDQo+PiB3aGlj
-aCBjb250YWlucyB0aGUgY29udGV4dCBzdHJpbmcsIGl0cyBsZW5ndGggYW5kIHRoZQ0KPj4g
-InNsb3QiIG51bWJlciBvZiB0aGUgc2VjdXJpdHkgbW9kdWxlIHRoYXQgY3JlYXRlZCBpdC4N
-Cj4+IFRoZSBzZWN1cml0eV9yZWxlYXNlX3NlY2N0eCgpIGludGVyZmFjZSBpcyBjaGFuZ2Vk
-LA0KPj4gcmVwbGFjaW5nIHRoZSAoc3RyaW5nLGxlbikgcG9pbnRlciBwYWlyIHdpdGggYSBs
-c21jb250ZXh0DQo+PiBwb2ludGVyLg0KPj4NCj4+IFBhdGNoZXMgMDAxNS0wMDE3IGNvbnZl
-cnQgdGhlIHNlY3VyaXR5IGludGVyZmFjZXMgZnJvbQ0KPj4gKHN0cmluZyxsZW4pIHBvaW50
-ZXIgcGFpcnMgdG8gYSBsc21jb250ZXh0IHBvaW50ZXIuDQo+PiBUaGUgc2xvdCBudW1iZXIg
-aWRlbnRpZnlpbmcgdGhlIGNyZWF0aW5nIG1vZHVsZSBpcw0KPj4gYWRkZWQgYnkgdGhlIGlu
-ZnJhc3RydWN0dXJlLiBXaGVyZSB0aGUgc2VjdXJpdHkgY29udGV4dA0KPj4gaXMgc3RvcmVk
-IGZvciBleHRlbmRlZCBwZXJpb2RzIHRoZSBkYXRhIHR5cGUgaXMgY2hhbmdlZC4NCj4+DQo+
-PiBUaGUgTmV0bGFiZWwgY29kZSBpcyBjb252ZXJ0ZWQgdG8gc2F2ZSBsc21ibG9iIHN0cnVj
-dHVyZXMNCj4+IGluc3RlYWQgb2Ygc2VjaWRzIGluIFBhdGNoZXMgMDAxOC0wMDE5Lg0KPj4N
-Cj4+IFBhdGNoIDAwMjAgYWRkcyBjaGVja3MgdG8gdGhlIGJpbmRlciBob29rcyB3aGljaCB2
-ZXJpZnkNCj4+IHRoYXQgaWYgYm90aCBlbmRzIG9mIGEgdHJhbnNhY3Rpb24gdXNlIHRoZSBz
-YW1lICJkaXNwbGF5Ii4NCj4+DQo+PiBQYXRjaGVzIDAwMjEtMDAyMiBhZGQgYWRkaXRpb24g
-ZGF0YSB0byB0aGUgYXVkaXQgcmVjb3Jkcw0KPj4gdG8gaWRlbnRpZnkgdGhlIExTTSBzcGVj
-aWZpYyBkYXRhIGZvciBhbGwgYWN0aXZlIG1vZHVsZXMuDQo+Pg0KPj4gUGF0Y2hlcyAwMDIz
-LTAwMjQgYWRkIG5ldyBpbnRlcmZhY2VzIGZvciBnZXR0aW5nIHRoZQ0KPj4gY29tcG91bmQg
-c2VjdXJpdHkgY29udGV4dHMuDQo+Pg0KPj4gRmluYWxseSwgd2l0aCBhbGwgaW50ZXJmZXJl
-bmNlIG9uIHRoZSBBcHBBcm1vciBob29rcw0KPj4gcmVtb3ZlZCwgUGF0Y2ggMDAyNSByZW1v
-dmVzIHRoZSBleGNsdXNpdmUgYml0IGZyb20NCj4+IEFwcEFybW9yLiBBbiB1bm5lY2Vzc2Fy
-eSBzdHViIGhvb2sgd2FzIGFsc28gcmVtb3ZlZC4NCj4+DQo+PiBUaGUgVWJ1bnR1IHByb2pl
-Y3QgaXMgdXNpbmcgYW4gZWFybGllciB2ZXJzaW9uIG9mDQo+PiB0aGlzIHBhdGNoc2V0IGlu
-IHRoZWlyIGRpc3RyaWJ1dGlvbiB0byBlbmFibGUgc3RhY2tpbmcNCj4+IGZvciBjb250YWlu
-ZXJzLg0KPj4NCj4+IFBlcmZvcm1hbmNlIG1lYXN1cmVtZW50cyB0byBkYXRlIGhhdmUgdGhl
-IGNoYW5nZQ0KPj4gd2l0aGluIHRoZSAibm9pc2UiLiBUaGUgc29ja3BlcmYgYW5kIGRiZW5j
-aCByZXN1bHRzDQo+PiBhcmUgb24gdGhlIG9yZGVyIG9mIDAuMiUgdG8gMC44JSBkaWZmZXJl
-bmNlLCB3aXRoDQo+PiBiZXR0ZXIgcGVyZm9ybWFuY2UgYmVpbmcgYXMgY29tbW9uIGFzIHdv
-cnNlLiBUaGUNCj4+IGJlbmNobWFya3Mgd2VyZSBydW4gd2l0aCBBcHBBcm1vciBhbmQgU21h
-Y2sgb24gVWJ1bnR1Lg0KPj4NCj4+IGh0dHBzOi8vZ2l0aHViLmNvbS9jc2NoYXVmbGVyL2xz
-bS1zdGFja2luZy5naXQjc3RhY2stNS4yLXYxMC1hcHBhcm1vcg0KPg0KPiBDYW4geW91IHJl
-LWJhc2Ugb24gc29tZXRoaW5nIG1vcmUgcmVjZW50IHRoYW4gdjUuMS1yYzIgKHRoYXQncyB0
-aGUgYmFzZSBmb3IgdGhhdCBicmFuY2ggY3VycmVudGx5KT8NCj4gQXQgcHJlc2VudCBpdCB3
-b24ndCBldmVuIGJvb3QgZm9yIG1lIG9uIG1vZGVybiBGZWRvcmEuwqAgVHdvIGtleSBtaXNz
-aW5nIGNvbW1pdHMgYXJlOg0KDQpTaWdoLiBJdCdzIGJhc2VkIG9uIEphbWVzJyBuZXh0LWdl
-bmVyYWwuIEFzIGl0J3MgZ29pbmcgdXAgdGhyb3VnaCBKYW1lcywNCmFuZCBoZSBoYXNuJ3Qg
-dXBkYXRlZCB0aGF0IGJyYW5jaCwgSSdtIHNvcnQgb2Ygc3R1Y2suIEJUVywgSSBoYXZlIGEg
-cmUtYmFzZWQNCnZlcnNpb24sIGJ1dCBkb24ndCBzZWUgaG93IHRvIGdldCBpdCBpbnRvIG15
-IGdpdCB0cmVlIHdpdGhvdXQgbXVja2luZyB1cA0KdGhlIGV2ZW50dWFsIG1lcmdlLg0KDQo+
-DQo+IGUzM2MxYjk5MjM3NzVkMTdhZDI0Njk0NmZlNjdmY2I5YmUyODg2NzcgKCJhcHBhcm1v
-cjogUmVzdG9yZSBZL04gaW4gL3N5cyBmb3IgYXBwYXJtb3IncyAiZW5hYmxlZCIpIC0gd2l0
-aG91dCB0aGlzLCBkYnVzIGZhbGxzIG92ZXIgKG9yIGF0IGxlYXN0IGRidXMtYnJva2VyIGlu
-IEZlZG9yYSkNCj4NCj4gMTY5Y2UwYzA4MWNkODVmNzgzODhiYjZjMTYzOGMxYWQ3YjgxYmRl
-NyAoInNlbGludXg6IGZpeCByZXNpZHVhbCB1c2VzIG9mIGN1cnJlbnRfc2VjdXJpdHkoKSBm
-b3IgdGhlIFNFTGludXggYmxvYiIpIC0gd2l0aG91dCB0aGlzLCBzZWxpbnV4IGVuZHMgdXAg
-ZGVyZWZlcmVuY2luZyBzb21ldGhpbmcgb3RoZXIgdGhhbiBpdHMgb3duIHNlY3VyaXR5IGJs
-b2IgYWZ0ZXIgdGhlc2UgcGF0Y2hlcw0KPg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IENhc2V5
-IFNjaGF1ZmxlciA8Y2FzZXlAc2NoYXVmbGVyLWNhLmNvbT4NCj4+IC0tLQ0KPj4gwqAgYXJj
-aC9hbHBoYS9pbmNsdWRlL3VhcGkvYXNtL3NvY2tldC5owqDCoMKgIHzCoMKgIDEgKw0KPj4g
-wqAgYXJjaC9taXBzL2luY2x1ZGUvdWFwaS9hc20vc29ja2V0LmjCoMKgwqDCoCB8wqDCoCAx
-ICsNCj4+IMKgIGFyY2gvcGFyaXNjL2luY2x1ZGUvdWFwaS9hc20vc29ja2V0LmjCoMKgIHzC
-oMKgIDEgKw0KPj4gwqAgYXJjaC9zcGFyYy9pbmNsdWRlL3VhcGkvYXNtL3NvY2tldC5owqDC
-oMKgIHzCoMKgIDEgKw0KPj4gwqAgZHJpdmVycy9hbmRyb2lkL2JpbmRlci5jwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAyNCArLQ0KPj4gwqAgZnMva2VybmZzL2Rpci5j
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKg
-IDUgKy0NCj4+IMKgIGZzL2tlcm5mcy9pbm9kZS5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDM1ICstDQo+PiDCoCBmcy9rZXJuZnMva2VybmZz
-LWludGVybmFsLmjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgMyArLQ0KPj4gwqAg
-ZnMvbmZzL25mczRwcm9jLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCB8wqAgMjIgKy0NCj4+IMKgIGZzL25mc2QvbmZzNHhkci5jwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDIwICstDQo+PiDCoCBmcy9w
-cm9jL2Jhc2UuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIHzCoMKgIDIgKw0KPj4gwqAgaW5jbHVkZS9saW51eC9hdWRpdC5owqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDEgKw0KPj4gwqAgaW5jbHVkZS9s
-aW51eC9jcmVkLmjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDC
-oCAzICstDQo+PiDCoCBpbmNsdWRlL2xpbnV4L2xzbV9ob29rcy5owqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCB8wqAgMzcgKy0NCj4+IMKgIGluY2x1ZGUvbGludXgvc2VjdXJpdHku
-aMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDE3NSArKysrKysrKy0tDQo+PiDC
-oCBpbmNsdWRlL25ldC9hZl91bml4LmjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgfMKgwqAgMiArLQ0KPj4gwqAgaW5jbHVkZS9uZXQvbmV0bGFiZWwuaMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgOCArLQ0KPj4gwqAgaW5jbHVkZS9u
-ZXQvc2NtLmjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8
-wqAgMTUgKy0NCj4+IMKgIGluY2x1ZGUvdWFwaS9hc20tZ2VuZXJpYy9zb2NrZXQuaMKgwqDC
-oMKgwqDCoCB8wqDCoCAxICsNCj4+IMKgIGtlcm5lbC9hdWRpdC5jwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDcwICsrKy0NCj4+IMKg
-IGtlcm5lbC9hdWRpdC5owqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgfMKgwqAgOSArLQ0KPj4gwqAga2VybmVsL2F1ZGl0X2Zzbm90aWZ5LmPC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAxICsNCj4+IMKgIGtlcm5l
-bC9hdWRpdGZpbHRlci5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-fMKgIDEwICstDQo+PiDCoCBrZXJuZWwvYXVkaXRzYy5jwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDEyOSArKysrLS0tDQo+PiDCoCBrZXJuZWwv
-Y3JlZC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCB8wqAgMTIgKy0NCj4+IMKgIG5ldC9jb3JlL3NvY2suY8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCA3ICstDQo+PiDCoCBuZXQv
-aXB2NC9jaXBzb19pcHY0LmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-fMKgwqAgNiArLQ0KPj4gwqAgbmV0L2lwdjQvaXBfc29ja2dsdWUuY8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDEyICstDQo+PiDCoCBuZXQvbmV0ZmlsdGVyL25m
-X2Nvbm50cmFja19uZXRsaW5rLmPCoMKgwqAgfMKgIDIwICstDQo+PiDCoCBuZXQvbmV0Zmls
-dGVyL25mX2Nvbm50cmFja19zdGFuZGFsb25lLmMgfMKgIDExICstDQo+PiDCoCBuZXQvbmV0
-ZmlsdGVyL25mbmV0bGlua19xdWV1ZS5jwqDCoMKgwqDCoMKgwqDCoCB8wqAgMjYgKy0NCj4+
-IMKgIG5ldC9uZXRmaWx0ZXIvbmZ0X21ldGEuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCB8wqAgMTMgKy0NCj4+IMKgIG5ldC9uZXRmaWx0ZXIveHRfU0VDTUFSSy5jwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgNSArLQ0KPj4gwqAgbmV0L25ldGxhYmVsL25l
-dGxhYmVsX2thcGkuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgNiArLQ0KPj4gwqAg
-bmV0L25ldGxhYmVsL25ldGxhYmVsX3VubGFiZWxlZC5jwqDCoMKgwqDCoMKgIHzCoCA5NyAr
-KystLS0NCj4+IMKgIG5ldC9uZXRsYWJlbC9uZXRsYWJlbF91bmxhYmVsZWQuaMKgwqDCoMKg
-wqDCoCB8wqDCoCAyICstDQo+PiDCoCBuZXQvbmV0bGFiZWwvbmV0bGFiZWxfdXNlci5jwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMTMgKy0NCj4+IMKgIG5ldC9uZXRsYWJlbC9uZXRs
-YWJlbF91c2VyLmjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDYgKy0NCj4+IMKgIG5l
-dC91bml4L2FmX3VuaXguY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCB8wqDCoCA2ICstDQo+PiDCoCBuZXQveGZybS94ZnJtX3BvbGljeS5jwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAyICsNCj4+IMKgIG5ldC94ZnJtL3hm
-cm1fc3RhdGUuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAy
-ICsNCj4+IMKgIHNlY3VyaXR5L2FwcGFybW9yL2luY2x1ZGUvYXBwYXJtb3IuaMKgwqDCoCB8
-wqDCoCAzICstDQo+PiDCoCBzZWN1cml0eS9hcHBhcm1vci9pbmNsdWRlL25ldC5owqDCoMKg
-wqDCoMKgwqDCoCB8wqDCoCA2ICstDQo+PiDCoCBzZWN1cml0eS9hcHBhcm1vci9sc20uY8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMTIxICsrKystLS0NCj4+IMKgIHNl
-Y3VyaXR5L2NvbW1vbmNhcC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgfMKgwqAgNyArLQ0KPj4gwqAgc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWEuaMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgfMKgIDE0ICstDQo+PiDCoCBzZWN1cml0eS9pbnRlZ3JpdHkv
-aW1hL2ltYV9hcGkuY8KgwqDCoMKgwqDCoMKgIHzCoCAxMCArLQ0KPj4gwqAgc2VjdXJpdHkv
-aW50ZWdyaXR5L2ltYS9pbWFfYXBwcmFpc2UuY8KgwqAgfMKgwqAgNiArLQ0KPj4gwqAgc2Vj
-dXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfbWFpbi5jwqDCoMKgwqDCoMKgIHzCoCAzNiArLQ0K
-Pj4gwqAgc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfcG9saWN5LmPCoMKgwqDCoCB8wqAg
-MTkgKy0NCj4+IMKgIHNlY3VyaXR5L2ludGVncml0eS9pbnRlZ3JpdHlfYXVkaXQuY8KgwqDC
-oCB8wqDCoCAxICsNCj4+IMKgIHNlY3VyaXR5L2xvYWRwaW4vbG9hZHBpbi5jwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgOCArLQ0KPj4gwqAgc2VjdXJpdHkvc2FmZXNldGlk
-L2xzbS5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDggKy0NCj4+IMKg
-IHNlY3VyaXR5L3NlY3VyaXR5LmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIHwgNTg2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tDQo+PiDCoCBz
-ZWN1cml0eS9zZWxpbnV4L2hvb2tzLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-fCAxMDkgKysrLS0tDQo+PiDCoCBzZWN1cml0eS9zZWxpbnV4L2luY2x1ZGUvY2xhc3NtYXAu
-aMKgwqDCoMKgIHzCoMKgIDIgKy0NCj4+IMKgIHNlY3VyaXR5L3NlbGludXgvaW5jbHVkZS9v
-YmpzZWMuaMKgwqDCoMKgwqDCoCB8wqDCoCA1ICsNCj4+IMKgIHNlY3VyaXR5L3NlbGludXgv
-aW5jbHVkZS9zZWN1cml0eS5owqDCoMKgwqAgfMKgwqAgMSArDQo+PiDCoCBzZWN1cml0eS9z
-ZWxpbnV4L25ldGxhYmVsLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDI1ICstDQo+
-PiDCoCBzZWN1cml0eS9zZWxpbnV4L3NzL3NlcnZpY2VzLmPCoMKgwqDCoMKgwqDCoMKgwqAg
-fMKgwqAgNCArLQ0KPj4gwqAgc2VjdXJpdHkvc21hY2svc21hY2suaMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgNiArDQo+PiDCoCBzZWN1cml0eS9zbWFjay9z
-bWFja19sc20uY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMTI0ICsrKystLS0NCj4+
-IMKgIHNlY3VyaXR5L3NtYWNrL3NtYWNrX25ldGZpbHRlci5jwqDCoMKgwqDCoMKgwqAgfMKg
-wqAgOCArLQ0KPj4gwqAgc2VjdXJpdHkvc21hY2svc21hY2tmcy5jwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIHzCoCAxMCArLQ0KPj4gwqAgc2VjdXJpdHkvdG9tb3lvL3RvbW95
-by5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDggKy0NCj4+IMKgIHNl
-Y3VyaXR5L3lhbWEveWFtYV9sc20uY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8
-wqDCoCA3ICstDQo+PiDCoCA2NiBmaWxlcyBjaGFuZ2VkLCAxMzc2IGluc2VydGlvbnMoKyks
-IDU4MCBkZWxldGlvbnMoLSkNCj4+DQo+DQo=
+This new task_landlock_ptrace_ancestor() helper can be used to identify
+if the Landlock domain tied to the current tracer is in the same
+hierarchy as the domain of tracee.
+
+Indeed, ptrace(2) can be used to impersonate an unsandboxed process and
+lead to a privilege escalation.  A common use-case when sandboxing a
+process is then to forbid it to debug a less-privileged process.  A
+sandbox process (tracer) should only be allowed to trace another process
+(tracee) if the tracee has fewer privileges than the tracer.  This
+policy can be implemented with this helper.
+
+More complex helpers could be added in the future to enable other ways
+to check the relation between the tracer and the tracee.
+
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: James Morris <jmorris@namei.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Will Drewry <wad@chromium.org>
+---
+
+Changes since v10:
+* new patch taking inspiration from the previous static ptrace policy
+---
+ include/linux/bpf.h            |  2 +
+ include/uapi/linux/bpf.h       | 21 ++++++++++-
+ kernel/bpf/verifier.c          |  4 ++
+ security/landlock/bpf_ptrace.c | 68 ++++++++++++++++++++++++++++++++++
+ security/landlock/bpf_verify.c |  4 ++
+ 5 files changed, 98 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 819a3e207438..67ec198a90cb 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -214,6 +214,7 @@ enum bpf_arg_type {
+ 	ARG_PTR_TO_LONG,	/* pointer to long */
+ 	ARG_PTR_TO_SOCKET,	/* pointer to bpf_sock (fullsock) */
+ 	ARG_PTR_TO_BTF_ID,	/* pointer to in-kernel struct */
++	ARG_PTR_TO_TASK,	/* pointer to task_struct */
+ };
+ 
+ /* type of values returned from helper functions */
+@@ -1088,6 +1089,7 @@ extern const struct bpf_func_proto bpf_get_local_storage_proto;
+ extern const struct bpf_func_proto bpf_strtol_proto;
+ extern const struct bpf_func_proto bpf_strtoul_proto;
+ extern const struct bpf_func_proto bpf_tcp_sock_proto;
++extern const struct bpf_func_proto bpf_task_landlock_ptrace_ancestor_proto;
+ 
+ /* Shared helpers among cBPF and eBPF. */
+ void bpf_user_rnd_init_once(void);
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 6e4147790f96..c88436b97163 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -2777,6 +2777,24 @@ union bpf_attr {
+  * 		restricted to raw_tracepoint bpf programs.
+  * 	Return
+  * 		0 on success, or a negative error in case of failure.
++ *
++ * int bpf_task_landlock_ptrace_ancestor(struct task_struct *parent, struct task_struct *child)
++ *	Description
++ *		Check the relation of a potentially parent task with a child
++ *		one, according to their Landlock ptrace hook programs.
++ *	Return
++ *		**-EINVAL** if the child's ptrace programs are not comparable
++ *		to the parent ones, i.e. one of them is an empty set.
++ *
++ *		**-ENOENT** if the parent's ptrace programs are either in a
++ *		separate hierarchy of the child ones, or if the parent's ptrace
++ *		programs are a superset of the child ones.
++ *
++ *		0 if the parent's ptrace programs are the same as the child
++ *		ones.
++ *
++ *		1 if the parent's ptrace programs are indeed a subset of the
++ *		child ones.
+  */
+ #define __BPF_FUNC_MAPPER(FN)		\
+ 	FN(unspec),			\
+@@ -2890,7 +2908,8 @@ union bpf_attr {
+ 	FN(sk_storage_delete),		\
+ 	FN(send_signal),		\
+ 	FN(tcp_gen_syncookie),		\
+-	FN(skb_output),
++	FN(skb_output),			\
++	FN(task_landlock_ptrace_ancestor),
+ 
+ /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+  * function eBPF program intends to call
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index ebf1991906b7..af8f1a777a2d 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -3492,6 +3492,10 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 regno,
+ 		    type != PTR_TO_MAP_VALUE &&
+ 		    type != expected_type)
+ 			goto err_type;
++	} else if (arg_type == ARG_PTR_TO_TASK) {
++		expected_type = PTR_TO_TASK;
++		if (type != expected_type)
++			goto err_type;
+ 	} else {
+ 		verbose(env, "unsupported arg_type %d\n", arg_type);
+ 		return -EFAULT;
+diff --git a/security/landlock/bpf_ptrace.c b/security/landlock/bpf_ptrace.c
+index 2ec73078ad01..0e1362951463 100644
+--- a/security/landlock/bpf_ptrace.c
++++ b/security/landlock/bpf_ptrace.c
+@@ -7,9 +7,13 @@
+  */
+ 
+ #include <linux/bpf.h>
++#include <linux/cred.h>
++#include <linux/kernel.h>
++#include <linux/rcupdate.h>
+ #include <uapi/linux/landlock.h>
+ 
+ #include "bpf_ptrace.h"
++#include "common.h"
+ 
+ bool landlock_is_valid_access_ptrace(int off, enum bpf_access_type type,
+ 		enum bpf_reg_type *reg_type, int *max_size)
+@@ -28,3 +32,67 @@ bool landlock_is_valid_access_ptrace(int off, enum bpf_access_type type,
+ 		return false;
+ 	}
+ }
++
++/**
++ * domain_ptrace_ancestor - check domain ordering according to ptrace
++ *
++ * @parent: a parent domain
++ * @child: a potential child of @parent
++ *
++ * Check if the @parent domain is less or equal to (i.e. a subset of) the
++ * @child domain.
++ */
++static int domain_ptrace_ancestor(const struct landlock_domain *parent,
++		const struct landlock_domain *child)
++{
++	const struct landlock_prog_list *child_progs, *parent_progs;
++	const size_t hook = get_hook_index(LANDLOCK_HOOK_PTRACE);
++
++	if (!parent || !child)
++		/* @parent or @child has no ptrace restriction */
++		return -EINVAL;
++	parent_progs = parent->programs[hook];
++	child_progs = child->programs[hook];
++	if (!parent_progs || !child_progs)
++		/* @parent or @child has no ptrace restriction */
++		return -EINVAL;
++	if (child_progs == parent_progs)
++		/* @parent is at the same level as @child */
++		return 0;
++	for (child_progs = child_progs->prev; child_progs;
++			child_progs = child_progs->prev) {
++		if (child_progs == parent_progs)
++			/* @parent is one of the ancestors of @child */
++			return 1;
++	}
++	/*
++	 * Either there is no relationship between @parent and @child, or
++	 * @child is one of the ancestors of @parent.
++	 */
++	return -ENOENT;
++}
++
++/*
++ * Cf. include/uapi/linux/bpf.h - bpf_task_landlock_ptrace_ancestor
++ */
++BPF_CALL_2(bpf_task_landlock_ptrace_ancestor, const struct task_struct *,
++		parent, const struct task_struct *, child)
++{
++	const struct landlock_domain *dom_parent, *dom_child;
++
++	WARN_ON_ONCE(!rcu_read_lock_held());
++	if (WARN_ON(!parent || !child))
++		return -EFAULT;
++	dom_parent = landlock_cred(__task_cred(parent))->domain;
++	dom_child = landlock_cred(__task_cred(child))->domain;
++	return domain_ptrace_ancestor(dom_parent, dom_child);
++}
++
++const struct bpf_func_proto bpf_task_landlock_ptrace_ancestor_proto = {
++	.func		= bpf_task_landlock_ptrace_ancestor,
++	.gpl_only	= false,
++	.pkt_access	= false,
++	.ret_type	= RET_INTEGER,
++	.arg1_type	= ARG_PTR_TO_TASK,
++	.arg2_type	= ARG_PTR_TO_TASK,
++};
+diff --git a/security/landlock/bpf_verify.c b/security/landlock/bpf_verify.c
+index 6ed921588178..a1d2db75d51d 100644
+--- a/security/landlock/bpf_verify.c
++++ b/security/landlock/bpf_verify.c
+@@ -70,6 +70,10 @@ static const struct bpf_func_proto *bpf_landlock_func_proto(
+ 		return &bpf_map_update_elem_proto;
+ 	case BPF_FUNC_map_delete_elem:
+ 		return &bpf_map_delete_elem_proto;
++	case BPF_FUNC_task_landlock_ptrace_ancestor:
++		if (get_hook_type(prog) == LANDLOCK_HOOK_PTRACE)
++			return &bpf_task_landlock_ptrace_ancestor_proto;
++		return NULL;
+ 	default:
+ 		return NULL;
+ 	}
+-- 
+2.23.0
+
