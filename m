@@ -6,61 +6,62 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D2BCA9EC6
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 19:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8360BCA9EC5
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 19:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A37F2173E
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 19:02:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AC9E20873
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 19:09:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ITHLhKwY"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IgR3AvNb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbfJ3TCc (ORCPT
+        id S1727093AbfJ3TJm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Oct 2019 15:02:32 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40084 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726951AbfJ3TCb (ORCPT
+        Wed, 30 Oct 2019 15:09:42 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:32887 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfJ3TJm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Oct 2019 15:02:31 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 15so2082386pgt.7
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Oct 2019 12:02:29 -0700 (PDT)
+        Wed, 30 Oct 2019 15:09:42 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c184so2265163pfb.0
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Oct 2019 12:09:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=oGDBahFoMPSIZ29sHXhe1mehZlhHuZjEGPvioRijuyg=;
-        b=ITHLhKwYHLawxDKJoXVFazyKfWfmJx5VWQYSzCXI3uwCtcs0q7fLyaj9SL04wb9vsM
-         RlSKIzlfu4E7whMcthOGZ0RckEeTvwu4OzrBanTEIRe9aOYcmYXOA8e4hm7V0kDaVqJU
-         d50WeQX+Habf5zhjgR6kw/cCCYQZ5jn9IttQk=
+        bh=dufKW7ailST27XmBsRzEjUu5gldQC2+JQubS/xpnsTo=;
+        b=IgR3AvNb/IW+SuaYisEPvGgQ1N2CpDUOZAYg3Bs1VILV+oQkm3mFZj1IcMwvtNGnDL
+         yeG/doPiWKeFY3yEF0o2hjznX9oxZms0D8u3x06ENtLStfpt0E7OnXbnVS1h8Gnqe7Ln
+         znKBLsdqnjwo/9KJQEFt73HS/yRu0B+AJ1Qpc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=oGDBahFoMPSIZ29sHXhe1mehZlhHuZjEGPvioRijuyg=;
-        b=Us75zmiq9h1SKlqfkt73eb22pbUNJHHd8VgOkxPNtljFPo042Jd77F8s5DOBfdOZIy
-         pwvbfAoR8u1wRyH0yAA51BCbww53hho6i83SBEl9Mw1kJEBBWSYULycWm/iBCAkb+IwE
-         GWtDjWJwfKjv79iC+HGrD7fNQgXtZfMlE14DtCPmlS92m/f/OrM1TeVLQK0UJlkeI0QQ
-         5byI7q7I3AqSbR7mNL10u3ItkguYDIpCZsjUg1dSRjeDew7ujABzedEAySYHsNcCUrac
-         X7sMs0OmQQf31vmNL0JMR63F2VrB5VKbl1XECBy4yCXysQsFF5VxDo4mnYIbbmp1IAKt
-         Hu/Q==
-X-Gm-Message-State: APjAAAV2MDvD9B78IwkksrgP0i9/KHYBPCBrI0pii/GBaSbCXVemS7hh
-        GPDC0syDOb/50NWsIYxfDdOHqg==
-X-Google-Smtp-Source: APXvYqzota95kx11bi1wNxwIZc9AQEa/YsaYDEtNJUaPGRly4YWFB/enVi4ZfTsIfFi/BRYxa1QUGQ==
-X-Received: by 2002:a62:83c6:: with SMTP id h189mr892782pfe.213.1572462149354;
-        Wed, 30 Oct 2019 12:02:29 -0700 (PDT)
+        bh=dufKW7ailST27XmBsRzEjUu5gldQC2+JQubS/xpnsTo=;
+        b=lrnd2f5uNtW2otPhqM9nzz4N7srkOzluHocTBGF+J1L3OI0RbFLKN/iIBvyXLG8qZn
+         SUHmgBVs8lO2yoonvluJRxf3D7oA6EUl+URvo7mVUHkZ+I76yQptxceNrFlAk2nTtz2c
+         orkPUip3/PsHF5jVQNGrF2XfGQ1XwpZbK3d4nhBuKYPvzJ68P9xnm+6BLcdihabZF53N
+         GMN6RakxgfIUCKalCS3Lh6UMa/KDPDs9bY/ib/l0wcchmlIesj+6qe7Scsu8t22HiUrK
+         DCCJPGdtEnKEnYRXv6bVsiYyUQHBRVfOdT6fwH4SrJpJmWrtZ4VpVGftiGyI9M8xPuk1
+         ETBA==
+X-Gm-Message-State: APjAAAWR6H0V3dhBVXwck3C2BsyBrA6LT+O+S0tQebW1+tQ5lWM4SNVZ
+        zEYSVqSKf2mqfmEYwcwBgF8gRQ==
+X-Google-Smtp-Source: APXvYqyWkXi7dHZifGHol+L8h1naJvUA7vjOJyl4pJ9ePxkgrWj5xfjXri3x2IxsOUF4oLO2ZUTSBw==
+X-Received: by 2002:a17:90a:9204:: with SMTP id m4mr1064291pjo.104.1572462581965;
+        Wed, 30 Oct 2019 12:09:41 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j26sm508386pgi.92.2019.10.30.12.02.28
+        by smtp.gmail.com with ESMTPSA id m123sm699881pfb.133.2019.10.30.12.09.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 12:02:28 -0700 (PDT)
-Date:   Wed, 30 Oct 2019 12:02:27 -0700
+        Wed, 30 Oct 2019 12:09:41 -0700 (PDT)
+Date:   Wed, 30 Oct 2019 12:09:40 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, shuah <shuah@kernel.org>,
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Matthias Maennich <maennich@google.com>,
+        shuah <shuah@kernel.org>,
         John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        serge@hallyn.com, Alan Maguire <alan.maguire@oracle.com>,
-        Iurii Zaikin <yzaikin@google.com>,
-        David Gow <davidgow@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
+        serge@hallyn.com, Iurii Zaikin <yzaikin@google.com>,
+        David Gow <davidgow@google.com>, Theodore Ts'o <tytso@mit.edu>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-security-module@vger.kernel.org,
         KUnit Development <kunit-dev@googlegroups.com>,
@@ -69,46 +70,56 @@ Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, shuah <shuah@kernel.org>,
         Mike Salvatore <mike.salvatore@canonical.com>
 Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
  tests for policy unpack
-Message-ID: <201910301201.404F0E3BB@keescook>
+Message-ID: <201910301205.74EC2A226D@keescook>
 References: <20191018001816.94460-1-brendanhiggins@google.com>
- <20191018004307.GA95597@google.com>
- <20191018162519.GH21137@mit.edu>
- <CAFd5g45LmnbD7L4LqdbfBV5YR377e81m61+z==RKCGjWBFqDGQ@mail.gmail.com>
+ <20191018122949.GD11244@42.do-not-panic.com>
+ <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
+ <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
+ <20191024101529.GK11244@42.do-not-panic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFd5g45LmnbD7L4LqdbfBV5YR377e81m61+z==RKCGjWBFqDGQ@mail.gmail.com>
+In-Reply-To: <20191024101529.GK11244@42.do-not-panic.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 18, 2019 at 02:41:38PM -0700, Brendan Higgins wrote:
-> On Fri, Oct 18, 2019 at 9:25 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> >
-> > On Thu, Oct 17, 2019 at 05:43:07PM -0700, Brendan Higgins wrote:
-> > > > +config SECURITY_APPARMOR_TEST
-> > > > +   bool "Build KUnit tests for policy_unpack.c"
-> > > > +   default n
-> > > > +   depends on KUNIT && SECURITY_APPARMOR
-> > >
-> > > Ted, here is an example where doing select on direct dependencies is
-> > > tricky because SECURITY_APPARMOR has a number of indirect dependencies.
-> >
-> > Well, that could be solved by adding a select on all of the indirect
-> > dependencies.  I did get your point about the fact that we could have
+On Thu, Oct 24, 2019 at 10:15:29AM +0000, Luis Chamberlain wrote:
+> On Wed, Oct 23, 2019 at 05:42:18PM -0700, Brendan Higgins wrote:
+> > With that, I think the best solution in this case will be the
+> > "__visible_for_testing" route. It has no overhead when testing is
+> > turned off (in fact it is no different in anyway when testing is
+> > turned off). The downsides I see are:
+> > 
+> > 1) You may not be able to test non-module code not compiled for
+> > testing later with the test modules that Alan is working on (But the
+> > only way I think that will work is by preventing the symbol from being
+> > inlined, right?).
+> > 
+> > 2) I think "__visible_for_testing" will be prone to abuse. Here, I
+> > think there are reasons why we might want to expose these symbols for
+> > testing, but not otherwise. Nevertheless, I think most symbols that
+> > should be tested should probably be made visible by default. Since you
+> > usually only want to test your public interfaces. I could very well
+> > see this getting used as a kludge that gets used far too frequently.
 > 
-> In this particular case that would work.
+> There are two parts to your statement on 2):
 > 
-> > cases where the indirect dependencies might conflict with one another.
-> > That's going to be a tough situation regardless of whether we have a
-> > sat-solver or a human who has to struggle with that situation.
-> 
-> But yeah, that's the real problem.
+>   a) possible abuse of say __visible_for_testing
 
-I think at this stage we want to make it _possible_ to write tests
-sanely without causing all kinds of headaches. I think "build all the
-tests" can just be a function of "allmodconfig" and leave it at that
-until we have cases we really need to deal with.
+I really don't like the idea of littering the kernel with these. It'll
+also require chunks in header files wrapped in #ifdefs. This is really
+ugly.
+
+>   b) you typically only want to test your public interfaces
+
+True, but being able to test the little helper functions is a nice
+starting point and a good building block.
+
+Why can't unit tests live with the code they're testing? They're already
+logically tied together; what's the harm there? This needn't be the case
+for ALL tests, etc. The test driver could still live externally. The
+test in the other .c would just have exported functions... ?
 
 -- 
 Kees Cook
