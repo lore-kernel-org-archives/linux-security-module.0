@@ -2,361 +2,265 @@ Return-Path: <SRS0=3RLe=YX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C760FCA9EC6
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 14:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5D6CA9EC5
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 16:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94A6C208E3
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 14:04:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08DD3205C9
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 16:19:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AD1FHJqU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbfJ3OEU (ORCPT
+        id S1727290AbfJ3QS6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Oct 2019 10:04:20 -0400
-Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:51351 "EHLO
-        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfJ3OET (ORCPT
+        Wed, 30 Oct 2019 12:18:58 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36028 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbfJ3QS6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Oct 2019 10:04:19 -0400
-Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
-        by smtp-sh2.infomaniak.ch (8.14.4/8.14.4/Debian-8+deb8u2) with ESMTP id x9UE3Eeb245292
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Oct 2019 15:03:15 +0100
-Received: from ns3096276.ip-94-23-54.eu (ns3096276.ip-94-23-54.eu [94.23.54.103])
-        (authenticated bits=0)
-        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x9UE3A91166781
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
-        Wed, 30 Oct 2019 15:03:11 +0100
-Subject: Re: [PATCH bpf-next v11 2/7] landlock: Add the management of domains
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        Florent Revest <revest@chromium.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        KP Singh <kpsingh@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20191029171505.6650-1-mic@digikod.net>
- <20191029171505.6650-3-mic@digikod.net>
- <20191030025621.GA27626@mail.hallyn.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Openpgp: preference=signencrypt
-Message-ID: <e6c59db1-0fb5-704d-6693-335fa199101c@digikod.net>
-Date:   Wed, 30 Oct 2019 15:03:10 +0100
-User-Agent: 
+        Wed, 30 Oct 2019 12:18:58 -0400
+Received: by mail-io1-f68.google.com with SMTP id d25so2415076ioc.3;
+        Wed, 30 Oct 2019 09:18:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dwt32/Gx5HdaQ+zftvvpNO21bwdYc3mUPo3g9Pdn1Uo=;
+        b=AD1FHJqU851yv7rL/plnmm+6KmBIGKww4UxUPkSMsgXTDId3k2SM2yRshjXjAlrhrr
+         HZuTXgKfoL094aAUGkBtMnxyWhhgSuvCF82AnNRacuBolHVZr3X6s104efH7hqkhAjN0
+         Or3qMTBE9vws5qn0qVhzZ1zCS/cqF/BkdQf5c7j6Y2qrScQQRYgL8n/296y5497FPdr5
+         dbFn3L1m/6wlZTsAq7FnW4qYQGiJiU5rb/+ukqUGzmFc9QYaUav+N29DMOb2SfwKSMdk
+         cP4GE5/1jLmtgwjn8z2pGKfPSHtkEtNvGDyJofGbIutP5whWMpiUh8xiWoWoMpvp+7Fu
+         cbiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dwt32/Gx5HdaQ+zftvvpNO21bwdYc3mUPo3g9Pdn1Uo=;
+        b=jQ40kOLH7ioHuXQjg+KH6QmNdMg3fy4CWVknoj3AjZ+Ic5cvoxMrRAEQWZa0+dxSlK
+         kwUx851kXa3BtQHGkliVmsedA6kIp1+QHdtEGWL4Qp4+2qdFBiK+FQUTVXD+nN0Wcmxl
+         t4eWW1Z5t/exMyw9haZn63I9sEgesy4nZmiETUx58M0EkIx96IroYr+sIMY4tbkgSXcj
+         4ljnPxILKlE1j4vm4Jtf00ILQxgGtTKVpOtLtwh9vSL46RD0nzrmqWvpFw779w3FJT8K
+         +1Qh8yCxZ4nk8uyvyAH/ZtbXz07uWsYKx8doeTnCFmyHCrHUwFA4nrXFnZcjNckuUtmH
+         gtMQ==
+X-Gm-Message-State: APjAAAWxGGCzvnT8G+Bm4/H4aGAfd2wZfhbLAbuXzr5g6iTZ6N9yeID8
+        7Nxux8tX8QayGaBAkGR6NS/msidYc/DzjUoIRZ8=
+X-Google-Smtp-Source: APXvYqwbLOk2n5iHzKzzMmIhlfveeNHABqIlYpf0W2f9qUNfENTAV2B8vvyfzmAbXa7kdRi12GGt7jV2GC+y6mfumoA=
+X-Received: by 2002:a5e:9741:: with SMTP id h1mr583194ioq.143.1572452336799;
+ Wed, 30 Oct 2019 09:18:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191030025621.GA27626@mail.hallyn.com>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 30 Oct 2019 17:19:12 +0100
+Message-ID: <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
+ not cursor and length [ver #2]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Oct 24, 2019 at 11:49 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Convert pipes to use head and tail pointers for the buffer ring rather than
+> pointer and length as the latter requires two atomic ops to update (or a
+> combined op) whereas the former only requires one.
+>
+>  (1) The head pointer is the point at which production occurs and points to
+>      the slot in which the next buffer will be placed.  This is equivalent
+>      to pipe->curbuf + pipe->nrbufs.
+>
+>      The head pointer belongs to the write-side.
+>
+>  (2) The tail pointer is the point at which consumption occurs.  It points
+>      to the next slot to be consumed.  This is equivalent to pipe->curbuf.
+>
+>      The tail pointer belongs to the read-side.
+>
+>  (3) head and tail are allowed to run to UINT_MAX and wrap naturally.  They
+>      are only masked off when the array is being accessed, e.g.:
+>
+>         pipe->bufs[head & mask]
+>
+>      This means that it is not necessary to have a dead slot in the ring as
+>      head == tail isn't ambiguous.
+>
+>  (4) The ring is empty if "head == tail".
+>
+>      A helper, pipe_empty(), is provided for this.
+>
+>  (5) The occupancy of the ring is "head - tail".
+>
+>      A helper, pipe_occupancy(), is provided for this.
+>
+>  (6) The number of free slots in the ring is "pipe->ring_size - occupancy".
+>
+>      A helper, pipe_space_for_user() is provided to indicate how many slots
+>      userspace may use.
+>
+>  (7) The ring is full if "head - tail >= pipe->ring_size".
+>
+>      A helper, pipe_full(), is provided for this.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+>
+>  fs/fuse/dev.c             |   31 +++--
+>  fs/pipe.c                 |  169 ++++++++++++++++-------------
+>  fs/splice.c               |  188 ++++++++++++++++++++------------
+>  include/linux/pipe_fs_i.h |   86 ++++++++++++++-
+>  include/linux/uio.h       |    4 -
+>  lib/iov_iter.c            |  266 +++++++++++++++++++++++++--------------------
+>  6 files changed, 464 insertions(+), 280 deletions(-)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index dadd617d826c..1e4bc27573cc 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -703,7 +703,7 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
+>                         cs->pipebufs++;
+>                         cs->nr_segs--;
+>                 } else {
+> -                       if (cs->nr_segs == cs->pipe->buffers)
+> +                       if (cs->nr_segs >= cs->pipe->ring_size)
+>                                 return -EIO;
+>
+>                         page = alloc_page(GFP_HIGHUSER);
+> @@ -879,7 +879,7 @@ static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
+>         struct pipe_buffer *buf;
+>         int err;
+>
+> -       if (cs->nr_segs == cs->pipe->buffers)
+> +       if (cs->nr_segs >= cs->pipe->ring_size)
+>                 return -EIO;
+>
+>         err = unlock_request(cs->req);
+> @@ -1341,7 +1341,7 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
+>         if (!fud)
+>                 return -EPERM;
+>
+> -       bufs = kvmalloc_array(pipe->buffers, sizeof(struct pipe_buffer),
+> +       bufs = kvmalloc_array(pipe->ring_size, sizeof(struct pipe_buffer),
+>                               GFP_KERNEL);
+>         if (!bufs)
+>                 return -ENOMEM;
+> @@ -1353,7 +1353,7 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
+>         if (ret < 0)
+>                 goto out;
+>
+> -       if (pipe->nrbufs + cs.nr_segs > pipe->buffers) {
+> +       if (pipe_occupancy(pipe->head, pipe->tail) + cs.nr_segs > pipe->ring_size) {
+>                 ret = -EIO;
+>                 goto out;
+>         }
+> @@ -1935,6 +1935,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
+>                                      struct file *out, loff_t *ppos,
+>                                      size_t len, unsigned int flags)
+>  {
+> +       unsigned int head, tail, mask, count;
+>         unsigned nbuf;
+>         unsigned idx;
+>         struct pipe_buffer *bufs;
+> @@ -1949,8 +1950,12 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
+>
+>         pipe_lock(pipe);
+>
+> -       bufs = kvmalloc_array(pipe->nrbufs, sizeof(struct pipe_buffer),
+> -                             GFP_KERNEL);
+> +       head = pipe->head;
+> +       tail = pipe->tail;
+> +       mask = pipe->ring_size - 1;
+> +       count = head - tail;
+> +
+> +       bufs = kvmalloc_array(count, sizeof(struct pipe_buffer), GFP_KERNEL);
+>         if (!bufs) {
+>                 pipe_unlock(pipe);
+>                 return -ENOMEM;
+> @@ -1958,8 +1963,8 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
+>
+>         nbuf = 0;
+>         rem = 0;
+> -       for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
+> -               rem += pipe->bufs[(pipe->curbuf + idx) & (pipe->buffers - 1)].len;
+> +       for (idx = tail; idx < head && rem < len; idx++)
+> +               rem += pipe->bufs[idx & mask].len;
+>
+>         ret = -EINVAL;
+>         if (rem < len)
+> @@ -1970,16 +1975,16 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
+>                 struct pipe_buffer *ibuf;
+>                 struct pipe_buffer *obuf;
+>
+> -               BUG_ON(nbuf >= pipe->buffers);
+> -               BUG_ON(!pipe->nrbufs);
+> -               ibuf = &pipe->bufs[pipe->curbuf];
+> +               BUG_ON(nbuf >= pipe->ring_size);
+> +               BUG_ON(tail == head);
+> +               ibuf = &pipe->bufs[tail & mask];
+>                 obuf = &bufs[nbuf];
+>
+>                 if (rem >= ibuf->len) {
+>                         *obuf = *ibuf;
+>                         ibuf->ops = NULL;
+> -                       pipe->curbuf = (pipe->curbuf + 1) & (pipe->buffers - 1);
+> -                       pipe->nrbufs--;
+> +                       tail++;
+> +                       pipe_commit_read(pipe, tail);
+>                 } else {
+>                         if (!pipe_buf_get(pipe, ibuf))
+>                                 goto out_free;
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 8a2ab2f974bd..8a0806fe12d3 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -43,10 +43,11 @@ unsigned long pipe_user_pages_hard;
+>  unsigned long pipe_user_pages_soft = PIPE_DEF_BUFFERS * INR_OPEN_CUR;
+>
+>  /*
+> - * We use a start+len construction, which provides full use of the
+> - * allocated memory.
+> - * -- Florian Coosmann (FGC)
+> - *
+> + * We use head and tail indices that aren't masked off, except at the point of
+> + * dereference, but rather they're allowed to wrap naturally.  This means there
+> + * isn't a dead spot in the buffer, provided the ring size < INT_MAX.
+> + * -- David Howells 2019-09-23.
 
-On 30/10/2019 03:56, Serge E. Hallyn wrote:
-> On Tue, Oct 29, 2019 at 06:15:00PM +0100, Mickaël Salaün wrote:
->> A Landlock domain is a set of eBPF programs.  There is a list for each
->> different program types that can be run on a specific Landlock hook
->> (e.g. ptrace).  A domain is tied to a set of subjects (i.e. tasks).  A
->> Landlock program should not try (nor be able) to infer which subject is
->> currently enforced, but to have a unique security policy for all
->> subjects tied to the same domain.  This make the reasoning much easier
->> and help avoid pitfalls.
->>
->> The next commits tie a domain to a task's credentials thanks to
->> seccomp(2), but we could use cgroups or a security file-system to
->> enforce a sysadmin-defined policy .
->>
->> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->> Cc: Alexei Starovoitov <ast@kernel.org>
->> Cc: Andy Lutomirski <luto@amacapital.net>
->> Cc: Daniel Borkmann <daniel@iogearbox.net>
->> Cc: James Morris <jmorris@namei.org>
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Serge E. Hallyn <serge@hallyn.com>
->> Cc: Will Drewry <wad@chromium.org>
->> ---
->>
->> Changes since v10:
->> * rename files and names to clearly define a domain
->> * create a standalone patch to ease review
->> ---
-> 
-> [...]
-> 
->> +/**
->> + * store_landlock_prog - prepend and deduplicate a Landlock prog_list
->> + *
->> + * Prepend @prog to @init_domain while ignoring @prog if they are already in
->> + * @ref_domain.  Whatever is the result of this function call, you can call
->> + * bpf_prog_put(@prog) after.
->> + *
->> + * @init_domain: empty domain to prepend to
->> + * @ref_domain: domain to check for duplicate programs
->> + * @prog: program to prepend
->> + *
->> + * Return -errno on error or 0 if @prog was successfully stored.
->> + */
->> +static int store_landlock_prog(struct landlock_domain *init_domain,
->> +		const struct landlock_domain *ref_domain,
->> +		struct bpf_prog *prog)
->> +{
->> +	struct landlock_prog_list *tmp_list = NULL;
->> +	int err;
->> +	size_t hook;
->> +	enum landlock_hook_type last_type;
->> +	struct bpf_prog *new = prog;
->> +
->> +	/* allocate all the memory we need */
->> +	struct landlock_prog_list *new_list;
->> +
->> +	last_type = get_hook_type(new);
->> +
->> +	/* ignore duplicate programs */
-> 
-> This comment should be "don't allow" rather than "ignore", right?
+Hi David,
 
-Exactly, fixed.
+Is "ring size < INT_MAX" constraint correct?
 
-> 
->> +	if (ref_domain) {
->> +		struct landlock_prog_list *ref;
->> +
->> +		hook = get_hook_index(get_hook_type(new));
->> +		for (ref = ref_domain->programs[hook]; ref;
->> +				ref = ref->prev) {
->> +			if (ref->prog == new)
->> +				return -EINVAL;
->> +		}
->> +	}
->> +
->> +	new = bpf_prog_inc(new);
->> +	if (IS_ERR(new)) {
->> +		err = PTR_ERR(new);
->> +		goto put_tmp_list;
->> +	}
->> +	new_list = kzalloc(sizeof(*new_list), GFP_KERNEL);
->> +	if (!new_list) {
->> +		bpf_prog_put(new);
->> +		err = -ENOMEM;
->> +		goto put_tmp_list;
->> +	}
->> +	/* ignore Landlock types in this tmp_list */
->> +	new_list->prog = new;
->> +	new_list->prev = tmp_list;
->> +	refcount_set(&new_list->usage, 1);
->> +	tmp_list = new_list;
->> +
->> +	if (!tmp_list)
->> +		/* inform user space that this program was already added */
-> 
-> I'm not following this.  You just kzalloc'd new_list, pointed
-> tmp_list to new_list, so how could tmp_list be NULL?  Was there
-> a bad code reorg here, or am i being dense?
+I've never had to implement this free running indices scheme, but
+the way I've always visualized it is that the top bit of the index is
+used as a lap (as in a race) indicator, leaving 31 bits to work with
+(in case of unsigned ints).  Should that be
 
-Indeed, this was introduce with a code refactoring (while removing a
-program "chaining" concept) where this code snippet was in a loop, hence
-the weird use of tmp_list. I'm cleaning this up (and simplifying this
-whole code), and replacing the -EINVAL for the duplicate program check
-with the -EEXIST.
+  ring size <= 2^31
 
-Thanks!
+or more precisely
 
+  ring size is a power of two <= 2^31
 
-> 
->> +		return -EEXIST;
->> +
->> +	/* properly store the list (without error cases) */
->> +	while (tmp_list) {
->> +		struct landlock_prog_list *new_list;
->> +
->> +		new_list = tmp_list;
->> +		tmp_list = tmp_list->prev;
->> +		/* do not increment the previous prog list usage */
->> +		hook = get_hook_index(get_hook_type(new_list->prog));
->> +		new_list->prev = init_domain->programs[hook];
->> +		/* no need to add from the last program to the first because
->> +		 * each of them are a different Landlock type */
->> +		smp_store_release(&init_domain->programs[hook], new_list);
->> +	}
->> +	return 0;
->> +
->> +put_tmp_list:
->> +	put_landlock_prog_list(tmp_list);
->> +	return err;
->> +}
->> +
->> +/* limit Landlock programs set to 256KB */
->> +#define LANDLOCK_PROGRAMS_MAX_PAGES (1 << 6)
->> +
->> +/**
->> + * landlock_prepend_prog - attach a Landlock prog_list to @current_domain
->> + *
->> + * Whatever is the result of this function call, you can call
->> + * bpf_prog_put(@prog) after.
->> + *
->> + * @current_domain: landlock_domain pointer, must be (RCU-)locked (if needed)
->> + *                  to prevent a concurrent put/free. This pointer must not be
->> + *                  freed after the call.
->> + * @prog: non-NULL Landlock prog_list to prepend to @current_domain. @prog will
->> + *        be owned by landlock_prepend_prog() and freed if an error happened.
->> + *
->> + * Return @current_domain or a new pointer when OK. Return a pointer error
->> + * otherwise.
->> + */
->> +struct landlock_domain *landlock_prepend_prog(
->> +		struct landlock_domain *current_domain,
->> +		struct bpf_prog *prog)
->> +{
->> +	struct landlock_domain *new_domain = current_domain;
->> +	unsigned long pages;
->> +	int err;
->> +	size_t i;
->> +	struct landlock_domain tmp_domain = {};
->> +
->> +	if (prog->type != BPF_PROG_TYPE_LANDLOCK_HOOK)
->> +		return ERR_PTR(-EINVAL);
->> +
->> +	/* validate memory size allocation */
->> +	pages = prog->pages;
->> +	if (current_domain) {
->> +		size_t i;
->> +
->> +		for (i = 0; i < ARRAY_SIZE(current_domain->programs); i++) {
->> +			struct landlock_prog_list *walker_p;
->> +
->> +			for (walker_p = current_domain->programs[i];
->> +					walker_p; walker_p = walker_p->prev)
->> +				pages += walker_p->prog->pages;
->> +		}
->> +		/* count a struct landlock_domain if we need to allocate one */
->> +		if (refcount_read(&current_domain->usage) != 1)
->> +			pages += round_up(sizeof(*current_domain), PAGE_SIZE)
->> +				/ PAGE_SIZE;
->> +	}
->> +	if (pages > LANDLOCK_PROGRAMS_MAX_PAGES)
->> +		return ERR_PTR(-E2BIG);
->> +
->> +	/* ensure early that we can allocate enough memory for the new
->> +	 * prog_lists */
->> +	err = store_landlock_prog(&tmp_domain, current_domain, prog);
->> +	if (err)
->> +		return ERR_PTR(err);
->> +
->> +	/*
->> +	 * Each task_struct points to an array of prog list pointers.  These
->> +	 * tables are duplicated when additions are made (which means each
->> +	 * table needs to be refcounted for the processes using it). When a new
->> +	 * table is created, all the refcounters on the prog_list are bumped
->> +	 * (to track each table that references the prog). When a new prog is
->> +	 * added, it's just prepended to the list for the new table to point
->> +	 * at.
->> +	 *
->> +	 * Manage all the possible errors before this step to not uselessly
->> +	 * duplicate current_domain and avoid a rollback.
->> +	 */
->> +	if (!new_domain) {
->> +		/*
->> +		 * If there is no Landlock domain used by the current task,
->> +		 * then create a new one.
->> +		 */
->> +		new_domain = new_landlock_domain();
->> +		if (IS_ERR(new_domain))
->> +			goto put_tmp_lists;
->> +	} else if (refcount_read(&current_domain->usage) > 1) {
->> +		/*
->> +		 * If the current task is not the sole user of its Landlock
->> +		 * domain, then duplicate it.
->> +		 */
->> +		new_domain = new_landlock_domain();
->> +		if (IS_ERR(new_domain))
->> +			goto put_tmp_lists;
->> +		for (i = 0; i < ARRAY_SIZE(new_domain->programs); i++) {
->> +			new_domain->programs[i] =
->> +				READ_ONCE(current_domain->programs[i]);
->> +			if (new_domain->programs[i])
->> +				refcount_inc(&new_domain->programs[i]->usage);
->> +		}
->> +
->> +		/*
->> +		 * Landlock domain from the current task will not be freed here
->> +		 * because the usage is strictly greater than 1. It is only
->> +		 * prevented to be freed by another task thanks to the caller
->> +		 * of landlock_prepend_prog() which should be locked if needed.
->> +		 */
->> +		landlock_put_domain(current_domain);
->> +	}
->> +
->> +	/* prepend tmp_domain to new_domain */
->> +	for (i = 0; i < ARRAY_SIZE(tmp_domain.programs); i++) {
->> +		/* get the last new list */
->> +		struct landlock_prog_list *last_list =
->> +			tmp_domain.programs[i];
->> +
->> +		if (last_list) {
->> +			while (last_list->prev)
->> +				last_list = last_list->prev;
->> +			/* no need to increment usage (pointer replacement) */
->> +			last_list->prev = new_domain->programs[i];
->> +			new_domain->programs[i] = tmp_domain.programs[i];
->> +		}
->> +	}
->> +	return new_domain;
->> +
->> +put_tmp_lists:
->> +	for (i = 0; i < ARRAY_SIZE(tmp_domain.programs); i++)
->> +		put_landlock_prog_list(tmp_domain.programs[i]);
->> +	return new_domain;
->> +}
->> diff --git a/security/landlock/domain_manage.h b/security/landlock/domain_manage.h
->> new file mode 100644
->> index 000000000000..5b5b49f6e3e8
->> --- /dev/null
->> +++ b/security/landlock/domain_manage.h
->> @@ -0,0 +1,23 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Landlock LSM - domain management headers
->> + *
->> + * Copyright © 2016-2019 Mickaël Salaün <mic@digikod.net>
->> + * Copyright © 2018-2019 ANSSI
->> + */
->> +
->> +#ifndef _SECURITY_LANDLOCK_DOMAIN_MANAGE_H
->> +#define _SECURITY_LANDLOCK_DOMAIN_MANAGE_H
->> +
->> +#include <linux/filter.h>
->> +
->> +#include "common.h"
->> +
->> +void landlock_get_domain(struct landlock_domain *dom);
->> +void landlock_put_domain(struct landlock_domain *dom);
->> +
->> +struct landlock_domain *landlock_prepend_prog(
->> +		struct landlock_domain *current_domain,
->> +		struct bpf_prog *prog);
->> +
->> +#endif /* _SECURITY_LANDLOCK_DOMAIN_MANAGE_H */
->> -- 
->> 2.23.0
-> 
+or am I missing something?
+
+Thanks,
+
+                Ilya
