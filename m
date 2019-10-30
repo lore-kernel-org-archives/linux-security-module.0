@@ -2,265 +2,119 @@ Return-Path: <SRS0=3RLe=YX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5D6CA9EC5
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 16:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D59CA9EC5
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 18:59:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08DD3205C9
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 16:19:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BACC204FD
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 18:59:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AD1FHJqU"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ngQ4YsXE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbfJ3QS6 (ORCPT
+        id S1726884AbfJ3S7E (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Oct 2019 12:18:58 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36028 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbfJ3QS6 (ORCPT
+        Wed, 30 Oct 2019 14:59:04 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42599 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726665AbfJ3S7E (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Oct 2019 12:18:58 -0400
-Received: by mail-io1-f68.google.com with SMTP id d25so2415076ioc.3;
-        Wed, 30 Oct 2019 09:18:57 -0700 (PDT)
+        Wed, 30 Oct 2019 14:59:04 -0400
+Received: by mail-pg1-f195.google.com with SMTP id c23so1397401pgn.9
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Oct 2019 11:59:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dwt32/Gx5HdaQ+zftvvpNO21bwdYc3mUPo3g9Pdn1Uo=;
-        b=AD1FHJqU851yv7rL/plnmm+6KmBIGKww4UxUPkSMsgXTDId3k2SM2yRshjXjAlrhrr
-         HZuTXgKfoL094aAUGkBtMnxyWhhgSuvCF82AnNRacuBolHVZr3X6s104efH7hqkhAjN0
-         Or3qMTBE9vws5qn0qVhzZ1zCS/cqF/BkdQf5c7j6Y2qrScQQRYgL8n/296y5497FPdr5
-         dbFn3L1m/6wlZTsAq7FnW4qYQGiJiU5rb/+ukqUGzmFc9QYaUav+N29DMOb2SfwKSMdk
-         cP4GE5/1jLmtgwjn8z2pGKfPSHtkEtNvGDyJofGbIutP5whWMpiUh8xiWoWoMpvp+7Fu
-         cbiQ==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=lydW9atQW2RqhX2w9FQSYN22+fl/dNiMF69085WMHtM=;
+        b=ngQ4YsXEu3hNnNn3MSw8hh8vZ5syLFrqYQcNZ6AnbPi7LDobSUUnL9sWE4OlkQghF8
+         yYdjVJJ6Detmtfk4AntUsuUYUFDP9MTXrG+RdAPrgHZXXDqgzoakrJw1DnjVbg19fYzo
+         z/kw/vK6g7IcWfCMXQ03sOl7rkKhj5iGdxf9k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dwt32/Gx5HdaQ+zftvvpNO21bwdYc3mUPo3g9Pdn1Uo=;
-        b=jQ40kOLH7ioHuXQjg+KH6QmNdMg3fy4CWVknoj3AjZ+Ic5cvoxMrRAEQWZa0+dxSlK
-         kwUx851kXa3BtQHGkliVmsedA6kIp1+QHdtEGWL4Qp4+2qdFBiK+FQUTVXD+nN0Wcmxl
-         t4eWW1Z5t/exMyw9haZn63I9sEgesy4nZmiETUx58M0EkIx96IroYr+sIMY4tbkgSXcj
-         4ljnPxILKlE1j4vm4Jtf00ILQxgGtTKVpOtLtwh9vSL46RD0nzrmqWvpFw779w3FJT8K
-         +1Qh8yCxZ4nk8uyvyAH/ZtbXz07uWsYKx8doeTnCFmyHCrHUwFA4nrXFnZcjNckuUtmH
-         gtMQ==
-X-Gm-Message-State: APjAAAWxGGCzvnT8G+Bm4/H4aGAfd2wZfhbLAbuXzr5g6iTZ6N9yeID8
-        7Nxux8tX8QayGaBAkGR6NS/msidYc/DzjUoIRZ8=
-X-Google-Smtp-Source: APXvYqwbLOk2n5iHzKzzMmIhlfveeNHABqIlYpf0W2f9qUNfENTAV2B8vvyfzmAbXa7kdRi12GGt7jV2GC+y6mfumoA=
-X-Received: by 2002:a5e:9741:: with SMTP id h1mr583194ioq.143.1572452336799;
- Wed, 30 Oct 2019 09:18:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 30 Oct 2019 17:19:12 +0100
-Message-ID: <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com>
-Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
- not cursor and length [ver #2]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lydW9atQW2RqhX2w9FQSYN22+fl/dNiMF69085WMHtM=;
+        b=sgfHr0ejLGkeUToyiIfKUqJ/Vyw3YvGx1G3cn3bAuIMji3DFXg00BWXBPLvvo7swJ0
+         ovVnsekhHcI5idbQ3ShXm/xRBJnHmRv5j+2riIou0ktMcow2GC0fDozKl672JayIJpwd
+         ty6imaGSZ/NUbpWBVqNZRuRpkBFQlhlsnb+lzP8lh4of+uyQZGCa/zd3hXROOUjvt6Cb
+         kQ752Ydlnoeg4YGpnt63da54w8w/EJdZ9eAfKekifPWyh2u9M6+btDi5H6JEbQD7SFVO
+         CPSRwofVyOfKGTOHqsCkws1wZNK7B9VLq9fhlwqLNGsjqIXKL9UJYglDUTr2zSZiL93x
+         zJ0w==
+X-Gm-Message-State: APjAAAWY9rdIwtknLp7lfyZCD/7OFZjfk4SybMg/JvfOMXAi/9Tf9nk7
+        v6BMPilQvJT0UYKmMtMo56CHrQ==
+X-Google-Smtp-Source: APXvYqyi6mqapjcTlpY6OS6+c0zNuBWc9Fp5Tnew7VwPk6+TzOYM8OkMJvisUME8Culvm6LoCo8NTg==
+X-Received: by 2002:aa7:8ad9:: with SMTP id b25mr932975pfd.168.1572461942183;
+        Wed, 30 Oct 2019 11:59:02 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c1sm3936091pjc.23.2019.10.30.11.59.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2019 11:59:01 -0700 (PDT)
+Date:   Wed, 30 Oct 2019 11:59:00 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Iurii Zaikin <yzaikin@google.com>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        shuah <shuah@kernel.org>, john.johansen@canonical.com,
+        jmorris@namei.org, serge@hallyn.com, alan.maguire@oracle.com,
+        davidgow@google.com, Luis Chamberlain <mcgrof@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Mike Salvatore <mike.salvatore@canonical.com>
+Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
+ tests for policy unpack
+Message-ID: <201910301157.58D0CE4D3@keescook>
+References: <20191018001816.94460-1-brendanhiggins@google.com>
+ <CAAXuY3rLEt9nqOBSNaWjLMHNg6pDHdjtg7hFiYx-KCDhyfnkcg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAXuY3rLEt9nqOBSNaWjLMHNg6pDHdjtg7hFiYx-KCDhyfnkcg@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 24, 2019 at 11:49 AM David Howells <dhowells@redhat.com> wrote:
->
-> Convert pipes to use head and tail pointers for the buffer ring rather than
-> pointer and length as the latter requires two atomic ops to update (or a
-> combined op) whereas the former only requires one.
->
->  (1) The head pointer is the point at which production occurs and points to
->      the slot in which the next buffer will be placed.  This is equivalent
->      to pipe->curbuf + pipe->nrbufs.
->
->      The head pointer belongs to the write-side.
->
->  (2) The tail pointer is the point at which consumption occurs.  It points
->      to the next slot to be consumed.  This is equivalent to pipe->curbuf.
->
->      The tail pointer belongs to the read-side.
->
->  (3) head and tail are allowed to run to UINT_MAX and wrap naturally.  They
->      are only masked off when the array is being accessed, e.g.:
->
->         pipe->bufs[head & mask]
->
->      This means that it is not necessary to have a dead slot in the ring as
->      head == tail isn't ambiguous.
->
->  (4) The ring is empty if "head == tail".
->
->      A helper, pipe_empty(), is provided for this.
->
->  (5) The occupancy of the ring is "head - tail".
->
->      A helper, pipe_occupancy(), is provided for this.
->
->  (6) The number of free slots in the ring is "pipe->ring_size - occupancy".
->
->      A helper, pipe_space_for_user() is provided to indicate how many slots
->      userspace may use.
->
->  (7) The ring is full if "head - tail >= pipe->ring_size".
->
->      A helper, pipe_full(), is provided for this.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
->
->  fs/fuse/dev.c             |   31 +++--
->  fs/pipe.c                 |  169 ++++++++++++++++-------------
->  fs/splice.c               |  188 ++++++++++++++++++++------------
->  include/linux/pipe_fs_i.h |   86 ++++++++++++++-
->  include/linux/uio.h       |    4 -
->  lib/iov_iter.c            |  266 +++++++++++++++++++++++++--------------------
->  6 files changed, 464 insertions(+), 280 deletions(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index dadd617d826c..1e4bc27573cc 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -703,7 +703,7 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
->                         cs->pipebufs++;
->                         cs->nr_segs--;
->                 } else {
-> -                       if (cs->nr_segs == cs->pipe->buffers)
-> +                       if (cs->nr_segs >= cs->pipe->ring_size)
->                                 return -EIO;
->
->                         page = alloc_page(GFP_HIGHUSER);
-> @@ -879,7 +879,7 @@ static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
->         struct pipe_buffer *buf;
->         int err;
->
-> -       if (cs->nr_segs == cs->pipe->buffers)
-> +       if (cs->nr_segs >= cs->pipe->ring_size)
->                 return -EIO;
->
->         err = unlock_request(cs->req);
-> @@ -1341,7 +1341,7 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
->         if (!fud)
->                 return -EPERM;
->
-> -       bufs = kvmalloc_array(pipe->buffers, sizeof(struct pipe_buffer),
-> +       bufs = kvmalloc_array(pipe->ring_size, sizeof(struct pipe_buffer),
->                               GFP_KERNEL);
->         if (!bufs)
->                 return -ENOMEM;
-> @@ -1353,7 +1353,7 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
->         if (ret < 0)
->                 goto out;
->
-> -       if (pipe->nrbufs + cs.nr_segs > pipe->buffers) {
-> +       if (pipe_occupancy(pipe->head, pipe->tail) + cs.nr_segs > pipe->ring_size) {
->                 ret = -EIO;
->                 goto out;
->         }
-> @@ -1935,6 +1935,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->                                      struct file *out, loff_t *ppos,
->                                      size_t len, unsigned int flags)
->  {
-> +       unsigned int head, tail, mask, count;
->         unsigned nbuf;
->         unsigned idx;
->         struct pipe_buffer *bufs;
-> @@ -1949,8 +1950,12 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->
->         pipe_lock(pipe);
->
-> -       bufs = kvmalloc_array(pipe->nrbufs, sizeof(struct pipe_buffer),
-> -                             GFP_KERNEL);
-> +       head = pipe->head;
-> +       tail = pipe->tail;
-> +       mask = pipe->ring_size - 1;
-> +       count = head - tail;
-> +
-> +       bufs = kvmalloc_array(count, sizeof(struct pipe_buffer), GFP_KERNEL);
->         if (!bufs) {
->                 pipe_unlock(pipe);
->                 return -ENOMEM;
-> @@ -1958,8 +1963,8 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->
->         nbuf = 0;
->         rem = 0;
-> -       for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
-> -               rem += pipe->bufs[(pipe->curbuf + idx) & (pipe->buffers - 1)].len;
-> +       for (idx = tail; idx < head && rem < len; idx++)
-> +               rem += pipe->bufs[idx & mask].len;
->
->         ret = -EINVAL;
->         if (rem < len)
-> @@ -1970,16 +1975,16 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->                 struct pipe_buffer *ibuf;
->                 struct pipe_buffer *obuf;
->
-> -               BUG_ON(nbuf >= pipe->buffers);
-> -               BUG_ON(!pipe->nrbufs);
-> -               ibuf = &pipe->bufs[pipe->curbuf];
-> +               BUG_ON(nbuf >= pipe->ring_size);
-> +               BUG_ON(tail == head);
-> +               ibuf = &pipe->bufs[tail & mask];
->                 obuf = &bufs[nbuf];
->
->                 if (rem >= ibuf->len) {
->                         *obuf = *ibuf;
->                         ibuf->ops = NULL;
-> -                       pipe->curbuf = (pipe->curbuf + 1) & (pipe->buffers - 1);
-> -                       pipe->nrbufs--;
-> +                       tail++;
-> +                       pipe_commit_read(pipe, tail);
->                 } else {
->                         if (!pipe_buf_get(pipe, ibuf))
->                                 goto out_free;
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index 8a2ab2f974bd..8a0806fe12d3 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -43,10 +43,11 @@ unsigned long pipe_user_pages_hard;
->  unsigned long pipe_user_pages_soft = PIPE_DEF_BUFFERS * INR_OPEN_CUR;
->
->  /*
-> - * We use a start+len construction, which provides full use of the
-> - * allocated memory.
-> - * -- Florian Coosmann (FGC)
-> - *
-> + * We use head and tail indices that aren't masked off, except at the point of
-> + * dereference, but rather they're allowed to wrap naturally.  This means there
-> + * isn't a dead spot in the buffer, provided the ring size < INT_MAX.
-> + * -- David Howells 2019-09-23.
+On Thu, Oct 17, 2019 at 05:33:56PM -0700, Iurii Zaikin wrote:
+> On Thu, Oct 17, 2019 at 5:19 PM Brendan Higgins
+> <brendanhiggins@google.com> wrote:
+> 
+> > +config SECURITY_APPARMOR_TEST
+> > +       bool "Build KUnit tests for policy_unpack.c"
+> > +       default n
 
-Hi David,
+New options already already default n, this can be left off.
 
-Is "ring size < INT_MAX" constraint correct?
+> > +       depends on KUNIT && SECURITY_APPARMOR
+> > +       help
+> >
+> select SECURITY_APPARMOR ?
 
-I've never had to implement this free running indices scheme, but
-the way I've always visualized it is that the top bit of the index is
-used as a lap (as in a race) indicator, leaving 31 bits to work with
-(in case of unsigned ints).  Should that be
+"select" doesn't enforce dependencies, so just a "depends ..." is
+correct.
 
-  ring size <= 2^31
+> > +       KUNIT_EXPECT_EQ(test, size, TEST_BLOB_DATA_SIZE);
+> > +       KUNIT_EXPECT_TRUE(test,
+> > +               memcmp(blob, TEST_BLOB_DATA, TEST_BLOB_DATA_SIZE) == 0);
+> I think this must be  KUNIT_ASSERT_EQ(test, size, TEST_BLOB_DATA_SIZE);,
+> otherwise there could be a buffer overflow in memcmp. All tests that
+> follow such pattern
 
-or more precisely
+Agreed.
 
-  ring size is a power of two <= 2^31
+> are suspect. Also, not sure about your stylistic preference for
+> KUNIT_EXPECT_TRUE(test,
+>                memcmp(blob, TEST_BLOB_DATA, TEST_BLOB_DATA_SIZE) == 0);
+> vs
+> KUNIT_EXPECT_EQ(test,
+>                0,
+>                memcmp(blob, TEST_BLOB_DATA, TEST_BLOB_DATA_SIZE));
 
-or am I missing something?
+I like == 0.
 
-Thanks,
-
-                Ilya
+-- 
+Kees Cook
