@@ -7,70 +7,71 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D425CA9EC3
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 09:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BFECA9EC3
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 09:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0B6520862
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 09:18:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 589B420873
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 09:33:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vLVfuciN"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XhDF1lef"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfJaJSC (ORCPT
+        id S1727184AbfJaJdr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Oct 2019 05:18:02 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41077 "EHLO
+        Thu, 31 Oct 2019 05:33:47 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33480 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbfJaJSC (ORCPT
+        with ESMTP id S1727009AbfJaJdq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Oct 2019 05:18:02 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p26so3935808pfq.8
-        for <linux-security-module@vger.kernel.org>; Thu, 31 Oct 2019 02:18:01 -0700 (PDT)
+        Thu, 31 Oct 2019 05:33:46 -0400
+Received: by mail-pf1-f196.google.com with SMTP id c184so3996741pfb.0
+        for <linux-security-module@vger.kernel.org>; Thu, 31 Oct 2019 02:33:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/4vjjXip3PEZlpbvSCBjNSofs7TybrsEceZdmzVqTWg=;
-        b=vLVfuciNf7T8Yu5E2bROWn0NM0KpFjqxr++0zpwbFio/EEJo2T5wJdD3D7Cnjum+5S
-         oReoZsaxy9BkEdsv2pV9IsrGYf6fnv3cvIgdQCN+azdIrPfljxaoL8N7PG4SH1weLRJz
-         8Pq7bPws7tFsavO1Jg3lTNzhSqpD3x1IsE4n9KcEIEh9PPRkZNyo0J04GyWnA9YDYFDP
-         ON7Li7hij9hcochr8D0HBMbwnjWPQdG6D7NJ6RAEFI6WvqiJgQhzIpnsvDcS+UAGdqth
-         NnKwbU9dNTl+Ntmn//STGsXFF7/l/PtIpEuvLmkAT2KXdJJ9CPiqDpbYcmz4P/j/9KMH
-         oLJA==
+        bh=UfGWBZAudfaqT290q3OdOipHzfk3TijoCmN+3Jz803Q=;
+        b=XhDF1lefotT2UASMthSJUxNnb0mHTBcOYfkwpTSAY+w/HCQvebzTSdG9rU5FoZT5jB
+         7yGt6KeTaVrur2O+wQU1bqQTugrJbB69piT163uph4YXe867ADk73jYvYgJdMCASsaqO
+         jJoZ9FwT67M6PC6GOB7CEWQH/Vaam0LdsvMGqVy4R2FyYjny8XLnDljIsrzwlWUecIxm
+         lAAUkGPSwFcHfQ42lhykC7lDHXvf9WRF8TUolfSlHkao3dOb5o/E4oz1kPLmbIMJMZph
+         1nluWoVD9/ou08jb121tFfVKxG0vlpu9296vSX3JQpwJ0QYKoASioMWRqKHvSqwmsNB9
+         Skag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/4vjjXip3PEZlpbvSCBjNSofs7TybrsEceZdmzVqTWg=;
-        b=QQZcXPt+4NUQ6V4wFWsPBORqRChX93BEUHjmoQdytZRyxJEEk53LpF+e5ehl2VWxdc
-         eWPGR1qmva5EwiQVtC8qgyx+ujFOtze9hfoaYso2XW91Ovtpja+OflMVgB6u1u2k9U1i
-         5Z+ED4BkKwrr2aYZqk/tZUnEzGKWhyPsC9ucIGXV744szGSUzuro5HfRCTWjUABzipOh
-         dQfhsu0kRWVRODHIc6wMm2zbp4dNhkZ+JsSu4paRDIS6BtzDUx4l9v4698df0EgJvrkV
-         S2U8Ib4zY/oofIhNFIDBaId7EmkTXVTh+MOzPC21SYYVFHURMm56l6Ibowxy6U6UWVAu
-         XhHQ==
-X-Gm-Message-State: APjAAAVpBXl8rihZEpHNlpRaO/by+/f6gx7m94S6gM9TIVvwgu17x/uO
-        KEExaR6jtlj8nHuOF40wkUHWmzp9O4PJU3pxwpbgfw==
-X-Google-Smtp-Source: APXvYqypwZwY39bRA8SlcqSx2t9abzPasBSJqwBHjFz7WDKZ1NhGDmS5XjfCTop3u9EnVZ+RtajjJ+BbxlfeIRaFHGc=
-X-Received: by 2002:a63:234c:: with SMTP id u12mr5113679pgm.384.1572513480667;
- Thu, 31 Oct 2019 02:18:00 -0700 (PDT)
+        bh=UfGWBZAudfaqT290q3OdOipHzfk3TijoCmN+3Jz803Q=;
+        b=dbvfLfDZGz47rTofLVfsFhH4bQNExMSijM6U81NOL8H8clzq6P6aAOeZvHGrfrMhkR
+         TqhpnTUqXnpwVwVqbQSDCTPZIIWryB+ighTjgZUdkWOSySfZxKRptIYUckkEoi2FJqit
+         O2AfFhUXkc1hs9NXL3FK+nI0Jgyk1NhwwMKmyiO9hrkteWOHotSYbm+wvwQO+eEDrETo
+         NyGL1CyZg5WvN3QSip5IJbTwo9XVygW9Vy0WgkXSayR4K3EIiLsPmK3M7qz8swHL3VIm
+         I3b4poiO7BC1RmaaXpnoXyhZX+6d63lxjhxfQkqDqsaAMLupYTmrE+CWA4m1aH1hb645
+         X1YA==
+X-Gm-Message-State: APjAAAXndx3mWzxNxfW2hxwrTfuDvEzX77e6nJUTq14BEWXK4VXtPRpA
+        7f+znGQRQXY3nEPVfR2GHIXkYLIcMJD4O1raqlkJqQ==
+X-Google-Smtp-Source: APXvYqwBk6uPqm3VmykJcnsaeX9RA5YnvlcvEM+HRhk1ugxAFt3mcM3t+eszNFAN+ts86FuqPlbKTwge7YK0Mt6Chag=
+X-Received: by 2002:a65:664e:: with SMTP id z14mr5281693pgv.201.1572514424176;
+ Thu, 31 Oct 2019 02:33:44 -0700 (PDT)
 MIME-Version: 1.0
 References: <20191018001816.94460-1-brendanhiggins@google.com>
  <20191018122949.GD11244@42.do-not-panic.com> <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
  <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
  <20191024101529.GK11244@42.do-not-panic.com> <201910301205.74EC2A226D@keescook>
-In-Reply-To: <201910301205.74EC2A226D@keescook>
+ <CAAXuY3o31iCJwZ+WGHMaK1MgpC0qv=JkJWnzv8Lhym9TnZQvcQ@mail.gmail.com>
+In-Reply-To: <CAAXuY3o31iCJwZ+WGHMaK1MgpC0qv=JkJWnzv8Lhym9TnZQvcQ@mail.gmail.com>
 From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 31 Oct 2019 02:17:49 -0700
-Message-ID: <CAFd5g45V-iYaAhHwoaUPoPYUBud-5vxbBkApp-h5O6J8trnPRA@mail.gmail.com>
+Date:   Thu, 31 Oct 2019 02:33:32 -0700
+Message-ID: <CAFd5g446cyijzgap9r8nm_202zkUsfdZXrn5E1_Mfe-R+eFb_g@mail.gmail.com>
 Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
  tests for policy unpack
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+To:     Iurii Zaikin <yzaikin@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
         Alan Maguire <alan.maguire@oracle.com>,
         Matthias Maennich <maennich@google.com>,
         shuah <shuah@kernel.org>,
         John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        serge@hallyn.com, Iurii Zaikin <yzaikin@google.com>,
-        David Gow <davidgow@google.com>,
+        serge@hallyn.com, David Gow <davidgow@google.com>,
         "Theodore Ts'o" <tytso@mit.edu>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-security-module@vger.kernel.org,
@@ -83,77 +84,47 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 30, 2019 at 12:09 PM Kees Cook <keescook@chromium.org> wrote:
+On Wed, Oct 30, 2019 at 1:12 PM Iurii Zaikin <yzaikin@google.com> wrote:
 >
-> On Thu, Oct 24, 2019 at 10:15:29AM +0000, Luis Chamberlain wrote:
-> > On Wed, Oct 23, 2019 at 05:42:18PM -0700, Brendan Higgins wrote:
-> > > With that, I think the best solution in this case will be the
-> > > "__visible_for_testing" route. It has no overhead when testing is
-> > > turned off (in fact it is no different in anyway when testing is
-> > > turned off). The downsides I see are:
-> > >
-> > > 1) You may not be able to test non-module code not compiled for
-> > > testing later with the test modules that Alan is working on (But the
-> > > only way I think that will work is by preventing the symbol from being
-> > > inlined, right?).
-> > >
-> > > 2) I think "__visible_for_testing" will be prone to abuse. Here, I
-> > > think there are reasons why we might want to expose these symbols for
-> > > testing, but not otherwise. Nevertheless, I think most symbols that
-> > > should be tested should probably be made visible by default. Since you
-> > > usually only want to test your public interfaces. I could very well
-> > > see this getting used as a kludge that gets used far too frequently.
+> > Why can't unit tests live with the code they're testing? They're already
+> > logically tied together; what's the harm there? This needn't be the case
+> > for ALL tests, etc. The test driver could still live externally. The
+> > test in the other .c would just have exported functions... ?
 > >
-> > There are two parts to your statement on 2):
-> >
-> >   a) possible abuse of say __visible_for_testing
->
-> I really don't like the idea of littering the kernel with these. It'll
+> Curiously enough, this approach has been adopted by D 2.0 where unittests are
+> members of the class under test:  https://digitalmars.com/d/2.0/unittest.html
 
-Yeah, I kind of hope that it would make people think more
-intentionally about what is a public interface so that they wouldn't
-litter the kernel with those. But I agree that in the world where
-people *didn't* do that. Lots of these sprinkled around would be
-annoying.
+Thanks for pointing this out, Iurii, that actually looks pretty cool.
+I still personally prefer keeping tests and code separate, but if we
+decide to go the route of mixing tests and code, maybe we might want
+to use this as a model.
 
-> also require chunks in header files wrapped in #ifdefs. This is really
+> but such approach is not mainstream.
+> I personally like the idea of testing the lowest level bits in isolation even if
+> they are not a part of any interface. I think that specifying the
+> interface using
+> unit tests and ensuring implementation correctness are complementary but
+> I haven't had much luck arguing this with our esteemed colleagues.
 
-Why would it require header files wrapped in #ifdefs?
+So I think this is a very subtle point which is very widely
+misunderstood. Most people write code and then write their tests,
+following this practice along with only testing public interfaces
+often causes people to just not test all of their code, which is
+wrong.
 
-We could put all the ifdeffery logic in the __visible_for_testing
-macro so that nothing in the original code has to change except for
-adding an #include and replacing a couple of `static`s with
-`__visible_for_testing`.
+The idea of only testing public interfaces is supposed to make people
+think more carefully about what the composite layers of the program
+is. If you are having difficulty getting decent coverage by only
+testing your public interfaces, then it likely tells you that you have
+one of two problems:
 
-> ugly.
->
-> >   b) you typically only want to test your public interfaces
->
-> True, but being able to test the little helper functions is a nice
-> starting point and a good building block.
+1) You have code that you don't need, and you should remove it.
 
-Yeah, I think I have come to accept that. We can argue about how this
-should change and how people need to learn to be more intentional
-about which interfaces are public and many other high minded ideas,
-but when it comes down to it, we need to provide a starting point that
-is easy.
+2) One of the layers in your program is too think, and you should
+introduce a new layer with a new public interface that you can test
+through.
 
-If our nice starting point becomes a problem, we can always improve it later.
-
-> Why can't unit tests live with the code they're testing? They're already
-> logically tied together; what's the harm there? This needn't be the case
-> for ALL tests, etc. The test driver could still live externally. The
-> test in the other .c would just have exported functions... ?
-
-Well, for one, it totally tanks certain cases for building KUnit tests
-as modules. I don't care about this point *too* much personally, but I
-accept that there are others that want this, and I don't want to make
-these people's lives too difficult.
-
-The main reason I care, however, is just that I think it looks bad to
-me. The file that these tests were in was already pretty long, and the
-tests made it even longer. So that makes the tests harder to find. If
-all tests are in a *-test.c file, then it becomes really easy to find
-all of your tests. Admittedly, this is a pretty minor point. Honestly,
-the main reason it looks bad to me, is because it is different from
-what I am used to, which, I know, is not a great reason.
+I think the second point here is problematic with how C is written in
+the kernel. We don't really have any concept of public vs. private
+inside the kernel outside of static vs. not static, which is much more
+restricted.
