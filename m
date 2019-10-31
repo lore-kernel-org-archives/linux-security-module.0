@@ -1,123 +1,151 @@
-Return-Path: <SRS0=3RLe=YX=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=Hf04=YY=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA22CA9EC7
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 22:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B59CECA9ED0
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 01:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EB282087F
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Oct 2019 22:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CA322173E
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 01:19:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="g33Q4U/Y"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jATu4MK3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfJ3Wio (ORCPT
+        id S1726710AbfJaBTS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Oct 2019 18:38:44 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41680 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbfJ3Wio (ORCPT
+        Wed, 30 Oct 2019 21:19:18 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:34448 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726575AbfJaBTS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Oct 2019 18:38:44 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p4so4127927wrm.8
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Oct 2019 15:38:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qfICZRpjv9MzZUR3Km31YoPnMoXWt4BCtsBGyOPs+MA=;
-        b=g33Q4U/Y/PsWl2LTH18JY6gpMyFVmPxV9qqWkrT57lR2a/GCy9kyBDrbLXWbaa2fps
-         tOVndw1p6l/7VQHVRvGpLmhpFDr4RJXRgrTPx4hhh43FE6ruFdAPV73fa0XTmGA/7rmy
-         ly6YasutyEzFhYEmiEDQkruKueLdPUY1jDjaw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qfICZRpjv9MzZUR3Km31YoPnMoXWt4BCtsBGyOPs+MA=;
-        b=N/g6S+6IdeBPm3X2eX13yOaFaqe/U11ssxZcXxfXKc2IxhVy+vGet+Psx9bVXMlX1u
-         9qILoT04W+k2QBQQFfuZ361dQWKwtnkeQZdUibhl1urVn4rNVQLyOLk6OI3Gu+SH5lxI
-         594EZ26G4jByTfeyrzte3mHvWG8aq32vQqH9262EYfY3DNIQlIC4wX03MyLjL5exVZYS
-         gbuy4NFUEI5F8a1Ed9gKBlsMqhtyyBL0Lxq1As0+aZxomOp16zfuLobFVzPwKB9w2C9x
-         gvkN5DH89pEVICdHLiEGNRSlcZtZ9+fV+/yugu/cH4SzHizem4bdESKQMA4t6Y4zTxGo
-         LmUQ==
-X-Gm-Message-State: APjAAAW/7mvPze/ZNkDe6gWh4C8j/9A2MaxIIAHiNFKfP8MOQuA7u5qM
-        T0yWDGvKiHboAxaNygiL4mW2Hg==
-X-Google-Smtp-Source: APXvYqwy8Lp9RkPFYIcCKVwNc4bwfuBSBiCYr98GupWsvuOSYztGZY5yvtxoKwr5rWH+K4PLLBTR+g==
-X-Received: by 2002:adf:d1a3:: with SMTP id w3mr2258782wrc.9.1572475121267;
-        Wed, 30 Oct 2019 15:38:41 -0700 (PDT)
-Received: from [192.168.1.149] (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
-        by smtp.gmail.com with ESMTPSA id t24sm1858665wra.55.2019.10.30.15.38.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Oct 2019 15:38:40 -0700 (PDT)
-Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
- not cursor and length [ver #2]
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
- <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com>
- <4892d186-8eb0-a282-e7e6-e79958431a54@rasmusvillemoes.dk>
- <CAOi1vP9paV2-2_S0NgfbZDE6+5kqHXVc9xabHVC-2Ss1MmXkCg@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <d08d13d9-8eee-9c1e-2f8d-e846063882d7@rasmusvillemoes.dk>
-Date:   Wed, 30 Oct 2019 23:38:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <CAOi1vP9paV2-2_S0NgfbZDE6+5kqHXVc9xabHVC-2Ss1MmXkCg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 30 Oct 2019 21:19:18 -0400
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 5FBE820B4905;
+        Wed, 30 Oct 2019 18:19:17 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5FBE820B4905
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1572484757;
+        bh=jKdr0i575psSffuW6tVfQvBwkPEFTHm7RfRhZzLOb6E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jATu4MK3A3ylU/E0k6trxZ3oQMU+wLM3JPimqzDIgTWagtcvPK1v3mF/e3EO3D8+m
+         O06pnP+RjDLzc9m3jSCh/5QlAViOCiwZ1XBgn8hu+/v8rMOyTaiq0dOrittY/NC2FF
+         jegrwioZDYptNcu+16Raeig/XrOltXXA5ZV3I0tk=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     prsriva@linux.microsoft.com
+Subject: [PATCH v3 5/9] KEYS: Updated ima_get_action() to return keyrings if specified in the policy
+Date:   Wed, 30 Oct 2019 18:19:06 -0700
+Message-Id: <20191031011910.2574-6-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191031011910.2574-1-nramas@linux.microsoft.com>
+References: <20191031011910.2574-1-nramas@linux.microsoft.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 30/10/2019 23.16, Ilya Dryomov wrote:
-> On Wed, Oct 30, 2019 at 9:35 PM Rasmus Villemoes
-> <linux@rasmusvillemoes.dk> wrote:
->>
->> On 30/10/2019 17.19, Ilya Dryomov wrote:
->>> On Thu, Oct 24, 2019 at 11:49 AM David Howells <dhowells@redhat.com> wrote:
->>>>  /*
->>>> - * We use a start+len construction, which provides full use of the
->>>> - * allocated memory.
->>>> - * -- Florian Coosmann (FGC)
->>>> - *
->>>> + * We use head and tail indices that aren't masked off, except at the point of
->>>> + * dereference, but rather they're allowed to wrap naturally.  This means there
->>>> + * isn't a dead spot in the buffer, provided the ring size < INT_MAX.
->>>> + * -- David Howells 2019-09-23.
->>>
->>> Hi David,
->>>
->>> Is "ring size < INT_MAX" constraint correct?
->>
->> No. As long as one always uses a[idx % size] to access the array, the
->> only requirement is that size is representable in an unsigned int. Then
->> because one also wants to do the % using simple bitmasking, that further
->> restricts one to sizes that are a power of 2, so the end result is that
->> the max size is 2^31 (aka INT_MAX+1).
-> 
-> I think the fact that indices are free running and wrap at a power of
-> two already restricts you to sizes the are a power of two,
+Information regarding what keyrings need to be measured is missing.
+ima_get_action() needs to retrieve the keyrings, if specified for
+KEYRING_CHECK. 
 
-Ah, yes, of course. When reducing indices mod n that may already have
-been implicitly reduced mod N, N must be a multiple of n for the result
-to be well-defined.
+This patch adds a new out parameter to ima_get_action() to return
+keyrings read from the policy.
 
-Rasmus
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ security/integrity/ima/ima.h      | 3 ++-
+ security/integrity/ima/ima_api.c  | 6 ++++--
+ security/integrity/ima/ima_main.c | 8 ++++++--
+ 3 files changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 3539a159a7ac..ded78af94e69 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -212,7 +212,8 @@ struct ima_measure_key_entry {
+ /* LIM API function definitions */
+ int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+ 		   int mask, enum ima_hooks func, int *pcr,
+-		   struct ima_template_desc **template_desc);
++		   struct ima_template_desc **template_desc,
++		   char **keyrings);
+ int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
+ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 			    struct file *file, void *buf, loff_t size,
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index f488d1cead79..77ac076672e1 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -169,6 +169,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  * @func: caller identifier
+  * @pcr: pointer filled in if matched measure policy sets pcr=
+  * @template_desc: pointer filled in if matched measure policy sets template=
++ * @keyrings: pointer filled in if matched measure policy sets keyrings=
+  *
+  * The policy is defined in terms of keypairs:
+  *		subj=, obj=, type=, func=, mask=, fsmagic=
+@@ -184,14 +185,15 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  */
+ int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+ 		   int mask, enum ima_hooks func, int *pcr,
+-		   struct ima_template_desc **template_desc)
++		   struct ima_template_desc **template_desc,
++		   char **keyrings)
+ {
+ 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE | IMA_HASH;
+ 
+ 	flags &= ima_policy_flag;
+ 
+ 	return ima_match_policy(inode, cred, secid, func, mask, flags, pcr,
+-				template_desc, NULL);
++				template_desc, keyrings);
+ }
+ 
+ /*
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 72ae0878ec5d..cbc7de87106f 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -214,7 +214,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	 * Included is the appraise submask.
+ 	 */
+ 	action = ima_get_action(inode, cred, secid, mask, func, &pcr,
+-				&template_desc);
++				&template_desc, NULL);
+ 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
+ 			   (ima_policy_flag & IMA_MEASURE));
+ 	if (!action && !violation_check)
+@@ -627,6 +627,7 @@ void process_buffer_measurement(const void *buf, int size,
+ 					    .buf = buf,
+ 					    .buf_len = size};
+ 	struct ima_template_desc *template = NULL;
++	char *keyrings = NULL;
+ 	struct {
+ 		struct ima_digest_data hdr;
+ 		char digest[IMA_MAX_DIGEST_SIZE];
+@@ -641,11 +642,14 @@ void process_buffer_measurement(const void *buf, int size,
+ 	if (func) {
+ 		security_task_getsecid(current, &secid);
+ 		action = ima_get_action(NULL, current_cred(), secid, 0, func,
+-					&pcr, &template);
++					&pcr, &template, &keyrings);
+ 		if (!(action & IMA_MEASURE))
+ 			return;
+ 	}
+ 
++	if (keyrings != NULL)
++		keyrings = NULL;
++
+ 	if (!pcr)
+ 		pcr = CONFIG_IMA_MEASURE_PCR_IDX;
+ 
+-- 
+2.17.1
+
