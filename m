@@ -2,109 +2,71 @@ Return-Path: <SRS0=Hf04=YY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA60DCA9ECB
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 18:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A729CCA9ECB
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 21:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A246E20650
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 18:40:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ToKg4wox"
+	by mail.kernel.org (Postfix) with ESMTP id 84536208C0
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 21:13:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729212AbfJaSkl (ORCPT
+        id S1727981AbfJaVNE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Oct 2019 14:40:41 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34891 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729266AbfJaSki (ORCPT
+        Thu, 31 Oct 2019 17:13:04 -0400
+Received: from mga18.intel.com ([134.134.136.126]:37197 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727020AbfJaVNE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Oct 2019 14:40:38 -0400
-Received: by mail-pl1-f196.google.com with SMTP id x6so3076813pln.2
-        for <linux-security-module@vger.kernel.org>; Thu, 31 Oct 2019 11:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4ZF1W1bG/Rl8CChrQFOeusHspeNIEyvicA7XRZyNais=;
-        b=ToKg4woxb646iL0UBTpW7kOzBulVyPZE8eDKGJRbGidQmuB1kSZuXXGKQrlmhVqoG/
-         6mqlKlPwwHbv30/kmrxykMo2JifdPmff3G7Vcjm5igE3zt+aH+NuABmoc8V6qYyGdAUo
-         73/woDqeWba6Ad8QQ0T/3wSFBcBSEsb+D3la0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4ZF1W1bG/Rl8CChrQFOeusHspeNIEyvicA7XRZyNais=;
-        b=e+9MxLcLwDEGZ4Rxt/ybZ+tPQNInHPG6cKTIh54nVdVVIGJMys/cW3ZG6N7TltTaDs
-         uHYKoLQPE+oXTFumwu+colmjB5p95Z8N9LFQGkcrRLAEhKhXNA3+A8nBHT6vDg5Mzq89
-         8ROH5aRaUOsggcB6fKpOTGDUt6xjmAgnRVcpwfe6FnEvMMIairJrATroN/h5GmvXtC4Y
-         rVDm/gzZgLFcARv44DmpKftgH5nWwTFhYnWVHdbRMsdkdk1AKyt+xivRwoHFqPI/25gQ
-         hhp4vHKE5lwcTf2SN1nE8XKAZnf8hMIT184xEqaCAGdmlrksJ839bm58avokdZVqfupY
-         F9BQ==
-X-Gm-Message-State: APjAAAXBqOZAN9YIBuI26+nLezNjkkUF+cGWGrpkK/EyOUBCzx2x/Qu9
-        fcg6jAcxEuKkexfwGABEvbn3pw==
-X-Google-Smtp-Source: APXvYqzTiXUhiopZUISbbRLvil8rhHffcEWWEBYAGxeX2kHSa42od+2QUV+X5ZsC/43T4hltLWmqWA==
-X-Received: by 2002:a17:902:326:: with SMTP id 35mr8047584pld.248.1572547237564;
-        Thu, 31 Oct 2019 11:40:37 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j14sm3913682pfi.168.2019.10.31.11.40.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2019 11:40:36 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 11:40:35 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Iurii Zaikin <yzaikin@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Matthias Maennich <maennich@google.com>,
-        shuah <shuah@kernel.org>,
-        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        serge@hallyn.com, David Gow <davidgow@google.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thu, 31 Oct 2019 17:13:04 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 14:13:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,253,1569308400"; 
+   d="scan'208";a="194459648"
+Received: from epobrien-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.10.103])
+  by orsmga008.jf.intel.com with ESMTP; 31 Oct 2019 14:12:53 -0700
+Date:   Thu, 31 Oct 2019 23:12:52 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
         linux-security-module@vger.kernel.org,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Mike Salvatore <mike.salvatore@canonical.com>
-Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
- tests for policy unpack
-Message-ID: <201910311136.BBC4C70B@keescook>
-References: <20191018001816.94460-1-brendanhiggins@google.com>
- <20191018122949.GD11244@42.do-not-panic.com>
- <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
- <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
- <20191024101529.GK11244@42.do-not-panic.com>
- <201910301205.74EC2A226D@keescook>
- <CAAXuY3o31iCJwZ+WGHMaK1MgpC0qv=JkJWnzv8Lhym9TnZQvcQ@mail.gmail.com>
- <CAFd5g446cyijzgap9r8nm_202zkUsfdZXrn5E1_Mfe-R+eFb_g@mail.gmail.com>
+        Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
+Message-ID: <20191031211252.GC10507@linux.intel.com>
+References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+ <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+ <20191029092920.GA14494@linux.intel.com>
+ <20191030093045.GB12481@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFd5g446cyijzgap9r8nm_202zkUsfdZXrn5E1_Mfe-R+eFb_g@mail.gmail.com>
+In-Reply-To: <20191030093045.GB12481@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 31, 2019 at 02:33:32AM -0700, Brendan Higgins wrote:
-> 2) One of the layers in your program is too think, and you should
-> introduce a new layer with a new public interface that you can test
-> through.
-> 
-> I think the second point here is problematic with how C is written in
-> the kernel. We don't really have any concept of public vs. private
-> inside the kernel outside of static vs. not static, which is much more
-> restricted.
+On Wed, Oct 30, 2019 at 02:30:45AM -0700, Sean Christopherson wrote:
+> Why?  The number of pages processed is effectively returned via the params
+> on any error, e.g. wouldn't it be more appropriate to return -ERESTARTSYS?
+> And I don't see any reason to add an arbitrary cap on the number of pages,
+> e.g. SGX plays nice with the scheduler and signals, and restricting the
+> number of EPC pages available to a process via cgroups (returning -ENOMEM)
+> is a better solution for managing EPC.
 
-I don't find "2" to be a convincing argument (as you hint a bit at in
-the next paragraph)_. There are lots of things code is depending on
-(especially given the kernel's coding style guides about breaking up
-large functions into little ones), that you want to test to make sure
-is working correctly that has no public exposure, and you want to test
-those helper's corner cases which might be hard to (currently) reach via
-the higher level public APIs.
+Returning -ENOMEM does not tell you from which page to retry.
 
--- 
-Kees Cook
+/Jarkko
