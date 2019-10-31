@@ -2,107 +2,80 @@ Return-Path: <SRS0=Hf04=YY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D41CA9ECB
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 21:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C85CA9ECB
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 21:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6367C20862
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 21:17:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36CB22087F
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 21:48:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfJaVR6 (ORCPT
+        id S1728852AbfJaVr6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Oct 2019 17:17:58 -0400
-Received: from mga01.intel.com ([192.55.52.88]:43734 "EHLO mga01.intel.com"
+        Thu, 31 Oct 2019 17:47:58 -0400
+Received: from mga09.intel.com ([134.134.136.24]:50799 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726540AbfJaVR5 (ORCPT
+        id S1728598AbfJaVr5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Oct 2019 17:17:57 -0400
+        Thu, 31 Oct 2019 17:47:57 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 14:17:56 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 14:47:56 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,253,1569308400"; 
-   d="scan'208";a="402024076"
+   d="scan'208";a="204331816"
 Received: from epobrien-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.10.103])
-  by fmsmga006.fm.intel.com with ESMTP; 31 Oct 2019 14:17:46 -0700
-Date:   Thu, 31 Oct 2019 23:17:44 +0200
+  by orsmga006.jf.intel.com with ESMTP; 31 Oct 2019 14:47:48 -0700
+Date:   Thu, 31 Oct 2019 23:47:45 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>
-Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
-Message-ID: <20191031211721.GD10507@linux.intel.com>
-References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
- <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
- <173a196e-fa6b-23b8-c818-dfca6cdadcc6@tycho.nsa.gov>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     jens.wiklander@linaro.org, dhowells@redhat.com, corbet@lwn.net,
+        jejb@linux.ibm.com, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com,
+        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
+        stuart.yoder@arm.com, janne.karhunen@gmail.com,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        tee-dev@lists.linaro.org
+Subject: Re: [Patch v3 6/7] doc: keys: Document usage of TEE based Trusted
+ Keys
+Message-ID: <20191031214745.GG10507@linux.intel.com>
+References: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
+ <1572530323-14802-7-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <173a196e-fa6b-23b8-c818-dfca6cdadcc6@tycho.nsa.gov>
+In-Reply-To: <1572530323-14802-7-git-send-email-sumit.garg@linaro.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 30, 2019 at 09:45:05AM -0400, Stephen Smalley wrote:
-> On 10/28/19 5:03 PM, Jarkko Sakkinen wrote:
-> > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
-> > can be used by applications to set aside private regions of code and
-> > data. The code outside the SGX hosted software entity is disallowed to
-> > access the memory inside the enclave enforced by the CPU. We call these
-> > entities as enclaves.
-> > 
-> > This commit implements a driver that provides an ioctl API to construct
-> > and run enclaves. Enclaves are constructed from pages residing in
-> > reserved physical memory areas. The contents of these pages can only be
-> > accessed when they are mapped as part of an enclave, by a hardware
-> > thread running inside the enclave.
-> > 
-> > The starting state of an enclave consists of a fixed measured set of
-> > pages that are copied to the EPC during the construction process by
-> > using ENCLS leaf functions and Software Enclave Control Structure (SECS)
-> > that defines the enclave properties.
-> > 
-> > Enclave are constructed by using ENCLS leaf functions ECREATE, EADD and
-> > EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
-> > the EPC and EINIT check a given signed measurement and moves the enclave
-> > into a state ready for execution.
-> > 
-> > An initialized enclave can only be accessed through special Thread Control
-> > Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
-> > function converts a thread into enclave mode and continues the execution in
-> > the offset defined by the TCS provided to EENTER. An enclave is exited
-> > through syscall, exception, interrupts or by explicitly calling another
-> > ENCLU leaf EEXIT.
-> > 
-> > The permissions, which enclave page is added will set the limit for maximum
-> > permissions that can be set for mmap() and mprotect(). This will
-> > effectively allow to build different security schemes between producers and
-> > consumers of enclaves. Later on we can increase granularity with LSM hooks
-> > for page addition (i.e. for producers) and mapping of the enclave (i.e. for
-> > consumers)
+On Thu, Oct 31, 2019 at 07:28:42PM +0530, Sumit Garg wrote:
+> Provide documentation for usage of TEE based Trusted Keys via existing
+> user-space "keyctl" utility. Also, document various use-cases.
 > 
-> Where do things stand wrt to ensuring that SGX cannot be used to introduce
-> executable mappings that were never authorized by the LSM (or never measured
-> by IMA)?
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 
-This was the latest discussion about that subject:
+This is the most important commit in order for someone who don't deal
+that much with ARM TEE to get right. Until this commit is right, I don't
+unfortunately have much to say about other commits.
 
-https://lore.kernel.org/linux-sgx/CALCETrWDLX68Vi4=9Dicq9ATmJ5mv36bzrc02heNYaHaBeWumQ@mail.gmail.com/
+Instead of making disjoint islands, you should edit trusted-encrypted.rst
+so that it describes commonalities and differences.
+
+What the document currently describes is the usage model. It could be a
+section of its own. In that you should describe first the common
+parameters and separetely the backend specific parametrs.
+
+From kernel internals (there could be a section with this name)  the
+document describe the key generation e.g. is the hardware used and how
+it is used, is there salting with krng and so forth.
 
 /Jarkko
