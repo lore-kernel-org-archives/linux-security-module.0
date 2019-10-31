@@ -2,102 +2,165 @@ Return-Path: <SRS0=Hf04=YY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3567CA9EC3
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 11:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF41C47E49
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 12:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2BFB2087F
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 11:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFE2620862
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Oct 2019 12:10:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfJaL5q (ORCPT
+        id S1726462AbfJaMKm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Oct 2019 07:57:46 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55306 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbfJaLzI (ORCPT
+        Thu, 31 Oct 2019 08:10:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40016 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726722AbfJaMKm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Oct 2019 07:55:08 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iQ92T-0002qM-L8; Thu, 31 Oct 2019 12:54:53 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3ED611C0070;
-        Thu, 31 Oct 2019 12:54:53 +0100 (CET)
-Date:   Thu, 31 Oct 2019 11:54:52 -0000
-From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] security/safesetid: Replace rcu_swap_protected() with
- rcu_replace_pointer()
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Reported-by: kbuild test robot" <lkp@intel.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Micah Morton <mortonm@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        <linux-security-module@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-MIME-Version: 1.0
-Message-ID: <157252289291.29376.2051030506832660651.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Thu, 31 Oct 2019 08:10:42 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9VCA9Ki140532
+        for <linux-security-module@vger.kernel.org>; Thu, 31 Oct 2019 08:10:41 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vyv3rqk1d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 31 Oct 2019 08:10:40 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 31 Oct 2019 12:10:38 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Oct 2019 12:10:34 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9VC9xXx34668934
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 12:09:59 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A0EEE11C05E;
+        Thu, 31 Oct 2019 12:10:33 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0302E11C04C;
+        Thu, 31 Oct 2019 12:10:32 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.194.174])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Oct 2019 12:10:31 +0000 (GMT)
+Subject: Re: [PATCH v3 1/9] KEYS: Defined an IMA hook to measure keys on key
+ create or update
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     prsriva@linux.microsoft.com
+Date:   Thu, 31 Oct 2019 08:10:31 -0400
+In-Reply-To: <20191031011910.2574-2-nramas@linux.microsoft.com>
+References: <20191031011910.2574-1-nramas@linux.microsoft.com>
+         <20191031011910.2574-2-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19103112-0016-0000-0000-000002BF7A23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19103112-0017-0000-0000-00003320DD7B
+Message-Id: <1572523831.5028.43.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-31_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910310125
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The following commit has been merged into the core/rcu branch of tip:
+On Wed, 2019-10-30 at 18:19 -0700, Lakshmi Ramasubramanian wrote:
+> Asymmetric keys used for verifying file signatures or certificates
+> are currently not included in the IMA measurement list.
+> 
+> This patch defines a new IMA hook namely ima_post_key_create_or_update()
+> to measure asymmetric keys.
 
-Commit-ID:     a60a5746004d7dbb68cbccd4c16d0529e2b2d1d9
-Gitweb:        https://git.kernel.org/tip/a60a5746004d7dbb68cbccd4c16d0529e2b2d1d9
-Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Fri, 04 Oct 2019 15:07:09 -07:00
-Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Wed, 30 Oct 2019 08:45:57 -07:00
+It's not enough for the kernel to be able to compile the kernel after
+applying all the patches in a patch set.  After applying each patch,
+the kernel should build properly, otherwise it is not bi-sect safe.
+ Refer to "3) Separate your changes" of
+"Documentation/process/submitting-patches.rst.
+ 
+> 
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> ---
+>  security/integrity/ima/ima.h      |  2 ++
+>  security/integrity/ima/ima_main.c | 26 ++++++++++++++++++++++++++
+>  2 files changed, 28 insertions(+)
+> 
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 997a57137351..22d0628faf56 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -21,6 +21,8 @@
+>  #include <linux/tpm.h>
+>  #include <linux/audit.h>
+>  #include <crypto/hash_info.h>
+> +#include <crypto/public_key.h>
+> +#include <keys/asymmetric-type.h>
+>  
+>  #include "../integrity.h"
+>  
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 492b8f241d39..18e1bc105be7 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -635,6 +635,9 @@ void process_buffer_measurement(const void *buf, int size,
+>  	int action = 0;
+>  	u32 secid;
+>  
+> +	if (!ima_policy_flag)
+> +		return;
+> +
+>  	if (func) {
+>  		security_task_getsecid(current, &secid);
+>  		action = ima_get_action(NULL, current_cred(), secid, 0, func,
+> @@ -695,6 +698,29 @@ void ima_kexec_cmdline(const void *buf, int size)
+>  	}
+>  }
+>  
+> +/**
+> + * ima_post_key_create_or_update - measure asymmetric keys
+> + * @keyring: keyring to which the key is linked to
+> + * @key: created or updated key
+> + * @flags: key flags
+> + * @create: flag indicating whether the key was created or updated
+> + *
+> + * Keys can only be measured, not appraised.
+> + */
+> +void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+> +				   unsigned long flags, bool create)
+> +{
+> +	const struct public_key *pk;
+> +
+> +	if (key->type != &key_type_asymmetric)
+> +		return;
+> +
+> +	pk = key->payload.data[asym_crypto];
+> +	process_buffer_measurement(pk->key, pk->keylen,
+> +				   keyring->description,
+> +				   NONE, 0);
 
-security/safesetid: Replace rcu_swap_protected() with rcu_replace_pointer()
+This patch should also define the new "func".
 
-This commit replaces the use of rcu_swap_protected() with the more
-intuitively appealing rcu_replace_pointer() as a step towards removing
-rcu_swap_protected().
+Mimi
 
-Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Reported-by: Reported-by: kbuild test robot <lkp@intel.com>
-[ paulmck: From rcu_replace() to rcu_replace_pointer() per Ingo Molnar. ]
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Micah Morton <mortonm@chromium.org>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: <linux-security-module@vger.kernel.org>
----
- security/safesetid/securityfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +}
+> +
+>  static int __init init_ima(void)
+>  {
+>  	int error;
 
-diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
-index 74a13d4..f8bc574 100644
---- a/security/safesetid/securityfs.c
-+++ b/security/safesetid/securityfs.c
-@@ -179,8 +179,8 @@ out_free_rule:
- 	 * doesn't currently exist, just use a spinlock for now.
- 	 */
- 	mutex_lock(&policy_update_lock);
--	rcu_swap_protected(safesetid_setuid_rules, pol,
--			   lockdep_is_held(&policy_update_lock));
-+	pol = rcu_replace_pointer(safesetid_setuid_rules, pol,
-+				  lockdep_is_held(&policy_update_lock));
- 	mutex_unlock(&policy_update_lock);
- 	err = len;
- 
