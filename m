@@ -2,122 +2,81 @@ Return-Path: <SRS0=4y41=YZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCB7CA9ECF
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 19:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 220E3CA9ED1
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 20:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F55521906
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 19:25:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572636321;
-	bh=m3f9F38m5vqjc2xonynn9KjryMszWAzyWjRQ0GiQRDg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=BNe8QuD41hLGSGynw0ki0A4Kf+HhQXTlfI0XAa3dNU/ObaG8U3SCALMLLqAuvIrrd
-	 ZgyjnzCYgLafQhIFamkt3LROGSB/1oPWgB/8HhH6yYmnTu2xvFwlK3W2GnURPqpkI9
-	 sF/KlAudgFTuQ291WiiuSA162fBgw061nHS/g/so=
+	by mail.kernel.org (Postfix) with ESMTP id 01E1D21855
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 20:20:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbfKATZR (ORCPT
+        id S1727671AbfKAUUH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Nov 2019 15:25:17 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37803 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727756AbfKATZR (ORCPT
+        Fri, 1 Nov 2019 16:20:07 -0400
+Received: from mga11.intel.com ([192.55.52.93]:55656 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726477AbfKAUUH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Nov 2019 15:25:17 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v2so11325478lji.4
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Nov 2019 12:25:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YYxjqcv/PYLPJKobOoHtNXOrj3psbjFOHnMYal58y3I=;
-        b=c+Gs+TI8cuAjd4kd2hWlKLPAsPgXseDnrsUcVlBiA4ySvAjVj2n7unbZVDl4mRhd8k
-         QGeff69FovwuouMkPqWploEvqGg2xz0OwyPfdogz9QpK6BaN9Ka9RJgzEVo5nEiWZyg/
-         /eJ1qfcbNdodLUDZDnlwBOGgeV6KiV/t48RJo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YYxjqcv/PYLPJKobOoHtNXOrj3psbjFOHnMYal58y3I=;
-        b=ThDCI+BQF83K8OJmWOOaFlw4EQB9XXzs0BDjuqz6FwSFeff3moqQcXexmVIIPZmlhi
-         muUno1gNJ5izMj0YrjIaRKuMmH5ETtCSGNl94HOnJUUtrs4dslWQ++fOhZc4znFFlpFB
-         tepovrLZfZrM7jGZgt6xTEX/RbZS4k8VHFJ56Zww2cSX7K77IQBso7d6cVvLDfToxmtA
-         SQA4nMLCnKqYzqhsdHZ7+26K0QD+jXJUVD5qdkc5TIWDYwQPqwwEVfW7x8eBweWQC86v
-         85MbMovjnd4ximtwNqDugJj4znlWzvnbSpvzHW8lPmdDB31v9OAG2w25HeFb+6f15k3F
-         Qg0Q==
-X-Gm-Message-State: APjAAAVPDuV2iHr+8iRqHzyGY5hqUmfjchyB/U3fpumUNl6X33QnEIAD
-        f75b+KCT1Lk0muZpJC0dwn9gLFoDpZw=
-X-Google-Smtp-Source: APXvYqx2hThy5s1K60HOdOHOmilxo6CUs/a8ZYKZddudhAe6NSDrFrhreLu5TV3gQ/mmYlqE6iFkGw==
-X-Received: by 2002:a2e:8616:: with SMTP id a22mr8513850lji.30.1572636312947;
-        Fri, 01 Nov 2019 12:25:12 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id 3sm2868531lfq.55.2019.11.01.12.25.11
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2019 12:25:11 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id y3so11316021ljj.6
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Nov 2019 12:25:11 -0700 (PDT)
-X-Received: by 2002:a05:651c:154:: with SMTP id c20mr9282919ljd.1.1572636310860;
- Fri, 01 Nov 2019 12:25:10 -0700 (PDT)
+        Fri, 1 Nov 2019 16:20:07 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 13:20:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,256,1569308400"; 
+   d="scan'208";a="226138430"
+Received: from bklaps-mobl.ger.corp.intel.com (HELO localhost) ([10.252.27.20])
+  by fmsmga004.fm.intel.com with ESMTP; 01 Nov 2019 13:19:58 -0700
+Date:   Fri, 1 Nov 2019 22:19:57 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Jens Wiklander <jens.wiklander@linaro.org>, dhowells@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>, jejb@linux.ibm.com,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Stuart Yoder <stuart.yoder@arm.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+Subject: Re: [Patch v3 6/7] doc: keys: Document usage of TEE based Trusted
+ Keys
+Message-ID: <20191101201957.GA8369@linux.intel.com>
+References: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
+ <1572530323-14802-7-git-send-email-sumit.garg@linaro.org>
+ <20191031214745.GG10507@linux.intel.com>
+ <CAFA6WYMkE928v-v76gGtWmsS0PwRp-OHUtkS0+Ts4V6x0AKBqQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 1 Nov 2019 12:24:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjqx4j2vqg-tAwthNP1gcAcj1x4B7sq6Npbi8QJTUMd-A@mail.gmail.com>
-Message-ID: <CAHk-=wjqx4j2vqg-tAwthNP1gcAcj1x4B7sq6Npbi8QJTUMd-A@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/11] pipe: Notification queue preparation [ver #3]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFA6WYMkE928v-v76gGtWmsS0PwRp-OHUtkS0+Ts4V6x0AKBqQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 1, 2019 at 10:34 AM David Howells <dhowells@redhat.com> wrote:
->  (1) It removes the nr_exclusive argument from __wake_up_sync_key() as this
->      is always 1.  This prepares for step 2.
->
->  (2) Adds wake_up_interruptible_sync_poll_locked() so that poll can be
->      woken up from a function that's holding the poll waitqueue spinlock.
+On Fri, Nov 01, 2019 at 03:04:18PM +0530, Sumit Garg wrote:
+ 
+> Isn't this statement contradicting with your earlier statement
+> regarding the right order would be to complete TEE patches review
+> first and then come up with documentation here [2]?
+> 
+> [1] https://lore.kernel.org/linux-integrity/1568025601.4614.253.camel@linux.ibm.com/
+> [2] https://lore.kernel.org/linux-integrity/20190909163643.qxmzpcggi567hmhv@linux.intel.com/
 
-Side note: we have a couple of cases where I don't think we should use
-the "sync" version at all.
+With the intersecting issues, namely key generation and conflicting
+keyctl parameters, that was not a well considered statement.
 
-Both pipe_read() and pipe_write() have that
-
-        if (do_wakeup) {
-                wake_up_interruptible_sync_poll(&pipe->wait, ...
-
-code at the end, outside the loop. But those two wake-ups aren't
-actually synchronous.
-
-A sync wake is supposedly something where the waker is just about to
-go to sleep, telling the scheduler that "don't bother trying to pick
-another cpu, this process is going to sleep and you can stay here".
-
-I'm not sure how much this matters, but it does strike me that it's
-wrong. We're not going to sleep at all in that case - this is not the
-"I filled the whole buffer, so I'm going to sleep" case (or the "I've
-read all the data, I'm waiting for more".
-
-It's entirely possible that we always wake pipe wakeups to be sync
-just because it's a common pattern (and a common benchmark), but this
-series made me look at it again. Particularly since David has
-benchmarks that don't seem to show a lot of fluctuation with his
-changes - I wonder how much the sync logic buys us (or hurts us)?
-
-               Linus
+/Jarkko
