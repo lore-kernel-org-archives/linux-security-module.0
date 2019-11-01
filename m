@@ -2,86 +2,82 @@ Return-Path: <SRS0=4y41=YZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6866CA9ECF
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 14:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81ABCA9ECF
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 15:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A883020650
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 14:53:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f1rigfPG"
+	by mail.kernel.org (Postfix) with ESMTP id BAD6D208E3
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 15:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbfKAOxd (ORCPT
+        id S1728668AbfKAPcj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Nov 2019 10:53:33 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:54111 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727492AbfKAOxd (ORCPT
+        Fri, 1 Nov 2019 11:32:39 -0400
+Received: from mga07.intel.com ([134.134.136.100]:19571 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727100AbfKAPcj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Nov 2019 10:53:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572620012;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4MrbBDQoC+y5mHa+x24tjKMzrIZqDb3nq3UowOz4YuY=;
-        b=f1rigfPGvTB/H5OhVEpDcYnjXRTVvHpmdODmqZmpitWDVFrlTfMmbN/5TjtGlIR6AjZ2hA
-        skc5QuBqRyut7uUj0laj1LxPrGsM7Se4L/dOcL7zroerH5slpEVz434+jA5/wyEKtF0HuY
-        ns0fYH9VIbeKtnAMX0lwLDUcByGLYF0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-343-hHyjRC-_MMioG67u4CEa_w-1; Fri, 01 Nov 2019 10:53:28 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9BED01800D67;
-        Fri,  1 Nov 2019 14:53:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6466F26DEA;
-        Fri,  1 Nov 2019 14:53:21 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAOi1vP9GAmy5NXJisrDssspoRcc+UHum+cyBsJTMNTjz_jieoQ@mail.gmail.com>
-References: <CAOi1vP9GAmy5NXJisrDssspoRcc+UHum+cyBsJTMNTjz_jieoQ@mail.gmail.com> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk> <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk> <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com> <4892d186-8eb0-a282-e7e6-e79958431a54@rasmusvillemoes.dk> <16620.1572534687@warthog.procyon.org.uk>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
+        Fri, 1 Nov 2019 11:32:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 08:32:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,256,1569308400"; 
+   d="scan'208";a="375595027"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by orsmga005.jf.intel.com with ESMTP; 01 Nov 2019 08:32:38 -0700
+Date:   Fri, 1 Nov 2019 08:32:38 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring, not cursor and length [ver #2]
+        Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
+Message-ID: <20191101153238.GA2657@linux.intel.com>
+References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+ <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+ <173a196e-fa6b-23b8-c818-dfca6cdadcc6@tycho.nsa.gov>
+ <20191031211721.GD10507@linux.intel.com>
+ <f91d788c-b372-8e2f-7ffb-995f501b5d6b@tycho.nsa.gov>
+ <4bf866ae-adc8-7902-3714-b62e548d8584@tycho.nsa.gov>
 MIME-Version: 1.0
-Content-ID: <23657.1572620001.1@warthog.procyon.org.uk>
-Date:   Fri, 01 Nov 2019 14:53:21 +0000
-Message-ID: <23658.1572620001@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: hHyjRC-_MMioG67u4CEa_w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4bf866ae-adc8-7902-3714-b62e548d8584@tycho.nsa.gov>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Ilya Dryomov <idryomov@gmail.com> wrote:
+On Fri, Nov 01, 2019 at 09:28:17AM -0400, Stephen Smalley wrote:
+> On 11/1/19 9:16 AM, Stephen Smalley wrote:
+> >So, IIUC, that means that merging the driver will create a regression with
+> >respect to LSM control over executable mappings that will only be
+> >rectified at some future point in time if/when someone submits LSM hooks
+> >or calls to existing hooks to restore such control.  That doesn't seem
+> >like a good idea.  Why can't you include at least that basic level of
+> >control now?  It is one thing to defer finer grained control or
+> >SGX-specific access controls to the future - that I can understand.  But
+> >introducing a regression in the existing controls is not really ok.
+> 
+> Unless you are arguing that the existing checks on mmap/mprotect of
+> /dev/sgx/enclave are a coarse-grained approximation (effectively requiring
+> WX to the file or execmem for any user of SGX).
 
-> >  * This means there isn't a dead spot in the buffer, but the ring
-> >  * size has to be a power of two and <=3D 2^31.
-
-I'll go with that, thanks.
-
-David
-
+Yes, that's the argument as running any enclave will require RWX access to
+/dev/sgx/enclave.  EXECMEM won't trigger for SGX users as /dev/sgx/enclave
+must be MAP_SHARED and it's a non-private file (not backed by anonymous
+inode, in case I got the file terminology wrong).
