@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13875CA9ECF
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 17:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 945CBCA9ED0
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 17:35:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D966E21897
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 17:35:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57C9720862
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 17:35:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e8kS7un1"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YzCVoD5v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbfKARfe (ORCPT
+        id S1728921AbfKARfk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Nov 2019 13:35:34 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43057 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727928AbfKARfd (ORCPT
+        Fri, 1 Nov 2019 13:35:40 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:47603 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728568AbfKARfk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Nov 2019 13:35:33 -0400
+        Fri, 1 Nov 2019 13:35:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572629732;
+        s=mimecast20190719; t=1572629739;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=G/3IjFBlrcu9yWMCYn5372hkbcEcVSpB5vL0sJqAX3o=;
-        b=e8kS7un1jUu9yv5WMzhOdDPLizxERroGi1aiDCbdM5A5s4PDZpvYv+1sMwjFAw1JDB25HR
-        GRLlS5rN4nVJ2rys5uxtSd/Jp8o4lHFnh+rpDIsOEcYfe0O/zPRQUyBb3roUqEuBGuy7OP
-        oFMdksJhdA0d5ngnRP5qd8n+SXFMMc0=
+        bh=N2gLZQTmOtfe94PwgELEjIRO8IuV3gWS7pjAAw1ld4Q=;
+        b=YzCVoD5v2/i4HLPvF0HSPmiXxDldT4MC3zM1n37hwYAxy/eP2gPVsU1FOJEbuHR6KIFmJE
+        xppGhf5egooOtmfZX3QnHXspvblwACTD1iVZi/h7TpZPCgdYHqYSc3WPd/CthHNDgjurNx
+        KiR/jLjhx5jDpQZIMqmGGPE+7MtXsDs=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-268-vc67HLdpPwahTj8KtFndSw-1; Fri, 01 Nov 2019 13:35:29 -0400
+ us-mta-31-c0mbb6TfPoiAsyuG_xveUQ-1; Fri, 01 Nov 2019 13:35:38 -0400
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8C0271800D6B;
-        Fri,  1 Nov 2019 17:35:27 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3B4502EDC;
+        Fri,  1 Nov 2019 17:35:36 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1F0F860BEC;
-        Fri,  1 Nov 2019 17:35:24 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9C9B160C63;
+        Fri,  1 Nov 2019 17:35:33 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 09/11] pipe: Remove redundant wakeup from pipe_write()
- [ver #3]
+Subject: [RFC PATCH 10/11] pipe: Check for ring full inside of the spinlock
+ in pipe_write() [ver #3]
 From:   David Howells <dhowells@redhat.com>
 To:     torvalds@linux-foundation.org
 Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
@@ -61,14 +61,14 @@ Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 01 Nov 2019 17:35:24 +0000
-Message-ID: <157262972442.13142.11480420475866936493.stgit@warthog.procyon.org.uk>
+Date:   Fri, 01 Nov 2019 17:35:32 +0000
+Message-ID: <157262973277.13142.11996381016183033698.stgit@warthog.procyon.org.uk>
 In-Reply-To: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
 References: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: vc67HLdpPwahTj8KtFndSw-1
+X-MC-Unique: c0mbb6TfPoiAsyuG_xveUQ-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -76,29 +76,33 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Remove a redundant wakeup from pipe_write().
+Make pipe_write() check to see if the ring has become full between it
+taking the pipe mutex, checking the ring status and then taking the
+spinlock.
+
+This can happen if a notification is written into the pipe as that happens
+without the pipe mutex.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/pipe.c |    5 -----
- 1 file changed, 5 deletions(-)
+ fs/pipe.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/fs/pipe.c b/fs/pipe.c
-index ce77ac0d8901..d7b8d3f22987 100644
+index d7b8d3f22987..aba2455caabe 100644
 --- a/fs/pipe.c
 +++ b/fs/pipe.c
-@@ -517,11 +517,6 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- =09=09=09=09ret =3D -ERESTARTSYS;
- =09=09=09break;
- =09=09}
--=09=09if (do_wakeup) {
--=09=09=09wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLRDNOR=
-M);
--=09=09=09kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
--=09=09=09do_wakeup =3D 0;
--=09=09}
- =09=09pipe->waiting_writers++;
- =09=09pipe_wait(pipe);
- =09=09pipe->waiting_writers--;
+@@ -463,6 +463,11 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ =09=09=09spin_lock_irq(&pipe->wait.lock);
+=20
+ =09=09=09head =3D pipe->head;
++=09=09=09if (pipe_full(head, pipe->tail, max_usage)) {
++=09=09=09=09spin_unlock_irq(&pipe->wait.lock);
++=09=09=09=09continue;
++=09=09=09}
++
+ =09=09=09pipe->head =3D head + 1;
+=20
+ =09=09=09/* Always wake up, even if the copy fails. Otherwise
 
