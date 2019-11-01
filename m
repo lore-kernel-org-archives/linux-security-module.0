@@ -4,231 +4,191 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D963EC47E49
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 12:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A887CA9ECF
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 13:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1212217F9
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 12:30:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEAE521855
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 13:16:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YSt34bQC"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="SPgy5l5g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbfKAMan (ORCPT
+        id S1726824AbfKANQZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Nov 2019 08:30:43 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44128 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726805AbfKAMam (ORCPT
+        Fri, 1 Nov 2019 09:16:25 -0400
+Received: from UPDC19PA24.eemsg.mail.mil ([214.24.27.199]:65331 "EHLO
+        UPDC19PA24.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbfKANQY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Nov 2019 08:30:42 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA1CT2SV029640;
-        Fri, 1 Nov 2019 12:30:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : in-reply-to : message-id : references : mime-version :
- content-type; s=corp-2019-08-05;
- bh=vwH+H5vdPVCLDFF7q/yE8iJeIEk7TaoKYEKRySZW4G8=;
- b=YSt34bQC5PEGhIi+jnBnEVl4kwrMnqNKNuhEZ795rp2D3TXeNCmoHiyWLgSQFHSjpAHc
- A01OmoAZ7zcjZbYENyf7PKnpasUyJPAxEJaUPb2r/W7yDKyrimGkbc/VWoEaEkx9Yax6
- yV91GmU9v8LMMCjF4bztB0g+psRwwYseDE52OSr8Sm26JZsnbnmcx3qpYaKsUePrdnda
- qOuu7r0XLRgeQaTIDF/k9xCyM8IHsCMYnDqst7nbKOcWCYQLOwp5mWxr/7ZFM26oy2yN
- qWtYt0FMuWCSNKlhIR9QThDQKpQ4aoO+N52XobpyQL738BE8YGhmFR9upnY74uuVkhul Sw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2vxwhg1hjq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 01 Nov 2019 12:30:20 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA1CTEi2038007;
-        Fri, 1 Nov 2019 12:30:20 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2vyqpg55ja-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 01 Nov 2019 12:30:20 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA1CUG3q007065;
-        Fri, 1 Nov 2019 12:30:17 GMT
-Received: from dhcp-10-175-177-231.vpn.oracle.com (/10.175.177.231)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 01 Nov 2019 05:30:16 -0700
-Date:   Fri, 1 Nov 2019 12:30:08 +0000 (GMT)
-From:   Alan Maguire <alan.maguire@oracle.com>
-X-X-Sender: alan@dhcp-10-175-177-231.vpn.oracle.com
-To:     Brendan Higgins <brendanhiggins@google.com>
-cc:     Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Matthias Maennich <maennich@google.com>,
-        shuah <shuah@kernel.org>,
-        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        serge@hallyn.com, Iurii Zaikin <yzaikin@google.com>,
-        David Gow <davidgow@google.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fri, 1 Nov 2019 09:16:24 -0400
+X-EEMSG-check-017: 27466880|UPDC19PA24_ESA_OUT06.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.68,255,1569283200"; 
+   d="scan'208";a="27466880"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UPDC19PA24.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 01 Nov 2019 13:16:20 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1572614180; x=1604150180;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=2j6u2sV7UephGxnJ3ambNAx+dFg+wboZYjnoVew9C5g=;
+  b=SPgy5l5gLUDsNxhMhJfelIIEqBRMvtdaczIWfcH0pAlvkdAnrSbVOIH+
+   1vf9y13HtUr4w5ZxD7x5e2S64tq8vZJ76UAUB4VP/F9yMror4Lb3Lfiti
+   XQz5dyL93I9pP8kwawjLDqw83UoqBTrvHPk7t1frDAHJFviZ2Y/bhN272
+   sboBDtaN35yyJBAxNrO7nCNxyjgSzDI7SvORQ5i4X5FfWS9NXyLMuvxsM
+   c66oI9NfPBrNhIBhYc8UZ8XipRXupqVd6xjr7rfx2L4wg4I/y52yK6kcq
+   9Lw/DZ4MptVFYAyMPzd0d39BRtxddQpLKVGTO8Ymvc0QL/+kz4s/X1Zy5
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.68,255,1569283200"; 
+   d="scan'208";a="34987254"
+IronPort-PHdr: =?us-ascii?q?9a23=3AXObYjxXUZt6PKgEa0Fy7+258eqPV8LGtZVwlr6?=
+ =?us-ascii?q?E/grcLSJyIuqrYZhaBu6dThVPEFb/W9+hDw7KP9fy5AipZucnK7C1KWacPfi?=
+ =?us-ascii?q?dNsd8RkQ0kDZzNImzAB9muURYHGt9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV?=
+ =?us-ascii?q?3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oIxi6sAvcutMLjYd+KKs9xR?=
+ =?us-ascii?q?TEr3tVcOlK2G1kIk6ekQzh7cmq5p5j9CpQu/Ml98FeVKjxYro1Q79FAjk4Km?=
+ =?us-ascii?q?45/MLkuwXNQguJ/XscT34ZkgFUDAjf7RH1RYn+vy3nvedgwiaaPMn2TbcpWT?=
+ =?us-ascii?q?S+6qpgVRHlhDsbOzM/7WrakdJ7gr5Frx29phx/24/Ub5+TNPpiZaPWYNcWSX?=
+ =?us-ascii?q?NcUspNSyBNB4WxYIUVD+oFIO1WsY/zqVUTphe6HAWhCufixjpOi3Tr36M1zv?=
+ =?us-ascii?q?4hHBnb0gI+EdIAsHfaotv7O6gdU++60KbGwC7fb/5Uwzrx9JTEfx4jrPyKQL?=
+ =?us-ascii?q?l+cdDRyU4qFw7dk1uQtZLqPyuV1usTtWiQ8vduVee1hG4jrwF+vDiuzdorh4?=
+ =?us-ascii?q?nSm40V0UvJ9Tl5wYkpJd24T1R3Ydi/EJRKrS2aOIx2Qt07TmxupS00xLoGuZ?=
+ =?us-ascii?q?uhcygLzpQq3x3fZOKdc4iO/B3jUPydITBihHJqfr+0mhW88VC4x+HhWcS530?=
+ =?us-ascii?q?xGoypYntXWqHwA2ALf5tKaRvZ740yvwyyA1xrJ5eFBOU00kK3bJIM/zbMojZ?=
+ =?us-ascii?q?oTtFjDHjfxmEXrkK+abkUk9fas6+TgerjmuoWTN5V1igHjKaQigNC/AOQkPQ?=
+ =?us-ascii?q?gOWGiX4+K826H4/ULlWrlKi/w2kq3BvJDbI8QUuLK5DhdI3oss5BuzFTer3M?=
+ =?us-ascii?q?kCkXUZI19JZgiLg5XxN1HLOv/4DPO/g1q2kDdswvDLJqbhDYjWLnXYjLfgfa?=
+ =?us-ascii?q?py605byAYpy9Bf/IhbBqsOIPL0RE/9rMbYAQMhMwyo3+bnD81w1oEEVmKVAa?=
+ =?us-ascii?q?+ZM6TSvUWT5u01IOmMZ44VuDDjJPgj/PPuiX45mVkAfaimx5cXaXa4Huh4LE?=
+ =?us-ascii?q?Wde3bjntABEWIStAokUOPqkEGCUSJUZ3uqW6I85zc7CJ+pDIvaRYCinqaB3C?=
+ =?us-ascii?q?GlEZ1SfW1GFF+MHmnyd4meWPcDdjiSIsl/nTwAT7ShTJUh1R62vg/g17VnNv?=
+ =?us-ascii?q?bU+jEftZ/729l45OzemAox9TNqFcSd1X+CT2VukmMPXT8207h1oVZhxVebza?=
+ =?us-ascii?q?h4n/tYGMRX5/NIVAc6KJHdw/VhC9D9VQPMZcmJSFm4TdW8Gz0xTcw+w8UIY0?=
+ =?us-ascii?q?ljH9WulBfD3zClA7UNjbyEGIQ08r7A33j2P8ty0XXG1LEkj1Q9RstPNGumhr?=
+ =?us-ascii?q?Nw9gTKCY7JlFiZl6C3eqsGwC7N9WCDzWyUsEFfSg5wXr3PXWoDaUvOsdT5+k?=
+ =?us-ascii?q?TCQqezBrs9LAtO19SOKqtQZd3vllVJWvHjNc/fY2K3h2e/GxKIyqmQY4rtfm?=
+ =?us-ascii?q?UXxD/dB1QckwAP4XaGMhAzBjy/rG3ECjxiD1Dvb1nw/ul+snO7T1Q0zx2Nb0?=
+ =?us-ascii?q?1517q65AQVheebS/MVxb8EuSEhqylqE1a5xd7ZF92Apw95dqVGfdw9+EtH1X?=
+ =?us-ascii?q?7etwFlOJygL6dihkQbcwttuUPjzA93BZtdnsgqtnwq0BB+Jr6f0FNEbzmYx4?=
+ =?us-ascii?q?z/OqXLKmnu+xCic6jW2knb0NmK5qgA8vA4q1H+vAGsDUci6Wto3MRV03SG+p?=
+ =?us-ascii?q?XGFhYdUZX0Ukwv7Rh1u6naYjUh54PTzXBsKre7siXN2903Hucq0Bahf9BCMK?=
+ =?us-ascii?q?OCDwLyEssaB9SwJ+wugVSmchUEPOVK/q4uI8ymb+eG2LKsPOt4hzKmjX5I4Y?=
+ =?us-ascii?q?Bn3kKP7SV8Vu/J048Ewv6C2wuHVi38gUygssDxhYBLezUSEnCjxijjAY5bfr?=
+ =?us-ascii?q?dycpoTCWeyP823wc1zh573VH5Z6F6sHVQG1NWpeRqPdVP92wJQ2F8WoXyhhS?=
+ =?us-ascii?q?u30Th0nys1oaqY2SzE2/7iewYfOm5XWGliik/hLpKyj98HRkiobggomAG+5U?=
+ =?us-ascii?q?b62adburhwL2nNTkdOfCj2KHpvUq+xtrqEfs5O54kksSRRUOSgf1+aTqTxrA?=
+ =?us-ascii?q?cd0yPmB2Fe3iw0dym2upXlmBx3kH6dLHl3rHvWYsxwwRbf5NrBRf5NxDoGQy?=
+ =?us-ascii?q?94iTjYB1SmItam482el43fveCmS2KhSppTfDHozYyatSu3/3ZqAQOlkPCznN?=
+ =?us-ascii?q?3qCgk60Snn19Z0USXEtgrzYo7u166iK+JoYlFoBEPg68p9AoxxiZMwiYoK1n?=
+ =?us-ascii?q?geh5Wa43wHnGTpPdpGx630dGANSiITw97J/Ajl31VuLnCOx4LiVnWQ2clhZ9?=
+ =?us-ascii?q?6hYmMWxiI99cFKCL+Q7LNagSt1vkC0rQXLYfhyhj0d0+ch6GYGg+EVvwog1i?=
+ =?us-ascii?q?GdAq0OHUlfJiHslAqH78q4rKpJYGaja7+w1FBxndq5FrGNvhlcWGrlepclBS?=
+ =?us-ascii?q?Jw7d9wMFPW3H3z94HrYt/Qbd0Iux2VlRfAk/ZaKJYrmvUWgipnPHr3vWc5xO?=
+ =?us-ascii?q?4jkRxuwZa6sZCdK2Vs4q25BAJYNj/raMMI4TztgqFensGZ34CrAJptACkEXJ?=
+ =?us-ascii?q?ztTfiwCjIdqeznNxqSED07snqUBaTQEhKF6Edns33DCZ+qN3CRJHkW1thiRR?=
+ =?us-ascii?q?+dJFBBjwAQRjk1gpk5FgWyzsz7bEh5/iwR5kL/qhZU0uJoKhj/UnvBqweyZD?=
+ =?us-ascii?q?Y0SZqfLBlN4wFY+UjaLMye4fhvHy1C4pKhqwmNIHSBZwtUFWEJRlCEB1f7M7?=
+ =?us-ascii?q?mq5NnA9fWYB+WnI/vVf7qBtfFeV+2JxZKz0opq5jOMNsKSMXl/C/00xFFOXW?=
+ =?us-ascii?q?52G8vHgTUDUS8XmDzXb86duhi8/jd7rsel8PTkQAjv/5eAC6NOMdVz/BC7mb?=
+ =?us-ascii?q?yDN/OKhClnMjZY1okAymTSxLgE3V4dljxhdzm3HrkbtC7NSr7QlbFTDxIBdy?=
+ =?us-ascii?q?xzM85IvOoA2VxvMNTYidS97bd7jf8zBlENAV7ogMKqYooRKmK+NVXKAm6PNb?=
+ =?us-ascii?q?KbNXvKxd36ZeW3TrgG38tOsBjlgiqWC0/uOHy4kjDtUx2+ebVXgDqzIA1VuI?=
+ =?us-ascii?q?b7dA1kT2fkUoS1OVWALNZrgGhukvUPjXTQODtZaGMtfg=3D=3D?=
+X-IPAS-Result: =?us-ascii?q?A2CjAABmL7xd/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
+ =?us-ascii?q?QICAQEBAYF9gW8FLGxUATIqhCiPC1QGgTaJY5FCCQEBAQEBAQEBAS0HAQIBA?=
+ =?us-ascii?q?YFMgnQCg3skOBMCDgEBAQQBAQEBAQUDAQFshTcMgjspAYJtAQUjFUEQCxgCA?=
+ =?us-ascii?q?iYCAlcGDQYCAQGCXz8BglIlD7IOgTKFToM+gUIGgQ4ojBEYeIEHgREngms+g?=
+ =?us-ascii?q?mIEgTkGAQGDLoJeBJY6lziCLoIzhF6OHgYbmWWWbpM3IoFYKwgCGAghD4MoT?=
+ =?us-ascii?q?xEUjA2FWyUDMQGBAwEBiycOF4IZAQE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 01 Nov 2019 13:16:19 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id xA1DGGL2019003;
+        Fri, 1 Nov 2019 09:16:17 -0400
+Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
         linux-security-module@vger.kernel.org,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Mike Salvatore <mike.salvatore@canonical.com>
-Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
- tests for policy unpack
-In-Reply-To: <CAFd5g45V-iYaAhHwoaUPoPYUBud-5vxbBkApp-h5O6J8trnPRA@mail.gmail.com>
-Message-ID: <alpine.LRH.2.20.1911011142160.15982@dhcp-10-175-177-231.vpn.oracle.com>
-References: <20191018001816.94460-1-brendanhiggins@google.com> <20191018122949.GD11244@42.do-not-panic.com> <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com> <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
- <20191024101529.GK11244@42.do-not-panic.com> <201910301205.74EC2A226D@keescook> <CAFd5g45V-iYaAhHwoaUPoPYUBud-5vxbBkApp-h5O6J8trnPRA@mail.gmail.com>
-User-Agent: Alpine 2.20 (LRH 67 2015-01-07)
+        Suresh Siddha <suresh.b.siddha@intel.com>
+References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+ <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+ <173a196e-fa6b-23b8-c818-dfca6cdadcc6@tycho.nsa.gov>
+ <20191031211721.GD10507@linux.intel.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <f91d788c-b372-8e2f-7ffb-995f501b5d6b@tycho.nsa.gov>
+Date:   Fri, 1 Nov 2019 09:16:16 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9427 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1911010125
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9427 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1911010125
+In-Reply-To: <20191031211721.GD10507@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 31 Oct 2019, Brendan Higgins wrote:
-
-> On Wed, Oct 30, 2019 at 12:09 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Thu, Oct 24, 2019 at 10:15:29AM +0000, Luis Chamberlain wrote:
-> > > On Wed, Oct 23, 2019 at 05:42:18PM -0700, Brendan Higgins wrote:
-> > > > With that, I think the best solution in this case will be the
-> > > > "__visible_for_testing" route. It has no overhead when testing is
-> > > > turned off (in fact it is no different in anyway when testing is
-> > > > turned off). The downsides I see are:
-> > > >
-> > > > 1) You may not be able to test non-module code not compiled for
-> > > > testing later with the test modules that Alan is working on (But the
-> > > > only way I think that will work is by preventing the symbol from being
-> > > > inlined, right?).
-> > > >
-> > > > 2) I think "__visible_for_testing" will be prone to abuse. Here, I
-> > > > think there are reasons why we might want to expose these symbols for
-> > > > testing, but not otherwise. Nevertheless, I think most symbols that
-> > > > should be tested should probably be made visible by default. Since you
-> > > > usually only want to test your public interfaces. I could very well
-> > > > see this getting used as a kludge that gets used far too frequently.
-> > >
-> > > There are two parts to your statement on 2):
-> > >
-> > >   a) possible abuse of say __visible_for_testing
-> >
-> > I really don't like the idea of littering the kernel with these. It'll
+On 10/31/19 5:17 PM, Jarkko Sakkinen wrote:
+> On Wed, Oct 30, 2019 at 09:45:05AM -0400, Stephen Smalley wrote:
+>> On 10/28/19 5:03 PM, Jarkko Sakkinen wrote:
+>>> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+>>> can be used by applications to set aside private regions of code and
+>>> data. The code outside the SGX hosted software entity is disallowed to
+>>> access the memory inside the enclave enforced by the CPU. We call these
+>>> entities as enclaves.
+>>>
+>>> This commit implements a driver that provides an ioctl API to construct
+>>> and run enclaves. Enclaves are constructed from pages residing in
+>>> reserved physical memory areas. The contents of these pages can only be
+>>> accessed when they are mapped as part of an enclave, by a hardware
+>>> thread running inside the enclave.
+>>>
+>>> The starting state of an enclave consists of a fixed measured set of
+>>> pages that are copied to the EPC during the construction process by
+>>> using ENCLS leaf functions and Software Enclave Control Structure (SECS)
+>>> that defines the enclave properties.
+>>>
+>>> Enclave are constructed by using ENCLS leaf functions ECREATE, EADD and
+>>> EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
+>>> the EPC and EINIT check a given signed measurement and moves the enclave
+>>> into a state ready for execution.
+>>>
+>>> An initialized enclave can only be accessed through special Thread Control
+>>> Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
+>>> function converts a thread into enclave mode and continues the execution in
+>>> the offset defined by the TCS provided to EENTER. An enclave is exited
+>>> through syscall, exception, interrupts or by explicitly calling another
+>>> ENCLU leaf EEXIT.
+>>>
+>>> The permissions, which enclave page is added will set the limit for maximum
+>>> permissions that can be set for mmap() and mprotect(). This will
+>>> effectively allow to build different security schemes between producers and
+>>> consumers of enclaves. Later on we can increase granularity with LSM hooks
+>>> for page addition (i.e. for producers) and mapping of the enclave (i.e. for
+>>> consumers)
+>>
+>> Where do things stand wrt to ensuring that SGX cannot be used to introduce
+>> executable mappings that were never authorized by the LSM (or never measured
+>> by IMA)?
 > 
-> Yeah, I kind of hope that it would make people think more
-> intentionally about what is a public interface so that they wouldn't
-> litter the kernel with those. But I agree that in the world where
-> people *didn't* do that. Lots of these sprinkled around would be
-> annoying.
+> This was the latest discussion about that subject:
 > 
-> > also require chunks in header files wrapped in #ifdefs. This is really
-> 
-> Why would it require header files wrapped in #ifdefs?
-> 
-> We could put all the ifdeffery logic in the __visible_for_testing
-> macro so that nothing in the original code has to change except for
-> adding an #include and replacing a couple of `static`s with
-> `__visible_for_testing`.
-> 
+> https://lore.kernel.org/linux-sgx/CALCETrWDLX68Vi4=9Dicq9ATmJ5mv36bzrc02heNYaHaBeWumQ@mail.gmail.com/
 
-FWIW I think this approach, if used sparingly, is fine.  However I'd
-propose a hierarchy of options when looking to expose interfaces for 
-testing.
-
-1. For small, largely self-contained functions, move their definitions 
-from .c files to a .h file where those functions are defined as "static 
-inline".  That way the original code and tests can included them and we 
-have solved function availability for both the cases where the tests are 
-built-in and compiled as a module.  The apparmor interfaces here seem to 
-be candidates for that approach.
-
-2. For more complex cases, __visible_for_testing (for built-in visbility)
-and some sort of equivalent EXPORT_FOR_TESTING (for module 
-visibility) would work, or the kunit_find_symbol() based lookup approach I 
-suggested in the module patches.  Either of these allows for building 
-tests as modules or builtin.
-
-3. For some cases, module support will probably be impossible or difficult 
-to maintain.  In such cases, builtin tests make most sense so any 
-questions about symbol visibility would largely concern changing static 
-definitions to be __visibile_for_testing, with no need for any symbol 
-export for module visibility.
-
-
-> > ugly.
-> >
-> > >   b) you typically only want to test your public interfaces
-> >
-> > True, but being able to test the little helper functions is a nice
-> > starting point and a good building block.
-> 
-> Yeah, I think I have come to accept that. We can argue about how this
-> should change and how people need to learn to be more intentional
-> about which interfaces are public and many other high minded ideas,
-> but when it comes down to it, we need to provide a starting point that
-> is easy.
-> 
-> If our nice starting point becomes a problem, we can always improve it later.
-> 
-> > Why can't unit tests live with the code they're testing? They're already
-> > logically tied together; what's the harm there? This needn't be the case
-> > for ALL tests, etc. The test driver could still live externally. The
-> > test in the other .c would just have exported functions... ?
-> 
-> Well, for one, it totally tanks certain cases for building KUnit tests
-> as modules. I don't care about this point *too* much personally, but I
-> accept that there are others that want this, and I don't want to make
-> these people's lives too difficult.
->
-
-Appreciated.  I think at this point it might be useful to lay out my 
-thinking on why being able to build tests as modules may be helpful moving 
-forward.
-
-- First and foremost, if the functionality itself is predominantly 
-delivered in module form, or indeed is simply tristate, having a way to 
-test kernel code when built as a module seems to me to be necessary. To 
-test module code with built-in test code seems broken, and even if it 
-could be made to work we'd end up having to invent a bunch of the mechanisms
-we'd need for building tests as modules anyway.
-
-- Running tests on demand.  From previous discussions, I think this is 
-wanted for kselftest, and if we have a set of modules with a conventional 
-prefix (e.g. kunit-*), running tests becomes simply a "find + modprobe" in 
-the kernel module tree.  Results could be harvested from debugfs (I have a 
-WIP patch to store logging data in the per-test data structures such that 
-"cat /sys/kernel/debug/kunit-results/kunit-foo" will display results for 
-that test suite).  There are other ways to achieve this goal, and it's 
-a crude method without any test selection beyond which modules are 
-loaded, but this path is noticeably shorter to having a simple way to 
-execute tests in a kselftest-friendly way I think. 
-
-- Developing tests. I've also found this model to be neat for test 
-development; add a test, build, load the module to test the test, add 
-another test, build, unload/load etc. 
-
-- The late_initcall() initialization of tests may not always be appropriate
-for subsystems under test, and as the number of tests grow (a good 
-problem to have!), it will likely become infeasible.
-
-Anyway I'm not sure if any of the above resonates with others as being 
-useful, but hopefully it clarifies why module support might matter moving 
-forward.
-
-If it makes sense, I can look at tweaking the module patchset to remove
-the kunit_find_symbol() stuff so that we can punt on specific mechanisms 
-for now; my main aim at this point is to ensure we're thinking about 
-providing mechanisms for testing modules. 
-
-Thanks!
-
-Alan
+So, IIUC, that means that merging the driver will create a regression 
+with respect to LSM control over executable mappings that will only be 
+rectified at some future point in time if/when someone submits LSM hooks 
+or calls to existing hooks to restore such control.  That doesn't seem 
+like a good idea.  Why can't you include at least that basic level of 
+control now?  It is one thing to defer finer grained control or 
+SGX-specific access controls to the future - that I can understand.  But 
+introducing a regression in the existing controls is not really ok.
