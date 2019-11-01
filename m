@@ -2,142 +2,233 @@ Return-Path: <SRS0=4y41=YZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A18CA9ECF
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 09:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D963EC47E49
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 12:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCC3821855
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 09:34:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1212217F9
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 12:30:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ADFX2EB5"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YSt34bQC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728752AbfKAJed (ORCPT
+        id S1727926AbfKAMan (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Nov 2019 05:34:33 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44655 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728764AbfKAJed (ORCPT
+        Fri, 1 Nov 2019 08:30:43 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44128 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726805AbfKAMam (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Nov 2019 05:34:33 -0400
-Received: by mail-lf1-f68.google.com with SMTP id v4so6774657lfd.11
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Nov 2019 02:34:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P2Wy+d6SJv+zW1h7gwcrJ9wMcc9z6tW4Pf7OV3vuzIM=;
-        b=ADFX2EB5FnE/sL/t/2Vc3e3rF5fsiteBk+A1NMThui6yAi2ffh/Vfsjgbu7Q64wo//
-         /ZbliqCo0dGLps5HIDxXXgS8YTSVHRxr64v7UdeaW8Qf2v3MIf0SEitoyEbRpK2+uOHa
-         En0OqRHTtilLbQCkItdwdeHtmcVVfvRLXG8YLPaMGFGYo5ZxaMRtIYSxsXu8XGBcfHj1
-         iSZwCHcfn4tEC5oOdZQn9ZMJXSZyTqUzXYwSX0L+ebBJ/jMT/clmdue5MBGMan58F22M
-         7JtxmPGOYoJQ4ykrVOkiawCvP5XGhfk2BeCjFy/fju8i27uwEYR8I/i/6a1uJhu82shX
-         zzBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P2Wy+d6SJv+zW1h7gwcrJ9wMcc9z6tW4Pf7OV3vuzIM=;
-        b=C8khlAcJBrGS8NHVNusoK1XNZHORVSkUtrSveTZ/8z+SlAifDCfV5qLlVqmZv43HIT
-         nHKxW+eVMFAfPWYWTD2tELWatEPTFRyONGacDVQ3fDl/2mHBySt4JNpfTTOf9CFiZvX1
-         +wDxBEc9DU5yEETyiPopX3Yb2MFGjYKFa3i2PO2/N+vYo9O6/4wRRZOXh4OT/+eMzl6r
-         RGRhZdu7segK+ZX2tdtSlg8IDyRBXK7Q0LkgN+lKXkWforbql6r/pGZLR0ysTJ43snaI
-         RevVXuj1Cco7u2O7KFQGkxentn+L6gokG9eV8vXmIw4aK6AQC2dlc+CtzI/hGSSeq/qn
-         G98Q==
-X-Gm-Message-State: APjAAAV278Uwy0tHWouKnIhgzET0T5YKryovVUAFLEQ2IE2vAAozIdMD
-        SkO/3Ee2vDE4kTA/WERZihSgLN4IKUBOUoRyjGefZg==
-X-Google-Smtp-Source: APXvYqykFl40jxMDQlJMBgGfbD2FRHdfPvjdr0aHRQNEMjEwkimo+7UrmZo1Gp8KiXJ6RvnSoNWXnAaB8dvQSi7cRbs=
-X-Received: by 2002:a05:6512:409:: with SMTP id u9mr6753625lfk.0.1572600869571;
- Fri, 01 Nov 2019 02:34:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
- <1572530323-14802-7-git-send-email-sumit.garg@linaro.org> <20191031214745.GG10507@linux.intel.com>
-In-Reply-To: <20191031214745.GG10507@linux.intel.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Fri, 1 Nov 2019 15:04:18 +0530
-Message-ID: <CAFA6WYMkE928v-v76gGtWmsS0PwRp-OHUtkS0+Ts4V6x0AKBqQ@mail.gmail.com>
-Subject: Re: [Patch v3 6/7] doc: keys: Document usage of TEE based Trusted Keys
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Jens Wiklander <jens.wiklander@linaro.org>, dhowells@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>, jejb@linux.ibm.com,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Stuart Yoder <stuart.yoder@arm.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Fri, 1 Nov 2019 08:30:42 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA1CT2SV029640;
+        Fri, 1 Nov 2019 12:30:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : in-reply-to : message-id : references : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=vwH+H5vdPVCLDFF7q/yE8iJeIEk7TaoKYEKRySZW4G8=;
+ b=YSt34bQC5PEGhIi+jnBnEVl4kwrMnqNKNuhEZ795rp2D3TXeNCmoHiyWLgSQFHSjpAHc
+ A01OmoAZ7zcjZbYENyf7PKnpasUyJPAxEJaUPb2r/W7yDKyrimGkbc/VWoEaEkx9Yax6
+ yV91GmU9v8LMMCjF4bztB0g+psRwwYseDE52OSr8Sm26JZsnbnmcx3qpYaKsUePrdnda
+ qOuu7r0XLRgeQaTIDF/k9xCyM8IHsCMYnDqst7nbKOcWCYQLOwp5mWxr/7ZFM26oy2yN
+ qWtYt0FMuWCSNKlhIR9QThDQKpQ4aoO+N52XobpyQL738BE8YGhmFR9upnY74uuVkhul Sw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2vxwhg1hjq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Nov 2019 12:30:20 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA1CTEi2038007;
+        Fri, 1 Nov 2019 12:30:20 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2vyqpg55ja-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Nov 2019 12:30:20 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA1CUG3q007065;
+        Fri, 1 Nov 2019 12:30:17 GMT
+Received: from dhcp-10-175-177-231.vpn.oracle.com (/10.175.177.231)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 01 Nov 2019 05:30:16 -0700
+Date:   Fri, 1 Nov 2019 12:30:08 +0000 (GMT)
+From:   Alan Maguire <alan.maguire@oracle.com>
+X-X-Sender: alan@dhcp-10-175-177-231.vpn.oracle.com
+To:     Brendan Higgins <brendanhiggins@google.com>
+cc:     Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Matthias Maennich <maennich@google.com>,
+        shuah <shuah@kernel.org>,
+        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        serge@hallyn.com, Iurii Zaikin <yzaikin@google.com>,
+        David Gow <davidgow@google.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-security-module@vger.kernel.org,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Mike Salvatore <mike.salvatore@canonical.com>
+Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
+ tests for policy unpack
+In-Reply-To: <CAFd5g45V-iYaAhHwoaUPoPYUBud-5vxbBkApp-h5O6J8trnPRA@mail.gmail.com>
+Message-ID: <alpine.LRH.2.20.1911011142160.15982@dhcp-10-175-177-231.vpn.oracle.com>
+References: <20191018001816.94460-1-brendanhiggins@google.com> <20191018122949.GD11244@42.do-not-panic.com> <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com> <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
+ <20191024101529.GK11244@42.do-not-panic.com> <201910301205.74EC2A226D@keescook> <CAFd5g45V-iYaAhHwoaUPoPYUBud-5vxbBkApp-h5O6J8trnPRA@mail.gmail.com>
+User-Agent: Alpine 2.20 (LRH 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9427 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911010125
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9427 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911010125
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 1 Nov 2019 at 03:17, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Thu, Oct 31, 2019 at 07:28:42PM +0530, Sumit Garg wrote:
-> > Provide documentation for usage of TEE based Trusted Keys via existing
-> > user-space "keyctl" utility. Also, document various use-cases.
+On Thu, 31 Oct 2019, Brendan Higgins wrote:
+
+> On Wed, Oct 30, 2019 at 12:09 PM Kees Cook <keescook@chromium.org> wrote:
 > >
-> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > On Thu, Oct 24, 2019 at 10:15:29AM +0000, Luis Chamberlain wrote:
+> > > On Wed, Oct 23, 2019 at 05:42:18PM -0700, Brendan Higgins wrote:
+> > > > With that, I think the best solution in this case will be the
+> > > > "__visible_for_testing" route. It has no overhead when testing is
+> > > > turned off (in fact it is no different in anyway when testing is
+> > > > turned off). The downsides I see are:
+> > > >
+> > > > 1) You may not be able to test non-module code not compiled for
+> > > > testing later with the test modules that Alan is working on (But the
+> > > > only way I think that will work is by preventing the symbol from being
+> > > > inlined, right?).
+> > > >
+> > > > 2) I think "__visible_for_testing" will be prone to abuse. Here, I
+> > > > think there are reasons why we might want to expose these symbols for
+> > > > testing, but not otherwise. Nevertheless, I think most symbols that
+> > > > should be tested should probably be made visible by default. Since you
+> > > > usually only want to test your public interfaces. I could very well
+> > > > see this getting used as a kludge that gets used far too frequently.
+> > >
+> > > There are two parts to your statement on 2):
+> > >
+> > >   a) possible abuse of say __visible_for_testing
+> >
+> > I really don't like the idea of littering the kernel with these. It'll
+> 
+> Yeah, I kind of hope that it would make people think more
+> intentionally about what is a public interface so that they wouldn't
+> litter the kernel with those. But I agree that in the world where
+> people *didn't* do that. Lots of these sprinkled around would be
+> annoying.
+> 
+> > also require chunks in header files wrapped in #ifdefs. This is really
+> 
+> Why would it require header files wrapped in #ifdefs?
+> 
+> We could put all the ifdeffery logic in the __visible_for_testing
+> macro so that nothing in the original code has to change except for
+> adding an #include and replacing a couple of `static`s with
+> `__visible_for_testing`.
+> 
+
+FWIW I think this approach, if used sparingly, is fine.  However I'd
+propose a hierarchy of options when looking to expose interfaces for 
+testing.
+
+1. For small, largely self-contained functions, move their definitions 
+from .c files to a .h file where those functions are defined as "static 
+inline".  That way the original code and tests can included them and we 
+have solved function availability for both the cases where the tests are 
+built-in and compiled as a module.  The apparmor interfaces here seem to 
+be candidates for that approach.
+
+2. For more complex cases, __visible_for_testing (for built-in visbility)
+and some sort of equivalent EXPORT_FOR_TESTING (for module 
+visibility) would work, or the kunit_find_symbol() based lookup approach I 
+suggested in the module patches.  Either of these allows for building 
+tests as modules or builtin.
+
+3. For some cases, module support will probably be impossible or difficult 
+to maintain.  In such cases, builtin tests make most sense so any 
+questions about symbol visibility would largely concern changing static 
+definitions to be __visibile_for_testing, with no need for any symbol 
+export for module visibility.
+
+
+> > ugly.
+> >
+> > >   b) you typically only want to test your public interfaces
+> >
+> > True, but being able to test the little helper functions is a nice
+> > starting point and a good building block.
+> 
+> Yeah, I think I have come to accept that. We can argue about how this
+> should change and how people need to learn to be more intentional
+> about which interfaces are public and many other high minded ideas,
+> but when it comes down to it, we need to provide a starting point that
+> is easy.
+> 
+> If our nice starting point becomes a problem, we can always improve it later.
+> 
+> > Why can't unit tests live with the code they're testing? They're already
+> > logically tied together; what's the harm there? This needn't be the case
+> > for ALL tests, etc. The test driver could still live externally. The
+> > test in the other .c would just have exported functions... ?
+> 
+> Well, for one, it totally tanks certain cases for building KUnit tests
+> as modules. I don't care about this point *too* much personally, but I
+> accept that there are others that want this, and I don't want to make
+> these people's lives too difficult.
 >
-> This is the most important commit in order for someone who don't deal
-> that much with ARM TEE to get right.
->
 
-I agree that documentation needs to be updated and your following
-comments seems to be somewhat similar to comments from Mimi here [1].
+Appreciated.  I think at this point it might be useful to lay out my 
+thinking on why being able to build tests as modules may be helpful moving 
+forward.
 
-> Until this commit is right, I don't
-> unfortunately have much to say about other commits.
+- First and foremost, if the functionality itself is predominantly 
+delivered in module form, or indeed is simply tristate, having a way to 
+test kernel code when built as a module seems to me to be necessary. To 
+test module code with built-in test code seems broken, and even if it 
+could be made to work we'd end up having to invent a bunch of the mechanisms
+we'd need for building tests as modules anyway.
 
-Isn't this statement contradicting with your earlier statement
-regarding the right order would be to complete TEE patches review
-first and then come up with documentation here [2]?
+- Running tests on demand.  From previous discussions, I think this is 
+wanted for kselftest, and if we have a set of modules with a conventional 
+prefix (e.g. kunit-*), running tests becomes simply a "find + modprobe" in 
+the kernel module tree.  Results could be harvested from debugfs (I have a 
+WIP patch to store logging data in the per-test data structures such that 
+"cat /sys/kernel/debug/kunit-results/kunit-foo" will display results for 
+that test suite).  There are other ways to achieve this goal, and it's 
+a crude method without any test selection beyond which modules are 
+loaded, but this path is noticeably shorter to having a simple way to 
+execute tests in a kselftest-friendly way I think. 
 
-[1] https://lore.kernel.org/linux-integrity/1568025601.4614.253.camel@linux.ibm.com/
-[2] https://lore.kernel.org/linux-integrity/20190909163643.qxmzpcggi567hmhv@linux.intel.com/
+- Developing tests. I've also found this model to be neat for test 
+development; add a test, build, load the module to test the test, add 
+another test, build, unload/load etc. 
 
-> Instead of making disjoint islands, you should edit trusted-encrypted.rst
-> so that it describes commonalities and differences.
->
-> What the document currently describes is the usage model. It could be a
-> section of its own. In that you should describe first the common
-> parameters and separetely the backend specific parametrs.
->
-> From kernel internals (there could be a section with this name)  the
-> document describe the key generation e.g. is the hardware used and how
-> it is used, is there salting with krng and so forth.
+- The late_initcall() initialization of tests may not always be appropriate
+for subsystems under test, and as the number of tests grow (a good 
+problem to have!), it will likely become infeasible.
 
-BTW, here is the info regarding RNG provided by OP-TEE (an open-source
-TEE implementation).
+Anyway I'm not sure if any of the above resonates with others as being 
+useful, but hopefully it clarifies why module support might matter moving 
+forward.
 
-It's either direct output from hardware based RNG (if platform
-supports one) [3] or a software based Fortuna CSPRNG (executing in
-trusted environment) [4] which is seeded via multiple entropy sources
-as described here [5].
+If it makes sense, I can look at tweaking the module patchset to remove
+the kunit_find_symbol() stuff so that we can punt on specific mechanisms 
+for now; my main aim at this point is to ensure we're thinking about 
+providing mechanisms for testing modules. 
 
-Overall, I think salting this with krng sounds reasonable to address
-single RNG source concern. So I would suggest to have a common wrapper
-API that would do salting of trust source (TPM or TEE) RNG output with
-krng.
+Thanks!
 
-[3] https://github.com/OP-TEE/optee_os/blob/master/core/crypto/rng_hw.c
-[4] https://github.com/OP-TEE/optee_os/blob/master/core/crypto/rng_fortuna.c
-[5] https://github.com/OP-TEE/optee_os/blob/master/core/include/crypto/crypto.h#L272
-
--Sumit
-
->
-> /Jarkko
+Alan
