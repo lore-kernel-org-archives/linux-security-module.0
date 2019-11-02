@@ -1,89 +1,118 @@
-Return-Path: <SRS0=4y41=YZ=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=iWO7=Y2=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF348CA9ECF
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 22:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D10C47E49
+	for <linux-security-module@archiver.kernel.org>; Sat,  2 Nov 2019 18:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC1CB208CB
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Nov 2019 22:25:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2D0E217D9
+	for <linux-security-module@archiver.kernel.org>; Sat,  2 Nov 2019 18:54:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572720846;
+	bh=EiUQFbd4eCzqoWiWRCkqn8pp6zL45XyarvpaXrgunXs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=rHQQLFsO3izrAQs4ApuO3OqGbpz4+XtmGLruDBamQhr720bV6zGaaohrWB5KXcbws
+	 TVIx7ZH/f+1L5b2rhvqMt+5l0QoGGNDHEo4sD5TFq2Z3X3uk0kNpZzjmJEAK//Au50
+	 EuShq4dZS2ebTFb60nGXXrI9wYXXZlFtEiRgMDqE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbfKAWZL (ORCPT
+        id S1726675AbfKBSyC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Nov 2019 18:25:11 -0400
-Received: from smtprelay0201.hostedemail.com ([216.40.44.201]:56612 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725989AbfKAWZL (ORCPT
+        Sat, 2 Nov 2019 14:54:02 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38390 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfKBSyA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Nov 2019 18:25:11 -0400
-X-Greylist: delayed 601 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Nov 2019 18:25:10 EDT
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave06.hostedemail.com (Postfix) with ESMTP id 1E2EE8026C45;
-        Fri,  1 Nov 2019 22:15:10 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 4774E182CED34;
-        Fri,  1 Nov 2019 22:15:08 +0000 (UTC)
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-HE-Tag: shade52_49a12faf12c2a
-X-Filterd-Recvd-Size: 2421
-Received: from grimm.local.home (unknown [94.155.134.143])
-        (Authenticated sender: rostedt@goodmis.org)
-        by omf19.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  1 Nov 2019 22:15:05 +0000 (UTC)
-Date:   Fri, 1 Nov 2019 18:15:01 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     dann frazier <dann.frazier@canonical.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        James Morris <jmorris@namei.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: tracefs splats in lockdown=confidentiality mode
-Message-ID: <20191101181501.4beff81b@grimm.local.home>
-In-Reply-To: <20191101210803.GA9841@xps13.dannf>
-References: <20191101210803.GA9841@xps13.dannf>
-X-Mailer: Claws Mail 3.17.4git49 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 2 Nov 2019 14:54:00 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q28so9463955lfa.5
+        for <linux-security-module@vger.kernel.org>; Sat, 02 Nov 2019 11:53:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UFZsrTxHj8UNSOV0MW3iX+ZNPh241BxYI9RJCfbRj4I=;
+        b=fwWi36Cjm33TVpJsMKyyeNJuPa+EzO/w2jcz8N5ivZnB2LBgFElTwve7u7JUY1CQlk
+         LBP3NYhj8mwMGDKFLZC3aAKJjtxEeb837zFLkONBVlInZ3n9BYz2CiSK5BYhQEqMplN+
+         cxbruKuD+a9IFTjckV4CYWfQYTCffHao0G3wg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UFZsrTxHj8UNSOV0MW3iX+ZNPh241BxYI9RJCfbRj4I=;
+        b=t/sC+dI2EfZ1hIbwSEQaBRZ7Wo3vPwOi6E/RfH63OY6z+Ygt5QpNXexlKuuUvq7fGN
+         qFCW4MhgQlNqE2pkmyXdKz/xfyRpEBIX3TmK3ykdYCD7AVkX0fV/N5Tn/R6BPu/tt0sh
+         FvLrTkZlQSWYU1TuI5HN8V5LoPIQ0oR6/ICDtAs3jk7EGTvbPKV3okmCOpUfwxBuZWcV
+         1P0E6hyfeQnUExeSv7E3Ze1CrPldgQ7mDa0hpXrnzucNVRzy2ctJciKG84JwtluggQqf
+         It65Dm5Cu+WpWMka7Mkdg/TZQH260wnorzcq0cm4Cvo98+I5TwfJRPErDQMMXwvZJduP
+         olzA==
+X-Gm-Message-State: APjAAAV5KuFDYMWpNZrKm+TmedgNPi3oLoLLfF7ZjkKV5sHx3eeaZXwb
+        h1/HMDlZ/M4LzEHdIUpBrspMVzfvipc=
+X-Google-Smtp-Source: APXvYqzM/pjzgfGwveUT0LcM4COylMWWJGN24fUyhkk7qJvIep/u6tsscXmtAY36IF6O/GNY4r12fg==
+X-Received: by 2002:ac2:57cb:: with SMTP id k11mr11321652lfo.87.1572720837925;
+        Sat, 02 Nov 2019 11:53:57 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id v6sm7088762ljd.15.2019.11.02.11.53.54
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Nov 2019 11:53:54 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id y6so9455964lfj.2
+        for <linux-security-module@vger.kernel.org>; Sat, 02 Nov 2019 11:53:54 -0700 (PDT)
+X-Received: by 2002:ac2:4c86:: with SMTP id d6mr11465241lfl.106.1572720834124;
+ Sat, 02 Nov 2019 11:53:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <30394.1571936252@warthog.procyon.org.uk> <c6e044cc-5596-90b7-4418-6ad7009d6d79@yandex-team.ru>
+ <17311.1572534953@warthog.procyon.org.uk>
+In-Reply-To: <17311.1572534953@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 2 Nov 2019 11:53:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg_X_7JSYT-a3qHrzvuWGMyffDWtQ4n7adBp_fe5w0BsA@mail.gmail.com>
+Message-ID: <CAHk-=wg_X_7JSYT-a3qHrzvuWGMyffDWtQ4n7adBp_fe5w0BsA@mail.gmail.com>
+Subject: Re: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 1 Nov 2019 15:08:03 -0600
-dann frazier <dann.frazier@canonical.com> wrote:
+On Thu, Oct 31, 2019 at 8:16 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Konstantin Khlebnikov <khlebnikov@yandex-team.ru> wrote:
+>
+> > Similar synchronization is required for reusing memory after vmsplice()?
+> > I don't see other way how sender could safely change these pages.
+>
+> Sounds like a point - if you have multiple parallel contributors to the pipe
+> via vmsplice(), then FIONREAD is of no use.  To use use FIONREAD, you have to
+> let the pipe become empty before you can be sure.
 
-> hey,
->   fyi, I'm seeing a bunch of errors from tracefs when booting 5.4-rc5 in
-> lockdown=confidentiality mode:
-> 
-> [    1.763630] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
-> [    1.772332] Could not create tracefs 'available_events' entry
-> [    1.778633] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
-> [    1.787095] Could not create tracefs 'set_event' entry
-> [    1.792412] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
-> (...)
-> [    2.899481] Could not create tracefs 'set_graph_notrace' entry
-> [    2.905671] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
-> [    2.913934] ------------[ cut here ]------------
-> [    2.918435] Could not register function stat for cpu 0
-> [    2.923717] WARNING: CPU: 1 PID: 1 at kernel/trace/ftrace.c:987 ftrace_init_tracefs_toplevel+0x168/0x1bc
-> [    2.933939] Modules linked in:
-> [    2.937290] CPU: 1 PID: 1 Comm: 
+Well, the rules for vmsplice is simply to not change the source pages.
+It's zero-copy, after all.
 
-Looks to me that it's working as designed ;-)
+If you want to change the source pages, you need to just use write() instead.
 
-I'm guessing we could quiet these warnings for boot up though. :-/
+That said, even then the right model isn't fsync(). If you really want
+to have something like "notify me when this buffer has been used", it
+should be some kind of sequence count thing, not a "wait for empty".
 
-But there should be at least one message that states that the tracefs
-files are not being created due to lockdown.
+Which might be useful in theory, but would be something quite
+different (and honestly, I wouldn't expect it to find all that
+widespread use)
 
--- Steve
+             Linus
