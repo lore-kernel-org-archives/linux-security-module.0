@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA6ACA9ED4
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Nov 2019 22:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 282B5CA9ED3
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Nov 2019 22:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15446204EC
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Nov 2019 22:23:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7FE1204EC
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Nov 2019 22:23:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="G4S1IccD"
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="Ta9OhILb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387990AbfKDVyj (ORCPT
+        id S2389139AbfKDWX2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Nov 2019 16:54:39 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46663 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387985AbfKDVyi (ORCPT
+        Mon, 4 Nov 2019 17:23:28 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34211 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387960AbfKDVyc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:54:38 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 193so12127848pfc.13
-        for <linux-security-module@vger.kernel.org>; Mon, 04 Nov 2019 13:54:38 -0800 (PST)
+        Mon, 4 Nov 2019 16:54:32 -0500
+Received: by mail-pl1-f196.google.com with SMTP id k7so8302936pll.1
+        for <linux-security-module@vger.kernel.org>; Mon, 04 Nov 2019 13:54:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rhNUYQaKaY0tf/t180d0e5QptZPN3w+bLozrSzcP+j4=;
-        b=G4S1IccDrfZyaN9EfQVBzUK+LLXYlnj+DA4fdO6nnV2E9FAo37xjdwaOUW3jXlii9h
-         69rqn7ksftNNL5mO4B3gBf6/u7tBehvSkMpPdWguTwZYaUHsnzVqofKv1RQ14dAlKzgB
-         h4ZsxOcVtS79l+II1uMVAkzV3u/gCFaxGqgiVP5HZefOeWyflrvA3icbDi4XkAYJa51S
-         0qhp/regEGy3byhrGoFaJrKltMh3sxo8BP+mprk4iTHTc0JQubsXhgP00wIlY9sYgdY5
-         4b7+PLEBub5VjI6mJpqAyO/0XrfADRSASPBsM/25gu9zjEh0bq4wNjiz6mczJNDE6dxG
-         Aj6g==
+        bh=Wxkk5ut6+s0cNxryvChWsZmwhMRnXWdBGWPKhZvNzYg=;
+        b=Ta9OhILb7dafwoZE94wX59bg3IB8dDT9GlQC97tPh29z/3kSAXgrECiTfion0qsXcP
+         Gb/+wmlpd0zXzoJ66PmkqCXLZcFsKU0mNNQX3YSN96bJIR8B+ULtpE+QE5Y38N6G2Fuh
+         b3bfMG91+uQ/4ufFHpibcNlxYOE7zisRLzMjRKfTBzPIjfjcWXvtxEPpSqneDd9tBRYD
+         8QCPOx9AAr6lFRCvNcVwtbcLmft+KdqJm2nW+a/ocAWInbniD+baUnOJJOdR1TMDX2yS
+         DYcjutbwzqYc/2iK2IokKCFgaFBheyNKGzU0gk6d2seNa4PVR5jlQZHSqmGCvz8z4nZ8
+         VINQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rhNUYQaKaY0tf/t180d0e5QptZPN3w+bLozrSzcP+j4=;
-        b=URnAocOmkT9aM7he99125lbD+xgXpru9mlotXhXaUI/3fHKUWPSE4yCgKEq4FBHEdh
-         J1GR6V1aF2hMQwn6eZu+8uMhkXUhN5f1LVvgI7tn2t6yewURs3fLDR4kX9iuSr/YFicI
-         GZd0cQK8w0IIsTwOq84XJv8n9WMaR5KbQYv45QgCM3YAbVE6zlPLkwXXV9Mz9LqRejAP
-         nEGN4CAp03WUW+gOn8I79JPmDxbDbT25SqjYEpU4X99SFk/ThqeFCEPTeo26TtfUKPJK
-         4hEUsbfySDvODnOjGdXGV/39JAFTHHXFodegIcbLFWV4sfEJ7Naf2VULAjGRNX56TudT
-         wBUg==
-X-Gm-Message-State: APjAAAU1C69DkQypNZrQPZSXXYhoDK1w0JqHl9BEvUGpsZIiIYF6aKvi
-        ovyokd7x5h1MiKdr5Vp9hpUAmw==
-X-Google-Smtp-Source: APXvYqxcQgigqGbYIQuKl+hwYhPqVDd8wAAp6ZGpgNztsIRiZSGr9mm5PznZY54M2lg3SRV1PiLhsw==
-X-Received: by 2002:a63:7358:: with SMTP id d24mr31875286pgn.407.1572904477692;
-        Mon, 04 Nov 2019 13:54:37 -0800 (PST)
+        bh=Wxkk5ut6+s0cNxryvChWsZmwhMRnXWdBGWPKhZvNzYg=;
+        b=jyQrkfH9hws7RCYH96fxr9pBdCaRKFC+r+yhIa6R5/bNQ7VsShRbH5fBA/FBbmrl5g
+         I5M/b/3cXJEvC7h7LR6Scy6IoHVK95Y90Mv2qLkcDdXqWPVzjZPgUHJLA1b3ygVAwE1o
+         ze1h2kBVBeOa9PQey9zN9jA3KJX1pjlWzM3rj3Pt6nj8V2C1dnpz4cXJjaw9Q2bsDyk1
+         +bWJQbQHp/MPRXt+l+wZUE1HOTq40pkjDmDriC5ND/WaK5lPYcYF2N5xCuFNfsRWlsuU
+         Ne+j1qlmB8u8SLh+xGIAATRsYYfifeFyRqBttcrrJVQgyvxq3bM4TLKdY+VOGxCRSCff
+         2H+A==
+X-Gm-Message-State: APjAAAVpIG3Bq39GDsqYqhAr5ZHpI8Z5N6iWUoTuTZbcefUzec/nZSoM
+        XpjR+WZNqoV/cOtgBbYPtTqlrA==
+X-Google-Smtp-Source: APXvYqzOlfhOuAcFE3PyPSu5cEFzLhnqc55aJlwnPcOx3PgwKCcUSt+zGdCYKQeCnDodouthnOblqw==
+X-Received: by 2002:a17:902:6b47:: with SMTP id g7mr25942305plt.160.1572904471170;
+        Mon, 04 Nov 2019 13:54:31 -0800 (PST)
 Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
-        by smtp.gmail.com with ESMTPSA id e198sm19231350pfh.83.2019.11.04.13.54.36
+        by smtp.gmail.com with ESMTPSA id e198sm19231350pfh.83.2019.11.04.13.54.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 13:54:37 -0800 (PST)
+        Mon, 04 Nov 2019 13:54:30 -0800 (PST)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
@@ -68,9 +68,9 @@ Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         linux-unionfs@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v15 3/4] overlayfs: internal getxattr operations without sepolicy checking
-Date:   Mon,  4 Nov 2019 13:52:48 -0800
-Message-Id: <20191104215253.141818-4-salyzyn@android.com>
+Subject: [PATCH v15 2/4] overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+Date:   Mon,  4 Nov 2019 13:52:47 -0800
+Message-Id: <20191104215253.141818-3-salyzyn@android.com>
 X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
 In-Reply-To: <20191104215253.141818-1-salyzyn@android.com>
 References: <20191104215253.141818-1-salyzyn@android.com>
@@ -80,30 +80,30 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Check impure, opaque, origin & meta xattr with no sepolicy audit
-(using __vfs_getxattr) since these operations are internal to
-overlayfs operations and do not disclose any data.  This became
-an issue for credential override off since sys_admin would have
-been required by the caller; whereas would have been inherently
-present for the creator since it performed the mount.
+Because of the overlayfs getxattr recursion, the incoming inode fails
+to update the selinux sid resulting in avc denials being reported
+against a target context of u:object_r:unlabeled:s0.
 
-This is a change in operations since we do not check in the new
-ovl_do_vfs_getxattr function if the credential override is off or
-not.  Reasoning is that the sepolicy check is unnecessary overhead,
-especially since the check can be expensive.
+Solution is to respond to the XATTR_NOSECURITY flag in get xattr
+method that calls the __vfs_getxattr handler instead so that the
+context can be read in, rather than being denied with an -EACCES
+when vfs_getxattr handler is called.
 
-Because for override credentials off, this affects _everyone_ that
-underneath performs private xattr calls without the appropriate
-sepolicy permissions and sys_admin capability.  Providing blanket
-support for sys_admin would be bad for all possible callers.
+For the use case where access is to be blocked by the security layer.
 
-For the override credentials on, this will affect only the mounter,
-should it lack sepolicy permissions. Not considered a security
-problem since mounting by definition has sys_admin capabilities,
-but sepolicy contexts would still need to be crafted.
+The path then would be security(dentry) ->
+__vfs_getxattr({dentry...XATTR_NOSECURITY}) ->
+handler->get({dentry...XATTR_NOSECURITY}) ->
+__vfs_getxattr({realdentry...XATTR_NOSECURITY}) ->
+lower_handler->get({realdentry...XATTR_NOSECURITY}) which
+would report back through the chain data and success as expected,
+the logging security layer at the top would have the data to
+determine the access permissions and report back to the logs and
+the caller that the target context was blocked.
 
-It should be noted that there is precedence, __vfs_getxattr is used
-in other filesystems for their own internal trusted xattr management.
+For selinux this would solve the cosmetic issue of the selinux log
+and allow audit2allow to correctly report the rule needed to address
+the access problem.
 
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
@@ -119,159 +119,82 @@ Cc: linux-kernel@vger.kernel.org
 Cc: kernel-team@android.com
 Cc: linux-security-module@vger.kernel.org
 
-v15 - revert to v13 as xattr_gs_args was rejected.
-    - move ovl_do_wrapper from util.c to inline in overlayfs.h
+v15 - revert to v13 because xattr_gs_args rejected.
 
 v14 - rebase to use xattr_gs_args.
 
-v13 - rebase to use __vfs_getxattr flags option
+v13 - rebase to use __vfs_getxattr flags option.
 
-v12 - rebase
+v12 - Added back to patch series as get xattr with flag option.
 
-v11 - switch name to ovl_do_vfs_getxattr, fortify comment
+v11 - Squashed out of patch series and replaced with per-thread flag
+      solution.
 
-v10 - added to patch series
+v10 - Added to patch series as __get xattr method.
 ---
- fs/overlayfs/namei.c     | 12 +++++++-----
- fs/overlayfs/overlayfs.h |  8 ++++++++
- fs/overlayfs/util.c      | 18 +++++++++---------
- 3 files changed, 24 insertions(+), 14 deletions(-)
+ fs/overlayfs/inode.c     | 5 +++--
+ fs/overlayfs/overlayfs.h | 2 +-
+ fs/overlayfs/super.c     | 4 ++--
+ 3 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-index e9717c2f7d45..f5aba0a0767b 100644
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -106,10 +106,11 @@ int ovl_check_fh_len(struct ovl_fh *fh, int fh_len)
- 
- static struct ovl_fh *ovl_get_fh(struct dentry *dentry, const char *name)
- {
--	int res, err;
-+	ssize_t res;
-+	int err;
- 	struct ovl_fh *fh = NULL;
- 
--	res = vfs_getxattr(dentry, name, NULL, 0);
-+	res = ovl_do_vfs_getxattr(dentry, name, NULL, 0);
- 	if (res < 0) {
- 		if (res == -ENODATA || res == -EOPNOTSUPP)
- 			return NULL;
-@@ -123,7 +124,7 @@ static struct ovl_fh *ovl_get_fh(struct dentry *dentry, const char *name)
- 	if (!fh)
- 		return ERR_PTR(-ENOMEM);
- 
--	res = vfs_getxattr(dentry, name, fh, res);
-+	res = ovl_do_vfs_getxattr(dentry, name, fh, res);
- 	if (res < 0)
- 		goto fail;
- 
-@@ -141,10 +142,11 @@ static struct ovl_fh *ovl_get_fh(struct dentry *dentry, const char *name)
- 	return NULL;
- 
- fail:
--	pr_warn_ratelimited("overlayfs: failed to get origin (%i)\n", res);
-+	pr_warn_ratelimited("overlayfs: failed to get origin (%zi)\n", res);
- 	goto out;
- invalid:
--	pr_warn_ratelimited("overlayfs: invalid origin (%*phN)\n", res, fh);
-+	pr_warn_ratelimited("overlayfs: invalid origin (%*phN)\n",
-+			    (int)res, fh);
- 	goto out;
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index bc14781886bf..c057e51057f7 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -363,7 +363,7 @@ int ovl_xattr_set(struct dentry *dentry, struct inode *inode, const char *name,
  }
  
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index ab3d031c422b..55b872c28bf9 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -200,6 +200,14 @@ static inline bool ovl_open_flags_need_copy_up(int flags)
- 	return ((OPEN_FMODE(flags) & FMODE_WRITE) || (flags & O_TRUNC));
- }
- 
-+static inline ssize_t ovl_do_vfs_getxattr(struct dentry *dentry,
-+					  const char *name, void *buf,
-+					  size_t size)
-+{
-+	return __vfs_getxattr(dentry, d_inode(dentry), name, buf, size,
-+			      XATTR_NOSECURITY);
-+}
-+
- /* util.c */
- int ovl_want_write(struct dentry *dentry);
- void ovl_drop_write(struct dentry *dentry);
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index f5678a3f8350..2050c5084a82 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -537,9 +537,9 @@ void ovl_copy_up_end(struct dentry *dentry)
- 
- bool ovl_check_origin_xattr(struct dentry *dentry)
+ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
+-		  void *value, size_t size)
++		  void *value, size_t size, int flags)
  {
--	int res;
-+	ssize_t res;
+ 	ssize_t res;
+ 	const struct cred *old_cred;
+@@ -371,7 +371,8 @@ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
+ 		ovl_i_dentry_upper(inode) ?: ovl_dentry_lower(dentry);
  
--	res = vfs_getxattr(dentry, OVL_XATTR_ORIGIN, NULL, 0);
-+	res = ovl_do_vfs_getxattr(dentry, OVL_XATTR_ORIGIN, NULL, 0);
- 
- 	/* Zero size value means "copied up but origin unknown" */
- 	if (res >= 0)
-@@ -550,13 +550,13 @@ bool ovl_check_origin_xattr(struct dentry *dentry)
- 
- bool ovl_check_dir_xattr(struct dentry *dentry, const char *name)
- {
--	int res;
-+	ssize_t res;
- 	char val;
- 
- 	if (!d_is_dir(dentry))
- 		return false;
- 
--	res = vfs_getxattr(dentry, name, &val, 1);
-+	res = ovl_do_vfs_getxattr(dentry, name, &val, 1);
- 	if (res == 1 && val == 'y')
- 		return true;
- 
-@@ -837,13 +837,13 @@ int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *upperdir)
- /* err < 0, 0 if no metacopy xattr, 1 if metacopy xattr found */
- int ovl_check_metacopy_xattr(struct dentry *dentry)
- {
--	int res;
-+	ssize_t res;
- 
- 	/* Only regular files can have metacopy xattr */
- 	if (!S_ISREG(d_inode(dentry)->i_mode))
- 		return 0;
- 
--	res = vfs_getxattr(dentry, OVL_XATTR_METACOPY, NULL, 0);
-+	res = ovl_do_vfs_getxattr(dentry, OVL_XATTR_METACOPY, NULL, 0);
- 	if (res < 0) {
- 		if (res == -ENODATA || res == -EOPNOTSUPP)
- 			return 0;
-@@ -852,7 +852,7 @@ int ovl_check_metacopy_xattr(struct dentry *dentry)
- 
- 	return 1;
- out:
--	pr_warn_ratelimited("overlayfs: failed to get metacopy (%i)\n", res);
-+	pr_warn_ratelimited("overlayfs: failed to get metacopy (%zi)\n", res);
+ 	old_cred = ovl_override_creds(dentry->d_sb);
+-	res = vfs_getxattr(realdentry, name, value, size);
++	res = __vfs_getxattr(realdentry, d_inode(realdentry), name,
++			     value, size, flags);
+ 	revert_creds(old_cred);
  	return res;
  }
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 6934bcf030f0..ab3d031c422b 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -356,7 +356,7 @@ int ovl_permission(struct inode *inode, int mask);
+ int ovl_xattr_set(struct dentry *dentry, struct inode *inode, const char *name,
+ 		  const void *value, size_t size, int flags);
+ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
+-		  void *value, size_t size);
++		  void *value, size_t size, int flags);
+ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size);
+ struct posix_acl *ovl_get_acl(struct inode *inode, int type);
+ int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags);
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 57f5f948ae0a..c91e7b604631 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -857,7 +857,7 @@ ovl_posix_acl_xattr_get(const struct xattr_handler *handler,
+ 			struct dentry *dentry, struct inode *inode,
+ 			const char *name, void *buffer, size_t size, int flags)
+ {
+-	return ovl_xattr_get(dentry, inode, handler->name, buffer, size);
++	return ovl_xattr_get(dentry, inode, handler->name, buffer, size, flags);
+ }
  
-@@ -878,7 +878,7 @@ ssize_t ovl_getxattr(struct dentry *dentry, char *name, char **value,
- 	ssize_t res;
- 	char *buf = NULL;
+ static int __maybe_unused
+@@ -939,7 +939,7 @@ static int ovl_other_xattr_get(const struct xattr_handler *handler,
+ 			       const char *name, void *buffer, size_t size,
+ 			       int flags)
+ {
+-	return ovl_xattr_get(dentry, inode, name, buffer, size);
++	return ovl_xattr_get(dentry, inode, name, buffer, size, flags);
+ }
  
--	res = vfs_getxattr(dentry, name, NULL, 0);
-+	res = ovl_do_vfs_getxattr(dentry, name, NULL, 0);
- 	if (res < 0) {
- 		if (res == -ENODATA || res == -EOPNOTSUPP)
- 			return -ENODATA;
-@@ -890,7 +890,7 @@ ssize_t ovl_getxattr(struct dentry *dentry, char *name, char **value,
- 		if (!buf)
- 			return -ENOMEM;
- 
--		res = vfs_getxattr(dentry, name, buf, res);
-+		res = ovl_do_vfs_getxattr(dentry, name, buf, res);
- 		if (res < 0)
- 			goto fail;
- 	}
+ static int ovl_other_xattr_set(const struct xattr_handler *handler,
 -- 
 2.24.0.rc1.363.gb1bccd3e3d-goog
 
