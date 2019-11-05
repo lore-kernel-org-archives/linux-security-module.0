@@ -2,86 +2,110 @@ Return-Path: <SRS0=mnxl=Y5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1208C010A2
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 11:11:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25219C47E49
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 16:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A111620869
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 11:11:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F08B421D6C
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 16:03:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DAxnbXOe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388655AbfKELLo (ORCPT
+        id S2390003AbfKEQDK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Nov 2019 06:11:44 -0500
-Received: from mga18.intel.com ([134.134.136.126]:18842 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388494AbfKELLn (ORCPT
+        Tue, 5 Nov 2019 11:03:10 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:47854 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389985AbfKEQDJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Nov 2019 06:11:43 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 03:11:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
-   d="scan'208";a="403317098"
-Received: from zpanjkov-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.3.163])
-  by fmsmga006.fm.intel.com with ESMTP; 05 Nov 2019 03:11:29 -0800
-Date:   Tue, 5 Nov 2019 13:11:22 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>
-Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
-Message-ID: <20191105111057.GA20879@linux.intel.com>
-References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
- <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
- <20191029092920.GA14494@linux.intel.com>
- <20191030093045.GB12481@linux.intel.com>
- <20191031211252.GC10507@linux.intel.com>
+        Tue, 5 Nov 2019 11:03:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572969788;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pLj9LlV805f/L7J5FbyPXxXB07oTibsiCCSGb45ogQg=;
+        b=DAxnbXOel7GR/PEe2t6Mrv+03Xuzy/G2FGswsUfLa3WuDKMrcLU58JE3w5zv0Q9mvuNpPY
+        I1VMJVfrzlKq4LH4UyFmZKsbkrhlnt52r9X2+0oUwwfFrHC4TmVAq484vO9YuFSB3J2CDA
+        meGCgBaj17ZWJu0UuOPTyX1me2I6xBY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-350-9SUU8LceOXeOLaVGd4SGTA-1; Tue, 05 Nov 2019 11:03:06 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B43698017DD;
+        Tue,  5 Nov 2019 16:03:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-254.rdu2.redhat.com [10.10.120.254])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 980C81FA;
+        Tue,  5 Nov 2019 16:03:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
+References: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
+To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Details on the UAPI of implementing notifications on pipes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191031211252.GC10507@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-ID: <18579.1572969779.1@warthog.procyon.org.uk>
+Date:   Tue, 05 Nov 2019 16:02:59 +0000
+Message-ID: <18580.1572969779@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: 9SUU8LceOXeOLaVGd4SGTA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 31, 2019 at 11:12:52PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Oct 30, 2019 at 02:30:45AM -0700, Sean Christopherson wrote:
-> > Why?  The number of pages processed is effectively returned via the params
-> > on any error, e.g. wouldn't it be more appropriate to return -ERESTARTSYS?
-> > And I don't see any reason to add an arbitrary cap on the number of pages,
-> > e.g. SGX plays nice with the scheduler and signals, and restricting the
-> > number of EPC pages available to a process via cgroups (returning -ENOMEM)
-> > is a better solution for managing EPC.
-> 
-> Returning -ENOMEM does not tell you from which page to retry.
+So to implement notifications on top of pipes, I've hacked it together a bi=
+t
+in the following ways:
 
-API should be robust enough to be able to cap the amount of data
-processed with or without cgroups like send(), recv(), read() and
-write() are and the call pattern for it must be a loop not a single shot
-call for any megalomaniac length.
+ (1) I'm passing O_TMPFILE to the pipe2() system call to indicate that you
+     want a notifications pipe.  This prohibits splice and co. from being
+     called on it as I don't want to have to try to fix iov_iter_revert() t=
+o
+     handle kernel notifications being intermixed with splices.
 
-I'll add @count to address this. This output field will contain the
-number of bytes actually written instead of overwriting input
-parameters, which is a bad practice in anyway.
+     The choice of O_TMPFILE was just for convenience, but it needs to be
+     something different.  I could, for instance, add a constant,
+     O_NOTIFICATION_PIPE with the same *value* as O_TMPFILE.  I don't think
+     it's likely that it will make sense to use O_TMPFILE with a pipe, but =
+I
+     also don't want to eat up another O_* constant just for this.
 
-We don't need to actually cap to anything but API must be able to
-support such scenario. Caller must be prepared to deal with the
-situation where the return value is zero but @count < @length.
+     Unfortunately, pipe2() doesn't have any other arguments into from whic=
+h I
+     can steal a bit.
 
-/Jarkko
+ (2) I've added a pair of ioctls to configure the notifications bits.  They=
+'re
+     ioctls as I just reused the ioctl code from my devmisc driver.  Should=
+ I
+     use fcntl() instead, such as is done for F_SETPIPE_SZ?
+
+     The ioctls do two things: set the ring size to a number of slots (so
+     similarish to F_SETPIPE_SZ) and set filters.
+
+Any thoughts on how better to represent these bits?
+
+Thanks,
+David
+
