@@ -2,281 +2,293 @@ Return-Path: <SRS0=mnxl=Y5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B66C5DF60
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 22:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CECFC5DF60
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 23:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 955E72084D
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 22:32:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ECA321A49
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 23:44:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="EthnUynl"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m00rGWWy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730281AbfKEWcm (ORCPT
+        id S1729692AbfKEXok (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Nov 2019 17:32:42 -0500
-Received: from sonic306-28.consmr.mail.ne1.yahoo.com ([66.163.189.90]:44132
-        "EHLO sonic306-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730292AbfKEWcg (ORCPT
+        Tue, 5 Nov 2019 18:44:40 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42833 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729494AbfKEXok (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Nov 2019 17:32:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1572993153; bh=CEqNC2OZLKhyTZ7Hb0wmLJu9sTXB7Mqxnyl1A+S6+TQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=EthnUynlV3IADcJoG7UBd/VTNjzZ7I/WBRXx6R0tOfBu/digqcE9CI8gdRu4aZr81P6OpLwRgnsT25ySQipCfZU0BCUBdunGTXIHoP+PiOZEXdNdmK/jzMYw31lw1aWnh+f0jvUliA4etie2rv1S8EhZBKrzcIFeSDaSgHhTRkQiofew4SCwhWp4p/S+ewHGXd5jG48seSE9Q8ekCTB1PysumwFLXyZ7ON6SQtrPWuquqyU1XdnBQRthU8iDf07Nc+Jf9Cx5lPriaeGI15bo9cmQp+2Yv5ziEAgxf3TDPWz7oqNpGzhXXoxXgig9U+3swL3t2ALLrz9/qUbBzRJ4DQ==
-X-YMail-OSG: rfffkqUVM1mtWPHBkSEHkDFHFeeok1ZQg00bzBb3.jZv4O1lGgzzwpgqdePX6OZ
- 2wiCCfIXfku9bdJSJPbuC.uynz.UKpEKMLq9A90N7FxSs0vvCrkYuLeI70vP.HS1qbFbLZxLoajv
- APnAf4lVryLPORh3ehRfo2ecxYWFpMrxhvyTWIdDz03dy6Ef1c1NB.0nkrIWlOKcty1bHlCKneSY
- WnZ0E8bCeBSnRqJ05Ax1rCB1nMK8WGCru7aWWqvkUuAt3Njz.TmcgHd0DVnDx28jXCmgSKBVYl07
- m_XBbabPZhajs8CoG22v2CvI0XY1.0gD0xPQYH9Wkpkgt8.3Fl1fm7Ab26myjUSniEKVOX0mITx_
- utGnqfzQFR0tQxUw942fQ9Ln.Uki88TS_xdGYRY6xBmRhh6QQuS_hJARlFgdzVNM69yNqLlAPdCM
- vxs__Drt50TIiEJidaazHPgbdURbt4tlCTCQfW4R0k3Lc9QRQqOUA5VGloJDp96t1z3IQ4I2k_Ut
- d2I52vQLMyVMwiGRpofQDYCSeCN7wCdopOKtSC6m04PZZ.G6Tw5qekGrY_gRioO0LULq3ttBJNBH
- ta.ZQfw2OGEltEGS7fJe6Q5GBgHChDEpd4D5GHhEeBiFORQs4bEApBqlYJDXbATHHF0cvLftCKN.
- V4Xp_sHk5ZTTn9f.R4ZhZuj1hgZz2WfmGoKwrjJflvsmk3CJOvGqtsR3HUx7HM53uJl21eY568oj
- r8i9nUBhhfRyFH5W46EMgkTRqHeujpdWsFoz47Np4_lvvCI4q9nuazIdcN.ciDf8jNdNDBha.IVW
- zi3s385lyLENv56IQ7oUn7SImMDPqVQnccSpbQXLK9KHeKn9_NZCECl8TgJIzn54oc6mMmNTcKkh
- MRHnN12UltF_zAUrICz9lppvlYdbwWVssaUiGqmlqygOPjylAHuxbPkKCiyvpuYcrTzzIDZOftAH
- Ekh5Wv1AXnGjOR5eknJrn9Bq6g30FAOIzzz0A3uQOkmM47RtfkCTL5f4ixxWu3EUzDcTKB5A2mbL
- nFyOykPouTuB4zQnOoaIOrRj824trFx5ngqZ5td.U9Aq5UadVbcGBNQFXT9QPD5NxbGxTcGGCUPF
- xE9wLpuGoPxyaFT7fkr.W_K.bgvYCaiHqtT3DuyR1e72jMGWplZanzmUdATo560PH3BtmBVM98Ut
- ehb4TiYD65TKWNWNJcVA.v2lOk4lMztf6q1ITLePRFKgIFmhDjTSriwk8vMv7s.83TIYS1vV9Ehm
- uHxzGDVUvP9pAPtI3VoDH2AonmYyP1fV1WU_VH_THikFCxytq.lMkxAHl..nDFzsTSbO5.iEa.0e
- ocAWJvlJ4R22IBVYY4zPXn4OM7Anqm4yw2CRf7QmHCEERMHm6ohw8TrFdTEb76pPLZ4FGKFEiNOe
- 2MceryyCTaRZyLV59o2o4ViUkEJ8DLuG1H3XoMQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Tue, 5 Nov 2019 22:32:33 +0000
-Received: by smtp410.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8eeec92530544327d71d2d9b5a53830c;
-          Tue, 05 Nov 2019 22:32:29 +0000 (UTC)
-Subject: Re: [PATCH bpf-next v13 4/7] landlock: Add ptrace LSM hooks
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        Florent Revest <revest@chromium.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        KP Singh <kpsingh@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        casey@schaufler-ca.com
-References: <20191104172146.30797-1-mic@digikod.net>
- <20191104172146.30797-5-mic@digikod.net>
- <20191105171824.dfve44gjiftpnvy7@ast-mbp.dhcp.thefacebook.com>
- <c5c6b433-7e6a-c8f8-f063-e704c3df4cc6@schaufler-ca.com>
- <20191105193130.qam2eafnmgvrvjwk@ast-mbp.dhcp.thefacebook.com>
- <637736ef-c48e-ac3b-3eef-8a6a095a96f1@schaufler-ca.com>
- <20191105215453.szhdkrvuekwfz6le@ast-mbp.dhcp.thefacebook.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- mQINBFzV9HABEAC/mmv3jeJyF7lR7QhILYg1+PeBLIMZv7KCzBSc/4ZZipoWdmr77Lel/RxQ
- 1PrNx0UaM5r6Hj9lJmJ9eg4s/TUBSP67mTx+tsZ1RhG78/WFf9aBe8MSXxY5cu7IUwo0J/CG
- vdSqACKyYPV5eoTJmnMxalu8/oVUHyPnKF3eMGgE0mKOFBUMsb2pLS/enE4QyxhcZ26jeeS6
- 3BaqDl1aTXGowM5BHyn7s9LEU38x/y2ffdqBjd3au2YOlvZ+XUkzoclSVfSR29bomZVVyhMB
- h1jTmX4Ac9QjpwsxihT8KNGvOM5CeCjQyWcW/g8LfWTzOVF9lzbx6IfEZDDoDem4+ZiPsAXC
- SWKBKil3npdbgb8MARPes2DpuhVm8yfkJEQQmuLYv8GPiJbwHQVLZGQAPBZSAc7IidD2zbf9
- XAw1/SJGe1poxOMfuSBsfKxv9ba2i8hUR+PH7gWwkMQaQ97B1yXYxVEkpG8Y4MfE5Vd3bjJU
- kvQ/tOBUCw5zwyIRC9+7zr1zYi/3hk+OG8OryZ5kpILBNCo+aePeAJ44znrySarUqS69tuXd
- a3lMPHUJJpUpIwSKQ5UuYYkWlWwENEWSefpakFAIwY4YIBkzoJ/t+XJHE1HTaJnRk6SWpeDf
- CreF3+LouP4njyeLEjVIMzaEpwROsw++BX5i5vTXJB+4UApTAQARAQABtChDYXNleSBTY2hh
- dWZsZXIgPGNhc2V5QHNjaGF1Zmxlci1jYS5jb20+iQJUBBMBCAA+FiEEC+9tH1YyUwIQzUIe
- OKUVfIxDyBEFAlzV9HACGwMFCRLMAwAFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQOKUV
- fIxDyBG6ag/6AiRl8yof47YOEVHlrmewbpnlBTaYNfJ5cZflNRKRX6t4bp1B2YV1whlDTpiL
- vNOwFkh+ZE0eI5M4x8Gw2Oiok+4Q5liA9PHTozQYF+Ia+qdL5EehfbLGoEBqklpGvG3h8JsO
- 7SvONJuFDgvab/U/UriDYycJwzwKZuhVtK9EMpnTtUDyP3DY+Q8h7MWsniNBLVXnh4yBIEJg
- SSgDn3COpZoFTPGKE+rIzioo/GJe8CTa2g+ZggJiY/myWTS3quG0FMvwvNYvZ4I2g6uxSl7n
- bZVqAZgqwoTAv1HSXIAn9muwZUJL03qo25PFi2gQmX15BgJKQcV5RL0GHFHRThDS3IyadOgK
- P2j78P8SddTN73EmsG5OoyzwZAxXfck9A512BfVESqapHurRu2qvMoUkQaW/2yCeRQwGTsFj
- /rr0lnOBkyC6wCmPSKXe3dT2mnD5KnCkjn7KxLqexKt4itGjJz4/ynD/qh+gL7IPbifrQtVH
- JI7cr0fI6Tl8V6efurk5RjtELsAlSR6fKV7hClfeDEgLpigHXGyVOsynXLr59uE+g/+InVic
- jKueTq7LzFd0BiduXGO5HbGyRKw4MG5DNQvC//85EWmFUnDlD3WHz7Hicg95D+2IjD2ZVXJy
- x3LTfKWdC8bU8am1fi+d6tVEFAe/KbUfe+stXkgmfB7pxqW5Ag0EXNX0cAEQAPIEYtPebJzT
- wHpKLu1/j4jQcke06Kmu5RNuj1pEje7kX5IKzQSs+CPH0NbSNGvrA4dNGcuDUTNHgb5Be9hF
- zVqRCEvF2j7BFbrGe9jqMBWHuWheQM8RRoa2UMwQ704mRvKr4sNPh01nKT52ASbWpBPYG3/t
- WbYaqfgtRmCxBnqdOx5mBJIBh9Q38i63DjQgdNcsTx2qS7HFuFyNef5LCf3jogcbmZGxG/b7
- yF4OwmGsVc8ufvlKo5A9Wm+tnRjLr/9Mn9vl5Xa/tQDoPxz26+aWz7j1in7UFzAarcvqzsdM
- Em6S7uT+qy5jcqyuipuenDKYF/yNOVSNnsiFyQTFqCPCpFihOnuaWqfmdeUOQHCSo8fD4aRF
- emsuxqcsq0Jp2ODq73DOTsdFxX2ESXYoFt3Oy7QmIxeEgiHBzdKU2bruIB5OVaZ4zWF+jusM
- Uh+jh+44w9DZkDNjxRAA5CxPlmBIn1OOYt1tsphrHg1cH1fDLK/pDjsJZkiH8EIjhckOtGSb
- aoUUMMJ85nVhN1EbU/A3DkWCVFEA//Vu1+BckbSbJKE7Hl6WdW19BXOZ7v3jo1q6lWwcFYth
- esJfk3ZPPJXuBokrFH8kqnEQ9W2QgrjDX3et2WwZFLOoOCItWxT0/1QO4ikcef/E7HXQf/ij
- Dxf9HG2o5hOlMIAkJq/uLNMvABEBAAGJAjwEGAEIACYWIQQL720fVjJTAhDNQh44pRV8jEPI
- EQUCXNX0cAIbDAUJEswDAAAKCRA4pRV8jEPIEWkzEACKFUnpp+wIVHpckMfBqN8BE5dUbWJc
- GyQ7wXWajLtlPdw1nNw0Wrv+ob2RCT7qQlUo6GRLcvj9Fn5tR4hBvR6D3m8aR0AGHbcC62cq
- I7LjaSDP5j/em4oVL2SMgNTrXgE2w33JMGjAx9oBzkxmKUqprhJomPwmfDHMJ0t7y39Da724
- oLPTkQDpJL1kuraM9TC5NyLe1+MyIxqM/8NujoJbWeQUgGjn9uxQAil7o/xSCjrWCP3kZDID
- vd5ZaHpdl8e1mTExQoKr4EWgaMjmD/a3hZ/j3KfTVNpM2cLfD/QwTMaC2fkK8ExMsz+rUl1H
- icmcmpptCwOSgwSpPY1Zfio6HvEJp7gmDwMgozMfwQuT9oxyFTxn1X3rn1IoYQF3P8gsziY5
- qtTxy2RrgqQFm/hr8gM78RhP54UPltIE96VywviFzDZehMvuwzW//fxysIoK97Y/KBZZOQs+
- /T+Bw80Pwk/dqQ8UmIt2ffHEgwCTbkSm711BejapWCfklxkMZDp16mkxSt2qZovboVjXnfuq
- wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
- v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
- abzjfg==
-Message-ID: <93f53bdd-a499-6425-111c-ab90d81874d7@schaufler-ca.com>
-Date:   Tue, 5 Nov 2019 14:32:27 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 5 Nov 2019 18:44:40 -0500
+Received: by mail-pl1-f195.google.com with SMTP id j12so8541071plt.9
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Nov 2019 15:44:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Um9/qfCrgZQ1WrP8N3q635iXaQT9L9NZqcD9xzyqjhM=;
+        b=m00rGWWyIBgUYfI0QN893mlVLSmeXOwzg7GcqkNFGQQZos7nfhjD+GJyP5XiGGvtfe
+         jndgqjdkc8Qnbcp0cwruho0cEPYZ/2v+G5j7kC9ctfuh0rvGyynZVF49Fs42BvbGVuq3
+         8tv+uhlF+yYWzMdnXTQIRmcwfTqXEoKJJPIu0hbQwOuj7VCLslthywlJT56/VzfsAaEr
+         Sp5b2usbNudPlZ9FwnogiNaWQx21Ao+nNY6rA7jlrfkAcE/vORzVG9BbBMjZtPmNVAfg
+         cvawCcLWuH99pXRuuD7Wlf+LvpZDOjabTvsjfcjYOwfM226DYIVsvTPTabKQCy7ZheDd
+         JfJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Um9/qfCrgZQ1WrP8N3q635iXaQT9L9NZqcD9xzyqjhM=;
+        b=rZOYxhY/kZSOo5Fn2SsOT7ZcNFtwabc3tpNtfcrXldWdm2Spmx3dBLKryQN33WMcDU
+         fmEkoDpz9pQRPsLRIQXTS9GY3EOKeXV94H1uKPF7h8+Rvy3rd09lOCJl5X9dZ1EU1fWv
+         KVuN7uJK52Yvks2IwHbBEc8ojLFvAt6ek9naSdVYPQXCPufvXoXQTdZuTvCucM10sgUe
+         MHv37DdsznuZE6fWJcps33hJ5nEV74PfjzhIRhl2ScS2Dp1JrTAC+L5hibALmytT8aYw
+         nrZ2CgZaxqQ7BPz39NbLKP5niplOGoY+yImawGMPURHXCyx3aEu3n1anx+E+FYM2N+TB
+         KZiQ==
+X-Gm-Message-State: APjAAAXzdPYPWcEi/8idoxujaLzvMduMhvir32jFVvL9t4eA5ESq5RUW
+        BXe8Z0+WDUsHlRVjtzlPW+d5u7MM4WDljdVw6C75NA==
+X-Google-Smtp-Source: APXvYqzCFV7KRMTLsbE7bEb+T05qapNLIwRw+TgsIRHszTdTe9Vcmq+K/1l3DcTczC5gtBYOrrlyzWqtn8ldUatIhnY=
+X-Received: by 2002:a17:902:b685:: with SMTP id c5mr34580955pls.297.1572997478784;
+ Tue, 05 Nov 2019 15:44:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191105215453.szhdkrvuekwfz6le@ast-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.14680 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
+References: <20191018001816.94460-1-brendanhiggins@google.com>
+ <20191018122949.GD11244@42.do-not-panic.com> <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
+ <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
+ <20191024101529.GK11244@42.do-not-panic.com> <201910301205.74EC2A226D@keescook>
+ <CAFd5g45V-iYaAhHwoaUPoPYUBud-5vxbBkApp-h5O6J8trnPRA@mail.gmail.com> <alpine.LRH.2.20.1911011142160.15982@dhcp-10-175-177-231.vpn.oracle.com>
+In-Reply-To: <alpine.LRH.2.20.1911011142160.15982@dhcp-10-175-177-231.vpn.oracle.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 5 Nov 2019 15:44:27 -0800
+Message-ID: <CAFd5g44C4y=M3goRgaXeOzh=T=+y03Natfyut+ojrKOf+4HSWw@mail.gmail.com>
+Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
+ tests for policy unpack
+To:     Alan Maguire <alan.maguire@oracle.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Matthias Maennich <maennich@google.com>,
+        shuah <shuah@kernel.org>,
+        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        serge@hallyn.com, Iurii Zaikin <yzaikin@google.com>,
+        David Gow <davidgow@google.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Mike Salvatore <mike.salvatore@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/5/2019 1:54 PM, Alexei Starovoitov wrote:
-> On Tue, Nov 05, 2019 at 11:55:17AM -0800, Casey Schaufler wrote:
->> On 11/5/2019 11:31 AM, Alexei Starovoitov wrote:
->>> On Tue, Nov 05, 2019 at 09:55:42AM -0800, Casey Schaufler wrote:
->>>> On 11/5/2019 9:18 AM, Alexei Starovoitov wrote:
->>>>> On Mon, Nov 04, 2019 at 06:21:43PM +0100, Micka=C3=ABl Sala=C3=BCn =
-wrote:
->>>>>> Add a first Landlock hook that can be used to enforce a security p=
-olicy
->>>>>> or to audit some process activities.  For a sandboxing use-case, i=
-t is
->>>>>> needed to inform the kernel if a task can legitimately debug anoth=
-er.
->>>>>> ptrace(2) can also be used by an attacker to impersonate another t=
-ask
->>>>>> and remain undetected while performing malicious activities.
->>>>>>
->>>>>> Using ptrace(2) and related features on a target process can lead =
-to a
->>>>>> privilege escalation.  A sandboxed task must then be able to tell =
-the
->>>>>> kernel if another task is more privileged, via ptrace_may_access()=
-=2E
->>>>>>
->>>>>> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
->>>>> ...
->>>>>> +static int check_ptrace(struct landlock_domain *domain,
->>>>>> +		struct task_struct *tracer, struct task_struct *tracee)
->>>>>> +{
->>>>>> +	struct landlock_hook_ctx_ptrace ctx_ptrace =3D {
->>>>>> +		.prog_ctx =3D {
->>>>>> +			.tracer =3D (uintptr_t)tracer,
->>>>>> +			.tracee =3D (uintptr_t)tracee,
->>>>>> +		},
->>>>>> +	};
->>>>> So you're passing two kernel pointers obfuscated as u64 into bpf pr=
-ogram
->>>>> yet claiming that the end goal is to make landlock unprivileged?!
->>>>> The most basic security hole in the tool that is aiming to provide =
-security.
->>>>>
->>>>> I think the only way bpf-based LSM can land is both landlock and KR=
-SI
->>>>> developers work together on a design that solves all use cases. BPF=
- is capable
->>>>> to be a superset of all existing LSMs
->>>> I can't agree with this. Nope. There are many security models
->>>> for which BPF introduces excessive complexity. You don't need
->>>> or want the generality of a general purpose programming language
->>>> to implement Smack or TOMOYO. Or a simple Bell & LaPadula for
->>>> that matter. SELinux? I can't imagine anyone trying to do that
->>>> in eBPF, although I'm willing to be surprised. Being able to
->>>> enforce a policy isn't the only criteria for an LSM.=20
->>> what are the other criteria?
->> They include, but are not limited to, performance impact
->> and the ability to be analyzed.=20
-> Right and BPF is the only thing that exists in the kernel where the ver=
-ifier
-> knows precisely the number of instructions the critical path through th=
-e
-> program will take. Currently we don't quantify this cost for bpf helper=
-s, but
-> it's easy to add. Can you do this for smack? Can you tell upfront the l=
-ongest
-> execution time for all security rules?
-
-There's much more to analyze than number of instructions.
-There's also completion of policy enforcement. There are
-lots of tools for measuring performance within the kernel.
-
->> It has to be fast, or the networking people are
->> going to have fits. You can't require the addition
->> of a pointer into the skb because it'll get rejected
->> out of hand. You can't completely refactor the vfs locking
->> to accommodate you needs.
-> I'm not sure why you got such impression. I'm not proposing to refactor=
- vfs or
-> add fields to skb.
-
-I'm not saying you did. Those are examples of things you would
-have trouble with.
-
->  Once we have equivalent to smack policy implemented in
-> bpf-based lsm let's do performance benchmarking and compare actual numb=
-ers
-> instead of hypothesizing about them. Which policy do you think would be=
-
-> the most representative of smack use case?
-
-The Tizen3 Three domain model will do just fine.
-https://wiki.tizen.org/Security:SmackThreeDomainModel
-
-
+On Fri, Nov 1, 2019 at 5:30 AM Alan Maguire <alan.maguire@oracle.com> wrote:
 >
->>>> I see many issues with a BPF <-> vfs interface.
->>> There is no such interface today. What do you have in mind?
->> You can't implement SELinux or Smack using BPF without a way
->> to manipulate inode data.
-> Are you talking about inode->i_security ? That's not manipulating inode=
- data.
-
-Poppycock.
-
-> It's attaching extra metadata to inode object without changing inode it=
-self.
-
-Where I come from, we call that inode object data.
-
-> BPF can do it already via hash maps. It's not as fast as direct pointer=
- access,
-
-Then you're not listening. Performance MATTERS!
-
-> but for many use cases it's good enough. If it turns out to be a perfor=
-mance
-> limiting factor we will accelerate it.
-
-How many times have I heard that bit of rubbish?
-No. You can't start with a bad design and tweak it to acceptability later=
-=2E
-
-
->>>> the mechanisms needed for the concerns of the day. Ideally,
->>>> we should be able to drop mechanisms when we decide that they
->>>> no longer add value.
->>> Exactly. bpf-based lsm must not add to kernel abi.
->> Huh? I have no idea where that came from.
-> It sounds to me that some folks in the community got wrong impression t=
-hat
-> anything that BPF accesses is magically turning that thing into stable =
-kernel
-> ABI. That is not true. BPF progs had access _all_ kernel data pointers =
-and
-> structures for years without turning the whole kernel into stable ABI. =
-I want
-> to make sure that this part is understood. This is also a requirement f=
-or
-> bpf-based LSM. It must not make LSM hooks into stable ABI.
+> On Thu, 31 Oct 2019, Brendan Higgins wrote:
 >
+> > On Wed, Oct 30, 2019 at 12:09 PM Kees Cook <keescook@chromium.org> wrote:
+> > >
+> > > On Thu, Oct 24, 2019 at 10:15:29AM +0000, Luis Chamberlain wrote:
+> > > > On Wed, Oct 23, 2019 at 05:42:18PM -0700, Brendan Higgins wrote:
+> > > > > With that, I think the best solution in this case will be the
+> > > > > "__visible_for_testing" route. It has no overhead when testing is
+> > > > > turned off (in fact it is no different in anyway when testing is
+> > > > > turned off). The downsides I see are:
+> > > > >
+> > > > > 1) You may not be able to test non-module code not compiled for
+> > > > > testing later with the test modules that Alan is working on (But the
+> > > > > only way I think that will work is by preventing the symbol from being
+> > > > > inlined, right?).
+> > > > >
+> > > > > 2) I think "__visible_for_testing" will be prone to abuse. Here, I
+> > > > > think there are reasons why we might want to expose these symbols for
+> > > > > testing, but not otherwise. Nevertheless, I think most symbols that
+> > > > > should be tested should probably be made visible by default. Since you
+> > > > > usually only want to test your public interfaces. I could very well
+> > > > > see this getting used as a kludge that gets used far too frequently.
+> > > >
+> > > > There are two parts to your statement on 2):
+> > > >
+> > > >   a) possible abuse of say __visible_for_testing
+> > >
+> > > I really don't like the idea of littering the kernel with these. It'll
+> >
+> > Yeah, I kind of hope that it would make people think more
+> > intentionally about what is a public interface so that they wouldn't
+> > litter the kernel with those. But I agree that in the world where
+> > people *didn't* do that. Lots of these sprinkled around would be
+> > annoying.
+> >
+> > > also require chunks in header files wrapped in #ifdefs. This is really
+> >
+> > Why would it require header files wrapped in #ifdefs?
+> >
+> > We could put all the ifdeffery logic in the __visible_for_testing
+> > macro so that nothing in the original code has to change except for
+> > adding an #include and replacing a couple of `static`s with
+> > `__visible_for_testing`.
+> >
+>
+> FWIW I think this approach, if used sparingly, is fine.  However I'd
+> propose a hierarchy of options when looking to expose interfaces for
+> testing.
+>
+> 1. For small, largely self-contained functions, move their definitions
+> from .c files to a .h file where those functions are defined as "static
+> inline".  That way the original code and tests can included them and we
+> have solved function availability for both the cases where the tests are
+> built-in and compiled as a module.  The apparmor interfaces here seem to
+> be candidates for that approach.
+>
+> 2. For more complex cases, __visible_for_testing (for built-in visbility)
+> and some sort of equivalent EXPORT_FOR_TESTING (for module
+> visibility) would work, or the kunit_find_symbol() based lookup approach I
+> suggested in the module patches.  Either of these allows for building
+> tests as modules or builtin.
+>
+> 3. For some cases, module support will probably be impossible or difficult
+> to maintain.  In such cases, builtin tests make most sense so any
+> questions about symbol visibility would largely concern changing static
+> definitions to be __visibile_for_testing, with no need for any symbol
+> export for module visibility.
 
+Very well said, I think this sums up a lot of good points. Basically,
+I think you illustrate that it's not just one of the ways that were
+proposed is the most appropriate for all cases, but really several are
+valid strategies in different instances.
+
+> > > ugly.
+> > >
+> > > >   b) you typically only want to test your public interfaces
+> > >
+> > > True, but being able to test the little helper functions is a nice
+> > > starting point and a good building block.
+> >
+> > Yeah, I think I have come to accept that. We can argue about how this
+> > should change and how people need to learn to be more intentional
+> > about which interfaces are public and many other high minded ideas,
+> > but when it comes down to it, we need to provide a starting point that
+> > is easy.
+> >
+> > If our nice starting point becomes a problem, we can always improve it later.
+> >
+> > > Why can't unit tests live with the code they're testing? They're already
+> > > logically tied together; what's the harm there? This needn't be the case
+> > > for ALL tests, etc. The test driver could still live externally. The
+> > > test in the other .c would just have exported functions... ?
+> >
+> > Well, for one, it totally tanks certain cases for building KUnit tests
+> > as modules. I don't care about this point *too* much personally, but I
+> > accept that there are others that want this, and I don't want to make
+> > these people's lives too difficult.
+> >
+>
+> Appreciated.  I think at this point it might be useful to lay out my
+> thinking on why being able to build tests as modules may be helpful moving
+> forward.
+>
+> - First and foremost, if the functionality itself is predominantly
+> delivered in module form, or indeed is simply tristate, having a way to
+> test kernel code when built as a module seems to me to be necessary. To
+> test module code with built-in test code seems broken, and even if it
+> could be made to work we'd end up having to invent a bunch of the mechanisms
+> we'd need for building tests as modules anyway.
+
+I think that is a fair point. I think I was thinking of it as an all
+or nothing type thing. I know that we had moved past it in words, but
+I think I was still hung up on the idea that we were going to try to
+aggressively make tests buildable as modules. Here, and combined with
+what Mike said (in a later email), I think I realized that a better
+metric is what the code under test does.
+
+It's probably not a big deal to make *everything* available as a
+module. The right thing is probably that, if the code is available as
+a module, the test should probably be available as a module. If the
+code is not available as a module, it is not necessary to provide the
+test as a module.
+
+But that and what Mike said, I think, gets at something deeper. Each
+subsystem has its own way of doing things, and that is a reality we
+have to deal with. As long as there is some way to "run all the tests"
+what conventions we enforce at the outset may not really be all that
+important. Sure, some amount of consistency is important, but what is
+more important is that we make something that is easy to use. We can
+always go back and clean things up later.
+
+After writing this, it sounds kind of obvious and like things that
+people have said already; nevertheless, I think it is still worthwhile
+to say, if nothing else to show that I think we are all on the same
+page.
+
+So yeah, I think that optionally including tests in the code under
+test is fine (if that is what works best for the developer), I think
+that __visible_for_testing is fine if that's what works best, and
+testing through public interfaces is also fine. We might want to
+gently push people in one direction or another over time, but all seem
+like things that are reasonable to support now. In this case, since
+people seem to be more in favor of including tests in source, that's
+probably the right thing to do here.
+
+I will make the __visible_for_testing thing available in a separate
+patch at some point. Someone can pick it up if they want to use it.
+
+> - Running tests on demand.  From previous discussions, I think this is
+> wanted for kselftest, and if we have a set of modules with a conventional
+> prefix (e.g. kunit-*), running tests becomes simply a "find + modprobe" in
+> the kernel module tree.  Results could be harvested from debugfs (I have a
+> WIP patch to store logging data in the per-test data structures such that
+> "cat /sys/kernel/debug/kunit-results/kunit-foo" will display results for
+> that test suite).  There are other ways to achieve this goal, and it's
+> a crude method without any test selection beyond which modules are
+> loaded, but this path is noticeably shorter to having a simple way to
+> execute tests in a kselftest-friendly way I think.
+
+Yep, I think we are all in agreement here. Shuah, Knut, and myself all
+agreed at LPC that running tests on demand via kselftest was a
+worthwhile goal. I am not strongly opposed to the common prefix idea.
+I think that is something we might want to run past Linus though, as
+he has not been a fan of certain file prefixes that he considers to
+convey redundant information.
+
+> - Developing tests. I've also found this model to be neat for test
+> development; add a test, build, load the module to test the test, add
+> another test, build, unload/load etc.
+
+Not really sure what you mean here. I suspect that I probably won't
+agree, as I have found that rebuilding the kernel for every test is
+not overly burdensome. Nevertheless, I also don't see any reason to
+oppose you here. If some developer likes that model (even if I don't),
+it is best to support it if possible, as we should ideally make things
+easier for every development flow.
+
+> - The late_initcall() initialization of tests may not always be appropriate
+> for subsystems under test, and as the number of tests grow (a good
+> problem to have!), it will likely become infeasible.
+
+Agreed. I just went with it for now because it was easy and
+uncontroversial. I already have some WIP patches to get rid of it (I
+am not sure how that will affect what you are doing, but I suspect
+your module patches will be done first - since they already look close
+- so I will probably try to figure that out after your module patches
+get merged).
+
+> Anyway I'm not sure if any of the above resonates with others as being
+> useful, but hopefully it clarifies why module support might matter moving
+> forward.
+
+I definitely agree with the point about supporting building tests as
+modules if the code under test builds as modules, especially if the
+developers want it. So yes, it does resonate with me! :-)
+
+> If it makes sense, I can look at tweaking the module patchset to remove
+> the kunit_find_symbol() stuff so that we can punt on specific mechanisms
+> for now; my main aim at this point is to ensure we're thinking about
+> providing mechanisms for testing modules.
+
+Yeah, I started looking at the latest version of your patches (sorry
+for the late follow up), and yeah, I think it probably makes sense to
+split that out into a separate patch/patchset.
+
+Thanks for the comments! They really helped clear some things up for me!
