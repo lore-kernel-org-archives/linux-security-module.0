@@ -1,294 +1,166 @@
-Return-Path: <SRS0=mnxl=Y5=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=blwp=Y6=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CECFC5DF60
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 23:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D695C5DF60
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 00:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ECA321A49
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 23:44:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D16552178F
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 00:00:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m00rGWWy"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VlMCTkpT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729692AbfKEXok (ORCPT
+        id S1730554AbfKFAAL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Nov 2019 18:44:40 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42833 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729494AbfKEXok (ORCPT
+        Tue, 5 Nov 2019 19:00:11 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34491 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729563AbfKFAAL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Nov 2019 18:44:40 -0500
-Received: by mail-pl1-f195.google.com with SMTP id j12so8541071plt.9
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Nov 2019 15:44:40 -0800 (PST)
+        Tue, 5 Nov 2019 19:00:11 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n13so5641190pff.1
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Nov 2019 16:00:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Um9/qfCrgZQ1WrP8N3q635iXaQT9L9NZqcD9xzyqjhM=;
-        b=m00rGWWyIBgUYfI0QN893mlVLSmeXOwzg7GcqkNFGQQZos7nfhjD+GJyP5XiGGvtfe
-         jndgqjdkc8Qnbcp0cwruho0cEPYZ/2v+G5j7kC9ctfuh0rvGyynZVF49Fs42BvbGVuq3
-         8tv+uhlF+yYWzMdnXTQIRmcwfTqXEoKJJPIu0hbQwOuj7VCLslthywlJT56/VzfsAaEr
-         Sp5b2usbNudPlZ9FwnogiNaWQx21Ao+nNY6rA7jlrfkAcE/vORzVG9BbBMjZtPmNVAfg
-         cvawCcLWuH99pXRuuD7Wlf+LvpZDOjabTvsjfcjYOwfM226DYIVsvTPTabKQCy7ZheDd
-         JfJQ==
+        bh=lhPGHL3YRrXYTue69wU9eU8V8Hx/b8hEqaEa6yTMnkc=;
+        b=VlMCTkpT+whd9RxOskp1d0UAGHuA0h6fy1q55ME6v1BSRDECHdj3UWLD4/nl2kFi57
+         QpRQjXkkG5d9C2XQorCh+PtySWXjM/1Ism68mr8kGSxX6kw1HJkesh4FOnHnGPZ9dsTD
+         aamT7cM11W7vGaxrQIWXJJmkRttlHajiwihfjEq3uvKt5ZGOqMDiLRXukqUs6y4y/I+F
+         ZcRpXOi/VnaKLTPk1GXl1k3S8OX8QuI+UWU+nJm83HCp9Fd9umODkJeL+YS99b/pyJVz
+         +T2egQKbxqr6HH1esUB6oT76CdyQY8WAkKAuJWMpkQA1MU1q9jVYpcx+lmxI6UmsWCNh
+         to6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Um9/qfCrgZQ1WrP8N3q635iXaQT9L9NZqcD9xzyqjhM=;
-        b=rZOYxhY/kZSOo5Fn2SsOT7ZcNFtwabc3tpNtfcrXldWdm2Spmx3dBLKryQN33WMcDU
-         fmEkoDpz9pQRPsLRIQXTS9GY3EOKeXV94H1uKPF7h8+Rvy3rd09lOCJl5X9dZ1EU1fWv
-         KVuN7uJK52Yvks2IwHbBEc8ojLFvAt6ek9naSdVYPQXCPufvXoXQTdZuTvCucM10sgUe
-         MHv37DdsznuZE6fWJcps33hJ5nEV74PfjzhIRhl2ScS2Dp1JrTAC+L5hibALmytT8aYw
-         nrZ2CgZaxqQ7BPz39NbLKP5niplOGoY+yImawGMPURHXCyx3aEu3n1anx+E+FYM2N+TB
-         KZiQ==
-X-Gm-Message-State: APjAAAXzdPYPWcEi/8idoxujaLzvMduMhvir32jFVvL9t4eA5ESq5RUW
-        BXe8Z0+WDUsHlRVjtzlPW+d5u7MM4WDljdVw6C75NA==
-X-Google-Smtp-Source: APXvYqzCFV7KRMTLsbE7bEb+T05qapNLIwRw+TgsIRHszTdTe9Vcmq+K/1l3DcTczC5gtBYOrrlyzWqtn8ldUatIhnY=
-X-Received: by 2002:a17:902:b685:: with SMTP id c5mr34580955pls.297.1572997478784;
- Tue, 05 Nov 2019 15:44:38 -0800 (PST)
+        bh=lhPGHL3YRrXYTue69wU9eU8V8Hx/b8hEqaEa6yTMnkc=;
+        b=MXsaY60O+nKGw4cjMjXycbzNLSzRmeGSbsmZ1UtRg893mmTnxlGBpd9TSvEzCwwSjJ
+         6ZBQqCA+out6OMSvJ0GVyE2sO2FPqswm7AvYIXS248RVAG+3UcIHWn2dl4nzjPUrDlLC
+         fLZXZ4uJtjNgCnX5iMVPKTnWkNg2YhIW5VXMVs2mxg0cryF+tkPq+XaJH91n4upa5T+F
+         LXcBVD44qEg79213/kPvSSuTFELMotvfkzC8RcdklPSYAA83Gq4kmMS9NzAvM7V0gyGR
+         lhPXdFGZIopqJLR0B3T8+Mg/YmV/tWqo0M6cTTn+9Tv33KIRJqJ0HC7B00N6XQgqX8zW
+         slSQ==
+X-Gm-Message-State: APjAAAU4o/gKtEZR6tS75QM50KW1nNl6J+spzHVdAPNmgOKVj5nQk+ZS
+        OTuZu+npyLIUphyvxxV8O6BufIUZSqRo8AnnfjeDvg==
+X-Google-Smtp-Source: APXvYqx2fYUU/NkVF71Am9HasgI3vwxMoHR3QiibGcvRUftbZnyu0R3anDH7NSvGotdiSWDPP3VbGLfdWXuUHeNFMvw=
+X-Received: by 2002:a65:664e:: with SMTP id z14mr39064849pgv.201.1572998408009;
+ Tue, 05 Nov 2019 16:00:08 -0800 (PST)
 MIME-Version: 1.0
 References: <20191018001816.94460-1-brendanhiggins@google.com>
  <20191018122949.GD11244@42.do-not-panic.com> <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
  <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
  <20191024101529.GK11244@42.do-not-panic.com> <201910301205.74EC2A226D@keescook>
- <CAFd5g45V-iYaAhHwoaUPoPYUBud-5vxbBkApp-h5O6J8trnPRA@mail.gmail.com> <alpine.LRH.2.20.1911011142160.15982@dhcp-10-175-177-231.vpn.oracle.com>
-In-Reply-To: <alpine.LRH.2.20.1911011142160.15982@dhcp-10-175-177-231.vpn.oracle.com>
+ <CAAXuY3o31iCJwZ+WGHMaK1MgpC0qv=JkJWnzv8Lhym9TnZQvcQ@mail.gmail.com>
+ <CAFd5g446cyijzgap9r8nm_202zkUsfdZXrn5E1_Mfe-R+eFb_g@mail.gmail.com> <205525ba-dc2f-34a9-b7dc-4421285535d7@canonical.com>
+In-Reply-To: <205525ba-dc2f-34a9-b7dc-4421285535d7@canonical.com>
 From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 5 Nov 2019 15:44:27 -0800
-Message-ID: <CAFd5g44C4y=M3goRgaXeOzh=T=+y03Natfyut+ojrKOf+4HSWw@mail.gmail.com>
+Date:   Tue, 5 Nov 2019 15:59:56 -0800
+Message-ID: <CAFd5g47_H=JeC-esa_1H2jgwvW5kThWYzm6Wj_XonEsk-J6JDw@mail.gmail.com>
 Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
  tests for policy unpack
-To:     Alan Maguire <alan.maguire@oracle.com>
-Cc:     Kees Cook <keescook@chromium.org>,
+To:     Mike Salvatore <mike.salvatore@canonical.com>
+Cc:     Iurii Zaikin <yzaikin@google.com>,
+        Kees Cook <keescook@chromium.org>,
         Luis Chamberlain <mcgrof@kernel.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
         Matthias Maennich <maennich@google.com>,
         shuah <shuah@kernel.org>,
         John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        serge@hallyn.com, Iurii Zaikin <yzaikin@google.com>,
-        David Gow <davidgow@google.com>,
+        serge@hallyn.com, David Gow <davidgow@google.com>,
         "Theodore Ts'o" <tytso@mit.edu>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-security-module@vger.kernel.org,
         KUnit Development <kunit-dev@googlegroups.com>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Mike Salvatore <mike.salvatore@canonical.com>
+        <linux-kselftest@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 1, 2019 at 5:30 AM Alan Maguire <alan.maguire@oracle.com> wrote:
+On Tue, Nov 5, 2019 at 8:43 AM Mike Salvatore
+<mike.salvatore@canonical.com> wrote:
 >
-> On Thu, 31 Oct 2019, Brendan Higgins wrote:
+> >> but such approach is not mainstream.
+> >> I personally like the idea of testing the lowest level bits in isolation even if
+> >> they are not a part of any interface. I think that specifying the
+> >> interface using
+> >> unit tests and ensuring implementation correctness are complementary but
+> >> I haven't had much luck arguing this with our esteemed colleagues.
 >
-> > On Wed, Oct 30, 2019 at 12:09 PM Kees Cook <keescook@chromium.org> wrote:
-> > >
-> > > On Thu, Oct 24, 2019 at 10:15:29AM +0000, Luis Chamberlain wrote:
-> > > > On Wed, Oct 23, 2019 at 05:42:18PM -0700, Brendan Higgins wrote:
-> > > > > With that, I think the best solution in this case will be the
-> > > > > "__visible_for_testing" route. It has no overhead when testing is
-> > > > > turned off (in fact it is no different in anyway when testing is
-> > > > > turned off). The downsides I see are:
-> > > > >
-> > > > > 1) You may not be able to test non-module code not compiled for
-> > > > > testing later with the test modules that Alan is working on (But the
-> > > > > only way I think that will work is by preventing the symbol from being
-> > > > > inlined, right?).
-> > > > >
-> > > > > 2) I think "__visible_for_testing" will be prone to abuse. Here, I
-> > > > > think there are reasons why we might want to expose these symbols for
-> > > > > testing, but not otherwise. Nevertheless, I think most symbols that
-> > > > > should be tested should probably be made visible by default. Since you
-> > > > > usually only want to test your public interfaces. I could very well
-> > > > > see this getting used as a kludge that gets used far too frequently.
-> > > >
-> > > > There are two parts to your statement on 2):
-> > > >
-> > > >   a) possible abuse of say __visible_for_testing
-> > >
-> > > I really don't like the idea of littering the kernel with these. It'll
-> >
-> > Yeah, I kind of hope that it would make people think more
-> > intentionally about what is a public interface so that they wouldn't
-> > litter the kernel with those. But I agree that in the world where
-> > people *didn't* do that. Lots of these sprinkled around would be
-> > annoying.
-> >
-> > > also require chunks in header files wrapped in #ifdefs. This is really
-> >
-> > Why would it require header files wrapped in #ifdefs?
-> >
-> > We could put all the ifdeffery logic in the __visible_for_testing
-> > macro so that nothing in the original code has to change except for
-> > adding an #include and replacing a couple of `static`s with
-> > `__visible_for_testing`.
-> >
+> In general, testing public interfaces is preferable, however, I think it's
+> important to avoid becoming dogmatic. IMHO, it's more important to have tests
+> that are clear in what they test than to not write tests (or write confusing
+> tests) in order to adhere to a generalized principle.
+
+That's a really good point.
+
+> > So I think this is a very subtle point which is very widely
+> > misunderstood. Most people write code and then write their tests,
+> > following this practice along with only testing public interfaces
+> > often causes people to just not test all of their code, which is
+> > wrong.
 >
-> FWIW I think this approach, if used sparingly, is fine.  However I'd
-> propose a hierarchy of options when looking to expose interfaces for
-> testing.
+> The very nature of this situation is that the code was written before the tests.
 >
-> 1. For small, largely self-contained functions, move their definitions
-> from .c files to a .h file where those functions are defined as "static
-> inline".  That way the original code and tests can included them and we
-> have solved function availability for both the cases where the tests are
-> built-in and compiled as a module.  The apparmor interfaces here seem to
-> be candidates for that approach.
+> > The idea of only testing public interfaces is supposed to make people
+> > think more carefully about what the composite layers of the program
+> > is. If you are having difficulty getting decent coverage by only
+> > testing your public interfaces, then it likely tells you that you have
+> > one of two problems:
+> >
+> > 1) You have code that you don't need, and you should remove it.
+> >
+> > 2) One of the layers in your program is too think, and you should
+> > introduce a new layer with a new public interface that you can test
+> > through.
+> >
+> > I think the second point here is problematic with how C is written in
+> > the kernel. We don't really have any concept of public vs. private
+> > inside the kernel outside of static vs. not static, which is much more
+> > restricted.
 >
-> 2. For more complex cases, __visible_for_testing (for built-in visbility)
-> and some sort of equivalent EXPORT_FOR_TESTING (for module
-> visibility) would work, or the kunit_find_symbol() based lookup approach I
-> suggested in the module patches.  Either of these allows for building
-> tests as modules or builtin.
+> I don't think we can expect developers to refactor large portions of complex
+> kernel code in order to improve its testability. I imagine this will happen
+> naturally over time, but I think we need to allow for developers to test
+> "private" code in the meanwhile.
 >
-> 3. For some cases, module support will probably be impossible or difficult
-> to maintain.  In such cases, builtin tests make most sense so any
-> questions about symbol visibility would largely concern changing static
-> definitions to be __visibile_for_testing, with no need for any symbol
-> export for module visibility.
-
-Very well said, I think this sums up a lot of good points. Basically,
-I think you illustrate that it's not just one of the ways that were
-proposed is the most appropriate for all cases, but really several are
-valid strategies in different instances.
-
-> > > ugly.
-> > >
-> > > >   b) you typically only want to test your public interfaces
-> > >
-> > > True, but being able to test the little helper functions is a nice
-> > > starting point and a good building block.
-> >
-> > Yeah, I think I have come to accept that. We can argue about how this
-> > should change and how people need to learn to be more intentional
-> > about which interfaces are public and many other high minded ideas,
-> > but when it comes down to it, we need to provide a starting point that
-> > is easy.
-> >
-> > If our nice starting point becomes a problem, we can always improve it later.
-> >
-> > > Why can't unit tests live with the code they're testing? They're already
-> > > logically tied together; what's the harm there? This needn't be the case
-> > > for ALL tests, etc. The test driver could still live externally. The
-> > > test in the other .c would just have exported functions... ?
-> >
-> > Well, for one, it totally tanks certain cases for building KUnit tests
-> > as modules. I don't care about this point *too* much personally, but I
-> > accept that there are others that want this, and I don't want to make
-> > these people's lives too difficult.
-> >
+> My opinion is that it's more important to have tests than not. As evidence, I
+> submit the following commit:
+> https://github.com/torvalds/linux/commit/156e42996bd84eccb6acf319f19ce0cb140d00e3.
 >
-> Appreciated.  I think at this point it might be useful to lay out my
-> thinking on why being able to build tests as modules may be helpful moving
-> forward.
->
-> - First and foremost, if the functionality itself is predominantly
-> delivered in module form, or indeed is simply tristate, having a way to
-> test kernel code when built as a module seems to me to be necessary. To
-> test module code with built-in test code seems broken, and even if it
-> could be made to work we'd end up having to invent a bunch of the mechanisms
-> we'd need for building tests as modules anyway.
+> While not a major bug, this bug was discovered as a direct result of writing
+> these unit tests. So, in summary, I see value in "testing the lowest level bits
+> in isolation", even if it doesn't necessarily represent the Gold Standard in
+> Unit Testing.
 
-I think that is a fair point. I think I was thinking of it as an all
-or nothing type thing. I know that we had moved past it in words, but
-I think I was still hung up on the idea that we were going to try to
-aggressively make tests buildable as modules. Here, and combined with
-what Mike said (in a later email), I think I realized that a better
-metric is what the code under test does.
+You're right.
 
-It's probably not a big deal to make *everything* available as a
-module. The right thing is probably that, if the code is available as
-a module, the test should probably be available as a module. If the
-code is not available as a module, it is not necessary to provide the
-test as a module.
+I think, in summary, it seems that pretty much everyone agrees that we
+need to provide a mechanism for testing low level bits of code in
+isolation in such a way that the tests are easy to write, and don't
+require the code under test to be massively refactored. Beyond that it
+seems that we are mostly in between either including tests in the
+source for the code under test or using the __visible_for_testing
+mechanism. Between the two, it seems the preference is for including
+the test in the source.
 
-But that and what Mike said, I think, gets at something deeper. Each
-subsystem has its own way of doing things, and that is a reality we
-have to deal with. As long as there is some way to "run all the tests"
-what conventions we enforce at the outset may not really be all that
-important. Sure, some amount of consistency is important, but what is
-more important is that we make something that is easy to use. We can
-always go back and clean things up later.
+So I think I will still send out a patch to add in the
+__visible_for_testing mechanism in case someone wants to use it in the
+future.
 
-After writing this, it sounds kind of obvious and like things that
-people have said already; nevertheless, I think it is still worthwhile
-to say, if nothing else to show that I think we are all on the same
-page.
+Nevertheless, I will reformat this patch to include the tests in the
+files that are under test. One question, do we have a preference
+between putting all the tests in the same file as the code under test?
+Or do we want to put them in a separate file that gets #included in
+the file under test? I have a preference for the latter, but will
+defer to what everyone else wants.
 
-So yeah, I think that optionally including tests in the code under
-test is fine (if that is what works best for the developer), I think
-that __visible_for_testing is fine if that's what works best, and
-testing through public interfaces is also fine. We might want to
-gently push people in one direction or another over time, but all seem
-like things that are reasonable to support now. In this case, since
-people seem to be more in favor of including tests in source, that's
-probably the right thing to do here.
-
-I will make the __visible_for_testing thing available in a separate
-patch at some point. Someone can pick it up if they want to use it.
-
-> - Running tests on demand.  From previous discussions, I think this is
-> wanted for kselftest, and if we have a set of modules with a conventional
-> prefix (e.g. kunit-*), running tests becomes simply a "find + modprobe" in
-> the kernel module tree.  Results could be harvested from debugfs (I have a
-> WIP patch to store logging data in the per-test data structures such that
-> "cat /sys/kernel/debug/kunit-results/kunit-foo" will display results for
-> that test suite).  There are other ways to achieve this goal, and it's
-> a crude method without any test selection beyond which modules are
-> loaded, but this path is noticeably shorter to having a simple way to
-> execute tests in a kselftest-friendly way I think.
-
-Yep, I think we are all in agreement here. Shuah, Knut, and myself all
-agreed at LPC that running tests on demand via kselftest was a
-worthwhile goal. I am not strongly opposed to the common prefix idea.
-I think that is something we might want to run past Linus though, as
-he has not been a fan of certain file prefixes that he considers to
-convey redundant information.
-
-> - Developing tests. I've also found this model to be neat for test
-> development; add a test, build, load the module to test the test, add
-> another test, build, unload/load etc.
-
-Not really sure what you mean here. I suspect that I probably won't
-agree, as I have found that rebuilding the kernel for every test is
-not overly burdensome. Nevertheless, I also don't see any reason to
-oppose you here. If some developer likes that model (even if I don't),
-it is best to support it if possible, as we should ideally make things
-easier for every development flow.
-
-> - The late_initcall() initialization of tests may not always be appropriate
-> for subsystems under test, and as the number of tests grow (a good
-> problem to have!), it will likely become infeasible.
-
-Agreed. I just went with it for now because it was easy and
-uncontroversial. I already have some WIP patches to get rid of it (I
-am not sure how that will affect what you are doing, but I suspect
-your module patches will be done first - since they already look close
-- so I will probably try to figure that out after your module patches
-get merged).
-
-> Anyway I'm not sure if any of the above resonates with others as being
-> useful, but hopefully it clarifies why module support might matter moving
-> forward.
-
-I definitely agree with the point about supporting building tests as
-modules if the code under test builds as modules, especially if the
-developers want it. So yes, it does resonate with me! :-)
-
-> If it makes sense, I can look at tweaking the module patchset to remove
-> the kunit_find_symbol() stuff so that we can punt on specific mechanisms
-> for now; my main aim at this point is to ensure we're thinking about
-> providing mechanisms for testing modules.
-
-Yeah, I started looking at the latest version of your patches (sorry
-for the late follow up), and yeah, I think it probably makes sense to
-split that out into a separate patch/patchset.
-
-Thanks for the comments! They really helped clear some things up for me!
+Thanks everyone!
