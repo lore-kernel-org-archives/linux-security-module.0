@@ -2,160 +2,137 @@ Return-Path: <SRS0=mnxl=Y5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0FDC5DF62
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 16:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8AAC5DF60
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 17:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FA5121928
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 16:43:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6491214B2
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 17:18:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XX5HI5fd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390249AbfKEQnX (ORCPT
+        id S2390419AbfKERSa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Nov 2019 11:43:23 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52527 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390060AbfKEQnW (ORCPT
+        Tue, 5 Nov 2019 12:18:30 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35700 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389659AbfKERSa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:43:22 -0500
-Received: from c-73-130-187-69.hsd1.pa.comcast.net ([73.130.187.69] helo=[172.25.50.30])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <mike.salvatore@canonical.com>)
-        id 1iS1vL-00023X-4x; Tue, 05 Nov 2019 16:43:19 +0000
-Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
- tests for policy unpack
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        Iurii Zaikin <yzaikin@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Matthias Maennich <maennich@google.com>,
-        shuah <shuah@kernel.org>,
-        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        serge@hallyn.com, David Gow <davidgow@google.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-References: <20191018001816.94460-1-brendanhiggins@google.com>
- <20191018122949.GD11244@42.do-not-panic.com>
- <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
- <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
- <20191024101529.GK11244@42.do-not-panic.com>
- <201910301205.74EC2A226D@keescook>
- <CAAXuY3o31iCJwZ+WGHMaK1MgpC0qv=JkJWnzv8Lhym9TnZQvcQ@mail.gmail.com>
- <CAFd5g446cyijzgap9r8nm_202zkUsfdZXrn5E1_Mfe-R+eFb_g@mail.gmail.com>
-From:   Mike Salvatore <mike.salvatore@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mike.salvatore@canonical.com; keydata=
- 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
-Message-ID: <205525ba-dc2f-34a9-b7dc-4421285535d7@canonical.com>
-Date:   Tue, 5 Nov 2019 11:43:16 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 5 Nov 2019 12:18:30 -0500
+Received: by mail-pf1-f195.google.com with SMTP id d13so16042938pfq.2;
+        Tue, 05 Nov 2019 09:18:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=acyehhZ1kInQCOam4ex9rg1irdVyYdAedYo4L8HuhBE=;
+        b=XX5HI5fdLsOtra8e6FRnylQV3POlGoUKjN0QnYgWdYOJbhoq4GfEwzEeXeNk2KlNeR
+         cVlbwQ56h482SqsmeiyycLjPl/5cQaqbvnnxnAM834DFR1QuK+5nydBQhFrpZjok32Gs
+         AR+xXuUBvANEvmAOUphy2n4Zx7YW461y5VxLfF/EtosJl8SnhT+Zr/CsDH5S4y/MHx2S
+         ZjxeqFC22NsB4jP94cfp65T/GYZYybPc8LC7uxKNS7jlfkNEFav/I592UcGT0BwJ8FfK
+         uA6ngmKqqv2JvvgOcXk+TtukS5gONMHHX01ywSEFKn0OVOWk9FKzUUGoSgwBXWeGoNNH
+         I2XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=acyehhZ1kInQCOam4ex9rg1irdVyYdAedYo4L8HuhBE=;
+        b=n133OZv6dcpjgoC+09kN1c0SCJkvabFSbSJOqZjn8L1Q3J/RjzxpoXyu1DMYKj8ywp
+         Dyvu04jiaRifsR97ZAOkSpfmqDCtk0/9OilwLXAmNJqsRT45YgjBAmnejZ9iskEYNhi4
+         wOula1OaXbBl+pLlQZbVJK/vGoKDX7Tiw9CVF+QA27iIF0mRFGUmDVv3iRrkwZL94pkR
+         kF91hIki6FjkBwKvDGsTRIt4RqNheoilqUHEVSjjyDhcaxxKBbJiKdGYnDj9i6sH2m8b
+         AF000BTNXDVevPGw5upOZ6hUJ3QpEEdbrkxx4OdSUzUpQJzHRYcwiaphVHp6FqsqVY58
+         FT5A==
+X-Gm-Message-State: APjAAAUndn/FGRd3vu/HAW2/xpK2R2PQLRFIXKuPdO60Ye8gXd74bOpT
+        YQ5ZiqqO1bswpANoWSQvII8=
+X-Google-Smtp-Source: APXvYqxfGfRVQ8tyN+3W2wPHBfjDO9cnkSVobGLtqqzKW+U2w79oK6iebqGh0WK8FAFAk8uwenlUKg==
+X-Received: by 2002:a17:90a:2326:: with SMTP id f35mr126860pje.134.1572974309032;
+        Tue, 05 Nov 2019 09:18:29 -0800 (PST)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::1:47d0])
+        by smtp.gmail.com with ESMTPSA id a66sm9765299pfb.166.2019.11.05.09.18.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Nov 2019 09:18:27 -0800 (PST)
+Date:   Tue, 5 Nov 2019 09:18:26 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        Florent Revest <revest@chromium.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        KP Singh <kpsingh@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v13 4/7] landlock: Add ptrace LSM hooks
+Message-ID: <20191105171824.dfve44gjiftpnvy7@ast-mbp.dhcp.thefacebook.com>
+References: <20191104172146.30797-1-mic@digikod.net>
+ <20191104172146.30797-5-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <CAFd5g446cyijzgap9r8nm_202zkUsfdZXrn5E1_Mfe-R+eFb_g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191104172146.30797-5-mic@digikod.net>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
->> but such approach is not mainstream.
->> I personally like the idea of testing the lowest level bits in isolation even if
->> they are not a part of any interface. I think that specifying the
->> interface using
->> unit tests and ensuring implementation correctness are complementary but
->> I haven't had much luck arguing this with our esteemed colleagues.
-
-In general, testing public interfaces is preferable, however, I think it's
-important to avoid becoming dogmatic. IMHO, it's more important to have tests
-that are clear in what they test than to not write tests (or write confusing
-tests) in order to adhere to a generalized principle.
-
-> So I think this is a very subtle point which is very widely
-> misunderstood. Most people write code and then write their tests,
-> following this practice along with only testing public interfaces
-> often causes people to just not test all of their code, which is
-> wrong.
-
-The very nature of this situation is that the code was written before the tests.
-
-> The idea of only testing public interfaces is supposed to make people
-> think more carefully about what the composite layers of the program
-> is. If you are having difficulty getting decent coverage by only
-> testing your public interfaces, then it likely tells you that you have
-> one of two problems:
+On Mon, Nov 04, 2019 at 06:21:43PM +0100, Mickaël Salaün wrote:
+> Add a first Landlock hook that can be used to enforce a security policy
+> or to audit some process activities.  For a sandboxing use-case, it is
+> needed to inform the kernel if a task can legitimately debug another.
+> ptrace(2) can also be used by an attacker to impersonate another task
+> and remain undetected while performing malicious activities.
 > 
-> 1) You have code that you don't need, and you should remove it.
+> Using ptrace(2) and related features on a target process can lead to a
+> privilege escalation.  A sandboxed task must then be able to tell the
+> kernel if another task is more privileged, via ptrace_may_access().
 > 
-> 2) One of the layers in your program is too think, and you should
-> introduce a new layer with a new public interface that you can test
-> through.
-> 
-> I think the second point here is problematic with how C is written in
-> the kernel. We don't really have any concept of public vs. private
-> inside the kernel outside of static vs. not static, which is much more
-> restricted.
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+...
+> +static int check_ptrace(struct landlock_domain *domain,
+> +		struct task_struct *tracer, struct task_struct *tracee)
+> +{
+> +	struct landlock_hook_ctx_ptrace ctx_ptrace = {
+> +		.prog_ctx = {
+> +			.tracer = (uintptr_t)tracer,
+> +			.tracee = (uintptr_t)tracee,
+> +		},
+> +	};
 
-I don't think we can expect developers to refactor large portions of complex
-kernel code in order to improve its testability. I imagine this will happen
-naturally over time, but I think we need to allow for developers to test
-"private" code in the meanwhile.
+So you're passing two kernel pointers obfuscated as u64 into bpf program
+yet claiming that the end goal is to make landlock unprivileged?!
+The most basic security hole in the tool that is aiming to provide security.
 
-My opinion is that it's more important to have tests than not. As evidence, I
-submit the following commit:
-https://github.com/torvalds/linux/commit/156e42996bd84eccb6acf319f19ce0cb140d00e3.
-
-While not a major bug, this bug was discovered as a direct result of writing
-these unit tests. So, in summary, I see value in "testing the lowest level bits
-in isolation", even if it doesn't necessarily represent the Gold Standard in
-Unit Testing.
+I think the only way bpf-based LSM can land is both landlock and KRSI
+developers work together on a design that solves all use cases. BPF is capable
+to be a superset of all existing LSMs whereas landlock and KRSI propsals today
+are custom solutions to specific security concerns. BPF subsystem was extended
+with custom things in the past. In networking we have lwt, skb, tc, xdp, sk
+program types with a lot of overlapping functionality. We couldn't figure out
+how to generalize them into single 'networking' program. Now we can and we
+should. Accepting two partially overlapping bpf-based LSMs would be repeating
+the same mistake again.
 
