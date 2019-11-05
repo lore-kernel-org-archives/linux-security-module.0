@@ -2,110 +2,160 @@ Return-Path: <SRS0=mnxl=Y5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25219C47E49
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 16:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0FDC5DF62
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 16:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F08B421D6C
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 16:03:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DAxnbXOe"
+	by mail.kernel.org (Postfix) with ESMTP id 7FA5121928
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Nov 2019 16:43:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390003AbfKEQDK (ORCPT
+        id S2390249AbfKEQnX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Nov 2019 11:03:10 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:47854 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389985AbfKEQDJ (ORCPT
+        Tue, 5 Nov 2019 11:43:23 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52527 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390060AbfKEQnW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:03:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572969788;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pLj9LlV805f/L7J5FbyPXxXB07oTibsiCCSGb45ogQg=;
-        b=DAxnbXOel7GR/PEe2t6Mrv+03Xuzy/G2FGswsUfLa3WuDKMrcLU58JE3w5zv0Q9mvuNpPY
-        I1VMJVfrzlKq4LH4UyFmZKsbkrhlnt52r9X2+0oUwwfFrHC4TmVAq484vO9YuFSB3J2CDA
-        meGCgBaj17ZWJu0UuOPTyX1me2I6xBY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-350-9SUU8LceOXeOLaVGd4SGTA-1; Tue, 05 Nov 2019 11:03:06 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B43698017DD;
-        Tue,  5 Nov 2019 16:03:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-254.rdu2.redhat.com [10.10.120.254])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 980C81FA;
-        Tue,  5 Nov 2019 16:03:00 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
-References: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
-To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Details on the UAPI of implementing notifications on pipes
+        Tue, 5 Nov 2019 11:43:22 -0500
+Received: from c-73-130-187-69.hsd1.pa.comcast.net ([73.130.187.69] helo=[172.25.50.30])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <mike.salvatore@canonical.com>)
+        id 1iS1vL-00023X-4x; Tue, 05 Nov 2019 16:43:19 +0000
+Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
+ tests for policy unpack
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Iurii Zaikin <yzaikin@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Matthias Maennich <maennich@google.com>,
+        shuah <shuah@kernel.org>,
+        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        serge@hallyn.com, David Gow <davidgow@google.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+References: <20191018001816.94460-1-brendanhiggins@google.com>
+ <20191018122949.GD11244@42.do-not-panic.com>
+ <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
+ <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
+ <20191024101529.GK11244@42.do-not-panic.com>
+ <201910301205.74EC2A226D@keescook>
+ <CAAXuY3o31iCJwZ+WGHMaK1MgpC0qv=JkJWnzv8Lhym9TnZQvcQ@mail.gmail.com>
+ <CAFd5g446cyijzgap9r8nm_202zkUsfdZXrn5E1_Mfe-R+eFb_g@mail.gmail.com>
+From:   Mike Salvatore <mike.salvatore@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mike.salvatore@canonical.com; keydata=
+ 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
+Message-ID: <205525ba-dc2f-34a9-b7dc-4421285535d7@canonical.com>
+Date:   Tue, 5 Nov 2019 11:43:16 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-ID: <18579.1572969779.1@warthog.procyon.org.uk>
-Date:   Tue, 05 Nov 2019 16:02:59 +0000
-Message-ID: <18580.1572969779@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: 9SUU8LceOXeOLaVGd4SGTA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAFd5g446cyijzgap9r8nm_202zkUsfdZXrn5E1_Mfe-R+eFb_g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-So to implement notifications on top of pipes, I've hacked it together a bi=
-t
-in the following ways:
+>> but such approach is not mainstream.
+>> I personally like the idea of testing the lowest level bits in isolation even if
+>> they are not a part of any interface. I think that specifying the
+>> interface using
+>> unit tests and ensuring implementation correctness are complementary but
+>> I haven't had much luck arguing this with our esteemed colleagues.
 
- (1) I'm passing O_TMPFILE to the pipe2() system call to indicate that you
-     want a notifications pipe.  This prohibits splice and co. from being
-     called on it as I don't want to have to try to fix iov_iter_revert() t=
-o
-     handle kernel notifications being intermixed with splices.
+In general, testing public interfaces is preferable, however, I think it's
+important to avoid becoming dogmatic. IMHO, it's more important to have tests
+that are clear in what they test than to not write tests (or write confusing
+tests) in order to adhere to a generalized principle.
 
-     The choice of O_TMPFILE was just for convenience, but it needs to be
-     something different.  I could, for instance, add a constant,
-     O_NOTIFICATION_PIPE with the same *value* as O_TMPFILE.  I don't think
-     it's likely that it will make sense to use O_TMPFILE with a pipe, but =
-I
-     also don't want to eat up another O_* constant just for this.
+> So I think this is a very subtle point which is very widely
+> misunderstood. Most people write code and then write their tests,
+> following this practice along with only testing public interfaces
+> often causes people to just not test all of their code, which is
+> wrong.
 
-     Unfortunately, pipe2() doesn't have any other arguments into from whic=
-h I
-     can steal a bit.
+The very nature of this situation is that the code was written before the tests.
 
- (2) I've added a pair of ioctls to configure the notifications bits.  They=
-'re
-     ioctls as I just reused the ioctl code from my devmisc driver.  Should=
- I
-     use fcntl() instead, such as is done for F_SETPIPE_SZ?
+> The idea of only testing public interfaces is supposed to make people
+> think more carefully about what the composite layers of the program
+> is. If you are having difficulty getting decent coverage by only
+> testing your public interfaces, then it likely tells you that you have
+> one of two problems:
+> 
+> 1) You have code that you don't need, and you should remove it.
+> 
+> 2) One of the layers in your program is too think, and you should
+> introduce a new layer with a new public interface that you can test
+> through.
+> 
+> I think the second point here is problematic with how C is written in
+> the kernel. We don't really have any concept of public vs. private
+> inside the kernel outside of static vs. not static, which is much more
+> restricted.
 
-     The ioctls do two things: set the ring size to a number of slots (so
-     similarish to F_SETPIPE_SZ) and set filters.
+I don't think we can expect developers to refactor large portions of complex
+kernel code in order to improve its testability. I imagine this will happen
+naturally over time, but I think we need to allow for developers to test
+"private" code in the meanwhile.
 
-Any thoughts on how better to represent these bits?
+My opinion is that it's more important to have tests than not. As evidence, I
+submit the following commit:
+https://github.com/torvalds/linux/commit/156e42996bd84eccb6acf319f19ce0cb140d00e3.
 
-Thanks,
-David
+While not a major bug, this bug was discovered as a direct result of writing
+these unit tests. So, in summary, I see value in "testing the lowest level bits
+in isolation", even if it doesn't necessarily represent the Gold Standard in
+Unit Testing.
 
