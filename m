@@ -2,143 +2,295 @@ Return-Path: <SRS0=blwp=Y6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F361C5DF63
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 17:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F3CC5DF65
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D850B21848
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 17:18:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B09D206DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:01:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tfm+AIKz"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="LyIJrdjr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732340AbfKFRSb (ORCPT
+        id S1732352AbfKFTB3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Nov 2019 12:18:31 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41265 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732330AbfKFRSa (ORCPT
+        Wed, 6 Nov 2019 14:01:29 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:36192 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732279AbfKFTB3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:18:30 -0500
-Received: by mail-pg1-f196.google.com with SMTP id l3so17571208pgr.8
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Nov 2019 09:18:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=kqep8XBz+ob9m9HgLeaELks6sa5oaorHLu84jPUpdI0=;
-        b=Tfm+AIKzVLe4DKvn7S7UE7TTNFzSpLQpGOJ0dbBICYYiDkzHHhPep0L3G96Vp0HLkn
-         3iFEtU69J8jfFGl/vrroJ5cmlLPPZ/jEFJYPh5Iiuzsg9xZmv+vWYtIEUnvnADfAz+O0
-         6EHPI8OypMmHrVeVHx6LKUwBIdRVeHrA8kypc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=kqep8XBz+ob9m9HgLeaELks6sa5oaorHLu84jPUpdI0=;
-        b=poHJ+JcNqv/rzttDcz4d0oz6jeozClhxLwrVKm/McZmbssUj7Btk0npyQ0i1ohnRjk
-         M5zplMB4MghUsrZQX4zW/b0IbWG5/S5uc4CIqgAPOAz1jfwyhTKe8/q8ulG1mJgyPJoZ
-         /tlicfY+uIfmcBIr4dh5BQvvl9Eq7YT5r07SsVFBhD5bM+sf2wZA3LsIwc+fVeEYXX8m
-         8TrqT9jpMO9vHWZbcDUAPNWVhgiUdeIRjgGSz83XwpE+mV7mmBjJxIxzD9ZKVbh76fwb
-         mkMK8e/payNqwxaJ0kxDk2wZhahDK6rKsbIVOthwnzsLFsixqvimdVXxLfxVt6F1xFk2
-         d7+Q==
-X-Gm-Message-State: APjAAAW14yFOUJ+6QVeE/4x8mtnWqUy8nYONBEjqCNsfBNua3bTH8hkW
-        u8lI10x6zRXeYk3zhjU8Zh7+3g==
-X-Google-Smtp-Source: APXvYqyZHHZJMCCOAUO2Q7fAPKf5j8qTcabKvqS3xUm4Nyrs58kWQPudNMOakH9O8x+5MrgTLl1e+w==
-X-Received: by 2002:a63:d452:: with SMTP id i18mr4222869pgj.76.1573060709773;
-        Wed, 06 Nov 2019 09:18:29 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id s5sm3084844pjn.24.2019.11.06.09.18.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 09:18:28 -0800 (PST)
-Date:   Wed, 6 Nov 2019 09:18:27 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     shuah@kernel.org, john.johansen@canonical.com, jmorris@namei.org,
-        serge@hallyn.com, alan.maguire@oracle.com, yzaikin@google.com,
-        davidgow@google.com, mcgrof@kernel.org, tytso@mit.edu,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kselftest@vger.kernel.org,
-        Mike Salvatore <mike.salvatore@canonical.com>
-Subject: Re: [PATCH linux-kselftest/test v2] apparmor: add AppArmor KUnit
- tests for policy unpack
-Message-ID: <201911060916.AC9E14B@keescook>
-References: <20191106004329.16991-1-brendanhiggins@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106004329.16991-1-brendanhiggins@google.com>
+        Wed, 6 Nov 2019 14:01:29 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 9F2D020B4908;
+        Wed,  6 Nov 2019 11:01:27 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9F2D020B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1573066887;
+        bh=3KLwpY5WMSeoDc50Cu89wwg2YWMqHdF3aIcDS9t248o=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=LyIJrdjrjZCdWOhfDfWtmkxfgWlY5ab9yKEg/JEa3uR2FJVJBGfuXXopPKPFDV5xL
+         lXYwiPzRx66BTFc8keXivQGE8NE1gM8WPtwG4EWsOkrCns+WPLLkH7NkBjo0kOSZvB
+         JXCbXJrxNMoGfyqJMST0IwMHZ68+SMUot+Y4cyIs=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 08/10] IMA: Defined functions to queue and dequeue keys for measurement
+Date:   Wed,  6 Nov 2019 11:01:14 -0800
+Message-Id: <20191106190116.2578-9-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191106190116.2578-1-nramas@linux.microsoft.com>
+References: <20191106190116.2578-1-nramas@linux.microsoft.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 05, 2019 at 04:43:29PM -0800, Brendan Higgins wrote:
-> From: Mike Salvatore <mike.salvatore@canonical.com>
-> 
-> Add KUnit tests to test AppArmor unpacking of userspace policies.
-> AppArmor uses a serialized binary format for loading policies. To find
-> policy format documentation see
-> Documentation/admin-guide/LSM/apparmor.rst.
-> 
-> In order to write the tests against the policy unpacking code, some
-> static functions needed to be exposed for testing purposes. One of the
-> goals of this patch is to establish a pattern for which testing these
-> kinds of functions should be done in the future.
-> 
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> Signed-off-by: Mike Salvatore <mike.salvatore@canonical.com>
-> ---
->  security/apparmor/Kconfig              |  16 +
->  security/apparmor/policy_unpack.c      |   4 +
->  security/apparmor/policy_unpack_test.c | 607 +++++++++++++++++++++++++
->  3 files changed, 627 insertions(+)
->  create mode 100644 security/apparmor/policy_unpack_test.c
-> 
-> diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
-> index d8b1a360a6368..78a33ccac2574 100644
-> --- a/security/apparmor/Kconfig
-> +++ b/security/apparmor/Kconfig
-> @@ -66,3 +66,19 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
->  	  Set the default value of the apparmor.debug kernel parameter.
->  	  When enabled, various debug messages will be logged to
->  	  the kernel message buffer.
-> +
-> +config SECURITY_APPARMOR_KUNIT_TEST
-> +	bool "Build KUnit tests for policy_unpack.c"
-> +	depends on KUNIT && SECURITY_APPARMOR
-> +	help
-> +	  This builds the AppArmor KUnit tests.
-> +
-> +	  KUnit tests run during boot and output the results to the debug log
-> +	  in TAP format (http://testanything.org/). Only useful for kernel devs
-> +	  running KUnit test harness and are not for inclusion into a
-> +	  production build.
-> +
-> +	  For more information on KUnit and unit tests in general please refer
-> +	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-> +
-> +	  If unsure, say N.
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index 8cfc9493eefc7..37c1dd3178fc0 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -1120,3 +1120,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
->  
->  	return error;
->  }
-> +
-> +#ifdef CONFIG_SECURITY_APPARMOR_KUNIT_TEST
-> +#include "policy_unpack_test.c"
-> +#endif /* CONFIG_SECURITY_APPARMOR_KUNIT_TEST */
+A key can be measured right away only if IMA is initialized.
+Otherwise, the key should be queued up and processed when IMA
+initialization is completed.
 
-To make this even LESS intrusive, the ifdefs could live in ..._test.c.
+This patch defines functions to queue and dequeue keys for
+measurement and a config to enable these functions.
+These functions are defined in a new file namely
+ima_asymmetric_keys.c
 
-Also, while I *think* the kernel build system will correctly track this
-dependency, can you double-check that changes to ..._test.c correctly
-trigger a recompile of policy_unpack.c?
+Note that currently IMA subsystem can be enabled without
+enabling KEYS subsystem.
 
+Adding support for measuring asymmetric keys in IMA requires KEYS
+subsystem to be enabled. To handle this dependency a new config
+namely CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS has been added. Enabling
+this config requires the following configs to be enabled:
+    CONFIG_IMA, CONFIG_KEYS, CONFIG_ASYMMETRIC_KEY_TYPE, and
+    CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE.
+
+The new file ima_asymmetric_keys.c is built only if
+CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS is enabled.
+
+This config is turned off by default.
+
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ security/integrity/ima/Kconfig               |  14 ++
+ security/integrity/ima/Makefile              |   1 +
+ security/integrity/ima/ima.h                 |  24 ++++
+ security/integrity/ima/ima_asymmetric_keys.c | 136 +++++++++++++++++++
+ 4 files changed, 175 insertions(+)
+ create mode 100644 security/integrity/ima/ima_asymmetric_keys.c
+
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 838476d780e5..c6d14884bc19 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -310,3 +310,17 @@ config IMA_APPRAISE_SIGNED_INIT
+ 	default n
+ 	help
+ 	   This option requires user-space init to be signed.
++
++config IMA_MEASURE_ASYMMETRIC_KEYS
++	bool "Enable measuring asymmetric keys on key create or update"
++	depends on IMA
++	depends on KEYS
++	depends on ASYMMETRIC_KEY_TYPE
++	depends on ASYMMETRIC_PUBLIC_KEY_SUBTYPE
++	default n
++	help
++	   This option enables measuring asymmetric keys when
++	   the key is created or updated. Additionally, IMA policy
++	   needs to be configured to either measure keys linked to
++	   any keyring or only measure keys linked to the keyrings
++	   specified in the IMA policy through the keyrings= option.
+diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+index 31d57cdf2421..3e9d0ad68c7b 100644
+--- a/security/integrity/ima/Makefile
++++ b/security/integrity/ima/Makefile
+@@ -12,3 +12,4 @@ ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+ ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
+ ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+ obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
++obj-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 6a86daa62c5b..872883520ea6 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -206,6 +206,30 @@ extern const char *const func_tokens[];
+ 
+ struct modsig;
+ 
++#ifdef CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS
++/*
++ * To track keys that need to be measured.
++ */
++struct ima_measure_key_entry {
++	struct list_head list;
++	void *public_key;
++	u32  public_key_len;
++	char *keyring_name;
++};
++
++int ima_queue_or_process_key_for_measurement(struct key *keyring,
++					     struct key *key);
++void ima_measure_queued_keys(void);
++#else
++static inline int ima_queue_or_process_key_for_measurement(
++					     struct key *keyring,
++					     struct key *key)
++{
++	return 0;
++}
++static inline void ima_measure_queued_keys(void) {}
++#endif /* CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS */
++
+ /* LIM API function definitions */
+ int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+ 		   int mask, enum ima_hooks func, int *pcr,
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+new file mode 100644
+index 000000000000..fa3d9bf8fcbe
+--- /dev/null
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -0,0 +1,136 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2019 Microsoft Corporation
++ *
++ * Author: Lakshmi Ramasubramanian (nramas@linux.microsoft.com)
++ *
++ * File: ima_asymmetric_keys.c
++ *       Queue and de-queue functions for measuring asymmetric keys.
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <crypto/public_key.h>
++#include <keys/asymmetric-type.h>
++#include "ima.h"
++
++/*
++ * To synchronize access to the list of keys that need to be measured
++ */
++static DEFINE_MUTEX(ima_measure_keys_mutex);
++static LIST_HEAD(ima_measure_keys);
++
++static void ima_free_measure_key_entry(struct ima_measure_key_entry *entry)
++{
++	if (entry != NULL) {
++		if (entry->public_key != NULL)
++			kzfree(entry->public_key);
++		if (entry->keyring_name != NULL)
++			kzfree(entry->keyring_name);
++		kzfree(entry);
++	}
++}
++
++static struct ima_measure_key_entry *ima_alloc_measure_key_entry(
++	struct key *keyring,
++	struct key *key)
++{
++	int rc = 0;
++	const struct public_key *pk;
++	size_t keyring_name_len;
++	struct ima_measure_key_entry *entry = NULL;
++
++	pk = key->payload.data[asym_crypto];
++	keyring_name_len = strlen(keyring->description) + 1;
++	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
++	if (entry != NULL) {
++		entry->public_key = kzalloc(pk->keylen, GFP_KERNEL);
++		entry->keyring_name =
++			kzalloc(keyring_name_len, GFP_KERNEL);
++	}
++
++	if ((entry == NULL) || (entry->public_key == NULL) ||
++	    (entry->keyring_name == NULL)) {
++		rc = -ENOMEM;
++		goto out;
++	}
++
++	strcpy(entry->keyring_name, keyring->description);
++	memcpy(entry->public_key, pk->key, pk->keylen);
++	entry->public_key_len = pk->keylen;
++	rc = 0;
++
++out:
++	if (rc) {
++		ima_free_measure_key_entry(entry);
++		entry = NULL;
++	}
++
++	return entry;
++}
++
++int ima_queue_or_process_key_for_measurement(struct key *keyring,
++					     struct key *key)
++{
++	int rc = 0;
++	struct ima_measure_key_entry *entry = NULL;
++	const struct public_key *pk;
++
++	if (key->type != &key_type_asymmetric)
++		return 0;
++
++	mutex_lock(&ima_measure_keys_mutex);
++
++	if (ima_initialized) {
++		/*
++		 * keyring->description points to the name of the keyring
++		 * (such as ".builtin_trusted_keys", ".ima", etc.) to
++		 * which the given key is linked to.
++		 *
++		 * The name of the keyring is passed in the "eventname"
++		 * parameter to process_buffer_measurement() and is set
++		 * in the "eventname" field in ima_event_data for
++		 * the key measurement IMA event.
++		 *
++		 * The name of the keyring is also passed in the "keyring"
++		 * parameter to process_buffer_measurement() to check
++		 * if the IMA policy is configured to measure a key linked
++		 * to the given keyring.
++		 */
++		pk = key->payload.data[asym_crypto];
++		process_buffer_measurement(pk->key, pk->keylen,
++					   keyring->description,
++					   KEYRING_CHECK, 0,
++					   keyring->description);
++	} else {
++		entry = ima_alloc_measure_key_entry(keyring, key);
++		if (entry != NULL) {
++			INIT_LIST_HEAD(&entry->list);
++			list_add_tail(&entry->list, &ima_measure_keys);
++		} else
++			rc = -ENOMEM;
++	}
++
++	mutex_unlock(&ima_measure_keys_mutex);
++
++	return rc;
++}
++
++void ima_measure_queued_keys(void)
++{
++	struct ima_measure_key_entry *entry, *tmp;
++
++	mutex_lock(&ima_measure_keys_mutex);
++
++	list_for_each_entry_safe(entry, tmp, &ima_measure_keys, list) {
++		process_buffer_measurement(entry->public_key,
++					   entry->public_key_len,
++					   entry->keyring_name,
++					   KEYRING_CHECK, 0,
++					   entry->keyring_name);
++		list_del(&entry->list);
++		ima_free_measure_key_entry(entry);
++	}
++
++	mutex_unlock(&ima_measure_keys_mutex);
++}
 -- 
-Kees Cook
+2.17.1
+
