@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8EBC5DF65
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D3AC5DF63
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B25CC214D8
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5112220650
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:01:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="rPaGli8m"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sZ9Gms1Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732299AbfKFTB2 (ORCPT
+        id S1732489AbfKFTBs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Nov 2019 14:01:28 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:36164 "EHLO
+        Wed, 6 Nov 2019 14:01:48 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:36184 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732221AbfKFTB1 (ORCPT
+        with ESMTP id S1732215AbfKFTB2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Nov 2019 14:01:27 -0500
+        Wed, 6 Nov 2019 14:01:28 -0500
 Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id F417520B4904;
-        Wed,  6 Nov 2019 11:01:26 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F417520B4904
+        by linux.microsoft.com (Postfix) with ESMTPSA id 76F7820B4907;
+        Wed,  6 Nov 2019 11:01:27 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 76F7820B4907
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1573066887;
-        bh=pdZMTl5IJ3XXZubK6GdXhNLleyudkMn7QHLhVAEdwuA=;
+        bh=vzYPZl2IGof7+mAg55CncHBag4fIUbnnADY8hCvLvn0=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=rPaGli8mIP/hietVzL5XjZNbR1xELEi+RlsF2Xm8RNqO0HQfsz8FpkD6ui+ZjnMIS
-         fSo9KOx7BykKmYLW+mHRXcjmyx2Vft7qC3Zgeb+MTUyyCqtXrtzCgLeKyLJekFeg91
-         8+5EGzxHiLz/YbsgzEc0m7yPAiytUz4v3bBwJnYI=
+        b=sZ9Gms1Y/cRhVwtVw52cvtghfyKsKsh5QJAGFfeC9JYRs+tP/rItB0miMZ3rOQqg+
+         IdUT0d/T3wrymsjo4NjVwS+8woW8+0vpFxqxt2bLYP2cZyZjvc4m7l/w+vx5b/PgKH
+         m4Ys7vBSJmQYm7OOppi9WofAi0Y8igsOMhHihcH4=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, dhowells@redhat.com,
         matthewgarrett@google.com, sashal@kernel.org,
         jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 04/10] IMA: Read keyrings= option from the IMA policy into ima_rule_entry
-Date:   Wed,  6 Nov 2019 11:01:10 -0800
-Message-Id: <20191106190116.2578-5-nramas@linux.microsoft.com>
+Subject: [PATCH v4 07/10] IMA: Added a boolean flag to track IMA initialization status
+Date:   Wed,  6 Nov 2019 11:01:13 -0800
+Message-Id: <20191106190116.2578-8-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191106190116.2578-1-nramas@linux.microsoft.com>
 References: <20191106190116.2578-1-nramas@linux.microsoft.com>
@@ -50,77 +50,60 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-"keyrings=" option, if specified in the IMA policy, needs to be
-stored in the list of IMA rules when the configured IMA policy is read.
+IMA initialization status need to be checked before attempting to
+determine the action (measure, appraise, etc.) and any related options
+specified in the IMA policy.
 
-This patch defines a new policy token enum namely Opt_keyrings
-for reading "keyrings=" option from the IMA policy.
+This patch defines a flag namely ima_initialized to track
+IMA initialization status.
+
+ima_policy_flag cannot be relied upon for knowing IMA initialization
+status because ima_policy_flag will be set to 0 when either IMA
+is not initialized or the IMA policy itself is empty.
 
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- security/integrity/ima/ima_policy.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ security/integrity/ima/ima.h      | 1 +
+ security/integrity/ima/ima_init.c | 9 ++++++++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 4d68ad8ed91c..74a727dc6030 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -768,7 +768,8 @@ enum {
- 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_appraise_flag,
--	Opt_permit_directio, Opt_pcr, Opt_template, Opt_err
-+	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
-+	Opt_err
- };
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index f15199f7ff2a..6a86daa62c5b 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -52,6 +52,7 @@ extern int ima_policy_flag;
+ extern int ima_hash_algo;
+ extern int ima_appraise;
+ extern struct tpm_chip *ima_tpm_chip;
++extern bool ima_initialized;
  
- static const match_table_t policy_tokens = {
-@@ -804,6 +805,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_permit_directio, "permit_directio"},
- 	{Opt_pcr, "pcr=%s"},
- 	{Opt_template, "template=%s"},
-+	{Opt_keyrings, "keyrings=%s"},
- 	{Opt_err, NULL}
- };
+ /* IMA event related data */
+ struct ima_event_data {
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 5d55ade5f3b9..a810af6df587 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -23,6 +23,7 @@
+ /* name for boot aggregate entry */
+ static const char boot_aggregate_name[] = "boot_aggregate";
+ struct tpm_chip *ima_tpm_chip;
++bool ima_initialized;
  
-@@ -1051,6 +1053,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			result = 0;
- 			entry->flags |= IMA_FSNAME;
- 			break;
-+		case Opt_keyrings:
-+			ima_log_string(ab, "keyrings", args[0].from);
+ /* Add the boot aggregate to the IMA measurement list and extend
+  * the PCR register.
+@@ -131,5 +132,11 @@ int __init ima_init(void)
+ 
+ 	ima_init_policy();
+ 
+-	return ima_fs_init();
++	rc = ima_fs_init();
++	if (rc != 0)
++		return rc;
 +
-+			if ((entry->keyrings) ||
-+			    (entry->action != MEASURE) ||
-+			    (entry->func != KEYRING_CHECK)) {
-+				result = -EINVAL;
-+				break;
-+			}
-+			entry->keyrings = kstrdup(args[0].from, GFP_KERNEL);
-+			if (!entry->keyrings) {
-+				result = -ENOMEM;
-+				break;
-+			}
-+			result = 0;
-+			entry->flags |= IMA_KEYRINGS;
-+			break;
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
-@@ -1426,6 +1445,13 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
- 	}
- 
-+	if (entry->flags & IMA_KEYRINGS) {
-+		if (entry->keyrings != NULL)
-+			snprintf(tbuf, sizeof(tbuf), "%s", entry->keyrings);
-+		seq_printf(m, pt(Opt_keyrings), tbuf);
-+		seq_puts(m, " ");
-+	}
++	ima_initialized = true;
 +
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
++	return 0;
+ }
 -- 
 2.17.1
 
