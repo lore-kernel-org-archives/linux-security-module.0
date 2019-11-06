@@ -2,63 +2,64 @@ Return-Path: <SRS0=blwp=Y6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB92CC5DF60
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 00:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 919BBC5DF60
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 00:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A82321D6C
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 00:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B9172178F
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 00:37:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iwk05Z47"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H9CHqqLs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729792AbfKFAff (ORCPT
+        id S1730601AbfKFAhb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Nov 2019 19:35:35 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45458 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729563AbfKFAff (ORCPT
+        Tue, 5 Nov 2019 19:37:31 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42743 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727046AbfKFAha (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Nov 2019 19:35:35 -0500
-Received: by mail-pf1-f195.google.com with SMTP id z4so11394234pfn.12
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Nov 2019 16:35:35 -0800 (PST)
+        Tue, 5 Nov 2019 19:37:30 -0500
+Received: by mail-pf1-f193.google.com with SMTP id s5so9179219pfh.9
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Nov 2019 16:37:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nV6+nAXCqKLxAkJ73MkPjCdygA/6kDv8a5/d5YqbKKM=;
-        b=iwk05Z47ymun6qVZ2ZqvWQVrNbyrFI4pKJaqVPuEkPVoeZ8TkgQOMYeUjohJyfTxHy
-         i35BEo94zplaDsUpCIniLT2yVpRSn0rD/LIMZNRRDFvwzV2sw5aV+CntsHEXnIS5QRWU
-         credwKAD1iKpgmUDD//nXU9d/JxDgA1iEl62DNLFnu4wvD4qkNgQ8PPueRPgDYOLgbG/
-         wRQ40/pTEPmrga86TUsN55Q89f3ccHt/vgpMxsPdm95ao3HIHGPXqJhoiqMN+sz2D0kx
-         L5TvL5vphZGSYA4WnzDDvIMRkLoCjBCDf84EfTVmSdk0cpkisx4MeLqnP8yYmbqeUxse
-         0Yng==
+        bh=+xOEbfGEe8GuKsDuMH9MLXg4toOcxPN6sItuj2bk3/c=;
+        b=H9CHqqLsNjXKwjTR8C18iAyH8mYJcqKTJzTxrYbrX9XeucuHFy1MhMkr1qLwUynZoI
+         /J/8lr1Tt6Tc60wRlH3f0rCQ+RCSquDh718fEM32Pnwo3rLKeuHLnu9yJmM44VRCWzAL
+         fq9Bt+WdnoeV5CUpdKzZdWbZmt41FnpeY8GYZ5DJ2H/cxEiSxhW2f46kx44APEOsPs2N
+         4F351UJo2YxVOgozWPeqoavVc5HMRYeB51yXeKoXhAF9CtkVszv/lcexWJwkh/wJIpcR
+         4dIAA7zDub0oVR8BKH2l7GEwSt6EPBaBMMM13ETRjrqv2629QX/kFGMEOst2UaazKjlf
+         E0Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nV6+nAXCqKLxAkJ73MkPjCdygA/6kDv8a5/d5YqbKKM=;
-        b=Eaycz5POnuEiooBSnu/TUyaF6vNEBXI5zUISup2pMsT7cFGM0b+uTCnV73ycudF90P
-         ES4ww+1f+xP7YGGttY/s3EvjR7GF3h+mK/7ECWCFmctuyR6YjoxgSk0vn8RpeLVusc81
-         j7jxOVLkQeOE7l/WDifd/xYCr1B7VYDEzOLCQfwGRRB59teh76xEZg1YJVzWlSPHZwQd
-         fzUAjluYOmYkoTyy+ctwv5KuIeCbzE2IAHkR/9NsmdDnezE4Lj3J3bi9zyVxJ406xszO
-         BjFqzvO5h12dlKjRYPBZKhi2eB91IU0ICSfbhfsTyAI5xfMbpDlkn+szjUZyScf+LhXz
-         ivFw==
-X-Gm-Message-State: APjAAAUNeuiErNiB19d/CB9mlevmwkwfR4e9QPN82ujHbnJpbHig2JJD
-        t3loy8BjNIg6fwtR5w0t+rTwtlH7PAtrUUOcpeJtmQ==
-X-Google-Smtp-Source: APXvYqxx7uF9ghHiBuV0xbVds7C5n9sNEWRuLJWVo2JcGIMQ4ueurVpCMm+qC8uxe/bJIIoWwyQx/y3NuBylgqCZee4=
-X-Received: by 2002:a63:234c:: with SMTP id u12mr38258741pgm.384.1573000534052;
- Tue, 05 Nov 2019 16:35:34 -0800 (PST)
+        bh=+xOEbfGEe8GuKsDuMH9MLXg4toOcxPN6sItuj2bk3/c=;
+        b=TVpmiFdin4ZWTURXBsmnvpH0YcRVae+NT54PF056N762tGCbKtJ+gqw4uC7XH+DmG4
+         VoUv3HVzIjF1jSD+WlKk4MPq4EeGtfTPnzCR5498PzFWao0ebN+EMTlqwEjL5lLq/oPU
+         oYzdtRZ3OWV0VJYTDK+Bh05SJ3OTzgmcP8HZp0uSJJiJIgkrcnuG2aUYSmRaO8g6MvKT
+         39sIhGLpycbDPll2kG2H35wpPMwYg+OlH2F3KYcyh9nEQb3UtmQ/dmRIZj0bEL3fyEMq
+         6B8kiCzffFj4ZsNHf+5OAiRak5IWDeS7KhX8TgHsDY1VbgmNFb6qy1+LNmSLfyCpQ8oS
+         HTIg==
+X-Gm-Message-State: APjAAAURseG5dTru+hilNHzB5J+BoEOef4gJNwSBADP1wIiAdrJguy4w
+        NzFTlrmx0nTD9LD1f0HZHBG1fNCQCHbtujSRu5MBvQ==
+X-Google-Smtp-Source: APXvYqxcqWQVNbu/TYt0V5Wacgq4WEbsEc01rhn+cjVcvFFuB1FXuC8UVbgZanjPIa7uEEjhDRGZx0tXaQhiyBI1m6k=
+X-Received: by 2002:a17:90a:252d:: with SMTP id j42mr18353pje.131.1573000647922;
+ Tue, 05 Nov 2019 16:37:27 -0800 (PST)
 MIME-Version: 1.0
 References: <20191018001816.94460-1-brendanhiggins@google.com>
- <CAAXuY3rLEt9nqOBSNaWjLMHNg6pDHdjtg7hFiYx-KCDhyfnkcg@mail.gmail.com> <201910301157.58D0CE4D3@keescook>
-In-Reply-To: <201910301157.58D0CE4D3@keescook>
+ <CAAXuY3rLEt9nqOBSNaWjLMHNg6pDHdjtg7hFiYx-KCDhyfnkcg@mail.gmail.com>
+ <201910301157.58D0CE4D3@keescook> <CAFd5g47gfEJqRUW1PR1rtgrzekwLVqRRw0iJ4EVRW4xzUiW2Yw@mail.gmail.com>
+In-Reply-To: <CAFd5g47gfEJqRUW1PR1rtgrzekwLVqRRw0iJ4EVRW4xzUiW2Yw@mail.gmail.com>
 From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 5 Nov 2019 16:35:22 -0800
-Message-ID: <CAFd5g47gfEJqRUW1PR1rtgrzekwLVqRRw0iJ4EVRW4xzUiW2Yw@mail.gmail.com>
+Date:   Tue, 5 Nov 2019 16:37:16 -0800
+Message-ID: <CAFd5g47Qn7ESPLvm9t_ifGPhjJ9dXgV9KVObg64bN3UNnoQPdA@mail.gmail.com>
 Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
  tests for policy unpack
 To:     Kees Cook <keescook@chromium.org>
@@ -79,50 +80,61 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 30, 2019 at 11:59 AM Kees Cook <keescook@chromium.org> wrote:
+On Tue, Nov 5, 2019 at 4:35 PM Brendan Higgins
+<brendanhiggins@google.com> wrote:
 >
-> On Thu, Oct 17, 2019 at 05:33:56PM -0700, Iurii Zaikin wrote:
-> > On Thu, Oct 17, 2019 at 5:19 PM Brendan Higgins
-> > <brendanhiggins@google.com> wrote:
+> On Wed, Oct 30, 2019 at 11:59 AM Kees Cook <keescook@chromium.org> wrote:
 > >
-> > > +config SECURITY_APPARMOR_TEST
-> > > +       bool "Build KUnit tests for policy_unpack.c"
-> > > +       default n
->
-> New options already already default n, this can be left off.
->
-> > > +       depends on KUNIT && SECURITY_APPARMOR
-> > > +       help
+> > On Thu, Oct 17, 2019 at 05:33:56PM -0700, Iurii Zaikin wrote:
+> > > On Thu, Oct 17, 2019 at 5:19 PM Brendan Higgins
+> > > <brendanhiggins@google.com> wrote:
 > > >
-> > select SECURITY_APPARMOR ?
+> > > > +config SECURITY_APPARMOR_TEST
+> > > > +       bool "Build KUnit tests for policy_unpack.c"
+> > > > +       default n
+> >
+> > New options already already default n, this can be left off.
+> >
+> > > > +       depends on KUNIT && SECURITY_APPARMOR
+> > > > +       help
+> > > >
+> > > select SECURITY_APPARMOR ?
+> >
+> > "select" doesn't enforce dependencies, so just a "depends ..." is
+> > correct.
+> >
+> > > > +       KUNIT_EXPECT_EQ(test, size, TEST_BLOB_DATA_SIZE);
+> > > > +       KUNIT_EXPECT_TRUE(test,
+> > > > +               memcmp(blob, TEST_BLOB_DATA, TEST_BLOB_DATA_SIZE) == 0);
+> > > I think this must be  KUNIT_ASSERT_EQ(test, size, TEST_BLOB_DATA_SIZE);,
+> > > otherwise there could be a buffer overflow in memcmp. All tests that
+> > > follow such pattern
+> >
+> > Agreed.
+> >
+> > > are suspect. Also, not sure about your stylistic preference for
+> > > KUNIT_EXPECT_TRUE(test,
+> > >                memcmp(blob, TEST_BLOB_DATA, TEST_BLOB_DATA_SIZE) == 0);
+> > > vs
+> > > KUNIT_EXPECT_EQ(test,
+> > >                0,
+> > >                memcmp(blob, TEST_BLOB_DATA, TEST_BLOB_DATA_SIZE));
+> >
+> > I like == 0.
 >
-> "select" doesn't enforce dependencies, so just a "depends ..." is
-> correct.
+> Oh, I almost missed this. I think the *_EQ(...) is better than the
+> *_TRUE(...) because the EQ is able to provide more debug information
+> if the test fails (otherwise there would really be no point in
+> providing all these variants).
 >
-> > > +       KUNIT_EXPECT_EQ(test, size, TEST_BLOB_DATA_SIZE);
-> > > +       KUNIT_EXPECT_TRUE(test,
-> > > +               memcmp(blob, TEST_BLOB_DATA, TEST_BLOB_DATA_SIZE) == 0);
-> > I think this must be  KUNIT_ASSERT_EQ(test, size, TEST_BLOB_DATA_SIZE);,
-> > otherwise there could be a buffer overflow in memcmp. All tests that
-> > follow such pattern
+> Any objections?
 >
-> Agreed.
->
-> > are suspect. Also, not sure about your stylistic preference for
-> > KUNIT_EXPECT_TRUE(test,
-> >                memcmp(blob, TEST_BLOB_DATA, TEST_BLOB_DATA_SIZE) == 0);
-> > vs
-> > KUNIT_EXPECT_EQ(test,
-> >                0,
-> >                memcmp(blob, TEST_BLOB_DATA, TEST_BLOB_DATA_SIZE));
->
-> I like == 0.
+> Thanks for the catch Iurii!
 
-Oh, I almost missed this. I think the *_EQ(...) is better than the
-*_TRUE(...) because the EQ is able to provide more debug information
-if the test fails (otherwise there would really be no point in
-providing all these variants).
+Wait, nevermind.
 
-Any objections?
+Either way is fine because memcmp probably won't show terribly
+interesting information in the non-zero case. I'll just leave it the
+way Mike wrote it.
 
-Thanks for the catch Iurii!
+Sorry!
