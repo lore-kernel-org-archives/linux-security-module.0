@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D50C5DF65
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5896C5DF64
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B3A321929
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC9282187F
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:02:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VCTitycI"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IYQfPpBx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732545AbfKFTCD (ORCPT
+        id S1732237AbfKFTB1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Nov 2019 14:02:03 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:36152 "EHLO
+        Wed, 6 Nov 2019 14:01:27 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:36128 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732219AbfKFTB1 (ORCPT
+        with ESMTP id S1732215AbfKFTB1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 6 Nov 2019 14:01:27 -0500
 Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id CD31A20B4903;
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7E2A82010C18;
         Wed,  6 Nov 2019 11:01:26 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CD31A20B4903
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7E2A82010C18
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1573066886;
-        bh=Vn1DTnsnkYEUMpWj4b4LGG4HQThqx8QQ+UbmMlGwIIw=;
+        bh=fjc1SDZ6eAyerupfns9th1oRdeR4c1j0/l98r7qhoWI=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=VCTitycIB4TCqBKhWLu/29FZdPJmBxbGsPTap00A9B0z97mghgb/tO6CpyZU7cduM
-         1aC7+h1Tdf4m5u+b/VzMaB2HRCbSO6s/9pkODDDePGl3r2FWfdNhXxAiSXYk5yg4xm
-         gnEmHgbCbuPzACgblxaK/qy8Ao4apr9LSKezeJCs=
+        b=IYQfPpBxfFCmXMbhSh7x03hOIBgGLnV2WV8Bb94KUj/gJab9+0p32BILkWBdNZscL
+         u44Maavjs7FLkS3j7zTfE0wnqbT15F5seP9GmE7MnDZPfbb3fIRGOFN0tOQU9OgS/N
+         JMsRdnR1UP3OdLm5I6Rz2OrlUbZKGLHKpB3k0DEc=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, dhowells@redhat.com,
         matthewgarrett@google.com, sashal@kernel.org,
         jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 03/10] IMA: Added keyrings= option in IMA policy to only measure keys added to the specified keyrings.
-Date:   Wed,  6 Nov 2019 11:01:09 -0800
-Message-Id: <20191106190116.2578-4-nramas@linux.microsoft.com>
+Subject: [PATCH v4 01/10] IMA: Defined an IMA hook to measure keys on key create or update
+Date:   Wed,  6 Nov 2019 11:01:07 -0800
+Message-Id: <20191106190116.2578-2-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191106190116.2578-1-nramas@linux.microsoft.com>
 References: <20191106190116.2578-1-nramas@linux.microsoft.com>
@@ -50,75 +50,44 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA policy needs to support measuring only those keys linked to
-a specific set of keyrings.
+Asymmetric keys used for verifying file signatures or certificates
+are currently not included in the IMA measurement list.
 
-This patch defines a new IMA policy option namely "keyrings=" that
-can be used to specify a set of keyrings. If this option is specified
-in the policy for func=KEYRING_CHECK then only the keys linked to
-the keyrings given in "keyrings=" option are measured.
-
-If "keyrings=" option is not specified for func=KEYRING_CHECK then
-all keys are measured.
+This patch defines a new IMA hook namely ima_post_key_create_or_update()
+to measure asymmetric keys.
 
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- Documentation/ABI/testing/ima_policy | 10 +++++++++-
- security/integrity/ima/ima_policy.c  |  2 ++
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ security/integrity/ima/ima_main.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 341df49b5ad1..be2874fa3928 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -25,7 +25,7 @@ Description:
- 			lsm:	[[subj_user=] [subj_role=] [subj_type=]
- 				 [obj_user=] [obj_role=] [obj_type=]]
- 			option:	[[appraise_type=]] [template=] [permit_directio]
--				[appraise_flag=]
-+				[appraise_flag=] [keyrings=]
- 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
-@@ -43,6 +43,9 @@ Description:
- 			appraise_flag:= [check_blacklist]
- 			Currently, blacklist check is only for files signed with appended
- 			signature.
-+			keyrings:= list of keyrings
-+			(eg, .builtin_trusted_keys|.ima). Only valid
-+			when action is "measure" and func is KEYRING_CHECK.
- 			template:= name of a defined IMA template type
- 			(eg, ima-ng). Only valid when action is "measure".
- 			pcr:= decimal value
-@@ -119,3 +122,8 @@ Description:
- 		all keys:
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index d7e987baf127..a0e233afe876 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -721,6 +721,22 @@ void ima_kexec_cmdline(const void *buf, int size)
+ 					   KEXEC_CMDLINE, 0);
+ }
  
- 			measure func=KEYRING_CHECK
++/**
++ * ima_post_key_create_or_update - measure asymmetric keys
++ * @keyring: keyring to which the key is linked to
++ * @key: created or updated key
++ * @flags: key flags
++ * @create: flag indicating whether the key was created or updated
++ *
++ * Keys can only be measured, not appraised.
++ */
++void ima_post_key_create_or_update(struct key *keyring, struct key *key,
++				   unsigned long flags, bool create)
++{
++	if ((keyring != NULL) && (key != NULL))
++		return;
++}
 +
-+		Example of measure rule using KEYRING_CHECK to only measure
-+		keys added to .builtin_trusted_keys or .ima keyring:
-+
-+			measure func=KEYRING_CHECK keyrings=.builtin_trusted_keys|.ima
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 4344b7354fc5..4d68ad8ed91c 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -34,6 +34,7 @@
- #define IMA_EUID	0x0080
- #define IMA_PCR		0x0100
- #define IMA_FSNAME	0x0200
-+#define IMA_KEYRINGS	0x0400
- 
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -79,6 +80,7 @@ struct ima_rule_entry {
- 		int type;	/* audit type */
- 	} lsm[MAX_LSM_RULES];
- 	char *fsname;
-+	char *keyrings; /* Measure keys added to these keyrings */
- 	struct ima_template_desc *template;
- };
- 
+ static int __init init_ima(void)
+ {
+ 	int error;
 -- 
 2.17.1
 
