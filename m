@@ -2,130 +2,124 @@ Return-Path: <SRS0=blwp=Y6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D34EFC6195
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 22:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C44FC6194
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 23:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7775A2173E
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 22:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBBA8217F4
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 23:52:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Gu1APcN4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbfKFWpH (ORCPT
+        id S1727413AbfKFXwM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Nov 2019 17:45:07 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2998 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727154AbfKFWpG (ORCPT
+        Wed, 6 Nov 2019 18:52:12 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:53368 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbfKFXwM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Nov 2019 17:45:06 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA6MghYQ014228
-        for <linux-security-module@vger.kernel.org>; Wed, 6 Nov 2019 17:45:05 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w46fyshea-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Nov 2019 17:45:05 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 6 Nov 2019 22:45:02 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 6 Nov 2019 22:45:00 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA6MixhP55640138
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 6 Nov 2019 22:44:59 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4F376A4076;
-        Wed,  6 Nov 2019 22:44:59 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 55B85A406F;
-        Wed,  6 Nov 2019 22:44:58 +0000 (GMT)
-Received: from dhcp-9-31-102-173.watson.ibm.com (unknown [9.31.102.173])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  6 Nov 2019 22:44:58 +0000 (GMT)
-Subject: Re: [PATCH v4 01/10] IMA: Defined an IMA hook to measure keys on
- key create or update
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
+        Wed, 6 Nov 2019 18:52:12 -0500
+Received: from [10.137.112.111] (unknown [131.107.147.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 2FC6F20B7192;
+        Wed,  6 Nov 2019 15:52:11 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2FC6F20B7192
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1573084331;
+        bh=7+TITNWnuuqtobgXFF9AfJ8kAcAt4vZ2t9MtwS6OXX4=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=Gu1APcN4pyax71gcqYaAGdCtpIOmXf+wnCOL+xZC42h5YzThdJ0hzJk82wr3IR8sr
+         1OMthYH/qbPa2X011zafPUPpOwABgK8hFxmOm96D/wJbfa5DVYlr44SFXuITIHb7CI
+         6HV2JMReS+0R5u4OtMJlXQ+E29piD77UmskPLmck=
+Subject: Re: [PATCH v4 08/10] IMA: Defined functions to queue and dequeue keys
+ for measurement
+To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
         jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191106190116.2578-2-nramas@linux.microsoft.com>
 References: <20191106190116.2578-1-nramas@linux.microsoft.com>
-         <20191106190116.2578-2-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Wed, 06 Nov 2019 17:43:09 -0500
-Mime-Version: 1.0
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+ <20191106190116.2578-9-nramas@linux.microsoft.com>
+ <1573080281.5028.314.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <8b2fd578-7429-f5b8-4286-1face91e1ae6@linux.microsoft.com>
+Date:   Wed, 6 Nov 2019 15:52:31 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
+MIME-Version: 1.0
+In-Reply-To: <1573080281.5028.314.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19110622-0012-0000-0000-000003615CB7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110622-0013-0000-0000-0000219CBB65
-Message-Id: <1573080189.5028.313.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-06_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911060218
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2019-11-06 at 11:01 -0800, Lakshmi Ramasubramanian wrote:
-> Asymmetric keys used for verifying file signatures or certificates
-> are currently not included in the IMA measurement list.
+
+On 11/6/2019 2:44 PM, Mimi Zohar wrote:
+
+>> +int ima_queue_or_process_key_for_measurement(struct key *keyring,
+>> +					     struct key *key)
+>> +{
+>> +	int rc = 0;
+>> +	struct ima_measure_key_entry *entry = NULL;
+>> +	const struct public_key *pk;
+>> +
+>> +	if (key->type != &key_type_asymmetric)
+>> +		return 0;
+>> +
+>> +	mutex_lock(&ima_measure_keys_mutex);
+
 > 
-> This patch defines a new IMA hook namely ima_post_key_create_or_update()
-> to measure asymmetric keys.
-> 
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> ---
->  security/integrity/ima/ima_main.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index d7e987baf127..a0e233afe876 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -721,6 +721,22 @@ void ima_kexec_cmdline(const void *buf, int size)
->  					   KEXEC_CMDLINE, 0);
->  }
->  
-> +/**
-> + * ima_post_key_create_or_update - measure asymmetric keys
-> + * @keyring: keyring to which the key is linked to
-> + * @key: created or updated key
-> + * @flags: key flags
-> + * @create: flag indicating whether the key was created or updated
-> + *
-> + * Keys can only be measured, not appraised.
-> + */
-> +void ima_post_key_create_or_update(struct key *keyring, struct key *key,
-> +				   unsigned long flags, bool create)
-> +{
-> +	if ((keyring != NULL) && (key != NULL))
-> +		return;
+> Unless the key is being queued, there's no reason to take the lock.
 
-I would move the patch that defines the "keyring=" policy option prior
-to this one.  Include the call to process_buffer_measurement() in this
-patch.  A subsequent patch would add support to defer measuring the
-key, by calling a function named something like
-ima_queue_key_measurement().
+Reason the lock is taken even in the case the key is not queued is to 
+avoid the following race condition:
 
-Mimi
+  => ima_init() sets ima_initialized flag and calls the dequeue function
 
-> +}
-> +
->  static int __init init_ima(void)
->  {
->  	int error;
+  => If IMA hook checks ima_initialized flag outside the lock and sees 
+the flag is not set, it will call the queue function.
 
+  => If the above two steps race, the key could get added to the queue 
+after ima_init() has processed the queued keys.
+
+That's the reason I named the function called by the IMA hook to 
+ima_queue_or_process_key_for_measurement().
+
+But I can make the following change:
+
+  => IMA hook checks the flag.
+  => If it is set, process key immediately
+  => If the flag is not set, call ima_queue_or_process_key_for_measurement()
+
+ima_queue_or_process_key_for_measurement() will do the following:
+
+  => With the lock held check ima_initialized flag
+  => If true release the lock and call process_buffer_measurement()
+  => If false, queue the key and then release the lock
+
+Would that be acceptable?
+
+> Measuring the key should be done in ima_post_key_create_or_update()
+> unless, it is being deferred.  Please update the function name to
+> reflect this.
+
+Just wanted to confirm:
+Rename ima_post_key_create_or_update() to a more appropriate name?
+
+Another reason for doing all key related operations in 
+ima_queue_or_process_key_for_measurement() is to isolate key related 
+code in a separate C file and build it if and only if the CONFIG 
+dependencies are met.
+
+With respect to loading custom policy, I will take a look at how to 
+handle that case. Thanks for pointing that out.
+
+> Mimi
+
+thanks,
+  -lakshmi
