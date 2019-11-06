@@ -2,179 +2,69 @@ Return-Path: <SRS0=blwp=Y6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F5FC5DF63
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 10:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EB2C47E49
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 10:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F204020869
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 10:16:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ObNh5sfX"
+	by mail.kernel.org (Postfix) with ESMTP id 41655217D7
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 10:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731585AbfKFKQS (ORCPT
+        id S1729532AbfKFKkj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Nov 2019 05:16:18 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40963 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729964AbfKFKQR (ORCPT
+        Wed, 6 Nov 2019 05:40:39 -0500
+Received: from namei.org ([65.99.196.166]:57374 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727239AbfKFKkj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Nov 2019 05:16:17 -0500
-Received: by mail-pf1-f194.google.com with SMTP id p26so18492908pfq.8
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Nov 2019 02:16:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=LWhaWOk3qJ6PhGYnB7tu0nDt84GiXSttuOOylRuzwNc=;
-        b=ObNh5sfXqEx18MUAaYvkcPImWOLTjuhO7VKVPtL2nZEQG+EET68NKQivKeOwF6Dm4g
-         FGQDbUs1KTCi3/lY8t5Ij25W0NdnN6/CYRsQAMYKOsHYM5yhWFQ+A7x1Z+fYLo/UeL+r
-         rId5mISetQvkVdgiBepwWG09mM8m0nqrmzFrE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=LWhaWOk3qJ6PhGYnB7tu0nDt84GiXSttuOOylRuzwNc=;
-        b=cS9st75BDJ/4Dj7dkhh2eHyXKPSwYaw7mSJy5sVwTepmvdRxmVDFpKju1a++tAGQxW
-         DnRW5sSQHXTMYQsfnter2PeqFcc2HH7m2m9Z6OXIQleSwysWqXHu3dB7CgH3ibqZpPEh
-         x0WsBs8mq4/CBRyvInYKHoWT9ZIAgPKJD1hF8EzDGpeiP2dBf2pGrRTRZ/M5mdwSuore
-         KlaiFOuv43RHgmhsfnfv6F6gsm662pbSRH+YFa67MQ6FGTWKOpjlcn9wNex3nUAc90ga
-         yVPp+cBn05qOF6ZXK1wuvifg5E6lAL6iwIyCUau1EhvnqA7CPBB4D6uNGB70VTPCbabP
-         q2Cg==
-X-Gm-Message-State: APjAAAWMwf/mNV4Dcg9OS6LTDNmA/B1dQJzAgbsn4BfFNlCtWXOqjyC/
-        fSRhWp6h/bXy/omKZVPs+jYXcQ==
-X-Google-Smtp-Source: APXvYqwxV7gDGYqEbtfgNl/MhyaITnpP/bBp/7zKAiqa0AArpIsZ6CMrCVE9eZTO2YbYXGUFpP/66Q==
-X-Received: by 2002:a17:90a:901:: with SMTP id n1mr2761705pjn.113.1573035375469;
-        Wed, 06 Nov 2019 02:16:15 -0800 (PST)
-Received: from chromium.org ([122.173.128.252])
-        by smtp.gmail.com with ESMTPSA id y36sm21074021pgk.66.2019.11.06.02.16.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 02:16:14 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Wed, 6 Nov 2019 15:45:58 +0530
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        Florent Revest <revest@chromium.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v13 4/7] landlock: Add ptrace LSM hooks
-Message-ID: <20191106101558.GA19467@chromium.org>
-References: <20191104172146.30797-1-mic@digikod.net>
- <20191104172146.30797-5-mic@digikod.net>
- <20191105171824.dfve44gjiftpnvy7@ast-mbp.dhcp.thefacebook.com>
- <23acf523-dbc4-855b-ca49-2bbfa5e7117e@digikod.net>
+        Wed, 6 Nov 2019 05:40:39 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id xA6AeOsr030674;
+        Wed, 6 Nov 2019 10:40:24 GMT
+Date:   Wed, 6 Nov 2019 02:40:24 -0800 (PST)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     Stephen Smalley <sds@tycho.nsa.gov>, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
+Subject: Re: [PATCH v10 00/25] LSM: Module stacking for AppArmor
+In-Reply-To: <19e2696d-ab07-21e5-ba22-4ffdcae3c97c@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1911060238410.30342@namei.org>
+References: <20191024205228.6922-1-casey@schaufler-ca.com> <ce6c4861-2767-89ab-bad5-f633a67b3fc9@tycho.nsa.gov> <19e2696d-ab07-21e5-ba22-4ffdcae3c97c@schaufler-ca.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <23acf523-dbc4-855b-ca49-2bbfa5e7117e@digikod.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/mixed; BOUNDARY="1665246916-726966886-1573036767=:30342"
+Content-ID: <alpine.LRH.2.21.1911060239530.30342@namei.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 05-Nov 19:01, Mickaël Salaün wrote:
-> 
-> On 05/11/2019 18:18, Alexei Starovoitov wrote:
-> > On Mon, Nov 04, 2019 at 06:21:43PM +0100, Mickaël Salaün wrote:
-> >> Add a first Landlock hook that can be used to enforce a security policy
-> >> or to audit some process activities.  For a sandboxing use-case, it is
-> >> needed to inform the kernel if a task can legitimately debug another.
-> >> ptrace(2) can also be used by an attacker to impersonate another task
-> >> and remain undetected while performing malicious activities.
-> >>
-> >> Using ptrace(2) and related features on a target process can lead to a
-> >> privilege escalation.  A sandboxed task must then be able to tell the
-> >> kernel if another task is more privileged, via ptrace_may_access().
-> >>
-> >> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > ...
-> >> +static int check_ptrace(struct landlock_domain *domain,
-> >> +		struct task_struct *tracer, struct task_struct *tracee)
-> >> +{
-> >> +	struct landlock_hook_ctx_ptrace ctx_ptrace = {
-> >> +		.prog_ctx = {
-> >> +			.tracer = (uintptr_t)tracer,
-> >> +			.tracee = (uintptr_t)tracee,
-> >> +		},
-> >> +	};
-> > 
-> > So you're passing two kernel pointers obfuscated as u64 into bpf program
-> > yet claiming that the end goal is to make landlock unprivileged?!
-> > The most basic security hole in the tool that is aiming to provide security.
-> 
-> How could you used these pointers without dedicated BPF helpers? This
-> context items are typed as PTR_TO_TASK and can't be used without a
-> dedicated helper able to deal with ARG_PTR_TO_TASK. Moreover, pointer
-> arithmetic is explicitly forbidden (and I added tests for that). Did I
-> miss something?
-> 
-> > 
-> > I think the only way bpf-based LSM can land is both landlock and KRSI
-> > developers work together on a design that solves all use cases.
-> 
-> As I said in a previous cover letter [1], that would be great. I think
-> that the current Landlock bases (almost everything from this series
-> except the seccomp interface) should meet both needs, but I would like
-> to have the point of view of the KRSI developers.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-As I mentioned we are willing to collaborate but the current landlock
-patches does not meet the needs for KRSI:
+--1665246916-726966886-1573036767=:30342
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+Content-ID: <alpine.LRH.2.21.1911060239531.30342@namei.org>
 
-* One program type per use-case (eg. LANDLOCK_PROG_PTRACE) as opposed to
-  a single program type. This is something that KRSI proposed in it's
-  initial design [1] and the new common "eBPF + LSM" based approach
-  [2] would maintain as well.
+On Tue, 29 Oct 2019, Casey Schaufler wrote:
 
-* Landlock chooses to have multiple LSM hooks per landlock hook which is
-  more restrictive. It's not easy to write precise MAC and Audit
-  policies for a privileged LSM based on this and this ends up bloating
-  the context that needs to be maintained and requires avoidable
-  boilerplate work in the kernel.
-
-[1] https://lore.kernel.org/patchwork/project/lkml/list/?series=410101
-[2] https://lore.kernel.org/bpf/20191106100655.GA18815@chromium.org/T/#u
-
-- KP Singh
-
+> > Can you re-base on something more recent than v5.1-rc2 (that's the base for that branch currently)?
+> > At present it won't even boot for me on modern Fedora.  Two key missing commits are:
 > 
-> [1] https://lore.kernel.org/lkml/20191029171505.6650-1-mic@digikod.net/
-> 
-> > BPF is capable
-> > to be a superset of all existing LSMs whereas landlock and KRSI propsals today
-> > are custom solutions to specific security concerns. BPF subsystem was extended
-> > with custom things in the past. In networking we have lwt, skb, tc, xdp, sk
-> > program types with a lot of overlapping functionality. We couldn't figure out
-> > how to generalize them into single 'networking' program. Now we can and we
-> > should. Accepting two partially overlapping bpf-based LSMs would be repeating
-> > the same mistake again.
-> 
-> I'll let the LSM maintainers comment on whether BPF could be a superset
-> of all LSM, but given the complexity of an access-control system, I have
-> some doubts though. Anyway, we need to start somewhere and then iterate.
-> This patch series is a first step.
+> Sigh. It's based on James' next-general. As it's going up through James,
+> and he hasn't updated that branch, I'm sort of stuck. BTW, I have a re-based
+> version, but don't see how to get it into my git tree without mucking up
+> the eventual merge.
+
+Don't use next-general for this. Use the most recent released kernel if 
+that works.
+
+-- 
+James Morris
+<jmorris@namei.org>
+
+--1665246916-726966886-1573036767=:30342--
