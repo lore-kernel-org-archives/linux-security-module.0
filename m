@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E76C5DF63
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D50C5DF65
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 090B321882
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:02:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B3A321929
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Nov 2019 19:02:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HsFPoEXQ"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VCTitycI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbfKFTB5 (ORCPT
+        id S1732545AbfKFTCD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Nov 2019 14:01:57 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:36170 "EHLO
+        Wed, 6 Nov 2019 14:02:03 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:36152 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732259AbfKFTB2 (ORCPT
+        with ESMTP id S1732219AbfKFTB1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Nov 2019 14:01:28 -0500
+        Wed, 6 Nov 2019 14:01:27 -0500
 Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 4EDA020B4906;
-        Wed,  6 Nov 2019 11:01:27 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4EDA020B4906
+        by linux.microsoft.com (Postfix) with ESMTPSA id CD31A20B4903;
+        Wed,  6 Nov 2019 11:01:26 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CD31A20B4903
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573066887;
-        bh=n1NP0EUOPt57DXoMwVasH/v3zddNJcqY0C3hlBcerBA=;
+        s=default; t=1573066886;
+        bh=Vn1DTnsnkYEUMpWj4b4LGG4HQThqx8QQ+UbmMlGwIIw=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=HsFPoEXQcPIUDqX9bZ6aRXalWlW33QNp6m4uPNRI8qfX2Nk2pc4RFV/riaoCL0OV+
-         t54Kgxzd/ZVPMYvy6ZOMrr3IbfpiY/7+JpDIUqo17y9UFDPQ7awv8BeAUvA5ENngxX
-         2ZgXtkqAT2MPOIcw5xSl6tWlZfFFcRlYHweAiOmE=
+        b=VCTitycIB4TCqBKhWLu/29FZdPJmBxbGsPTap00A9B0z97mghgb/tO6CpyZU7cduM
+         1aC7+h1Tdf4m5u+b/VzMaB2HRCbSO6s/9pkODDDePGl3r2FWfdNhXxAiSXYk5yg4xm
+         gnEmHgbCbuPzACgblxaK/qy8Ao4apr9LSKezeJCs=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, dhowells@redhat.com,
         matthewgarrett@google.com, sashal@kernel.org,
         jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 06/10] IMA: Measure key if the IMA policy allows measurement for the keyring to which the key is linked to
-Date:   Wed,  6 Nov 2019 11:01:12 -0800
-Message-Id: <20191106190116.2578-7-nramas@linux.microsoft.com>
+Subject: [PATCH v4 03/10] IMA: Added keyrings= option in IMA policy to only measure keys added to the specified keyrings.
+Date:   Wed,  6 Nov 2019 11:01:09 -0800
+Message-Id: <20191106190116.2578-4-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191106190116.2578-1-nramas@linux.microsoft.com>
 References: <20191106190116.2578-1-nramas@linux.microsoft.com>
@@ -50,114 +50,75 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-process_buffer_measurement() needs to check if the keyring to which
-the given key is linked to is listed in the keyrings option in
-the IMA policy.
+IMA policy needs to support measuring only those keys linked to
+a specific set of keyrings.
 
-This patch adds a new parameter "keyring" to process_buffer_measurement().
+This patch defines a new IMA policy option namely "keyrings=" that
+can be used to specify a set of keyrings. If this option is specified
+in the policy for func=KEYRING_CHECK then only the keys linked to
+the keyrings given in "keyrings=" option are measured.
 
-If process_buffer_measurement() is called with func KEYRING_CHECK and
-the name of the keyring to which the key is linked to, then the given
-key is measured if:
-  1, IMA policy did not specify "keyrings=" option.
-  2, Or, the given keyring name is listed in the "keyrings=" option.
+If "keyrings=" option is not specified for func=KEYRING_CHECK then
+all keys are measured.
 
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- security/integrity/ima/ima.h          |  2 +-
- security/integrity/ima/ima_appraise.c |  2 +-
- security/integrity/ima/ima_main.c     | 26 ++++++++++++++++++++++++--
- 3 files changed, 26 insertions(+), 4 deletions(-)
+ Documentation/ABI/testing/ima_policy | 10 +++++++++-
+ security/integrity/ima/ima_policy.c  |  2 ++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 387829afb9a2..f15199f7ff2a 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -221,7 +221,7 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
- 			   struct ima_template_desc *template_desc);
- void process_buffer_measurement(const void *buf, int size,
- 				const char *eventname, enum ima_hooks func,
--				int pcr);
-+				int pcr, const char *keyring);
- void ima_audit_measurement(struct integrity_iint_cache *iint,
- 			   const unsigned char *filename);
- int ima_alloc_init_template(struct ima_event_data *event_data,
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 47ad4f56c0a8..a9649b04b9f1 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -330,7 +330,7 @@ int ima_check_blacklist(struct integrity_iint_cache *iint,
- 		if ((rc == -EPERM) && (iint->flags & IMA_MEASURE))
- 			process_buffer_measurement(digest, digestsize,
- 						   "blacklisted-hash", NONE,
--						   pcr);
-+						   pcr, NULL);
- 	}
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index 341df49b5ad1..be2874fa3928 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -25,7 +25,7 @@ Description:
+ 			lsm:	[[subj_user=] [subj_role=] [subj_type=]
+ 				 [obj_user=] [obj_role=] [obj_type=]]
+ 			option:	[[appraise_type=]] [template=] [permit_directio]
+-				[appraise_flag=]
++				[appraise_flag=] [keyrings=]
+ 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
+ 				[FIRMWARE_CHECK]
+ 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
+@@ -43,6 +43,9 @@ Description:
+ 			appraise_flag:= [check_blacklist]
+ 			Currently, blacklist check is only for files signed with appended
+ 			signature.
++			keyrings:= list of keyrings
++			(eg, .builtin_trusted_keys|.ima). Only valid
++			when action is "measure" and func is KEYRING_CHECK.
+ 			template:= name of a defined IMA template type
+ 			(eg, ima-ng). Only valid when action is "measure".
+ 			pcr:= decimal value
+@@ -119,3 +122,8 @@ Description:
+ 		all keys:
  
- 	return rc;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index b6d17f37ba61..56540357c854 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -632,12 +632,22 @@ int ima_load_data(enum kernel_load_data_id id)
-  * @eventname: event name to be used for the buffer entry.
-  * @func: IMA hook
-  * @pcr: pcr to extend the measurement
-+ * @keyring: keyring for the measurement
-+ *
-+ *	The following scenarios are possible with respect to
-+ *	the parameter "keyring":
-+ *	1, keyring is NULL. In this case buffer is measured.
-+ *	2, keyring is not NULL, but ima_get_action returned
-+ *	   a NULL keyrings. In this case also the buffer is measured.
-+ *	3, keyring is not NULL and ima_get_action returned
-+ *	   a non-NULL keyrings. In this case measure the buffer
-+ *	   only if the given keyring is present in the keyrings.
-  *
-  * Based on policy, the buffer is measured into the ima log.
-  */
- void process_buffer_measurement(const void *buf, int size,
- 				const char *eventname, enum ima_hooks func,
--				int pcr)
-+				int pcr, const char *keyring)
- {
- 	int ret = 0;
- 	struct ima_template_entry *entry = NULL;
-@@ -656,6 +666,13 @@ void process_buffer_measurement(const void *buf, int size,
- 	int action = 0;
- 	u32 secid;
- 
-+	/*
-+	 * If IMA is not yet initialized or IMA policy is empty
-+	 * then there is no need to measure.
-+	 */
-+	if (!ima_policy_flag)
-+		return;
+ 			measure func=KEYRING_CHECK
 +
- 	/*
- 	 * Both LSM hooks and auxilary based buffer measurements are
- 	 * based on policy.  To avoid code duplication, differentiate
-@@ -671,6 +688,11 @@ void process_buffer_measurement(const void *buf, int size,
- 			return;
- 	}
- 
-+	if ((keyring != NULL) && (keyrings != NULL)
-+	    && (strstr(keyrings, keyring) == NULL)) {
-+		return;
-+	}
++		Example of measure rule using KEYRING_CHECK to only measure
++		keys added to .builtin_trusted_keys or .ima keyring:
 +
- 	if (!pcr)
- 		pcr = CONFIG_IMA_MEASURE_PCR_IDX;
++			measure func=KEYRING_CHECK keyrings=.builtin_trusted_keys|.ima
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 4344b7354fc5..4d68ad8ed91c 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -34,6 +34,7 @@
+ #define IMA_EUID	0x0080
+ #define IMA_PCR		0x0100
+ #define IMA_FSNAME	0x0200
++#define IMA_KEYRINGS	0x0400
  
-@@ -719,7 +741,7 @@ void ima_kexec_cmdline(const void *buf, int size)
- {
- 	if (buf && size != 0)
- 		process_buffer_measurement(buf, size, "kexec-cmdline",
--					   KEXEC_CMDLINE, 0);
-+					   KEXEC_CMDLINE, 0, NULL);
- }
+ #define UNKNOWN		0
+ #define MEASURE		0x0001	/* same as IMA_MEASURE */
+@@ -79,6 +80,7 @@ struct ima_rule_entry {
+ 		int type;	/* audit type */
+ 	} lsm[MAX_LSM_RULES];
+ 	char *fsname;
++	char *keyrings; /* Measure keys added to these keyrings */
+ 	struct ima_template_desc *template;
+ };
  
- /**
 -- 
 2.17.1
 
