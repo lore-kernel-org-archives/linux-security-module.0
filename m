@@ -2,102 +2,90 @@ Return-Path: <SRS0=96uJ=Y7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 854EAC5DF60
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 17:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 204B9C43331
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 18:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C5632084D
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 17:42:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I8MRldZa"
+	by mail.kernel.org (Postfix) with ESMTP id EB4DC214D8
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 18:15:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1573150543;
+	bh=mkkJBDyIiAdnm/glQLkfsD0szVtlg4EXK/75ogcIUiU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=U38wn0Iq9BEusy7L00UNH+ADi1z+7UN1x8dQ4GuvP81rNT/eyktNNeCMsV4BqGVPM
+	 eNV0qcENCS4NGZewfJS9q9eWN/6hg4X/RgscGnbaYr8oiV54y50SjeCti2pwxQPQvz
+	 Rr0TeinsY40YNJAbmbduHX6C2yUXAbgNXoJ29nN8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730649AbfKGRme (ORCPT
+        id S1726118AbfKGSPm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Nov 2019 12:42:34 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:21555 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730400AbfKGRme (ORCPT
+        Thu, 7 Nov 2019 13:15:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725797AbfKGSPm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Nov 2019 12:42:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573148553;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=X1foU4cyX2MhxBVBENJ4jXE1nzS/4a8PcCvLYQvqpsc=;
-        b=I8MRldZasAUCkppfLsj5z/l1loKZR+DDCxqazbPnIRaO55R+IjGt6WZI5hOn5urGYZrGPj
-        2ZorB40ied/l0RQEls/xePlVywr5dz/3hdjrIqtAEPjy3HpJKeTK3lsw3OxXRbf/DURfHJ
-        kMwwBU9mxVNSSRwGOdnYiOala4zJCEM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-262-D-hZqIeRMxO76CIz0f9Q7w-1; Thu, 07 Nov 2019 12:42:29 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 7 Nov 2019 13:15:42 -0500
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 026A5477;
-        Thu,  7 Nov 2019 17:42:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-254.rdu2.redhat.com [10.10.120.254])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B9AEB5C6DC;
-        Thu,  7 Nov 2019 17:42:19 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wiJ+jaT5Ev-wCg7iGNNO_JFUyMDcat0KDdA2b_+n_cZCQ@mail.gmail.com>
-References: <CAHk-=wiJ+jaT5Ev-wCg7iGNNO_JFUyMDcat0KDdA2b_+n_cZCQ@mail.gmail.com> <157262967752.13142.696874122947836210.stgit@warthog.procyon.org.uk> <20191107090306.GV29418@shao2-debian>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, lkp report check <rong.a.chen@intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DDB621D7F
+        for <linux-security-module@vger.kernel.org>; Thu,  7 Nov 2019 18:15:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573150541;
+        bh=mkkJBDyIiAdnm/glQLkfsD0szVtlg4EXK/75ogcIUiU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pQqJMQdtiWhzbkNUqqqm0gMcVuFUFO6KFRLn/L3tv6U+SHbk6Yl5nXLVb2nXQjgFW
+         YjXLXvGC8ZXU3YaPRHpZzlWR5Gjr/8D28yaAwzDWfK26KeGUzf3KvZ7inKo317qC7G
+         1cIx5r9ZIlXNLcSGM/Nd3hpDiNqLz/fqkOviuI2Q=
+Received: by mail-wr1-f45.google.com with SMTP id t1so4166223wrv.4
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Nov 2019 10:15:41 -0800 (PST)
+X-Gm-Message-State: APjAAAWQzziz0IqzrQzpHjg2lh1vTbFFpcR1hGyhkWIPp/L+7KHkylAH
+        g6jlUHsv/35FbbMvlNb2Pt5LQn71TNH5WdXbo3K/MQ==
+X-Google-Smtp-Source: APXvYqx20OM7QsTfSBvENmpd1ZzYDPmxA0e8l69FibUDYivV3Y4TzOtfUMdKVs1bwqiNP0U1tpOoZOTXhte3WmwIXm8=
+X-Received: by 2002:adf:e4c5:: with SMTP id v5mr4364675wrm.106.1573150540087;
+ Thu, 07 Nov 2019 10:15:40 -0800 (PST)
+MIME-Version: 1.0
+References: <157313371694.29677.15388731274912671071.stgit@warthog.procyon.org.uk>
+ <157313379331.29677.5209561321495531328.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157313379331.29677.5209561321495531328.stgit@warthog.procyon.org.uk>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 7 Nov 2019 10:15:28 -0800
+X-Gmail-Original-Message-ID: <CALCETrWszYm9=-WEgSbhmGc3DYCvY6q3W4Lezm6YtKnGtRs_5g@mail.gmail.com>
+Message-ID: <CALCETrWszYm9=-WEgSbhmGc3DYCvY6q3W4Lezm6YtKnGtRs_5g@mail.gmail.com>
+Subject: Re: [RFC PATCH 08/14] pipe: Allow buffers to be marked
+ read-whole-or-error for notifications [ver #2]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
         Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
         Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        keyrings@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
         linux-block <linux-block@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        lkp@lists.01.org
-Subject: Re: [pipe] d60337eff1: phoronix-test-suite.noise-level.0.activity_level 144.0% improvement
-MIME-Version: 1.0
-Content-ID: <25251.1573148538.1@warthog.procyon.org.uk>
-Date:   Thu, 07 Nov 2019 17:42:18 +0000
-Message-ID: <25252.1573148538@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: D-hZqIeRMxO76CIz0f9Q7w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Thu, Nov 7, 2019 at 5:39 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Allow a buffer to be marked such that read() must return the entire buffer
+> in one go or return ENOBUFS.  Multiple buffers can be amalgamated into a
+> single read, but a short read will occur if the next "whole" buffer won't
+> fit.
+>
+> This is useful for watch queue notifications to make sure we don't split a
+> notification across multiple reads, especially given that we need to
+> fabricate an overrun record under some circumstances - and that isn't in
+> the buffers.
 
-> > FYI, we noticed a 144.0% improvement of phoronix-test-suite.noise-level=
-.0.activity_level due to commit:
-> >
-> > commit: d60337eff18a3c587832ab8053a567f1da9710d2 ("[RFC PATCH 04/11] pi=
-pe: Use head and tail pointers for the ring, not cursor and length [ver #3]=
-")
->=20
-> That sounds nice, but is odd. That commit really shouldn't change
-> anything noticeable. David, any idea?
-
-Yeah, it does sound odd - the only thing that springs particularly to mind =
-is
-that maybe it's an effect of one of the preceding patches that affects the
-waitqueue stuff.
-
-TBH, I'm not sure what the Phoronix test suite is actually testing from the
-report.  "noise-level-1.1.0" seems more a reporting script than an actual
-test.
-
-David
-
+Hmm.  I'm not totally in love with introducing a new error code like
+this for read(), especially if it could affect the kind of pipe that
+is bound to a file in a filesystem.  But maybe it's not a problem.
