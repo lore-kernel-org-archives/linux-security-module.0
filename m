@@ -2,115 +2,174 @@ Return-Path: <SRS0=96uJ=Y7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AE9C5DF60
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 21:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEB5C5DF60
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 23:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 507CF2077C
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 21:12:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AC492178F
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 23:33:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RsCmziqV"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VCSF0q3Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfKGVMd (ORCPT
+        id S1726281AbfKGXdo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Nov 2019 16:12:33 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:51254 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfKGVMc (ORCPT
+        Thu, 7 Nov 2019 18:33:44 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35257 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfKGXdo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Nov 2019 16:12:32 -0500
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D7C8820B7192;
-        Thu,  7 Nov 2019 13:12:31 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D7C8820B7192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573161151;
-        bh=Dq/RMVhen0d8e7vLNzh46Ixy8AtVy3mHTdjNkp6DDic=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=RsCmziqVUticNS68QSUKws2DrO/UoBxa18Xihwt7iTe2TWPIwRFs2LZFzAuuc81rf
-         TgtkRW1ijozgN/gAv2RBqRE4lX95WRbLSiduik0gDhQnofP8Qw2TL36s8p3AloT1bt
-         cHuoPTE1ia1FG49S/gVjrWY+89+JmgV+BNKG4WRs=
-Subject: Re: [PATCH v4 01/10] IMA: Defined an IMA hook to measure keys on key
- create or update
-To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191106190116.2578-1-nramas@linux.microsoft.com>
- <20191106190116.2578-2-nramas@linux.microsoft.com>
- <1573080189.5028.313.camel@linux.ibm.com>
- <c838a233-28fb-cad2-4694-18366c2643a4@linux.microsoft.com>
- <1573098037.5028.325.camel@linux.ibm.com>
- <7ce84aa0-729e-c58e-f16a-25490b4e336d@linux.microsoft.com>
- <1573159988.5028.400.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <f45593ae-823e-6d61-d14c-20726bd8cacc@linux.microsoft.com>
-Date:   Thu, 7 Nov 2019 13:12:31 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 7 Nov 2019 18:33:44 -0500
+Received: by mail-pf1-f193.google.com with SMTP id d13so3514731pfq.2
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Nov 2019 15:33:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=U9LCQzLECFkJez50E4J6R+X6khDWEPIZnHrW73R9i5E=;
+        b=VCSF0q3YAX7JfT36ea1mW70HVF+YkyVrrVNTW2SZ4JLxyAeawqVF5Rdh/9rH2i6SAG
+         FoQiW4BL2Au/RpCOeuFpBTfOXv4RQtMPCBLk6e6QZxC/urZTkrbpLiC+YEq9NmzAG5cv
+         F+3JZZa34J+jp5deo2+K4zBb9HUa7wRMlJQsvk8KX9STNPJBMoHbGn/Q46TMgSZ3qeLo
+         ngTvyzyK3mDIAm6PbpO9h1Beh1EI6Xb9/jJ3eovQN+C9cXnxaZQ1izArK9tovZRpWLOD
+         tLEtBET4eAM8hFBHeMHotaYpbI6I69R5joMhIlXZrcEQGsztakOvy2J+1ogM7Gq4/lfG
+         d6oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=U9LCQzLECFkJez50E4J6R+X6khDWEPIZnHrW73R9i5E=;
+        b=R9OX1CP8qMU7KmLx6FMFD7Pror/Hu9GeMhH/Yc5X2Dl5D+1lUgp8xisn3dK8i8J77W
+         k9iwLzsnI9WfJ/zhzpcChxKFlBkZqopVIG21vzKiDGJvzb6LsGp0BmyHbl/w4z+QscmX
+         2vkcbPciD2pMQ382PK/IW3DojuIPe7dTuv9TE1gRCykAgTVOdOX4koRrwR56rH/Aq41b
+         B9y93f+CHl85k3zomtgRUekrB5DP66wYm2loB+yh3riX9oWmwhbqhqIthcX23qunCn0/
+         UFIlo7Vql3JrVmRE/6cRPUbRDhAEP/gEBbHUC6c2WU8N/BmEOO79zpS1GPmphZfT1rsR
+         rP2Q==
+X-Gm-Message-State: APjAAAWF9pcfULd+B4Qd37HSiixZBVuYfE3jOg/VJ7K77BpITy4lgzHC
+        qwsYPrzBbKNYBHL5vH6Q4BPLQw==
+X-Google-Smtp-Source: APXvYqxZsw+8wS5vW5TZg88AZWSvd3uOCaJzI81XZmIohq0NEHnExqON51fuwGRb5S8Qgc5fO9qnzg==
+X-Received: by 2002:aa7:9aa9:: with SMTP id x9mr7834759pfi.207.1573169622713;
+        Thu, 07 Nov 2019 15:33:42 -0800 (PST)
+Received: from google.com ([2620:15c:2cb:1:e90c:8e54:c2b4:29e7])
+        by smtp.gmail.com with ESMTPSA id u3sm3438966pgp.51.2019.11.07.15.33.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2019 15:33:41 -0800 (PST)
+Date:   Thu, 7 Nov 2019 15:33:37 -0800
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     shuah@kernel.org, john.johansen@canonical.com, jmorris@namei.org,
+        serge@hallyn.com, alan.maguire@oracle.com, yzaikin@google.com,
+        davidgow@google.com, mcgrof@kernel.org, tytso@mit.edu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kselftest@vger.kernel.org,
+        Mike Salvatore <mike.salvatore@canonical.com>
+Subject: Re: [PATCH linux-kselftest/test v2] apparmor: add AppArmor KUnit
+ tests for policy unpack
+Message-ID: <20191107233337.GA191231@google.com>
+References: <20191106004329.16991-1-brendanhiggins@google.com>
+ <201911060916.AC9E14B@keescook>
 MIME-Version: 1.0
-In-Reply-To: <1573159988.5028.400.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201911060916.AC9E14B@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/7/19 12:53 PM, Mimi Zohar wrote:
+On Wed, Nov 06, 2019 at 09:18:27AM -0800, Kees Cook wrote:
+> On Tue, Nov 05, 2019 at 04:43:29PM -0800, Brendan Higgins wrote:
+> > From: Mike Salvatore <mike.salvatore@canonical.com>
+> > 
+> > Add KUnit tests to test AppArmor unpacking of userspace policies.
+> > AppArmor uses a serialized binary format for loading policies. To find
+> > policy format documentation see
+> > Documentation/admin-guide/LSM/apparmor.rst.
+> > 
+> > In order to write the tests against the policy unpacking code, some
+> > static functions needed to be exposed for testing purposes. One of the
+> > goals of this patch is to establish a pattern for which testing these
+> > kinds of functions should be done in the future.
+> > 
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > Signed-off-by: Mike Salvatore <mike.salvatore@canonical.com>
+> > ---
+> >  security/apparmor/Kconfig              |  16 +
+> >  security/apparmor/policy_unpack.c      |   4 +
+> >  security/apparmor/policy_unpack_test.c | 607 +++++++++++++++++++++++++
+> >  3 files changed, 627 insertions(+)
+> >  create mode 100644 security/apparmor/policy_unpack_test.c
+> > 
+> > diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+> > index d8b1a360a6368..78a33ccac2574 100644
+> > --- a/security/apparmor/Kconfig
+> > +++ b/security/apparmor/Kconfig
+> > @@ -66,3 +66,19 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
+> >  	  Set the default value of the apparmor.debug kernel parameter.
+> >  	  When enabled, various debug messages will be logged to
+> >  	  the kernel message buffer.
+> > +
+> > +config SECURITY_APPARMOR_KUNIT_TEST
+> > +	bool "Build KUnit tests for policy_unpack.c"
+> > +	depends on KUNIT && SECURITY_APPARMOR
+> > +	help
+> > +	  This builds the AppArmor KUnit tests.
+> > +
+> > +	  KUnit tests run during boot and output the results to the debug log
+> > +	  in TAP format (http://testanything.org/). Only useful for kernel devs
+> > +	  running KUnit test harness and are not for inclusion into a
+> > +	  production build.
+> > +
+> > +	  For more information on KUnit and unit tests in general please refer
+> > +	  to the KUnit documentation in Documentation/dev-tools/kunit/.
+> > +
+> > +	  If unsure, say N.
+> > diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> > index 8cfc9493eefc7..37c1dd3178fc0 100644
+> > --- a/security/apparmor/policy_unpack.c
+> > +++ b/security/apparmor/policy_unpack.c
+> > @@ -1120,3 +1120,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
+> >  
+> >  	return error;
+> >  }
+> > +
+> > +#ifdef CONFIG_SECURITY_APPARMOR_KUNIT_TEST
+> > +#include "policy_unpack_test.c"
+> > +#endif /* CONFIG_SECURITY_APPARMOR_KUNIT_TEST */
+> 
+> To make this even LESS intrusive, the ifdefs could live in ..._test.c.
 
->>
->> The measurement decision is not based on whether the keyring is a
->> trusted one or an untrusted one. As long as the IMA policy allows
->> (through the "keyrings=" option) the key will be measured.
-> 
-> We should be able to measure all keys being loaded onto any keyring or
-> onto a specific "keyring=".   This shouldn't be any different than any
-> other policy rule.  Once you have this basic feature working, you
-> would address loading keys during early boot.
-Perfect - that's exactly how I have implemented it right now. Will 
-continue to test it.
+Less intrusive, yes, but I think I actually like the ifdef here; it
+makes it clear from the source that the test is only a part of the build
+when configured to do so. Nevertheless, I will change it if anyone feels
+strongly about it.
 
->> Do you want only trusted keyrings to be allowed in the measurement?
->> In my opinion, that decision should be deferred to whoever is setting up
->> the IMA policy.
-> 
-> Right, but it shouldn't be limited to just "trusted" keyrings.  This
-> way you can first test loading keys onto any keyring.
-Thank you.
+> Also, while I *think* the kernel build system will correctly track this
+> dependency, can you double-check that changes to ..._test.c correctly
+> trigger a recompile of policy_unpack.c?
 
-> Queuing the keys should be independent of measuring the keys.
->   Initially you would start with just measuring the key.  From a high
-> level it would look like:
-> 
->      ima_post_key_create_or_update(...)
->      {
->         "measure key based on
->      policy(key, keyring, ...)"
->      }
-> 
-> This requires the IMA "keyring=" policy option support be defined
-> first.
-> 
-> Subsequently you would add key queuing support, and then update
-> ima_post_key_create_or_update().  It would look like:
-> 
->          ima_post_key_create_or_update(...)
->          {
->              if (custom policy is loaded)
->                 "measure key based on policy(key, keyring, ...)"
->              else
->                  "queue key(key, keyring)"
->          }
-> 
-> Mimi
+Yep, just verified, first I ran the tests and everything passed. Then I
+applied the following diff:
 
-Yes - I have the above change working. Will continue testing.
+diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+index 533137f45361c..e1b0670dbdc27 100644
+--- a/security/apparmor/policy_unpack_test.c
++++ b/security/apparmor/policy_unpack_test.c
+@@ -161,7 +161,7 @@ static void policy_unpack_test_unpack_array_with_name(struct kunit *test)
+ 
+ 	array_size = unpack_array(puf->e, name);
+ 
+-	KUNIT_EXPECT_EQ(test, array_size, (u16)TEST_ARRAY_SIZE);
++	KUNIT_EXPECT_EQ(test, array_size + 1, (u16)TEST_ARRAY_SIZE);
+ 	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos,
+ 		puf->e->start + TEST_ARRAY_BUF_OFFSET + sizeof(u16) + 1);
+ }
 
-thanks,
-  -lakshmi
+and reran the tests (to trigger an incremental build) and the test
+failed as expected indicating that the dependency is properly tracked.
+
+Cheers!
