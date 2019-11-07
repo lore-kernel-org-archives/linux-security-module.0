@@ -2,175 +2,316 @@ Return-Path: <SRS0=96uJ=Y7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1913AC5DF60
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 08:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49ED7C5DF60
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 13:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC17921882
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 08:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FE49218AE
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 13:35:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BYDXMzvx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfKGIYA convert rfc822-to-8bit (ORCPT
+        id S2388605AbfKGNf3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Nov 2019 03:24:00 -0500
-Received: from m4a0039g.houston.softwaregrp.com ([15.124.2.85]:36696 "EHLO
-        m4a0039g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726734AbfKGIX7 (ORCPT
+        Thu, 7 Nov 2019 08:35:29 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:48022 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728172AbfKGNf3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Nov 2019 03:23:59 -0500
-Received: FROM m4a0039g.houston.softwaregrp.com (15.120.17.146) BY m4a0039g.houston.softwaregrp.com WITH ESMTP;
- Thu,  7 Nov 2019 08:22:50 +0000
-Received: from M9W0068.microfocus.com (2002:f79:bf::f79:bf) by
- M4W0334.microfocus.com (2002:f78:1192::f78:1192) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Thu, 7 Nov 2019 08:21:41 +0000
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (15.124.72.11) by
- M9W0068.microfocus.com (15.121.0.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10 via Frontend Transport; Thu, 7 Nov 2019 08:21:41 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E8S3nwjYdQYp5d6nHUJ9j8qeyDOM2DwIo0wc5wQ5Lr3g8d+3N1mdjBP0MN2LKqw5kGZO1O8i0gbSEoXeEU/aghra/0BiraYXNQCXxwwMxZUG6apt28u1RYgBxHUeTH/+pIGhJ+vm7AcKBseAOAaQ+b9wbAIPG1oDSnRu8TUcUy6tixrhY8Lb8imHjKyVzHOltYP7QHycOndeaXD3q3m5MvZFidF/dVcIIMT3r1Yqr86iDWmFbR9jGwqwWICJxqs3Siex50jPUic53y9H4Y6aGTbCSpSEvK8pBrvMDb9UY5SfZBxXq736yu4XjhMha+Th9pOv5Lho2Ce46eiLcVjZog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zw1gX5UmsSpwOfFbQ4O12YDndiNAwwEx9Oe3l9ve42g=;
- b=OPYHU2xEqbTNh3wctgQ1IY+O2xWFvaN4R1PVdX8yKTI6J6r0cS8poojHB542PXoZrOaVvg1Ny9Z7Gl7l0Wc4sTWMeEMmijTuLgLnrO4MJD57CroU1UCDw1lRtkysoyC8XMHvVbviYk9QWn5Vt13JQE3umBInNpwiQ5EN42dYL2o9gLzXfxhIg6C5XmUBC8y6mIDP/w0G2QzXXqp83ZHCxQpwaWOui0E+T54OBdc4WDuMU0GVJCSnwWVqTbo33BTXqSebL4zynmsgESgorXWIiiLWRA35mlU3rr75VvbbWT37S1jKun8WarHK3OTY/xfyHklkPHC/AAWjmDCXTtmDxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-Received: from MWHPR1801MB1919.namprd18.prod.outlook.com (10.164.204.162) by
- MWHPR1801MB2063.namprd18.prod.outlook.com (10.164.205.139) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.20; Thu, 7 Nov 2019 08:21:40 +0000
-Received: from MWHPR1801MB1919.namprd18.prod.outlook.com
- ([fe80::7106:bd76:41b8:ef03]) by MWHPR1801MB1919.namprd18.prod.outlook.com
- ([fe80::7106:bd76:41b8:ef03%3]) with mapi id 15.20.2430.020; Thu, 7 Nov 2019
- 08:21:40 +0000
-From:   Joey Lee <JLee@suse.com>
-To:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-CC:     David Howells <dhowells@redhat.com>,
-        "gnomes@lxorguk.ukuu.org.uk" <gnomes@lxorguk.ukuu.org.uk>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jforbes@redhat.com" <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        James Morris <jmorris@namei.org>
-Subject: Re: [PATCH 18/30] acpi: Disable APEI error injection if the kernel is
- locked down
-Thread-Topic: [PATCH 18/30] acpi: Disable APEI error injection if the kernel
- is locked down
-Thread-Index: AQHVlURhP/mEXrsc5kO6jxmwyldIMQ==
-Date:   Thu, 7 Nov 2019 08:21:40 +0000
-Message-ID: <20191107082131.GI12016@linux-l9pv.suse>
-References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
- <151024877315.28329.472560163492858160.stgit@warthog.procyon.org.uk>
-In-Reply-To: <151024877315.28329.472560163492858160.stgit@warthog.procyon.org.uk>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK2PR02CA0172.apcprd02.prod.outlook.com
- (2603:1096:201:1f::32) To MWHPR1801MB1919.namprd18.prod.outlook.com
- (2603:10b6:301:68::34)
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=JLee@suse.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [60.251.47.116]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2cd6a720-fabc-4209-8354-08d7635b83a7
-x-ms-traffictypediagnostic: MWHPR1801MB2063:
-x-ms-exchange-purlcount: 3
-x-microsoft-antispam-prvs: <MWHPR1801MB20639C911CED73A4CE8E5428A3780@MWHPR1801MB2063.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0214EB3F68
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(39860400002)(396003)(376002)(366004)(346002)(189003)(199004)(6436002)(6116002)(66556008)(64756008)(6916009)(4326008)(54906003)(66946007)(6246003)(305945005)(229853002)(5660300002)(478600001)(7736002)(14444005)(3846002)(102836004)(966005)(26005)(25786009)(8676002)(81166006)(66446008)(5640700003)(81156014)(256004)(99286004)(446003)(14454004)(11346002)(6512007)(486006)(476003)(66066001)(316002)(66476007)(2906002)(52116002)(55236004)(33656002)(86362001)(2351001)(6506007)(6486002)(80792005)(386003)(6306002)(186003)(2501003)(76176011)(36756003)(71190400001)(8936002)(71200400001)(9686003)(1076003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR1801MB2063;H:MWHPR1801MB1919.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: suse.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: xeWK8XqBa9xqhG7w60uK8focqfbPjbheloLT+mxm345b8EQRf6acNRZssE3n+/2j4c+g0RepNnD28IJ3VDkOHTcidAcj9sa+WQc16ssDVWS76YZyNtDiMrdkg8Hes5MOXKroacwf+bFiJsN3FWr+/0gDxASY0Wlq4seRqx0yy8CMxcOPNJffYjWlPnRw8a6GUec2sty4Sj5zkvrrD8b45Fm9o4SyjozISWB/IqKpoaCPauYFqZgNPHu+J5IQ00hnT50hW4UM+koywugXXWS1hy+8b+91pG+58sWAFUoRznDNRk3LDMTJ9EAbMyk5PbJDxap05LdmgTCmUV+kAnn5TpLwkExo2jt9mEx2xbX+rmc1tRgHwBqOs3mY+Rk+FDjoU7zNMUreqbk7rJAIlVnIHJ4EIMEPzCq5WlbLYWn8KwMbjiV85zVSor5/ABoleE8GhOwajcFeWX2XeP08i/xk6MdN1H9cN5HkvQ911m7XVEM=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <DA7B6F7E6050AA4F9C89EDDE76B4B210@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+        Thu, 7 Nov 2019 08:35:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573133727;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=iwZ876V7tzoSqORegIaOnw8FP0vXTiWZKEpvV8lcU5c=;
+        b=BYDXMzvxHyaZmbX7A0k5DUkhdx75LSum4CpSs5xntduoKJBIzWv5p2dno/LGa0Rcp0Ucoa
+        4zWS6rfO+KwiXeh1AKAHVtAFVQM1VuEzjfXdZbT1/5LXuuvxDsU4Ku3iBUd2I/WG8yufBR
+        KTbD3uX5qzhyZnx93iCfRjpxrET4c7E=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-98-La97UjRAOm-X80uwH0h8xg-1; Thu, 07 Nov 2019 08:35:23 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 575D41800D7A;
+        Thu,  7 Nov 2019 13:35:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-254.rdu2.redhat.com [10.10.120.254])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B13360C88;
+        Thu,  7 Nov 2019 13:35:17 +0000 (UTC)
+Subject: [RFC PATCH 00/14] pipe: Keyrings,
+ Block and USB notifications [ver #2]
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
+        raven@themaw.net, Christian Brauner <christian@brauner.io>,
+        dhowells@redhat.com, keyrings@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 07 Nov 2019 13:35:17 +0000
+Message-ID: <157313371694.29677.15388731274912671071.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cd6a720-fabc-4209-8354-08d7635b83a7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2019 08:21:40.6237
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: j+53XOdLW5OJVsvsRWw+II3NTjP3RQ2cbDxXaOY4lnqdCKGeHujPlamNf467ATeZ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1801MB2063
-X-OriginatorOrg: suse.com
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: La97UjRAOm-X80uwH0h8xg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi experts,
 
-On Thu, Nov 09, 2017 at 05:32:53PM +0000, David Howells wrote:
-> From: Linn Crosetto <linn@hpe.com>
-> 
-> ACPI provides an error injection mechanism, EINJ, for debugging and testing
-> the ACPI Platform Error Interface (APEI) and other RAS features.  If
-> supported by the firmware, ACPI specification 5.0 and later provide for a
-> way to specify a physical memory address to which to inject the error.
-> 
-> Injecting errors through EINJ can produce errors which to the platform are
-> indistinguishable from real hardware errors.  This can have undesirable
-> side-effects, such as causing the platform to mark hardware as needing
-> replacement.
-> 
-> While it does not provide a method to load unauthenticated privileged code,
-> the effect of these errors may persist across reboots and affect trust in
-> the underlying hardware, so disable error injection through EINJ if
-> the kernel is locked down.
-> 
-> Signed-off-by: Linn Crosetto <linn@hpe.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-> cc: linux-acpi@vger.kernel.org
+Here's a set of patches to add a general notification queue concept and to
+add event sources such as:
 
-I was looking at the lockdown pathes in v5.4-rc kernel and found that the
-"acpi: Disable APEI error injection if the kernel is locked down" did not
-merged with lockdown patch set. This patch be sent with Matthew's pull
-request lockdown patches for 5.2:
-    http://kernsec.org/pipermail/linux-security-module-archive/2019-March/012033.html
+ (1) Keys/keyrings, such as linking and unlinking keys and changing their
+     attributes.
 
-But it didn't show in Morris's git:
-    https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git/log/?h=next-lockdown
+ (2) General device events (single common queue) including:
 
-Maybe I missed some detail of this patch. Could anyone point out the
-concern of this patch please?
+     - Block layer events, such as device errors
 
-> ---
-> 
->  drivers/acpi/apei/einj.c |    3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
-> index b38737c83a24..6d71e1e97b20 100644
-> --- a/drivers/acpi/apei/einj.c
-> +++ b/drivers/acpi/apei/einj.c
-> @@ -518,6 +518,9 @@ static int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
->  	int rc;
->  	u64 base_addr, size;
->  
-> +	if (kernel_is_locked_down("ACPI error injection"))
-> +		return -EPERM;
-> +
->  	/* If user manually set "flags", make sure it is legal */
->  	if (flags && (flags &
->  		~(SETWA_FLAGS_APICID|SETWA_FLAGS_MEM|SETWA_FLAGS_PCIE_SBDF)))
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-efi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+     - USB subsystem events, such as device attach/remove, device reset,
+       device errors.
 
-Thanks
-Joey Lee
+I have patches for adding superblock and mount topology watches also,
+though those are not in this set as there are other dependencies.
+
+LSM hooks are included:
+
+ (1) A set of hooks are provided that allow an LSM to rule on whether or
+     not a watch may be set.  Each of these hooks takes a different
+     "watched object" parameter, so they're not really shareable.  The LSM
+     should use current's credentials.  [Wanted by SELinux & Smack]
+
+ (2) A hook is provided to allow an LSM to rule on whether or not a
+     particular message may be posted to a particular queue.  This is given
+     the credentials from the event generator (which may be the system) and
+     the watch setter.  [Wanted by Smack]
+
+I've provided SELinux and Smack with implementations of some of these hooks=
+.
+
+
+Design decisions:
+
+ (1) The notification queue is built on top of a standard pipe.  Messages
+     are effectively spliced in.  The pipe is opened with a special flag:
+
+=09pipe2(fds, O_NOTIFICATION_PIPE);
+
+     The special flag has the same value as O_EXCL (which doesn't seem like
+     it will ever be applicable in this context)[?].  It is given up front
+     to make it a lot easier to prohibit splice and co. from accessing the
+     pipe.
+
+     [?] Should this be done some other way?  I'd rather not use up a new
+     O_* flag if I can avoid it - should I add a pipe3() system call
+     instead?
+
+     The pipe is then configured::
+
+=09ioctl(fds[1], IOC_WATCH_QUEUE_SET_SIZE, queue_depth);
+=09ioctl(fds[1], IOC_WATCH_QUEUE_SET_FILTER, &filter);
+
+     Messages are then read out of the pipe using read().
+
+ (2) It should be possible to allow write() to insert data into the
+     notification pipes too, but this is currently disabled as the kernel
+     has to be able to insert messages into the pipe *without* holding
+     pipe->mutex and the code to make this work needs careful auditing.
+
+ (3) sendfile(), splice() and vmsplice() are disabled on notification pipes
+     because of the pipe->mutex issue and also because they sometimes want
+     to revert what they just did - but one or more notification messages
+     might've been interleaved in the ring.
+
+ (4) The kernel inserts messages with the wait queue spinlock held.  This
+     means that pipe_read() and pipe_write() have to take the spinlock to
+     update the queue pointers.
+
+ (5) Records in the buffer are binary, typed and have a length so that they
+     can be of varying size.
+
+     This allows multiple heterogeneous sources to share a common buffer;
+     there are 16 million types available, of which I've used just a few,
+     so there is scope for others to be used.  Tags may be specified when a
+     watchpoint is created to help distinguish the sources.
+
+ (6) Records are filterable as types have up to 256 subtypes that can be
+     individually filtered.  Other filtration is also available.
+
+ (7) Notification pipes don't interfere with each other; each may be bound
+     to a different set of watches.  Any particular notification will be
+     copied to all the queues that are currently watching for it - and only
+     those that are watching for it.
+
+ (8) When recording a notification, the kernel will not sleep, but will
+     rather mark a queue as having lost a message if there's insufficient
+     space.  read() will fabricate a loss notification message at an
+     appropriate point later.
+
+ (9) The notification pipe is created and then watchpoints are attached to
+     it, using one of:
+
+=09keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fds[1], 0x01);
+=09watch_devices(fds[1], 0x02, 0);
+
+     where in both cases, fd indicates the queue and the number after is a
+     tag between 0 and 255.
+
+(10) Watches are removed if either the notification pipe is destroyed or
+     the watched object is destroyed.  In the latter case, a message will
+     be generated indicating the enforced watch removal.
+
+
+Things I want to avoid:
+
+ (1) Introducing features that make the core VFS dependent on the network
+     stack or networking namespaces (ie. usage of netlink).
+
+ (2) Dumping all this stuff into dmesg and having a daemon that sits there
+     parsing the output and distributing it as this then puts the
+     responsibility for security into userspace and makes handling
+     namespaces tricky.  Further, dmesg might not exist or might be
+     inaccessible inside a container.
+
+ (3) Letting users see events they shouldn't be able to see.
+
+
+Testing and manpages:
+
+ (*) The keyutils tree has a pipe-watch branch that has keyctl commands for
+     making use of notifications.  Proposed manual pages can also be found
+     on this branch, though a couple of them really need to go to the main
+     manpages repository instead.
+
+     If the kernel supports the watching of keys, then running "make test"
+     on that branch will cause the testing infrastructure to spawn a
+     monitoring process on the side that monitors a notifications pipe for
+     all the key/keyring changes induced by the tests and they'll all be
+     checked off to make sure they happened.
+
+=09https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/lo=
+g/?h=3Dpipe-watch
+
+The kernel patches can also be found here:
+
+=09https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/lo=
+g/?h=3Dnotifications-pipe-core
+
+Changes:
+
+ ver #2:
+
+ (*) Declare O_NOTIFICATION_PIPE to use and switch it to be the same value
+     as O_EXCL rather then O_TMPFILE (the latter is a bit nasty in its
+     implementation).
+
+ ver #1:
+
+ (*) Build on top of standard pipes instead of having a driver.
+
+David
+---
+David Howells (14):
+      uapi: General notification queue definitions
+      security: Add hooks to rule on setting a watch
+      security: Add a hook for the point of notification insertion
+      pipe: Add O_NOTIFICATION_PIPE
+      pipe: Add general notification queue support
+      keys: Add a notification facility
+      Add sample notification program
+      pipe: Allow buffers to be marked read-whole-or-error for notification=
+s
+      pipe: Add notification lossage handling
+      Add a general, global device notification watch list
+      block: Add block layer notifications
+      usb: Add USB subsystem notifications
+      selinux: Implement the watch_key security hook
+      smack: Implement the watch_key and post_notification hooks
+
+
+ Documentation/ioctl/ioctl-number.rst        |    1=20
+ Documentation/security/keys/core.rst        |   58 ++
+ Documentation/watch_queue.rst               |  385 ++++++++++++++++
+ arch/alpha/kernel/syscalls/syscall.tbl      |    1=20
+ arch/arm/tools/syscall.tbl                  |    1=20
+ arch/arm64/include/asm/unistd.h             |    2=20
+ arch/arm64/include/asm/unistd32.h           |    2=20
+ arch/ia64/kernel/syscalls/syscall.tbl       |    1=20
+ arch/m68k/kernel/syscalls/syscall.tbl       |    1=20
+ arch/microblaze/kernel/syscalls/syscall.tbl |    1=20
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |    1=20
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |    1=20
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |    1=20
+ arch/parisc/kernel/syscalls/syscall.tbl     |    1=20
+ arch/powerpc/kernel/syscalls/syscall.tbl    |    1=20
+ arch/s390/kernel/syscalls/syscall.tbl       |    1=20
+ arch/sh/kernel/syscalls/syscall.tbl         |    1=20
+ arch/sparc/kernel/syscalls/syscall.tbl      |    1=20
+ arch/x86/entry/syscalls/syscall_32.tbl      |    1=20
+ arch/x86/entry/syscalls/syscall_64.tbl      |    1=20
+ arch/xtensa/kernel/syscalls/syscall.tbl     |    1=20
+ block/Kconfig                               |    9=20
+ block/blk-core.c                            |   29 +
+ drivers/base/Kconfig                        |    9=20
+ drivers/base/Makefile                       |    1=20
+ drivers/base/watch.c                        |   90 ++++
+ drivers/usb/core/Kconfig                    |    9=20
+ drivers/usb/core/devio.c                    |   47 ++
+ drivers/usb/core/hub.c                      |    4=20
+ fs/pipe.c                                   |  229 ++++++---
+ fs/splice.c                                 |   12=20
+ include/linux/blkdev.h                      |   15 +
+ include/linux/device.h                      |    7=20
+ include/linux/key.h                         |    3=20
+ include/linux/lsm_audit.h                   |    1=20
+ include/linux/lsm_hooks.h                   |   38 ++
+ include/linux/pipe_fs_i.h                   |   27 +
+ include/linux/security.h                    |   32 +
+ include/linux/syscalls.h                    |    1=20
+ include/linux/usb.h                         |   18 +
+ include/linux/watch_queue.h                 |  127 +++++
+ include/uapi/asm-generic/unistd.h           |    4=20
+ include/uapi/linux/keyctl.h                 |    2=20
+ include/uapi/linux/watch_queue.h            |  158 ++++++
+ init/Kconfig                                |   12=20
+ kernel/Makefile                             |    1=20
+ kernel/sys_ni.c                             |    1=20
+ kernel/watch_queue.c                        |  658 +++++++++++++++++++++++=
+++++
+ samples/Kconfig                             |    7=20
+ samples/Makefile                            |    1=20
+ samples/watch_queue/Makefile                |    7=20
+ samples/watch_queue/watch_test.c            |  251 ++++++++++
+ security/keys/Kconfig                       |    9=20
+ security/keys/compat.c                      |    3=20
+ security/keys/gc.c                          |    5=20
+ security/keys/internal.h                    |   30 +
+ security/keys/key.c                         |   38 +-
+ security/keys/keyctl.c                      |   99 ++++
+ security/keys/keyring.c                     |   20 +
+ security/keys/request_key.c                 |    4=20
+ security/security.c                         |   23 +
+ security/selinux/hooks.c                    |   14 +
+ security/smack/smack_lsm.c                  |   82 +++
+ 63 files changed, 2492 insertions(+), 109 deletions(-)
+ create mode 100644 Documentation/watch_queue.rst
+ create mode 100644 drivers/base/watch.c
+ create mode 100644 include/linux/watch_queue.h
+ create mode 100644 include/uapi/linux/watch_queue.h
+ create mode 100644 kernel/watch_queue.c
+ create mode 100644 samples/watch_queue/Makefile
+ create mode 100644 samples/watch_queue/watch_test.c
+
