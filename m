@@ -2,104 +2,95 @@ Return-Path: <SRS0=FL3x=ZA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6645C5DF60
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Nov 2019 06:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A14CFA372C
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Nov 2019 08:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC7EC21882
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Nov 2019 06:43:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K0Vy1weL"
+	by mail.kernel.org (Postfix) with ESMTP id 3AF91222C2
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Nov 2019 08:05:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbfKHGnB (ORCPT
+        id S1730299AbfKHIFO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Nov 2019 01:43:01 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50929 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729873AbfKHGnA (ORCPT
+        Fri, 8 Nov 2019 03:05:14 -0500
+Received: from mga07.intel.com ([134.134.136.100]:7323 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727421AbfKHIFO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Nov 2019 01:43:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573195379;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=G8x+s0gT+EQcwDzJx0Qq2QbxI7ZiAY//ltXx+x3jOGg=;
-        b=K0Vy1weLhKpp+bOYWw9qkFhoWjt5hAnm5TJDvgl+GMj6vYvO4f8cr3fTcdesvFUfFCgcKy
-        ReGybiIDU97z6kY7DmNomlfd+rLZO78KxLyqCFZwh2U/SIFyGLv8PNigXHfLK1tusotyt5
-        zRgKfr8mMlnBgxWHfNOqEDD6HSlFqS0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-217-VLRlQoNXNQOdqlAzq2_FZA-1; Fri, 08 Nov 2019 01:42:56 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 67DF6477;
-        Fri,  8 Nov 2019 06:42:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-254.rdu2.redhat.com [10.10.120.254])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8307A10016DA;
-        Fri,  8 Nov 2019 06:42:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CALCETrWeN9CGJHz0dzG1uH5Qjbr+xG3OKZuEd33eBY_rAzVkqQ@mail.gmail.com>
-References: <CALCETrWeN9CGJHz0dzG1uH5Qjbr+xG3OKZuEd33eBY_rAzVkqQ@mail.gmail.com> <157313371694.29677.15388731274912671071.stgit@warthog.procyon.org.uk> <157313375678.29677.15875689548927466028.stgit@warthog.procyon.org.uk> <CALCETrUka9KaOKFbNKUXcA6XvoFxiXPftctSHtN4DL35Cay61w@mail.gmail.com> <6964.1573152517@warthog.procyon.org.uk>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 04/14] pipe: Add O_NOTIFICATION_PIPE [ver #2]
+        Fri, 8 Nov 2019 03:05:14 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 00:05:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,280,1569308400"; 
+   d="scan'208";a="377700784"
+Received: from rafalwi-mobl.ger.corp.intel.com (HELO localhost) ([10.252.3.149])
+  by orsmga005.jf.intel.com with ESMTP; 08 Nov 2019 00:05:02 -0800
+Date:   Fri, 8 Nov 2019 10:05:01 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
+Message-ID: <20191108080501.GA3370@linux.intel.com>
+References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+ <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+ <173a196e-fa6b-23b8-c818-dfca6cdadcc6@tycho.nsa.gov>
+ <20191031211721.GD10507@linux.intel.com>
+ <f91d788c-b372-8e2f-7ffb-995f501b5d6b@tycho.nsa.gov>
+ <4bf866ae-adc8-7902-3714-b62e548d8584@tycho.nsa.gov>
+ <20191101153238.GA2657@linux.intel.com>
+ <f3a3d137-a187-9090-f5af-da306ced5371@tycho.nsa.gov>
 MIME-Version: 1.0
-Content-ID: <7771.1573195370.1@warthog.procyon.org.uk>
-Date:   Fri, 08 Nov 2019 06:42:50 +0000
-Message-ID: <7772.1573195370@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: VLRlQoNXNQOdqlAzq2_FZA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f3a3d137-a187-9090-f5af-da306ced5371@tycho.nsa.gov>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Andy Lutomirski <luto@kernel.org> wrote:
+On Fri, Nov 01, 2019 at 01:16:59PM -0400, Stephen Smalley wrote:
+> On 11/1/19 11:32 AM, Sean Christopherson wrote:
+> > On Fri, Nov 01, 2019 at 09:28:17AM -0400, Stephen Smalley wrote:
+> > > On 11/1/19 9:16 AM, Stephen Smalley wrote:
+> > > > So, IIUC, that means that merging the driver will create a regression with
+> > > > respect to LSM control over executable mappings that will only be
+> > > > rectified at some future point in time if/when someone submits LSM hooks
+> > > > or calls to existing hooks to restore such control.  That doesn't seem
+> > > > like a good idea.  Why can't you include at least that basic level of
+> > > > control now?  It is one thing to defer finer grained control or
+> > > > SGX-specific access controls to the future - that I can understand.  But
+> > > > introducing a regression in the existing controls is not really ok.
+> > > 
+> > > Unless you are arguing that the existing checks on mmap/mprotect of
+> > > /dev/sgx/enclave are a coarse-grained approximation (effectively requiring
+> > > WX to the file or execmem for any user of SGX).
+> > 
+> > Yes, that's the argument as running any enclave will require RWX access to
+> > /dev/sgx/enclave.  EXECMEM won't trigger for SGX users as /dev/sgx/enclave
+> > must be MAP_SHARED and it's a non-private file (not backed by anonymous
+> > inode, in case I got the file terminology wrong).
+> 
+> Ok, so for SELinux's purposes, one will need to allow :file { open ioctl map
+> read write execute } to whatever type is ultimately assigned to
+> /dev/sgx/enclave in order to use SGX.
 
-> I can open a normal pipe from userspace (with pipe() or pipe2()), and
-> I can have two threads.  One thread writes to the pipe with write().
-> The other thread writes with splice().  Everything works fine.
+AFAIK yes.
 
-Yes.  Every operation you do on a pipe from userspace is serialised with th=
-e
-pipe mutex - and both ends share the same pipe.
-
-> What's special about notifications?
-
-The post_notification() cannot take the pipe mutex.  It has to be callable
-from softirq context.  Linus's idea is that when you're actually altering t=
-he
-ring pointers you should hold the wake-queue spinlock, and post_notificatio=
-n()
-holds the wake queue spinlock for the duration of the operation.
-
-This means that post_notification() can be writing to the pipe whilst a
-userspace-invoked operation is holding the pipe mutex and is also doing
-something to the ring.
-
-David
-
+/Jarkko
