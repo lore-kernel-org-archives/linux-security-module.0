@@ -1,175 +1,112 @@
-Return-Path: <SRS0=96uJ=Y7=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=FL3x=ZA=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEB5C5DF60
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 23:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0E0C5DF60
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Nov 2019 05:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AC492178F
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Nov 2019 23:33:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VCSF0q3Y"
+	by mail.kernel.org (Postfix) with ESMTP id E135C21848
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Nov 2019 05:07:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1573189628;
+	bh=Nml6ZqPGIxeHePwEoMl3uFywnf+kk1nTeP99Kndi+gU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=pMB6n3cjcXnp663VTaXqSwaWW9APY9t6B+/JjwCnzOpVpUHxOBaxFR/wtdpkyKU8r
+	 Q12X8mdaPKeH2EL9ykTc/26G7uYMTVJEac9skt1OZt4eosbswxCzDYUzZvE6uAhqkB
+	 T6ZlhX2sQRFxeiYjby1UW89VJlSpr7WI4jj919d8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726281AbfKGXdo (ORCPT
+        id S1725372AbfKHFHH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Nov 2019 18:33:44 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35257 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfKGXdo (ORCPT
+        Fri, 8 Nov 2019 00:07:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35858 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726281AbfKHFHH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Nov 2019 18:33:44 -0500
-Received: by mail-pf1-f193.google.com with SMTP id d13so3514731pfq.2
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Nov 2019 15:33:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=U9LCQzLECFkJez50E4J6R+X6khDWEPIZnHrW73R9i5E=;
-        b=VCSF0q3YAX7JfT36ea1mW70HVF+YkyVrrVNTW2SZ4JLxyAeawqVF5Rdh/9rH2i6SAG
-         FoQiW4BL2Au/RpCOeuFpBTfOXv4RQtMPCBLk6e6QZxC/urZTkrbpLiC+YEq9NmzAG5cv
-         F+3JZZa34J+jp5deo2+K4zBb9HUa7wRMlJQsvk8KX9STNPJBMoHbGn/Q46TMgSZ3qeLo
-         ngTvyzyK3mDIAm6PbpO9h1Beh1EI6Xb9/jJ3eovQN+C9cXnxaZQ1izArK9tovZRpWLOD
-         tLEtBET4eAM8hFBHeMHotaYpbI6I69R5joMhIlXZrcEQGsztakOvy2J+1ogM7Gq4/lfG
-         d6oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=U9LCQzLECFkJez50E4J6R+X6khDWEPIZnHrW73R9i5E=;
-        b=R9OX1CP8qMU7KmLx6FMFD7Pror/Hu9GeMhH/Yc5X2Dl5D+1lUgp8xisn3dK8i8J77W
-         k9iwLzsnI9WfJ/zhzpcChxKFlBkZqopVIG21vzKiDGJvzb6LsGp0BmyHbl/w4z+QscmX
-         2vkcbPciD2pMQ382PK/IW3DojuIPe7dTuv9TE1gRCykAgTVOdOX4koRrwR56rH/Aq41b
-         B9y93f+CHl85k3zomtgRUekrB5DP66wYm2loB+yh3riX9oWmwhbqhqIthcX23qunCn0/
-         UFIlo7Vql3JrVmRE/6cRPUbRDhAEP/gEBbHUC6c2WU8N/BmEOO79zpS1GPmphZfT1rsR
-         rP2Q==
-X-Gm-Message-State: APjAAAWF9pcfULd+B4Qd37HSiixZBVuYfE3jOg/VJ7K77BpITy4lgzHC
-        qwsYPrzBbKNYBHL5vH6Q4BPLQw==
-X-Google-Smtp-Source: APXvYqxZsw+8wS5vW5TZg88AZWSvd3uOCaJzI81XZmIohq0NEHnExqON51fuwGRb5S8Qgc5fO9qnzg==
-X-Received: by 2002:aa7:9aa9:: with SMTP id x9mr7834759pfi.207.1573169622713;
-        Thu, 07 Nov 2019 15:33:42 -0800 (PST)
-Received: from google.com ([2620:15c:2cb:1:e90c:8e54:c2b4:29e7])
-        by smtp.gmail.com with ESMTPSA id u3sm3438966pgp.51.2019.11.07.15.33.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 15:33:41 -0800 (PST)
-Date:   Thu, 7 Nov 2019 15:33:37 -0800
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     shuah@kernel.org, john.johansen@canonical.com, jmorris@namei.org,
-        serge@hallyn.com, alan.maguire@oracle.com, yzaikin@google.com,
-        davidgow@google.com, mcgrof@kernel.org, tytso@mit.edu,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kselftest@vger.kernel.org,
-        Mike Salvatore <mike.salvatore@canonical.com>
-Subject: Re: [PATCH linux-kselftest/test v2] apparmor: add AppArmor KUnit
- tests for policy unpack
-Message-ID: <20191107233337.GA191231@google.com>
-References: <20191106004329.16991-1-brendanhiggins@google.com>
- <201911060916.AC9E14B@keescook>
+        Fri, 8 Nov 2019 00:07:07 -0500
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91697222CB
+        for <linux-security-module@vger.kernel.org>; Fri,  8 Nov 2019 05:07:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573189626;
+        bh=Nml6ZqPGIxeHePwEoMl3uFywnf+kk1nTeP99Kndi+gU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bAdWTsYRTkqedcC/+Z5sINwapybfyle+SAfQCYzh0EWS5bFnoTWCp8gEp5sb9cWnI
+         O5bF/n5f1DTs5DQ85rVVTZbzCY3ybfp9Rs/y1P5HNCiBgUd2Nw3kHKIgcB9HugJvZn
+         vVLMDAwji8m5eynkuo8EBnTeCAjeGmxaYmxlk+Hs=
+Received: by mail-wm1-f51.google.com with SMTP id v3so6434473wmh.1
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Nov 2019 21:07:06 -0800 (PST)
+X-Gm-Message-State: APjAAAUmoPe0F4a5gCsTVJ2uB2yuK0B46e0PRQzHvd7ooTBXoYOivaEu
+        LT+KGmdanvX8r03VAlb2zrxekKeQPx6Wz2LGXP5cIA==
+X-Google-Smtp-Source: APXvYqx08Mv0U8UmADt1yPzJqTiWQTH/61DB5ak1MBLcnJribE7k+KhLlnxirQA97U78di+ySNLiALLNE6nRtXo4CT0=
+X-Received: by 2002:a7b:c1ca:: with SMTP id a10mr6805119wmj.161.1573189624926;
+ Thu, 07 Nov 2019 21:07:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201911060916.AC9E14B@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <157313371694.29677.15388731274912671071.stgit@warthog.procyon.org.uk>
+ <157313375678.29677.15875689548927466028.stgit@warthog.procyon.org.uk>
+ <CALCETrUka9KaOKFbNKUXcA6XvoFxiXPftctSHtN4DL35Cay61w@mail.gmail.com> <6964.1573152517@warthog.procyon.org.uk>
+In-Reply-To: <6964.1573152517@warthog.procyon.org.uk>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 7 Nov 2019 21:06:53 -0800
+X-Gmail-Original-Message-ID: <CALCETrWeN9CGJHz0dzG1uH5Qjbr+xG3OKZuEd33eBY_rAzVkqQ@mail.gmail.com>
+Message-ID: <CALCETrWeN9CGJHz0dzG1uH5Qjbr+xG3OKZuEd33eBY_rAzVkqQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/14] pipe: Add O_NOTIFICATION_PIPE [ver #2]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 06, 2019 at 09:18:27AM -0800, Kees Cook wrote:
-> On Tue, Nov 05, 2019 at 04:43:29PM -0800, Brendan Higgins wrote:
-> > From: Mike Salvatore <mike.salvatore@canonical.com>
-> > 
-> > Add KUnit tests to test AppArmor unpacking of userspace policies.
-> > AppArmor uses a serialized binary format for loading policies. To find
-> > policy format documentation see
-> > Documentation/admin-guide/LSM/apparmor.rst.
-> > 
-> > In order to write the tests against the policy unpacking code, some
-> > static functions needed to be exposed for testing purposes. One of the
-> > goals of this patch is to establish a pattern for which testing these
-> > kinds of functions should be done in the future.
-> > 
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > Signed-off-by: Mike Salvatore <mike.salvatore@canonical.com>
-> > ---
-> >  security/apparmor/Kconfig              |  16 +
-> >  security/apparmor/policy_unpack.c      |   4 +
-> >  security/apparmor/policy_unpack_test.c | 607 +++++++++++++++++++++++++
-> >  3 files changed, 627 insertions(+)
-> >  create mode 100644 security/apparmor/policy_unpack_test.c
-> > 
-> > diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
-> > index d8b1a360a6368..78a33ccac2574 100644
-> > --- a/security/apparmor/Kconfig
-> > +++ b/security/apparmor/Kconfig
-> > @@ -66,3 +66,19 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
-> >  	  Set the default value of the apparmor.debug kernel parameter.
-> >  	  When enabled, various debug messages will be logged to
-> >  	  the kernel message buffer.
-> > +
-> > +config SECURITY_APPARMOR_KUNIT_TEST
-> > +	bool "Build KUnit tests for policy_unpack.c"
-> > +	depends on KUNIT && SECURITY_APPARMOR
-> > +	help
-> > +	  This builds the AppArmor KUnit tests.
-> > +
-> > +	  KUnit tests run during boot and output the results to the debug log
-> > +	  in TAP format (http://testanything.org/). Only useful for kernel devs
-> > +	  running KUnit test harness and are not for inclusion into a
-> > +	  production build.
-> > +
-> > +	  For more information on KUnit and unit tests in general please refer
-> > +	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-> > +
-> > +	  If unsure, say N.
-> > diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> > index 8cfc9493eefc7..37c1dd3178fc0 100644
-> > --- a/security/apparmor/policy_unpack.c
-> > +++ b/security/apparmor/policy_unpack.c
-> > @@ -1120,3 +1120,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
-> >  
-> >  	return error;
-> >  }
-> > +
-> > +#ifdef CONFIG_SECURITY_APPARMOR_KUNIT_TEST
-> > +#include "policy_unpack_test.c"
-> > +#endif /* CONFIG_SECURITY_APPARMOR_KUNIT_TEST */
-> 
-> To make this even LESS intrusive, the ifdefs could live in ..._test.c.
+On Thu, Nov 7, 2019 at 10:48 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Andy Lutomirski <luto@kernel.org> wrote:
+>
+> > > Add an O_NOTIFICATION_PIPE flag that can be passed to pipe2() to indicate
+> > > that the pipe being created is going to be used for notifications.  This
+> > > suppresses the use of splice(), vmsplice(), tee() and sendfile() on the
+> > > pipe as calling iov_iter_revert() on a pipe when a kernel notification
+> > > message has been inserted into the middle of a multi-buffer splice will be
+> > > messy.
+> >
+> > How messy?
+>
+> Well, iov_iter_revert() on a pipe iterator simply walks backwards along the
+> ring discarding the last N contiguous slots (where N is normally the number of
+> slots that were filled by whatever operation is being reverted).
+>
+> However, unless the code that transfers stuff into the pipe takes the spinlock
+> spinlock and disables softirqs for the duration of its ring filling, what were
+> N contiguous slots may now have kernel notifications interspersed - even if it
+> has been holding the pipe mutex.
+>
+> So, now what do you do?  You have to free up just the buffers relevant to the
+> iterator and then you can either compact down the ring to free up the space or
+> you can leave null slots and let the read side clean them up, thereby
+> reducing the capacity of the pipe temporarily.
+>
+> Either way, iov_iter_revert() gets more complex and has to hold the spinlock.
 
-Less intrusive, yes, but I think I actually like the ifdef here; it
-makes it clear from the source that the test is only a part of the build
-when configured to do so. Nevertheless, I will change it if anyone feels
-strongly about it.
+I feel like I'm missing something fundamental here.
 
-> Also, while I *think* the kernel build system will correctly track this
-> dependency, can you double-check that changes to ..._test.c correctly
-> trigger a recompile of policy_unpack.c?
-
-Yep, just verified, first I ran the tests and everything passed. Then I
-applied the following diff:
-
-diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
-index 533137f45361c..e1b0670dbdc27 100644
---- a/security/apparmor/policy_unpack_test.c
-+++ b/security/apparmor/policy_unpack_test.c
-@@ -161,7 +161,7 @@ static void policy_unpack_test_unpack_array_with_name(struct kunit *test)
- 
- 	array_size = unpack_array(puf->e, name);
- 
--	KUNIT_EXPECT_EQ(test, array_size, (u16)TEST_ARRAY_SIZE);
-+	KUNIT_EXPECT_EQ(test, array_size + 1, (u16)TEST_ARRAY_SIZE);
- 	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos,
- 		puf->e->start + TEST_ARRAY_BUF_OFFSET + sizeof(u16) + 1);
- }
-
-and reran the tests (to trigger an incremental build) and the test
-failed as expected indicating that the dependency is properly tracked.
-
-Cheers!
+I can open a normal pipe from userspace (with pipe() or pipe2()), and
+I can have two threads.  One thread writes to the pipe with write().
+The other thread writes with splice().  Everything works fine.  What's
+special about notifications?
