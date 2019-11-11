@@ -2,125 +2,90 @@ Return-Path: <SRS0=x07C=ZD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C69AC43331
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Nov 2019 19:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7AFC17445
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Nov 2019 19:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FA5F2184C
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Nov 2019 19:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79E9A21783
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Nov 2019 19:41:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GSODaX0v"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="N2Ewm1z5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfKKTdt (ORCPT
+        id S1727374AbfKKTlX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Nov 2019 14:33:49 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:44830 "EHLO
+        Mon, 11 Nov 2019 14:41:23 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:47794 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727298AbfKKTdK (ORCPT
+        with ESMTP id S1727265AbfKKTlW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:33:10 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 35AF220B4903;
-        Mon, 11 Nov 2019 11:33:09 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 35AF220B4903
+        Mon, 11 Nov 2019 14:41:22 -0500
+Received: from [10.137.112.111] (unknown [131.107.147.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 2D8A020B7192;
+        Mon, 11 Nov 2019 11:41:22 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2D8A020B7192
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573500789;
-        bh=4O3uK6lXpKVD9poyisB/Ew+/kGR5hpYtefEMtATH65A=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=GSODaX0vKhCgiAD1sWveiQ8q91BEJGY/WaMW0dEVRYIVtgok7sya0DAuqkSbju/a8
-         z/fuUx80PCxp+preaCQHUTFnzrsGV+XNUU0qlGq83nBX1ko+wCJ9e2hXnHeCj4M8Mr
-         JBiJyMRZoAmxljIUnA0XRt1HC7zA4qbAFSTYmugQ=
+        s=default; t=1573501282;
+        bh=yo/9FmZW0Y99bAu6iFa8LVJuZTCyAJDW2GqEslRJ+QQ=;
+        h=Subject:From:To:References:Date:In-Reply-To:From;
+        b=N2Ewm1z5bz02D6/2tZat1uKI5YJ406Flu+7c+jeChj9D8ThW6vkLp5W/mD56749Ty
+         rokrIFXAJvZNzZpBhh47F7UNJRJUmRYv1xL7JEBzXuo1EcrQ851MNXaIV/8ddAp7vH
+         cikiSBQ+XvskaHcFyMSN/RNW/oTO6hX1TIc1G1ts=
+Subject: Re: [PATCH v5 0/10] KEYS: Measure keys when they are created or
+ updated
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, dhowells@redhat.com,
         matthewgarrett@google.com, sashal@kernel.org,
         jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 03/10] IMA: Read keyrings= option from the IMA policy into ima_rule_entry
-Date:   Mon, 11 Nov 2019 11:32:56 -0800
-Message-Id: <20191111193303.12781-4-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191111193303.12781-1-nramas@linux.microsoft.com>
 References: <20191111193303.12781-1-nramas@linux.microsoft.com>
+Message-ID: <b135b1ac-add6-aea4-cab3-3e9c12796b6a@linux.microsoft.com>
+Date:   Mon, 11 Nov 2019 11:41:42 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <20191111193303.12781-1-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-"keyrings=" option, if specified in the IMA policy, needs to be
-stored in the list of IMA rules when the configured IMA policy is read.
+On 11/11/2019 11:32 AM, Lakshmi Ramasubramanian wrote:
 
-This patch defines a new policy token enum namely Opt_keyrings
-for reading "keyrings=" option from the IMA policy.
+Hi Mimi,
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima_policy.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+> Problem Statement:
+> 
+> Keys created or updated in the system are currently not being measured.
+> 
+> This change aims to address measuring keys created or updated
+> in the system:
+> 
+>    => Patches #1 through #5 update IMA policy functions to handle
+>       measurement of keys based on configured IMA policy.
+> 
+>    => Patches #6 and #7 add IMA hook for measuring keys and the call
+>       to the IMA hook from key_create_or_update function.
+>       Keys are processed immediately - no support for
+>       deferred processing.
+> 
+>    => Patches #8 through #10 add support for queuing keys if
+>       custom IMA policies have not been applied yet and process
+>       the queued keys when custom IMA policies are applied.
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index a0f7ffa80736..1aee3c8b9cf6 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -768,7 +768,8 @@ enum {
- 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_appraise_flag,
--	Opt_permit_directio, Opt_pcr, Opt_template, Opt_err
-+	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
-+	Opt_err
- };
- 
- static const match_table_t policy_tokens = {
-@@ -804,6 +805,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_permit_directio, "permit_directio"},
- 	{Opt_pcr, "pcr=%s"},
- 	{Opt_template, "template=%s"},
-+	{Opt_keyrings, "keyrings=%s"},
- 	{Opt_err, NULL}
- };
- 
-@@ -1053,6 +1055,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			result = 0;
- 			entry->flags |= IMA_FSNAME;
- 			break;
-+		case Opt_keyrings:
-+			ima_log_string(ab, "keyrings", args[0].from);
-+
-+			if ((entry->keyrings) ||
-+			    (entry->action != MEASURE) ||
-+			    (entry->func != KEYRING_CHECK)) {
-+				result = -EINVAL;
-+				break;
-+			}
-+			entry->keyrings = kstrdup(args[0].from, GFP_KERNEL);
-+			if (!entry->keyrings) {
-+				result = -ENOMEM;
-+				break;
-+			}
-+			result = 0;
-+			entry->flags |= IMA_KEYRINGS;
-+			break;
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
-@@ -1428,6 +1447,13 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
- 	}
- 
-+	if (entry->flags & IMA_KEYRINGS) {
-+		if (entry->keyrings != NULL)
-+			snprintf(tbuf, sizeof(tbuf), "%s", entry->keyrings);
-+		seq_printf(m, pt(Opt_keyrings), tbuf);
-+		seq_puts(m, " ");
-+	}
-+
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
--- 
-2.17.1
+I was wondering if it'd be better to split this patch set into two sets:
 
+1st set including the patches for measuring keys without queuing support 
+(Patches #1 through #7)
+
+2nd set including the patches that add queuing support (Patches #8 
+through #10).
+
+thanks,
+  -lakshmi
