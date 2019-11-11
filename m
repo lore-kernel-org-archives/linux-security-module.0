@@ -1,158 +1,481 @@
-Return-Path: <SRS0=FL3x=ZA=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=x07C=ZD=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 949CEFA372C
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Nov 2019 15:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B32C43331
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Nov 2019 17:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BD5421D7E
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Nov 2019 15:41:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 256B6206BA
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Nov 2019 17:56:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SLvIW861"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfKHPlM (ORCPT
+        id S1726834AbfKKR4T (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Nov 2019 10:41:12 -0500
-Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:36977 "EHLO
-        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbfKHPlL (ORCPT
+        Mon, 11 Nov 2019 12:56:19 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36302 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726763AbfKKR4T (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Nov 2019 10:41:11 -0500
-Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
-        by smtp-sh2.infomaniak.ch (8.14.4/8.14.4/Debian-8+deb8u2) with ESMTP id xA8Fe0wD187815
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Nov 2019 16:40:00 +0100
-Received: from ns3096276.ip-94-23-54.eu (ns3096276.ip-94-23-54.eu [94.23.54.103])
-        (authenticated bits=0)
-        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id xA8FduEU195949
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
-        Fri, 8 Nov 2019 16:39:56 +0100
-Subject: Re: [PATCH bpf-next v13 4/7] landlock: Add ptrace LSM hooks
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     KP Singh <kpsingh@chromium.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Drysdale <drysdale@google.com>,
-        Florent Revest <revest@chromium.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-References: <20191104172146.30797-1-mic@digikod.net>
- <20191104172146.30797-5-mic@digikod.net>
- <20191105171824.dfve44gjiftpnvy7@ast-mbp.dhcp.thefacebook.com>
- <23acf523-dbc4-855b-ca49-2bbfa5e7117e@digikod.net>
- <20191105193446.s4pswwwhrmgk6hcx@ast-mbp.dhcp.thefacebook.com>
- <20191106100655.GA18815@chromium.org>
- <813cedde-8ed7-2d3b-883d-909efa978d41@digikod.net>
- <20191106214526.GA22244@chromium.org>
- <3e208632-e7ab-3405-5196-ab1d770e20c3@digikod.net>
- <5d0f1dc5-5a99-bd6a-4acc-0cdcd062a0c9@iogearbox.net>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Openpgp: preference=signencrypt
-Message-ID: <78b75ea3-3a7c-103c-ee00-a9c6c41bcd9c@digikod.net>
-Date:   Fri, 8 Nov 2019 16:39:55 +0100
-User-Agent: 
+        Mon, 11 Nov 2019 12:56:19 -0500
+Received: by mail-pg1-f196.google.com with SMTP id k13so9912942pgh.3
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Nov 2019 09:56:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=44TDHe9RfT98Q3zYHwAvTRATWM0VKLfWTcrUrfztb9c=;
+        b=SLvIW861Kz0uVoPbdC/7b4bkEHOzyOSzotLaBiFFZ+kt4HXGfoQEVw53aKyRDwLIFD
+         cWwHJDFRK72F8gG20A9wBJUqd3dy4RJbbkTQVqiNkSQTZdZCjX/muu1O4cIDXMfwnEfH
+         t1OIlzgMElFtbfh6/Q/pTh6lDbYzJJUIDFSrw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=44TDHe9RfT98Q3zYHwAvTRATWM0VKLfWTcrUrfztb9c=;
+        b=cNrCrHp75oOISD+dVs70ZMDCpyKERM3yWdQwLlIpBPyJcyiGDX1id2zrqmhxfZICjv
+         +c4Zc2y5f7GZcaEuoGz0ABPv+FAkBG6Jjpq6LznZasKWCE6DJMRYRWYAXIgkav0i/efv
+         XqpgeOa5VPJB3mn6KEz2HZs94FgJrz5tIZQlWVBvq6kk3L5Md9oDMMLDMu4h6TzL+zSB
+         EqIkGCI69OxAHWaA1gJWE+uj27d8IZmTE8TO9aBbxSjYSLmf5Xo68vdz1dsD7/duLtRo
+         WjBVi7zASs/XH6WCda5U7H5dfVI+qH2OWWeksyNOAxvROFcY713ZA1Hy4ilEGVFJjRHs
+         uKYw==
+X-Gm-Message-State: APjAAAUhwq96DpaEruOKwXYy3xHLJfLZ45lbvphRiN7d9PWOFb9hdkf6
+        vpxOZnq6SH7s9MGTrTFSjiSUKw==
+X-Google-Smtp-Source: APXvYqzIaAsWjgLCLNI/fYrORh1uY65wlevPmH1iBPKLHTFaA+duIIXXzKsuYaN0jCXgXEmROHwN0Q==
+X-Received: by 2002:a17:90a:2e87:: with SMTP id r7mr296808pjd.21.1573494978432;
+        Mon, 11 Nov 2019 09:56:18 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id i13sm14721396pfo.39.2019.11.11.09.56.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2019 09:56:17 -0800 (PST)
+Date:   Mon, 11 Nov 2019 09:56:16 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Zhang Xiaoxu <zhangxiaoxu5@huawei.com>, zhangxiaoxu@huawei.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        tyhicks@canonical.com, colin.king@canonical.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH] x86/mtrr: only administrator can read the configurations.
+Message-ID: <201911110934.AC5BA313@keescook>
+References: <20191105071714.27376-1-zhangxiaoxu5@huawei.com>
+ <201911081236.57A127A@keescook>
+ <20191108205031.GH4503@zn.tnic>
+ <201911081320.5D3CD1A4CD@keescook>
+ <20191108213307.GI4503@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <5d0f1dc5-5a99-bd6a-4acc-0cdcd062a0c9@iogearbox.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191108213307.GI4503@zn.tnic>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+[this wasn't being discussed on a list... CCing lkml]
 
-On 08/11/2019 15:34, Daniel Borkmann wrote:
-> On 11/8/19 3:08 PM, Mickaël Salaün wrote:
->> On 06/11/2019 22:45, KP Singh wrote:
->>> On 06-Nov 17:55, Mickaël Salaün wrote:
->>>> On 06/11/2019 11:06, KP Singh wrote:
->>>>> On 05-Nov 11:34, Alexei Starovoitov wrote:
->>>>>> On Tue, Nov 05, 2019 at 07:01:41PM +0100, Mickaël Salaün wrote:
->>>>>>> On 05/11/2019 18:18, Alexei Starovoitov wrote:
-> [...]
->>> * Use a single BPF program type; this is necessary for a key requirement
->>>    of KRSI, i.e. runtime instrumentation. The upcoming prototype should
->>>    illustrate how this works for KRSI - note that it’s possible to vary
->>>    the context types exposed by different hooks.
->>
->> Why a single BPF program type? Do you mean *attach* types? Landlock only
->> use one program type, but will use multiple attach types.
->>
->> Why do you think it is necessary for KRSI or for runtime instrumentation?
->>
->> If it is justified, it could be a dedicated program attach type (e.g.
->> BPF_LANDLOCK_INTROSPECTION).
->>
->> What is the advantage to have the possibility to vary the context types
->> over dedicated *typed* contexts? I don't see any advantages, but at
->> least one main drawback: to require runtime checks (when helpers use
->> this generic context) instead of load time checks (thanks to static type
->> checking of the context).
+On Fri, Nov 08, 2019 at 10:33:07PM +0100, Borislav Petkov wrote:
+> On Fri, Nov 08, 2019 at 01:22:50PM -0800, Kees Cook wrote:
+> > The correct pattern for these kinds of things is to do the checks at
+> > open time, yes. (Which is why I perked up at this patch when I noticed
+> > it.)
 > 
-> Lets take security_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
-> as one specific example here: the running kernel has its own internal
-> btf_vmlinux and therefore a complete description of itself. From verifier
-> side we can retrieve & introspect the security_sock_rcv_skb signatue
+> I would move it there but...
+> 
+> > Well, I'm not entirely sure what the issue here is. I saw the patch also
+> > changed the DAC permissions to 0600, so wouldn't that alone fix things?
+> > But the capable checks moved around... is there an "unprivileged" use of
+> > this file any more? If so, why keep at capable() checks and just use
+> > DAC?
+> 
+> ... yes, that would be even better because it would kill all the checks,
+> so less code.
+> 
+> How's that?
 
-OK, this is indeed the signature defined by the kernel API. What happen
-if this API change (e.g. if struct sock is replaced with a struct
-sock_meta)?
+Some recap from being accidentally offlist:
+
+- this patch should check capabilities at open time (or retain the
+  checks on the opener's permissions for later checks).
+
+- changing the DAC permissions might break something that expects to
+  read mtrr when not uid 0.
+
+- if we leave the DAC permissions alone and just move the capable check
+  to the opener, we should get the intent of the original patch. (i.e.
+  check against CAP_SYS_ADMIN not just the wider uid 0.)
+
+- *this may still break things* if userspace expects to be able to
+  read other parts of the file as non-uid-0 and non-CAP_SYS_ADMIN.
+  If *that* is the case, then we need to censor the contents using
+  the opener's permissions (as done in other /proc cases).
+
+I think the most cautious way forward is something like
+51d7b120418e ("/proc/iomem: only expose physical resource addresses to
+privileged users"). Untested (and should likely be expanded to know
+about read vs write for lockdown interaction):
 
 
-> and
-> thus know that the given BPF attachment point has struct sock and struct
-> sk_buff as input arguments
+diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+index 4d36dcc1cf87..7ccc3e290338 100644
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -34,6 +34,11 @@ const char *mtrr_attrib_to_str(int x)
+ 
+ #ifdef CONFIG_PROC_FS
+ 
++static bool has_mtrr_privs(struct file *file)
++{
++	return file_ns_capable(file, &init_user_ns, CAP_SYS_ADMIN);
++}
++
+ static int
+ mtrr_file_add(unsigned long base, unsigned long size,
+ 	      unsigned int type, bool increment, struct file *file, int page)
+@@ -101,7 +106,7 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
+ 	int length;
+ 	size_t linelen;
+ 
+-	if (!capable(CAP_SYS_ADMIN))
++	if (!has_mtrr_privs(file))
+ 		return -EPERM;
+ 
+ 	memset(line, 0, LINE_SIZE);
+@@ -226,7 +231,7 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_ADD_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!has_mtrr_privs(file))
+ 			return -EPERM;
+ 		err =
+ 		    mtrr_file_add(sentry.base, sentry.size, sentry.type, true,
+@@ -236,7 +241,7 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_SET_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!has_mtrr_privs(file))
+ 			return -EPERM;
+ 		err = mtrr_add(sentry.base, sentry.size, sentry.type, false);
+ 		break;
+@@ -244,7 +249,7 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_DEL_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!has_mtrr_privs(file))
+ 			return -EPERM;
+ 		err = mtrr_file_del(sentry.base, sentry.size, file, 0);
+ 		break;
+@@ -252,7 +257,7 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_KILL_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!has_mtrr_privs(file))
+ 			return -EPERM;
+ 		err = mtrr_del(-1, sentry.base, sentry.size);
+ 		break;
+@@ -279,7 +284,7 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_ADD_PAGE_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!has_mtrr_privs(file))
+ 			return -EPERM;
+ 		err =
+ 		    mtrr_file_add(sentry.base, sentry.size, sentry.type, true,
+@@ -289,7 +294,7 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_SET_PAGE_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!has_mtrr_privs(file))
+ 			return -EPERM;
+ 		err =
+ 		    mtrr_add_page(sentry.base, sentry.size, sentry.type, false);
+@@ -298,7 +303,7 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_DEL_PAGE_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!has_mtrr_privs(file))
+ 			return -EPERM;
+ 		err = mtrr_file_del(sentry.base, sentry.size, file, 1);
+ 		break;
+@@ -306,7 +311,7 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_KILL_PAGE_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!has_mtrr_privs(file))
+ 			return -EPERM;
+ 		err = mtrr_del_page(-1, sentry.base, sentry.size);
+ 		break;
+@@ -401,6 +406,7 @@ static int mtrr_seq_show(struct seq_file *seq, void *offset)
+ 	int i, max;
+ 	mtrr_type type;
+ 	unsigned long base, size;
++	int usage;
+ 
+ 	max = num_var_ranges;
+ 	for (i = 0; i < max; i++) {
+@@ -409,6 +415,15 @@ static int mtrr_seq_show(struct seq_file *seq, void *offset)
+ 			mtrr_usage_table[i] = 0;
+ 			continue;
+ 		}
++		usage = mtrr_usage_table[i];
++		type_str = mtrr_attrib_to_str(type);
++
++		if (!has_mtrr_privs(seq->file)) {
++			base = 0;
++			size = 0;
++			usage = 0;
++			type_str = "?";
++		}
+ 		if (size < (0x100000 >> PAGE_SHIFT)) {
+ 			/* less than 1MB */
+ 			factor = 'K';
+@@ -420,8 +435,7 @@ static int mtrr_seq_show(struct seq_file *seq, void *offset)
+ 		/* Base can be > 32bit */
+ 		seq_printf(seq, "reg%02i: base=0x%06lx000 (%5luMB), size=%5lu%cB, count=%d: %s\n",
+ 			   i, base, base >> (20 - PAGE_SHIFT),
+-			   size, factor,
+-			   mtrr_usage_table[i], mtrr_attrib_to_str(type));
++			   size, factor, usage, type_str);
+ 	}
+ 	return 0;
+ }
 
-How does the verifier know a given BPF attachment point for a program
-without relying on its type or attach type? How and where is registered
-this mapping?
 
-To say it another way, if there is no way to differentiate two program
-targeting different hook, I don't understand how the verifier could
-check if a given program can legitimately call a helper which could read
-the tracer and tracee fields (legitimate for a ptrace hook), whereas
-this program may be attached to a sock_rcv_skb hook (and there is no way
-to know that).
+If we want to risk breaking stuff, here is the "just check capable at open time" patch:
+
+diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+index 4d36dcc1cf87..a65e5c6686d0 100644
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -101,9 +101,6 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
+ 	int length;
+ 	size_t linelen;
+ 
+-	if (!capable(CAP_SYS_ADMIN))
+-		return -EPERM;
+-
+ 	memset(line, 0, LINE_SIZE);
+ 
+ 	len = min_t(size_t, len, LINE_SIZE - 1);
+@@ -226,8 +223,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_ADD_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
+-			return -EPERM;
+ 		err =
+ 		    mtrr_file_add(sentry.base, sentry.size, sentry.type, true,
+ 				  file, 0);
+@@ -236,24 +231,18 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_SET_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
+-			return -EPERM;
+ 		err = mtrr_add(sentry.base, sentry.size, sentry.type, false);
+ 		break;
+ 	case MTRRIOC_DEL_ENTRY:
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_DEL_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
+-			return -EPERM;
+ 		err = mtrr_file_del(sentry.base, sentry.size, file, 0);
+ 		break;
+ 	case MTRRIOC_KILL_ENTRY:
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_KILL_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
+-			return -EPERM;
+ 		err = mtrr_del(-1, sentry.base, sentry.size);
+ 		break;
+ 	case MTRRIOC_GET_ENTRY:
+@@ -279,8 +268,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_ADD_PAGE_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
+-			return -EPERM;
+ 		err =
+ 		    mtrr_file_add(sentry.base, sentry.size, sentry.type, true,
+ 				  file, 1);
+@@ -289,8 +276,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_SET_PAGE_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
+-			return -EPERM;
+ 		err =
+ 		    mtrr_add_page(sentry.base, sentry.size, sentry.type, false);
+ 		break;
+@@ -298,16 +283,12 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_DEL_PAGE_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
+-			return -EPERM;
+ 		err = mtrr_file_del(sentry.base, sentry.size, file, 1);
+ 		break;
+ 	case MTRRIOC_KILL_PAGE_ENTRY:
+ #ifdef CONFIG_COMPAT
+ 	case MTRRIOC32_KILL_PAGE_ENTRY:
+ #endif
+-		if (!capable(CAP_SYS_ADMIN))
+-			return -EPERM;
+ 		err = mtrr_del_page(-1, sentry.base, sentry.size);
+ 		break;
+ 	case MTRRIOC_GET_PAGE_ENTRY:
+@@ -381,6 +362,9 @@ static int mtrr_open(struct inode *inode, struct file *file)
+ 		return -EIO;
+ 	if (!mtrr_if->get)
+ 		return -ENXIO;
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
+ 	return single_open(file, mtrr_seq_show, NULL);
+ }
+ 
 
 
-> which can then be accessed generically by the
-> prog in order to allow sk_filter_trim_cap() to pass or to drop the skb.
-> The same generic approach can be done for many of the other lsm hooks, so
-> single program type would be enough there and context is derived
-> automatically,
-> no dedicated extra context per attach type would be needed and no runtime
-> checks as you mentioned above since its still all asserted at verification
-> time.
+Thoughts?
 
-I mentioned runtime check because I though a helper should handle the
-case when it doesn't make sense for a program attached to a specific
-point/hook (e.g. ptrace) to use an input argument (e.g. sk) defined for
-another point/hook (e.g. sock_rcv_skb).
-
+-Kees
 
 > 
-> Thanks,
-> Daniel
+> ---
+> From: Zhang Xiaoxu <zhangxiaoxu5@huawei.com>
+> Date: Tue, 5 Nov 2019 15:17:14 +0800
+> Subject: [PATCH] x86/mtrr: Restrict MTRR ranges dumping and ioctl()
 > 
+> /proc/mtrr dumps the physical memory ranges of the variable range MTRRs
+> along with their respective sizes and caching attributes. Since that
+> file is world-readable, it presents a small information leak about the
+> physical address ranges of a system which should be blocked.
+> 
+> Make that file root-only and get rid of all the capability checks as
+> they're not needed anymore.
+> 
+>  [ bp: rewrite commit message. ]
+> 
+> Suggested-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Zhang Xiaoxu <zhangxiaoxu5@huawei.com>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Colin Ian King <colin.king@canonical.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Tyler Hicks <tyhicks@canonical.com>
+> Cc: x86-ml <x86@kernel.org>
+> Cc: zhangxiaoxu@huawei.com
+> Link: https://lkml.kernel.org/r/20191105071714.27376-1-zhangxiaoxu5@huawei.com
+> ---
+>  arch/x86/kernel/cpu/mtrr/if.c | 18 +-----------------
+>  1 file changed, 1 insertion(+), 17 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+> index 4d36dcc1cf87..7ff865f2b150 100644
+> --- a/arch/x86/kernel/cpu/mtrr/if.c
+> +++ b/arch/x86/kernel/cpu/mtrr/if.c
+> @@ -226,8 +226,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+>  #ifdef CONFIG_COMPAT
+>  	case MTRRIOC32_ADD_ENTRY:
+>  #endif
+> -		if (!capable(CAP_SYS_ADMIN))
+> -			return -EPERM;
+>  		err =
+>  		    mtrr_file_add(sentry.base, sentry.size, sentry.type, true,
+>  				  file, 0);
+> @@ -236,24 +234,18 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+>  #ifdef CONFIG_COMPAT
+>  	case MTRRIOC32_SET_ENTRY:
+>  #endif
+> -		if (!capable(CAP_SYS_ADMIN))
+> -			return -EPERM;
+>  		err = mtrr_add(sentry.base, sentry.size, sentry.type, false);
+>  		break;
+>  	case MTRRIOC_DEL_ENTRY:
+>  #ifdef CONFIG_COMPAT
+>  	case MTRRIOC32_DEL_ENTRY:
+>  #endif
+> -		if (!capable(CAP_SYS_ADMIN))
+> -			return -EPERM;
+>  		err = mtrr_file_del(sentry.base, sentry.size, file, 0);
+>  		break;
+>  	case MTRRIOC_KILL_ENTRY:
+>  #ifdef CONFIG_COMPAT
+>  	case MTRRIOC32_KILL_ENTRY:
+>  #endif
+> -		if (!capable(CAP_SYS_ADMIN))
+> -			return -EPERM;
+>  		err = mtrr_del(-1, sentry.base, sentry.size);
+>  		break;
+>  	case MTRRIOC_GET_ENTRY:
+> @@ -279,8 +271,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+>  #ifdef CONFIG_COMPAT
+>  	case MTRRIOC32_ADD_PAGE_ENTRY:
+>  #endif
+> -		if (!capable(CAP_SYS_ADMIN))
+> -			return -EPERM;
+>  		err =
+>  		    mtrr_file_add(sentry.base, sentry.size, sentry.type, true,
+>  				  file, 1);
+> @@ -289,8 +279,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+>  #ifdef CONFIG_COMPAT
+>  	case MTRRIOC32_SET_PAGE_ENTRY:
+>  #endif
+> -		if (!capable(CAP_SYS_ADMIN))
+> -			return -EPERM;
+>  		err =
+>  		    mtrr_add_page(sentry.base, sentry.size, sentry.type, false);
+>  		break;
+> @@ -298,16 +286,12 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+>  #ifdef CONFIG_COMPAT
+>  	case MTRRIOC32_DEL_PAGE_ENTRY:
+>  #endif
+> -		if (!capable(CAP_SYS_ADMIN))
+> -			return -EPERM;
+>  		err = mtrr_file_del(sentry.base, sentry.size, file, 1);
+>  		break;
+>  	case MTRRIOC_KILL_PAGE_ENTRY:
+>  #ifdef CONFIG_COMPAT
+>  	case MTRRIOC32_KILL_PAGE_ENTRY:
+>  #endif
+> -		if (!capable(CAP_SYS_ADMIN))
+> -			return -EPERM;
+>  		err = mtrr_del_page(-1, sentry.base, sentry.size);
+>  		break;
+>  	case MTRRIOC_GET_PAGE_ENTRY:
+> @@ -436,7 +420,7 @@ static int __init mtrr_if_init(void)
+>  	    (!cpu_has(c, X86_FEATURE_CENTAUR_MCR)))
+>  		return -ENODEV;
+>  
+> -	proc_create("mtrr", S_IWUSR | S_IRUGO, NULL, &mtrr_fops);
+> +	proc_create("mtrr", 0600, NULL, &mtrr_fops);
+>  	return 0;
+>  }
+>  arch_initcall(mtrr_if_init);
+> -- 
+> 2.21.0
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 
-Thanks for this explanation Daniel.
+-- 
+Kees Cook
