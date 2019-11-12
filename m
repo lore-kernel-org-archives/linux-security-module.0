@@ -2,123 +2,122 @@ Return-Path: <SRS0=Bogo=ZE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DD4C43331
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 18:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C91C43331
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 18:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DA1F2067B
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 18:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C346F20818
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 18:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbfKLSHo (ORCPT
+        id S1726965AbfKLSkO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Nov 2019 13:07:44 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51616 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726718AbfKLSHn (ORCPT
+        Tue, 12 Nov 2019 13:40:14 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:55152 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbfKLSkN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Nov 2019 13:07:43 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xACHx6km139264
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2019 13:07:40 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7yaceauq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2019 13:07:17 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 12 Nov 2019 18:06:09 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 12 Nov 2019 18:06:05 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xACI65me49610782
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Nov 2019 18:06:05 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F0597AE04D;
-        Tue, 12 Nov 2019 18:06:04 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C984AAE045;
-        Tue, 12 Nov 2019 18:06:03 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.194.252])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 12 Nov 2019 18:06:03 +0000 (GMT)
-Subject: Re: [PATCH v5 04/10] IMA: Updated IMA policy functions to return
- keyrings option read from the policy
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 12 Nov 2019 13:06:03 -0500
-In-Reply-To: <407b93e1-f474-7b01-816f-62b45690f417@linux.microsoft.com>
-References: <20191111193303.12781-1-nramas@linux.microsoft.com>
-         <20191111193303.12781-5-nramas@linux.microsoft.com>
-         <1573578316.17949.43.camel@linux.ibm.com>
-         <407b93e1-f474-7b01-816f-62b45690f417@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19111218-0016-0000-0000-000002C31290
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19111218-0017-0000-0000-00003324A9F2
-Message-Id: <1573581963.17949.63.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911120154
+        Tue, 12 Nov 2019 13:40:13 -0500
+Received: by mail-il1-f199.google.com with SMTP id t67so20694924ill.21
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2019 10:40:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=71kVpgTR6WVhVliHWkFE/QB/m1atQ1vryoeja6RcvFc=;
+        b=Ly69eYhS70rcDIMEEJHyKTebtj7AKcLL6kWLiPvuTz+s1rb639aIrOTksQdaniCWe1
+         xOzJIx3Yf0weg9qsDxwUPpV6UQ7LDwTRadA+sWecbGlhElqFmayMkZGrR3SUaeof78oP
+         MiChH1tPNsntZQ0VD0ATtyItkeZL2dGhgww+l3ERgrjG6dAIrsqJAJPJWwQUTmnaakrJ
+         ERWj68xKZXE7Qcsnl4se7LSVPxkq2+xVMLbl2UOE+B6eimKFYRbzw98EQM+uvsz3rzoz
+         xukmSFGWMlFg8Tp/XtNiRgBAIDMRP+le8/+OwhraF3ZpeRY84kVQb8CiPQ49rxJoMuZI
+         jq/w==
+X-Gm-Message-State: APjAAAWpYtf61ZPZvvfShD4+SWCLLHAvYr0TOQGR7ETctvwPDGzh5laZ
+        WPy4L5udmX0fyjjgB0ZVOKSSUFluktHl4GhKj3TjS/xLsTRY
+X-Google-Smtp-Source: APXvYqy/gJew53dJxbhfA6YHD2edNQn0csOfsR6FbmRM3+R8fDllklCqbjxJ6M9wWyhhmi9UI+RKuSxXFqwZ04g9S0nRlWPP55uQ
+MIME-Version: 1.0
+X-Received: by 2002:a6b:b987:: with SMTP id j129mr32077476iof.105.1573584011279;
+ Tue, 12 Nov 2019 10:40:11 -0800 (PST)
+Date:   Tue, 12 Nov 2019 10:40:11 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000004471505972a9432@google.com>
+Subject: WARNING in aa_sock_msg_perm (2)
+From:   syzbot <syzbot+e3b328542d4adc02a975@syzkaller.appspotmail.com>
+To:     jmorris@namei.org, john.johansen@canonical.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2019-11-12 at 09:47 -0800, Lakshmi Ramasubramanian wrote:
-> On 11/12/2019 9:05 AM, Mimi Zohar wrote:
-> 
-> >>   int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
-> >>   		     enum ima_hooks func, int mask, int flags, int *pcr,
-> >> -		     struct ima_template_desc **template_desc)
-> >> +		     struct ima_template_desc **template_desc,
-> >> +		     char **keyrings)
-> >>   {
-> >>   	struct ima_rule_entry *entry;
-> >>   	int action = 0, actmask = flags | (flags << 1);
-> >> @@ -527,6 +529,9 @@ int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
-> >>   		if ((pcr) && (entry->flags & IMA_PCR))
-> >>   			*pcr = entry->pcr;
-> >>   
-> >> +		if ((keyrings) && (entry->flags & IMA_KEYRINGS))
-> >> +			*keyrings = entry->keyrings;
-> > 
-> > ima_match_rules() determines whether the rule is in policy or not. It
-> > returns true on rule match, false on failure.  There's no need to
-> > return the list of keyrings.
-> 
-> But the above code change is in ima_match_policy() - not in 
-> ima_match_rules() function.
-> 
-> ima_match_rules() function is updated in Patch #1 -
-> [PATCH v5 01/10] IMA: Added KEYRING_CHECK func in IMA policy to measure keys
-> 
-> I've updated that function to check if func is "KEYRING_CHECK" and 
-> return true\false as appropriate.
-> 
-> Am I missing something?
+Hello,
 
-The first patch adds basic support for the new "func".  This allows
-measuring all keys.  ima_match_rules() then needs to be updated in the
-patch that adds the "keyrings=" or "keyring=" support to limit it to a
-specific keyring.
+syzbot found the following crash on:
 
-Mimi
+HEAD commit:    31f4f5b4 Linux 5.4-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12887074e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=83de638b2a862933
+dashboard link: https://syzkaller.appspot.com/bug?extid=e3b328542d4adc02a975
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e3b328542d4adc02a975@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+AppArmor WARN aa_sock_msg_perm: ((!sock)):
+WARNING: CPU: 0 PID: 12781 at security/apparmor/lsm.c:920  
+aa_sock_msg_perm.isra.0+0xdd/0x170 security/apparmor/lsm.c:920
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 12781 Comm: kworker/0:1 Not tainted 5.4.0-rc7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: krxrpcd rxrpc_peer_keepalive_worker
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  panic+0x2e3/0x75c kernel/panic.c:221
+  __warn.cold+0x2f/0x35 kernel/panic.c:582
+  report_bug+0x289/0x300 lib/bug.c:195
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+RIP: 0010:aa_sock_msg_perm.isra.0+0xdd/0x170 security/apparmor/lsm.c:920
+Code: 89 ef e8 26 e4 02 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 16 3a 60 fe  
+48 c7 c6 e0 39 e1 87 48 c7 c7 e0 24 e1 87 e8 4b 6c 31 fe <0f> 0b e9 43 ff  
+ff ff e8 f7 39 60 fe 48 c7 c6 e0 39 e1 87 48 c7 c7
+RSP: 0018:ffff88809c3d79b0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815cc846 RDI: ffffed101387af28
+RBP: ffff88809c3d79d8 R08: ffff88805b02c600 R09: fffffbfff14efd54
+R10: fffffbfff14efd53 R11: ffffffff8a77ea9f R12: ffff88809c3d7b20
+R13: ffffffff87e12920 R14: 0000000000000002 R15: 000000000000001d
+  apparmor_socket_sendmsg+0x2a/0x30 security/apparmor/lsm.c:936
+  security_socket_sendmsg+0x77/0xc0 security/security.c:2013
+  sock_sendmsg+0x45/0x130 net/socket.c:654
+  kernel_sendmsg+0x44/0x50 net/socket.c:677
+  rxrpc_send_keepalive+0x1ff/0x940 net/rxrpc/output.c:655
+  rxrpc_peer_keepalive_dispatch net/rxrpc/peer_event.c:376 [inline]
+  rxrpc_peer_keepalive_worker+0x7be/0xd02 net/rxrpc/peer_event.c:437
+  process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
