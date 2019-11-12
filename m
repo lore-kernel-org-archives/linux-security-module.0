@@ -1,126 +1,274 @@
-Return-Path: <SRS0=Bogo=ZE=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=Z0rp=ZF=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2317AC17440
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 22:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B807C17440
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Nov 2019 00:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2D3721E6F
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 22:35:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C1E12084E
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Nov 2019 00:00:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SabtPLLv"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sxFM3d7k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbfKLWfq (ORCPT
+        id S1726936AbfKMAAn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Nov 2019 17:35:46 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38810 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbfKLWfq (ORCPT
+        Tue, 12 Nov 2019 19:00:43 -0500
+Received: from sonic306-28.consmr.mail.ne1.yahoo.com ([66.163.189.90]:33520
+        "EHLO sonic306-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726923AbfKMAAn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Nov 2019 17:35:46 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c13so116168pfp.5
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2019 14:35:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nOqv3GVC/sOv/psVpK3OUgRa5dRR0J6o4196+nUyO4E=;
-        b=SabtPLLvxVL9plXPPEfVE1Efsg2zBLJfYRr7wAEkHn55lx5jRAeqdMQJbdtO+3deLX
-         5NfmJmBWAkk++uIcY9vLg2ooc8/x6xvfjXxw7uaeoQkSxKTYBdIIooc9+7YLRCclFubM
-         xmEJ7LhzaR7uIXEsWi4NR7+CA+sZAuY6uAQX8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nOqv3GVC/sOv/psVpK3OUgRa5dRR0J6o4196+nUyO4E=;
-        b=US6VxDS0envzE8sk8e5AvoHYh65bUmA/40MLVSrDgWcDUUaQ+oAH6KVp5lEv2BKPGY
-         /bcijHhBWyyAoMNh3yZmAi5fT7q4pRjDKKwKajOH9QOW88hEm+UddtWeHapi/jERsTaH
-         mIJ9QtAKekoD6gsOx6A1dylYE3ObmSui8hbkqLajjmofMw9bBkPU7Icv5IOJeP3WHbCg
-         6wb8MrhOr5Kb0BYLUYuH8s99lxq+JfTgXbZj9c6Yk5SKpPnu/AIG4EGb8RXRBDsUY2JB
-         CwUSihluYRW34USeNni3HcXacXD2BmvmDI7ih6CBcj2HW3bbjxYHXTxgqNLeYdAALsCX
-         AcdA==
-X-Gm-Message-State: APjAAAVRpFAt/wyPW5WTxb2KsXrmXK3UI5iokl2+/adBZDvFsjXGYkE8
-        Hepi+03ByaOpt2VwQiv8rCUSAg==
-X-Google-Smtp-Source: APXvYqzSms2sequeDq1u4xwoS0zPQjGQZ/GqRMNLwcDTdxHXQyCuGIXshc0sMv6JwPzxK3rplp2NEw==
-X-Received: by 2002:a17:90a:1a41:: with SMTP id 1mr281490pjl.28.1573598145086;
-        Tue, 12 Nov 2019 14:35:45 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y36sm14678pgk.66.2019.11.12.14.35.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 14:35:44 -0800 (PST)
-Date:   Tue, 12 Nov 2019 14:35:43 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Zhang Xiaoxu <zhangxiaoxu5@huawei.com>, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, tyhicks@canonical.com,
-        colin.king@canonical.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH] x86/mtrr: only administrator can read the configurations.
-Message-ID: <201911121434.FF26FF3FE@keescook>
-References: <20191105071714.27376-1-zhangxiaoxu5@huawei.com>
- <201911081236.57A127A@keescook>
- <20191108205031.GH4503@zn.tnic>
- <201911081320.5D3CD1A4CD@keescook>
- <20191108213307.GI4503@zn.tnic>
- <201911110934.AC5BA313@keescook>
- <20191112174956.GB32336@zn.tnic>
+        Tue, 12 Nov 2019 19:00:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1573603240; bh=YzXnW5/L6igDxgI2K1OLnntyttuTMtL4IbcD3npVEWM=; h=From:To:Cc:Subject:Date:References:From:Subject; b=sxFM3d7kNKVLqm4yGm+eIH7JzKUuiWsNGnOp3yYSelhuvXCD4U5AP5YW4OcB7tXbbDBZMeuJlkn5tuDiEnho0g2MeN0QpeExNaHC413wuC/qXpp0TFRpiYFJET8e2WKD3kdmQ/EJ1sLmv0L40yfdVO9Qyvzv2RCZZQPbdNaAHTIb0+YMa2qup5Wu0QsNaTUqDdCTmHZXpnDUOsbYWXVV5lyUaACXdwHa0gpIVv7UU4lyZyvgs8tfX1ISb3sW3TtMlxS3EHfCrai/2EXXHKeIq4StjON63u5abzezbHwoiBDV7jk0WhhQXbUL0bqZSjxNYhnOqwzaIKu4eg2Bdi9PBw==
+X-YMail-OSG: bnTL4aQVM1nlVdT6f32XyQ1PbqYG1gedN2y5pZBFRu3gw0q4Hdo7jI5w1D.ZHay
+ f0oKQBWIc2cCKBdQs40aq9jpjC3blHqROtGhG5xKHUIKVbnohluCtmZYjs8FWtf8IOheSbJr11lB
+ _zqQgU4A9GKxptkCJPZ9lz7rhfOJcF6WrT5V4g77.TTtEYNJW_I8AUTom7NW9.OnQELM1qKTTxsb
+ KRDgXhuAi95gj0aVeBsEy8Ecy1gRjs0PxmkvUUet6MefkVZ8S3szg_1DZ.9Gk7sdYhTnIzHeSpiT
+ S7BjPSuxeWlbOla.6VisoMPmhm2GwiPIEuEzip0BFrcPvXKN5dJfam4WoizdPd0En8nr119a2o_a
+ Tv52tR7woi2fhrWZ9u3KTKbKLWUV0NhTsA.HCDKWxGDMftIuHXpttnFjttl1_7Uf7txjHb.9Fi2o
+ LzfvwdcI9oORFGsb3ZAy1pGD4m9WMHxZS.MjWc14OXf7PfoRoTd1hC8IvF7zucTgPF3tigxXk0Kq
+ ZRbd9xbNjXHwDng4o7mBrs3_AUabrGsGYcRowOd2IH9j8TAMxSsyTtR5llc06kcu3NsiGzk7MOwB
+ W4J95acg_fInbhN9Hz1kmqI2ciLaEp5zoQI81l64sVwfv3ENkrVLeRcHSlvqvDa.sQeXc9WzS3Ry
+ rS2runRFZ.O.i7QTOEAQPmCpXXCLDZ2CRjji3G.iDkZ3CBVN9PFVaNwC86SIGFKXEWHT7aV5f1Ju
+ ORl616JWV0dhW7VqABdKEMWhIx8O4cUT0PUM76CHBgmLIbiWIF7xR._a8mpqMcj4rME14E49WWJa
+ K7X4EgidV34RoDTNRM0dxCV7UrB39gsoykOdmnFXxF9vDzrI7PcLIDKERqvr2pzeRzdajrRzplYI
+ yIHokoc8R30M30r4mKXDzVbJr0c2lwjws06r738LMfVIAMgyy9e.CVJwlfOQIxfKudLat5mXi3kb
+ nEH9eRK0CdfqnbRu06GCvoHS6SrectCwTHeXv603dpnlH7qEXUHzJoKZwh85BolkLkDvsyzkwtoI
+ jhzCaraYyDcuZzvj2snB5.Z_5RZGxKv7OkDsnOKRRtyVPuTxjCvIyTu5Z4I2BcIHEiWwyxbkloK5
+ lz0obFAk8Jy7JZxK.jkZVDWL4BajLoz7eMd_7ml8w8_WyCsoZuZCXxw9jUT8.l_g10jgWhAZArhu
+ K7V06ZvvLRxBES6L.PIieWwR_aZHu.iIkYwotLeZAdVH03PGlE9uionHfXM3KcwETooQqXqLzHcU
+ RAy3EBwXiMNOjJ5C_0SYMnyEGqr5f6ox_g4dyRQ3NyVkKhDE3JGjyR3n2Q52WYZw7DnSrbW4pnLG
+ gFHRrEmrGbsb18KbGRpFTVO0Kxj.GgF0uiZBfPq.DaiLEaT_6X5YU1V.Wfj8hkiAzPxSU_foBH9J
+ b9rSSwmFvtiWuFFVZxC6W
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Nov 2019 00:00:40 +0000
+Received: by smtp425.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID dc9164e8ec7666abe13209391dbbba67;
+          Wed, 13 Nov 2019 00:00:35 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     casey@schaufler-ca.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com, sds@tycho.nsa.gov
+Subject: [PATCH v10 00/25] LSM: Module stacking for AppArmor
+Date:   Tue, 12 Nov 2019 15:59:57 -0800
+Message-Id: <20191113000022.5300-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112174956.GB32336@zn.tnic>
+Content-Transfer-Encoding: 8bit
+References: <20191113000022.5300-1-casey.ref@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 12, 2019 at 06:49:56PM +0100, Borislav Petkov wrote:
-> On Mon, Nov 11, 2019 at 09:56:16AM -0800, Kees Cook wrote:
-> > Some recap from being accidentally offlist:
-> > 
-> > - this patch should check capabilities at open time (or retain the
-> >   checks on the opener's permissions for later checks).
-> > 
-> > - changing the DAC permissions might break something that expects to
-> >   read mtrr when not uid 0.
-> > 
-> > - if we leave the DAC permissions alone and just move the capable check
-> >   to the opener, we should get the intent of the original patch. (i.e.
-> >   check against CAP_SYS_ADMIN not just the wider uid 0.)
-> > 
-> > - *this may still break things* if userspace expects to be able to
-> >   read other parts of the file as non-uid-0 and non-CAP_SYS_ADMIN.
-> >   If *that* is the case, then we need to censor the contents using
-> >   the opener's permissions (as done in other /proc cases).
-> > 
-> > I think the most cautious way forward is something like
-> > 51d7b120418e ("/proc/iomem: only expose physical resource addresses to
-> > privileged users"). Untested (and should likely be expanded to know
-> > about read vs write for lockdown interaction):
-> 
-> I'm back'n'forth on this.
-> 
-> So tglx and I agree that it doesn't make a whole lotta sense for
-> non-privileged luserspace to be able to read /proc/mtrr because it is a
-> small leak and normal users shouldn't care about the caching attributes
-> of memory regions in the first place.
-> 
-> So maybe we should do the second variant.
-> 
-> But then we're not supposed to break luserspace.
-> 
-> But then we can revert it if we do...
-> 
-> Ugh.
+This patchset provides the changes required for
+the AppArmor security module to stack safely with any other.
 
-Shall I send a patch for just moving the capable() checks into open()
-and if someone yells we switch to the other option on the assumption
-that then we'll have a real-world case we can test the other solution
-against?
+v10: Ask the security modules if the display can be changed.
 
--- 
-Kees Cook
+v9: There is no version 9
+
+v8: Incorporate feedback from v7
+    - Minor clean-up in display value management
+    - refactor "compound" context creation to use a common
+      append_ctx() function.
+
+v7: Incorporate feedback from v6
+    - Make setting the display a privileged operation. The
+      availability of compound contexts reduces the need for
+      setting the display.
+
+v6: Incorporate feedback from v5
+    - Add subj_<lsm>= and obj_<lsm>= fields to audit records
+    - Add /proc/.../attr/context to get the full context in
+      lsmname\0value\0... format as suggested by Simon McVittie
+    - Add SO_PEERCONTEXT for getsockopt() to get the full context
+      in the same format, also suggested by Simon McVittie.
+    - Add /sys/kernel/security/lsm_display_default to provide
+      the display default value.
+
+v5: Incorporate feedback from v4
+    - Initialize the lsmcontext in security_secid_to_secctx()
+    - Clear the lsmcontext in all security_release_secctx() cases
+    - Don't use the "display" on strictly internal context
+      interfaces.
+    - The SELinux binder hooks check for cases where the context
+      "display" isn't compatible with SELinux.
+
+v4: Incorporate feedback from v3
+    - Mark new lsm_<blob>_alloc functions static
+    - Replace the lsm and slot fields of the security_hook_list
+      with a pointer to a LSM allocated lsm_id structure. The
+      LSM identifies if it needs a slot explicitly. Use the
+      lsm_id rather than make security_add_hooks return the
+      slot value.
+    - Validate slot values used in security.c
+    - Reworked the "display" process attribute handling so that
+      it works right and doesn't use goofy list processing.
+    - fix display value check in dentry_init_security
+    - Replace audit_log of secids with '?' instead of deleting
+      the audit log
+
+v3: Incorporate feedback from v2
+    - Make lsmblob parameter and variable names more
+      meaningful, changing "le" and "l" to "blob".
+    - Improve consistency of constant naming.
+    - Do more sanity checking during LSM initialization.
+    - Be a bit clearer about what is temporary scaffolding.
+    - Rather than clutter security_getpeersec_dgram with
+      otherwise unnecessary checks remove the apparmor
+      stub, which does nothing useful.
+
+Patche 0001 moves management of the sock security blob from the individual
+modules to the infrastructure.
+
+Patches 0002-0012 replace system use of a "secid" with
+a structure "lsmblob" containing information from the
+security modules to be held and reused later. At this
+point lsmblob contains an array of u32 secids, one "slot"
+for each of the security modules compiled into the
+kernel that used secids. A "slot" is allocated when
+a security module requests one.
+The infrastructure is changed to use the slot number
+to pass the correct secid to or from the security module
+hooks.
+
+It is important that the lsmblob be a fixed size entity
+that does not have to be allocated. Several of the places
+where it is used would have performance and/or locking
+issues with dynamic allocation.
+
+Patch 0013 provides a mechanism for a process to
+identify which security module's hooks should be used
+when displaying or converting a security context string.
+A new interface /proc/.../attr/display contains the name
+of the security module to show. Reading from this file
+will present the name of the module, while writing to
+it will set the value. Only names of active security
+modules are accepted. Internally, the name is translated
+to the appropriate "slot" number for the module which
+is then stored in the task security blob. Setting the
+display requires that all modules using the /proc interfaces
+allow the transition.
+
+Patch 0014 Starts the process of changing how a security
+context is represented. Since it is possible for a
+security context to have been generated by more than one
+security module it is now necessary to note which module
+created a security context so that the correct "release"
+hook can be called. There are several places where the
+module that created a security context cannot be inferred.
+
+This is achieved by introducing a "lsmcontext" structure
+which contains the context string, its length and the
+"slot" number of the security module that created it.
+The security_release_secctx() interface is changed,
+replacing the (string,len) pointer pair with a lsmcontext
+pointer.
+
+Patches 0015-0017 convert the security interfaces from
+(string,len) pointer pairs to a lsmcontext pointer.
+The slot number identifying the creating module is
+added by the infrastructure. Where the security context
+is stored for extended periods the data type is changed.
+
+The Netlabel code is converted to save lsmblob structures
+instead of secids in Patches 0018-0019.
+
+Patch 0020 adds checks to the binder hooks which verify
+that if both ends of a transaction use the same "display".
+
+Patches 0021-0022 add addition data to the audit records
+to identify the LSM specific data for all active modules.
+
+Patches 0023-0024 add new interfaces for getting the
+compound security contexts.
+
+Finally, with all interference on the AppArmor hooks
+removed, Patch 0025 removes the exclusive bit from
+AppArmor. An unnecessary stub hook was also removed.
+
+The Ubuntu project is using an earlier version of
+this patchset in their distribution to enable stacking
+for containers.
+
+Performance measurements to date have the change
+within the "noise". The sockperf and dbench results
+are on the order of 0.2% to 0.8% difference, with
+better performance being as common as worse. The
+benchmarks were run with AppArmor and Smack on Ubuntu.
+
+https://github.com/cschaufler/lsm-stacking.git#stack-5.2-v10-apparmor
+
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ arch/alpha/include/uapi/asm/socket.h    |   1 +
+ arch/mips/include/uapi/asm/socket.h     |   1 +
+ arch/parisc/include/uapi/asm/socket.h   |   1 +
+ arch/sparc/include/uapi/asm/socket.h    |   1 +
+ drivers/android/binder.c                |  24 +-
+ fs/kernfs/dir.c                         |   5 +-
+ fs/kernfs/inode.c                       |  35 +-
+ fs/kernfs/kernfs-internal.h             |   3 +-
+ fs/nfs/nfs4proc.c                       |  22 +-
+ fs/nfsd/nfs4xdr.c                       |  20 +-
+ fs/proc/base.c                          |   2 +
+ include/linux/audit.h                   |   1 +
+ include/linux/cred.h                    |   3 +-
+ include/linux/lsm_hooks.h               |  37 +-
+ include/linux/security.h                | 175 ++++++++--
+ include/net/af_unix.h                   |   2 +-
+ include/net/netlabel.h                  |   8 +-
+ include/net/scm.h                       |  15 +-
+ include/uapi/asm-generic/socket.h       |   1 +
+ kernel/audit.c                          |  70 +++-
+ kernel/audit.h                          |   9 +-
+ kernel/audit_fsnotify.c                 |   1 +
+ kernel/auditfilter.c                    |  10 +-
+ kernel/auditsc.c                        | 129 ++++---
+ kernel/cred.c                           |  12 +-
+ net/core/sock.c                         |   7 +-
+ net/ipv4/cipso_ipv4.c                   |   6 +-
+ net/ipv4/ip_sockglue.c                  |  12 +-
+ net/netfilter/nf_conntrack_netlink.c    |  20 +-
+ net/netfilter/nf_conntrack_standalone.c |  11 +-
+ net/netfilter/nfnetlink_queue.c         |  26 +-
+ net/netfilter/nft_meta.c                |  13 +-
+ net/netfilter/xt_SECMARK.c              |   5 +-
+ net/netlabel/netlabel_kapi.c            |   6 +-
+ net/netlabel/netlabel_unlabeled.c       |  97 +++---
+ net/netlabel/netlabel_unlabeled.h       |   2 +-
+ net/netlabel/netlabel_user.c            |  13 +-
+ net/netlabel/netlabel_user.h            |   6 +-
+ net/unix/af_unix.c                      |   6 +-
+ net/xfrm/xfrm_policy.c                  |   2 +
+ net/xfrm/xfrm_state.c                   |   2 +
+ security/apparmor/include/apparmor.h    |   3 +-
+ security/apparmor/include/net.h         |   6 +-
+ security/apparmor/lsm.c                 | 121 ++++---
+ security/commoncap.c                    |   7 +-
+ security/integrity/ima/ima.h            |  14 +-
+ security/integrity/ima/ima_api.c        |  10 +-
+ security/integrity/ima/ima_appraise.c   |   6 +-
+ security/integrity/ima/ima_main.c       |  36 +-
+ security/integrity/ima/ima_policy.c     |  19 +-
+ security/integrity/integrity_audit.c    |   1 +
+ security/loadpin/loadpin.c              |   8 +-
+ security/safesetid/lsm.c                |   8 +-
+ security/security.c                     | 586 +++++++++++++++++++++++++++++---
+ security/selinux/hooks.c                | 109 +++---
+ security/selinux/include/classmap.h     |   2 +-
+ security/selinux/include/objsec.h       |   5 +
+ security/selinux/include/security.h     |   1 +
+ security/selinux/netlabel.c             |  25 +-
+ security/selinux/ss/services.c          |   4 +-
+ security/smack/smack.h                  |   6 +
+ security/smack/smack_lsm.c              | 124 ++++---
+ security/smack/smack_netfilter.c        |   8 +-
+ security/smack/smackfs.c                |  10 +-
+ security/tomoyo/tomoyo.c                |   8 +-
+ security/yama/yama_lsm.c                |   7 +-
+ 66 files changed, 1376 insertions(+), 580 deletions(-)
