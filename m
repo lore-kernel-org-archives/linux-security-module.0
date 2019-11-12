@@ -2,122 +2,115 @@ Return-Path: <SRS0=Bogo=ZE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C91C43331
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 18:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD65C43331
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 20:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C346F20818
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 18:40:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBF9421872
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 20:27:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfKLSkO (ORCPT
+        id S1726960AbfKLU1j (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Nov 2019 13:40:14 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:55152 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbfKLSkN (ORCPT
+        Tue, 12 Nov 2019 15:27:39 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15672 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726388AbfKLU1j (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Nov 2019 13:40:13 -0500
-Received: by mail-il1-f199.google.com with SMTP id t67so20694924ill.21
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2019 10:40:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=71kVpgTR6WVhVliHWkFE/QB/m1atQ1vryoeja6RcvFc=;
-        b=Ly69eYhS70rcDIMEEJHyKTebtj7AKcLL6kWLiPvuTz+s1rb639aIrOTksQdaniCWe1
-         xOzJIx3Yf0weg9qsDxwUPpV6UQ7LDwTRadA+sWecbGlhElqFmayMkZGrR3SUaeof78oP
-         MiChH1tPNsntZQ0VD0ATtyItkeZL2dGhgww+l3ERgrjG6dAIrsqJAJPJWwQUTmnaakrJ
-         ERWj68xKZXE7Qcsnl4se7LSVPxkq2+xVMLbl2UOE+B6eimKFYRbzw98EQM+uvsz3rzoz
-         xukmSFGWMlFg8Tp/XtNiRgBAIDMRP+le8/+OwhraF3ZpeRY84kVQb8CiPQ49rxJoMuZI
-         jq/w==
-X-Gm-Message-State: APjAAAWpYtf61ZPZvvfShD4+SWCLLHAvYr0TOQGR7ETctvwPDGzh5laZ
-        WPy4L5udmX0fyjjgB0ZVOKSSUFluktHl4GhKj3TjS/xLsTRY
-X-Google-Smtp-Source: APXvYqy/gJew53dJxbhfA6YHD2edNQn0csOfsR6FbmRM3+R8fDllklCqbjxJ6M9wWyhhmi9UI+RKuSxXFqwZ04g9S0nRlWPP55uQ
+        Tue, 12 Nov 2019 15:27:39 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xACKQcJY111776;
+        Tue, 12 Nov 2019 15:27:35 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w82qsa1k1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 15:27:34 -0500
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id xACKQmAE112557;
+        Tue, 12 Nov 2019 15:27:32 -0500
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w82qsa1jj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 15:27:32 -0500
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xACKQO0Y023436;
+        Tue, 12 Nov 2019 20:27:31 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma05wdc.us.ibm.com with ESMTP id 2w5n369w0t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 20:27:31 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xACKRUnQ48366078
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 20:27:30 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9DFA2136051;
+        Tue, 12 Nov 2019 20:27:30 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1FB0E136053;
+        Tue, 12 Nov 2019 20:27:29 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Nov 2019 20:27:29 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org, jsnitsel@redhat.com,
+        jarkko.sakkinen@linux.intel.com
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH] tpm_tis: Move setting of TPM_CHIP_FLAG_IRQ into tpm_tis_probe_irq_single
+Date:   Tue, 12 Nov 2019 15:27:25 -0500
+Message-Id: <20191112202725.3009814-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b987:: with SMTP id j129mr32077476iof.105.1573584011279;
- Tue, 12 Nov 2019 10:40:11 -0800 (PST)
-Date:   Tue, 12 Nov 2019 10:40:11 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000004471505972a9432@google.com>
-Subject: WARNING in aa_sock_msg_perm (2)
-From:   syzbot <syzbot+e3b328542d4adc02a975@syzkaller.appspotmail.com>
-To:     jmorris@namei.org, john.johansen@canonical.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911120174
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-syzbot found the following crash on:
+Move the setting of the TPM_CHIP_FLAG_IRQ for irq probing into
+tpm_tis_probe_irq_single before calling tpm_tis_gen_interrupt.
+This move handles error conditions better that may arise if anything
+before fails in tpm_tis_probe_irq_single.
 
-HEAD commit:    31f4f5b4 Linux 5.4-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12887074e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=83de638b2a862933
-dashboard link: https://syzkaller.appspot.com/bug?extid=e3b328542d4adc02a975
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e3b328542d4adc02a975@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-AppArmor WARN aa_sock_msg_perm: ((!sock)):
-WARNING: CPU: 0 PID: 12781 at security/apparmor/lsm.c:920  
-aa_sock_msg_perm.isra.0+0xdd/0x170 security/apparmor/lsm.c:920
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 12781 Comm: kworker/0:1 Not tainted 5.4.0-rc7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: krxrpcd rxrpc_peer_keepalive_worker
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  panic+0x2e3/0x75c kernel/panic.c:221
-  __warn.cold+0x2f/0x35 kernel/panic.c:582
-  report_bug+0x289/0x300 lib/bug.c:195
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:aa_sock_msg_perm.isra.0+0xdd/0x170 security/apparmor/lsm.c:920
-Code: 89 ef e8 26 e4 02 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 16 3a 60 fe  
-48 c7 c6 e0 39 e1 87 48 c7 c7 e0 24 e1 87 e8 4b 6c 31 fe <0f> 0b e9 43 ff  
-ff ff e8 f7 39 60 fe 48 c7 c6 e0 39 e1 87 48 c7 c7
-RSP: 0018:ffff88809c3d79b0 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815cc846 RDI: ffffed101387af28
-RBP: ffff88809c3d79d8 R08: ffff88805b02c600 R09: fffffbfff14efd54
-R10: fffffbfff14efd53 R11: ffffffff8a77ea9f R12: ffff88809c3d7b20
-R13: ffffffff87e12920 R14: 0000000000000002 R15: 000000000000001d
-  apparmor_socket_sendmsg+0x2a/0x30 security/apparmor/lsm.c:936
-  security_socket_sendmsg+0x77/0xc0 security/security.c:2013
-  sock_sendmsg+0x45/0x130 net/socket.c:654
-  kernel_sendmsg+0x44/0x50 net/socket.c:677
-  rxrpc_send_keepalive+0x1ff/0x940 net/rxrpc/output.c:655
-  rxrpc_peer_keepalive_dispatch net/rxrpc/peer_event.c:376 [inline]
-  rxrpc_peer_keepalive_worker+0x7be/0xd02 net/rxrpc/peer_event.c:437
-  process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
-  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Suggested-by: Jerry Snitselaar <jsnitsel@redhat.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/char/tpm/tpm_tis_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 8af2cee1a762..6b6605890c7d 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -790,6 +790,7 @@ static int tpm_tis_probe_irq_single(struct tpm_chip *chip, u32 intmask,
+ 		return rc;
+ 
+ 	priv->irq_tested = false;
++	chip->flags |= TPM_CHIP_FLAG_IRQ;
+ 
+ 	/* Generate an interrupt by having the core call through to
+ 	 * tpm_tis_send
+@@ -1060,7 +1061,6 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 		}
+ 
+ 		tpm_chip_start(chip);
+-		chip->flags |= TPM_CHIP_FLAG_IRQ;
+ 		if (irq) {
+ 			tpm_tis_probe_irq_single(chip, intmask, IRQF_SHARED,
+ 						 irq);
+-- 
+2.14.5
+
