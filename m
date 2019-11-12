@@ -2,92 +2,106 @@ Return-Path: <SRS0=Bogo=ZE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DCEC43331
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 17:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC73C43331
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 17:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EDB22084E
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 17:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6D36214E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 17:49:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="itGVmsgj"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="UmGJ6da/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfKLRrR (ORCPT
+        id S1726912AbfKLRt7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Nov 2019 12:47:17 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:59726 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726965AbfKLRrR (ORCPT
+        Tue, 12 Nov 2019 12:49:59 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:50080 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726645AbfKLRt7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Nov 2019 12:47:17 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id A0FC020B7192;
-        Tue, 12 Nov 2019 09:47:16 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A0FC020B7192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573580836;
-        bh=7Kt5Wc/Am4vLaRBG7Pci6TyveGeHnN0SpQV4X3XO9EI=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=itGVmsgjze45PFuFQHgL2h8w0PMmNiHPhp0540ZwqwWnVKp/uZubLR0JaMurjOJrb
-         fOmEbYYnLWeLY7dR8bdQ73Rp0zP0OY++KEGLCzA5qqduhyxdPo/VTn/ekYlxPQ13hi
-         i0bwvoPc1lQ2hvOagO6jfBrwURAg2jSY+Fxx/+lU=
-Subject: Re: [PATCH v5 04/10] IMA: Updated IMA policy functions to return
- keyrings option read from the policy
-To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191111193303.12781-1-nramas@linux.microsoft.com>
- <20191111193303.12781-5-nramas@linux.microsoft.com>
- <1573578316.17949.43.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <407b93e1-f474-7b01-816f-62b45690f417@linux.microsoft.com>
-Date:   Tue, 12 Nov 2019 09:47:37 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Tue, 12 Nov 2019 12:49:59 -0500
+Received: from zn.tnic (p200300EC2F0F7D008198F3F0B2113C87.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:7d00:8198:f3f0:b211:3c87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B392C1EC0CB2;
+        Tue, 12 Nov 2019 18:49:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1573580997;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=QwqQupYicDqj+KSPQHWw8AJsSBWO0Y8rmiBeQ2YH9aA=;
+        b=UmGJ6da/MYJxh2iw+4JiYwXEFfnnUt/18F7b01YzPvJ0QIEX9QMkweNg5Qp/IjOS7eHW8I
+        8jPI496s4rzYCra8zu3OuR8MV4EBJkewQi0e09HYCE+ap2HQYVWf7Ug4tAIy0EAKjmFHQz
+        3/X7OlaZzVEG5XXEZLUbeMjT/Zc/7lc=
+Date:   Tue, 12 Nov 2019 18:49:56 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Zhang Xiaoxu <zhangxiaoxu5@huawei.com>, zhangxiaoxu@huawei.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        tyhicks@canonical.com, colin.king@canonical.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH] x86/mtrr: only administrator can read the configurations.
+Message-ID: <20191112174956.GB32336@zn.tnic>
+References: <20191105071714.27376-1-zhangxiaoxu5@huawei.com>
+ <201911081236.57A127A@keescook>
+ <20191108205031.GH4503@zn.tnic>
+ <201911081320.5D3CD1A4CD@keescook>
+ <20191108213307.GI4503@zn.tnic>
+ <201911110934.AC5BA313@keescook>
 MIME-Version: 1.0
-In-Reply-To: <1573578316.17949.43.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <201911110934.AC5BA313@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/12/2019 9:05 AM, Mimi Zohar wrote:
-
->>   int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
->>   		     enum ima_hooks func, int mask, int flags, int *pcr,
->> -		     struct ima_template_desc **template_desc)
->> +		     struct ima_template_desc **template_desc,
->> +		     char **keyrings)
->>   {
->>   	struct ima_rule_entry *entry;
->>   	int action = 0, actmask = flags | (flags << 1);
->> @@ -527,6 +529,9 @@ int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
->>   		if ((pcr) && (entry->flags & IMA_PCR))
->>   			*pcr = entry->pcr;
->>   
->> +		if ((keyrings) && (entry->flags & IMA_KEYRINGS))
->> +			*keyrings = entry->keyrings;
+On Mon, Nov 11, 2019 at 09:56:16AM -0800, Kees Cook wrote:
+> Some recap from being accidentally offlist:
 > 
-> ima_match_rules() determines whether the rule is in policy or not. It
-> returns true on rule match, false on failure.  There's no need to
-> return the list of keyrings.
+> - this patch should check capabilities at open time (or retain the
+>   checks on the opener's permissions for later checks).
+> 
+> - changing the DAC permissions might break something that expects to
+>   read mtrr when not uid 0.
+> 
+> - if we leave the DAC permissions alone and just move the capable check
+>   to the opener, we should get the intent of the original patch. (i.e.
+>   check against CAP_SYS_ADMIN not just the wider uid 0.)
+> 
+> - *this may still break things* if userspace expects to be able to
+>   read other parts of the file as non-uid-0 and non-CAP_SYS_ADMIN.
+>   If *that* is the case, then we need to censor the contents using
+>   the opener's permissions (as done in other /proc cases).
+> 
+> I think the most cautious way forward is something like
+> 51d7b120418e ("/proc/iomem: only expose physical resource addresses to
+> privileged users"). Untested (and should likely be expanded to know
+> about read vs write for lockdown interaction):
 
-But the above code change is in ima_match_policy() - not in 
-ima_match_rules() function.
+I'm back'n'forth on this.
 
-ima_match_rules() function is updated in Patch #1 -
-[PATCH v5 01/10] IMA: Added KEYRING_CHECK func in IMA policy to measure keys
+So tglx and I agree that it doesn't make a whole lotta sense for
+non-privileged luserspace to be able to read /proc/mtrr because it is a
+small leak and normal users shouldn't care about the caching attributes
+of memory regions in the first place.
 
-I've updated that function to check if func is "KEYRING_CHECK" and 
-return true\false as appropriate.
+So maybe we should do the second variant.
 
-Am I missing something?
+But then we're not supposed to break luserspace.
 
-  -lakshmi
+But then we can revert it if we do...
+
+Ugh.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
