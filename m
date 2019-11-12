@@ -2,61 +2,125 @@ Return-Path: <SRS0=Bogo=ZE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B4AC43331
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 21:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2317AC17440
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 22:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A34EB214E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 21:01:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2D3721E6F
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Nov 2019 22:35:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SabtPLLv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfKLVBJ (ORCPT
+        id S1726912AbfKLWfq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Nov 2019 16:01:09 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:53247 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbfKLVBJ (ORCPT
+        Tue, 12 Nov 2019 17:35:46 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38810 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfKLWfq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Nov 2019 16:01:09 -0500
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xACL0gLr095467;
-        Wed, 13 Nov 2019 06:00:42 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav104.sakura.ne.jp);
- Wed, 13 Nov 2019 06:00:42 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav104.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040052248.bbtec.net [126.40.52.248])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xACL0bKE095449
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 13 Nov 2019 06:00:41 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: WARNING in aa_sock_msg_perm (2)
-To:     syzbot <syzbot+e3b328542d4adc02a975@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com
-References: <00000000000004471505972a9432@google.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     jmorris@namei.org, john.johansen@canonical.com,
+        Tue, 12 Nov 2019 17:35:46 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c13so116168pfp.5
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2019 14:35:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=nOqv3GVC/sOv/psVpK3OUgRa5dRR0J6o4196+nUyO4E=;
+        b=SabtPLLvxVL9plXPPEfVE1Efsg2zBLJfYRr7wAEkHn55lx5jRAeqdMQJbdtO+3deLX
+         5NfmJmBWAkk++uIcY9vLg2ooc8/x6xvfjXxw7uaeoQkSxKTYBdIIooc9+7YLRCclFubM
+         xmEJ7LhzaR7uIXEsWi4NR7+CA+sZAuY6uAQX8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=nOqv3GVC/sOv/psVpK3OUgRa5dRR0J6o4196+nUyO4E=;
+        b=US6VxDS0envzE8sk8e5AvoHYh65bUmA/40MLVSrDgWcDUUaQ+oAH6KVp5lEv2BKPGY
+         /bcijHhBWyyAoMNh3yZmAi5fT7q4pRjDKKwKajOH9QOW88hEm+UddtWeHapi/jERsTaH
+         mIJ9QtAKekoD6gsOx6A1dylYE3ObmSui8hbkqLajjmofMw9bBkPU7Icv5IOJeP3WHbCg
+         6wb8MrhOr5Kb0BYLUYuH8s99lxq+JfTgXbZj9c6Yk5SKpPnu/AIG4EGb8RXRBDsUY2JB
+         CwUSihluYRW34USeNni3HcXacXD2BmvmDI7ih6CBcj2HW3bbjxYHXTxgqNLeYdAALsCX
+         AcdA==
+X-Gm-Message-State: APjAAAVRpFAt/wyPW5WTxb2KsXrmXK3UI5iokl2+/adBZDvFsjXGYkE8
+        Hepi+03ByaOpt2VwQiv8rCUSAg==
+X-Google-Smtp-Source: APXvYqzSms2sequeDq1u4xwoS0zPQjGQZ/GqRMNLwcDTdxHXQyCuGIXshc0sMv6JwPzxK3rplp2NEw==
+X-Received: by 2002:a17:90a:1a41:: with SMTP id 1mr281490pjl.28.1573598145086;
+        Tue, 12 Nov 2019 14:35:45 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y36sm14678pgk.66.2019.11.12.14.35.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 14:35:44 -0800 (PST)
+Date:   Tue, 12 Nov 2019 14:35:43 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Zhang Xiaoxu <zhangxiaoxu5@huawei.com>, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, tyhicks@canonical.com,
+        colin.king@canonical.com, tglx@linutronix.de,
         linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com
-Message-ID: <f291704f-464d-72f2-b016-0073bc6a8ac3@I-love.SAKURA.ne.jp>
-Date:   Wed, 13 Nov 2019 06:00:32 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        linux-security-module@vger.kernel.org,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH] x86/mtrr: only administrator can read the configurations.
+Message-ID: <201911121434.FF26FF3FE@keescook>
+References: <20191105071714.27376-1-zhangxiaoxu5@huawei.com>
+ <201911081236.57A127A@keescook>
+ <20191108205031.GH4503@zn.tnic>
+ <201911081320.5D3CD1A4CD@keescook>
+ <20191108213307.GI4503@zn.tnic>
+ <201911110934.AC5BA313@keescook>
+ <20191112174956.GB32336@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <00000000000004471505972a9432@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191112174956.GB32336@zn.tnic>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-net/rxrpc/output.c:655 was previously reported as "#syz dup: KASAN: use-after-free Read in rxrpc_send_keepalive".
-Now reported as different subject?
+On Tue, Nov 12, 2019 at 06:49:56PM +0100, Borislav Petkov wrote:
+> On Mon, Nov 11, 2019 at 09:56:16AM -0800, Kees Cook wrote:
+> > Some recap from being accidentally offlist:
+> > 
+> > - this patch should check capabilities at open time (or retain the
+> >   checks on the opener's permissions for later checks).
+> > 
+> > - changing the DAC permissions might break something that expects to
+> >   read mtrr when not uid 0.
+> > 
+> > - if we leave the DAC permissions alone and just move the capable check
+> >   to the opener, we should get the intent of the original patch. (i.e.
+> >   check against CAP_SYS_ADMIN not just the wider uid 0.)
+> > 
+> > - *this may still break things* if userspace expects to be able to
+> >   read other parts of the file as non-uid-0 and non-CAP_SYS_ADMIN.
+> >   If *that* is the case, then we need to censor the contents using
+> >   the opener's permissions (as done in other /proc cases).
+> > 
+> > I think the most cautious way forward is something like
+> > 51d7b120418e ("/proc/iomem: only expose physical resource addresses to
+> > privileged users"). Untested (and should likely be expanded to know
+> > about read vs write for lockdown interaction):
+> 
+> I'm back'n'forth on this.
+> 
+> So tglx and I agree that it doesn't make a whole lotta sense for
+> non-privileged luserspace to be able to read /proc/mtrr because it is a
+> small leak and normal users shouldn't care about the caching attributes
+> of memory regions in the first place.
+> 
+> So maybe we should do the second variant.
+> 
+> But then we're not supposed to break luserspace.
+> 
+> But then we can revert it if we do...
+> 
+> Ugh.
 
-#syz dup: KMSAN: use-after-free in rxrpc_send_keepalive
+Shall I send a patch for just moving the capable() checks into open()
+and if someone yells we switch to the other option on the assumption
+that then we'll have a real-world case we can test the other solution
+against?
 
+-- 
+Kees Cook
