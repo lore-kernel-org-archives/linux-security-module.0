@@ -2,137 +2,280 @@ Return-Path: <SRS0=Z0rp=ZF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33363C43331
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Nov 2019 13:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E55C43141
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Nov 2019 16:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1185C222BD
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Nov 2019 13:50:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EFE2206CC
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Nov 2019 16:51:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="pT0TClH+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbfKMNuK (ORCPT
+        id S1728018AbfKMQvT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Nov 2019 08:50:10 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:63469 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727385AbfKMNuK (ORCPT
+        Wed, 13 Nov 2019 11:51:19 -0500
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com ([66.163.189.89]:40015
+        "EHLO sonic306-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726311AbfKMQvS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Nov 2019 08:50:10 -0500
-Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xADDnr7c015245;
-        Wed, 13 Nov 2019 22:49:53 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp);
- Wed, 13 Nov 2019 22:49:53 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040052248.bbtec.net [126.40.52.248])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xADDnifR015129
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 13 Nov 2019 22:49:53 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
- sockets.
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     James Morris <jmorris@namei.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-security-module@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <0000000000004f43fa058a97f4d3@google.com>
- <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
- <1b5722cc-adbc-035d-5ca1-9aa56e70d312@I-love.SAKURA.ne.jp>
- <a4ed1778-8b73-49d1-0ff0-59d9c6ac0af8@I-love.SAKURA.ne.jp>
- <20190618204933.GE17978@ZenIV.linux.org.uk>
- <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
- <bc146372-764d-93a9-af27-666d73ed3af5@i-love.sakura.ne.jp>
- <alpine.LRH.2.21.1907061944050.2662@namei.org>
- <alpine.LRH.2.21.1907061949040.2662@namei.org>
- <289ebc65-8444-37e3-e54e-21b55d2c9192@i-love.sakura.ne.jp>
- <a28f2680-bafc-5e23-4eea-6b432f561cd4@i-love.sakura.ne.jp>
- <A9CE5147-4047-4C42-B772-F0ED510FA283@canb.auug.org.au>
- <36906718-d2ae-3514-c6b2-371037c98da5@i-love.sakura.ne.jp>
- <20191003082543.5e1e25dd@canb.auug.org.au>
- <b175f451-4e76-84aa-48fa-e3ee9490c579@i-love.sakura.ne.jp>
-Message-ID: <d5cbd24b-531d-e9d0-f784-e6447129741d@i-love.sakura.ne.jp>
-Date:   Wed, 13 Nov 2019 22:49:41 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Wed, 13 Nov 2019 11:51:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1573663876; bh=2yLtcp8P2eqJ5gOUBc6t9JhwZELQNS4Ab1P/9PIEQms=; h=From:To:Cc:Subject:Date:References:From:Subject; b=pT0TClH+o9B795W6WmjEJdZVKN8rBBF9DazJDhLECQRRfwjzXXePBCy/MJDSX0cehM4irLzJvB5gA2OXBKHVFPsqo+5ukibaIX6mPG253fGGGchM6B+ZfW0t/HDXeiEH/PhDC1NTOnjZqdPliHjLiZH2wqUWIBgd79ssgJisn48mzUZPUoSL4mEBaORsg7ROwvqYKyi7B9NAHXmd9EcKPG+CHHVHRc54Z7DuXWgWSLnGpaTehzEGcy+1DFLJpt4dKVgietTZ052/MXgKNipiHUTlg2Y1dWEW/D4dG/gllq+Bc+tDhqVTppKg6liSSkpqKc8fOtwzdVKu3uJiW75USg==
+X-YMail-OSG: 2hVbptMVM1mUqsHLT8Q54LGY0OCTrgUWg8059Sqh2lSGPlTb0o6u_lijkBo5o75
+ 2.FXyyAtNPLNvE5TKAOvaYcZGjy2fN9tmzZG7BtJtgxmogRFG8IO8qXI5cyS.NHBRKLc4DJL1a2L
+ 0Ahr84PPt5mAjazHNEPNW4F9hGw2Tf90krJXsrrYEbY6tigSo60xkYcDp8sr2fk6vypm.NFJmhKm
+ vNXdR96gFl6G8JCKo_RjUkeTBjSemr1X5.H0HswF.NDZrrYG1KyWc3afKKciPo7G1hmMPT7PrmMp
+ yOQ3ZR3QtG.fdaLmmOyK7hZxQPV_w1RutidTp_x22ZKJvY3UYd_.KEvCLo4jeqd5JXnkAsIkZLdt
+ HlFJthHvTKuiq5_CXrQzA6Um_XTfbCni21SDH4xHcCJ9eyVG7ErS19ozYcKQxa4EvNxWkPqO1LFe
+ GST0.h26qPEmzWWFctxTOmx4Rl3WArpafKC3OT6jrbdS0rVlGRtcUxd0MvC1B.umWDJpi_PSOOHf
+ AziPh9crMsGjd.UpnPV_KWkxUsIBfHyyfNiP.IdoYg.hN_XB35ufxWzSUeeidUWBjpXWD_pQLyMn
+ rshaUJpBd3QeKU9VwSl_MnxWOnH.aj25O28fKGRul3XhlfYDdnIbzsSm1XY1fldlAyv1G1KTBA5i
+ tmnJpkTglBQI0rta.5Q4xJ2iLUKWvzy38PgafCOB7Sr2cGmmLrjarvOCb804eLo838cpW2q54rL_
+ njsa2CX58YUA2E67fP9z1lKmNmQt4CPghMkAFeXBSItQ73p_1bC2LbcEv1TBEhhC3.s217cSRiWq
+ YxdHIF9MKlPFmpy_QPTlwtobNKrW24deLtVyEizeF6AJPUhena.rIPhuyquqQltiAQDcxpIbf8SB
+ hbeUo8CowhN79giLSAEUOoT4ISk1W1cu9qh994N0ZVttefc927y0B2LMmV3Ni_UNBQWUjNXQh6di
+ xj9mFV0KcKSAeAnpVr02dwVVBkZgLsUqgeOVfTNatR7W8d0UXDrWn7phTTfW8mnMABxrSY2h8Wbl
+ spyu3.fF8GSPCpFe0N2.IN97n9G8xFNYho0ZH8aMLRHFu7.OfUOh6WV6c3w4NpB9DA3edRMyvq1N
+ QIazaa625g9lPekshWPVs19NHM2BBgUz0PjUyGY0ilkXMUWlskDzw_7Toot02phBQkYbZ.MLH.Tk
+ ghEzakXdiGvPANPXdivRXo.cJw.u.RxsG8__Tc6v1ukNSwYSOJh_hiUC5VTRzV5xhKA.iSQ.8i8J
+ ZE0nXgWO5gJrWfoSslk6stTn96Uwp6SuPNroL9Xd0VRI9E_fODZgiODK2CRrdHd9r8AuP6n7xQWB
+ Hf3DobV_Zrtyk3RafigGw6HV7o85jbyxmaLOTKD2g9_n2A32_.AvDfuaRKfGn5bB.rW_XhADLlDF
+ PJpLKDwvr390dN7vA4j.aekMqMw--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Nov 2019 16:51:16 +0000
+Received: by smtp411.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID e948f3a250728d7566d3e2a83137ba19;
+          Wed, 13 Nov 2019 16:51:14 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     casey@schaufler-ca.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com, sds@tycho.nsa.gov
+Subject: [PATCH v11 00/25] LSM: Module stacking for AppArmor
+Date:   Wed, 13 Nov 2019 08:50:46 -0800
+Message-Id: <20191113165111.6744-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <b175f451-4e76-84aa-48fa-e3ee9490c579@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+References: <20191113165111.6744-1-casey.ref@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello, Andrew and James.
+This patchset provides the changes required for
+the AppArmor security module to stack safely with any other.
 
-I have difficulty setting up environments for sending pull request to linux.git
-(nobody around me knows Linux kernel maintainer's workflow at the command line level).
-Can you pick up the following commit via mmotm or linux-security.git tree?
+v11: Rebase to 5.4-rc6
+     Incorporate feedback from v10
+     - Disambiguate reading /proc/.../attr/display by restricting
+       all use of the interface to the current process.
+     - Fix a merge error in AppArmor's display attribute check
 
-commit a5f9bda81cb4fa513f74707083b1eeee8735547f
-Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date:   Sat Jun 22 13:14:26 2019 +0900
+v10: Ask the security modules if the display can be changed.
 
-    tomoyo: Don't check open/getattr permission on sockets.
+v9: There is no version 9
 
-On 2019/10/03 18:59, Tetsuo Handa wrote:
-> Hello.
-> 
-> On 2019/10/03 7:25, Stephen Rothwell wrote:
->> Hi Tetsuo,
->>
->> On Wed, 2 Oct 2019 19:50:48 +0900 Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>>
->>> On 2019/09/14 16:36, Stephen Rothwell wrote:
->>>>
->>>> I am on vacation until after the merge window closes, so I will add it then.
->>>> Please remind me if I don't.  
->>>
->>> Did you return from the vacation?
->>
->> I knew I'd missed one (but I have too much email :-().
-> 
-> Thank you for adding my tree.
-> 
->>
->> I don't think the back merges of Linus' tree add anything useful to
->> your tree.  At this point it probably makes sense to just rebase the
->> single patch onto v5.4-rc1 and then not back merge Linus' tree at all
->> (unless some really complex conflict arises).
->>
-> 
-> This is my first time using persistent git tree.
-> I made my tree using the sequence shown below.
-> 
->   # Upon initialization
->   git clone https://scm.osdn.net/gitroot/tomoyo/tomoyo-test1.git
->   cd tomoyo-test1/
->   git remote add upstream git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->   git remote update upstream
->   git merge upstream/master
->   git push -u origin master
-> 
-> According to
-> https://lkml.kernel.org/r/CAHk-=wg=io4rX2qzupdd4XdYy6okMx5jjzEwXe_UvLQgLsSUFA@mail.gmail.com
-> I should not try "git rebase" and "git merge" because I don't understand what they do. But
-> I guess I need to use "git merge" in order to update my tree before making changes.
-> Is the sequence shown below appropriate?
-> 
->   # When making changes
->   git remote update upstream
->   git merge upstream/master
->   edit files
->   git commit
->   git push -u origin master
-> 
-> Since I'm not familiar with git management, I want to use only master branch.
-> Do I need to make branches or another git tree for asking Linus to pull for linux.git ?
-> 
+v8: Incorporate feedback from v7
+    - Minor clean-up in display value management
+    - refactor "compound" context creation to use a common
+      append_ctx() function.
 
+v7: Incorporate feedback from v6
+    - Make setting the display a privileged operation. The
+      availability of compound contexts reduces the need for
+      setting the display.
+
+v6: Incorporate feedback from v5
+    - Add subj_<lsm>= and obj_<lsm>= fields to audit records
+    - Add /proc/.../attr/context to get the full context in
+      lsmname\0value\0... format as suggested by Simon McVittie
+    - Add SO_PEERCONTEXT for getsockopt() to get the full context
+      in the same format, also suggested by Simon McVittie.
+    - Add /sys/kernel/security/lsm_display_default to provide
+      the display default value.
+
+v5: Incorporate feedback from v4
+    - Initialize the lsmcontext in security_secid_to_secctx()
+    - Clear the lsmcontext in all security_release_secctx() cases
+    - Don't use the "display" on strictly internal context
+      interfaces.
+    - The SELinux binder hooks check for cases where the context
+      "display" isn't compatible with SELinux.
+
+v4: Incorporate feedback from v3
+    - Mark new lsm_<blob>_alloc functions static
+    - Replace the lsm and slot fields of the security_hook_list
+      with a pointer to a LSM allocated lsm_id structure. The
+      LSM identifies if it needs a slot explicitly. Use the
+      lsm_id rather than make security_add_hooks return the
+      slot value.
+    - Validate slot values used in security.c
+    - Reworked the "display" process attribute handling so that
+      it works right and doesn't use goofy list processing.
+    - fix display value check in dentry_init_security
+    - Replace audit_log of secids with '?' instead of deleting
+      the audit log
+
+v3: Incorporate feedback from v2
+    - Make lsmblob parameter and variable names more
+      meaningful, changing "le" and "l" to "blob".
+    - Improve consistency of constant naming.
+    - Do more sanity checking during LSM initialization.
+    - Be a bit clearer about what is temporary scaffolding.
+    - Rather than clutter security_getpeersec_dgram with
+      otherwise unnecessary checks remove the apparmor
+      stub, which does nothing useful.
+
+Patche 0001 moves management of the sock security blob from the individual
+modules to the infrastructure.
+
+Patches 0002-0012 replace system use of a "secid" with
+a structure "lsmblob" containing information from the
+security modules to be held and reused later. At this
+point lsmblob contains an array of u32 secids, one "slot"
+for each of the security modules compiled into the
+kernel that used secids. A "slot" is allocated when
+a security module requests one.
+The infrastructure is changed to use the slot number
+to pass the correct secid to or from the security module
+hooks.
+
+It is important that the lsmblob be a fixed size entity
+that does not have to be allocated. Several of the places
+where it is used would have performance and/or locking
+issues with dynamic allocation.
+
+Patch 0013 provides a mechanism for a process to
+identify which security module's hooks should be used
+when displaying or converting a security context string.
+A new interface /proc/self/attr/display contains the name
+of the security module to show. Reading from this file
+will present the name of the module, while writing to
+it will set the value. Only names of active security
+modules are accepted. Internally, the name is translated
+to the appropriate "slot" number for the module which
+is then stored in the task security blob. Setting the
+display requires that all modules using the /proc interfaces
+allow the transition. The "display" of other processess
+can be neither read nor written. All suggested cases
+for reading the display of a different process have race
+conditions.
+
+Patch 0014 Starts the process of changing how a security
+context is represented. Since it is possible for a
+security context to have been generated by more than one
+security module it is now necessary to note which module
+created a security context so that the correct "release"
+hook can be called. There are several places where the
+module that created a security context cannot be inferred.
+
+This is achieved by introducing a "lsmcontext" structure
+which contains the context string, its length and the
+"slot" number of the security module that created it.
+The security_release_secctx() interface is changed,
+replacing the (string,len) pointer pair with a lsmcontext
+pointer.
+
+Patches 0015-0017 convert the security interfaces from
+(string,len) pointer pairs to a lsmcontext pointer.
+The slot number identifying the creating module is
+added by the infrastructure. Where the security context
+is stored for extended periods the data type is changed.
+
+The Netlabel code is converted to save lsmblob structures
+instead of secids in Patches 0018-0019.
+
+Patch 0020 adds checks to the binder hooks which verify
+that if both ends of a transaction use the same "display".
+
+Patches 0021-0022 add addition data to the audit records
+to identify the LSM specific data for all active modules.
+
+Patches 0023-0024 add new interfaces for getting the
+compound security contexts.
+
+Finally, with all interference on the AppArmor hooks
+removed, Patch 0025 removes the exclusive bit from
+AppArmor. An unnecessary stub hook was also removed.
+
+The Ubuntu project is using an earlier version of
+this patchset in their distribution to enable stacking
+for containers.
+
+Performance measurements to date have the change
+within the "noise". The sockperf and dbench results
+are on the order of 0.2% to 0.8% difference, with
+better performance being as common as worse. The
+benchmarks were run with AppArmor and Smack on Ubuntu.
+
+https://github.com/cschaufler/lsm-stacking.git#stack-5.4-rc6-v11-apparmor
+
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ arch/alpha/include/uapi/asm/socket.h    |   1 +
+ arch/mips/include/uapi/asm/socket.h     |   1 +
+ arch/parisc/include/uapi/asm/socket.h   |   1 +
+ arch/sparc/include/uapi/asm/socket.h    |   1 +
+ drivers/android/binder.c                |  26 +-
+ fs/ceph/xattr.c                         |   6 +-
+ fs/nfs/nfs4proc.c                       |  22 +-
+ fs/nfsd/nfs4xdr.c                       |  20 +-
+ fs/proc/base.c                          |   2 +
+ include/linux/audit.h                   |   1 +
+ include/linux/cred.h                    |   3 +-
+ include/linux/lsm_hooks.h               |  37 +-
+ include/linux/security.h                | 175 ++++++++--
+ include/net/af_unix.h                   |   2 +-
+ include/net/netlabel.h                  |   8 +-
+ include/net/scm.h                       |  15 +-
+ include/uapi/asm-generic/socket.h       |   1 +
+ kernel/audit.c                          |  72 +++-
+ kernel/audit.h                          |   9 +-
+ kernel/audit_fsnotify.c                 |   1 +
+ kernel/auditfilter.c                    |  10 +-
+ kernel/auditsc.c                        | 127 ++++---
+ kernel/cred.c                           |  12 +-
+ net/core/sock.c                         |   7 +-
+ net/ipv4/cipso_ipv4.c                   |   6 +-
+ net/ipv4/ip_sockglue.c                  |  12 +-
+ net/netfilter/nf_conntrack_netlink.c    |  20 +-
+ net/netfilter/nf_conntrack_standalone.c |  11 +-
+ net/netfilter/nfnetlink_queue.c         |  26 +-
+ net/netfilter/nft_meta.c                |  13 +-
+ net/netfilter/xt_SECMARK.c              |   5 +-
+ net/netlabel/netlabel_kapi.c            |   6 +-
+ net/netlabel/netlabel_unlabeled.c       |  97 +++---
+ net/netlabel/netlabel_unlabeled.h       |   2 +-
+ net/netlabel/netlabel_user.c            |  13 +-
+ net/netlabel/netlabel_user.h            |   6 +-
+ net/unix/af_unix.c                      |   6 +-
+ net/xfrm/xfrm_policy.c                  |   2 +
+ net/xfrm/xfrm_state.c                   |   2 +
+ security/apparmor/include/apparmor.h    |   3 +-
+ security/apparmor/include/net.h         |   6 +-
+ security/apparmor/lsm.c                 | 117 +++----
+ security/commoncap.c                    |   7 +-
+ security/integrity/ima/ima.h            |  15 +-
+ security/integrity/ima/ima_api.c        |  11 +-
+ security/integrity/ima/ima_appraise.c   |   6 +-
+ security/integrity/ima/ima_main.c       |  49 +--
+ security/integrity/ima/ima_policy.c     |  19 +-
+ security/integrity/integrity_audit.c    |   1 +
+ security/loadpin/loadpin.c              |   8 +-
+ security/safesetid/lsm.c                |   8 +-
+ security/security.c                     | 593 +++++++++++++++++++++++++++++---
+ security/selinux/hooks.c                | 109 +++---
+ security/selinux/include/classmap.h     |   2 +-
+ security/selinux/include/objsec.h       |   5 +
+ security/selinux/include/security.h     |   1 +
+ security/selinux/netlabel.c             |  25 +-
+ security/selinux/ss/services.c          |   4 +-
+ security/smack/smack.h                  |   6 +
+ security/smack/smack_lsm.c              | 124 ++++---
+ security/smack/smack_netfilter.c        |   8 +-
+ security/smack/smackfs.c                |  10 +-
+ security/tomoyo/tomoyo.c                |   8 +-
+ security/yama/yama_lsm.c                |   7 +-
+ 64 files changed, 1376 insertions(+), 563 deletions(-)
