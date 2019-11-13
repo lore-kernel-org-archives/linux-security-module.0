@@ -2,596 +2,131 @@ Return-Path: <SRS0=Z0rp=ZF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD771C43141
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Nov 2019 18:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46402C33C99
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Nov 2019 18:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDD98206ED
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Nov 2019 18:27:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F60E206F3
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Nov 2019 18:47:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="GU3dMRCx"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mVk6DHX1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbfKMS1t (ORCPT
+        id S1728496AbfKMSrE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Nov 2019 13:27:49 -0500
-Received: from sonic317-1.consmr.mail.ne1.yahoo.com ([66.163.184.228]:34994
-        "EHLO sonic317-1.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728373AbfKMS1s (ORCPT
+        Wed, 13 Nov 2019 13:47:04 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:43360 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbfKMSrE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Nov 2019 13:27:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1573669666; bh=xoM89yPX0lmllKNbzJ/Q/tL4KuocEab57fB3n0i0OOs=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=GU3dMRCxmkotn00AVIz+Lygpkk83ygVjmi9umNRAFZ569ajY4a75F/qOpmX6u/+HJ/QKppsqE7eUJpGOkKqonqTTPwnPe1CpFRQPRGzDVIpHSIkuPHXGutDXQ2prwQyWsAgxZQ4spynYDXoINLxNhtSjG5dK8gz7pHc+aj00KsdHUHS/qZzaUz16S0ECfZsWUSH2ebu8fDWeKNoMrq8eIo8JnhFDHDm4+zFl/UbjOrAi/4HfX1UiX0W5DPFTjAvLv2eFGzpChep9CmrbfkKrQ72Vk9p1SUZuvI2bGHRH27PI22n5kfYA+YZb8jfrY1t4T1RnUMDCXwNI6qkacT8DNw==
-X-YMail-OSG: N_6BpMEVRDvd.miR6A7lED5GPdAEx7ojsA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Nov 2019 18:27:46 +0000
-Received: by smtp428.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 12d4900c069877a28331491f4321a926;
-          Wed, 13 Nov 2019 18:25:43 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        sds@tycho.nsa.gov
-Subject: [PATCH v11 23/25] NET: Add SO_PEERCONTEXT for multiple LSMs
-Date:   Wed, 13 Nov 2019 10:25:04 -0800
-Message-Id: <20191113182506.2580-7-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113182506.2580-1-casey@schaufler-ca.com>
-References: <20191113182506.2580-1-casey@schaufler-ca.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 13 Nov 2019 13:47:04 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 1F9D220B4905;
+        Wed, 13 Nov 2019 10:47:03 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1F9D220B4905
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1573670823;
+        bh=MOGUb7jpfG2A7HaNkFYloS4DcIBLS63Y9W6vcnBeebA=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=mVk6DHX1r+C7PhN9DfwBCPD4ru4MKm36HB/n92YK3yN415hVa8HTS4fC1YeJkVPhX
+         SaYkDStmJ32TCO8asF08uNz2a8JTTRL4dtoGvbR7KwsH3JwA+jEn33yJeL1JwBjZeD
+         FFkZ+6JRY0WQYqLbFzUeclvTFv7OG/yOV7QH8JzY=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 3/3] KEYS: Call the IMA hook to measure keys
+Date:   Wed, 13 Nov 2019 10:46:58 -0800
+Message-Id: <20191113184658.2862-4-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191113184658.2862-1-nramas@linux.microsoft.com>
+References: <20191113184658.2862-1-nramas@linux.microsoft.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The getsockopt SO_PEERSEC provides the LSM based security
-information for a single module, but for reasons of backward
-compatibility cannot include the information for multiple
-modules. A new option SO_PEERCONTEXT is added to report the
-security "context" of multiple modules using a "compound" format
+Call the IMA hook from key_create_or_update function to measure
+the key when a new key is created or an existing key is updated.
 
-        lsm1\0value\0lsm2\0value\0
+This patch adds the call to the IMA hook from key_create_or_update
+function to measure the key on key create or update.
 
-This is expected to be used by system services, including dbus-daemon.
-The exact format of a compound context has been the subject of
-considerable debate. This format was suggested by Simon McVittie,
-a dbus maintainer with a significant stake in the format being
-usable.
-
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-cc: netdev@vger.kernel.org
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- arch/alpha/include/uapi/asm/socket.h  |   1 +
- arch/mips/include/uapi/asm/socket.h   |   1 +
- arch/parisc/include/uapi/asm/socket.h |   1 +
- arch/sparc/include/uapi/asm/socket.h  |   1 +
- include/linux/lsm_hooks.h             |   9 +-
- include/linux/security.h              |  11 ++-
- include/uapi/asm-generic/socket.h     |   1 +
- kernel/audit.c                        |   4 +-
- net/core/sock.c                       |   7 +-
- net/netlabel/netlabel_unlabeled.c     |   9 +-
- net/netlabel/netlabel_user.c          |   2 +-
- security/apparmor/lsm.c               |  20 ++---
- security/security.c                   | 118 +++++++++++++++++++++++---
- security/selinux/hooks.c              |  20 ++---
- security/smack/smack_lsm.c            |  31 +++----
- 15 files changed, 164 insertions(+), 72 deletions(-)
+ include/linux/ima.h | 13 +++++++++++++
+ security/keys/key.c |  9 +++++++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/arch/alpha/include/uapi/asm/socket.h b/arch/alpha/include/uapi/asm/socket.h
-index de6c4df61082..b26fb34e4226 100644
---- a/arch/alpha/include/uapi/asm/socket.h
-+++ b/arch/alpha/include/uapi/asm/socket.h
-@@ -123,6 +123,7 @@
- #define SO_SNDTIMEO_NEW         67
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 6d904754d858..ec5afe319ab7 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -25,6 +25,12 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ extern void ima_post_path_mknod(struct dentry *dentry);
+ extern void ima_kexec_cmdline(const void *buf, int size);
  
- #define SO_DETACH_REUSEPORT_BPF 68
-+#define SO_PEERCONTEXT          69
- 
- #if !defined(__KERNEL__)
- 
-diff --git a/arch/mips/include/uapi/asm/socket.h b/arch/mips/include/uapi/asm/socket.h
-index d0a9ed2ca2d6..10e03507b1ed 100644
---- a/arch/mips/include/uapi/asm/socket.h
-+++ b/arch/mips/include/uapi/asm/socket.h
-@@ -134,6 +134,7 @@
- #define SO_SNDTIMEO_NEW         67
- 
- #define SO_DETACH_REUSEPORT_BPF 68
-+#define SO_PEERCONTEXT          69
- 
- #if !defined(__KERNEL__)
- 
-diff --git a/arch/parisc/include/uapi/asm/socket.h b/arch/parisc/include/uapi/asm/socket.h
-index 10173c32195e..e11df59a84d1 100644
---- a/arch/parisc/include/uapi/asm/socket.h
-+++ b/arch/parisc/include/uapi/asm/socket.h
-@@ -115,6 +115,7 @@
- #define SO_SNDTIMEO_NEW         0x4041
- 
- #define SO_DETACH_REUSEPORT_BPF 0x4042
-+#define SO_PEERCONTEXT          0x4043
- 
- #if !defined(__KERNEL__)
- 
-diff --git a/arch/sparc/include/uapi/asm/socket.h b/arch/sparc/include/uapi/asm/socket.h
-index 8029b681fc7c..5b41ef778040 100644
---- a/arch/sparc/include/uapi/asm/socket.h
-+++ b/arch/sparc/include/uapi/asm/socket.h
-@@ -116,6 +116,7 @@
- #define SO_SNDTIMEO_NEW          0x0045
- 
- #define SO_DETACH_REUSEPORT_BPF  0x0047
-+#define SO_PEERCONTEXT           0x0048
- 
- #if !defined(__KERNEL__)
- 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index b2ec81fcd1e2..6740bc713f12 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -880,8 +880,8 @@
-  *	SO_GETPEERSEC.  For tcp sockets this can be meaningful if the
-  *	socket is associated with an ipsec SA.
-  *	@sock is the local socket.
-- *	@optval userspace memory where the security state is to be copied.
-- *	@optlen userspace int where the module should copy the actual length
-+ *	@optval memory where the security state is to be copied.
-+ *	@optlen int where the module should copy the actual length
-  *	of the security state.
-  *	@len as input is the maximum length to copy to userspace provided
-  *	by the caller.
-@@ -1724,9 +1724,8 @@ union security_list_options {
- 	int (*socket_setsockopt)(struct socket *sock, int level, int optname);
- 	int (*socket_shutdown)(struct socket *sock, int how);
- 	int (*socket_sock_rcv_skb)(struct sock *sk, struct sk_buff *skb);
--	int (*socket_getpeersec_stream)(struct socket *sock,
--					char __user *optval,
--					int __user *optlen, unsigned len);
-+	int (*socket_getpeersec_stream)(struct socket *sock, char **optval,
-+					int *optlen, unsigned len);
- 	int (*socket_getpeersec_dgram)(struct socket *sock,
- 					struct sk_buff *skb, u32 *secid);
- 	int (*sk_alloc_security)(struct sock *sk, int family, gfp_t priority);
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 79f5177a6b52..55bcb4ed8a21 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -179,7 +179,7 @@ struct lsmblob {
- #define LSMBLOB_NEEDED		-2	/* Slot requested on initialization */
- #define LSMBLOB_NOT_NEEDED	-3	/* Slot not requested */
- #define LSMBLOB_DISPLAY		-4	/* Use the "display" slot */
--#define LSMBLOB_FIRST		-5	/* Use the default "display" slot */
-+#define LSMBLOB_COMPOUND	-5	/* A compound "display" */
- 
- /**
-  * lsmblob_init - initialize an lsmblob structure.
-@@ -1398,7 +1398,8 @@ int security_socket_setsockopt(struct socket *sock, int level, int optname);
- int security_socket_shutdown(struct socket *sock, int how);
- int security_sock_rcv_skb(struct sock *sk, struct sk_buff *skb);
- int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
--				      int __user *optlen, unsigned len);
-+				      int __user *optlen, unsigned len,
-+				      int display);
- int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb,
- 				     struct lsmblob *blob);
- int security_sk_alloc(struct sock *sk, int family, gfp_t priority);
-@@ -1532,8 +1533,10 @@ static inline int security_sock_rcv_skb(struct sock *sk,
- 	return 0;
- }
- 
--static inline int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
--						    int __user *optlen, unsigned len)
-+static inline int security_socket_getpeersec_stream(struct socket *sock,
-+						    char __user *optval,
-+						    int __user *optlen,
-+						    unsigned len, int display)
- {
- 	return -ENOPROTOOPT;
- }
-diff --git a/include/uapi/asm-generic/socket.h b/include/uapi/asm-generic/socket.h
-index 77f7c1638eb1..e3a853d53705 100644
---- a/include/uapi/asm-generic/socket.h
-+++ b/include/uapi/asm-generic/socket.h
-@@ -118,6 +118,7 @@
- #define SO_SNDTIMEO_NEW         67
- 
- #define SO_DETACH_REUSEPORT_BPF 68
-+#define SO_PEERCONTEXT          69
- 
- #if !defined(__KERNEL__)
- 
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 77e5d54a3e30..f75db95e6a9e 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -1424,7 +1424,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
- 		len = 0;
- 		if (lsmblob_is_set(&audit_sig_lsm)) {
- 			err = security_secid_to_secctx(&audit_sig_lsm,
--						       &context, LSMBLOB_FIRST);
-+						       &context, 0);
- 			if (err)
- 				return err;
- 		}
-@@ -2099,7 +2099,7 @@ int audit_log_task_context(struct audit_buffer *ab)
- 	if (!lsmblob_is_set(&blob))
- 		return 0;
- 
--	error = security_secid_to_secctx(&blob, &context, LSMBLOB_FIRST);
-+	error = security_secid_to_secctx(&blob, &context, 0);
- 	if (error) {
- 		if (error != -EINVAL)
- 			goto error_path;
-diff --git a/net/core/sock.c b/net/core/sock.c
-index ac78a570e43a..7a1c41a79b0b 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -1413,7 +1413,12 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
- 		break;
- 
- 	case SO_PEERSEC:
--		return security_socket_getpeersec_stream(sock, optval, optlen, len);
-+		return security_socket_getpeersec_stream(sock, optval, optlen,
-+							 len, LSMBLOB_DISPLAY);
++#ifdef CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS
++extern void ima_post_key_create_or_update(struct key *keyring,
++					  struct key *key,
++					  unsigned long flags, bool create);
++#endif
 +
-+	case SO_PEERCONTEXT:
-+		return security_socket_getpeersec_stream(sock, optval, optlen,
-+							 len, LSMBLOB_COMPOUND);
+ #ifdef CONFIG_IMA_KEXEC
+ extern void ima_add_kexec_buffer(struct kimage *image);
+ #endif
+@@ -101,6 +107,13 @@ static inline void ima_add_kexec_buffer(struct kimage *image)
+ {}
+ #endif
  
- 	case SO_MARK:
- 		v.val = sk->sk_mark;
-diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-index 60a7665de0e3..fefd1f2d26f8 100644
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -436,8 +436,7 @@ int netlbl_unlhsh_add(struct net *net,
- unlhsh_add_return:
- 	rcu_read_unlock();
- 	if (audit_buf != NULL) {
--		if (security_secid_to_secctx(lsmblob, &context,
--					     LSMBLOB_FIRST) == 0) {
-+		if (security_secid_to_secctx(lsmblob, &context, 0) == 0) {
- 			audit_log_format(audit_buf, " sec_obj=%s",
- 					 context.context);
- 			security_release_secctx(&context);
-@@ -493,7 +492,7 @@ static int netlbl_unlhsh_remove_addr4(struct net *net,
- 			dev_put(dev);
- 		if (entry != NULL &&
- 		    security_secid_to_secctx(&entry->lsmblob, &context,
--					     LSMBLOB_FIRST) == 0) {
-+					     0) == 0) {
- 			audit_log_format(audit_buf, " sec_obj=%s",
- 					 context.context);
- 			security_release_secctx(&context);
-@@ -554,7 +553,7 @@ static int netlbl_unlhsh_remove_addr6(struct net *net,
- 			dev_put(dev);
- 		if (entry != NULL &&
- 		    security_secid_to_secctx(&entry->lsmblob, &context,
--					     LSMBLOB_FIRST) == 0) {
-+					     0) == 0) {
- 			audit_log_format(audit_buf, " sec_obj=%s",
- 					 context.context);
- 			security_release_secctx(&context);
-@@ -1125,7 +1124,7 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
- 		lsmb = (struct lsmblob *)&addr6->lsmblob;
++#ifndef CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS
++static inline void ima_post_key_create_or_update(struct key *keyring,
++						 struct key *key,
++						 unsigned long flags,
++						 bool create) {}
++#endif
++
+ #ifdef CONFIG_IMA_APPRAISE
+ extern bool is_ima_appraise_enabled(void);
+ extern void ima_inode_post_setattr(struct dentry *dentry);
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 764f4c57913e..9782d4d046fd 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -13,6 +13,7 @@
+ #include <linux/security.h>
+ #include <linux/workqueue.h>
+ #include <linux/random.h>
++#include <linux/ima.h>
+ #include <linux/err.h>
+ #include "internal.h"
+ 
+@@ -936,6 +937,9 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
+ 		goto error_link_end;
  	}
  
--	ret_val = security_secid_to_secctx(lsmb, &context, LSMBLOB_FIRST);
-+	ret_val = security_secid_to_secctx(lsmb, &context, 0);
- 	if (ret_val != 0)
- 		goto list_cb_failure;
- 	ret_val = nla_put(cb_arg->skb,
-diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
-index 1941877fd16f..537c0bf25e3c 100644
---- a/net/netlabel/netlabel_user.c
-+++ b/net/netlabel/netlabel_user.c
-@@ -100,7 +100,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
++	/* let the ima module know about the created key. */
++	ima_post_key_create_or_update(keyring, key, flags, true);
++
+ 	key_ref = make_key_ref(key, is_key_possessed(keyring_ref));
  
- 	lsmblob_init(&blob, audit_info->secid);
- 	if (audit_info->secid != 0 &&
--	    security_secid_to_secctx(&blob, &context, LSMBLOB_FIRST) == 0) {
-+	    security_secid_to_secctx(&blob, &context, 0) == 0) {
- 		audit_log_format(audit_buf, " subj=%s", context.context);
- 		security_release_secctx(&context);
- 	}
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index fefccd559541..b4c964fdc2f9 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1065,10 +1065,8 @@ static struct aa_label *sk_peer_label(struct sock *sk)
-  *
-  * Note: for tcp only valid if using ipsec or cipso on lan
-  */
--static int apparmor_socket_getpeersec_stream(struct socket *sock,
--					     char __user *optval,
--					     int __user *optlen,
--					     unsigned int len)
-+static int apparmor_socket_getpeersec_stream(struct socket *sock, char **optval,
-+					     int *optlen, unsigned int len)
- {
- 	char *name;
- 	int slen, error = 0;
-@@ -1088,17 +1086,11 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
- 	if (slen < 0) {
- 		error = -ENOMEM;
- 	} else {
--		if (slen > len) {
-+		if (slen > len)
- 			error = -ERANGE;
--		} else if (copy_to_user(optval, name, slen)) {
--			error = -EFAULT;
--			goto out;
--		}
--		if (put_user(slen, optlen))
--			error = -EFAULT;
--out:
--		kfree(name);
--
-+		else
-+			*optval = name;
-+		*optlen = slen;
+ error_link_end:
+@@ -965,6 +969,11 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
  	}
  
- done:
-diff --git a/security/security.c b/security/security.c
-index 0dce15d74cb5..f1fefa187ef8 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -723,6 +723,42 @@ static void __init lsm_early_task(struct task_struct *task)
- 		panic("%s: Early task alloc failed.\n", __func__);
+ 	key_ref = __key_update(key_ref, &prep);
++
++	/* let the ima module know about the updated key. */
++	if (!IS_ERR(key_ref))
++		ima_post_key_create_or_update(keyring, key, flags, false);
++
+ 	goto error_free_prep;
  }
- 
-+/**
-+ * append_ctx - append a lsm/context pair to a compound context
-+ * @ctx: the existing compound context
-+ * @ctxlen: size of the old context, including terminating nul byte
-+ * @lsm: new lsm name, nul terminated
-+ * @new: new context, possibly nul terminated
-+ * @newlen: maximum size of @new
-+ *
-+ * replace @ctx with a new compound context, appending @newlsm and @new
-+ * to @ctx. On exit the new data replaces the old, which is freed.
-+ * @ctxlen is set to the new size, which includes a trailing nul byte.
-+ *
-+ * Returns 0 on success, -ENOMEM if no memory is available.
-+ */
-+static int append_ctx(char **ctx, int *ctxlen, const char *lsm, char *new,
-+		      int newlen)
-+{
-+	char *final;
-+	int llen;
-+
-+	llen = strlen(lsm) + 1;
-+	newlen = strnlen(new, newlen) + 1;
-+
-+	final = kzalloc(*ctxlen + llen + newlen, GFP_KERNEL);
-+	if (final == NULL)
-+		return -ENOMEM;
-+	if (*ctxlen)
-+		memcpy(final, *ctx, *ctxlen);
-+	memcpy(final + *ctxlen, lsm, llen);
-+	memcpy(final + *ctxlen + llen, new, newlen);
-+	kfree(*ctx);
-+	*ctx = final;
-+	*ctxlen = *ctxlen + llen + newlen;
-+	return 0;
-+}
-+
- /*
-  * Hook list operation macros.
-  *
-@@ -2164,8 +2200,8 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
- 	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
- 		if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
- 			continue;
--		if (lsm == NULL && *display != LSMBLOB_INVALID &&
--		    *display != hp->lsmid->slot)
-+		if (lsm == NULL && display != NULL &&
-+		    *display != LSMBLOB_INVALID && *display != hp->lsmid->slot)
- 			continue;
- 		return hp->hook.setprocattr(name, value, size);
- 	}
-@@ -2196,7 +2232,7 @@ int security_secid_to_secctx(struct lsmblob *blob, struct lsmcontext *cp,
- 	 */
- 	if (display == LSMBLOB_DISPLAY)
- 		display = lsm_task_display(current);
--	else if (display == LSMBLOB_FIRST)
-+	else if (display == 0)
- 		display = LSMBLOB_INVALID;
- 	else if (display < 0) {
- 		WARN_ONCE(true,
-@@ -2246,6 +2282,15 @@ void security_release_secctx(struct lsmcontext *cp)
- 	struct security_hook_list *hp;
- 	bool found = false;
- 
-+	if (cp->slot == LSMBLOB_INVALID)
-+		return;
-+
-+	if (cp->slot == LSMBLOB_COMPOUND) {
-+		kfree(cp->context);
-+		found = true;
-+		goto clear_out;
-+	}
-+
- 	hlist_for_each_entry(hp, &security_hook_heads.release_secctx, list)
- 		if (cp->slot == hp->lsmid->slot) {
- 			hp->hook.release_secctx(cp->context, cp->len);
-@@ -2253,6 +2298,7 @@ void security_release_secctx(struct lsmcontext *cp)
- 			break;
- 		}
- 
-+clear_out:
- 	memset(cp, 0, sizeof(*cp));
- 
- 	if (!found)
-@@ -2389,17 +2435,67 @@ int security_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
- EXPORT_SYMBOL(security_sock_rcv_skb);
- 
- int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
--				      int __user *optlen, unsigned len)
-+				      int __user *optlen, unsigned len,
-+				      int display)
- {
--	int display = lsm_task_display(current);
- 	struct security_hook_list *hp;
-+	char *final = NULL;
-+	char *cp;
-+	int rc = 0;
-+	unsigned finallen = 0;
-+	unsigned clen = 0;
- 
--	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeersec_stream,
--			     list)
--		if (display == LSMBLOB_INVALID || display == hp->lsmid->slot)
--			return hp->hook.socket_getpeersec_stream(sock, optval,
--								 optlen, len);
--	return -ENOPROTOOPT;
-+	switch (display) {
-+	case LSMBLOB_DISPLAY:
-+		rc = -ENOPROTOOPT;
-+		display = lsm_task_display(current);
-+		hlist_for_each_entry(hp,
-+				&security_hook_heads.socket_getpeersec_stream,
-+				list)
-+			if (display == LSMBLOB_INVALID ||
-+			    display == hp->lsmid->slot) {
-+				rc = hp->hook.socket_getpeersec_stream(sock,
-+							&final, &finallen, len);
-+				break;
-+			}
-+		break;
-+	case LSMBLOB_COMPOUND:
-+		/*
-+		 * A compound context, in the form [lsm\0value\0]...
-+		 */
-+		hlist_for_each_entry(hp,
-+				&security_hook_heads.socket_getpeersec_stream,
-+				list) {
-+			rc = hp->hook.socket_getpeersec_stream(sock, &cp, &clen,
-+							       len);
-+			if (rc == -EINVAL || rc == -ENOPROTOOPT) {
-+				rc = 0;
-+				continue;
-+			}
-+			if (rc) {
-+				kfree(final);
-+				return rc;
-+			}
-+			rc = append_ctx(&final, &finallen, hp->lsmid->lsm,
-+					cp, clen);
-+		}
-+		if (final == NULL)
-+			return -EINVAL;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (finallen > len)
-+		rc = -ERANGE;
-+	else if (copy_to_user(optval, final, finallen))
-+		rc = -EFAULT;
-+
-+	if (put_user(finallen, optlen))
-+		rc = -EFAULT;
-+
-+	kfree(final);
-+	return rc;
- }
- 
- int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb,
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 16348270b98e..ca7b32631636 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -5048,10 +5048,8 @@ static int selinux_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
- 	return err;
- }
- 
--static int selinux_socket_getpeersec_stream(struct socket *sock,
--					    char __user *optval,
--					    int __user *optlen,
--					    unsigned int len)
-+static int selinux_socket_getpeersec_stream(struct socket *sock, char **optval,
-+					    int *optlen, unsigned int len)
- {
- 	int err = 0;
- 	char *scontext;
-@@ -5071,18 +5069,12 @@ static int selinux_socket_getpeersec_stream(struct socket *sock,
- 	if (err)
- 		return err;
- 
--	if (scontext_len > len) {
-+	if (scontext_len > len)
- 		err = -ERANGE;
--		goto out_len;
--	}
--
--	if (copy_to_user(optval, scontext, scontext_len))
--		err = -EFAULT;
-+	else
-+		*optval = scontext;
- 
--out_len:
--	if (put_user(scontext_len, optlen))
--		err = -EFAULT;
--	kfree(scontext);
-+	*optlen = scontext_len;
- 	return err;
- }
- 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index e23792dae35c..d6983fb67d31 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3958,28 +3958,29 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
-  *
-  * returns zero on success, an error code otherwise
-  */
--static int smack_socket_getpeersec_stream(struct socket *sock,
--					  char __user *optval,
--					  int __user *optlen, unsigned len)
-+static int smack_socket_getpeersec_stream(struct socket *sock, char **optval,
-+					  int *optlen, unsigned len)
- {
--	struct socket_smack *ssp;
--	char *rcp = "";
--	int slen = 1;
-+	struct socket_smack *ssp = smack_sock(sock->sk);
-+	char *rcp;
-+	int slen;
- 	int rc = 0;
- 
--	ssp = smack_sock(sock->sk);
--	if (ssp->smk_packet != NULL) {
--		rcp = ssp->smk_packet->smk_known;
--		slen = strlen(rcp) + 1;
-+	if (ssp->smk_packet == NULL) {
-+		*optlen = 0;
-+		return -EINVAL;
- 	}
- 
-+	rcp = ssp->smk_packet->smk_known;
-+	slen = strlen(rcp) + 1;
- 	if (slen > len)
- 		rc = -ERANGE;
--	else if (copy_to_user(optval, rcp, slen) != 0)
--		rc = -EFAULT;
--
--	if (put_user(slen, optlen) != 0)
--		rc = -EFAULT;
-+	else {
-+		*optval = kstrdup(rcp, GFP_KERNEL);
-+		if (*optval == NULL)
-+			rc = -ENOMEM;
-+	}
-+	*optlen = slen;
- 
- 	return rc;
- }
+ EXPORT_SYMBOL(key_create_or_update);
 -- 
-2.20.1
+2.17.1
 
