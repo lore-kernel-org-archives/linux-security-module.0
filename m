@@ -2,70 +2,74 @@ Return-Path: <SRS0=z26M=ZG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1DEC43215
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Nov 2019 16:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5349CC43141
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Nov 2019 18:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2F79206DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Nov 2019 16:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20D7B20727
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Nov 2019 18:18:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="R+xEQD03"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbfKNQoh (ORCPT
+        id S1727658AbfKNSSf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Nov 2019 11:44:37 -0500
-Received: from mga18.intel.com ([134.134.136.126]:60815 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726474AbfKNQoh (ORCPT
+        Thu, 14 Nov 2019 13:18:35 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58844 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727647AbfKNSSf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Nov 2019 11:44:37 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 08:44:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
-   d="scan'208";a="203114131"
-Received: from pkamlakx-mobl1.gar.corp.intel.com (HELO localhost) ([10.252.10.73])
-  by fmsmga008.fm.intel.com with ESMTP; 14 Nov 2019 08:44:32 -0800
-Date:   Thu, 14 Nov 2019 18:44:26 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, jsnitsel@redhat.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH] tpm_tis: Move setting of TPM_CHIP_FLAG_IRQ into
- tpm_tis_probe_irq_single
-Message-ID: <20191114164426.GC9528@linux.intel.com>
-References: <20191112202725.3009814-1-stefanb@linux.vnet.ibm.com>
- <20191114164151.GB9528@linux.intel.com>
+        Thu, 14 Nov 2019 13:18:35 -0500
+Received: from [10.137.112.111] (unknown [131.107.147.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 8A02920B4901;
+        Thu, 14 Nov 2019 10:18:34 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8A02920B4901
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1573755514;
+        bh=sd/+ILMW3HOqjjFdPZLW7teDwHtSzje14R12p9PHhCU=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=R+xEQD03lHZZp9wEAvnUW+jsln5ODyo3ery21KtNljMyvzsUuif5WEEblErSAAgE4
+         9q1azVU9c/JfGQQO1EeMKuEqjmw7JroeNynEbKdNdhNUb4racJb0BwsmMZQZjtYppu
+         qpR1Mfp7la6gCUJxogsHk8xU4tujRYsuDpYaj/4U=
+Subject: Re: [PATCH v7 4/5] IMA: Add support to limit measuring keys
+To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191114031202.18012-1-nramas@linux.microsoft.com>
+ <20191114031202.18012-5-nramas@linux.microsoft.com>
+ <1573742237.4793.30.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <1deec85d-78b1-0cf2-ec2c-7dacaa2c3672@linux.microsoft.com>
+Date:   Thu, 14 Nov 2019 10:18:55 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191114164151.GB9528@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1573742237.4793.30.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 14, 2019 at 06:41:51PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Nov 12, 2019 at 03:27:25PM -0500, Stefan Berger wrote:
-> > From: Stefan Berger <stefanb@linux.ibm.com>
-> > 
-> > Move the setting of the TPM_CHIP_FLAG_IRQ for irq probing into
-> > tpm_tis_probe_irq_single before calling tpm_tis_gen_interrupt.
-> > This move handles error conditions better that may arise if anything
-> > before fails in tpm_tis_probe_irq_single.
-> > 
-> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > Suggested-by: Jerry Snitselaar <jsnitsel@redhat.com>
+On 11/14/2019 6:37 AM, Mimi Zohar wrote:
+> Keyrings may be created by userspace with any name (e.g. foo, foobar,
+> ...).  A keyring name might be a subset of another keyring name.  For
+> example, with the policy "keyrings=foobar", keys being loaded on "foo"
+> would also be measured.  Using strstr() will not achieve what is
+> needed.
 > 
-> What about just changing the condition?
+> Mimi
 
-Also cannot take this since it is not a bug (no fixes tag).
+Very good catch - I missed that :(
 
-/Jarkko
+Will fix and send an update.
+
+thanks,
+  -lakshmi
+
