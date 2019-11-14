@@ -2,123 +2,153 @@ Return-Path: <SRS0=z26M=ZG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0889AC432C3
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Nov 2019 03:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E108C432C3
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Nov 2019 14:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CD1A206F3
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Nov 2019 03:12:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YlJt/Y+1"
+	by mail.kernel.org (Postfix) with ESMTP id 6CBFA206D8
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Nov 2019 14:38:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbfKNDMK (ORCPT
+        id S1726598AbfKNOir (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Nov 2019 22:12:10 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:48438 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbfKNDMJ (ORCPT
+        Thu, 14 Nov 2019 09:38:47 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:30710 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726505AbfKNOiq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Nov 2019 22:12:09 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.159.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 38E2920B4903;
-        Wed, 13 Nov 2019 19:12:09 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 38E2920B4903
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573701129;
-        bh=K/agi32Oac2t+Dh8q8GVUkQ2g0EOgg71DPIGb1PJ/fQ=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=YlJt/Y+13ZQEMFS7ClYl9ALrQlo2sDWJNaIb9n5zLVpj1l42eP8rXbocg06qXY/xT
-         uUpHccgeJNK4Vq/IA94K1a6hUDtDz+11u/lun35Kqus0i9HXZ9KoKuTglAL2jW5cVp
-         K2Sq/kxcpTORwsDgFd2g5DoZiJ63CBttBpuNe0Ig=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
+        Thu, 14 Nov 2019 09:38:46 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xAEEadwo031831
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Nov 2019 09:38:45 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w976hvrbb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Nov 2019 09:38:44 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 14 Nov 2019 14:37:24 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 14 Nov 2019 14:37:20 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAEEbJpS39125238
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Nov 2019 14:37:19 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 432A1AE045;
+        Thu, 14 Nov 2019 14:37:19 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 073DFAE053;
+        Thu, 14 Nov 2019 14:37:18 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.133.147])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 14 Nov 2019 14:37:17 +0000 (GMT)
+Subject: Re: [PATCH v7 4/5] IMA: Add support to limit measuring keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
         jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 1/5] IMA: Add KEY_CHECK func to measure keys
-Date:   Wed, 13 Nov 2019 19:11:58 -0800
-Message-Id: <20191114031202.18012-2-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191114031202.18012-1-nramas@linux.microsoft.com>
+Date:   Thu, 14 Nov 2019 09:37:17 -0500
+In-Reply-To: <20191114031202.18012-5-nramas@linux.microsoft.com>
 References: <20191114031202.18012-1-nramas@linux.microsoft.com>
+         <20191114031202.18012-5-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19111414-0008-0000-0000-0000032F0196
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19111414-0009-0000-0000-00004A4E10BB
+Message-Id: <1573742237.4793.30.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-14_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911140136
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Measure keys loaded onto any keyring.
+On Wed, 2019-11-13 at 19:12 -0800, Lakshmi Ramasubramanian wrote:
+> +/**
+> + * ima_match_keyring - determine whether the keyring matches the measure rule
+> + * @rule: a pointer to a rule
+> + * @keyring: name of the keyring to match against the measure rule
+> + *
+> + * If the measure action for KEY_CHECK does not specify keyrings=
+> + * option then return true (Measure all keys).
+> + * Else, return true if the given keyring name is present in
+> + * the keyrings= option. False, otherwise.
+> + */
+> +static bool ima_match_keyring(struct ima_rule_entry *rule,
+> +			      const char *keyring)
+> +{
+> +	if ((keyring == NULL) || (rule->keyrings == NULL)
+> +		return true;
 
-This patch defines a new IMA policy func namely KEY_CHECK to
-measure keys. Updated ima_match_rules() to check for KEY_CHECK
-and ima_parse_rule() to handle KEY_CHECK.
+If the policy requires matching a specific keyring, then the "keyring"
+needs to match.  The logic, here, isn't quite right.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- Documentation/ABI/testing/ima_policy | 7 ++++++-
- security/integrity/ima/ima.h         | 1 +
- security/integrity/ima/ima_policy.c  | 4 +++-
- 3 files changed, 10 insertions(+), 2 deletions(-)
+> +	else
+> +		return (strstr(rule->keyrings, keyring) != NULL);
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 29aaedf33246..3823c27894c5 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -29,7 +29,7 @@ Description:
- 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
--				[KEXEC_CMDLINE]
-+				[KEXEC_CMDLINE] [KEY_CHECK]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
- 			       [[^]MAY_EXEC]
- 			fsmagic:= hex value
-@@ -113,3 +113,8 @@ Description:
- 		Example of appraise rule allowing modsig appended signatures:
- 
- 			appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig
-+
-+		Example of measure rule using KEY_CHECK to measure all keys:
-+
-+			measure func=KEY_CHECK
-+
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index df4ca482fb53..fe6c698617bd 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -193,6 +193,7 @@ static inline unsigned long ima_hash_key(u8 *digest)
- 	hook(KEXEC_INITRAMFS_CHECK)	\
- 	hook(POLICY_CHECK)		\
- 	hook(KEXEC_CMDLINE)		\
-+	hook(KEY_CHECK)			\
- 	hook(MAX_CHECK)
- #define __ima_hook_enumify(ENUM)	ENUM,
- 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index f19a895ad7cd..1525a28fd705 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -373,7 +373,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- {
- 	int i;
- 
--	if (func == KEXEC_CMDLINE) {
-+	if ((func == KEXEC_CMDLINE) || (func == KEY_CHECK)) {
- 		if ((rule->flags & IMA_FUNC) && (rule->func == func))
- 			return true;
- 		return false;
-@@ -997,6 +997,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = POLICY_CHECK;
- 			else if (strcmp(args[0].from, "KEXEC_CMDLINE") == 0)
- 				entry->func = KEXEC_CMDLINE;
-+			else if (strcmp(args[0].from, "KEY_CHECK") == 0)
-+				entry->func = KEY_CHECK;
- 			else
- 				result = -EINVAL;
- 			if (!result)
--- 
-2.17.1
+    if (rule->keyrings) {
+            if (!keyring)
+                    return false;
+		
+            return (strstr(rule->keyrings, keyring) != NULL);
+    }
+
+    return true;
+
+Keyrings may be created by userspace with any name (e.g. foo, foobar,
+...).  A keyring name might be a subset of another keyring name.  For
+example, with the policy "keyrings=foobar", keys being loaded on "foo"
+would also be measured.  Using strstr() will not achieve what is
+needed.
+
+Mimi
+
+
+> +}
+> +
+>  /**
+>   * ima_match_rules - determine whether an inode matches the measure rule.
+>   * @rule: a pointer to a rule
+> @@ -364,18 +384,23 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+>   * @secid: the secid of the task to be validated
+>   * @func: LIM hook identifier
+>   * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
+> + * @keyring: keyring name to check in policy for KEY_CHECK func
+>   *
+>   * Returns true on rule match, false on failure.
+>   */
+>  static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+>  			    const struct cred *cred, u32 secid,
+> -			    enum ima_hooks func, int mask)
+> +			    enum ima_hooks func, int mask,
+> +			    const char *keyring)
+>  {
+>  	int i;
+>  
+>  	if ((func == KEXEC_CMDLINE) || (func == KEY_CHECK)) {
+> -		if ((rule->flags & IMA_FUNC) && (rule->func == func))
+> +		if ((rule->flags & IMA_FUNC) && (rule->func == func)) {
+> +			if (func == KEY_CHECK)
+> +				return ima_match_keyring(rule, keyring);
+>  			return true;
+> +		}
+>  		return false;
+>  	}
+>  	if ((rule->flags & IMA_FUNC) &&
 
