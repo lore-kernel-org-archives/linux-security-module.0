@@ -2,74 +2,117 @@ Return-Path: <SRS0=4li3=ZH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F37EC432C3
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Nov 2019 13:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1552BC43141
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Nov 2019 13:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F279E2072D
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Nov 2019 13:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEC822073B
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Nov 2019 13:14:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbfKONI5 (ORCPT
+        id S1727507AbfKONOv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Nov 2019 08:08:57 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55196 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727272AbfKONI5 (ORCPT
+        Fri, 15 Nov 2019 08:14:51 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60112 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727506AbfKONOt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Nov 2019 08:08:57 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 34D7B2A6BA2C4B011194;
-        Fri, 15 Nov 2019 21:08:54 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Fri, 15 Nov 2019
- 21:08:45 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jmorris@namei.org>, <serge@hallyn.com>, <nayna@linux.ibm.com>,
-        <zohar@linux.ibm.com>, <dhowells@redhat.com>,
-        <jwboyer@fedoraproject.org>, <yuehaibing@huawei.com>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] x86/efi: remove unused variables
-Date:   Fri, 15 Nov 2019 21:08:30 +0800
-Message-ID: <20191115130830.13320-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+        Fri, 15 Nov 2019 08:14:49 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAFD2AJp056296
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Nov 2019 08:14:48 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w9nup6wdn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Nov 2019 08:14:48 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 15 Nov 2019 13:14:46 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 15 Nov 2019 13:14:42 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAFDEfI943713012
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Nov 2019 13:14:41 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 90D2811C052;
+        Fri, 15 Nov 2019 13:14:41 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6655311C04A;
+        Fri, 15 Nov 2019 13:14:40 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.206.176])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 15 Nov 2019 13:14:40 +0000 (GMT)
+Subject: Re: [PATCH v7 3/5] KEYS: Call the IMA hook to measure keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 15 Nov 2019 08:14:39 -0500
+In-Reply-To: <24262d82-c90b-b64d-f237-9ef038f38d0e@linux.microsoft.com>
+References: <20191114031202.18012-1-nramas@linux.microsoft.com>
+         <20191114031202.18012-4-nramas@linux.microsoft.com>
+         <1573743267.4793.43.camel@linux.ibm.com>
+         <24262d82-c90b-b64d-f237-9ef038f38d0e@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19111513-0028-0000-0000-000003B72858
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19111513-0029-0000-0000-0000247A39C3
+Message-Id: <1573823679.4793.121.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-15_03:2019-11-15,2019-11-15 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 phishscore=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 suspectscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911150120
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-commit ad723674d675 ("x86/efi: move common keyring
-handler functions to new file") leave this unused.
+On Thu, 2019-11-14 at 10:24 -0800, Lakshmi Ramasubramanian wrote:
+> On 11/14/2019 6:54 AM, Mimi Zohar wrote:
+> > With this patch, keys are now being measured.  With the boot command
+> > line, we can verify the measurement entry against /proc/cmdline.  How
+> > can the key measurement entry be verified?  Please include that
+> > information, here, in this patch description.
+> 
+> Glad you could verify measurement of keys. Thanks a lot for trying it.
+> 
+> Will add information on testing\validating the feature.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- security/integrity/platform_certs/load_uefi.c | 5 -----
- 1 file changed, 5 deletions(-)
+Thank you.
 
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index 4369204..111898a 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -11,11 +11,6 @@
- #include "../integrity.h"
- #include "keyring_handler.h"
- 
--static efi_guid_t efi_cert_x509_guid __initdata = EFI_CERT_X509_GUID;
--static efi_guid_t efi_cert_x509_sha256_guid __initdata =
--	EFI_CERT_X509_SHA256_GUID;
--static efi_guid_t efi_cert_sha256_guid __initdata = EFI_CERT_SHA256_GUID;
--
- /*
-  * Look to see if a UEFI variable called MokIgnoreDB exists and return true if
-  * it does.
--- 
-2.7.4
+> 
+> > Also, can the key data, now included in the measurement list, be used
+> > to verify signatures in the ima-sig or ima-modsig templates?  Is there
+> > a way of correlating a signature with a key?  Perhaps include a
+> > kselftest as an example.
+> 
+> I am not familiar with kselftest. Will take a look and see if it'd be 
+> possible to correlate a signature with a key.
 
+I'd like the measurement list to be self contained, allowing a
+regression test, for example, to walk the measurement list, verifying
+the file signatures stored in the measurement list based on the key
+measurement(s).
+
+It isn't so much about Kselftest, but implementing a regression test
+(eg. Kselftest, LTP, ima-evm-utils, ...) as a PoC, in order to know
+that the key measurement contains everything needed to identify the
+key (eg. keyid, certificate serial number, ...) and verify file
+signatures.
+
+Mimi
 
