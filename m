@@ -1,91 +1,51 @@
-Return-Path: <SRS0=z26M=ZG=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=4li3=ZH=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_REPLYTO_END_DIGIT,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE567C432C3
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Nov 2019 18:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D8CC432C3
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Nov 2019 11:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86950206F0
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Nov 2019 18:30:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="M42MiLqF"
+	by mail.kernel.org (Postfix) with ESMTP id B3710206B6
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Nov 2019 11:51:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbfKNSam (ORCPT
+        id S1727520AbfKOLvh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Nov 2019 13:30:42 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:34982 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfKNSam (ORCPT
+        Fri, 15 Nov 2019 06:51:37 -0500
+Received: from [211.53.128.215] ([211.53.128.215]:54805 "EHLO MAIL.isd.co.kr"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727519AbfKOLvh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:30:42 -0500
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 6DD0F20110C5;
-        Thu, 14 Nov 2019 10:30:41 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6DD0F20110C5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573756241;
-        bh=e34wBcGrkzium9S0nLXTM8zcP/I7IMpdThpV/SvpLXo=;
-        h=Subject:From:To:References:Date:In-Reply-To:From;
-        b=M42MiLqFiMb/kxpyHFHubuIHG1d4k97HJDOUGJ2iRF7z7rl1MmPhT11Jye515ar9u
-         6m6yhmTvqsCDlLdkP1gpISLKpiPUnRdBA9YYvQduQ4sRJpTEkZGh7I40dzeEJOeWj+
-         hPj3TIitM/qY0QN16gxwz9U6JnCW89ukk/hjIyA8=
-Subject: Re: [PATCH v7 2/5] IMA: Define an IMA hook to measure keys
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191114031202.18012-1-nramas@linux.microsoft.com>
- <20191114031202.18012-3-nramas@linux.microsoft.com>
-Message-ID: <56718c81-86db-c72b-19b7-c563838838d6@linux.microsoft.com>
-Date:   Thu, 14 Nov 2019 10:30:37 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 15 Nov 2019 06:51:37 -0500
+Received: from 192.168.1.3 (217.217.179.17) by MAIL.isd.co.kr (10.10.10.22)
+ with Microsoft SMTP Server id 14.3.123.3; Fri, 15 Nov 2019 20:50:17 +0900
+Date:   Fri, 15 Nov 2019 12:50:45 +0100
+From:   Peter Wong <choimj@isd.co.kr>
+Reply-To: Peter Wong <pw178483@gmail.com>
+To:     <linux-security-module@vger.kernel.org>
+Message-ID: <26431569.38524.1573818647006.JavaMail.cash@webmail.isd.co.kr>
+Subject: Investment opportunity
 MIME-Version: 1.0
-In-Reply-To: <20191114031202.18012-3-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [217.217.179.17]
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/13/19 7:11 PM, Lakshmi Ramasubramanian wrote:
+Greetings,
 
-> The IMA hook is defined in a new file namely ima_asymmetric_keys.c
-> which is built only if CONFIG_KEYS is enabled.
+Find attached email very confidential. reply for more details
 
-I think instead of CONFIG_KEYS I should use 
-CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE for ima_asymmetric_keys.c since 
-this config is enabled only when both CONFIG_ASYMMETRIC_KEY_TYPE and 
-CONFIG_KEYS are enabled.
+Thanks.
+Peter Wong
 
-Please see below taken from "crypto/asymmetric_keys/Kconfig"
 
-# SPDX-License-Identifier: GPL-2.0
-menuconfig ASYMMETRIC_KEY_TYPE
-         bool "Asymmetric (public-key cryptographic) key type"
-         depends on KEYS
-         help
-           This option provides support for a key type that holds the 
-data for
-           the asymmetric keys used for public key cryptographic 
-operations such
-           as encryption, decryption, signature generation and signature
-           verification.
 
-if ASYMMETRIC_KEY_TYPE
 
-config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-         tristate "Asymmetric public-key crypto algorithm subtype"
+----------------------------------------------------
+This email was sent by the shareware version of Postman Professional.
 
-endif # ASYMMETRIC_KEY_TYPE
-
-thanks,
-  -lakshmi
