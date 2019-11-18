@@ -3,89 +3,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C175C43215
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Nov 2019 07:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D32C43215
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Nov 2019 17:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7C072075E
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Nov 2019 07:53:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EE0C21934
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Nov 2019 17:59:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbfKRHxa (ORCPT
+        id S1726336AbfKRR72 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Nov 2019 02:53:30 -0500
-Received: from mga07.intel.com ([134.134.136.100]:29559 "EHLO mga07.intel.com"
+        Mon, 18 Nov 2019 12:59:28 -0500
+Received: from mga02.intel.com ([134.134.136.20]:53198 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726315AbfKRHxa (ORCPT
+        id S1726317AbfKRR72 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Nov 2019 02:53:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        Mon, 18 Nov 2019 12:59:28 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Nov 2019 23:53:28 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 09:59:27 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,319,1569308400"; 
-   d="scan'208";a="196047576"
-Received: from rongch2-mobl.ccr.corp.intel.com (HELO [10.255.29.39]) ([10.255.29.39])
-  by orsmga007.jf.intel.com with ESMTP; 17 Nov 2019 23:53:24 -0800
-Subject: Re: [LKP] Re: [pipe] d60337eff1:
- BUG:kernel_NULL_pointer_dereference,address
-To:     David Howells <dhowells@redhat.com>,
-        kernel test robot <lkp@intel.com>
-Cc:     torvalds@linux-foundation.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lkp@lists.01.org
-References: <9279.1573824532@warthog.procyon.org.uk>
- <20191110031348.GE29418@shao2-debian>
- <6853.1573834946@warthog.procyon.org.uk>
-From:   kernel test robot <rong.a.chen@intel.com>
-Message-ID: <35daca93-ff2b-2c7d-b837-72396ca0677a@intel.com>
-Date:   Mon, 18 Nov 2019 15:53:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+X-IronPort-AV: E=Sophos;i="5.68,321,1569308400"; 
+   d="scan'208";a="208926876"
+Received: from cooperwu-mobl.gar.corp.intel.com (HELO localhost) ([10.252.3.195])
+  by orsmga003.jf.intel.com with ESMTP; 18 Nov 2019 09:59:25 -0800
+Date:   Mon, 18 Nov 2019 19:59:24 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, jsnitsel@redhat.com,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] tpm_tis: Move setting of TPM_CHIP_FLAG_IRQ into
+ tpm_tis_probe_irq_single
+Message-ID: <20191118175924.GA5984@linux.intel.com>
+References: <20191112202725.3009814-1-stefanb@linux.vnet.ibm.com>
+ <20191114164151.GB9528@linux.intel.com>
+ <20191114164426.GC9528@linux.intel.com>
+ <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <6853.1573834946@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi David,
+On Sat, Nov 16, 2019 at 09:32:06AM -0500, Stefan Berger wrote:
+> On 11/14/19 11:44 AM, Jarkko Sakkinen wrote:
+> > On Thu, Nov 14, 2019 at 06:41:51PM +0200, Jarkko Sakkinen wrote:
+> > > On Tue, Nov 12, 2019 at 03:27:25PM -0500, Stefan Berger wrote:
+> > > > From: Stefan Berger <stefanb@linux.ibm.com>
+> > > > 
+> > > > Move the setting of the TPM_CHIP_FLAG_IRQ for irq probing into
+> > > > tpm_tis_probe_irq_single before calling tpm_tis_gen_interrupt.
+> > > > This move handles error conditions better that may arise if anything
+> > > > before fails in tpm_tis_probe_irq_single.
+> > > > 
+> > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > > Suggested-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > What about just changing the condition?
+> > Also cannot take this since it is not a bug (no fixes tag).
+> 
+> I'll repost but will wait until Jerry has tested it on that machine.
 
-Yes, it can fix the problem.
+OK, great, thank you.
 
-Best Regards,
-Rong Chen
+This is really needs some reasoning on why this was the right way to
+fix the issue. In addition, a source code comment might make sense.
 
-On 11/16/2019 12:22 AM, David Howells wrote:
-> Actually, no, this is the fix:
->
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index 7006b5b2106d..be2fc5793ddd 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -537,7 +537,7 @@ static size_t push_pipe(struct iov_iter *i, size_t size,
->   		buf->ops = &default_pipe_buf_ops;
->   		buf->page = page;
->   		buf->offset = 0;
-> -		buf->len = max_t(ssize_t, left, PAGE_SIZE);
-> +		buf->len = min_t(ssize_t, left, PAGE_SIZE);
->   		left -= buf->len;
->   		iter_head++;
->   		pipe->head = iter_head;
->
-> David
-> _______________________________________________
-> LKP mailing list -- lkp@lists.01.org
-> To unsubscribe send an email to lkp-leave@lists.01.org
-
+/Jarkko
