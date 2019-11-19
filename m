@@ -1,202 +1,182 @@
-Return-Path: <SRS0=C/xF=ZK=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=tSh8=ZL=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B471CC432C3
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Nov 2019 21:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 272ECC33CA1
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Nov 2019 00:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80AD8208CE
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Nov 2019 21:09:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F27DB22316
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Nov 2019 00:35:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XQ6hYXLY"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cpQP7haZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbfKRVJ0 (ORCPT
+        id S1727148AbfKSAfH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Nov 2019 16:09:26 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41538 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbfKRVJ0 (ORCPT
+        Mon, 18 Nov 2019 19:35:07 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42933 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727099AbfKSAfH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Nov 2019 16:09:26 -0500
-Received: by mail-pf1-f195.google.com with SMTP id p26so10968406pfq.8
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Nov 2019 13:09:24 -0800 (PST)
+        Mon, 18 Nov 2019 19:35:07 -0500
+Received: by mail-pl1-f194.google.com with SMTP id j12so10725419plt.9
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Nov 2019 16:35:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=brNqL6zVPSQ5JwzRtAwRvqEQVxU2P5eqAvSAOt7aHtM=;
-        b=XQ6hYXLYNFdMJoP1GZVRliyiJQVEbteGvbXFZF1JTflyx/WMljc3NDpIeLFmJ3DWmp
-         GG/P3cyqEgHEmUYIP3yH6SudKNm86c9ObEHQYLbq6Y+oKpxKqSBjL5rxns0mO231ltlx
-         5EddBxhbWUcKPvULCBAfpmVdBQtRNgw5I9ezk=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KDjD6wRu08/3eOf5MmI1OKuUS2ePOxx6myNS0OClZW8=;
+        b=cpQP7haZ+qnxm49l1kiO3rneGBNvdafMNXYylZOqZtyhHZ0UQBk1UvGioO2Tm4UKfU
+         bVxFYceBpiVXNyY+0FP9js/obi0/U1euVPU2zBXCqdIkU2CwzXvjScc7mS06age6cBeu
+         RZDjkIOxguq7TDOaRrrHOb0T4eVi0Q/lq7ssL6GCHIHr0kJ23QzzeKVaeyue3EQU33ix
+         LZO1ilWg0c1pw46cl07rclj1NJyng7cjT7w7rVpQXLJIvs9UgabUGWKCiiYEdAUPIax1
+         8HWULHCUaEw29Ry6bYakMq5jC2UvpyvmjTLa/PtHrRJVVPgtIaTC98wJGbS8TjyKLLlj
+         3WHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=brNqL6zVPSQ5JwzRtAwRvqEQVxU2P5eqAvSAOt7aHtM=;
-        b=Fs5VyhI/Q4wL1mvi/Wu/7ZP/dH/S8r7SDD0oKbe2PQ3sh0ZGavCxGk8dBdFzFN6UG+
-         jZKKplI83kBb4gZgofKChmL/bfiZo/JvLFGZO452nMlwJU5WohkclmLuoR93cBOqOC6l
-         2GPuAiayLT6WhXoDlPiWF4Vj5Wmd6W5wwBdYvearDkFeaj5AMOtBaaJX+W1iIyUw4kp9
-         dR3ZfOvKmbRLtDVWqEh8F67hw40/cRl5Ut/3tcY5HsppMUZo999Xoget1yuQ7edTPZXJ
-         uB3nwOlVGdcOyzjYYoaEyfycoixCNCCL/wVR9fmkq5l8y3MH/hZyKjI25P83PkRE19XZ
-         eCBw==
-X-Gm-Message-State: APjAAAV0seWdVMsNxxx8Dhbla8IAdNR9jarCpn0GjI0kIdeSRm3HWRDW
-        1yZTEDr2vt9Rt266zMy/qxh5Jg==
-X-Google-Smtp-Source: APXvYqxwXeAUBUepsAEyBkqI42nmhRb0cKtGnZWmzakoUDnAD+nn1I2/bwkDIrKBj6rjEJFhXiDckg==
-X-Received: by 2002:a63:731a:: with SMTP id o26mr1504137pgc.108.1574111363777;
-        Mon, 18 Nov 2019 13:09:23 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i11sm8346900pgl.73.2019.11.18.13.09.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 13:09:22 -0800 (PST)
-Date:   Mon, 18 Nov 2019 13:09:21 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Zhang Xiaoxu <zhangxiaoxu5@huawei.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        tyhicks@canonical.com, colin.king@canonical.com,
-        linux-security-module@vger.kernel.org,
-        Matthew Garrett <mjg59@google.com>
-Subject: [PATCH] x86/mtrr: Require CAP_SYS_ADMIN for all access
-Message-ID: <201911181308.63F06502A1@keescook>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KDjD6wRu08/3eOf5MmI1OKuUS2ePOxx6myNS0OClZW8=;
+        b=nIWmeSyilLceMeXR60UzUZuiNkjNq0So3cNPwPejOoupgDICrWrzhHtixifecPv/HP
+         utmHX3zSXSxI8zHjS7Xn9Ur5XjaIn6RWXXVic9J/ueAb/zXK1/TEyhpVqnEyXYtztMTz
+         v0npWV5u4vBlFCqZWDzRvcjrkzvuRKi2Gb0JTII/9XDeXKSFTyA2KTtI6PJ0ddX+ciin
+         gs63+PP9ssa/+0XNVbLxBgcebTWbz8j6ebg82fH1fvcuoDEQcAnjPc8Q3LYVkhbLfKl9
+         mefmaPCoUjvTdlsa+bYxEFbahzfzjBlPtmErgWViAHfBwqAqky3LCS8VNPlqIAy3gOUv
+         yolQ==
+X-Gm-Message-State: APjAAAVPYYS2X90aPomFJNLIqDWY6u9VazGDJWZgYgthb0qQMIC2VFts
+        2AFUbtn+msJfq91CsVdhx3rxz6SNNsBqrCNPk5LFcQ==
+X-Google-Smtp-Source: APXvYqzisxXdX2gUjgmZ6VXkODOtflaLP8heK8Rw+lwEa0j3nLTrZNJKQNDvqDFnnE1Owdv6Fid84PeLGqzly0vXJ2A=
+X-Received: by 2002:a17:90a:d155:: with SMTP id t21mr2326831pjw.84.1574123705397;
+ Mon, 18 Nov 2019 16:35:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20191106004329.16991-1-brendanhiggins@google.com>
+ <201911060916.AC9E14B@keescook> <20191107233337.GA191231@google.com>
+In-Reply-To: <20191107233337.GA191231@google.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 18 Nov 2019 16:34:53 -0800
+Message-ID: <CAFd5g462jFnbPxA2Nvc_3W064kZ8t5oHNE4M_3yt84+NuoiHGQ@mail.gmail.com>
+Subject: Re: [PATCH linux-kselftest/test v2] apparmor: add AppArmor KUnit
+ tests for policy unpack
+To:     Kees Cook <keescook@chromium.org>
+Cc:     shuah <shuah@kernel.org>,
+        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        serge@hallyn.com, Alan Maguire <alan.maguire@oracle.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        David Gow <davidgow@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Mike Salvatore <mike.salvatore@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Zhang Xiaoxu noted that physical address locations for MTRR were
-visible to non-root users, which could be considered an information
-leak. In discussing[1] the options for solving this, it sounded like
-just moving the capable check into open() was the first step. If this
-breaks userspace, then we will have a test case for the more conservative
-approaches discussed in the thread. In summary:
+On Thu, Nov 7, 2019 at 3:33 PM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+>
+> On Wed, Nov 06, 2019 at 09:18:27AM -0800, Kees Cook wrote:
+> > On Tue, Nov 05, 2019 at 04:43:29PM -0800, Brendan Higgins wrote:
+> > > From: Mike Salvatore <mike.salvatore@canonical.com>
+> > >
+> > > Add KUnit tests to test AppArmor unpacking of userspace policies.
+> > > AppArmor uses a serialized binary format for loading policies. To find
+> > > policy format documentation see
+> > > Documentation/admin-guide/LSM/apparmor.rst.
+> > >
+> > > In order to write the tests against the policy unpacking code, some
+> > > static functions needed to be exposed for testing purposes. One of the
+> > > goals of this patch is to establish a pattern for which testing these
+> > > kinds of functions should be done in the future.
+> > >
+> > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > > Signed-off-by: Mike Salvatore <mike.salvatore@canonical.com>
+> > > ---
+> > >  security/apparmor/Kconfig              |  16 +
+> > >  security/apparmor/policy_unpack.c      |   4 +
+> > >  security/apparmor/policy_unpack_test.c | 607 +++++++++++++++++++++++++
+> > >  3 files changed, 627 insertions(+)
+> > >  create mode 100644 security/apparmor/policy_unpack_test.c
+> > >
+> > > diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+> > > index d8b1a360a6368..78a33ccac2574 100644
+> > > --- a/security/apparmor/Kconfig
+> > > +++ b/security/apparmor/Kconfig
+> > > @@ -66,3 +66,19 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
+> > >       Set the default value of the apparmor.debug kernel parameter.
+> > >       When enabled, various debug messages will be logged to
+> > >       the kernel message buffer.
+> > > +
+> > > +config SECURITY_APPARMOR_KUNIT_TEST
+> > > +   bool "Build KUnit tests for policy_unpack.c"
+> > > +   depends on KUNIT && SECURITY_APPARMOR
+> > > +   help
+> > > +     This builds the AppArmor KUnit tests.
+> > > +
+> > > +     KUnit tests run during boot and output the results to the debug log
+> > > +     in TAP format (http://testanything.org/). Only useful for kernel devs
+> > > +     running KUnit test harness and are not for inclusion into a
+> > > +     production build.
+> > > +
+> > > +     For more information on KUnit and unit tests in general please refer
+> > > +     to the KUnit documentation in Documentation/dev-tools/kunit/.
+> > > +
+> > > +     If unsure, say N.
+> > > diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> > > index 8cfc9493eefc7..37c1dd3178fc0 100644
+> > > --- a/security/apparmor/policy_unpack.c
+> > > +++ b/security/apparmor/policy_unpack.c
+> > > @@ -1120,3 +1120,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
+> > >
+> > >     return error;
+> > >  }
+> > > +
+> > > +#ifdef CONFIG_SECURITY_APPARMOR_KUNIT_TEST
+> > > +#include "policy_unpack_test.c"
+> > > +#endif /* CONFIG_SECURITY_APPARMOR_KUNIT_TEST */
+> >
+> > To make this even LESS intrusive, the ifdefs could live in ..._test.c.
+>
+> Less intrusive, yes, but I think I actually like the ifdef here; it
+> makes it clear from the source that the test is only a part of the build
+> when configured to do so. Nevertheless, I will change it if anyone feels
+> strongly about it.
+>
+> > Also, while I *think* the kernel build system will correctly track this
+> > dependency, can you double-check that changes to ..._test.c correctly
+> > trigger a recompile of policy_unpack.c?
+>
+> Yep, just verified, first I ran the tests and everything passed. Then I
+> applied the following diff:
+>
+> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+> index 533137f45361c..e1b0670dbdc27 100644
+> --- a/security/apparmor/policy_unpack_test.c
+> +++ b/security/apparmor/policy_unpack_test.c
+> @@ -161,7 +161,7 @@ static void policy_unpack_test_unpack_array_with_name(struct kunit *test)
+>
+>         array_size = unpack_array(puf->e, name);
+>
+> -       KUNIT_EXPECT_EQ(test, array_size, (u16)TEST_ARRAY_SIZE);
+> +       KUNIT_EXPECT_EQ(test, array_size + 1, (u16)TEST_ARRAY_SIZE);
+>         KUNIT_EXPECT_PTR_EQ(test, puf->e->pos,
+>                 puf->e->start + TEST_ARRAY_BUF_OFFSET + sizeof(u16) + 1);
+>  }
+>
+> and reran the tests (to trigger an incremental build) and the test
+> failed as expected indicating that the dependency is properly tracked.
 
-- MTRR should check capabilities at open time (or retain the
-  checks on the opener's permissions for later checks).
+Hey Kees,
 
-- changing the DAC permissions might break something that expects to
-  open mtrr when not uid 0.
+Since it looks like you already took a pretty close look at this,
+would you mind giving me a review?
 
-- if we leave the DAC permissions alone and just move the capable check
-  to the opener, we should get the desired protection. (i.e. check
-  against CAP_SYS_ADMIN not just the wider uid 0.)
-
-- if that still breaks things, as in userspace expects to be able to
-  read other parts of the file as non-uid-0 and non-CAP_SYS_ADMIN, then
-  we need to censor the contents using the opener's permissions. For
-  example, as done in other /proc cases, like commit 51d7b120418e
-  ("/proc/iomem: only expose physical resource addresses to privileged
-  users").
-
-[1] https://lore.kernel.org/lkml/201911110934.AC5BA313@keescook/
-
-Reported-by: Zhang Xiaoxu <zhangxiaoxu5@huawei.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- arch/x86/kernel/cpu/mtrr/if.c | 21 ++-------------------
- 1 file changed, 2 insertions(+), 19 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
-index 4d36dcc1cf87..9c86aeae1b14 100644
---- a/arch/x86/kernel/cpu/mtrr/if.c
-+++ b/arch/x86/kernel/cpu/mtrr/if.c
-@@ -101,9 +101,6 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
- 	int length;
- 	size_t linelen;
- 
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
- 	memset(line, 0, LINE_SIZE);
- 
- 	len = min_t(size_t, len, LINE_SIZE - 1);
-@@ -226,8 +223,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_ADD_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err =
- 		    mtrr_file_add(sentry.base, sentry.size, sentry.type, true,
- 				  file, 0);
-@@ -236,24 +231,18 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_SET_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err = mtrr_add(sentry.base, sentry.size, sentry.type, false);
- 		break;
- 	case MTRRIOC_DEL_ENTRY:
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_DEL_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err = mtrr_file_del(sentry.base, sentry.size, file, 0);
- 		break;
- 	case MTRRIOC_KILL_ENTRY:
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_KILL_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err = mtrr_del(-1, sentry.base, sentry.size);
- 		break;
- 	case MTRRIOC_GET_ENTRY:
-@@ -279,8 +268,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_ADD_PAGE_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err =
- 		    mtrr_file_add(sentry.base, sentry.size, sentry.type, true,
- 				  file, 1);
-@@ -289,8 +276,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_SET_PAGE_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err =
- 		    mtrr_add_page(sentry.base, sentry.size, sentry.type, false);
- 		break;
-@@ -298,16 +283,12 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_DEL_PAGE_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err = mtrr_file_del(sentry.base, sentry.size, file, 1);
- 		break;
- 	case MTRRIOC_KILL_PAGE_ENTRY:
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_KILL_PAGE_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err = mtrr_del_page(-1, sentry.base, sentry.size);
- 		break;
- 	case MTRRIOC_GET_PAGE_ENTRY:
-@@ -381,6 +362,8 @@ static int mtrr_open(struct inode *inode, struct file *file)
- 		return -EIO;
- 	if (!mtrr_if->get)
- 		return -ENXIO;
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
- 	return single_open(file, mtrr_seq_show, NULL);
- }
- 
--- 
-2.17.1
-
-
--- 
-Kees Cook
+Thanks!
