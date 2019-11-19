@@ -2,181 +2,199 @@ Return-Path: <SRS0=tSh8=ZL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 272ECC33CA1
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Nov 2019 00:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C5BC432C3
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Nov 2019 09:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F27DB22316
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Nov 2019 00:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D770320715
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Nov 2019 09:18:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cpQP7haZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iiFBuwOK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbfKSAfH (ORCPT
+        id S1725784AbfKSJSo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Nov 2019 19:35:07 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42933 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbfKSAfH (ORCPT
+        Tue, 19 Nov 2019 04:18:44 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:26150 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727250AbfKSJSo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Nov 2019 19:35:07 -0500
-Received: by mail-pl1-f194.google.com with SMTP id j12so10725419plt.9
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Nov 2019 16:35:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KDjD6wRu08/3eOf5MmI1OKuUS2ePOxx6myNS0OClZW8=;
-        b=cpQP7haZ+qnxm49l1kiO3rneGBNvdafMNXYylZOqZtyhHZ0UQBk1UvGioO2Tm4UKfU
-         bVxFYceBpiVXNyY+0FP9js/obi0/U1euVPU2zBXCqdIkU2CwzXvjScc7mS06age6cBeu
-         RZDjkIOxguq7TDOaRrrHOb0T4eVi0Q/lq7ssL6GCHIHr0kJ23QzzeKVaeyue3EQU33ix
-         LZO1ilWg0c1pw46cl07rclj1NJyng7cjT7w7rVpQXLJIvs9UgabUGWKCiiYEdAUPIax1
-         8HWULHCUaEw29Ry6bYakMq5jC2UvpyvmjTLa/PtHrRJVVPgtIaTC98wJGbS8TjyKLLlj
-         3WHQ==
+        Tue, 19 Nov 2019 04:18:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574155123;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=F5gVroGd0jCB/6b+aqlr6VxWgFq7818TIln7vtMs1d8=;
+        b=iiFBuwOKR8bevPklnBkgV2g0M0C87ZxACeuqBJu2/exEPqM2OQ+J4qgTUWiJKOdcF1di64
+        RexxBwgHCIv4DIYOn5eQGIgkCFFzMivCP8T6nIYqI4a0/xMSyZ8SwZT0jHxZi1CAYq2MAt
+        2r56+ejkGH8sAguB549GKtkgxQGcPw8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-113-1CxssZghPUir_CnQRtshvg-1; Tue, 19 Nov 2019 04:18:39 -0500
+Received: by mail-wr1-f71.google.com with SMTP id b4so17898421wrn.8
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Nov 2019 01:18:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KDjD6wRu08/3eOf5MmI1OKuUS2ePOxx6myNS0OClZW8=;
-        b=nIWmeSyilLceMeXR60UzUZuiNkjNq0So3cNPwPejOoupgDICrWrzhHtixifecPv/HP
-         utmHX3zSXSxI8zHjS7Xn9Ur5XjaIn6RWXXVic9J/ueAb/zXK1/TEyhpVqnEyXYtztMTz
-         v0npWV5u4vBlFCqZWDzRvcjrkzvuRKi2Gb0JTII/9XDeXKSFTyA2KTtI6PJ0ddX+ciin
-         gs63+PP9ssa/+0XNVbLxBgcebTWbz8j6ebg82fH1fvcuoDEQcAnjPc8Q3LYVkhbLfKl9
-         mefmaPCoUjvTdlsa+bYxEFbahzfzjBlPtmErgWViAHfBwqAqky3LCS8VNPlqIAy3gOUv
-         yolQ==
-X-Gm-Message-State: APjAAAVPYYS2X90aPomFJNLIqDWY6u9VazGDJWZgYgthb0qQMIC2VFts
-        2AFUbtn+msJfq91CsVdhx3rxz6SNNsBqrCNPk5LFcQ==
-X-Google-Smtp-Source: APXvYqzisxXdX2gUjgmZ6VXkODOtflaLP8heK8Rw+lwEa0j3nLTrZNJKQNDvqDFnnE1Owdv6Fid84PeLGqzly0vXJ2A=
-X-Received: by 2002:a17:90a:d155:: with SMTP id t21mr2326831pjw.84.1574123705397;
- Mon, 18 Nov 2019 16:35:05 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I0ochwV95DWb+Vb/kQFhi7I2FhfRb9PfG9M5Z+gcjYQ=;
+        b=MXh4/gCOC/EEXzIoOGLVOuKr5I/tHDU4B/WwvQbcs4auvz/CbpO6a9ypa61/KnYgPI
+         EfajZPpX54RyrRvrb5NBmxk2cINplyRkf6UV8p5BtigZI8YK5sD+3pdDw37ZeEaHhMge
+         sYQljvVOXtw1kDe4KaWsKjkLWxuUjCOBUf9PXQnuJ6nW05EGTGTMdcpuJiSpQKAc2u8n
+         Nb0pZsbN4n6T/kyjpPSYwOCz2LlIIgGO5DeQmd4LtwfZzGV6NGohAR9L2dqDrb+JITVK
+         pfDyqo3mYitg/sPJ57HwtxYFt59atKaNOfwuC2n6pRmle6ysfkHgkExjBFI1SLGhBKMx
+         bjZQ==
+X-Gm-Message-State: APjAAAXOaJlXUSQM7CR/88GB5WMXSPdTG2pxt7NlzyGRbwEP7Pr9l+/S
+        xq1ckSAO0Ntcm/iJ61tENgZS6D/ZQ5AszjVaaS8j+Lx8cKfIoA5SOVYW2QVXIykHJsu5tdu7SjT
+        6xjpMexnpr80oY3mdDFt1dBlAz4x/CEbLtWeB
+X-Received: by 2002:a1c:7d95:: with SMTP id y143mr4388612wmc.143.1574155118631;
+        Tue, 19 Nov 2019 01:18:38 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy/3ENyoIZuytZnCqKEgxHHFsE1tK9q5FPF1B1/0eBPoNkV5H1Fk3MNUOM61TMOl+cJiT5QLg==
+X-Received: by 2002:a1c:7d95:: with SMTP id y143mr4388590wmc.143.1574155118380;
+        Tue, 19 Nov 2019 01:18:38 -0800 (PST)
+Received: from minerva.redhat.com ([90.168.169.92])
+        by smtp.gmail.com with ESMTPSA id f140sm2427588wme.21.2019.11.19.01.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2019 01:18:37 -0800 (PST)
+From:   Javier Martinez Canillas <javierm@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Peter Jones <pjones@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH] efi: Only print errors about failing to get certs if EFI vars are found
+Date:   Tue, 19 Nov 2019 10:18:21 +0100
+Message-Id: <20191119091822.276265-1-javierm@redhat.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <20191106004329.16991-1-brendanhiggins@google.com>
- <201911060916.AC9E14B@keescook> <20191107233337.GA191231@google.com>
-In-Reply-To: <20191107233337.GA191231@google.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 18 Nov 2019 16:34:53 -0800
-Message-ID: <CAFd5g462jFnbPxA2Nvc_3W064kZ8t5oHNE4M_3yt84+NuoiHGQ@mail.gmail.com>
-Subject: Re: [PATCH linux-kselftest/test v2] apparmor: add AppArmor KUnit
- tests for policy unpack
-To:     Kees Cook <keescook@chromium.org>
-Cc:     shuah <shuah@kernel.org>,
-        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        serge@hallyn.com, Alan Maguire <alan.maguire@oracle.com>,
-        Iurii Zaikin <yzaikin@google.com>,
-        David Gow <davidgow@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Mike Salvatore <mike.salvatore@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MC-Unique: 1CxssZghPUir_CnQRtshvg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 7, 2019 at 3:33 PM Brendan Higgins
-<brendanhiggins@google.com> wrote:
->
-> On Wed, Nov 06, 2019 at 09:18:27AM -0800, Kees Cook wrote:
-> > On Tue, Nov 05, 2019 at 04:43:29PM -0800, Brendan Higgins wrote:
-> > > From: Mike Salvatore <mike.salvatore@canonical.com>
-> > >
-> > > Add KUnit tests to test AppArmor unpacking of userspace policies.
-> > > AppArmor uses a serialized binary format for loading policies. To find
-> > > policy format documentation see
-> > > Documentation/admin-guide/LSM/apparmor.rst.
-> > >
-> > > In order to write the tests against the policy unpacking code, some
-> > > static functions needed to be exposed for testing purposes. One of the
-> > > goals of this patch is to establish a pattern for which testing these
-> > > kinds of functions should be done in the future.
-> > >
-> > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > > Signed-off-by: Mike Salvatore <mike.salvatore@canonical.com>
-> > > ---
-> > >  security/apparmor/Kconfig              |  16 +
-> > >  security/apparmor/policy_unpack.c      |   4 +
-> > >  security/apparmor/policy_unpack_test.c | 607 +++++++++++++++++++++++++
-> > >  3 files changed, 627 insertions(+)
-> > >  create mode 100644 security/apparmor/policy_unpack_test.c
-> > >
-> > > diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
-> > > index d8b1a360a6368..78a33ccac2574 100644
-> > > --- a/security/apparmor/Kconfig
-> > > +++ b/security/apparmor/Kconfig
-> > > @@ -66,3 +66,19 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
-> > >       Set the default value of the apparmor.debug kernel parameter.
-> > >       When enabled, various debug messages will be logged to
-> > >       the kernel message buffer.
-> > > +
-> > > +config SECURITY_APPARMOR_KUNIT_TEST
-> > > +   bool "Build KUnit tests for policy_unpack.c"
-> > > +   depends on KUNIT && SECURITY_APPARMOR
-> > > +   help
-> > > +     This builds the AppArmor KUnit tests.
-> > > +
-> > > +     KUnit tests run during boot and output the results to the debug log
-> > > +     in TAP format (http://testanything.org/). Only useful for kernel devs
-> > > +     running KUnit test harness and are not for inclusion into a
-> > > +     production build.
-> > > +
-> > > +     For more information on KUnit and unit tests in general please refer
-> > > +     to the KUnit documentation in Documentation/dev-tools/kunit/.
-> > > +
-> > > +     If unsure, say N.
-> > > diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> > > index 8cfc9493eefc7..37c1dd3178fc0 100644
-> > > --- a/security/apparmor/policy_unpack.c
-> > > +++ b/security/apparmor/policy_unpack.c
-> > > @@ -1120,3 +1120,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
-> > >
-> > >     return error;
-> > >  }
-> > > +
-> > > +#ifdef CONFIG_SECURITY_APPARMOR_KUNIT_TEST
-> > > +#include "policy_unpack_test.c"
-> > > +#endif /* CONFIG_SECURITY_APPARMOR_KUNIT_TEST */
-> >
-> > To make this even LESS intrusive, the ifdefs could live in ..._test.c.
->
-> Less intrusive, yes, but I think I actually like the ifdef here; it
-> makes it clear from the source that the test is only a part of the build
-> when configured to do so. Nevertheless, I will change it if anyone feels
-> strongly about it.
->
-> > Also, while I *think* the kernel build system will correctly track this
-> > dependency, can you double-check that changes to ..._test.c correctly
-> > trigger a recompile of policy_unpack.c?
->
-> Yep, just verified, first I ran the tests and everything passed. Then I
-> applied the following diff:
->
-> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
-> index 533137f45361c..e1b0670dbdc27 100644
-> --- a/security/apparmor/policy_unpack_test.c
-> +++ b/security/apparmor/policy_unpack_test.c
-> @@ -161,7 +161,7 @@ static void policy_unpack_test_unpack_array_with_name(struct kunit *test)
->
->         array_size = unpack_array(puf->e, name);
->
-> -       KUNIT_EXPECT_EQ(test, array_size, (u16)TEST_ARRAY_SIZE);
-> +       KUNIT_EXPECT_EQ(test, array_size + 1, (u16)TEST_ARRAY_SIZE);
->         KUNIT_EXPECT_PTR_EQ(test, puf->e->pos,
->                 puf->e->start + TEST_ARRAY_BUF_OFFSET + sizeof(u16) + 1);
->  }
->
-> and reran the tests (to trigger an incremental build) and the test
-> failed as expected indicating that the dependency is properly tracked.
+If CONFIG_LOAD_UEFI_KEYS is enabled, the kernel attempts to load the certs
+from the db, dbx and MokListRT EFI variables into the appropriate keyrings.
 
-Hey Kees,
+But it just assumes that the variables will be present and prints an error
+if the certs can't be loaded, even when is possible that the variables may
+not exist. For example the MokListRT variable will only be present if shim
+is used.
 
-Since it looks like you already took a pretty close look at this,
-would you mind giving me a review?
+So only print an error message about failing to get the certs list from an
+EFI variable if this is found. Otherwise these printed errors just pollute
+the kernel ring buffer with confusing messages like the following:
 
-Thanks!
+[    5.427251] Couldn't get size: 0x800000000000000e
+[    5.427261] MODSIGN: Couldn't get UEFI db list
+[    5.428012] Couldn't get size: 0x800000000000000e
+[    5.428023] Couldn't get UEFI MokListRT
+
+Reported-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+
+---
+
+ security/integrity/platform_certs/load_uefi.c | 31 ++++++++++---------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
+
+diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integ=
+rity/platform_certs/load_uefi.c
+index 81b19c52832..336fa528359 100644
+--- a/security/integrity/platform_certs/load_uefi.c
++++ b/security/integrity/platform_certs/load_uefi.c
+@@ -39,16 +39,18 @@ static __init bool uefi_check_ignore_db(void)
+  * Get a certificate list blob from the named EFI variable.
+  */
+ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+-=09=09=09=09  unsigned long *size)
++=09=09=09=09  unsigned long *size, efi_status_t *status)
+ {
+-=09efi_status_t status;
+ =09unsigned long lsize =3D 4;
+ =09unsigned long tmpdb[4];
+ =09void *db;
+=20
+-=09status =3D efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
+-=09if (status !=3D EFI_BUFFER_TOO_SMALL) {
+-=09=09pr_err("Couldn't get size: 0x%lx\n", status);
++=09*status =3D efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
++=09if (*status =3D=3D EFI_NOT_FOUND)
++=09=09return NULL;
++
++=09if (*status !=3D EFI_BUFFER_TOO_SMALL) {
++=09=09pr_err("Couldn't get size: 0x%lx\n", *status);
+ =09=09return NULL;
+ =09}
+=20
+@@ -56,10 +58,10 @@ static __init void *get_cert_list(efi_char16_t *name, e=
+fi_guid_t *guid,
+ =09if (!db)
+ =09=09return NULL;
+=20
+-=09status =3D efi.get_variable(name, guid, NULL, &lsize, db);
+-=09if (status !=3D EFI_SUCCESS) {
++=09*status =3D efi.get_variable(name, guid, NULL, &lsize, db);
++=09if (*status !=3D EFI_SUCCESS) {
+ =09=09kfree(db);
+-=09=09pr_err("Error reading db var: 0x%lx\n", status);
++=09=09pr_err("Error reading db var: 0x%lx\n", *status);
+ =09=09return NULL;
+ =09}
+=20
+@@ -144,6 +146,7 @@ static int __init load_uefi_certs(void)
+ =09efi_guid_t mok_var =3D EFI_SHIM_LOCK_GUID;
+ =09void *db =3D NULL, *dbx =3D NULL, *mok =3D NULL;
+ =09unsigned long dbsize =3D 0, dbxsize =3D 0, moksize =3D 0;
++=09efi_status_t status;
+ =09int rc =3D 0;
+=20
+ =09if (!efi.get_variable)
+@@ -153,8 +156,8 @@ static int __init load_uefi_certs(void)
+ =09 * an error if we can't get them.
+ =09 */
+ =09if (!uefi_check_ignore_db()) {
+-=09=09db =3D get_cert_list(L"db", &secure_var, &dbsize);
+-=09=09if (!db) {
++=09=09db =3D get_cert_list(L"db", &secure_var, &dbsize, &status);
++=09=09if (!db && status !=3D EFI_NOT_FOUND) {
+ =09=09=09pr_err("MODSIGN: Couldn't get UEFI db list\n");
+ =09=09} else {
+ =09=09=09rc =3D parse_efi_signature_list("UEFI:db",
+@@ -166,8 +169,8 @@ static int __init load_uefi_certs(void)
+ =09=09}
+ =09}
+=20
+-=09mok =3D get_cert_list(L"MokListRT", &mok_var, &moksize);
+-=09if (!mok) {
++=09mok =3D get_cert_list(L"MokListRT", &mok_var, &moksize, &status);
++=09if (!mok && status !=3D EFI_NOT_FOUND) {
+ =09=09pr_info("Couldn't get UEFI MokListRT\n");
+ =09} else {
+ =09=09rc =3D parse_efi_signature_list("UEFI:MokListRT",
+@@ -177,8 +180,8 @@ static int __init load_uefi_certs(void)
+ =09=09kfree(mok);
+ =09}
+=20
+-=09dbx =3D get_cert_list(L"dbx", &secure_var, &dbxsize);
+-=09if (!dbx) {
++=09dbx =3D get_cert_list(L"dbx", &secure_var, &dbxsize, &status);
++=09if (!dbx && status !=3D EFI_NOT_FOUND) {
+ =09=09pr_info("Couldn't get UEFI dbx list\n");
+ =09} else {
+ =09=09rc =3D parse_efi_signature_list("UEFI:dbx",
+--=20
+2.23.0
+
