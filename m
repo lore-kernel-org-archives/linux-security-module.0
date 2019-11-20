@@ -2,186 +2,120 @@ Return-Path: <SRS0=HtSi=ZM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EFCC432C0
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Nov 2019 13:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C45C43215
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Nov 2019 14:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EBBF224DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Nov 2019 13:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574257077;
-	bh=wD3mXbNja9ectFp7lvh2up4ccGeb8rNyy241I2AEdDU=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=HRof47ixXmr9A15lgqMGOJoyLXS6bwic6b3xJIsfe3JVPXh4HwanjXlXMUlu0yghL
-	 OvbwyBm4Ie/WUIQ1uSUAsB2wZJ20wa2HgJJ9iw22fgPbk8IZB/IPobz/lvDAaW7acA
-	 I9THwmxVTNTvwfPzqnAJMMESt5qv9qto637w/3bs=
+	by mail.kernel.org (Postfix) with ESMTP id A888E217D6
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Nov 2019 14:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730949AbfKTNh4 (ORCPT
+        id S1731742AbfKTOvv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Nov 2019 08:37:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44966 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729145AbfKTNh4 (ORCPT
+        Wed, 20 Nov 2019 09:51:51 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33396 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731836AbfKTOvu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:37:56 -0500
-Received: from localhost.localdomain (unknown [118.189.143.39])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92BB2224D2;
-        Wed, 20 Nov 2019 13:37:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574257074;
-        bh=wD3mXbNja9ectFp7lvh2up4ccGeb8rNyy241I2AEdDU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=G9cMvX8kKqiOhbdcD9TMVRwfcY+nK1JMG3vIwFJCl9r9CClW86exzpY1lrzbx5Zf2
-         93NTsDmYzfWlNhSAWWo/ol7I1i0UpwXyVTbJTLjoRfbIPOEAGBrak4XNBzIQ8RrGyS
-         Rgx4TC3zjmPMrLTj3be40JEtF1bMDBJI4cXySVEc=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Micah Morton <mortonm@chromium.org>,
+        Wed, 20 Nov 2019 09:51:50 -0500
+Received: by mail-ed1-f66.google.com with SMTP id a24so20481644edt.0;
+        Wed, 20 Nov 2019 06:51:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LdZZamBZOTXJ+H49jpFbHd4kFB5olOuJEEXYQ+Tq3NY=;
+        b=dgZEIp0JWrBkNmGhY1hotc/HfrYrsv061gkPNzjqZ+nDs5m/8jP2Sv9F3N6Bpp6+o2
+         QFdwjJ1R4/CGyMPpkH7xAVjffMLKBy/CrnCOEHURxLjG7A3otnYfV89ihKbCYRg68kEz
+         4ovkIlw6TBugxwmyl+Bc50gyX3QdXnp4HV/6z0f1a+ytSOdIwH3sok1vvend7wRX4pj5
+         1HKdewXuetw/yj7ektzucVP6VksturXb7yrGa6mjCyROLtltrQRldPA3vnLBXD+iKU8M
+         kChAaryOf5RZ7gqAm04Tijcq01q14HImTxhbnNka3/cW0CFK7lc/52/QvO17hqkk+MLQ
+         GXBQ==
+X-Gm-Message-State: APjAAAUqTbBPGl+flcfDdipMo5HxO0ApCixTUtjB95V1r/if5DSUnvzZ
+        sI/Q7Hfg0bKKdkGAV450nq4=
+X-Google-Smtp-Source: APXvYqx4sL4itCM4mhO7FgVoymcvMnSi2elIRoWRpIrIaTNkF429Yn2Jt/uSeG1Yvnpm1OX14iuOXw==
+X-Received: by 2002:a17:906:f108:: with SMTP id gv8mr6110283ejb.180.1574261508945;
+        Wed, 20 Nov 2019 06:51:48 -0800 (PST)
+Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
+        by smtp.googlemail.com with ESMTPSA id r3sm1457572eds.64.2019.11.20.06.51.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2019 06:51:48 -0800 (PST)
+From:   Denis Efremov <efremov@linux.com>
+Cc:     Denis Efremov <efremov@linux.com>,
         linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: [PATCH] security: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:37:50 +0800
-Message-Id: <20191120133750.12519-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, stable@vger.kernel.org
+Subject: [PATCH] Smack: check length in smk_set_cipso()
+Date:   Wed, 20 Nov 2019 17:51:18 +0300
+Message-Id: <20191120145118.30402-1-efremov@linux.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-	$ sed -e 's/^        /\t/' -i */Kconfig
+It's possible to trigger out-of-bounds read in smk_set_cipso().
+For example (from root):
+$ echo "test 1" > /sys/fs/smackfs/cipso2
+BUG: KASAN: slab-out-of-bounds in vsscanf+0x2203/0x2990
+Read of size 1 at addr ffff888061b023c9 by task bash/5578
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+The patch adds length checks for SMK_LONG_FMT format.
+
+The bug was found by syzkaller.
+
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Denis Efremov <efremov@linux.com>
 ---
- security/apparmor/Kconfig      |  2 +-
- security/integrity/Kconfig     | 24 ++++++++++++------------
- security/integrity/ima/Kconfig | 12 ++++++------
- security/safesetid/Kconfig     | 24 ++++++++++++------------
- 4 files changed, 31 insertions(+), 31 deletions(-)
+ security/smack/smackfs.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
-index a422a349f926..1f0e712c5e50 100644
---- a/security/apparmor/Kconfig
-+++ b/security/apparmor/Kconfig
-@@ -32,7 +32,7 @@ config SECURITY_APPARMOR_HASH_DEFAULT
-        depends on SECURITY_APPARMOR_HASH
-        default y
-        help
--         This option selects whether sha1 hashing of loaded policy
-+	 This option selects whether sha1 hashing of loaded policy
- 	 is enabled by default. The generation of sha1 hashes for
- 	 loaded policy provide system administrators a quick way
- 	 to verify that policy in the kernel matches what is expected,
-diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
-index 71f0177e8716..c92339445087 100644
---- a/security/integrity/Kconfig
-+++ b/security/integrity/Kconfig
-@@ -34,10 +34,10 @@ config INTEGRITY_ASYMMETRIC_KEYS
- 	bool "Enable asymmetric keys support"
- 	depends on INTEGRITY_SIGNATURE
- 	default n
--        select ASYMMETRIC_KEY_TYPE
--        select ASYMMETRIC_PUBLIC_KEY_SUBTYPE
--        select CRYPTO_RSA
--        select X509_CERTIFICATE_PARSER
-+	select ASYMMETRIC_KEY_TYPE
-+	select ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-+	select CRYPTO_RSA
-+	select X509_CERTIFICATE_PARSER
- 	help
- 	  This option enables digital signature verification using
- 	  asymmetric keys.
-@@ -53,14 +53,14 @@ config INTEGRITY_TRUSTED_KEYRING
- 	   keyring.
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index e3e05c04dbd1..fad50a5a807b 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -878,6 +878,9 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+ 	else
+ 		rule += strlen(skp->smk_known) + 1;
  
- config INTEGRITY_PLATFORM_KEYRING
--        bool "Provide keyring for platform/firmware trusted keys"
--        depends on INTEGRITY_ASYMMETRIC_KEYS
--        depends on SYSTEM_BLACKLIST_KEYRING
--        help
--         Provide a separate, distinct keyring for platform trusted keys, which
--         the kernel automatically populates during initialization from values
--         provided by the platform for verifying the kexec'ed kerned image
--         and, possibly, the initramfs signature.
-+	bool "Provide keyring for platform/firmware trusted keys"
-+	depends on INTEGRITY_ASYMMETRIC_KEYS
-+	depends on SYSTEM_BLACKLIST_KEYRING
-+	help
-+	 Provide a separate, distinct keyring for platform trusted keys, which
-+	 the kernel automatically populates during initialization from values
-+	 provided by the platform for verifying the kexec'ed kerned image
-+	 and, possibly, the initramfs signature.
++	if (rule - data + 2 * SMK_DIGITLEN - 1 >= count)
++		goto out;
++
+ 	ret = sscanf(rule, "%d", &maplevel);
+ 	if (ret != 1 || maplevel > SMACK_CIPSO_MAXLEVEL)
+ 		goto out;
+@@ -887,15 +890,19 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+ 	if (ret != 1 || catlen > SMACK_CIPSO_MAXCATNUM)
+ 		goto out;
  
- config LOAD_UEFI_KEYS
-        depends on INTEGRITY_PLATFORM_KEYRING
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 838476d780e5..ec9259bd8115 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -159,13 +159,13 @@ config IMA_APPRAISE
- 	  If unsure, say N.
+-	if (format == SMK_FIXED24_FMT &&
+-	    count != (SMK_CIPSOMIN + catlen * SMK_DIGITLEN))
++	rule += SMK_DIGITLEN;
++
++	if ((format == SMK_FIXED24_FMT &&
++	     count != (SMK_CIPSOMIN + catlen * SMK_DIGITLEN)) ||
++	    (format == SMK_LONG_FMT &&
++	     count != (rule - data + catlen * SMK_DIGITLEN)))
+ 		goto out;
  
- config IMA_ARCH_POLICY
--        bool "Enable loading an IMA architecture specific policy"
--        depends on (KEXEC_SIG && IMA) || IMA_APPRAISE \
-+	bool "Enable loading an IMA architecture specific policy"
-+	depends on (KEXEC_SIG && IMA) || IMA_APPRAISE \
- 		   && INTEGRITY_ASYMMETRIC_KEYS
--        default n
--        help
--          This option enables loading an IMA architecture specific policy
--          based on run time secure boot flags.
-+	default n
-+	help
-+	  This option enables loading an IMA architecture specific policy
-+	  based on run time secure boot flags.
+ 	memset(mapcatset, 0, sizeof(mapcatset));
  
- config IMA_APPRAISE_BUILD_POLICY
- 	bool "IMA build time configured policy rules"
-diff --git a/security/safesetid/Kconfig b/security/safesetid/Kconfig
-index 18b5fb90417b..ab1a2c69b0b8 100644
---- a/security/safesetid/Kconfig
-+++ b/security/safesetid/Kconfig
-@@ -1,15 +1,15 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config SECURITY_SAFESETID
--        bool "Gate setid transitions to limit CAP_SET{U/G}ID capabilities"
--        depends on SECURITY
--        select SECURITYFS
--        default n
--        help
--          SafeSetID is an LSM module that gates the setid family of syscalls to
--          restrict UID/GID transitions from a given UID/GID to only those
--          approved by a system-wide whitelist. These restrictions also prohibit
--          the given UIDs/GIDs from obtaining auxiliary privileges associated
--          with CAP_SET{U/G}ID, such as allowing a user to set up user namespace
--          UID mappings.
-+	bool "Gate setid transitions to limit CAP_SET{U/G}ID capabilities"
-+	depends on SECURITY
-+	select SECURITYFS
-+	default n
-+	help
-+	  SafeSetID is an LSM module that gates the setid family of syscalls to
-+	  restrict UID/GID transitions from a given UID/GID to only those
-+	  approved by a system-wide whitelist. These restrictions also prohibit
-+	  the given UIDs/GIDs from obtaining auxiliary privileges associated
-+	  with CAP_SET{U/G}ID, such as allowing a user to set up user namespace
-+	  UID mappings.
+ 	for (i = 0; i < catlen; i++) {
+-		rule += SMK_DIGITLEN;
+ 		ret = sscanf(rule, "%u", &cat);
++		rule += SMK_DIGITLEN;
+ 		if (ret != 1 || cat > SMACK_CIPSO_MAXCATNUM)
+ 			goto out;
  
--          If you are unsure how to answer this question, answer N.
-+	  If you are unsure how to answer this question, answer N.
 -- 
-2.17.1
+2.21.0
 
