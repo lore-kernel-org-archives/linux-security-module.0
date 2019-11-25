@@ -1,94 +1,135 @@
-Return-Path: <SRS0=ogR9=ZP=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=MyF8=ZR=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3EC4C432C0
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Nov 2019 05:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C512AC43141
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Nov 2019 17:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B078B20719
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Nov 2019 05:21:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AED702053B
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Nov 2019 17:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725973AbfKWFVd (ORCPT
+        id S1729223AbfKYRyT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 23 Nov 2019 00:21:33 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61257 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfKWFVc (ORCPT
+        Mon, 25 Nov 2019 12:54:19 -0500
+Received: from mga12.intel.com ([192.55.52.136]:14985 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729220AbfKYRyT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 23 Nov 2019 00:21:32 -0500
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xAN5LRPR078351;
-        Sat, 23 Nov 2019 14:21:27 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav302.sakura.ne.jp);
- Sat, 23 Nov 2019 14:21:27 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav302.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040052248.bbtec.net [126.40.52.248])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xAN5LMq2078325
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 23 Nov 2019 14:21:27 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v11 02/25] LSM: Create and manage the lsmblob data
- structure.
-To:     Casey Schaufler <casey@schaufler-ca.com>
-References: <20191123011454.3292-1-casey.ref@schaufler-ca.com>
- <20191123011454.3292-1-casey@schaufler-ca.com>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <c5096bce-2d77-3e56-f29c-b4a6188e84f1@i-love.sakura.ne.jp>
-Date:   Sat, 23 Nov 2019 14:21:23 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Mon, 25 Nov 2019 12:54:19 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Nov 2019 09:54:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,242,1571727600"; 
+   d="scan'208";a="216979269"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga001.fm.intel.com with ESMTP; 25 Nov 2019 09:54:17 -0800
+Date:   Mon, 25 Nov 2019 09:54:17 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+7e2ab84953e4084a638d@syzkaller.appspotmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jim Mattson <jmattson@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Raslan, KarimAllah" <karahmed@amazon.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: general protection fault in __schedule (2)
+Message-ID: <20191125175417.GD12178@linux.intel.com>
+References: <000000000000e67a05057314ddf6@google.com>
+ <0000000000005eb1070597ea3a1f@google.com>
+ <20191122205453.GE31235@linux.intel.com>
+ <CACT4Y+b9FD8GTHc0baY-kUkuNFo-gdXCJ-uk5JtJSyjsyt8jTg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191123011454.3292-1-casey@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+b9FD8GTHc0baY-kUkuNFo-gdXCJ-uk5JtJSyjsyt8jTg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/11/23 10:14, Casey Schaufler wrote:
-> When more than one security module is exporting data to
-> audit and networking sub-systems a single 32 bit integer
-> is no longer sufficient to represent the data. Add a
-> structure to be used instead.
+On Sat, Nov 23, 2019 at 06:15:15AM +0100, Dmitry Vyukov wrote:
+> On Fri, Nov 22, 2019 at 9:54 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
+> >
+> > On Thu, Nov 21, 2019 at 11:19:00PM -0800, syzbot wrote:
+> > > syzbot has bisected this bug to:
+> > >
+> > > commit 8fcc4b5923af5de58b80b53a069453b135693304
+> > > Author: Jim Mattson <jmattson@google.com>
+> > > Date:   Tue Jul 10 09:27:20 2018 +0000
+> > >
+> > >     kvm: nVMX: Introduce KVM_CAP_NESTED_STATE
+> > >
+> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=124cdbace00000
+> > > start commit:   234b69e3 ocfs2: fix ocfs2 read block panic
+> > > git tree:       upstream
+> > > final crash:    https://syzkaller.appspot.com/x/report.txt?x=114cdbace00000
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=164cdbace00000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa12be50bca08d8
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=7e2ab84953e4084a638d
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150f0a4e400000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f67111400000
+> > >
+> > > Reported-by: syzbot+7e2ab84953e4084a638d@syzkaller.appspotmail.com
+> > > Fixes: 8fcc4b5923af ("kvm: nVMX: Introduce KVM_CAP_NESTED_STATE")
+> > >
+> > > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> >
+> > Is there a way to have syzbot stop processing/bisecting these things
+> > after a reasonable amount of time?  The original crash is from August of
+> > last year...
+> >
+> > Note, the original crash is actually due to KVM's put_kvm() fd race, but
+> > whatever we want to blame, it's a duplicate.
+> >
+> > #syz dup: general protection fault in kvm_lapic_hv_timer_in_use
 > 
-> The lsmblob structure is currently an array of
-> u32 "secids". There is an entry for each of the
-> security modules built into the system that would
-> use secids if active. The system assigns the module
-> a "slot" when it registers hooks. If modules are
-> compiled in but not registered there will be unused
-> slots.
+> Hi Sean,
 > 
-> A new lsm_id structure, which contains the name
-> of the LSM and its slot number, is created. There
-> is an instance for each LSM, which assigns the name
-> and passes it to the infrastructure to set the slot.
+> syzbot only sends bisection results to open bugs with no known fixes.
+> So what you did (marking the bug as invalid/dup, or attaching a fix)
+> would stop it from doing/sending bisection.
 > 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  include/linux/lsm_hooks.h  | 12 ++++++--
->  include/linux/security.h   | 58 ++++++++++++++++++++++++++++++++++++++
->  security/apparmor/lsm.c    |  7 ++++-
->  security/commoncap.c       |  7 ++++-
->  security/loadpin/loadpin.c |  8 +++++-
->  security/safesetid/lsm.c   |  8 +++++-
->  security/security.c        | 28 ++++++++++++++----
->  security/selinux/hooks.c   |  8 +++++-
->  security/smack/smack_lsm.c |  7 ++++-
->  security/tomoyo/tomoyo.c   |  8 +++++-
->  security/yama/yama_lsm.c   |  7 ++++-
->  11 files changed, 142 insertions(+), 16 deletions(-)
->
+> "Original crash happened a long time ago" is not necessary a good
+> signal. On the syzbot dashboard
+> (https://syzkaller.appspot.com/upstream), you can see bugs with the
+> original crash 2+ years ago, but they are still pretty much relevant.
+> The default kernel development process strategy for invalidating bug
+> reports by burying them in oblivion has advantages, but also
+> downsides. FWIW syzbot prefers explicit status tracking.
 
-For TOMOYO part,
- 
-Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+I have no objection to explicit status tracking or getting pinged on old
+open bugs.  I suppose I don't even mind the belated bisection, I'd probably
+whine if syzbot didn't do the bisection :-).
+
+What's annoying is the report doesn't provide any information about when it
+originally occured or on what kernel it originally failed.  It didn't occur
+to me that the original bug might be a year old and I only realized it was
+from an old kernel when I saw "4.19.0-rc4+" in the dashboard's sample crash
+log.  Knowing that the original crash was a year old would have saved me
+5-10 minutes of getting myself oriented.
+
+Could syzbot provide the date and reported kernel version (assuming the
+kernel version won't be misleading) of the original failure in its reports?
