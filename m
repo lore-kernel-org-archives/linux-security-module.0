@@ -2,134 +2,293 @@ Return-Path: <SRS0=MyF8=ZR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C512AC43141
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Nov 2019 17:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E22EC432C3
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Nov 2019 22:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AED702053B
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Nov 2019 17:54:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF32B20748
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Nov 2019 22:40:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EjuYjEx5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729223AbfKYRyT (ORCPT
+        id S1726873AbfKYWkB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Nov 2019 12:54:19 -0500
-Received: from mga12.intel.com ([192.55.52.136]:14985 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729220AbfKYRyT (ORCPT
+        Mon, 25 Nov 2019 17:40:01 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:30392 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725912AbfKYWkB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Nov 2019 12:54:19 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Nov 2019 09:54:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,242,1571727600"; 
-   d="scan'208";a="216979269"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga001.fm.intel.com with ESMTP; 25 Nov 2019 09:54:17 -0800
-Date:   Mon, 25 Nov 2019 09:54:17 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+7e2ab84953e4084a638d@syzkaller.appspotmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
+        Mon, 25 Nov 2019 17:40:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574721599;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=5sKIYkJNyPnvls7YymGjYgeRReOTkIWJFCCY/KNJN4E=;
+        b=EjuYjEx5/34jJmXXXgzxWlzOf6AGaCWqQ+45PcraM3dV28GUr6y94qzfB8NZ/j2sTREux2
+        cp+X6plr+xEi7gBrEGwxw9OAfX2Bzoyij/3JMvSk2iHkshzVl/Id06JY7iDKfgugRIFGVN
+        9ikpa0GIRgAjgt7p9FEzr+3qffVcrRY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-52-YNICEyQ8MOCH5iLhyx9JEQ-1; Mon, 25 Nov 2019 17:39:56 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A9750DB20;
+        Mon, 25 Nov 2019 22:39:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-161.rdu2.redhat.com [10.10.120.161])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C15825D9CA;
+        Mon, 25 Nov 2019 22:39:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jim Mattson <jmattson@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Raslan, KarimAllah" <karahmed@amazon.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        KVM list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: general protection fault in __schedule (2)
-Message-ID: <20191125175417.GD12178@linux.intel.com>
-References: <000000000000e67a05057314ddf6@google.com>
- <0000000000005eb1070597ea3a1f@google.com>
- <20191122205453.GE31235@linux.intel.com>
- <CACT4Y+b9FD8GTHc0baY-kUkuNFo-gdXCJ-uk5JtJSyjsyt8jTg@mail.gmail.com>
+        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] pipe: Notification queue preparation
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+b9FD8GTHc0baY-kUkuNFo-gdXCJ-uk5JtJSyjsyt8jTg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-ID: <31451.1574721589.1@warthog.procyon.org.uk>
+Date:   Mon, 25 Nov 2019 22:39:49 +0000
+Message-ID: <31452.1574721589@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: YNICEyQ8MOCH5iLhyx9JEQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Nov 23, 2019 at 06:15:15AM +0100, Dmitry Vyukov wrote:
-> On Fri, Nov 22, 2019 at 9:54 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >
-> > On Thu, Nov 21, 2019 at 11:19:00PM -0800, syzbot wrote:
-> > > syzbot has bisected this bug to:
-> > >
-> > > commit 8fcc4b5923af5de58b80b53a069453b135693304
-> > > Author: Jim Mattson <jmattson@google.com>
-> > > Date:   Tue Jul 10 09:27:20 2018 +0000
-> > >
-> > >     kvm: nVMX: Introduce KVM_CAP_NESTED_STATE
-> > >
-> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=124cdbace00000
-> > > start commit:   234b69e3 ocfs2: fix ocfs2 read block panic
-> > > git tree:       upstream
-> > > final crash:    https://syzkaller.appspot.com/x/report.txt?x=114cdbace00000
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=164cdbace00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa12be50bca08d8
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=7e2ab84953e4084a638d
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150f0a4e400000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f67111400000
-> > >
-> > > Reported-by: syzbot+7e2ab84953e4084a638d@syzkaller.appspotmail.com
-> > > Fixes: 8fcc4b5923af ("kvm: nVMX: Introduce KVM_CAP_NESTED_STATE")
-> > >
-> > > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> >
-> > Is there a way to have syzbot stop processing/bisecting these things
-> > after a reasonable amount of time?  The original crash is from August of
-> > last year...
-> >
-> > Note, the original crash is actually due to KVM's put_kvm() fd race, but
-> > whatever we want to blame, it's a duplicate.
-> >
-> > #syz dup: general protection fault in kvm_lapic_hv_timer_in_use
-> 
-> Hi Sean,
-> 
-> syzbot only sends bisection results to open bugs with no known fixes.
-> So what you did (marking the bug as invalid/dup, or attaching a fix)
-> would stop it from doing/sending bisection.
-> 
-> "Original crash happened a long time ago" is not necessary a good
-> signal. On the syzbot dashboard
-> (https://syzkaller.appspot.com/upstream), you can see bugs with the
-> original crash 2+ years ago, but they are still pretty much relevant.
-> The default kernel development process strategy for invalidating bug
-> reports by burying them in oblivion has advantages, but also
-> downsides. FWIW syzbot prefers explicit status tracking.
+Hi Linus,
 
-I have no objection to explicit status tracking or getting pinged on old
-open bugs.  I suppose I don't even mind the belated bisection, I'd probably
-whine if syzbot didn't do the bisection :-).
+Can you pull this please?  This is my set of preparatory patches for
+building a general notification queue on top of pipes.  It makes a number
+of significant changes:
 
-What's annoying is the report doesn't provide any information about when it
-originally occured or on what kernel it originally failed.  It didn't occur
-to me that the original bug might be a year old and I only realized it was
-from an old kernel when I saw "4.19.0-rc4+" in the dashboard's sample crash
-log.  Knowing that the original crash was a year old would have saved me
-5-10 minutes of getting myself oriented.
+ (1) It removes the nr_exclusive argument from __wake_up_sync_key() as this
+     is always 1.  This prepares for step 2.
 
-Could syzbot provide the date and reported kernel version (assuming the
-kernel version won't be misleading) of the original failure in its reports?
+ (2) Adds wake_up_interruptible_sync_poll_locked() so that poll can be
+     woken up from a function that's holding the poll waitqueue spinlock.
+
+     [btw, I realise that I haven't un-sync'd the
+      wake_up_interruptible_sync_poll() calls as you tentatively suggested.
+      I can send a follow up patch to fix that if you still want it]
+
+ (3) Change the pipe buffer ring to be managed in terms of unbounded head
+     and tail indices rather than bounded index and length.  This means
+     that reading the pipe only needs to modify one index, not two.
+
+ (4) A selection of helper functions are provided to query the state of the
+     pipe buffer, plus a couple to apply updates to the pipe indices.
+
+ (5) The pipe ring is allowed to have kernel-reserved slots.  This allows
+     many notification messages to be spliced in by the kernel without
+     allowing userspace to pin too many pages if it writes to the same
+     pipe.
+
+ (6) Advance the head and tail indices inside the pipe waitqueue lock and
+     use step 2 to poke poll without having to take the lock twice.
+
+ (7) Rearrange pipe_write() to preallocate the buffer it is going to write
+     into and then drop the spinlock.  This allows kernel notifications to
+     then be added the ring whilst it is filling the buffer it allocated.
+     The read side is stalled because the pipe mutex is still held.
+
+ (8) Don't wake up readers on a pipe if there was already data in it when
+     we added more.
+
+ (9) Don't wake up writers on a pipe if the ring wasn't full before we
+     removed a buffer.
+
+PATCHES=09BENCHMARK=09BEST=09=09TOTAL BYTES=09AVG BYTES=09STDDEV
+=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-=09pipe=09=09      307457969=09    36348556755=09      302904639=09       =
+10622403
+-=09splice=09=09      287117614=09    26933658717=09      224447155=09     =
+ 160777958
+-=09vmsplice=09      435180375=09    51302964090=09      427524700=09      =
+ 19083037
+
+rm-nrx=09pipe=09=09      311091179=09    37093181356=09      309109844=09  =
+      7221622
+rm-nrx=09splice=09=09      285628049=09    27916298942=09      232635824=09=
+      158296431
+rm-nrx=09vmsplice=09      417703153=09    47570362546=09      396419687=09 =
+      33960822
+
+wakesl=09pipe=09=09      310698731=09    36772541631=09      306437846=09  =
+      8249347
+wakesl=09splice=09=09      286193726=09    28600435451=09      238336962=09=
+      141169318
+wakesl=09vmsplice=09      436175803=09    50723895824=09      422699131=09 =
+      40724240
+
+ht=09pipe=09=09      305534565=09    36426079543=09      303550662=09      =
+  5673885
+ht=09splice=09=09      243632025=09    23319439010=09      194328658=09    =
+  150479853
+ht=09vmsplice=09      432825176=09    49101781001=09      409181508=09     =
+  44102509
+
+k-rsv=09pipe=09=09      308691523=09    36652267561=09      305435563=09   =
+    12972559
+k-rsv=09splice=09=09      244793528=09    23625172865=09      196876440=09 =
+     125319143
+k-rsv=09vmsplice=09      436119082=09    49460808579=09      412173404=09  =
+     55547525
+
+r-adv-t=09pipe=09=09      310094218=09    36860182219=09      307168185=09 =
+       8081101
+r-adv-t=09splice=09=09      285527382=09    27085052687=09      225708772=
+=09      206918887
+r-adv-t=09vmsplice=09      336885948=09    40128756927=09      334406307=09=
+        5895935
+
+r-cond=09pipe=09=09      308727804=09    36635828180=09      305298568=09  =
+      9976806
+r-cond=09splice=09=09      284467568=09    28445793054=09      237048275=09=
+      200284329
+r-cond=09vmsplice=09      449679489=09    51134833848=09      426123615=09 =
+      66790875
+
+w-preal=09pipe=09=09      307416578=09    36662086426=09      305517386=09 =
+       6216663
+w-preal=09splice=09=09      282655051=09    28455249109=09      237127075=
+=09      194154549
+w-preal=09vmsplice=09      437002601=09    47832160621=09      398601338=09=
+       96513019
+
+w-redun=09pipe=09=09      307279630=09    36329750422=09      302747920=09 =
+       8913567
+w-redun=09splice=09=09      284324488=09    27327152734=09      227726272=
+=09      219735663
+w-redun=09vmsplice=09      451141971=09    51485257719=09      429043814=09=
+       51388217
+
+w-ckful=09pipe=09=09      305055247=09    36374947350=09      303124561=09 =
+       5400728
+w-ckful=09splice=09=09      281575308=09    26841554544=09      223679621=
+=09      215942886
+w-ckful=09vmsplice=09      436653588=09    47564907110=09      396374225=09=
+       82255342
+
+The patches column indicates the point in the patchset at which the benchma=
+rks
+were taken:
+
+=090=09No patches
+=09rm-nrx=09"Remove the nr_exclusive argument from __wake_up_sync_key()"
+=09wakesl=09"Add wake_up_interruptible_sync_poll_locked()"
+=09ht=09"pipe: Use head and tail pointers for the ring, not cursor and leng=
+th"
+=09k-rsv=09"pipe: Allow pipes to have kernel-reserved slots"
+=09r-adv-t=09"pipe: Advance tail pointer inside of wait spinlock in pipe_re=
+ad()"
+=09r-cond=09"pipe: Conditionalise wakeup in pipe_read()"
+=09w-preal=09"pipe: Rearrange sequence in pipe_write() to preallocate slot"
+=09w-redun=09"pipe: Remove redundant wakeup from pipe_write()"
+=09w-ckful=09"pipe: Check for ring full inside of the spinlock in pipe_writ=
+e()"
+
+Changes:
+
+ (*) Fix some bugs spotted by kbuild.
+
+ ver #3:
+
+ (*) Get rid of pipe_commit_{read,write}.
+
+ (*) Port the virtio_console driver.
+
+ (*) Fix pipe_zero().
+
+ (*) Amend some comments.
+
+ (*) Added an additional patch that changes the threshold at which readers
+     wake writers for Konstantin Khlebnikov.
+
+ ver #2:
+
+ (*) Split the notification patches out into a separate branch.
+
+ (*) Removed the nr_exclusive parameter from __wake_up_sync_key().
+
+ (*) Renamed the locked wakeup function.
+
+ (*) Add helpers for empty, full, occupancy.
+
+ (*) Split the addition of ->max_usage out into its own patch.
+
+ (*) Fixed some bits pointed out by Rasmus Villemoes.
+
+ ver #1:
+
+ (*) Build on top of standard pipes instead of having a driver.
+
+David
+---
+The following changes since commit da0c9ea146cbe92b832f1b0f694840ea8eb33cce=
+:
+
+  Linux 5.4-rc2 (2019-10-06 14:27:30 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/=
+notifications-pipe-prep-20191115
+
+for you to fetch changes up to 3c0edea9b29f9be6c093f236f762202b30ac9431:
+
+  pipe: Remove sync on wake_ups (2019-11-15 16:22:54 +0000)
+
+----------------------------------------------------------------
+Pipework for general notification queue
+
+----------------------------------------------------------------
+David Howells (12):
+      pipe: Reduce #inclusion of pipe_fs_i.h
+      Remove the nr_exclusive argument from __wake_up_sync_key()
+      Add wake_up_interruptible_sync_poll_locked()
+      pipe: Use head and tail pointers for the ring, not cursor and length
+      pipe: Allow pipes to have kernel-reserved slots
+      pipe: Advance tail pointer inside of wait spinlock in pipe_read()
+      pipe: Conditionalise wakeup in pipe_read()
+      pipe: Rearrange sequence in pipe_write() to preallocate slot
+      pipe: Remove redundant wakeup from pipe_write()
+      pipe: Check for ring full inside of the spinlock in pipe_write()
+      pipe: Increase the writer-wakeup threshold to reduce context-switch c=
+ount
+      pipe: Remove sync on wake_ups
+
+ drivers/char/virtio_console.c |  16 ++-
+ fs/exec.c                     |   1 -
+ fs/fuse/dev.c                 |  31 +++--
+ fs/ocfs2/aops.c               |   1 -
+ fs/pipe.c                     | 232 +++++++++++++++++++++---------------
+ fs/splice.c                   | 190 +++++++++++++++++------------
+ include/linux/pipe_fs_i.h     |  64 +++++++++-
+ include/linux/uio.h           |   4 +-
+ include/linux/wait.h          |  11 +-
+ kernel/exit.c                 |   2 +-
+ kernel/sched/wait.c           |  37 ++++--
+ lib/iov_iter.c                | 269 ++++++++++++++++++++++++--------------=
+----
+ security/smack/smack_lsm.c    |   1 -
+ 13 files changed, 529 insertions(+), 330 deletions(-)
+
