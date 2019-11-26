@@ -2,116 +2,123 @@ Return-Path: <SRS0=MSBT=ZS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03485C43141
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Nov 2019 13:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24294C43215
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Nov 2019 21:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9C12075C
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Nov 2019 13:18:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC14520863
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Nov 2019 21:24:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="P8OkylXH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727917AbfKZNSm (ORCPT
+        id S1727088AbfKZVYs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Nov 2019 08:18:42 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53594 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727258AbfKZNSl (ORCPT
+        Tue, 26 Nov 2019 16:24:48 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33360 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbfKZVYs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Nov 2019 08:18:41 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAQDHpFh185284;
-        Tue, 26 Nov 2019 08:18:37 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2wfjyy74t1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Nov 2019 08:18:36 -0500
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id xAQDI3Wa186946;
-        Tue, 26 Nov 2019 08:18:36 -0500
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2wfjyy74sn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Nov 2019 08:18:36 -0500
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xAQDITlI029600;
-        Tue, 26 Nov 2019 13:18:35 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma02wdc.us.ibm.com with ESMTP id 2wevd6k7mg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Nov 2019 13:18:35 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAQDIZcv37355834
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Nov 2019 13:18:35 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E282B2805A;
-        Tue, 26 Nov 2019 13:18:34 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4D812805E;
-        Tue, 26 Nov 2019 13:18:34 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Nov 2019 13:18:34 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: [PATCH 2/2] tpm: Revert "tpm_tis_core: Turn on the TPM before probing IRQ's"
-Date:   Tue, 26 Nov 2019 08:17:53 -0500
-Message-Id: <20191126131753.3424363-3-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191126131753.3424363-1-stefanb@linux.vnet.ibm.com>
-References: <20191126131753.3424363-1-stefanb@linux.vnet.ibm.com>
+        Tue, 26 Nov 2019 16:24:48 -0500
+Received: by mail-lf1-f68.google.com with SMTP id d6so15350594lfc.0
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2019 13:24:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=CEw4jOKJMhZKkV1eMwS5PwtPdwRdezpWN4q2D1I8RcQ=;
+        b=P8OkylXHnYtaFsX0ZAt6YVDE1F/70OWbvpOyAYcvZqQzqknAR9g8gGZ2TYaEjOHSYQ
+         HbCGP8Jndnii5OlXD/woTraA53oLxVhRb1bNuhe8rvY+TmkNUnWAmreD1Qt99QODvGOR
+         ZCawShyATDXHd39MV2le8O6Ag+O32rN80sc3AweYxNq0jYDGHoMB9DwFKLt4uu5B9J1X
+         rp+YDlOB66hqUxe3Rtf4ExpKvx7dfY8F9G3pTaQt7hZLfN3HOyUskGttnzNttuqf+HE0
+         TRpUh6aQrCNeC+QdZtPyb92pCABvm85yuCn4X+4OXyMoovIGdILj0lwJvO/C6GZ6NEZO
+         pXRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=CEw4jOKJMhZKkV1eMwS5PwtPdwRdezpWN4q2D1I8RcQ=;
+        b=GmsjDmV5+jEeis21CoialPcfCEeP3lVrB949Mot8FeVwZlAcal8L+SBpbCEMOmUzmL
+         p/3eVq26Flv1QHHsYMZdzh51nFtDI9KsiWTv8CKbI2F6C7DPKkY74RWnVkyuHmxSYrT4
+         HSw9v9YEyLY8Jm2M+SdH4QL+J0/+WdODvw/p/cM+8r3lBraTXhxiLdI3Lk7md6n9DFg/
+         Trk3M6oskh07URH1yA4Nw4xzdzX1CQEBINscicY3gcUAXis8aCgQohomcB8sBXuYS7bj
+         ANMfFjfcWcPB8k11UHe2yuQeLUBs7Hejl+7CzyPR8tYa4RX4nAKzAll+zfMpyt7RExCp
+         if0Q==
+X-Gm-Message-State: APjAAAUsdC4zjUNA2/BwB7y7srvgqnvoevz3CX9wbm1hVPLgv4gZd0BU
+        ALTHz75SfxlKt89GwHQa5AQil0+97w5YXgn3s/ER
+X-Google-Smtp-Source: APXvYqwFNl6yq6//E6s3XI9PZjL79hQnR/gAzxOZT2E5dSQFA8kbY+SjBp/nt0uaxPrc123dbcH7FjUuGxAlIpqw0w4=
+X-Received: by 2002:ac2:428d:: with SMTP id m13mr20422790lfh.64.1574803485662;
+ Tue, 26 Nov 2019 13:24:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-26_03:2019-11-26,2019-11-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- mlxscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0
- adultscore=0 clxscore=1015 bulkscore=0 mlxlogscore=968 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-1911260119
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 26 Nov 2019 16:24:34 -0500
+Message-ID: <CAHC9VhRj-vx8AnP5tKcq9joNqWSHRv1bk+3e7DGU9mxjN+fVFg@mail.gmail.com>
+Subject: [GIT PULL] SELinux patches for v5.5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+Hi Linus,
 
-Revert the patch that was turning the TPM on before probing for IRQs.
+Only three SELinux patches for v5.5, all passing the test suite and
+listed below, please merge them for v5.5.
 
-Fixes: 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Cc: stable@vger.kernel.org
----
- drivers/char/tpm/tpm_tis_core.c | 2 --
- 1 file changed, 2 deletions(-)
+- Remove the size limit on SELinux policies, the limitation was a
+lingering vestige and no longer necessary.
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 5dc52c4e2292..27c6ca031e23 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -1059,7 +1059,6 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 			goto out_err;
- 		}
- 
--		tpm_chip_start(chip);
- 		if (irq) {
- 			tpm_tis_probe_irq_single(chip, intmask, IRQF_SHARED,
- 						 irq);
-@@ -1069,7 +1068,6 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 		} else {
- 			tpm_tis_probe_irq(chip, intmask);
- 		}
--		tpm_chip_stop(chip);
- 	}
- 
- 	rc = tpm_chip_register(chip);
+- Allow file labeling before the policy is loaded.  This should ease
+some of the burden when the policy is initially loaded (no need to
+relabel files), but it should also help enable some new system
+concepts which dynamically create the root filesystem in the initrd.
+
+- Add support for the "greatest lower bound" policy construct which is
+defined as the intersection of the MLS range of two SELinux labels.
+
+Thanks,
+-Paul
+--
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+
+ Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20191126
+
+for you to fetch changes up to 42345b68c2e3e2b6549fc34b937ff44240dfc3b6:
+
+ selinux: default_range glblub implementation (2019-10-07 19:01:35 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.5 PR 20191126
+
+----------------------------------------------------------------
+Jonathan Lebon (1):
+     selinux: allow labeling before policy is loaded
+
+Joshua Brindle (1):
+     selinux: default_range glblub implementation
+
+zhanglin (1):
+     selinux: remove load size limit
+
+security/selinux/hooks.c            | 12 ++++++++++++
+security/selinux/include/security.h |  3 ++-
+security/selinux/selinuxfs.c        |  4 ----
+security/selinux/ss/context.h       | 32 ++++++++++++++++++++++++++++++++
+security/selinux/ss/ebitmap.c       | 18 ++++++++++++++++++
+security/selinux/ss/ebitmap.h       |  1 +
+security/selinux/ss/mls.c           |  3 +++
+security/selinux/ss/policydb.c      |  5 +++++
+security/selinux/ss/policydb.h      |  1 +
+9 files changed, 74 insertions(+), 5 deletions(-)
+
 -- 
-2.14.5
-
+paul moore
+www.paul-moore.com
