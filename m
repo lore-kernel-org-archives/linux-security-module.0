@@ -3,69 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3433CC43215
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Nov 2019 17:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58CB1C432C3
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Nov 2019 21:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 172092073F
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Nov 2019 17:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30BD7216F4
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Nov 2019 21:18:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbfK0RWZ (ORCPT
+        id S1733138AbfK0VSv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Nov 2019 12:22:25 -0500
-Received: from namei.org ([65.99.196.166]:34938 "EHLO namei.org"
+        Wed, 27 Nov 2019 16:18:51 -0500
+Received: from mga12.intel.com ([192.55.52.136]:25616 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbfK0RWZ (ORCPT
+        id S1733142AbfK0VLQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Nov 2019 12:22:25 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id xARHMAm2004256;
-        Wed, 27 Nov 2019 17:22:10 GMT
-Date:   Thu, 28 Nov 2019 04:22:10 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Audit-ML <linux-audit@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, matthewgarrett@google.com
-Subject: Re: [RFC PATCH v2] security,lockdown,selinux: implement SELinux
- lockdown
-In-Reply-To: <20191127170436.4237-1-sds@tycho.nsa.gov>
-Message-ID: <alpine.LRH.2.21.1911280421250.3325@namei.org>
-References: <20191127170436.4237-1-sds@tycho.nsa.gov>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Wed, 27 Nov 2019 16:11:16 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 13:11:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,250,1571727600"; 
+   d="scan'208";a="383619382"
+Received: from gtau-mobl.ger.corp.intel.com (HELO localhost) ([10.251.83.243])
+  by orsmga005.jf.intel.com with ESMTP; 27 Nov 2019 13:11:12 -0800
+Date:   Wed, 27 Nov 2019 23:11:09 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dan.j.williams@intel.com
+Subject: Re: [PATCH] tpm_tis: Move setting of TPM_CHIP_FLAG_IRQ into
+ tpm_tis_probe_irq_single
+Message-ID: <20191127211109.GF14290@linux.intel.com>
+References: <20191112202725.3009814-1-stefanb@linux.vnet.ibm.com>
+ <20191114164151.GB9528@linux.intel.com>
+ <20191114164426.GC9528@linux.intel.com>
+ <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
+ <20191121184949.yvw2gwzlkhjzko64@cantor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191121184949.yvw2gwzlkhjzko64@cantor>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 27 Nov 2019, Stephen Smalley wrote:
-
-> avc:  denied  { confidentiality } for pid=4628 comm="cp"
->  lockdown_reason="/proc/kcore access"
->  scontext=unconfined_u:unconfined_r:test_lockdown_integrity_t:s0-s0:c0.c1023
->  tcontext=unconfined_u:unconfined_r:test_lockdown_integrity_t:s0-s0:c0.c1023
->  tclass=lockdown permissive=0
+On Thu, Nov 21, 2019 at 11:49:49AM -0700, Jerry Snitselaar wrote:
+> On Sat Nov 16 19, Stefan Berger wrote:
+> > On 11/14/19 11:44 AM, Jarkko Sakkinen wrote:
+> > > On Thu, Nov 14, 2019 at 06:41:51PM +0200, Jarkko Sakkinen wrote:
+> > > > On Tue, Nov 12, 2019 at 03:27:25PM -0500, Stefan Berger wrote:
+> > > > > From: Stefan Berger <stefanb@linux.ibm.com>
+> > > > > 
+> > > > > Move the setting of the TPM_CHIP_FLAG_IRQ for irq probing into
+> > > > > tpm_tis_probe_irq_single before calling tpm_tis_gen_interrupt.
+> > > > > This move handles error conditions better that may arise if anything
+> > > > > before fails in tpm_tis_probe_irq_single.
+> > > > > 
+> > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > > > Suggested-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > > What about just changing the condition?
+> > > Also cannot take this since it is not a bug (no fixes tag).
+> > 
+> > I'll repost but will wait until Jerry has tested it on that machine.
+> > 
+> >    Stefan
+> > 
+> > 
+> > > 
+> > > /Jarkko
+> > 
+> > 
 > 
-> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-> ---
->  include/linux/lsm_audit.h           |  2 ++
->  include/linux/security.h            |  2 ++
->  security/lockdown/lockdown.c        | 24 -----------------------
->  security/lsm_audit.c                |  5 +++++
->  security/security.c                 | 30 +++++++++++++++++++++++++++++
->  security/selinux/hooks.c            | 30 +++++++++++++++++++++++++++++
->  security/selinux/include/classmap.h |  2 ++
->  7 files changed, 71 insertions(+), 24 deletions(-)
+> It appears they still have the problem. I'm still waiting on logistics
+> to send me a system to debug.
 
-LGTM.
+Which hardware is guaranteed to ignite this? I can try to get test hw
+for this from somewhere. Kind of looking into this blinded ATM. Dan?
 
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
-
-
--- 
-James Morris
-<jmorris@namei.org>
-
+/Jarkko
