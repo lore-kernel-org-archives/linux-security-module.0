@@ -1,420 +1,333 @@
-Return-Path: <SRS0=MSBT=ZS=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=Mo47=ZT=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21020C432C0
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Nov 2019 23:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00534C432C3
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Nov 2019 17:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDEC020836
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Nov 2019 23:18:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6896206F0
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Nov 2019 17:04:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c+GFcQpk"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="TUx7HZ3U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbfKZXSk (ORCPT
+        id S1726990AbfK0REw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Nov 2019 18:18:40 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36942 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726571AbfKZXSf (ORCPT
+        Wed, 27 Nov 2019 12:04:52 -0500
+Received: from USAT19PA23.eemsg.mail.mil ([214.24.22.197]:10780 "EHLO
+        USAT19PA23.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbfK0REw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Nov 2019 18:18:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574810313;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=20GeOpoPT0snHt7qe+T0XUQDGxez5/QlN7Y4QZP0gmM=;
-        b=c+GFcQpkoeeBNPPGk/1+3Y2yn1nqpkG0sXjqUOr+lYM8gY4bbzBTZyKtaJTIoOSG0rBDlG
-        SUDyY0kuCtTRh0UTChnsx78GRviBta9kpdypVR9X+F/XINsDYLo6dt9tf4JFuDN0HhW5gj
-        oI+ZELWcM7vLyO3v3tNcRqdPPxbWQqI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-309-TVjWshN5Pz-bv83_5tEp9g-1; Tue, 26 Nov 2019 18:18:29 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6B35E1856A62;
-        Tue, 26 Nov 2019 23:18:27 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-161.rdu2.redhat.com [10.10.120.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 539E7600C8;
-        Tue, 26 Nov 2019 23:18:24 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] pipe: General notification queue
+        Wed, 27 Nov 2019 12:04:52 -0500
+X-EEMSG-check-017: 55328871|USAT19PA23_ESA_OUT04.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.69,250,1571702400"; 
+   d="scan'208";a="55328871"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by USAT19PA23.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 27 Nov 2019 17:04:48 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1574874289; x=1606410289;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xYdJT5Q8Im3N8WSylXaPmuhl6GqEkpGAwPd0N9KPxko=;
+  b=TUx7HZ3U5TVa07DCKvAxlFy34p83WhULHBUaoWn5Dc+zYqG72d0G44Bo
+   MIEnkTSAlzJCMVZUCpmVDjF2PbZkf+1HC/1fBSJmwZygJl9ImbG3U+r4V
+   ytzrTL70uoJVrNf69Ck6zQ+oUEYHcd5mPJet85My6Fy47ZCaetQQrdT0O
+   f4GUS8i4RwhEo47lYzvRBCHv69vs3hgtVXK4EQAOO7CCm5GtGjGkYRl9a
+   yF3G2wNUecdAUjzj/Z2dQ3Pn5+SQHl3zlUP5XPQG0q1qGIRyYpZTc5ZOY
+   4UM454oIEIN9CjefkI+VR+r3l58mFb+/fK1yYOpkgZyPL1Wa2xnLZSNS3
+   A==;
+X-IronPort-AV: E=Sophos;i="5.69,250,1571702400"; 
+   d="scan'208";a="36092306"
+IronPort-PHdr: =?us-ascii?q?9a23=3AapskcxcspfQBru6ThmObAw8tlGMj4u6mDksu8p?=
+ =?us-ascii?q?Mizoh2WeGdxc26bBGN2/xhgRfzUJnB7Loc0qyK6vumADJdqsfd+Fk5M7V0Hy?=
+ =?us-ascii?q?cfjssXmwFySOWkMmbcaMDQUiohAc5ZX0Vk9XzoeWJcGcL5ekGA6ibqtW1aFR?=
+ =?us-ascii?q?rwLxd6KfroEYDOkcu3y/qy+5rOaAlUmTaxe7x/IAi4oAnLq8UbgItvJqk1xx?=
+ =?us-ascii?q?bGv3BFZ/lYyWR0KFyJgh3y/N2w/Jlt8yRRv/Iu6ctNWrjkcqo7ULJVEi0oP3?=
+ =?us-ascii?q?g668P3uxbDSxCP5mYHXWUNjhVIGQnF4wrkUZr3ryD3q/By2CiePc3xULA0RT?=
+ =?us-ascii?q?Gv5LplRRP0lCsKMSMy/2/Nisx0kalVvhSvqRJiyILQeY2YNP5zcqbbcNgHR2?=
+ =?us-ascii?q?ROQ9xRWjRBDI2icoUBAekPM+FXoIfyvFYCsRizCBOwCO711jNEmnn71rA63e?=
+ =?us-ascii?q?Q7FgHG2RQtEc8SsHvKtNX1NLkdUeaox6fVyDXMdfdW2TPj54nIbxsspuqMUq?=
+ =?us-ascii?q?9rccfK1UkuFx/KjlWXqYD/OTOVzf4Cv3KU7+pnS+KikmgqoBxyrDi33sogl4?=
+ =?us-ascii?q?bEi40Pxl3E6Cl12pg5KNKmREJhfNKpFoZbuTuAOItsWMwiRnlluCM9yrIbp5?=
+ =?us-ascii?q?G2ZDMKyJE7xx7HbPyHbpSI7grjVOmPJTd4g2poeK6liBao8Eig1/b8WtO10F?=
+ =?us-ascii?q?ZMoCpFlcLMuW4R2BDJ9siGSudy/kem2TqV0QDc9vpELlwumareKp4hxqY8lp?=
+ =?us-ascii?q?sVsUvdAi/7gFj6gaCZe0k++uWk9v7rbqvpq5OCLYN4lxnyMqE0lcy+BeQ4PB?=
+ =?us-ascii?q?IOX2+e+emkz73s4Fb5Ta5Wjvw2jqbZsJfaKd4dpq6iGQBZyIkj6xGhDzu+yt?=
+ =?us-ascii?q?QXgWEHLE5ZeBKAl4XpPkvBIOzkDfe/nVutnjhryOrcPr37HJrNMmTDnazufb?=
+ =?us-ascii?q?Z67E5cxw4zws5F651IDbEBJer5WlXtu9zAEh85Lwu0zv7lCNV40YMeQ3iPAq?=
+ =?us-ascii?q?6CMK7Jt1+H/OcvLPeNZIMPvzb9Mfcl7eb0jXAlgV8dYbWp3ZwPZXCgBPtmPk?=
+ =?us-ascii?q?GZbGH0gtgbDGcKuhMyTOntiF2FSz5ceWy+UL475jE+EIimF5vMRpixgLyd2y?=
+ =?us-ascii?q?e2BplWZmFAClCRHnbkbp+LW+oRZyKTPs9siSYEWqa8RI8hzx6uqBX2xKZgLu?=
+ =?us-ascii?q?rR4icYr47s1MBp5+3PkhE/7Th0D8Wb02GQQGB4h3gISCEq06Biu0x9y0uD0K?=
+ =?us-ascii?q?hhj/xdEtxc+u5JUgMkOpPH0ex6BM79WhjbcteKVlmmWNOmDi81Tt4rxN8OeU?=
+ =?us-ascii?q?l9Ec24jh/fxyqqH6MVl7uTCZwv7K3c23nxJ8Bgy3fJz6QhkVYmTdVVNWG8ha?=
+ =?us-ascii?q?5w6RLTB4jXnEWdjaqqcr4c3CGevFuEmHGDuEBeTR5YT6rIRzYca1HQoNC/4V?=
+ =?us-ascii?q?nNHJG0DrFyCRdM0c6PLONxb9TtiVhXDKP4NM/2f3O6m2D2Aw2BgLyLcty5KC?=
+ =?us-ascii?q?0mwCzBBR1cwEgo9nGcOF17W3as?=
+X-IPAS-Result: =?us-ascii?q?A2CqAgDiq95d/wHyM5BlHAEBAQEBBwEBEQEEBAEBgX6Bb?=
+ =?us-ascii?q?wWBbSASKo0ukXeRRAkBAQEBAQEBAQEbHAEBhECCJjgTAhABAQEEAQEBAQEFA?=
+ =?us-ascii?q?wEBbIVDgjspgxwLAUaBUYJjP4JTJbQyM4kagUiBNoc9gzuBOHmBB4ERNoMbh?=
+ =?us-ascii?q?DWGAgSNFBWKAHSWHII3gjmTEQwbgkCMKYs2qm0igVgrCAIYCCEPgydQERSGV?=
+ =?us-ascii?q?BeOQSMDMIt9ASQHghQBAQ?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 27 Nov 2019 17:04:48 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id xARH4gO5064133;
+        Wed, 27 Nov 2019 12:04:42 -0500
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+To:     selinux@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        paul@paul-moore.com, jmorris@namei.org, matthewgarrett@google.com,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: [RFC PATCH v2] security,lockdown,selinux: implement SELinux lockdown
+Date:   Wed, 27 Nov 2019 12:04:36 -0500
+Message-Id: <20191127170436.4237-1-sds@tycho.nsa.gov>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-ID: <31554.1574810303.1@warthog.procyon.org.uk>
-Date:   Tue, 26 Nov 2019 23:18:23 +0000
-Message-ID: <31555.1574810303@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: TVjWshN5Pz-bv83_5tEp9g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
-
-Can you consider pulling my general notification queue patchset after
-you've pulled the preparatory pipework patchset?  Or should it be deferred
-to the next window?
-
-The general notification queue is built on top a pipe, splicing kernel
-events into the pipe from a variety of event sources.  A 'notification'
-mode pipe must be linked to the desired sources before it will start
-getting any events delivered through it.  Event sources include:
-
- (1) Keys/keyrings, such as linking and unlinking keys and changing their
-     attributes.
-
- (2) General device events (single common queue) including:
-
-     - Block layer events, such as device errors
-
-     - USB subsystem events, such as device attach/remove, device reset,
-       device errors.
-
- (3) I have patches for adding superblock and mount topology watches also,
-     but in a separate branch as there are other dependencies.
-
-LSM hooks are included:
-
- (1) A set of hooks are provided that allow an LSM to rule on whether or
-     not a watch may be set.  Each of these hooks takes a different
-     "watched object" parameter, so they're not really shareable.  The LSM
-     should use current's credentials.  [Wanted by SELinux & Smack]
-
- (2) A hook is provided to allow an LSM to rule on whether or not a
-     particular message may be posted to a particular queue.  This is given
-     the credentials from the event generator (which may be the system) and
-     the watch setter.  [Wanted by Smack]
-
-I've provided SELinux and Smack with implementations of some of these hooks=
-.
-
-
-USE CASES
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
- (1) Key/keyring notifications.
-
-     If you have your kerberos tickets in a file/directory, your gnome desk=
-top
-     will monitor that using something like fanotify and tell you if your
-     credentials cache changes.
-
-     We also have the ability to cache your kerberos tickets in the session=
-,
-     user or persistent keyring so that it isn't left around on disk across=
- a
-     reboot or logout.  Keyrings, however, cannot currently be monitored
-     asynchronously, so the desktop has to poll for it - not so good on a
-     laptop.
-
-     This source will allow the desktop to avoid the need to poll.
-
- (2) USB notifications.
-
-     GregKH was looking for a way to do USB notifications as I was looking =
-to
-     find additional sources to implement.  I'm not sure how he wants to us=
-e
-     them, but I'll let him speak to that himself.
-
- (3) Block notifications.
-
-     This one I was thinking that I could make something like ddrescue bett=
-er
-     by letting it get notifications this way.  This was a target of
-     convenience since I had a dodgy disk I was trying to rescue.
-
-     It could also potentially be used help systemd, say, detect broken
-     devices and avoid trying to unmount them when trying to reboot the mac=
-hine.
-
-     I can drop this for now if you prefer.
-
- (4) Mount notifications.
-
-     This one is wanted to avoid repeated trawling of /proc/mounts or simil=
-ar
-     to work out changes to the mount object attributes and mount topology.
-     I'm told that the proc file holding the namespace_sem is a point of
-     contention, especially as the process of generating the text descripti=
-ons
-     of the mounts/superblocks can be quite involved.
-
-     The notifications directly indicate the mounts involved in any particu=
-lar
-     event and what the change was.  You can poll /proc/mounts, but all you
-     know is that something changed; you don't know what and you don't know
-     how and reading that file may race with multiple changed being effecte=
-d.
-
-     I pair this with a new fsinfo() system call that allows, amongst other
-     things, the ability to retrieve in one go an { id, change counter } tu=
-ple
-     from all the children of a specified mount, allowing buffer overruns t=
-o
-     be cleaned up quickly.
-
-     It's not just Red Hat that's potentially interested in this:
-
-=09https://lore.kernel.org/linux-fsdevel/293c9bd3-f530-d75e-c353-ddeabac27c=
-f6@6wind.com/
-
- (5) Superblock notifications.
-
-     This one is provided to allow systemd or the desktop to more easily
-     detect events such as I/O errors and EDQUOT/ENOSPC.
-
-
-DESIGN DECISIONS
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
- (1) The notification queue is built on top of a standard pipe.  Messages
-     are effectively spliced in.  The pipe is opened with a special flag:
-
-=09pipe2(fds, O_NOTIFICATION_PIPE);
-
-     The special flag has the same value as O_EXCL (which doesn't seem like
-     it will ever be applicable in this context)[?].  It is given up front
-     to make it a lot easier to prohibit splice and co. from accessing the
-     pipe.
-
-     [?] Should this be done some other way?  I'd rather not use up a new
-     O_* flag if I can avoid it - should I add a pipe3() system call
-     instead?
-
-     The pipe is then configured::
-
-=09ioctl(fds[1], IOC_WATCH_QUEUE_SET_SIZE, queue_depth);
-=09ioctl(fds[1], IOC_WATCH_QUEUE_SET_FILTER, &filter);
-
-     Messages are then read out of the pipe using read().
-
-     [?] Should this use fcntl() rather than ioctl()?
-
- (2) It should be possible to allow write() to insert data into the
-     notification pipes too, but this is currently disabled as the kernel
-     has to be able to insert messages into the pipe *without* holding
-     pipe->mutex and the code to make this work needs careful auditing.
-
- (3) sendfile(), splice() and vmsplice() are disabled on notification pipes
-     because of the pipe->mutex issue and also because they sometimes want
-     to revert what they just did - but one or more notification messages
-     might've been interleaved in the ring.
-
- (4) The kernel inserts messages with the wait queue spinlock held.  This
-     means that pipe_read() and pipe_write() have to take the spinlock to
-     update the queue pointers.
-
- (5) Records in the buffer are binary, typed and have a length so that they
-     can be of varying size.
-
-     This allows multiple heterogeneous sources to share a common buffer;
-     there are 16 million types available, of which I've used just a few,
-     so there is scope for others to be used.  Tags may be specified when a
-     watchpoint is created to help distinguish the sources.
-
- (6) Records are filterable as types have up to 256 subtypes that can be
-     individually filtered.  Other filtration is also available.
-
- (7) Notification pipes don't interfere with each other; each may be bound
-     to a different set of event sources.  Any particular notification will
-     be copied to all the queues that are currently watching for it - and
-     only those that are watching for it.
-
- (8) When recording a notification, the kernel will not sleep, but will
-     rather mark a queue as having lost a message if there's insufficient
-     space.  read() will fabricate a loss notification message at an
-     appropriate point later.
-
- (9) The notification pipe is created and then watchpoints are attached to
-     it.  Examples of this include:
-
-=09keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fds[1], 0x01);
-=09watch_devices(fds[1], 0x02, 0);
-
-     where in both cases, fd indicates the queue and the number after is a
-     tag between 0 and 255.
-
-(10) Watches are removed if either the notification pipe is destroyed or
-     the watched object is destroyed.  In the latter case, a message will
-     be generated indicating the enforced watch removal.
-
-
-Things I want to avoid:
-
- (1) Introducing features that make the core VFS dependent on the network
-     stack or networking namespaces (ie. usage of netlink).
-
- (2) Dumping all this stuff into dmesg and having a daemon that sits there
-     parsing the output and distributing it as this then puts the
-     responsibility for security into userspace and makes handling
-     namespaces tricky.  Further, dmesg might not exist or might be
-     inaccessible inside a container.
-
- (3) Letting users see events they shouldn't be able to see.
-
-
-TESTING AND MANPAGES
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
- (*) The keyutils tree has a pipe-watch branch that has keyctl commands for
-     making use of notifications.  Proposed manual pages can also be found
-     on this branch, though a couple of them really need to go to the main
-     manpages repository instead.
-
-     If the kernel supports the watching of keys, then running "make test"
-     on that branch will cause the testing infrastructure to spawn a
-     monitoring process on the side that monitors a notifications pipe for
-     all the key/keyring changes induced by the tests and they'll all be
-     checked off to make sure they happened.
-
-=09https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/lo=
-g/?h=3Dpipe-watch
-
-Changes:
-
- (*) Fix some bits found by kbuild.
-
- ver #2:
-
- (*) Declare O_NOTIFICATION_PIPE to use and switch it to be the same value
-     as O_EXCL rather then O_TMPFILE (the latter is a bit nasty in its
-     implementation).
-
- ver #1:
-
- (*) Build on top of standard pipes instead of having a driver.
-
-David
+Implement a SELinux hook for lockdown.  If the lockdown module is also
+enabled, then a denial by the lockdown module will take precedence over
+SELinux, so SELinux can only further restrict lockdown decisions.
+The SELinux hook only distinguishes at the granularity of integrity
+versus confidentiality similar to the lockdown module, but includes the
+full lockdown reason as part of the audit record as a hint in diagnosing
+what triggered the denial.  To support this auditing, move the
+lockdown_reasons[] string array from being private to the lockdown
+module to the security framework so that it can be used by the lsm audit
+code and so that it is always available even when the lockdown module
+is disabled.
+
+Note that the SELinux implementation allows the integrity and
+confidentiality reasons to be controlled independently from one another.
+Thus, in an SELinux policy, one could allow operations that specify
+an integrity reason while blocking operations that specify a
+confidentiality reason. The SELinux hook implementation is
+stricter than the lockdown module in validating the provided reason value.
+
+Sample AVC audit output from denials:
+avc:  denied  { integrity } for pid=3402 comm="fwupd"
+ lockdown_reason="/dev/mem,kmem,port" scontext=system_u:system_r:fwupd_t:s0
+ tcontext=system_u:system_r:fwupd_t:s0 tclass=lockdown permissive=0
+
+avc:  denied  { confidentiality } for pid=4628 comm="cp"
+ lockdown_reason="/proc/kcore access"
+ scontext=unconfined_u:unconfined_r:test_lockdown_integrity_t:s0-s0:c0.c1023
+ tcontext=unconfined_u:unconfined_r:test_lockdown_integrity_t:s0-s0:c0.c1023
+ tclass=lockdown permissive=0
+
+Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
 ---
-The following changes since commit 3c0edea9b29f9be6c093f236f762202b30ac9431=
-:
+ include/linux/lsm_audit.h           |  2 ++
+ include/linux/security.h            |  2 ++
+ security/lockdown/lockdown.c        | 24 -----------------------
+ security/lsm_audit.c                |  5 +++++
+ security/security.c                 | 30 +++++++++++++++++++++++++++++
+ security/selinux/hooks.c            | 30 +++++++++++++++++++++++++++++
+ security/selinux/include/classmap.h |  2 ++
+ 7 files changed, 71 insertions(+), 24 deletions(-)
 
-  pipe: Remove sync on wake_ups (2019-11-15 16:22:54 +0000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/=
-notifications-pipe-core-20191115
-
-for you to fetch changes up to 72fb99936e50f6c17490aeb445c87406a1265d52:
-
-  smack: Implement the watch_key and post_notification hooks (2019-11-15 16=
-:23:58 +0000)
-
-----------------------------------------------------------------
-General notification queue built on pipes
-
-----------------------------------------------------------------
-David Howells (14):
-      uapi: General notification queue definitions
-      security: Add hooks to rule on setting a watch
-      security: Add a hook for the point of notification insertion
-      pipe: Add O_NOTIFICATION_PIPE
-      pipe: Add general notification queue support
-      keys: Add a notification facility
-      Add sample notification program
-      pipe: Allow buffers to be marked read-whole-or-error for notification=
-s
-      pipe: Add notification lossage handling
-      Add a general, global device notification watch list
-      block: Add block layer notifications
-      usb: Add USB subsystem notifications
-      selinux: Implement the watch_key security hook
-      smack: Implement the watch_key and post_notification hooks
-
- Documentation/ioctl/ioctl-number.rst        |   1 +
- Documentation/security/keys/core.rst        |  58 +++
- Documentation/watch_queue.rst               | 385 ++++++++++++++++
- arch/alpha/kernel/syscalls/syscall.tbl      |   1 +
- arch/arm/tools/syscall.tbl                  |   1 +
- arch/arm64/include/asm/unistd.h             |   2 +-
- arch/arm64/include/asm/unistd32.h           |   2 +
- arch/ia64/kernel/syscalls/syscall.tbl       |   1 +
- arch/m68k/kernel/syscalls/syscall.tbl       |   1 +
- arch/microblaze/kernel/syscalls/syscall.tbl |   1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   |   1 +
- arch/parisc/kernel/syscalls/syscall.tbl     |   1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    |   1 +
- arch/s390/kernel/syscalls/syscall.tbl       |   1 +
- arch/sh/kernel/syscalls/syscall.tbl         |   1 +
- arch/sparc/kernel/syscalls/syscall.tbl      |   1 +
- arch/x86/entry/syscalls/syscall_32.tbl      |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl      |   1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     |   1 +
- block/Kconfig                               |   9 +
- block/blk-core.c                            |  29 ++
- drivers/base/Kconfig                        |   9 +
- drivers/base/Makefile                       |   1 +
- drivers/base/watch.c                        |  90 ++++
- drivers/usb/core/Kconfig                    |   9 +
- drivers/usb/core/devio.c                    |  47 ++
- drivers/usb/core/hub.c                      |   4 +
- fs/pipe.c                                   | 242 +++++++---
- fs/splice.c                                 |  12 +-
- include/linux/blkdev.h                      |  15 +
- include/linux/device.h                      |   7 +
- include/linux/key.h                         |   3 +
- include/linux/lsm_audit.h                   |   1 +
- include/linux/lsm_hooks.h                   |  38 ++
- include/linux/pipe_fs_i.h                   |  27 +-
- include/linux/security.h                    |  32 +-
- include/linux/syscalls.h                    |   1 +
- include/linux/usb.h                         |  18 +
- include/linux/watch_queue.h                 | 127 ++++++
- include/uapi/asm-generic/unistd.h           |   4 +-
- include/uapi/linux/keyctl.h                 |   2 +
- include/uapi/linux/watch_queue.h            | 158 +++++++
- init/Kconfig                                |  12 +
- kernel/Makefile                             |   1 +
- kernel/sys_ni.c                             |   1 +
- kernel/watch_queue.c                        | 658 ++++++++++++++++++++++++=
-++++
- samples/Kconfig                             |   7 +
- samples/Makefile                            |   1 +
- samples/watch_queue/Makefile                |   7 +
- samples/watch_queue/watch_test.c            | 251 +++++++++++
- security/keys/Kconfig                       |   9 +
- security/keys/compat.c                      |   3 +
- security/keys/gc.c                          |   5 +
- security/keys/internal.h                    |  30 +-
- security/keys/key.c                         |  38 +-
- security/keys/keyctl.c                      |  99 ++++-
- security/keys/keyring.c                     |  20 +-
- security/keys/request_key.c                 |   4 +-
- security/security.c                         |  23 +
- security/selinux/hooks.c                    |  14 +
- security/smack/smack_lsm.c                  |  82 +++-
- 63 files changed, 2506 insertions(+), 108 deletions(-)
- create mode 100644 Documentation/watch_queue.rst
- create mode 100644 drivers/base/watch.c
- create mode 100644 include/linux/watch_queue.h
- create mode 100644 include/uapi/linux/watch_queue.h
- create mode 100644 kernel/watch_queue.c
- create mode 100644 samples/watch_queue/Makefile
- create mode 100644 samples/watch_queue/watch_test.c
+diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
+index 915330abf6e5..99d629fd9944 100644
+--- a/include/linux/lsm_audit.h
++++ b/include/linux/lsm_audit.h
+@@ -74,6 +74,7 @@ struct common_audit_data {
+ #define LSM_AUDIT_DATA_FILE	12
+ #define LSM_AUDIT_DATA_IBPKEY	13
+ #define LSM_AUDIT_DATA_IBENDPORT 14
++#define LSM_AUDIT_DATA_LOCKDOWN 15
+ 	union 	{
+ 		struct path path;
+ 		struct dentry *dentry;
+@@ -93,6 +94,7 @@ struct common_audit_data {
+ 		struct file *file;
+ 		struct lsm_ibpkey_audit *ibpkey;
+ 		struct lsm_ibendport_audit *ibendport;
++		int reason;
+ 	} u;
+ 	/* this union contains LSM specific data */
+ 	union {
+diff --git a/include/linux/security.h b/include/linux/security.h
+index a8d59d612d27..df7a4d293fe8 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -125,6 +125,8 @@ enum lockdown_reason {
+ 	LOCKDOWN_CONFIDENTIALITY_MAX,
+ };
+ 
++extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1];
++
+ /* These functions are in security/commoncap.c */
+ extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
+ 		       int cap, unsigned int opts);
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index 8a10b43daf74..5a952617a0eb 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -16,30 +16,6 @@
+ 
+ static enum lockdown_reason kernel_locked_down;
+ 
+-static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+-	[LOCKDOWN_NONE] = "none",
+-	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
+-	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
+-	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
+-	[LOCKDOWN_HIBERNATION] = "hibernation",
+-	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
+-	[LOCKDOWN_IOPORT] = "raw io port access",
+-	[LOCKDOWN_MSR] = "raw MSR access",
+-	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
+-	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
+-	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
+-	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
+-	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
+-	[LOCKDOWN_DEBUGFS] = "debugfs access",
+-	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+-	[LOCKDOWN_KCORE] = "/proc/kcore access",
+-	[LOCKDOWN_KPROBES] = "use of kprobes",
+-	[LOCKDOWN_BPF_READ] = "use of bpf to read kernel RAM",
+-	[LOCKDOWN_PERF] = "unsafe use of perf",
+-	[LOCKDOWN_TRACEFS] = "use of tracefs",
+-	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+-};
+-
+ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+ 						 LOCKDOWN_INTEGRITY_MAX,
+ 						 LOCKDOWN_CONFIDENTIALITY_MAX};
+diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+index e40874373f2b..2d2bf49016f4 100644
+--- a/security/lsm_audit.c
++++ b/security/lsm_audit.c
+@@ -27,6 +27,7 @@
+ #include <linux/dccp.h>
+ #include <linux/sctp.h>
+ #include <linux/lsm_audit.h>
++#include <linux/security.h>
+ 
+ /**
+  * ipv4_skb_to_auditdata : fill auditdata from skb
+@@ -425,6 +426,10 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 				 a->u.ibendport->dev_name,
+ 				 a->u.ibendport->port);
+ 		break;
++	case LSM_AUDIT_DATA_LOCKDOWN:
++		audit_log_format(ab, " lockdown_reason=");
++		audit_log_string(ab, lockdown_reasons[a->u.reason]);
++		break;
+ 	} /* switch (a->type) */
+ }
+ 
+diff --git a/security/security.c b/security/security.c
+index 1bc000f834e2..f439c1102b1a 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -35,6 +35,36 @@
+ #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
+ #define EARLY_LSM_COUNT (__end_early_lsm_info - __start_early_lsm_info)
+ 
++/*
++ * These are descriptions of the reasons that can be passed to the
++ * security_locked_down() LSM hook. Placing this array here allows
++ * all security modules to use the same descriptions for auditing
++ * purposes.
++ */
++const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
++	[LOCKDOWN_NONE] = "none",
++	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
++	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
++	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
++	[LOCKDOWN_HIBERNATION] = "hibernation",
++	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
++	[LOCKDOWN_IOPORT] = "raw io port access",
++	[LOCKDOWN_MSR] = "raw MSR access",
++	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
++	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
++	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
++	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
++	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
++	[LOCKDOWN_DEBUGFS] = "debugfs access",
++	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
++	[LOCKDOWN_KCORE] = "/proc/kcore access",
++	[LOCKDOWN_KPROBES] = "use of kprobes",
++	[LOCKDOWN_BPF_READ] = "use of bpf to read kernel RAM",
++	[LOCKDOWN_PERF] = "unsafe use of perf",
++	[LOCKDOWN_TRACEFS] = "use of tracefs",
++	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
++};
++
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static BLOCKING_NOTIFIER_HEAD(blocking_lsm_notifier_chain);
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 36e531b91df2..ca8a9d1b3ffd 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6799,6 +6799,34 @@ static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
+ }
+ #endif
+ 
++static int selinux_lockdown(enum lockdown_reason what)
++{
++	struct common_audit_data ad;
++	u32 sid = current_sid();
++	int invalid_reason = (what <= LOCKDOWN_NONE) ||
++			     (what == LOCKDOWN_INTEGRITY_MAX) ||
++			     (what >= LOCKDOWN_CONFIDENTIALITY_MAX);
++
++	if (WARN(invalid_reason, "Invalid lockdown reason")) {
++		audit_log(audit_context(),
++			  GFP_ATOMIC, AUDIT_SELINUX_ERR,
++			  "lockdown_reason=invalid");
++		return -EINVAL;
++	}
++
++	ad.type = LSM_AUDIT_DATA_LOCKDOWN;
++	ad.u.reason = what;
++
++	if (what <= LOCKDOWN_INTEGRITY_MAX)
++		return avc_has_perm(&selinux_state,
++				    sid, sid, SECCLASS_LOCKDOWN,
++				    LOCKDOWN__INTEGRITY, &ad);
++	else
++		return avc_has_perm(&selinux_state,
++				    sid, sid, SECCLASS_LOCKDOWN,
++				    LOCKDOWN__CONFIDENTIALITY, &ad);
++}
++
+ struct lsm_blob_sizes selinux_blob_sizes __lsm_ro_after_init = {
+ 	.lbs_cred = sizeof(struct task_security_struct),
+ 	.lbs_file = sizeof(struct file_security_struct),
+@@ -7042,6 +7070,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(bpf_map_free_security, selinux_bpf_map_free),
+ 	LSM_HOOK_INIT(bpf_prog_free_security, selinux_bpf_prog_free),
+ #endif
++
++	LSM_HOOK_INIT(locked_down, selinux_lockdown),
+ };
+ 
+ static __init int selinux_init(void)
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index 32e9b03be3dd..594c32febcd8 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -244,6 +244,8 @@ struct security_class_mapping secclass_map[] = {
+ 	  {"map_create", "map_read", "map_write", "prog_load", "prog_run"} },
+ 	{ "xdp_socket",
+ 	  { COMMON_SOCK_PERMS, NULL } },
++	{ "lockdown",
++	  { "integrity", "confidentiality", NULL } },
+ 	{ NULL }
+   };
+ 
+-- 
+2.23.0
 
