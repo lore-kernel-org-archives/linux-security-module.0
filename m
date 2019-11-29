@@ -2,262 +2,105 @@ Return-Path: <SRS0=v/bU=ZV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 217E2C432C0
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Nov 2019 23:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08449C43215
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Nov 2019 23:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E48EB206BF
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Nov 2019 23:16:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D65FA2464D
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Nov 2019 23:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbfK2XQo (ORCPT
+        id S1727124AbfK2X03 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Nov 2019 18:16:44 -0500
-Received: from mga01.intel.com ([192.55.52.88]:16194 "EHLO mga01.intel.com"
+        Fri, 29 Nov 2019 18:26:29 -0500
+Received: from mga09.intel.com ([134.134.136.24]:61596 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727073AbfK2XQo (ORCPT
+        id S1727097AbfK2X03 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Nov 2019 18:16:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        Fri, 29 Nov 2019 18:26:29 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2019 15:16:43 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2019 15:26:28 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,259,1571727600"; 
-   d="scan'208";a="384194270"
+   d="scan'208";a="384195895"
 Received: from gamanzi-mobl4.ger.corp.intel.com (HELO localhost) ([10.252.3.126])
-  by orsmga005.jf.intel.com with ESMTP; 29 Nov 2019 15:16:30 -0800
+  by orsmga005.jf.intel.com with ESMTP; 29 Nov 2019 15:26:25 -0800
+Date:   Sat, 30 Nov 2019 01:26:24 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v24 15/24] x86/sgx: Add provisioning
-Date:   Sat, 30 Nov 2019 01:13:17 +0200
-Message-Id: <20191129231326.18076-16-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
-References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Stefan Berger <stefanb@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, jsnitsel@redhat.com
+Subject: Re: [PATCH] tpm_tis: Move setting of TPM_CHIP_FLAG_IRQ into
+ tpm_tis_probe_irq_single
+Message-ID: <20191129232624.GB19623@linux.intel.com>
+References: <20191112202725.3009814-1-stefanb@linux.vnet.ibm.com>
+ <20191114164151.GB9528@linux.intel.com>
+ <20191114164426.GC9528@linux.intel.com>
+ <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
+ <20191121184949.yvw2gwzlkhjzko64@cantor>
+ <20191127211109.GF14290@linux.intel.com>
+ <CAPcyv4gO2T4xcZjYSYJ8-0kDPRnVYWhX_df5E94Cjyksx6WFbg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=a
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4gO2T4xcZjYSYJ8-0kDPRnVYWhX_df5E94Cjyksx6WFbg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In order to provide a mechanism for devilering provisoning rights:
+On Wed, Nov 27, 2019 at 01:26:07PM -0800, Dan Williams wrote:
+> [ add Jerry ]
+> 
+> On Wed, Nov 27, 2019 at 1:11 PM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > On Thu, Nov 21, 2019 at 11:49:49AM -0700, Jerry Snitselaar wrote:
+> > > On Sat Nov 16 19, Stefan Berger wrote:
+> > > > On 11/14/19 11:44 AM, Jarkko Sakkinen wrote:
+> > > > > On Thu, Nov 14, 2019 at 06:41:51PM +0200, Jarkko Sakkinen wrote:
+> > > > > > On Tue, Nov 12, 2019 at 03:27:25PM -0500, Stefan Berger wrote:
+> > > > > > > From: Stefan Berger <stefanb@linux.ibm.com>
+> > > > > > >
+> > > > > > > Move the setting of the TPM_CHIP_FLAG_IRQ for irq probing into
+> > > > > > > tpm_tis_probe_irq_single before calling tpm_tis_gen_interrupt.
+> > > > > > > This move handles error conditions better that may arise if anything
+> > > > > > > before fails in tpm_tis_probe_irq_single.
+> > > > > > >
+> > > > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > > > > > Suggested-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > > > > What about just changing the condition?
+> > > > > Also cannot take this since it is not a bug (no fixes tag).
+> > > >
+> > > > I'll repost but will wait until Jerry has tested it on that machine.
+> > > >
+> > > >    Stefan
+> > > >
+> > > >
+> > > > >
+> > > > > /Jarkko
+> > > >
+> > > >
+> > >
+> > > It appears they still have the problem. I'm still waiting on logistics
+> > > to send me a system to debug.
+> >
+> > Which hardware is guaranteed to ignite this? I can try to get test hw
+> > for this from somewhere. Kind of looking into this blinded ATM. Dan?
+> 
+> Jerry had mentioned that this was also occurring on T490s. Otherwise
+> I'll ping you offline about the system I saw this on internally.
 
-1. Add a new device file /dev/sgx/provision that works as a token for
-   allowing an enclave to have the provisioning privileges.
-2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
-   following data structure:
+I'll see if I can get my hands on T490 or T490s or something with
+equivalent hardware.
 
-   struct sgx_enclave_set_attribute {
-           __u64 addr;
-           __u64 attribute_fd;
-   };
-
-A daemon could sit on top of /dev/sgx/provision and send a file
-descriptor of this file to a process that needs to be able to provision
-enclaves.
-
-The way this API is used is straight-forward. Lets assume that dev_fd is
-a handle to /dev/sgx/enclave and prov_fd is a handle to
-/dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
-initialize an enclave with the PROVISIONKEY attribute by
-
-params.addr = <enclave address>;
-params.token_fd = prov_fd;
-
-ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
-
-Cc: linux-security-module@vger.kernel.org
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
- arch/x86/kernel/cpu/sgx/driver.c | 23 +++++++++++++++-
- arch/x86/kernel/cpu/sgx/driver.h |  2 ++
- arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
- 4 files changed, 82 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 5edb08ab8fd0..57d0d30c79b3 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -25,6 +25,8 @@ enum sgx_page_flags {
- 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
- #define SGX_IOC_ENCLAVE_INIT \
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-+#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
-+	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -63,4 +65,13 @@ struct sgx_enclave_init {
- 	__u64 sigstruct;
- };
- 
-+/**
-+ * struct sgx_enclave_set_attribute - parameter structure for the
-+ *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
-+ * @attribute_fd:	file handle of the attribute file in the securityfs
-+ */
-+struct sgx_enclave_set_attribute {
-+	__u64 attribute_fd;
-+};
-+
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index c724dcccf2e2..4d996463b213 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -141,12 +141,18 @@ static const struct file_operations sgx_encl_fops = {
- 	.get_unmapped_area	= sgx_get_unmapped_area,
- };
- 
-+const struct file_operations sgx_provision_fops = {
-+	.owner			= THIS_MODULE,
-+};
-+
- static struct bus_type sgx_bus_type = {
- 	.name	= "sgx",
- };
- 
- static struct device sgx_encl_dev;
- static struct cdev sgx_encl_cdev;
-+static struct device sgx_provision_dev;
-+static struct cdev sgx_provision_cdev;
- static dev_t sgx_devt;
- 
- static void sgx_dev_release(struct device *dev)
-@@ -223,22 +229,37 @@ int __init sgx_drv_init(void)
- 	if (ret)
- 		goto err_chrdev_region;
- 
-+	ret = sgx_dev_init("sgx/provision", &sgx_provision_dev,
-+			   &sgx_provision_cdev, &sgx_provision_fops, 1);
-+	if (ret)
-+		goto err_encl_dev;
-+
- 	sgx_encl_wq = alloc_workqueue("sgx-encl-wq",
- 				      WQ_UNBOUND | WQ_FREEZABLE, 1);
- 	if (!sgx_encl_wq) {
- 		ret = -ENOMEM;
--		goto err_encl_dev;
-+		goto err_provision_dev;
- 	}
- 
- 	ret = cdev_device_add(&sgx_encl_cdev, &sgx_encl_dev);
- 	if (ret)
- 		goto err_encl_wq;
- 
-+	ret = cdev_device_add(&sgx_provision_cdev, &sgx_provision_dev);
-+	if (ret)
-+		goto err_encl_cdev;
-+
- 	return 0;
- 
-+err_encl_cdev:
-+	cdev_device_del(&sgx_encl_cdev, &sgx_encl_dev);
-+
- err_encl_wq:
- 	destroy_workqueue(sgx_encl_wq);
- 
-+err_provision_dev:
-+	put_device(&sgx_provision_dev);
-+
- err_encl_dev:
- 	put_device(&sgx_encl_dev);
- 
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index e95c6e86c0c6..2f13886522a8 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -25,6 +25,8 @@ extern u64 sgx_attributes_reserved_mask;
- extern u64 sgx_xfrm_reserved_mask;
- extern u32 sgx_xsave_size_tbl[64];
- 
-+extern const struct file_operations sgx_provision_fops;
-+
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
- 
- int sgx_drv_init(void);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index cd2146a15a22..275388ba9992 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -629,6 +629,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
- 
-+/**
-+ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
-+ * @filep:	open file to /dev/sgx
-+ * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
-+ *
-+ * Mark the enclave as being allowed to access a restricted attribute bit.
-+ * The requested attribute is specified via the attribute_fd field in the
-+ * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
-+ * handle to an SGX attribute file, e.g. “/dev/sgx/provision".
-+ *
-+ * Failure to explicitly request access to a restricted attribute will cause
-+ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-+ * is access to the PROVISION_KEY.
-+ *
-+ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
-+ *
-+ * Return: 0 on success, -errno otherwise
-+ */
-+static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
-+					  void __user *arg)
-+{
-+	struct sgx_enclave_set_attribute params;
-+	struct file *attribute_file;
-+	int ret;
-+
-+	if (copy_from_user(&params, arg, sizeof(params)))
-+		return -EFAULT;
-+
-+	attribute_file = fget(params.attribute_fd);
-+	if (!attribute_file)
-+		return -EINVAL;
-+
-+	if (attribute_file->f_op != &sgx_provision_fops) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
-+	ret = 0;
-+
-+out:
-+	fput(attribute_file);
-+	return ret;
-+}
- 
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
-@@ -652,6 +696,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_INIT:
- 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
-+		ret = sgx_ioc_enclave_set_attribute(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
--- 
-2.20.1
-
+/Jarkko
