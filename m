@@ -1,138 +1,150 @@
-Return-Path: <SRS0=upjG=ZU=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=v/bU=ZV=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B31C43215
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Nov 2019 18:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC99AC432C0
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Nov 2019 00:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0353C217AB
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Nov 2019 18:24:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574965495;
-	bh=mMXc779SXeCQxnAgqrWY8WGkspesVFib9Q6I1MXzP/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=l/OcaOcNGzr0uLa2RW5fIpEmZz8QtFzuIvyfuGaAWZUKMht3t64BFUI65IbWiDYQg
-	 zxnFI3t2R7XZhJ5pskIfbclEqOjuYVl5g8NPifku1VmtNQ2AwZ9YBCdLTap1T1AhIv
-	 RjBMrdARAMLZERKbgpIjH5Szuqq+45bskOI2XwcY=
+	by mail.kernel.org (Postfix) with ESMTP id 8E5072176D
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Nov 2019 00:05:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfK1SYy (ORCPT
+        id S1726657AbfK2AFG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Nov 2019 13:24:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38954 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbfK1SYy (ORCPT
+        Thu, 28 Nov 2019 19:05:06 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:33158 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbfK2AFG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Nov 2019 13:24:54 -0500
-Received: from localhost (unknown [217.68.49.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6F7521775;
-        Thu, 28 Nov 2019 18:24:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574965492;
-        bh=mMXc779SXeCQxnAgqrWY8WGkspesVFib9Q6I1MXzP/o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Te/vPvcm6LPF/MJkwAUZuqL4Y/6nRQC1uGtL8nGJCJWq475Gjta4WmfGFImY/WEx5
-         flFT3V3/PnWOi0rSsLIext9zrrEmBM8JC6yIKo8CQ4PeyrZOEQC75i1vmzxB+shUJQ
-         4NM7WrQMn4lpF4Ai+K5rPenkl0GT12awRLhkfYSw=
-Date:   Thu, 28 Nov 2019 19:24:50 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>
-Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
-Message-ID: <20191128182450.GA3493127@kroah.com>
-References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
- <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+        Thu, 28 Nov 2019 19:05:06 -0500
+Received: by mail-io1-f72.google.com with SMTP id p19so19133900iog.0
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Nov 2019 16:05:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=w/HvLkOSu/v5/h3baM8jZB3a9xl/Qrwfh5SeJXgTDvA=;
+        b=K3M9lAaT7Jzro6obmre14MeHJc8Bn5ob2k2+4ifkT5E+83wNIXJgtydmnDrSJClZA/
+         G/rEeXGeyOsI2SrypA+nBZjjYXr9oDDKfsswHUQciuPTHApr3fegpvQLF2uxo/SaX1f+
+         pNUtvNT5+PEC41AuXEOs8jjbNLcPD2TUGw5CHoJFRLsyrlIvklNh+wZ7EQi/w1jjSK14
+         m+pc/b+WILCv7eYZb3m7ZXVJc/V+656KnMBcSvub4FSVOefrncio376z1xrbTSZiknEv
+         f+AK2b2Ea9eJkU3nGw1bMHDzJmcv5cZaFFZsyalT1Ai3CkvQw2iib7JX+2Kfyu9Beep/
+         tpnw==
+X-Gm-Message-State: APjAAAVbx4fwJUnqPYKHTCMVb6IJJu3cfhdJ1Jho9EDjLzZBEpNuw2Cc
+        lNtDVG+qeY1JWxyls5r2MYXOswRhZIMtBH851raZ98bcILyX
+X-Google-Smtp-Source: APXvYqymwSQ1v3AUjhQQYR7YffI3wT8H0KBte/hHJIiGucB2l82dyqjQ/Nj4W/ozbfwXFBgZutxwaMtceUqaSB7OUZIChTztBMqZ
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Received: by 2002:a92:ce06:: with SMTP id b6mr48880153ilo.14.1574985905877;
+ Thu, 28 Nov 2019 16:05:05 -0800 (PST)
+Date:   Thu, 28 Nov 2019 16:05:05 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000723a32059870fbd4@google.com>
+Subject: general protection fault in smack_socket_sendmsg (2)
+From:   syzbot <syzbot+131d2229316b7012ac06@syzkaller.appspotmail.com>
+To:     a@unstable.cc, andrew@lunn.ch, b.a.t.m.a.n@lists.open-mesh.org,
+        casey@schaufler-ca.com, davem@davemloft.net, f.fainelli@gmail.com,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, mareklindner@neomailbox.ch,
+        netdev@vger.kernel.org, serge@hallyn.com, sw@simonwunderlich.de,
+        syzkaller-bugs@googlegroups.com,
+        vivien.didelot@savoirfairelinux.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 28, 2019 at 11:03:12PM +0200, Jarkko Sakkinen wrote:
-> +static struct device sgx_encl_dev;
+Hello,
 
-Ugh, really?  After 23 versions of this patchset no one saw this?
+syzbot found the following crash on:
 
-> +static struct cdev sgx_encl_cdev;
-> +static dev_t sgx_devt;
-> +
-> +static void sgx_dev_release(struct device *dev)
-> +{
-> +}
+HEAD commit:    0be0ee71 vfs: properly and reliably lock f_pos in fdget_po..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12c49ef2e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=330a1f54d1edb817
+dashboard link: https://syzkaller.appspot.com/bug?extid=131d2229316b7012ac06
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13bb67cee00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12460136e00000
 
-The old kernel documentation used to say I was allowed to make fun of
-people who did this, but that was removed as it really wasn't that nice.
+The bug was bisected to:
 
-But I'm seriously reconsidering that at the moment.
+commit 8ae5bcdc5d98a99e59f194101e7acd2e9d055758
+Author: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Date:   Fri May 19 21:00:54 2017 +0000
 
-No, this is NOT OK!
+     net: dsa: add MDB notifier
 
-Think about what you are doing here, and why you feel that it is ok to
-work around a kernel message that was added there explicitly to help you
-do things the right way.  I didn't add it just because I felt like it, I
-was trying to give you a chance to not get the use of this api
-incorrect.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17ec2f5ae00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=141c2f5ae00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=101c2f5ae00000
 
-That failed :(
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+131d2229316b7012ac06@syzkaller.appspotmail.com
+Fixes: 8ae5bcdc5d98 ("net: dsa: add MDB notifier")
 
-Ugh, not ok.  Seriously, not ok...
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 7989 Comm: kworker/1:4 Not tainted 5.4.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: krxrpcd rxrpc_peer_keepalive_worker
+RIP: 0010:smack_socket_sendmsg+0x5b/0x480 security/smack/smack_lsm.c:3675
+Code: e8 fa 03 6b fe 4c 89 e8 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 ef e8  
+74 46 a4 fe 4d 8b 65 00 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00  
+74 08 48 89 df e8 56 46 a4 fe 4c 8b 33 49 8d 9e 08
+RSP: 0018:ffff88808a58f9c8 EFLAGS: 00010206
+RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff8880a1270280
+RDX: 0000000000000000 RSI: ffff88808a58fb18 RDI: 0000000000000000
+RBP: ffff88808a58fa80 R08: ffffffff83442500 R09: ffff88808a58fb86
+R10: ffffed10114b1f72 R11: 0000000000000000 R12: ffff8880a124c114
+R13: ffff88808a58fb18 R14: dffffc0000000000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880aeb00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe2d48c9e78 CR3: 0000000098a23000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  security_socket_sendmsg+0x6c/0xd0 security/security.c:2013
+  sock_sendmsg net/socket.c:655 [inline]
+  kernel_sendmsg+0x77/0x140 net/socket.c:678
+  rxrpc_send_keepalive+0x254/0x3c0 net/rxrpc/output.c:655
+  rxrpc_peer_keepalive_dispatch net/rxrpc/peer_event.c:376 [inline]
+  rxrpc_peer_keepalive_worker+0x76e/0xb40 net/rxrpc/peer_event.c:437
+  process_one_work+0x7ef/0x10e0 kernel/workqueue.c:2269
+  worker_thread+0xc01/0x1630 kernel/workqueue.c:2415
+  kthread+0x332/0x350 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Modules linked in:
+---[ end trace 8b748724da7e3b28 ]---
+RIP: 0010:smack_socket_sendmsg+0x5b/0x480 security/smack/smack_lsm.c:3675
+Code: e8 fa 03 6b fe 4c 89 e8 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 ef e8  
+74 46 a4 fe 4d 8b 65 00 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00  
+74 08 48 89 df e8 56 46 a4 fe 4c 8b 33 49 8d 9e 08
+RSP: 0018:ffff88808a58f9c8 EFLAGS: 00010206
+RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff8880a1270280
+RDX: 0000000000000000 RSI: ffff88808a58fb18 RDI: 0000000000000000
+RBP: ffff88808a58fa80 R08: ffffffff83442500 R09: ffff88808a58fb86
+R10: ffffed10114b1f72 R11: 0000000000000000 R12: ffff8880a124c114
+R13: ffff88808a58fb18 R14: dffffc0000000000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880aeb00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe2d48c9e78 CR3: 0000000098a23000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-> +static __init int sgx_dev_init(const char *name, struct device *dev,
-> +			       struct cdev *cdev,
-> +			       const struct file_operations *fops, int minor)
-> +{
-> +	int ret;
-> +
-> +	device_initialize(dev);
 
-Why do you even need a struct device in the first place?
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> +
-> +	dev->bus = &sgx_bus_type;
-> +	dev->devt = MKDEV(MAJOR(sgx_devt), minor);
-> +	dev->release = sgx_dev_release;
-> +
-> +	ret = dev_set_name(dev, name);
-> +	if (ret) {
-> +		put_device(dev);
-> +		return ret;
-> +	}
-> +
-> +	cdev_init(cdev, fops);
-
-Why a whole cdev?
-
-Why not use a misc device?  YOu only have 2 devices right?  Why not 2
-misc devices then?  That saves the use of a whole major number and makes
-your code a _LOT_ simpler.
-
-> +	ret = bus_register(&sgx_bus_type);
-
-I'm afraid to look at this bus code.
-
-Instead I'm going to ask, why do you need a bus at all?  What drivers do
-you have for this bus?
-
-ugh I don't know why I looked at this code, but it's not ok as-is and
-anyone who reviewed the driver model interaction needs to rethink
-things...
-
-greg k-h
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
