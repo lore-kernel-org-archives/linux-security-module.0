@@ -2,149 +2,63 @@ Return-Path: <SRS0=v/bU=ZV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC99AC432C0
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Nov 2019 00:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E94C432C0
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Nov 2019 09:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E5072176D
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Nov 2019 00:05:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6ADA215F1
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Nov 2019 09:40:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfK2AFG (ORCPT
+        id S1726709AbfK2Jk0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Nov 2019 19:05:06 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:33158 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbfK2AFG (ORCPT
+        Fri, 29 Nov 2019 04:40:26 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:65191 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfK2Jk0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Nov 2019 19:05:06 -0500
-Received: by mail-io1-f72.google.com with SMTP id p19so19133900iog.0
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Nov 2019 16:05:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=w/HvLkOSu/v5/h3baM8jZB3a9xl/Qrwfh5SeJXgTDvA=;
-        b=K3M9lAaT7Jzro6obmre14MeHJc8Bn5ob2k2+4ifkT5E+83wNIXJgtydmnDrSJClZA/
-         G/rEeXGeyOsI2SrypA+nBZjjYXr9oDDKfsswHUQciuPTHApr3fegpvQLF2uxo/SaX1f+
-         pNUtvNT5+PEC41AuXEOs8jjbNLcPD2TUGw5CHoJFRLsyrlIvklNh+wZ7EQi/w1jjSK14
-         m+pc/b+WILCv7eYZb3m7ZXVJc/V+656KnMBcSvub4FSVOefrncio376z1xrbTSZiknEv
-         f+AK2b2Ea9eJkU3nGw1bMHDzJmcv5cZaFFZsyalT1Ai3CkvQw2iib7JX+2Kfyu9Beep/
-         tpnw==
-X-Gm-Message-State: APjAAAVbx4fwJUnqPYKHTCMVb6IJJu3cfhdJ1Jho9EDjLzZBEpNuw2Cc
-        lNtDVG+qeY1JWxyls5r2MYXOswRhZIMtBH851raZ98bcILyX
-X-Google-Smtp-Source: APXvYqymwSQ1v3AUjhQQYR7YffI3wT8H0KBte/hHJIiGucB2l82dyqjQ/Nj4W/ozbfwXFBgZutxwaMtceUqaSB7OUZIChTztBMqZ
+        Fri, 29 Nov 2019 04:40:26 -0500
+Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xAT9duVL025281;
+        Fri, 29 Nov 2019 18:39:56 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav301.sakura.ne.jp);
+ Fri, 29 Nov 2019 18:39:56 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav301.sakura.ne.jp)
+Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xAT9dnVK025145
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 29 Nov 2019 18:39:55 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: general protection fault in smack_socket_sendmsg (2)
+To:     syzbot <syzbot+131d2229316b7012ac06@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com
+References: <000000000000723a32059870fbd4@google.com>
+Cc:     b.a.t.m.a.n@lists.open-mesh.org, jmorris@namei.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        serge@hallyn.com, Casey Schaufler <casey@schaufler-ca.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <ee964c66-da56-def6-9525-6d960ab9487a@I-love.SAKURA.ne.jp>
+Date:   Fri, 29 Nov 2019 18:39:49 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a92:ce06:: with SMTP id b6mr48880153ilo.14.1574985905877;
- Thu, 28 Nov 2019 16:05:05 -0800 (PST)
-Date:   Thu, 28 Nov 2019 16:05:05 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000723a32059870fbd4@google.com>
-Subject: general protection fault in smack_socket_sendmsg (2)
-From:   syzbot <syzbot+131d2229316b7012ac06@syzkaller.appspotmail.com>
-To:     a@unstable.cc, andrew@lunn.ch, b.a.t.m.a.n@lists.open-mesh.org,
-        casey@schaufler-ca.com, davem@davemloft.net, f.fainelli@gmail.com,
-        jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mareklindner@neomailbox.ch,
-        netdev@vger.kernel.org, serge@hallyn.com, sw@simonwunderlich.de,
-        syzkaller-bugs@googlegroups.com,
-        vivien.didelot@savoirfairelinux.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <000000000000723a32059870fbd4@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On 2019/11/29 9:05, syzbot wrote:
+>  rxrpc_send_keepalive+0x254/0x3c0 net/rxrpc/output.c:655
 
-syzbot found the following crash on:
+Again net/rxrpc/output.c:655
 
-HEAD commit:    0be0ee71 vfs: properly and reliably lock f_pos in fdget_po..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c49ef2e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=330a1f54d1edb817
-dashboard link: https://syzkaller.appspot.com/bug?extid=131d2229316b7012ac06
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13bb67cee00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12460136e00000
-
-The bug was bisected to:
-
-commit 8ae5bcdc5d98a99e59f194101e7acd2e9d055758
-Author: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Date:   Fri May 19 21:00:54 2017 +0000
-
-     net: dsa: add MDB notifier
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17ec2f5ae00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=141c2f5ae00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=101c2f5ae00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+131d2229316b7012ac06@syzkaller.appspotmail.com
-Fixes: 8ae5bcdc5d98 ("net: dsa: add MDB notifier")
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 7989 Comm: kworker/1:4 Not tainted 5.4.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: krxrpcd rxrpc_peer_keepalive_worker
-RIP: 0010:smack_socket_sendmsg+0x5b/0x480 security/smack/smack_lsm.c:3675
-Code: e8 fa 03 6b fe 4c 89 e8 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 ef e8  
-74 46 a4 fe 4d 8b 65 00 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00  
-74 08 48 89 df e8 56 46 a4 fe 4c 8b 33 49 8d 9e 08
-RSP: 0018:ffff88808a58f9c8 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff8880a1270280
-RDX: 0000000000000000 RSI: ffff88808a58fb18 RDI: 0000000000000000
-RBP: ffff88808a58fa80 R08: ffffffff83442500 R09: ffff88808a58fb86
-R10: ffffed10114b1f72 R11: 0000000000000000 R12: ffff8880a124c114
-R13: ffff88808a58fb18 R14: dffffc0000000000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880aeb00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe2d48c9e78 CR3: 0000000098a23000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  security_socket_sendmsg+0x6c/0xd0 security/security.c:2013
-  sock_sendmsg net/socket.c:655 [inline]
-  kernel_sendmsg+0x77/0x140 net/socket.c:678
-  rxrpc_send_keepalive+0x254/0x3c0 net/rxrpc/output.c:655
-  rxrpc_peer_keepalive_dispatch net/rxrpc/peer_event.c:376 [inline]
-  rxrpc_peer_keepalive_worker+0x76e/0xb40 net/rxrpc/peer_event.c:437
-  process_one_work+0x7ef/0x10e0 kernel/workqueue.c:2269
-  worker_thread+0xc01/0x1630 kernel/workqueue.c:2415
-  kthread+0x332/0x350 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 8b748724da7e3b28 ]---
-RIP: 0010:smack_socket_sendmsg+0x5b/0x480 security/smack/smack_lsm.c:3675
-Code: e8 fa 03 6b fe 4c 89 e8 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 ef e8  
-74 46 a4 fe 4d 8b 65 00 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00  
-74 08 48 89 df e8 56 46 a4 fe 4c 8b 33 49 8d 9e 08
-RSP: 0018:ffff88808a58f9c8 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff8880a1270280
-RDX: 0000000000000000 RSI: ffff88808a58fb18 RDI: 0000000000000000
-RBP: ffff88808a58fa80 R08: ffffffff83442500 R09: ffff88808a58fb86
-R10: ffffed10114b1f72 R11: 0000000000000000 R12: ffff8880a124c114
-R13: ffff88808a58fb18 R14: dffffc0000000000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880aeb00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe2d48c9e78 CR3: 0000000098a23000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+#syz dup: KMSAN: use-after-free in rxrpc_send_keepalive
