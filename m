@@ -2,235 +2,247 @@ Return-Path: <SRS0=f5xb=ZY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81023C432C0
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Dec 2019 18:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4308C432C0
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Dec 2019 18:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4151F20718
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Dec 2019 18:29:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rbLwSQlv"
+	by mail.kernel.org (Postfix) with ESMTP id BA79320718
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Dec 2019 18:45:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbfLBS3d (ORCPT
+        id S1727917AbfLBSpJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Dec 2019 13:29:33 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44604 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727670AbfLBS3d (ORCPT
+        Mon, 2 Dec 2019 13:45:09 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:48359 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727549AbfLBSpJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Dec 2019 13:29:33 -0500
-Received: by mail-ot1-f66.google.com with SMTP id x3so341952oto.11
-        for <linux-security-module@vger.kernel.org>; Mon, 02 Dec 2019 10:29:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:autocrypt:message-id:date
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=RMT8z4DghcpYVZCst5GM3UQo7/bXDEcd6I9itVgMBp4=;
-        b=rbLwSQlvB5nk3jvI5yJGLq3+ZxkPSiMjZA5koGaj2KyfG4rFoVXpVF7bwqpk4llt1a
-         K70jJQ8yQ+SiUIBEe9uBiu4cFD/iTC6bedP3809ABMfHjCxljpszWzM/idtkC9VfB+e6
-         cUWMhz8mlI0FBP3nJrj/Nz5ETkGLmCyCQbKz8e3Cwiwylsb0b2HqA5UKJed55odjMJ5M
-         DV6fgSvtK5eR6mZceeYe2lqb0oKh8ICuOx4DgottmR5yJNgS/ZHeLYFMtYWgWdPaXqmf
-         IjM4Iu5lyTFpERen9Lc83N2NzAyWBUceGChRKa9sCXsP0IAgN3wSfDamGVVnurZIM/Aj
-         1ILA==
+        Mon, 2 Dec 2019 13:45:09 -0500
+Received: by mail-il1-f200.google.com with SMTP id 4so469251ill.15
+        for <linux-security-module@vger.kernel.org>; Mon, 02 Dec 2019 10:45:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
-         :message-id:date:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=RMT8z4DghcpYVZCst5GM3UQo7/bXDEcd6I9itVgMBp4=;
-        b=AU7aHIhE+mnXY1FARjja6NgGdT2lU9b9oLZKb0q3hBlWLZpWd6Gf1YKn3xf9I7TP7B
-         ODv3Gdx/TXoOrXFhA4bm1/B1q/BOfmUccTwFWBX2c/krJUMWL580J38U8z0AUBGNT5g3
-         rYToYfuWmnm54iJM3g9Yd4JlyE6HBmy0SttAzqt8CM79l/M+E84EP3ZR7nKKF2qG4c8Q
-         Y2o2vRWzMy1cltDODMcEItEpnaqhZEftBm1VnoTScy7WLtU6iL20D6dixKEga0Cr0SxI
-         DHmCfwgDk19dUTdz4KFLn8v5JBgnq0PxNNZdX3XMxs/cPtFVHi9e66l2MRVxJJKt05BS
-         XkDQ==
-X-Gm-Message-State: APjAAAU3QbmqjK1PyNWslQVFFXiUZlSIIdVDnHTAREYlzFZlRilCva+F
-        UU1mldfvLMaRGKHa+2HPjek=
-X-Google-Smtp-Source: APXvYqwV4y/ABr5ZVqweMtmYxcrqg6WF4imDbMsZntkMRPxJOKrQzkOamUAA6/EG3nLY/t/vTCCgOg==
-X-Received: by 2002:a9d:3d05:: with SMTP id a5mr321629otc.295.1575311372180;
-        Mon, 02 Dec 2019 10:29:32 -0800 (PST)
-Received: from [10.77.0.2] (173-17-41-233.client.mchsi.com. [173.17.41.233])
-        by smtp.gmail.com with ESMTPSA id m2sm62008oie.55.2019.12.02.10.29.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2019 10:29:31 -0800 (PST)
-Subject: Re: [PATCH] Kernel Lockdown: Add an option to allow raw MSR access
- even, in confidentiality mode.
-From:   Matt Parnell <mparnell@gmail.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        matthew.garrett@nebula.com
-References: <339ca47a-6ed1-4ab4-f8cf-7b205fa9f773@gmail.com>
- <201911301035.74813D4533@keescook>
- <f415ec28-8440-3b29-176c-50da09247ea3@gmail.com>
- <f988a531-a7f8-cef6-d3b4-6fbd89f5351f@gmail.com>
-Autocrypt: addr=mparnell@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <96625b06-3bba-6831-7127-22b690fccf1b@gmail.com>
-Date:   Mon, 2 Dec 2019 12:29:05 -0600
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=itCABTGD8qdhBDl50zMwwE7VeQ2i5Gc0+NOJZoEJkF0=;
+        b=rUEry1nR+hvaEKWvRr7KvTSUBmCFsV69R5HjDGrJ/Lf3nIZp9xYTMnhu7gsyEZStJB
+         7er7LzEa6xXmv1Xt+HVW/SakAt0t3QE4uqACP+yu0Kv5ewszIm6uKpQc6BjeN+phI/Pp
+         My5fPMRGPp8qxCUy3Ih4s8cfccJiuf8dCnvj6VuavFvuY2QuL5FJIK3RKLdYkJTnuGKh
+         OnopKMrM6zvpPj8VvQ0d5/+tLs3LenxnMrtbZMQYr22fdcQS5PpMgXVl659fL2fI5+5I
+         gXEpFxozXi2i0Yy5zafS/8MRrp9agGQQuB2NvtcCmzWbaEPXvponAyjeb1m44Ul3jwAL
+         8U0Q==
+X-Gm-Message-State: APjAAAV9Dc+kncSyuHUvucQPc6ChMGxfeilY2DeoGBObUYKXGLuPK9pb
+        7PW6R2qs1aUfc4ATruzZ8q37OxjvbnT1a0hEFfJdpcTb97iY
+X-Google-Smtp-Source: APXvYqwIH2+SSVQbUDLmK8P9Y83JayLZp6b4GBVssznSDKXNoVUicLrHRqAEb07CLWNmjC8DqTLUFG4uRqm0DT2C93n7ioURFCvt
 MIME-Version: 1.0
-In-Reply-To: <f988a531-a7f8-cef6-d3b4-6fbd89f5351f@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+X-Received: by 2002:a02:40ca:: with SMTP id n193mr1028204jaa.71.1575312308038;
+ Mon, 02 Dec 2019 10:45:08 -0800 (PST)
+Date:   Mon, 02 Dec 2019 10:45:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000880dcc0598bcfac9@google.com>
+Subject: possible deadlock in process_measurement (2)
+From:   syzbot <syzbot+18a1619cceea30ed45af@syzkaller.appspotmail.com>
+To:     dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-After doing some research it appears that for Intel chips, only a single
-register needs to be writeable. I'm not sure about AMD etc.
+Hello,
 
-intel-undervolt/blob/master/config.h:
+syzbot found the following crash on:
 
-    #define MSR_ADDR_TEMPERATURE 0x1a2
-    #define MSR_ADDR_UNITS 0x606
-    #define MSR_ADDR_VOLTAGE 0x150
+HEAD commit:    81b6b964 Merge branch 'master' of git://git.kernel.org/pub..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17019696e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=333b76551307b2a0
+dashboard link: https://syzkaller.appspot.com/bug?extid=18a1619cceea30ed45af
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-Perhaps add an MSR whitelist to allow writing, if
-LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY=Y and
-CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=Y?
+Unfortunately, I don't have any reproducer for this crash yet.
 
-CONFIG_SECURITY_LOCKDOWN_LSM_EARLY is likely what prevents Apparmor or
-some other LSM policy manager allow this behavior...
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+18a1619cceea30ed45af@syzkaller.appspotmail.com
 
-as an option at build time would be more sensible?
+======================================================
+WARNING: possible circular locking dependency detected
+5.4.0-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor.2/596 is trying to acquire lock:
+ffff88802b0761a0 (&ovl_i_mutex_key[depth]){+.+.}, at: inode_lock  
+include/linux/fs.h:791 [inline]
+ffff88802b0761a0 (&ovl_i_mutex_key[depth]){+.+.}, at:  
+process_measurement+0x6f4/0x1810 security/integrity/ima/ima_main.c:230
 
-On 12/1/19 2:53 PM, Matt Parnell wrote:
-> That is, I was intending to use lockdown from boot, which isn't
-> changeable after the fact if I'm not mistaken. How possible is granular
-> control of what is and is not locked down?
->
-> On 11/30/19 1:09 PM, Matt Parnell wrote:
->> I can see how using a policy would be beneficial; I only did this
->> because as I understood it, policy wouldn't be able to change these
->> particular settings since anything attempting to do so would be from
->> userspace.
->>
->> On 11/30/19 12:36 PM, Kees Cook wrote:
->>> On Sat, Nov 30, 2019 at 12:49:48AM -0600, Matt Parnell wrote:
->>>> From 452b8460e464422d268659a8abb93353a182f8c8 Mon Sep 17 00:00:00 2001
->>>> From: Matt Parnell <mparnell@gmail.com>
->>>> Date: Sat, 30 Nov 2019 00:44:09 -0600
->>>> Subject: [PATCH] Kernel Lockdown: Add an option to allow raw MSR access even
->>>>  in confidentiality mode.
->>>>
->>>> For Intel CPUs, some of the MDS mitigations utilize the new "flush" MSR, and
->>>> while this isn't something normally used in userspace, it does cause false
->>>> positives for the "Forshadow" vulnerability.
->>>>
->>>> Additionally, Intel CPUs use MSRs for voltage and frequency controls,
->>>> which in
->>>> many cases is useful for undervolting to avoid excess heat.
->>>>
->>>> Signed-off-by: Matt Parnell <mparnell@gmail.com>
->>> I would expect this to just be implemented via LSM policy, not ifdefs
->>> and Kconfig?
->>>
->>> -Kees
->>>
->>>> ---
->>>>  arch/x86/kernel/msr.c     |  5 ++++-
->>>>  security/lockdown/Kconfig | 12 ++++++++++++
->>>>  2 files changed, 16 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/x86/kernel/msr.c b/arch/x86/kernel/msr.c
->>>> index 1547be359d7f..4adce59455c3 100644
->>>> --- a/arch/x86/kernel/msr.c
->>>> +++ b/arch/x86/kernel/msr.c
->>>> @@ -80,10 +80,11 @@ static ssize_t msr_write(struct file *file, const
->>>> char __user *buf,
->>>>      int err = 0;
->>>>      ssize_t bytes = 0;
->>>>  
->>>> +#if defined(LOCK_DOWN_DENY_RAW_MSR)
->>>>      err = security_locked_down(LOCKDOWN_MSR);
->>>>      if (err)
->>>>          return err;
->>>> -
->>>> +#endif
->>>>      if (count % 8)
->>>>          return -EINVAL;    /* Invalid chunk size */
->>>>  
->>>> @@ -135,9 +136,11 @@ static long msr_ioctl(struct file *file, unsigned
->>>> int ioc, unsigned long arg)
->>>>              err = -EFAULT;
->>>>              break;
->>>>          }
->>>> +#if defined(LOCK_DOWN_DENY_RAW_MSR)
->>>>          err = security_locked_down(LOCKDOWN_MSR);
->>>>          if (err)
->>>>              break;
->>>> +#endif
->>>>          err = wrmsr_safe_regs_on_cpu(cpu, regs);
->>>>          if (err)
->>>>              break;
->>>> diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
->>>> index e84ddf484010..f4fe72c4bf8f 100644
->>>> --- a/security/lockdown/Kconfig
->>>> +++ b/security/lockdown/Kconfig
->>>> @@ -44,4 +44,16 @@ config LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY
->>>>       code to read confidential material held inside the kernel are
->>>>       disabled.
->>>>  
->>>> +config LOCK_DOWN_DENY_RAW_MSR
->>>> +    bool "Lock down and deny raw MSR access"
->>>> +    depends on LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY
->>>> +    default y
->>>> +    help
->>>> +      Some Intel based systems require raw MSR access to use the flush
->>>> +      MSR for MDS mitigation confirmation. Raw access can also be used
->>>> +      to undervolt many Intel CPUs.
->>>> +
->>>> +      Say Y to prevent access or N to allow raw MSR access for such
->>>> +      cases.
->>>> +
->>>>  endchoice
->>>> -- 
->>>> 2.24.0
->>>>
->>>>
->>>
+but task is already holding lock:
+ffff8880547b07d0 (&sig->cred_guard_mutex){+.+.}, at: prepare_bprm_creds  
+fs/exec.c:1409 [inline]
+ffff8880547b07d0 (&sig->cred_guard_mutex){+.+.}, at:  
+__do_execve_file.isra.0+0x376/0x22b0 fs/exec.c:1754
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&sig->cred_guard_mutex){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:959 [inline]
+        __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1106
+        mutex_lock_killable_nested+0x16/0x20 kernel/locking/mutex.c:1136
+        lock_trace+0x4a/0xe0 fs/proc/base.c:406
+        proc_pid_personality+0x1c/0xd0 fs/proc/base.c:2961
+        proc_single_show+0xfd/0x1c0 fs/proc/base.c:756
+        seq_read+0x4ca/0x1110 fs/seq_file.c:229
+        do_loop_readv_writev fs/read_write.c:714 [inline]
+        do_loop_readv_writev fs/read_write.c:701 [inline]
+        do_iter_read+0x4a4/0x660 fs/read_write.c:935
+        vfs_readv+0xf0/0x160 fs/read_write.c:997
+        do_preadv+0x1c4/0x280 fs/read_write.c:1089
+        __do_sys_preadv fs/read_write.c:1139 [inline]
+        __se_sys_preadv fs/read_write.c:1134 [inline]
+        __x64_sys_preadv+0x9a/0xf0 fs/read_write.c:1134
+        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #2 (&p->lock){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:959 [inline]
+        __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1106
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1121
+        seq_read+0x71/0x1110 fs/seq_file.c:161
+        do_loop_readv_writev fs/read_write.c:714 [inline]
+        do_loop_readv_writev fs/read_write.c:701 [inline]
+        do_iter_read+0x4a4/0x660 fs/read_write.c:935
+        vfs_readv+0xf0/0x160 fs/read_write.c:997
+        kernel_readv fs/splice.c:359 [inline]
+        default_file_splice_read+0x482/0x980 fs/splice.c:414
+        do_splice_to+0x127/0x180 fs/splice.c:877
+        splice_direct_to_actor+0x2d2/0x970 fs/splice.c:954
+        do_splice_direct+0x1da/0x2a0 fs/splice.c:1063
+        do_sendfile+0x597/0xd00 fs/read_write.c:1464
+        __do_sys_sendfile64 fs/read_write.c:1525 [inline]
+        __se_sys_sendfile64 fs/read_write.c:1511 [inline]
+        __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1511
+        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #1 (sb_writers#3){.+.+}:
+        percpu_down_read include/linux/percpu-rwsem.h:40 [inline]
+        __sb_start_write+0x241/0x460 fs/super.c:1672
+        sb_start_write include/linux/fs.h:1650 [inline]
+        mnt_want_write+0x3f/0xc0 fs/namespace.c:354
+        ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:21
+        ovl_setattr+0xdd/0x8b0 fs/overlayfs/inode.c:27
+        notify_change+0xad7/0xfb0 fs/attr.c:337
+        do_truncate+0x158/0x220 fs/open.c:64
+        handle_truncate fs/namei.c:2998 [inline]
+        do_last fs/namei.c:3414 [inline]
+        path_openat+0x2d63/0x46d0 fs/namei.c:3525
+        do_filp_open+0x1a1/0x280 fs/namei.c:3555
+        do_sys_open+0x3fe/0x5d0 fs/open.c:1097
+        ksys_open include/linux/syscalls.h:1385 [inline]
+        __do_sys_creat fs/open.c:1155 [inline]
+        __se_sys_creat fs/open.c:1153 [inline]
+        __x64_sys_creat+0x61/0x80 fs/open.c:1153
+        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (&ovl_i_mutex_key[depth]){+.+.}:
+        check_prev_add kernel/locking/lockdep.c:2476 [inline]
+        check_prevs_add kernel/locking/lockdep.c:2581 [inline]
+        validate_chain kernel/locking/lockdep.c:2971 [inline]
+        __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
+        lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
+        down_write+0x93/0x150 kernel/locking/rwsem.c:1534
+        inode_lock include/linux/fs.h:791 [inline]
+        process_measurement+0x6f4/0x1810  
+security/integrity/ima/ima_main.c:230
+        ima_file_check+0xc5/0x110 security/integrity/ima/ima_main.c:438
+        do_last fs/namei.c:3412 [inline]
+        path_openat+0x113d/0x46d0 fs/namei.c:3525
+        do_filp_open+0x1a1/0x280 fs/namei.c:3555
+        do_open_execat+0x137/0x690 fs/exec.c:857
+        __do_execve_file.isra.0+0x1702/0x22b0 fs/exec.c:1762
+        do_execveat_common fs/exec.c:1868 [inline]
+        do_execve fs/exec.c:1885 [inline]
+        __do_sys_execve fs/exec.c:1961 [inline]
+        __se_sys_execve fs/exec.c:1956 [inline]
+        __x64_sys_execve+0x8f/0xc0 fs/exec.c:1956
+        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+Chain exists of:
+   &ovl_i_mutex_key[depth] --> &p->lock --> &sig->cred_guard_mutex
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&sig->cred_guard_mutex);
+                                lock(&p->lock);
+                                lock(&sig->cred_guard_mutex);
+   lock(&ovl_i_mutex_key[depth]);
+
+  *** DEADLOCK ***
+
+1 lock held by syz-executor.2/596:
+  #0: ffff8880547b07d0 (&sig->cred_guard_mutex){+.+.}, at:  
+prepare_bprm_creds fs/exec.c:1409 [inline]
+  #0: ffff8880547b07d0 (&sig->cred_guard_mutex){+.+.}, at:  
+__do_execve_file.isra.0+0x376/0x22b0 fs/exec.c:1754
+
+stack backtrace:
+CPU: 1 PID: 596 Comm: syz-executor.2 Not tainted 5.4.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  print_circular_bug.isra.0.cold+0x163/0x172 kernel/locking/lockdep.c:1685
+  check_noncircular+0x32e/0x3e0 kernel/locking/lockdep.c:1809
+  check_prev_add kernel/locking/lockdep.c:2476 [inline]
+  check_prevs_add kernel/locking/lockdep.c:2581 [inline]
+  validate_chain kernel/locking/lockdep.c:2971 [inline]
+  __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
+  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
+  down_write+0x93/0x150 kernel/locking/rwsem.c:1534
+  inode_lock include/linux/fs.h:791 [inline]
+  process_measurement+0x6f4/0x1810 security/integrity/ima/ima_main.c:230
+  ima_file_check+0xc5/0x110 security/integrity/ima/ima_main.c:438
+  do_last fs/namei.c:3412 [inline]
+  path_openat+0x113d/0x46d0 fs/namei.c:3525
+  do_filp_open+0x1a1/0x280 fs/namei.c:3555
+  do_open_execat+0x137/0x690 fs/exec.c:857
+  __do_execve_file.isra.0+0x1702/0x22b0 fs/exec.c:1762
+  do_execveat_common fs/exec.c:1868 [inline]
+  do_execve fs/exec.c:1885 [inline]
+  __do_sys_execve fs/exec.c:1961 [inline]
+  __se_sys_execve fs/exec.c:1956 [inline]
+  __x64_sys_execve+0x8f/0xc0 fs/exec.c:1956
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45a679
+Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffbf4072c78 EFLAGS: 00000246 ORIG_RAX: 000000000000003b
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000045a679
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000040
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffbf40736d4
+R13: 00000000004c0fcd R14: 00000000004d41f0 R15: 00000000ffffffff
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
