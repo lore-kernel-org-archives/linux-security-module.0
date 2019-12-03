@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1A4C432C0
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Dec 2019 02:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B51EC432C0
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Dec 2019 03:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4344A20684
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Dec 2019 02:39:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 151002068E
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Dec 2019 03:57:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oS10tHKM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rpHJY5pW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbfLCCja (ORCPT
+        id S1726480AbfLCD5l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Dec 2019 21:39:30 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:37219 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725957AbfLCCja (ORCPT
+        Mon, 2 Dec 2019 22:57:41 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:41496 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726327AbfLCD5l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Dec 2019 21:39:30 -0500
-Received: by mail-yw1-f65.google.com with SMTP id 4so736377ywx.4
-        for <linux-security-module@vger.kernel.org>; Mon, 02 Dec 2019 18:39:29 -0800 (PST)
+        Mon, 2 Dec 2019 22:57:41 -0500
+Received: by mail-yb1-f193.google.com with SMTP id d95so1012295ybi.8
+        for <linux-security-module@vger.kernel.org>; Mon, 02 Dec 2019 19:57:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:from:to:cc:references:autocrypt:message-id:date
          :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=5EEcRzVUSv/wje5OYg15nPJPBFoZqbpt9ohaPGQzn0M=;
-        b=oS10tHKMU2qnZ9D538Ky5kA06SKsQMuX0wxMoS6sXEX9SyvOXiKtkpOy6VbuO/Isxr
-         pc2bBxekDmT8kNI72S93jMpGYtOkGc7e8celnUnuCq2RNfPFqxFbfjFkEuGh7WunGVwj
-         +ElPgnSDIytE7lDKYN5B4vQVMH7Pm+yqQtfBkOxqNhyyt4RgT1HAxTDJrcUmpdgMs59w
-         qXe4MuiePSQczLkqU4s66nC9/NaJsDvUdKf0B+G2g4WlErLu1Umx3hxi1iNanOBWHtoZ
-         mbK7kcg8jn3Z7kMvqp0EI2c2xrZ7NFleeWCRLEdEzmOFjssYbRcAauaUgHcEsTiUMv2a
-         yxpw==
+        bh=qIC2Plh0Ur9V6eUxkUwYXgwYcLtBXG51HKy94/9bd8k=;
+        b=rpHJY5pWKZPHCRweGxeQr27Vfn9mUIQStr/qZmWvZMvKDgyEt/GsiyYXc1r+BKSofZ
+         1ENWmINNKYPLQrZdQ/+8cXVV3SNLLhkVZoS3PJXdLKVAPopb6UtB/YEK7On0hS3ZIZ5+
+         MFD+8uJtipQOp1yr9LXZJdyNH6TTpLMW5yioKJRx4qbKhks/AtgvHIb7JvylJqGqUetW
+         Gdpcb+JYsrN8x8D/aJ74DEJYH3mRyzlIZ1cVi415T1rUev7yhiey4O6fY/MUvc9QgnWY
+         Ei8+W0QQjQaAIU3Cj5JyWLn5kNZZB1Dtnr5FzPWomPoBBF2225s/y3/LMvNKXDE2yIAG
+         DzyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:references:autocrypt
          :message-id:date:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=5EEcRzVUSv/wje5OYg15nPJPBFoZqbpt9ohaPGQzn0M=;
-        b=CYSx/bnjLYncpvxuCcDfFlqQdaS2nk6+ZNPPJJhsePzOZoZlmQ/ql2MyienHFurwpS
-         QmpJvctuFI2brxvkSR0VksQhDh9ckJT+uK5rCJqWzjOhgnWkkT1kkxpL7hwCLC+kfEbk
-         AQqdE31DyzaCvdNz91GiOC/f+kPPimzj0tUV5hc/m6Hqr9p9ZF0PLr7wDAJV8T4x4LuS
-         lfDDZ6kTwh/4kCNB32t407Ou5uHYA9nGb0dBxqv8JUbuwFUUsGjatkc0mlYGZOoTx6ie
-         YotU784fdtoruWmopsuhF0ynIjQaprEyg1sF60X/Tqn+L3ILQEOdy9cC1UFG3Eyk/831
-         39dg==
-X-Gm-Message-State: APjAAAUFadWEUWjpeOnKGtayz4An6/WNKKZZv8TOO68Z0O4CzmSWnUyl
-        /HO7rGm6ckQy9sn2YCEqKZ8=
-X-Google-Smtp-Source: APXvYqyWJ+YPL7/V/6X7QzVIiJAd1ZqZRFWC3cZrgi3gDDXzqPwYm8eynO3k10DkCe7nU9a9MS7+hw==
-X-Received: by 2002:a0d:ea41:: with SMTP id t62mr2033414ywe.29.1575340769320;
-        Mon, 02 Dec 2019 18:39:29 -0800 (PST)
-Received: from [192.168.2.190] (173-17-41-233.client.mchsi.com. [173.17.41.233])
-        by smtp.gmail.com with ESMTPSA id g6sm859351ywe.16.2019.12.02.18.39.28
+        bh=qIC2Plh0Ur9V6eUxkUwYXgwYcLtBXG51HKy94/9bd8k=;
+        b=ULEwPmVGfViuSdBpbcCMxzdX9EzscOxB16kLIv/k5fa2flIPEKfD6Z3xVTCQzmXL8f
+         ty0yCem0QOSM3t0D4dLEP7onKMLPuYmlek1ZerUePcKjma7bGH/O49HZ88uYUL4IQn20
+         G8QMF21VDVZybHZ3tYEVXqlAFYHAR409N6/QBEnfs/KwFNEJRlRH0iiLbVbJuaiHzFqq
+         AEX3Ap9veCGkwa5zAucGY0JIRWUbhzo3GPawNiLBI9oRS2qQks80igcedk4jj81eDIKS
+         Hk/SmLf5j/ukx72Si6k/Eal7nlg3N0BBCnpYpandGGzYfY3DtAVFvHQN497j6Hyq7ujn
+         TSqA==
+X-Gm-Message-State: APjAAAUbNazu1bEERB1+9HasThZnr4587mC6SVVXzcGEWxK34kTEGING
+        liH7DHjvHCrhCpvMyxC8yGlWlhLH
+X-Google-Smtp-Source: APXvYqyhd8mkOKOsv9gCPepLhl08LmQ+BKUBf6xfSt/ZbdMgnN+kEsTYw5RkwNVWoi0mECJLFGz6Ag==
+X-Received: by 2002:a25:d24f:: with SMTP id j76mr2963637ybg.304.1575345459951;
+        Mon, 02 Dec 2019 19:57:39 -0800 (PST)
+Received: from [192.168.2.191] (173-17-41-233.client.mchsi.com. [173.17.41.233])
+        by smtp.gmail.com with ESMTPSA id i84sm900707ywc.43.2019.12.02.19.57.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2019 18:39:28 -0800 (PST)
+        Mon, 02 Dec 2019 19:57:39 -0800 (PST)
 Subject: Re: [PATCH] Kernel Lockdown: Add an option to allow raw MSR access
  even, in confidentiality mode.
 From:   Matt Parnell <mparnell@gmail.com>
@@ -69,6 +69,7 @@ References: <339ca47a-6ed1-4ab4-f8cf-7b205fa9f773@gmail.com>
  <62ccc074-ac6d-edea-10c6-925f99dfc592@gmail.com>
  <CACdnJuuDKX2GXZoubLGFoh8D3a1a38j+9rwu2iBZG6pqpqgokw@mail.gmail.com>
  <80b97dca-6eec-b008-81aa-74eb4f14ea0b@gmail.com>
+ <b887b039-ebf6-5ef1-429e-04792f3cd664@gmail.com>
 Autocrypt: addr=mparnell@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFo3GdQBEADtjJfHcx+4ZWkygvBe298oW4OwHbF0iLJd/+yOObV/2/F2hHNvIsnY0syy
  ew0pdCBGbzhUlQbzIGEI1aBiikFP/g7zbWGf2r1Gkye+vka252dPZbeCW+reSbMQ6wsSpaLN
@@ -112,39 +113,45 @@ Autocrypt: addr=mparnell@gmail.com; prefer-encrypt=mutual; keydata=
  EGbY1YzYACwMFwyWLaO8wWVo5MDe28OLpKbjHz3Zlu7E4gIJx3jId4coWSV7X1oAnq0JGUSO
  ypEChR786n/GobJlYw5UDWUJsmOFB9IXzt7o3YyKibpjPMmQY4tPUc137cJrbjsXU22fYrZn
  BPsD42iWdKVVoEd04MIj6OvIZCNHBRZA8Bly8xKPSLJIWNG0YZ7ETA0070lPmh9s3xqW
-Message-ID: <b887b039-ebf6-5ef1-429e-04792f3cd664@gmail.com>
-Date:   Mon, 2 Dec 2019 20:50:45 -0600
+Message-ID: <337e64ca-f2da-d8ff-0b64-fce00c9e1994@gmail.com>
+Date:   Mon, 2 Dec 2019 21:57:11 -0600
 MIME-Version: 1.0
-In-Reply-To: <80b97dca-6eec-b008-81aa-74eb4f14ea0b@gmail.com>
+In-Reply-To: <b887b039-ebf6-5ef1-429e-04792f3cd664@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US-large
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Correction: I'm out of caffeine, tired, and it has made me an idiot.
+...possibly a bug on my older 4790k system, on my 8550u this doesn't
+seem to happen. Strange.
 
-That message triggers regardless, it seems. I apologize.
+Either way, I can stop bugging you if you'd like.
 
-On 12/2/19 8:24 PM, Matt Parnell wrote:
-> For what it is worth, this doesn't happen with lockdown disabled.
+On 12/2/19 8:50 PM, Matt Parnell wrote:
+> Correction: I'm out of caffeine, tired, and it has made me an idiot.
 >
-> That message and the code that checks for mitigations is in
-> arch/x86/kvm/vmx/vmx.c - for some reason locking down the MSRs is even
-> making the kernel think that the MSR for the mitigation isn't there,
-> meaning that it is also likely not mitigating the bug.
+> That message triggers regardless, it seems. I apologize.
 >
-> On 12/2/19 8:16 PM, Matthew Garrett wrote:
->> On Mon, Dec 2, 2019 at 6:01 PM Matt Parnell <mparnell@gmail.com> wrote:
->>> I should also mention the kernel itself thinks it is vulnerable with the
->>> MSRs locked down:
->>>
->>> [    7.367922] L1TF CPU bug present and SMT on, data leak possible. See
->>> CVE-2018-3646 and
->>> https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for
->>> details.
->> The lockdown code doesn't touch any of the codepaths the kernel uses
->> to access MSRs itself (a *lot* would break in that case), so if the
->> kernel is asserting this inappropriately then that seems like a kernel
->> bug.
+> On 12/2/19 8:24 PM, Matt Parnell wrote:
+>> For what it is worth, this doesn't happen with lockdown disabled.
+>>
+>> That message and the code that checks for mitigations is in
+>> arch/x86/kvm/vmx/vmx.c - for some reason locking down the MSRs is even
+>> making the kernel think that the MSR for the mitigation isn't there,
+>> meaning that it is also likely not mitigating the bug.
+>>
+>> On 12/2/19 8:16 PM, Matthew Garrett wrote:
+>>> On Mon, Dec 2, 2019 at 6:01 PM Matt Parnell <mparnell@gmail.com> wrote:
+>>>> I should also mention the kernel itself thinks it is vulnerable with the
+>>>> MSRs locked down:
+>>>>
+>>>> [    7.367922] L1TF CPU bug present and SMT on, data leak possible. See
+>>>> CVE-2018-3646 and
+>>>> https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for
+>>>> details.
+>>> The lockdown code doesn't touch any of the codepaths the kernel uses
+>>> to access MSRs itself (a *lot* would break in that case), so if the
+>>> kernel is asserting this inappropriately then that seems like a kernel
+>>> bug.
