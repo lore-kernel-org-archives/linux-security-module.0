@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 627E1C432C0
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Dec 2019 08:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6288BC432C0
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Dec 2019 08:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AF56206E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Dec 2019 08:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F96320640
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Dec 2019 08:38:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KRN+1znG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="khAANywf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbfLCIen (ORCPT
+        id S1725848AbfLCIif (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 Dec 2019 03:34:43 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41588 "EHLO
+        Tue, 3 Dec 2019 03:38:35 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46231 "EHLO
         mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfLCIen (ORCPT
+        with ESMTP id S1725829AbfLCIif (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Dec 2019 03:34:43 -0500
-Received: by mail-qk1-f193.google.com with SMTP id g15so2620604qka.8
-        for <linux-security-module@vger.kernel.org>; Tue, 03 Dec 2019 00:34:42 -0800 (PST)
+        Tue, 3 Dec 2019 03:38:35 -0500
+Received: by mail-qk1-f193.google.com with SMTP id f5so2584870qkm.13
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Dec 2019 00:38:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=WE8c4qrvYO1bS4Cz4rfqeIP68iNlGE5erawwEVWjZZA=;
-        b=KRN+1znG/HVo6LwSaucLwcBd4gEMtTbMC3S0gfN9TfVu2ISBdKBYAuZ+txXSBpIm3Q
-         Qbv2zqdz3k8IBbLMrudE/lmoT0jT3BFq4F9onHntGlmFVtFP1qen4w9tqEppl3o9D5fo
-         U5fbDHnNNbwnImF2iofBJ/IxdedrkLwB3E1pkLUxST2ON42z1Hr5O7vDwx0qOeV7IrYx
-         QZi3oYII8HPaDBSeBQsEd9957ihEiw2KIzUpMSumY+o0zr01tvJWsiCPdVhIcT2+Sa//
-         cUOAxN4e5uKWpW4/Y9MUjkgLkypNxwOpplhNCVNqNsauSAm2nZKOyO7Mx4/Qnlwnl+q4
-         /OAg==
+        bh=o7aLt1oUIvQVBX/J6Kkxyz9cvB9MeKi1aQENFI9rur8=;
+        b=khAANywf5NG93o1p0O4xZW/k8iWycjO9GZtsPRqumvWWXPXYGNwcgtEHz3sDkWi0VL
+         cuoTMmG4aHGH6cbku4L0kH5nPqWvW/bl8A3DIl4SwojAhh7/zyaLfCUCVaa5K1tVqIGA
+         hHKN3AE6RDaaRqFF5zaoowMYiYQ5jNjXQCp3AVkdq8frZH5J4UD3hDs9dApYU0SkNk1X
+         c1BFwJw8LbTsYrwq4iD2OgLUAjCtUepWuk5ksjn+1BKnQeczy8S20QgZumuj8U0RwhOe
+         AVU7FT84LSZXWLuXccNZG56Y34nO7NiQZM8MTOb/RH0cKvfYrvAkHRllKJef0nwbeoEK
+         NStA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=WE8c4qrvYO1bS4Cz4rfqeIP68iNlGE5erawwEVWjZZA=;
-        b=nIZOfKWr4ZW3SHduYamA5YL6cthm4yVaUyh9HfV4W2+7aDEwX+jRCp4pESOVXTSg6x
-         BPBeESD2Ny0ULFU8yV7bcuDyMVETpBRX/jersPfhy7akxzaWxIe86AsFNfzuBccLQP4Y
-         27TyRm+zs4h85LbVXeHHkd1YGPq3CGJgmmr59wmGTLBiDw/Urg2gIb1ccb5Wa8rhM61e
-         SemSBfOd4ULlawGwJtGKle4+eUsD4L3Nlh6uAHyOxMuh6UwOffVFdFq5wP3H3JM37XK+
-         9Er94FaB3UmSPOYlA50/c2EdKl5j0sKwnufmy7Ymu4Jd5Ye26/cN1xfgsi7HipKJ9IhJ
-         eSmA==
-X-Gm-Message-State: APjAAAVUPc7Cix4ZnH2ABHpa0I1NFmQyMvbbNu+7ajH8bGZrKGj1B/aC
-        EWg1L9kXCCBsD/bclVQK4m4W3A9iasYlhCeNS6LTmifCwLk=
-X-Google-Smtp-Source: APXvYqzZRtXFokiAFfn88fYPcjz/xe4t4r9eNR7i2sihaXS50yzqUZLX+JKguOJhfB/mjK6GsXJrXieoz3aIDez+o80=
-X-Received: by 2002:a37:bdc3:: with SMTP id n186mr3583700qkf.407.1575362081539;
- Tue, 03 Dec 2019 00:34:41 -0800 (PST)
+        bh=o7aLt1oUIvQVBX/J6Kkxyz9cvB9MeKi1aQENFI9rur8=;
+        b=Z7xE+mB8CcfRZtAFRJPCSPXDUN7Uupu8b+R8wmXKGK4wB1FqJLC28na2ojrHmC6xIT
+         oJt+x9hMLBFsXe8LghQafgCEtTJzRXauiN0VDAqP6KvTON2j3ILRdgORljCngD6ZsFs6
+         EQ8nWOtB4uexpco5QZCS+TUTEPeIwwsyiXZjb5X9vrOqbAQ8nI/B5Cuve4EmXG+E83v4
+         7ANfGfk2uNflXwY9Nn338F88ONy2A9hsqvRxGtGu2dQWuv06xdSlvZoKnpCJqVSTez1Z
+         NkneZGQ0pn7LkgLNxNnYhC+ZXIHCXECzSPYca7TfUz9pcl4eMJ4+yK8Wef7XBNDEep9N
+         XKPQ==
+X-Gm-Message-State: APjAAAWC0sShIfY9HVMRTBtB6QBPamX2I3UlDOwhDWBMZPFJ/CXSIlrG
+        hpHeIuEonLr7A3IBVk5QIIYenCVT/eBlJAcZqL4J5Q==
+X-Google-Smtp-Source: APXvYqyo6Oq0WQd4gs0TMeDoZkRJa+uX9c9kS14c4bIAdXgYrYPAMa90v74+t3oClTTfLLEAORdzUdfFrgJgMoVZLHQ=
+X-Received: by 2002:a37:4782:: with SMTP id u124mr3999254qka.8.1575362313699;
+ Tue, 03 Dec 2019 00:38:33 -0800 (PST)
 MIME-Version: 1.0
-References: <000000000000d2a8cc0598c8798f@google.com>
-In-Reply-To: <000000000000d2a8cc0598c8798f@google.com>
+References: <00000000000036decf0598c8762e@google.com>
+In-Reply-To: <00000000000036decf0598c8762e@google.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 3 Dec 2019 09:34:30 +0100
-Message-ID: <CACT4Y+YVVK6sO6nE9wwYSgCjaZKR-h2HSJ120CFBimjjxZVJgQ@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in pipe_read
-To:     syzbot <syzbot+7047406d4ba783c8eb7b@syzkaller.appspotmail.com>,
+Date:   Tue, 3 Dec 2019 09:38:22 +0100
+Message-ID: <CACT4Y+YVMUxeLcFMray9n0+cXbVibj5X347LZr8YgvjN5nC8pw@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in sys_kill
+To:     syzbot <syzbot+de8d933e7d153aa0c1bb@syzkaller.appspotmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
         linux-security-module <linux-security-module@vger.kernel.org>,
         Daniel Axtens <dja@axtens.net>,
@@ -84,8 +84,8 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Dec 3, 2019 at 9:28 AM syzbot
-<syzbot+7047406d4ba783c8eb7b@syzkaller.appspotmail.com> wrote:
+On Tue, Dec 3, 2019 at 9:27 AM syzbot
+<syzbot+de8d933e7d153aa0c1bb@syzkaller.appspotmail.com> wrote:
 >
 > Hello,
 >
@@ -93,29 +93,39 @@ On Tue, Dec 3, 2019 at 9:28 AM syzbot
 >
 > HEAD commit:    596cf45c Merge branch 'akpm' (patches from Andrew)
 > git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17b1af36e00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15f11c2ae00000
 > kernel config:  https://syzkaller.appspot.com/x/.config?x=9bbcda576154a4b4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7047406d4ba783c8eb7b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=de8d933e7d153aa0c1bb
 > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
 > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
 >
 > Unfortunately, I don't have any reproducer for this crash yet.
 >
 > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+7047406d4ba783c8eb7b@syzkaller.appspotmail.com
+> Reported-by: syzbot+de8d933e7d153aa0c1bb@syzkaller.appspotmail.com
 
-Something seriously broke in smack+kasan+vmap stacks, we now have 60
+Something seriously broken in smack+kasan+vmap stacks, we now have 60
 rcu stalls all over the place and counting. This is one of the
-samples. Let's dup all of them to a single one and continue the
-discussion there:
+samples. I've duped 2 other samples to this one, you can see them on
+the dashboard:
+https://syzkaller.appspot.com/bug?extid=de8d933e7d153aa0c1bb
 
-#syz dup: INFO: rcu detected stall in sys_kill
+I see 2 common this across all stalls:
+1. They all happen on the instance that uses smack (which is now
+effectively dead), see smack instance here:
+https://syzkaller.appspot.com/upstream
+2. They all contain this frame in the stack trace:
+free_thread_stack+0x168/0x590 kernel/fork.c:280
+The last commit that touches this file is "fork: support VMAP_STACK
+with KASAN_VMALLOC".
+That may be very likely the root cause. +Daniel
+
 
 > rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
->         (detected by 0, t=10502 jiffies, g=5977, q=61)
+>         (detected by 1, t=10502 jiffies, g=6629, q=331)
 > rcu: All QSes seen, last rcu_preempt kthread activity 10503
-> (4294953644-4294943141), jiffies_till_next_fqs=1, root ->qsmask 0x0
-> syz-executor.0  R  running task    24296  8125   8124 0x0000400a
+> (4294953794-4294943291), jiffies_till_next_fqs=1, root ->qsmask 0x0
+> syz-executor.0  R  running task    24648  8293   8292 0x0000400a
 > Call Trace:
 >   <IRQ>
 >   sched_show_task+0x40f/0x560 kernel/sched/core.c:5954
@@ -133,16 +143,18 @@ discussion there:
 >   smp_apic_timer_interrupt+0x109/0x280 arch/x86/kernel/apic/apic.c:1135
 >   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
 >   </IRQ>
-> RIP: 0010:mod_memcg_page_state+0x2b/0x190 include/linux/memcontrol.h:653
-> Code: 48 89 e5 41 57 41 56 41 54 53 41 89 f6 48 89 fb e8 da 28 2e 00 48 83
-> c3 38 48 89 d8 48 c1 e8 03 49 bc 00 00 00 00 00 fc ff df <42> 80 3c 20 00
-> 74 08 48 89 df e8 b6 9f 69 00 48 8b 1b 48 85 db 0f
-> RSP: 0018:ffffc90001f27998 EFLAGS: 00000a02 ORIG_RAX: ffffffffffffff13
-> RAX: 1ffffd40005452bf RBX: ffffea0002a295f8 RCX: ffff88808f094580
-> RDX: 0000000000000000 RSI: 00000000fffffffc RDI: ffffea0002a295c0
-> RBP: ffffc90001f279b8 R08: dffffc0000000000 R09: fffffbfff1287025
+> RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
+> RIP: 0010:check_kcov_mode kernel/kcov.c:70 [inline]
+> RIP: 0010:__sanitizer_cov_trace_pc+0x1c/0x50 kernel/kcov.c:102
+> Code: cc 07 48 89 de e8 64 02 3b 00 5b 5d c3 cc 48 8b 04 24 65 48 8b 0c 25
+> c0 1d 02 00 65 8b 15 b8 81 8b 7e f7 c2 00 01 1f 00 75 2c <8b> 91 80 13 00
+> 00 83 fa 02 75 21 48 8b 91 88 13 00 00 48 8b 32 48
+> RSP: 0018:ffffc900021c7c28 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+> RAX: ffffffff81487433 RBX: 0000000000000000 RCX: ffff88809428a100
+> RDX: 0000000000000001 RSI: 00000000fffffffc RDI: ffffea0002479240
+> RBP: ffffc900021c7c50 R08: dffffc0000000000 R09: fffffbfff1287025
 > R10: fffffbfff1287025 R11: 0000000000000000 R12: dffffc0000000000
-> R13: dffffc0000000000 R14: 00000000fffffffc R15: ffff8880a8a6f4a8
+> R13: dffffc0000000000 R14: 00000000fffffffc R15: ffff888091c57428
 >   free_thread_stack+0x168/0x590 kernel/fork.c:280
 >   release_task_stack kernel/fork.c:440 [inline]
 >   put_task_stack+0xa3/0x130 kernel/fork.c:451
@@ -152,39 +164,31 @@ discussion there:
 >   preempt_schedule_common kernel/sched/core.c:4236 [inline]
 >   preempt_schedule+0xdb/0x120 kernel/sched/core.c:4261
 >   ___preempt_schedule+0x16/0x18 arch/x86/entry/thunk_64.S:50
->   __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:161 [inline]
->   _raw_spin_unlock_irqrestore+0xcc/0xe0 kernel/locking/spinlock.c:191
->   spin_unlock_irqrestore include/linux/spinlock.h:393 [inline]
->   __wake_up_common_lock kernel/sched/wait.c:125 [inline]
->   __wake_up+0xe1/0x150 kernel/sched/wait.c:142
->   pipe_read+0x8e1/0x9e0 fs/pipe.c:374
->   call_read_iter include/linux/fs.h:1896 [inline]
->   new_sync_read fs/read_write.c:414 [inline]
->   __vfs_read+0x59e/0x730 fs/read_write.c:427
->   vfs_read+0x1dd/0x420 fs/read_write.c:461
->   ksys_read+0x117/0x220 fs/read_write.c:587
->   __do_sys_read fs/read_write.c:597 [inline]
->   __se_sys_read fs/read_write.c:595 [inline]
->   __x64_sys_read+0x7b/0x90 fs/read_write.c:595
+>   __raw_read_unlock include/linux/rwlock_api_smp.h:227 [inline]
+>   _raw_read_unlock+0x3a/0x40 kernel/locking/spinlock.c:255
+>   kill_something_info kernel/signal.c:1586 [inline]
+>   __do_sys_kill kernel/signal.c:3640 [inline]
+>   __se_sys_kill+0x5e9/0x6c0 kernel/signal.c:3634
+>   __x64_sys_kill+0x5b/0x70 kernel/signal.c:3634
 >   do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
 >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x414190
-> Code: 01 f0 ff ff 0f 83 90 1b 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f
-> 44 00 00 83 3d dd 42 66 00 00 75 14 b8 00 00 00 00 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 64 1b 00 00 c3 48 83 ec 08 e8 6a fc ff ff
-> RSP: 002b:00007fff84902588 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000414190
-> RDX: 0000000000000038 RSI: 0000000000758040 RDI: 00000000000000f9
-> RBP: 0000000000000002 R08: 00000000000003b8 R09: 0000000000004000
-> R10: 0000000000717660 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007fff849025c0 R14: 000000000000e9c4 R15: 00007fff849025d0
-> rcu: rcu_preempt kthread starved for 10534 jiffies! g5977 f0x2
+> RIP: 0033:0x422a17
+> Code: 44 00 00 48 c7 c2 d4 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff c3 66 2e
+> 0f 1f 84 00 00 00 00 00 0f 1f 40 00 b8 3e 00 00 00 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 dd 32 ff ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007fff38dca538 EFLAGS: 00000293 ORIG_RAX: 000000000000003e
+> RAX: ffffffffffffffda RBX: 0000000000000064 RCX: 0000000000422a17
+> RDX: 0000000000000bb8 RSI: 0000000000000009 RDI: 00000000fffffffe
+> RBP: 0000000000000002 R08: 0000000000000001 R09: 0000000001c62940
+> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000008
+> R13: 00007fff38dca570 R14: 000000000000f0b6 R15: 00007fff38dca580
+> rcu: rcu_preempt kthread starved for 10533 jiffies! g6629 f0x2
 > RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
 > rcu: RCU grace-period kthread stack dump:
-> rcu_preempt     R  running task    29104    10      2 0x80004000
+> rcu_preempt     R  running task    29032    10      2 0x80004008
 > Call Trace:
->   context_switch kernel/sched/core.c:3385 [inline]
->   __schedule+0x9a0/0xcc0 kernel/sched/core.c:4081
+>   context_switch kernel/sched/core.c:3388 [inline]
+>   __schedule+0x9a8/0xcc0 kernel/sched/core.c:4081
 >   schedule+0x181/0x210 kernel/sched/core.c:4155
 >   schedule_timeout+0x14f/0x240 kernel/time/timer.c:1895
 >   rcu_gp_fqs_loop kernel/rcu/tree.c:1661 [inline]
@@ -204,4 +208,4 @@ discussion there:
 > --
 > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
 > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000d2a8cc0598c8798f%40google.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000036decf0598c8762e%40google.com.
