@@ -2,111 +2,88 @@ Return-Path: <SRS0=6Zdz=Z2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E05C43603
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 20:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FF0C2D0B1
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 21:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D7482077B
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 20:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD5DF2073C
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 21:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbfLDUwb (ORCPT
+        id S1728228AbfLDVlC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Dec 2019 15:52:31 -0500
-Received: from relay.sw.ru ([185.231.240.75]:50772 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727889AbfLDUwb (ORCPT
+        Wed, 4 Dec 2019 16:41:02 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:37230 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728060AbfLDVlC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Dec 2019 15:52:31 -0500
-Received: from [192.168.15.5]
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1icbcl-0001ny-LQ; Wed, 04 Dec 2019 23:51:51 +0300
-Subject: Re: KASAN: slab-out-of-bounds Read in fbcon_get_font
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Cc:     syzbot <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, ghalat@redhat.com,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <0000000000002cfc3a0598d42b70@google.com>
- <CAKMK7uFAfw4M6B8WaHx6FBkYDmUBTQ6t3D8RE5BbMt=_5vyp9A@mail.gmail.com>
- <CACT4Y+aV9vzJ6gs9r2RAQP+dQ_vkOc5H6hWu-prF1ECruAE_5w@mail.gmail.com>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <6632ddb6-37bf-dc42-e355-2443c17e6da0@virtuozzo.com>
-Date:   Wed, 4 Dec 2019 23:49:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Wed, 4 Dec 2019 16:41:02 -0500
+Received: by mail-il1-f199.google.com with SMTP id t19so838821ila.4
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Dec 2019 13:41:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=JrNPfPX8ooL5t/Vw7RYAMqCMbF8rwCtCqkj0exct6ns=;
+        b=rp16tY23QqQ6jXVVkKzBPUHC6ryM1Dsg9ld2EuZyz9AEkzKVI9EzzWcBExuv6LzWJt
+         4+miI28+EEe8YxsQEx3ZjAwoRTjHpC0xBMCFSh2e1g5qMrtSs5Ez2oLLbU5GVyrs4LNu
+         AKN8eI7/34vBzWSVaQGuRRFvRF2cxPsFduUuyQHM/3I+m24FXQwjCMCgCrv40qoGl139
+         b/8VslGi34rIJj9ePSRqxzG6MAxV3tdqYszYu6ik5j1JHReLS+UHm9+FTKjSJHakCd9D
+         s+6DI9U5pqwZeejeae80j70/4fT+fbLrun6EfluPtzaPwWK3l+Lw+g9x9IuxmAy7z0aJ
+         uvPg==
+X-Gm-Message-State: APjAAAVkWQBq8MCXsJejIz2rWMQt1gvxtWgWzKrQZBx3rp16IZVdtUai
+        jBiyQHl/KyhTrwM0J7zy8mXQQ5h4DXc0FzSzRpPaNktRjoIf
+X-Google-Smtp-Source: APXvYqweHEd887dmgHwZ98tD32QtHsIIU9QUEjKbdT4mjyi6aPIBc1Zjh5EyBzHGg/jDulIxR32o86hj/XmAPTryABiezG7aI+6v
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+aV9vzJ6gs9r2RAQP+dQ_vkOc5H6hWu-prF1ECruAE_5w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:d3:: with SMTP id w19mr5157404jao.127.1575495661402;
+ Wed, 04 Dec 2019 13:41:01 -0800 (PST)
+Date:   Wed, 04 Dec 2019 13:41:01 -0800
+In-Reply-To: <0000000000002cfc3a0598d42b70@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003e640e0598e7abc3@google.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in fbcon_get_font
+From:   syzbot <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com>
+To:     aryabinin@virtuozzo.com, b.zolnierkie@samsung.com,
+        daniel.thompson@linaro.org, daniel.vetter@ffwll.ch,
+        dri-devel@lists.freedesktop.org, dvyukov@google.com,
+        ghalat@redhat.com, gleb@kernel.org, gwshan@linux.vnet.ibm.com,
+        hpa@zytor.com, jmorris@namei.org, kasan-dev@googlegroups.com,
+        kvm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        maarten.lankhorst@linux.intel.com, mingo@redhat.com,
+        mpe@ellerman.id.au, pbonzini@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, ruscur@russell.cc,
+        sam@ravnborg.org, serge@hallyn.com, stewart@linux.vnet.ibm.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+syzbot has bisected this bug to:
 
+commit 2de50e9674fc4ca3c6174b04477f69eb26b4ee31
+Author: Russell Currey <ruscur@russell.cc>
+Date:   Mon Feb 8 04:08:20 2016 +0000
 
-On 12/4/19 9:33 AM, Dmitry Vyukov wrote:
-> On Tue, Dec 3, 2019 at 11:37 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->>
->> On Tue, Dec 3, 2019 at 11:25 PM syzbot
->> <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com> wrote:
->>>
->>> Hello,
->>>
->>> syzbot found the following crash on:
->>>
->>> HEAD commit:    76bb8b05 Merge tag 'kbuild-v5.5' of git://git.kernel.org/p..
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=10bfe282e00000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=dd226651cb0f364b
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=4455ca3b3291de891abc
->>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11181edae00000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105cbb7ae00000
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com
->>>
->>> ==================================================================
->>> BUG: KASAN: slab-out-of-bounds in memcpy include/linux/string.h:380 [inline]
->>> BUG: KASAN: slab-out-of-bounds in fbcon_get_font+0x2b2/0x5e0
->>> drivers/video/fbdev/core/fbcon.c:2465
->>> Read of size 16 at addr ffff888094b0aa10 by task syz-executor414/9999
->>
->> So fbcon allocates some memory, security/tomoyo goes around and frees
->> it, fbcon goes boom because the memory is gone. I'm kinda leaning
->> towards "not an fbcon bug". Adding relevant security folks and mailing
->> lists.
->>
->> But from a very quick look in tomoyo it loosk more like "machine on
->> fire, random corruption all over". No idea what's going on here.
-> 
-> Hi Daniel,
-> 
-> This is an out-of-bounds access, not use-after-free.
-> I don't know why we print the free stack at all (maybe +Andrey knows),
-> but that's what KASAN did from day one. I filed
-> https://bugzilla.kernel.org/show_bug.cgi?id=198425 which I think is a
-> good idea, I will add your confusion as a data point :)
+     powerpc/powernv: Remove support for p5ioc2
 
-Because we have that information (free stack) and it usually better to provide
-all the information we have rather than hide it. You never known what information
-might be needed to fix the bug.
-Free memory might be reused and what we report as OOB might be an UAF and free stack
-could be useful in such case.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=127a042ae00000
+start commit:   76bb8b05 Merge tag 'kbuild-v5.5' of git://git.kernel.org/p..
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=117a042ae00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=167a042ae00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dd226651cb0f364b
+dashboard link: https://syzkaller.appspot.com/bug?extid=4455ca3b3291de891abc
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11181edae00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105cbb7ae00000
+
+Reported-by: syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com
+Fixes: 2de50e9674fc ("powerpc/powernv: Remove support for p5ioc2")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
