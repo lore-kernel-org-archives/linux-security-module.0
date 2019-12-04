@@ -2,106 +2,216 @@ Return-Path: <SRS0=6Zdz=Z2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30650C43603
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 12:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4571C43603
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 13:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4442077B
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 12:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 820EE2077B
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 13:58:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tJ6NRvsb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbfLDMuz (ORCPT
+        id S1727961AbfLDN6X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Dec 2019 07:50:55 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52492 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727446AbfLDMuz (ORCPT
+        Wed, 4 Dec 2019 08:58:23 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:42041 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727956AbfLDN6X (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:50:55 -0500
-Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xB4Cogn6080765;
-        Wed, 4 Dec 2019 21:50:42 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp);
- Wed, 04 Dec 2019 21:50:42 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xB4CoYgJ080585
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 4 Dec 2019 21:50:42 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
- sockets.
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     James Morris <jmorris@namei.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-security-module@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <0000000000004f43fa058a97f4d3@google.com>
- <1b5722cc-adbc-035d-5ca1-9aa56e70d312@I-love.SAKURA.ne.jp>
- <a4ed1778-8b73-49d1-0ff0-59d9c6ac0af8@I-love.SAKURA.ne.jp>
- <20190618204933.GE17978@ZenIV.linux.org.uk>
- <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
- <bc146372-764d-93a9-af27-666d73ed3af5@i-love.sakura.ne.jp>
- <alpine.LRH.2.21.1907061944050.2662@namei.org>
- <alpine.LRH.2.21.1907061949040.2662@namei.org>
- <289ebc65-8444-37e3-e54e-21b55d2c9192@i-love.sakura.ne.jp>
- <a28f2680-bafc-5e23-4eea-6b432f561cd4@i-love.sakura.ne.jp>
- <A9CE5147-4047-4C42-B772-F0ED510FA283@canb.auug.org.au>
- <36906718-d2ae-3514-c6b2-371037c98da5@i-love.sakura.ne.jp>
- <20191003082543.5e1e25dd@canb.auug.org.au>
- <b175f451-4e76-84aa-48fa-e3ee9490c579@i-love.sakura.ne.jp>
- <d5cbd24b-531d-e9d0-f784-e6447129741d@i-love.sakura.ne.jp>
- <alpine.LRH.2.21.1911211818320.3625@namei.org>
- <cba33548-91dc-42b4-ef96-43642ebc3427@i-love.sakura.ne.jp>
- <b7263da2-d56d-0f27-a7e5-03541ff8a0c1@i-love.sakura.ne.jp>
-Message-ID: <579b10bb-990f-ae4c-8098-b39e56a4c475@i-love.sakura.ne.jp>
-Date:   Wed, 4 Dec 2019 21:50:34 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Wed, 4 Dec 2019 08:58:23 -0500
+Received: by mail-qv1-f66.google.com with SMTP id q19so3053217qvy.9
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Dec 2019 05:58:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gQZRT9h5gGn+PRANbfIUGJFXwRG2sVqXF2x1gIv9kfs=;
+        b=tJ6NRvsbIsUmgHEdcym0Wc0fsQFAhfkuw+O0JBwruAYPf3PJnDMVpvvu8UJR4DbDC+
+         1TUjzSVM7P+ef8JRDrBmBHc0cum5nfW1g/MqxCrb4dBwstFdDHzZ69Uc1y49M5eFjKkH
+         RL7r2d+Ika4blGjFxeITtmakwhCmWTYLz68iG15wKzH9z0/JMHrTFZi071S8IqysiMiS
+         hBpEmerf0W0Bcocz8B85YtexLNMezMR78/wGAZ7ilQFuNTS0jrWdBkEj7s6Qv5eMw8L/
+         f7EtY/9pX87CZ5jc63IpzCv/C1Z+9OfrTChuvRmSdTNtqxi9/EVkOvttqc0SLANPUMUw
+         tDGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gQZRT9h5gGn+PRANbfIUGJFXwRG2sVqXF2x1gIv9kfs=;
+        b=ebXD1a1MYuF/hmvdTDx7wFABqt9+zWvjNQLdZmRs3ue+g6m6/yIdeGJfB+cR0Tm6d+
+         F1JTp2gt8/1C+1Ek3aGObo9VVY3ru/Ns1mYlPhelEpbYYUCM7UPFmDYRQLeIYQw7Ns0S
+         q+x5ommv8udGUnjaMMztDOZPszibzqSDHd3yLO0Q2jQDEl9qdltutwe2xsFn+UI+yecO
+         10osYEIr1LT21/+8eFEufAOtqaW3OFyKzipXc2HvdVEtgooSLPmMx09t6x3XiiThHZLm
+         vOL1K460RXKYqB4smcTheHc6fkkEUa6zADn+1RWzNnnILXJfRqd+Y98n0GMh+fjOtjOb
+         vPpA==
+X-Gm-Message-State: APjAAAVAFwk7vuTICX4ZUXTAhdtJtC9awlm/fbmSXFKfgtrEa/fhRYpE
+        prl4/I3jWKpFP1us3RgsaydfAPK6P68jL7a/56XeNQ==
+X-Google-Smtp-Source: APXvYqxUT1PoMIpiOgUyl37nZdqmUEn3reGYvzlq+uXR01+gVXhkfGPq9D9ZKMFJxj7ayYKHGK6k6lod70gglwcsczc=
+X-Received: by 2002:a0c:b446:: with SMTP id e6mr2700026qvf.159.1575467901712;
+ Wed, 04 Dec 2019 05:58:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <b7263da2-d56d-0f27-a7e5-03541ff8a0c1@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <00000000000036decf0598c8762e@google.com> <CACT4Y+YVMUxeLcFMray9n0+cXbVibj5X347LZr8YgvjN5nC8pw@mail.gmail.com>
+In-Reply-To: <CACT4Y+YVMUxeLcFMray9n0+cXbVibj5X347LZr8YgvjN5nC8pw@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 4 Dec 2019 14:58:10 +0100
+Message-ID: <CACT4Y+asdED7tYv462Ui2OhQVKXVUnC+=fumXR3qM1A4d6AvOQ@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in sys_kill
+To:     syzbot <syzbot+de8d933e7d153aa0c1bb@syzkaller.appspotmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Daniel Axtens <dja@axtens.net>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>, christian@kellner.me,
+        cyphar@cyphar.com, "Reshetova, Elena" <elena.reshetova@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>, ldv@altlinux.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Will Drewry <wad@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/11/21 22:59, Tetsuo Handa wrote:
-> On 2019/11/21 19:18, Tetsuo Handa wrote:
->> On 2019/11/21 16:21, James Morris wrote:
->>> On Wed, 13 Nov 2019, Tetsuo Handa wrote:
->>>
->>>> Hello, Andrew and James.
->>>>
->>>> I have difficulty setting up environments for sending pull request to linux.git
->>>> (nobody around me knows Linux kernel maintainer's workflow at the command line level).
->>>> Can you pick up the following commit via mmotm or linux-security.git tree?
->>>
->>> Not sure if your fix is complete.
->>>
->>> Are there other potential paths to trigger this via tomoyo_path_perm() ?
->>>
->>> e.g. call unlink(2) on /proc/pid/fd/sockfd
->>
->> I think they are safe. For example, unlink(2) checks that
->> inode is valid before calling security_path_unlink().
-> 
-> Hmm, since unlink(2) locks parent's inode instead of inode to be removed itself,
-> there is indeed possibility that tomoyo_path_perm() races with __sock_release().
-> We need another patch...
-> 
+On Tue, Dec 3, 2019 at 9:38 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Tue, Dec 3, 2019 at 9:27 AM syzbot
+> <syzbot+de8d933e7d153aa0c1bb@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    596cf45c Merge branch 'akpm' (patches from Andrew)
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=15f11c2ae00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=9bbcda576154a4b4
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=de8d933e7d153aa0c1bb
+> > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> >
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+de8d933e7d153aa0c1bb@syzkaller.appspotmail.com
+>
+> Something seriously broken in smack+kasan+vmap stacks, we now have 60
+> rcu stalls all over the place and counting. This is one of the
+> samples. I've duped 2 other samples to this one, you can see them on
+> the dashboard:
+> https://syzkaller.appspot.com/bug?extid=de8d933e7d153aa0c1bb
+>
+> I see 2 common this across all stalls:
+> 1. They all happen on the instance that uses smack (which is now
+> effectively dead), see smack instance here:
+> https://syzkaller.appspot.com/upstream
+> 2. They all contain this frame in the stack trace:
+> free_thread_stack+0x168/0x590 kernel/fork.c:280
+> The last commit that touches this file is "fork: support VMAP_STACK
+> with KASAN_VMALLOC".
+> That may be very likely the root cause. +Daniel
 
-I decided to drop tomoyo_get_socket_name(). Will you pick up the following commit?
+I've stopped smack syzbot instance b/c it produces infinite stream of
+assorted crashes due to this.
+Please ping syzkaller@googlegroups.com when this is fixed, I will
+re-enable the instance.
 
-commit c39593ab0500fcd6db290b311c120349927ddc04
-Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date:   Mon Nov 25 10:46:51 2019 +0900
-
-    tomoyo: Don't use nifty names on sockets.
+> > rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> >         (detected by 1, t=10502 jiffies, g=6629, q=331)
+> > rcu: All QSes seen, last rcu_preempt kthread activity 10503
+> > (4294953794-4294943291), jiffies_till_next_fqs=1, root ->qsmask 0x0
+> > syz-executor.0  R  running task    24648  8293   8292 0x0000400a
+> > Call Trace:
+> >   <IRQ>
+> >   sched_show_task+0x40f/0x560 kernel/sched/core.c:5954
+> >   print_other_cpu_stall kernel/rcu/tree_stall.h:410 [inline]
+> >   check_cpu_stall kernel/rcu/tree_stall.h:538 [inline]
+> >   rcu_pending kernel/rcu/tree.c:2827 [inline]
+> >   rcu_sched_clock_irq+0x1861/0x1ad0 kernel/rcu/tree.c:2271
+> >   update_process_times+0x12d/0x180 kernel/time/timer.c:1726
+> >   tick_sched_handle kernel/time/tick-sched.c:167 [inline]
+> >   tick_sched_timer+0x263/0x420 kernel/time/tick-sched.c:1310
+> >   __run_hrtimer kernel/time/hrtimer.c:1514 [inline]
+> >   __hrtimer_run_queues+0x403/0x840 kernel/time/hrtimer.c:1576
+> >   hrtimer_interrupt+0x38c/0xda0 kernel/time/hrtimer.c:1638
+> >   local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1110 [inline]
+> >   smp_apic_timer_interrupt+0x109/0x280 arch/x86/kernel/apic/apic.c:1135
+> >   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+> >   </IRQ>
+> > RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
+> > RIP: 0010:check_kcov_mode kernel/kcov.c:70 [inline]
+> > RIP: 0010:__sanitizer_cov_trace_pc+0x1c/0x50 kernel/kcov.c:102
+> > Code: cc 07 48 89 de e8 64 02 3b 00 5b 5d c3 cc 48 8b 04 24 65 48 8b 0c 25
+> > c0 1d 02 00 65 8b 15 b8 81 8b 7e f7 c2 00 01 1f 00 75 2c <8b> 91 80 13 00
+> > 00 83 fa 02 75 21 48 8b 91 88 13 00 00 48 8b 32 48
+> > RSP: 0018:ffffc900021c7c28 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+> > RAX: ffffffff81487433 RBX: 0000000000000000 RCX: ffff88809428a100
+> > RDX: 0000000000000001 RSI: 00000000fffffffc RDI: ffffea0002479240
+> > RBP: ffffc900021c7c50 R08: dffffc0000000000 R09: fffffbfff1287025
+> > R10: fffffbfff1287025 R11: 0000000000000000 R12: dffffc0000000000
+> > R13: dffffc0000000000 R14: 00000000fffffffc R15: ffff888091c57428
+> >   free_thread_stack+0x168/0x590 kernel/fork.c:280
+> >   release_task_stack kernel/fork.c:440 [inline]
+> >   put_task_stack+0xa3/0x130 kernel/fork.c:451
+> >   finish_task_switch+0x3f1/0x550 kernel/sched/core.c:3256
+> >   context_switch kernel/sched/core.c:3388 [inline]
+> >   __schedule+0x9a8/0xcc0 kernel/sched/core.c:4081
+> >   preempt_schedule_common kernel/sched/core.c:4236 [inline]
+> >   preempt_schedule+0xdb/0x120 kernel/sched/core.c:4261
+> >   ___preempt_schedule+0x16/0x18 arch/x86/entry/thunk_64.S:50
+> >   __raw_read_unlock include/linux/rwlock_api_smp.h:227 [inline]
+> >   _raw_read_unlock+0x3a/0x40 kernel/locking/spinlock.c:255
+> >   kill_something_info kernel/signal.c:1586 [inline]
+> >   __do_sys_kill kernel/signal.c:3640 [inline]
+> >   __se_sys_kill+0x5e9/0x6c0 kernel/signal.c:3634
+> >   __x64_sys_kill+0x5b/0x70 kernel/signal.c:3634
+> >   do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x422a17
+> > Code: 44 00 00 48 c7 c2 d4 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff c3 66 2e
+> > 0f 1f 84 00 00 00 00 00 0f 1f 40 00 b8 3e 00 00 00 0f 05 <48> 3d 01 f0 ff
+> > ff 0f 83 dd 32 ff ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007fff38dca538 EFLAGS: 00000293 ORIG_RAX: 000000000000003e
+> > RAX: ffffffffffffffda RBX: 0000000000000064 RCX: 0000000000422a17
+> > RDX: 0000000000000bb8 RSI: 0000000000000009 RDI: 00000000fffffffe
+> > RBP: 0000000000000002 R08: 0000000000000001 R09: 0000000001c62940
+> > R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000008
+> > R13: 00007fff38dca570 R14: 000000000000f0b6 R15: 00007fff38dca580
+> > rcu: rcu_preempt kthread starved for 10533 jiffies! g6629 f0x2
+> > RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+> > rcu: RCU grace-period kthread stack dump:
+> > rcu_preempt     R  running task    29032    10      2 0x80004008
+> > Call Trace:
+> >   context_switch kernel/sched/core.c:3388 [inline]
+> >   __schedule+0x9a8/0xcc0 kernel/sched/core.c:4081
+> >   schedule+0x181/0x210 kernel/sched/core.c:4155
+> >   schedule_timeout+0x14f/0x240 kernel/time/timer.c:1895
+> >   rcu_gp_fqs_loop kernel/rcu/tree.c:1661 [inline]
+> >   rcu_gp_kthread+0xed8/0x1770 kernel/rcu/tree.c:1821
+> >   kthread+0x332/0x350 kernel/kthread.c:255
+> >   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >
+> > --
+> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000036decf0598c8762e%40google.com.
