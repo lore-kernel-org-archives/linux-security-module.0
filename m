@@ -2,261 +2,106 @@ Return-Path: <SRS0=6Zdz=Z2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B1EC2BC73
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 09:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30650C43603
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 12:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BAEF2077B
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 09:15:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="XS/OczIR"
+	by mail.kernel.org (Postfix) with ESMTP id 0E4442077B
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Dec 2019 12:50:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725922AbfLDJPl (ORCPT
+        id S1727779AbfLDMuz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Dec 2019 04:15:41 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43944 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfLDJPk (ORCPT
+        Wed, 4 Dec 2019 07:50:55 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52492 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727446AbfLDMuz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Dec 2019 04:15:40 -0500
-Received: by mail-ot1-f66.google.com with SMTP id p8so5658999oth.10
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Dec 2019 01:15:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kbkpGLkL0yrq3ltKSzyFrHQi1/pqNXq+Qh0OZ6abB+I=;
-        b=XS/OczIRTKx2gis4efj9n4PJqnrXXOzdlxfVGIuoxii4M5FuldJ2UxjGI/uTm2mVlr
-         iDilqY2Yx/0yPC8LKfZjXtBUU1w+F1cLGcuARUcoXHUWOLGQ4Z1M5R+32l22QxeMiGrN
-         oiSsMeCCjpVMu66KOCGP0WxjZ96Z7O6WqY+9g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kbkpGLkL0yrq3ltKSzyFrHQi1/pqNXq+Qh0OZ6abB+I=;
-        b=cxYZmrJ0dbX/nuZqB90eID2AmyPcCFB8w8PP9QOwhu0/h6EBa4aI5DxLAAwzzAJ/gm
-         enXoavB3YB91Kxl+m3WpEKfS4Uy/ElOSIthdnZkWMLIL3LASbB5NAGdBj44kRuPOPogD
-         idKdaGyO6/P4TZGm0kavjockGG1o2jgB2p5MfiQ6BFBzbWN5k5USZMCga5a7V+0RSfiW
-         Ci0wTJAoEE0D1GuLHX39gQ8+Rl1m0umrF/wDqjpJIIe9i79NPtd2Rdy0MYlXRoi9ZYbM
-         mvqTZxU1r5EMubxf8ucjfi6sqUU+/3TgYI2T1r8yNZ1WNWSasTZ8K7exlwdZs8Nu3ZgQ
-         5JhA==
-X-Gm-Message-State: APjAAAUW6WAQQfYvIcxqQSmSZofsM8++cmi+ul9Mp8YLtGxobHBB99/Q
-        6u/sjmlnkbEUOt84WcA/K5aVykxNEzJPkH+nP+CehA==
-X-Google-Smtp-Source: APXvYqwigkG2RkEu7H6A8TRkX1xQOSs2iOfkgqcan8LwWE3honUjU5nirjQ0f42/pUC9lJ32pXDkKwGqhXNt2ezlEEs=
-X-Received: by 2002:a05:6830:4d1:: with SMTP id s17mr1810455otd.188.1575450938604;
- Wed, 04 Dec 2019 01:15:38 -0800 (PST)
+        Wed, 4 Dec 2019 07:50:55 -0500
+Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xB4Cogn6080765;
+        Wed, 4 Dec 2019 21:50:42 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp);
+ Wed, 04 Dec 2019 21:50:42 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp)
+Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xB4CoYgJ080585
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Wed, 4 Dec 2019 21:50:42 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
+ sockets.
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     James Morris <jmorris@namei.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-security-module@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <0000000000004f43fa058a97f4d3@google.com>
+ <1b5722cc-adbc-035d-5ca1-9aa56e70d312@I-love.SAKURA.ne.jp>
+ <a4ed1778-8b73-49d1-0ff0-59d9c6ac0af8@I-love.SAKURA.ne.jp>
+ <20190618204933.GE17978@ZenIV.linux.org.uk>
+ <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
+ <bc146372-764d-93a9-af27-666d73ed3af5@i-love.sakura.ne.jp>
+ <alpine.LRH.2.21.1907061944050.2662@namei.org>
+ <alpine.LRH.2.21.1907061949040.2662@namei.org>
+ <289ebc65-8444-37e3-e54e-21b55d2c9192@i-love.sakura.ne.jp>
+ <a28f2680-bafc-5e23-4eea-6b432f561cd4@i-love.sakura.ne.jp>
+ <A9CE5147-4047-4C42-B772-F0ED510FA283@canb.auug.org.au>
+ <36906718-d2ae-3514-c6b2-371037c98da5@i-love.sakura.ne.jp>
+ <20191003082543.5e1e25dd@canb.auug.org.au>
+ <b175f451-4e76-84aa-48fa-e3ee9490c579@i-love.sakura.ne.jp>
+ <d5cbd24b-531d-e9d0-f784-e6447129741d@i-love.sakura.ne.jp>
+ <alpine.LRH.2.21.1911211818320.3625@namei.org>
+ <cba33548-91dc-42b4-ef96-43642ebc3427@i-love.sakura.ne.jp>
+ <b7263da2-d56d-0f27-a7e5-03541ff8a0c1@i-love.sakura.ne.jp>
+Message-ID: <579b10bb-990f-ae4c-8098-b39e56a4c475@i-love.sakura.ne.jp>
+Date:   Wed, 4 Dec 2019 21:50:34 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-References: <0000000000002cfc3a0598d42b70@google.com> <CAKMK7uFAfw4M6B8WaHx6FBkYDmUBTQ6t3D8RE5BbMt=_5vyp9A@mail.gmail.com>
- <CACT4Y+aV9vzJ6gs9r2RAQP+dQ_vkOc5H6hWu-prF1ECruAE_5w@mail.gmail.com>
-In-Reply-To: <CACT4Y+aV9vzJ6gs9r2RAQP+dQ_vkOc5H6hWu-prF1ECruAE_5w@mail.gmail.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Wed, 4 Dec 2019 10:15:27 +0100
-Message-ID: <CAKMK7uHo9cQ56-xUV8KJfvmS94JMVVu+fZ+7uPX85bWruUGzEw@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in fbcon_get_font
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     kasan-dev <kasan-dev@googlegroups.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        syzbot <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, ghalat@redhat.com,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b7263da2-d56d-0f27-a7e5-03541ff8a0c1@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 4, 2019 at 7:33 AM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Tue, Dec 3, 2019 at 11:37 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> >
-> > On Tue, Dec 3, 2019 at 11:25 PM syzbot
-> > <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    76bb8b05 Merge tag 'kbuild-v5.5' of git://git.kernel.org/p..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=10bfe282e00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=dd226651cb0f364b
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=4455ca3b3291de891abc
-> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11181edae00000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105cbb7ae00000
-> > >
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com
-> > >
-> > > ==================================================================
-> > > BUG: KASAN: slab-out-of-bounds in memcpy include/linux/string.h:380 [inline]
-> > > BUG: KASAN: slab-out-of-bounds in fbcon_get_font+0x2b2/0x5e0
-> > > drivers/video/fbdev/core/fbcon.c:2465
-> > > Read of size 16 at addr ffff888094b0aa10 by task syz-executor414/9999
-> >
-> > So fbcon allocates some memory, security/tomoyo goes around and frees
-> > it, fbcon goes boom because the memory is gone. I'm kinda leaning
-> > towards "not an fbcon bug". Adding relevant security folks and mailing
-> > lists.
-> >
-> > But from a very quick look in tomoyo it loosk more like "machine on
-> > fire, random corruption all over". No idea what's going on here.
->
-> Hi Daniel,
->
-> This is an out-of-bounds access, not use-after-free.
-> I don't know why we print the free stack at all (maybe +Andrey knows),
-> but that's what KASAN did from day one. I filed
-> https://bugzilla.kernel.org/show_bug.cgi?id=198425 which I think is a
-> good idea, I will add your confusion as a data point :)
-> Re this bug, free stack is irrelevant, I guess it's when the heap
-> block was freed before it was reallocated by console. So it's plain
-> out-of-bounds in fbcon_get_font, which looks sane and consistent to me
-> and reproducible on top.
+On 2019/11/21 22:59, Tetsuo Handa wrote:
+> On 2019/11/21 19:18, Tetsuo Handa wrote:
+>> On 2019/11/21 16:21, James Morris wrote:
+>>> On Wed, 13 Nov 2019, Tetsuo Handa wrote:
+>>>
+>>>> Hello, Andrew and James.
+>>>>
+>>>> I have difficulty setting up environments for sending pull request to linux.git
+>>>> (nobody around me knows Linux kernel maintainer's workflow at the command line level).
+>>>> Can you pick up the following commit via mmotm or linux-security.git tree?
+>>>
+>>> Not sure if your fix is complete.
+>>>
+>>> Are there other potential paths to trigger this via tomoyo_path_perm() ?
+>>>
+>>> e.g. call unlink(2) on /proc/pid/fd/sockfd
+>>
+>> I think they are safe. For example, unlink(2) checks that
+>> inode is valid before calling security_path_unlink().
+> 
+> Hmm, since unlink(2) locks parent's inode instead of inode to be removed itself,
+> there is indeed possibility that tomoyo_path_perm() races with __sock_release().
+> We need another patch...
+> 
 
-Ugh, that's indeed very confusing, thanks for explaining.
--Daniel
+I decided to drop tomoyo_get_socket_name(). Will you pick up the following commit?
 
->
->
-> > > CPU: 0 PID: 9999 Comm: syz-executor414 Not tainted 5.4.0-syzkaller #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > > Google 01/01/2011
-> > > Call Trace:
-> > >   __dump_stack lib/dump_stack.c:77 [inline]
-> > >   dump_stack+0x197/0x210 lib/dump_stack.c:118
-> > >   print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
-> > >   __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
-> > >   kasan_report+0x12/0x20 mm/kasan/common.c:638
-> > >   check_memory_region_inline mm/kasan/generic.c:185 [inline]
-> > >   check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
-> > >   memcpy+0x24/0x50 mm/kasan/common.c:124
-> > >   memcpy include/linux/string.h:380 [inline]
-> > >   fbcon_get_font+0x2b2/0x5e0 drivers/video/fbdev/core/fbcon.c:2465
-> > >   con_font_get drivers/tty/vt/vt.c:4446 [inline]
-> > >   con_font_op+0x20b/0x1250 drivers/tty/vt/vt.c:4605
-> > >   vt_ioctl+0x181a/0x26d0 drivers/tty/vt/vt_ioctl.c:965
-> > >   tty_ioctl+0xa37/0x14f0 drivers/tty/tty_io.c:2658
-> > >   vfs_ioctl fs/ioctl.c:47 [inline]
-> > >   file_ioctl fs/ioctl.c:545 [inline]
-> > >   do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-> > >   ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-> > >   __do_sys_ioctl fs/ioctl.c:756 [inline]
-> > >   __se_sys_ioctl fs/ioctl.c:754 [inline]
-> > >   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-> > >   do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-> > >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > > RIP: 0033:0x4444d9
-> > > Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
-> > > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> > > ff 0f 83 7b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> > > RSP: 002b:00007fff6f4393b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> > > RAX: ffffffffffffffda RBX: 00007fff6f4393c0 RCX: 00000000004444d9
-> > > RDX: 0000000020000440 RSI: 0000000000004b72 RDI: 0000000000000005
-> > > RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000400da0
-> > > R10: 00007fff6f438f00 R11: 0000000000000246 R12: 00000000004021e0
-> > > R13: 0000000000402270 R14: 0000000000000000 R15: 0000000000000000
-> > >
-> > > Allocated by task 9999:
-> > >   save_stack+0x23/0x90 mm/kasan/common.c:71
-> > >   set_track mm/kasan/common.c:79 [inline]
-> > >   __kasan_kmalloc mm/kasan/common.c:512 [inline]
-> > >   __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:485
-> > >   kasan_kmalloc+0x9/0x10 mm/kasan/common.c:526
-> > >   __do_kmalloc mm/slab.c:3656 [inline]
-> > >   __kmalloc+0x163/0x770 mm/slab.c:3665
-> > >   kmalloc include/linux/slab.h:561 [inline]
-> > >   fbcon_set_font+0x32d/0x860 drivers/video/fbdev/core/fbcon.c:2663
-> > >   con_font_set drivers/tty/vt/vt.c:4538 [inline]
-> > >   con_font_op+0xe18/0x1250 drivers/tty/vt/vt.c:4603
-> > >   vt_ioctl+0xd2e/0x26d0 drivers/tty/vt/vt_ioctl.c:913
-> > >   tty_ioctl+0xa37/0x14f0 drivers/tty/tty_io.c:2658
-> > >   vfs_ioctl fs/ioctl.c:47 [inline]
-> > >   file_ioctl fs/ioctl.c:545 [inline]
-> > >   do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-> > >   ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-> > >   __do_sys_ioctl fs/ioctl.c:756 [inline]
-> > >   __se_sys_ioctl fs/ioctl.c:754 [inline]
-> > >   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-> > >   do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-> > >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > >
-> > > Freed by task 9771:
-> > >   save_stack+0x23/0x90 mm/kasan/common.c:71
-> > >   set_track mm/kasan/common.c:79 [inline]
-> > >   kasan_set_free_info mm/kasan/common.c:334 [inline]
-> > >   __kasan_slab_free+0x102/0x150 mm/kasan/common.c:473
-> > >   kasan_slab_free+0xe/0x10 mm/kasan/common.c:482
-> > >   __cache_free mm/slab.c:3426 [inline]
-> > >   kfree+0x10a/0x2c0 mm/slab.c:3757
-> > >   tomoyo_init_log+0x15c1/0x2070 security/tomoyo/audit.c:294
-> > >   tomoyo_supervisor+0x33f/0xef0 security/tomoyo/common.c:2095
-> > >   tomoyo_audit_env_log security/tomoyo/environ.c:36 [inline]
-> > >   tomoyo_env_perm+0x18e/0x210 security/tomoyo/environ.c:63
-> > >   tomoyo_environ security/tomoyo/domain.c:670 [inline]
-> > >   tomoyo_find_next_domain+0x1354/0x1f6c security/tomoyo/domain.c:876
-> > >   tomoyo_bprm_check_security security/tomoyo/tomoyo.c:107 [inline]
-> > >   tomoyo_bprm_check_security+0x124/0x1a0 security/tomoyo/tomoyo.c:97
-> > >   security_bprm_check+0x63/0xb0 security/security.c:784
-> > >   search_binary_handler+0x71/0x570 fs/exec.c:1645
-> > >   exec_binprm fs/exec.c:1701 [inline]
-> > >   __do_execve_file.isra.0+0x1329/0x22b0 fs/exec.c:1821
-> > >   do_execveat_common fs/exec.c:1867 [inline]
-> > >   do_execve fs/exec.c:1884 [inline]
-> > >   __do_sys_execve fs/exec.c:1960 [inline]
-> > >   __se_sys_execve fs/exec.c:1955 [inline]
-> > >   __x64_sys_execve+0x8f/0xc0 fs/exec.c:1955
-> > >   do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-> > >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > >
-> > > The buggy address belongs to the object at ffff888094b0a000
-> > >   which belongs to the cache kmalloc-4k of size 4096
-> > > The buggy address is located 2576 bytes inside of
-> > >   4096-byte region [ffff888094b0a000, ffff888094b0b000)
-> > > The buggy address belongs to the page:
-> > > page:ffffea000252c280 refcount:1 mapcount:0 mapping:ffff8880aa402000
-> > > index:0x0 compound_mapcount: 0
-> > > raw: 00fffe0000010200 ffffea0002a3ae08 ffffea0002a6aa88 ffff8880aa402000
-> > > raw: 0000000000000000 ffff888094b0a000 0000000100000001 0000000000000000
-> > > page dumped because: kasan: bad access detected
-> > >
-> > > Memory state around the buggy address:
-> > >   ffff888094b0a900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > >   ffff888094b0a980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > > > ffff888094b0aa00: 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > >                           ^
-> > >   ffff888094b0aa80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > >   ffff888094b0ab00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > > ==================================================================
-> > >
-> > >
-> > > ---
-> > > This bug is generated by a bot. It may contain errors.
-> > > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > >
-> > > syzbot will keep track of this bug report. See:
-> > > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > > syzbot can test patches for this bug, for details see:
-> > > https://goo.gl/tpsmEJ#testing-patches
+commit c39593ab0500fcd6db290b311c120349927ddc04
+Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date:   Mon Nov 25 10:46:51 2019 +0900
 
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+    tomoyo: Don't use nifty names on sockets.
