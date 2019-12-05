@@ -2,128 +2,124 @@ Return-Path: <SRS0=JRQQ=Z3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB2DC43603
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 11:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F15C2D0BF
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 12:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23BA02464D
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 11:37:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FjAqSfZW"
+	by mail.kernel.org (Postfix) with ESMTP id 043B72464E
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 12:58:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729236AbfLELhJ (ORCPT
+        id S1729426AbfLEM6g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Dec 2019 06:37:09 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39350 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729048AbfLELhJ (ORCPT
+        Thu, 5 Dec 2019 07:58:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39370 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729048AbfLEM6f (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Dec 2019 06:37:09 -0500
-Received: by mail-qt1-f195.google.com with SMTP id g1so3211928qtj.6
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Dec 2019 03:37:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TfYIZA1x1hWCQA6g7oQ19DH7tEX6ualy3pbm/P3Lk+A=;
-        b=FjAqSfZWtL5kJIRnjAfh3psbkl8pAdn9kqdwrkrc6B4f8S1BQX57V7yNhGnG0BgwL4
-         z15JyoonOBeE0tT3TytWPHa3CYQzBD9Tx1POq43C8+CKKbYgMmPV0L4s8BZLCisZW0Pm
-         f5LkYEtNxM7sPloRggdzD8iVN6W49sZsR+I/jfJbS6KjWa+Z1FJ1NvmgxtfYC2CLp305
-         w4/Zdw6lu3ne6ZYwhPkYooh4vLuzcrPNHP7Rj3jkgz7jaVzaahUIH1/iG1bVjXkBegYp
-         /DU83BC87lTZAbNf8X47Bpt+FqvVbEZvFIVSsSmXIuUebjxYpvSkwl+OHCAaL0gmPODj
-         tlXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TfYIZA1x1hWCQA6g7oQ19DH7tEX6ualy3pbm/P3Lk+A=;
-        b=ADO0I0IXRXivenh7RQcQ9vnKrs69nbHwnnK/1S9rIdDjQlw4j/M++vHDzFlLEYNn9i
-         dKPrpMpxqXO1MJhu7TxyRsBOk1Gbj5O2ioj7gsPNVyn/Wkgc1LUZ03EyrorVdlLWucgy
-         bgKxkeqrpff55jvNIIFLVn/amkRRcuVL8tYPkK+Wji707yWVDGZvIZj3a/GEDxF/vwn4
-         /Pl83R91fV5Mb0S7+posROM9VP25qpH/d1oZNARg0DeaoP0E/6Z4XoAJx8WM335qhNkU
-         fg2bpDJhVu3TD9Czo8r6rVCdqsW90CHRqiJNBsXuZ7sQQVPQT4lP1EniRUqS7XP/1bmS
-         MLRA==
-X-Gm-Message-State: APjAAAURph3U2X89vc1bdKw2Au+ykzWp10WL5cihtfmzVeTwN7Sy8A+K
-        wPCbETmjH1cfe+jeqsh5UWN5s2AZcTFz6I6+yC5KkA==
-X-Google-Smtp-Source: APXvYqzfgZJ9l6UJOOMZ2Qo7SFoVkzP/jw5YHvEyX7L/cw3KsXRUm/icBbPq7v443TCg8aD8BOA0xHa3BtNpRac5BEo=
-X-Received: by 2002:ac8:ccf:: with SMTP id o15mr7086616qti.380.1575545828141;
- Thu, 05 Dec 2019 03:37:08 -0800 (PST)
+        Thu, 5 Dec 2019 07:58:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 66F10AB87;
+        Thu,  5 Dec 2019 12:58:32 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id B24BCDA733; Thu,  5 Dec 2019 13:58:26 +0100 (CET)
+Date:   Thu, 5 Dec 2019 13:58:26 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] pipe: Notification queue preparation
+Message-ID: <20191205125826.GK2734@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, David Howells <dhowells@redhat.com>,
+        torvalds@linux-foundation.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>, keyrings@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <31452.1574721589@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <0000000000003e640e0598e7abc3@google.com> <41c082f5-5d22-d398-3bdd-3f4bf69d7ea3@redhat.com>
- <CACT4Y+bCHOCLYF+TW062n8+tqfK9vizaRvyjUXNPdneciq0Ahg@mail.gmail.com>
- <f4db22f2-53a3-68ed-0f85-9f4541530f5d@redhat.com> <397ad276-ee2b-3883-9ed4-b5b1a2f8cf67@i-love.sakura.ne.jp>
-In-Reply-To: <397ad276-ee2b-3883-9ed4-b5b1a2f8cf67@i-love.sakura.ne.jp>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 5 Dec 2019 12:36:56 +0100
-Message-ID: <CACT4Y+bUkzJAezH9Pk=c1amtzO0-r1Hcn3WmDuS+Drn-R3GAQA@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in fbcon_get_font
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        syzbot <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI <dri-devel@lists.freedesktop.org>, ghalat@redhat.com,
-        Gleb Natapov <gleb@kernel.org>, gwshan@linux.vnet.ibm.com,
-        "H. Peter Anvin" <hpa@zytor.com>, James Morris <jmorris@namei.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Russell Currey <ruscur@russell.cc>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, stewart@linux.vnet.ibm.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <31452.1574721589@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Dec 5, 2019 at 11:41 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2019/12/05 19:22, Paolo Bonzini wrote:
-> > Ah, and because the machine is a KVM guest, kvm_wait appears in a lot of
-> > backtrace and I get to share syzkaller's joy every time. :)
-> >
-> > This bisect result is bogus, though Tetsuo found the bug anyway.
-> > Perhaps you can exclude commits that only touch architectures other than
-> > x86?
-> >
->
-> It would be nice if coverage functionality can extract filenames in the source
-> code and supply the list of filenames as arguments for bisect operation.
->
-> Also, (unrelated but) it would be nice if we can have "make yes2modconfig"
-> target which converts CONFIG_FOO=y to CONFIG_FOO=m if FOO is tristate.
-> syzbot is testing kernel configs close to "make allyesconfig" but I want to
-> save kernel rebuild time by disabling unrelated functionality when manually
-> "debug printk()ing" kernels.
+On Mon, Nov 25, 2019 at 10:39:49PM +0000, David Howells wrote:
+> David Howells (12):
+>       pipe: Reduce #inclusion of pipe_fs_i.h
+>       Remove the nr_exclusive argument from __wake_up_sync_key()
+>       Add wake_up_interruptible_sync_poll_locked()
+>       pipe: Use head and tail pointers for the ring, not cursor and length
 
-I thought that maybe sed "s#=y#=m#g" && make olddefconfig will do, but
-unfortunately, it turns off non-tristate configs...
+This commit (8cefc107ca54c8b06438b7dc9) causes hangs of 'btrfs send'
+commands, that's eg. inside fstests or in btrfs-progs testsuite. The
+'send' uses pipe/splice to get data from kernel to userspace.
 
-$ egrep "CONFIG_MEMORY_HOTPLUG|CONFIG_TCP_CONG_DCTCP" .config
-CONFIG_MEMORY_HOTPLUG=y
-CONFIG_TCP_CONG_DCTCP=y
-# sed -i "s/CONFIG_MEMORY_HOTPLUG=y/CONFIG_MEMORY_HOTPLUG=m/g" .config
-# sed -i "s/CONFIG_TCP_CONG_DCTCP=y/CONFIG_TCP_CONG_DCTCP=m/g" .config
-# egrep "CONFIG_MEMORY_HOTPLUG|CONFIG_TCP_CONG_DCTCP" .config
-CONFIG_MEMORY_HOTPLUG=m
-CONFIG_TCP_CONG_DCTCP=m
-# make olddefconfig
-# egrep "CONFIG_MEMORY_HOTPLUG|CONFIG_TCP_CONG_DCTCP" .config
-# CONFIG_MEMORY_HOTPLUG is not set
-CONFIG_TCP_CONG_DCTCP=m
+The test that reliably worked for me leaves the process hanging with
+this stacktrace (no CPU or IO activity):
+
+[<0>] pipe_write+0x1be/0x4b0
+[<0>] new_sync_write+0x11e/0x1c0
+[<0>] vfs_write+0xc1/0x1d0
+[<0>] kernel_write+0x2c/0x40
+[<0>] send_cmd+0x78/0xf0 [btrfs]
+[<0>] send_extent_data+0x4b1/0x52c [btrfs]
+[<0>] process_extent+0xe46/0xe9d [btrfs]
+[<0>] changed_cb+0xcf5/0xd2f [btrfs]
+[<0>] send_subvol+0x8ad/0xc0b [btrfs]
+[<0>] btrfs_ioctl_send+0xe50/0xf30 [btrfs]
+[<0>] _btrfs_ioctl_send+0x80/0x110 [btrfs]
+[<0>] btrfs_ioctl+0x18e1/0x3450 [btrfs]
+[<0>] do_vfs_ioctl+0xa5/0x710
+[<0>] ksys_ioctl+0x70/0x80
+[<0>] __x64_sys_ioctl+0x16/0x20
+[<0>] do_syscall_64+0x56/0x220
+[<0>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+I've bisected that to the mentioned commit, using test in btrfs-progs
+testsuite with command "make TEST=016\* test-misc". Normally the test
+can run up to 10 seconds, in the buggy case it stays there.
+
+I can help testing fixes or gathering more information, please let me
+know.
+
+Full bisect log:
+
+# bad: [3c0edea9b29f9be6c093f236f762202b30ac9431] pipe: Remove sync on wake_ups
+# good: [da0c9ea146cbe92b832f1b0f694840ea8eb33cce] Linux 5.4-rc2
+git bisect start '3c0edea9b29f9be6c093f236f762202b30ac9431' 'd055b4fb4d165b06d912e7f846610d120c3bb9fb^'
+# bad: [b667b867344301e24f21d4a4c844675ff61d89e1] pipe: Advance tail pointer inside of wait spinlock in pipe_read()
+git bisect bad b667b867344301e24f21d4a4c844675ff61d89e1
+# good: [f94df9890e98f2090c6a8d70c795134863b70201] Add wake_up_interruptible_sync_poll_locked()
+git bisect good f94df9890e98f2090c6a8d70c795134863b70201
+# bad: [6718b6f855a0b4962d54bd625be2718cb820cec6] pipe: Allow pipes to have kernel-reserved slots
+git bisect bad 6718b6f855a0b4962d54bd625be2718cb820cec6
+# bad: [8cefc107ca54c8b06438b7dc9cc08bc0a11d5b98] pipe: Use head and tail pointers for the ring, not cursor and length
+git bisect bad 8cefc107ca54c8b06438b7dc9cc08bc0a11d5b98
+# first bad commit: [8cefc107ca54c8b06438b7dc9cc08bc0a11d5b98] pipe: Use head and tail pointers for the ring, not cursor and length
+
+>       pipe: Allow pipes to have kernel-reserved slots
+>       pipe: Advance tail pointer inside of wait spinlock in pipe_read()
+>       pipe: Conditionalise wakeup in pipe_read()
+>       pipe: Rearrange sequence in pipe_write() to preallocate slot
+>       pipe: Remove redundant wakeup from pipe_write()
+>       pipe: Check for ring full inside of the spinlock in pipe_write()
+>       pipe: Increase the writer-wakeup threshold to reduce context-switch count
+>       pipe: Remove sync on wake_ups
