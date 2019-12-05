@@ -2,118 +2,136 @@ Return-Path: <SRS0=JRQQ=Z3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DC3C2D0BE
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 02:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B7DC2BD09
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 10:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9582B214B2
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 02:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86B1D24656
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 10:13:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UrjqAl0F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728611AbfLECDy (ORCPT
+        id S1729313AbfLEKN0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Dec 2019 21:03:54 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:60062 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbfLECDy (ORCPT
+        Thu, 5 Dec 2019 05:13:26 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:22086 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729295AbfLEKN0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Dec 2019 21:03:54 -0500
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xB51xvft020982;
-        Thu, 5 Dec 2019 10:59:57 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav301.sakura.ne.jp);
- Thu, 05 Dec 2019 10:59:57 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav301.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xB51xvmN020973;
-        Thu, 5 Dec 2019 10:59:57 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id xB51xuco020972;
-        Thu, 5 Dec 2019 10:59:56 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201912050159.xB51xuco020972@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: KASAN: slab-out-of-bounds Read in =?ISO-2022-JP?B?ZmJjb25fZ2V0X2Zv?=
- =?ISO-2022-JP?B?bnQ=?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Grzegorz Halat <ghalat@redhat.com>
-Cc:     syzbot <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com>,
-        aryabinin@virtuozzo.com, daniel.thompson@linaro.org,
+        Thu, 5 Dec 2019 05:13:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575540805;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dLjLck9Pm/snpxos2FeKTPLyXDOV4MbjcH5G/gXnZeo=;
+        b=UrjqAl0FdTx1DR8II4SItSOlGSaV0zYAIeT3P/cdj/b/s/gfViXXoV2xNJ0RLZmdjU6cu/
+        4KkfTSYf+GJf2ciZm6bDahr2A/wf9HqN4Mlt25JTIiiatJD4ES0ba0cBW180jJzJnulzny
+        hZ6p2Oxf2aBUKy28i3TAT+CG9DJG3MI=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-434-sqpaFdMINAaZIfALwAWdEA-1; Thu, 05 Dec 2019 05:13:23 -0500
+Received: by mail-wr1-f70.google.com with SMTP id z10so1296610wrt.21
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Dec 2019 02:13:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K5MgG/FvOKZSKbQY6hPWHA5W+WMbjReooYZ5I81Xsns=;
+        b=ZdH4DUuXmRmh9iDQVAczhE7ELR0Nog5TahZrBSLPVu0e1cl+YgDv0IGaWfH+YaZPpn
+         eKvrZ3NV8u0Puiw6Qh1SH/WbUf3P2qM3nEcJ3hCH8byFllHw+oIT+dxuHe+VDkAtDoE0
+         7Oz32cA3wCST+8uIibAsftk9fYxc0PtRyczxQIJaM9kL5U14kkfqS2YhEYpDdmX6F00K
+         fatKHusx8iXGQbsQItJh4hPLmzbl6JeJ6ujBtBhUCm8EZcyeHx3TDj7l8Rw3iiKxoVG2
+         5PK8EhB95YCapYAzD379idHmlrucmJvRhTXB3QIAFTcyRaP+z5GwHvRaPkWST4NluWHw
+         DA1w==
+X-Gm-Message-State: APjAAAVB5wWDINwdoJbphMUJFjahVXmIB2fXtx4515EQ3uwWeC74Rvzw
+        MLewnKjckxM3eckGQxHlXp46k0kpK7D9QywiyBanMH6mJn8mDvQAlwSesBU/bBNPA9IqwDBVKkq
+        gKyUOxmYA57eErC9yqsX+se3A/sYjIX1ESevp
+X-Received: by 2002:adf:ee88:: with SMTP id b8mr9668749wro.249.1575540802662;
+        Thu, 05 Dec 2019 02:13:22 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy1I4G0ttOXF/rUkkrOfkbFkbQZCtitZoVCfOg6HbWgiUhViQ9mKyA8AXZI2yuHHuDJRNzr4g==
+X-Received: by 2002:adf:ee88:: with SMTP id b8mr9668720wro.249.1575540802410;
+        Thu, 05 Dec 2019 02:13:22 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:541f:a977:4b60:6802? ([2001:b07:6468:f312:541f:a977:4b60:6802])
+        by smtp.gmail.com with ESMTPSA id b10sm11809139wrt.90.2019.12.05.02.13.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2019 02:13:21 -0800 (PST)
+Subject: Re: KASAN: slab-out-of-bounds Read in fbcon_get_font
+To:     syzbot <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com>,
+        aryabinin@virtuozzo.com, b.zolnierkie@samsung.com,
+        daniel.thompson@linaro.org, daniel.vetter@ffwll.ch,
         dri-devel@lists.freedesktop.org, dvyukov@google.com,
-        gleb@kernel.org, gwshan@linux.vnet.ibm.com, hpa@zytor.com,
-        jmorris@namei.org, kasan-dev@googlegroups.com, kvm@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mingo@redhat.com,
-        mpe@ellerman.id.au, pbonzini@redhat.com, ruscur@russell.cc,
-        serge@hallyn.com, stewart@linux.vnet.ibm.com,
-        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
-        tglx@linutronix.de, x86@kernel.org
+        ghalat@redhat.com, gleb@kernel.org, gwshan@linux.vnet.ibm.com,
+        hpa@zytor.com, jmorris@namei.org, kasan-dev@googlegroups.com,
+        kvm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        maarten.lankhorst@linux.intel.com, mingo@redhat.com,
+        mpe@ellerman.id.au, penguin-kernel@i-love.sakura.ne.jp,
+        ruscur@russell.cc, sam@ravnborg.org, serge@hallyn.com,
+        stewart@linux.vnet.ibm.com, syzkaller-bugs@googlegroups.com,
+        takedakn@nttdata.co.jp, tglx@linutronix.de, x86@kernel.org
+References: <0000000000003e640e0598e7abc3@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <41c082f5-5d22-d398-3bdd-3f4bf69d7ea3@redhat.com>
+Date:   Thu, 5 Dec 2019 11:13:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Date:   Thu, 05 Dec 2019 10:59:56 +0900
-References: <0000000000002cfc3a0598d42b70@google.com> <0000000000003e640e0598e7abc3@google.com>
 In-Reply-To: <0000000000003e640e0598e7abc3@google.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-MC-Unique: sqpaFdMINAaZIfALwAWdEA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello.
+On 04/12/19 22:41, syzbot wrote:
+> syzbot has bisected this bug to:
+>=20
+> commit 2de50e9674fc4ca3c6174b04477f69eb26b4ee31
+> Author: Russell Currey <ruscur@russell.cc>
+> Date:=C2=A0=C2=A0 Mon Feb 8 04:08:20 2016 +0000
+>=20
+> =C2=A0=C2=A0=C2=A0 powerpc/powernv: Remove support for p5ioc2
+>=20
+> bisection log:=C2=A0 https://syzkaller.appspot.com/x/bisect.txt?x=3D127a0=
+42ae00000
+> start commit:=C2=A0=C2=A0 76bb8b05 Merge tag 'kbuild-v5.5' of
+> git://git.kernel.org/p..
+> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
+> final crash:=C2=A0=C2=A0=C2=A0 https://syzkaller.appspot.com/x/report.txt=
+?x=3D117a042ae00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D167a042ae0000=
+0
+> kernel config:=C2=A0 https://syzkaller.appspot.com/x/.config?x=3Ddd226651=
+cb0f364b
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3D4455ca3b3291de891abc
+> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 https://syzkaller.appspot.com/x/=
+repro.syz?x=3D11181edae00000
+> C reproducer:=C2=A0=C2=A0 https://syzkaller.appspot.com/x/repro.c?x=3D105=
+cbb7ae00000
+>=20
+> Reported-by: syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com
+> Fixes: 2de50e9674fc ("powerpc/powernv: Remove support for p5ioc2")
+>=20
+> For information about bisection process see:
+> https://goo.gl/tpsmEJ#bisection
+>=20
 
-syzbot is reporting that memory allocation size at fbcon_set_font() is too small
-because font's height is rounded up from 10 to 16 after memory allocation.
+Why is everybody being CC'd, even if the bug has nothing to do with the
+person's subsystem?
 
-----------
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index c9235a2f42f8..68fe66e435d3 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -2461,6 +2461,7 @@ static int fbcon_get_font(struct vc_data *vc, struct console_font *font)
- 
- 	if (font->width <= 8) {
- 		j = vc->vc_font.height;
-+		printk("ksize(fontdata)=%lu font->charcount=%d vc->vc_font.height=%d font->width=%u\n", ksize(fontdata), font->charcount, j, font->width);
- 		for (i = 0; i < font->charcount; i++) {
- 			memcpy(data, fontdata, j);
- 			memset(data + j, 0, 32 - j);
-@@ -2661,6 +2662,8 @@ static int fbcon_set_font(struct vc_data *vc, struct console_font *font,
- 	size = h * pitch * charcount;
- 
- 	new_data = kmalloc(FONT_EXTRA_WORDS * sizeof(int) + size, GFP_USER);
-+	if (new_data)
-+		printk("ksize(new_data)=%lu h=%u pitch=%u charcount=%u font->width=%u\n", ksize(new_data), h, pitch, charcount, font->width);
- 
- 	if (!new_data)
- 		return -ENOMEM;
-----------
+Thanks,
 
-Normal usage:
+Paolo
 
-[   27.305293] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.328527] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.362551] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.385084] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.387653] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.417562] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.437808] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.440738] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.461157] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.495346] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.607372] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.655674] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.675310] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-[   27.702193] ksize(new_data)=8192 h=16 pitch=1 charcount=256 font->width=8
-
-syzbot's testcase:
-
-[  115.784893] ksize(new_data)=4096 h=10 pitch=1 charcount=256 font->width=8
-[  115.790269] ksize(fontdata)=4096 font->charcount=256 vc->vc_font.height=16 font->width=8
