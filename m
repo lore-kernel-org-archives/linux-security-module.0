@@ -2,41 +2,41 @@ Return-Path: <SRS0=JRQQ=Z3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6162C43603
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 10:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D85BBC43603
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 10:42:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A12B924653
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 10:34:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC5C22464F
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Dec 2019 10:42:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729074AbfLEKeu (ORCPT
+        id S1729041AbfLEKml (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Dec 2019 05:34:50 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:62946 "EHLO
+        Thu, 5 Dec 2019 05:42:41 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52933 "EHLO
         www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728707AbfLEKeu (ORCPT
+        with ESMTP id S1729018AbfLEKml (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Dec 2019 05:34:50 -0500
-Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xB5AUvCo044363;
-        Thu, 5 Dec 2019 19:30:57 +0900 (JST)
+        Thu, 5 Dec 2019 05:42:41 -0500
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xB5AfI4B052654;
+        Thu, 5 Dec 2019 19:41:18 +0900 (JST)
         (envelope-from penguin-kernel@i-love.sakura.ne.jp)
 Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp);
- Thu, 05 Dec 2019 19:30:57 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp);
+ Thu, 05 Dec 2019 19:41:18 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp)
 Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
         (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xB5AUqmd044301
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xB5AfHTe052651
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 5 Dec 2019 19:30:57 +0900 (JST)
+        Thu, 5 Dec 2019 19:41:18 +0900 (JST)
         (envelope-from penguin-kernel@i-love.sakura.ne.jp)
 Subject: Re: KASAN: slab-out-of-bounds Read in fbcon_get_font
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>
 Cc:     syzbot <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com>,
         Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
@@ -63,13 +63,14 @@ Cc:     syzbot <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com>,
 References: <0000000000003e640e0598e7abc3@google.com>
  <41c082f5-5d22-d398-3bdd-3f4bf69d7ea3@redhat.com>
  <CACT4Y+bCHOCLYF+TW062n8+tqfK9vizaRvyjUXNPdneciq0Ahg@mail.gmail.com>
+ <f4db22f2-53a3-68ed-0f85-9f4541530f5d@redhat.com>
 From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <811afcac-ec6e-3ff0-1a4e-c83b98540f0d@i-love.sakura.ne.jp>
-Date:   Thu, 5 Dec 2019 19:30:53 +0900
+Message-ID: <397ad276-ee2b-3883-9ed4-b5b1a2f8cf67@i-love.sakura.ne.jp>
+Date:   Thu, 5 Dec 2019 19:41:18 +0900
 User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+bCHOCLYF+TW062n8+tqfK9vizaRvyjUXNPdneciq0Ahg@mail.gmail.com>
+In-Reply-To: <f4db22f2-53a3-68ed-0f85-9f4541530f5d@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -77,43 +78,20 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/12/05 19:16, Dmitry Vyukov wrote:
-> On Thu, Dec 5, 2019 at 11:13 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->>
->> On 04/12/19 22:41, syzbot wrote:
->>> syzbot has bisected this bug to:
->>>
->>> commit 2de50e9674fc4ca3c6174b04477f69eb26b4ee31
->>> Author: Russell Currey <ruscur@russell.cc>
->>> Date:   Mon Feb 8 04:08:20 2016 +0000
->>>
->>>     powerpc/powernv: Remove support for p5ioc2
->>>
->>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=127a042ae00000
->>> start commit:   76bb8b05 Merge tag 'kbuild-v5.5' of
->>> git://git.kernel.org/p..
->>> git tree:       upstream
->>> final crash:    https://syzkaller.appspot.com/x/report.txt?x=117a042ae00000
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=167a042ae00000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=dd226651cb0f364b
->>> dashboard link:
->>> https://syzkaller.appspot.com/bug?extid=4455ca3b3291de891abc
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11181edae00000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105cbb7ae00000
->>>
->>> Reported-by: syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com
->>> Fixes: 2de50e9674fc ("powerpc/powernv: Remove support for p5ioc2")
->>>
->>> For information about bisection process see:
->>> https://goo.gl/tpsmEJ#bisection
->>>
->>
->> Why is everybody being CC'd, even if the bug has nothing to do with the
->> person's subsystem?
+On 2019/12/05 19:22, Paolo Bonzini wrote:
+> Ah, and because the machine is a KVM guest, kvm_wait appears in a lot of
+> backtrace and I get to share syzkaller's joy every time. :)
 > 
-> The To list should be intersection of 2 groups of emails: result of
-> get_maintainers.pl on the file identified as culprit in the crash
-> message + emails extracted from the bisected to commit.
+> This bisect result is bogus, though Tetsuo found the bug anyway.
+> Perhaps you can exclude commits that only touch architectures other than
+> x86?
 > 
 
-There is "#syz uncc" command but it is too hard to utilize?
+It would be nice if coverage functionality can extract filenames in the source
+code and supply the list of filenames as arguments for bisect operation.
+
+Also, (unrelated but) it would be nice if we can have "make yes2modconfig"
+target which converts CONFIG_FOO=y to CONFIG_FOO=m if FOO is tristate.
+syzbot is testing kernel configs close to "make allyesconfig" but I want to
+save kernel rebuild time by disabling unrelated functionality when manually
+"debug printk()ing" kernels.
