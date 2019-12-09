@@ -2,110 +2,99 @@ Return-Path: <SRS0=cm7D=Z7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FB3C04E30
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 15:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62BB3C43603
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 16:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27AB9207FD
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 15:56:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36AAA2073D
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 16:42:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iQIYv2N7";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Qbyd3o3z"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PXKjZd4Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726495AbfLIP4A (ORCPT
+        id S1726538AbfLIQmG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Dec 2019 10:56:00 -0500
-Received: from a27-56.smtp-out.us-west-2.amazonses.com ([54.240.27.56]:42718
-        "EHLO a27-56.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726080AbfLIP4A (ORCPT
+        Mon, 9 Dec 2019 11:42:06 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46209 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725904AbfLIQmG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Dec 2019 10:56:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575906959;
-        h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=4Cga0lZOowX0o4Q6/b5Uqw434bX5zOMw4GgYknmuCXg=;
-        b=iQIYv2N7m+lnvrZmfq3Z2rBsDtcm6GJ0fSOvfIcrCCvsh9rAFEBIbPLeZ3QLnvU1
-        HaRUnu8aA4cT6WGlV9tdB+OGC64nHv95xjED/qkCjAVqPpTDwuzR37j4CyTwqBR3+gP
-        JG8HE8lBzbRwcsLVFdOsArpN44Yg0RG7X6S9nihU=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575906959;
-        h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-        bh=4Cga0lZOowX0o4Q6/b5Uqw434bX5zOMw4GgYknmuCXg=;
-        b=Qbyd3o3zZOyvcPqJIUFPiATxbwQm2IZyDdHHTq61RMXMMTK7Hl4yWQoJxG0SwPRC
-        oWNKVv7U3VTjZuSbpEz1KWO52C2774vlIdoY/BZE/bTcko//P7P/KCUtaIV5NUKZWLD
-        RDX/KTvo6vODxebTEuOinJCNiZ0t7TfLh6uiqTac=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 07307C447AD
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rsiddoji@codeaurora.org
-From:   <rsiddoji@codeaurora.org>
-To:     <selinux@vger.kernel.org>
-Cc:     <paul@paul-moore.com>, <linux-security-module@vger.kernel.org>,
-        <sds@tycho.nsa.gov>
-Subject: Looks like issue in handling   active_nodes count  in 4.19 kernel .
-Date:   Mon, 9 Dec 2019 15:55:59 +0000
-Message-ID: <0101016eeb5fe01d-f423431d-d9d9-4290-ae38-8b451ffc3eef-000000@us-west-2.amazonses.com>
+        Mon, 9 Dec 2019 11:42:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575909725;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hm6dEMqLmR2mPUC6qUoTwYnpBwWDphm54SqO3q6FRrk=;
+        b=PXKjZd4ZyJQsGEbW88ibdx2+3OmQLHpZfSRf54cxHMImVrerRCPgn9oeTr87/o7RE9Bvyu
+        /VcWPp30AyxlmE7pHPY+SEArGJBwSkmfbJAbwdMEEJPplxeqactIxVvtrv1MAaMgdQcGQ2
+        r1aVrOsH55EQi2OseMCuN4pf9ELB1rc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-53-eyHOT_dtMvG_jqnwRH_0tw-1; Mon, 09 Dec 2019 11:42:01 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DC98580589B;
+        Mon,  9 Dec 2019 16:41:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D9FC6E3F3;
+        Mon,  9 Dec 2019 16:41:58 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 2/4] afs: Fix SELinux setting security label on /afs
+From:   David Howells <dhowells@redhat.com>
+To:     linux-afs@lists.infradead.org
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        dhowells@redhat.com
+Date:   Mon, 09 Dec 2019 16:41:58 +0000
+Message-ID: <157590971828.21604.4748701398112202168.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157590971161.21604.14727023636839480425.stgit@warthog.procyon.org.uk>
+References: <157590971161.21604.14727023636839480425.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: eyHOT_dtMvG_jqnwRH_0tw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AdWuphyeVQIzpEdGQ+WvGTVrgnJThA==
-Content-Language: en-us
-X-SES-Outgoing: 2019.12.09-54.240.27.56
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi team , 
-Looks like we have  issue in handling the  "active_nodes" count in the
-Selinux - avc.c file. 
-Where  avc_cache.active_nodes increase more than slot array   and code
-frequency calling of avc_reclaim_node()  from  avc_alloc_node() ;
+Make the AFS dynamic root superblock R/W so that SELinux can set the
+security label on it.  Without this, upgrades to, say, the Fedora
+filesystem-afs RPM fail if afs is mounted on it because the SELinux label
+can't be (re-)applied.
 
-Where following are the 2 instance which seem to  possible culprits which
-are seen on 4.19 kernel . Can you  comment if my understand is wrong.
+It might be better to make it possible to bypass the R/O check for LSM
+label application through setxattr.
 
+Fixes: 4d673da14533 ("afs: Support the AFS dynamic root")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: selinux@vger.kernel.org
+cc: linux-security-module@vger.kernel.org
+---
 
-#1. if we see the  active_nodes count is incremented in  avc_alloc_node
-(avc) which is called in avc_insert() 
-Where if the code take  failure path on  avc_xperms_populate  the code will
-not decrement this counter . 
+ fs/afs/super.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-
-static struct avc_node *avc_insert(struct selinux_avc *avc,
-				   u32 ssid, u32 tsid, u16 tclass,
- 				   struct av_decision *avd,
-....	
-	node = avc_alloc_node(avc);  //incremented here
-....
-              rc = avc_xperms_populate(node, xp_node);  // possibilities of
-this getting failure is there .
-		if (rc) {
-			kmem_cache_free(avc_node_cachep, node);  // but on
-failure we are not decrementing active_nodes ?
-			return NULL;  
- 		}
-
-#2.  where it looks like the logic on comparing the  active_nodes against
-avc_cache_threshold seems  wired  as the count of active nodes is always
-going to be
- more than 512 will may land in simply  removing /calling  avc_reclaim_node
-frequently much before the slots are full maybe we are not using cache at
-best ?
- we should be comparing with some high watermark ? or my understanding wrong
-?
- 
-/*@ static struct avc_node *avc_alloc_node(struct selinux_avc *avc) */
-
- 	if (atomic_inc_return(&avc->avc_cache.active_nodes) >   
- 	    avc->avc_cache_threshold)      //  default  threshold is 512 
- 		avc_reclaim_node(avc);
-
-
-Regards,
-Ravi
+diff --git a/fs/afs/super.c b/fs/afs/super.c
+index 488641b1a418..d9a6036b70b9 100644
+--- a/fs/afs/super.c
++++ b/fs/afs/super.c
+@@ -448,7 +448,6 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
+ 	/* allocate the root inode and dentry */
+ 	if (as->dyn_root) {
+ 		inode = afs_iget_pseudo_dir(sb, true);
+-		sb->s_flags	|= SB_RDONLY;
+ 	} else {
+ 		sprintf(sb->s_id, "%llu", as->volume->vid);
+ 		afs_activate_volume(as->volume);
 
