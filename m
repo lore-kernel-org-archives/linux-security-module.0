@@ -6,78 +6,81 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F21C04E30
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 19:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F8AC04E30
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 19:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B67E72073D
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 19:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB9E4207FF
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 19:57:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbfLITwX (ORCPT
+        id S1726408AbfLIT5b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Dec 2019 14:52:23 -0500
-Received: from mga14.intel.com ([192.55.52.115]:50945 "EHLO mga14.intel.com"
+        Mon, 9 Dec 2019 14:57:31 -0500
+Received: from mga04.intel.com ([192.55.52.120]:49527 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726342AbfLITwX (ORCPT
+        id S1726230AbfLIT5b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Dec 2019 14:52:23 -0500
+        Mon, 9 Dec 2019 14:57:31 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2019 11:42:53 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2019 11:57:30 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,296,1571727600"; 
-   d="scan'208";a="215198322"
+   d="scan'208";a="264346146"
 Received: from nshalmon-mobl.ger.corp.intel.com (HELO localhost) ([10.252.8.146])
-  by orsmga006.jf.intel.com with ESMTP; 09 Dec 2019 11:42:50 -0800
-Date:   Mon, 9 Dec 2019 21:42:48 +0200
+  by FMSMGA003.fm.intel.com with ESMTP; 09 Dec 2019 11:57:21 -0800
+Date:   Mon, 9 Dec 2019 21:57:19 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 0/2] Revert patches fixing probing of interrupts
-Message-ID: <20191209194248.GC19243@linux.intel.com>
-References: <20191126131753.3424363-1-stefanb@linux.vnet.ibm.com>
- <20191129223418.GA15726@linux.intel.com>
- <6f6f60a2-3b55-e76d-c11a-4677fcb72c16@linux.ibm.com>
- <20191202185520.57w2h3dgs5q7lhob@cantor>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
+Message-ID: <20191209195719.GH19243@linux.intel.com>
+References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+ <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+ <20191128182450.GA3493127@kroah.com>
+ <20191206203807.GA9971@linux.intel.com>
+ <20191207080939.GA193518@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191202185520.57w2h3dgs5q7lhob@cantor>
+In-Reply-To: <20191207080939.GA193518@kroah.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 02, 2019 at 11:55:20AM -0700, Jerry Snitselaar wrote:
-> On Sun Dec 01 19, Stefan Berger wrote:
-> > On 11/29/19 5:37 PM, Jarkko Sakkinen wrote:
-> > > On Tue, Nov 26, 2019 at 08:17:51AM -0500, Stefan Berger wrote:
-> > > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > > 
-> > > > Revert the patches that were fixing the probing of interrupts due
-> > > > to reports of interrupt stroms on some systems
-> > > Can you explain how reverting is going to fix the issue?
+On Sat, Dec 07, 2019 at 09:09:39AM +0100, Greg KH wrote:
+> On Fri, Dec 06, 2019 at 10:38:07PM +0200, Jarkko Sakkinen wrote:
+> > > Why a whole cdev?
+> > > 
+> > > Why not use a misc device?  YOu only have 2 devices right?  Why not 2
+> > > misc devices then?  That saves the use of a whole major number and makes
+> > > your code a _LOT_ simpler.
 > > 
-> > 
-> > The reverts fix 'the interrupt storm issue' that they are causing on
-> > some systems but don't fix the issue with the interrupt mode not being
-> > used. I was hoping Jerry would get access to a system faster but this
-> > didn't seem to be the case. So sending these patches seemed the better
-> > solution than leaving 5.4.x with the problem but going back to when it
-> > worked 'better.'
-> > 
+> > The downside would be that if we ever want to add sysfs attributes, that
+> > could not be done synchronously with the device creation.
 > 
-> I finally heard back from IT support, and unfortunately they don't
-> have any T490s systems to give out on temp loan. So I can only send
-> patched kernels to the end user that had the problem.
+> That is what the groups member of struct misc_device is for.
 
-At least it is a fact that tpm_chip_stop() is called too early and that
-is destined to cause issues.
+OK, cool, then there is no problem changing to misc.
 
-Should I bake a patch or do you have already something?
+I haven't seen misc drivers (not that I've looked through every single
+of them so I suppose there are such) to use it and somehow have been
+blind to seeing it that it si there.
+
+Thanks again for the feedback. I'll fix this for the next patch set
+version.
 
 /Jarkko
