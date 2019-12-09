@@ -6,59 +6,58 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F305AC3F68F
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 23:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C06DDC04E30
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 23:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C01DE206D5
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 23:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94757206D5
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 23:43:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="14tLFFKp"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="V9GgiIat"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfLIXmT (ORCPT
+        id S1727311AbfLIXnB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Dec 2019 18:42:19 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39966 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727104AbfLIXmT (ORCPT
+        Mon, 9 Dec 2019 18:43:01 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40766 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbfLIXnB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Dec 2019 18:42:19 -0500
-Received: by mail-lj1-f195.google.com with SMTP id s22so17687940ljs.7
-        for <linux-security-module@vger.kernel.org>; Mon, 09 Dec 2019 15:42:17 -0800 (PST)
+        Mon, 9 Dec 2019 18:43:01 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y5so12152742lfy.7
+        for <linux-security-module@vger.kernel.org>; Mon, 09 Dec 2019 15:42:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aThrcSk9eJO9ZEYp7MG17rWkIvsNKHgQ2G/tGY7+yOE=;
-        b=14tLFFKpoHTBuxLubV+jJ4G64SOJMnFCScFUUU9UaiDMXiZdeG2vUaK4lyOGq7NC4w
-         UTPyCCusyaPb50dHMWMotz1iv4mj3c0zWp3o3fLvU6hZXdgmhaTMsNKdnJ724em4bz/Q
-         6WjkZbMLqbozo9qRqcnX/KkrmyT6IGc1TAQOfLh0K9pXRyX+VNZEfmtbScNsTz4lkpYG
-         9qiUIem6CMOGSvATGX8ScnZshVcCrEochW3UtZeJb7xoQjpZhygzCrK0y8g4n+1fkGt/
-         z7TocrnA5IKUW4EQVLertAQlotckPKaUdm06UdNXJVyH7WgO3bvJ7dF546k1404uL3oC
-         2sxQ==
+        bh=BtqRa889GoZnx3kjAxABN57oHgPb28WLq9td6hKp/GE=;
+        b=V9GgiIatHKva79qeqGQ7v6slhUTadyGG1+h3fDzsFh/uOzEcFcxRjym6vTgH937xOB
+         SbYCmsGZfVz8cbGv+ZZPAHzMWirrT3yhk3iwUevLVVgYnrqqP2pNhwyhXz3+OEqfVMhG
+         sNhvLmkjKNxEyRClU/Onat4Glla63AkMe/xIvksLwtaKxNuWc1miERjcSY472yeHiNzn
+         C7J3TJCslwdiKL71kAHxOclAn8uJHyirx7hyAlji3IHCifRqtiaGX4XZEDNUA4Ncrg9l
+         l0AMYEMQGSGviXnDKpPRc8cFXhFGagbUaxirGRMhdprVnEW+T/0KejF1Zv46t4bTaQzC
+         V/aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aThrcSk9eJO9ZEYp7MG17rWkIvsNKHgQ2G/tGY7+yOE=;
-        b=Y+U4QPWwW6hXjxEwAl170z67BZYsmftZ//UydPC+aif6GesauFy+23AjHCDsynG1J6
-         pTAbgFKATTLG5W8XyDrecSxJ76e7SntPmFXsShgBhoidJXvkoMHH6sOrxSBlUDhIySzO
-         jAyxIJppmF95j+FfooPl1RnjUI/i5ZoveXXt08LIb1IsoZQRI+ZVgqJt00iUqc3Z3rUQ
-         L6kbgRs7QlbCfE7AYU4ukqDWHGNuEaZfBKHKWm1GagMhLWQslowzQJ864m7fdlZ2BFNa
-         GHD33IeSJVznC4E4eNhsRT5+sqFrQobuQB0mv8M4As1zHk+j4mnk/Nkf7NPG9tN1PpRl
-         zb2Q==
-X-Gm-Message-State: APjAAAVTYK62cQyDwYIRsU2CzqV3XhgwNyY0j9B5mvRUbbZc+ktZ48kv
-        R/TeFIVQCL+nOWWaCXqDzXxkaBHqmGrcb7UdPCtN
-X-Google-Smtp-Source: APXvYqwX6hbYsmadx0Ho/OJIPmZFzixXDc4j7x2P5It41no5mCwMWMtRc+w57pdQz3Ao2AxtB/uIFzSwPoizTOSw1+4=
-X-Received: by 2002:a2e:b045:: with SMTP id d5mr5848186ljl.184.1575934936802;
- Mon, 09 Dec 2019 15:42:16 -0800 (PST)
+        bh=BtqRa889GoZnx3kjAxABN57oHgPb28WLq9td6hKp/GE=;
+        b=Ya1XdICnYndA5a8Gfh4nil32EvCkco70aRQgTF7j/dB0igL7cm4EYuxMzNxNRt/Z29
+         fbWACmIPDihppSmz9lBzdjbz4AJt28Lc1Q7Dhh8MR181ksqDrpTSRJR08/9xVReenIDD
+         k20eyZ8pr4htusbn7iu/dTh9Z+p+7+YVUCk5jPLqdcDQLU651WhTj2vM3qEEjJbx6GPE
+         qAc1qYwEjj8vWYd5XZ3XDLmPv4XsTgFBh/GVviKUOoWc+yxOYIK2rc20UwfxBihR5wa7
+         QDTySMvCKmYjCjQGsV0lu2UKrENT+W+B47wc0imJkWM+EMndxkwmv2y/Y7DbBKxgKw5U
+         CpCA==
+X-Gm-Message-State: APjAAAWMZ5+qAEbDx7sfzWmoeC3qiy8Tw3W29tNxF4kSVcpHc/3NsBtt
+        ymKEI1bzcLfatjGpnR5VjUmH8aTQ0sSP/IgypeDO4GeUsw==
+X-Google-Smtp-Source: APXvYqz5xnlRDWwRwSMy0RIrgoC4ocWWMNdNe/ANkV+Dh1zgZqivst4S8XwY1Os+U+Jo1pW9zxV59uc+C8LU6y9O4jM=
+X-Received: by 2002:a19:f514:: with SMTP id j20mr15634235lfb.31.1575934979071;
+ Mon, 09 Dec 2019 15:42:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20191122172245.7875-1-sds@tycho.nsa.gov>
-In-Reply-To: <20191122172245.7875-1-sds@tycho.nsa.gov>
+References: <20191122172245.7875-1-sds@tycho.nsa.gov> <20191122172245.7875-2-sds@tycho.nsa.gov>
+In-Reply-To: <20191122172245.7875-2-sds@tycho.nsa.gov>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 9 Dec 2019 18:42:05 -0500
-Message-ID: <CAHC9VhRWx-1sUDLgKwkiL6PC9vXh-rUaWg4rOq3_U6=w1MOO8w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] selinux: revert "stop passing MAY_NOT_BLOCK to the
- AVC upon follow_link"
+Date:   Mon, 9 Dec 2019 18:42:47 -0500
+Message-ID: <CAHC9VhS_GthVA9+mV0E7D0HTUTuC7u-4J1ef2cpW56wD+85bOw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] selinux: fall back to ref-walk if audit is required
 To:     Stephen Smalley <sds@tycho.nsa.gov>
 Cc:     selinux@vger.kernel.org, will@kernel.org, viro@zeniv.linux.org.uk,
         neilb@suse.de, linux-fsdevel@vger.kernel.org,
@@ -69,21 +68,26 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On Fri, Nov 22, 2019 at 12:23 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> This reverts commit e46e01eebbbc ("selinux: stop passing MAY_NOT_BLOCK
-> to the AVC upon follow_link"). The correct fix is to instead fall
-> back to ref-walk if audit is required irrespective of the specific
-> audit data type.  This is done in the next commit.
+> commit bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
+> passed down the rcu flag to the SELinux AVC, but failed to adjust the
+> test in slow_avc_audit() to also return -ECHILD on LSM_AUDIT_DATA_DENTRY.
+> Previously, we only returned -ECHILD if generating an audit record with
+> LSM_AUDIT_DATA_INODE since this was only relevant from inode_permission.
+> Move the handling of MAY_NOT_BLOCK to avc_audit() and its inlined
+> equivalent in selinux_inode_permission() immediately after we determine
+> that audit is required, and always fall back to ref-walk in this case.
 >
-> Fixes: e46e01eebbbc ("selinux: stop passing MAY_NOT_BLOCK to the AVC upon follow_link")
+> Fixes: bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
 > Reported-by: Will Deacon <will@kernel.org>
+> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
 > Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
 > ---
->  security/selinux/avc.c         | 24 ++++++++++++++++++++++--
->  security/selinux/hooks.c       |  5 +++--
->  security/selinux/include/avc.h |  5 +++++
->  3 files changed, 30 insertions(+), 4 deletions(-)
+>  security/selinux/avc.c         | 24 +++++-------------------
+>  security/selinux/hooks.c       | 11 +++++++----
+>  security/selinux/include/avc.h |  8 +++++---
+>  3 files changed, 17 insertions(+), 26 deletions(-)
 
-Merged into selinux/next, thanks.
+Also merged into selinux/next, thanks.
 
 -- 
 paul moore
