@@ -6,81 +6,62 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F8AC04E30
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 19:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAB3C43603
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 21:38:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB9E4207FF
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 19:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD51B2071E
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Dec 2019 21:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbfLIT5b (ORCPT
+        id S1726538AbfLIViD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Dec 2019 14:57:31 -0500
-Received: from mga04.intel.com ([192.55.52.120]:49527 "EHLO mga04.intel.com"
+        Mon, 9 Dec 2019 16:38:03 -0500
+Received: from namei.org ([65.99.196.166]:36680 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbfLIT5b (ORCPT
+        id S1726509AbfLIViD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Dec 2019 14:57:31 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2019 11:57:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,296,1571727600"; 
-   d="scan'208";a="264346146"
-Received: from nshalmon-mobl.ger.corp.intel.com (HELO localhost) ([10.252.8.146])
-  by FMSMGA003.fm.intel.com with ESMTP; 09 Dec 2019 11:57:21 -0800
-Date:   Mon, 9 Dec 2019 21:57:19 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
+        Mon, 9 Dec 2019 16:38:03 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id xB9LbjkV004719;
+        Mon, 9 Dec 2019 21:37:45 GMT
+Date:   Tue, 10 Dec 2019 08:37:45 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>
-Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
-Message-ID: <20191209195719.GH19243@linux.intel.com>
-References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
- <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
- <20191128182450.GA3493127@kroah.com>
- <20191206203807.GA9971@linux.intel.com>
- <20191207080939.GA193518@kroah.com>
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
+ sockets.
+In-Reply-To: <579b10bb-990f-ae4c-8098-b39e56a4c475@i-love.sakura.ne.jp>
+Message-ID: <alpine.LRH.2.21.1912100837160.4379@namei.org>
+References: <0000000000004f43fa058a97f4d3@google.com> <20190618204933.GE17978@ZenIV.linux.org.uk> <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp> <bc146372-764d-93a9-af27-666d73ed3af5@i-love.sakura.ne.jp> <alpine.LRH.2.21.1907061944050.2662@namei.org>
+ <alpine.LRH.2.21.1907061949040.2662@namei.org> <289ebc65-8444-37e3-e54e-21b55d2c9192@i-love.sakura.ne.jp> <a28f2680-bafc-5e23-4eea-6b432f561cd4@i-love.sakura.ne.jp> <A9CE5147-4047-4C42-B772-F0ED510FA283@canb.auug.org.au> <36906718-d2ae-3514-c6b2-371037c98da5@i-love.sakura.ne.jp>
+ <20191003082543.5e1e25dd@canb.auug.org.au> <b175f451-4e76-84aa-48fa-e3ee9490c579@i-love.sakura.ne.jp> <d5cbd24b-531d-e9d0-f784-e6447129741d@i-love.sakura.ne.jp> <alpine.LRH.2.21.1911211818320.3625@namei.org> <cba33548-91dc-42b4-ef96-43642ebc3427@i-love.sakura.ne.jp>
+ <b7263da2-d56d-0f27-a7e5-03541ff8a0c1@i-love.sakura.ne.jp> <579b10bb-990f-ae4c-8098-b39e56a4c475@i-love.sakura.ne.jp>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191207080939.GA193518@kroah.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Dec 07, 2019 at 09:09:39AM +0100, Greg KH wrote:
-> On Fri, Dec 06, 2019 at 10:38:07PM +0200, Jarkko Sakkinen wrote:
-> > > Why a whole cdev?
-> > > 
-> > > Why not use a misc device?  YOu only have 2 devices right?  Why not 2
-> > > misc devices then?  That saves the use of a whole major number and makes
-> > > your code a _LOT_ simpler.
-> > 
-> > The downside would be that if we ever want to add sysfs attributes, that
-> > could not be done synchronously with the device creation.
+On Wed, 4 Dec 2019, Tetsuo Handa wrote:
+
 > 
-> That is what the groups member of struct misc_device is for.
+> I decided to drop tomoyo_get_socket_name(). Will you pick up the following commit?
+> 
+> commit c39593ab0500fcd6db290b311c120349927ddc04
+> Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date:   Mon Nov 25 10:46:51 2019 +0900
+> 
+>     tomoyo: Don't use nifty names on sockets.
+> 
 
-OK, cool, then there is no problem changing to misc.
+From where?
 
-I haven't seen misc drivers (not that I've looked through every single
-of them so I suppose there are such) to use it and somehow have been
-blind to seeing it that it si there.
+Please send a patch.
 
-Thanks again for the feedback. I'll fix this for the next patch set
-version.
+-- 
+James Morris
+<jmorris@namei.org>
 
-/Jarkko
