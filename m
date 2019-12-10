@@ -2,104 +2,166 @@ Return-Path: <SRS0=PCLm=2A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B82CFC43603
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 10:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD09C2D0BF
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 11:27:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 925F7207FF
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 10:21:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1A5A20726
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 11:27:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PXjKkgMX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfLJKV2 (ORCPT
+        id S1727211AbfLJL1t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Dec 2019 05:21:28 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:57290 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfLJKV2 (ORCPT
+        Tue, 10 Dec 2019 06:27:49 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:54706 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727199AbfLJL1t (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Dec 2019 05:21:28 -0500
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xBAALDS9088324;
-        Tue, 10 Dec 2019 19:21:13 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav305.sakura.ne.jp);
- Tue, 10 Dec 2019 19:21:13 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav305.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xBAAL8l2088215
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 10 Dec 2019 19:21:13 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
- sockets.
-To:     James Morris <jmorris@namei.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-security-module@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <0000000000004f43fa058a97f4d3@google.com>
- <20190618204933.GE17978@ZenIV.linux.org.uk>
- <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
- <bc146372-764d-93a9-af27-666d73ed3af5@i-love.sakura.ne.jp>
- <alpine.LRH.2.21.1907061944050.2662@namei.org>
- <alpine.LRH.2.21.1907061949040.2662@namei.org>
- <289ebc65-8444-37e3-e54e-21b55d2c9192@i-love.sakura.ne.jp>
- <a28f2680-bafc-5e23-4eea-6b432f561cd4@i-love.sakura.ne.jp>
- <A9CE5147-4047-4C42-B772-F0ED510FA283@canb.auug.org.au>
- <36906718-d2ae-3514-c6b2-371037c98da5@i-love.sakura.ne.jp>
- <20191003082543.5e1e25dd@canb.auug.org.au>
- <b175f451-4e76-84aa-48fa-e3ee9490c579@i-love.sakura.ne.jp>
- <d5cbd24b-531d-e9d0-f784-e6447129741d@i-love.sakura.ne.jp>
- <alpine.LRH.2.21.1911211818320.3625@namei.org>
- <cba33548-91dc-42b4-ef96-43642ebc3427@i-love.sakura.ne.jp>
- <b7263da2-d56d-0f27-a7e5-03541ff8a0c1@i-love.sakura.ne.jp>
- <579b10bb-990f-ae4c-8098-b39e56a4c475@i-love.sakura.ne.jp>
- <alpine.LRH.2.21.1912100837160.4379@namei.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <457927e7-2cec-3933-3e5c-67ebd29d8a52@i-love.sakura.ne.jp>
-Date:   Tue, 10 Dec 2019 19:21:08 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Tue, 10 Dec 2019 06:27:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575977267;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bOFmsAtNbW8RFKiaUWBj7E1wR8cw0Z5ta8Z04trWaPw=;
+        b=PXjKkgMX3jYCeIPg7CvNbgQcfKlCzSa6KQ3TXAnyXFRbfULZpZU0zE6ChXj5cbpGlC/uvE
+        HXWAg6IGeIFxo6SaGIGbN0pyyiC0eCzagU+cepVrf5S7HHY1yEvplrrMxvOxSUsFDFN/Pv
+        4bq8OIZ2BEkoWlkxE5uKRVAO4mmqycQ=
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
+ [209.85.167.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-56-EQuJAairM4CsRZzcCb6jzQ-1; Tue, 10 Dec 2019 06:27:46 -0500
+Received: by mail-oi1-f200.google.com with SMTP id u125so6081573oia.20
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Dec 2019 03:27:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=bOFmsAtNbW8RFKiaUWBj7E1wR8cw0Z5ta8Z04trWaPw=;
+        b=dTdL/3KdQ4gPfOuCijTSPXDad9Te5jFoI7RSJF4XA3dHPlj0VWuz7d9ML3keu/xwjL
+         +MXRz9laaS/SECg6X4vIOqpOjR+VweNGZ4DQzViTYj6Cgn9OLAvjxPxAjHnbyIFZ/qRd
+         3pvBLgjCOaaROpDI0Q8/BoyHhI3CsmSavPiwJ/aPFIE+Ph1Tc8WSYbnzMjkiCf30oaZJ
+         2hUQh74nj1j+crX1W2iD8h2ayuSLxEziZT9vzqd7y+oCTzvLTOQeASxCq0OhqUzdaRlD
+         +g3hy+G38TZo9A83yqL2gCnUagodX2yK5BKtevijrDieMMHHTm/ENEUz4kUcPdpLAjqj
+         EJ1A==
+X-Gm-Message-State: APjAAAVM8hjm7gap9w6um+EPYaNXY4sk5YSjQqEJhXs+x4FKPK2f56fN
+        ZPAwmnvONEzcd3plzim1IY/gkP5d8WRswFd664idyEOB2i9ZCXJcJiSGtsI+fEhPDCrOV7KfnXZ
+        ar40t+BhpC/0oBLVE0bG5ZlpAdaiIMKmItWLukkaqJn+2U+iemRaX
+X-Received: by 2002:a9d:338:: with SMTP id 53mr15586615otv.197.1575977265343;
+        Tue, 10 Dec 2019 03:27:45 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxoDNawE1RIKWv2izZYOAI/uCL0+cRnKFQ76pSJpz1S/34x+nbOWHlmWHvZ46sRQuTiYSTwxrUg3G5EtMrNof8=
+X-Received: by 2002:a9d:338:: with SMTP id 53mr15586596otv.197.1575977265026;
+ Tue, 10 Dec 2019 03:27:45 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1912100837160.4379@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191209075756.123157-1-omosnace@redhat.com> <23671223-f841-564c-6ae8-0401bce0fa20@tycho.nsa.gov>
+ <ecfd3846-b38f-4b85-4568-d64625c490ac@tycho.nsa.gov> <2fadcd3d-96d2-82bf-f221-a7961853be50@schaufler-ca.com>
+In-Reply-To: <2fadcd3d-96d2-82bf-f221-a7961853be50@schaufler-ca.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 10 Dec 2019 12:27:34 +0100
+Message-ID: <CAFqZXNsZTRveUYBdsXC2iM2MU+nWPz0xL9eLRFwFYMnti-Ww-g@mail.gmail.com>
+Subject: Re: [PATCH] selinux: reorder hooks to make runtime disable less broken
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        SElinux list <selinux@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        LSM <linux-security-module@vger.kernel.org>
+X-MC-Unique: EQuJAairM4CsRZzcCb6jzQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/12/10 6:37, James Morris wrote:
-> On Wed, 4 Dec 2019, Tetsuo Handa wrote:
-> 
->>
->> I decided to drop tomoyo_get_socket_name(). Will you pick up the following commit?
->>
->> commit c39593ab0500fcd6db290b311c120349927ddc04
->> Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Date:   Mon Nov 25 10:46:51 2019 +0900
->>
->>     tomoyo: Don't use nifty names on sockets.
->>
-> 
->>From where?
-> 
-> Please send a patch.
-> 
+On Mon, Dec 9, 2019 at 6:20 PM Casey Schaufler <casey@schaufler-ca.com> wro=
+te:
+> On 12/9/2019 5:58 AM, Stephen Smalley wrote:
+> > On 12/9/19 8:21 AM, Stephen Smalley wrote:
+> >> On 12/9/19 2:57 AM, Ondrej Mosnacek wrote:
+> >>> Commit b1d9e6b0646d ("LSM: Switch to lists of hooks") switched the LS=
+M
+> >>> infrastructure to use per-hook lists, which meant that removing the
+> >>> hooks for a given module was no longer atomic. Even though the commit
+> >>> clearly documents that modules implementing runtime revmoval of hooks
+> >>> (only SELinux attempts this madness) need to take special precautions=
+ to
+> >>> avoid race conditions, SELinux has never addressed this.
+> >>>
+> >>> By inserting an artificial delay between the loop iterations of
+> >>> security_delete_hooks() (I used 100 ms), booting to a state where
+> >>> SELinux is enabled, but policy is not yet loaded, and running these
+> >>> commands:
+> >>>
+> >>>      while true; do ping -c 1 <some IP>; done &
+> >>>      echo -n 1 >/sys/fs/selinux/disable
+> >>>      kill %1
+> >>>      wait
+> >>>
+> >>> ...I was able to trigger NULL pointer dereferences in various places.=
+ I
+> >>> also have a report of someone getting panics on a stock RHEL-8 kernel
+> >>> after setting SELINUX=3Ddisabled in /etc/selinux/config and rebooting
+> >>> (without adding "selinux=3D0" to kernel command-line).
+> >>>
+> >>> Reordering the SELinux hooks such that those that allocate structures
+> >>> are removed last seems to prevent these panics. It is very much possi=
+ble
+> >>> that this doesn't make the runtime disable completely race-free, but =
+at
+> >>> least it makes the operation much less fragile.
+> >>>
+> >>> An alternative (and safer) solution would be to add NULL checks to ea=
+ch
+> >>> hook, but doing this just to support the runtime disable hack doesn't
+> >>> seem to be worth the effort...
+> >>
+> >> Personally, I would prefer to just get rid of runtime disable altogeth=
+er; it also precludes making the hooks read-only after initialization.  IMH=
+O, selinux=3D0 is the proper way to disable SELinux if necessary.  I believ=
+e there is an open bugzilla on Fedora related to this issue, since runtime =
+disable was originally introduced for Fedora.
+> >
+> > Also, if we have to retain this support, it seems like this ought to be=
+ fixed in the LSM framework especially since it was a change there that bro=
+ke the SELinux implementation.
+>
+> Agreed, mostly. Deleting an LSM is fundamentally something the infrastruc=
+ture
+> should handle *if* we allow it. Should we decide at some point to allow l=
+oadable
+> modules, as Tetsuo has advocated from time to time, we would need a gener=
+al
+> solution. We don't have a general solution now because only SELinux wants=
+ it.
+> The previous implementation was under #ifdef for SELinux. At the time I u=
+nderstood
+> that there was no interest in investing in it. The implementation passed =
+tests
+> at the time.
+>
+> I propose that until such time as someone decides to seriously investigat=
+e
+> loadable security modules* the sole user of the deletion mechanism is
+> welcome to invest whatever they like in their special case, and I will be
+> happy to lend whatever assistance I can.
 
-Patch is at https://scm.osdn.net/gitroot/tomoyo/tomoyo-test1 and was tested on linux-next.git .
-But if you pick up c39593ab0500, what do I need to do (in order to avoid trying to apply the same
-patch) ? Could you explain me (using command line) how I can send only c39593ab0500 to linux.git ?
-https://osdn.net/projects/tomoyo/scm/git/tomoyo-test1/commits has only master branch.
+On my way to lunch I came up with another relatively simple solution
+that should address this problem at the infrastructure level. Let me
+try to write it up into a patch, hopefully it will work...
 
-c39593ab0500 (HEAD -> master, origin/master) tomoyo: Don't use nifty names on sockets.
-cbf8353d474c Merge branch 'master' of https://scm.osdn.net/gitroot/tomoyo/tomoyo-test1
-fd46afeac605 Revert "tomoyo: Don't check open/getattr permission on sockets."
-19768fdc4025 Revert "printk: Monitor change of console loglevel."
-07fca3f339d7 printk: Monitor change of console loglevel.
-df8aec8cd8b2 tomoyo: Don't check open/getattr permission on sockets.
-219d54332a09 (tag: v5.4, upstream/master) Linux 5.4
+>
+> ---
+> * I do not plan to propose an implementation of loadable modules.
+>   I leave that as an exercise for the next generation.
+>
+>
+
+--=20
+Ondrej Mosnacek <omosnace at redhat dot com>
+Software Engineer, Security Technologies
+Red Hat, Inc.
+
