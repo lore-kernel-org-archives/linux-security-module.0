@@ -2,127 +2,192 @@ Return-Path: <SRS0=PCLm=2A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A81C2D0BF
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 19:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A085C00454
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 19:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41AF62077B
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 19:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA82020828
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 19:48:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="oJVda0Q/"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mYnRzTb5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726018AbfLJTTb (ORCPT
+        id S1726926AbfLJTsJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Dec 2019 14:19:31 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39365 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726646AbfLJTTb (ORCPT
+        Tue, 10 Dec 2019 14:48:09 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35709 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726903AbfLJTsI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Dec 2019 14:19:31 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e10so21170922ljj.6
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Dec 2019 11:19:29 -0800 (PST)
+        Tue, 10 Dec 2019 14:48:08 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b19so354942pfo.2
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Dec 2019 11:48:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EFFaHeLywLCEIsIYE3gh04d4L/LDub1CmkA503m7820=;
-        b=oJVda0Q/NoNyjxFVM9bPSGiRbiru85lnYXQDbbNKNI3A7Ue4sB4D6ziXDu8bu+CPIP
-         PeUQ5Kw29mhsSnoUuX/PrC/D1rW1WOChX3yooN1liuE3+AsO14Bb3LgEeFwYlZ84zeiV
-         +0l4H9DcIUa2gc4uQPRYCm9JoriRxGZ3v2ZBZel55W5RP0ymDH19AL7H5TMHqye2Arph
-         5ELGGjjzzALUXWybXwEHOQSCZ7FlsTwoKNe7NFSM93+Q+CVRkcKs+5KGlX2iL8NXvku9
-         MfsmXxKn4BJLexUzXeMOCm+FbwYtA4W9Tj48JOCgAmM9ivH34PTAld14uSjXOe6VafF1
-         Z+Kw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=hs4+jt4b4qkjnd//rQ0dpgbF0ORXyEi5ROObXi8EfqY=;
+        b=mYnRzTb5+sTStYc7Niv1gGvH8acexDCSmAR+l0KIkpgvJvO+UcpjC7yGbeRlAanOLS
+         9X2B13LZgLNohEiDdd7+igZqn9TNKmhRIY1C0B7AS+VxR1Vxl4UJ6mdA3VB6atZDX4Jn
+         NTcWbvkzGlJ0wiIQr/Bqwlnvpx8AJV8BuVDKs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EFFaHeLywLCEIsIYE3gh04d4L/LDub1CmkA503m7820=;
-        b=QJXBHSIfc1s8hBzsKaU/A2SgfDgmGkpOKtXpJhVGPFDOpc0GM+BEwqe02yOaM1Ljhx
-         4jWji5MssUlXqObYjU+hZ5TO51zQDONFv3qYb0mV0Bar32J002ETVik6RM8dxMNcpda5
-         ONOg2yE6/NsjpB0wLaBpRgGWOsgXcWGMkNhS+aB3E0NlMt6UFRiaK5BdyR+YC3IIAZ0T
-         CjvK5i0A1GVBmnjEKMppCkqx8uyiJ75FeV4OXjk8AgK1RMOFmKcjzQn+bnWoKxiBSpmd
-         dHiKAa2KB7MngPp7Xt7msttaWZhtgb4TbHpH8Gt9GibKd6iUkaxhwJOfzVWxv8mB11Zv
-         H+IA==
-X-Gm-Message-State: APjAAAXH/O1Xs0Vj+kWtfx6JzQxtOSGABpmAtcsIi0uxi/vjKo8ax/IU
-        fwG51z+nits6ltrxsCEdESMqIQmDsgC0VFKKelxn
-X-Google-Smtp-Source: APXvYqwoHdoFaC9VqOmbCrjLyG60Izi0pyFDrXtJVEVwH8HxY528XWdNXlFXpR2SdkpmiKjV3xGi6/j7rHAj3t7HO2M=
-X-Received: by 2002:a2e:99cd:: with SMTP id l13mr7448075ljj.243.1576005568716;
- Tue, 10 Dec 2019 11:19:28 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=hs4+jt4b4qkjnd//rQ0dpgbF0ORXyEi5ROObXi8EfqY=;
+        b=rEtNO2Uvpdc2jqyGrC0Q8f3Zy/ZmjbmALHKP0i/1SF4B1yu/rAyXsFTxQ2RVYtCejZ
+         CQkPJHbu3shdXmwWEAutmL4g4N/e7Ja0MReMmruxRai6I6xNEmQJQuIZqhBoyKo+8Psp
+         8Uu/spsia3vhev1svFX6BRwlYJ5Bc+2wrxPjE/TDJnjwakKtlJcpioVRXASvTMDnXaTt
+         ngQB8Rilmindfv01qglesKK0jPDDFkMcbgf0FcAO8JLY0341DJUwv6GcgVwrXAmXVzLH
+         DAqROUN69xA4N5Npoi6NrRbXXzqBCGJ1BiDW8Uj7RfkB9EvkoVR1coTb/ErZs4OIjdnC
+         5saQ==
+X-Gm-Message-State: APjAAAWcUl8LsBIiMfftPB2pHlhJMheMZHLKend+a58yG6NYNj2EaOSw
+        PShpdPhDZNeci/exWsDdAW6kYg==
+X-Google-Smtp-Source: APXvYqz78cU7WRPjnasXetiMClBhXKzMKxaJBk2LajotEHBGPikWJe9GXvoW0ru9xwaigCtaqSZ13Q==
+X-Received: by 2002:a63:4e47:: with SMTP id o7mr26628998pgl.332.1576007286738;
+        Tue, 10 Dec 2019 11:48:06 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id l186sm4243001pge.31.2019.12.10.11.48.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 11:48:05 -0800 (PST)
+Date:   Tue, 10 Dec 2019 11:48:04 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     shuah <shuah@kernel.org>,
+        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        serge@hallyn.com, Alan Maguire <alan.maguire@oracle.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        David Gow <davidgow@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Mike Salvatore <mike.salvatore@canonical.com>
+Subject: Re: [PATCH linux-kselftest/test v2] apparmor: add AppArmor KUnit
+ tests for policy unpack
+Message-ID: <201912101147.7BCF728@keescook>
+References: <20191106004329.16991-1-brendanhiggins@google.com>
+ <201911060916.AC9E14B@keescook>
+ <20191107233337.GA191231@google.com>
+ <CAFd5g462jFnbPxA2Nvc_3W064kZ8t5oHNE4M_3yt84+NuoiHGQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <157594281322.676903.11041338053333686450.stgit@chester>
- <f7e43b67-3f46-e480-f8b0-e86eff85293f@tycho.nsa.gov> <CAHC9VhSO0Jaqyxw_5AtPTTQTqS+Q9CWhBQQ7822hvUS8MWLy6A@mail.gmail.com>
- <2abbcb79-4384-cfb0-1feb-c3a2e042a2ed@tycho.nsa.gov>
-In-Reply-To: <2abbcb79-4384-cfb0-1feb-c3a2e042a2ed@tycho.nsa.gov>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 10 Dec 2019 14:19:17 -0500
-Message-ID: <CAHC9VhTS+MpwkJNg=hLsjzwNqwPcEN1yEVkXh8=k6Wdh+S+kWA@mail.gmail.com>
-Subject: Re: [RFC PATCH] selinux: ensure we cleanup the internal AVC counters
- on error in avc_insert()
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     selinux@vger.kernel.org, rsiddoji@codeaurora.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFd5g462jFnbPxA2Nvc_3W064kZ8t5oHNE4M_3yt84+NuoiHGQ@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Dec 10, 2019 at 11:12 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 12/10/19 10:54 AM, Paul Moore wrote:
-> > On Tue, Dec 10, 2019 at 8:44 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> >> On 12/9/19 8:53 PM, Paul Moore wrote:
-> >>> In AVC insert we don't call avc_node_kill() when avc_xperms_populate()
-> >>> fails, resulting in the avc->avc_cache.active_nodes counter having a
-> >>> false value.
-> >>
-> >> incorrect value?
-> >>
-> >>     This patch corrects this problem and does some cleanup
-> >>> in avc_insert() while we are there.
-> >>
-> >> submitting-patches.rst recommends describing in imperative mood and
-> >> avoiding the words "patch" in what will eventually just be a commit log,
-> >> ala "Correct this problem and perform some cleanup..."
+On Mon, Nov 18, 2019 at 04:34:53PM -0800, Brendan Higgins wrote:
+> On Thu, Nov 7, 2019 at 3:33 PM Brendan Higgins
+> <brendanhiggins@google.com> wrote:
 > >
-> > Well, you've made me feel better about my nit-picky comments on patches ;)
+> > On Wed, Nov 06, 2019 at 09:18:27AM -0800, Kees Cook wrote:
+> > > On Tue, Nov 05, 2019 at 04:43:29PM -0800, Brendan Higgins wrote:
+> > > > From: Mike Salvatore <mike.salvatore@canonical.com>
+> > > >
+> > > > Add KUnit tests to test AppArmor unpacking of userspace policies.
+> > > > AppArmor uses a serialized binary format for loading policies. To find
+> > > > policy format documentation see
+> > > > Documentation/admin-guide/LSM/apparmor.rst.
+> > > >
+> > > > In order to write the tests against the policy unpacking code, some
+> > > > static functions needed to be exposed for testing purposes. One of the
+> > > > goals of this patch is to establish a pattern for which testing these
+> > > > kinds of functions should be done in the future.
+> > > >
+> > > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > > > Signed-off-by: Mike Salvatore <mike.salvatore@canonical.com>
+> > > > ---
+> > > >  security/apparmor/Kconfig              |  16 +
+> > > >  security/apparmor/policy_unpack.c      |   4 +
+> > > >  security/apparmor/policy_unpack_test.c | 607 +++++++++++++++++++++++++
+> > > >  3 files changed, 627 insertions(+)
+> > > >  create mode 100644 security/apparmor/policy_unpack_test.c
+> > > >
+> > > > diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+> > > > index d8b1a360a6368..78a33ccac2574 100644
+> > > > --- a/security/apparmor/Kconfig
+> > > > +++ b/security/apparmor/Kconfig
+> > > > @@ -66,3 +66,19 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
+> > > >       Set the default value of the apparmor.debug kernel parameter.
+> > > >       When enabled, various debug messages will be logged to
+> > > >       the kernel message buffer.
+> > > > +
+> > > > +config SECURITY_APPARMOR_KUNIT_TEST
+> > > > +   bool "Build KUnit tests for policy_unpack.c"
+> > > > +   depends on KUNIT && SECURITY_APPARMOR
+> > > > +   help
+> > > > +     This builds the AppArmor KUnit tests.
+> > > > +
+> > > > +     KUnit tests run during boot and output the results to the debug log
+> > > > +     in TAP format (http://testanything.org/). Only useful for kernel devs
+> > > > +     running KUnit test harness and are not for inclusion into a
+> > > > +     production build.
+> > > > +
+> > > > +     For more information on KUnit and unit tests in general please refer
+> > > > +     to the KUnit documentation in Documentation/dev-tools/kunit/.
+> > > > +
+> > > > +     If unsure, say N.
+> > > > diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> > > > index 8cfc9493eefc7..37c1dd3178fc0 100644
+> > > > --- a/security/apparmor/policy_unpack.c
+> > > > +++ b/security/apparmor/policy_unpack.c
+> > > > @@ -1120,3 +1120,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
+> > > >
+> > > >     return error;
+> > > >  }
+> > > > +
+> > > > +#ifdef CONFIG_SECURITY_APPARMOR_KUNIT_TEST
+> > > > +#include "policy_unpack_test.c"
+> > > > +#endif /* CONFIG_SECURITY_APPARMOR_KUNIT_TEST */
+> > >
+> > > To make this even LESS intrusive, the ifdefs could live in ..._test.c.
 > >
-> > Are you okay with the following?
+> > Less intrusive, yes, but I think I actually like the ifdef here; it
+> > makes it clear from the source that the test is only a part of the build
+> > when configured to do so. Nevertheless, I will change it if anyone feels
+> > strongly about it.
 > >
-> >    selinux: ensure we cleanup the internal AVC counters on error in avc_insert()
+> > > Also, while I *think* the kernel build system will correctly track this
+> > > dependency, can you double-check that changes to ..._test.c correctly
+> > > trigger a recompile of policy_unpack.c?
 > >
-> >    Fix avc_insert() to call avc_node_kill() if we've already allocated
-> >    an AVC node and the code fails to insert the node in the cache.
->
-> Sure, or just "Fix the AVC to correctly decrement the count of AVC nodes
-> if it encounters an allocation failure on an extended permissions node."
->
-> >> Should probably add a:
-> >>
-> >> Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
-> >>
-> >> Might be easier to back port if you split the cleanup from the fix, but
-> >> your call of course.
+> > Yep, just verified, first I ran the tests and everything passed. Then I
+> > applied the following diff:
 > >
-> > I waffled on that last night when I wrote up the patch, and more
-> > generally if this should go to -stable or -next (despite what is
-> > claimed, adding a "Fixes:" tag means it gets picked up by -stable more
-> > often than not in my experience).  At its worst, not fixing this bug
-> > means we could end up effectively shrinking the AVC cache if xperms
-> > are used *and* we happen to fail a memory allocation while adding a
-> > new entry to the AVC; we don't cause an incorrect node to be cached,
-> > we don't crash the system, we don't leak memory.  My thinking is that
-> > this isn't a major concern, and not worth the risk to -stable, but if
-> > anyone has any data that shows otherwise, please let me know.
+> > diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+> > index 533137f45361c..e1b0670dbdc27 100644
+> > --- a/security/apparmor/policy_unpack_test.c
+> > +++ b/security/apparmor/policy_unpack_test.c
+> > @@ -161,7 +161,7 @@ static void policy_unpack_test_unpack_array_with_name(struct kunit *test)
 > >
-> > I'll go ahead and add the "Fixes:" tag (technically this is the
-> > *right* thing to do), but I'm going to stick with -next and leave the
-> > cleanup as-is just to raise the bar a bit for the -stable backports
-> > which I'm sure are going to happen.
+> >         array_size = unpack_array(puf->e, name);
+> >
+> > -       KUNIT_EXPECT_EQ(test, array_size, (u16)TEST_ARRAY_SIZE);
+> > +       KUNIT_EXPECT_EQ(test, array_size + 1, (u16)TEST_ARRAY_SIZE);
+> >         KUNIT_EXPECT_PTR_EQ(test, puf->e->pos,
+> >                 puf->e->start + TEST_ARRAY_BUF_OFFSET + sizeof(u16) + 1);
+> >  }
+> >
+> > and reran the tests (to trigger an incremental build) and the test
+> > failed as expected indicating that the dependency is properly tracked.
+> 
+> Hey Kees,
+> 
+> Since it looks like you already took a pretty close look at this,
+> would you mind giving me a review?
 
-Merged into selinux/next.
+Yes! Thanks for checking on those items. :)
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
 
 -- 
-paul moore
-www.paul-moore.com
+Kees Cook
