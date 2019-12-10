@@ -2,229 +2,203 @@ Return-Path: <SRS0=PCLm=2A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCC8C43603
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 12:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23197C43603
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 13:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BFB020838
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 12:33:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFFE820652
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 13:51:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HvKLzLgQ"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="kQuj4mDp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfLJMd5 (ORCPT
+        id S1727441AbfLJNvp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Dec 2019 07:33:57 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39585 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727374AbfLJMbV (ORCPT
+        Tue, 10 Dec 2019 08:51:45 -0500
+Received: from USFB19PA36.eemsg.mail.mil ([214.24.26.199]:18709 "EHLO
+        USFB19PA36.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbfLJNvp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Dec 2019 07:31:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575981079;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4CxEQ5z2P35PU5qEnTEcH9MyNfCjukSbjzhDjqs04MQ=;
-        b=HvKLzLgQ5HtpiU1y5VIDskCrdj19j961VmXcvVdbGEYy9bX9s46eaW8nJJ/bzGg1rXVIJH
-        6LjjDT/Q/oYA+Ej/hkKAxirykPVbpaW5sEzFCE4xFKW2yas2s18ZXPpFPy3nXakS103x9C
-        HXfctNafBSFp5ArZ9Pjuz7E/XNavNFk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-421-dwRglwilOo-3WYmw05ymMQ-1; Tue, 10 Dec 2019 07:31:18 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A8F5E107ACCD;
-        Tue, 10 Dec 2019 12:31:16 +0000 (UTC)
-Received: from coeurl.usersys.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2396C60BF3;
-        Tue, 10 Dec 2019 12:31:16 +0000 (UTC)
-Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
-        id 9516020AE5; Tue, 10 Dec 2019 07:31:15 -0500 (EST)
-From:   Scott Mayhew <smayhew@redhat.com>
-To:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v6 02/27] nfs: stash server into struct nfs_mount_info
-Date:   Tue, 10 Dec 2019 07:30:50 -0500
-Message-Id: <20191210123115.1655-3-smayhew@redhat.com>
-In-Reply-To: <20191210123115.1655-1-smayhew@redhat.com>
-References: <20191210123115.1655-1-smayhew@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: dwRglwilOo-3WYmw05ymMQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+        Tue, 10 Dec 2019 08:51:45 -0500
+X-Greylist: delayed 424 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Dec 2019 08:51:44 EST
+X-EEMSG-check-017: 34153941|USFB19PA36_ESA_OUT06.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.69,299,1571702400"; 
+   d="scan'208";a="34153941"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by USFB19PA36.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 10 Dec 2019 13:44:35 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1575985476; x=1607521476;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=BqrXrOlH2AwEczMne19p4RzjhaG6eEPCHqHn8/2G4PA=;
+  b=kQuj4mDp6PojT3wI+KVBCAXbiy5KvwucPCO8IwjFEAd2bNwUAosb6n48
+   eBhPSpXp1GzJufsyQIGEl3IxJcg4I55jR95isalxqkGoxSIH0Mi8/gbNj
+   exkN9AdawASUkFdUxHbhr+kdVlq5e4R5QnII2DeGfGqLqQPtZaSm+mLl0
+   aHVjiMZnksLQNy/o62X3yvMRC7D0iZOa3G+F9ApmQmMV3IFUJgkhAHpA1
+   VNqiC8kBd++1iwOlBjq+JaSTSQAmvagT7r5Lkq4vTFgDxKz1OBL94o7vV
+   C5YFb4UL6eMmoKMZsZyELVoWLhqW/D0APoJ64YNdenUUZ7eMdnp8lfbum
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.69,299,1571702400"; 
+   d="scan'208";a="36538632"
+IronPort-PHdr: =?us-ascii?q?9a23=3AfFd2PRMe8IlpRgdqQHwl6mtUPXoX/o7sNwtQ0K?=
+ =?us-ascii?q?IMzox0K/z+pcbcNUDSrc9gkEXOFd2Cra4d0KyP4vurBDdIyK3CmUhKSIZLWR?=
+ =?us-ascii?q?4BhJdetC0bK+nBN3fGKuX3ZTcxBsVIWQwt1Xi6NU9IBJS2PAWK8TW94jEIBx?=
+ =?us-ascii?q?rwKxd+KPjrFY7OlcS30P2594HObwlSizexfL1/IA+roQjVuMQajotvJ6gswR?=
+ =?us-ascii?q?bVv3VEfPhby3l1LlyJhRb84cmw/J9n8ytOvv8q6tBNX6bncakmVLJUFDspPX?=
+ =?us-ascii?q?w7683trhnDUBCA5mAAXWUMkxpHGBbK4RfnVZrsqCT6t+592C6HPc3qSL0/RD?=
+ =?us-ascii?q?qv47t3RBLulSwKLCAy/n3JhcNsjaJbuBOhqAJ5w47Ie4GeKf5ycrrAcd8GWW?=
+ =?us-ascii?q?ZNW8BcWCJbAoO4coABEewPM+hFpIX5vlcCsx+zCQyqCejyyDFHm2X20LUn3e?=
+ =?us-ascii?q?o/HwHI3A8uEdwAv3vbrtr6KKgcXPupzKTK1zjPc+9a1Dn/5YXObxsvoeuMXb?=
+ =?us-ascii?q?V1ccfJ1EcvCx3Kjk2QqYP7OTOey/kDs22B4OpkUeKglW4moBx2rzi028gskZ?=
+ =?us-ascii?q?LEhp4Vy1/Y9SV5x5w5JdujSEFhe9KkH5xQtz+DOoZwX8gsQHlotT4nxrAJtp?=
+ =?us-ascii?q?O3ZigHxIk9yxLBZPGLbZKE7g/lWe2MOzl3nmhld6i6hxuq9EigzfDzWdes3V?=
+ =?us-ascii?q?ZRqypFjsHMtncQ1xzP8sSHSuVy/kOm2TuXywDc8PtEIUEplarAMZIhw7gwlp?=
+ =?us-ascii?q?QUsUTYACD5hF/6jLOWd0o4+uio7P7rYrP6qZ+HK4B4kAT+MqUqmsCnAOQ4NB?=
+ =?us-ascii?q?YBX3SD9Oih27Du8lf1TbVXgvEsjKXUv47WKd4GqqKhBg9ayIcj6xKxDze819?=
+ =?us-ascii?q?QYmGEKLElYdxKclIXpJ1HPL+z4Dfe4mVislixryOrcMr3uBZXNMGDPkK39cr?=
+ =?us-ascii?q?Zl905c1A0zwMhH551OF7EBJOn+Wlfru9zFCh81Kgm0w+HgCNVnyIwSQ36AAq?=
+ =?us-ascii?q?icMKnKq1+H+vovI/WQZI8SoDv9MOYq5/rvjX8/hF8ccrKk3YUYaH+mBPRqOU?=
+ =?us-ascii?q?aZbmT2gtcHD2gKuhAyTOvwiF2NSTRTfWq9X7og5jEnD4KrFZ3DRpusgLOcwS?=
+ =?us-ascii?q?i7GZ9WZmFdB1+QFnfnapuLVO0RaCKIJc9hiCYLWaKmS4872hGkrBX6xKZ/Lu?=
+ =?us-ascii?q?rI5i0Ysoru1Nx05+3ViBEz+iV4D9+D3G6RUmF0hGIIRyM23axmpEx9zUqM0b?=
+ =?us-ascii?q?V8g/NGDtFT+fxJXRkgNZLGzOx1FcryWgTfcdeNUlqmRc+mAT5iBu42lucHfk?=
+ =?us-ascii?q?I1PtKllB2LizKjHrs9j7WWANkx9aXG0j76IMMrjz7d2a0giUQ2atVAOHfgha?=
+ =?us-ascii?q?Nl8QXXQYnTnBa3jaGvIJ8A0TbN+WHL9m+HuEVVQUYkSqnedWwObUvR69Li7w?=
+ =?us-ascii?q?XNSKH4WudvCRdI1cPXcvgCUdbul1gTAa65adk=3D?=
+X-IPAS-Result: =?us-ascii?q?A2BJAACJn+9d/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
+ =?us-ascii?q?QICAQEBAYF+gXSBbSASKoQDiQOGZgEBAQEBAQaBN4lpkUYJAQEBAQEBAQEBN?=
+ =?us-ascii?q?wEBhEACgic4EwIQAQEBBAEBAQEBBQMBAWyFQ4I7KQGCeQEBAQECASMEEUEQC?=
+ =?us-ascii?q?xgCAiYCAlcGAQwGAgEBgl8/glMFIKwtdX8zhU+DP4FIgQ4ojDJ5gQeBEScPg?=
+ =?us-ascii?q?l0+h1mCXgSNNolGRpcigjmCO5MvBhuaOC2OHZxCIoFYKwgCGAghDzuCbFARF?=
+ =?us-ascii?q?IxyFxWOLCMDMI8rAQE?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 10 Dec 2019 13:44:33 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id xBADiHkZ235780;
+        Tue, 10 Dec 2019 08:44:17 -0500
+Subject: Re: [RFC PATCH] selinux: ensure we cleanup the internal AVC counters
+ on error in avc_insert()
+To:     Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org
+Cc:     rsiddoji@codeaurora.org, linux-security-module@vger.kernel.org
+References: <157594281322.676903.11041338053333686450.stgit@chester>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <f7e43b67-3f46-e480-f8b0-e86eff85293f@tycho.nsa.gov>
+Date:   Tue, 10 Dec 2019 08:44:52 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <157594281322.676903.11041338053333686450.stgit@chester>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+On 12/9/19 8:53 PM, Paul Moore wrote:
+> In AVC insert we don't call avc_node_kill() when avc_xperms_populate()
+> fails, resulting in the avc->avc_cache.active_nodes counter having a
+> false value.
 
-Reviewed-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/nfs/internal.h  |  3 ++-
- fs/nfs/nfs4super.c | 10 ++++------
- fs/nfs/super.c     | 19 ++++++++-----------
- 3 files changed, 14 insertions(+), 18 deletions(-)
+incorrect value?
 
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index 24a65da58aa9..8f4900bd04f7 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -142,6 +142,7 @@ struct nfs_mount_info {
- =09int (*set_security)(struct super_block *, struct dentry *, struct nfs_m=
-ount_info *);
- =09struct nfs_parsed_mount_data *parsed;
- =09struct nfs_clone_mount *cloned;
-+=09struct nfs_server *server;
- =09struct nfs_fh *mntfh;
- };
-=20
-@@ -397,7 +398,7 @@ struct dentry *nfs_try_mount(int, const char *, struct =
-nfs_mount_info *,
- =09=09=09struct nfs_subversion *);
- int nfs_set_sb_security(struct super_block *, struct dentry *, struct nfs_=
-mount_info *);
- int nfs_clone_sb_security(struct super_block *, struct dentry *, struct nf=
-s_mount_info *);
--struct dentry *nfs_fs_mount_common(struct nfs_server *, int, const char *,
-+struct dentry *nfs_fs_mount_common(int, const char *,
- =09=09=09=09   struct nfs_mount_info *, struct nfs_subversion *);
- struct dentry *nfs_fs_mount(struct file_system_type *, int, const char *, =
-void *);
- struct dentry * nfs_xdev_mount_common(struct file_system_type *, int,
-diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
-index beeaed872e6c..e7f2fd1925b1 100644
---- a/fs/nfs/nfs4super.c
-+++ b/fs/nfs/nfs4super.c
-@@ -109,13 +109,12 @@ nfs4_remote_mount(struct file_system_type *fs_type, i=
-nt flags,
- =09=09  const char *dev_name, void *info)
- {
- =09struct nfs_mount_info *mount_info =3D info;
--=09struct nfs_server *server;
-=20
- =09mount_info->set_security =3D nfs_set_sb_security;
-=20
- =09/* Get a volume representation */
--=09server =3D nfs4_create_server(mount_info, &nfs_v4);
--=09return nfs_fs_mount_common(server, flags, dev_name, mount_info, &nfs_v4=
-);
-+=09mount_info->server =3D nfs4_create_server(mount_info, &nfs_v4);
-+=09return nfs_fs_mount_common(flags, dev_name, mount_info, &nfs_v4);
- }
-=20
- static struct vfsmount *nfs_do_root_mount(struct file_system_type *fs_type=
-,
-@@ -260,7 +259,6 @@ nfs4_remote_referral_mount(struct file_system_type *fs_=
-type, int flags,
- =09=09.set_security =3D nfs_clone_sb_security,
- =09=09.cloned =3D raw_data,
- =09};
--=09struct nfs_server *server;
- =09struct dentry *mntroot =3D ERR_PTR(-ENOMEM);
-=20
- =09dprintk("--> nfs4_referral_get_sb()\n");
-@@ -270,8 +268,8 @@ nfs4_remote_referral_mount(struct file_system_type *fs_=
-type, int flags,
- =09=09goto out;
-=20
- =09/* create a new volume representation */
--=09server =3D nfs4_create_referral_server(mount_info.cloned, mount_info.mn=
-tfh);
--=09mntroot =3D nfs_fs_mount_common(server, flags, dev_name, &mount_info, &=
-nfs_v4);
-+=09mount_info.server =3D nfs4_create_referral_server(mount_info.cloned, mo=
-unt_info.mntfh);
-+=09mntroot =3D nfs_fs_mount_common(flags, dev_name, &mount_info, &nfs_v4);
- out:
- =09nfs_free_fhandle(mount_info.mntfh);
- =09return mntroot;
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index f074c3773f0e..379c7b26051d 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1896,14 +1896,12 @@ struct dentry *nfs_try_mount(int flags, const char =
-*dev_name,
- =09=09=09     struct nfs_mount_info *mount_info,
- =09=09=09     struct nfs_subversion *nfs_mod)
- {
--=09struct nfs_server *server;
--
- =09if (mount_info->parsed->need_mount)
--=09=09server =3D nfs_try_mount_request(mount_info, nfs_mod);
-+=09=09mount_info->server =3D nfs_try_mount_request(mount_info, nfs_mod);
- =09else
--=09=09server =3D nfs_mod->rpc_ops->create_server(mount_info, nfs_mod);
-+=09=09mount_info->server =3D nfs_mod->rpc_ops->create_server(mount_info, n=
-fs_mod);
-=20
--=09return nfs_fs_mount_common(server, flags, dev_name, mount_info, nfs_mod=
-);
-+=09return nfs_fs_mount_common(flags, dev_name, mount_info, nfs_mod);
- }
- EXPORT_SYMBOL_GPL(nfs_try_mount);
-=20
-@@ -2649,20 +2647,21 @@ static void nfs_set_readahead(struct backing_dev_in=
-fo *bdi,
- =09bdi->io_pages =3D iomax_pages;
- }
-=20
--struct dentry *nfs_fs_mount_common(struct nfs_server *server,
--=09=09=09=09   int flags, const char *dev_name,
-+struct dentry *nfs_fs_mount_common(int flags, const char *dev_name,
- =09=09=09=09   struct nfs_mount_info *mount_info,
- =09=09=09=09   struct nfs_subversion *nfs_mod)
- {
- =09struct super_block *s;
- =09struct dentry *mntroot =3D ERR_PTR(-ENOMEM);
- =09int (*compare_super)(struct super_block *, void *) =3D nfs_compare_supe=
-r;
-+=09struct nfs_server *server =3D mount_info->server;
- =09struct nfs_sb_mountdata sb_mntdata =3D {
- =09=09.mntflags =3D flags,
- =09=09.server =3D server,
- =09};
- =09int error;
-=20
-+=09mount_info->server =3D NULL;
- =09if (IS_ERR(server))
- =09=09return ERR_CAST(server);
-=20
-@@ -2803,7 +2802,6 @@ nfs_xdev_mount(struct file_system_type *fs_type, int =
-flags,
- =09=09.set_security =3D nfs_clone_sb_security,
- =09=09.cloned =3D data,
- =09};
--=09struct nfs_server *server;
- =09struct dentry *mntroot =3D ERR_PTR(-ENOMEM);
- =09struct nfs_subversion *nfs_mod =3D NFS_SB(data->sb)->nfs_client->cl_nfs=
-_mod;
-=20
-@@ -2812,10 +2810,9 @@ nfs_xdev_mount(struct file_system_type *fs_type, int=
- flags,
- =09mount_info.mntfh =3D mount_info.cloned->fh;
-=20
- =09/* create a new volume representation */
--=09server =3D nfs_mod->rpc_ops->clone_server(NFS_SB(data->sb), data->fh, d=
-ata->fattr, data->authflavor);
-+=09mount_info.server =3D nfs_mod->rpc_ops->clone_server(NFS_SB(data->sb), =
-data->fh, data->fattr, data->authflavor);
-=20
--=09mntroot =3D nfs_fs_mount_common(server, flags,
--=09=09=09=09dev_name, &mount_info, nfs_mod);
-+=09mntroot =3D nfs_fs_mount_common(flags, dev_name, &mount_info, nfs_mod);
-=20
- =09dprintk("<-- nfs_xdev_mount() =3D %ld\n",
- =09=09=09IS_ERR(mntroot) ? PTR_ERR(mntroot) : 0L);
---=20
-2.17.2
+   This patch corrects this problem and does some cleanup
+> in avc_insert() while we are there.
+
+submitting-patches.rst recommends describing in imperative mood and 
+avoiding the words "patch" in what will eventually just be a commit log, 
+ala "Correct this problem and perform some cleanup..."
+
+Should probably add a:
+
+Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
+
+Might be easier to back port if you split the cleanup from the fix, but 
+your call of course.
+
+> 
+> Reported-by: rsiddoji@codeaurora.org
+> Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+
+> ---
+>   security/selinux/avc.c |   51 +++++++++++++++++++++++-------------------------
+>   1 file changed, 24 insertions(+), 27 deletions(-)
+> 
+> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+> index 23dc888ae305..6646300f7ccb 100644
+> --- a/security/selinux/avc.c
+> +++ b/security/selinux/avc.c
+> @@ -617,40 +617,37 @@ static struct avc_node *avc_insert(struct selinux_avc *avc,
+>   	struct avc_node *pos, *node = NULL;
+>   	int hvalue;
+>   	unsigned long flag;
+> +	spinlock_t *lock;
+> +	struct hlist_head *head;
+>   
+>   	if (avc_latest_notif_update(avc, avd->seqno, 1))
+> -		goto out;
+> +		return NULL;
+>   
+>   	node = avc_alloc_node(avc);
+> -	if (node) {
+> -		struct hlist_head *head;
+> -		spinlock_t *lock;
+> -		int rc = 0;
+> -
+> -		hvalue = avc_hash(ssid, tsid, tclass);
+> -		avc_node_populate(node, ssid, tsid, tclass, avd);
+> -		rc = avc_xperms_populate(node, xp_node);
+> -		if (rc) {
+> -			kmem_cache_free(avc_node_cachep, node);
+> -			return NULL;
+> -		}
+> -		head = &avc->avc_cache.slots[hvalue];
+> -		lock = &avc->avc_cache.slots_lock[hvalue];
+> +	if (!node)
+> +		return NULL;
+>   
+> -		spin_lock_irqsave(lock, flag);
+> -		hlist_for_each_entry(pos, head, list) {
+> -			if (pos->ae.ssid == ssid &&
+> -			    pos->ae.tsid == tsid &&
+> -			    pos->ae.tclass == tclass) {
+> -				avc_node_replace(avc, node, pos);
+> -				goto found;
+> -			}
+> +	avc_node_populate(node, ssid, tsid, tclass, avd);
+> +	if (avc_xperms_populate(node, xp_node)) {
+> +		avc_node_kill(avc, node);
+> +		return NULL;
+> +	}
+> +
+> +	hvalue = avc_hash(ssid, tsid, tclass);
+> +	head = &avc->avc_cache.slots[hvalue];
+> +	lock = &avc->avc_cache.slots_lock[hvalue];
+> +	spin_lock_irqsave(lock, flag);
+> +	hlist_for_each_entry(pos, head, list) {
+> +		if (pos->ae.ssid == ssid &&
+> +			pos->ae.tsid == tsid &&
+> +			pos->ae.tclass == tclass) {
+> +			avc_node_replace(avc, node, pos);
+> +			goto found;
+>   		}
+> -		hlist_add_head_rcu(&node->list, head);
+> -found:
+> -		spin_unlock_irqrestore(lock, flag);
+>   	}
+> -out:
+> +	hlist_add_head_rcu(&node->list, head);
+> +found:
+> +	spin_unlock_irqrestore(lock, flag);
+>   	return node;
+>   }
+>   
+> 
 
