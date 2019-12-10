@@ -2,62 +2,58 @@ Return-Path: <SRS0=PCLm=2A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C394AC00454
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 12:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4B7C43603
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 12:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90E4F208C3
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 12:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5C2920838
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 12:33:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VTNBqBZE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EofWhJy3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfLJMdo (ORCPT
+        id S1727370AbfLJMdr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Dec 2019 07:33:44 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:20089 "EHLO
+        Tue, 10 Dec 2019 07:33:47 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38877 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727444AbfLJMbX (ORCPT
+        with ESMTP id S1727411AbfLJMbX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 10 Dec 2019 07:31:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575981082;
+        s=mimecast20190719; t=1575981081;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iTwtQMcDj/AiSV92e7jTz17J61UISJVqdTIBvCkXxaw=;
-        b=VTNBqBZEvjYhgI5HMojBG6Kz32+RpsdUd5UE60rSwfXNtEexjrOGRFVIkYfIukvORdd64T
-        bpyefOX1njiP6HUo7J7Y1JxN0NB/Oonqf6AbyghEoiRphczWiyxwBfgfd50Ig+e/vEbdaX
-        dGc1u+GvZpdfXh2jiJlAw/ne1rcNsYM=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=6fYr/YcKzcP2lJn3q4ihsiLHTDwRl+UTgfXSrf1mhKc=;
+        b=EofWhJy3gZ38PlMMq/xP+b2nMZ9oAzmN61F/yS+N8lcz7lmAWojLIdjdK4iFdmXcu4UyX+
+        GZSdkWJRnI+JRSFMGwYXM6hi+TSqJfX1SdI8H6XzBnCWOOidn921KYYab4m9j0BvDTTqxO
+        EJfDYY0d2HYNSk+QPAVjLubS+T/1k28=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-425-pb7EhZwpOB-ESrGlEY7Lvg-1; Tue, 10 Dec 2019 07:31:18 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-59-ZBNHqDn8PB6I1ebKEiGXjA-1; Tue, 10 Dec 2019 07:31:18 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 36FCE2F29;
-        Tue, 10 Dec 2019 12:31:17 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 95B98100551A;
+        Tue, 10 Dec 2019 12:31:16 +0000 (UTC)
 Received: from coeurl.usersys.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 183585C219;
-        Tue, 10 Dec 2019 12:31:17 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 204D45D72A;
+        Tue, 10 Dec 2019 12:31:15 +0000 (UTC)
 Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
-        id D09C620C27; Tue, 10 Dec 2019 07:31:15 -0500 (EST)
+        id 8CD41209AF; Tue, 10 Dec 2019 07:31:15 -0500 (EST)
 From:   Scott Mayhew <smayhew@redhat.com>
 To:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com
 Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
         linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v6 14/27] nfs_clone_sb_security(): simplify the check for server bogosity
-Date:   Tue, 10 Dec 2019 07:31:02 -0500
-Message-Id: <20191210123115.1655-15-smayhew@redhat.com>
-In-Reply-To: <20191210123115.1655-1-smayhew@redhat.com>
-References: <20191210123115.1655-1-smayhew@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: pb7EhZwpOB-ESrGlEY7Lvg-1
+Subject: [PATCH v6 00/27] nfs: Mount API conversion
+Date:   Tue, 10 Dec 2019 07:30:48 -0500
+Message-Id: <20191210123115.1655-1-smayhew@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: ZBNHqDn8PB6I1ebKEiGXjA-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
@@ -65,35 +61,92 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+Hi Anna, Trond,
 
-We used to check ->i_op for being nfs_dir_inode_operations.  With
-separate inode_operations for v3 and v4 that became bogus, but
-rather than going for protocol-dependent comparison we could've
-just checked ->i_fop instead; _that_ is the same for all protocol
-versions.
+Here's a set of patches that converts NFS to use the mount API.  Note that
+there are a lot of preliminary patches, some from David and some from Al.
+The final patch (the one that does the actual conversion) from the David's
+initial posting has been split into 5 separate patches, and the entire set
+has been rebased on top of v5.5-rc1.
 
-Reviewed-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/nfs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v5:
+- fixed possible derefence of error pointer in nfs4_validate_fspath()
+  reported by Dan Carpenter
+- rebased on top of v5.5-rc1
+Changes since v4:
+- further split the original "NFS: Add fs_context support" patch (new
+  patch is about 25% smaller than the v4 patch)
+- fixed NFSv4 referral mounts (broken in the original patch)
+- fixed leak of nfs_fattr when fs_context is freed
+Changes since v3:
+- changed license and copyright text in fs/nfs/fs_context.c
+Changes since v2:
+- fixed the conversion of the nconnect=3D option
+- added '#if IS_ENABLED(CONFIG_NFS_V4)' around nfs4_parse_monolithic()
+  to avoid unused-function warning when compiling with v4 disabled
+Chagnes since v1:
+- split up patch 23 into 4 separate patches
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 2bcf0f8295e0..bec6c341f72c 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2578,7 +2578,7 @@ int nfs_clone_sb_security(struct super_block *s, stru=
-ct dentry *mntroot,
- =09unsigned long kflags =3D 0, kflags_out =3D 0;
-=20
- =09/* clone any lsm security options from the parent to the new sb */
--=09if (d_inode(mntroot)->i_op !=3D NFS_SB(s)->nfs_client->rpc_ops->dir_ino=
-de_ops)
-+=09if (d_inode(mntroot)->i_fop !=3D &nfs_dir_operations)
- =09=09return -ESTALE;
-=20
- =09if (NFS_SB(s)->caps & NFS_CAP_SECURITY_LABEL)
+-Scott
+
+Al Viro (15):
+  saner calling conventions for nfs_fs_mount_common()
+  nfs: stash server into struct nfs_mount_info
+  nfs: lift setting mount_info from nfs4_remote{,_referral}_mount
+  nfs: fold nfs4_remote_fs_type and nfs4_remote_referral_fs_type
+  nfs: don't bother setting/restoring export_path around
+    do_nfs_root_mount()
+  nfs4: fold nfs_do_root_mount/nfs_follow_remote_path
+  nfs: lift setting mount_info from nfs_xdev_mount()
+  nfs: stash nfs_subversion reference into nfs_mount_info
+  nfs: don't bother passing nfs_subversion to ->try_mount() and
+    nfs_fs_mount_common()
+  nfs: merge xdev and remote file_system_type
+  nfs: unexport nfs_fs_mount_common()
+  nfs: don't pass nfs_subversion to ->create_server()
+  nfs: get rid of mount_info ->fill_super()
+  nfs_clone_sb_security(): simplify the check for server bogosity
+  nfs: get rid of ->set_security()
+
+David Howells (8):
+  NFS: Move mount parameterisation bits into their own file
+  NFS: Constify mount argument match tables
+  NFS: Rename struct nfs_parsed_mount_data to struct nfs_fs_context
+  NFS: Split nfs_parse_mount_options()
+  NFS: Deindent nfs_fs_context_parse_option()
+  NFS: Add a small buffer in nfs_fs_context to avoid string dup
+  NFS: Do some tidying of the parsing code
+  NFS: Add fs_context support.
+
+Scott Mayhew (4):
+  NFS: rename nfs_fs_context pointer arg in a few functions
+  NFS: Convert mount option parsing to use functionality from
+    fs_parser.h
+  NFS: Additional refactoring for fs_context conversion
+  NFS: Attach supplementary error information to fs_context.
+
+ fs/nfs/Makefile         |    2 +-
+ fs/nfs/client.c         |   80 +-
+ fs/nfs/fs_context.c     | 1424 +++++++++++++++++++++++++
+ fs/nfs/fscache.c        |    2 +-
+ fs/nfs/getroot.c        |   73 +-
+ fs/nfs/internal.h       |  132 +--
+ fs/nfs/namespace.c      |  146 ++-
+ fs/nfs/nfs3_fs.h        |    2 +-
+ fs/nfs/nfs3client.c     |    6 +-
+ fs/nfs/nfs3proc.c       |    2 +-
+ fs/nfs/nfs4_fs.h        |    9 +-
+ fs/nfs/nfs4client.c     |   99 +-
+ fs/nfs/nfs4file.c       |    1 +
+ fs/nfs/nfs4namespace.c  |  292 +++---
+ fs/nfs/nfs4proc.c       |    2 +-
+ fs/nfs/nfs4super.c      |  257 ++---
+ fs/nfs/proc.c           |    2 +-
+ fs/nfs/super.c          | 2217 +++++----------------------------------
+ include/linux/nfs_xdr.h |    9 +-
+ 19 files changed, 2287 insertions(+), 2470 deletions(-)
+ create mode 100644 fs/nfs/fs_context.c
+
 --=20
 2.17.2
 
