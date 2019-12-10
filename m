@@ -2,166 +2,518 @@ Return-Path: <SRS0=PCLm=2A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD09C2D0BF
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 11:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2867C2D0C5
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 12:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1A5A20726
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 11:27:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B48E20838
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Dec 2019 12:31:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PXjKkgMX"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OeqHi5xQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfLJL1t (ORCPT
+        id S1727631AbfLJMb1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Dec 2019 06:27:49 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:54706 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727199AbfLJL1t (ORCPT
+        Tue, 10 Dec 2019 07:31:27 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:54764 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727608AbfLJMb1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:27:49 -0500
+        Tue, 10 Dec 2019 07:31:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575977267;
+        s=mimecast20190719; t=1575981085;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=bOFmsAtNbW8RFKiaUWBj7E1wR8cw0Z5ta8Z04trWaPw=;
-        b=PXjKkgMX3jYCeIPg7CvNbgQcfKlCzSa6KQ3TXAnyXFRbfULZpZU0zE6ChXj5cbpGlC/uvE
-        HXWAg6IGeIFxo6SaGIGbN0pyyiC0eCzagU+cepVrf5S7HHY1yEvplrrMxvOxSUsFDFN/Pv
-        4bq8OIZ2BEkoWlkxE5uKRVAO4mmqycQ=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-56-EQuJAairM4CsRZzcCb6jzQ-1; Tue, 10 Dec 2019 06:27:46 -0500
-Received: by mail-oi1-f200.google.com with SMTP id u125so6081573oia.20
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Dec 2019 03:27:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bOFmsAtNbW8RFKiaUWBj7E1wR8cw0Z5ta8Z04trWaPw=;
-        b=dTdL/3KdQ4gPfOuCijTSPXDad9Te5jFoI7RSJF4XA3dHPlj0VWuz7d9ML3keu/xwjL
-         +MXRz9laaS/SECg6X4vIOqpOjR+VweNGZ4DQzViTYj6Cgn9OLAvjxPxAjHnbyIFZ/qRd
-         3pvBLgjCOaaROpDI0Q8/BoyHhI3CsmSavPiwJ/aPFIE+Ph1Tc8WSYbnzMjkiCf30oaZJ
-         2hUQh74nj1j+crX1W2iD8h2ayuSLxEziZT9vzqd7y+oCTzvLTOQeASxCq0OhqUzdaRlD
-         +g3hy+G38TZo9A83yqL2gCnUagodX2yK5BKtevijrDieMMHHTm/ENEUz4kUcPdpLAjqj
-         EJ1A==
-X-Gm-Message-State: APjAAAVM8hjm7gap9w6um+EPYaNXY4sk5YSjQqEJhXs+x4FKPK2f56fN
-        ZPAwmnvONEzcd3plzim1IY/gkP5d8WRswFd664idyEOB2i9ZCXJcJiSGtsI+fEhPDCrOV7KfnXZ
-        ar40t+BhpC/0oBLVE0bG5ZlpAdaiIMKmItWLukkaqJn+2U+iemRaX
-X-Received: by 2002:a9d:338:: with SMTP id 53mr15586615otv.197.1575977265343;
-        Tue, 10 Dec 2019 03:27:45 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxoDNawE1RIKWv2izZYOAI/uCL0+cRnKFQ76pSJpz1S/34x+nbOWHlmWHvZ46sRQuTiYSTwxrUg3G5EtMrNof8=
-X-Received: by 2002:a9d:338:: with SMTP id 53mr15586596otv.197.1575977265026;
- Tue, 10 Dec 2019 03:27:45 -0800 (PST)
-MIME-Version: 1.0
-References: <20191209075756.123157-1-omosnace@redhat.com> <23671223-f841-564c-6ae8-0401bce0fa20@tycho.nsa.gov>
- <ecfd3846-b38f-4b85-4568-d64625c490ac@tycho.nsa.gov> <2fadcd3d-96d2-82bf-f221-a7961853be50@schaufler-ca.com>
-In-Reply-To: <2fadcd3d-96d2-82bf-f221-a7961853be50@schaufler-ca.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Tue, 10 Dec 2019 12:27:34 +0100
-Message-ID: <CAFqZXNsZTRveUYBdsXC2iM2MU+nWPz0xL9eLRFwFYMnti-Ww-g@mail.gmail.com>
-Subject: Re: [PATCH] selinux: reorder hooks to make runtime disable less broken
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        SElinux list <selinux@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        LSM <linux-security-module@vger.kernel.org>
-X-MC-Unique: EQuJAairM4CsRZzcCb6jzQ-1
+        bh=i4pZOY575C3XWd4ewUwz3HOnt5uDC6INuYO5kmnM1rM=;
+        b=OeqHi5xQroxizRzivIGaCGxgCEh20cZdPHWso9RkneHZy2d5glB31FZl6413siXeQJSa3+
+        nIkNy8cgBrQSvILf+aRvpLMt4GY/7Zzauc3TvRQ8D3WXxEQo/dF6vBo9POnA2gEGmnyUFS
+        Y09CW+BzaVlDWKTMoBrGplziOhiVofo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-389-3yQ3uaeSMM2fy493OJAxmQ-1; Tue, 10 Dec 2019 07:31:19 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9ABDD800D5E;
+        Tue, 10 Dec 2019 12:31:17 +0000 (UTC)
+Received: from coeurl.usersys.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 67E755DA60;
+        Tue, 10 Dec 2019 12:31:17 +0000 (UTC)
+Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
+        id 0642920C40; Tue, 10 Dec 2019 07:31:16 -0500 (EST)
+From:   Scott Mayhew <smayhew@redhat.com>
+To:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v6 22/27] NFS: Do some tidying of the parsing code
+Date:   Tue, 10 Dec 2019 07:31:10 -0500
+Message-Id: <20191210123115.1655-23-smayhew@redhat.com>
+In-Reply-To: <20191210123115.1655-1-smayhew@redhat.com>
+References: <20191210123115.1655-1-smayhew@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: 3yQ3uaeSMM2fy493OJAxmQ-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 9, 2019 at 6:20 PM Casey Schaufler <casey@schaufler-ca.com> wro=
-te:
-> On 12/9/2019 5:58 AM, Stephen Smalley wrote:
-> > On 12/9/19 8:21 AM, Stephen Smalley wrote:
-> >> On 12/9/19 2:57 AM, Ondrej Mosnacek wrote:
-> >>> Commit b1d9e6b0646d ("LSM: Switch to lists of hooks") switched the LS=
-M
-> >>> infrastructure to use per-hook lists, which meant that removing the
-> >>> hooks for a given module was no longer atomic. Even though the commit
-> >>> clearly documents that modules implementing runtime revmoval of hooks
-> >>> (only SELinux attempts this madness) need to take special precautions=
- to
-> >>> avoid race conditions, SELinux has never addressed this.
-> >>>
-> >>> By inserting an artificial delay between the loop iterations of
-> >>> security_delete_hooks() (I used 100 ms), booting to a state where
-> >>> SELinux is enabled, but policy is not yet loaded, and running these
-> >>> commands:
-> >>>
-> >>>      while true; do ping -c 1 <some IP>; done &
-> >>>      echo -n 1 >/sys/fs/selinux/disable
-> >>>      kill %1
-> >>>      wait
-> >>>
-> >>> ...I was able to trigger NULL pointer dereferences in various places.=
- I
-> >>> also have a report of someone getting panics on a stock RHEL-8 kernel
-> >>> after setting SELINUX=3Ddisabled in /etc/selinux/config and rebooting
-> >>> (without adding "selinux=3D0" to kernel command-line).
-> >>>
-> >>> Reordering the SELinux hooks such that those that allocate structures
-> >>> are removed last seems to prevent these panics. It is very much possi=
-ble
-> >>> that this doesn't make the runtime disable completely race-free, but =
-at
-> >>> least it makes the operation much less fragile.
-> >>>
-> >>> An alternative (and safer) solution would be to add NULL checks to ea=
-ch
-> >>> hook, but doing this just to support the runtime disable hack doesn't
-> >>> seem to be worth the effort...
-> >>
-> >> Personally, I would prefer to just get rid of runtime disable altogeth=
-er; it also precludes making the hooks read-only after initialization.  IMH=
-O, selinux=3D0 is the proper way to disable SELinux if necessary.  I believ=
-e there is an open bugzilla on Fedora related to this issue, since runtime =
-disable was originally introduced for Fedora.
-> >
-> > Also, if we have to retain this support, it seems like this ought to be=
- fixed in the LSM framework especially since it was a change there that bro=
-ke the SELinux implementation.
->
-> Agreed, mostly. Deleting an LSM is fundamentally something the infrastruc=
-ture
-> should handle *if* we allow it. Should we decide at some point to allow l=
-oadable
-> modules, as Tetsuo has advocated from time to time, we would need a gener=
-al
-> solution. We don't have a general solution now because only SELinux wants=
- it.
-> The previous implementation was under #ifdef for SELinux. At the time I u=
-nderstood
-> that there was no interest in investing in it. The implementation passed =
-tests
-> at the time.
->
-> I propose that until such time as someone decides to seriously investigat=
-e
-> loadable security modules* the sole user of the deletion mechanism is
-> welcome to invest whatever they like in their special case, and I will be
-> happy to lend whatever assistance I can.
+From: David Howells <dhowells@redhat.com>
 
-On my way to lunch I came up with another relatively simple solution
-that should address this problem at the infrastructure level. Let me
-try to write it up into a patch, hopefully it will work...
+Do some tidying of the parsing code, including:
 
->
-> ---
-> * I do not plan to propose an implementation of loadable modules.
->   I leave that as an exercise for the next generation.
->
->
+ (*) Returning 0/error rather than true/false.
 
+ (*) Putting the nfs_fs_context pointer first in some arg lists.
+
+ (*) Unwrap some lines that will now fit on one line.
+
+ (*) Provide unioned sockaddr/sockaddr_storage fields to avoid casts.
+
+ (*) nfs_parse_devname() can paste its return values directly into the
+     nfs_fs_context struct as that's where the caller puts them.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/nfs/fs_context.c | 126 +++++++++++++++++++-------------------------
+ fs/nfs/internal.h   |  16 ++++--
+ fs/nfs/super.c      |   2 +-
+ 3 files changed, 66 insertions(+), 78 deletions(-)
+
+diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
+index 2921c5820c31..44531443a92b 100644
+--- a/fs/nfs/fs_context.c
++++ b/fs/nfs/fs_context.c
+@@ -343,8 +343,9 @@ static void nfs_set_mount_transport_protocol(struct nfs=
+_fs_context *ctx)
+  * Add 'flavor' to 'auth_info' if not already present.
+  * Returns true if 'flavor' ends up in the list, false otherwise
+  */
+-static bool nfs_auth_info_add(struct nfs_auth_info *auth_info,
+-=09=09=09      rpc_authflavor_t flavor)
++static int nfs_auth_info_add(struct nfs_fs_context *ctx,
++=09=09=09     struct nfs_auth_info *auth_info,
++=09=09=09     rpc_authflavor_t flavor)
+ {
+ =09unsigned int i;
+ =09unsigned int max_flavor_len =3D ARRAY_SIZE(auth_info->flavors);
+@@ -352,26 +353,27 @@ static bool nfs_auth_info_add(struct nfs_auth_info *a=
+uth_info,
+ =09/* make sure this flavor isn't already in the list */
+ =09for (i =3D 0; i < auth_info->flavor_len; i++) {
+ =09=09if (flavor =3D=3D auth_info->flavors[i])
+-=09=09=09return true;
++=09=09=09return 0;
+ =09}
+=20
+ =09if (auth_info->flavor_len + 1 >=3D max_flavor_len) {
+ =09=09dfprintk(MOUNT, "NFS: too many sec=3D flavors\n");
+-=09=09return false;
++=09=09return -EINVAL;
+ =09}
+=20
+ =09auth_info->flavors[auth_info->flavor_len++] =3D flavor;
+-=09return true;
++=09return 0;
+ }
+=20
+ /*
+  * Parse the value of the 'sec=3D' option.
+  */
+-static int nfs_parse_security_flavors(char *value, struct nfs_fs_context *=
+ctx)
++static int nfs_parse_security_flavors(struct nfs_fs_context *ctx, char *va=
+lue)
+ {
+ =09substring_t args[MAX_OPT_ARGS];
+ =09rpc_authflavor_t pseudoflavor;
+ =09char *p;
++=09int ret;
+=20
+ =09dfprintk(MOUNT, "NFS: parsing sec=3D%s option\n", value);
+=20
+@@ -413,19 +415,20 @@ static int nfs_parse_security_flavors(char *value, st=
+ruct nfs_fs_context *ctx)
+ =09=09default:
+ =09=09=09dfprintk(MOUNT,
+ =09=09=09=09 "NFS: sec=3D option '%s' not recognized\n", p);
+-=09=09=09return 0;
++=09=09=09return -EINVAL;
+ =09=09}
+=20
+-=09=09if (!nfs_auth_info_add(&ctx->auth_info, pseudoflavor))
+-=09=09=09return 0;
++=09=09ret =3D nfs_auth_info_add(ctx, &ctx->auth_info, pseudoflavor);
++=09=09if (ret < 0)
++=09=09=09return ret;
+ =09}
+=20
+-=09return 1;
++=09return 0;
+ }
+=20
+-static int nfs_parse_version_string(char *string,
+-=09=09struct nfs_fs_context *ctx,
+-=09=09substring_t *args)
++static int nfs_parse_version_string(struct nfs_fs_context *ctx,
++=09=09=09=09    char *string,
++=09=09=09=09    substring_t *args)
+ {
+ =09ctx->flags &=3D ~NFS_MOUNT_VER3;
+ =09switch (match_token(string, nfs_vers_tokens, args)) {
+@@ -456,9 +459,10 @@ static int nfs_parse_version_string(char *string,
+ =09=09ctx->minorversion =3D 2;
+ =09=09break;
+ =09default:
+-=09=09return 0;
++=09=09dfprintk(MOUNT, "NFS:   Unsupported NFS version\n");
++=09=09return -EINVAL;
+ =09}
+-=09return 1;
++=09return 0;
+ }
+=20
+ static int nfs_get_option_str(substring_t args[], char **option)
+@@ -513,7 +517,7 @@ static int nfs_fs_context_parse_option(struct nfs_fs_co=
+ntext *ctx, char *p)
+ {
+ =09substring_t args[MAX_OPT_ARGS];
+ =09char *string;
+-=09int token, rc;
++=09int token, ret;
+=20
+ =09dfprintk(MOUNT, "NFS:   parsing nfs mount option '%s'\n", p);
+=20
+@@ -553,13 +557,11 @@ static int nfs_fs_context_parse_option(struct nfs_fs_=
+context *ctx, char *p)
+ =09=09break;
+ =09case Opt_lock:
+ =09=09ctx->flags &=3D ~NFS_MOUNT_NONLM;
+-=09=09ctx->flags &=3D ~(NFS_MOUNT_LOCAL_FLOCK |
+-=09=09=09=09NFS_MOUNT_LOCAL_FCNTL);
++=09=09ctx->flags &=3D ~(NFS_MOUNT_LOCAL_FLOCK | NFS_MOUNT_LOCAL_FCNTL);
+ =09=09break;
+ =09case Opt_nolock:
+ =09=09ctx->flags |=3D NFS_MOUNT_NONLM;
+-=09=09ctx->flags |=3D (NFS_MOUNT_LOCAL_FLOCK |
+-=09=09=09       NFS_MOUNT_LOCAL_FCNTL);
++=09=09ctx->flags |=3D (NFS_MOUNT_LOCAL_FLOCK | NFS_MOUNT_LOCAL_FCNTL);
+ =09=09break;
+ =09case Opt_udp:
+ =09=09ctx->flags &=3D ~NFS_MOUNT_TCP;
+@@ -692,29 +694,25 @@ static int nfs_fs_context_parse_option(struct nfs_fs_=
+context *ctx, char *p)
+ =09=09string =3D match_strdup(args);
+ =09=09if (string =3D=3D NULL)
+ =09=09=09goto out_nomem;
+-=09=09rc =3D nfs_parse_version_string(string, ctx, args);
++=09=09ret =3D nfs_parse_version_string(ctx, string, args);
+ =09=09kfree(string);
+-=09=09if (!rc)
+-=09=09=09goto out_invalid_value;
++=09=09if (ret < 0)
++=09=09=09return ret;
+ =09=09break;
+ =09case Opt_sec:
+ =09=09string =3D match_strdup(args);
+ =09=09if (string =3D=3D NULL)
+ =09=09=09goto out_nomem;
+-=09=09rc =3D nfs_parse_security_flavors(string, ctx);
++=09=09ret =3D nfs_parse_security_flavors(ctx, string);
+ =09=09kfree(string);
+-=09=09if (!rc) {
+-=09=09=09dfprintk(MOUNT, "NFS:   unrecognized "
+-=09=09=09=09 "security flavor\n");
+-=09=09=09return -EINVAL;
+-=09=09}
++=09=09if (ret < 0)
++=09=09=09return ret;
+ =09=09break;
+ =09case Opt_proto:
+ =09=09string =3D match_strdup(args);
+ =09=09if (string =3D=3D NULL)
+ =09=09=09goto out_nomem;
+-=09=09token =3D match_token(string,
+-=09=09=09=09    nfs_xprt_protocol_tokens, args);
++=09=09token =3D match_token(string, nfs_xprt_protocol_tokens, args);
+=20
+ =09=09ctx->protofamily =3D AF_INET;
+ =09=09switch (token) {
+@@ -742,9 +740,8 @@ static int nfs_fs_context_parse_option(struct nfs_fs_co=
+ntext *ctx, char *p)
+ =09=09=09xprt_load_transport(string);
+ =09=09=09break;
+ =09=09default:
+-=09=09=09dfprintk(MOUNT, "NFS:   unrecognized "
+-=09=09=09=09 "transport protocol\n");
+ =09=09=09kfree(string);
++=09=09=09dfprintk(MOUNT, "NFS:   unrecognized transport protocol\n");
+ =09=09=09return -EINVAL;
+ =09=09}
+ =09=09kfree(string);
+@@ -753,8 +750,7 @@ static int nfs_fs_context_parse_option(struct nfs_fs_co=
+ntext *ctx, char *p)
+ =09=09string =3D match_strdup(args);
+ =09=09if (string =3D=3D NULL)
+ =09=09=09goto out_nomem;
+-=09=09token =3D match_token(string,
+-=09=09=09=09    nfs_xprt_protocol_tokens, args);
++=09=09token =3D match_token(string, nfs_xprt_protocol_tokens, args);
+ =09=09kfree(string);
+=20
+ =09=09ctx->mountfamily =3D AF_INET;
+@@ -773,8 +769,7 @@ static int nfs_fs_context_parse_option(struct nfs_fs_co=
+ntext *ctx, char *p)
+ =09=09=09break;
+ =09=09case Opt_xprt_rdma: /* not used for side protocols */
+ =09=09default:
+-=09=09=09dfprintk(MOUNT, "NFS:   unrecognized "
+-=09=09=09=09 "transport protocol\n");
++=09=09=09dfprintk(MOUNT, "NFS:   unrecognized transport protocol\n");
+ =09=09=09return -EINVAL;
+ =09=09}
+ =09=09break;
+@@ -784,9 +779,8 @@ static int nfs_fs_context_parse_option(struct nfs_fs_co=
+ntext *ctx, char *p)
+ =09=09=09goto out_nomem;
+ =09=09ctx->nfs_server.addrlen =3D
+ =09=09=09rpc_pton(ctx->net, string, strlen(string),
+-=09=09=09=09 (struct sockaddr *)
+ =09=09=09=09 &ctx->nfs_server.address,
+-=09=09=09=09 sizeof(ctx->nfs_server.address));
++=09=09=09=09 sizeof(ctx->nfs_server._address));
+ =09=09kfree(string);
+ =09=09if (ctx->nfs_server.addrlen =3D=3D 0)
+ =09=09=09goto out_invalid_address;
+@@ -796,8 +790,7 @@ static int nfs_fs_context_parse_option(struct nfs_fs_co=
+ntext *ctx, char *p)
+ =09=09=09goto out_nomem;
+ =09=09break;
+ =09case Opt_mounthost:
+-=09=09if (nfs_get_option_str(args,
+-=09=09=09=09       &ctx->mount_server.hostname))
++=09=09if (nfs_get_option_str(args, &ctx->mount_server.hostname))
+ =09=09=09goto out_nomem;
+ =09=09break;
+ =09case Opt_mountaddr:
+@@ -806,9 +799,8 @@ static int nfs_fs_context_parse_option(struct nfs_fs_co=
+ntext *ctx, char *p)
+ =09=09=09goto out_nomem;
+ =09=09ctx->mount_server.addrlen =3D
+ =09=09=09rpc_pton(ctx->net, string, strlen(string),
+-=09=09=09=09 (struct sockaddr *)
+ =09=09=09=09 &ctx->mount_server.address,
+-=09=09=09=09 sizeof(ctx->mount_server.address));
++=09=09=09=09 sizeof(ctx->mount_server._address));
+ =09=09kfree(string);
+ =09=09if (ctx->mount_server.addrlen =3D=3D 0)
+ =09=09=09goto out_invalid_address;
+@@ -822,8 +814,7 @@ static int nfs_fs_context_parse_option(struct nfs_fs_co=
+ntext *ctx, char *p)
+ =09=09string =3D match_strdup(args);
+ =09=09if (string =3D=3D NULL)
+ =09=09=09goto out_nomem;
+-=09=09token =3D match_token(string,
+-=09=09=09=09    nfs_lookupcache_tokens, args);
++=09=09token =3D match_token(string, nfs_lookupcache_tokens, args);
+ =09=09kfree(string);
+ =09=09switch (token) {
+ =09=09case Opt_lookupcache_all:
+@@ -837,8 +828,7 @@ static int nfs_fs_context_parse_option(struct nfs_fs_co=
+ntext *ctx, char *p)
+ =09=09=09ctx->flags |=3D NFS_MOUNT_LOOKUP_CACHE_NONEG|NFS_MOUNT_LOOKUP_CAC=
+HE_NONE;
+ =09=09=09break;
+ =09=09default:
+-=09=09=09dfprintk(MOUNT, "NFS:   invalid "
+-=09=09=09=09 "lookupcache argument\n");
++=09=09=09dfprintk(MOUNT, "NFS:   invalid lookupcache argument\n");
+ =09=09=09return -EINVAL;
+ =09=09}
+ =09=09break;
+@@ -851,8 +841,7 @@ static int nfs_fs_context_parse_option(struct nfs_fs_co=
+ntext *ctx, char *p)
+ =09=09string =3D match_strdup(args);
+ =09=09if (string =3D=3D NULL)
+ =09=09=09goto out_nomem;
+-=09=09token =3D match_token(string, nfs_local_lock_tokens,
+-=09=09=09=09    args);
++=09=09token =3D match_token(string, nfs_local_lock_tokens, args);
+ =09=09kfree(string);
+ =09=09switch (token) {
+ =09=09case Opt_local_lock_all:
+@@ -870,8 +859,7 @@ static int nfs_fs_context_parse_option(struct nfs_fs_co=
+ntext *ctx, char *p)
+ =09=09=09=09=09NFS_MOUNT_LOCAL_FCNTL);
+ =09=09=09break;
+ =09=09default:
+-=09=09=09dfprintk(MOUNT, "NFS:=09invalid=09"
+-=09=09=09=09 "local_lock argument\n");
++=09=09=09dfprintk(MOUNT, "NFS:=09invalid=09local_lock argument\n");
+ =09=09=09return -EINVAL;
+ =09=09}
+ =09=09break;
+@@ -885,13 +873,11 @@ static int nfs_fs_context_parse_option(struct nfs_fs_=
+context *ctx, char *p)
+ =09=09break;
+ =09case Opt_userspace:
+ =09case Opt_deprecated:
+-=09=09dfprintk(MOUNT, "NFS:   ignoring mount option "
+-=09=09=09 "'%s'\n", p);
++=09=09dfprintk(MOUNT, "NFS:   ignoring mount option '%s'\n", p);
+ =09=09break;
+=20
+ =09default:
+-=09=09dfprintk(MOUNT, "NFS:   unrecognized mount option "
+-=09=09=09 "'%s'\n", p);
++=09=09dfprintk(MOUNT, "NFS:   unrecognized mount option '%s'\n", p);
+ =09=09return -EINVAL;
+ =09}
+=20
+@@ -951,15 +937,15 @@ int nfs_parse_mount_options(char *raw, struct nfs_fs_=
+context *ctx)
+ =09 * families in the addr=3D/mountaddr=3D options.
+ =09 */
+ =09if (ctx->protofamily !=3D AF_UNSPEC &&
+-=09    ctx->protofamily !=3D ctx->nfs_server.address.ss_family)
++=09    ctx->protofamily !=3D ctx->nfs_server.address.sa_family)
+ =09=09goto out_proto_mismatch;
+=20
+ =09if (ctx->mountfamily !=3D AF_UNSPEC) {
+ =09=09if (ctx->mount_server.addrlen) {
+-=09=09=09if (ctx->mountfamily !=3D ctx->mount_server.address.ss_family)
++=09=09=09if (ctx->mountfamily !=3D ctx->mount_server.address.sa_family)
+ =09=09=09=09goto out_mountproto_mismatch;
+ =09=09} else {
+-=09=09=09if (ctx->mountfamily !=3D ctx->nfs_server.address.ss_family)
++=09=09=09if (ctx->mountfamily !=3D ctx->nfs_server.address.sa_family)
+ =09=09=09=09goto out_mountproto_mismatch;
+ =09=09}
+ =09}
+@@ -995,9 +981,9 @@ int nfs_parse_mount_options(char *raw, struct nfs_fs_co=
+ntext *ctx)
+  *
+  * Note: caller frees hostname and export path, even on error.
+  */
+-static int nfs_parse_devname(const char *dev_name,
+-=09=09=09     char **hostname, size_t maxnamlen,
+-=09=09=09     char **export_path, size_t maxpathlen)
++static int nfs_parse_devname(struct nfs_fs_context *ctx,
++=09=09=09     const char *dev_name,
++=09=09=09     size_t maxnamlen, size_t maxpathlen)
+ {
+ =09size_t len;
+ =09char *end;
+@@ -1033,17 +1019,17 @@ static int nfs_parse_devname(const char *dev_name,
+ =09=09goto out_hostname;
+=20
+ =09/* N.B. caller will free nfs_server.hostname in all cases */
+-=09*hostname =3D kstrndup(dev_name, len, GFP_KERNEL);
+-=09if (*hostname =3D=3D NULL)
++=09ctx->nfs_server.hostname =3D kmemdup_nul(dev_name, len, GFP_KERNEL);
++=09if (!ctx->nfs_server.hostname)
+ =09=09goto out_nomem;
+ =09len =3D strlen(++end);
+ =09if (len > maxpathlen)
+ =09=09goto out_path;
+-=09*export_path =3D kstrndup(end, len, GFP_KERNEL);
+-=09if (!*export_path)
++=09ctx->nfs_server.export_path =3D kmemdup_nul(end, len, GFP_KERNEL);
++=09if (!ctx->nfs_server.export_path)
+ =09=09goto out_nomem;
+=20
+-=09dfprintk(MOUNT, "NFS: MNTPATH: '%s'\n", *export_path);
++=09dfprintk(MOUNT, "NFS: MNTPATH: '%s'\n", ctx->nfs_server.export_path);
+ =09return 0;
+=20
+ out_bad_devname:
+@@ -1064,7 +1050,7 @@ static int nfs_parse_devname(const char *dev_name,
+ }
+=20
+ /*
+- * Validate the NFS2/NFS3 mount data
++ * Parse monolithic NFS2/NFS3 mount data
+  * - fills in the mount root filehandle
+  *
+  * For option strings, user space handles the following behaviors:
+@@ -1393,11 +1379,7 @@ int nfs_validate_text_mount_data(void *options,
+=20
+ =09nfs_set_port(sap, &ctx->nfs_server.port, port);
+=20
+-=09return nfs_parse_devname(dev_name,
+-=09=09=09=09   &ctx->nfs_server.hostname,
+-=09=09=09=09   max_namelen,
+-=09=09=09=09   &ctx->nfs_server.export_path,
+-=09=09=09=09   max_pathlen);
++=09return nfs_parse_devname(ctx, dev_name, max_namelen, max_pathlen);
+=20
+ #if !IS_ENABLED(CONFIG_NFS_V4)
+ out_v4_not_compiled:
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index 5342f3e4d565..003c2b8eb1e6 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -82,11 +82,11 @@ struct nfs_client_initdata {
+  * In-kernel mount arguments
+  */
+ struct nfs_fs_context {
+-=09int=09=09=09flags;
++=09unsigned int=09=09flags;=09=09/* NFS{,4}_MOUNT_* flags */
+ =09unsigned int=09=09rsize, wsize;
+ =09unsigned int=09=09timeo, retrans;
+-=09unsigned int=09=09acregmin, acregmax,
+-=09=09=09=09acdirmin, acdirmax;
++=09unsigned int=09=09acregmin, acregmax;
++=09unsigned int=09=09acdirmin, acdirmax;
+ =09unsigned int=09=09namlen;
+ =09unsigned int=09=09options;
+ =09unsigned int=09=09bsize;
+@@ -102,7 +102,10 @@ struct nfs_fs_context {
+ =09bool=09=09=09sloppy;
+=20
+ =09struct {
+-=09=09struct sockaddr_storage=09address;
++=09=09union {
++=09=09=09struct sockaddr=09address;
++=09=09=09struct sockaddr_storage=09_address;
++=09=09};
+ =09=09size_t=09=09=09addrlen;
+ =09=09char=09=09=09*hostname;
+ =09=09u32=09=09=09version;
+@@ -111,7 +114,10 @@ struct nfs_fs_context {
+ =09} mount_server;
+=20
+ =09struct {
+-=09=09struct sockaddr_storage=09address;
++=09=09union {
++=09=09=09struct sockaddr=09address;
++=09=09=09struct sockaddr_storage=09_address;
++=09=09};
+ =09=09size_t=09=09=09addrlen;
+ =09=09char=09=09=09*hostname;
+ =09=09char=09=09=09*export_path;
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 83527515590e..59962bc0118f 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -816,7 +816,7 @@ static int nfs_request_mount(struct nfs_fs_context *cfg=
+,
+ =09/*
+ =09 * Construct the mount server's address.
+ =09 */
+-=09if (cfg->mount_server.address.ss_family =3D=3D AF_UNSPEC) {
++=09if (cfg->mount_server.address.sa_family =3D=3D AF_UNSPEC) {
+ =09=09memcpy(request.sap, &cfg->nfs_server.address,
+ =09=09       cfg->nfs_server.addrlen);
+ =09=09cfg->mount_server.addrlen =3D cfg->nfs_server.addrlen;
 --=20
-Ondrej Mosnacek <omosnace at redhat dot com>
-Software Engineer, Security Technologies
-Red Hat, Inc.
+2.17.2
 
