@@ -2,121 +2,187 @@ Return-Path: <SRS0=sGvM=2B=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D55DBC43603
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Dec 2019 11:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E888C00454
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Dec 2019 13:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60A9D21556
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Dec 2019 11:44:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B31222B48
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Dec 2019 13:21:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=pks.im header.i=@pks.im header.b="GJ0da8m2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L5UkeyQ5"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QHZ9kX0t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729003AbfLKLoS (ORCPT
+        id S1729241AbfLKNVe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Dec 2019 06:44:18 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:37669 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727365AbfLKLoR (ORCPT
+        Wed, 11 Dec 2019 08:21:34 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39877 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729132AbfLKNVe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Dec 2019 06:44:17 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 415A0221E5;
-        Wed, 11 Dec 2019 06:44:16 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 11 Dec 2019 06:44:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pks.im; h=from
-        :to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm2; bh=q9GfmJu0/uXcjjwNdVXT87y9tv
-        f2NAepvRlS76KjFRs=; b=GJ0da8m2WH87Ht44h966jrtP0Zmt91nq++iEcenp+s
-        781GGmpBI6qjrNcUfAigwkw5Yss5e9d4+AnuTV0z8u++p5hA6KJvGUvrXIQ/LssM
-        6mtYyzPcuRb4CMNMQv3woiTsDkci6wmdXP50iVas7tQPDOVBAo3va5uAw4av3ALX
-        Nzi1Bnh1Z0UWeNdFm+Lc6yz8aMNOnhiWwpH3nn54l5B5T6zovpVhmq4letl8NyuQ
-        fKcFx8P7ProWrdX/m/4PEOJR9HOWhtpKXYgBdBMfOambgxtj228HvOJZc/AQBD3a
-        p4T/BZLjJJaJMAtsLoi9OvnS5XEbRMV3d4HbN1LMY6aw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=q9GfmJu0/uXcjjwNd
-        VXT87y9tvf2NAepvRlS76KjFRs=; b=L5UkeyQ5D+dpUGbymL26aPvBSWJIQIF2o
-        GNxOZoiAxw5RxlZ6J1aOp1ihqpG3Osm4U3asRYAZndARsZu4MRVBXa3DhYicc5qO
-        7MdXZuIee6t8POfobaYfwrkfgBqTD3985pUBsUa3NSUlVbOISuC9siLSlfNJX66I
-        FBWQdKKAvOkQ8eiwDNetil+i1yWwsxH9eD6w92dXbo0eoMqB4k/T5TTQgO6bxxY5
-        mHcobLNV1bgQFDhQnVy6UzfkwO9cuWEPVEPHEJs2malUAjxbYcwOb62kYLlQT0NO
-        FZtDrpwrJiqrunlo9LyW7/7vRhXf4/ofWe4K0EdsikJFfwVqm6rIA==
-X-ME-Sender: <xms:j9bwXeRmRE-gQqcGF_KBnC8tTx-ygmqU8OiHYNDHOKlMag_EXZHqIQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudelhedgvdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefrrghtrhhitghk
-    ucfuthgvihhnhhgrrhguthcuoehpshesphhkshdrihhmqeenucffohhmrghinhepihhssh
-    huvgdrshgvtghurhhithihnecukfhppeejjedrudekfedrudejjedrudduieenucfrrghr
-    rghmpehmrghilhhfrhhomhepphhssehpkhhsrdhimhenucevlhhushhtvghrufhiiigvpe
-    dt
-X-ME-Proxy: <xmx:j9bwXeBZgNNsjAlQQb9OESx0AUrzRPZ-bBbGl-vGX-Fa8V7vRlo6TA>
-    <xmx:j9bwXRQgDhYnM99cgeutqzUYqQrKWOFUjLuWb5nq7DStHoQHxF5skQ>
-    <xmx:j9bwXQTA5EntrFSSxWKCLBf2Df3RFrgRVYvRwWDOkLOY99kPpOCV4w>
-    <xmx:kNbwXVUIvN8TJz_QE2UpzLAYUxJnHZvAnPAK91oZgxkyUsfVfLQ0bA>
-Received: from vm-mail (x4db7b174.dyn.telefonica.de [77.183.177.116])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F094D8005B;
-        Wed, 11 Dec 2019 06:44:13 -0500 (EST)
-Received: from localhost (<unknown> [10.192.0.11])
-        by vm-mail (OpenSMTPD) with ESMTPSA id 123db24a (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-        Wed, 11 Dec 2019 11:44:10 +0000 (UTC)
-From:   Patrick Steinhardt <ps@pks.im>
-To:     linux-security-module@vger.kernel.org
-Cc:     Patrick Steinhardt <ps@pks.im>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] apparmor: fix bind mounts aborting with -ENOMEM
-Date:   Wed, 11 Dec 2019 12:44:08 +0100
-Message-Id: <c70b386ac87254dcd3e23ae5ab168e44b1567e28.1576064594.git.ps@pks.im>
-X-Mailer: git-send-email 2.24.1
+        Wed, 11 Dec 2019 08:21:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576070492;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Fx/pdQPsQcpjbET1DdPNYibdtHFsVp/bssCr0g+dk5w=;
+        b=QHZ9kX0t4P/OAZ7P21BQgJbGaIWMgkghnmScTvIR5N5MyHDD1XgvPFEGCxjn1b5sF/jzge
+        pRap9dxCe6m4fJJGSXWxcE5QYA/i0kSrY/kr/qn+qLXg5Q6MnKNbeMJubJ9xj659GbCKBv
+        zbfpUe4fQLlLy4drDsH+CXdOycZHuCE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-343-K-VgDL2YOb6pEnqau5oD8Q-1; Wed, 11 Dec 2019 08:21:29 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D643C1005516;
+        Wed, 11 Dec 2019 13:21:27 +0000 (UTC)
+Received: from coeurl.usersys.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E4BD643E4;
+        Wed, 11 Dec 2019 13:21:27 +0000 (UTC)
+Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
+        id 04E5F20AE5; Wed, 11 Dec 2019 08:21:27 -0500 (EST)
+Date:   Wed, 11 Dec 2019 08:21:26 -0500
+From:   Scott Mayhew <smayhew@redhat.com>
+To:     "Schumaker, Anna" <Anna.Schumaker@netapp.com>
+Cc:     "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>
+Subject: Re: [PATCH v6 00/27] nfs: Mount API conversion
+Message-ID: <20191211132126.GX4276@coeurl.usersys.redhat.com>
+References: <20191210123115.1655-1-smayhew@redhat.com>
+ <498258bf630d4c2667920f21341a2a6e82a3788d.camel@netapp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <498258bf630d4c2667920f21341a2a6e82a3788d.camel@netapp.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: K-VgDL2YOb6pEnqau5oD8Q-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-With commit df323337e507 (apparmor: Use a memory pool instead per-CPU
-caches, 2019-05-03), AppArmor code was converted to use memory pools. In
-that conversion, a bug snuck into the code that polices bind mounts that
-causes all bind mounts to fail with -ENOMEM, as we erroneously error out
-if `aa_get_buffer` returns a pointer instead of erroring out when it
-does _not_ return a valid pointer.
+On Tue, 10 Dec 2019, Schumaker, Anna wrote:
 
-Fix the issue by correctly checking for valid pointers returned by
-`aa_get_buffer` to fix bind mounts with AppArmor.
+> Hi Scott,
+>=20
+> On Tue, 2019-12-10 at 07:30 -0500, Scott Mayhew wrote:
+> > Hi Anna, Trond,
+> >=20
+> > Here's a set of patches that converts NFS to use the mount API.  Note t=
+hat
+> > there are a lot of preliminary patches, some from David and some from A=
+l.
+> > The final patch (the one that does the actual conversion) from the Davi=
+d's
+> > initial posting has been split into 5 separate patches, and the entire =
+set
+> > has been rebased on top of v5.5-rc1.
+>=20
+> Thanks for the updated patches! Everything looks okay to me, but I've onl=
+y
+> tested with the legacy mount command. I'm curious if you've tested it usi=
+ng the
+> new system?
 
-Fixes: df323337e507 (apparmor: Use a memory pool instead per-CPU caches)
-Signed-off-by: Patrick Steinhardt <ps@pks.im>
----
+My testing was also with the legacy mount command.  I can work on
+testing with the new syscalls now.
 
-I've fixed the issue on top of v5.5-rc1, where I in fact found
-the issue.
+-Scott
 
- security/apparmor/mount.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
-index 4ed6688f9d40..e0828ee7a345 100644
---- a/security/apparmor/mount.c
-+++ b/security/apparmor/mount.c
-@@ -442,7 +442,7 @@ int aa_bind_mount(struct aa_label *label, const struct path *path,
- 	buffer = aa_get_buffer(false);
- 	old_buffer = aa_get_buffer(false);
- 	error = -ENOMEM;
--	if (!buffer || old_buffer)
-+	if (!buffer || !old_buffer)
- 		goto out;
- 
- 	error = fn_for_each_confined(label, profile,
--- 
-2.24.1
+>=20
+> Thanks,
+> Anna
+>=20
+> >=20
+> > Changes since v5:
+> > - fixed possible derefence of error pointer in nfs4_validate_fspath()
+> >   reported by Dan Carpenter
+> > - rebased on top of v5.5-rc1
+> > Changes since v4:
+> > - further split the original "NFS: Add fs_context support" patch (new
+> >   patch is about 25% smaller than the v4 patch)
+> > - fixed NFSv4 referral mounts (broken in the original patch)
+> > - fixed leak of nfs_fattr when fs_context is freed
+> > Changes since v3:
+> > - changed license and copyright text in fs/nfs/fs_context.c
+> > Changes since v2:
+> > - fixed the conversion of the nconnect=3D option
+> > - added '#if IS_ENABLED(CONFIG_NFS_V4)' around nfs4_parse_monolithic()
+> >   to avoid unused-function warning when compiling with v4 disabled
+> > Chagnes since v1:
+> > - split up patch 23 into 4 separate patches
+> >=20
+> > -Scott
+> >=20
+> > Al Viro (15):
+> >   saner calling conventions for nfs_fs_mount_common()
+> >   nfs: stash server into struct nfs_mount_info
+> >   nfs: lift setting mount_info from nfs4_remote{,_referral}_mount
+> >   nfs: fold nfs4_remote_fs_type and nfs4_remote_referral_fs_type
+> >   nfs: don't bother setting/restoring export_path around
+> >     do_nfs_root_mount()
+> >   nfs4: fold nfs_do_root_mount/nfs_follow_remote_path
+> >   nfs: lift setting mount_info from nfs_xdev_mount()
+> >   nfs: stash nfs_subversion reference into nfs_mount_info
+> >   nfs: don't bother passing nfs_subversion to ->try_mount() and
+> >     nfs_fs_mount_common()
+> >   nfs: merge xdev and remote file_system_type
+> >   nfs: unexport nfs_fs_mount_common()
+> >   nfs: don't pass nfs_subversion to ->create_server()
+> >   nfs: get rid of mount_info ->fill_super()
+> >   nfs_clone_sb_security(): simplify the check for server bogosity
+> >   nfs: get rid of ->set_security()
+> >=20
+> > David Howells (8):
+> >   NFS: Move mount parameterisation bits into their own file
+> >   NFS: Constify mount argument match tables
+> >   NFS: Rename struct nfs_parsed_mount_data to struct nfs_fs_context
+> >   NFS: Split nfs_parse_mount_options()
+> >   NFS: Deindent nfs_fs_context_parse_option()
+> >   NFS: Add a small buffer in nfs_fs_context to avoid string dup
+> >   NFS: Do some tidying of the parsing code
+> >   NFS: Add fs_context support.
+> >=20
+> > Scott Mayhew (4):
+> >   NFS: rename nfs_fs_context pointer arg in a few functions
+> >   NFS: Convert mount option parsing to use functionality from
+> >     fs_parser.h
+> >   NFS: Additional refactoring for fs_context conversion
+> >   NFS: Attach supplementary error information to fs_context.
+> >=20
+> >  fs/nfs/Makefile         |    2 +-
+> >  fs/nfs/client.c         |   80 +-
+> >  fs/nfs/fs_context.c     | 1424 +++++++++++++++++++++++++
+> >  fs/nfs/fscache.c        |    2 +-
+> >  fs/nfs/getroot.c        |   73 +-
+> >  fs/nfs/internal.h       |  132 +--
+> >  fs/nfs/namespace.c      |  146 ++-
+> >  fs/nfs/nfs3_fs.h        |    2 +-
+> >  fs/nfs/nfs3client.c     |    6 +-
+> >  fs/nfs/nfs3proc.c       |    2 +-
+> >  fs/nfs/nfs4_fs.h        |    9 +-
+> >  fs/nfs/nfs4client.c     |   99 +-
+> >  fs/nfs/nfs4file.c       |    1 +
+> >  fs/nfs/nfs4namespace.c  |  292 +++---
+> >  fs/nfs/nfs4proc.c       |    2 +-
+> >  fs/nfs/nfs4super.c      |  257 ++---
+> >  fs/nfs/proc.c           |    2 +-
+> >  fs/nfs/super.c          | 2217 +++++----------------------------------
+> >  include/linux/nfs_xdr.h |    9 +-
+> >  19 files changed, 2287 insertions(+), 2470 deletions(-)
+> >  create mode 100644 fs/nfs/fs_context.c
+> >=20
 
