@@ -2,195 +2,78 @@ Return-Path: <SRS0=NGWT=2C=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47CECC2D0CA
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Dec 2019 09:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1E0C43603
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Dec 2019 10:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11C1822527
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Dec 2019 09:38:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iu2oujS4"
+	by mail.kernel.org (Postfix) with ESMTP id 88E64206DA
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Dec 2019 10:31:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbfLLJig (ORCPT
+        id S1728571AbfLLKbh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Dec 2019 04:38:36 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40884 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728348AbfLLJig (ORCPT
+        Thu, 12 Dec 2019 05:31:37 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:55269 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728461AbfLLKbg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Dec 2019 04:38:36 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t14so1693194wmi.5;
-        Thu, 12 Dec 2019 01:38:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6OFVz1V+QdSxenYGCYriudr4690ZB5/L3ueHTeHO5JI=;
-        b=iu2oujS4uBIC/mGVXZwBCITYwmhwoIVD6SU1up0d6MC7GsNBgB+Z3YWAqFTe0eJxkW
-         Lge/MLAolwiBpQQ5aZ0cny62Sio7aJRyVus+9FxgcSPI7Z83uP/UzO/OaXcOzhsJJOoQ
-         jivVmjILRdZoEYu8QP2sFw2tDnMZvRQwBkuGFTuGxB6U4XnUUutywaJNXmrdl6wB4Yag
-         KdJR0qDnI9dCeRTPgpUY/3UWw2J6mROXYmxACs5YY5D5cMkO746Kj/Nfu3BhrVe+p/vg
-         FVwMtfthT/KzZVUGT/SLq2OZm+/9WGuWXWDTbsEH98ZtVyiXM9DwoVq/eZpDOFYkgo85
-         7Tgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6OFVz1V+QdSxenYGCYriudr4690ZB5/L3ueHTeHO5JI=;
-        b=IysPBZEVq3T9lTCuDjms0SKYya9xmTHEJu4qkRkoK/s1wG+mtOkDZQ27i3f3NuL3Fg
-         BpumcKLCYa/2Cqn+cy8yvKyJbdLXE52+LCQO/fl4UkaL1uQTDs9ivbMsB92cK2qvcE+q
-         OeGTV4KsU93YFE0EE0aogOOwmGpp9bpSBQeyPO73aYBGRe0PgCYNLW8jWvxpPfqY5dt3
-         YA+LCe70AzXolXXuqsiJz38cNlRh/Z3wt5UaAm+wOA6iOs0wrVNEJ9YX6+0gZ7qhVQlS
-         vsaXAdH0gvKMBKcjQ2QnfT7tDhfVj1RUNj21p6L9zUa0YGjW3lW5iqJj58K16B1mHf6h
-         GuaQ==
-X-Gm-Message-State: APjAAAURFF5cjLu0oarCjgxhf6D8B6Qjnj2gTHjH+LqucxInCNELJK7t
-        r5svR6qB0fVYWFKPrm9Q1F8=
-X-Google-Smtp-Source: APXvYqxi1X9dzmpuNKwm/hSxvBMNS9eiNkE+auH0j6TmmuDBUFABS5sZvv0wUWSaTe0yPaK5o6dWDA==
-X-Received: by 2002:a1c:4e10:: with SMTP id g16mr5310900wmh.94.1576143514424;
-        Thu, 12 Dec 2019 01:38:34 -0800 (PST)
-Received: from linux-691t.suse.de ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id z8sm5471508wrq.22.2019.12.12.01.38.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Dec 2019 01:38:33 -0800 (PST)
-From:   "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thu, 12 Dec 2019 05:31:36 -0500
+Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xBCAUxo3016466;
+        Thu, 12 Dec 2019 19:30:59 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav106.sakura.ne.jp);
+ Thu, 12 Dec 2019 19:30:59 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav106.sakura.ne.jp)
+Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xBCAUssV016407
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 12 Dec 2019 19:30:59 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] LSM: allow an LSM to disable all hooks at once
+To:     Ondrej Mosnacek <omosnace@redhat.com>,
+        linux-security-module@vger.kernel.org,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        Josh Boyer <jwboyer@fedoraproject.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>
-Subject: [PATCH 2/2] efi: show error messages only when loading certificates is failed
-Date:   Thu, 12 Dec 2019 17:38:12 +0800
-Message-Id: <20191212093812.10518-3-jlee@suse.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191212093812.10518-1-jlee@suse.com>
-References: <20191212093812.10518-1-jlee@suse.com>
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, selinux@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Micah Morton <mortonm@chromium.org>
+References: <20191211140833.939845-1-omosnace@redhat.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <66706222-b6af-5099-e485-b99391ad70b3@i-love.sakura.ne.jp>
+Date:   Thu, 12 Dec 2019 19:30:54 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
+MIME-Version: 1.0
+In-Reply-To: <20191211140833.939845-1-omosnace@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When loading certificates list from EFI variables, the error
-message and efi status code always be emitted to dmesg. It looks
-ugly:
+On 2019/12/11 23:08, Ondrej Mosnacek wrote:
+> As a nice side effect, this allows marking the hooks (and other stuff)
+> __ro_after_init unconditionally. Since SECURITY_WRITABLE_HOOKS no longer
+> makes sense, remove it and instead use SECURITY_SELINUX_DISABLE directly
+> for turning on the runtime disable functionality, to emphasize that this
+> is only used by SELinux and is meant to be removed in the future.
 
-[    2.335031] Couldn't get size: 0x800000000000000e
-[    2.335032] Couldn't get UEFI MokListRT
-[    2.339985] Couldn't get size: 0x800000000000000e
-[    2.339987] Couldn't get UEFI dbx list
+I don't like unconditionally marking __ro_after_init. I'm currently waiting for
+Casey's stacking work to complete. I haven't given up dynamically loadable LSM modules.
 
-This cosmetic patch moved the messages to the error handling code
-path. And, it also shows the corresponding status string of status
-code.
-
-Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
----
- security/integrity/platform_certs/load_uefi.c | 41 ++++++++++++++-------------
- 1 file changed, 22 insertions(+), 19 deletions(-)
-
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index 81b19c52832b..3b766831d2c5 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -1,4 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/kernel.h>
- #include <linux/sched.h>
-@@ -39,7 +40,7 @@ static __init bool uefi_check_ignore_db(void)
-  * Get a certificate list blob from the named EFI variable.
-  */
- static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
--				  unsigned long *size)
-+				  unsigned long *size, const char *source)
- {
- 	efi_status_t status;
- 	unsigned long lsize = 4;
-@@ -48,23 +49,31 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
- 
- 	status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
- 	if (status != EFI_BUFFER_TOO_SMALL) {
--		pr_err("Couldn't get size: 0x%lx\n", status);
--		return NULL;
-+		if (status == EFI_NOT_FOUND) {
-+			pr_debug("%s list was not found\n", source);
-+			return NULL;
-+		}
-+		goto err;
- 	}
- 
- 	db = kmalloc(lsize, GFP_KERNEL);
--	if (!db)
--		return NULL;
-+	if (!db) {
-+		status = EFI_OUT_OF_RESOURCES;
-+		goto err;
-+	}
- 
- 	status = efi.get_variable(name, guid, NULL, &lsize, db);
- 	if (status != EFI_SUCCESS) {
- 		kfree(db);
--		pr_err("Error reading db var: 0x%lx\n", status);
--		return NULL;
-+		goto err;
- 	}
- 
- 	*size = lsize;
- 	return db;
-+err:
-+	pr_err("Couldn't get %s list: %s (0x%lx)\n",
-+		source, efi_status_to_str(status), status);
-+	return NULL;
- }
- 
- /*
-@@ -153,10 +162,8 @@ static int __init load_uefi_certs(void)
- 	 * an error if we can't get them.
- 	 */
- 	if (!uefi_check_ignore_db()) {
--		db = get_cert_list(L"db", &secure_var, &dbsize);
--		if (!db) {
--			pr_err("MODSIGN: Couldn't get UEFI db list\n");
--		} else {
-+		db = get_cert_list(L"db", &secure_var, &dbsize, "UEFI:db");
-+		if (db) {
- 			rc = parse_efi_signature_list("UEFI:db",
- 					db, dbsize, get_handler_for_db);
- 			if (rc)
-@@ -166,10 +173,8 @@ static int __init load_uefi_certs(void)
- 		}
- 	}
- 
--	mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
--	if (!mok) {
--		pr_info("Couldn't get UEFI MokListRT\n");
--	} else {
-+	mok = get_cert_list(L"MokListRT", &mok_var, &moksize, "UEFI:MokListRT");
-+	if (mok) {
- 		rc = parse_efi_signature_list("UEFI:MokListRT",
- 					      mok, moksize, get_handler_for_db);
- 		if (rc)
-@@ -177,10 +182,8 @@ static int __init load_uefi_certs(void)
- 		kfree(mok);
- 	}
- 
--	dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
--	if (!dbx) {
--		pr_info("Couldn't get UEFI dbx list\n");
--	} else {
-+	dbx = get_cert_list(L"dbx", &secure_var, &dbxsize, "UEFI:dbx");
-+	if (dbx) {
- 		rc = parse_efi_signature_list("UEFI:dbx",
- 					      dbx, dbxsize,
- 					      get_handler_for_dbx);
--- 
-2.16.4
+In order to allow loading LSM modules after boot, I have to add lines
+1093-1173, 1190-1195, 1208-1211, 1217-1220 in
+https://osdn.net/projects/akari/scm/svn/blobs/head/trunk/akari/lsm-4.12.c .
+I suggest grouping __lsm_ro_after_init variables into a special section and
+implementing a legal method for temporarily making that section read-write.
+Then, architectures with that method will be able to use __ro_after_init marking.
 
