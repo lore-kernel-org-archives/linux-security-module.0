@@ -2,183 +2,177 @@ Return-Path: <SRS0=NGWT=2C=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A398C3F68F
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Dec 2019 14:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE252C43603
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Dec 2019 14:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6114227BF
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Dec 2019 14:24:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="IigjLaZQ"
+	by mail.kernel.org (Postfix) with ESMTP id 936D121655
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Dec 2019 14:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729392AbfLLOYQ (ORCPT
+        id S1729769AbfLLOn7 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Dec 2019 09:24:16 -0500
-Received: from UCOL19PA36.eemsg.mail.mil ([214.24.24.196]:44541 "EHLO
-        UCOL19PA36.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729568AbfLLOYQ (ORCPT
+        Thu, 12 Dec 2019 09:43:59 -0500
+Received: from m9a0013g.houston.softwaregrp.com ([15.124.64.91]:46920 "EHLO
+        m9a0013g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729266AbfLLOn6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:24:16 -0500
-X-EEMSG-check-017: 60315571|UCOL19PA36_ESA_OUT03.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.69,306,1571702400"; 
-   d="scan'208";a="60315571"
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by UCOL19PA36.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 12 Dec 2019 14:24:14 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1576160654; x=1607696654;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=Y3KYuYPbH0nMd0X+aWlXgx9w/IYsU1vilpXJMJ8W4mE=;
-  b=IigjLaZQZAZjc1fCSxA30ziMU9TSAr9mKZNh520/QOIQEehrxs/mnEaq
-   utbR4gPHtXy88EVOOPiayZFagx+QRfSXkI/gJ/uMiZQd7cKC0b0u/VhP4
-   1P5iXMpJfNGAyZfJB7WJuzYK8ykjmBAgcyf3/FX+wdgk2QLVehFWktNjL
-   k2nFUP03p0knupbi/UHxZ6RS3muzct5XQiyGH51/l18U/+1JsnnRZxxOM
-   5qj63dPvtKuwKozjFL7/ndGC/ay65KniSV6FQpe3/WjBCVdwPF8iMtrrX
-   vdt/E8xqZTL8mW0W+c9yA5bLZpGVWHJ7MVJWfEk42fokPqOBNSwHwQkMm
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.69,306,1571702400"; 
-   d="scan'208";a="36661636"
-IronPort-PHdr: =?us-ascii?q?9a23=3Ax74tdRNwzTVyse/Qi5Ml6mtUPXoX/o7sNwtQ0K?=
- =?us-ascii?q?IMzox0K/T8pcbcNUDSrc9gkEXOFd2Cra4d0KyP4v+rBzVIyK3CmUhKSIZLWR?=
- =?us-ascii?q?4BhJdetC0bK+nBN3fGKuX3ZTcxBsVIWQwt1Xi6NU9IBJS2PAWK8TW94jEIBx?=
- =?us-ascii?q?rwKxd+KPjrFY7OlcS30P2594HObwlSizexfL1/IA+roQjVtMQajopvJrsswR?=
- =?us-ascii?q?bVv3VEfPhby3l1LlyJhRb84cmw/J9n8ytOvv8q6tBNX6bncakmVLJUFDspPX?=
- =?us-ascii?q?w7683trhnDUBCA5mAAXWUMkxpHGBbK4RfnVZrsqCT6t+592C6HPc3qSL0/RD?=
- =?us-ascii?q?qv47t3RBLulSwKLCAy/n3JhcNsjaJbuBOhqAJ5w47Ie4GeKf5ycrrAcd8GWW?=
- =?us-ascii?q?ZNW8BcWCJbAoO4coABEewPM+hFpIX5vlcDrR+zCQyqCejyyDFHm2X20LUn3e?=
- =?us-ascii?q?o/HwHI3A8uEdwAv3vbrtr6KKgcXPupzKTK1zjPc+9a1Dn/5YXObxsvoeuMXb?=
- =?us-ascii?q?V1ccfJ1EcvCx3Kjk2QqYP7OTOey/kDs22B4OpkUeKglW4moBx2rzi028gskZ?=
- =?us-ascii?q?LEhp4Vy1/Y9SV5x5w5JdujSEFhe9KkH5xQtz+DOoZwX8gsQHlotT4nxrAJtp?=
- =?us-ascii?q?O3ZigHxIk9yxLBZPGLbZKE7g/lWe2MOzl3nmhld6i6hxuq9EigzfDzWdes3V?=
- =?us-ascii?q?ZRqypFjsHMtncQ1xzP8sSHSuVy/kOm2TuXywDc8PtEIUEplarAMZIhw7gwlp?=
- =?us-ascii?q?QUsUTYACD5hF/6jLOWd0o4+uio7P7rYrP6qZ+HK4B4kAT+MqUqmsCnAOQ4NB?=
- =?us-ascii?q?YBX3SD9Oih27Du8lf1TbVXgvEsjKXUv47WKd4GqqKhBg9ayIcj6xKxDze819?=
- =?us-ascii?q?QYmGEKLElYdxKclIXpJ1HPL+z4Dfe4mVislixryOrcMr3uBZXNMGDPkK39cr?=
- =?us-ascii?q?Zl905c1A0zwMhF6JJXEbwBJPPzWknstN3XFBM5Mgq0w/r5B9V5zI8RRWWPAq?=
- =?us-ascii?q?qBOqPIrVCI/v4vI/WLZIINpDnyMeMl6ODujHIigl8SYamp0oEKaHC2GvRpPV?=
- =?us-ascii?q?+ZbWPwjdgbC2sFog0+TOnygl2YTTFTf2qyX7475jwjEo2mCZnMR4+zj72Bxi?=
- =?us-ascii?q?u0BYBWaX1cBVCKEnfocJuEVuwIaCKTJM9hjzMFWaKgS48nyRGhqgv6x6B7Ie?=
- =?us-ascii?q?rT/y0SrYjj28Rt5+3PiREy8iR5D9yD3GGRUW50hGIJSiQ33KB5r0x90E2M3r?=
- =?us-ascii?q?VmjPNCCNNf/fRJUh01NZTE1ex1F8jyWh7dfteOUFupWMmpATQvQd8qwN8BfV?=
- =?us-ascii?q?x9G9O8gRDHxSaqBKUVl7OTDpwu7q3cx2TxJ9p6y3ve0akhjl8mQsRINWC9nK?=
- =?us-ascii?q?5w6RXcB47TnEWFjaqlaaMc3CvV/meZ0WWOpF1YUBJ3UajdX3AfYU/Wrc/j6U?=
- =?us-ascii?q?7ZVb+hF6koMgtbxs6eMKdFdtrpjVBeTvf5JNvee36xm3u3BRuQ2LyMaJTle2?=
- =?us-ascii?q?MH0ynHEkgLjRsT/XaYOggiASehvXjRASdvFVLpf0Pj7+1+pGmnQU8zygGAd1?=
- =?us-ascii?q?dh2Kat+h4JmfycTOse0agAuCg/pDR7BlC90M/IBNqavQZhZ6VcYdIm4FdH1m?=
- =?us-ascii?q?LZtgp9M4ekL6BjgF4ebgt2s1nv1xVxFoVPj8wqoGk2wwp1LKKSyElBeC+A3Z?=
- =?us-ascii?q?DsJr3XLXH//BK1ZK7Q3FHe0M2b+qgI6PQ/pFXjuB+mGlA+/HVg1tlfy2Gc6Y?=
- =?us-ascii?q?nSDAoOTZLxVV469xtkqL7EeSky+4TU1XpvMaSvrjDC28gpBOwgyhahYtdfNb?=
- =?us-ascii?q?mIFAjoE80VH8KuMvAlm0C1bhIYO+Bf7LA7P9m8ePuA2a6kJuBgkSmpjWRA54?=
- =?us-ascii?q?B93UaM+DRmRuHU2JYFxumS3hGbWDfkkFehrsf3lJhCZT4IG2q/ySjlBJNXZq?=
- =?us-ascii?q?19ZosLCnmhI9exxtpgg57hQXlY9ESsB1kews+mZQKSb0Dh3Q1XzUkXpX2nmS?=
- =?us-ascii?q?2lzz17ij0ptbSQ0zDTw+T4dRoHJm5KSHBnjVfrPIe0ktQaU1azYgg3mxuq+1?=
- =?us-ascii?q?z6y7JYpKthNWnTR1lHfyzsI2FlSKuwuaKIY9RT55MwrSVXTOO8bEiBSrHjpx?=
- =?us-ascii?q?sa0iXjH3ZRxT0gaTGqtYv2nwZghGKeMnlztnzZdt90xRvF49zcX/FR1CIcRC?=
- =?us-ascii?q?ZkkTnXGkS8P96x8NWQlpfDtP2+Vm24Wp1Qbybr14WAuzW/5WBxHx2/kO68ms?=
- =?us-ascii?q?f9HQg5zyD7zd9qWjvMrBrmZYnrzau6O/p9fkZ0HF/899Z6GoZmn4srmp4Qw3?=
- =?us-ascii?q?caiYuO8HoHi2jzNdFb2KL4bHYXWTELxNvV6hD/2EJ/NnKJ2575VnKFz8tjYt?=
- =?us-ascii?q?m6ZXkW2jg878BRE6qU6qZLnS5rrVq5tw7RZuJ9njhOgccpvVccj+BBmw4gwy?=
- =?us-ascii?q?PVVrkRNU1ZOzH80RWO89266q5QYTDrOZO5z0dv1euqDLifrAVRQj6tcZ45ED?=
- =?us-ascii?q?5Y9c5/OU/C1HDpr4rtPtLXaIRAmAeTlkL7k+VNKJ833sEPjC5jNHO16WYp0M?=
- =?us-ascii?q?YnnBdu2te8p4HBJGJzqvHqSiVEPyH4MptAsgrmirxTy4PPgtGi?=
-X-IPAS-Result: =?us-ascii?q?A2DNAABqTPJd/wHyM5BkGwEBAQEBAQEFAQEBEQEBAwMBA?=
- =?us-ascii?q?QGBfoFvBYFtIBKELYkDhmoGBoE3gQGIaJFGCQEBAQEBAQEBATcBAYFMgnQCg?=
- =?us-ascii?q?i44EwIQAQEBBAEBAQEBBQMBAWyFQ4I7KQGCegEFIxUtFBALDgoCAiYCAlcGA?=
- =?us-ascii?q?QwIAQEXgkg/glMlrV6BMoVPgyyBSIEOKIlPgmN5gQeBEScPgig1PoQigzeCX?=
- =?us-ascii?q?gSPcYYxYUaXJoI6gjyTNwYbmkEtjh6cTiI+gRorCAIYCCEPgj9pTxEUkCwXF?=
- =?us-ascii?q?Y4sIwOOFIJBAQE?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 12 Dec 2019 14:24:13 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id xBCENi1U043831;
-        Thu, 12 Dec 2019 09:23:45 -0500
-Subject: Re: [PATCH v1 0/3] Introduce CAP_SYS_PERFMON capability for secure
- Perf users groups
-To:     Andi Kleen <ak@linux.intel.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        elena.reshetova@intel.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Stephane Eranian <eranian@google.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>
-References: <283f09a5-33bd-eac3-bdfd-83d775045bf9@linux.intel.com>
- <1e836f34-eda3-542d-f7ce-9a3e87ac5e2e@schaufler-ca.com>
- <d0c6f000-4757-02d8-b114-a35cbb9566ed@linux.intel.com>
- <a81248c5-971a-9d3f-6df4-e6335384fe7f@schaufler-ca.com>
- <ab206ef5-466e-7bce-3e5f-53da110bddb2@linux.intel.com>
- <16e9e399-2ebf-261f-eee5-cf9ace2a82b9@schaufler-ca.com>
- <20191211203648.GA862919@tassilo.jf.intel.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <d2095e4a-261b-b561-2a2c-cf00fd416503@tycho.nsa.gov>
-Date:   Thu, 12 Dec 2019 09:24:25 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20191211203648.GA862919@tassilo.jf.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Thu, 12 Dec 2019 09:43:58 -0500
+X-Greylist: delayed 1021 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Dec 2019 09:43:57 EST
+Received: FROM m9a0013g.houston.softwaregrp.com (15.121.0.191) BY m9a0013g.houston.softwaregrp.com WITH ESMTP;
+ Thu, 12 Dec 2019 14:42:50 +0000
+Received: from M4W0334.microfocus.com (2002:f78:1192::f78:1192) by
+ M9W0068.microfocus.com (2002:f79:bf::f79:bf) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Thu, 12 Dec 2019 14:24:09 +0000
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (15.124.8.13) by
+ M4W0334.microfocus.com (15.120.17.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Thu, 12 Dec 2019 14:24:09 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Q/85qc2puIMnQ9rOu1YuLHZXcdeKEzbQ1z4bxrab56+rMXF9/1DFvzYlKVRgAphpY+KSuki7FR6NYRMt4OULTD9o30Z81rmsiT5ig80eWyRjydW0CclvRp+HAcJyb9jZ9g0P+bBNRzEbt6s71SsWvEDaKbsmfdIW0MohOuuLCKVhS2GE42wlkwKXOqogpxYhicfCjcCMtzrofZv2nBIU/HjdYG2p7JXTZGIXJpMVPXOhCqMHxB3D3Ioiiv2B8uYCcJRNUsakKapQRlD/Spo/f5OMl5OgBW9GNchB7fcY4yHM92c3HNsPiCACi1v9SbQgfQ0svmdBwwio8pNnRlKG2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EYcWYYx4aNd4ZoGxqjCHcp6dGFD4ea9UwZFDnZTf6Mw=;
+ b=m5ClFb1VpCa+vdzWHSX55ioWAGqqoTcuQJu/1eJ708i3CpUH7+5L/m5neQSuKzsPJa/HantoWG3+YS8ULtc8KOVVT4tNZ7cGE0HL5DB/27nqixAMjbJDfQM39F5+x0+HyMlkYlE1nhbg4ky3W7otKBRWE5bvfTUxY2h3wWWeJLStZdLdzfnlGB/uS3GTxRehOXojYQcV0pE1p/Je1mSL7t8/c2s/yGq0WUhKPL6ZhyuoRU404USH50RnRxMrOVrfy9M0l5jszZ0c7hpFGEIMG3Ngc5F9/otsk914oe/fNvFUDw7Q/SC+qxpX7XvUal9Cd+Da5Gvy1jSCi0hsae7c8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Received: from MWHPR1801MB1919.namprd18.prod.outlook.com (10.164.204.162) by
+ MWHPR1801MB1903.namprd18.prod.outlook.com (10.164.204.158) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.18; Thu, 12 Dec 2019 14:24:08 +0000
+Received: from MWHPR1801MB1919.namprd18.prod.outlook.com
+ ([fe80::1c16:ffc:c341:ebbc]) by MWHPR1801MB1919.namprd18.prod.outlook.com
+ ([fe80::1c16:ffc:c341:ebbc%6]) with mapi id 15.20.2538.016; Thu, 12 Dec 2019
+ 14:24:08 +0000
+From:   Joey Lee <JLee@suse.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] efi: add a function for transferring status to string
+Thread-Topic: [PATCH 1/2] efi: add a function for transferring status to
+ string
+Thread-Index: AQHVsN48IHC/EIELJUajHOSd7WDsoqe2jdeA
+Date:   Thu, 12 Dec 2019 14:24:07 +0000
+Message-ID: <20191212142357.GV22409@linux-l9pv.suse>
+References: <20191212093812.10518-1-jlee@suse.com>
+ <20191212093812.10518-2-jlee@suse.com>
+ <CAKv+Gu83Ndu8XWDAUTmHu6udRCXbodqzTyq5wZJvfGiLfidwbw@mail.gmail.com>
+In-Reply-To: <CAKv+Gu83Ndu8XWDAUTmHu6udRCXbodqzTyq5wZJvfGiLfidwbw@mail.gmail.com>
+Accept-Language: zh-TW, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK2PR04CA0078.apcprd04.prod.outlook.com
+ (2603:1096:202:15::22) To MWHPR1801MB1919.namprd18.prod.outlook.com
+ (2603:10b6:301:68::34)
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=JLee@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [124.11.22.254]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: bc41a153-7339-4526-0aeb-08d77f0ef2e4
+x-ms-traffictypediagnostic: MWHPR1801MB1903:
+x-microsoft-antispam-prvs: <MWHPR1801MB1903954AE816DDEA0A528ADDA3550@MWHPR1801MB1903.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3631;
+x-forefront-prvs: 0249EFCB0B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(396003)(376002)(346002)(366004)(39860400002)(189003)(199004)(52116002)(6916009)(71200400001)(6506007)(4326008)(33656002)(5660300002)(6486002)(54906003)(316002)(86362001)(26005)(7416002)(81166006)(8936002)(81156014)(8676002)(64756008)(66446008)(2906002)(66476007)(478600001)(66946007)(186003)(36756003)(66556008)(1076003)(6512007)(9686003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR1801MB1903;H:MWHPR1801MB1919.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 1fHawgUt6+3KfPzsPjMjc17otrOR5X2kZm5NPcG851FORpE5SA3TXH6NTO232TNTJkZXEaR2UTrJD0Y8bDr3e15XTP8IYdvYIydJFlXTKMOwE39WADw1+nIuJg65XVZJQA1pYC6XdDTb92Bduo5LJVq+urqyxN9+OW+iox2w8BiN+RqgJt3rL7XDpslLDdCwgr9Q4I2zgr58N4oC9FxoBVIWn8kPvQGQb8RwSeI0Md1+EsdlDlEQzaIsqUqHVf90mua2JbojDK8dPZWh5e7OFek7CRPOHA79bEU+uFlT8iGmrR4eWFJKn+d6XvFESDteph7jKcXsjS6nZShGYY/pI9FFr5y5poF6VtnSlz+Vkfj/esoTL9nJwahsTfjMmbNr+R22uVjf/2BWreP3Dl+RnNeDMwAKbmZqEuArsdVQU99YGH1VsDsyS0s4iD5koVfp
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <31C4C5E617C9F742A826A5DD8DCC726D@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc41a153-7339-4526-0aeb-08d77f0ef2e4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2019 14:24:07.8804
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Q4SRWuAvaUsNeDG/C5HsWwo4ZHt9FL7oEADJDzd8Q46MwQ8VtXZkVyQFZWx6Bd6R
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1801MB1903
+X-OriginatorOrg: suse.com
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/11/19 3:36 PM, Andi Kleen wrote:
->>> In this circumstances CAP_SYS_PERFMON looks like smart balanced advancement that
->>> trade-offs between perf_events subsystem extensions, required level of control
->>> and configurability of perf_events, existing users adoption effort, and it brings
->>> security hardening benefits of decreasing attack surface for the existing users
->>> and use cases.
->>
->> I'm not 100% opposed to CAP_SYS_PERFMON. I am 100% opposed to new capabilities
->> that have a single use. Surely there are other CAP_SYS_ADMIN users that [cs]ould
->> be converted to CAP_SYS_PERFMON as well. If there is a class of system performance
->> privileged operations, say a dozen or so, you may have a viable argument.
+Hi Ard, 
+
+On Thu, Dec 12, 2019 at 11:20:48AM +0000, Ard Biesheuvel wrote:
+> On Thu, 12 Dec 2019 at 10:38, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
+> >
+> > This function can be used to transfer EFI status code to string
+> > to improve the readability of debug log.
+> >
+> > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
 > 
-> perf events is not a single use. It has a bazillion of sub functionalities,
-> including hardware tracing, software tracing, pmu counters, software counters,
-> uncore counters, break points and various other stuff in its PMU drivers.
+> I think I mentioned this the last time you sent this patch: by making
+> this a static inline, those strings will be copied into each object
+> file that uses this routine.
+> Instead, please make it an ordinary function.
 > 
-> See it more as a whole quite heterogenous driver subsystem.
-> 
-> I guess CAP_SYS_PERFMON is not a good name because perf is much more
-> than just Perfmon. Perhaps call it CAP_SYS_PERF_EVENTS
 
-That seems misleading since it isn't being checked for all perf_events 
-operations IIUC (CAP_SYS_ADMIN is still required for some?) and it is 
-even more specialized than CAP_SYS_PERFMON, making it less likely that 
-we could ever use this capability as a check for other kernel 
-performance monitoring facilities beyond perf_events.
+Sorry for I just sent a old version patch. I will send a new one.
 
-I'm not as opposed to fine-grained capabilities as Casey is but I do 
-recognize that there are a limited number of available bits (although we 
-do have a fair number of unused ones currently given the extension to 
-64-bits) and that it would be easy to consume them all if we allocated 
-one for every kernel feature.  That said, this might be a sufficiently 
-important use case to justify it.
+Thanks a lot!
+Joey Lee 
 
-Obviously I'd encourage you to consider leveraging SELinux as well but I 
-understand that you are looking for a solution that doesn't depend on a 
-distro using a particular LSM or a particular policy.  I will note that 
-SELinux doesn't suffer from the limited bits problem because one can 
-always define a new SELinux security class with its own access vector 
-permissions bitmap, as has been done for the recently added LSM/SELinux 
-perf_event hooks.
-
-I don't know who actually gets to decide when/if a new capability is 
-allocated.  Maybe Serge and/or James as capabilities and LSM maintainers.
-
-I have no objections to these patches from a SELinux POV.
+> > ---
+> >  include/linux/efi.h | 26 ++++++++++++++++++++++++++
+> >  1 file changed, 26 insertions(+)
+> >
+> > diff --git a/include/linux/efi.h b/include/linux/efi.h
+> > index d87acf62958e..08daf4cdd807 100644
+> > --- a/include/linux/efi.h
+> > +++ b/include/linux/efi.h
+> > @@ -42,6 +42,32 @@
+> >  #define EFI_ABORTED            (21 | (1UL << (BITS_PER_LONG-1)))
+> >  #define EFI_SECURITY_VIOLATION (26 | (1UL << (BITS_PER_LONG-1)))
+> >
+> > +#define EFI_STATUS_STR(_status) \
+> > +       case EFI_##_status: \
+> > +               return "EFI_" __stringify(_status);
+> > +
+> > +static inline char *
+> > +efi_status_to_str(unsigned long status)
+> > +{
+> > +       switch (status) {
+> > +       EFI_STATUS_STR(SUCCESS)
+> > +       EFI_STATUS_STR(LOAD_ERROR)
+> > +       EFI_STATUS_STR(INVALID_PARAMETER)
+> > +       EFI_STATUS_STR(UNSUPPORTED)
+> > +       EFI_STATUS_STR(BAD_BUFFER_SIZE)
+> > +       EFI_STATUS_STR(BUFFER_TOO_SMALL)
+> > +       EFI_STATUS_STR(NOT_READY)
+> > +       EFI_STATUS_STR(DEVICE_ERROR)
+> > +       EFI_STATUS_STR(WRITE_PROTECTED)
+> > +       EFI_STATUS_STR(OUT_OF_RESOURCES)
+> > +       EFI_STATUS_STR(NOT_FOUND)
+> > +       EFI_STATUS_STR(ABORTED)
+> > +       EFI_STATUS_STR(SECURITY_VIOLATION)
+> > +       }
+> > +
+> > +       return "";
+> > +}
+> > +
+> >  typedef unsigned long efi_status_t;
+> >  typedef u8 efi_bool_t;
+> >  typedef u16 efi_char16_t;              /* UNICODE character */
+> > --
+> > 2.16.4
+> >
