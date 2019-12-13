@@ -2,196 +2,183 @@ Return-Path: <SRS0=n75/=2D=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2817DC2D0C9
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Dec 2019 21:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBFEC2D0C9
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Dec 2019 23:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0AD5206D8
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Dec 2019 21:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FB7A24125
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Dec 2019 23:23:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fa5MdWSE"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="dFta73b2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725554AbfLMVkF (ORCPT
+        id S1726638AbfLMXXy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Dec 2019 16:40:05 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:37307 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726386AbfLMVkF (ORCPT
+        Fri, 13 Dec 2019 18:23:54 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34026 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbfLMXXy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Dec 2019 16:40:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576273204;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WgOXIag/oVgErX13K0wlqJ230VPf+71NlCt27NFhOC8=;
-        b=fa5MdWSE+yr0QbII1ZjOkAwPlUZ0EiOxvOB0mlcU7x7do3fn1CmSkRh4xlmVtvh4Nqf+h/
-        FBcVLfFdsl6cL8wyDU36s6nM1lTqm/BKZRm5oPrDNm3xVuZHfdKg93l2QWmdzErnr9h9fM
-        EbwJ7dojO7FJZ7u1twsb6IkLv9Smjck=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-293-j09TGu7gOzS_Le1gjjpMpA-1; Fri, 13 Dec 2019 16:40:01 -0500
-X-MC-Unique: j09TGu7gOzS_Le1gjjpMpA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 68993593A4;
-        Fri, 13 Dec 2019 21:39:59 +0000 (UTC)
-Received: from coeurl.usersys.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DB63C5D9CA;
-        Fri, 13 Dec 2019 21:39:58 +0000 (UTC)
-Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
-        id 6505E20694; Fri, 13 Dec 2019 16:39:58 -0500 (EST)
-Date:   Fri, 13 Dec 2019 16:39:58 -0500
-From:   Scott Mayhew <smayhew@redhat.com>
-To:     "Schumaker, Anna" <Anna.Schumaker@netapp.com>
-Cc:     "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>
-Subject: Re: [PATCH v6 00/27] nfs: Mount API conversion
-Message-ID: <20191213213958.GY4276@coeurl.usersys.redhat.com>
-References: <20191210123115.1655-1-smayhew@redhat.com>
- <498258bf630d4c2667920f21341a2a6e82a3788d.camel@netapp.com>
+        Fri, 13 Dec 2019 18:23:54 -0500
+Received: by mail-lj1-f195.google.com with SMTP id m6so486683ljc.1
+        for <linux-security-module@vger.kernel.org>; Fri, 13 Dec 2019 15:23:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6sEma6QewPsDcAV3of38HRDLt0CvEgr7yXVj5mX+1ck=;
+        b=dFta73b2M54Q9pbxh2ieNMbCfyi7rNPQh45Gb7D0RyIqTxdSZZH/HEclW52V6rCVTa
+         KJv8xIntTINTJBbVBCtNK8cWQWpqjgskIlafpDA/N9gQHSNkYaZQzp+8l9k+WyHDvQvq
+         LE4QS2mLQMHrYZL2Vvzx1d4hr1LCVM6sk13te2nwg9VrM9sY5e5h+8yTNVed/BC5bQvM
+         rbSDmmUH5Bec34qj64cr1yeU1jVrPKlQwc9Oa2LdSANlcT4M/1pJtiogrEXlsLTPbG5F
+         h/nD1YC5vs9O54VgZVpquSc0RFztnq7landfTTKrV4z2a+wMeewLACafayVlvCMQRsvM
+         /CRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6sEma6QewPsDcAV3of38HRDLt0CvEgr7yXVj5mX+1ck=;
+        b=dPywKOhSSWtqgO9+3Nd1pRbw/c+RXccCRliRiDJ5zeKp5MmbPcCYiCwwpbJjY7G6E0
+         b310c7IdpZq0BrVXK0gh9FqoeP60DcAJYXWv285V1rB5ns/wj7muFYckI4c/TvdAaMgY
+         +wnkKBxCoTJnXr8K0DXmXUJKSZ7V9Goha3dD/BbYMrlkgoLPv+6mXrl5/naX0VVw5YKp
+         EWw/JTF9TnUHfe/IbP+65nNLEiX3rTZ7eO1fRDEbMwx9JNHSioB26a7G+B5EmU3c7GEy
+         dgjuk8Hfbiemf2baGYFyvWa99wL2fR+0L8WsmjKv7CXcfhL7kC20Rqub64+5mb7v8Jfc
+         pc5A==
+X-Gm-Message-State: APjAAAX9WCVhaUoXOxwq9X0UE8UWGosVs3wRYVJP1QOqBXnSCNx7BGfk
+        anZF/kW3qzvQwh0cdevDp0ODs7n+hyF5mmmUpKvb
+X-Google-Smtp-Source: APXvYqwGMLWGEbtciNh6PajD1f9K2VmEYE1uuUS4NB32RTLzP2Yrfky5m/RWkbG25MBGFsDN4/LvMv1SxZOUuLQpDjM=
+X-Received: by 2002:a2e:9d9a:: with SMTP id c26mr11246076ljj.225.1576279431027;
+ Fri, 13 Dec 2019 15:23:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <498258bf630d4c2667920f21341a2a6e82a3788d.camel@netapp.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+References: <20191211140833.939845-1-omosnace@redhat.com> <677be2d4-8247-3c2b-ac13-def725cffaeb@tycho.nsa.gov>
+ <201912110840.62A4E64BA@keescook> <356c555a-d4ab-84fb-0165-f7672bc1ee63@schaufler-ca.com>
+ <2fdb09e7-6668-cb1b-8a2d-1550278ae803@tycho.nsa.gov> <CAFqZXNtjELoG_5GK5c4XpH8Be3NfsKMZdZvrJKPpnTLPKKgZ9A@mail.gmail.com>
+ <1f613260-d315-6925-d069-e92b872b8610@tycho.nsa.gov> <CAHC9VhT_CBQN+aFWjpPixi9Ok3Z7bQ-053AHg4pvqVtn-RdVVA@mail.gmail.com>
+ <0f0778af-73c2-3c75-30c0-da5eae203032@tycho.nsa.gov> <CAHC9VhT24b6YYTcE-h9pS9HnJ35unW_14EYLcNBBd-xUa=1L9A@mail.gmail.com>
+ <83d047ce-0ca0-4152-1da7-32798c500aab@tycho.nsa.gov> <CAHC9VhQG9zZEL53XRdLHdmFJDpg8qAd9p61Xkm5AdSgM=-5eAg@mail.gmail.com>
+ <83af5f0f-d3ec-7827-92e5-2db0997b9d22@tycho.nsa.gov> <CAHC9VhSqNGxqGQU6QfB3SxHZZdtPh79-4vOrpDXLr9zxT_X4bg@mail.gmail.com>
+ <CAFqZXNv7PUgrU9Qe28e3cHnRAwjKZLVmNrOZggvkE5AB7T9o1Q@mail.gmail.com>
+In-Reply-To: <CAFqZXNv7PUgrU9Qe28e3cHnRAwjKZLVmNrOZggvkE5AB7T9o1Q@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 13 Dec 2019 18:23:39 -0500
+Message-ID: <CAHC9VhRwPpBAD3vDwTf1q25Qhp-nE_wmPpqdyfsDwpUNS6smrw@mail.gmail.com>
+Subject: Re: [PATCH] LSM: allow an LSM to disable all hooks at once
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Micah Morton <mortonm@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 10 Dec 2019, Schumaker, Anna wrote:
+On Fri, Dec 13, 2019 at 9:07 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Thu, Dec 12, 2019 at 8:01 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Thu, Dec 12, 2019 at 1:48 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > > On 12/12/19 1:18 PM, Paul Moore wrote:
+> > > > On Thu, Dec 12, 2019 at 1:10 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > > >>
+> > > >> On 12/12/19 1:09 PM, Paul Moore wrote:
+> > > >>> On Thu, Dec 12, 2019 at 12:57 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > > >>>> On 12/12/19 12:54 PM, Paul Moore wrote:
+> > > >>>>> On Thu, Dec 12, 2019 at 8:14 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > > >>>>>> On 12/12/19 6:49 AM, Ondrej Mosnacek wrote:
+> > > >>>>>>> On Wed, Dec 11, 2019 at 8:12 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > > >>>>>>>> On 12/11/19 1:35 PM, Casey Schaufler wrote:
+> > > >>>>>>>>> On 12/11/2019 8:42 AM, Kees Cook wrote:
+> > > >>>>>>>>>> On Wed, Dec 11, 2019 at 09:29:10AM -0500, Stephen Smalley wrote:
+> > > >>>>>>>>>>> On 12/11/19 9:08 AM, Ondrej Mosnacek wrote:
+> > > >>>>>
+> > > >>>>> ...
+> > > >>>>>
+> > > >>>>>>>> selinux_state.initialized reflects whether a policy has
+> > > >>>>>>>> been loaded.  With a few exceptions in certain hook functions, it is
+> > > >>>>>>>> only checked by the security server service functions
+> > > >>>>>>>> (security/selinux/ss/services.c) prior to accessing the policydb.  So
+> > > >>>>>>>> there is a lot of SELinux processing that would still occur in that
+> > > >>>>>>>> situation unless we added if (!selinux_state.initialized) return 0;
+> > > >>>>>>>> checks to all the hook functions, which would create the same exposure
+> > > >>>>>>>> and would further break the SELinux-enabled case (we need to perform
+> > > >>>>>>>> some SELinux processing pre-policy-load to allocate blobs and track what
+> > > >>>>>>>> tasks and objects require delayed security initialization when policy
+> > > >>>>>>>> load finally occurs).
+> > > >>>>>>>
+> > > >>>>>>> I think what Casey was suggesting is to add another flag that would
+> > > >>>>>>> switch from "no policy loaded, but we expect it to be loaded
+> > > >>>>>>> eventually" to "no policy loaded and we don't expect/allow it to be
+> > > >>>>>>> loaded any more", which is essentially equivalent to checking
+> > > >>>>>>> selinux_enabled in each hook, which you had already brought up.
+> > > >>>>>>
+> > > >>>>>> Yep.  if (!selinux_enabled) return 0; or if (selinux_state.disabled)
+> > > >>>>>> return 0; under #ifdef CONFIG_SECURITY_SELINUX_DISABLE in every hook
+> > > >>>>>> might be the best option until it can be removed altogether; avoids
+> > > >>>>>> impacting the LSM framework or any other security module, preserves the
+> > > >>>>>> existing functionality, fairly low overhead on the SELinux-disabled case.
+> > > >>>>>
+> > > >>>>> Just so I'm understanding this thread correctly, the above change
+> > > >>>>> (adding enabled checks to each SELinux hook implementation) is only
+> > > >>>>> until Fedora can figure out a way to deprecate and remove the runtime
+> > > >>>>> disable?
+> > > >>>>
+> > > >>>> That's my understanding.  In the interim, Android kernels should already
+> > > >>>> be disabling CONFIG_SECURITY_SELINUX_DISABLE and other distros may
+> > > >>>> choose to disable it as long as they don't care about supporting SELinux
+> > > >>>> runtime disable.
+> > > >>>
+> > > >>> Okay, I just wanted to make sure I wasn't missing something.
+> > > >>> Honestly, I'd rather Fedora just go ahead and do whatever it is they
+> > > >>> need to do to turn off CONFIG_SECURITY_SELINUX_DISABLE (it sounds like
+> > > >>> they have a plan and are working on it), I'm not overly excited about
+> > > >>> temporarily cluttering up the code with additional "enabled" checks
+> > > >>> when the status quo works, even if it is less than ideal.
+> > > >>
+> > > >> The status quo is producing kernel crashes, courtesy of LSM stacking
+> > > >> changes...
+> > > >
+> > > > How prevalent are these crashes?
+> > > >
+> > > > This also only happens when disabling SELinux at runtime, yes?
+> > > > Something we've advised against for some time now and are working to
+> > > > eliminate?  Let's just get rid of the runtime disable *soon*, and if
+> > > > we need a stop-gap fix let's just go with the hook reordering since
+> > > > that seems to minimize the impact, if not resolve it.
+> > >
+> > > Not optimistic given that the original bug was opened 2.5+ years ago,
+> > > commenters identified fairly significant challenges to removing the
+> > > support, and no visible progress was ever made.  I suppose the hook
+> > > reordering will do but seems fragile and hacky.  Whatever.
+> >
+> > Based on Ondrej's comments in this thread it sounded as if there was
+> > some renewed interest in actually eliminating it from Fedora this
+> > time.  If that's not the case, perhaps it's time to start that effort
+> > back up, and if we can't ever get away from the runtime disable then
+> > we can take the step of admitting that everything is terrible and we
+> > can consider some of the options presented in this thread.
+>
+> Yes, we are quite determined to do what it takes to remove it. It may
+> go more smoothly than expected, or it may get unexpectedly
+> complicated. It's hard to tell at this point.
 
-> Hi Scott,
-> 
-> On Tue, 2019-12-10 at 07:30 -0500, Scott Mayhew wrote:
-> > Hi Anna, Trond,
-> > 
-> > Here's a set of patches that converts NFS to use the mount API.  Note that
-> > there are a lot of preliminary patches, some from David and some from Al.
-> > The final patch (the one that does the actual conversion) from the David's
-> > initial posting has been split into 5 separate patches, and the entire set
-> > has been rebased on top of v5.5-rc1.
-> 
-> Thanks for the updated patches! Everything looks okay to me, but I've only
-> tested with the legacy mount command. I'm curious if you've tested it using the
-> new system?
+That's good to hear, I know it is going to be difficult, but I think
+we can all agree it's the right thing to do.  Any idea when you might
+have a better idea of the time involved?
 
-I've hacked up mount.nfs for testing the new syscalls (for mounting... I
-haven't quite figured out remounting yet) here:
-https://github.com/scottmayhew/nfs-utils/tree/fscontext
+Next week I think I'm going to put together a RFC patch that marks
+CONFIG_SECURITY_SELINUX_DISABLE as deprecated, and displays a warning
+when it is used at runtime.  Later on when we have a better idea of
+the removal date, we can start adding delays when it is used to help
+get people to migrate to the cmdline approach.
 
-It seems to be working okay, with one exception.  If I mount the same
-NFS export with the same mount options multiple times, then I get
-multiple mounts:
-
-[root@fedora30 ~]# mount.nfs nfs:/export /mnt/t
-[root@fedora30 ~]# mount.nfs nfs:/export /mnt/t
-[root@fedora30 ~]# grep /mnt/t /proc/mounts
-nfs:/export /mnt/t nfs rw,seclabel,relatime,vers=4.2,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=krb5,clientaddr=192.168.122.239,local_lock=none,addr=192.168.122.3 0 0
-nfs:/export /mnt/t nfs rw,seclabel,relatime,vers=4.2,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=krb5,clientaddr=192.168.122.239,local_lock=none,addr=192.168.122.3 0 0
-
-That doesn't happen with the mount() syscall:
-
-[root@fedora30 ~]# mount.nfs.old nfs:/export /mnt/t
-[root@fedora30 ~]# mount.nfs.old nfs:/export /mnt/t
-[root@fedora30 ~]# grep /mnt/t /proc/mounts
-nfs:/export /mnt/t nfs rw,seclabel,relatime,vers=4.2,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=krb5,clientaddr=192.168.122.239,local_lock=none,addr=192.168.122.3 0 0
-
--Scott
-
-> 
-> Thanks,
-> Anna
-> 
-> > 
-> > Changes since v5:
-> > - fixed possible derefence of error pointer in nfs4_validate_fspath()
-> >   reported by Dan Carpenter
-> > - rebased on top of v5.5-rc1
-> > Changes since v4:
-> > - further split the original "NFS: Add fs_context support" patch (new
-> >   patch is about 25% smaller than the v4 patch)
-> > - fixed NFSv4 referral mounts (broken in the original patch)
-> > - fixed leak of nfs_fattr when fs_context is freed
-> > Changes since v3:
-> > - changed license and copyright text in fs/nfs/fs_context.c
-> > Changes since v2:
-> > - fixed the conversion of the nconnect= option
-> > - added '#if IS_ENABLED(CONFIG_NFS_V4)' around nfs4_parse_monolithic()
-> >   to avoid unused-function warning when compiling with v4 disabled
-> > Chagnes since v1:
-> > - split up patch 23 into 4 separate patches
-> > 
-> > -Scott
-> > 
-> > Al Viro (15):
-> >   saner calling conventions for nfs_fs_mount_common()
-> >   nfs: stash server into struct nfs_mount_info
-> >   nfs: lift setting mount_info from nfs4_remote{,_referral}_mount
-> >   nfs: fold nfs4_remote_fs_type and nfs4_remote_referral_fs_type
-> >   nfs: don't bother setting/restoring export_path around
-> >     do_nfs_root_mount()
-> >   nfs4: fold nfs_do_root_mount/nfs_follow_remote_path
-> >   nfs: lift setting mount_info from nfs_xdev_mount()
-> >   nfs: stash nfs_subversion reference into nfs_mount_info
-> >   nfs: don't bother passing nfs_subversion to ->try_mount() and
-> >     nfs_fs_mount_common()
-> >   nfs: merge xdev and remote file_system_type
-> >   nfs: unexport nfs_fs_mount_common()
-> >   nfs: don't pass nfs_subversion to ->create_server()
-> >   nfs: get rid of mount_info ->fill_super()
-> >   nfs_clone_sb_security(): simplify the check for server bogosity
-> >   nfs: get rid of ->set_security()
-> > 
-> > David Howells (8):
-> >   NFS: Move mount parameterisation bits into their own file
-> >   NFS: Constify mount argument match tables
-> >   NFS: Rename struct nfs_parsed_mount_data to struct nfs_fs_context
-> >   NFS: Split nfs_parse_mount_options()
-> >   NFS: Deindent nfs_fs_context_parse_option()
-> >   NFS: Add a small buffer in nfs_fs_context to avoid string dup
-> >   NFS: Do some tidying of the parsing code
-> >   NFS: Add fs_context support.
-> > 
-> > Scott Mayhew (4):
-> >   NFS: rename nfs_fs_context pointer arg in a few functions
-> >   NFS: Convert mount option parsing to use functionality from
-> >     fs_parser.h
-> >   NFS: Additional refactoring for fs_context conversion
-> >   NFS: Attach supplementary error information to fs_context.
-> > 
-> >  fs/nfs/Makefile         |    2 +-
-> >  fs/nfs/client.c         |   80 +-
-> >  fs/nfs/fs_context.c     | 1424 +++++++++++++++++++++++++
-> >  fs/nfs/fscache.c        |    2 +-
-> >  fs/nfs/getroot.c        |   73 +-
-> >  fs/nfs/internal.h       |  132 +--
-> >  fs/nfs/namespace.c      |  146 ++-
-> >  fs/nfs/nfs3_fs.h        |    2 +-
-> >  fs/nfs/nfs3client.c     |    6 +-
-> >  fs/nfs/nfs3proc.c       |    2 +-
-> >  fs/nfs/nfs4_fs.h        |    9 +-
-> >  fs/nfs/nfs4client.c     |   99 +-
-> >  fs/nfs/nfs4file.c       |    1 +
-> >  fs/nfs/nfs4namespace.c  |  292 +++---
-> >  fs/nfs/nfs4proc.c       |    2 +-
-> >  fs/nfs/nfs4super.c      |  257 ++---
-> >  fs/nfs/proc.c           |    2 +-
-> >  fs/nfs/super.c          | 2217 +++++----------------------------------
-> >  include/linux/nfs_xdr.h |    9 +-
-> >  19 files changed, 2287 insertions(+), 2470 deletions(-)
-> >  create mode 100644 fs/nfs/fs_context.c
-> > 
-
+-- 
+paul moore
+www.paul-moore.com
