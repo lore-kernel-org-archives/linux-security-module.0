@@ -1,102 +1,104 @@
-Return-Path: <SRS0=NGWT=2C=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=n75/=2D=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A903C2D0C9
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Dec 2019 22:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF6BC43603
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Dec 2019 09:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C695C2253D
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Dec 2019 22:04:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEB30206D8
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Dec 2019 09:07:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="JaiU05aL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1oVLkla"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731295AbfLLWEv (ORCPT
+        id S1725980AbfLMJHC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Dec 2019 17:04:51 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:50040 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730779AbfLLWEu (ORCPT
+        Fri, 13 Dec 2019 04:07:02 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36496 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfLMJHC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Dec 2019 17:04:50 -0500
-Received: by linux.microsoft.com (Postfix, from userid 1001)
-        id DE80920B7187; Thu, 12 Dec 2019 14:04:49 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DE80920B7187
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
-        s=default; t=1576188289;
-        bh=jkm72bW0CrlIB8ikaKjBSdd8IXwgeJj35zWeOybEfsc=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=JaiU05aLioDaWOBB2diCOCBUvavRkymjLyLOPgH+/O67bH2oVDs2wTOCF82t1RU55
-         kzfqm/HXl/Xp/5ANfJ31B6RsCVXz1C0h+xhHIpUs8HMT78pr8AMoW6VsV/GxgI1sYY
-         HG/E4wRPS4Bc6x9f9HRp5RWQoZcO0yTZVL3cssNU=
-Received: from localhost (localhost [127.0.0.1])
-        by linux.microsoft.com (Postfix) with ESMTP id DBC003070327;
-        Thu, 12 Dec 2019 14:04:49 -0800 (PST)
-Date:   Thu, 12 Dec 2019 14:04:49 -0800 (PST)
-From:   James Morris <jamorris@linuxonhyperv.com>
-X-X-Sender: jamorris@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net
-To:     Paul Moore <paul@paul-moore.com>
-cc:     Stephen Smalley <sds@tycho.nsa.gov>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-next@vger.kernel.org,
-        jamorris@linux.microsoft.com
-Subject: Re: [PATCH] security: only build lsm_audit if CONFIG_SECURITY=y
-In-Reply-To: <CAHC9VhRnqfuVUTDZA+8G-_OTqqN8M7XJhOpiO1m3t0XhY584Xw@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1912121404420.96286@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
-References: <20191210165541.85245-1-sds@tycho.nsa.gov> <CAHC9VhRnqfuVUTDZA+8G-_OTqqN8M7XJhOpiO1m3t0XhY584Xw@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 13 Dec 2019 04:07:02 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z3so5797933wru.3;
+        Fri, 13 Dec 2019 01:07:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=zgE7H652OqyN4nqOaV860HJ7ZzQUNg5TLy0QsJ2RWEM=;
+        b=J1oVLkla8WreiTlDRa8LXhCUU3+ujH95oXC6BB78EC0TlSd6fLuE2GRl+0xU9wkgF/
+         pyiyXOPC1BtTsJaHcINVAVDo++Wm383E4Q9i5piBTTXn49Pj2ALqb7sMcSUNkIbfT+yS
+         K41HTu/Fh6XO7jD1+BHEfutnY8DvE7/4h4QCqP/EGosQaxJRTuErqsXGNXZaIUKlgS/M
+         ttQvUX5dQv/Dn31A6dLorPNkKNvVw5Xm93i3BrnH0CEukc26UZp3qzPUX9Hafr0dM8Qn
+         zwGBiZvLc/9JryUUTIAfiKJy58fNZtfm5fGzi2nfQ8YT7b2vnHRrELju7cV9nRB0jdkh
+         dpCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zgE7H652OqyN4nqOaV860HJ7ZzQUNg5TLy0QsJ2RWEM=;
+        b=jZIOmZtAsEKd7kimOxV0IrEYPz/QqRV1JYPzJNLd7iHHnP2DFHN3zZyAArxDGnlZ50
+         EdUuMVoBfyqLA2sX/7jKf/PEfVbjtbgdLO8eWzJW8P0H8yWRDkAHUbMevnSReTmGtVQa
+         hszGdgyairpDkCY+r7eQvtsOuZsz5APwAdPZ1DRtNNPJNfNBRDnPsHfu8YvIMJDZW3FZ
+         9Ze8bQK0anUjYogz4GRKsFa7KVDIaqYTjIAOasL7PpfXn5oD032hEDlp/jZjbESa2c55
+         YuiOGJ2FUM93UKz1BgAUzTerrsvCUrRG0J01Q9jm+q9SPVA2iVrIHTJO8riFPv6rdwHA
+         y58Q==
+X-Gm-Message-State: APjAAAU4nNoysGG4j54NdB9MLCNxPAlLmk5DJsSi8VvP5QDh68ZkZdL7
+        XJbEhYsZvi7bSCdvncVvAtQ=
+X-Google-Smtp-Source: APXvYqwctuSRjAyVEEe/pDJj7009/7T6jQBFBpEvZyv0JWbqyBLun6a0bGKtliRCpDHSmpSNK3YUkA==
+X-Received: by 2002:adf:ebc6:: with SMTP id v6mr11423586wrn.75.1576228019639;
+        Fri, 13 Dec 2019 01:06:59 -0800 (PST)
+Received: from linux-691t.suse.de ([124.11.22.254])
+        by smtp.gmail.com with ESMTPSA id y6sm9079094wrl.17.2019.12.13.01.06.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Dec 2019 01:06:58 -0800 (PST)
+From:   "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>
+Subject: [PATCH 0/2 v2] efi: cosmetic patches for the error messages when
+Date:   Fri, 13 Dec 2019 17:06:44 +0800
+Message-Id: <20191213090646.12329-1-jlee@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 10 Dec 2019, Paul Moore wrote:
+When loading certificates list from EFI variables, the error
+messages and efi status codes always be emitted to dmesg. It looks
+ugly:
 
-> On Tue, Dec 10, 2019 at 11:55 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> > The lsm_audit code is only required when CONFIG_SECURITY is enabled.
-> > It does not have a build dependency on CONFIG_AUDIT since audit.h
-> > provides trivial static inlines for audit_log*() when CONFIG_AUDIT
-> > is disabled.  Hence, the Makefile should only add lsm_audit to the
-> > obj lists based on CONFIG_SECURITY, not CONFIG_AUDIT.
-> >
-> > Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
-> > Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-> > ---
-> >  security/Makefile | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Merged into selinux/next in order to fix the linux-next build
-> breakage.  James, if you would prefer a different fix, let us know.
+[    2.335031] Couldn't get size: 0x800000000000000e
+[    2.335032] Couldn't get UEFI MokListRT 
+[    2.339985] Couldn't get size: 0x800000000000000e
+[    2.339987] Couldn't get UEFI dbx list
 
-LGTM
+This cosmetic patch set moved the above messages to the error
+handling code path. And, it adds a function to convert EFI status
+code to a string for improving the readability of debug log. The function
+can also be used in other EFI logs.
 
-> 
-> > diff --git a/security/Makefile b/security/Makefile
-> > index be1dd9d2cb2f..746438499029 100644
-> > --- a/security/Makefile
-> > +++ b/security/Makefile
-> > @@ -22,7 +22,7 @@ obj-$(CONFIG_SECURITY)                        += security.o
-> >  obj-$(CONFIG_SECURITYFS)               += inode.o
-> >  obj-$(CONFIG_SECURITY_SELINUX)         += selinux/
-> >  obj-$(CONFIG_SECURITY_SMACK)           += smack/
-> > -obj-$(CONFIG_AUDIT)                    += lsm_audit.o
-> > +obj-$(CONFIG_SECURITY)                 += lsm_audit.o
-> >  obj-$(CONFIG_SECURITY_TOMOYO)          += tomoyo/
-> >  obj-$(CONFIG_SECURITY_APPARMOR)                += apparmor/
-> >  obj-$(CONFIG_SECURITY_YAMA)            += yama/
-> > --
-> > 2.23.0
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
-> 
+v2:
+The convert function be moved to efi.c
 
+Lee, Chun-Yi (2):
+  efi: add a function to convert the status code to a string
+  efi: show error messages only when loading certificates is failed
+
+ drivers/firmware/efi/efi.c                    | 32 +++++++++++++++++++++
+ include/linux/efi.h                           |  1 +
+ security/integrity/platform_certs/load_uefi.c | 41 ++++++++++++++-------------
+ 3 files changed, 55 insertions(+), 19 deletions(-)
 
 -- 
-James Morris
-<jamorris@linuxonhyperv.com>
+2.16.4
+
