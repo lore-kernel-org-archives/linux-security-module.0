@@ -2,110 +2,123 @@ Return-Path: <SRS0=H1aQ=2F=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8B6C43603
-	for <linux-security-module@archiver.kernel.org>; Sun, 15 Dec 2019 11:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48A2C43603
+	for <linux-security-module@archiver.kernel.org>; Sun, 15 Dec 2019 15:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B68E421D7E
-	for <linux-security-module@archiver.kernel.org>; Sun, 15 Dec 2019 11:53:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AD6C2253D
+	for <linux-security-module@archiver.kernel.org>; Sun, 15 Dec 2019 15:43:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="brkukWbL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbfLOLxo (ORCPT
+        id S1726540AbfLOPnZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 15 Dec 2019 06:53:44 -0500
-Received: from mga18.intel.com ([134.134.136.126]:55004 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726089AbfLOLxn (ORCPT
+        Sun, 15 Dec 2019 10:43:25 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43283 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbfLOPnY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 15 Dec 2019 06:53:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Dec 2019 03:53:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,317,1571727600"; 
-   d="scan'208";a="416159519"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 15 Dec 2019 03:53:41 -0800
-Received: from [10.251.95.214] (abudanko-mobl.ccr.corp.intel.com [10.251.95.214])
-        by linux.intel.com (Postfix) with ESMTP id 1FB7658044E;
-        Sun, 15 Dec 2019 03:53:36 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v1 0/3] Introduce CAP_SYS_PERFMON capability for secure
- Perf users groups
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Andi Kleen <ak@linux.intel.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        elena.reshetova@intel.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Stephane Eranian <eranian@google.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>
-References: <283f09a5-33bd-eac3-bdfd-83d775045bf9@linux.intel.com>
- <1e836f34-eda3-542d-f7ce-9a3e87ac5e2e@schaufler-ca.com>
- <d0c6f000-4757-02d8-b114-a35cbb9566ed@linux.intel.com>
- <a81248c5-971a-9d3f-6df4-e6335384fe7f@schaufler-ca.com>
- <ab206ef5-466e-7bce-3e5f-53da110bddb2@linux.intel.com>
- <16e9e399-2ebf-261f-eee5-cf9ace2a82b9@schaufler-ca.com>
- <20191211203648.GA862919@tassilo.jf.intel.com>
- <d2095e4a-261b-b561-2a2c-cf00fd416503@tycho.nsa.gov>
-Organization: Intel Corp.
-Message-ID: <533d0954-25ce-9df0-6324-3ff00d1ee042@linux.intel.com>
-Date:   Sun, 15 Dec 2019 14:53:35 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Sun, 15 Dec 2019 10:43:24 -0500
+Received: by mail-ed1-f66.google.com with SMTP id dc19so2973475edb.10
+        for <linux-security-module@vger.kernel.org>; Sun, 15 Dec 2019 07:43:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to:cc;
+        bh=/wWyyDw15GkE7UwKL96KUA/7gQa6SV59lh2fmM6CWcM=;
+        b=brkukWbLtTHUVZIpOLT9fGY8HtdASX4AqCK9/MvP8ML02VN1rcS/dPBkKsDm8tJTnY
+         2XR4i0iAiffK0Vj4AlaRWhwoDsl+H267JoL6u2ZSTtFdKFE7VCeL5oKvx9Fn7f299v9/
+         Xeu4i//QtabBuYaInPGrFeJ+h3o6l1GnY+li9Xa+f/mDyqwDu58I3aOY8jcvule1n68P
+         O8ALCsTw28V/DUlf2FYxItZ6uQgBHU55hdpcMltrBj2y/GxXcE2ErB19jUIRO6rhsHPk
+         AFhAkDsshvReTX36q9laQI1qHcoKWQXoqHkOI7NAG7pNCaC0sIOVW7sgvvdI2hChgrEO
+         JrOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=/wWyyDw15GkE7UwKL96KUA/7gQa6SV59lh2fmM6CWcM=;
+        b=Jtogcb2Fvv/1yL1m5tnCRs5lJ/cK+IJR7Em4QQSfG1VbX4IhwmVxHywmYIPSaxe+Pj
+         GwmRcuCuAvBBxQREj4A0PztBTS2hiwtdcXm/gNNPUyKAlfi10RLoi5esczBNO2hmol8O
+         VKDTbksWM3QxP8I+g2d+qXSEVg7BwSDrjDhw3f1/mVYn9d3g0VviPTVUypiRWAa2X5k7
+         Ar6otYHySOI/Qjw1MlXyfSmZRGCqNy6CDbs6lGuyVysFLr7Rj3J9n75or9O20XA7JY07
+         2pj8Ex/w2oF45m/eUbhdzpXryIDcrTfWVjeCuCwK7TtO5l7c78OXfXN31cOk1+wxmS7Z
+         QBEA==
+X-Gm-Message-State: APjAAAXUWqUN4ezHsx8v4ajuRzqN3Lqp54LnJe3Gt1Khp4Q5kXit6HuU
+        waVV2BnX6AEY2mHjBfgEaN8xB+XROf6CHgfvQ+Q=
+X-Google-Smtp-Source: APXvYqz3yE862N7kXKMR2RWG8QUBKwLdcwbaLW2/L7gzxe/569RfQJav+doLEdCsgigKUCKva7HG7D/RKpJ0ut4roms=
+X-Received: by 2002:a17:906:3cea:: with SMTP id d10mr28701887ejh.32.1576424602755;
+ Sun, 15 Dec 2019 07:43:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <d2095e4a-261b-b561-2a2c-cf00fd416503@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Sun, 15 Dec 2019 16:43:11 +0100
+Message-ID: <CAKgNAkiyAkZy=oLrpJvHYU9Tq1dunNJLOJdtr508_w3vrdPWcQ@mail.gmail.com>
+Subject: Anomalous output from getpcaps(1) for process with all capabilities
+To:     Andrew Morgan <morgan@kernel.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>, ksrot@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hello Andrew,
 
-On 12.12.2019 17:24, Stephen Smalley wrote:
-> On 12/11/19 3:36 PM, Andi Kleen wrote:
->>>> In this circumstances CAP_SYS_PERFMON looks like smart balanced advancement that
->>>> trade-offs between perf_events subsystem extensions, required level of control
->>>> and configurability of perf_events, existing users adoption effort, and it brings
->>>> security hardening benefits of decreasing attack surface for the existing users
->>>> and use cases.
->>>
->>> I'm not 100% opposed to CAP_SYS_PERFMON. I am 100% opposed to new capabilities
->>> that have a single use. Surely there are other CAP_SYS_ADMIN users that [cs]ould
->>> be converted to CAP_SYS_PERFMON as well. If there is a class of system performance
->>> privileged operations, say a dozen or so, you may have a viable argument.
->>
->> perf events is not a single use. It has a bazillion of sub functionalities,
->> including hardware tracing, software tracing, pmu counters, software counters,
->> uncore counters, break points and various other stuff in its PMU drivers.
->>
->> See it more as a whole quite heterogenous driver subsystem.
->>
->> I guess CAP_SYS_PERFMON is not a good name because perf is much more
->> than just Perfmon. Perhaps call it CAP_SYS_PERF_EVENTS
-> 
-> That seems misleading since it isn't being checked for all perf_events operations IIUC (CAP_SYS_ADMIN is still required for some?) and it is even more specialized than CAP_SYS_PERFMON, making it less likely that we could ever use this capability as a check for other kernel performance monitoring facilities beyond perf_events.
-> 
-> I'm not as opposed to fine-grained capabilities as Casey is but I do recognize that there are a limited number of available bits (although we do have a fair number of unused ones currently given the extension to 64-bits) and that it would be easy to consume them all if we allocated one for every kernel feature.  That said, this might be a sufficiently important use case to justify it.
-> 
-> Obviously I'd encourage you to consider leveraging SELinux as well but I understand that you are looking for a solution that doesn't depend on a distro using a particular LSM or a particular policy.  I will note that SELinux doesn't suffer from the limited bits problem because one can always define a new SELinux security class with its own access vector permissions bitmap, as has been done for the recently added LSM/SELinux perf_event hooks.
-> 
-> I don't know who actually gets to decide when/if a new capability is allocated.  Maybe Serge and/or James as capabilities and LSM maintainers.
-> 
-> I have no objections to these patches from a SELinux POV.
+Once upon a time (I don't remember exactly when things changed but let
+us say 5 years ago), when one examined the capabilities of a process
+with all capabilities, one saw something like the following nicely
+compact output:
 
-Stephen, thanks for meaningful input!
+$ getpcaps 1
+Capabilities for `1': =ep
 
-~Alexey
+Nowadays, one rather sees this (as also noticed by others [1]):
+
+$ getpcaps 1
+Capabilities for `1': =
+cap_chown,cap_dac_override,cap_dac_read_search,cap_fowner,
+cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,
+cap_linux_immutable,cap_net_bind_service,cap_net_broadcast,
+cap_net_admin,cap_net_raw,cap_ipc_lock,cap_ipc_owner,
+cap_sys_module,cap_sys_rawio,cap_sys_chroot,cap_sys_ptrace,
+cap_sys_pacct,cap_sys_admin,cap_sys_boot,cap_sys_nice,
+cap_sys_resource,cap_sys_time,cap_sys_tty_config,cap_mknod,
+cap_lease,cap_audit_write,cap_audit_control,cap_setfcap,
+cap_mac_override,cap_mac_admin,cap_syslog,cap_wake_alarm,
+cap_block_suspend,cap_audit_read+ep
+
+The latter of course is much harder to read.
+
+This all the more perplexing when compared to the folowing:
+
+$ setcap =ep myprog
+$ getcap myprog
+prog =ep
+
+Looking more closely, there is a difference in the respective
+capability sets. For the process show above, the effective and
+permitted capability have precisely the 38 current capabilities
+available. By contrast, inspecting the security.capability attribute
+of 'myprog' show a permitted set that has all 64 bits sets. So this
+explains why there is a difference in the output of getpcaps and
+getcap above.
+
+I'm not sure where the behavior change originated. cap_to_text() has
+seen no change between 2008 and 2017, AFAIK, but surely it is there
+that some bit parsing logic needs to be fixed. Do you have any
+thoughts?
+
+Thanks,
+
+Michael
+
+[1] https://bugzilla.redhat.com/show_bug.cgi?id=1432878
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
