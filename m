@@ -2,206 +2,283 @@ Return-Path: <SRS0=Abxs=2G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E80C43603
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 Dec 2019 22:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFD2C2D0C3
+	for <linux-security-module@archiver.kernel.org>; Mon, 16 Dec 2019 22:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB84024673
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 Dec 2019 22:27:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF3FD21D7D
+	for <linux-security-module@archiver.kernel.org>; Mon, 16 Dec 2019 22:33:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lXU0Lkbd"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="RIVKbai2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbfLPW12 (ORCPT
+        id S1726487AbfLPWdw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 16 Dec 2019 17:27:28 -0500
-Received: from sonic306-28.consmr.mail.ne1.yahoo.com ([66.163.189.90]:44395
-        "EHLO sonic306-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727977AbfLPWZx (ORCPT
+        Mon, 16 Dec 2019 17:33:52 -0500
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com ([66.163.188.211]:38893
+        "EHLO sonic311-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726454AbfLPWdv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 16 Dec 2019 17:25:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1576535151; bh=pk4OM2anm1/C+LQ96dtDYWeHAfHr5wLruGqEfoA0KyY=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=lXU0LkbdrESxOfrdn4xmp5qGdHpGX4r42WOcujBm8skPdlVpu6iOVjfUYe4P2hKnoFpKbRobMCBQ2qb8+sw7QoA2WkPDMI77I4UDX6wMs5FQFO7KjcQCgvBUWaFJe9OiJtlcTL4cFz6LtVVrh1WtrhXAL/OPQljDzqixIEL1VghF2iI0keGKGVNjEcAOB7ixg51hQXqLopiOrUTxtaLq8J0nnE2kck+Dmf9tBkheEHgJbav5ixwfj8pEdUKYJTooWe1toN8qT3SwFHS0WHD+7kxmlUOrGaoFkpJrSGP77o98moDQma+LEKlhDKw94IgrZ4iC612dkgXwPnHDmeZSkw==
-X-YMail-OSG: EOSHJDsVM1mOhuYYPl_cXXeuHvFRJU87DA6RKtOoGHz9wDxfoiIVSe9C2nQM1Fw
- lc_9Jru.i.LZn6UL1P3qv6mL4TiL5NsTIKukqPSzZGS1j_LEjNdAej2V9E.jeuHWfo_3eob98pc8
- 6VyNqzUjbCiCnBkT4fFuBzC.rwWsY4x.EiFGY5fjWZG3BrRBnPvQRgVtdsrb5PjyUEVEmZg7fvbQ
- YhfobkW34KyBQ4sWo.GPwD4rp21ezmv9pFU8D4.lLx8Ls88UjeT93CszjV9e5u97NTF1GwHC0aGH
- iO.l2XUSdP.ifRSHbznvErL6RWmB3H9ClY9WK1eJteatiOek1cdiBT6MZcXMGa_EZqPyzAD6qnWs
- _oNUYwT5pMGxwBU5p872niiaz8EnxZKbeaE3hZqPqnH8En6rLE.kRwh4Y.bGKy1cHYz5Mbk2kPU5
- 6UmZPGTlAKovFa2vvyBWDhRE.3h18n2xYy3ndJDHPWXJz.xG0lI4yURA_DHA_rYFz6Ed94xyCPPn
- g6hz96Ae4LtJPOpR7KcmW3uIOJrjJ4SpQGpB0Ks21gvZx4KAUIs7QEyn.aJT1yBSmi.K2H9.vhhK
- i_yw6Si3QdnuF6j9Jqor.jlx25DVXPH73XmDyNLEAlk9yoKnqC3.G9xxfSKIkhhZLeAQ_MdIjHHy
- VYr5w.V9QTt8hAJ_M64YhYh_UKkPVPvKQR77lHqauzjyKQz4Zu29qdAhZx7YJY1KUz_Oe8QVYAwm
- wGtl4N1A6fpcLbv8b3BNAWMh3tImLz491q4IYUNyOaq0bUT0v0lIU6PTvoIpWoGtLcmfhDjOoC6N
- sVtkj24dmoQws_EZ_74qRz1WTSoXnnecPe6MZSyCS3ROC3cOq4gYzMZwPPitOGfmTHjUHoYaxMVD
- 8Tp2i4aDIQfJADCaRB05TsfzSZ47j5QvMwSrrnEDCF76dRhMURGGP1zplFRryMfxuW1P3bBftume
- cFSi0mGNOj45RnDUcjznlTAXu9i62AuQsbcxBQ.lg7NoiQlxZ1gQzBaA2lNOZPlLF9MdIIUE3jay
- oLNvbuK9l2zi7N6FYMyBpMiicuGny1ly04nTr9WzVpj2z8.99XoK55smyAvFylnHRi9EhLAnYiOO
- 7RnTsR9C4hd5sfYUIKRkhR2rLOFn2aKN8knrGOVu0t6xbgTW1eCxgyOsAZUiG1Wz7yis0TLPtW79
- .u4DpiU0Skz6HLNf2DprE2sWJfPKQaaivVwG.6_xPDMcQHe1_w32jG1B0uPNc0K18cvRtIX6Qf9Z
- x3PfK7qXCXecGJpnwPyVWD9qqwD58N7mCrsPXI1tKTusQ2P_gJ0TY6rVgFyagohtFX0u.EMXSiLW
- xDjgkjpt_ecXNclidtpB3MemAhi7CboTpov_RvT03ytp3ZIAbsP2YVEn21uK3RFSzHg9FMKW12oG
- 3FQ4HgN53jjeMknrkXkm01qk5ZCzWHu0L0hVPzgX1v3h6WVbOQlPkUcyXT2J7wmwF
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Mon, 16 Dec 2019 22:25:51 +0000
-Received: by smtp426.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ad449dcdff93ede6e1b6227b68a93c45;
-          Mon, 16 Dec 2019 22:25:46 +0000 (UTC)
+        Mon, 16 Dec 2019 17:33:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1576535628; bh=+R0f5Pb+jzFZ/4+zq9nYc4/3+i9YVKFRUdvUCQRbbB4=; h=From:To:Cc:Subject:Date:References:From:Subject; b=RIVKbai2pUPKEqL3Pns3WJMqXfIidjCuvmHVoEII7GEM9vKT8MGh2+QMVIkPUjmxUiq8qKNU40zGJq8A1ZcSa84ymQol8B1TGkQ9P5sdC5XFTpg44UZ4s6qQUsZ1H+Ig6kdM2UZhSJ6kOqzGJMh5XfvLctBGhHmCguKzu0JOhLHppwZQEOXNtLkXzV26P6VCgZFTyJOqasw4GYLYBfVaVPiFULJzenffRtP5/3VauWNFUA+d0QZNheHIe/lmHmYs+a2OJw5J/k5guDuGkkWzzfwR5XsDp4pTc9A0UmJ8wW0y+wKh1Ox/xjkCQSmpAg1eIjt8LBZXAl+LETrqMq+i9Q==
+X-YMail-OSG: OFq_wc8VM1klgCAn4Tfz.kFfGXavKthK7z0woFyidSE9Tg8WwHjPGeHxE0nZMo0
+ EflM4_I2vBOIaxIJjKZOlnjgWGvzyVmkeW_NEq18S_gfKGKVg4mXeoDX8r99bjMxVkshq7iS0ZjF
+ X59MFzs5eHwNc0nMoVwKojAa47JOgDbQr3kPqU_yx1pIomfKlGsU3EjLylQhJ6h837ruJGIbRGu2
+ J3D5yIn717A4iBkARJZdPRD2PWhdkvP4WawZF56kw9ir7cDnVZt1QDNAaszLJwez55DiI3BhR_wY
+ uvxmVj4gD8ui61XXnbsu5bBTTSYPNwphoOldsIGExjFgBdcz4Uev9YPZXF0FclemLHgNqSarW1B3
+ 1sbhpQZYStrlYxF803XI96BNh2N.8QCVX2lZQhVbqUlijNY5EHVX0XBLHP3zjQpq6ZEhQ_zTHKaq
+ NhAh30lbANvcg9bowbsRalmv53.meHSNc_QyQoU2SIykjE0g2ckZjzqcvVgbCiLHacpgimT4d02U
+ .virLTdfFQOSSPkUeUWmVzd8qk4XKcD7Z.v2wnL9texhFqhxMgkOzrREBv961R4z8KO7TgqGUXbo
+ Z_7RWZ9eSpNZwLp2SaWF7jVfk8UWK4ayf1W2hakumE_lLR8lWvJYfJvVVDHu8qQdFq.9PTIGm7w_
+ HHNiLZwjup0F8PAQGm6GYBd2jzkUC96zjgwDKsCSdOSi.X1LoeGt7Jre12aufzL5ANNKFpstZ_Xw
+ ZQueKiHBe7gxzhoDMwy0eHtJ0hxRCVJlApf2oYtdotsayKV4GpkBaPOc1QN3UNCCY9Ja0H.962l4
+ nNS_uOjcuL5yF9kvgJN9nptDjEU_g9rL86cvtLedo5SvL0.TdORJQtJMTk79.J0Emt2DAWyMaVK8
+ oxKYdoXt5b5QvYG0k6.7JmX_3wHg5_1vkTmiieBsac_ChgGhf3v6n2TXktglirNV4FvEH4GN4EI.
+ 8dNysFY8JBlpd62Gn8.ObtaDd6i_chgQgqW0Lh_x7B5GtS_aDXC.QmuMzxHTVX16DZ7AcxUUfgw5
+ cXPw1jNhqS8xuZPBvH0G3bqY0M9gtJMfRX6Aw80evKvZ78rwtnf3nNOJtBS8.LFkwSHBFamS9oLK
+ ZGXUyqiL2vTm5oBnMv7vC1OZLPsB82QVsQF_tWYx2fykElYzc2ZZx0fjip83bBinSP096UQApBI3
+ fS.m9NZamlxCxQUcsLrRilE1qsgm4EG6EZAN8EUn7LHLJCnaDHx6amXnUJctMKThnsfoAqP5c1ye
+ zYXNaXmLwA9WLM8BwFPGL9Ud79kefieVA.L7XbxAWm.HhoKTyiNHRh4_1h3XoJv4pnWNBK9LMyR6
+ Bgg77NWBVXurga5M4iFUXt5K0raOIxkJs_wOZ5wWTd14PEqN.AoW4gGiXrIKF3OA4hwZjkQleh.A
+ lWK4n5TE9JXsY2447dn77tgxBd6bdjjtn9UDOPMVS
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Mon, 16 Dec 2019 22:33:48 +0000
+Received: by smtp429.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID df0d9b9ca902229e8a3f24aecb3674a2;
+          Mon, 16 Dec 2019 22:33:46 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
         sds@tycho.nsa.gov
-Subject: [PATCH v12 16/25] LSM: Use lsmcontext in security_dentry_init_security
-Date:   Mon, 16 Dec 2019 14:24:22 -0800
-Message-Id: <20191216222431.4956-17-casey@schaufler-ca.com>
+Subject: [PATCH v12 00/25] LSM: Module stacking for AppArmor
+Date:   Mon, 16 Dec 2019 14:33:20 -0800
+Message-Id: <20191216223345.5066-1-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191216222431.4956-1-casey@schaufler-ca.com>
-References: <20191216222431.4956-1-casey@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+References: <20191216223345.5066-1-casey.ref@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Change the security_dentry_init_security() interface to
-fill an lsmcontext structure instead of a void * data area
-and a length. The lone caller of this interface is NFS4,
-which may make copies of the data using its own mechanisms.
-A rework of the nfs4 code to use the lsmcontext properly
-is a significant project, so the coward's way out is taken,
-and the lsmcontext data from security_dentry_init_security()
-is copied, then released directly.
+This patchset provides the changes required for
+the AppArmor security module to stack safely with any other.
 
-This interface does not use the "display". There is currently
-not case where that is useful or reasonable.
+v12: Rebase to 5.5-rc1
+     Fixed a couple of incorrect contractions in the text.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
+v11: Rebase to 5.4-rc6
+     Incorporate feedback from v10
+     - Disambiguate reading /proc/.../attr/display by restricting
+       all use of the interface to the current process.
+     - Fix a merge error in AppArmor's display attribute check
+
+v10: Ask the security modules if the display can be changed.
+
+v9: There is no version 9
+
+v8: Incorporate feedback from v7
+    - Minor clean-up in display value management
+    - refactor "compound" context creation to use a common
+      append_ctx() function.
+
+v7: Incorporate feedback from v6
+    - Make setting the display a privileged operation. The
+      availability of compound contexts reduces the need for
+      setting the display.
+
+v6: Incorporate feedback from v5
+    - Add subj_<lsm>= and obj_<lsm>= fields to audit records
+    - Add /proc/.../attr/context to get the full context in
+      lsmname\0value\0... format as suggested by Simon McVittie
+    - Add SO_PEERCONTEXT for getsockopt() to get the full context
+      in the same format, also suggested by Simon McVittie.
+    - Add /sys/kernel/security/lsm_display_default to provide
+      the display default value.
+
+v5: Incorporate feedback from v4
+    - Initialize the lsmcontext in security_secid_to_secctx()
+    - Clear the lsmcontext in all security_release_secctx() cases
+    - Don't use the "display" on strictly internal context
+      interfaces.
+    - The SELinux binder hooks check for cases where the context
+      "display" isn't compatible with SELinux.
+
+v4: Incorporate feedback from v3
+    - Mark new lsm_<blob>_alloc functions static
+    - Replace the lsm and slot fields of the security_hook_list
+      with a pointer to a LSM allocated lsm_id structure. The
+      LSM identifies if it needs a slot explicitly. Use the
+      lsm_id rather than make security_add_hooks return the
+      slot value.
+    - Validate slot values used in security.c
+    - Reworked the "display" process attribute handling so that
+      it works right and doesn't use goofy list processing.
+    - fix display value check in dentry_init_security
+    - Replace audit_log of secids with '?' instead of deleting
+      the audit log
+
+v3: Incorporate feedback from v2
+    - Make lsmblob parameter and variable names more
+      meaningful, changing "le" and "l" to "blob".
+    - Improve consistency of constant naming.
+    - Do more sanity checking during LSM initialization.
+    - Be a bit clearer about what is temporary scaffolding.
+    - Rather than clutter security_getpeersec_dgram with
+      otherwise unnecessary checks remove the apparmor
+      stub, which does nothing useful.
+
+Patche 0001 moves management of the sock security blob from the individual
+modules to the infrastructure.
+
+Patches 0002-0012 replace system use of a "secid" with
+a structure "lsmblob" containing information from the
+security modules to be held and reused later. At this
+point lsmblob contains an array of u32 secids, one "slot"
+for each of the security modules compiled into the
+kernel that used secids. A "slot" is allocated when
+a security module requests one.
+The infrastructure is changed to use the slot number
+to pass the correct secid to or from the security module
+hooks.
+
+It is important that the lsmblob be a fixed size entity
+that does not have to be allocated. Several of the places
+where it is used would have performance and/or locking
+issues with dynamic allocation.
+
+Patch 0013 provides a mechanism for a process to
+identify which security module's hooks should be used
+when displaying or converting a security context string.
+A new interface /proc/self/attr/display contains the name
+of the security module to show. Reading from this file
+will present the name of the module, while writing to
+it will set the value. Only names of active security
+modules are accepted. Internally, the name is translated
+to the appropriate "slot" number for the module which
+is then stored in the task security blob. Setting the
+display requires that all modules using the /proc interfaces
+allow the transition. The "display" of other processess
+can be neither read nor written. All suggested cases
+for reading the display of a different process have race
+conditions.
+
+Patch 0014 Starts the process of changing how a security
+context is represented. Since it is possible for a
+security context to have been generated by more than one
+security module it is now necessary to note which module
+created a security context so that the correct "release"
+hook can be called. There are several places where the
+module that created a security context cannot be inferred.
+
+This is achieved by introducing a "lsmcontext" structure
+which contains the context string, its length and the
+"slot" number of the security module that created it.
+The security_release_secctx() interface is changed,
+replacing the (string,len) pointer pair with a lsmcontext
+pointer.
+
+Patches 0015-0017 convert the security interfaces from
+(string,len) pointer pairs to a lsmcontext pointer.
+The slot number identifying the creating module is
+added by the infrastructure. Where the security context
+is stored for extended periods the data type is changed.
+
+The Netlabel code is converted to save lsmblob structures
+instead of secids in Patches 0018-0019.
+
+Patch 0020 adds checks to the binder hooks which verify
+that if both ends of a transaction use the same "display".
+
+Patches 0021-0022 add addition data to the audit records
+to identify the LSM specific data for all active modules.
+
+Patches 0023-0024 add new interfaces for getting the
+compound security contexts.
+
+Finally, with all interference on the AppArmor hooks
+removed, Patch 0025 removes the exclusive bit from
+AppArmor. An unnecessary stub hook was also removed.
+
+The Ubuntu project is using an earlier version of
+this patchset in their distribution to enable stacking
+for containers.
+
+Performance measurements to date have the change
+within the "noise". The sockperf and dbench results
+are on the order of 0.2% to 0.8% difference, with
+better performance being as common as worse. The
+benchmarks were run with AppArmor and Smack on Ubuntu.
+
+https://github.com/cschaufler/lsm-stacking.git#stack-5.4-rc6-v11-apparmor
+
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- fs/nfs/nfs4proc.c        | 26 ++++++++++++++++----------
- include/linux/security.h |  7 +++----
- security/security.c      | 29 +++++++++++++++++++++++++----
- 3 files changed, 44 insertions(+), 18 deletions(-)
-
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index a30e36654c57..78d63f7f0088 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -112,6 +112,7 @@ static inline struct nfs4_label *
- nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
- 	struct iattr *sattr, struct nfs4_label *label)
- {
-+	struct lsmcontext context;
- 	int err;
- 
- 	if (label == NULL)
-@@ -121,21 +122,26 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
- 		return NULL;
- 
- 	err = security_dentry_init_security(dentry, sattr->ia_mode,
--				&dentry->d_name, (void **)&label->label, &label->len);
--	if (err == 0)
--		return label;
-+					    &dentry->d_name, &context);
-+
-+	if (err)
-+		return NULL;
-+
-+	label->label = kmemdup(context.context, context.len, GFP_KERNEL);
-+	if (label->label == NULL)
-+		label = NULL;
-+	else
-+		label->len = context.len;
-+
-+	security_release_secctx(&context);
-+
-+	return label;
- 
--	return NULL;
- }
- static inline void
- nfs4_label_release_security(struct nfs4_label *label)
- {
--	struct lsmcontext scaff; /* scaffolding */
--
--	if (label) {
--		lsmcontext_init(&scaff, label->label, label->len, 0);
--		security_release_secctx(&scaff);
--	}
-+	kfree(label->label);
- }
- static inline u32 *nfs4_bitmask(struct nfs_server *server, struct nfs4_label *label)
- {
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 00421941f683..a5eba06a9382 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -398,8 +398,8 @@ int security_add_mnt_opt(const char *option, const char *val,
- 				int len, void **mnt_opts);
- int security_move_mount(const struct path *from_path, const struct path *to_path);
- int security_dentry_init_security(struct dentry *dentry, int mode,
--					const struct qstr *name, void **ctx,
--					u32 *ctxlen);
-+					const struct qstr *name,
-+					struct lsmcontext *ctx);
- int security_dentry_create_files_as(struct dentry *dentry, int mode,
- 					struct qstr *name,
- 					const struct cred *old,
-@@ -790,8 +790,7 @@ static inline void security_inode_free(struct inode *inode)
- static inline int security_dentry_init_security(struct dentry *dentry,
- 						 int mode,
- 						 const struct qstr *name,
--						 void **ctx,
--						 u32 *ctxlen)
-+						 struct lsmcontext *ctx)
- {
- 	return -EOPNOTSUPP;
- }
-diff --git a/security/security.c b/security/security.c
-index 4ba1a6ed36e0..8aa107b57af9 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1011,12 +1011,33 @@ void security_inode_free(struct inode *inode)
- 				inode_free_by_rcu);
- }
- 
-+/*
-+ * security_dentry_init_security - initial context for a dentry
-+ * @dentry: directory entry
-+ * @mode: access mode
-+ * @name: path name
-+ * @context: resulting security context
-+ *
-+ * Use at most one security module to get the initial
-+ * security context. Do not use the "display".
-+ *
-+ * Returns -EOPNOTSUPP if not supplied by any module or the module result.
-+ */
- int security_dentry_init_security(struct dentry *dentry, int mode,
--					const struct qstr *name, void **ctx,
--					u32 *ctxlen)
-+				  const struct qstr *name,
-+				  struct lsmcontext *cp)
- {
--	return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
--				name, ctx, ctxlen);
-+	struct security_hook_list *hp;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.dentry_init_security,
-+			     list) {
-+		cp->slot = hp->lsmid->slot;
-+		return hp->hook.dentry_init_security(dentry, mode, name,
-+						     (void **)&cp->context,
-+						     &cp->len);
-+	}
-+
-+	return -EOPNOTSUPP;
- }
- EXPORT_SYMBOL(security_dentry_init_security);
- 
--- 
-2.20.1
-
+ arch/alpha/include/uapi/asm/socket.h    |   1 +
+ arch/mips/include/uapi/asm/socket.h     |   1 +
+ arch/parisc/include/uapi/asm/socket.h   |   1 +
+ arch/sparc/include/uapi/asm/socket.h    |   1 +
+ drivers/android/binder.c                |  26 +-
+ fs/ceph/xattr.c                         |   6 +-
+ fs/nfs/nfs4proc.c                       |  22 +-
+ fs/nfsd/nfs4xdr.c                       |  20 +-
+ fs/proc/base.c                          |   2 +
+ include/linux/audit.h                   |   1 +
+ include/linux/cred.h                    |   3 +-
+ include/linux/lsm_hooks.h               |  37 +-
+ include/linux/security.h                | 175 ++++++++--
+ include/net/af_unix.h                   |   2 +-
+ include/net/netlabel.h                  |   8 +-
+ include/net/scm.h                       |  15 +-
+ include/uapi/asm-generic/socket.h       |   1 +
+ kernel/audit.c                          |  72 +++-
+ kernel/audit.h                          |   9 +-
+ kernel/audit_fsnotify.c                 |   1 +
+ kernel/auditfilter.c                    |  10 +-
+ kernel/auditsc.c                        | 127 ++++---
+ kernel/cred.c                           |  12 +-
+ net/core/sock.c                         |   7 +-
+ net/ipv4/cipso_ipv4.c                   |   6 +-
+ net/ipv4/ip_sockglue.c                  |  12 +-
+ net/netfilter/nf_conntrack_netlink.c    |  20 +-
+ net/netfilter/nf_conntrack_standalone.c |  11 +-
+ net/netfilter/nfnetlink_queue.c         |  26 +-
+ net/netfilter/nft_meta.c                |  13 +-
+ net/netfilter/xt_SECMARK.c              |   5 +-
+ net/netlabel/netlabel_kapi.c            |   6 +-
+ net/netlabel/netlabel_unlabeled.c       |  97 +++---
+ net/netlabel/netlabel_unlabeled.h       |   2 +-
+ net/netlabel/netlabel_user.c            |  13 +-
+ net/netlabel/netlabel_user.h            |   6 +-
+ net/unix/af_unix.c                      |   6 +-
+ net/xfrm/xfrm_policy.c                  |   2 +
+ net/xfrm/xfrm_state.c                   |   2 +
+ security/apparmor/include/apparmor.h    |   3 +-
+ security/apparmor/include/net.h         |   6 +-
+ security/apparmor/lsm.c                 | 117 +++----
+ security/commoncap.c                    |   7 +-
+ security/integrity/ima/ima.h            |  15 +-
+ security/integrity/ima/ima_api.c        |  11 +-
+ security/integrity/ima/ima_appraise.c   |   6 +-
+ security/integrity/ima/ima_main.c       |  42 +--
+ security/integrity/ima/ima_policy.c     |  19 +-
+ security/integrity/integrity_audit.c    |   1 +
+ security/loadpin/loadpin.c              |   8 +-
+ security/safesetid/lsm.c                |   8 +-
+ security/security.c                     | 593 +++++++++++++++++++++++++++++---
+ security/selinux/hooks.c                | 109 +++---
+ security/selinux/include/classmap.h     |   2 +-
+ security/selinux/include/objsec.h       |   5 +
+ security/selinux/include/security.h     |   1 +
+ security/selinux/netlabel.c             |  25 +-
+ security/selinux/ss/services.c          |   4 +-
+ security/smack/smack.h                  |   6 +
+ security/smack/smack_lsm.c              | 124 ++++---
+ security/smack/smack_netfilter.c        |   8 +-
+ security/smack/smackfs.c                |  10 +-
+ security/tomoyo/tomoyo.c                |   8 +-
+ security/yama/yama_lsm.c                |   7 +-
+ 64 files changed, 1372 insertions(+), 560 deletions(-)
