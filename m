@@ -2,187 +2,242 @@ Return-Path: <SRS0=CFR+=2H=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE29C3F68F
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Dec 2019 16:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C40E1C43603
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Dec 2019 16:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 497A424683
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Dec 2019 16:23:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8351724655
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Dec 2019 16:25:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="puxvVVcO"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="nG2OB6vF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfLQQXZ (ORCPT
+        id S1727896AbfLQQZF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 Dec 2019 11:23:25 -0500
-Received: from UPDC19PA22.eemsg.mail.mil ([214.24.27.197]:62451 "EHLO
-        UPDC19PA22.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728400AbfLQQXZ (ORCPT
+        Tue, 17 Dec 2019 11:25:05 -0500
+Received: from sonic313-14.consmr.mail.ne1.yahoo.com ([66.163.185.37]:40620
+        "EHLO sonic313-14.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728245AbfLQQZF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 Dec 2019 11:23:25 -0500
-X-EEMSG-check-017: 38929291|UPDC19PA22_ESA_OUT04.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.69,326,1571702400"; 
-   d="scan'208";a="38929291"
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by UPDC19PA22.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 17 Dec 2019 16:23:20 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1576599800; x=1608135800;
-  h=subject:from:to:cc:references:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=qf5MG/6StXmkltm26fo5hZmet/UlD8Ve+FZMWDw6mB0=;
-  b=puxvVVcOlEOkFBwCEQxczEhdDOsv3X5al7GkTje01afOnON4va+aRRpZ
-   EcxhgPWzKnjCD+AXwJr8RCWFuyJRMbNrTt3B2gHPmHqRofgVQKKXPgXnw
-   WsnkI+wLpES2z7aQReGHKSq6JN0nb5H6OPIwvHeIGPYNRvdVtMINIe98G
-   9U++04TkHWOFbiMuegrkxzO4uyYN8R0p0AjE8QMibSCcpEVSPQWa5coFb
-   FU3z0EXpj8CAZb9qoDrVP//Q9Ev0cvlJ+GpYx68qtk0zRpCTFIUfmOT0o
-   cpEQ2wHQRxu2yEt0mN8RWXWV7gtgXuBGut3rnnGgnDOI8jSdUV5xCXAOV
-   w==;
-X-IronPort-AV: E=Sophos;i="5.69,326,1571702400"; 
-   d="scan'208";a="36849656"
-IronPort-PHdr: =?us-ascii?q?9a23=3Ap/3qlBSPoGsxobse+3GrlM6ZJtpsv+yvbD5Q0Y?=
- =?us-ascii?q?Iujvd0So/mwa67ZBKPt8tkgFKBZ4jH8fUM07OQ7/m7HzZYvt3R7TgrS99lb1?=
- =?us-ascii?q?c9k8IYnggtUoauKHbQC7rUVRE8B9lIT1R//nu2YgB/Ecf6YEDO8DXptWZBUh?=
- =?us-ascii?q?rwOhBoKevrB4Xck9q41/yo+53Ufg5EmCexbal9IRmrowjdrNcajZdgJ6o+yR?=
- =?us-ascii?q?bEomZDdvhLy29vOV+dhQv36N2q/J5k/SRQuvYh+NBFXK7nYak2TqFWASo/PW?=
- =?us-ascii?q?wt68LlqRfMTQ2U5nsBSWoWiQZHAxLE7B7hQJj8tDbxu/dn1ymbOc32Sq00WS?=
- =?us-ascii?q?in4qx2RhLklDsLOjgk+2zMlMd+kLxUrw6gpxxnwo7bfoeVNOZlfqjAed8WXH?=
- =?us-ascii?q?dNUtpNWyBEBI6zYZEPD+4cNuhGqYfzqUYFoR+nCQSiAO7jzzlFjWL006Inye?=
- =?us-ascii?q?QsCRzI0gw+EdIAs3raotv6O6gQXu+pw6fF1inDYvBM1Dvh9ITFfBIsrPeRVr?=
- =?us-ascii?q?xwa8rRzkwvGhvYgFWMt4PlJzOV2foLs2OG8uRgUPigi2ojqw5vojmk28Ahip?=
- =?us-ascii?q?LUiYIO0V3E6SV4z5o1Jd2/UkJ7Z8WkH4FKuyGVMIt2XNovTmd1syg50r0LoY?=
- =?us-ascii?q?O3cScFxZg9xxPTduaLf5aH7x79TuqdPDF1j29/dr2lnRa9602gx/X5VsmzzV?=
- =?us-ascii?q?lFsDJIksLJtnARzxzT7dWHSudl8kehxzmP0wfT5/lYIU8uj6rbKoMhwqUqmp?=
- =?us-ascii?q?oSt0TDECj2mF7og6CKbEkk5uip5PjnYrXhvJOcMZN7ihriPag0n8y/AOA4Ph?=
- =?us-ascii?q?APX2id5+u8yKXu8VD2TbhFlPE7krTVvIrEKckUuKK1GRJZ3p4m6xmlDjem1N?=
- =?us-ascii?q?oYnWMALFJAYB+HlJXmO0rVLfDkDfawn1SskDBxy/DAJb3uGI/BLnfEkLf/Zb?=
- =?us-ascii?q?p98VJTyBIvzdBD4JJZEqsBIOnyWkDsqdPYCR05Mw2vzun7D9Vyy50RVniSAq?=
- =?us-ascii?q?+DN6PSq0WH6vgoI+mWa48foCz9JOQ95/7ykX85nkcQfbK30psTaXC4GOlmIk?=
- =?us-ascii?q?qCbHryjdcOD30KshA9TOP0kl2CVyBcZ3KoU6I7/DE7B5qsDZ3fSYC1nLyBwC?=
- =?us-ascii?q?C7E4VOZm9cF1CMFWzld52eVPcRbCKeO8phkjsDVbi7VYAtzw2htAj/y7B/NO?=
- =?us-ascii?q?rb5jUYtY7/1Nhy/+DTkRAy9TppD8WSym2NVH97kX8VRz8s3aB/vUx8xk6G0a?=
- =?us-ascii?q?h/nvNYCNhT6O1SXwckOp7T0fZ6B8rxWg3fZNeJTkipQtG8DTE2VNIxzIxGX0?=
- =?us-ascii?q?EoIdy8j1jgwi+jGfculrCHA541/avG3jClPd18x3rB1qgJhF4qT8JSL2q8j+?=
- =?us-ascii?q?h47QeFQ8bSnkGYkbu6XboT0TSL92qZy2eK+kZCX11eS6LACEsDa1PWoNKx3U?=
- =?us-ascii?q?bLS7ujGPxzKQda4dKTIatNLNvyhBNJQ+m1a4eWWH64h2rlXUXA/biLdoe/Pj?=
- =?us-ascii?q?xGjSg=3D?=
-X-IPAS-Result: =?us-ascii?q?A2BNAAAJAPld/wHyM5BdCBoBAQEBAQEBAQEDAQEBAREBA?=
- =?us-ascii?q?QECAgEBAQGBfoF0gRhVIBIqhASJA4Z0BAaBN4lqj16BZwkBAQEBAQEBAQEjF?=
- =?us-ascii?q?AEBhEACgjw4EwIQAQEBBAEBAQEBBQMBAWyFNwyCOykBgnoBBSMECwEFQRAJA?=
- =?us-ascii?q?hgCAiYCAlcGAQwGAgEBgl8/AYJSJZIlm3R/M4kMgUiBDiiMMnmBB4ERJw+CX?=
- =?us-ascii?q?T6EEhIOgyeCXgSXUpczgj6CQoRtjlsGG4JDdIcCkBAtjiCBRpsYIoFYKwgCG?=
- =?us-ascii?q?AghD4MnCUcRFJNbiBsjAzCPP4JBAQE?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 17 Dec 2019 16:23:17 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id xBHGMv8K104662;
-        Tue, 17 Dec 2019 11:22:57 -0500
-Subject: Re: Looks like issue in handling active_nodes count in 4.19 kernel .
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-To:     Ravi Kumar Siddojigari <rsiddoji@codeaurora.org>,
-        selinux@vger.kernel.org
-Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org
-References: <0101016eeb5fdf43-18f58c0b-8670-43eb-ad08-60dae381f0fd-000000@us-west-2.amazonses.com>
- <4335f89f-d2cb-7f45-d370-6ee0699d3c20@tycho.nsa.gov>
- <0101016eebed2b2e-db98eae1-b92b-450b-934e-c8e92c5370b3-000000@us-west-2.amazonses.com>
- <7b047966-33c0-de62-b10f-047819890337@tycho.nsa.gov>
- <d6081414-613f-fdb8-8dcd-9ebf6a3baa27@tycho.nsa.gov>
- <0101016ef59a2152-41e65aac-8784-4401-b20d-45b2852872d4-000000@us-west-2.amazonses.com>
- <411fa1ea-d9b4-b89e-8cab-656db8eef259@tycho.nsa.gov>
- <001e01d5b4f0$495efbd0$dc1cf370$@codeaurora.org>
- <21b5511a-fdba-3c2f-e9a6-efdc890b5881@tycho.nsa.gov>
-Message-ID: <0f6b6f32-e4bc-1ec0-dc27-2f4214ea479a@tycho.nsa.gov>
-Date:   Tue, 17 Dec 2019 11:23:36 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Tue, 17 Dec 2019 11:25:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1576599904; bh=XXbsZ6x7oCUtuMbA7hTYdSczrsHj0vKBbZ5akyoiWO0=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=nG2OB6vFelDkfgnzOVCPkahp0K2d/6u2NtZPLmFTKUoleJQEqxXUTxUxVTD8/Adjip4LhK61CalJvuhRb4eqSdvIacHWhgxK2SYdVpEVneesSRLd6VIE/KitpCK21f6hOwlHeWmxL+Ay4+N7vupRwjNsn5pRZoQ4xuyhqEIpz5UX0EKoFBGuNA4RZI3WB0qks5/zgFAIRMyaNbXMe/IJmkSxrHYSCBDSXMaW7fQ1XGzdWZdAr20dSJv4I8djj3omjmP0rbBwxa2VBqn9UmELk1RbEQGEdStbEt61oYGfzfGuJ71mdwX4rdSFBg0Grim0jdJAPdETRL46bRzH0EBnUA==
+X-YMail-OSG: a.q_p24VM1mDT9SGTpl1K38O95phTQ2l0z3Lb_tdbJuUuJ_TH0n4P.4K8Ifc3Yo
+ 4Hq9bhTbaDUD8e0E1wIv5TtYmp08G77nIthX9KZ6WIxlhqIMIIsLMyWQheAcGg3mzTdqBs29u8FZ
+ w5IUcQBGdU3nXxDCesTb6swz5VG5JnOd6fbmmR_e5MfShiLJUp2w_4XEOPHU2FP3jt5ngucmXg8O
+ BncNeBLFzyGaXXRZ09xrysSUSZkftL3RCWxQB4kMOzGSfqnmt.US9MuRIZYWMd6v2SGA1.D2Vyyr
+ wOCTQ9vFhK8ISecfT9OIp1ANxAvEWkWvdKBy.xjQdmcUwn5ZFoTk4jUhqy6ZlQOUtaKGUf4C.qfL
+ 2W085yxYGNKid7Mv2U69ETzj21p8Fc5JmFhKo7zCPqoWxu0YCb70VLTZHcvHrt8EhGl8HipuIOIu
+ Zar3vq__XmZcPyKW2TZOWl32H66ljZsi5z5S1uK9ZWk3TbowWwnFwxRjfcKfiZqgFY_LNOltW5rN
+ koNtEVLCqhMvOCYAgGXSANlEq6qbMB8ZJ9BTvHX2MYIw1mPvQ84n637sZHa04acDmgKgwMT1cb7R
+ pAf9W0GmpNurgvei2pFNSP35xOE643ReLzloIB8hGFJepVPWd2GJSWYXjcXKNDqrpOpgn_oJWGsZ
+ 2QxQ7ct0SRMRg_xeeZsxxDkpQxmJafB3HDwqvOllm3KXt9s4xZm9Kmi24Je24nTU8PThGqnMu1sX
+ 2wLlNJiVI_8.fra.x0DNbSH8cij5zqK50ThaWYdBTmyJ9eFWdzztIiZUIA0biQ_6FXsfLTX_fQpL
+ vvIM5HddkGg7FXWGeUJBv.Mk2klUuDhLC9qVge_o4VwiC0KqUaf7A2Bqo9_bnx6ToY84MRElgOFD
+ wCN7NRpVhtgAF_Oflc9j2G6axp6mXhSzCxHkJEykTxrl73P2d25U7.f52Fw6H87wVF4oNOp7AbBS
+ QouDTW2Gcxehx4J7Lct_jxjahBLgHrVXu179TJhHhlZd6h19MLP6BvP8k7WfszJILsOJYf.WRcVK
+ ODPq3mLQVTl75TUs3MJYR7.jXjLHzIOEIBwyHv7LfZoUNX9iNPeurX3GwzJJgmiDwMbBMxOT812l
+ NMw2p9fdaTo.B8.TdPG0L_aKLN7Vqg6znChtSaVmThiNWrcjw7KG0oW2oEoiZr0xrhE796iZS3aE
+ MJQcw6CZjLaE74t2_WYrdyW2AW3UX3Q9SupWMBHUJ77PDl5xncvxpSMj4Uu9iRYuYmMuLHAtgmy0
+ 6DQZd7qbphhJMZc_4_gsCTfN1MYzBbW6q6bTjX6GYi9FaMwQY0fMMyHeQverpJ1WFAq0hrJrZNBo
+ aaBsZv12kgrzo3n7Cctl7JQPoKWPAFsM7VlvfS6hodzYY6VYjlFwyiijHYvwfZULbn4MDbtLB2Ho
+ rlgRKSBJQw_ekRtKco_k0ao18PAlfyCi2yuzYZtuywCNeLYQPMMrM_fUWkqrOig--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Tue, 17 Dec 2019 16:25:04 +0000
+Received: by smtp427.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a20bd7134ac93420f683ed18562ccd23;
+          Tue, 17 Dec 2019 16:25:02 +0000 (UTC)
+Subject: Re: [PATCH] integrity: Expose data structures required for
+ include/linux/integrity.h
+To:     Florent Revest <revest@chromium.org>,
+        linux-integrity@vger.kernel.org
+Cc:     jmorris@namei.org, serge@hallyn.com, revest@google.com,
+        allison@lohutok.net, armijn@tjaldur.nl, bauerman@linux.ibm.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20191217134748.198011-1-revest@chromium.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <e9e366d3-6c5d-743b-ffde-6b95b85884a2@schaufler-ca.com>
+Date:   Tue, 17 Dec 2019 08:25:01 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <21b5511a-fdba-3c2f-e9a6-efdc890b5881@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191217134748.198011-1-revest@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.14873 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/17/19 10:52 AM, Stephen Smalley wrote:
-> On 12/17/19 10:40 AM, Ravi Kumar Siddojigari wrote:
->> Yes  indeed this is a stress test on ARM64 device with multicore  
->> where most of the cores /tasks are stuck  in avc_reclaim_node .
->> We still see this issue even after picking the earlier patch " 
->> selinux: ensure we cleanup the internal AVC counters on error in 
->> avc_insert() commit: d8db60cb23e4"
->> Where selinux_state  during issue was as below where all the slots 
->> are  NULL and the count was more than threshold.
->> Which seem to be calling avc_reclaim_node always and as the all the 
->> slots are empty its going for full for- loop with locks and unlock and 
->> taking too long .
->> Not sure what could make the  slots null , for sure its not due to 
->> flush() /Reset(). We think that still we need to call  avc_kill_node  
->> in update_node function .
->> Adding the patch below can you please review or correct the following 
->> patch .
->>
->>
->>    selinux_state = (
->>      disabled = FALSE,
->>      enforcing = TRUE,
->>      checkreqprot = FALSE,
->>      initialized = TRUE,
->>      policycap = (TRUE, TRUE, TRUE, FALSE, FALSE, TRUE),
->>      avc = 0xFFFFFF9BEFF1E890 -> (
->>        avc_cache_threshold = 512,  /* <<<<<not configured and its with 
->> default*/
->>        avc_cache = (
->>          slots = ((first = 0x0), (first = 0x0), (first = 0x0), (first 
->> = 0x0), (first = 0x0), (first = 0x0), (first = 0x0), (first = 0x0), 
->> (first = 0x0), (first = 0x0), (first = 0x0), (first = 0x0), (first   
->> /*<<<< all are NULL */
->>          slots_lock = ((rlock = (raw_lock = (val = (counter = 0), 
->> locked = 0, pending = 0, locked_pending = 0, tail = 0), magic = 
->> 3735899821, owner_cpu = 4294967295, owner = 0xFFFFFFFFFFFFFFFF, 
->> dep_map = (key = 0xFFFFFF9BEFF298A8, cla
->>          lru_hint = (counter = 616831529),
->>          active_nodes = (counter = 547),   /*<<<<< increased more than 
->> 512*/
->>          latest_notif = 1)),
->>      ss = 0xFFFFFF9BEFF2E578)
->>
->>
->> -- 
->> In AVC update we don't call avc_node_kill() when avc_xperms_populate()
->> fails, resulting in the avc->avc_cache.active_nodes counter having a
->> false value.In last patch this changes was missed , so correcting it.
->>
->> Change-Id: Ic0298162cc766c0f21be7ab232e259766654dad3
->> Signed-off-by: Jaihind Yadav<jaihindyadav@codeaurora.org>
->> ---
->>   security/selinux/avc.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
->> index 91d24c2..3d1cff2 100644
->> --- a/security/selinux/avc.c
->> +++ b/security/selinux/avc.c
->> @@ -913,7 +913,7 @@ static int avc_update_node(struct selinux_avc *avc,
->>          if (orig->ae.xp_node) {
->>                  rc = avc_xperms_populate(node, orig->ae.xp_node);
->>                  if (rc) {
->> -                       kmem_cache_free(avc_node_cachep, node);
->> +                       avc_node_kill(avc, node);
->>                          goto out_unlock;
->>                  }
->>          }
->> -- 
-> 
-> That looks correct to me; I guess that one got missed by the prior fix.
-> Still not sure how your AVC got into that state though...
-> 
-> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+On 12/17/2019 5:47 AM, Florent Revest wrote:
+> From: Florent Revest <revest@google.com>
+>
+> include/linux/integrity.h exposes the prototype of integrity_inode_get().
+> However, it relies on struct integrity_iint_cache which is currently
+> defined in an internal header, security/integrity/integrity.h.
+>
+> To allow the rest of the kernel to use integrity_inode_get,
 
-BTW, have you been running these stress tests on earlier kernels too? 
-If so, what version(s) are known to pass them?  I ask because this code 
-has been present since v4.3 and this is the first such report.
+Why do you want to do this?
 
+>  this patch
+> moves the definition of the necessary structures from a private header
+> to a global kernel header.
+>
+> Signed-off-by: Florent Revest <revest@google.com>
+> ---
+>  include/linux/integrity.h      | 37 ++++++++++++++++++++++++++++++++++
+>  security/integrity/integrity.h | 37 ----------------------------------
+>  2 files changed, 37 insertions(+), 37 deletions(-)
+>
+> diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+> index 2271939c5c31..15a0d5e91737 100644
+> --- a/include/linux/integrity.h
+> +++ b/include/linux/integrity.h
+> @@ -18,6 +18,43 @@ enum integrity_status {
+>  	INTEGRITY_UNKNOWN,
+>  };
+>  
+> +#define IMA_MAX_DIGEST_SIZE	64
+> +
+> +struct ima_digest_data {
+> +	u8 algo;
+> +	u8 length;
+> +	union {
+> +		struct {
+> +			u8 unused;
+> +			u8 type;
+> +		} sha1;
+> +		struct {
+> +			u8 type;
+> +			u8 algo;
+> +		} ng;
+> +		u8 data[2];
+> +	} xattr;
+> +	u8 digest[0];
+> +} __packed;
+> +
+> +/* integrity data associated with an inode */
+> +struct integrity_iint_cache {
+> +	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
+> +	struct mutex mutex;	/* protects: version, flags, digest */
+> +	struct inode *inode;	/* back pointer to inode in question */
+> +	u64 version;		/* track inode changes */
+> +	unsigned long flags;
+> +	unsigned long measured_pcrs;
+> +	unsigned long atomic_flags;
+> +	enum integrity_status ima_file_status:4;
+> +	enum integrity_status ima_mmap_status:4;
+> +	enum integrity_status ima_bprm_status:4;
+> +	enum integrity_status ima_read_status:4;
+> +	enum integrity_status ima_creds_status:4;
+> +	enum integrity_status evm_status:4;
+> +	struct ima_digest_data *ima_hash;
+> +};
+> +
+>  /* List of EVM protected security xattrs */
+>  #ifdef CONFIG_INTEGRITY
+>  extern struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index 65377848fbc5..2d5e69ab4646 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -77,25 +77,6 @@ struct evm_ima_xattr_data {
+>  	u8 digest[SHA1_DIGEST_SIZE];
+>  } __packed;
+>  
+> -#define IMA_MAX_DIGEST_SIZE	64
+> -
+> -struct ima_digest_data {
+> -	u8 algo;
+> -	u8 length;
+> -	union {
+> -		struct {
+> -			u8 unused;
+> -			u8 type;
+> -		} sha1;
+> -		struct {
+> -			u8 type;
+> -			u8 algo;
+> -		} ng;
+> -		u8 data[2];
+> -	} xattr;
+> -	u8 digest[0];
+> -} __packed;
+> -
+>  /*
+>   * signature format v2 - for using with asymmetric keys
+>   */
+> @@ -108,24 +89,6 @@ struct signature_v2_hdr {
+>  	uint8_t sig[0];		/* signature payload */
+>  } __packed;
+>  
+> -/* integrity data associated with an inode */
+> -struct integrity_iint_cache {
+> -	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
+> -	struct mutex mutex;	/* protects: version, flags, digest */
+> -	struct inode *inode;	/* back pointer to inode in question */
+> -	u64 version;		/* track inode changes */
+> -	unsigned long flags;
+> -	unsigned long measured_pcrs;
+> -	unsigned long atomic_flags;
+> -	enum integrity_status ima_file_status:4;
+> -	enum integrity_status ima_mmap_status:4;
+> -	enum integrity_status ima_bprm_status:4;
+> -	enum integrity_status ima_read_status:4;
+> -	enum integrity_status ima_creds_status:4;
+> -	enum integrity_status evm_status:4;
+> -	struct ima_digest_data *ima_hash;
+> -};
+> -
+>  /* rbtree tree calls to lookup, insert, delete
+>   * integrity data associated with an inode.
+>   */
