@@ -2,118 +2,116 @@ Return-Path: <SRS0=Jclw=2I=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB79C2D0CD
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 09:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF4BC43603
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 11:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C5182465E
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 09:31:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 900E9227BF
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 11:03:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U2faBm6Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfLRJbT (ORCPT
+        id S1726830AbfLRLDO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Dec 2019 04:31:19 -0500
-Received: from mga06.intel.com ([134.134.136.31]:41254 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725785AbfLRJbS (ORCPT
+        Wed, 18 Dec 2019 06:03:14 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52024 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726825AbfLRLDN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Dec 2019 04:31:18 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 01:31:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,329,1571727600"; 
-   d="scan'208";a="218091630"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 18 Dec 2019 01:31:17 -0800
-Received: from [10.125.252.219] (abudanko-mobl.ccr.corp.intel.com [10.125.252.219])
-        by linux.intel.com (Postfix) with ESMTP id 33127580458;
-        Wed, 18 Dec 2019 01:31:09 -0800 (PST)
-Subject: [PATCH v4 9/9] drivers/oprofile: open access for CAP_SYS_PERFMON
- privileged process
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Wed, 18 Dec 2019 06:03:13 -0500
+Received: by mail-wm1-f66.google.com with SMTP id d73so1359883wmd.1
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2019 03:03:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=VaysA7IlqDXPOxdOsGsKdFEXVpxF1pTwFbagFkrgqas=;
+        b=U2faBm6YN6xKP04YNzJdCmz51sgXVZJdXiGPwmZIfoea9S2p56z2XfJkwcCH5vv8LI
+         +LoL/NJii26fgLloWu/qa9bF+t5ZyO+2iYLRDh7972llndvkCQdO0AnZ72/esc+eb2uW
+         4U9W/MqrU5Tc7sEGC1R1i0Wp8VSdrw3qE9GzQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=VaysA7IlqDXPOxdOsGsKdFEXVpxF1pTwFbagFkrgqas=;
+        b=YOI0wDi51RNUT+FT4jYCuEXv8SwxqzI7BYY7fPiMUNdqThjtSrp88dvjVdU/6Kx9kh
+         WlYdHaTsR3o+H9yRBoY0o/4PmUyCUl3M78JSYUXVHrx13/Z8WB3U+0dKKYjRgeGssQ+9
+         nRY4kIq5EynFTzFniMtdBrYDrsehlx1ulLCsGKqgt8QwLcTkQU+IrPdf+pAN+7y7hl9F
+         0Nq2Bo06Oxwiq9e/GHsybW8kPKjIuc5PjhfCbrmYQpCbspaX1vH4gCK8El4bp3BCIrY6
+         QBVEAtHwHIkaNooDPd5/OZmYeAj6rUqOwb6RrgzRK44PwdpNETMf5B/RNtuvmbrUaK0k
+         Ou8w==
+X-Gm-Message-State: APjAAAV2d4nuWO9vJhrsMvlXl1Um8/PCEncgiape+a0OFeE3JM9DZTFf
+        a487RjolOixaW/cQzrk3fCqXmg==
+X-Google-Smtp-Source: APXvYqwEDw33xSM9dXOl1KdYfEr2bPMTWkcfxRl2JYVvpLiSuj3PN1cLzNAr2b8ZKPibkIXBg/Q/Ug==
+X-Received: by 2002:a05:600c:2148:: with SMTP id v8mr2628992wml.111.1576666991755;
+        Wed, 18 Dec 2019 03:03:11 -0800 (PST)
+Received: from ?IPv6:2620:0:105f:304:c29:4454:35de:5c04? ([2620:0:105f:304:c29:4454:35de:5c04])
+        by smtp.gmail.com with ESMTPSA id 16sm2050765wmi.0.2019.12.18.03.03.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 03:03:10 -0800 (PST)
+Message-ID: <2ae5127d76cbf78140fb2d6108c9ec70c7d8ae5d.camel@chromium.org>
+Subject: Re: [PATCH] integrity: Expose data structures required for
+ include/linux/integrity.h
+From:   Florent Revest <revest@chromium.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Robert Richter <rric@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, oprofile-list@lists.sf.net
-References: <c0460c78-b1a6-b5f7-7119-d97e5998f308@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <70eb48f8-34ae-8aa3-ca64-d433b75ea2ae@linux.intel.com>
-Date:   Wed, 18 Dec 2019 12:31:08 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        linux-integrity@vger.kernel.org
+Cc:     jmorris@namei.org, serge@hallyn.com, revest@google.com,
+        allison@lohutok.net, armijn@tjaldur.nl, bauerman@linux.ibm.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kpsingh@chromium.org
+Date:   Wed, 18 Dec 2019 12:03:09 +0100
+In-Reply-To: <1576624105.4579.379.camel@linux.ibm.com>
+References: <20191217134748.198011-1-revest@chromium.org>
+         <e9e366d3-6c5d-743b-ffde-6b95b85884a2@schaufler-ca.com>
+         <1576624105.4579.379.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-In-Reply-To: <c0460c78-b1a6-b5f7-7119-d97e5998f308@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, 2019-12-17 at 18:08 -0500, Mimi Zohar wrote:
+> On Tue, 2019-12-17 at 08:25 -0800, Casey Schaufler wrote:
+> > On 12/17/2019 5:47 AM, Florent Revest wrote:
+> > > From: Florent Revest <revest@google.com>
+> > > 
+> > > include/linux/integrity.h exposes the prototype of
+> > > integrity_inode_get().
+> > > However, it relies on struct integrity_iint_cache which is
+> > > currently
+> > > defined in an internal header, security/integrity/integrity.h.
+> > > 
+> > > To allow the rest of the kernel to use integrity_inode_get,
+> > 
+> > Why do you want to do this?
+> 
+> ditto
 
-Open access to monitoring for CAP_SYS_PERFMON privileged processes.
-For backward compatibility reasons access to the monitoring remains open
-for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage for secure
-monitoring is discouraged with respect to CAP_SYS_PERFMON capability.
+My team works on KRSI (eBPF MAC policies presented at LSS by KP Singh).
+https://lkml.org/lkml/2019/9/10/393 We identified file hashes gathered
+from the integrity subsystem as an interesting field that we could
+potentially someday expose to eBPF programs through helpers.
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- drivers/oprofile/event_buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+One of the reason behind writing KRSI is to replace a custom kernel
+auditing module that currently needs to redefine those structures to
+access them. I imagine other kernel modules could benefit from a file
+hash API too.
 
-diff --git a/drivers/oprofile/event_buffer.c b/drivers/oprofile/event_buffer.c
-index 12ea4a4ad607..6c9edc8bbc95 100644
---- a/drivers/oprofile/event_buffer.c
-+++ b/drivers/oprofile/event_buffer.c
-@@ -113,7 +113,7 @@ static int event_buffer_open(struct inode *inode, struct file *file)
- {
- 	int err = -EPERM;
- 
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!perfmon_capable())
- 		return -EPERM;
- 
- 	if (test_and_set_bit_lock(0, &buffer_opened))
--- 
-2.20.1
+This is the least intrusive patch I could come up with that allows us
+to lookup a hash from an inode. I was surprised to find that
+integrity_inode_get was exposed but not the structures it returns.
 
+If the community is interested in a different file hash API, I'd be
+happy to iterate on this patch based on your feedback.
+
+> > >  this patch
+> > > moves the definition of the necessary structures from a private
+> > > header
+> > > to a global kernel header.
 
