@@ -2,136 +2,211 @@ Return-Path: <SRS0=Jclw=2I=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0914CC43603
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 13:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B64C2D0CD
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 13:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F3A2146E
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 13:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E13E32176D
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 13:54:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="jWnh7oge"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfLRNe6 (ORCPT
+        id S1727089AbfLRNyK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Dec 2019 08:34:58 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59812 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726996AbfLRNe5 (ORCPT
+        Wed, 18 Dec 2019 08:54:10 -0500
+Received: from UCOL19PA34.eemsg.mail.mil ([214.24.24.194]:58428 "EHLO
+        UCOL19PA34.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726856AbfLRNyJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Dec 2019 08:34:57 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBIDXwol086483
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2019 08:34:55 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2wym9qsru7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2019 08:34:55 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 18 Dec 2019 13:34:53 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 18 Dec 2019 13:34:50 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBIDYnFY57409696
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Dec 2019 13:34:50 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DDC7652054;
-        Wed, 18 Dec 2019 13:34:49 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.206.168])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 980A152050;
-        Wed, 18 Dec 2019 13:34:48 +0000 (GMT)
-Subject: Re: [PATCH] integrity: Expose data structures required for
- include/linux/integrity.h
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Florent Revest <revest@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-integrity@vger.kernel.org
-Cc:     jmorris@namei.org, serge@hallyn.com, revest@google.com,
-        allison@lohutok.net, armijn@tjaldur.nl, bauerman@linux.ibm.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kpsingh@chromium.org
-Date:   Wed, 18 Dec 2019 08:34:47 -0500
-In-Reply-To: <2ae5127d76cbf78140fb2d6108c9ec70c7d8ae5d.camel@chromium.org>
-References: <20191217134748.198011-1-revest@chromium.org>
-         <e9e366d3-6c5d-743b-ffde-6b95b85884a2@schaufler-ca.com>
-         <1576624105.4579.379.camel@linux.ibm.com>
-         <2ae5127d76cbf78140fb2d6108c9ec70c7d8ae5d.camel@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19121813-0020-0000-0000-0000039983FD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19121813-0021-0000-0000-000021F0A6CD
-Message-Id: <1576676087.4579.396.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-18_03:2019-12-17,2019-12-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=904
- suspectscore=0 impostorscore=0 phishscore=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912180112
+        Wed, 18 Dec 2019 08:54:09 -0500
+X-EEMSG-check-017: 63325529|UCOL19PA34_ESA_OUT01.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.69,329,1571702400"; 
+   d="scan'208";a="63325529"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UCOL19PA34.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 18 Dec 2019 13:53:11 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1576677191; x=1608213191;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=B1VJ1ddOGZKrIiRmAu/dSAhuPfQGvmKewq91Ah43aK4=;
+  b=jWnh7ogeeBr6KsazkRrzc8CCB08/WwnzOJkA5PBQrg2lHFva0jVhDmzu
+   PB+t2cxi6xtVcqlEptQRW2dhLPPRoyX3wd9qZKKU1T06CAQFFG88FVWSe
+   OvyWBGru8By7s8Q2+Bjwc/u5VVj1RIaqJS22K2RtJzzU4beQFzb+yHiOb
+   EFQN/4Z77YttvSQdP0BQR/OGUfyWx4S1+EHfcrp9duwzcp40aT1rK53xT
+   T187HfltBXYWCuh6TImPwK3dzAdQHnN3u6/lK8Gm6PgbtZ24tdcCcgRsA
+   EcBitFW022AmfL8oDbSt4/uJqHndmTqjISkqxOr69N9xeLxX7NX6fDAE3
+   w==;
+X-IronPort-AV: E=Sophos;i="5.69,329,1571702400"; 
+   d="scan'208";a="36896192"
+IronPort-PHdr: =?us-ascii?q?9a23=3AuWvG+x3yI1NDmzAysmDT+DRfVm0co7zxezQtwd?=
+ =?us-ascii?q?8ZsesWLPTxwZ3uMQTl6Ol3ixeRBMOHsqkC0bKH+P28EUU7or+5+EgYd5JNUx?=
+ =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
+ =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCezbL9oMhm6sQHcusYWjIZtN6081g?=
+ =?us-ascii?q?bHrnxUdupM2GhmP0iTnxHy5sex+J5s7SFdsO8/+sBDTKv3Yb02QaRXAzo6PW?=
+ =?us-ascii?q?814tbrtQTYQguU+nQcSGQWnQFWDAXD8Rr3Q43+sir+tup6xSmaIcj7Rq06VD?=
+ =?us-ascii?q?i+86tmTgLjhTwZPDAl7m7Yls1wjLpaoB2/oRx/35XUa5yROPZnY6/RYc8WSW?=
+ =?us-ascii?q?9HU8lfTSxBBp63YZUJAeQPIO1Uq5Dxq0UKoBe7AwSnGeHhxSJShnLuwKM0ze?=
+ =?us-ascii?q?ohHwHF0gIuEd0Bv3bbo8n6OqoJTeC4zrPFwSnfY/5Y2zrw7pXDfBA7ofGLWL?=
+ =?us-ascii?q?J9adffyVUxGAPdjlWft4rlNC6I2OQIqWeb6+5gWvyvimU6rAxxuSWgxtw3h4?=
+ =?us-ascii?q?nVhoMa1lDE9SJjzIYzPt23UlR3YdGjEJtOriyXMZZ9TMA6Q2xwpSo3xbILtY?=
+ =?us-ascii?q?S7cSQX0pgr2RHSZ+Kdf4SV5B/oSfyfLi1ihH1/fbKynxOy8U+9xeLiTsS0y1?=
+ =?us-ascii?q?NKrjZdktnLq3ANywTf6siZRft5+UeswSqP2BrJ6uFFPEA0jrDXK58nwr4+kZ?=
+ =?us-ascii?q?oTqlrMETPslEXqjK6ZakUk+u+y5+ThfrrmvYOTO5VxigH/NqQigs2/AeImPQ?=
+ =?us-ascii?q?gSR2WX5Oux2bL58UD5XblGlOM6n6bHvJzAOMgXvqu5DBVU0oYn5Ra/FTCm0N?=
+ =?us-ascii?q?EAkHkcMV1FYwmKj5TpOl7SIPD4Cu2zg1K3kDhx3fzGMbrhAovVInjZjLjhZa?=
+ =?us-ascii?q?p961JbyAcr19Bf/JNUBawcL/L0WE/xtcfVAQM+MwOp3enoEsh91pkZWWKVGK?=
+ =?us-ascii?q?CVKqTSsUWH5ug3OemDeJcVuCrhK/gi//PulmE2mVscfamvwJsWZ2u1HuppI0?=
+ =?us-ascii?q?qHe3rgmNQBHnkQvgo4UuPqjEeOUTlJZ3a9R6g8/C00CJq6DYffQYCgmKSB0z?=
+ =?us-ascii?q?2mHp1SfW1GEkqDEWrsd4mdXvcMbyWSItV/nTAeSbehTIoh3wm0tADm07pnMv?=
+ =?us-ascii?q?bU+ioAuJLn1dh14fDTlB4r+TxvEcuSz3yNT3t1nmMURz46xaV/oUtgxVee1a?=
+ =?us-ascii?q?h3nedVFcJc5/xXSAc2L53cwPJgC9D0RA3Bes2FSFG8QtWpUnkNSYcLysEPK2?=
+ =?us-ascii?q?VgHty4xivC0yatAb4anqaKTMgu6aPQ03/zJu52zHrL3bQ7iEMvBMxVOjvizr?=
+ =?us-ascii?q?Vy8wnVGp7hjUqUjeCpeL4a0SqL832MnkSUu0QNaxJ9SaXIWzgkY0LSqdnorh?=
+ =?us-ascii?q?fZQ6SGFaUsMgwHz9WLbKRNdIu63h19WP7/NYGGMCqKkGCqCEPNn+ndYQ=3D?=
+ =?us-ascii?q?=3D?=
+X-IPAS-Result: =?us-ascii?q?A2BYAABZLvpd/wHyM5BdCBoBAQEBAQEBAQEDAQEBAREBA?=
+ =?us-ascii?q?QECAgEBAQGBfIF2gRhVIBIqhASJA4ZTAQEBAQEGgTeJao9egWcJAQEBAQEBA?=
+ =?us-ascii?q?QEBIxQBAYRAAoI9OBMCEAEBAQQBAQEBAQUDAQFshTcMgjspAYJ5AQEBAQIBI?=
+ =?us-ascii?q?wQRQQwECxEEAQEBAgImAgJPCAYBDAYCAQGCXz8BglIFIK0QdX8zhU+DRIFBg?=
+ =?us-ascii?q?Q4ojDJ5gQeBEScPgl0+hBISDheDEIJeBJcORpc1gj+CQ4RujlwGG4JDdYcEk?=
+ =?us-ascii?q?BItjiGBRpsZIoFYKwgCGAghD4MnCUcYDZNbiBsjAzAMjFOCQQEB?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 18 Dec 2019 13:53:10 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id xBIDqo5Q221797;
+        Wed, 18 Dec 2019 08:52:50 -0500
+Subject: Re: Looks like issue in handling active_nodes count in 4.19 kernel .
+To:     Ravi Kumar Siddojigari <rsiddoji@codeaurora.org>,
+        selinux@vger.kernel.org
+Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org
+References: <0101016eeb5fdf43-18f58c0b-8670-43eb-ad08-60dae381f0fd-000000@us-west-2.amazonses.com>
+ <4335f89f-d2cb-7f45-d370-6ee0699d3c20@tycho.nsa.gov>
+ <0101016eebed2b2e-db98eae1-b92b-450b-934e-c8e92c5370b3-000000@us-west-2.amazonses.com>
+ <7b047966-33c0-de62-b10f-047819890337@tycho.nsa.gov>
+ <d6081414-613f-fdb8-8dcd-9ebf6a3baa27@tycho.nsa.gov>
+ <0101016ef59a2152-41e65aac-8784-4401-b20d-45b2852872d4-000000@us-west-2.amazonses.com>
+ <411fa1ea-d9b4-b89e-8cab-656db8eef259@tycho.nsa.gov>
+ <001e01d5b4f0$495efbd0$dc1cf370$@codeaurora.org>
+ <21b5511a-fdba-3c2f-e9a6-efdc890b5881@tycho.nsa.gov>
+ <0f6b6f32-e4bc-1ec0-dc27-2f4214ea479a@tycho.nsa.gov>
+ <002101d5b568$393887d0$aba99770$@codeaurora.org>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <628ec743-8f18-85b9-f9fb-81b7b0cf1ee1@tycho.nsa.gov>
+Date:   Wed, 18 Dec 2019 08:53:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <002101d5b568$393887d0$aba99770$@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2019-12-18 at 12:03 +0100, Florent Revest wrote:
-> On Tue, 2019-12-17 at 18:08 -0500, Mimi Zohar wrote:
-> > On Tue, 2019-12-17 at 08:25 -0800, Casey Schaufler wrote:
-> > > On 12/17/2019 5:47 AM, Florent Revest wrote:
-> > > > From: Florent Revest <revest@google.com>
-> > > > 
-> > > > include/linux/integrity.h exposes the prototype of
-> > > > integrity_inode_get().
-> > > > However, it relies on struct integrity_iint_cache which is
-> > > > currently
-> > > > defined in an internal header, security/integrity/integrity.h.
-> > > > 
-> > > > To allow the rest of the kernel to use integrity_inode_get,
-> > > 
-> > > Why do you want to do this?
-> > 
-> > ditto
-> 
-> My team works on KRSI (eBPF MAC policies presented at LSS by KP Singh).
-> https://lkml.org/lkml/2019/9/10/393 We identified file hashes gathered
-> from the integrity subsystem as an interesting field that we could
-> potentially someday expose to eBPF programs through helpers.
-> 
-> One of the reason behind writing KRSI is to replace a custom kernel
-> auditing module that currently needs to redefine those structures to
-> access them. I imagine other kernel modules could benefit from a file
-> hash API too.
-> 
-> This is the least intrusive patch I could come up with that allows us
-> to lookup a hash from an inode. I was surprised to find that
-> integrity_inode_get was exposed but not the structures it returns.
-> 
-> If the community is interested in a different file hash API, I'd be
-> happy to iterate on this patch based on your feedback.
+On 12/18/19 12:58 AM, Ravi Kumar Siddojigari wrote:
+> Yes this is the first time that we are getting this stress tested done on v4.19 kernel .
+> We had not tested this prior version of kernel though . Current proposed changes seems to really help and testing is still going on .
+> As per the delta it looks  change  6b6bc620  seem to be missing in earlier version of kernel not sure if this was the cause.
 
-There's a major difference between returning just the file hash and
-making the integrity_iint_cache structure public.  Peter Moody's
-original code queried the cache[1].  Why do you need access to the
-structure itself?
-
-FYI, if/when we get to IMA namespacing, the cache structure will
-change.
-
-Mimi
-
-[1] ima: add the ability to query ima for the hash of a given file.
+6b6bc620 shouldn't have altered any behavior; it was purely an 
+encapsulation of the data structures.  Both of the bugs you've 
+identified were introduced by the xperms support in fa1aa143ac4a68. 
+Maybe they were harder to trigger when the AVC was still using 
+GFP_ATOMIC instead of GFP_NOWAIT, but they were bugs nonetheless.
 
 > 
-> > > >  this patch
-> > > > moves the definition of the necessary structures from a private
-> > > > header
-> > > > to a global kernel header.
+> Br ,
+> Ravi.
+> -----Original Message-----
+> From: Stephen Smalley <sds@tycho.nsa.gov>
+> Sent: Tuesday, December 17, 2019 9:54 PM
+> To: Ravi Kumar Siddojigari <rsiddoji@codeaurora.org>; selinux@vger.kernel.org
+> Cc: paul@paul-moore.com; linux-security-module@vger.kernel.org
+> Subject: Re: Looks like issue in handling active_nodes count in 4.19 kernel .
+> 
+> On 12/17/19 10:52 AM, Stephen Smalley wrote:
+>> On 12/17/19 10:40 AM, Ravi Kumar Siddojigari wrote:
+>>> Yes  indeed this is a stress test on ARM64 device with multicore
+>>> where most of the cores /tasks are stuck  in avc_reclaim_node .
+>>> We still see this issue even after picking the earlier patch "
+>>> selinux: ensure we cleanup the internal AVC counters on error in
+>>> avc_insert() commit: d8db60cb23e4"
+>>> Where selinux_state  during issue was as below where all the slots
+>>> are  NULL and the count was more than threshold.
+>>> Which seem to be calling avc_reclaim_node always and as the all the
+>>> slots are empty its going for full for- loop with locks and unlock
+>>> and taking too long .
+>>> Not sure what could make the  slots null , for sure its not due to
+>>> flush() /Reset(). We think that still we need to call  avc_kill_node
+>>> in update_node function .
+>>> Adding the patch below can you please review or correct the following
+>>> patch .
+>>>
+>>>
+>>>     selinux_state = (
+>>>       disabled = FALSE,
+>>>       enforcing = TRUE,
+>>>       checkreqprot = FALSE,
+>>>       initialized = TRUE,
+>>>       policycap = (TRUE, TRUE, TRUE, FALSE, FALSE, TRUE),
+>>>       avc = 0xFFFFFF9BEFF1E890 -> (
+>>>         avc_cache_threshold = 512,  /* <<<<<not configured and its
+>>> with default*/
+>>>         avc_cache = (
+>>>           slots = ((first = 0x0), (first = 0x0), (first = 0x0), (first
+>>> = 0x0), (first = 0x0), (first = 0x0), (first = 0x0), (first = 0x0),
+>>> (first = 0x0), (first = 0x0), (first = 0x0), (first = 0x0), (first
+>>> /*<<<< all are NULL */
+>>>           slots_lock = ((rlock = (raw_lock = (val = (counter = 0),
+>>> locked = 0, pending = 0, locked_pending = 0, tail = 0), magic =
+>>> 3735899821, owner_cpu = 4294967295, owner = 0xFFFFFFFFFFFFFFFF,
+>>> dep_map = (key = 0xFFFFFF9BEFF298A8, cla
+>>>           lru_hint = (counter = 616831529),
+>>>           active_nodes = (counter = 547),   /*<<<<< increased more
+>>> than 512*/
+>>>           latest_notif = 1)),
+>>>       ss = 0xFFFFFF9BEFF2E578)
+>>>
+>>>
+>>> --
+>>> In AVC update we don't call avc_node_kill() when
+>>> avc_xperms_populate() fails, resulting in the
+>>> avc->avc_cache.active_nodes counter having a false value.In last patch this changes was missed , so correcting it.
+>>>
+>>> Change-Id: Ic0298162cc766c0f21be7ab232e259766654dad3
+>>> Signed-off-by: Jaihind Yadav<jaihindyadav@codeaurora.org>
+>>> ---
+>>>    security/selinux/avc.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/security/selinux/avc.c b/security/selinux/avc.c index
+>>> 91d24c2..3d1cff2 100644
+>>> --- a/security/selinux/avc.c
+>>> +++ b/security/selinux/avc.c
+>>> @@ -913,7 +913,7 @@ static int avc_update_node(struct selinux_avc
+>>> *avc,
+>>>           if (orig->ae.xp_node) {
+>>>                   rc = avc_xperms_populate(node, orig->ae.xp_node);
+>>>                   if (rc) {
+>>> -                       kmem_cache_free(avc_node_cachep, node);
+>>> +                       avc_node_kill(avc, node);
+>>>                           goto out_unlock;
+>>>                   }
+>>>           }
+>>> --
+>>
+>> That looks correct to me; I guess that one got missed by the prior fix.
+>> Still not sure how your AVC got into that state though...
+>>
+>> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+> 
+> BTW, have you been running these stress tests on earlier kernels too?
+> If so, what version(s) are known to pass them?  I ask because this code has been present since v4.3 and this is the first such report.
 > 
 
