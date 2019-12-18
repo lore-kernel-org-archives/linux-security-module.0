@@ -2,172 +2,244 @@ Return-Path: <SRS0=Jclw=2I=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E94DC43603
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 05:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB03C2D0C3
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 09:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA725206EC
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 05:58:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="oVs4ae2a"
+	by mail.kernel.org (Postfix) with ESMTP id 2516E20717
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Dec 2019 09:18:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725811AbfLRF66 (ORCPT
+        id S1726757AbfLRJRK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Dec 2019 00:58:58 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:10284 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725799AbfLRF66 (ORCPT
+        Wed, 18 Dec 2019 04:17:10 -0500
+Received: from mga18.intel.com ([134.134.136.126]:60669 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725955AbfLRJRK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Dec 2019 00:58:58 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576648737; h=Content-Transfer-Encoding: Content-Type:
- MIME-Version: Message-ID: Date: Subject: In-Reply-To: References: Cc:
- To: From: Sender; bh=0CumTbfhGoP+1h0Gl7LnTSUH8mwM1nvfEcLk+U1HrIM=; b=oVs4ae2a6DSnjmgtkfq+obet8EwfRCyzy1ki/9F1Vozm+6uZ7sqjXrwVUXOQwKTB4UnRjNol
- YziIKxsvT/JyW6XPYZZZSj0u2uuBavo50mN/VXS12X2bOOiX9JzpI+G0i2Ek+/QL4I8rQQ8j
- f8cXKjcNFOT9Ve6aHZ8P2LXs5Zk=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyJkN2ViYyIsICJsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5df9c01e.7f994d8c6730-smtp-out-n01;
- Wed, 18 Dec 2019 05:58:54 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 29A2BC433A2; Wed, 18 Dec 2019 05:58:53 +0000 (UTC)
-Received: from rsiddoji1 (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: rsiddoji)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9B7B1C433CB;
-        Wed, 18 Dec 2019 05:58:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B7B1C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rsiddoji@codeaurora.org
-From:   "Ravi Kumar Siddojigari" <rsiddoji@codeaurora.org>
-To:     "'Stephen Smalley'" <sds@tycho.nsa.gov>, <selinux@vger.kernel.org>
-Cc:     <paul@paul-moore.com>, <linux-security-module@vger.kernel.org>
-References: <0101016eeb5fdf43-18f58c0b-8670-43eb-ad08-60dae381f0fd-000000@us-west-2.amazonses.com> <4335f89f-d2cb-7f45-d370-6ee0699d3c20@tycho.nsa.gov> <0101016eebed2b2e-db98eae1-b92b-450b-934e-c8e92c5370b3-000000@us-west-2.amazonses.com> <7b047966-33c0-de62-b10f-047819890337@tycho.nsa.gov> <d6081414-613f-fdb8-8dcd-9ebf6a3baa27@tycho.nsa.gov> <0101016ef59a2152-41e65aac-8784-4401-b20d-45b2852872d4-000000@us-west-2.amazonses.com> <411fa1ea-d9b4-b89e-8cab-656db8eef259@tycho.nsa.gov> <001e01d5b4f0$495efbd0$dc1cf370$@codeaurora.org> <21b5511a-fdba-3c2f-e9a6-efdc890b5881@tycho.nsa.gov> <0f6b6f32-e4bc-1ec0-dc27-2f4214ea479a@tycho.nsa.gov>
-In-Reply-To: <0f6b6f32-e4bc-1ec0-dc27-2f4214ea479a@tycho.nsa.gov>
-Subject: RE: Looks like issue in handling active_nodes count in 4.19 kernel .
-Date:   Wed, 18 Dec 2019 11:28:47 +0530
-Organization: The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
-Message-ID: <002101d5b568$393887d0$aba99770$@codeaurora.org>
+        Wed, 18 Dec 2019 04:17:10 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 01:17:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,328,1571727600"; 
+   d="scan'208";a="205782211"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 18 Dec 2019 01:17:08 -0800
+Received: from [10.125.252.219] (abudanko-mobl.ccr.corp.intel.com [10.125.252.219])
+        by linux.intel.com (Postfix) with ESMTP id 0400D5802C9;
+        Wed, 18 Dec 2019 01:16:59 -0800 (PST)
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v4 0/7] Introduce CAP_SYS_PERFMON to secure system performance
+ monitoring and observability
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "james.bottomley@hansenpartnership.com" 
+        <james.bottomley@hansenpartnership.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Robert Richter <rric@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, oprofile-list@lists.sf.net
+Organization: Intel Corp.
+Message-ID: <c0460c78-b1a6-b5f7-7119-d97e5998f308@linux.intel.com>
+Date:   Wed, 18 Dec 2019 12:16:58 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQHnox6jYXzQWBJanA4xvaBIwH53oQHEBp5eAW+3n+oCcppYQQLX+pcHAZBKVBoDAGwdBwG8Ix8zAUmroZsDW73tkqcAAlWw
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Yes this is the first time that we are getting this stress tested done =
-on v4.19 kernel .=20
-We had not tested this prior version of kernel though . Current proposed =
-changes seems to really help and testing is still going on .=20
-As per the delta it looks  change  6b6bc620  seem to be missing in =
-earlier version of kernel not sure if this was the cause.=20
 
-Br ,=20
-Ravi.
------Original Message-----
-From: Stephen Smalley <sds@tycho.nsa.gov>=20
-Sent: Tuesday, December 17, 2019 9:54 PM
-To: Ravi Kumar Siddojigari <rsiddoji@codeaurora.org>; =
-selinux@vger.kernel.org
-Cc: paul@paul-moore.com; linux-security-module@vger.kernel.org
-Subject: Re: Looks like issue in handling active_nodes count in 4.19 =
-kernel .
+Currently access to perf_events, i915_perf and other performance monitoring and
+observability subsystems of the kernel is open for a privileged process [1] with
+CAP_SYS_ADMIN capability enabled in the process effective set [2].
 
-On 12/17/19 10:52 AM, Stephen Smalley wrote:
-> On 12/17/19 10:40 AM, Ravi Kumar Siddojigari wrote:
->> Yes  indeed this is a stress test on ARM64 device with multicore=20
->> where most of the cores /tasks are stuck  in avc_reclaim_node .
->> We still see this issue even after picking the earlier patch "=20
->> selinux: ensure we cleanup the internal AVC counters on error in
->> avc_insert() commit: d8db60cb23e4"
->> Where selinux_state  during issue was as below where all the slots=20
->> are  NULL and the count was more than threshold.
->> Which seem to be calling avc_reclaim_node always and as the all the=20
->> slots are empty its going for full for- loop with locks and unlock=20
->> and taking too long .
->> Not sure what could make the  slots null , for sure its not due to
->> flush() /Reset(). We think that still we need to call  avc_kill_node=20
->> in update_node function .
->> Adding the patch below can you please review or correct the following =
+This patch set introduces CAP_SYS_PERFMON capability devoted to secure system
+performance monitoring and observability operations so that CAP_SYS_PERFMON would
+assist CAP_SYS_ADMIN capability in its governing role for perf_events, i915_perf
+and other performance monitoring and observability subsystems of the kernel.
 
->> patch .
->>
->>
->>    selinux_state =3D (
->>      disabled =3D FALSE,
->>      enforcing =3D TRUE,
->>      checkreqprot =3D FALSE,
->>      initialized =3D TRUE,
->>      policycap =3D (TRUE, TRUE, TRUE, FALSE, FALSE, TRUE),
->>      avc =3D 0xFFFFFF9BEFF1E890 -> (
->>        avc_cache_threshold =3D 512,  /* <<<<<not configured and its=20
->> with default*/
->>        avc_cache =3D (
->>          slots =3D ((first =3D 0x0), (first =3D 0x0), (first =3D =
-0x0), (first=20
->> =3D 0x0), (first =3D 0x0), (first =3D 0x0), (first =3D 0x0), (first =
-=3D 0x0),
->> (first =3D 0x0), (first =3D 0x0), (first =3D 0x0), (first =3D 0x0), =
-(first  =20
->> /*<<<< all are NULL */
->>          slots_lock =3D ((rlock =3D (raw_lock =3D (val =3D (counter =
-=3D 0),=20
->> locked =3D 0, pending =3D 0, locked_pending =3D 0, tail =3D 0), magic =
-=3D=20
->> 3735899821, owner_cpu =3D 4294967295, owner =3D 0xFFFFFFFFFFFFFFFF,=20
->> dep_map =3D (key =3D 0xFFFFFF9BEFF298A8, cla
->>          lru_hint =3D (counter =3D 616831529),
->>          active_nodes =3D (counter =3D 547),   /*<<<<< increased more =
+CAP_SYS_PERFMON intends to meet the demand to secure system performance monitoring
+and observability operations in security sensitive, restricted, production
+environments (e.g. HPC clusters, cloud and virtual compute environments) where root
+or CAP_SYS_ADMIN credentials are not available to mass users of a system because
+of security considerations.
 
->> than 512*/
->>          latest_notif =3D 1)),
->>      ss =3D 0xFFFFFF9BEFF2E578)
->>
->>
->> --
->> In AVC update we don't call avc_node_kill() when=20
->> avc_xperms_populate() fails, resulting in the=20
->> avc->avc_cache.active_nodes counter having a false value.In last =
-patch this changes was missed , so correcting it.
->>
->> Change-Id: Ic0298162cc766c0f21be7ab232e259766654dad3
->> Signed-off-by: Jaihind Yadav<jaihindyadav@codeaurora.org>
->> ---
->>   security/selinux/avc.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/security/selinux/avc.c b/security/selinux/avc.c index=20
->> 91d24c2..3d1cff2 100644
->> --- a/security/selinux/avc.c
->> +++ b/security/selinux/avc.c
->> @@ -913,7 +913,7 @@ static int avc_update_node(struct selinux_avc=20
->> *avc,
->>          if (orig->ae.xp_node) {
->>                  rc =3D avc_xperms_populate(node, orig->ae.xp_node);
->>                  if (rc) {
->> -                       kmem_cache_free(avc_node_cachep, node);
->> +                       avc_node_kill(avc, node);
->>                          goto out_unlock;
->>                  }
->>          }
->> --
->=20
-> That looks correct to me; I guess that one got missed by the prior =
-fix.
-> Still not sure how your AVC got into that state though...
->=20
-> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+CAP_SYS_PERFMON intends to harden system security and integrity during system
+performance monitoring and observability operations by decreasing attack surface
+that is available to CAP_SYS_ADMIN privileged processes [2].
 
-BTW, have you been running these stress tests on earlier kernels too?=20
-If so, what version(s) are known to pass them?  I ask because this code =
-has been present since v4.3 and this is the first such report.
+CAP_SYS_PERFMON intends to take over CAP_SYS_ADMIN credentials related to system
+performance monitoring and observability operations and balance amount of
+CAP_SYS_ADMIN credentials following the recommendations in the capabilities man
+page [2] for CAP_SYS_ADMIN: "Note: this capability is overloaded; see Notes to
+kernel developers, below."
+
+For backward compatibility reasons access to system performance monitoring and
+observability subsystems of the kernel remains open for CAP_SYS_ADMIN privileged
+processes but CAP_SYS_ADMIN capability usage for secure system performance
+monitoring and observability operations is discouraged with respect to the
+introduced CAP_SYS_PERFMON capability.
+
+The patch set is for tip perf/core repository:
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip perf/core
+sha1: ceb9e77324fa661b1001a0ae66f061b5fcb4e4e6
+
+---
+Changes in v4:
+- converted perfmon_capable() into an inline function
+- made perf_events kprobes, uprobes, hw breakpoints and namespaces data available
+  to CAP_SYS_PERFMON privileged processes
+- applied perfmon_capable() to drivers/perf and drivers/oprofile
+- extended __cmd_ftrace() with support of CAP_SYS_PERFMON
+Changes in v3:
+- implemented perfmon_capable() macros aggregating required capabilities checks
+Changes in v2:
+- made perf_events trace points available to CAP_SYS_PERFMON privileged processes
+- made perf_event_paranoid_check() treat CAP_SYS_PERFMON equally to CAP_SYS_ADMIN
+- applied CAP_SYS_PERFMON to i915_perf, bpf_trace, powerpc and parisc system
+  performance monitoring and observability related subsystems
+
+---
+Alexey Budankov (9):
+  capabilities: introduce CAP_SYS_PERFMON to kernel and user space
+  perf/core: open access for CAP_SYS_PERFMON privileged process
+  perf tool: extend Perf tool with CAP_SYS_PERFMON capability support
+  drm/i915/perf: open access for CAP_SYS_PERFMON privileged process
+  trace/bpf_trace: open access for CAP_SYS_PERFMON privileged process
+  powerpc/perf: open access for CAP_SYS_PERFMON privileged process
+  parisc/perf: open access for CAP_SYS_PERFMON privileged process
+  drivers/perf: open access for CAP_SYS_PERFMON privileged process
+  drivers/oprofile: open access for CAP_SYS_PERFMON privileged process
+
+ arch/parisc/kernel/perf.c           |  2 +-
+ arch/powerpc/perf/imc-pmu.c         |  4 ++--
+ drivers/gpu/drm/i915/i915_perf.c    | 13 ++++++-------
+ drivers/oprofile/event_buffer.c     |  2 +-
+ drivers/perf/arm_spe_pmu.c          |  4 ++--
+ include/linux/capability.h          |  4 ++++
+ include/linux/perf_event.h          |  6 +++---
+ include/uapi/linux/capability.h     |  8 +++++++-
+ kernel/events/core.c                |  6 +++---
+ kernel/trace/bpf_trace.c            |  2 +-
+ security/selinux/include/classmap.h |  4 ++--
+ tools/perf/builtin-ftrace.c         |  5 +++--
+ tools/perf/design.txt               |  3 ++-
+ tools/perf/util/cap.h               |  4 ++++
+ tools/perf/util/evsel.c             | 10 +++++-----
+ tools/perf/util/util.c              |  1 +
+ 16 files changed, 47 insertions(+), 31 deletions(-)
+
+---
+Testing and validation (Intel Skylake, 8 cores, Fedora 29, 5.4.0-rc8+, x86_64):
+
+libcap library [3], [4] and Perf tool can be used to apply CAP_SYS_PERFMON 
+capability for secure system performance monitoring and observability beyond the
+scope permitted by the system wide perf_event_paranoid kernel setting [5] and
+below are the steps for evaluation:
+
+  - patch, build and boot the kernel
+  - patch, build Perf tool e.g. to /home/user/perf
+  ...
+  # git clone git://git.kernel.org/pub/scm/libs/libcap/libcap.git libcap
+  # pushd libcap
+  # patch libcap/include/uapi/linux/capabilities.h with [PATCH 1]
+  # make
+  # pushd progs
+  # ./setcap "cap_sys_perfmon,cap_sys_ptrace,cap_syslog=ep" /home/user/perf
+  # ./setcap -v "cap_sys_perfmon,cap_sys_ptrace,cap_syslog=ep" /home/user/perf
+  /home/user/perf: OK
+  # ./getcap /home/user/perf
+  /home/user/perf = cap_sys_ptrace,cap_syslog,cap_sys_perfmon+ep
+  # echo 2 > /proc/sys/kernel/perf_event_paranoid
+  # cat /proc/sys/kernel/perf_event_paranoid 
+  2
+  ...
+  $ /home/user/perf top
+    ... works as expected ...
+  $ cat /proc/`pidof perf`/status
+  Name:	perf
+  Umask:	0002
+  State:	S (sleeping)
+  Tgid:	2958
+  Ngid:	0
+  Pid:	2958
+  PPid:	9847
+  TracerPid:	0
+  Uid:	500	500	500	500
+  Gid:	500	500	500	500
+  FDSize:	256
+  ...
+  CapInh:	0000000000000000
+  CapPrm:	0000004400080000
+  CapEff:	0000004400080000 => 01000100 00000000 00001000 00000000 00000000
+                                     cap_sys_perfmon,cap_sys_ptrace,cap_syslog
+  CapBnd:	0000007fffffffff
+  CapAmb:	0000000000000000
+  NoNewPrivs:	0
+  Seccomp:	0
+  Speculation_Store_Bypass:	thread vulnerable
+  Cpus_allowed:	ff
+  Cpus_allowed_list:	0-7
+  ...
+
+Usage of cap_sys_perfmon effectively avoids unused credentials excess:
+
+- with cap_sys_admin:
+  CapEff:	0000007fffffffff => 01111111 11111111 11111111 11111111 11111111
+
+- with cap_sys_perfmon:
+  CapEff:	0000004400080000 => 01000100 00000000 00001000 00000000 00000000
+                                    38   34               19
+                           sys_perfmon   syslog           sys_ptrace
+
+---
+
+[1] https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html
+[2] http://man7.org/linux/man-pages/man7/capabilities.7.html
+[3] http://man7.org/linux/man-pages/man8/setcap.8.html
+[4] https://git.kernel.org/pub/scm/libs/libcap/libcap.git
+[5] http://man7.org/linux/man-pages/man2/perf_event_open.2.html
+[6] https://sites.google.com/site/fullycapable/, posix_1003.1e-990310.pdf
+
+-- 
+2.20.1
 
