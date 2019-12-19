@@ -2,164 +2,115 @@ Return-Path: <SRS0=Lltm=2J=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45449C2D0D1
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Dec 2019 16:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3C8C2D0D1
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Dec 2019 16:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC0724679
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Dec 2019 16:00:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="OS1s+m5n"
+	by mail.kernel.org (Postfix) with ESMTP id 3ECAB24650
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Dec 2019 16:48:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfLSQAY (ORCPT
+        id S1726836AbfLSQsf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Dec 2019 11:00:24 -0500
-Received: from UPDC19PA20.eemsg.mail.mil ([214.24.27.195]:52301 "EHLO
-        UPDC19PA20.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbfLSQAY (ORCPT
+        Thu, 19 Dec 2019 11:48:35 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:49334 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726818AbfLSQsf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Dec 2019 11:00:24 -0500
-X-EEMSG-check-017: 39787187|UPDC19PA20_ESA_OUT02.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.69,332,1571702400"; 
-   d="scan'208";a="39787187"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by UPDC19PA20.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 19 Dec 2019 16:00:19 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1576771220; x=1608307220;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=HNfDHRhGYVkqnjWB+sU3sQZkwcx6EXjKpmJfsyr+mTw=;
-  b=OS1s+m5nsKfiYLKq/4861l9v1uJXGcivSlyGw61LIYDB7yB5jX8ib4W9
-   /GPTVuyPs2/OYpDC2Ltf+3/bo8pm5rL0NSDcMotAnFXy/Rxzq5eTSbfe5
-   xYF2od50QKp2T6OPLoS6WaJIheM7U6jeOJddK5ros+MvbpfTfOtVozLKo
-   oM+Z6LYg5GaFSOmLGIQ1mua+V+6AH3DQ8xnXQBUjHZAlyLDfXlE6kl0/Y
-   X4F7YldUdo1CNGku6+g5C9QeZDFIyPfPzTOq1fDXs/JvWD7kWRF+tMXB0
-   ZPXLWEAN3aBfZasIrqoS/43gJ3yqaqCotpkUF5ZW0N3MG1uu70FsKlvCO
-   w==;
-X-IronPort-AV: E=Sophos;i="5.69,332,1571702400"; 
-   d="scan'208";a="31283805"
-IronPort-PHdr: =?us-ascii?q?9a23=3AJlRF1xbv8UcawwSiKUpzm/f/LSx+4OfEezUN45?=
- =?us-ascii?q?9isYplN5qZpsyyZR7h7PlgxGXEQZ/co6odzbaP6Oa6ADVLsc/JmUtBWaQEbw?=
- =?us-ascii?q?UCh8QSkl5oK+++Imq/EsTXaTcnFt9JTl5v8iLzG0FUHMHjew+a+SXqvnYdFR?=
- =?us-ascii?q?rlKAV6OPn+FJLMgMSrzeCy/IDYbxlViDanbr5+MRu7oR/PusULnIduJaU8xg?=
- =?us-ascii?q?bUqXZUZupawn9lK0iOlBjm/Mew+5Bj8yVUu/0/8sNLTLv3caclQ7FGFToqK2?=
- =?us-ascii?q?866tHluhnFVguP+2ATUn4KnRpSAgjK9w/1U5HsuSbnrOV92S2aPcrrTbAoXD?=
- =?us-ascii?q?mp8qlmRAP0hCoBKjU063/chNBug61HoRKhvx1/zJDSYIGJL/p1Y6fRccoHSW?=
- =?us-ascii?q?ZdQspdUipMDY2mb4sLEuEPI+BWoYfgrFcKtBezCw2hCObpxzRVhHH5wLc63v?=
- =?us-ascii?q?w8Hw/Y0gwuH9EAvnrao9r6NqgdTe+7wbLUzTjBdf5axSvx5YbKfx0nvPqCXa?=
- =?us-ascii?q?hwcc3UyUQ3Cg3FkkufqZTlPzyL0OQGrnWV7+96WuKrj24otQFwqSWoy8c3l4?=
- =?us-ascii?q?bJnZkYykzE9CplwIY1Ise0SEhgYdG+CpdQuCaaN5VvT84kXmpmuz46x6UbtZ?=
- =?us-ascii?q?O0cyUG0pQqywPFZ/CZfIWE/AjvWPuXLDxlnnxqYqi/iAy38UW4z+38UdS730?=
- =?us-ascii?q?hSoypel9nMqmgN1xvO6sibUvd9/lmu2TKI1w3L9uFLO1o0lavGK5462LIwl5?=
- =?us-ascii?q?wTsUrEHi/thkr5kLWadlkk++e06+TnZa/qppmAOI9vlg7yKKEums27AeggMw?=
- =?us-ascii?q?gOWXaU+fik2bH+8kD0T69Gg/0rnqXDrpzXKtoXqrSkDwNN14Ys8Re/DzOo0N?=
- =?us-ascii?q?QCmnkHKUpIeAmagIjyIFzOPPD5Auu/g1SrijtrwevGMaf7DpXCKXjDjq/tfa?=
- =?us-ascii?q?xh5E5E1Aoz0ddf6opOCrEaIfL8R1L+tNvaDh84KAG73+HnB8hj2YwERGKPGK?=
- =?us-ascii?q?iZMLnIvlOS4eIvOeaMbpcPuDnhM/gl++LujXghlF8FZ6apwJ8XZWugHvt8Pk?=
- =?us-ascii?q?WZZWPggtIGEWcNpAoxUvbmh0GFUT5Wf3yyRb4z5iknCIK6CofOXputj6KF3C?=
- =?us-ascii?q?e6GJ1We29HB0uSEXfnaYqEQe0AaCGMLc97lDwLS7yhR5Um1RG0uw/w06BnIf?=
- =?us-ascii?q?bM+i0EqZLj08B45+nSlRE06Dx1AN2R03qTQG5og2MIXT423Lx/oEBkz1eD1r?=
- =?us-ascii?q?V3g+FcFdNN/P5JTAg6OoDGz+BgCND9RBjBftGXR1aiWNmmBisxTt1ii+MJNn?=
- =?us-ascii?q?x0BdTqrQ3G1jDiOL4Zm7uJBZM96KOUi2LqJspxzHTH/KImg1QvX9FIL2Tggb?=
- =?us-ascii?q?RwoUybTcHxmlid34Otcr4Rk2SFoH+K0G6mpEhFVEt1VqLfUDYUYU6A/vrj4U?=
- =?us-ascii?q?aXdKOjEbQqNEN6zMeGLqZbIonygU5uWOboONOYZXm43Wi3G0Dblfu3cIP2dj?=
- =?us-ascii?q?BFj23mA08enlVWpC3XOA=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2ARAAAZnvtd/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
- =?us-ascii?q?QICAQEBAYFrAgEBAQELAYF1gWwBIBIqhAaJA4ZbBoE3iWyPXoFnCQEBAQEBA?=
- =?us-ascii?q?QEBATcBAYRAAoJANwYOAhABAQEEAQEBAQEFAwEBbIVDgjspAYJ5AQEBAQMjB?=
- =?us-ascii?q?BFBEAsRAwECAQICJgICTwgGAQwGAgEBglMMP4JTJawZdX8zhU+DR4E9gQ4oA?=
- =?us-ascii?q?YwyeYEHgTgPgl0+hBIEARIBgy+CXgSHOo9VRpc2gj6CRJNOBhuCQ5gOLY4kg?=
- =?us-ascii?q?UabGyNncSsIAhgIIQ+DJ1AYDZt2IwMwjlUPF4IbAQE?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 19 Dec 2019 15:59:58 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id xBJFxZml178240;
-        Thu, 19 Dec 2019 10:59:37 -0500
-Subject: Re: Looks like issue in handling active_nodes count in 4.19 kernel .
-To:     Ravi Kumar Siddojigari <rsiddoji@codeaurora.org>,
-        "'Paul Moore'" <paul@paul-moore.com>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <0101016eeb5fdf43-18f58c0b-8670-43eb-ad08-60dae381f0fd-000000@us-west-2.amazonses.com>
- <4335f89f-d2cb-7f45-d370-6ee0699d3c20@tycho.nsa.gov>
- <0101016eebed2b2e-db98eae1-b92b-450b-934e-c8e92c5370b3-000000@us-west-2.amazonses.com>
- <7b047966-33c0-de62-b10f-047819890337@tycho.nsa.gov>
- <d6081414-613f-fdb8-8dcd-9ebf6a3baa27@tycho.nsa.gov>
- <0101016ef59a2152-41e65aac-8784-4401-b20d-45b2852872d4-000000@us-west-2.amazonses.com>
- <411fa1ea-d9b4-b89e-8cab-656db8eef259@tycho.nsa.gov>
- <001e01d5b4f0$495efbd0$dc1cf370$@codeaurora.org>
- <21b5511a-fdba-3c2f-e9a6-efdc890b5881@tycho.nsa.gov>
- <CAHC9VhQYA8uTRQ0OajEmsTrDytNVx+BSiL5vEsGefKEhAw+gKA@mail.gmail.com>
- <002701d5b651$8434b2b0$8c9e1810$@codeaurora.org>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <3ad91461-f717-879b-6ace-a8ca31d6e3e1@tycho.nsa.gov>
-Date:   Thu, 19 Dec 2019 11:00:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 19 Dec 2019 11:48:35 -0500
+Received: from localhost (unknown [IPv6:2a00:5f00:102:0:3aba:f8ff:fe58:9ca1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: smcv)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id B1ED428DE70;
+        Thu, 19 Dec 2019 16:48:33 +0000 (GMT)
+Date:   Thu, 19 Dec 2019 16:48:31 +0000
+From:   Simon McVittie <smcv@collabora.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
+Subject: Re: [PATCH v12 23/25] NET: Add SO_PEERCONTEXT for multiple LSMs
+Message-ID: <20191219164831.GA1308552@horizon>
+References: <20191216223621.5127-1-casey@schaufler-ca.com>
+ <20191216223621.5127-24-casey@schaufler-ca.com>
+ <56b96440-a304-42b6-1515-1ad2659b2581@tycho.nsa.gov>
+ <e7aa3b6f-cee1-6277-21dd-77a4db9bbc2b@tycho.nsa.gov>
+ <a522de22-ba62-a24d-24f7-b69418e7ec0b@tycho.nsa.gov>
+ <20191219121939.GA1291250@horizon>
+ <55b5c889-ff38-38c4-578e-ec4211b837a4@tycho.nsa.gov>
+ <93912039-e64e-cc56-20fc-095accf6c4dd@tycho.nsa.gov>
 MIME-Version: 1.0
-In-Reply-To: <002701d5b651$8434b2b0$8c9e1810$@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <93912039-e64e-cc56-20fc-095accf6c4dd@tycho.nsa.gov>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/19/19 4:48 AM, Ravi Kumar Siddojigari wrote:
-> Sorry , Re-adding the patch  below as requested.
-> 
-> Stephen ,
-> Issue is fixed with this  2 changes , Issue as even reproduced on v4.14 and  similar changes work there also .
+On Thu, 19 Dec 2019 at 10:00:31 -0500, Stephen Smalley wrote:
+> Looks like userspace is generally forgiving of whether the terminating NUL
+> byte is included or omitted by the kernel (with different behaviors for
+> SELinux - always included, Smack - omitted by /proc/pid/attr/current but
+> included in SO_PEERSEC, and AppArmor - omitted for /proc/pid/attr/current
+> but includes a terminating \n, omitted for SO_PEERSEC but no terminating
+> \n), and procps-ng explicitly tests for printable characters (but truncates
+> on the first unprintable character).
 
-It would be preferable if you sent the patch directly via git send-email 
-or similar.  In any event, for the final version, we should drop the 
-Change-Id because it is Android-specific and we should add a Fixes line 
-like so:
+Because LSM people have told me in the past that the '\0' is not
+conceptually part of the label, the D-Bus specification and reference
+implementation already assume that its presence or absence is irrelevant,
+and normalize to a canonical form (which happens to be that it appends a
+'\0' if missing, to be nice to C-like languages, but I could equally
+have chosen to strip the '\0' and rely on an out-of-band length count).
 
-Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
+By design, SO_PEERCONTEXT and /proc/pid/attr/context don't (can't!)
+preserve whether the label originally ended with '\0' or not (because
+they are designed to use '\0' as a terminator for each label), so these
+new kernel interfaces are already a bit closer than the old kernel
+interfaces to how D-Bus represents this information.
 
-Given the behavior you are describing and the fact that you could 
-reproduce it on v4.14 as well, I would recommend marking both it and 
-Paul's earlier patch for stable (Paul will do this if he agrees; no 
-action required by you).
+The problematic case is AppArmor's terminating '\n' on
+/proc/pid/attr/current, because when I asked in the past, I was told
+that it would be (unwise but) valid to have a LSM where "foo" and "foo\n"
+are distinct labels.
 
-> 
-> --
->  From 77c618006397c7a65ead257f3cb4e4fe3da2d4b8 Mon Sep 17 00:00:00 2001
-> From: Jaihind Yadav <jaihindyadav@codeaurora.org>
-> Date: Tue, 17 Dec 2019 17:25:47 +0530
-> Subject: [PATCH] selinux: ensure we cleanup the internal AVC counters on error
->   in avc_update()
-> 
-> In AVC update we don't call avc_node_kill() when avc_xperms_populate()
-> fails, resulting in the avc->avc_cache.active_nodes counter having a
-> false value. In last patch this changes was missed , so correcting it.
-> 
-> Change-Id: Ic0298162cc766c0f21be7ab232e259766654dad3
-> Signed-off-by: Ravi Kumar Siddojigari <rsiddoji@codeaurora.org>
-> ---
->   security/selinux/avc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-> index 91d24c2..3d1cff2 100644
-> --- a/security/selinux/avc.c
-> +++ b/security/selinux/avc.c
-> @@ -913,7 +913,7 @@ static int avc_update_node(struct selinux_avc *avc,
->          if (orig->ae.xp_node) {
->                  rc = avc_xperms_populate(node, orig->ae.xp_node);
->                  if (rc) {
-> -                       kmem_cache_free(avc_node_cachep, node);
-> +                       avc_node_kill(avc, node);
->                          goto out_unlock;
->                  }
->          }
-> --
-> 1.9.1
-> 
-> Br,
-> 
+If that hypothetical LSM would make procps-ng lose information (because
+procps-ng truncates at the first unprintable character), does that change
+the situation any? Would that make it acceptable for other LSM-agnostic
+user-space components, like the reference implementation of D-Bus, to
+assume that stripping a trailing newline from /proc/pid/attr/context
+or from one of the component strings of /proc/pid/attr/current is a
+non-lossy operation?
+
+> > >    If this new API is an opportunity to declare that LSMs are expected
+> > >    to put the same canonical form of a label in
+> > > /proc/$pid/attr/context and
+> > >    SO_PEERCONTEXT, possibly with a non-canonical version (adding '\n' or
+> > >    '\0' or similar) exposed in the older /proc/$pid/attr/current and
+> > >    SO_PEERSEC interfaces for backwards compatibility, then that
+> > > would make
+> > >    life a lot easier for user-space developers like me.
+> > 
+> > I'm all for this but the current implementation reuses the same
+> > underlying hooks as SO_PEERSEC, so it gets the same result for the
+> > per-lsm values.  We'd need a separate hook if we cannot alter the
+> > current AppArmor SO_PEERSEC format.
+
+If AppArmor was going to change the format of one of its interfaces
+(or deviate from it when implementing new interfaces), I'd actually
+prefer it to be /proc/pid/attr/current that changed or was superseded,
+because /proc/pid/attr/current is the one that contains a newline that
+consumers are meant to ignore.
+
+For what it's worth, libapparmor explicitly removes the newline, so this
+only matters to LSM-agnostic readers like D-Bus implementations, and to
+lower-level AppArmor-aware readers that use the kernel interfaces directly
+in preference to using libapparmor.
+
+    smcv
