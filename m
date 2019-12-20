@@ -2,99 +2,123 @@ Return-Path: <SRS0=iN1c=2K=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A12C2D0C0
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 12:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FB1C2D0D2
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 14:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0928D24679
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 12:03:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="msrN2966"
+	by mail.kernel.org (Postfix) with ESMTP id 583712068F
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 14:04:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfLTMDf (ORCPT
+        id S1727500AbfLTOEf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Dec 2019 07:03:35 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:36276 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727285AbfLTMDf (ORCPT
+        Fri, 20 Dec 2019 09:04:35 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:16756 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727483AbfLTOEe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Dec 2019 07:03:35 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576843414; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=QOv7RvAgmSKMtzh5ZYK35DY3wv0oF/I4SlruXDv4xY4=; b=msrN29664aWsdlW6La9scC+zL7jMGF4WHMu2BAkuHMNI6upY/T4P1qg/b+o1vtc3Abm5JewU
- 0JGy7v3VOXbharkJISapjpiPiJVxPgKkavBZwTW4wP3cvUUpmqiGe0V/F8/dU+/Tzj9mVxRZ
- 3tvsBOufkxO8onEuI8LcxJjM/gI=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyJkN2ViYyIsICJsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5dfcb895.7f6b5df855a8-smtp-out-n03;
- Fri, 20 Dec 2019 12:03:33 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 4933DC447A4; Fri, 20 Dec 2019 12:03:33 +0000 (UTC)
-Received: from rsiddoji-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rsiddoji)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C231AC433A2;
-        Fri, 20 Dec 2019 12:03:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C231AC433A2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rsiddoji@codeaurora.org
-From:   Ravi Kumar Siddojigari <rsiddoji@codeaurora.org>
-To:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        sds@tycho.nsa.gov
-Cc:     rsiddoji@codeaurora.org,
-        Jaihind Yadav <jaihindyadav@codeaurora.org>
-Subject: Re: Looks like issue in handling active_nodes count in 4.19 kernel 
-Date:   Fri, 20 Dec 2019 17:33:01 +0530
-Message-Id: <1576843382-24184-1-git-send-email-rsiddoji@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <CAHC9VhSv9BsjqNtwdpAv1yj630L-k8UBcWA5bwC9ySevrPw34w@mail.gmail.com>
-References: <CAHC9VhSv9BsjqNtwdpAv1yj630L-k8UBcWA5bwC9ySevrPw34w@mail.gmail.com>
+        Fri, 20 Dec 2019 09:04:34 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBKDwvgY023124
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Dec 2019 09:04:33 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2x0pse340q-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Dec 2019 09:04:31 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 20 Dec 2019 14:04:29 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 20 Dec 2019 14:04:27 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBKE3hC936897118
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Dec 2019 14:03:43 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BA6A1AE055;
+        Fri, 20 Dec 2019 14:04:26 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F0E96AE056;
+        Fri, 20 Dec 2019 14:04:25 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.154.31])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 20 Dec 2019 14:04:25 +0000 (GMT)
+Subject: Re: [PATCH v1 - RFC] ima: export the measurement list when needed
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Janne Karhunen <janne.karhunen@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Cc:     kgold@linux.ibm.com, david.safford@gmail.com, monty.wiseman@ge.com
+Date:   Fri, 20 Dec 2019 09:04:25 -0500
+In-Reply-To: <20191220074929.8191-1-janne.karhunen@gmail.com>
+References: <20191220074929.8191-1-janne.karhunen@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19122014-0008-0000-0000-00000342EF8B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19122014-0009-0000-0000-00004A630D4B
+Message-Id: <1576850665.5241.52.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-20_03:2019-12-17,2019-12-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ malwarescore=0 phishscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 mlxlogscore=999 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1912200111
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+[Cc'ing LSM mailing list for a wider audience]
 
-Thanks for correcting , Adding the signoff of orginal author in the 
-following commit .
+On Fri, 2019-12-20 at 09:49 +0200, Janne Karhunen wrote:
+> Some systems can end up carrying lots of entries in the ima
+> measurement list. Since every entry is using a bit of kernel
+> memory, add a new Kconfig variable to allow the sysadmin to
+> define the maximum measurement list size and the location
+> of the exported list.
+> 
+> The list is written out in append mode, so the system will
+> keep writing new entries as long as it stays running or runs
+> out of space. File is also automatically truncated on startup.
+> 
+> Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
 
-From 6308b405e2097ab9d82c5a3894815daf7331e0b6 Mon Sep 17 00:00:00 2001
-From: Jaihind Yadav <jaihindyadav@codeaurora.org>
-Date: Tue, 17 Dec 2019 17:25:47 +0530
-Subject: [PATCH] selinux: ensure we cleanup the internal AVC counters on error
- in avc_update()
-To: rsiddoji@codeaurora.org
+Continually adding new measurements, without limiting or removing the
+measurement list seems to becoming more of an issue.
 
-In AVC update we don't call avc_node_kill() when avc_xperms_populate()
-fails, resulting in the avc->avc_cache.active_nodes counter having a
-false value.In last patch this changes was missed , so correcting it.
+From Dave Safford's TLV patch description[1]:
+    A second goal of the [TLV] patch set is to test the more radical
+    idea of being able to copy the measurement list data out of the
+    kernel. The data is verifiable with the TPM PCR value, and need not
+    be kept in kernel memory. In some cases, this "memory leak" can
+    grow large enough to cause issues, and this is a test of a
+    potential way to solve that problem.
 
+The TLV version automatically removed the measurement list the first
+time the measurement list was read, which sounded very odd to me.  In
+an offline discussion, Dave further clarified that reading the
+measurement list should be similar to how a trusted userspace
+application reads kernel messages.  The difference being kernel
+messages are stored in a circular buffer and may be dropped.  In the
+IMA measurement list case, the measurement list would grow until the
+trusted userspace application gets around to reading the measurement
+list. 
 
-Signed-off-by: Jaihind Yadav <jaihindyadav@codeaurora.org>
-Signed-off-by: Ravi Kumar Siddojigari <rsiddoji@codeaurora.org>
----
- security/selinux/avc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Should the kernel be involved in writing the IMA measurement list to a
+file or, as Dave suggested, this should be delegated to a userspace
+application?
+ 
+Mimi
 
-diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-index ecd3829996aa..9c69e83834b0 100644
---- a/security/selinux/avc.c
-+++ b/security/selinux/avc.c
-@@ -907,7 +907,7 @@ static int avc_update_node(struct selinux_avc *avc,
-        if (orig->ae.xp_node) {
-                rc = avc_xperms_populate(node, orig->ae.xp_node);
-                if (rc) {
--                       kmem_cache_free(avc_node_cachep, node);
-+                       avc_node_kill(avc, node);
-                        goto out_unlock;
-                }
-        }
---
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+[1] https://lore.kernel.org/linux-integrity/BCA04D5D9A3B764C9B7405BBA4
+D4A3C002569222@ALPMBAPA12.e2k.ad.ge.com/
+
