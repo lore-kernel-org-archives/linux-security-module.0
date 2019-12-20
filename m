@@ -5,281 +5,169 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E381DC2D0D2
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 15:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 245F4C43603
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 16:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF07624682
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 15:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4620206D3
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 16:31:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UWPjWjNk"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W5IZsAhY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfLTPnI (ORCPT
+        id S1727414AbfLTQbm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Dec 2019 10:43:08 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45678 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727403AbfLTPmH (ORCPT
+        Fri, 20 Dec 2019 11:31:42 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45614 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727181AbfLTQbm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Dec 2019 10:42:07 -0500
-Received: by mail-wr1-f68.google.com with SMTP id j42so9806974wrj.12
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Dec 2019 07:42:05 -0800 (PST)
+        Fri, 20 Dec 2019 11:31:42 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j42so9962883wrj.12
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Dec 2019 08:31:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SY0ttQjEzQPvjvG8/HqwJhfFR6ICOMlRVz/9vg/M7EA=;
-        b=UWPjWjNkk3ZwL4zfuKwzD7wzxugsutarPfj0LeFqtbIXiZgJJOW1P3MOcYslXxorPk
-         nAQY96DB9dWRcMoEyI6QZWz4Cz+kt2H22MewO8uKIJqlKeA0e6oSySc3nTN3PgHriCS9
-         cKqgMmJVlPMkgu8RfEumk+6mn2FmDiWKzUbq4=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JEPKTWFBgqyz+hVI4T+K0RwVC4SXQz3XQWTyqv52qe8=;
+        b=W5IZsAhYOcgC9qWUZYKC01gRCHi+E98qMCuJ/gpkCo6A1zL/IlfRHzDjgbgPxE32VK
+         Lj18G/l5Tmlan2jDE+DlrH3dYb0dLa0PyZvI0Yny3B0a14NKr7NBKVoBIs7ldxNFnYBk
+         4A9x3WSvrnyIiB+NFpEEfVCPUEA0cPNQjfP24=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SY0ttQjEzQPvjvG8/HqwJhfFR6ICOMlRVz/9vg/M7EA=;
-        b=iXeHwt5/YbrfYOGu6h/Wji+IqK0e9YzclMURBLzjjvgcRBFjlIF5dN4rbMXX5mYWiF
-         KDecg9+yGqJKtjtaI8CaC+zf184YSVQLm0MEYeiK+V8lE2B1oFjeU0GA0w+HfJztVqS2
-         dtYp7ml7saiL4+HyP1ho5Zn/mJ0GmUJh5noiMnFgjRGG8SxIFDfsLUInMug2b6NQOMoq
-         RVQG7lBUkYpZu54hnXgqgzkYRyI3/ud5Yh/07T+mie5BW4vRpRcDy1gTx8z1BA4sGHka
-         WQ8SUsSikqQ1Fa8vXAsUBKM5i4HJIR6b4ywbMEvgQxEhH2pSch3hbmdai7LdwFxWN65O
-         6nsg==
-X-Gm-Message-State: APjAAAX+J5BYv9CggY5aOmuimamivtRcUytPVffyViAxTeRA70BkmW+V
-        JZOvjFPSWY/FS3k+VThaxZn0gg==
-X-Google-Smtp-Source: APXvYqxXhdI++uWPW1rc4/x3ev8WEpbY3c9lyzxIBUVouN9hKWxxY/RHbhhyvPJNvVFpgXkGqOONXw==
-X-Received: by 2002:a5d:5283:: with SMTP id c3mr16600716wrv.148.1576856524700;
-        Fri, 20 Dec 2019 07:42:04 -0800 (PST)
-Received: from kpsingh-kernel.localdomain ([2a00:79e1:abc:308:c46b:b838:66cf:6204])
-        by smtp.gmail.com with ESMTPSA id x11sm10118062wmg.46.2019.12.20.07.42.03
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JEPKTWFBgqyz+hVI4T+K0RwVC4SXQz3XQWTyqv52qe8=;
+        b=oeZV4cu9w2CPV41J3R+hHO94QoGr6G3lEAWyigi6GPsMRw2Im8dzlHaxFFANSgBj51
+         okcUFcpqX6ffeFkIL3f5LYbmiIm1eDsVi18uFj3UcuamEHgkZGOsoH/zKQd43Wbcapkx
+         bgd+yRDcV3ZtoWsWb0lLG2Pi26zn7/JO6UzIpqeXH6XE8c6W4F0mGdMtSSmZaLWxvKuY
+         6SX66PvQM1gWSFNvNk1+3BSNnYNZtmw+J5oGCVgsCA9Utal4UFsdqBR7FyCGLvbs2xE8
+         NzJyx0mrfznfQcB+adVCpWCVirm7L/nfcZniaMV3jcmuQx3mC5UlbHhFnfeE2mfTPXqC
+         A5uQ==
+X-Gm-Message-State: APjAAAWwZyL6ljJMVcR73ln1BxRp+xO8E0FvpreII16h2r8y+vr4kifi
+        GAicMbbnShrDFZvy4WnRl2GJiA==
+X-Google-Smtp-Source: APXvYqxkB5aC2co8k3B6rs6cg84QwN9ShYX3gqM097SYUJJnoBCgbMFZMv+ot6jikLHHu88ZU05y+Q==
+X-Received: by 2002:adf:ea0f:: with SMTP id q15mr15795873wrm.324.1576859499726;
+        Fri, 20 Dec 2019 08:31:39 -0800 (PST)
+Received: from revest.zrh.corp.google.com ([2a00:79e0:42:204:51d1:d96e:f72e:c8c0])
+        by smtp.gmail.com with ESMTPSA id e6sm10165522wru.44.2019.12.20.08.31.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 07:42:04 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [PATCH bpf-next v1 01/13] bpf: Refactor BPF_EVENT context macros to its own header.
-Date:   Fri, 20 Dec 2019 16:41:56 +0100
-Message-Id: <20191220154208.15895-2-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191220154208.15895-1-kpsingh@chromium.org>
-References: <20191220154208.15895-1-kpsingh@chromium.org>
+        Fri, 20 Dec 2019 08:31:39 -0800 (PST)
+From:   Florent Revest <revest@chromium.org>
+To:     linux-integrity@vger.kernel.org
+Cc:     kpsingh@chromium.org, mjg59@google.com, zohar@linux.ibm.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Florent Revest <revest@google.com>
+Subject: [PATCH] ima: add the ability to query ima for the hash of a given file.
+Date:   Fri, 20 Dec 2019 17:31:36 +0100
+Message-Id: <20191220163136.25010-1-revest@chromium.org>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@google.com>
+From: Florent Revest <revest@google.com>
 
-These macros are useful for other program types than tracing.
-i.e. KRSI (an upccoming BPF based LSM) which does not use
-BPF_PROG_TYPE_TRACE but uses verifiable BTF accesses similar
-to raw tracepoints.
+This allows other parts of the kernel (perhaps a stacked LSM allowing
+system monitoring, eg. the proposed KRSI LSM [1]) to retrieve the hash
+of a given file from IMA if it's present in the iint cache.
 
-Signed-off-by: KP Singh <kpsingh@google.com>
+It's true that the existence of the hash means that it's also in the
+audit logs or in /sys/kernel/security/ima/ascii_runtime_measurements,
+but it can be difficult to pull that information out for every
+subsequent exec.  This is especially true if a given host has been up
+for a long time and the file was first measured a long time ago.
+
+This is based on Peter Moody's patch:
+ https://sourceforge.net/p/linux-ima/mailman/message/33036180/
+
+[1] https://lkml.org/lkml/2019/9/10/393
+
+Signed-off-by: Florent Revest <revest@google.com>
 ---
- include/linux/bpf_event.h | 78 +++++++++++++++++++++++++++++++++++++++
- include/trace/bpf_probe.h | 30 +--------------
- kernel/trace/bpf_trace.c  | 24 +-----------
- 3 files changed, 81 insertions(+), 51 deletions(-)
- create mode 100644 include/linux/bpf_event.h
+ include/linux/ima.h               |  6 +++++
+ security/integrity/ima/ima_main.c | 41 +++++++++++++++++++++++++++++++
+ 2 files changed, 47 insertions(+)
 
-diff --git a/include/linux/bpf_event.h b/include/linux/bpf_event.h
-new file mode 100644
-index 000000000000..353eb1f5a3d0
---- /dev/null
-+++ b/include/linux/bpf_event.h
-@@ -0,0 +1,78 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+
-+/*
-+ * Copyright (c) 2018 Facebook
-+ * Copyright 2019 Google LLC.
-+ */
-+
-+#ifndef _LINUX_BPF_EVENT_H
-+#define _LINUX_BPF_EVENT_H
-+
-+#ifdef CONFIG_BPF_EVENTS
-+
-+/* cast any integer, pointer, or small struct to u64 */
-+#define UINTTYPE(size) \
-+	__typeof__(__builtin_choose_expr(size == 1,  (u8)1, \
-+		   __builtin_choose_expr(size == 2, (u16)2, \
-+		   __builtin_choose_expr(size == 4, (u32)3, \
-+		   __builtin_choose_expr(size == 8, (u64)4, \
-+					 (void)5)))))
-+#define __CAST_TO_U64(x) ({ \
-+	typeof(x) __src = (x); \
-+	UINTTYPE(sizeof(x)) __dst; \
-+	memcpy(&__dst, &__src, sizeof(__dst)); \
-+	(u64)__dst; })
-+
-+#define __CAST0(...) 0
-+#define __CAST1(a, ...) __CAST_TO_U64(a)
-+#define __CAST2(a, ...) __CAST_TO_U64(a), __CAST1(__VA_ARGS__)
-+#define __CAST3(a, ...) __CAST_TO_U64(a), __CAST2(__VA_ARGS__)
-+#define __CAST4(a, ...) __CAST_TO_U64(a), __CAST3(__VA_ARGS__)
-+#define __CAST5(a, ...) __CAST_TO_U64(a), __CAST4(__VA_ARGS__)
-+#define __CAST6(a, ...) __CAST_TO_U64(a), __CAST5(__VA_ARGS__)
-+#define __CAST7(a, ...) __CAST_TO_U64(a), __CAST6(__VA_ARGS__)
-+#define __CAST8(a, ...) __CAST_TO_U64(a), __CAST7(__VA_ARGS__)
-+#define __CAST9(a, ...) __CAST_TO_U64(a), __CAST8(__VA_ARGS__)
-+#define __CAST10(a ,...) __CAST_TO_U64(a), __CAST9(__VA_ARGS__)
-+#define __CAST11(a, ...) __CAST_TO_U64(a), __CAST10(__VA_ARGS__)
-+#define __CAST12(a, ...) __CAST_TO_U64(a), __CAST11(__VA_ARGS__)
-+/* tracepoints with more than 12 arguments will hit build error */
-+#define CAST_TO_U64(...) CONCATENATE(__CAST, COUNT_ARGS(__VA_ARGS__))(__VA_ARGS__)
-+
-+#define UINTTYPE(size) \
-+	__typeof__(__builtin_choose_expr(size == 1,  (u8)1, \
-+		   __builtin_choose_expr(size == 2, (u16)2, \
-+		   __builtin_choose_expr(size == 4, (u32)3, \
-+		   __builtin_choose_expr(size == 8, (u64)4, \
-+					 (void)5)))))
-+
-+#define UNPACK(...)			__VA_ARGS__
-+#define REPEAT_1(FN, DL, X, ...)	FN(X)
-+#define REPEAT_2(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_1(FN, DL, __VA_ARGS__)
-+#define REPEAT_3(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_2(FN, DL, __VA_ARGS__)
-+#define REPEAT_4(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_3(FN, DL, __VA_ARGS__)
-+#define REPEAT_5(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_4(FN, DL, __VA_ARGS__)
-+#define REPEAT_6(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_5(FN, DL, __VA_ARGS__)
-+#define REPEAT_7(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_6(FN, DL, __VA_ARGS__)
-+#define REPEAT_8(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_7(FN, DL, __VA_ARGS__)
-+#define REPEAT_9(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_8(FN, DL, __VA_ARGS__)
-+#define REPEAT_10(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_9(FN, DL, __VA_ARGS__)
-+#define REPEAT_11(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_10(FN, DL, __VA_ARGS__)
-+#define REPEAT_12(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_11(FN, DL, __VA_ARGS__)
-+#define REPEAT(X, FN, DL, ...)		REPEAT_##X(FN, DL, __VA_ARGS__)
-+
-+#define SARG(X)		u64 arg##X
-+#ifdef COPY
-+#undef COPY
-+#endif
-+
-+#define COPY(X)		args[X] = arg##X
-+#define __DL_COM	(,)
-+#define __DL_SEM	(;)
-+
-+#define __SEQ_0_11	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-+
-+#endif
-+#endif /* _LINUX_BPF_EVENT_H */
-+
-diff --git a/include/trace/bpf_probe.h b/include/trace/bpf_probe.h
-index b04c29270973..5165dbc66098 100644
---- a/include/trace/bpf_probe.h
-+++ b/include/trace/bpf_probe.h
-@@ -1,5 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 6d904754d858..d621c65ba9a5 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -23,6 +23,7 @@ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
+ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 			      enum kernel_read_file_id id);
+ extern void ima_post_path_mknod(struct dentry *dentry);
++extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
+ extern void ima_kexec_cmdline(const void *buf, int size);
  
-+#include <linux/bpf_event.h>
-+
- #undef TRACE_SYSTEM_VAR
- 
- #ifdef CONFIG_BPF_EVENTS
-@@ -27,34 +29,6 @@
- #undef __perf_task
- #define __perf_task(t)	(t)
- 
--/* cast any integer, pointer, or small struct to u64 */
--#define UINTTYPE(size) \
--	__typeof__(__builtin_choose_expr(size == 1,  (u8)1, \
--		   __builtin_choose_expr(size == 2, (u16)2, \
--		   __builtin_choose_expr(size == 4, (u32)3, \
--		   __builtin_choose_expr(size == 8, (u64)4, \
--					 (void)5)))))
--#define __CAST_TO_U64(x) ({ \
--	typeof(x) __src = (x); \
--	UINTTYPE(sizeof(x)) __dst; \
--	memcpy(&__dst, &__src, sizeof(__dst)); \
--	(u64)__dst; })
--
--#define __CAST1(a,...) __CAST_TO_U64(a)
--#define __CAST2(a,...) __CAST_TO_U64(a), __CAST1(__VA_ARGS__)
--#define __CAST3(a,...) __CAST_TO_U64(a), __CAST2(__VA_ARGS__)
--#define __CAST4(a,...) __CAST_TO_U64(a), __CAST3(__VA_ARGS__)
--#define __CAST5(a,...) __CAST_TO_U64(a), __CAST4(__VA_ARGS__)
--#define __CAST6(a,...) __CAST_TO_U64(a), __CAST5(__VA_ARGS__)
--#define __CAST7(a,...) __CAST_TO_U64(a), __CAST6(__VA_ARGS__)
--#define __CAST8(a,...) __CAST_TO_U64(a), __CAST7(__VA_ARGS__)
--#define __CAST9(a,...) __CAST_TO_U64(a), __CAST8(__VA_ARGS__)
--#define __CAST10(a,...) __CAST_TO_U64(a), __CAST9(__VA_ARGS__)
--#define __CAST11(a,...) __CAST_TO_U64(a), __CAST10(__VA_ARGS__)
--#define __CAST12(a,...) __CAST_TO_U64(a), __CAST11(__VA_ARGS__)
--/* tracepoints with more than 12 arguments will hit build error */
--#define CAST_TO_U64(...) CONCATENATE(__CAST, COUNT_ARGS(__VA_ARGS__))(__VA_ARGS__)
--
- #undef DECLARE_EVENT_CLASS
- #define DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print)	\
- static notrace void							\
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index ffc91d4935ac..3fb02fe799ab 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -7,6 +7,7 @@
- #include <linux/slab.h>
- #include <linux/bpf.h>
- #include <linux/bpf_perf_event.h>
-+#include <linux/bpf_event.h>
- #include <linux/filter.h>
- #include <linux/uaccess.h>
- #include <linux/ctype.h>
-@@ -1461,29 +1462,6 @@ void __bpf_trace_run(struct bpf_prog *prog, u64 *args)
- 	rcu_read_unlock();
+ #ifdef CONFIG_IMA_KEXEC
+@@ -91,6 +92,11 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
+ 	return;
  }
  
--#define UNPACK(...)			__VA_ARGS__
--#define REPEAT_1(FN, DL, X, ...)	FN(X)
--#define REPEAT_2(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_1(FN, DL, __VA_ARGS__)
--#define REPEAT_3(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_2(FN, DL, __VA_ARGS__)
--#define REPEAT_4(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_3(FN, DL, __VA_ARGS__)
--#define REPEAT_5(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_4(FN, DL, __VA_ARGS__)
--#define REPEAT_6(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_5(FN, DL, __VA_ARGS__)
--#define REPEAT_7(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_6(FN, DL, __VA_ARGS__)
--#define REPEAT_8(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_7(FN, DL, __VA_ARGS__)
--#define REPEAT_9(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_8(FN, DL, __VA_ARGS__)
--#define REPEAT_10(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_9(FN, DL, __VA_ARGS__)
--#define REPEAT_11(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_10(FN, DL, __VA_ARGS__)
--#define REPEAT_12(FN, DL, X, ...)	FN(X) UNPACK DL REPEAT_11(FN, DL, __VA_ARGS__)
--#define REPEAT(X, FN, DL, ...)		REPEAT_##X(FN, DL, __VA_ARGS__)
--
--#define SARG(X)		u64 arg##X
--#define COPY(X)		args[X] = arg##X
--
--#define __DL_COM	(,)
--#define __DL_SEM	(;)
--
--#define __SEQ_0_11	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
--
- #define BPF_TRACE_DEFN_x(x)						\
- 	void bpf_trace_run##x(struct bpf_prog *prog,			\
- 			      REPEAT(x, SARG, __DL_COM, __SEQ_0_11))	\
++static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
++{
++	return -EOPNOTSUPP;
++}
++
+ static inline void ima_kexec_cmdline(const void *buf, int size) {}
+ #endif /* CONFIG_IMA */
+ 
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index d7e987baf127..f054ddf4364e 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -445,6 +445,47 @@ int ima_file_check(struct file *file, int mask)
+ }
+ EXPORT_SYMBOL_GPL(ima_file_check);
+ 
++/**
++ * ima_file_hash - return the stored measurement if a file has been hashed.
++ * @file: pointer to the file
++ * @buf: buffer in which to store the hash
++ * @buf_size: length of the buffer
++ *
++ * On success, output the hash into buf and return the hash algorithm (as
++ * defined in the enum hash_algo).
++ * If the hash is larger than buf, then only size bytes will be copied. It
++ * generally just makes sense to pass a buffer capable of holding the largest
++ * possible hash: IMA_MAX_DIGEST_SIZE
++ *
++ * If IMA is disabled or if no measurement is available, return -EOPNOTSUPP.
++ * If the parameters are incorrect, return -EINVAL.
++ */
++int ima_file_hash(struct file *file, char *buf, size_t buf_size)
++{
++	struct inode *inode;
++	struct integrity_iint_cache *iint;
++	size_t copied_size;
++
++	if (!file || !buf)
++		return -EINVAL;
++
++	if (!ima_policy_flag)
++		return -EOPNOTSUPP;
++
++	inode = file_inode(file);
++	iint = integrity_iint_find(inode);
++	if (!iint)
++		return -EOPNOTSUPP;
++
++	mutex_lock(&iint->mutex);
++	copied_size = min_t(size_t, iint->ima_hash->length, buf_size);
++	memcpy(buf, iint->ima_hash->digest, copied_size);
++	mutex_unlock(&iint->mutex);
++
++	return iint->ima_hash->algo;
++}
++EXPORT_SYMBOL_GPL(ima_file_hash);
++
+ /**
+  * ima_post_create_tmpfile - mark newly created tmpfile as new
+  * @file : newly created tmpfile
 -- 
-2.20.1
+2.24.1.735.g03f4e72817-goog
 
