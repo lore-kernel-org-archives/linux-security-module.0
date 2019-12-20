@@ -2,58 +2,57 @@ Return-Path: <SRS0=iN1c=2K=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9873C2D0D2
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 15:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE081C2D0D2
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 15:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B41F224683
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 15:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7914424680
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Dec 2019 15:43:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LSixZOBH"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RJtIT+M7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfLTPmz (ORCPT
+        id S1727422AbfLTPmK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Dec 2019 10:42:55 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40473 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727469AbfLTPmM (ORCPT
+        Fri, 20 Dec 2019 10:42:10 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36206 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727469AbfLTPmJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Dec 2019 10:42:12 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c14so9826136wrn.7
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Dec 2019 07:42:10 -0800 (PST)
+        Fri, 20 Dec 2019 10:42:09 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p17so9701221wma.1
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Dec 2019 07:42:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=paRFHTiw/4aHrEDwPYYt5DNAc5B07BiR533ZjOOgfNA=;
-        b=LSixZOBHgCAqq5f5I3USgUDTDjz3ai4Mcl5c54BhPwpOnGd00SVi46jrFyJI4O+YTj
-         OfT49wqSAXZHqc35BN1589wYs++ESJgrkdVSEbxoEEeh1Z3QJqoYWCyEVtQxKDrRzv1f
-         h2gBiz2+2tBGjZz/gZdnZ/yzKNgphy5Bd2KR8=
+        bh=W3ikVYW2VHd7LIQCP37/NV9odo+wJGrACNZfFA7D07g=;
+        b=RJtIT+M71DBSAz6HBmcqeDGoEFJnpaRfB3D1OWgMxlX6No49nBa97p0CrZRCeg+YmI
+         EBf6iqD1S5sCoqauyOqOluyS9TZrzGwUnIrQ04zuz6icOhtJri7WSJB1z7AhuOx57PPa
+         PTyNtY0+Na/YSdwN0shWHSYSW9CivxHkLwj6A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=paRFHTiw/4aHrEDwPYYt5DNAc5B07BiR533ZjOOgfNA=;
-        b=nSg+zci6rUpoIdzNDbAjKxrP8YhcIT4pmKWCPoX0t1zIliwwTPosSHabITAy16YOUT
-         MbTf7fIdBawzjPrOF1DbYmS1zEu1CWPNcuNtQZ00S1C2I5vPhaga0cUxElfUOdKAmROr
-         tsEHRdzzipEimAoN83fONFxQOCBTI0QQVjP7NtNclFNEUaEeDyDBKtYTn8OviVUwJVUr
-         AG1fR96j2kQDCmsinxKEZGAiqXvNK0tvx9tirA9pMTYh55WUO4mPaxBBB41zjmRFNkWh
-         dtORDJMm3uyW6kHX0BQotr4gyMIuk7oZFfJVsmFUPPw2TP0Vs8rKkqilG1qu9AEq7JxR
-         f/Aw==
-X-Gm-Message-State: APjAAAVyessktOfAT3nf93USvBb09eeTsECSAqG7sEFgEv+ApLwXrXkK
-        gKxrozwh5/Oua0sHQXZpMrbxbw==
-X-Google-Smtp-Source: APXvYqxUhzkZqdzoLus5OLbBOFCDlsljW/eOFBtyxNAMOKpkpK3KXKXVADOUkwzlSnIiq/UcP9kD2A==
-X-Received: by 2002:a5d:6a8e:: with SMTP id s14mr16505533wru.150.1576856529739;
-        Fri, 20 Dec 2019 07:42:09 -0800 (PST)
+        bh=W3ikVYW2VHd7LIQCP37/NV9odo+wJGrACNZfFA7D07g=;
+        b=LwQCNmxWiCqJctkrW1oXtSOk6Ysl7jM8Pp86kgcP9hKTW5Voz7cwY1n9eBBCd+I7Wu
+         3A8i3Jclfp/h7PQ7qbahrqC4127+7MFcVFN5nkGHRl5If159OrMBq1estsGJRh0LAEaL
+         hfROQJhEKk3Cul0zt9JrKKYwkrHgI1ZNTg8hblw4rxBx7xw97ocs9G2v+VDZGa5eeOph
+         aI9J4lqFZYhv0rJEajbnHR990Vp4VmyGBNqa3EhSAs2L5wuXVEhbbUHWZRyxim7vzCeW
+         Zxk7g8HpNtWVam6TAtQksqBW3qyUI/3slU/RT8wrjFmgxwG8s6CtV9oZFk/4Nsdy4bHH
+         1q5g==
+X-Gm-Message-State: APjAAAWjJ4G1nZQgRpb4kA8GxkRkiH3lYbqP3TM7fhMkKq5lCkq3mo+B
+        p4kWvT+QZLFXZS9gbrEEc10D4Q==
+X-Google-Smtp-Source: APXvYqyVKsjtf80AQbpdWBOAeWsiNIXNCUAtx2pp1vsLceMqRMKQcroWanJ2rJpf4oA/3/lvTJTTZg==
+X-Received: by 2002:a7b:c407:: with SMTP id k7mr17559393wmi.46.1576856527148;
+        Fri, 20 Dec 2019 07:42:07 -0800 (PST)
 Received: from kpsingh-kernel.localdomain ([2a00:79e1:abc:308:c46b:b838:66cf:6204])
-        by smtp.gmail.com with ESMTPSA id x11sm10118062wmg.46.2019.12.20.07.42.08
+        by smtp.gmail.com with ESMTPSA id x11sm10118062wmg.46.2019.12.20.07.42.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 07:42:09 -0800 (PST)
+        Fri, 20 Dec 2019 07:42:06 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
@@ -81,9 +80,9 @@ Cc:     Alexei Starovoitov <ast@kernel.org>,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
         Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [PATCH bpf-next v1 05/13] tools/libbpf: Add support in libbpf for BPF_PROG_TYPE_LSM
-Date:   Fri, 20 Dec 2019 16:42:00 +0100
-Message-Id: <20191220154208.15895-6-kpsingh@chromium.org>
+Subject: [PATCH bpf-next v1 03/13] bpf: lsm: Introduce types for eBPF based LSM
+Date:   Fri, 20 Dec 2019 16:41:58 +0100
+Message-Id: <20191220154208.15895-4-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191220154208.15895-1-kpsingh@chromium.org>
 References: <20191220154208.15895-1-kpsingh@chromium.org>
@@ -95,190 +94,130 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: KP Singh <kpsingh@google.com>
 
-Update the libbpf library with functionality to load and
-attach a program type BPF_PROG_TYPE_LSM, currently with
-only one expected attach type BPF_LSM_MAC.
+A new eBPF program type BPF_PROG_TYPE_LSM with an
+expected attach type of BPF_LSM_MAC. An -EINVAL error is returned if an
+attachment is currently requested.
 
 Signed-off-by: KP Singh <kpsingh@google.com>
 ---
- tools/lib/bpf/bpf.c           |  2 +-
- tools/lib/bpf/bpf.h           |  6 +++++
- tools/lib/bpf/libbpf.c        | 44 +++++++++++++++++++++--------------
- tools/lib/bpf/libbpf.h        |  2 ++
- tools/lib/bpf/libbpf.map      |  6 +++++
- tools/lib/bpf/libbpf_probes.c |  1 +
- 6 files changed, 43 insertions(+), 18 deletions(-)
+ include/linux/bpf_types.h      |  4 ++++
+ include/uapi/linux/bpf.h       |  2 ++
+ kernel/bpf/syscall.c           |  6 ++++++
+ security/bpf/Makefile          |  2 +-
+ security/bpf/ops.c             | 14 ++++++++++++++
+ tools/include/uapi/linux/bpf.h |  2 ++
+ 6 files changed, 29 insertions(+), 1 deletion(-)
+ create mode 100644 security/bpf/ops.c
 
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index 98596e15390f..9c6fb083f7de 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -228,7 +228,7 @@ int bpf_load_program_xattr(const struct bpf_load_program_attr *load_attr,
- 	memset(&attr, 0, sizeof(attr));
- 	attr.prog_type = load_attr->prog_type;
- 	attr.expected_attach_type = load_attr->expected_attach_type;
--	if (attr.prog_type == BPF_PROG_TYPE_TRACING) {
-+	if (needs_btf_attach(attr.prog_type)) {
- 		attr.attach_btf_id = load_attr->attach_btf_id;
- 		attr.attach_prog_fd = load_attr->attach_prog_fd;
- 	} else {
-diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
-index 3c791fa8e68e..df2a00ff349f 100644
---- a/tools/lib/bpf/bpf.h
-+++ b/tools/lib/bpf/bpf.h
-@@ -177,6 +177,12 @@ LIBBPF_API int bpf_task_fd_query(int pid, int fd, __u32 flags, char *buf,
- 				 __u32 *buf_len, __u32 *prog_id, __u32 *fd_type,
- 				 __u64 *probe_offset, __u64 *probe_addr);
- 
-+static inline bool needs_btf_attach(enum bpf_prog_type prog_type)
-+{
-+	return (prog_type == BPF_PROG_TYPE_TRACING ||
-+		prog_type == BPF_PROG_TYPE_LSM);
-+}
-+
- #ifdef __cplusplus
- } /* extern "C" */
+diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
+index 93740b3614d7..5f48161529b4 100644
+--- a/include/linux/bpf_types.h
++++ b/include/linux/bpf_types.h
+@@ -65,6 +65,10 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_LIRC_MODE2, lirc_mode2,
+ BPF_PROG_TYPE(BPF_PROG_TYPE_SK_REUSEPORT, sk_reuseport,
+ 	      struct sk_reuseport_md, struct sk_reuseport_kern)
  #endif
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index b20f82e58989..b0b27d8e5a37 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -3738,7 +3738,7 @@ load_program(struct bpf_program *prog, struct bpf_insn *insns, int insns_cnt,
- 	load_attr.insns = insns;
- 	load_attr.insns_cnt = insns_cnt;
- 	load_attr.license = license;
--	if (prog->type == BPF_PROG_TYPE_TRACING) {
-+	if (needs_btf_attach(prog->type)) {
- 		load_attr.attach_prog_fd = prog->attach_prog_fd;
- 		load_attr.attach_btf_id = prog->attach_btf_id;
- 	} else {
-@@ -3983,7 +3983,7 @@ __bpf_object__open(const char *path, const void *obj_buf, size_t obj_buf_sz,
++#ifdef CONFIG_SECURITY_BPF
++BPF_PROG_TYPE(BPF_PROG_TYPE_LSM, lsm,
++	       void *, void *)
++#endif
  
- 		bpf_program__set_type(prog, prog_type);
- 		bpf_program__set_expected_attach_type(prog, attach_type);
--		if (prog_type == BPF_PROG_TYPE_TRACING) {
-+		if (needs_btf_attach(prog_type)) {
- 			err = libbpf_find_attach_btf_id(prog->section_name,
- 							attach_type,
- 							attach_prog_fd);
-@@ -4933,6 +4933,7 @@ bool bpf_program__is_##NAME(const struct bpf_program *prog)	\
- }								\
+ BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)
+ BPF_MAP_TYPE(BPF_MAP_TYPE_PERCPU_ARRAY, percpu_array_map_ops)
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index dbbcf0b02970..fc64ae865526 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -174,6 +174,7 @@ enum bpf_prog_type {
+ 	BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE,
+ 	BPF_PROG_TYPE_CGROUP_SOCKOPT,
+ 	BPF_PROG_TYPE_TRACING,
++	BPF_PROG_TYPE_LSM,
+ };
  
- BPF_PROG_TYPE_FNS(socket_filter, BPF_PROG_TYPE_SOCKET_FILTER);
-+BPF_PROG_TYPE_FNS(lsm, BPF_PROG_TYPE_LSM);
- BPF_PROG_TYPE_FNS(kprobe, BPF_PROG_TYPE_KPROBE);
- BPF_PROG_TYPE_FNS(sched_cls, BPF_PROG_TYPE_SCHED_CLS);
- BPF_PROG_TYPE_FNS(sched_act, BPF_PROG_TYPE_SCHED_ACT);
-@@ -5009,6 +5010,8 @@ static const struct {
- 	BPF_PROG_SEC("lwt_out",			BPF_PROG_TYPE_LWT_OUT),
- 	BPF_PROG_SEC("lwt_xmit",		BPF_PROG_TYPE_LWT_XMIT),
- 	BPF_PROG_SEC("lwt_seg6local",		BPF_PROG_TYPE_LWT_SEG6LOCAL),
-+	BPF_PROG_BTF("lsm/",			BPF_PROG_TYPE_LSM,
-+						BPF_LSM_MAC),
- 	BPF_APROG_SEC("cgroup_skb/ingress",	BPF_PROG_TYPE_CGROUP_SKB,
- 						BPF_CGROUP_INET_INGRESS),
- 	BPF_APROG_SEC("cgroup_skb/egress",	BPF_PROG_TYPE_CGROUP_SKB,
-@@ -5119,32 +5122,39 @@ int libbpf_prog_type_by_name(const char *name, enum bpf_prog_type *prog_type,
- 	return -ESRCH;
- }
+ enum bpf_attach_type {
+@@ -203,6 +204,7 @@ enum bpf_attach_type {
+ 	BPF_TRACE_RAW_TP,
+ 	BPF_TRACE_FENTRY,
+ 	BPF_TRACE_FEXIT,
++	BPF_LSM_MAC,
+ 	__MAX_BPF_ATTACH_TYPE
+ };
  
--#define BTF_PREFIX "btf_trace_"
-+static inline int __btf__typdef_with_prefix(struct btf *btf, const char *name,
-+					    const char *prefix)
-+{
-+
-+	size_t prefix_len = strlen(prefix);
-+	char btf_type_name[128];
-+
-+	strcpy(btf_type_name, prefix);
-+	strncat(btf_type_name, name, sizeof(btf_type_name) - (prefix_len + 1));
-+	return btf__find_by_name_kind(btf, btf_type_name, BTF_KIND_TYPEDEF);
-+}
-+
-+#define BTF_TRACE_PREFIX "btf_trace_"
-+#define BTF_LSM_PREFIX "lsm_btf_"
-+
- int libbpf_find_vmlinux_btf_id(const char *name,
- 			       enum bpf_attach_type attach_type)
- {
- 	struct btf *btf = bpf_core_find_kernel_btf();
--	char raw_tp_btf[128] = BTF_PREFIX;
--	char *dst = raw_tp_btf + sizeof(BTF_PREFIX) - 1;
--	const char *btf_name;
- 	int err = -EINVAL;
--	__u32 kind;
- 
- 	if (IS_ERR(btf)) {
- 		pr_warn("vmlinux BTF is not found\n");
- 		return -EINVAL;
- 	}
- 
--	if (attach_type == BPF_TRACE_RAW_TP) {
--		/* prepend "btf_trace_" prefix per kernel convention */
--		strncat(dst, name, sizeof(raw_tp_btf) - sizeof(BTF_PREFIX));
--		btf_name = raw_tp_btf;
--		kind = BTF_KIND_TYPEDEF;
--	} else {
--		btf_name = name;
--		kind = BTF_KIND_FUNC;
--	}
--	err = btf__find_by_name_kind(btf, btf_name, kind);
-+	if (attach_type == BPF_TRACE_RAW_TP)
-+		err = __btf__typdef_with_prefix(btf, name, BTF_TRACE_PREFIX);
-+	else if (attach_type == BPF_LSM_MAC)
-+		err = __btf__typdef_with_prefix(btf, name, BTF_LSM_PREFIX);
-+	else
-+		err = btf__find_by_name_kind(btf, name, BTF_KIND_FUNC);
-+
- 	btf__free(btf);
- 	return err;
- }
-diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index 0dbf4bfba0c4..9cd69d602c82 100644
---- a/tools/lib/bpf/libbpf.h
-+++ b/tools/lib/bpf/libbpf.h
-@@ -332,6 +332,7 @@ LIBBPF_API int bpf_program__set_sched_act(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_xdp(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_perf_event(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_tracing(struct bpf_program *prog);
-+LIBBPF_API int bpf_program__set_lsm(struct bpf_program *prog);
- 
- LIBBPF_API enum bpf_prog_type bpf_program__get_type(struct bpf_program *prog);
- LIBBPF_API void bpf_program__set_type(struct bpf_program *prog,
-@@ -352,6 +353,7 @@ LIBBPF_API bool bpf_program__is_sched_act(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_xdp(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_perf_event(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_tracing(const struct bpf_program *prog);
-+LIBBPF_API bool bpf_program__is_lsm(const struct bpf_program *prog);
- 
- /*
-  * No need for __attribute__((packed)), all members of 'bpf_map_def'
-diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
-index 8ddc2c40e482..3d396149755d 100644
---- a/tools/lib/bpf/libbpf.map
-+++ b/tools/lib/bpf/libbpf.map
-@@ -208,3 +208,9 @@ LIBBPF_0.0.6 {
- 		btf__find_by_name_kind;
- 		libbpf_find_vmlinux_btf_id;
- } LIBBPF_0.0.5;
-+
-+LIBBPF_0.0.7 {
-+	global:
-+		bpf_program__is_lsm;
-+		bpf_program__set_lsm;
-+} LIBBPF_0.0.6;
-diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
-index a9eb8b322671..203b4ecf7a0b 100644
---- a/tools/lib/bpf/libbpf_probes.c
-+++ b/tools/lib/bpf/libbpf_probes.c
-@@ -103,6 +103,7 @@ probe_load(enum bpf_prog_type prog_type, const struct bpf_insn *insns,
- 	case BPF_PROG_TYPE_CGROUP_SYSCTL:
- 	case BPF_PROG_TYPE_CGROUP_SOCKOPT:
- 	case BPF_PROG_TYPE_TRACING:
-+	case BPF_PROG_TYPE_LSM:
- 	default:
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index e3461ec59570..5a773fc6f9f5 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2096,6 +2096,9 @@ static int bpf_prog_attach(const union bpf_attr *attr)
+ 	case BPF_LIRC_MODE2:
+ 		ptype = BPF_PROG_TYPE_LIRC_MODE2;
  		break;
- 	}
++	case BPF_LSM_MAC:
++		ptype = BPF_PROG_TYPE_LSM;
++		break;
+ 	case BPF_FLOW_DISSECTOR:
+ 		ptype = BPF_PROG_TYPE_FLOW_DISSECTOR;
+ 		break;
+@@ -2127,6 +2130,9 @@ static int bpf_prog_attach(const union bpf_attr *attr)
+ 	case BPF_PROG_TYPE_LIRC_MODE2:
+ 		ret = lirc_prog_attach(attr, prog);
+ 		break;
++	case BPF_PROG_TYPE_LSM:
++		ret = -EINVAL;
++		break;
+ 	case BPF_PROG_TYPE_FLOW_DISSECTOR:
+ 		ret = skb_flow_dissector_bpf_prog_attach(attr, prog);
+ 		break;
+diff --git a/security/bpf/Makefile b/security/bpf/Makefile
+index 26a0ab6f99b7..c78a8a056e7e 100644
+--- a/security/bpf/Makefile
++++ b/security/bpf/Makefile
+@@ -2,4 +2,4 @@
+ #
+ # Copyright 2019 Google LLC.
+ 
+-obj-$(CONFIG_SECURITY_BPF) := lsm.o
++obj-$(CONFIG_SECURITY_BPF) := lsm.o ops.o
+diff --git a/security/bpf/ops.c b/security/bpf/ops.c
+new file mode 100644
+index 000000000000..2fa3ebdf598d
+--- /dev/null
++++ b/security/bpf/ops.c
+@@ -0,0 +1,14 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2019 Google LLC.
++ */
++
++#include <linux/filter.h>
++#include <linux/bpf.h>
++
++const struct bpf_prog_ops lsm_prog_ops = {
++};
++
++const struct bpf_verifier_ops lsm_verifier_ops = {
++};
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+index dbbcf0b02970..fc64ae865526 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -174,6 +174,7 @@ enum bpf_prog_type {
+ 	BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE,
+ 	BPF_PROG_TYPE_CGROUP_SOCKOPT,
+ 	BPF_PROG_TYPE_TRACING,
++	BPF_PROG_TYPE_LSM,
+ };
+ 
+ enum bpf_attach_type {
+@@ -203,6 +204,7 @@ enum bpf_attach_type {
+ 	BPF_TRACE_RAW_TP,
+ 	BPF_TRACE_FENTRY,
+ 	BPF_TRACE_FEXIT,
++	BPF_LSM_MAC,
+ 	__MAX_BPF_ATTACH_TYPE
+ };
+ 
 -- 
 2.20.1
 
