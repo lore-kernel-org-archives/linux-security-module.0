@@ -3,143 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4D6C2D0C0
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Dec 2019 11:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C50C3F68F
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Dec 2019 17:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EA1E207FF
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Dec 2019 11:22:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A107C207FF
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Dec 2019 17:39:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbfLWLWB (ORCPT
+        id S1726795AbfLWRjW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Dec 2019 06:22:01 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2215 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726663AbfLWLWB (ORCPT
+        Mon, 23 Dec 2019 12:39:22 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47020 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726766AbfLWRjW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Dec 2019 06:22:01 -0500
-Received: from lhreml704-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id E91352AAB68C71100DAC;
-        Mon, 23 Dec 2019 11:21:58 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml704-cah.china.huawei.com (10.201.108.45) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 23 Dec 2019 11:21:58 +0000
-Received: from [127.0.0.1] (10.202.227.179) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 23 Dec
- 2019 11:21:58 +0000
-To:     "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>
-CC:     Anders Roxell <anders.roxell@linaro.org>,
-        "paulmck@kernel.org" <paulmck@kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Subject: Report: suspicious RCU usage in security code
-Message-ID: <ebded533-8c29-6ceb-6384-f02a77291434@huawei.com>
-Date:   Mon, 23 Dec 2019 11:21:57 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.179]
-X-ClientProxiedBy: lhreml727-chm.china.huawei.com (10.201.108.78) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+        Mon, 23 Dec 2019 12:39:22 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBNHbIci008494
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Dec 2019 12:39:20 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2x21qpk6by-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Dec 2019 12:39:20 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 23 Dec 2019 17:39:18 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 23 Dec 2019 17:39:13 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBNHdDqT55902236
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Dec 2019 17:39:13 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F069E5204F;
+        Mon, 23 Dec 2019 17:39:12 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.238.12])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id F253852051;
+        Mon, 23 Dec 2019 17:39:11 +0000 (GMT)
+Subject: Re: [PATCH] ima: add the ability to query ima for the hash of a
+ given file.
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Florent Revest <revest@chromium.org>,
+        linux-integrity@vger.kernel.org
+Cc:     kpsingh@chromium.org, mjg59@google.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Florent Revest <revest@google.com>
+Date:   Mon, 23 Dec 2019 12:39:11 -0500
+In-Reply-To: <8f4d9c4e-735d-8ba9-b84a-4f341030e0cf@linux.microsoft.com>
+References: <20191220163136.25010-1-revest@chromium.org>
+         <8f4d9c4e-735d-8ba9-b84a-4f341030e0cf@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19122317-0020-0000-0000-0000039AF936
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19122317-0021-0000-0000-000021F22FF1
+Message-Id: <1577122751.5241.144.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-23_07:2019-12-23,2019-12-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=976 clxscore=1015 mlxscore=0 spamscore=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912230150
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi guys,
+On Fri, 2019-12-20 at 08:48 -0800, Lakshmi Ramasubramanian wrote:
+> On 12/20/2019 8:31 AM, Florent Revest wrote:
+> 
+> >   
+> > +/**
+> > + * ima_file_hash - return the stored measurement if a file has been hashed.
+> > + * @file: pointer to the file
+> > + * @buf: buffer in which to store the hash
+> > + * @buf_size: length of the buffer
+> > + *
+> > + * On success, output the hash into buf and return the hash algorithm (as
+> > + * defined in the enum hash_algo).
+> 
+> > + * If the hash is larger than buf, then only size bytes will be copied. It
+> > + * generally just makes sense to pass a buffer capable of holding the largest
+> > + * possible hash: IMA_MAX_DIGEST_SIZE
+> 
+> If the given buffer is smaller than the hash length, wouldn't it be 
+> better to return the required size and a status indicating the buffer is 
+> not enough. The caller can then call back with the required buffer.
+> 
+> If the hash is truncated the caller may not know if the hash is partial 
+> or not.
 
-I have noticed this WARN on Kernel v5.5-rc3 on my arm64 system:
+Based on the hash algorithm, the caller would know if the buffer
+provided was too small and was truncated.
 
-[   25.952600] =============================
-[   25.952602] WARNING: suspicious RCU usage
-[   25.952606] 5.5.0-rc3-dirty #816 Not tainted
-[   25.952609] -----------------------------
-[   25.952613] security/device_cgroup.c:355 RCU-list traversed in 
-non-reader section!!
-[   25.952615]
-                other info that might help us debug this:
+> 
+> > + *
+> > + * If IMA is disabled or if no measurement is available, return -EOPNOTSUPP.
+> > + * If the parameters are incorrect, return -EINVAL.
+> > + */
+> > +int ima_file_hash(struct file *file, char *buf, size_t buf_size)
+> > +{
+> > +	struct inode *inode;
+> > +	struct integrity_iint_cache *iint;
+> > +	size_t copied_size;
+> > +
+> > +	if (!file || !buf)
+> > +		return -EINVAL;
+> > +
 
-[   25.952618]
-                rcu_scheduler_active = 2, debug_locks = 1
-[   25.952621] 4 locks held by systemd/1:
-[   25.952624]  #0: ffff0023de3c4410 (sb_writers#8){.+.+}, at: 
-vfs_write+0x1c0/0x1e0
-[   25.952637]  #1: ffff0023e732f880 (&of->mutex){+.+.}, at: 
-kernfs_fop_write+0x12c/0x250
-[   25.952648]  #2: ffff0023e45c4288 (kn->count#30){++++}, at: 
-kernfs_fop_write+0x134/0x250
-[   25.952656]  #3: ffff800011c4e098 (devcgroup_mutex){+.+.}, at: 
-devcgroup_access_write+0x4c/0x6d0
-[   25.952663]
-                stack backtrace:
-[   25.952668] CPU: 6 PID: 1 Comm: systemd Not tainted 5.5.0-rc3-dirty #816
-[   25.952670] Hardware name: Huawei D06 /D06, BIOS Hisilicon D06 UEFI 
-RC0 - V1.16.01 03/15/2019
-[   25.952672] Call trace:
-[   25.952675]  dump_backtrace+0x0/0x1a0
-[   25.952678]  show_stack+0x14/0x20
-[   25.952681]  dump_stack+0xe8/0x150
-[   25.952685]  lockdep_rcu_suspicious+0xcc/0x110
-[   25.952689]  match_exception_partial+0x118/0x120
-[   25.952691]  verify_new_ex+0x64/0xf0
-[   25.952694]  devcgroup_access_write+0x3c8/0x6d0
-[   25.952697]  cgroup_file_write+0x88/0x1e0
-[   25.952700]  kernfs_fop_write+0x15c/0x250
-[   25.952703]  __vfs_write+0x18/0x38
-[   25.952705]  vfs_write+0xb4/0x1e0
-[   25.952708]  ksys_write+0x68/0xf8
-[   25.952711]  __arm64_sys_write+0x18/0x20
-[   25.952715]  el0_svc_common.constprop.2+0x74/0x170
-[   25.952717]  el0_svc_handler+0x20/0x80
-[   25.952720]  el0_sync_handler+0x114/0x1d0
-[   25.952722]  el0_sync+0x140/0x180
-john@ubuntu:~$
-john@ubuntu:~$
+Other kernel functions provide a means of determining the needed
+buffer size by passing a NULL field.  Instead of failing here, if buf
+is NULL, how about returning the hash algorithm?
 
+Mimi
 
-RCU Kconfig options:
+> > +	if (!ima_policy_flag)
+> > +		return -EOPNOTSUPP;
+> > +
 
-more .config | grep RCU
-# RCU Subsystem
-CONFIG_PREEMPT_RCU=y
-CONFIG_RCU_EXPERT=y
-CONFIG_SRCU=y
-CONFIG_TREE_SRCU=y
-CONFIG_TASKS_RCU=y
-CONFIG_RCU_STALL_COMMON=y
-CONFIG_RCU_NEED_SEGCBLIST=y
-CONFIG_RCU_FANOUT=64
-CONFIG_RCU_FANOUT_LEAF=16
-# CONFIG_RCU_FAST_NO_HZ is not set
-# CONFIG_RCU_BOOST is not set
-# CONFIG_RCU_NOCB_CPU is not set
-# end of RCU Subsystem
-CONFIG_HAVE_RCU_TABLE_FREE=y
-# RCU Debugging
-CONFIG_PROVE_RCU=y
-CONFIG_PROVE_RCU_LIST=y
-# CONFIG_RCU_PERF_TEST is not set
-# CONFIG_RCU_TORTURE_TEST is not set
-CONFIG_RCU_CPU_STALL_TIMEOUT=21
-# CONFIG_RCU_TRACE is not set
-# CONFIG_RCU_EQS_DEBUG is not set
-# end of RCU Debugging
-john@john-ThinkCentre-M93p:~/kernel-dev$
-
-I notice that verfiy_new_ex() has a RCU lockdep check warning, so the 
-condition may just need to be extended to the match_exception_partial() 
-RCU list iterator just to remove the WARN.
-
-Note: I am finishing for Christmas vacation today, so can't help further 
-ATM.
-
-Cheers,
-John
