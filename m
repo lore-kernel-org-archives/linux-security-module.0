@@ -2,64 +2,63 @@ Return-Path: <SRS0=fj6F=2O=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1FAC2D0C0
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Dec 2019 00:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A43C2D0D2
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Dec 2019 05:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCBDD206D3
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Dec 2019 00:09:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA21320730
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Dec 2019 05:48:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cyu37PyL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QTatrIDi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfLXAJb (ORCPT
+        id S1726047AbfLXFs1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Dec 2019 19:09:31 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33420 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbfLXAJb (ORCPT
+        Tue, 24 Dec 2019 00:48:27 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:35645 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfLXFs1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Dec 2019 19:09:31 -0500
-Received: by mail-qk1-f195.google.com with SMTP id d71so7018862qkc.0;
-        Mon, 23 Dec 2019 16:09:30 -0800 (PST)
+        Tue, 24 Dec 2019 00:48:27 -0500
+Received: by mail-qv1-f67.google.com with SMTP id u10so7066370qvi.2;
+        Mon, 23 Dec 2019 21:48:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pu5L+bxTE30ryYIOBF83rHNPUsWCI2dbAcOYhYtXBw0=;
-        b=Cyu37PyLyS5hhxm1elgprP9KOsSQl3RuQfogWOF5+EiHiD2u4Pqpwvou54PxHJIJ32
-         I9DmfUQBLGoRZUSZAAY708JKYEO1xFfKZh58wAa2zEPGvel1s2lDWsjFLClVtzNoIvnB
-         kriTCnledocn8pe5xJNCHHMQEihHL5PIhlg1htlCcdIImqkgnZkqCdB3dcsz++9czLm2
-         PKetWR5zlHpamP0Bo7xVl8lz/gXwRhGGBfdrHILWFnmpKrAyYfLd8c7k2byOoa3/+kc9
-         k4tJcQ81pVbrHQ23s2jbL9PatqpYoRxsoLsiyXeLpuA5VQSOy2A3nBfrvUF0/voxu1Na
-         7kWw==
+        bh=chyirdOESrcyZYls0O4S3CM7+3ie23NclpnHj9Q8TZ8=;
+        b=QTatrIDibvsfq4PIGOcDpegqvGeyTx/uyaEzHEx87OT9YjFBlXGYfYtaSXgB63vHsr
+         P7WkavE0s+JmgT+ohyprAJLIXh1/A4tDK7Z58DCZ1Oi/r0qlHzB+5oSEOCZLspyrj3tb
+         w7PZTpQxl+XtGtUjxC3nemQ8Oq+U5fql2TvIkoMBtU5HpKmfH65tsV8rRWmSa5fEst0A
+         rmM2uGFabc6Cm23pE79n7ePT3/LdX2tfKcSwtBJ7z/J2pa8meORoVjuiBGmEc4wlTSUn
+         xLDlsapm3n8DOGqBAGIf1Ksjw0VTGJytiNfJzq5vlSL156SFmVvQvkCNY1O4i9Ch7AMG
+         V9rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pu5L+bxTE30ryYIOBF83rHNPUsWCI2dbAcOYhYtXBw0=;
-        b=ij1JLgZ3zKHQni/Daz2n/HJPDbcHFrPVlk2QCBUsAXtwMDre5eBQzkTAHmnZfK4oFQ
-         aYmn9IDhp8XUL3JhDGKJefjdWR0+djMJkj1tNkoFUgfG9s+07OIItwsJPY+XXaMwpCis
-         DVGrLA6fUCpHXTUF94QtpA0v63NyvGr+foDV5lusNOquvoTt4B2+R8BPjFh8wMmKOCsp
-         2SMHnvfAv/05tGdu4ldDEkq05vUDPCrMsHnLdh8M85A3K/dfhpzFKVayTy23gqwN+thh
-         1Tc5/sG7hFyUNUc9vhLZCi+vzl4X20JEkDqt4VkmRG3VZ52qr8LCr1qCSNEbWZlV79jv
-         0XIw==
-X-Gm-Message-State: APjAAAXDEjRS17izLZKvS3f3Ab4QIRFUXkqCAqI9fxhHDbMy+IWSUuFp
-        8JLEMy5Vc3jevoX6A0yUkvRhRdU8nP90ZWLOMbo=
-X-Google-Smtp-Source: APXvYqz63+VdPLFcx7mCtf4DjdEsJKLeMa3Gud8cm3sua6KMJNfDXAm3YJT68HbwTZIBeIe4+roY92UI4S/wb+JLBZA=
-X-Received: by 2002:a05:620a:14a2:: with SMTP id x2mr29113651qkj.36.1577146169824;
- Mon, 23 Dec 2019 16:09:29 -0800 (PST)
+        bh=chyirdOESrcyZYls0O4S3CM7+3ie23NclpnHj9Q8TZ8=;
+        b=MTPEIPuREeRkyKq+IMr66NfRBYzHM3LeQ9dl8EtVBJOYfLI96TMcoLwSSj22/o4Ncs
+         W3Y+M1BEXLMukkgVRXcNlwMZq6Er3QJ5f9HxgXrsP9cT8MFNog4VE3IkyTbIT03CTeur
+         aVhe3HXdib+P8GUZjdY4gGX2uDz+flXgJmJU+azltsAGLBcM9pH1vjPChG3ytVyzkuq5
+         EVw6WMJiKoT6ktAdP4psBrEg4o5VHjijawTJorQP6xc8fcMyahzqsCF+jOVxL2t5sx+N
+         cnTgu7bJWu9Ebf1uY1xZnlrvZbrcp3vs10zMhhCDuUpNPsixGRHtxdgVLRyk6sy01EIC
+         pOvg==
+X-Gm-Message-State: APjAAAX7kUJS6Q4pZTQ0xo2GvLXvjTZg49X2WZyN16PLNPf2Em5sfsrO
+        QEN453FS3mSE6gZoQL1NUupOxZIGWN4mNQHZofQ=
+X-Google-Smtp-Source: APXvYqyrl1A6qr+sRbltNuz0bedudNwNw9G+4NxHPfCUvFEVv0wsJxTDoCR7jgt8O1rGoz8FIm9AYLmdrDYss5hRiMw=
+X-Received: by 2002:ad4:4e34:: with SMTP id dm20mr27799530qvb.163.1577166505897;
+ Mon, 23 Dec 2019 21:48:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20191220154208.15895-1-kpsingh@chromium.org> <20191220154208.15895-6-kpsingh@chromium.org>
- <CAEf4BzYz6wswhr+byP_xabLoWyA2ah8P2a-STOgqXzuiNkHShw@mail.gmail.com>
-In-Reply-To: <CAEf4BzYz6wswhr+byP_xabLoWyA2ah8P2a-STOgqXzuiNkHShw@mail.gmail.com>
+References: <20191220154208.15895-1-kpsingh@chromium.org> <20191220154208.15895-8-kpsingh@chromium.org>
+In-Reply-To: <20191220154208.15895-8-kpsingh@chromium.org>
 From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Mon, 23 Dec 2019 16:09:18 -0800
-Message-ID: <CAEf4Bza2gpeQSy-Eo-DXk1UsVkhRXSq5NmL7ra-grWq5FJCmVQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v1 05/13] tools/libbpf: Add support in libbpf for BPF_PROG_TYPE_LSM
+Date:   Mon, 23 Dec 2019 21:48:14 -0800
+Message-ID: <CAEf4BzZQYnSv+0nEkgt1kovXdtqMNv5hMhLdCWkJhUS-Lr3hyQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v1 07/13] bpf: lsm: Implement attach, detach and execution.
 To:     KP Singh <kpsingh@chromium.org>
 Cc:     open list <linux-kernel@vger.kernel.org>,
         bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
@@ -92,147 +91,42 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 23, 2019 at 4:07 PM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
+On Fri, Dec 20, 2019 at 7:43 AM KP Singh <kpsingh@chromium.org> wrote:
 >
-> On Fri, Dec 20, 2019 at 7:43 AM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > From: KP Singh <kpsingh@google.com>
-> >
-> > Update the libbpf library with functionality to load and
-> > attach a program type BPF_PROG_TYPE_LSM, currently with
-> > only one expected attach type BPF_LSM_MAC.
-> >
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> > ---
-> >  tools/lib/bpf/bpf.c           |  2 +-
-> >  tools/lib/bpf/bpf.h           |  6 +++++
-> >  tools/lib/bpf/libbpf.c        | 44 +++++++++++++++++++++--------------
-> >  tools/lib/bpf/libbpf.h        |  2 ++
-> >  tools/lib/bpf/libbpf.map      |  6 +++++
-> >  tools/lib/bpf/libbpf_probes.c |  1 +
-> >  6 files changed, 43 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-> > index 98596e15390f..9c6fb083f7de 100644
-> > --- a/tools/lib/bpf/bpf.c
-> > +++ b/tools/lib/bpf/bpf.c
-> > @@ -228,7 +228,7 @@ int bpf_load_program_xattr(const struct bpf_load_program_attr *load_attr,
-> >         memset(&attr, 0, sizeof(attr));
-> >         attr.prog_type = load_attr->prog_type;
-> >         attr.expected_attach_type = load_attr->expected_attach_type;
-> > -       if (attr.prog_type == BPF_PROG_TYPE_TRACING) {
-> > +       if (needs_btf_attach(attr.prog_type)) {
-> >                 attr.attach_btf_id = load_attr->attach_btf_id;
-> >                 attr.attach_prog_fd = load_attr->attach_prog_fd;
-> >         } else {
-> > diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
-> > index 3c791fa8e68e..df2a00ff349f 100644
-> > --- a/tools/lib/bpf/bpf.h
-> > +++ b/tools/lib/bpf/bpf.h
-> > @@ -177,6 +177,12 @@ LIBBPF_API int bpf_task_fd_query(int pid, int fd, __u32 flags, char *buf,
-> >                                  __u32 *buf_len, __u32 *prog_id, __u32 *fd_type,
-> >                                  __u64 *probe_offset, __u64 *probe_addr);
-> >
-> > +static inline bool needs_btf_attach(enum bpf_prog_type prog_type)
-> > +{
-> > +       return (prog_type == BPF_PROG_TYPE_TRACING ||
-> > +               prog_type == BPF_PROG_TYPE_LSM);
-> > +}
-> > +
+> From: KP Singh <kpsingh@google.com>
 >
-> This doesn't have to be a public API, right? It also doesn't follow
-> naming conventions of libbpf APIs. Let's just move it into
-> libbpf_internal.h, given it's used in few files.
+> A user space program can attach an eBPF program by:
 >
-> Also, Martin's patches add STRUCT_OPS, which do need btf_attach, but
-> don't set attach_prog_fd. So maybe something like
-> libbpf_need_attach_prog_btf() for a name to be a bit more specific?
+>   hook_fd = open("/sys/kernel/security/bpf/bprm_check_security",
+>                  O_RDWR|O_CLOEXEC)
+>   prog_fd = bpf(BPF_PROG_LOAD, ...)
+>   bpf(BPF_PROG_ATTACH, hook_fd, prog_fd)
 >
+> The following permissions are required to attach a program to a hook:
 >
-> >  #ifdef __cplusplus
-> >  } /* extern "C" */
-> >  #endif
-> > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> > index b20f82e58989..b0b27d8e5a37 100644
-> > --- a/tools/lib/bpf/libbpf.c
-> > +++ b/tools/lib/bpf/libbpf.c
-> > @@ -3738,7 +3738,7 @@ load_program(struct bpf_program *prog, struct bpf_insn *insns, int insns_cnt,
-> >         load_attr.insns = insns;
-> >         load_attr.insns_cnt = insns_cnt;
-> >         load_attr.license = license;
-> > -       if (prog->type == BPF_PROG_TYPE_TRACING) {
-> > +       if (needs_btf_attach(prog->type)) {
-> >                 load_attr.attach_prog_fd = prog->attach_prog_fd;
-> >                 load_attr.attach_btf_id = prog->attach_btf_id;
-> >         } else {
-> > @@ -3983,7 +3983,7 @@ __bpf_object__open(const char *path, const void *obj_buf, size_t obj_buf_sz,
-> >
-> >                 bpf_program__set_type(prog, prog_type);
-> >                 bpf_program__set_expected_attach_type(prog, attach_type);
-> > -               if (prog_type == BPF_PROG_TYPE_TRACING) {
-> > +               if (needs_btf_attach(prog_type)) {
-> >                         err = libbpf_find_attach_btf_id(prog->section_name,
-> >                                                         attach_type,
-> >                                                         attach_prog_fd);
-> > @@ -4933,6 +4933,7 @@ bool bpf_program__is_##NAME(const struct bpf_program *prog)       \
-> >  }                                                              \
-> >
-> >  BPF_PROG_TYPE_FNS(socket_filter, BPF_PROG_TYPE_SOCKET_FILTER);
-> > +BPF_PROG_TYPE_FNS(lsm, BPF_PROG_TYPE_LSM);
-> >  BPF_PROG_TYPE_FNS(kprobe, BPF_PROG_TYPE_KPROBE);
-> >  BPF_PROG_TYPE_FNS(sched_cls, BPF_PROG_TYPE_SCHED_CLS);
-> >  BPF_PROG_TYPE_FNS(sched_act, BPF_PROG_TYPE_SCHED_ACT);
-> > @@ -5009,6 +5010,8 @@ static const struct {
-> >         BPF_PROG_SEC("lwt_out",                 BPF_PROG_TYPE_LWT_OUT),
-> >         BPF_PROG_SEC("lwt_xmit",                BPF_PROG_TYPE_LWT_XMIT),
-> >         BPF_PROG_SEC("lwt_seg6local",           BPF_PROG_TYPE_LWT_SEG6LOCAL),
-> > +       BPF_PROG_BTF("lsm/",                    BPF_PROG_TYPE_LSM,
-> > +                                               BPF_LSM_MAC),
+> - CAP_SYS_ADMIN to load eBPF programs
+> - CAP_MAC_ADMIN (to update the policy of an LSM)
+> - The securityfs file being a valid hook and writable (O_RDWR)
 >
-> Is is supposed to be attachable same as BPF_PROG_TYPE_TRACING
-> programs? If yes, please define auto-attaching function, similar to
-> SEC_DEF("raw_tp") few lines below this one.
+> When such an attach call is received, the attachment logic looks up the
+> dentry and appends the program to the bpf_prog_array.
+>
+> The BPF programs are stored in a bpf_prog_array and writes to the array
+> are guarded by a mutex. The eBPF programs are executed as a part of the
+> LSM hook they are attached to. If any of the eBPF programs return
+> an error (-ENOPERM) the action represented by the hook is denied.
+>
+> Signed-off-by: KP Singh <kpsingh@google.com>
+> ---
+
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+
+>  MAINTAINERS             |   1 +
+>  include/linux/bpf_lsm.h |  13 ++++
+>  kernel/bpf/syscall.c    |   5 +-
+>  security/bpf/lsm_fs.c   |  19 +++++-
+>  security/bpf/ops.c      | 134 ++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 169 insertions(+), 3 deletions(-)
 >
 
-ah, haven't gotten to patch 11 yet, disregard this.
-
-> >         BPF_APROG_SEC("cgroup_skb/ingress",     BPF_PROG_TYPE_CGROUP_SKB,
-> >                                                 BPF_CGROUP_INET_INGRESS),
-> >         BPF_APROG_SEC("cgroup_skb/egress",      BPF_PROG_TYPE_CGROUP_SKB,
-> > @@ -5119,32 +5122,39 @@ int libbpf_prog_type_by_name(const char *name, enum bpf_prog_type *prog_type,
-> >         return -ESRCH;
-> >  }
-> >
-> > -#define BTF_PREFIX "btf_trace_"
-> > +static inline int __btf__typdef_with_prefix(struct btf *btf, const char *name,
->
-> typo: typdef -> typedef
->
-> But actually let's generalize it to pass BTF_KIND as another param, I
-> think I have a need for this (we might want to do that for structs,
-> not just typedef->func_proto).
-> Following btf__find_by_name_kind() naming, it probably should be
-> called btf__find_by_prefix_kind()?
->
-> > +                                           const char *prefix)
-> > +{
-> > +
-> > +       size_t prefix_len = strlen(prefix);
-> > +       char btf_type_name[128];
-> > +
-> > +       strcpy(btf_type_name, prefix);
-> > +       strncat(btf_type_name, name, sizeof(btf_type_name) - (prefix_len + 1));
->
-> at this point snprintf(btf_type_name, "%s%.*%s", prefix,
-> sizeof(btf_type_name) - prefix_len - 1, name) looks like a better and
-> cleaner alternative.
->
-> > +       return btf__find_by_name_kind(btf, btf_type_name, BTF_KIND_TYPEDEF);
-> > +}
-> > +
-> > +#define BTF_TRACE_PREFIX "btf_trace_"
-> > +#define BTF_LSM_PREFIX "lsm_btf_"
-> > +
->
-> [...]
+[...]
