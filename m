@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02B0C2D0DC
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Dec 2019 13:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E49D8C2D0DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Dec 2019 13:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D09D9207FF
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Dec 2019 13:03:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C63742075E
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Dec 2019 13:03:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfLYNDq (ORCPT
+        id S1726407AbfLYNDM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Dec 2019 08:03:46 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:36108 "EHLO mail.unsafe.ru"
+        Wed, 25 Dec 2019 08:03:12 -0500
+Received: from monster.unsafe.ru ([5.9.28.80]:36100 "EHLO mail.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbfLYNDN (ORCPT
+        id S1726289AbfLYNDM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Dec 2019 08:03:13 -0500
+        Wed, 25 Dec 2019 08:03:12 -0500
 Received: from localhost.localdomain (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id 9F85EC61B15;
-        Wed, 25 Dec 2019 12:53:20 +0000 (UTC)
+        by mail.unsafe.ru (Postfix) with ESMTPSA id A2A82C61B17;
+        Wed, 25 Dec 2019 12:53:28 +0000 (UTC)
 From:   Alexey Gladkov <gladkov.alexey@gmail.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
@@ -52,9 +52,9 @@ Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
         Oleg Nesterov <oleg@redhat.com>,
         Solar Designer <solar@openwall.com>,
         Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH v6 08/10] proc: instantiate only pids that we can ptrace on 'hidepid=3' mount option
-Date:   Wed, 25 Dec 2019 13:51:49 +0100
-Message-Id: <20191225125151.1950142-9-gladkov.alexey@gmail.com>
+Subject: [PATCH v6 10/10] docs: proc: add documentation for "hidepid=3" and "pidonly" options and new mount behavior
+Date:   Wed, 25 Dec 2019 13:51:51 +0100
+Message-Id: <20191225125151.1950142-11-gladkov.alexey@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
 References: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
@@ -64,81 +64,89 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-If "hidepid=3" mount option is set then do not instantiate pids that
-we can not ptrace. "hidepid=3" means that procfs should only contain
-pids that the caller can ptrace.
-
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
 Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
 ---
- fs/proc/base.c          | 15 +++++++++++++++
- fs/proc/root.c          |  4 ++--
- include/linux/proc_fs.h |  1 +
- 3 files changed, 18 insertions(+), 2 deletions(-)
+ Documentation/filesystems/proc.txt | 53 ++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index f4f1bcb28603..b55d205a7f6e 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -699,6 +699,14 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
- 				 struct task_struct *task,
- 				 int hide_pid_min)
- {
-+	/*
-+	 * If 'hidpid' mount option is set force a ptrace check,
-+	 * we indicate that we are using a filesystem syscall
-+	 * by passing PTRACE_MODE_READ_FSCREDS
-+	 */
-+	if (proc_fs_hide_pid(fs_info) == HIDEPID_NOT_PTRACABLE)
-+		return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 99ca040e3f90..6a62ae20a181 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -50,6 +50,8 @@ Table of Contents
+   4	Configuring procfs
+   4.1	Mount options
+ 
++  5	Filesystem behavior
 +
- 	if (proc_fs_hide_pid(fs_info) < hide_pid_min)
- 		return true;
- 	if (in_group_p(proc_fs_pid_gid(fs_info)))
-@@ -3274,7 +3282,14 @@ struct dentry *proc_pid_lookup(struct dentry *dentry, unsigned int flags)
- 	if (!task)
- 		goto out;
+ ------------------------------------------------------------------------------
+ Preface
+ ------------------------------------------------------------------------------
+@@ -2021,6 +2023,7 @@ The following mount options are supported:
  
-+	/* Limit procfs to only ptracable tasks */
-+	if (proc_fs_hide_pid(fs_info) == HIDEPID_NOT_PTRACABLE) {
-+		if (!has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS))
-+			goto out_put_task;
-+	}
+ 	hidepid=	Set /proc/<pid>/ access mode.
+ 	gid=		Set the group authorized to learn processes information.
++	pidonly=	Show only task related subset of procfs.
+ 
+ hidepid=0 means classic mode - everybody may access all /proc/<pid>/ directories
+ (default).
+@@ -2042,6 +2045,56 @@ information about running processes, whether some daemon runs with elevated
+ privileges, whether other user runs some sensitive program, whether other users
+ run any program at all, etc.
+ 
++hidepid=3 means that procfs should only contain /proc/<pid>/ directories
++that the caller can ptrace.
 +
- 	result = proc_pid_instantiate(dentry, task, NULL);
-+out_put_task:
- 	put_task_struct(task);
- out:
- 	return result;
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 3bb8df360cf7..3c7b29140293 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -70,8 +70,8 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	case Opt_hidepid:
- 		ctx->hidepid = result.uint_32;
- 		if (ctx->hidepid < HIDEPID_OFF ||
--		    ctx->hidepid > HIDEPID_INVISIBLE)
--			return invalf(fc, "proc: hidepid value must be between 0 and 2.\n");
-+		    ctx->hidepid > HIDEPID_NOT_PTRACABLE)
-+			return invalf(fc, "proc: hidepid value must be between 0 and 3.\n");
- 		break;
- 
- 	default:
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index e349fcafd729..83c87ea65505 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -17,6 +17,7 @@ enum {
- 	HIDEPID_OFF	  = 0,
- 	HIDEPID_NO_ACCESS = 1,
- 	HIDEPID_INVISIBLE = 2,
-+	HIDEPID_NOT_PTRACABLE = 3, /* Limit pids to only ptracable pids */
- };
- 
- struct proc_fs_info {
+ gid= defines a group authorized to learn processes information otherwise
+ prohibited by hidepid=.  If you use some daemon like identd which needs to learn
+ information about processes information, just add identd to this group.
++
++The pidonly=1 hides all top level files and directories in the procfs that
++are not related to tasks.
++
++------------------------------------------------------------------------------
++5 Filesystem behavior
++------------------------------------------------------------------------------
++
++Originally, before the advent of pid namepsace, procfs was a global file
++system. It means that there was only one procfs instance in the system.
++
++When pid namespace was added, a separate procfs instance was mounted in
++each pid namespace. So, procfs mount options are global among all
++mountpoints within the same namespace.
++
++# grep ^proc /proc/mounts
++proc /proc proc rw,relatime,hidepid=2 0 0
++
++# strace -e mount mount -o hidepid=1 -t proc proc /tmp/proc
++mount("proc", "/tmp/proc", "proc", 0, "hidepid=1") = 0
+++++ exited with 0 +++
++
++# grep ^proc /proc/mounts
++proc /proc proc rw,relatime,hidepid=2 0 0
++proc /tmp/proc proc rw,relatime,hidepid=2 0 0
++
++and only after remounting procfs mount options will change at all
++mountpoints.
++
++# mount -o remount,hidepid=1 -t proc proc /tmp/proc
++
++# grep ^proc /proc/mounts
++proc /proc proc rw,relatime,hidepid=1 0 0
++proc /tmp/proc proc rw,relatime,hidepid=1 0 0
++
++This behavior is different from the behavior of other filesystems.
++
++The new procfs behavior is more like other filesystems. Each procfs mount
++creates a new procfs instance. Mount options affect own procfs instance.
++It means that it became possible to have several procfs instances
++displaying tasks with different filtering options in one pid namespace.
++
++# mount -o hidepid=2 -t proc proc /proc
++# mount -o hidepid=1 -t proc proc /tmp/proc
++# grep ^proc /proc/mounts
++proc /proc proc rw,relatime,hidepid=2 0 0
++proc /tmp/proc proc rw,relatime,hidepid=1 0 0
 -- 
 2.24.1
 
