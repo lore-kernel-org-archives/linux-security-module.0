@@ -2,91 +2,126 @@ Return-Path: <SRS0=ALVC=2P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	LOTS_OF_MONEY,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15745C2D0DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Dec 2019 08:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E2EC2D0DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Dec 2019 12:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E59C420730
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Dec 2019 08:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18BB92072A
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Dec 2019 12:58:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbfLYIdF (ORCPT
+        id S1726307AbfLYM6N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Dec 2019 03:33:05 -0500
-Received: from mail01.vodafone.es ([217.130.24.71]:15864 "EHLO
-        mail01.vodafone.es" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbfLYIdF (ORCPT
+        Wed, 25 Dec 2019 07:58:13 -0500
+Received: from monster.unsafe.ru ([5.9.28.80]:58664 "EHLO mail.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726289AbfLYM6N (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Dec 2019 03:33:05 -0500
-X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Dec 2019 03:33:03 EST
-IronPort-SDR: Pc1hBoKRqziBmeq3P5Fxjfb6P9Q+q1ykDf7F69ICE1cFP1c6KwVktUNnpmJQFznlarwXIW2y10
- Z2HN4an8S2Nw==
-IronPort-PHdr: =?us-ascii?q?9a23=3AMA0mehdAFNntY6KN940q7DUylGMj4u6mDksu8p?=
- =?us-ascii?q?Mizoh2WeGdxcS+YB7h7PlgxGXEQZ/co6odzbaP6Oa6AzdLvszJmUtBWaQEbw?=
- =?us-ascii?q?UCh8QSkl5oK+++Imq/EsTXaTcnFt9JTl5v8iLzG0FUHMHjew+a+SXqvnYdFR?=
- =?us-ascii?q?rlKAV6OPn+FJLMgMSrzeCy/IDYbxlViDanbr5+MRu7oR/PusUIj4ZuJaQ8xg?=
- =?us-ascii?q?XUqXZUZupawn9lK0iOlBjm/Mew+5Bj8yVUu/0/8sNLTLv3caclQ7FGFToqK2?=
- =?us-ascii?q?866tHluhnFVguP+2ATUn4KnRpSAgjK9w/1U5HsuSbnrOV92S2aPcrrTbAoXD?=
- =?us-ascii?q?mp8qlmRAP0hCoBKjU09nzchM5tg6JBuB+vqRxxw5TKbo+WKfRxcb/Sc9wBSG?=
- =?us-ascii?q?pdXMteSzBNDp+gY4cRCecKIOZWr5P6p1sLtRawAxOjD/71xD9Sh3/22Kw60/?=
- =?us-ascii?q?ggEQHYxgMrAtUDsGjJrNXxKKgSUP26w7PTzTjYavNZwzb96IzSfhA9v/6MWa?=
- =?us-ascii?q?x/cdLLxkYzDQ/FlkmQpJXjMjiI1eoNq3CW4/R9We+tkWIrtg98riS1yssyhY?=
- =?us-ascii?q?TFnIwYx1DC+C5k2og6P8e4R1R+YdO8FZtQsDyVOJVuT8M5RmFopD46yrobuZ?=
- =?us-ascii?q?6nZCQKyIooxxrYa/GfdoiH+BPjVOKLIThmgHJpZL2yiwys8Uin1+LzTMe00F?=
- =?us-ascii?q?FMriVbiNXDqGsN2wTS6siBVPR94l+s1SiS2w3R8O1IPE45mbbBJ5I/zbM8jJ?=
- =?us-ascii?q?QevETbEi/zgkr2jauWdks++uiv7uTqeqnmpoKYN4BoiwHxL74hmtekDOQ9KA?=
- =?us-ascii?q?cOXmyb9f6g1LL9+U32Xq1KgecqnaXDqJDaOdwXprSlDA9NzoYj9xG/Ai+i0N?=
- =?us-ascii?q?QZm3kHMV1EdAucj4f3J17OPer4Dfajg1WsiTtrwvfGMaD8ApXJMHfOi6nhfb?=
- =?us-ascii?q?lj5E5G0gYzzs5Q54hSCr4fJPL/QEjxtMbXDkxxDwvhx+fhFcU4zY4VRHiOHr?=
- =?us-ascii?q?7cNaTerFuFzvwgLvPKZ4IPvjv5bf8/6K3UgGc9iGMaKI2glaMNaXW5AvV4Kg?=
- =?us-ascii?q?3NZXP0mNYEEHsLoAMzV8T4j12FVDdSYzC/QvRvyCs8DdeCBM/7XIGogaCAwi?=
- =?us-ascii?q?7zSoFLYmtHBlmXOXLhdoHCR/oIZTqbKYl5jmpXBvCaV4Y92ET250fBwL19I7?=
- =?us-ascii?q?+M9w=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GTKgAeHQNemCMYgtllgkQBGAEBgns?=
- =?us-ascii?q?3GyASk0JUBnUdihKFM4N8FYYaDIFbDQEBAQEBNQIBAYRAgiIkOBMCAw0BAQU?=
- =?us-ascii?q?BAQEBAQUEAQECEAEBAQEBCAsLBimFSkIBDAGBayKEF4EDgSyDA4JTKa0WGgK?=
- =?us-ascii?q?FI4R1gTYBjBgaeYEHgUSCMoUCARIBbIUhBI1FIYhLYZd+gj4EljANgikBjDg?=
- =?us-ascii?q?DglSJEacigjdVgQuBCnFNOIFyGYEdTxgNjSyOLUCBFhACT4VAh1yCMgEB?=
-X-IPAS-Result: =?us-ascii?q?A2GTKgAeHQNemCMYgtllgkQBGAEBgns3GyASk0JUBnUdi?=
- =?us-ascii?q?hKFM4N8FYYaDIFbDQEBAQEBNQIBAYRAgiIkOBMCAw0BAQUBAQEBAQUEAQECE?=
- =?us-ascii?q?AEBAQEBCAsLBimFSkIBDAGBayKEF4EDgSyDA4JTKa0WGgKFI4R1gTYBjBgae?=
- =?us-ascii?q?YEHgUSCMoUCARIBbIUhBI1FIYhLYZd+gj4EljANgikBjDgDglSJEacigjdVg?=
- =?us-ascii?q?QuBCnFNOIFyGYEdTxgNjSyOLUCBFhACT4VAh1yCMgEB?=
-X-IronPort-AV: E=Sophos;i="5.69,353,1571695200"; 
-   d="scan'208";a="298603249"
-Received: from mailrel04.vodafone.es ([217.130.24.35])
-  by mail01.vodafone.es with ESMTP; 25 Dec 2019 09:27:58 +0100
-Received: (qmail 32294 invoked from network); 25 Dec 2019 04:33:52 -0000
-Received: from unknown (HELO 192.168.1.88) (seigo@[217.217.179.17])
-          (envelope-sender <tulcidas@mail.telepac.pt>)
-          by mailrel04.vodafone.es (qmail-ldap-1.03) with SMTP
-          for <linux-security-module@vger.kernel.org>; 25 Dec 2019 04:33:52 -0000
-Date:   Wed, 25 Dec 2019 05:33:43 +0100 (CET)
-From:   La Primitiva <tulcidas@mail.telepac.pt>
-Reply-To: La Primitiva <laprimitivaes@zohomail.eu>
-To:     linux-security-module@vger.kernel.org
-Message-ID: <2080041.259406.1577248423654.JavaMail.javamailuser@localhost>
-Subject: Take home 750,000 Euros this end of year
+        Wed, 25 Dec 2019 07:58:13 -0500
+Received: from localhost.localdomain (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.unsafe.ru (Postfix) with ESMTPSA id 579B7C61B05;
+        Wed, 25 Dec 2019 12:52:58 +0000 (UTC)
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH v6 01/10] proc: Rename struct proc_fs_info to proc_fs_opts
+Date:   Wed, 25 Dec 2019 13:51:42 +0100
+Message-Id: <20191225125151.1950142-2-gladkov.alexey@gmail.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
+References: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Attn: Email User,
+Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+---
+ fs/proc_namespace.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-You have won, you are to reply back with your name and phone number for
-claim.
-
-La Primitiva
-
-
-
-
-----------------------------------------------------
-This email was sent by the shareware version of Postman Professional.
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 273ee82d8aa9..9a8b624bc3db 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -37,23 +37,23 @@ static __poll_t mounts_poll(struct file *file, poll_table *wait)
+ 	return res;
+ }
+ 
+-struct proc_fs_info {
++struct proc_fs_opts {
+ 	int flag;
+ 	const char *str;
+ };
+ 
+ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
+ {
+-	static const struct proc_fs_info fs_info[] = {
++	static const struct proc_fs_opts fs_opts[] = {
+ 		{ SB_SYNCHRONOUS, ",sync" },
+ 		{ SB_DIRSYNC, ",dirsync" },
+ 		{ SB_MANDLOCK, ",mand" },
+ 		{ SB_LAZYTIME, ",lazytime" },
+ 		{ 0, NULL }
+ 	};
+-	const struct proc_fs_info *fs_infop;
++	const struct proc_fs_opts *fs_infop;
+ 
+-	for (fs_infop = fs_info; fs_infop->flag; fs_infop++) {
++	for (fs_infop = fs_opts; fs_infop->flag; fs_infop++) {
+ 		if (sb->s_flags & fs_infop->flag)
+ 			seq_puts(m, fs_infop->str);
+ 	}
+@@ -63,7 +63,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
+ 
+ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ {
+-	static const struct proc_fs_info mnt_info[] = {
++	static const struct proc_fs_opts mnt_opts[] = {
+ 		{ MNT_NOSUID, ",nosuid" },
+ 		{ MNT_NODEV, ",nodev" },
+ 		{ MNT_NOEXEC, ",noexec" },
+@@ -72,9 +72,9 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ 		{ MNT_RELATIME, ",relatime" },
+ 		{ 0, NULL }
+ 	};
+-	const struct proc_fs_info *fs_infop;
++	const struct proc_fs_opts *fs_infop;
+ 
+-	for (fs_infop = mnt_info; fs_infop->flag; fs_infop++) {
++	for (fs_infop = mnt_opts; fs_infop->flag; fs_infop++) {
+ 		if (mnt->mnt_flags & fs_infop->flag)
+ 			seq_puts(m, fs_infop->str);
+ 	}
+-- 
+2.24.1
 
