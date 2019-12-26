@@ -1,277 +1,131 @@
-Return-Path: <SRS0=ALVC=2P=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=En6w=2Q=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B07DC2D0C8
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Dec 2019 23:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DB0C2D0C0
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Dec 2019 22:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E963E2075E
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Dec 2019 23:09:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4727206CB
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Dec 2019 22:31:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfLYXJI (ORCPT
+        id S1726920AbfLZWbE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Dec 2019 18:09:08 -0500
-Received: from mga07.intel.com ([134.134.136.100]:34530 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726489AbfLYXJI (ORCPT
+        Thu, 26 Dec 2019 17:31:04 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51430 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbfLZWbE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Dec 2019 18:09:08 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Dec 2019 15:09:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,356,1571727600"; 
-   d="gz'50?scan'50,208,50";a="367645134"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 25 Dec 2019 15:09:00 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1ikFm0-00071L-1z; Thu, 26 Dec 2019 07:09:00 +0800
-Date:   Thu, 26 Dec 2019 07:08:46 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     kbuild-all@lists.01.org, LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v6 09/10] proc: add option to mount only a pids subset
-Message-ID: <201912260752.HesRrecx%lkp@intel.com>
-References: <20191225125151.1950142-10-gladkov.alexey@gmail.com>
+        Thu, 26 Dec 2019 17:31:04 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ikbei-0000SB-TR; Thu, 26 Dec 2019 22:30:57 +0000
+Date:   Thu, 26 Dec 2019 22:30:56 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] security: apparmor: Fix a possible
+ sleep-in-atomic-context bug in find_attach()
+Message-ID: <20191226223056.GQ4203@ZenIV.linux.org.uk>
+References: <20191217131220.11613-1-baijiaju1990@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="unnerkgwpqz6ml3z"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191225125151.1950142-10-gladkov.alexey@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191217131220.11613-1-baijiaju1990@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Dec 17, 2019 at 09:12:20PM +0800, Jia-Ju Bai wrote:
+> The kernel may sleep while holding a RCU lock.
+> The function call path (from bottom to top) in Linux 4.19 is:
+> 
+> security/apparmor/domain.c, 331: 
+> 	vfs_getxattr_alloc(GFP_KERNEL) in aa_xattrs_match
+> security/apparmor/domain.c, 425: 
+> 	aa_xattrs_match in __attach_match
+> security/apparmor/domain.c, 485: 
+> 	__attach_match in find_attach
+> security/apparmor/domain.c, 484:
+>     rcu_read_lock in find_attach
+> 
+> vfs_getxattr_alloc(GFP_KERNEL) can sleep at runtime.
+> 
+> To fix this possible bug, GFP_KERNEL is replaced with GFP_ATOMIC for
+> vfs_getxattr_alloc().
+> 
+> This bug is found by a static analysis tool STCheck written by myself. 
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  security/apparmor/domain.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index 9be7ccb8379e..60b54ce57d1f 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -325,7 +325,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
+>  
+>  	for (i = 0; i < profile->xattr_count; i++) {
+>  		size = vfs_getxattr_alloc(d, profile->xattrs[i], &value,
+> -					  value_size, GFP_KERNEL);
+> +					  value_size, GFP_ATOMIC);
 
---unnerkgwpqz6ml3z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+<stares>
 
-Hi Alexey,
+How can that possibly make any sense?  We are, by the look of it, trying
+to read extended attributes of some sort here.  How the hell can that
+possibly hope to be non-blocking?
 
-Thank you for the patch! Perhaps something to improve:
+<goes to read>
+Yup, vfs_getxattr_alloc() does call xattr ->get() method, which certainly
+can cause IO.  GFP_ATOMIC affects only the allocation done in
+vfs_getxattr_alloc() itself, ->get() call doesn't even see it.
 
-[auto build test WARNING on linux/master]
-[cannot apply to lwn/docs-next linus/master v5.5-rc3 next-20191220]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+AFAICS, that "fix" is pure cargo-culting; if that code *can* be called in
+non-blocking context, we are fucked, GFP_ATOMIC or no GFP_ATOMIC.
 
-url:    https://github.com/0day-ci/linux/commits/Alexey-Gladkov/proc-modernize-proc-to-support-multiple-private-instances/20191226-060818
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 1522d9da40bdfe502c91163e6d769332897201fa
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.5.0-3) 7.5.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+Let's look at your call chain...  find_attach() calls __attach_match()
+under rcu_read_lock().  Yes, it does, and by the look of the function
+itself it does expect to be called thus.
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+Call of aa_xattrs_match() in there.  Present, no obvious dropping/regaining
+rcu_read_lock() around it.  Conditional upon perm & MAY_EXEC, but that
+doesn't seem to be provably excludable by the arguments of this particular
+call.  And yes, aa_xattrs_match() is very obviously blocking.
 
-All warnings (new ones prefixed by >>):
+So you've caught a real bug, but the "fix" doesn't fix anything whatsoever;
+reading xattrs *does* block, no matter what.
 
-   In file included from include/linux/sunrpc/stats.h:13:0,
-                    from include/linux/sunrpc/clnt.h:22,
-                    from include/linux/nfs_fs.h:32,
-                    from init/do_mounts.c:23:
-   include/linux/proc_fs.h:162:47: warning: 'struct proc_info_fs' declared inside parameter list will not be visible outside of this definition or declaration
-    static inline void proc_fs_set_pid_gid(struct proc_info_fs *fs_info, kgid_t gid)
-                                                  ^~~~~~~~~~~~
-   include/linux/proc_fs.h: In function 'proc_fs_pidonly':
->> include/linux/proc_fs.h:168:9: warning: 'return' with a value, in function returning void
-     return PROC_PIDONLY_OFF;
-            ^~~~~~~~~~~~~~~~
-   include/linux/proc_fs.h:166:20: note: declared here
-    static inline void proc_fs_pidonly(struct proc_fs_info *fs_info)
-                       ^~~~~~~~~~~~~~~
+By the look at git blame, we have commit 8e51f9087f4024d20f70f4d9831e1f45d8088331
+Author: Matthew Garrett <mjg59@google.com>
+Date:   Thu Feb 8 12:37:19 2018 -0800
 
-vim +/return +168 include/linux/proc_fs.h
+    apparmor: Add support for attaching profiles via xattr, presence and value
+    
+    Make it possible to tie Apparmor profiles to the presence of one or more
+    extended attributes, and optionally their values. An example usecase for
+    this is to automatically transition to a more privileged Apparmor profile
+    if an executable has a valid IMA signature, which can then be appraised
+    by the IMA subsystem.
+    
+    Signed-off-by: Matthew Garrett <mjg59@google.com>
+    Signed-off-by: John Johansen <john.johansen@canonical.com>
 
-   161	
- > 162	static inline void proc_fs_set_pid_gid(struct proc_info_fs *fs_info, kgid_t gid)
-   163	{
-   164	}
-   165	
-   166	static inline void proc_fs_pidonly(struct proc_fs_info *fs_info)
-   167	{
- > 168		return PROC_PIDONLY_OFF;
-   169	}
-   170	
+to thank for that.  And by the time of that commit the call chain already
+existed, complete with rcu_read_lock().
 
----
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+AFAICS, it really is buggered by design - you can't read xattrs in such
+context.  Again, GFP_ATOMIC is useless here - the problem is not in
+allocation, it's IO, possibly over network, etc. 
 
---unnerkgwpqz6ml3z
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---unnerkgwpqz6ml3z--
+Morever, *anything* that passes GFP_ATOMIC to vfs_getxattr_alloc() is
+deeply suspect - it's almost certainly cargo-culting in attempt to
+do inherently blocking operation in non-blocking context.  <greps>
+No GFP_ATOMIC (thankfully), but there's a bunch of GFP_NOFS and
+I really wonder if _those_ make any sense here...
