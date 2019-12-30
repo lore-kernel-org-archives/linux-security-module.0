@@ -2,99 +2,142 @@ Return-Path: <SRS0=GMo7=2U=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54613C2D0C3
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 20:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBFBC2D0C3
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 22:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24B6B20658
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 20:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577736919;
-	bh=Y5Md63y9ed5vH4kWr2XOEflxc2mMGD8E2NiwLKoa4oM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=uofwu0bbP8AWr2ieMH1ZGmEaxWYC7ky0y3yX6YkBMVeUtBDmTtSURkGlLo683gSox
-	 3dEZfSxz6T2zPw5mnzct+LPK5jZqbboiRTznPLAyd3M/C7l6oXT5gJ2HDSHUfiRfMr
-	 YYYsQ/fF0w690PZKQXmK70KvL7hed1xb3XMrCTYg=
+	by mail.kernel.org (Postfix) with ESMTP id E248520730
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 22:03:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nEQfUB9B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbfL3UPS (ORCPT
+        id S1727721AbfL3WDi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Dec 2019 15:15:18 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:47056 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727698AbfL3UPS (ORCPT
+        Mon, 30 Dec 2019 17:03:38 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38744 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727691AbfL3WDi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Dec 2019 15:15:18 -0500
-Received: by mail-lf1-f68.google.com with SMTP id f15so25803670lfl.13
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Dec 2019 12:15:17 -0800 (PST)
+        Mon, 30 Dec 2019 17:03:38 -0500
+Received: by mail-pl1-f195.google.com with SMTP id f20so15153662plj.5;
+        Mon, 30 Dec 2019 14:03:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0NUD8zZAQo+O9PgfrBGhsCZfnogIqpNz9ilU9EfzbLI=;
-        b=Cw67PqYmY/9S3uWAD1VHsvkn1/R3WJ4iRuDhSyOtGeWMdXghCBxnq7YsOEtiUzJHim
-         Vp31uJwyLJV62QuaFJjNEjhaAO7DeKrjBVuAaqC9Wz0tYLuOL+qVGWaET2U4f7Y70an7
-         M+OOMzDlKChNyvPNj5GGoYW9JzpJ6hT5JzIHg=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=sWcIwqwAQVaMiL6AbIBVoLXwMM9wjsoCuHsXRphgo8Y=;
+        b=nEQfUB9BU7XTfjYvCMI6Yd/qByThVkk2PiHeRSy9HqRXeXx/ACLKilBsXAOBcCROWX
+         wuYYWc18pechAi8K+EkPH15KMlWyQ6nb0StYh3i01u248ouxra+l0YzVMzSbAIdPpj32
+         8IklPGgLy/ca2jvIWXCX+wjrXBcw+YhdM6dG2drTzpt9BJH4W/VMrXUHA7PFo1I1D0fp
+         bV/2HKq3EUqlQLAmrkiIYXp5l16qLryAJoIvQkBet0s7dkrKl35d2kNDuDe+cTkV6CtO
+         pdBNwQkWVWBXVmtsGPAeYKEJ7QDU9Bg9dcnJKVDvMxCHqk2OAX0edZ0X4oodFaH8Hq0U
+         10lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0NUD8zZAQo+O9PgfrBGhsCZfnogIqpNz9ilU9EfzbLI=;
-        b=nlxB+d5rW3KKd0DiNXWCQMLTgzau+pTgi5VA53RAOf7q+VYHOuTaubn84nX2hvdNc1
-         KWFoaM4O8u0DqRedSxQtXVmpDDuDjJTVnAg4HPBr4o4qU7iF2KpU8WqS5pLvoTozE0St
-         SM006q78FVsyhYh56vEkxPV5yuGL9FBafLGwcA1WDOEg6QgnHMEs9kyO5euFoirFShOO
-         lrda1PefIGkDHerk30UQaxRu8uVR54sNIfvN7HySLT5pcI9gkMkkRnKWrNwh85AV4f9L
-         hHs/WZFMWhHp/NuSI+DUROjxjd2SEVeL1JihdRA+cGioz3joacAjTSm9PlvLf/aVAyFp
-         Atpw==
-X-Gm-Message-State: APjAAAUUUiTmqQplWlhY0AvcmuRnRP8e5HL1O57ris+2ZvhZOaZ0EEZg
-        H5kXn9AQwyI2WlYoI3URGrfVxwOtPIU=
-X-Google-Smtp-Source: APXvYqwzTTtWCYdb/SMTY+hOaikIOWmYqfLiy9iYZyonGTl5w4PH8721FceT97/oLHX2tY+Vd0H0bA==
-X-Received: by 2002:ac2:51de:: with SMTP id u30mr38533410lfm.69.1577736916035;
-        Mon, 30 Dec 2019 12:15:16 -0800 (PST)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id 195sm16627428ljj.55.2019.12.30.12.15.15
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Dec 2019 12:15:15 -0800 (PST)
-Received: by mail-lf1-f53.google.com with SMTP id m30so25829461lfp.8
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Dec 2019 12:15:15 -0800 (PST)
-X-Received: by 2002:ac2:50cc:: with SMTP id h12mr38668703lfm.29.1577736914815;
- Mon, 30 Dec 2019 12:15:14 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=sWcIwqwAQVaMiL6AbIBVoLXwMM9wjsoCuHsXRphgo8Y=;
+        b=hVBUeYUlCs6CqAhqAz823TJP4I7aok2n7HhCS49Q+MIV6qlAPVj1aeV+ulYZh4yk0s
+         9thbKAY9G/bOcbFwXO045HrVI/GQUWdWsSQGx5IJpowDcnW+9wdcNN+rKbFwZJ6UMUEP
+         cMHMXE9g+qQlG4WCbCzEovuR1dvQsBNesfpeXWV1RnwZ4e0e1gqhPpcL//2xYoDIgVJZ
+         S427ewzNvTEb6irnPBgrnHdQlMnq3IoxpTr3b+WrtwlVONJrhIp6jzxOQSB0IGUwE5Gb
+         mFmqQ6Vhx8V+99kV7PKPHn89ECDfEt7iPt8XmspaARKoIyfLecDhmS5rJKrK+HKSig9o
+         pEQA==
+X-Gm-Message-State: APjAAAUy/YfQAqm4vm79o9LeA8YY6ValEGXJrOWrVcucn3aCP4B8SyK9
+        LDtSX2t+F8XF6zVLNJQmYxE=
+X-Google-Smtp-Source: APXvYqzCT9zC3ZgKpQpD5zdYtsdEacKle/p/witN0yVp/CLOmZS4R1vbOaH6CIUVFPPMG9wX2sUhEg==
+X-Received: by 2002:a17:90a:1696:: with SMTP id o22mr1776310pja.78.1577743416953;
+        Mon, 30 Dec 2019 14:03:36 -0800 (PST)
+Received: from JF-EN-C02V905BHTDF.tld ([12.111.169.54])
+        by smtp.gmail.com with ESMTPSA id l8sm511900pjy.24.2019.12.30.14.03.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Dec 2019 14:03:36 -0800 (PST)
+Subject: Re: [PATCH v6 07/10] proc: flush task dcache entries from all procfs
+ instances
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
+ <20191225125151.1950142-8-gladkov.alexey@gmail.com>
+From:   J Freyensee <why2jjj.linux@gmail.com>
+Message-ID: <8d85ba43-0759-358e-137d-246107bac747@gmail.com>
+Date:   Mon, 30 Dec 2019 14:03:29 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.1
 MIME-Version: 1.0
-References: <8483f2c2-626d-382f-3994-ee29daebff75@i-love.sakura.ne.jp>
-In-Reply-To: <8483f2c2-626d-382f-3994-ee29daebff75@i-love.sakura.ne.jp>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 30 Dec 2019 12:14:59 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgNYqYSdD530KWQ9gtTeEvBd_Frn54Xc45B3D8PPL8ijA@mail.gmail.com>
-Message-ID: <CAHk-=wgNYqYSdD530KWQ9gtTeEvBd_Frn54Xc45B3D8PPL8ijA@mail.gmail.com>
-Subject: Re: [GIT PULL] tomoyo fixes for 5.5
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191225125151.1950142-8-gladkov.alexey@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 30, 2019 at 3:32 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> This is my first time for sending pull requests. It seems that most people
-> create a tag signed with GPG key but a few people send pull requests on
-> master branch without signing with GPG key. Did I follow necessary steps?
+snip
 
-I do require the gpg signed tag for non-kernel.org pull requests like this.
+.
 
-I trust the security at kernel.org - it requires 2FA and a gpg key
-just to even push to a git repo there at all - but even there I
-_prefer_ tags. But outside of kernel.org I absolutely do want to see a
-signed tag for a pull request, not just a master branch.
+.
 
-Side note: I don't actually require the pgp key to be something I have
-a direct path to, and if you can't get big set of signatures on yours,
-that's fine for initial pull requests. The key ends up still being a
-kind of identity, and we can work on getting the proper web of trust
-built up over time.
+.
 
-           Linus
+>   
+> +#ifdef CONFIG_PROC_FS
+> +static inline void pidns_proc_lock(struct pid_namespace *pid_ns)
+> +{
+> +	down_write(&pid_ns->rw_proc_mounts);
+> +}
+> +
+> +static inline void pidns_proc_unlock(struct pid_namespace *pid_ns)
+> +{
+> +	up_write(&pid_ns->rw_proc_mounts);
+> +}
+> +
+> +static inline void pidns_proc_lock_shared(struct pid_namespace *pid_ns)
+> +{
+> +	down_read(&pid_ns->rw_proc_mounts);
+> +}
+> +
+> +static inline void pidns_proc_unlock_shared(struct pid_namespace *pid_ns)
+> +{
+> +	up_read(&pid_ns->rw_proc_mounts);
+> +}
+> +#else /* !CONFIG_PROC_FS */
+> +
+Apologies for my newbie question. I couldn't help but notice all these 
+function calls are assuming that the parameter struct pid_namespace 
+*pid_ns will never be NULL.  Is that a good assumption?
+
+I don't have the background in this code to answer on my own, but I 
+thought I'd raise the question.
+
+Thanks,
+Jay
+
