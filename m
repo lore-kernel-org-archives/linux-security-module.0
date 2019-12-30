@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBECC2D0C2
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 19:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B52C2D0C2
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 19:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49439206CB
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 19:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCCAC206CB
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 19:20:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TrUeJBtY"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PY5Y+hA+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbfL3TP0 (ORCPT
+        id S1727642AbfL3TUn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Dec 2019 14:15:26 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:35083 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbfL3TP0 (ORCPT
+        Mon, 30 Dec 2019 14:20:43 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36521 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727571AbfL3TUn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Dec 2019 14:15:26 -0500
-Received: by mail-oi1-f195.google.com with SMTP id k4so11396379oik.2
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Dec 2019 11:15:25 -0800 (PST)
+        Mon, 30 Dec 2019 14:20:43 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 19so34900889otz.3
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Dec 2019 11:20:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=c8VNPmQpB/nhZUKa/jEyRPflBQQk4BiG2bU5Mb23sZI=;
-        b=TrUeJBtYQrhGzh9bo/B1sO67yNnIt1G5Zq9WRF6nvkZcUR6pWDDa+fWAGu0DWTCQ58
-         tzBhNoxl1KdV90x1wXcm/AHv9kB5yLfnupfaa3D+qkb9LQ3CZJGqdf11DZWsGdFwG8FK
-         N+79hxkfhaRxWj4KVx6cNl5Wg6kABBwrGJM7o=
+        bh=R2HUGNP1cgOAxLXKvlAf83qqvmp0LxZQcufLQgEdsSk=;
+        b=PY5Y+hA+W0jSa/dQ/V6VYLCqV4AT5UTQYa/uE4RAwjVpydp7EBzIhqRGAY878mMDoN
+         FHEaoDv3IAjYCnvd9HjkLIn3r6sFuOEkicnZT8ougvvck33aYYn/XTuQVKWU8PlFODAj
+         3x4ttGGQfDQLwU/9UX1Ht2WkvfJSLQPfQYkRo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=c8VNPmQpB/nhZUKa/jEyRPflBQQk4BiG2bU5Mb23sZI=;
-        b=SVH02GFre+UUuGAFp+CMeD+ldzeRoyFTUeEqAudV9QR7TcUCZvi0plmy4cQCRjcu7J
-         S2iU8f6Sxu4SUDmHzZyHWiEnxbK42/7C+RCYjeo75+gw22qpmmjUKRE8o+8mVbu4O2NQ
-         XHs3wzWadRUM2eD4jJpjCxr1qVz55uLGXNMpMIoMDP0t30hYAcFsnKednNKXHo+K1bL6
-         h35Qcr2cha7v0m5yOcA4QXOFGevbg9Rcc3RcR/iswIXitUb0n+AKKkNswp8xSvG0GUtw
-         587EH1DjbcFKTRpDgYd9L+Qx7Jhg3RQyOXUfImTh4txELobBUZWYMzAiw9Kjz2Gn+sfm
-         7t7Q==
-X-Gm-Message-State: APjAAAXywoev+4nAbntHUtJnWCcCO334E4EJD5DYALhrk9c32AgbLP5R
-        03kaeObQxI3+EYwmhcAfs/7wBQ==
-X-Google-Smtp-Source: APXvYqzHMhG2XB4gSSLkVkurcTS/kbf5+0VXeJOTvIqteere+/f7siDcsi2gN/gxmI1SnlIUiZ5MEQ==
-X-Received: by 2002:aca:4c15:: with SMTP id z21mr282394oia.8.1577733325313;
-        Mon, 30 Dec 2019 11:15:25 -0800 (PST)
+        bh=R2HUGNP1cgOAxLXKvlAf83qqvmp0LxZQcufLQgEdsSk=;
+        b=Ab9OHHOBSuMr/hvJEnRGPaZxTbvWmbcYab4CYQ1pyMzMmDWW8ihzrnaaNzZMqRhas5
+         Z57rVNjz8Eooe2n/FO4bcUTKAaDP4T9Sbf8DpSiHCbe/JdWBf8FGHyCQytniElAlydBv
+         jJwko7gAer1VciSN5ja5FnBF0Ptlgs1wfzdUDRShmUduEngP1E3/ZhIHmTdV7ovVJtL8
+         478A7mO2/s7zQHdGD4aSw6f+ocT1VQHmbpzSC5jb+HHwmKARbKhpfClKjJE9+BHYcrNs
+         zrV0UpC6T32uKG/8sMs3Q75QtSXM1P7yHH+srmo11yiCbBnvdnhiwgyzFV6pi4UVjII4
+         vYEA==
+X-Gm-Message-State: APjAAAWvMuRy27xM9QjvThTDEdyihN7wPXYEawVMCCUVqJqOlrl94Uj/
+        +jQiFtHG5ZoiXcBBCEgblZ/Ftg==
+X-Google-Smtp-Source: APXvYqxU4Rafz9V1wbvaC2DEXCwxWLwK/+lXqX/YBMc6nhISNgTL6bIGnejZYe7KiLdWaMYtrkPCNw==
+X-Received: by 2002:a05:6830:2116:: with SMTP id i22mr79234563otc.0.1577733642201;
+        Mon, 30 Dec 2019 11:20:42 -0800 (PST)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w8sm15888580ote.80.2019.12.30.11.15.24
+        by smtp.gmail.com with ESMTPSA id u75sm9985380oie.15.2019.12.30.11.20.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Dec 2019 11:15:24 -0800 (PST)
-Date:   Mon, 30 Dec 2019 11:15:23 -0800
+        Mon, 30 Dec 2019 11:20:41 -0800 (PST)
+Date:   Mon, 30 Dec 2019 11:20:39 -0800
 From:   Kees Cook <keescook@chromium.org>
 To:     KP Singh <kpsingh@chromium.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
         open list <linux-kernel@vger.kernel.org>,
         bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
         Alexei Starovoitov <ast@kernel.org>,
@@ -81,103 +81,31 @@ Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
         Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF (KRSI)
-Message-ID: <201912301112.A1A63A4@keescook>
+Subject: Re: [PATCH bpf-next v1 06/13] bpf: lsm: Init Hooks and create files
+ in securityfs
+Message-ID: <201912301119.B475C474@keescook>
 References: <20191220154208.15895-1-kpsingh@chromium.org>
- <95036040-6b1c-116c-bd6b-684f00174b4f@schaufler-ca.com>
- <CACYkzJ5nYh7eGuru4vQ=2ZWumGPszBRbgqxmhd4WQRXktAUKkQ@mail.gmail.com>
+ <20191220154208.15895-7-kpsingh@chromium.org>
+ <CAEf4BzZ+wMTjghpr4=e5AY9xeFjvm-Rc+JooJzJstBW1r73z4A@mail.gmail.com>
+ <20191230153711.GD70684@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACYkzJ5nYh7eGuru4vQ=2ZWumGPszBRbgqxmhd4WQRXktAUKkQ@mail.gmail.com>
+In-Reply-To: <20191230153711.GD70684@google.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 20, 2019 at 06:38:45PM +0100, KP Singh wrote:
-> Hi Casey,
+On Mon, Dec 30, 2019 at 04:37:11PM +0100, KP Singh wrote:
+> On 23-Dec 22:28, Andrii Nakryiko wrote:
+> > On Fri, Dec 20, 2019 at 7:43 AM KP Singh <kpsingh@chromium.org> wrote:
+> > [...]
 > 
-> Thanks for taking a look!
-> 
-> On Fri, Dec 20, 2019 at 6:17 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >
-> > On 12/20/2019 7:41 AM, KP Singh wrote:
-> > > From: KP Singh <kpsingh@google.com>
-> > >
-> > > This patch series is a continuation of the KRSI RFC
-> > > (https://lore.kernel.org/bpf/20190910115527.5235-1-kpsingh@chromium.org/)
-> > >
-> > > # Motivation
-> > >
-> > > Google does rich analysis of runtime security data collected from
-> > > internal Linux deployments (corporate devices and servers) to detect and
-> > > thwart threats in real-time. Currently, this is done in custom kernel
-> > > modules but we would like to replace this with something that's upstream
-> > > and useful to others.
-> > >
-> > > The current kernel infrastructure for providing telemetry (Audit, Perf
-> > > etc.) is disjoint from access enforcement (i.e. LSMs).  Augmenting the
-> > > information provided by audit requires kernel changes to audit, its
-> > > policy language and user-space components. Furthermore, building a MAC
-> > > policy based on the newly added telemetry data requires changes to
-> > > various LSMs and their respective policy languages.
-> > >
-> > > This patchset proposes a new stackable and privileged LSM which allows
-> > > the LSM hooks to be implemented using eBPF. This facilitates a unified
-> > > and dynamic (not requiring re-compilation of the kernel) audit and MAC
-> > > policy.
-> > >
-> > > # Why an LSM?
-> > >
-> > > Linux Security Modules target security behaviours rather than the
-> > > kernel's API. For example, it's easy to miss out a newly added system
-> > > call for executing processes (eg. execve, execveat etc.) but the LSM
-> > > framework ensures that all process executions trigger the relevant hooks
-> > > irrespective of how the process was executed.
-> > >
-> > > Allowing users to implement LSM hooks at runtime also benefits the LSM
-> > > eco-system by enabling a quick feedback loop from the security community
-> > > about the kind of behaviours that the LSM Framework should be targeting.
-> > >
-> > > # How does it work?
-> > >
-> > > The LSM introduces a new eBPF (https://docs.cilium.io/en/v1.6/bpf/)
-> > > program type, BPF_PROG_TYPE_LSM, which can only be attached to a LSM
-> > > hook.  All LSM hooks are exposed as files in securityfs. Attachment
-> > > requires CAP_SYS_ADMIN for loading eBPF programs and CAP_MAC_ADMIN for
-> > > modifying MAC policies.
-> > >
-> > > The eBPF programs are passed the same arguments as the LSM hooks and
-> > > executed in the body of the hook.
-> >
-> > This effectively exposes the LSM hooks as external APIs.
-> > It would mean that we can't change or delete them. That
-> > would be bad.
-> 
-> Perhaps this should have been clearer, we *do not* want to make LSM hooks
-> a stable API and expect the eBPF programs to adapt when such changes occur.
-> 
-> Based on our comparison with the previous approach, this still ends up
-> being a better trade-off (w.r.t. maintenance) when compared to adding
-> specific helpers or verifier logic for  each new hook or field that
-> needs to be exposed.
+> Good catch! You're right. These macros will not be there in v2 as
+> we move to using trampolines based callbacks.
 
-Given the discussion around tracing and stable ABI at the last kernel
-summit, Linus's mandate is mainly around "every day users" and not
-around these system-builder-sensitive cases where everyone has a strong
-expectation to rebuild their policy when the kernel changes. i.e. it's
-not "powertop", which was Linus's example of "and then everyone running
-Fedora breaks".
-
-So, while I know we've tried in the past to follow the letter of the
-law, it seems Linus really expects this only to be followed when it will
-have "real world" impact on unsuspecting end users.
-
-Obviously James Morris has the final say here, but as I understand it,
-it is fine to expose these here for the same reasons it's fine to expose
-the (ever changing) tracepoints and BPF hooks.
-
--Kees
+Speaking of which -- is the BPF trampoline code correctly designed to be
+W^X?
 
 -- 
 Kees Cook
