@@ -6,106 +6,95 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A107DC2D0C2
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 19:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54613C2D0C3
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 20:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 777242071E
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 19:30:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A2huiwkM"
+	by mail.kernel.org (Postfix) with ESMTP id 24B6B20658
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Dec 2019 20:15:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1577736919;
+	bh=Y5Md63y9ed5vH4kWr2XOEflxc2mMGD8E2NiwLKoa4oM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=uofwu0bbP8AWr2ieMH1ZGmEaxWYC7ky0y3yX6YkBMVeUtBDmTtSURkGlLo683gSox
+	 3dEZfSxz6T2zPw5mnzct+LPK5jZqbboiRTznPLAyd3M/C7l6oXT5gJ2HDSHUfiRfMr
+	 YYYsQ/fF0w690PZKQXmK70KvL7hed1xb3XMrCTYg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbfL3TaW (ORCPT
+        id S1727702AbfL3UPS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Dec 2019 14:30:22 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46215 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727648AbfL3TaW (ORCPT
+        Mon, 30 Dec 2019 15:15:18 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:47056 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbfL3UPS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Dec 2019 14:30:22 -0500
-Received: by mail-ot1-f66.google.com with SMTP id k8so30245037otl.13
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Dec 2019 11:30:21 -0800 (PST)
+        Mon, 30 Dec 2019 15:15:18 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f15so25803670lfl.13
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Dec 2019 12:15:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=FWVYjFfIIe+qY04H734qWucJ1T7JU5SJXMfcm3nyZe8=;
-        b=A2huiwkMJ6SdcgAICeEHmr+07krTJrt3VjY13ea54T6c88+FuO+LnG9GQCgV1X8POI
-         lhISAEjoPpzErokSmTog+0tBPZdNbW+sM9v6BcJX91cPA3kYUmbGFk3fOJb2wRrSKGyq
-         Z/LBK9gmn2GJHBV8S2MecPheW56GHJV6I2nN0=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0NUD8zZAQo+O9PgfrBGhsCZfnogIqpNz9ilU9EfzbLI=;
+        b=Cw67PqYmY/9S3uWAD1VHsvkn1/R3WJ4iRuDhSyOtGeWMdXghCBxnq7YsOEtiUzJHim
+         Vp31uJwyLJV62QuaFJjNEjhaAO7DeKrjBVuAaqC9Wz0tYLuOL+qVGWaET2U4f7Y70an7
+         M+OOMzDlKChNyvPNj5GGoYW9JzpJ6hT5JzIHg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=FWVYjFfIIe+qY04H734qWucJ1T7JU5SJXMfcm3nyZe8=;
-        b=rM4ivdgdZFK3mgfIdx8yVb2QcioulEq96jYg8amEdhXZbD1lljiWt2pC9B3Vzi8Auz
-         MmKkEICqMEpOfdFwwudXE1esJ6/pfz1d+Lg92heTgutkVrUZYICxZ/16msx5cVzt8Lgb
-         HeKI99Sm+zfDj3O3/bS/QHTPElm+bGcauCqeABMyEm0moUOgyOMm6KFw1fJUjRIaaOd6
-         4OcO+6C0iMpPnS7f1RwMtNH7QZNZjYxnnus5LAfoU8q8myNCpItY5gZdi4ImNQtAN4qb
-         F9298eFUs8R+QYayWHz7/um+Rnl5dyCP1LxooN/r/XcJxALQNOEJa4fVQ+fPrTrykMnA
-         Cs9g==
-X-Gm-Message-State: APjAAAW/q87xdfgjWen+ikBIoePelzcXPj+rCcmp7ZJBlgmbe7oLWGVJ
-        eNpXJuN2jU/qLDaZwevm0FwduA==
-X-Google-Smtp-Source: APXvYqylwQx/pxF9jNXq8V9+2c/EaY/yAeM5ESWygh8UA426HKAmV3tZgouZQbhsGnnQMhE/2md2DQ==
-X-Received: by 2002:a9d:650f:: with SMTP id i15mr58642823otl.97.1577734221397;
-        Mon, 30 Dec 2019 11:30:21 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j186sm8998876oih.55.2019.12.30.11.30.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Dec 2019 11:30:20 -0800 (PST)
-Date:   Mon, 30 Dec 2019 11:30:19 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>
-Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF (KRSI)
-Message-ID: <201912301128.B37D55AB44@keescook>
-References: <20191220154208.15895-1-kpsingh@chromium.org>
- <a6b61f33-82dc-0c1c-7a6c-1926343ef63e@digikod.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0NUD8zZAQo+O9PgfrBGhsCZfnogIqpNz9ilU9EfzbLI=;
+        b=nlxB+d5rW3KKd0DiNXWCQMLTgzau+pTgi5VA53RAOf7q+VYHOuTaubn84nX2hvdNc1
+         KWFoaM4O8u0DqRedSxQtXVmpDDuDjJTVnAg4HPBr4o4qU7iF2KpU8WqS5pLvoTozE0St
+         SM006q78FVsyhYh56vEkxPV5yuGL9FBafLGwcA1WDOEg6QgnHMEs9kyO5euFoirFShOO
+         lrda1PefIGkDHerk30UQaxRu8uVR54sNIfvN7HySLT5pcI9gkMkkRnKWrNwh85AV4f9L
+         hHs/WZFMWhHp/NuSI+DUROjxjd2SEVeL1JihdRA+cGioz3joacAjTSm9PlvLf/aVAyFp
+         Atpw==
+X-Gm-Message-State: APjAAAUUUiTmqQplWlhY0AvcmuRnRP8e5HL1O57ris+2ZvhZOaZ0EEZg
+        H5kXn9AQwyI2WlYoI3URGrfVxwOtPIU=
+X-Google-Smtp-Source: APXvYqwzTTtWCYdb/SMTY+hOaikIOWmYqfLiy9iYZyonGTl5w4PH8721FceT97/oLHX2tY+Vd0H0bA==
+X-Received: by 2002:ac2:51de:: with SMTP id u30mr38533410lfm.69.1577736916035;
+        Mon, 30 Dec 2019 12:15:16 -0800 (PST)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id 195sm16627428ljj.55.2019.12.30.12.15.15
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Dec 2019 12:15:15 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id m30so25829461lfp.8
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Dec 2019 12:15:15 -0800 (PST)
+X-Received: by 2002:ac2:50cc:: with SMTP id h12mr38668703lfm.29.1577736914815;
+ Mon, 30 Dec 2019 12:15:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a6b61f33-82dc-0c1c-7a6c-1926343ef63e@digikod.net>
+References: <8483f2c2-626d-382f-3994-ee29daebff75@i-love.sakura.ne.jp>
+In-Reply-To: <8483f2c2-626d-382f-3994-ee29daebff75@i-love.sakura.ne.jp>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 30 Dec 2019 12:14:59 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgNYqYSdD530KWQ9gtTeEvBd_Frn54Xc45B3D8PPL8ijA@mail.gmail.com>
+Message-ID: <CAHk-=wgNYqYSdD530KWQ9gtTeEvBd_Frn54Xc45B3D8PPL8ijA@mail.gmail.com>
+Subject: Re: [GIT PULL] tomoyo fixes for 5.5
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 20, 2019 at 11:46:47PM +0100, Mickaël Salaün wrote:
-> I'm working on a version of Landlock without eBPF, but still with the
-> initial sought properties: safe unprivileged composability, modularity, and
-> dynamic update. I'll send this version soon.
-> 
-> I hope that the work and experience from Landlock to bring eBPF to LSM will
-> continue to be used through KRSI. Landlock will now focus on the
-> unprivileged sandboxing part, without eBPF. Stay tuned!
+On Mon, Dec 30, 2019 at 3:32 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> This is my first time for sending pull requests. It seems that most people
+> create a tag signed with GPG key but a few people send pull requests on
+> master branch without signing with GPG key. Did I follow necessary steps?
 
-Will it end up looking at all like pledge? I'm still struggling to come
-up with a sensible pledge-like design on top of seccomp, especially
-given the need to have it very closely tied to the running libc...
+I do require the gpg signed tag for non-kernel.org pull requests like this.
 
--- 
-Kees Cook
+I trust the security at kernel.org - it requires 2FA and a gpg key
+just to even push to a git repo there at all - but even there I
+_prefer_ tags. But outside of kernel.org I absolutely do want to see a
+signed tag for a pull request, not just a master branch.
+
+Side note: I don't actually require the pgp key to be something I have
+a direct path to, and if you can't get big set of signatures on yours,
+that's fine for initial pull requests. The key ends up still being a
+kind of identity, and we can work on getting the proper web of trust
+built up over time.
+
+           Linus
