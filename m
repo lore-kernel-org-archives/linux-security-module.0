@@ -2,122 +2,135 @@ Return-Path: <SRS0=YZ/+=2V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB030C2D0DE
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Dec 2019 12:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A88C3F68F
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Dec 2019 13:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8E51206E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Dec 2019 12:13:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4721C206DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Dec 2019 13:13:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfLaMNK (ORCPT
+        id S1726674AbfLaNN2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 31 Dec 2019 07:13:10 -0500
-Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:42905 "EHLO
-        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbfLaMNK (ORCPT
+        Tue, 31 Dec 2019 08:13:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:22482 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726229AbfLaNN2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 31 Dec 2019 07:13:10 -0500
-Received: from smtp-2-0000.mail.infomaniak.ch ([10.5.36.107])
-        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id xBVCCBnS003437
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 31 Dec 2019 13:12:11 +0100
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 36C571028F798;
-        Tue, 31 Dec 2019 13:12:07 +0100 (CET)
-Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF (KRSI)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-References: <20191220154208.15895-1-kpsingh@chromium.org>
- <a6b61f33-82dc-0c1c-7a6c-1926343ef63e@digikod.net>
- <201912301128.B37D55AB44@keescook>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Autocrypt: addr=mic@digikod.net; prefer-encrypt=mutual; keydata=
- mQINBFNUOTgBEAC5HCwtCH/iikbZRDkXUSZa078Fz8H/21oNdzi13NM0ZdeR9KVq28ZCBAud
- law2P+HhaPFuZLqzRiy+iNOumPgrUyNphLhxWby/JgD7hvhYs5HJgdX0VTwzGqprmAeDKbnS
- G0Q2zxmnkb1/ENRTfrOIBm5LwyRhWIw5hg+HKh88g6qztDHdVSGqgWGLhj7RqDgHCgC4kAve
- /tWwfnpmMMndi5V+wg5EanyiffjAq6GHwzWbal+u3lkV8zNo15VZ+6mOY3X6dfYFVeX8hAP4
- u6OxzK4dQhDMVnJux5jum8RXtkSASiQpvx80npFbToIMgziWoWPV+Ag3Ti9JsactNzygozjL
- G0j8nc4dtfdkFoflEqtFIz2ZVWlmvcjbxTbvFpK2TwbVSiXe3Iyn4FIatk8tPsyY+mwKLzsc
- RNXaOXXB3kza0JmmnOyLCZuCTkds8FHvEG3nMIvyzXiobFM5F2b5Xo5x0fSo2ycIXXWgNJFn
- X1QXiPEM+emIRH0q2mHNAdvDki/Ns+qmkI4MQjWNGLGzlzb2GJBb5jXmkxEhk0/hUXVK3WYu
- /jGRQAbyX3XASArcw4RNFWd6fwzsX4Ras52BwI2qZaVAh4OclArEoSh5lGweizpN+1K8SnxG
- zVmvUDS8MfwlO97Kge4jzD0nRFOVE/z2DOLp6ZOcdRTxmTZNEwARAQABtCJNaWNrYcOrbCBT
- YWxhw7xuIDxtaWNAZGlnaWtvZC5uZXQ+iQI9BBMBCgAnBQJTVDk4AhsDBQkLRzUABQsJCAcD
- BRUKCQgLBRYDAgEAAh4BAheAAAoJECkv1ZR9XFaW/64P/3wPay/u16aRGeRgUl7ZZ8aZ50WH
- kCZHmX/aemxBk4lKNjbghzQFcuRkLODN0HXHZqqObLo77BKrSiVwlPSTNguXs9R6IaRfITvP
- 6k1ka/1I5ItczhHq0Ewf0Qs9SUphIGa71aE0zoWC4AWMz/avx/tvPdI4HoQop4K3DCJU5BXS
- NYDVOc8Ug9Zq+C1dM3PnLbL1BR1/K3D+fqAetQ9Aq/KP1NnsfSYQvkMoHIJ/6s0p3cUTkWJ3
- 0TjkJliErYdn+V3Uj049XPe1KN04jldZ5MJDEQv5G3o4zEGcMpziYxw75t6SJ+/lzeJyzJjy
- uYYzg8fqxJ8x9CYVrG1s8xcXu9TqPzFcHszfl9N01gOaT5UbJrjI8d2b2SG7SR9Wzn9FWNdy
- Uc/r/enMcnRkiMgadt6qSG+Z0UMwxPt/DTOkv5ISxyY8IzDJDCZ5HrBd9hTmTSztS+UUC2r1
- 5ijaOSCTWtGgJz/86ERDiUULZmhmQ1C9On46ilAgKEq4Eg3fXy6+kMaZXT3RTDrCtVrD4U58
- 11KD1mR4y8WwW5LJvKikqspaqrEVC4AyAbLwEsdjVmEVkdFqm6qW4YbaK+g/Wkr0jxuJ0bVn
- PTABQxmDBVUxsE6qDy6+s8ZWoPfwI1FK2TZwoIH0OQiffSXx6mdEO5X4O4Pj7f8pz723xCxV
- 1hqz/rrZ
-Message-ID: <6bb12d3a-5613-2891-83af-43e3176481dc@digikod.net>
-Date:   Tue, 31 Dec 2019 13:11:51 +0100
-User-Agent: 
-MIME-Version: 1.0
-In-Reply-To: <201912301128.B37D55AB44@keescook>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
+        Tue, 31 Dec 2019 08:13:28 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBVD7KxN101252
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Dec 2019 08:13:27 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2x869r93yf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Dec 2019 08:13:27 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 31 Dec 2019 13:13:25 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 31 Dec 2019 13:13:21 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBVDDKNT56098828
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Dec 2019 13:13:20 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A3B9A42047;
+        Tue, 31 Dec 2019 13:13:20 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 502FF42041;
+        Tue, 31 Dec 2019 13:13:19 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.184.68])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 31 Dec 2019 13:13:19 +0000 (GMT)
+Subject: Re: [PATCH v13 03/25] LSM: Use lsmblob in security_audit_rule_match
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        sds@tycho.nsa.gov, Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Tue, 31 Dec 2019 08:13:18 -0500
+In-Reply-To: <20191224235939.7483-4-casey@schaufler-ca.com>
+References: <20191224235939.7483-1-casey@schaufler-ca.com>
+         <20191224235939.7483-4-casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+X-TM-AS-GCONF: 00
+x-cbid: 19123113-0020-0000-0000-0000039CCA25
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19123113-0021-0000-0000-000021F412DB
+Message-Id: <1577797998.5874.75.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-31_03:2019-12-30,2019-12-31 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 suspectscore=2 spamscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912310115
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+[Cc'ing Janne Karhunen based on his recent work updating IMA policy
+rules LSM id's - commit b16942455193 ("ima: use the lsm policy update
+notifier")]
 
-On 30/12/2019 20:30, Kees Cook wrote:
-> On Fri, Dec 20, 2019 at 11:46:47PM +0100, Micka�l Sala�n wrote:
->> I'm working on a version of Landlock without eBPF, but still with the
->> initial sought properties: safe unprivileged composability, modularity, and
->> dynamic update. I'll send this version soon.
->>
->> I hope that the work and experience from Landlock to bring eBPF to LSM will
->> continue to be used through KRSI. Landlock will now focus on the
->> unprivileged sandboxing part, without eBPF. Stay tuned!
+On Tue, 2019-12-24 at 15:59 -0800, Casey Schaufler wrote:
+> diff --git a/security/security.c b/security/security.c
+> index 87fc70f77660..12e1e6223233 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -439,7 +439,7 @@ static int lsm_append(const char *new, char **result)
+>  /*
+>   * Current index to use while initializing the lsmblob secid list.
+>   */
+> -static int lsm_slot __initdata;
+> +static int lsm_slot __lsm_ro_after_init;
 > 
-> Will it end up looking at all like pledge? I'm still struggling to come
-> up with a sensible pledge-like design on top of seccomp, especially
-> given the need to have it very closely tied to the running libc...
+>  /**
+>   * security_add_hooks - Add a modules hooks to the hook lists.
+> @@ -2412,9 +2412,21 @@ void security_audit_rule_free(void *lsmrule)
+>  	call_void_hook(audit_rule_free, lsmrule);
+>  }
 > 
+> -int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+> +int security_audit_rule_match(struct lsmblob *blob, u32 field, u32 op,
+> +			      void *lsmrule)
+>  {
+> -	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
+> +	struct security_hook_list *hp;
+> +	int rc;
+> +
+> +	hlist_for_each_entry(hp, &security_hook_heads.audit_rule_match, list) {
+> +		if (WARN_ON(hp->lsmid->slot < 0 || hp->lsmid->slot >= lsm_slot))
+> +			continue;
+> +		rc = hp->hook.audit_rule_match(blob->secid[hp->lsmid->slot],
+> +					       field, op, lsmrule);
 
-Yes, it's similar to Pledge/Unveil but with fine-grained control (and a
-more flexible design). And because it is not tied to syscall, there is
-no similar issues than with seccomp and libc. In fact, there is no more
-relationship with seccomp neither. The version I'm working on is similar
-in principle to the patch series v10 [1], without the usage complexity
-brought by eBPF, but with a more polished file-based access-control. The
-demo from LSS 2018 [2] gives an overview of the possibilities.
+IMA's policy rules may be written in terms of LSM labels.  On IMA
+policy initialization and, subsequently, when the LSM policy is
+updated, IMA correlates LSM labels with LSM ids.  Doesn't
+security_audit_rule_init() also need to be updated to walk the LSMs?
 
-[1] https://lore.kernel.org/lkml/20190721213116.23476-1-mic@digikod.net/
-[2] https://landlock.io/talks/2018-08-27_landlock-lss_demo-1-web.mkv
+The basic assumption with security_audit_rule_match() is that there
+isn't any naming overlap.  Is that guaranteed?  With this change, do
+the IMA policy rules now need to be LSM qualified?
+
+Mimi
+
+> +		if (rc != 0)
+> +			return rc;
+> +	}
+> +	return 0;
+>  }
+>  #endif /* CONFIG_AUDIT */
+
