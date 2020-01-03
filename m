@@ -2,114 +2,118 @@ Return-Path: <SRS0=IjdJ=2Y=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82323C32767
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 15:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C83C3F68F
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 17:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 595BA222C3
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 15:55:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="BKJ6jXn4"
+	by mail.kernel.org (Postfix) with ESMTP id B2AFE215A4
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 17:11:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbgACPzv (ORCPT
+        id S1728057AbgACRLg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jan 2020 10:55:51 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45841 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727539AbgACPzv (ORCPT
+        Fri, 3 Jan 2020 12:11:36 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56478 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728049AbgACRLf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jan 2020 10:55:51 -0500
-Received: by mail-lf1-f67.google.com with SMTP id 203so32081985lfa.12
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Jan 2020 07:55:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ddaTtFCjjEwAEYd+PpHbtImJVfOEWlRXs7KX6+jip6k=;
-        b=BKJ6jXn4pFBNgwmSInzitZT3foO/A08jxgQAVP1eDxLn1ff9NMGXThb8DVAOIAOMw3
-         esbowAi6+RQOJoJke7GIYs691SWKdY/GyQsGIYDmMUiiObNodVmp3m52YWWwZ2I2ECtG
-         +OgaMsjVHIzDXO4z23QIO7Qpysmk316orRm4Pk/rm/Re6ZV9l9J3I6pikJuXklIjk03s
-         R1x5C58+Fyn2NEhEa2o1AGknTolAAAtKvr/vUbVNj7IFEqEWlxjOOR1zOswFmVxI8k96
-         slRx/JRDm1Zxx6hpkHJTXlQbgYm8HdjV6T15dLjplHHmhOMRh7Kg4IqL8/Lqk8FgJpU6
-         c83w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ddaTtFCjjEwAEYd+PpHbtImJVfOEWlRXs7KX6+jip6k=;
-        b=qWzO1Y6Oi+I7zZbZLX1bwCl4oKuiSKB6crvT+1AO6AxSKhoAvE8hG3/4zO/BP8JpAf
-         HpScj7Uvb2j9Fu3jQIyT+GAOJowrJgnriaL7XeqIsJrwR+R+w0dxklwlE10ztjJJhOIw
-         nwkBgysArycWrtb84Dy01T8JSbnw1THs5aCoNL8e/3wIBEOsidl8yorKGWudJTsg+h6U
-         pe+OQUnHoVpJu3wpWZ6iwdqeik9dDiq/TO4L29pIHC+xp9tw6CqeBw1KqlYcbYV4cN0I
-         D3JIHrCKqK6GJm+Ny0gOc+rWqbMdsOEUQUv2ry7vI4PXDscJeA8G+BTSCE6jjPcMj1n1
-         NmRg==
-X-Gm-Message-State: APjAAAVypXPMLlH3WlufIre2Xu5JJkseBycsJ30PuFSvvMS+T+DPpSNH
-        xKyIMg38VV7bD0M0FMy9BLqKj3yrjrIqkx2UIL2w
-X-Google-Smtp-Source: APXvYqwe49PA2g09iqfrXB8tsdkfqRIeC2hIHFqPDuBYrXGx1LOXXS42ZE81JkQfeWpqBE1L39HRvZYkLsdF92SiF5M=
-X-Received: by 2002:ac2:5983:: with SMTP id w3mr51485506lfn.137.1578066949398;
- Fri, 03 Jan 2020 07:55:49 -0800 (PST)
-MIME-Version: 1.0
-References: <157678334821.158235.2125894638773393579.stgit@chester>
- <CAFqZXNvXuWx-kCJeZKOgx4NSesCvnC63kHf6-=_SrFLH4xubag@mail.gmail.com>
- <CAHC9VhTHroatmHKt3Saru18TktFY8EXjsxkx-pWvx87-RUx8HA@mail.gmail.com> <CAFqZXNubaXZtF-yN6tMBuM+AGmSy=1nTcTimFfXaok32GY3aYA@mail.gmail.com>
-In-Reply-To: <CAFqZXNubaXZtF-yN6tMBuM+AGmSy=1nTcTimFfXaok32GY3aYA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 3 Jan 2020 10:55:37 -0500
-Message-ID: <CAHC9VhQzqRSfyfs74Lwz+-kJi5r_EvqBbmkzQBd2e8m2B5VDSw@mail.gmail.com>
-Subject: Re: [RFC PATCH] selinux: deprecate disabling SELinux and runtime
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
+        Fri, 3 Jan 2020 12:11:35 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 003H7PQB104972
+        for <linux-security-module@vger.kernel.org>; Fri, 3 Jan 2020 12:11:34 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xa14qxfrn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Jan 2020 12:11:34 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 3 Jan 2020 17:11:32 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 3 Jan 2020 17:11:29 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 003HBSWx35913866
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 3 Jan 2020 17:11:28 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5E3C94C046;
+        Fri,  3 Jan 2020 17:11:28 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7C4694C040;
+        Fri,  3 Jan 2020 17:11:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.194.89])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  3 Jan 2020 17:11:27 +0000 (GMT)
+Subject: Re: [PATCH] ima: Add a space after printing a LSM rule for
+ readability
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     clayc@hpe.com, linux-kernel@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com
+Date:   Fri, 03 Jan 2020 12:11:27 -0500
+In-Reply-To: <1578037863-7102-1-git-send-email-clayc@hpe.com>
+References: <1578037863-7102-1-git-send-email-clayc@hpe.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20010317-0012-0000-0000-0000037A4312
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20010317-0013-0000-0000-000021B65728
+Message-Id: <1578071487.5152.13.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-03_05:2020-01-02,2020-01-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ impostorscore=0 suspectscore=0 clxscore=1015 bulkscore=0 phishscore=0
+ mlxscore=0 mlxlogscore=999 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001030157
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 3, 2020 at 4:32 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> On Thu, Jan 2, 2020 at 10:38 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Thu, Jan 2, 2020 at 4:24 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > On Thu, Dec 19, 2019 at 8:22 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > > Deprecate the CONFIG_SECURITY_SELINUX_DISABLE functionality ...
+On Fri, 2020-01-03 at 15:51 +0800, clayc@hpe.com wrote:
+> From: Clay Chang <clayc@hpe.com>
 
-...
+Normally this "From" line is only seen when the sender isn't the patch
+author.  Any ideas what happened? 
 
-> > > Looks reasonable, informal ACK from me.
-> >
-> > Thanks.  You want to make that a formal ACK? ;)
->
-> Sure, if you find it useful :)
->
-> Acked-by: Ondrej Mosnacek <omosnace@redhat.com>
+> 
+> When reading ima_policy from securityfs, there is a missing
+> space between output string of LSM rules.
+> 
+> Signed-off-by: Clay Chang <clayc@hpe.com>
 
-Yes, it is useful, thank you.
+Good catch!  IMA policy rules based on LSM labels are used to
+constrain which files are in policy.  Normally a single LSM label is
+enough (e.g. dont_measure obj_type=auditd_log_t).  Could you include
+in this patch description a use case where multiple LSM labels are
+needed?
 
-For this patch your ACK is particularly significant because you are
-representing RH here (I'm assuming you are still the RH SELinux kernel
-person) and we are deprecating a feature used by Fedora.  In my
-opinion it would be a mistake to merge a deprecation patch without the
-ACKs of those who rely on the feature targeted for removal (although
-in some cases it may need to be done regardless).
+thanks,
 
-I also really dislike merging my own patches without at least one
-other Acked-by/Reviewed-by tag for the simple reason that I believe
-every patch should have at least two people (author and at least one
-reviewer) who agree that the patch is reasonable.  Of course there are
-exceptions for trivial and critical fixes, e.g. 15b590a81fcd
-("selinux: ensure the policy has been loaded before reading the sidtab
-stats"), but I like to keep those as the exception rather than the
-rule.  Just because someone is listed in the MAINTAINERS file
-shouldn't mean they are exempt from the normal review process.
+Mimi
 
-Generally speaking, one of the more useful things one can do from an
-upstream perspective is to review and test patches that are submitted
-to the list.  We are a community driven project after all, and the
-community aspect shouldn't be limited to just the development of
-patches ;)
+> ---
+>  security/integrity/ima/ima_policy.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index ef8dfd47c7e3..1a266e4f99bc 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -1496,6 +1496,7 @@ int ima_policy_show(struct seq_file *m, void *v)
+>  					   (char *)entry->lsm[i].args_p);
+>  				break;
+>  			}
+> +			seq_puts(m, " ");
+>  		}
+>  	}
+>  	if (entry->template)
 
--- 
-paul moore
-www.paul-moore.com
