@@ -2,127 +2,122 @@ Return-Path: <SRS0=IjdJ=2Y=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A718EC2D0CE
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 08:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 086BFC2D0C2
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 09:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88DC522314
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 08:56:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDB7321835
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 09:32:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="buQmi+65"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgACI4m (ORCPT
+        id S1726181AbgACJcy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jan 2020 03:56:42 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:41362 "EHLO mail.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbgACI4m (ORCPT
+        Fri, 3 Jan 2020 04:32:54 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:30440 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725972AbgACJcy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jan 2020 03:56:42 -0500
-Received: from comp-core-i7-2640m-0182e6 (nat-pool-brq-t.redhat.com [213.175.37.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id 65FB8C61AF3;
-        Fri,  3 Jan 2020 08:56:36 +0000 (UTC)
-Date:   Fri, 3 Jan 2020 09:56:34 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     J Freyensee <why2jjj.linux@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v6 07/10] proc: flush task dcache entries from all procfs
- instances
-Message-ID: <20200103085634.6xkgb4aonivjhfnq@comp-core-i7-2640m-0182e6>
-Mail-Followup-To: J Freyensee <why2jjj.linux@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
- <20191225125151.1950142-8-gladkov.alexey@gmail.com>
- <8d85ba43-0759-358e-137d-246107bac747@gmail.com>
+        Fri, 3 Jan 2020 04:32:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578043972;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=peCLyUcHcZDtrn11rrPNe5EtP4MeO4tPS8pTg/OSCns=;
+        b=buQmi+65BppowjJQECiYIM86Xb0SNN20At5HcktBk/3iuihDTibpanY0LRRw67kkVMoldb
+        fKUfhiPBdlKl0Kedm6Y8hKYQfC73HoexXsig2+9yzUrwYbY9mteoz7OXcArEnELU3rOE17
+        1OnNvp9vGiy1HBi6c5onmUh+qfNUyVU=
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
+ [209.85.167.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-326-MqkTmSEBPM-ibgNKk5nhMw-1; Fri, 03 Jan 2020 04:32:51 -0500
+Received: by mail-oi1-f200.google.com with SMTP id n130so11603504oib.5
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Jan 2020 01:32:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hG5Q9vhcZG5Wd6ocJI6dU3GALHIbQ+VzDS0McYQNwxQ=;
+        b=o74yk4a/nMw/gTyvks/pzFptqBZTZKxqPj6ByiOG66rt7HjRazaMB7gIE+VnvIA8Rx
+         215fVwmypfvfsYU2yTwkt1Y5NK6CxZADjqBHR5twYYkZzyZDFt5txEaTDQaTnhISjUDY
+         djLoq5vz2juZ+adwrRjyqf5JdEv0op0mtHsfXuGpFQrtGeIrEA4Y5sQKwrSSRi8+2G8y
+         jk8y+5ZW0gWqPsQlqn5XfNL+5dsQvK6CDPsBAO1J2EDu+jYa63VTbwFxrkEdMVvLfLyu
+         GcwCA5IHc4JAaRP/65PmU6xycxEr1NnHtjbkorXCb1v7jlXBgas6wKjf/4S/EQP+RCQv
+         4RQA==
+X-Gm-Message-State: APjAAAWI/D1oXK/tAV3BW7Bs0OhWx7qxU4HDIm7u/+jbl6om+Mryk8/D
+        0+E8SyiHtuERyHiUQLQYnPHe+/8Ft6H+yGgB2oyvFBF40wahLQdkoR21imSH+qkp5fQUpOoVt5Y
+        DGSZBr3n1ys14NyxKQKQCO4zoJRWyeLcyIR/nQbwHMVRq8w9Wxrzw
+X-Received: by 2002:a9d:68d1:: with SMTP id i17mr80060860oto.367.1578043970747;
+        Fri, 03 Jan 2020 01:32:50 -0800 (PST)
+X-Google-Smtp-Source: APXvYqytjxQEJPalZMGDnik9IRoxtCxyOMSp3eFv1NtMz+TbTI3pmpfamRWNYnoNosMnG3Dk+6fGK3es/mWhhNRcLFY=
+X-Received: by 2002:a9d:68d1:: with SMTP id i17mr80060840oto.367.1578043970454;
+ Fri, 03 Jan 2020 01:32:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8d85ba43-0759-358e-137d-246107bac747@gmail.com>
+References: <157678334821.158235.2125894638773393579.stgit@chester>
+ <CAFqZXNvXuWx-kCJeZKOgx4NSesCvnC63kHf6-=_SrFLH4xubag@mail.gmail.com> <CAHC9VhTHroatmHKt3Saru18TktFY8EXjsxkx-pWvx87-RUx8HA@mail.gmail.com>
+In-Reply-To: <CAHC9VhTHroatmHKt3Saru18TktFY8EXjsxkx-pWvx87-RUx8HA@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Fri, 3 Jan 2020 10:32:39 +0100
+Message-ID: <CAFqZXNubaXZtF-yN6tMBuM+AGmSy=1nTcTimFfXaok32GY3aYA@mail.gmail.com>
+Subject: Re: [RFC PATCH] selinux: deprecate disabling SELinux and runtime
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+X-MC-Unique: MqkTmSEBPM-ibgNKk5nhMw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 30, 2019 at 02:03:29PM -0800, J Freyensee wrote:
-> > +#ifdef CONFIG_PROC_FS
-> > +static inline void pidns_proc_lock(struct pid_namespace *pid_ns)
-> > +{
-> > +	down_write(&pid_ns->rw_proc_mounts);
-> > +}
-> > +
-> > +static inline void pidns_proc_unlock(struct pid_namespace *pid_ns)
-> > +{
-> > +	up_write(&pid_ns->rw_proc_mounts);
-> > +}
-> > +
-> > +static inline void pidns_proc_lock_shared(struct pid_namespace *pid_ns)
-> > +{
-> > +	down_read(&pid_ns->rw_proc_mounts);
-> > +}
-> > +
-> > +static inline void pidns_proc_unlock_shared(struct pid_namespace *pid_ns)
-> > +{
-> > +	up_read(&pid_ns->rw_proc_mounts);
-> > +}
-> > +#else /* !CONFIG_PROC_FS */
-> > +
-> Apologies for my newbie question. I couldn't help but notice all these
-> function calls are assuming that the parameter struct pid_namespace *pid_ns
-> will never be NULL.  Is that a good assumption?
+On Thu, Jan 2, 2020 at 10:38 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Thu, Jan 2, 2020 at 4:24 AM Ondrej Mosnacek <omosnace@redhat.com> wrot=
+e:
+> > On Thu, Dec 19, 2019 at 8:22 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > Deprecate the CONFIG_SECURITY_SELINUX_DISABLE functionality.  The
+> > > code was originally developed to make it easier for Linux
+> > > distributions to support architectures where adding parameters to the
+> > > kernel command line was difficult.  Unfortunately, supporting runtime
+> > > disable meant we had to make some security trade-offs when it came to
+> > > the LSM hooks, as documented in the Kconfig help text:
+> > >
+> > >   NOTE: selecting this option will disable the '__ro_after_init'
+> > >   kernel hardening feature for security hooks.   Please consider
+> > >   using the selinux=3D0 boot parameter instead of enabling this
+> > >   option.
+> > >
+> > > Fortunately it looks as if that the original motivation for the
+> > > runtime disable functionality is gone, and Fedora/RHEL appears to be
+> > > the only major distribution enabling this capability at build time
+> > > so we are now taking steps to remove it entirely from the kernel.
+> > > The first step is to mark the functionality as deprecated and print
+> > > an error when it is used (what this patch is doing).  As Fedora/RHEL
+> > > makes progress in transitioning the distribution away from runtime
+> > > disable, we will introduce follow-up patches over several kernel
+> > > releases which will block for increasing periods of time when the
+> > > runtime disable is used.  Finally we will remove the option entirely
+> > > once we believe all users have moved to the kernel cmdline approach.
+> > >
+> > > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> >
+> > Looks reasonable, informal ACK from me.
+>
+> Thanks.  You want to make that a formal ACK? ;)
 
-These inline helpers are introduced to improve readability. They only make
-sense inside procfs. I don't think that defensive programming is useful
-here.
+Sure, if you find it useful :)
 
--- 
-Rgrds, legion
+Acked-by: Ondrej Mosnacek <omosnace@redhat.com>
+
+--=20
+Ondrej Mosnacek <omosnace at redhat dot com>
+Software Engineer, Security Technologies
+Red Hat, Inc.
 
