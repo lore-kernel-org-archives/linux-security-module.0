@@ -2,82 +2,127 @@ Return-Path: <SRS0=IjdJ=2Y=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7147C32767
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 08:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A718EC2D0CE
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 08:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA9E721D7D
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 08:03:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88DC522314
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 08:56:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbgACIDF (ORCPT
+        id S1726390AbgACI4m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jan 2020 03:03:05 -0500
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:1906 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725890AbgACIDE (ORCPT
+        Fri, 3 Jan 2020 03:56:42 -0500
+Received: from monster.unsafe.ru ([5.9.28.80]:41362 "EHLO mail.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726050AbgACI4m (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jan 2020 03:03:04 -0500
-X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 Jan 2020 03:03:04 EST
-Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0037rYgJ004685;
-        Fri, 3 Jan 2020 07:57:51 GMT
-Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2xa0m1gc17-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Jan 2020 07:57:51 +0000
-Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
-        by g9t5008.houston.hpe.com (Postfix) with ESMTP id 583DF59;
-        Fri,  3 Jan 2020 07:57:51 +0000 (UTC)
-Received: from blofly.tw.rdlabs.hpecorp.net (blofly.tw.rdlabs.hpecorp.net [15.119.208.30])
-        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id 44A3E45;
-        Fri,  3 Jan 2020 07:57:48 +0000 (UTC)
-From:   clayc@hpe.com
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        Clay Chang <clayc@hpe.com>
-Subject: [PATCH] ima: Add a space after printing a LSM rule for readability
-Date:   Fri,  3 Jan 2020 15:51:03 +0800
-Message-Id: <1578037863-7102-1-git-send-email-clayc@hpe.com>
-X-Mailer: git-send-email 1.8.3.1
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2020-01-03_01:2020-01-02,2020-01-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
- adultscore=0 priorityscore=1501 phishscore=0 impostorscore=0 mlxscore=0
- lowpriorityscore=0 suspectscore=1 bulkscore=0 spamscore=0 mlxlogscore=786
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-2001030074
+        Fri, 3 Jan 2020 03:56:42 -0500
+Received: from comp-core-i7-2640m-0182e6 (nat-pool-brq-t.redhat.com [213.175.37.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.unsafe.ru (Postfix) with ESMTPSA id 65FB8C61AF3;
+        Fri,  3 Jan 2020 08:56:36 +0000 (UTC)
+Date:   Fri, 3 Jan 2020 09:56:34 +0100
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     J Freyensee <why2jjj.linux@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v6 07/10] proc: flush task dcache entries from all procfs
+ instances
+Message-ID: <20200103085634.6xkgb4aonivjhfnq@comp-core-i7-2640m-0182e6>
+Mail-Followup-To: J Freyensee <why2jjj.linux@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
+ <20191225125151.1950142-8-gladkov.alexey@gmail.com>
+ <8d85ba43-0759-358e-137d-246107bac747@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8d85ba43-0759-358e-137d-246107bac747@gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Clay Chang <clayc@hpe.com>
+On Mon, Dec 30, 2019 at 02:03:29PM -0800, J Freyensee wrote:
+> > +#ifdef CONFIG_PROC_FS
+> > +static inline void pidns_proc_lock(struct pid_namespace *pid_ns)
+> > +{
+> > +	down_write(&pid_ns->rw_proc_mounts);
+> > +}
+> > +
+> > +static inline void pidns_proc_unlock(struct pid_namespace *pid_ns)
+> > +{
+> > +	up_write(&pid_ns->rw_proc_mounts);
+> > +}
+> > +
+> > +static inline void pidns_proc_lock_shared(struct pid_namespace *pid_ns)
+> > +{
+> > +	down_read(&pid_ns->rw_proc_mounts);
+> > +}
+> > +
+> > +static inline void pidns_proc_unlock_shared(struct pid_namespace *pid_ns)
+> > +{
+> > +	up_read(&pid_ns->rw_proc_mounts);
+> > +}
+> > +#else /* !CONFIG_PROC_FS */
+> > +
+> Apologies for my newbie question. I couldn't help but notice all these
+> function calls are assuming that the parameter struct pid_namespace *pid_ns
+> will never be NULL.  Is that a good assumption?
 
-When reading ima_policy from securityfs, there is a missing
-space between output string of LSM rules.
+These inline helpers are introduced to improve readability. They only make
+sense inside procfs. I don't think that defensive programming is useful
+here.
 
-Signed-off-by: Clay Chang <clayc@hpe.com>
----
- security/integrity/ima/ima_policy.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index ef8dfd47c7e3..1a266e4f99bc 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1496,6 +1496,7 @@ int ima_policy_show(struct seq_file *m, void *v)
- 					   (char *)entry->lsm[i].args_p);
- 				break;
- 			}
-+			seq_puts(m, " ");
- 		}
- 	}
- 	if (entry->template)
 -- 
-2.18.1
+Rgrds, legion
 
