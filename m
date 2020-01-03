@@ -2,122 +2,114 @@ Return-Path: <SRS0=IjdJ=2Y=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 086BFC2D0C2
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 09:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82323C32767
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 15:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDB7321835
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 09:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 595BA222C3
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jan 2020 15:55:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="buQmi+65"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="BKJ6jXn4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726181AbgACJcy (ORCPT
+        id S1727946AbgACPzv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jan 2020 04:32:54 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:30440 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725972AbgACJcy (ORCPT
+        Fri, 3 Jan 2020 10:55:51 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45841 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727539AbgACPzv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jan 2020 04:32:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578043972;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=peCLyUcHcZDtrn11rrPNe5EtP4MeO4tPS8pTg/OSCns=;
-        b=buQmi+65BppowjJQECiYIM86Xb0SNN20At5HcktBk/3iuihDTibpanY0LRRw67kkVMoldb
-        fKUfhiPBdlKl0Kedm6Y8hKYQfC73HoexXsig2+9yzUrwYbY9mteoz7OXcArEnELU3rOE17
-        1OnNvp9vGiy1HBi6c5onmUh+qfNUyVU=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-326-MqkTmSEBPM-ibgNKk5nhMw-1; Fri, 03 Jan 2020 04:32:51 -0500
-Received: by mail-oi1-f200.google.com with SMTP id n130so11603504oib.5
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Jan 2020 01:32:51 -0800 (PST)
+        Fri, 3 Jan 2020 10:55:51 -0500
+Received: by mail-lf1-f67.google.com with SMTP id 203so32081985lfa.12
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Jan 2020 07:55:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ddaTtFCjjEwAEYd+PpHbtImJVfOEWlRXs7KX6+jip6k=;
+        b=BKJ6jXn4pFBNgwmSInzitZT3foO/A08jxgQAVP1eDxLn1ff9NMGXThb8DVAOIAOMw3
+         esbowAi6+RQOJoJke7GIYs691SWKdY/GyQsGIYDmMUiiObNodVmp3m52YWWwZ2I2ECtG
+         +OgaMsjVHIzDXO4z23QIO7Qpysmk316orRm4Pk/rm/Re6ZV9l9J3I6pikJuXklIjk03s
+         R1x5C58+Fyn2NEhEa2o1AGknTolAAAtKvr/vUbVNj7IFEqEWlxjOOR1zOswFmVxI8k96
+         slRx/JRDm1Zxx6hpkHJTXlQbgYm8HdjV6T15dLjplHHmhOMRh7Kg4IqL8/Lqk8FgJpU6
+         c83w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hG5Q9vhcZG5Wd6ocJI6dU3GALHIbQ+VzDS0McYQNwxQ=;
-        b=o74yk4a/nMw/gTyvks/pzFptqBZTZKxqPj6ByiOG66rt7HjRazaMB7gIE+VnvIA8Rx
-         215fVwmypfvfsYU2yTwkt1Y5NK6CxZADjqBHR5twYYkZzyZDFt5txEaTDQaTnhISjUDY
-         djLoq5vz2juZ+adwrRjyqf5JdEv0op0mtHsfXuGpFQrtGeIrEA4Y5sQKwrSSRi8+2G8y
-         jk8y+5ZW0gWqPsQlqn5XfNL+5dsQvK6CDPsBAO1J2EDu+jYa63VTbwFxrkEdMVvLfLyu
-         GcwCA5IHc4JAaRP/65PmU6xycxEr1NnHtjbkorXCb1v7jlXBgas6wKjf/4S/EQP+RCQv
-         4RQA==
-X-Gm-Message-State: APjAAAWI/D1oXK/tAV3BW7Bs0OhWx7qxU4HDIm7u/+jbl6om+Mryk8/D
-        0+E8SyiHtuERyHiUQLQYnPHe+/8Ft6H+yGgB2oyvFBF40wahLQdkoR21imSH+qkp5fQUpOoVt5Y
-        DGSZBr3n1ys14NyxKQKQCO4zoJRWyeLcyIR/nQbwHMVRq8w9Wxrzw
-X-Received: by 2002:a9d:68d1:: with SMTP id i17mr80060860oto.367.1578043970747;
-        Fri, 03 Jan 2020 01:32:50 -0800 (PST)
-X-Google-Smtp-Source: APXvYqytjxQEJPalZMGDnik9IRoxtCxyOMSp3eFv1NtMz+TbTI3pmpfamRWNYnoNosMnG3Dk+6fGK3es/mWhhNRcLFY=
-X-Received: by 2002:a9d:68d1:: with SMTP id i17mr80060840oto.367.1578043970454;
- Fri, 03 Jan 2020 01:32:50 -0800 (PST)
+        bh=ddaTtFCjjEwAEYd+PpHbtImJVfOEWlRXs7KX6+jip6k=;
+        b=qWzO1Y6Oi+I7zZbZLX1bwCl4oKuiSKB6crvT+1AO6AxSKhoAvE8hG3/4zO/BP8JpAf
+         HpScj7Uvb2j9Fu3jQIyT+GAOJowrJgnriaL7XeqIsJrwR+R+w0dxklwlE10ztjJJhOIw
+         nwkBgysArycWrtb84Dy01T8JSbnw1THs5aCoNL8e/3wIBEOsidl8yorKGWudJTsg+h6U
+         pe+OQUnHoVpJu3wpWZ6iwdqeik9dDiq/TO4L29pIHC+xp9tw6CqeBw1KqlYcbYV4cN0I
+         D3JIHrCKqK6GJm+Ny0gOc+rWqbMdsOEUQUv2ry7vI4PXDscJeA8G+BTSCE6jjPcMj1n1
+         NmRg==
+X-Gm-Message-State: APjAAAVypXPMLlH3WlufIre2Xu5JJkseBycsJ30PuFSvvMS+T+DPpSNH
+        xKyIMg38VV7bD0M0FMy9BLqKj3yrjrIqkx2UIL2w
+X-Google-Smtp-Source: APXvYqwe49PA2g09iqfrXB8tsdkfqRIeC2hIHFqPDuBYrXGx1LOXXS42ZE81JkQfeWpqBE1L39HRvZYkLsdF92SiF5M=
+X-Received: by 2002:ac2:5983:: with SMTP id w3mr51485506lfn.137.1578066949398;
+ Fri, 03 Jan 2020 07:55:49 -0800 (PST)
 MIME-Version: 1.0
 References: <157678334821.158235.2125894638773393579.stgit@chester>
- <CAFqZXNvXuWx-kCJeZKOgx4NSesCvnC63kHf6-=_SrFLH4xubag@mail.gmail.com> <CAHC9VhTHroatmHKt3Saru18TktFY8EXjsxkx-pWvx87-RUx8HA@mail.gmail.com>
-In-Reply-To: <CAHC9VhTHroatmHKt3Saru18TktFY8EXjsxkx-pWvx87-RUx8HA@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Fri, 3 Jan 2020 10:32:39 +0100
-Message-ID: <CAFqZXNubaXZtF-yN6tMBuM+AGmSy=1nTcTimFfXaok32GY3aYA@mail.gmail.com>
+ <CAFqZXNvXuWx-kCJeZKOgx4NSesCvnC63kHf6-=_SrFLH4xubag@mail.gmail.com>
+ <CAHC9VhTHroatmHKt3Saru18TktFY8EXjsxkx-pWvx87-RUx8HA@mail.gmail.com> <CAFqZXNubaXZtF-yN6tMBuM+AGmSy=1nTcTimFfXaok32GY3aYA@mail.gmail.com>
+In-Reply-To: <CAFqZXNubaXZtF-yN6tMBuM+AGmSy=1nTcTimFfXaok32GY3aYA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 3 Jan 2020 10:55:37 -0500
+Message-ID: <CAHC9VhQzqRSfyfs74Lwz+-kJi5r_EvqBbmkzQBd2e8m2B5VDSw@mail.gmail.com>
 Subject: Re: [RFC PATCH] selinux: deprecate disabling SELinux and runtime
-To:     Paul Moore <paul@paul-moore.com>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
 Cc:     SElinux list <selinux@vger.kernel.org>,
         Linux Security Module list 
         <linux-security-module@vger.kernel.org>
-X-MC-Unique: MqkTmSEBPM-ibgNKk5nhMw-1
-X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 2, 2020 at 10:38 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Thu, Jan 2, 2020 at 4:24 AM Ondrej Mosnacek <omosnace@redhat.com> wrot=
-e:
-> > On Thu, Dec 19, 2019 at 8:22 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > Deprecate the CONFIG_SECURITY_SELINUX_DISABLE functionality.  The
-> > > code was originally developed to make it easier for Linux
-> > > distributions to support architectures where adding parameters to the
-> > > kernel command line was difficult.  Unfortunately, supporting runtime
-> > > disable meant we had to make some security trade-offs when it came to
-> > > the LSM hooks, as documented in the Kconfig help text:
-> > >
-> > >   NOTE: selecting this option will disable the '__ro_after_init'
-> > >   kernel hardening feature for security hooks.   Please consider
-> > >   using the selinux=3D0 boot parameter instead of enabling this
-> > >   option.
-> > >
-> > > Fortunately it looks as if that the original motivation for the
-> > > runtime disable functionality is gone, and Fedora/RHEL appears to be
-> > > the only major distribution enabling this capability at build time
-> > > so we are now taking steps to remove it entirely from the kernel.
-> > > The first step is to mark the functionality as deprecated and print
-> > > an error when it is used (what this patch is doing).  As Fedora/RHEL
-> > > makes progress in transitioning the distribution away from runtime
-> > > disable, we will introduce follow-up patches over several kernel
-> > > releases which will block for increasing periods of time when the
-> > > runtime disable is used.  Finally we will remove the option entirely
-> > > once we believe all users have moved to the kernel cmdline approach.
-> > >
-> > > Signed-off-by: Paul Moore <paul@paul-moore.com>
+On Fri, Jan 3, 2020 at 4:32 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Thu, Jan 2, 2020 at 10:38 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Thu, Jan 2, 2020 at 4:24 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > > On Thu, Dec 19, 2019 at 8:22 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > > Deprecate the CONFIG_SECURITY_SELINUX_DISABLE functionality ...
+
+...
+
+> > > Looks reasonable, informal ACK from me.
 > >
-> > Looks reasonable, informal ACK from me.
+> > Thanks.  You want to make that a formal ACK? ;)
 >
-> Thanks.  You want to make that a formal ACK? ;)
+> Sure, if you find it useful :)
+>
+> Acked-by: Ondrej Mosnacek <omosnace@redhat.com>
 
-Sure, if you find it useful :)
+Yes, it is useful, thank you.
 
-Acked-by: Ondrej Mosnacek <omosnace@redhat.com>
+For this patch your ACK is particularly significant because you are
+representing RH here (I'm assuming you are still the RH SELinux kernel
+person) and we are deprecating a feature used by Fedora.  In my
+opinion it would be a mistake to merge a deprecation patch without the
+ACKs of those who rely on the feature targeted for removal (although
+in some cases it may need to be done regardless).
 
---=20
-Ondrej Mosnacek <omosnace at redhat dot com>
-Software Engineer, Security Technologies
-Red Hat, Inc.
+I also really dislike merging my own patches without at least one
+other Acked-by/Reviewed-by tag for the simple reason that I believe
+every patch should have at least two people (author and at least one
+reviewer) who agree that the patch is reasonable.  Of course there are
+exceptions for trivial and critical fixes, e.g. 15b590a81fcd
+("selinux: ensure the policy has been loaded before reading the sidtab
+stats"), but I like to keep those as the exception rather than the
+rule.  Just because someone is listed in the MAINTAINERS file
+shouldn't mean they are exempt from the normal review process.
 
+Generally speaking, one of the more useful things one can do from an
+upstream perspective is to review and test patches that are submitted
+to the list.  We are a community driven project after all, and the
+community aspect shouldn't be limited to just the development of
+patches ;)
+
+-- 
+paul moore
+www.paul-moore.com
