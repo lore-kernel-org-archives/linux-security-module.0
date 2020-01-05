@@ -2,88 +2,70 @@ Return-Path: <SRS0=Pmdf=22=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C472C32767
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 01:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0989C00523
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 03:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4187C222C4
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 01:36:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B8892465A
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 03:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1578195307;
+	bh=8buG9x7VmsXIQ+mAK/WzJv+HcLtCcwwzexe8iZQY32A=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=kdCuGd08zFDZ0Lt9y3tegHPZSagudpyjh3S18egwLCxsQPZQjzAjkj+iNkiHjYgP9
+	 bI+Fs84qW1CCIvHoLmHgqURIE3hNwh4XJnBhnYRI/Bubr1OwUn9gL4DTAtRX5KnPMH
+	 h2/RHVr7J98fiBLL/0mGsvCaOfLlHPewz0rav8qI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbgAEBgw (ORCPT
+        id S1726275AbgAEDfG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 4 Jan 2020 20:36:52 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:34574 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbgAEBgw (ORCPT
+        Sat, 4 Jan 2020 22:35:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726260AbgAEDfG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 4 Jan 2020 20:36:52 -0500
-Received: from static-50-53-33-191.bvtn.or.frontiernet.net ([50.53.33.191] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1inuqY-000172-Jo; Sun, 05 Jan 2020 01:36:50 +0000
-From:   John Johansen <john.johansen@canonical.com>
-Subject: [GIT PULL] apparmor bug fixes for v5.5-rc5
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKLM <linux-kernel@vger.kernel.org>,
+        Sat, 4 Jan 2020 22:35:06 -0500
+Subject: Re: [GIT PULL] apparmor bug fixes for v5.5-rc5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578195305;
+        bh=8buG9x7VmsXIQ+mAK/WzJv+HcLtCcwwzexe8iZQY32A=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=GZh4IXtNsMxJPqt/tKDGV/S1Zj8i/CzIZsDBiadQQRl19Lox0VUin7hyHbgdZV2rF
+         e3PQPTToE9mv+z+lq4dTwBu6YQXDNu9y4+afzoMIrTRFr2wLrnThLMn77pYbUFnnON
+         r/QIICqrmxk+aLVX9+G7l/FDKB9qOINa7XZiPBTc=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <cbec7335-39b8-6b7d-402b-a6dd467b492b@canonical.com>
+References: <cbec7335-39b8-6b7d-402b-a6dd467b492b@canonical.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <cbec7335-39b8-6b7d-402b-a6dd467b492b@canonical.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor
+ tags/apparmor-pr-2020-01-04
+X-PR-Tracked-Commit-Id: 8c62ed27a12c00e3db1c9f04bc0f272bdbb06734
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a125bcda2d0aee1d98b51c167aca60fb312572aa
+Message-Id: <157819530587.6178.12338966789047644717.pr-tracker-bot@kernel.org>
+Date:   Sun, 05 Jan 2020 03:35:05 +0000
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
         "open list:SECURITY SUBSYSTEM" 
         <linux-security-module@vger.kernel.org>
-Organization: Canonical
-Message-ID: <cbec7335-39b8-6b7d-402b-a6dd467b492b@canonical.com>
-Date:   Sat, 4 Jan 2020 17:36:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+The pull request you sent on Sat, 4 Jan 2020 17:36:48 -0800:
 
-Can you please pull the following bug fixes for apparmor
+> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2020-01-04
 
-Thanks!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a125bcda2d0aee1d98b51c167aca60fb312572aa
 
-- John
+Thank you!
 
-
-The following changes since commit fd6988496e79a6a4bdb514a4655d2920209eb85d:
-
-  Linux 5.5-rc4 (2019-12-29 15:29:16 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2020-01-04
-
-for you to fetch changes up to 8c62ed27a12c00e3db1c9f04bc0f272bdbb06734:
-
-  apparmor: fix aa_xattrs_match() may sleep while holding a RCU lock (2020-01-04 15:56:44 -0800)
-
-----------------------------------------------------------------
-+ Bug fixes
-  - performance regression: only get a label reference if the fast
-    path check fails
-  - fix aa_xattrs_match() may sleep while holding a RCU lock
-  - fix bind mounts aborting with -ENOMEM
-
-----------------------------------------------------------------
-John Johansen (2):
-      apparmor: only get a label reference if the fast path check fails
-      apparmor: fix aa_xattrs_match() may sleep while holding a RCU lock
-
-Patrick Steinhardt (1):
-      apparmor: fix bind mounts aborting with -ENOMEM
-
- security/apparmor/apparmorfs.c |  2 +-
- security/apparmor/domain.c     | 82 ++++++++++++++++++++++--------------------
- security/apparmor/file.c       | 12 ++++---
- security/apparmor/mount.c      |  2 +-
- security/apparmor/policy.c     |  4 +--
- 5 files changed, 55 insertions(+), 47 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
