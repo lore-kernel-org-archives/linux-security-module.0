@@ -2,117 +2,80 @@ Return-Path: <SRS0=Pmdf=22=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D649C32767
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 01:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B71C32771
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 01:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5893A22B48
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 01:19:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hqpa6/nF"
+	by mail.kernel.org (Postfix) with ESMTP id A1E8A215A4
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 01:24:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbgAEBT1 (ORCPT
+        id S1726487AbgAEBYu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 4 Jan 2020 20:19:27 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33483 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbgAEBT1 (ORCPT
+        Sat, 4 Jan 2020 20:24:50 -0500
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:52344 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727152AbgAEBYn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 4 Jan 2020 20:19:27 -0500
-Received: by mail-ot1-f68.google.com with SMTP id b18so44681727otp.0;
-        Sat, 04 Jan 2020 17:19:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=rjpqbK93O/iu5o//OmgzmyGJYgPRsECTez5RhFbPj4o=;
-        b=Hqpa6/nFMt1k6Gacb/LNwp7rvTpRgL96QMH2uL2Mvi2jOAk1KerRRAvklfHVZvReYD
-         91VPWQLdhtrbwEw10Mg0bO3VH9jI7Sk9vhp4Qh8YKHQx+wU/rVwfrrzhekSIVl+GJ4MW
-         ET8Vv/SmK6dxspqTTZR8JPpr3Li1VFK8p54X3xa6ucd23uiJlW8TCvXE8h4EJMeplk7z
-         jQARTTMTedqp+AREiD/XcaUjKVk72yu90lWgxzUWoyt8c46jYSvvmZQBy7hizMz6/4rt
-         fuXdHhIkcAihhYErtRKj993KME6Ci+shJVKflL5hiAYDcJ0mTYCc3ev+GvbVkOlXerTW
-         v0cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=rjpqbK93O/iu5o//OmgzmyGJYgPRsECTez5RhFbPj4o=;
-        b=rfV5sYzqAbE1a/jtkhRe4GScWpVqjIJcnpBa6gExZVb3xisD6P3HRXl/BV+e5FLVks
-         9HevBcV+8qsyFTFxGrm/eyhhC4mvQIOttdLQS3vG4qnixKdjsZYExq922uUMHvBINDTk
-         MX36mVeWL1bMJePGQpNEuIYd4XS2d529Ykv7W9QgILyNz9B9R3g5/KKu3XqSXCST2w7Z
-         WgrhV+yGg52OPveWMgs/wkTSfwuEGAAF+dpCUWYWbfFD+rtE+LUQTcX2tqYAJl8qm1fi
-         gCQ/LQIbaEjZArz+p0iD+F7l98RTT8riXJNZC0vQqS+mFVC3+/q8F50RhCprbUO7RxN9
-         6CbA==
-X-Gm-Message-State: APjAAAXZspQbUyst6OHgBluq/42CFYA1AYWR7BgCayYKjUH036+5v/yZ
-        0adEicJw8l5KZhh0W8fVVKOD1Oi8jqCtbKmStTE=
-X-Google-Smtp-Source: APXvYqwP+k+lkGBdLKIyu1Aozce9RaFYCdw7nnPyhgRnq8iNFacAvNb58GSAazI6o1ej8726b6Y9SX3w9f4jODeLw/M=
-X-Received: by 2002:a9d:6c92:: with SMTP id c18mr92355757otr.157.1578187166437;
- Sat, 04 Jan 2020 17:19:26 -0800 (PST)
-MIME-Version: 1.0
-References: <20200103234725.22846-1-kpsingh@chromium.org> <F25C9071-A7A7-4221-BC49-A769E1677EE1@amacapital.net>
-In-Reply-To: <F25C9071-A7A7-4221-BC49-A769E1677EE1@amacapital.net>
-From:   Justin Capella <justincapella@gmail.com>
-Date:   Sat, 4 Jan 2020 17:19:14 -0800
-Message-ID: <CAMrEMU-8KizWmgmYHzu8B++HOyfvC-2LF4KP7ibZki_q-_JrxA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: Make trampolines W^X
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org,
-        x86@kernel.org, linux-security-module@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Halcrow <mhalcrow@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 4 Jan 2020 20:24:43 -0500
+Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
+        by mx0a-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0051OFPK028216;
+        Sun, 5 Jan 2020 01:24:29 GMT
+Received: from g2t2354.austin.hpe.com (g2t2354.austin.hpe.com [15.233.44.27])
+        by mx0a-002e3701.pphosted.com with ESMTP id 2xb423rdgv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 05 Jan 2020 01:24:29 +0000
+Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
+        by g2t2354.austin.hpe.com (Postfix) with ESMTP id 7AC319D;
+        Sun,  5 Jan 2020 01:24:28 +0000 (UTC)
+Received: from blofly.tw.rdlabs.hpecorp.net (blofly.tw.rdlabs.hpecorp.net [15.119.208.30])
+        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id E05BE3B;
+        Sun,  5 Jan 2020 01:24:25 +0000 (UTC)
+From:   Clay Chang <clayc@hpe.com>
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, Clay Chang <clayc@hpe.com>
+Subject: [PATCH v2] ima: Add a space after printing LSM rules for readability
+Date:   Sun,  5 Jan 2020 09:18:13 +0800
+Message-Id: <20200105011813.13249-1-clayc@hpe.com>
+X-Mailer: git-send-email 2.16.6
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-04_06:2020-01-02,2020-01-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=590
+ impostorscore=0 adultscore=0 phishscore=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 spamscore=0
+ bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001050012
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I'm guessing 2 pages are used to allow for different protections? Does
-only the first page's protections need to be changed? Is that
-"old_image"?
+When reading ima_policy from securityfs, there is a missing
+space between output string of LSM rules and the remaining
+rules.
 
-+       set_memory_nx((unsigned long)image, 1);
-+       set_memory_rw((unsigned long)image, 1);
+Signed-off-by: Clay Chang <clayc@hpe.com>
+---
+ security/integrity/ima/ima_policy.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-+       set_memory_ro((unsigned long)new_image, 1);
-+       set_memory_x((unsigned long)new_image, 1);
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index ef8dfd47c7e3..1a266e4f99bc 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1496,6 +1496,7 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 					   (char *)entry->lsm[i].args_p);
+ 				break;
+ 			}
++			seq_puts(m, " ");
+ 		}
+ 	}
+ 	if (entry->template)
+-- 
+2.16.6
 
-Because
-
-+       void *old_image =3D tr->image + ((tr->selector + 1) & 1) * PAGE_SIZ=
-E;
-+       void *new_image =3D tr->image + (tr->selector & 1) * PAGE_SIZE
-
-
-> > - Mark the memory as read-only (set_memory_ro)
-> > - Mark the memory as executable (set_memory_x)
->
-> No, thanks. There=E2=80=99s very little excuse for doing two IPI flushes =
-when one would suffice.
-
-If there were checks between these steps to verify the trampoline
-wasn't tampered with while the page was writable it would make sense
-to do so before enabling execution.
-
-Could some of these int's be unsigned to be extra cautious?
-
-One last thought, if the extra checks are implemented, maybe comparing
-against the old image prior to setting rw would be worthwhile?
