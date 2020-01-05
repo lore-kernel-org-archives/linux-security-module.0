@@ -1,99 +1,109 @@
-Return-Path: <SRS0=rme9=2Z=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=Pmdf=22=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62704C2D0C2
-	for <linux-security-module@archiver.kernel.org>; Sat,  4 Jan 2020 11:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 866ACC33C99
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 01:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E8C821734
-	for <linux-security-module@archiver.kernel.org>; Sat,  4 Jan 2020 11:09:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62DAA24654
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 01:18:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725805AbgADLJK (ORCPT
+        id S1726426AbgAEBSq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 4 Jan 2020 06:09:10 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:56413 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgADLJK (ORCPT
+        Sat, 4 Jan 2020 20:18:46 -0500
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:8826 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726240AbgAEBSp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 4 Jan 2020 06:09:10 -0500
-Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 004B97TD090039;
-        Sat, 4 Jan 2020 20:09:07 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp);
- Sat, 04 Jan 2020 20:09:07 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 004B927x089997
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 4 Jan 2020 20:09:06 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: rcu detected stall in sys_sendfile64
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+bcad772bbc241b4c6147@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Sat, 4 Jan 2020 20:18:45 -0500
+Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
+        by mx0a-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0051IY29022683;
+        Sun, 5 Jan 2020 01:18:34 GMT
+Received: from g2t2352.austin.hpe.com (g2t2352.austin.hpe.com [15.233.44.25])
+        by mx0a-002e3701.pphosted.com with ESMTP id 2xb423rd00-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 05 Jan 2020 01:18:34 +0000
+Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
+        by g2t2352.austin.hpe.com (Postfix) with ESMTP id 926A4A7;
+        Sun,  5 Jan 2020 01:18:33 +0000 (UTC)
+Received: from blofly.tw.rdlabs.hpecorp.net (blofly.tw.rdlabs.hpecorp.net [15.119.208.30])
+        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id 6412736;
+        Sun,  5 Jan 2020 01:18:31 +0000 (UTC)
+Date:   Sun, 5 Jan 2020 09:12:46 +0800
+From:   Clay Chang <clayc@hpe.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <000000000000e728ec057d5c9d90@google.com>
- <a5478450-f975-228f-1ca6-886a45b654a1@I-love.SAKURA.ne.jp>
- <CACT4Y+YqWgZZFXdX2A2jVYEdHfY9ywGMgRRP5W4Uqdu__rA63g@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <bc53fe0b-2c17-4d4f-1c40-f290997d0521@i-love.sakura.ne.jp>
-Date:   Sat, 4 Jan 2020 20:09:00 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        linux-integrity@vger.kernel.org, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com
+Subject: Re: [PATCH] ima: Add a space after printing a LSM rule for
+ readability
+Message-ID: <20200105011246.GA5936@blofly.tw.rdlabs.hpecorp.net>
+References: <1578037863-7102-1-git-send-email-clayc@hpe.com>
+ <1578071487.5152.13.camel@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+YqWgZZFXdX2A2jVYEdHfY9ywGMgRRP5W4Uqdu__rA63g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1578071487.5152.13.camel@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-04_06:2020-01-02,2020-01-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ impostorscore=0 adultscore=0 phishscore=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 spamscore=0
+ bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001050010
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2018/12/20 3:42, Dmitry Vyukov wrote:
-> On Wed, Dec 19, 2018 at 11:13 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>
->> On 2018/12/19 18:27, syzbot wrote:
->>> HEAD commit:    ddfbab46539f Merge tag 'scsi-fixes' of git://git.kernel.or..
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=15b87fa3400000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=861a3573f4e78ba1
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=bcad772bbc241b4c6147
->>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13912ccd400000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145781db400000
->>
->> This is not a LSM problem, for the reproducer is calling
->> sched_setattr(SCHED_DEADLINE) with very large values.
->>
->>   sched_setattr(0, {size=0, sched_policy=0x6 /* SCHED_??? */, sched_flags=0, sched_nice=0, sched_priority=0, sched_runtime=2251799813724439, sched_deadline=4611686018427453437, sched_period=0}, 0) = 0
->>
->> I think that this problem is nothing but an insane sched_setattr() parameter.
->>
->> #syz invalid
+On Fri, Jan 03, 2020 at 12:11:27PM -0500, Mimi Zohar wrote:
+> On Fri, 2020-01-03 at 15:51 +0800, clayc@hpe.com wrote:
+> > From: Clay Chang <clayc@hpe.com>
 > 
-> Note there was another one with sched_setattr, which turned out to be
-> some serious problem in kernel (sched_setattr should not cause CPU
-> stall for 3 minutes):
-> INFO: rcu detected stall in do_idle
-> https://syzkaller.appspot.com/bug?extid=385468161961cee80c31
-> https://groups.google.com/forum/#!msg/syzkaller-bugs/crrfvusGtwI/IoD_zus4BgAJ
+> Normally this "From" line is only seen when the sender isn't the patch
+> author.  Any ideas what happened? 
+>
+
+Hi Mimi,
+
+Apparently I should not use "--from" in git-send-email command.
+
+> > 
+> > When reading ima_policy from securityfs, there is a missing
+> > space between output string of LSM rules.
+> > 
+> > Signed-off-by: Clay Chang <clayc@hpe.com>
 > 
-> Maybe it another incarnation of the same bug, that one is still not fixed.
+> Good catch!  IMA policy rules based on LSM labels are used to
+> constrain which files are in policy.  Normally a single LSM label is
+> enough (e.g. dont_measure obj_type=auditd_log_t).  Could you include
+> in this patch description a use case where multiple LSM labels are
+> needed?
 > 
 
-Can we let syzbot blacklist sched_setattr() for now? There are many stall reports
-doing sched_setattr(SCHED_RR) which makes it difficult to find stall reports not
-using sched_setattr().
+Apology for not expressed my intention clearly. The intention of this
+patch is to add a space after printing LSM rules (if any) and the
+remaining rules.
+
+Currently, if I have a policy, for example:
+appraise func=BPRM_CHECK obj_type=shell_exec_t appraise_type=imasig
+
+The read back result is:
+appraise func=BPRM_CHECK obj_type=shell_exec_tappraise_type=imasig
+
+which is not correct.
+
+I do not have a case for multiple LSM labels, but if there is one
+such case, this patch will also apply.
+
+I will post a v2 patch with tuned description.
+
+Thanks,
+Clay
