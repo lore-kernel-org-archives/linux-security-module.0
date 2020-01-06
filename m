@@ -1,101 +1,91 @@
-Return-Path: <SRS0=Pmdf=22=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=vZMJ=23=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDACC33C99
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 17:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9131DC32771
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 08:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD4EB20848
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jan 2020 17:40:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 671D524650
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 08:23:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVmAoO9Y"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HijrWx5D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbgAERkI (ORCPT
+        id S1726133AbgAFIXj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 5 Jan 2020 12:40:08 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43463 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbgAERkI (ORCPT
+        Mon, 6 Jan 2020 03:23:39 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57718 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbgAFIXj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 5 Jan 2020 12:40:08 -0500
-Received: by mail-wr1-f65.google.com with SMTP id d16so47162760wre.10
-        for <linux-security-module@vger.kernel.org>; Sun, 05 Jan 2020 09:40:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ffE4PL/VW47BHxGKSsmTtFKmcCav79yU0qqjDBklMK8=;
-        b=nVmAoO9Y3GkBB9ZaeAbQdM5+KOpyFhcbVBjWpPVUZwZPhATPVs8JGcAbTkdKhR7GrS
-         s0eBpxutjdR5mNvdn30ojHxnsmUEr3CsDhKFoRCbx9uCaXzpNdfdZSVGufP4uErkpjqm
-         VY9X5oOsM/z3lAEo/pTVqLp2cAkQgaTznjcn7jy5GZsfl+dXXItTbsYS5xhiX0q5YZaa
-         61c2UuDG3Etk3TjuQqgfhc42aR8cINLmNbw3yMRDSdA2yisYjXyMjsGN09yOnljwD8Py
-         Rh5kpqVOCnSGMZnIL8d/ulxrn7+YUP6XWwLk2c+4f4eZaU+OokQnbJeX30h6pLbpse+j
-         lHew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ffE4PL/VW47BHxGKSsmTtFKmcCav79yU0qqjDBklMK8=;
-        b=on3BUPaZKW39Q23XxtdWOtgO4YmhVniRfVmBtOuZsNyEt8mBpV11/r4dKBtOThvtca
-         D6feRDaVcj7JGXdD59rVlU+8ASHxXWQBLdLThHJvNbsPBRlbr5DInarBAV5Z6EOF8iwL
-         Bn9DmgwEajsRJIVv73ZJWRpp1T9z0o9AYa3qWm8xUB1STKwCPWt8GrHTnCjOD6qfLn83
-         i7wT9Raric8OvcWCo35Y1lLbs8yXI3/lNprWfIQ2j+ToznTPjg8QgGa06gF1r0bH/FdV
-         lXwdlx4p/3tF65UarmadxuPghVFFD9buMijiuBobtTfpjj0p6VieQeHWDZn6ZWOp9pB4
-         RUtw==
-X-Gm-Message-State: APjAAAWdRl1YTeTBp9BvNiPGrDTLvlljPlOoypSx2ESEFI0qXTl1zTt/
-        bFlhtvsk3sj9+A3K1fythPg=
-X-Google-Smtp-Source: APXvYqzsRO/59BK2HBP/eEWZQpbbelmiwHPaTY4j4HySxuAAjLIpo6wI7U8KB2PQOIZo2ptrqXh7JA==
-X-Received: by 2002:a5d:5091:: with SMTP id a17mr98031682wrt.362.1578246006120;
-        Sun, 05 Jan 2020 09:40:06 -0800 (PST)
-Received: from localhost.localdomain ([138.68.105.35])
-        by smtp.gmail.com with ESMTPSA id n16sm69112878wro.88.2020.01.05.09.40.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jan 2020 09:40:05 -0800 (PST)
-From:   ignat.loskutov@gmail.com
-To:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org,
-        Ignat Loskutov <ignat.loskutov@gmail.com>
-Subject: [PATCH] efi: Allow some cert-related UEFI variables to not be present
-Date:   Sun,  5 Jan 2020 20:34:24 +0300
-Message-Id: <20200105173424.20140-1-ignat.loskutov@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 6 Jan 2020 03:23:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nYOr/sf0nD1L6E/qjNg4zuKpPzCSoERM7P4MkiuiORA=; b=HijrWx5DY7NCS/gFZmqZ8abiU
+        e+aI9JakRwOWAEkl0/WwuV8+FIDdWoVILFVDZ6FO3AemSQ8V2zNHPBoXpqS0YodhIClCmaiRBBOk+
+        22aJFGVf4Un+DQolK0M2k2DNHpN9lp2f/mm+dyAnzoNs0w4N58fSwZJ+1TWQw5rvTbqHya0Io0aaR
+        Ype2ZK+wVhWx3Ir23o3L6fY/3AQXbLqxD+CYOwHYCHsqT+LaIZ22xcwmvXSAMgv1KKOMnHYSOuz1e
+        c1ljrjJTCkQKr+HQbhe2SzhZ4Npnpl6Y4ci6Euyuuo0QTJXOm4RcXPmYQPOCfvwKUzxfbJy8EzVbf
+        xoZM56CVQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ioNfT-0003Np-16; Mon, 06 Jan 2020 08:23:19 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id BB4DE304124;
+        Mon,  6 Jan 2020 09:21:43 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AAEAC2B627466; Mon,  6 Jan 2020 09:23:15 +0100 (CET)
+Date:   Mon, 6 Jan 2020 09:23:15 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     KP Singh <kpsingh@chromium.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+        linux-security-module@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Halcrow <mhalcrow@google.com>
+Subject: Re: [PATCH bpf-next] bpf: Make trampolines W^X
+Message-ID: <20200106082315.GL2810@hirez.programming.kicks-ass.net>
+References: <20200103234725.22846-1-kpsingh@chromium.org>
+ <F25C9071-A7A7-4221-BC49-A769E1677EE1@amacapital.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <F25C9071-A7A7-4221-BC49-A769E1677EE1@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Ignat Loskutov <ignat.loskutov@gmail.com>
+On Sat, Jan 04, 2020 at 09:49:10AM +0900, Andy Lutomirski wrote:
 
-get_cert_list() prints an error message if no UEFI variable exists with
-the given name. However, the calling code doesn't always consider this
-an error. Fix by returning silently in this case.
+> > - Mark memory as non executable (set_memory_nx). While module_alloc for
+> > x86 allocates the memory as PAGE_KERNEL and not PAGE_KERNEL_EXEC, not
+> > all implementations of module_alloc do so
+> 
+> How about fixing this instead?
 
-Signed-off-by: Ignat Loskutov <ignat.loskutov@gmail.com>
----
- security/integrity/platform_certs/load_uefi.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index 111898aad56e..163ede8d2abc 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -43,6 +43,8 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
- 	void *db;
- 
- 	status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
-+	if (status == EFI_NOT_FOUND)
-+		return NULL;
- 	if (status != EFI_BUFFER_TOO_SMALL) {
- 		pr_err("Couldn't get size: 0x%lx\n", status);
- 		return NULL;
--- 
-2.20.1
-
+We only care about STRICT_MODULE_RMW (iow, arm, arm64, s390, x86). Of
+those only s390 seems to be 'off'.
