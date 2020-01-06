@@ -2,111 +2,93 @@ Return-Path: <SRS0=vZMJ=23=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140D4C33C9E
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 18:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBA0C33C9E
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 21:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD89F207FF
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 18:46:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C45FA2146E
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 21:25:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="FvWLLXkm"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="mej2kPeP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbgAFSqC (ORCPT
+        id S1726980AbgAFVZz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Jan 2020 13:46:02 -0500
-Received: from UCOL19PA36.eemsg.mail.mil ([214.24.24.196]:41994 "EHLO
-        UCOL19PA36.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbgAFSqC (ORCPT
+        Mon, 6 Jan 2020 16:25:55 -0500
+Received: from UCOL19PA35.eemsg.mail.mil ([214.24.24.195]:9937 "EHLO
+        UCOL19PA35.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbgAFVZy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Jan 2020 13:46:02 -0500
-X-EEMSG-check-017: 68198295|UCOL19PA36_ESA_OUT03.csd.disa.mil
+        Mon, 6 Jan 2020 16:25:54 -0500
+X-EEMSG-check-017: 63304281|UCOL19PA35_ESA_OUT02.csd.disa.mil
 X-IronPort-AV: E=Sophos;i="5.69,403,1571702400"; 
-   d="scan'208";a="68198295"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by UCOL19PA36.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 06 Jan 2020 18:45:44 +0000
+   d="scan'208";a="63304281"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UCOL19PA35.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 06 Jan 2020 21:25:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1578336344; x=1609872344;
+  s=tycho.nsa.gov; t=1578345952; x=1609881952;
   h=subject:to:cc:references:from:message-id:date:
    mime-version:in-reply-to:content-transfer-encoding;
-  bh=RYG5Okrhv9azH+AJfIigWq0Gonv7tbcVZE/+6vKzKkI=;
-  b=FvWLLXkmpJ7lzVjSV5ZjWdprh1honKb+oOZEPaSWx+BJhY7adY09wgbm
-   wDOd2MUFslkW7Q0ddbZ/eOjd4pSkeJjAkm9LBn7lhk7G1ltaiH0nelqDh
-   bA7Llj1VlXmSugoTBp57QmGft4S3g+sAOy5uAvoZoyAdiybCwjChJ554I
-   qHAX4YXB+W+RP/GTG+tAFviGYXUaEM+3uk/3u5q5Ep89GT+IdgYgwjG8w
-   x1maOEHU7DK8k1TfD1RGVBhfYt4HlMwMgL7/hpjuPEwtIUB2+PzEoLIqI
-   meIOUKMbgU6pKvxDtI4qwgnjOW1UwAQNDEsVVfSVfVgFZwtNoV10hsvjL
-   A==;
+  bh=DvKwP+zm9yWcM/KI0EUJvVJldh/ba0CFm6Nx9gWe4uM=;
+  b=mej2kPePXTLRqyaMlVE4vLV4xeqFZ/SCTAl+MFJkM3iSq4SZiKGPko8F
+   7hBxtXP03AhDvxjCNF2AHJTmcoeBD0h3RyfDRGs6yf9oD4XkvTktoWpvk
+   06UeLGrRNZSxmwswBYd+e/EtODRnhJmFrfKk3uaSde6VtqHkWURINcSPX
+   oc1UZp3eq/cQo5Lz/aeZG6zzICFKuzMMaYF6MubaW3UUvceYKn/l5nAZr
+   0cP2EiphsZ/k4Qahi8OgO/SLsIK3fAIznmAuG0hFIm1gMM1DgRQZN+GxM
+   8qh/16r7LPjcBkxpzxrw0tjXEc/CA8zXp+noa/lV83sXrDMrhcOxRJTJ0
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.69,403,1571702400"; 
-   d="scan'208";a="31637839"
-IronPort-PHdr: =?us-ascii?q?9a23=3A7bMBABRGqBYweeYaJoY7C0mU6dpsv+yvbD5Q0Y?=
- =?us-ascii?q?Iujvd0So/mwa67YBGEt8tkgFKBZ4jH8fUM07OQ7/m7HzZdud3Y6S1KWacPfi?=
- =?us-ascii?q?dNsd8RkQ0kDZzNImzAB9muURYHGt9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV?=
- =?us-ascii?q?3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oIxi6sAvcutMIjYZiNqo9xQ?=
- =?us-ascii?q?bFrmZIdu9L2W5mOFWfkgrm6Myt5pBj6SNQu/wg985ET6r3erkzQKJbAjo7LW?=
- =?us-ascii?q?07/dXnuhbfQwSB4HscSXgWnQFTAwfZ9hH6X4z+vTX8u+FgxSSVJ8z2TbQzWT?=
- =?us-ascii?q?S/86dmTQLjhSkbOzIl9mzcl9d9h7xHrh2/uxN/wpbUYICLO/p4YqPdZs4RSW?=
- =?us-ascii?q?5YUspMSyBNHoawYo0BAOobOeZTspfzqV0AoxCjAQWgHePixztNinLwwKY00f?=
- =?us-ascii?q?kuERve0QI9AdwOvnTaotb7OqgcXu+6zrXHwzrYYvNK2zrw8pTEfgwvrPyOW7?=
- =?us-ascii?q?97bMrfyVMoFwPAllietJDlMC2N1uQNrWeb6fdrW/+qi2E9rwFxpiagx8cxgY?=
- =?us-ascii?q?TOnYIa10vE+D5lwIc1OdK4SEl7bcSiEJtLrS6WLYR2QsQ8Q2xxvisx174IuY?=
- =?us-ascii?q?ajcSQXx5kqyATTZvyaf4SS/B7uW/idLS1liH9jZbmxnQy98VK6xe35TsS01V?=
- =?us-ascii?q?FKoTdbndTUrXAN0gDT6tCASvtg4ketwTaP2B7X6uFDOU00ibDUK4Qgwr4tjZ?=
- =?us-ascii?q?ofq0XDHin4mEXxl6+ZaFkr9vK06+XnfrrmppicO5Vyig7iKaQhhtazAeE5Mg?=
- =?us-ascii?q?gKR2Sb+OK826P//UDhXblHgfI7nrPZvZzHP8gXuKG0DxFP3oo+8xq/Ci2p0N?=
- =?us-ascii?q?UcnXkJNlJFfxeHgpDyO17TO/D1Fuu/glSwnzdrwPDKJLvhAo7XIXTZn7fheq?=
- =?us-ascii?q?h951ZGyAUv1dBf+45UCrYZLf3vQEDxr8LXDx8iPgyv3+nnCM9y1p4QWWKLHK?=
- =?us-ascii?q?CZKrrevkOS6e41P+aMY4oVsi7nK/c5//7ukWM5mVgFcKmy2JsYdG64E+96LE?=
- =?us-ascii?q?WeZXrshs0OHnwNvgokVuPmkkGNUTlWZ3yqRaIz+ik7CJ66DYfEXo2inKaO3D?=
- =?us-ascii?q?ylEZxWfGxGEUyDEXfyeIWZVfcMbDydItV6nzwFU7ihV5Eu1RW0uADmzLpnK/?=
- =?us-ascii?q?Le+jcEupL7yNh1++rTmAkw9TxxCMSdyXuNT2Bvnm4TQT85xqV/rlJ8yluZ1q?=
- =?us-ascii?q?h4mfNYH8RJ5/xVSgc6KYLcz+tiBtD2WwLBeMqJSVm/TtW9Hz4+Us8xw8UPY0?=
- =?us-ascii?q?ZhG9SulxXD3y23DL8Ik7yEGoc58rzT33fvPcZx0XXG27c7j1kgXMRPMXeqhq?=
- =?us-ascii?q?ll9wjcH4TJiVmWl762daQA2y7A7HyDwnSKvEFZVg5wTKrEUGsBZkvZs9v5/F?=
- =?us-ascii?q?nOT7ywBrQ9NAtO18qCJrFNat3zglVMXO3jN8jGY2Kth2ewAg6FxrCSY4X0YG?=
- =?us-ascii?q?USwCLdCE8Hkw0I4XmGNRI+BiCko2LfETxuEEjjY0T28elxsHm7VFM7zxmWb0?=
- =?us-ascii?q?190Lq44hwVhfucS/MVxL4EuiAhqzVuE1a7xNLZFdyAqhF9c6pGZ9M951FH1W?=
- =?us-ascii?q?PFuANnOpysNbxthlkbcw5vpUPhyw13CplckcgttH4q1BR9KaSX0FNcdjOY24?=
- =?us-ascii?q?n8Or7JJWno+hCgdarW10rf0NqP/qcP7+o4pEv5sAGyDEUi8Ghn08NP3HeG4J?=
- =?us-ascii?q?XFEhAeUZDpUkwv7Rh1u6naYjUh54PTzXBsKbO7siLG298yHOsq0Augf9NGPK?=
- =?us-ascii?q?OBEw/yFNcaCNa0JOM2nFipa0FMAOcH36cvMtLuTPCG0bOlOOt61GathH9K8a?=
- =?us-ascii?q?hm2UKF6iR4R/SN1J9DyPadiE/PbDb5i1Hpl8vJmJxYZDxaSnG6wjbMD4lVYq?=
- =?us-ascii?q?R4epwCT2ypJpvk6M95gsvWR3NA9FOlT2gD0cutdAvaO0fxxiVMxE8Xpjqhgi?=
- =?us-ascii?q?L+wDtqxWJ65pGD1TDDlryxPCEMPXRGESw70Abh?=
-X-IPAS-Result: =?us-ascii?q?A2BpAQALgBNe/wHyM5AaAUsbAQEBAQEBAQUBAQERAQEDA?=
- =?us-ascii?q?wEBAYF8AoF7gWwBIBKEM4kDhmMBAQQGgTeJbpFICQEBAQEBAQEBATcBAYRAA?=
- =?us-ascii?q?oINOBMCEAEBAQQBAQEBAQUDAQFshUOCOykBgnkBAQEBAgEjFUEQCxgCAiYCA?=
- =?us-ascii?q?lcGAQwIAQGCXz+CUwUgj2CdJXWBMoVPgyeBPYEOKAGMMnmBB4E4D4JdPodZg?=
- =?us-ascii?q?l4EjXiJHkaWSHWCQIJFk08GG4JGh32QGC2OJpxqIoFYKwgCGAghD4MoTxgNm?=
- =?us-ascii?q?3YjA48XAQE?=
+   d="scan'208";a="37406374"
+IronPort-PHdr: =?us-ascii?q?9a23=3AxkKjwhdruxGl6lhTa6hIF0mmlGMj4u6mDksu8p?=
+ =?us-ascii?q?Mizoh2WeGdxcWzZx7h7PlgxGXEQZ/co6odzbaP6Oa6BDRLuMrR+Fk5M7V0Hy?=
+ =?us-ascii?q?cfjssXmwFySOWkMmbcaMDQUiohAc5ZX0Vk9XzoeWJcGcL5ekGA6ibqtW1aFR?=
+ =?us-ascii?q?rwLxd6KfroEYDOkcu3y/qy+5rOaAlUmTaxe7x/IAi4oAnLqMUbgZduJqksxh?=
+ =?us-ascii?q?bGoXZDZvhby35vKV+PhRj3+92+/IRk8yReuvIh89BPXKDndKkmTrJWESorPX?=
+ =?us-ascii?q?kt6MLkqRfMQw2P5mABUmoNiRpHHxLF7BDhUZjvtCbxq/dw1zObPc3ySrA0RC?=
+ =?us-ascii?q?ii4qJ2QxLmlCsLKzg0+3zMh8dukKxUvg6upx1nw47Vfo6VMuZ+frjAdt8eXG?=
+ =?us-ascii?q?ZNQ9pdWzBEDo66YYQPFe4BNvtGoYf7qVUFsB+yCRCiCe7rzzNFgGL9068n3O?=
+ =?us-ascii?q?Q7CQzIwRIuH9wOvnrXotv6OqgdXuKpw6fH1jjDc/Fb1C3h5ITUfB0so/eBVq?=
+ =?us-ascii?q?9wf8rLzkkvEhvIgEiMqYP7JzOV1voCs26G5OR9UOKgkWonqwVvrTmv28whjZ?=
+ =?us-ascii?q?LJiZ8Oyl3f6SV4wJo6Jd2/SEJhZ96kC4FfuzuVN4txXMMvWmdlszs5xL0eoZ?=
+ =?us-ascii?q?O3YScHxZs9yxPfdvCLaZaE7x39WOqLPDt1gm9udqiliBao60egz/XxVsyz0F?=
+ =?us-ascii?q?lXsCVIisLMtnUR1xzL7ciHV+d98l+h2TmR0wDT7flJIVwumqrBKp4h36Uwmo?=
+ =?us-ascii?q?ASsUTFEC/2n172g7GKeUk+5uip6/joYrXhppOGMY97lhr+Pbg0lsy6AOQ4Nh?=
+ =?us-ascii?q?ACX2md+euiyL3u5VD1TbpFg/EskqTVrYrWKdoUq6KnGQNZz54v6xOlADen1N?=
+ =?us-ascii?q?QYk2MHLFVAeB+flIjmJkrOLevkDfa/n1uskDBry+rAPr36GJrBNHfDkLD/fb?=
+ =?us-ascii?q?pl8U5T1BIzzcxD55JTErwBOOj8WlL1tNHDFh82KRG0w+L+BNV40YMeXniPDb?=
+ =?us-ascii?q?GDPKzOtl+I4/olI/OQa48NpDb9N/8l6ub1jXAnnV8dfK+p3YYYaX2jAPRmLF?=
+ =?us-ascii?q?uWYWD2jtcCD2gKpAw+Q/LuiFGYVj5TfXmyVbom5j4nEIKmEZvDRoe1jbyF3S?=
+ =?us-ascii?q?e7GIBWZ29fBlCXD3jna5iEW+0NaCKOIs5tizkEVb+8RI880RGhqhT3y6RoLu?=
+ =?us-ascii?q?XK4C0Ur5Hj28Zv5+3Vix4y8SZ4D8OH02GCHClImTYwTiIylIV4plZwggOb2L?=
+ =?us-ascii?q?V8q+RRCNgW4vROSAp8PpnZmagyEN32WwTcbv+XR1u8BNarGzc8SpQ22dBdTV?=
+ =?us-ascii?q?x6HoCZkh3b3yesS4QQnriPCY18prnQxFDtNs19zDDAz6BngF44FJgcfVa6j7?=
+ =?us-ascii?q?JyolCAT7XClF+UwuPzLvUR?=
+X-IPAS-Result: =?us-ascii?q?A2DaAgAVpRNe/wHyM5BcChwBAQEBAQcBAREBBAQBAYF8g?=
+ =?us-ascii?q?X2BbAEgEiqECYkDhmUBAQQGgTeBAYhtj2GBZwkBAQEBAQEBAQE3AQGEQAKCD?=
+ =?us-ascii?q?TgTAhABAQEEAQEBAQEFAwEBbIVDgjspAYJ6AQUjFUEQCxgCAiYCAlcGAQwGA?=
+ =?us-ascii?q?gEBgl8/glMlrWWBMoVPgyiBPYEOKIwzeYEHgREnD4IoNT6EHhODKIJeBI0li?=
+ =?us-ascii?q?RBhRpc9gkCCRY5UhHsGG4JGMIdNkBiOU5xqIoFYKwgCGAghD4MnUBgNm3YjA?=
+ =?us-ascii?q?zCOZwEB?=
 Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 06 Jan 2020 18:45:23 +0000
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 06 Jan 2020 21:25:51 +0000
 Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 006IioeO034870;
-        Mon, 6 Jan 2020 13:44:50 -0500
-Subject: Re: [PATCH v13 23/25] NET: Add SO_PEERCONTEXT for multiple LSMs
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Simon McVittie <smcv@collabora.com>
-Cc:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
-References: <20191224235939.7483-1-casey@schaufler-ca.com>
- <20191224235939.7483-24-casey@schaufler-ca.com>
- <cce57d59-8c68-8ef0-b887-0597492e1833@tycho.nsa.gov>
- <20200106172949.GA80652@horizon>
- <1a392962-8a2d-a3f3-5cc1-a51e82ada41b@schaufler-ca.com>
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 006LPGfw119434;
+        Mon, 6 Jan 2020 16:25:16 -0500
+Subject: Re: [RFC PATCH] selinux: deprecate disabling SELinux and runtime
+To:     Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org
+References: <157678334821.158235.2125894638773393579.stgit@chester>
 From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <f906ab41-cccd-a14c-ad82-738ac0ddf574@tycho.nsa.gov>
-Date:   Mon, 6 Jan 2020 13:45:56 -0500
+Message-ID: <a5794ae2-d1e3-4ad3-6a16-2d479f33da16@tycho.nsa.gov>
+Date:   Mon, 6 Jan 2020 16:26:24 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <1a392962-8a2d-a3f3-5cc1-a51e82ada41b@schaufler-ca.com>
+In-Reply-To: <157678334821.158235.2125894638773393579.stgit@chester>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -114,66 +96,80 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/6/20 1:03 PM, Casey Schaufler wrote:
-> On 1/6/2020 9:29 AM, Simon McVittie wrote:
->> On Mon, 06 Jan 2020 at 12:15:57 -0500, Stephen Smalley wrote:
->>> On 12/24/19 6:59 PM, Casey Schaufler wrote:
->>>> The getsockopt SO_PEERSEC provides the LSM based security
->>>> information for a single module, but for reasons of backward
->>>> compatibility cannot include the information for multiple
->>>> modules. A new option SO_PEERCONTEXT is added to report the
->>>> security "context" of multiple modules using a "compound" format
->>>>
->>>>           lsm1\0value\0lsm2\0value\0
->>>>
->>>> This is expected to be used by system services, including dbus-daemon.
->>>> The exact format of a compound context has been the subject of
->>>> considerable debate. This format was suggested by Simon McVittie,
->>>> a dbus maintainer with a significant stake in the format being
->>>> usable.
->>> Since upstream AA does not currently ever set the peer label info, there is
->>> no need for this support for stacking upstream AA today, and there is no way
->>> to test this functionality with more than one module present currently in an
->>> upstream kernel.  Either fix AA to actually implement the functionality so
->>> it can be tested properly, or drop it from this series please.
+On 12/19/19 2:22 PM, Paul Moore wrote:
+> Deprecate the CONFIG_SECURITY_SELINUX_DISABLE functionality.  The
+> code was originally developed to make it easier for Linux
+> distributions to support architectures where adding parameters to the
+> kernel command line was difficult.  Unfortunately, supporting runtime
+> disable meant we had to make some security trade-offs when it came to
+> the LSM hooks, as documented in the Kconfig help text:
 > 
-> I agree that SO_PEERCONTEXT can be deferred until such time as we have
-> AppArmor upstream support for SO_PEERSEC.
+>    NOTE: selecting this option will disable the '__ro_after_init'
+>    kernel hardening feature for security hooks.   Please consider
+>    using the selinux=0 boot parameter instead of enabling this
+>    option.
 > 
->>>    I don't
->>> understand why AA continues to keep this kind of basic and longstanding
->>> downstream functionality out of tree.
+> Fortunately it looks as if that the original motivation for the
+> runtime disable functionality is gone, and Fedora/RHEL appears to be
+> the only major distribution enabling this capability at build time
+> so we are now taking steps to remove it entirely from the kernel.
+> The first step is to mark the functionality as deprecated and print
+> an error when it is used (what this patch is doing).  As Fedora/RHEL
+> makes progress in transitioning the distribution away from runtime
+> disable, we will introduce follow-up patches over several kernel
+> releases which will block for increasing periods of time when the
+> runtime disable is used.  Finally we will remove the option entirely
+> once we believe all users have moved to the kernel cmdline approach.
 > 
-> Not everyone has the resource commitments of the world's largest
-> government. :(
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>   security/selinux/Kconfig     |    3 +++
+>   security/selinux/selinuxfs.c |    6 ++++++
+>   2 files changed, 9 insertions(+)
+> 
+> diff --git a/security/selinux/Kconfig b/security/selinux/Kconfig
+> index 996d35d950f7..580ac24c7aa1 100644
+> --- a/security/selinux/Kconfig
+> +++ b/security/selinux/Kconfig
+> @@ -42,6 +42,9 @@ config SECURITY_SELINUX_DISABLE
+>   	  using the selinux=0 boot parameter instead of enabling this
+>   	  option.
+>   
+> +	  WARNING: this option is deprecated and will be removed in a future
+> +	  kernel release.
+> +
+>   	  If you are unsure how to answer this question, answer N.
+>   
+>   config SECURITY_SELINUX_DEVELOP
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 278417e67b4c..adbe2dd35202 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -281,6 +281,12 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
+>   	int new_value;
+>   	int enforcing;
+>   
+> +	/* NOTE: we are now officially considering runtime disable as
+> +	 *       deprecated, and using it will become increasingly painful
+> +	 *       (e.g. sleeping/blocking) as we progress through future
+> +	 *       kernel releases until eventually it is removed */
+> +	pr_err("SELinux:  Runtime disable is deprecated, use selinux=0 on the kernel cmdline.\n");
 
-How hard is it to upstream code that is a) entirely contained within the 
-AA security module, and b) already shipping in Ubuntu kernels for quite 
-some time? Seems to be more of a lack of an upstream-first philosophy 
-than a resources issue...
+Looking for examples of similar deprecations in the kernel, I notice 
+that they often use pr_warn_once() or WARN_ONCE() to avoid spamming the 
+kernel logs excessively.  They also often include the current process 
+name to identify the offending process.  In this case, it probably 
+matters little since this is only done (legitimately) by the init 
+process and only once, so up to you whether you bother amending it. 
+Also for some interfaces, they appear to document the intent to remove 
+it in a file under Documentation/ABI/obsolete/ and then later move that 
+to removed/ when fully removed. Regardless,
 
-> 
->> Alternatively, a pair of tiny in-tree or out-of-tree stackable LSMs
->> that don't make any security decisions, and label every labellable
->> process/socket/thing with something predictable, would make it really
->> easy for both kernel and user-space developers to test this and the
->> user-space code that uses it (D-Bus and others).
-> 
-> Sounds like a fun and educational project. Maybe one of our lurkers
-> could do something clever.
-> 
->>
->> For example, they could label process 1234 and all sockets created by
->> process 1234 with "contexttest1\0pid1234\0contexttest2\0process1234" or
->> something like that.
->>
->> I'd love to see AppArmor in upstream kernels support SO_PEERSEC and
->> SO_PEERCONTEXT, but setting up a development machine to stack AppArmor
->> and SELinux (and still be able to boot, without one or the other LSM
->> forbidding something important) seems likely to be harder than setting
->> it up to load some toy LSMs.
-> 
->>
->>      smcv
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+
+> +
+>   	if (count >= PAGE_SIZE)
+>   		return -ENOMEM;
+>   
 > 
 
