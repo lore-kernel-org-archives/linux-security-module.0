@@ -2,112 +2,126 @@ Return-Path: <SRS0=vZMJ=23=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D020AC33C8C
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 22:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B97F8C33C9E
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 22:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4008207FD
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 22:13:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yijm0XTU"
+	by mail.kernel.org (Postfix) with ESMTP id 9ACAA21744
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 22:25:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbgAFWNW (ORCPT
+        id S1726779AbgAFWZb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Jan 2020 17:13:22 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36679 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbgAFWNV (ORCPT
+        Mon, 6 Jan 2020 17:25:31 -0500
+Received: from mga18.intel.com ([134.134.136.126]:46983 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726721AbgAFWZb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Jan 2020 17:13:21 -0500
-Received: by mail-pg1-f193.google.com with SMTP id k3so27493050pgc.3;
-        Mon, 06 Jan 2020 14:13:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=eyolJd68ERnJpeKV8cAEbEAjcAmeu/bmG+0f7OhQ2SA=;
-        b=Yijm0XTU+T/0xsej33JyRLg5dgQC8KC6yShekyLo5/vaHao2/7DcUd/SI8l20lCGjS
-         mRL39ZS33Ne/7Xm2Xr0sU8REN9pHR8iHGfOPR8aFm6qsoL9a5bDUvRjAKzh1H8gTlYXD
-         vA+ciQ0duA1TVCe/iUPA98eLjzYzfOznyTYKt26YlD2xIA1iR5QxQw7oKy+44L788t+0
-         wY8COOYx7B1l+NnVPkBDk6qqAZy8y6rR/ERf5q324H0L4iTy6eyLKivhcRUHS/vhPsoh
-         rjV0KqBOp+Skwxq71Lo0SP/nGtKA3TTCzRrtYu6jJ/vVG/IqlW7FjkIb2QuFmRVpzDTu
-         EN8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=eyolJd68ERnJpeKV8cAEbEAjcAmeu/bmG+0f7OhQ2SA=;
-        b=p+UKY58PiIUATy9p9bK+zSQllH62xQFusFAyFxW/Wvxo7JP/JwcxHj44his3hjEV9u
-         /+HCRz5/XRSjhm6i3mbB307YIy/mSvedWv25Z7NmGl1Vlk9Ha6wA6vB4q1sAB4ypOY0s
-         Tr3qb2Q1VyK9X/Vpt4HX+WlUirAOHEuIwxhL4gsSsQH2aNiyFYwLNunlX8mizuHaIY7L
-         lYSk10KKLa37sP390jxrB3cJrFXFsF8XoSTVuLmcfog/zPLOgdxSXKOueYr52XYN9IDL
-         MveM7tYJyKKq0u0om3IpM3O5YCaFqxHhGvILpPvUO5Ao6IN0Z+wuJ7Php6k2Rn2QYmCS
-         InAA==
-X-Gm-Message-State: APjAAAUSBqJv/YIWkFFxMRD9KxgMI+yiKD2NItFSeJV8qXFIOIqHb0PH
-        xNwxm/1fvz4EYK39X00cN2A=
-X-Google-Smtp-Source: APXvYqwYCJHcfeniuDi19iZ4yWsGvSHZV7jg0PZh3evoX6cntwbvydeSWfPAi1Ewbi82beKuDIKX3Q==
-X-Received: by 2002:a63:31d1:: with SMTP id x200mr106298627pgx.405.1578348801200;
-        Mon, 06 Jan 2020 14:13:21 -0800 (PST)
-Received: from ast-mbp ([2620:10d:c090:200::1:2bf6])
-        by smtp.gmail.com with ESMTPSA id w131sm81274287pfc.16.2020.01.06.14.13.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Jan 2020 14:13:20 -0800 (PST)
-Date:   Mon, 6 Jan 2020 14:13:18 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Justin Capella <justincapella@gmail.com>,
-        KP Singh <kpsingh@chromium.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
-        linux-security-module@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Halcrow <mhalcrow@google.com>
+        Mon, 6 Jan 2020 17:25:31 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 14:25:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,403,1571727600"; 
+   d="scan'208";a="253509785"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by fmsmga002.fm.intel.com with ESMTP; 06 Jan 2020 14:25:29 -0800
+Received: from orsmsx116.amr.corp.intel.com (10.22.240.14) by
+ ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 6 Jan 2020 14:25:28 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.41]) by
+ ORSMSX116.amr.corp.intel.com ([169.254.7.30]) with mapi id 14.03.0439.000;
+ Mon, 6 Jan 2020 14:25:28 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "kpsingh@chromium.org" <kpsingh@chromium.org>,
+        "luto@amacapital.net" <luto@amacapital.net>
+CC:     "songliubraving@fb.com" <songliubraving@fb.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "kuznet@ms2.inr.ac.ru" <kuznet@ms2.inr.ac.ru>,
+        "jannh@google.com" <jannh@google.com>,
+        "mjg59@google.com" <mjg59@google.com>,
+        "thgarnie@chromium.org" <thgarnie@chromium.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "revest@chromium.org" <revest@chromium.org>,
+        "jackmanb@chromium.org" <jackmanb@chromium.org>,
+        "kafai@fb.com" <kafai@fb.com>, "yhs@fb.com" <yhs@fb.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>,
+        "mhalcrow@google.com" <mhalcrow@google.com>,
+        "andriin@fb.com" <andriin@fb.com>
 Subject: Re: [PATCH bpf-next] bpf: Make trampolines W^X
-Message-ID: <20200106221317.wpwut2rgw23tdaoo@ast-mbp>
-References: <CAMrEMU8Vsn8rfULqf1gfuYL_-ybqzit29CLYReskaZ8XUroZww@mail.gmail.com>
- <768BAF04-BEBF-489A-8737-B645816B262A@amacapital.net>
+Thread-Topic: [PATCH bpf-next] bpf: Make trampolines W^X
+Thread-Index: AQHVwpjLpCzVLdPZ5Em9CS0HIZ/iOKfewVwA
+Date:   Mon, 6 Jan 2020 22:25:27 +0000
+Message-ID: <21bf6bb46544eab79e792980f82520f8fbdae9b5.camel@intel.com>
+References: <20200103234725.22846-1-kpsingh@chromium.org>
+         <F25C9071-A7A7-4221-BC49-A769E1677EE1@amacapital.net>
+In-Reply-To: <F25C9071-A7A7-4221-BC49-A769E1677EE1@amacapital.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.11]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C1D761781F8B5E4EBBB83ABF3CB2AE9E@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <768BAF04-BEBF-489A-8737-B645816B262A@amacapital.net>
-User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Jan 05, 2020 at 10:33:54AM +0900, Andy Lutomirski wrote:
-> 
-> >> On Jan 4, 2020, at 8:03 PM, Justin Capella <justincapella@gmail.com> wrote:
-> > ﻿
-> > I'm rather ignorant about this topic but it would make sense to check prior to making executable from a security standpoint wouldn't it? (In support of the (set_memory_ro + set_memory_x)
-> > 
-> 
-> Maybe, depends if it’s structured in a way that’s actually helpful from a security perspective.
-> 
-> It doesn’t help that set_memory_x and friends are not optimized at all. These functions are very, very, very slow and adversely affect all CPUs.
-
-That was one of the reason it wasn't done in the first.
-Also ftrace trampoline break w^x as well.
-Not sure what is the plan for ftrace, but for bpf trampoline I'm going to switch
-to text_poke (without _bp) once tip bits get merged during next merge window.
-Then bpf trampoline will be allocated as ro+x and text_poke will be used instead of memcpy.
+T24gU2F0LCAyMDIwLTAxLTA0IGF0IDA5OjQ5ICswOTAwLCBBbmR5IEx1dG9taXJza2kgd3JvdGU6
+DQo+ID4gT24gSmFuIDQsIDIwMjAsIGF0IDg6NDcgQU0sIEtQIFNpbmdoIDxrcHNpbmdoQGNocm9t
+aXVtLm9yZz4gd3JvdGU6DQo+ID4gDQo+ID4g77u/RnJvbTogS1AgU2luZ2ggPGtwc2luZ2hAZ29v
+Z2xlLmNvbT4NCj4gPiANCj4gPiBUaGUgaW1hZ2UgZm9yIHRoZSBCUEYgdHJhbXBvbGluZXMgaXMg
+YWxsb2NhdGVkIHdpdGgNCj4gPiBicGZfaml0X2FsbG9jX2V4ZV9wYWdlIHdoaWNoIG1hcmtzIHRo
+aXMgYWxsb2NhdGVkIHBhZ2UgZXhlY3V0YWJsZS4gVGhpcw0KPiA+IG1lYW5zIHRoYXQgdGhlIGFs
+bG9jYXRlZCBtZW1vcnkgaXMgVyBhbmQgWCBhdCB0aGUgc2FtZSB0aW1lIG1ha2luZyBpdA0KPiA+
+IHN1c2NlcHRpYmxlIHRvIFdYIGJhc2VkIGF0dGFja3MuDQo+ID4gDQo+ID4gU2luY2UgdGhlIGFs
+bG9jYXRlZCBtZW1vcnkgaXMgc2hhcmVkIGJldHdlZW4gdHdvIHRyYW1wb2xpbmVzICh0aGUNCj4g
+PiBjdXJyZW50IGFuZCB0aGUgbmV4dCksIDIgcGFnZXMgbXVzdCBiZSBhbGxvY2F0ZWQgdG8gYWRo
+ZXJlIHRvIFdeWCBhbmQNCj4gPiB0aGUgZm9sbG93aW5nIHNlcXVlbmNlIGlzIG9iZXllZCB3aGVy
+ZSB0cmFtcG9saW5lcyBhcmUgbW9kaWZpZWQ6DQo+IA0KPiBDYW4gd2UgcGxlYXNlIGRvIGJldHRl
+ciByYXRoZXIgdGhhbiBwaWxpbmcgZ2FyYmFnZSBvbiB0b3Agb2YgZ2FyYmFnZT8NCj4gDQo+ID4g
+DQo+ID4gLSBNYXJrIG1lbW9yeSBhcyBub24gZXhlY3V0YWJsZSAoc2V0X21lbW9yeV9ueCkuIFdo
+aWxlIG1vZHVsZV9hbGxvYyBmb3INCj4gPiB4ODYgYWxsb2NhdGVzIHRoZSBtZW1vcnkgYXMgUEFH
+RV9LRVJORUwgYW5kIG5vdCBQQUdFX0tFUk5FTF9FWEVDLCBub3QNCj4gPiBhbGwgaW1wbGVtZW50
+YXRpb25zIG9mIG1vZHVsZV9hbGxvYyBkbyBzbw0KPiANCj4gSG93IGFib3V0IGZpeGluZyB0aGlz
+IGluc3RlYWQ/DQo+IA0KPiA+IC0gTWFyayB0aGUgbWVtb3J5IGFzIHJlYWQvd3JpdGUgKHNldF9t
+ZW1vcnlfcncpDQo+IA0KPiBQcm9iYWJseSBoYXJtbGVzcywgYnV0IHNlZSBhYm92ZSBhYm91dCBm
+aXhpbmcgaXQuDQo+IA0KPiA+IC0gTW9kaWZ5IHRoZSB0cmFtcG9saW5lDQo+IA0KPiBTZWVtcyBy
+ZWFzb25hYmxlLiBJdOKAmXMgd29ydGggbm90aW5nIHRoYXQgdGhpcyB3aG9sZSBhcHByb2FjaCBp
+cyBzdWJvcHRpbWFsOg0KPiB0aGUg4oCcbW9kdWxl4oCdIGFsbG9jYXRvciBzaG91bGQgcmVhbGx5
+IGJlIHJldHVybmluZyBhIGxpc3Qgb2YgcGFnZXMgdG8gYmUNCj4gd3JpdHRlbiAobm90IGF0IHRo
+ZSBmaW5hbCBhZGRyZXNzISkgd2l0aCB0aGUgYWN0dWFsIGV4ZWN1dGFibGUgbWFwcGluZyB0byBi
+ZQ0KPiBtYXRlcmlhbGl6ZWQgbGF0ZXIsIGJ1dCB0aGF04oCZcyBhIGJpZ2dlciBwcm9qZWN0IHRo
+YXQgeW914oCZcmUgd2VsY29tZSB0byBpZ25vcmUNCj4gZm9yIG5vdy4gIChDb25jcmV0ZWx5LCBp
+dCBzaG91bGQgcHJvZHVjZSBhIHZtYXAgYWRkcmVzcyB3aXRoIGJhY2tpbmcgcGFnZXMgYnV0DQo+
+IHdpdGggdGhlIHZtYXAgYWxpYXMgZWl0aGVyIGVudGlyZWx5IHVubWFwcGVkIG9yIHJlYWQtb25s
+eS4gQSBzdWJzZXF1ZW50IGhlYWxlcg0KPiB3b3VsZCwgYWxsIGF0IG9uY2UsIG1ha2UgdGhlIGRp
+cmVjdCBtYXAgcGFnZXMgUk8gb3Igbm90LXByZXNlbnQgYW5kIG1ha2UgdGhlDQo+IHZtYXAgYWxp
+YXMgUlguKQ0KPiA+IC0gTWFyayB0aGUgbWVtb3J5IGFzIHJlYWQtb25seSAoc2V0X21lbW9yeV9y
+bykNCj4gPiAtIE1hcmsgdGhlIG1lbW9yeSBhcyBleGVjdXRhYmxlIChzZXRfbWVtb3J5X3gpDQo+
+IA0KPiBObywgdGhhbmtzLiBUaGVyZeKAmXMgdmVyeSBsaXR0bGUgZXhjdXNlIGZvciBkb2luZyB0
+d28gSVBJIGZsdXNoZXMgd2hlbiBvbmUNCj4gd291bGQgc3VmZmljZS4NCj4gDQo+IEFzIGZhciBh
+cyBJIGtub3csIGFsbCBhcmNoaXRlY3R1cmVzIGNhbiBkbyB0aGlzIHdpdGggYSBzaW5nbGUgZmx1
+c2ggd2l0aG91dA0KPiByYWNlcyAgeDg2IGNlcnRhaW5seSBjYW4uIFRoZSBtb2R1bGUgZnJlZWlu
+ZyBjb2RlIGdldHMgdGhpcyBzZXF1ZW5jZSByaWdodC4NCj4gUGxlYXNlIHJldXNlIGl0cyBtZWNo
+YW5pc20gb3IsIGlmIG5lZWRlZCwgZXhwb3J0IHRoZSByZWxldmFudCBpbnRlcmZhY2VzLg0KDQpT
+byBpZiBJIHVuZGVyc3RhbmQgdGhpcyByaWdodCwgc29tZSB0cmFtcG9saW5lcyBoYXZlIGJlZW4g
+YWRkZWQgdGhhdCBhcmUNCmN1cnJlbnRseSBzZXQgYXMgUldYIGF0IG1vZGlmaWNhdGlvbiB0aW1l
+IEFORCBsZWZ0IHRoYXQgd2F5IGR1cmluZyBydW50aW1lPyBUaGUNCmRpc2N1c3Npb24gb24gdGhl
+IG9yZGVyIG9mIHNldF9tZW1vcnlfKCkgY2FsbHMgaW4gdGhlIGNvbW1pdCBtZXNzYWdlIG1hZGUg
+bWUNCnRoaW5rIHRoYXQgdGhpcyB3YXMganVzdCBhIG1vZGlmaWNhdGlvbiB0aW1lIHRoaW5nIGF0
+IGZpcnN0Lg0KDQpBbHNvLCBpcyB0aGVyZSBhIHJlYXNvbiB5b3UgY291bGRuJ3QgdXNlIHRleHRf
+cG9rZSgpIHRvIG1vZGlmeSB0aGUgdHJhbXBvbGluZQ0Kd2l0aCBhIHNpbmdsZSBmbHVzaD8NCg0K
+DQo=
