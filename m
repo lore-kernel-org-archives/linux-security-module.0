@@ -2,155 +2,143 @@ Return-Path: <SRS0=vZMJ=23=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867F6C33C8C
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 15:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D7DC33C9E
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 16:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D1C32075A
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 15:15:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0955920848
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jan 2020 16:10:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWvJ0hUJ"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gYN8qm9g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbgAFPPU (ORCPT
+        id S1726478AbgAFQKj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Jan 2020 10:15:20 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34574 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbgAFPPU (ORCPT
+        Mon, 6 Jan 2020 11:10:39 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37376 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbgAFQKj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Jan 2020 10:15:20 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t2so50006481wrr.1;
-        Mon, 06 Jan 2020 07:15:18 -0800 (PST)
+        Mon, 6 Jan 2020 11:10:39 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f129so15828311wmf.2
+        for <linux-security-module@vger.kernel.org>; Mon, 06 Jan 2020 08:10:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zTQSaUx9fY9N5fiG62F+7SM0UDzGL6HAVdcpx53+n90=;
-        b=cWvJ0hUJN/7su+kb3ylfeBXNSVRKFL/Ht5gOkGAE6PXYxHmSNi0Tux3zKIPXxb0A//
-         8W8kKdL3/Am33w5EX/YnhVV9WI4nDpzd6/i01V2323cciQgjlyqCRXEAffJV5t03GIPO
-         CYpLD/zp+ndGI32uFUbtvlyJkswTd2218CXcmQ9zUAoJKbUiRzfKkg2W2dSpTgIgBwGs
-         t3wpmk7dFDIv3c42swffAWKB4//RmnyRMDdooB/zfYedKmP5R+VLN/8FbIcyH88Z++VU
-         T8B/yPTlLqtnhoP2artOpVm/VDcQLJSx98qR7TZFnYMfEJy8hv7+NGaGPKnmUqQ6cn0G
-         Z5Cg==
+        d=chromium.org; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=lKFIQHaKUHD2UmFMf44CL03yjerDzDCte0G5za7Hzaw=;
+        b=gYN8qm9gfI4NDVj7y1aSRpVDDuB6bfgMDg0dGrfKkOZz8EwVE2DIR3ZiHKZ/Vb2/81
+         ocxy5ZzV7c/CbFC5W7RV0kU8jLCvya4o9+5hG83RRMHLv6LX+6j3xtvhwmUyHdLyvYzF
+         Rr7XG6qC/KXrU7sht5+bHIyepl50iz8aoEQKc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zTQSaUx9fY9N5fiG62F+7SM0UDzGL6HAVdcpx53+n90=;
-        b=Jxi1+JY+ijLoyv61D9ijlH3rxEiPlpVw+AtRnT1hoUF5Xr4VHMM6vNrkc6jrlgFc0m
-         TU4uSOShcO99W+1QysdT4+Ri/jPLzfvpXlSLtjAD0kSIPS7aghFlB8mwpsNS5FJfuWJ+
-         /WKxhiVNksq2okD/VeSX/phZouLKBtN1GfvC/XQEydWu67w6KHPBx7Sn/X3unLHeVweq
-         QIMJBhZ5rw1YzBY718OCD+51PcVdMZUOfN+cv+baBvwmgiicneo8mJmbbaXLU1HsauAw
-         SXf8MvfcTlPOn9386RyNL7951RJ/Sjaq3iQ65cKpiaes6in88Fu0ZEQj4zXJjVspbOx+
-         gtGQ==
-X-Gm-Message-State: APjAAAUAqf3Rxi2JCXOZiIkY77MrzkmCAUClYFv/3eHXKAmJd6Nq2zWZ
-        6thm18pW6a6EPjSIuXBlpQ==
-X-Google-Smtp-Source: APXvYqyNeCBfGcSY8tzYao6Gf9lT0qkr1r3n6MMW2yaYqWla2aP861L3uIRX5g58cqiOezdEr2W3OQ==
-X-Received: by 2002:a5d:4687:: with SMTP id u7mr103340897wrq.176.1578323718007;
-        Mon, 06 Jan 2020 07:15:18 -0800 (PST)
-Received: from avx2 ([46.53.249.49])
-        by smtp.gmail.com with ESMTPSA id v3sm73919574wru.32.2020.01.06.07.15.16
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=lKFIQHaKUHD2UmFMf44CL03yjerDzDCte0G5za7Hzaw=;
+        b=bzBYddNszD6gzOV2XaZGGddtmLo51cD7J/7cle2VLzzTQ36gAQAvjU+vXpzAfBbY7a
+         tj4malHeFrdBbkKz3kO0p4fWDb3F/FjVBSUsUBTPIQDmdwWNFI6ktFek/no6FuuWOidc
+         eNMRz3PBlitjKVeDi3hOXRnP+ZhjEKn5tvRAxPwwN2IHMiXHj0yL5oTd6rrHg+p+YBKN
+         +A0+8UQX8y9aWGzLEY9eE7iVPA/lTFu8WdivcX4QqKA1/1bZiLGOHEzj7To24huy/WJw
+         VPfZvkS3JpYsg7r/N/BCTJsjFVcfv79/ZKknnd9o5pdPZY9x6K1emSE2ZZumQJTjNaVJ
+         9mpQ==
+X-Gm-Message-State: APjAAAUSLR8bfKo4A1nE43jPHEhBkE7oNe3zqZ0N6oc791ZFxP1sti3T
+        y48Cdo5RwO3ZiRmXKUXf9Fk8zg==
+X-Google-Smtp-Source: APXvYqymGd76zlAEst94AWo4Z3ZR8S+gC9+ZcYLTd0XrXTbf2ufdGmSY2XlY51LnNMXAYaPwvBfTeA==
+X-Received: by 2002:a7b:cbc8:: with SMTP id n8mr35083327wmi.35.1578327037092;
+        Mon, 06 Jan 2020 08:10:37 -0800 (PST)
+Received: from ?IPv6:2a00:79e0:42:204:51d1:d96e:f72e:c8c0? ([2a00:79e0:42:204:51d1:d96e:f72e:c8c0])
+        by smtp.gmail.com with ESMTPSA id i5sm72940135wrv.34.2020.01.06.08.10.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 07:15:17 -0800 (PST)
-Date:   Mon, 6 Jan 2020 18:15:14 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v6 00/10] proc: modernize proc to support multiple
- private instances
-Message-ID: <20200106151514.GA382@avx2>
-References: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
+        Mon, 06 Jan 2020 08:10:36 -0800 (PST)
+Message-ID: <e362242edea8931f045beea1228de99b6572aa89.camel@chromium.org>
+Subject: Re: [PATCH] ima: add the ability to query ima for the hash of a
+ given file.
+From:   Florent Revest <revest@chromium.org>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org
+Cc:     kpsingh@chromium.org, mjg59@google.com, zohar@linux.ibm.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Florent Revest <revest@google.com>
+Date:   Mon, 06 Jan 2020 17:10:35 +0100
+In-Reply-To: <8f4d9c4e-735d-8ba9-b84a-4f341030e0cf@linux.microsoft.com>
+References: <20191220163136.25010-1-revest@chromium.org>
+         <8f4d9c4e-735d-8ba9-b84a-4f341030e0cf@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
->  	hidepid=	Set /proc/<pid>/ access mode.
->  	gid=		Set the group authorized to learn processes information.
-> +	pidonly=	Show only task related subset of procfs.
+On Fri, 2019-12-20 at 08:48 -0800, Lakshmi Ramasubramanian wrote:
+> On 12/20/2019 8:31 AM, Florent Revest wrote:
+> 
+> >   
+> > +/**
+> > + * ima_file_hash - return the stored measurement if a file has
+> > been hashed.
+> > + * @file: pointer to the file
+> > + * @buf: buffer in which to store the hash
+> > + * @buf_size: length of the buffer
+> > + *
+> > + * On success, output the hash into buf and return the hash
+> > algorithm (as
+> > + * defined in the enum hash_algo).
+> > + * If the hash is larger than buf, then only size bytes will be
+> > copied. It
+> > + * generally just makes sense to pass a buffer capable of holding
+> > the largest
+> > + * possible hash: IMA_MAX_DIGEST_SIZE
+> 
+> If the given buffer is smaller than the hash length, wouldn't it be 
+> better to return the required size and a status indicating the buffer
+> is not enough. The caller can then call back with the required
+> buffer.
+> 
+> If the hash is truncated the caller may not know if the hash is
+> partial or not.
 
-I'd rather have
+I agree with Mimi's answer that the caller would know based on the
+returned hash algorithm.
 
-	mount -t proc -o set=pid
+> > + *
+> > + * If IMA is disabled or if no measurement is available, return
+> > -EOPNOTSUPP.
+> > + * If the parameters are incorrect, return -EINVAL.
+> > + */
+> > +int ima_file_hash(struct file *file, char *buf, size_t buf_size)
+> > +{
+> > +	struct inode *inode;
+> > +	struct integrity_iint_cache *iint;
+> > +	size_t copied_size;
+> > +
+> > +	if (!file || !buf)
+> > +		return -EINVAL;
+> > +
+> > +	if (!ima_policy_flag)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	inode = file_inode(file);
+> > +	iint = integrity_iint_find(inode);
+> > +	if (!iint)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	mutex_lock(&iint->mutex);
+> > +	copied_size = min_t(size_t, iint->ima_hash->length, buf_size);
+> > +	memcpy(buf, iint->ima_hash->digest, copied_size);
+> > +	mutex_unlock(&iint->mutex);
+> > +
+> > +	return iint->ima_hash->algo;
+> 
+> Should the hash algorithm be copied from iinit->ima_hash to a local 
+> variable while holding the mutex and that one returned?
+> 
+> I assume iinit->mutex  is taken to ensure iinit->ima_hash is not
+> removed while this function is accessing it.
 
-so that is can be naturally extended to 
+Ah! Good catch, thank you :) 
 
-	mount -t proc -o set=pid,sysctl,misc
-
-> +static int proc_dir_open(struct inode *inode, struct file *file)
-> +{
-> +	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
-> +
-> +	if (proc_fs_pidonly(fs_info) == PROC_PIDONLY_ON)
-> +		return -ENOENT;
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * These are the generic /proc directory operations. They
->   * use the in-memory "struct proc_dir_entry" tree to parse
-> @@ -338,6 +357,7 @@ static const struct file_operations proc_dir_operations = {
->  	.llseek			= generic_file_llseek,
->  	.read			= generic_read_dir,
->  	.iterate_shared		= proc_readdir,
-> +	.open			= proc_dir_open,
-
-This should not be necessary: if lookup and readdir filters work
-then ->open can't happen.
-
->  static int proc_reg_open(struct inode *inode, struct file *file)
->  {
-> +	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
->  	struct proc_dir_entry *pde = PDE(inode);
->  	int rv = 0;
->  	typeof_member(struct file_operations, open) open;
->  	typeof_member(struct file_operations, release) release;
->  	struct pde_opener *pdeo;
->  
-> +	if (proc_fs_pidonly(fs_info) == PROC_PIDONLY_ON)
-> +		return -ENOENT;
-
-Ditto. Can't open what can't be looked up.
-
-> --- a/include/linux/proc_fs.h
-> +++ b/include/linux/proc_fs.h
-> +/* definitions for hide_pid field */
-> +enum {
-> +	HIDEPID_OFF	  = 0,
-> +	HIDEPID_NO_ACCESS = 1,
-> +	HIDEPID_INVISIBLE = 2,
-> +	HIDEPID_NOT_PTRACABLE = 3, /* Limit pids to only ptracable pids */
-> +};
-
-These should live in uapi/ as they _are_ user interface to mount().
