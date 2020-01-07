@@ -2,176 +2,153 @@ Return-Path: <SRS0=OCSC=24=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF3DC33C9E
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 01:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 133AFC33C9E
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 03:29:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE5E207E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 01:36:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCA2A2075A
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 03:29:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="H/bxSDl9"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="GfpURyQm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbgAGBgw (ORCPT
+        id S1727401AbgAGD3n (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Jan 2020 20:36:52 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33572 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbgAGBgw (ORCPT
+        Mon, 6 Jan 2020 22:29:43 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46330 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727384AbgAGD3n (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Jan 2020 20:36:52 -0500
-Received: by mail-pf1-f193.google.com with SMTP id z16so27787355pfk.0
-        for <linux-security-module@vger.kernel.org>; Mon, 06 Jan 2020 17:36:51 -0800 (PST)
+        Mon, 6 Jan 2020 22:29:43 -0500
+Received: by mail-lf1-f67.google.com with SMTP id f15so37788489lfl.13
+        for <linux-security-module@vger.kernel.org>; Mon, 06 Jan 2020 19:29:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=HWVPU6NTGp9nzRxw5BWJeatmP8pnvZxGmvGTyfzAkRc=;
-        b=H/bxSDl9ArODmhysOekCr4511LlfvhHtaBDU8GIImpRdmsvDx40o7nMg/xP6prsIR3
-         W3wfDDHw7bYbaNMyMAt/CZBXvSY1qUoH2OGKUMGcoGkZjTvK/Ss3sTUWmjPTx+xUnPcB
-         /Ri5nVSIBJ4fQ8uFTyem8NfwiSa8/uBW6+OJbrR+gDUtYqvj2yLwQek6ho40oG80i7c3
-         utvI49OLakatRGxFuN91PBHLPNGJO+b3PNIg2CMjCDaW5r58PLezOGoGIxRgPFxmOhIr
-         jmlP+7U7gJwDrjgCWKNqBW3MxgSLx2NQth3QScpuYOm1wjI7LyouHYobvzIozvvpD+8X
-         AyHg==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U85TOD1CNefbRaDTXZubd4MkL5i5NuUFlBK6ll/AnWc=;
+        b=GfpURyQmT+bUCkwAIw9dXowtPpHQs6uj7/2y69fI6x9FCZidUF4LWjfrCaE4Ju2IXd
+         ZQ3HG9uEnv22Iucf+GVtJAXXOCHB18+pE14o1WaeHN/vXPn+cO9sfOIW6GaX1SnqgaV9
+         o6G/sBhxB3cu7AxaQ2Dx+lfXZQCofCQJxZ5DMCUEghrY/onl3p3WorfMGtCkt8wpCBPc
+         OsHNWE8usuxbb9Go/bCO4AvdTZ1eT8EoFLdkqsmUXV85ujOxEpViYTNnZN7usR55VsL4
+         ac60zibqlUqA697lnAnoUnDoIp5cVSeUeFIJG5UcpFKhhG7iGKcCiehHDCkl/KLaFLHH
+         NOcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=HWVPU6NTGp9nzRxw5BWJeatmP8pnvZxGmvGTyfzAkRc=;
-        b=nAhYm9Dv1E+atUs7gcmxR1fdXHjx5HbhlsODPSJcOWvHYHUnBDLjrbHlIhoW1q2UPu
-         2hxpfq0ntvlXyz4rMZJn0QdZAqX+euSPvys5DhLDs+oLUKQgHW2tndX201PfRVEfs27t
-         p/v3ylXmphhzCCZPnIoQ+TP5TBUCR0f7YO1vKwFG4OLwLrAyLM+s/Pdap66fXU7y3uyX
-         wstWgxw1wMXArItS9GSQhy2b0TB/AAaTgmeIDKm/4FaYyCB9rxe7KZ5O3bz+qe06deMs
-         QMQLUDIcbADSpBytKtOc5zoPYPv3BOdKYKUYz9EeOy8rEYnKq6nCc38HkvURrMKev3gg
-         ZacA==
-X-Gm-Message-State: APjAAAXK0uCsMiltkiqqtKXb+81fxGw/C6/ABhqd8l3k4zZCeFz181Eg
-        AwDekvvDJxFc6b82gbNs2l/v1A==
-X-Google-Smtp-Source: APXvYqwABUMpjwkXRj3CIQncBFYa4iBNoJvcnED7WOpDnd8SZzBtyrCvkbT8+x2IU2YDKmbRxbrMDw==
-X-Received: by 2002:aa7:9218:: with SMTP id 24mr110748206pfo.145.1578361011553;
-        Mon, 06 Jan 2020 17:36:51 -0800 (PST)
-Received: from ?IPv6:2600:1013:b01b:fb95:11fc:e81d:31f1:7b96? ([2600:1013:b01b:fb95:11fc:e81d:31f1:7b96])
-        by smtp.gmail.com with ESMTPSA id q12sm78770893pfh.158.2020.01.06.17.36.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jan 2020 17:36:50 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH bpf-next] bpf: Make trampolines W^X
-Date:   Mon, 6 Jan 2020 15:36:49 -1000
-Message-Id: <DB882EE8-20B2-4631-A808-E5C968B24CEB@amacapital.net>
-References: <21bf6bb46544eab79e792980f82520f8fbdae9b5.camel@intel.com>
-Cc:     "kpsingh@chromium.org" <kpsingh@chromium.org>,
-        "songliubraving@fb.com" <songliubraving@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "kuznet@ms2.inr.ac.ru" <kuznet@ms2.inr.ac.ru>,
-        "jannh@google.com" <jannh@google.com>,
-        "mjg59@google.com" <mjg59@google.com>,
-        "thgarnie@chromium.org" <thgarnie@chromium.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "revest@chromium.org" <revest@chromium.org>,
-        "jackmanb@chromium.org" <jackmanb@chromium.org>,
-        "kafai@fb.com" <kafai@fb.com>, "yhs@fb.com" <yhs@fb.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>,
-        "mhalcrow@google.com" <mhalcrow@google.com>,
-        "andriin@fb.com" <andriin@fb.com>
-In-Reply-To: <21bf6bb46544eab79e792980f82520f8fbdae9b5.camel@intel.com>
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-X-Mailer: iPhone Mail (17C54)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U85TOD1CNefbRaDTXZubd4MkL5i5NuUFlBK6ll/AnWc=;
+        b=JNXmMJGV09oa5pwTNEk1Wm3dRoT2+KOPmyfKKI8IMdOCl25OtvX53IQwERF4BlIGpl
+         GDdSNTaIAYmgQ9V4eMWdWZsQ4md25dk4cIM3bnpSNju9g9Ren3Qk1otX1q3NcWjNj6fG
+         +z7t33OHUZUgy6IeCjlwiQUqzFZSy72c2WHhEkQKfo0LwnOcXXhbWMNLcCWiRdNwJr6Q
+         vcKFy5zrH9uJ+105yHOGRY39Oq9lM+3xFC2lHXsACh+jR8LmMGsMX3KdeUBflNjOijkr
+         mQf71SCQVJYmzD8eZ6GhCwDC3hzr8ADfYZiJZVS7zaMbVJ5sE78GxmqvHt1u8zKMM0S/
+         hslA==
+X-Gm-Message-State: APjAAAXgcSPuksyIGFLwVFVcc/C+CbauCaXp4SdEsIfVWnLZfcsxizEz
+        9EyM1Sgev1/aGNbB8wZ3YkOXNLmkVVIfGCfuUfRr
+X-Google-Smtp-Source: APXvYqw09UmfesxJdAdZg1IEJDH2/HyATRUjtdoscI5S9pFrjsiJNdaa9NBXLcoemaYtPBlzhCvsqBH23o25NaFnh/w=
+X-Received: by 2002:ac2:54b5:: with SMTP id w21mr57395558lfk.175.1578367780380;
+ Mon, 06 Jan 2020 19:29:40 -0800 (PST)
+MIME-Version: 1.0
+References: <157678334821.158235.2125894638773393579.stgit@chester> <a5794ae2-d1e3-4ad3-6a16-2d479f33da16@tycho.nsa.gov>
+In-Reply-To: <a5794ae2-d1e3-4ad3-6a16-2d479f33da16@tycho.nsa.gov>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 6 Jan 2020 22:29:29 -0500
+Message-ID: <CAHC9VhSuutROagQEbCL=3PTUxGz9wnhoodB_hT_t-i-rWpof7Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] selinux: deprecate disabling SELinux and runtime
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Jan 6, 2020 at 4:25 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On 12/19/19 2:22 PM, Paul Moore wrote:
+> > Deprecate the CONFIG_SECURITY_SELINUX_DISABLE functionality.  The
+> > code was originally developed to make it easier for Linux
+> > distributions to support architectures where adding parameters to the
+> > kernel command line was difficult.  Unfortunately, supporting runtime
+> > disable meant we had to make some security trade-offs when it came to
+> > the LSM hooks, as documented in the Kconfig help text:
+> >
+> >    NOTE: selecting this option will disable the '__ro_after_init'
+> >    kernel hardening feature for security hooks.   Please consider
+> >    using the selinux=0 boot parameter instead of enabling this
+> >    option.
+> >
+> > Fortunately it looks as if that the original motivation for the
+> > runtime disable functionality is gone, and Fedora/RHEL appears to be
+> > the only major distribution enabling this capability at build time
+> > so we are now taking steps to remove it entirely from the kernel.
+> > The first step is to mark the functionality as deprecated and print
+> > an error when it is used (what this patch is doing).  As Fedora/RHEL
+> > makes progress in transitioning the distribution away from runtime
+> > disable, we will introduce follow-up patches over several kernel
+> > releases which will block for increasing periods of time when the
+> > runtime disable is used.  Finally we will remove the option entirely
+> > once we believe all users have moved to the kernel cmdline approach.
+> >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > ---
+> >   security/selinux/Kconfig     |    3 +++
+> >   security/selinux/selinuxfs.c |    6 ++++++
+> >   2 files changed, 9 insertions(+)
+> >
+> > diff --git a/security/selinux/Kconfig b/security/selinux/Kconfig
+> > index 996d35d950f7..580ac24c7aa1 100644
+> > --- a/security/selinux/Kconfig
+> > +++ b/security/selinux/Kconfig
+> > @@ -42,6 +42,9 @@ config SECURITY_SELINUX_DISABLE
+> >         using the selinux=0 boot parameter instead of enabling this
+> >         option.
+> >
+> > +       WARNING: this option is deprecated and will be removed in a future
+> > +       kernel release.
+> > +
+> >         If you are unsure how to answer this question, answer N.
+> >
+> >   config SECURITY_SELINUX_DEVELOP
+> > diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> > index 278417e67b4c..adbe2dd35202 100644
+> > --- a/security/selinux/selinuxfs.c
+> > +++ b/security/selinux/selinuxfs.c
+> > @@ -281,6 +281,12 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
+> >       int new_value;
+> >       int enforcing;
+> >
+> > +     /* NOTE: we are now officially considering runtime disable as
+> > +      *       deprecated, and using it will become increasingly painful
+> > +      *       (e.g. sleeping/blocking) as we progress through future
+> > +      *       kernel releases until eventually it is removed */
+> > +     pr_err("SELinux:  Runtime disable is deprecated, use selinux=0 on the kernel cmdline.\n");
+>
+> Looking for examples of similar deprecations in the kernel, I notice
+> that they often use pr_warn_once() or WARN_ONCE() to avoid spamming the
+> kernel logs excessively.  They also often include the current process
+> name to identify the offending process.  In this case, it probably
+> matters little since this is only done (legitimately) by the init
+> process and only once, so up to you whether you bother amending it.
 
-> On Jan 6, 2020, at 12:25 PM, Edgecombe, Rick P <rick.p.edgecombe@intel.com=
-> wrote:
->=20
-> =EF=BB=BFOn Sat, 2020-01-04 at 09:49 +0900, Andy Lutomirski wrote:
->>>> On Jan 4, 2020, at 8:47 AM, KP Singh <kpsingh@chromium.org> wrote:
->>>=20
->>> =EF=BB=BFFrom: KP Singh <kpsingh@google.com>
->>>=20
->>> The image for the BPF trampolines is allocated with
->>> bpf_jit_alloc_exe_page which marks this allocated page executable. This
->>> means that the allocated memory is W and X at the same time making it
->>> susceptible to WX based attacks.
->>>=20
->>> Since the allocated memory is shared between two trampolines (the
->>> current and the next), 2 pages must be allocated to adhere to W^X and
->>> the following sequence is obeyed where trampolines are modified:
->>=20
->> Can we please do better rather than piling garbage on top of garbage?
->>=20
->>>=20
->>> - Mark memory as non executable (set_memory_nx). While module_alloc for
->>> x86 allocates the memory as PAGE_KERNEL and not PAGE_KERNEL_EXEC, not
->>> all implementations of module_alloc do so
->>=20
->> How about fixing this instead?
->>=20
->>> - Mark the memory as read/write (set_memory_rw)
->>=20
->> Probably harmless, but see above about fixing it.
->>=20
->>> - Modify the trampoline
->>=20
->> Seems reasonable. It=E2=80=99s worth noting that this whole approach is s=
-uboptimal:
->> the =E2=80=9Cmodule=E2=80=9D allocator should really be returning a list o=
-f pages to be
->> written (not at the final address!) with the actual executable mapping to=
- be
->> materialized later, but that=E2=80=99s a bigger project that you=E2=80=99=
-re welcome to ignore
->> for now.  (Concretely, it should produce a vmap address with backing page=
-s but
->> with the vmap alias either entirely unmapped or read-only. A subsequent h=
-ealer
->> would, all at once, make the direct map pages RO or not-present and make t=
-he
->> vmap alias RX.)
->>> - Mark the memory as read-only (set_memory_ro)
->>> - Mark the memory as executable (set_memory_x)
->>=20
->> No, thanks. There=E2=80=99s very little excuse for doing two IPI flushes w=
-hen one
->> would suffice.
->>=20
->> As far as I know, all architectures can do this with a single flush witho=
-ut
->> races  x86 certainly can. The module freeing code gets this sequence righ=
-t.
->> Please reuse its mechanism or, if needed, export the relevant interfaces.=
+Yes, I saw that too and decided we were better off printing something
+each time since it really should only ever happen once on a well
+behaved system.
 
->=20
-> So if I understand this right, some trampolines have been added that are
-> currently set as RWX at modification time AND left that way during runtime=
-? The
-> discussion on the order of set_memory_() calls in the commit message made m=
-e
-> think that this was just a modification time thing at first.
+> Also for some interfaces, they appear to document the intent to remove
+> it in a file under Documentation/ABI/obsolete/ and then later move that
+> to removed/ when fully removed.
 
-I=E2=80=99m not sure what the status quo is.
+Thanks, I wasn't aware of that, and couldn't find anything relevant
+while grep'ing under Documentation/process.  There used to be a
+Documentation/feature-removal.txt (or a file with a similar name)
+which tracked these things, but I guess it migrated over to
+Documentation/ABI during the last Documentation shuffle a couple of
+years ago.
 
-We really ought to have a genuinely good API for allocation and initializati=
-on of text.  We can do so much better than set_memory_blahblah.
+I'll send out an updated patch in just a moment.
 
-FWIW, I have some ideas about making kernel flushes cheaper. It=E2=80=99s cu=
-rrently blocked on finding some time and on tglx=E2=80=99s irqtrace work.
-
->=20
-> Also, is there a reason you couldn't use text_poke() to modify the trampol=
-ine
-> with a single flush?
->=20
-
-Does text_poke to an IPI these days?=
+-- 
+paul moore
+www.paul-moore.com
