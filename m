@@ -2,127 +2,101 @@ Return-Path: <SRS0=OCSC=24=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A11C3F68F
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 20:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7DAC33CA1
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 20:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C64FB206DB
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 20:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 177AC21744
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 20:57:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1578430679;
+	bh=zehCim+mbE5Zwzd1nUwk8vKFQX8jEI+Gz7yP6WDgERQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=tvKHzAKxyTF2hBauJq00mojBi370DV0Xwr74A8VxNGVME7I9KhwN2aVkET7/e3Fjs
+	 MUSdfKtUbSuNBpRt76HcZVqX2nkaWgBEeEfkLt92F37mftdXgcd6oS9pvV/f9Mlo7X
+	 dYItB2mCvMbWhdlrCgKkH4FhRXhrPDsxsZWaxudY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbgAGUAC (ORCPT
+        id S1727728AbgAGU5y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jan 2020 15:00:02 -0500
-Received: from namei.org ([65.99.196.166]:55824 "EHLO namei.org"
+        Tue, 7 Jan 2020 15:57:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728358AbgAGUAB (ORCPT
+        id S1727723AbgAGU5w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:00:01 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 007Jxmfk001686;
-        Tue, 7 Jan 2020 19:59:48 GMT
-Date:   Wed, 8 Jan 2020 06:59:48 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-cc:     linux-security-module@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Micah Morton <mortonm@chromium.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: Re: [PATCH 2/2] security,selinux: get rid of
- security_delete_hooks()
-In-Reply-To: <20200107133154.588958-3-omosnace@redhat.com>
-Message-ID: <alpine.LRH.2.21.2001080653220.575@namei.org>
-References: <20200107133154.588958-1-omosnace@redhat.com> <20200107133154.588958-3-omosnace@redhat.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Tue, 7 Jan 2020 15:57:52 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51833208C4;
+        Tue,  7 Jan 2020 20:57:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578430671;
+        bh=zehCim+mbE5Zwzd1nUwk8vKFQX8jEI+Gz7yP6WDgERQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MmeB0P8UGsW/8I/hrkR/M7TVsRsYnRJcAI0Z/oQmvkJq2souJKO39g5wmmxHlXeUd
+         xcI0vW1hMk7oxV7Tw1uWusI66lgfGEsX4sWfcNkUMCd5vQSkMh3tQjs68wlJ3EJmVY
+         LfkO3iK5PeCOaATQ8yFTBcoCLEycl2lLI68rRpl8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 020/191] afs: Fix SELinux setting security label on /afs
+Date:   Tue,  7 Jan 2020 21:52:20 +0100
+Message-Id: <20200107205334.086622523@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 7 Jan 2020, Ondrej Mosnacek wrote:
+From: David Howells <dhowells@redhat.com>
 
-> The only user is SELinux, which is hereby converted to check the
-> disabled flag in each hook instead of removing the hooks from the list.
-> 
-> The __lsm_ro_after_init macro is now removed and replaced with
-> __ro_after_init directly.
-> 
-> This fixes a race condition in SELinux runtime disable, which was
-> introduced with the switch to hook lists in b1d9e6b0646d ("LSM: Switch
-> to lists of hooks").
-> 
-> Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->  include/linux/lsm_hooks.h    |  31 --
->  security/Kconfig             |   5 -
->  security/apparmor/lsm.c      |   6 +-
->  security/commoncap.c         |   2 +-
->  security/loadpin/loadpin.c   |   2 +-
->  security/lockdown/lockdown.c |   2 +-
->  security/security.c          |   5 +-
->  security/selinux/Kconfig     |   6 -
->  security/selinux/hooks.c     | 742 ++++++++++++++++++++++++++++++-----
->  security/smack/smack_lsm.c   |   4 +-
->  security/tomoyo/tomoyo.c     |   6 +-
->  security/yama/yama_lsm.c     |   2 +-
->  12 files changed, 654 insertions(+), 159 deletions(-)
+[ Upstream commit bcbccaf2edcf1b76f73f890e968babef446151a4 ]
 
-Please separate the changes for each LSM into separate patches (the 
-__lsm_ro_after_init removal patch can be last).
+Make the AFS dynamic root superblock R/W so that SELinux can set the
+security label on it.  Without this, upgrades to, say, the Fedora
+filesystem-afs RPM fail if afs is mounted on it because the SELinux label
+can't be (re-)applied.
 
->  config SECURITY_SELINUX_DEVELOP
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 47ad4db925cf..9ac2b6b69ff9 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -650,13 +650,15 @@ static int selinux_set_mnt_opts(struct super_block *sb,
->  {
->  	const struct cred *cred = current_cred();
->  	struct superblock_security_struct *sbsec = sb->s_security;
-> -	struct dentry *root = sbsec->sb->s_root;
->  	struct selinux_mnt_opts *opts = mnt_opts;
+It might be better to make it possible to bypass the R/O check for LSM
+label application through setxattr.
 
-Seems like there are a bunch of unrelated cleanups mixed in here.
+Fixes: 4d673da14533 ("afs: Support the AFS dynamic root")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
+cc: selinux@vger.kernel.org
+cc: linux-security-module@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/afs/super.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> -	int set_fscontext =	(oldsbsec->flags & FSCONTEXT_MNT);
-> -	int set_context =	(oldsbsec->flags & CONTEXT_MNT);
-> -	int set_rootcontext =	(oldsbsec->flags & ROOTCONTEXT_MNT);
-> +	set_fscontext =		(oldsbsec->flags & FSCONTEXT_MNT);
-> +	set_context =		(oldsbsec->flags & CONTEXT_MNT);
-> +	set_rootcontext =	(oldsbsec->flags & ROOTCONTEXT_MNT);
->  
-
-...
-
->  static int selinux_binder_set_context_mgr(struct task_struct *mgr)
->  {
-> -	u32 mysid = current_sid();
-> -	u32 mgrsid = task_sid(mgr);
-> +	if (selinux_disabled(&selinux_state))
-> +		return 0;
->  
->  	return avc_has_perm(&selinux_state,
-> -			    mysid, mgrsid, SECCLASS_BINDER,
-> +			    current_sid(), task_sid(mgr), SECCLASS_BINDER,
->  			    BINDER__SET_CONTEXT_MGR, NULL);
->  }
->  
-
-Ditto, etc.
-
-Please don't do this.
-
-
+diff --git a/fs/afs/super.c b/fs/afs/super.c
+index 488641b1a418..d9a6036b70b9 100644
+--- a/fs/afs/super.c
++++ b/fs/afs/super.c
+@@ -448,7 +448,6 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
+ 	/* allocate the root inode and dentry */
+ 	if (as->dyn_root) {
+ 		inode = afs_iget_pseudo_dir(sb, true);
+-		sb->s_flags	|= SB_RDONLY;
+ 	} else {
+ 		sprintf(sb->s_id, "%llu", as->volume->vid);
+ 		afs_activate_volume(as->volume);
 -- 
-James Morris
-<jmorris@namei.org>
+2.20.1
+
+
 
