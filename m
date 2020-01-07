@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7DAC33CA1
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 20:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7800CC3F68F
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 21:05:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 177AC21744
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 20:57:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C08B2467E
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 21:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578430679;
-	bh=zehCim+mbE5Zwzd1nUwk8vKFQX8jEI+Gz7yP6WDgERQ=;
+	s=default; t=1578431137;
+	bh=fgOgFJRNlSOolq+HiYRgzzxGwDnehhiPQKyel59QtcI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tvKHzAKxyTF2hBauJq00mojBi370DV0Xwr74A8VxNGVME7I9KhwN2aVkET7/e3Fjs
-	 MUSdfKtUbSuNBpRt76HcZVqX2nkaWgBEeEfkLt92F37mftdXgcd6oS9pvV/f9Mlo7X
-	 dYItB2mCvMbWhdlrCgKkH4FhRXhrPDsxsZWaxudY=
+	b=QaLVgfPGTTioEhjP0kR8Wcp7kLmtIeJGy2PqvqDEvQAPlu0Kll9uRet/AgvrlmLzv
+	 d+KclqkfNvMK5n0fd2jfFgUhsNxC80T/nH1dBPj+ExBvMJ4hIdaG5F6suSj3kXsRlJ
+	 SjImw7ACKGp6+5+cB/lEn0+V9PA8VHjyaxNTE60s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbgAGU5y (ORCPT
+        id S1728907AbgAGVFf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jan 2020 15:57:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55882 "EHLO mail.kernel.org"
+        Tue, 7 Jan 2020 16:05:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727723AbgAGU5w (ORCPT
+        id S1729252AbgAGVFe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:57:52 -0500
+        Tue, 7 Jan 2020 16:05:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51833208C4;
-        Tue,  7 Jan 2020 20:57:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29B8020678;
+        Tue,  7 Jan 2020 21:05:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430671;
-        bh=zehCim+mbE5Zwzd1nUwk8vKFQX8jEI+Gz7yP6WDgERQ=;
+        s=default; t=1578431133;
+        bh=fgOgFJRNlSOolq+HiYRgzzxGwDnehhiPQKyel59QtcI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MmeB0P8UGsW/8I/hrkR/M7TVsRsYnRJcAI0Z/oQmvkJq2souJKO39g5wmmxHlXeUd
-         xcI0vW1hMk7oxV7Tw1uWusI66lgfGEsX4sWfcNkUMCd5vQSkMh3tQjs68wlJ3EJmVY
-         LfkO3iK5PeCOaATQ8yFTBcoCLEycl2lLI68rRpl8=
+        b=aI8sjYS6NN7svdnesOkUEGkUeemLMecJfCtXh8rzxc1E3MZyIlusAr82IK8yuxIAx
+         F/2h5ZRB6Nhy3SFkM4E9M/nmEjPPyN5ASPq18JMe6dqHpxevu2Eo/tVsp/aDLsE+4F
+         iRp3XJD2w4FcEfM3Phsh/f970ImFz8sVtpfKvSIM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -47,12 +47,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Marc Dionne <marc.dionne@auristor.com>,
         selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 020/191] afs: Fix SELinux setting security label on /afs
-Date:   Tue,  7 Jan 2020 21:52:20 +0100
-Message-Id: <20200107205334.086622523@linuxfoundation.org>
+Subject: [PATCH 4.19 011/115] afs: Fix SELinux setting security label on /afs
+Date:   Tue,  7 Jan 2020 21:53:41 +0100
+Message-Id: <20200107205246.793506519@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-References: <20200107205332.984228665@linuxfoundation.org>
+In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
+References: <20200107205240.283674026@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -84,16 +84,16 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 deletion(-)
 
 diff --git a/fs/afs/super.c b/fs/afs/super.c
-index 488641b1a418..d9a6036b70b9 100644
+index 4d3e274207fb..bd2608297473 100644
 --- a/fs/afs/super.c
 +++ b/fs/afs/super.c
-@@ -448,7 +448,6 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
+@@ -404,7 +404,6 @@ static int afs_fill_super(struct super_block *sb,
  	/* allocate the root inode and dentry */
  	if (as->dyn_root) {
  		inode = afs_iget_pseudo_dir(sb, true);
 -		sb->s_flags	|= SB_RDONLY;
  	} else {
- 		sprintf(sb->s_id, "%llu", as->volume->vid);
+ 		sprintf(sb->s_id, "%u", as->volume->vid);
  		afs_activate_volume(as->volume);
 -- 
 2.20.1
