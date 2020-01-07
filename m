@@ -2,100 +2,133 @@ Return-Path: <SRS0=OCSC=24=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E9AC33C9E
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 09:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7877C33C8C
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 13:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC0F72080A
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 09:12:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74B912075A
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 13:03:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I1o26tz0"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rw+2W7Xo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbgAGJML (ORCPT
+        id S1727722AbgAGNDB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jan 2020 04:12:11 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:48356 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbgAGJML (ORCPT
+        Tue, 7 Jan 2020 08:03:01 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42672 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727834AbgAGNDA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jan 2020 04:12:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=A1bVLjosQRKXXi47Ohrd213MIJXML0aJ/z3lXdqGhps=; b=I1o26tz08SFbCJG4E70ntK+rt+
-        Tr4fOu9Fg8ogt5Liv4rRYtzCiNIgPRvbPqgPqsGoYzOfOzLIcWcjd/Bv81T4TI1L1Gh5JxoEMJUhc
-        iwjsOiB5q38fPqxxhmbMn2VLdC6pkiT58JrZntSNSsrt7mCzZK54lR4RfRAraqSg1WP8UqiekXSHH
-        tOMuGMYV85vEYJ3JPlkVzi/4Y99SXm9M11zwQ7/aMfBLPVFadlAWUTOPNm+v82jhLs3Z6N/K8sPLh
-        3ow6llWRv50EEH9wZ033z9piEV15LRqtXYIwFIFdi9NjHYZqwXpG9Ik+7I4j5RVLxkcZNVNX55SMJ
-        niQG05NQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ioktm-0004Te-0G; Tue, 07 Jan 2020 09:11:38 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 329343012C3;
-        Tue,  7 Jan 2020 10:10:00 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A66B42B2844EA; Tue,  7 Jan 2020 10:11:32 +0100 (CET)
-Date:   Tue, 7 Jan 2020 10:11:32 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Justin Capella <justincapella@gmail.com>,
-        KP Singh <kpsingh@chromium.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
-        linux-security-module@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Halcrow <mhalcrow@google.com>
-Subject: Re: [PATCH bpf-next] bpf: Make trampolines W^X
-Message-ID: <20200107091132.GR2844@hirez.programming.kicks-ass.net>
-References: <CAMrEMU8Vsn8rfULqf1gfuYL_-ybqzit29CLYReskaZ8XUroZww@mail.gmail.com>
- <768BAF04-BEBF-489A-8737-B645816B262A@amacapital.net>
- <20200106221317.wpwut2rgw23tdaoo@ast-mbp>
+        Tue, 7 Jan 2020 08:03:00 -0500
+Received: by mail-qk1-f195.google.com with SMTP id z14so41253784qkg.9
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Jan 2020 05:03:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cdaq2aRk52TxqNNR8RvwrJcuJacllXaozsgHajXcAbo=;
+        b=Rw+2W7XoVqLtdYJ5l5cbHD35TNMp1sIqX+cqVJ713sIGHCQ2deVpZmIwDDc0xJfiDV
+         Wo2NKsIJc8uEugos40O++P3Hd0sA86V0x2RtUiB+iZwinQdbdtqoSYr1jDDZwlbT7oqt
+         r6gYZ/T9grL9Yjh69TyYkPZJYVjhCbQlPb4c/nLNGJD3d1hgzhWN+54zxkquF9ZqI6jn
+         ETqjhj7ZzJNc7dfv/wcozuhsW154q1SR6WEZmLThTFOzaSFVzzT02prFNhcI1pNEMDpP
+         W52g9QKY2IQmPO1aHWDfaF0Thf6BSxfk2Pn7Vj82ut96EHitAwPkYeJQXl11QyLzzLgA
+         itbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cdaq2aRk52TxqNNR8RvwrJcuJacllXaozsgHajXcAbo=;
+        b=phx0ft7T1Yf6LCJI5RXsk3KBNDKVSZyB/KQWSSDbpHXg9elOHcOntTxM/K90hNm7o3
+         rzEau726bXSrH+McSMS+bdkZsM9o309f6habY9TU+L2COFOoMY1waaKtUBlmXQsDgZvL
+         PZxePoZjULghcpmSrHFbQVxktsl2W4wryBdEq5M/z4XOano40XQquPYweRWp2IWkcwBQ
+         3paWyojNdt0Ah1KBj2m73ZD9ZkVms6pPXoPtMg+vweRwuhoYWiF/YhMYJhok5aCRcyi6
+         LQdXa1AL/GkhxJSEqczcjKukXHq8SWB5Qttg4/7CLohWEA0qZtb2Yjmnsj2hfTn+OhmM
+         Y2pQ==
+X-Gm-Message-State: APjAAAUbexB63nJgDlStbGn8SgVcemy9lvTCt/JMczzrmvXTjhL8/DZB
+        OlOCCH+ZmwD408wj+Su3jRfagOhYL/cHWpURnSCI0g==
+X-Google-Smtp-Source: APXvYqwMn/uO+eqVUldCKfwNFNt+RFx/DbF7n9TC+5lLcAgn57ILY+sgX2fPETnR3Ko9uZGVyMezXuuf7svl0SuVHI0=
+X-Received: by 2002:ae9:e50c:: with SMTP id w12mr80253441qkf.407.1578402179268;
+ Tue, 07 Jan 2020 05:02:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200106221317.wpwut2rgw23tdaoo@ast-mbp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <000000000000e728ec057d5c9d90@google.com> <a5478450-f975-228f-1ca6-886a45b654a1@I-love.SAKURA.ne.jp>
+ <CACT4Y+YqWgZZFXdX2A2jVYEdHfY9ywGMgRRP5W4Uqdu__rA63g@mail.gmail.com> <bc53fe0b-2c17-4d4f-1c40-f290997d0521@i-love.sakura.ne.jp>
+In-Reply-To: <bc53fe0b-2c17-4d4f-1c40-f290997d0521@i-love.sakura.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 7 Jan 2020 14:02:47 +0100
+Message-ID: <CACT4Y+bEi9ZsJn0Jm2Lwt-1cijQq=wc5MqYh0qf6R6+wpZVD2Q@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in sys_sendfile64
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     syzbot <syzbot+bcad772bbc241b4c6147@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 06, 2020 at 02:13:18PM -0800, Alexei Starovoitov wrote:
-> On Sun, Jan 05, 2020 at 10:33:54AM +0900, Andy Lutomirski wrote:
-> > 
-> > >> On Jan 4, 2020, at 8:03 PM, Justin Capella <justincapella@gmail.com> wrote:
-> > > ﻿
-> > > I'm rather ignorant about this topic but it would make sense to check prior to making executable from a security standpoint wouldn't it? (In support of the (set_memory_ro + set_memory_x)
-> > > 
-> > 
-> > Maybe, depends if it’s structured in a way that’s actually helpful from a security perspective.
-> > 
-> > It doesn’t help that set_memory_x and friends are not optimized at all. These functions are very, very, very slow and adversely affect all CPUs.
-> 
-> That was one of the reason it wasn't done in the first.
-> Also ftrace trampoline break w^x as well.
+On Sat, Jan 4, 2020 at 12:09 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2018/12/20 3:42, Dmitry Vyukov wrote:
+> > On Wed, Dec 19, 2018 at 11:13 AM Tetsuo Handa
+> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >>
+> >> On 2018/12/19 18:27, syzbot wrote:
+> >>> HEAD commit:    ddfbab46539f Merge tag 'scsi-fixes' of git://git.kernel.or..
+> >>> git tree:       upstream
+> >>> console output: https://syzkaller.appspot.com/x/log.txt?x=15b87fa3400000
+> >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=861a3573f4e78ba1
+> >>> dashboard link: https://syzkaller.appspot.com/bug?extid=bcad772bbc241b4c6147
+> >>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13912ccd400000
+> >>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145781db400000
+> >>
+> >> This is not a LSM problem, for the reproducer is calling
+> >> sched_setattr(SCHED_DEADLINE) with very large values.
+> >>
+> >>   sched_setattr(0, {size=0, sched_policy=0x6 /* SCHED_??? */, sched_flags=0, sched_nice=0, sched_priority=0, sched_runtime=2251799813724439, sched_deadline=4611686018427453437, sched_period=0}, 0) = 0
+> >>
+> >> I think that this problem is nothing but an insane sched_setattr() parameter.
+> >>
+> >> #syz invalid
+> >
+> > Note there was another one with sched_setattr, which turned out to be
+> > some serious problem in kernel (sched_setattr should not cause CPU
+> > stall for 3 minutes):
+> > INFO: rcu detected stall in do_idle
+> > https://syzkaller.appspot.com/bug?extid=385468161961cee80c31
+> > https://groups.google.com/forum/#!msg/syzkaller-bugs/crrfvusGtwI/IoD_zus4BgAJ
+> >
+> > Maybe it another incarnation of the same bug, that one is still not fixed.
+> >
+>
+> Can we let syzbot blacklist sched_setattr() for now? There are many stall reports
+> doing sched_setattr(SCHED_RR) which makes it difficult to find stall reports not
+> using sched_setattr().
 
-Didn't I fix that?
+Hi Tetsuo,
+
+If we start practice of disabling whole syscalls, I would really like
+"for now" to be very well defined. When will it end? How will it
+happen? Is the problem on the radar of relevant people? Will it stay
+on somebody's radar until it's fixed? Normal practise of project
+sheriffing is to file a P1 bug assigned to somebody when something
+gets disabled. But I am not sure how we implement this for kernel.
+Since the problem is there for a long time and we disable it without
+defining any criteria, I afraid we disable it forever (then more bugs
+will pile and re-enabling it will be painful). At the very least we
+need to acknowledge that we stopping testing schedler for foreseeable
+future and schedler maintainers need to be notified about this.
+Blacklisting it and un-blacklisting will cause some churn. Was the bug
+given at least some attention? Significant number of bugs are
+relatively easy to fix and fixing it would solve all of the problems
+in a much better way.
