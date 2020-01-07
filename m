@@ -2,101 +2,83 @@ Return-Path: <SRS0=OCSC=24=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7800CC3F68F
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 21:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4578C33C9E
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 21:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C08B2467E
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 21:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578431137;
-	bh=fgOgFJRNlSOolq+HiYRgzzxGwDnehhiPQKyel59QtcI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QaLVgfPGTTioEhjP0kR8Wcp7kLmtIeJGy2PqvqDEvQAPlu0Kll9uRet/AgvrlmLzv
-	 d+KclqkfNvMK5n0fd2jfFgUhsNxC80T/nH1dBPj+ExBvMJ4hIdaG5F6suSj3kXsRlJ
-	 SjImw7ACKGp6+5+cB/lEn0+V9PA8VHjyaxNTE60s=
+	by mail.kernel.org (Postfix) with ESMTP id 869732072A
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jan 2020 21:14:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728907AbgAGVFf (ORCPT
+        id S1729858AbgAGVOI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jan 2020 16:05:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52324 "EHLO mail.kernel.org"
+        Tue, 7 Jan 2020 16:14:08 -0500
+Received: from namei.org ([65.99.196.166]:55866 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729252AbgAGVFe (ORCPT
+        id S1729688AbgAGVOI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:05:34 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29B8020678;
-        Tue,  7 Jan 2020 21:05:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431133;
-        bh=fgOgFJRNlSOolq+HiYRgzzxGwDnehhiPQKyel59QtcI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aI8sjYS6NN7svdnesOkUEGkUeemLMecJfCtXh8rzxc1E3MZyIlusAr82IK8yuxIAx
-         F/2h5ZRB6Nhy3SFkM4E9M/nmEjPPyN5ASPq18JMe6dqHpxevu2Eo/tVsp/aDLsE+4F
-         iRp3XJD2w4FcEfM3Phsh/f970ImFz8sVtpfKvSIM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 011/115] afs: Fix SELinux setting security label on /afs
-Date:   Tue,  7 Jan 2020 21:53:41 +0100
-Message-Id: <20200107205246.793506519@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
-User-Agent: quilt/0.66
+        Tue, 7 Jan 2020 16:14:08 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 007LDGan012550;
+        Tue, 7 Jan 2020 21:13:16 GMT
+Date:   Wed, 8 Jan 2020 08:13:16 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     KP Singh <kpsingh@chromium.org>
+cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
+Subject: Re: [PATCH bpf-next v1 02/13] bpf: lsm: Add a skeleton and config
+ options
+In-Reply-To: <20191220154208.15895-3-kpsingh@chromium.org>
+Message-ID: <alpine.LRH.2.21.2001080812500.9683@namei.org>
+References: <20191220154208.15895-1-kpsingh@chromium.org> <20191220154208.15895-3-kpsingh@chromium.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: David Howells <dhowells@redhat.com>
+On Fri, 20 Dec 2019, KP Singh wrote:
 
-[ Upstream commit bcbccaf2edcf1b76f73f890e968babef446151a4 ]
+> From: KP Singh <kpsingh@google.com>
+> 
+> The LSM can be enabled by CONFIG_SECURITY_BPF.
+> Without CONFIG_SECURITY_BPF_ENFORCE, the LSM will run the
+> attached eBPF programs but not enforce MAC policy based
+> on the return value of the attached programs.
+> 
+> Signed-off-by: KP Singh <kpsingh@google.com>
 
-Make the AFS dynamic root superblock R/W so that SELinux can set the
-security label on it.  Without this, upgrades to, say, the Fedora
-filesystem-afs RPM fail if afs is mounted on it because the SELinux label
-can't be (re-)applied.
 
-It might be better to make it possible to bypass the R/O check for LSM
-label application through setxattr.
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
-Fixes: 4d673da14533 ("afs: Support the AFS dynamic root")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
-cc: selinux@vger.kernel.org
-cc: linux-security-module@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/afs/super.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index 4d3e274207fb..bd2608297473 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -404,7 +404,6 @@ static int afs_fill_super(struct super_block *sb,
- 	/* allocate the root inode and dentry */
- 	if (as->dyn_root) {
- 		inode = afs_iget_pseudo_dir(sb, true);
--		sb->s_flags	|= SB_RDONLY;
- 	} else {
- 		sprintf(sb->s_id, "%u", as->volume->vid);
- 		afs_activate_volume(as->volume);
 -- 
-2.20.1
-
-
+James Morris
+<jmorris@namei.org>
 
