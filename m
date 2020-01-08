@@ -2,191 +2,104 @@ Return-Path: <SRS0=+YFI=25=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1787C33CA2
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 16:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9AAC282DD
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 18:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7082320673
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 16:07:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gqbvtODk"
+	by mail.kernel.org (Postfix) with ESMTP id 1795020692
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 18:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbgAHQHu (ORCPT
+        id S1730179AbgAHSWd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jan 2020 11:07:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58506 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727421AbgAHQHt (ORCPT
+        Wed, 8 Jan 2020 13:22:33 -0500
+Received: from namei.org ([65.99.196.166]:56096 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727169AbgAHSWd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jan 2020 11:07:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vTWY1coa2Uglbk+2ijUNU4PAcTKo3OAi9shtTNMi0Rk=; b=gqbvtODkaNnvdu0BtI1I+oz9W
-        A/2kAzeM+Of8bAddV33sSuyFB5xF+Iq5ljJRIvioI+k+R95x57awB/8d2/OaCxPEWI73HH3ggqw/b
-        sRuPnU/M3cuEf3KHzciBaTOkOpg9la+z/euW56512nmDwFzNGDIve2Ho4jXCQShNWbCSAJw0jVzgp
-        W73rwpfbOnlx/JXYvxqZG+ueOUqg0TTsDyxTW539J3TnC4nfAFSqo8UjcEPXCvaV8lYoYsU9cKROX
-        c5nXwgc0c5to6F7JUcDXFL8eRwzCCSZ1nK2sOxQ5uehPgx5U+VprgiM8abXXvQlwSBJdkTRyrU3JI
-        mPuHTmEYQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ipDrb-0002aV-JF; Wed, 08 Jan 2020 16:07:19 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0BFB530018B;
-        Wed,  8 Jan 2020 17:05:40 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 08A5520B79C82; Wed,  8 Jan 2020 17:07:14 +0100 (CET)
-Date:   Wed, 8 Jan 2020 17:07:13 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        Wed, 8 Jan 2020 13:22:33 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 008ILnMB026782;
+        Wed, 8 Jan 2020 18:21:49 GMT
+Date:   Thu, 9 Jan 2020 05:21:49 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     KP Singh <kpsingh@chromium.org>
+cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         Alexei Starovoitov <ast@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Robert Richter <rric@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
         Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, oprofile-list@lists.sf.net
-Subject: Re: [PATCH v4 2/9] perf/core: open access for CAP_SYS_PERFMON
- privileged process
-Message-ID: <20200108160713.GI2844@hirez.programming.kicks-ass.net>
-References: <c0460c78-b1a6-b5f7-7119-d97e5998f308@linux.intel.com>
- <c93309dc-b920-f5fa-f997-e8b2faf47b88@linux.intel.com>
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
+Subject: Re: [PATCH bpf-next v1 10/13] bpf: lsm: Handle attachment of the
+ same program
+In-Reply-To: <20191220154208.15895-11-kpsingh@chromium.org>
+Message-ID: <alpine.LRH.2.21.2001090521340.9683@namei.org>
+References: <20191220154208.15895-1-kpsingh@chromium.org> <20191220154208.15895-11-kpsingh@chromium.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c93309dc-b920-f5fa-f997-e8b2faf47b88@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 18, 2019 at 12:25:35PM +0300, Alexey Budankov wrote:
+On Fri, 20 Dec 2019, KP Singh wrote:
+
+> From: KP Singh <kpsingh@google.com>
 > 
-> Open access to perf_events monitoring for CAP_SYS_PERFMON privileged
-> processes. For backward compatibility reasons access to perf_events
-> subsystem remains open for CAP_SYS_ADMIN privileged processes but
-> CAP_SYS_ADMIN usage for secure perf_events monitoring is discouraged
-> with respect to CAP_SYS_PERFMON capability.
+> Allow userspace to attach a newer version of a program without having
+> duplicates of the same program.
 > 
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> ---
->  include/linux/perf_event.h | 6 +++---
->  kernel/events/core.c       | 6 +++---
->  2 files changed, 6 insertions(+), 6 deletions(-)
+> If BPF_F_ALLOW_OVERRIDE is passed, the attachment logic compares the
+> name of the new program to the names of existing attached programs. The
+> names are only compared till a "__" (or '\0', if there is no "__"). If
+> a successful match is found, the existing program is replaced with the
+> newer attachment.
 > 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 34c7c6910026..f46acd69425f 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -1285,7 +1285,7 @@ static inline int perf_is_paranoid(void)
->  
->  static inline int perf_allow_kernel(struct perf_event_attr *attr)
->  {
-> -	if (sysctl_perf_event_paranoid > 1 && !capable(CAP_SYS_ADMIN))
-> +	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
->  		return -EACCES;
->  
->  	return security_perf_event_open(attr, PERF_SECURITY_KERNEL);
-> @@ -1293,7 +1293,7 @@ static inline int perf_allow_kernel(struct perf_event_attr *attr)
->  
->  static inline int perf_allow_cpu(struct perf_event_attr *attr)
->  {
-> -	if (sysctl_perf_event_paranoid > 0 && !capable(CAP_SYS_ADMIN))
-> +	if (sysctl_perf_event_paranoid > 0 && !perfmon_capable())
->  		return -EACCES;
->  
->  	return security_perf_event_open(attr, PERF_SECURITY_CPU);
-> @@ -1301,7 +1301,7 @@ static inline int perf_allow_cpu(struct perf_event_attr *attr)
->  
->  static inline int perf_allow_tracepoint(struct perf_event_attr *attr)
->  {
-> -	if (sysctl_perf_event_paranoid > -1 && !capable(CAP_SYS_ADMIN))
-> +	if (sysctl_perf_event_paranoid > -1 && !perfmon_capable())
->  		return -EPERM;
->  
->  	return security_perf_event_open(attr, PERF_SECURITY_TRACEPOINT);
+> ./loader Attaches "env_dumper__v1" followed by "env_dumper__v2"
+> to the bprm_check_security hook..
+> 
+> ./loader
+> ./loader
+> 
+> Before:
+> 
+>   cat /sys/kernel/security/bpf/process_execution
+>   env_dumper__v1
+>   env_dumper__v2
+> 
+> After:
+> 
+>   cat /sys/kernel/security/bpf/process_execution
+>   env_dumper__v2
+> 
+> Signed-off-by: KP Singh <kpsingh@google.com>
 
-These are OK I suppose.
 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 059ee7116008..d9db414f2197 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -9056,7 +9056,7 @@ static int perf_kprobe_event_init(struct perf_event *event)
->  	if (event->attr.type != perf_kprobe.type)
->  		return -ENOENT;
->  
-> -	if (!capable(CAP_SYS_ADMIN))
-> +	if (!perfmon_capable())
->  		return -EACCES;
->  
->  	/*
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
-This one only allows attaching to already extant kprobes, right? It does
-not allow creation of kprobes.
 
-> @@ -9116,7 +9116,7 @@ static int perf_uprobe_event_init(struct perf_event *event)
->  	if (event->attr.type != perf_uprobe.type)
->  		return -ENOENT;
->  
-> -	if (!capable(CAP_SYS_ADMIN))
-> +	if (!perfmon_capable())
->  		return -EACCES;
->  
->  	/*
+-- 
+James Morris
+<jmorris@namei.org>
 
-Idem, I presume.
-
-> @@ -11157,7 +11157,7 @@ SYSCALL_DEFINE5(perf_event_open,
->  	}
->  
->  	if (attr.namespaces) {
-> -		if (!capable(CAP_SYS_ADMIN))
-> +		if (!perfmon_capable())
->  			return -EACCES;
->  	}
-
-And given we basically make the entire kernel observable with this CAP,
-busting namespaces shoulnd't be a problem either.
-
-So yeah, I suppose that works.
