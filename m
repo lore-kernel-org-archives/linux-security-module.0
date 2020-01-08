@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9AAC282DD
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 18:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A515C3F68F
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 18:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1795020692
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 18:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51C8C20692
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 18:24:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730179AbgAHSWd (ORCPT
+        id S1728215AbgAHSYc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jan 2020 13:22:33 -0500
-Received: from namei.org ([65.99.196.166]:56096 "EHLO namei.org"
+        Wed, 8 Jan 2020 13:24:32 -0500
+Received: from namei.org ([65.99.196.166]:56128 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727169AbgAHSWd (ORCPT
+        id S1727169AbgAHSYc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jan 2020 13:22:33 -0500
+        Wed, 8 Jan 2020 13:24:32 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 008ILnMB026782;
-        Wed, 8 Jan 2020 18:21:49 GMT
-Date:   Thu, 9 Jan 2020 05:21:49 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 008IO3Lw026916;
+        Wed, 8 Jan 2020 18:24:03 GMT
+Date:   Thu, 9 Jan 2020 05:24:03 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     KP Singh <kpsingh@chromium.org>
 cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
@@ -51,11 +51,11 @@ cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
         Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: Re: [PATCH bpf-next v1 10/13] bpf: lsm: Handle attachment of the
- same program
-In-Reply-To: <20191220154208.15895-11-kpsingh@chromium.org>
-Message-ID: <alpine.LRH.2.21.2001090521340.9683@namei.org>
-References: <20191220154208.15895-1-kpsingh@chromium.org> <20191220154208.15895-11-kpsingh@chromium.org>
+Subject: Re: [PATCH bpf-next v1 11/13] tools/libbpf: Add
+ bpf_program__attach_lsm
+In-Reply-To: <20191220154208.15895-12-kpsingh@chromium.org>
+Message-ID: <alpine.LRH.2.21.2001090523480.9683@namei.org>
+References: <20191220154208.15895-1-kpsingh@chromium.org> <20191220154208.15895-12-kpsingh@chromium.org>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -67,31 +67,7 @@ On Fri, 20 Dec 2019, KP Singh wrote:
 
 > From: KP Singh <kpsingh@google.com>
 > 
-> Allow userspace to attach a newer version of a program without having
-> duplicates of the same program.
-> 
-> If BPF_F_ALLOW_OVERRIDE is passed, the attachment logic compares the
-> name of the new program to the names of existing attached programs. The
-> names are only compared till a "__" (or '\0', if there is no "__"). If
-> a successful match is found, the existing program is replaced with the
-> newer attachment.
-> 
-> ./loader Attaches "env_dumper__v1" followed by "env_dumper__v2"
-> to the bprm_check_security hook..
-> 
-> ./loader
-> ./loader
-> 
-> Before:
-> 
->   cat /sys/kernel/security/bpf/process_execution
->   env_dumper__v1
->   env_dumper__v2
-> 
-> After:
-> 
->   cat /sys/kernel/security/bpf/process_execution
->   env_dumper__v2
+> Add functionality in libbpf to attach eBPF program to LSM hooks.
 > 
 > Signed-off-by: KP Singh <kpsingh@google.com>
 
