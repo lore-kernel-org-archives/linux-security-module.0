@@ -6,42 +6,59 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42372C3F68F
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 18:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F569C282DD
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 18:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2843120705
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 18:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8328A20705
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jan 2020 18:59:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbgAHSsE (ORCPT
+        id S1729595AbgAHS7H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jan 2020 13:48:04 -0500
-Received: from namei.org ([65.99.196.166]:56228 "EHLO namei.org"
+        Wed, 8 Jan 2020 13:59:07 -0500
+Received: from namei.org ([65.99.196.166]:56264 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728069AbgAHSsE (ORCPT
+        id S1726401AbgAHS7G (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jan 2020 13:48:04 -0500
+        Wed, 8 Jan 2020 13:59:06 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 008IllBQ028558;
-        Wed, 8 Jan 2020 18:47:47 GMT
-Date:   Thu, 9 Jan 2020 05:47:47 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 008IwTZG029133;
+        Wed, 8 Jan 2020 18:58:29 GMT
+Date:   Thu, 9 Jan 2020 05:58:29 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+cc:     Kees Cook <keescook@chromium.org>, KP Singh <kpsingh@chromium.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Micah Morton <mortonm@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [PATCH 2/2] security,selinux: get rid of
- security_delete_hooks()
-In-Reply-To: <CAFqZXNvbNqrTJWxdQU4P-7O-kLRcGW+QcL7LY5Ca8rULLm2ScA@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.2001090547340.27794@namei.org>
-References: <20200107133154.588958-1-omosnace@redhat.com> <20200107133154.588958-3-omosnace@redhat.com> <alpine.LRH.2.21.2001080653220.575@namei.org> <CAFqZXNvbNqrTJWxdQU4P-7O-kLRcGW+QcL7LY5Ca8rULLm2ScA@mail.gmail.com>
+        open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF
+ (KRSI)
+In-Reply-To: <c4e6cdf2-1233-fc82-ca01-ba84d218f5aa@tycho.nsa.gov>
+Message-ID: <alpine.LRH.2.21.2001090551000.27794@namei.org>
+References: <20191220154208.15895-1-kpsingh@chromium.org> <95036040-6b1c-116c-bd6b-684f00174b4f@schaufler-ca.com> <CACYkzJ5nYh7eGuru4vQ=2ZWumGPszBRbgqxmhd4WQRXktAUKkQ@mail.gmail.com> <201912301112.A1A63A4@keescook>
+ <c4e6cdf2-1233-fc82-ca01-ba84d218f5aa@tycho.nsa.gov>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -49,21 +66,28 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 8 Jan 2020, Ondrej Mosnacek wrote:
+On Wed, 8 Jan 2020, Stephen Smalley wrote:
 
-> > >  {
-> > >       const struct cred *cred = current_cred();
-> > >       struct superblock_security_struct *sbsec = sb->s_security;
-> > > -     struct dentry *root = sbsec->sb->s_root;
-> > >       struct selinux_mnt_opts *opts = mnt_opts;
-> >
-> > Seems like there are a bunch of unrelated cleanups mixed in here.
-> 
-> These are not unrelated - we need to avoid dereferencing the security
-> structs before checking selinux_disabled(), because they may be NULL
-> or uninitialized when SELinux has been diabled.
+> This appears to impose a very different standard to this eBPF-based LSM than
+> has been applied to the existing LSMs, e.g. we are required to preserve
+> SELinux policy compatibility all the way back to Linux 2.6.0 such that new
+> kernel with old policy does not break userspace.  If that standard isn't being
+> applied to the eBPF-based LSM, it seems to inhibit its use in major Linux
+> distros, since otherwise users will in fact start experiencing breakage on the
+> first such incompatible change.  Not arguing for or against, just trying to
+> make sure I understand correctly...
 
-Ok.
+A different standard would be applied here vs. a standard LSM like 
+SELinux, which are retrofitted access control systems.
+
+I see KRSI as being more of a debugging / analytical API, rather than an 
+access control system. You could of course build such a system with KRSI 
+but it would need to provide a layer of abstraction for general purpose 
+users.
+
+So yes this would be a special case, as its real value is in being a 
+special case, i.e. dynamic security telemetry.
+
 
 -- 
 James Morris
