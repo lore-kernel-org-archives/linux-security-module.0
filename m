@@ -2,421 +2,189 @@ Return-Path: <SRS0=jla6=26=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E73DFC33CA2
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 06:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E209FC33CA2
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 11:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE3742053B
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 06:49:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578552547;
-	bh=4G6sGg1ys6863QTyMXDlbv/klXCy1xEPVyUXXUkjE7Q=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=l0Tqbcd7Fy+ouFnqZ0z2uhj3+1A9HUpPcAQUIxC4MEj0xQ2Ko82WHr07+fpvZFCM2
-	 UFt8vXcG+dGRgJCHWXbeYTn6EUALk/Zk8gQqBsi81tm+5VWiyZAvAqm9fpPwtdY+2x
-	 eXf22RJhJZHK2HD71k2ewJgH+Z/kzKnHR56Bx5S8=
+	by mail.kernel.org (Postfix) with ESMTP id C026E2072A
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 11:37:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbgAIGsx (ORCPT
+        id S1726114AbgAILhB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jan 2020 01:48:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50532 "EHLO mail.kernel.org"
+        Thu, 9 Jan 2020 06:37:01 -0500
+Received: from mga01.intel.com ([192.55.52.88]:55961 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726541AbgAIGsw (ORCPT
+        id S1725997AbgAILhA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jan 2020 01:48:52 -0500
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A94AC20838
-        for <linux-security-module@vger.kernel.org>; Thu,  9 Jan 2020 06:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578552531;
-        bh=4G6sGg1ys6863QTyMXDlbv/klXCy1xEPVyUXXUkjE7Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=kOY80DL1qlxLw6g2tmV9oG1JqdRsKYAo/o1nAbGbD94j9TWbNFQDDdwqyDI214ewP
-         IHMQjbM76iAe37nVcOdi/1liZ6skFvpErivfjwd+clE63tHQGnnWEDSMm7p7wanWCS
-         2RwzfXIDVQPdoqDjCSkgwsy4/iysZ6t4EGuxXAGw=
-Received: by mail-wm1-f52.google.com with SMTP id m24so1570110wmc.3
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Jan 2020 22:48:50 -0800 (PST)
-X-Gm-Message-State: APjAAAVhL6lgz5tSZvUYxBnWmiN+Jba/Z8LOmYCs7nqxh5QQE6Ae6mA5
-        /YjdJJv59mgAXR5LLWvl96fVYcBpq7Dumywn4gSQ3Q==
-X-Google-Smtp-Source: APXvYqyu2uEHRdxJf6p3zKNVC4Uj54r9l5PCzKrRkteNu0epyaxUny9t2ULKRiWQTcAQ0YFdhP+dJU5xyln2IRrrO04=
-X-Received: by 2002:a1c:7d8b:: with SMTP id y133mr2657460wmc.165.1578552528899;
- Wed, 08 Jan 2020 22:48:48 -0800 (PST)
-MIME-Version: 1.0
-References: <21bf6bb46544eab79e792980f82520f8fbdae9b5.camel@intel.com>
- <DB882EE8-20B2-4631-A808-E5C968B24CEB@amacapital.net> <cdd157ef011efda92c9434f76141fc3aef174d85.camel@intel.com>
- <CALCETrV_tGk=B3Hw0h9viW45wMqB_W+rwWzx6LnC3-vSATOUOA@mail.gmail.com> <400be86aab208d0e50a237cdbd3195763396e3ed.camel@intel.com>
-In-Reply-To: <400be86aab208d0e50a237cdbd3195763396e3ed.camel@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 8 Jan 2020 22:48:36 -0800
-X-Gmail-Original-Message-ID: <CALCETrXXJhkNXmjTX_8VEO39+uE4XECtm=QNTDh1DpncXKhKhw@mail.gmail.com>
-Message-ID: <CALCETrXXJhkNXmjTX_8VEO39+uE4XECtm=QNTDh1DpncXKhKhw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: Make trampolines W^X
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc:     "peterz@infradead.org" <peterz@infradead.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
-        "songliubraving@fb.com" <songliubraving@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "kuznet@ms2.inr.ac.ru" <kuznet@ms2.inr.ac.ru>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "mjg59@google.com" <mjg59@google.com>,
-        "thgarnie@chromium.org" <thgarnie@chromium.org>,
-        "kpsingh@chromium.org" <kpsingh@chromium.org>,
+        Thu, 9 Jan 2020 06:37:00 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 03:37:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,413,1571727600"; 
+   d="scan'208";a="216275607"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga008.jf.intel.com with ESMTP; 09 Jan 2020 03:36:59 -0800
+Received: from [10.125.253.127] (abudanko-mobl.ccr.corp.intel.com [10.125.253.127])
+        by linux.intel.com (Postfix) with ESMTP id 2707C58043A;
+        Thu,  9 Jan 2020 03:36:50 -0800 (PST)
+Subject: Re: [PATCH v4 2/9] perf/core: open access for CAP_SYS_PERFMON
+ privileged process
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "james.bottomley@hansenpartnership.com" 
+        <james.bottomley@hansenpartnership.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Robert Richter <rric@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "revest@chromium.org" <revest@chromium.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "namit@vmware.com" <namit@vmware.com>,
-        "jackmanb@chromium.org" <jackmanb@chromium.org>,
-        "kafai@fb.com" <kafai@fb.com>, "yhs@fb.com" <yhs@fb.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>,
-        "mhalcrow@google.com" <mhalcrow@google.com>,
-        "andriin@fb.com" <andriin@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, oprofile-list@lists.sf.net
+References: <c0460c78-b1a6-b5f7-7119-d97e5998f308@linux.intel.com>
+ <c93309dc-b920-f5fa-f997-e8b2faf47b88@linux.intel.com>
+ <20200108160713.GI2844@hirez.programming.kicks-ass.net>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <cc239899-5c52-2fd0-286d-4bff18877937@linux.intel.com>
+Date:   Thu, 9 Jan 2020 14:36:50 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
+MIME-Version: 1.0
+In-Reply-To: <20200108160713.GI2844@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> On Jan 8, 2020, at 10:52 AM, Edgecombe, Rick P <rick.p.edgecombe@intel.co=
-m> wrote:
->
-> =EF=BB=BFOn Wed, 2020-01-08 at 00:41 -0800, Andy Lutomirski wrote:
->>> On Jan 7, 2020, at 9:01 AM, Edgecombe, Rick P <rick.p.edgecombe@intel.c=
-om>
->>> wrote:
->>>
->>> =EF=BB=BFCC Nadav and Jessica.
->>>
->>> On Mon, 2020-01-06 at 15:36 -1000, Andy Lutomirski wrote:
->>>>> On Jan 6, 2020, at 12:25 PM, Edgecombe, Rick P <
->>>>> rick.p.edgecombe@intel.com>
->>>>> wrote:
->>>>>
->>>>> =EF=BB=BFOn Sat, 2020-01-04 at 09:49 +0900, Andy Lutomirski wrote:
->>>>>>>>> On Jan 4, 2020, at 8:47 AM, KP Singh <kpsingh@chromium.org>
->>>>>>>>> wrote:
->>>>>>>>
->>>>>>>> =EF=BB=BFFrom: KP Singh <kpsingh@google.com>
->>>>>>>>
->>>>>>>> The image for the BPF trampolines is allocated with
->>>>>>>> bpf_jit_alloc_exe_page which marks this allocated page executable.
->>>>>>>> This
->>>>>>>> means that the allocated memory is W and X at the same time making
->>>>>>>> it
->>>>>>>> susceptible to WX based attacks.
->>>>>>>>
->>>>>>>> Since the allocated memory is shared between two trampolines (the
->>>>>>>> current and the next), 2 pages must be allocated to adhere to W^X
->>>>>>>> and
->>>>>>>> the following sequence is obeyed where trampolines are modified:
->>>>>>>
->>>>>>> Can we please do better rather than piling garbage on top of
->>>>>>> garbage?
->>>>>>>
->>>>>>>>
->>>>>>>> - Mark memory as non executable (set_memory_nx). While
->>>>>>>> module_alloc for
->>>>>>>> x86 allocates the memory as PAGE_KERNEL and not PAGE_KERNEL_EXEC,
->>>>>>>> not
->>>>>>>> all implementations of module_alloc do so
->>>>>>>
->>>>>>> How about fixing this instead?
->>>>>>>
->>>>>>>> - Mark the memory as read/write (set_memory_rw)
->>>>>>>
->>>>>>> Probably harmless, but see above about fixing it.
->>>>>>>
->>>>>>>> - Modify the trampoline
->>>>>>>
->>>>>>> Seems reasonable. It=E2=80=99s worth noting that this whole approac=
-h is
->>>>>>> suboptimal:
->>>>>>> the =E2=80=9Cmodule=E2=80=9D allocator should really be returning a=
- list of pages to
->>>>>>> be
->>>>>>> written (not at the final address!) with the actual executable
->>>>>>> mapping to
->>>>>>> be
->>>>>>> materialized later, but that=E2=80=99s a bigger project that you=E2=
-=80=99re welcome
->>>>>>> to
->>>>>>> ignore
->>>>>>> for now.  (Concretely, it should produce a vmap address with backin=
-g
->>>>>>> pages
->>>>>>> but
->>>>>>> with the vmap alias either entirely unmapped or read-only. A
->>>>>>> subsequent
->>>>>>> healer
->>>>>>> would, all at once, make the direct map pages RO or not-present and
->>>>>>> make
->>>>>>> the
->>>>>>> vmap alias RX.)
->>>>>>>> - Mark the memory as read-only (set_memory_ro)
->>>>>>>> - Mark the memory as executable (set_memory_x)
->>>>>>>
->>>>>>> No, thanks. There=E2=80=99s very little excuse for doing two IPI fl=
-ushes
->>>>>>> when one
->>>>>>> would suffice.
->>>>>>>
->>>>>>> As far as I know, all architectures can do this with a single flush
->>>>>>> without
->>>>>>> races  x86 certainly can. The module freeing code gets this sequenc=
-e
->>>>>>> right.
->>>>>>> Please reuse its mechanism or, if needed, export the relevant
->>>>>>> interfaces.
->>>>>
->>>>> So if I understand this right, some trampolines have been added that =
-are
->>>>> currently set as RWX at modification time AND left that way during
->>>>> runtime?
->>>>> The
->>>>> discussion on the order of set_memory_() calls in the commit message
->>>>> made me
->>>>> think that this was just a modification time thing at first.
->>>>
->>>> I=E2=80=99m not sure what the status quo is.
->>>>
->>>> We really ought to have a genuinely good API for allocation and
->>>> initialization
->>>> of text.  We can do so much better than set_memory_blahblah.
->>>>
->>>> FWIW, I have some ideas about making kernel flushes cheaper. It=E2=80=
-=99s
->>>> currently
->>>> blocked on finding some time and on tglx=E2=80=99s irqtrace work.
->>>>
->>>
->>> Makes sense to me. I guess there are 6 types of text allocations now:
->>> - These two BPF trampolines
->>> - BPF JITs
->>> - Modules
->>> - Kprobes
->>> - Ftrace
->>>
->>> All doing (or should be doing) pretty much the same thing. I believe Je=
-ssica
->>> had
->>> said at one point that she didn't like all the other features using
->>> module_alloc() as it was supposed to be just for real modules. Where wo=
-uld
->>> the
->>> API live?
->>
->> New header?  This shouldn=E2=80=99t matter that much.
->>
->> Here are two strawman proposals.  All of this is very rough -- the
->> actual data structures and signatures are likely problematic for
->> multiple reasons.
->>
->> --- First proposal ---
->>
->> struct text_allocation {
->>  void *final_addr;
->>  struct page *pages;
->>  int npages;
->> };
->>
->> int text_alloc(struct text_allocation *out, size_t size);
->>
->> /* now final_addr is not accessible and pages is writable. */
->>
->> int text_freeze(struct text_allocation *alloc);
->>
->> /* now pages are not accessible and final_addr is RO.  Alternatively,
->> pages are RO and final_addr is unmapped. */
->>
->> int text_finish(struct text_allocation *alloc);
->>
->> /* now final_addr is RX.  All done. */
->>
->> This gets it with just one flush and gives a chance to double-check in
->> case of race attacks from other CPUs.  Double-checking is annoying,
->> though.
->>
->> --- Second proposal ---
->>
->> struct text_allocation {
->>  void *final_addr;
->>  /* lots of opaque stuff including an mm_struct */
->>  /* optional: list of struct page, but this isn't obviously useful */
->> };
->>
->> int text_alloc(struct text_allocation *out, size_t size);
->>
->> /* Memory is allocated.  There is no way to access it at all right
->> now.  The memory is RO or not present in the direct map. */
->>
->> void __user *text_activate_mapping(struct text_allocation *out);
->>
->> /* Now the text is RW at *user* address given by return value.
->> Preemption is off if required by use_temporary_mm().  Real user memory
->> cannot be accessed. */
->>
->> void text_deactivate_mapping(struct text_allocation *alloc);
->>
->> /* Now the memory is inaccessible again. */
->>
->> void text_finalize(struct text_allocation *alloc);
->>
->> /* Now it's RX or XO at the final address. */
->>
->>
->> Pros of second approach:
->>
->> - Inherently immune to cross-CPU attack.  No double-check.
->>
->> - If we ever implement a cache of non-direct-mapped, unaliased pages,
->> then it works with no flushes at all.  We could even relax it a bit to
->> allow non-direct-mapped pages that may have RX / XO aliases but no W
->> aliases.
->>
->> - Can easily access without worrying about page boundaries.
->>
->> Cons:
->>
->> - The use of a temporary mm is annoying -- you can't copy from user
->> memory, for example.
->
-> Probably the first proposal is better for usages where there is a signatu=
-re that
-> can be checked like modules, because you could more easily check the sign=
-ature
-> after the text is RO. I guess leaving the direct map as RO could work for=
- the
-> second option too. Both would probably require significant changes to mod=
-ule
-> signature verification though.
 
-This sounds complicated =E2=80=94 for decent performance, we want to apply
-alternatives before we make the text RO, at which point verifying the
-signature is awkward at best.
+On 08.01.2020 19:07, Peter Zijlstra wrote:
+> On Wed, Dec 18, 2019 at 12:25:35PM +0300, Alexey Budankov wrote:
+>>
+>> Open access to perf_events monitoring for CAP_SYS_PERFMON privileged
+>> processes. For backward compatibility reasons access to perf_events
+>> subsystem remains open for CAP_SYS_ADMIN privileged processes but
+>> CAP_SYS_ADMIN usage for secure perf_events monitoring is discouraged
+>> with respect to CAP_SYS_PERFMON capability.
+>>
+>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>> ---
+>>  include/linux/perf_event.h | 6 +++---
+>>  kernel/events/core.c       | 6 +++---
+>>  2 files changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+>> index 34c7c6910026..f46acd69425f 100644
+>> --- a/include/linux/perf_event.h
+>> +++ b/include/linux/perf_event.h
+>> @@ -1285,7 +1285,7 @@ static inline int perf_is_paranoid(void)
+>>  
+>>  static inline int perf_allow_kernel(struct perf_event_attr *attr)
+>>  {
+>> -	if (sysctl_perf_event_paranoid > 1 && !capable(CAP_SYS_ADMIN))
+>> +	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
+>>  		return -EACCES;
+>>  
+>>  	return security_perf_event_open(attr, PERF_SECURITY_KERNEL);
+>> @@ -1293,7 +1293,7 @@ static inline int perf_allow_kernel(struct perf_event_attr *attr)
+>>  
+>>  static inline int perf_allow_cpu(struct perf_event_attr *attr)
+>>  {
+>> -	if (sysctl_perf_event_paranoid > 0 && !capable(CAP_SYS_ADMIN))
+>> +	if (sysctl_perf_event_paranoid > 0 && !perfmon_capable())
+>>  		return -EACCES;
+>>  
+>>  	return security_perf_event_open(attr, PERF_SECURITY_CPU);
+>> @@ -1301,7 +1301,7 @@ static inline int perf_allow_cpu(struct perf_event_attr *attr)
+>>  
+>>  static inline int perf_allow_tracepoint(struct perf_event_attr *attr)
+>>  {
+>> -	if (sysctl_perf_event_paranoid > -1 && !capable(CAP_SYS_ADMIN))
+>> +	if (sysctl_perf_event_paranoid > -1 && !perfmon_capable())
+>>  		return -EPERM;
+>>  
+>>  	return security_perf_event_open(attr, PERF_SECURITY_TRACEPOINT);
+> 
+> These are OK I suppose.
+> 
+>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>> index 059ee7116008..d9db414f2197 100644
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+>> @@ -9056,7 +9056,7 @@ static int perf_kprobe_event_init(struct perf_event *event)
+>>  	if (event->attr.type != perf_kprobe.type)
+>>  		return -ENOENT;
+>>  
+>> -	if (!capable(CAP_SYS_ADMIN))
+>> +	if (!perfmon_capable())
+>>  		return -EACCES;
+>>  
+>>  	/*
+> 
+> This one only allows attaching to already extant kprobes, right? It does
+> not allow creation of kprobes.
 
->
-> Just a minor point/clarification, but outside of an enhanced signed modul=
-e case,
-> I think the cross-CPU attack mitigation can't be full. For example, attac=
-king
-> the verified BPF byte code (which is apparently planned to no longer be R=
-O), or
-> the pointers being loaded into these trampolines. There is always going t=
-o be
-> some writable source or pointer to the source, and unless there is a way =
-to
-> verify the end RO result, it's an un-winnable game of whack-a-mole to do =
-it in
-> full. Still the less exposed surfaces the better since the writes we are
-> worrying about in this case are probably not fully arbitrary.
+This unblocks creation of local trace kprobes and uprobes by CAP_SYS_PERFMON 
+privileged process, exactly the same as for CAP_SYS_ADMIN privileged process.
 
-We could use hypervisor- or CR3-based protection. But I agree this is
-tricky and not strictly on topic :)
-
->
-> I don't see why it would be so bad to require copying data to the kernel =
-before
-> sending it through this process. Nothing copies to final allocation direc=
-tly
-> from userspace today, and from a perf perspective, how bad is an extra co=
-py when
-> we are saving TLB shootdowns? Are you thinking to protect the data that's=
- being
-> loaded from other CPUs?
-
-Hmm. If there=E2=80=99s a way to make loading stall, then the cross-cpu att=
-ack
-is a nice way to write shell code, so mitigating this has at least
-some value.
-
->
-> Otherwise, could we lazily clone/sync the original mm into the temporary =
-one to
-> allow this? (possibly totally misguided idea)
-
-That involves allocating a virtual address at a safe position to make
-this work. On architectures like s390, I don=E2=80=99t even know if this is
-possible. Even on x86, it=E2=80=99s awkward.  I think it=E2=80=99s easier t=
-o just say
-that, while the temporary mapping is active, user memory is
-inaccessible.
-
->
-> FWIW, I really like the idea of a cache of unmapped or RO pages. Potentia=
-lly
-> several optimizations we could do there.
->
-
-I guess we would track these pages by the maximum permissions than any
-current or unmapped but unflushed alias has.  This lets us get totally
-unmapped or RO pages out of the cache.  Or even RX =E2=80=94 we could
-potentially allocate, free, and reallocate text without flushing.
-
-> If this API should be cross platform, we might want to abstract the copy =
-itself
-> as well, since other arch's might have non __user solutions for copying d=
-ata in.
-
-Agreed, although maybe all arches would use =E2=80=9Cuser=E2=80=9D mappings=
-.
-
->
-> Unless someone else wants to, I can probably take a look at a first cut o=
-f this
-> after I get the current thing I'm working on out. Probably better to let =
-the
-> dust settle on the ftrace changes as well.
-
-That would be great!
-
-Do you know why the change_page_attr code currently does
-vm_unmap_aliases?  This is yet more extra expense. I assume the idea
-is that, if we=E2=80=99re changing cache attributes on a non-self-snoop
-machine, we need to kill stale aliases, and we should also kill them
-if we=E2=80=99re reducing permissions.  But we currently do it excessively.
-
-We should also consider improving vm_unmap_aliases().  As a practical
-matter, vm_unmap_aliases() often does a global flush, but it can't be
-relied on.  On the other hand, a global flush initiated for other
-reasons won't tell the vmap code that aliases have been zapped.
-
-If the locking is okay, we could maybe get away with zapping aliases
-from the normal flush code.  Alternatively, we could do something
-lockless, e.g.:
-
-atomic64_t kernel_tlb_gen, flushed_kernel_tlb_gen;
-
-flush_tlb_kernel_range(), etc increment kernel_tlb_gen before flushing
-and then update flushed_kernel_tlb_gen to match after flushing.
-
-The vmap code immediately removes PTEs when unmaps occur (which it may
-very well do right now -- I haven't checked) but also tracks the
-kernel_tlb_gen associated with each record of an
-unmapped-but-not-zapped area.  Then we split vm_unmap_aliases() into a
-variant that unmaps all aliases and a variant that merely promises to
-unmap at least one alias.  The former does what the current code does
-except that it skips the IPI if all areas in question have tlb_gen <
-flushed_kernel_tlb_gen.  The latter clears all areas with tlb_gen <
-flushed_kernel_tlb_gen and, if there weren't any, does
-flush_tlb_kernel_range() and flushes everything.
-
-(Major caveat: this is wrong for the case where
-flush_tlb_kernel_range() only flushes some but not all of the kernel.
-So this needs considerable work if it's actually going to me useful.
-The plain old "take locks and clean up" approach might be a better
-bet.)
-
---Andy
+> 
+>> @@ -9116,7 +9116,7 @@ static int perf_uprobe_event_init(struct perf_event *event)
+>>  	if (event->attr.type != perf_uprobe.type)
+>>  		return -ENOENT;
+>>  
+>> -	if (!capable(CAP_SYS_ADMIN))
+>> +	if (!perfmon_capable())
+>>  		return -EACCES;
+>>  
+>>  	/*
+> 
+> Idem, I presume.
+> 
+>> @@ -11157,7 +11157,7 @@ SYSCALL_DEFINE5(perf_event_open,
+>>  	}
+>>  
+>>  	if (attr.namespaces) {
+>> -		if (!capable(CAP_SYS_ADMIN))
+>> +		if (!perfmon_capable())
+>>  			return -EACCES;
+>>  	}
+> 
+> And given we basically make the entire kernel observable with this CAP,
+> busting namespaces shoulnd't be a problem either.
+> 
+> So yeah, I suppose that works.
+> 
