@@ -2,189 +2,189 @@ Return-Path: <SRS0=jla6=26=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E209FC33CA2
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 11:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 827EFC33CA2
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 14:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C026E2072A
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 11:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 575452067D
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 14:08:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIa0ugsq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726114AbgAILhB (ORCPT
+        id S1728514AbgAIOIo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jan 2020 06:37:01 -0500
-Received: from mga01.intel.com ([192.55.52.88]:55961 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbgAILhA (ORCPT
+        Thu, 9 Jan 2020 09:08:44 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46971 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728406AbgAIOIo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jan 2020 06:37:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 03:37:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,413,1571727600"; 
-   d="scan'208";a="216275607"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga008.jf.intel.com with ESMTP; 09 Jan 2020 03:36:59 -0800
-Received: from [10.125.253.127] (abudanko-mobl.ccr.corp.intel.com [10.125.253.127])
-        by linux.intel.com (Postfix) with ESMTP id 2707C58043A;
-        Thu,  9 Jan 2020 03:36:50 -0800 (PST)
-Subject: Re: [PATCH v4 2/9] perf/core: open access for CAP_SYS_PERFMON
- privileged process
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Thu, 9 Jan 2020 09:08:44 -0500
+Received: by mail-lj1-f194.google.com with SMTP id m26so7322048ljc.13;
+        Thu, 09 Jan 2020 06:08:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=mcCdRiYgan4Ah7460AE2tlNezQkP70ughOkgnn2zWig=;
+        b=dIa0ugsqbnth3pJ7h2R+Wyd9qyUA4mwxprIPL7wjM4eqH24lGTV8ZImNGEimn+1Bzf
+         6Sb7E7xuhzxHU6Oybazayg6vYpMQCy28hcFBSFhXtleCwr3RKuPJ/pf+cG1WS7Hye1AE
+         oajKWdLCFhUbcZPSRFw+NMAqP/VEoEhDsAwRH2ijoTApNn17F5NOuXxDn79jPc1+u8sg
+         IuWYpjEdUFwKa/vLTQW1oRBC/7il6xnDbGc/xq1WVeH1bNEBz+Tz+tRNd7IubN0i046U
+         ZPfX6CI4BX7UuWIEv/YueQ+qNFf0fYd4P3IV4urVkK7QV81PZRD4gBFaDqgML2uPnstj
+         ac2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mcCdRiYgan4Ah7460AE2tlNezQkP70ughOkgnn2zWig=;
+        b=NHAhQJ1dx1iddtIp9aiclJJ1dvKi5DLlwHu87G3LHcfRN46QeCTnQ5km0uSAJjFa8k
+         U1BBJzJiQcaHYt0OSR5WW0yGXzIRI1M7SBtrJV0loezeyTVA7FGf4epGEYTtC8/vEKdc
+         rscHGrFcCHgkzBgiH++eUmAuq3PagQPFmGeb8/bYAitvzoQngqF0fr0K+1Iqa7dPf5RK
+         QWP3v0GLkP16s/Lg5mY2tfUvF0XiTPFZrddVSB/VKEw/6HTq7DudkvvOmGEeuqm2HTQx
+         OA+RtYHMnEhk1XnW20ipaNOIz7w6yPzFtQyNIUt4amYZaZwdDyEW01+RHOgHs/eiPKtU
+         vZtQ==
+X-Gm-Message-State: APjAAAW1gDTBqTRMxIvDlw0/Lh63vEXo7dQh77VgMTVj3xLSAl/NlFOz
+        O1uW8sdhqcirzdY/CzeuyCZDva0W
+X-Google-Smtp-Source: APXvYqyeuBL5Nra50raH3DKQm7g83na+zG5fsaRSmjbf+EFpDs2xW71L8P3mh1I2Q7o5TKz/0xvF1g==
+X-Received: by 2002:a2e:5357:: with SMTP id t23mr6727149ljd.227.1578578922047;
+        Thu, 09 Jan 2020 06:08:42 -0800 (PST)
+Received: from localhost.localdomain (mobile-user-c1d2e4-97.dhcp.inet.fi. [193.210.228.97])
+        by smtp.gmail.com with ESMTPSA id n30sm3566499lfi.54.2020.01.09.06.08.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jan 2020 06:08:41 -0800 (PST)
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+To:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, zohar@linux.ibm.com
+Cc:     Janne Karhunen <janne.karhunen@gmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Robert Richter <rric@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, oprofile-list@lists.sf.net
-References: <c0460c78-b1a6-b5f7-7119-d97e5998f308@linux.intel.com>
- <c93309dc-b920-f5fa-f997-e8b2faf47b88@linux.intel.com>
- <20200108160713.GI2844@hirez.programming.kicks-ass.net>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <cc239899-5c52-2fd0-286d-4bff18877937@linux.intel.com>
-Date:   Thu, 9 Jan 2020 14:36:50 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <20200108160713.GI2844@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Konsta Karsisto <konsta.karsisto@gmail.com>
+Subject: [PATCH] ima: ima/lsm policy rule loading logic bug fixes
+Date:   Thu,  9 Jan 2020 16:08:21 +0200
+Message-Id: <20200109140821.17902-1-janne.karhunen@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Keep the ima policy rules around from the beginning even
+if they appear invalid at the time of loading, as they
+may become active after the lsm policy load. In other
+words, now the lsm and the ima can be initialized in any
+order and the handling logic is the same as with the lsm
+rule reload event.
 
-On 08.01.2020 19:07, Peter Zijlstra wrote:
-> On Wed, Dec 18, 2019 at 12:25:35PM +0300, Alexey Budankov wrote:
->>
->> Open access to perf_events monitoring for CAP_SYS_PERFMON privileged
->> processes. For backward compatibility reasons access to perf_events
->> subsystem remains open for CAP_SYS_ADMIN privileged processes but
->> CAP_SYS_ADMIN usage for secure perf_events monitoring is discouraged
->> with respect to CAP_SYS_PERFMON capability.
->>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->>  include/linux/perf_event.h | 6 +++---
->>  kernel/events/core.c       | 6 +++---
->>  2 files changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
->> index 34c7c6910026..f46acd69425f 100644
->> --- a/include/linux/perf_event.h
->> +++ b/include/linux/perf_event.h
->> @@ -1285,7 +1285,7 @@ static inline int perf_is_paranoid(void)
->>  
->>  static inline int perf_allow_kernel(struct perf_event_attr *attr)
->>  {
->> -	if (sysctl_perf_event_paranoid > 1 && !capable(CAP_SYS_ADMIN))
->> +	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
->>  		return -EACCES;
->>  
->>  	return security_perf_event_open(attr, PERF_SECURITY_KERNEL);
->> @@ -1293,7 +1293,7 @@ static inline int perf_allow_kernel(struct perf_event_attr *attr)
->>  
->>  static inline int perf_allow_cpu(struct perf_event_attr *attr)
->>  {
->> -	if (sysctl_perf_event_paranoid > 0 && !capable(CAP_SYS_ADMIN))
->> +	if (sysctl_perf_event_paranoid > 0 && !perfmon_capable())
->>  		return -EACCES;
->>  
->>  	return security_perf_event_open(attr, PERF_SECURITY_CPU);
->> @@ -1301,7 +1301,7 @@ static inline int perf_allow_cpu(struct perf_event_attr *attr)
->>  
->>  static inline int perf_allow_tracepoint(struct perf_event_attr *attr)
->>  {
->> -	if (sysctl_perf_event_paranoid > -1 && !capable(CAP_SYS_ADMIN))
->> +	if (sysctl_perf_event_paranoid > -1 && !perfmon_capable())
->>  		return -EPERM;
->>  
->>  	return security_perf_event_open(attr, PERF_SECURITY_TRACEPOINT);
-> 
-> These are OK I suppose.
-> 
->> diff --git a/kernel/events/core.c b/kernel/events/core.c
->> index 059ee7116008..d9db414f2197 100644
->> --- a/kernel/events/core.c
->> +++ b/kernel/events/core.c
->> @@ -9056,7 +9056,7 @@ static int perf_kprobe_event_init(struct perf_event *event)
->>  	if (event->attr.type != perf_kprobe.type)
->>  		return -ENOENT;
->>  
->> -	if (!capable(CAP_SYS_ADMIN))
->> +	if (!perfmon_capable())
->>  		return -EACCES;
->>  
->>  	/*
-> 
-> This one only allows attaching to already extant kprobes, right? It does
-> not allow creation of kprobes.
+Patch also fixes the rule re-use during the lsm policy
+reload and makes some prints a bit more human readable.
 
-This unblocks creation of local trace kprobes and uprobes by CAP_SYS_PERFMON 
-privileged process, exactly the same as for CAP_SYS_ADMIN privileged process.
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Reported-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
+Signed-off-by: Konsta Karsisto <konsta.karsisto@gmail.com>
+---
+ security/integrity/ima/ima_policy.c | 44 ++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 23 deletions(-)
 
-> 
->> @@ -9116,7 +9116,7 @@ static int perf_uprobe_event_init(struct perf_event *event)
->>  	if (event->attr.type != perf_uprobe.type)
->>  		return -ENOENT;
->>  
->> -	if (!capable(CAP_SYS_ADMIN))
->> +	if (!perfmon_capable())
->>  		return -EACCES;
->>  
->>  	/*
-> 
-> Idem, I presume.
-> 
->> @@ -11157,7 +11157,7 @@ SYSCALL_DEFINE5(perf_event_open,
->>  	}
->>  
->>  	if (attr.namespaces) {
->> -		if (!capable(CAP_SYS_ADMIN))
->> +		if (!perfmon_capable())
->>  			return -EACCES;
->>  	}
-> 
-> And given we basically make the entire kernel observable with this CAP,
-> busting namespaces shoulnd't be a problem either.
-> 
-> So yeah, I suppose that works.
-> 
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index a4dde9d575b2..4022c7736fc3 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -265,7 +265,7 @@ static void ima_lsm_free_rule(struct ima_rule_entry *entry)
+ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ {
+ 	struct ima_rule_entry *nentry;
+-	int i, result;
++	int i;
+ 
+ 	nentry = kmalloc(sizeof(*nentry), GFP_KERNEL);
+ 	if (!nentry)
+@@ -279,7 +279,7 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 	memset(nentry->lsm, 0, FIELD_SIZEOF(struct ima_rule_entry, lsm));
+ 
+ 	for (i = 0; i < MAX_LSM_RULES; i++) {
+-		if (!entry->lsm[i].rule)
++		if (!entry->lsm[i].args_p)
+ 			continue;
+ 
+ 		nentry->lsm[i].type = entry->lsm[i].type;
+@@ -288,13 +288,13 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 		if (!nentry->lsm[i].args_p)
+ 			goto out_err;
+ 
+-		result = security_filter_rule_init(nentry->lsm[i].type,
+-						   Audit_equal,
+-						   nentry->lsm[i].args_p,
+-						   &nentry->lsm[i].rule);
+-		if (result == -EINVAL)
+-			pr_warn("ima: rule for LSM \'%d\' is undefined\n",
+-				entry->lsm[i].type);
++		security_filter_rule_init(nentry->lsm[i].type,
++					  Audit_equal,
++					  nentry->lsm[i].args_p,
++					  &nentry->lsm[i].rule);
++		if (!nentry->lsm[i].rule)
++			pr_warn("rule for LSM \'%s\' is undefined\n",
++				(char *)entry->lsm[i].args_p);
+ 	}
+ 	return nentry;
+ 
+@@ -331,7 +331,9 @@ static void ima_lsm_update_rules(void)
+ 	list_for_each_entry_safe(entry, e, &ima_policy_rules, list) {
+ 		needs_update = 0;
+ 		for (i = 0; i < MAX_LSM_RULES; i++) {
+-			if (entry->lsm[i].rule) {
++			if (entry->lsm[i].args_p) {
++				pr_info("rule for LSM \'%s\' needs update\n",
++					(char *)entry->lsm[i].args_p);
+ 				needs_update = 1;
+ 				break;
+ 			}
+@@ -341,8 +343,7 @@ static void ima_lsm_update_rules(void)
+ 
+ 		result = ima_lsm_update_rule(entry);
+ 		if (result) {
+-			pr_err("ima: lsm rule update error %d\n",
+-				result);
++			pr_err("lsm rule update error %d\n", result);
+ 			return;
+ 		}
+ 	}
+@@ -865,8 +866,6 @@ static const match_table_t policy_tokens = {
+ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+ 			     substring_t *args, int lsm_rule, int audit_type)
+ {
+-	int result;
+-
+ 	if (entry->lsm[lsm_rule].rule)
+ 		return -EINVAL;
+ 
+@@ -875,16 +874,15 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+ 		return -ENOMEM;
+ 
+ 	entry->lsm[lsm_rule].type = audit_type;
+-	result = security_filter_rule_init(entry->lsm[lsm_rule].type,
+-					   Audit_equal,
+-					   entry->lsm[lsm_rule].args_p,
+-					   &entry->lsm[lsm_rule].rule);
+-	if (!entry->lsm[lsm_rule].rule) {
+-		kfree(entry->lsm[lsm_rule].args_p);
+-		return -EINVAL;
+-	}
++	security_filter_rule_init(entry->lsm[lsm_rule].type,
++				  Audit_equal,
++				  entry->lsm[lsm_rule].args_p,
++				  &entry->lsm[lsm_rule].rule);
++	if (!entry->lsm[lsm_rule].rule)
++		pr_warn("rule for LSM \'%s\' is undefined\n",
++			(char *)entry->lsm[lsm_rule].args_p);
+ 
+-	return result;
++	return 0;
+ }
+ 
+ static void ima_log_string_op(struct audit_buffer *ab, char *key, char *value,
+-- 
+2.17.1
+
