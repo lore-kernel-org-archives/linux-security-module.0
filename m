@@ -2,111 +2,103 @@ Return-Path: <SRS0=jla6=26=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6756C282DD
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 14:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09288C33CA2
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 16:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 864502067D
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 14:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA68920721
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 16:33:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731882AbgAIOzL (ORCPT
+        id S1733015AbgAIQdk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jan 2020 09:55:11 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44464 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728737AbgAIOzL (ORCPT
+        Thu, 9 Jan 2020 11:33:40 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40586 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729746AbgAIQdk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jan 2020 09:55:11 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 009EqUSb115697
-        for <linux-security-module@vger.kernel.org>; Thu, 9 Jan 2020 09:55:10 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xe5tk1cfv-1
+        Thu, 9 Jan 2020 11:33:40 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 009GNB7m093919
+        for <linux-security-module@vger.kernel.org>; Thu, 9 Jan 2020 11:33:38 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xdx6k522h-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Jan 2020 09:55:09 -0500
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Jan 2020 11:33:38 -0500
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 9 Jan 2020 14:55:04 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 9 Jan 2020 16:33:36 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 Jan 2020 14:55:01 -0000
+        Thu, 9 Jan 2020 16:33:30 -0000
 Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 009EsChl45482274
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 009GXT0b40698010
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 Jan 2020 14:54:12 GMT
+        Thu, 9 Jan 2020 16:33:29 GMT
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EF95CA4053;
-        Thu,  9 Jan 2020 14:54:59 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id A49CBA4055;
+        Thu,  9 Jan 2020 16:33:29 +0000 (GMT)
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3F88BA404D;
-        Thu,  9 Jan 2020 14:54:59 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 52DFFA404D;
+        Thu,  9 Jan 2020 16:33:28 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.85.153.42])
         by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Jan 2020 14:54:59 +0000 (GMT)
-Subject: Re: [PATCH] ima: ima/lsm policy rule loading logic bug fixes
+        Thu,  9 Jan 2020 16:33:28 +0000 (GMT)
+Subject: Re: [PATCH v13 26/25] Audit: Multiple LSM support in audit rules
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Janne Karhunen <janne.karhunen@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Konsta Karsisto <konsta.karsisto@gmail.com>
-Date:   Thu, 09 Jan 2020 09:54:58 -0500
-In-Reply-To: <20200109140821.17902-1-janne.karhunen@gmail.com>
-References: <20200109140821.17902-1-janne.karhunen@gmail.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        sds@tycho.nsa.gov,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        linux-integrity@vger.kernel.org
+Date:   Thu, 09 Jan 2020 11:33:27 -0500
+In-Reply-To: <ee5e4cea-b6c1-fa12-30de-8fc9007d69e9@schaufler-ca.com>
+References: <20191224235939.7483-1-casey.ref@schaufler-ca.com>
+         <20191224235939.7483-1-casey@schaufler-ca.com>
+         <ee5e4cea-b6c1-fa12-30de-8fc9007d69e9@schaufler-ca.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 20010914-0016-0000-0000-000002DBF132
+x-cbid: 20010916-0012-0000-0000-0000037BF9E3
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20010914-0017-0000-0000-0000333E70A9
-Message-Id: <1578581698.5147.51.camel@linux.ibm.com>
+x-cbparentid: 20010916-0013-0000-0000-000021B81BDA
+Message-Id: <1578587607.5147.63.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-09_02:2020-01-09,2020-01-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 impostorscore=0 phishscore=0 mlxscore=0
- spamscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001090130
+ definitions=2020-01-09_03:2020-01-09,2020-01-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 bulkscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 malwarescore=0 impostorscore=0
+ mlxlogscore=999 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-2001090140
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-01-09 at 16:08 +0200, Janne Karhunen wrote:
-> Keep the ima policy rules around from the beginning even
-> if they appear invalid at the time of loading, as they
-> may become active after the lsm policy load. In other
-> words, now the lsm and the ima can be initialized in any
-> order and the handling logic is the same as with the lsm
-> rule reload event.
-> 
-> Patch also fixes the rule re-use during the lsm policy
-> reload and makes some prints a bit more human readable.
+Hi Casey,
 
-Thanks, Janne.  What do you think about adding a single sentence at
-the end of this patch description?  Something along the lines of,
-"With these changes, there no need to defer loading a custom IMA
-policy, based on LSM rules, until after the LSM policy has been
-initialized."
+On Fri, 2020-01-03 at 10:53 -0800, Casey Schaufler wrote:
+> With multiple possible security modules supporting audit rule
+> it is necessary to keep separate data for each module in the
+> audit rules. This affects IMA as well, as it re-uses the audit
+> rule list mechanisms.
 
-The line length, here, is a bit short.  According to section "14) the
-canonical path format" of Documentation/process/submitting-
-patches.rst, the body of the explanation shouldl be line wrapped at 75
-columns.
+While reviewing this patch, I realized there was a bug in the base IMA
+code.  With Janne's bug fix, that he just posted, I think this patch
+can now be simplified.
 
-> 
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Reported-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
-> Signed-off-by: Konsta Karsisto <konsta.karsisto@gmail.com>
+My main concern is the number of warning messages that will be
+generated.  Any time a new LSM policy is loaded, the labels will be
+re-evaulated whether or not they are applicable to the particular LSM,
+causing unnecessary warnings.
 
-Please include a "Fixes" tag as well.  Otherwise,
-
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Mimi
 
