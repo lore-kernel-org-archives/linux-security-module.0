@@ -2,71 +2,36 @@ Return-Path: <SRS0=jla6=26=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C13C33CA2
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 17:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9CCC3F68F
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 18:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 151F22067D
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 17:59:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rqb+UPXB"
+	by mail.kernel.org (Postfix) with ESMTP id 5F93020721
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jan 2020 18:12:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732040AbgAIR7t (ORCPT
+        id S1730366AbgAISMx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jan 2020 12:59:49 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36254 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728653AbgAIR7t (ORCPT
+        Thu, 9 Jan 2020 13:12:53 -0500
+Received: from namei.org ([65.99.196.166]:56486 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730353AbgAISMx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jan 2020 12:59:49 -0500
-Received: by mail-qk1-f196.google.com with SMTP id a203so6843009qkc.3;
-        Thu, 09 Jan 2020 09:59:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8PkSoGPOiy4o4DnP2NNYtjoXFAX8iabjQVoKoqIqz5c=;
-        b=rqb+UPXBmbt9LxqHLWb2wQkjHE/m7Zrgy3kUrI+o7jFU+3/M3dfv69Wzsn4wrpWbYy
-         zUHOy33yGGfU4PoO72twqpbkFq0KLL4V7csznzM287joigW0bMkLi/aqxGH9yaCKvf/w
-         upqYKRrZSPc6e3khXFG+KxdZHeQ5gfJEmKxQJ4WaF/1hWuZgICoVSZb8aazY6XvLPsPj
-         Ddf0NIvw/o5BsSfIq+PRt0D/R+bTzwWR+3qbIcpRZfnrnj4Nb7tnoZ2LILoyKq0eTYBb
-         ryN78osR5tE0T0Veu21LPfmqW4WPVaHWB1sWGdfwrgBdeQ5izrHS31ZUitUE2RijpKrC
-         J/uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8PkSoGPOiy4o4DnP2NNYtjoXFAX8iabjQVoKoqIqz5c=;
-        b=Rbrj0jn1pXT/xqwoyqKaPaYK9sQ8caaC7aijtdYpCC9UiU502+6embF5889syEWc2s
-         cnZT/gBFfmPxidQwwfyf0FiPA8MKhqgyUDcMp/OORw2YEWp3BwWT9WcdSXHZOVuTOBTt
-         St1LTGv1Y8jh59B3cEtnezTMeZA6Vz5GpVWMWVxdsypM6wcIY86jatXyVYStpVffmImd
-         w+KA+PdpazdHLxprRcnVmEhvopdvw64hQ6uLlOfWRSdm3tQeLsqnGXUc/8ZQn8oo49V9
-         4eAS830B9ZZXjT9TnF5MGtYZVciIJDNxbLtP6cuOQ6GK8lAPHWg2yZynvsDh1K2sHnR6
-         T2jg==
-X-Gm-Message-State: APjAAAVTZ2MctjBDGQ59VSGwZoNrvCR3MiEUwHt7kcd9R/R7u/SDbASp
-        gnvXdeqHFk33opqaQLWUTebYMmQaujhL/qUycDE=
-X-Google-Smtp-Source: APXvYqwRSsDCOH2S2S4sv60fEnTRBs947fHi9e247NVahrgq8MxV2kgGpalTMfJ5tYF7+Kk+WnPM2QEv6CIOPhJJzh8=
-X-Received: by 2002:ae9:e809:: with SMTP id a9mr10590771qkg.92.1578592787759;
- Thu, 09 Jan 2020 09:59:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20191220154208.15895-1-kpsingh@chromium.org> <20191220154208.15895-13-kpsingh@chromium.org>
- <CAEf4BzY4K-vgSFPjV=pn3quc5DT1+eGkJnZfSw4+b0fERzPVfw@mail.gmail.com> <20200104000955.GB23487@chromium.org>
-In-Reply-To: <20200104000955.GB23487@chromium.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 9 Jan 2020 09:59:35 -0800
-Message-ID: <CAEf4Bzam_k99z-bh_kH=M9HUS3+nh_eSGJLffPO4y=_9psH9GA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v1 12/13] bpf: lsm: Add selftests for BPF_PROG_TYPE_LSM
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
+        Thu, 9 Jan 2020 13:12:53 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 009IBcbB024844;
+        Thu, 9 Jan 2020 18:11:38 GMT
+Date:   Fri, 10 Jan 2020 05:11:38 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+cc:     Kees Cook <keescook@chromium.org>, KP Singh <kpsingh@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        open list <linux-kernel@vger.kernel.org>,
         bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
         Thomas Garnier <thgarnie@chromium.org>,
         Michael Halcrow <mhalcrow@google.com>,
         Paul Turner <pjt@google.com>,
@@ -74,7 +39,7 @@ Cc:     open list <linux-kernel@vger.kernel.org>,
         Jann Horn <jannh@google.com>,
         Matthew Garrett <mjg59@google.com>,
         Christian Brauner <christian@brauner.io>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>,
         Martin KaFai Lau <kafai@fb.com>,
@@ -86,120 +51,63 @@ Cc:     open list <linux-kernel@vger.kernel.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Content-Type: text/plain; charset="UTF-8"
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF
+ (KRSI)
+In-Reply-To: <e59607cc-1a84-cbdd-5117-7efec86b11ff@tycho.nsa.gov>
+Message-ID: <alpine.LRH.2.21.2001100437550.21515@namei.org>
+References: <20191220154208.15895-1-kpsingh@chromium.org> <95036040-6b1c-116c-bd6b-684f00174b4f@schaufler-ca.com> <CACYkzJ5nYh7eGuru4vQ=2ZWumGPszBRbgqxmhd4WQRXktAUKkQ@mail.gmail.com> <201912301112.A1A63A4@keescook> <c4e6cdf2-1233-fc82-ca01-ba84d218f5aa@tycho.nsa.gov>
+ <alpine.LRH.2.21.2001090551000.27794@namei.org> <e59607cc-1a84-cbdd-5117-7efec86b11ff@tycho.nsa.gov>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 3, 2020 at 4:09 PM KP Singh <kpsingh@chromium.org> wrote:
->
-> On 23-Dez 22:49, Andrii Nakryiko wrote:
-> > On Fri, Dec 20, 2019 at 7:42 AM KP Singh <kpsingh@chromium.org> wrote:
-> > >
-> > > From: KP Singh <kpsingh@google.com>
-> > >
-> > > * Load a BPF program that audits mprotect calls
-> > > * Attach the program to the "file_mprotect" LSM hook
-> > > * Verify if the program is actually loading by reading
-> > >   securityfs
-> > > * Initialize the perf events buffer and poll for audit events
-> > > * Do an mprotect on some memory allocated on the heap
-> > > * Verify if the audit event was received
-> > >
-> > > Signed-off-by: KP Singh <kpsingh@google.com>
-> > > ---
-> > >  MAINTAINERS                                   |   2 +
-> > >  .../bpf/prog_tests/lsm_mprotect_audit.c       | 129 ++++++++++++++++++
-> > >  .../selftests/bpf/progs/lsm_mprotect_audit.c  |  58 ++++++++
-> > >  3 files changed, 189 insertions(+)
-> > >  create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_mprotect_audit.c
-> > >  create mode 100644 tools/testing/selftests/bpf/progs/lsm_mprotect_audit.c
-> > >
-> >
-> > [...]
-> >
-> > > +/*
-> > > + * Define some of the structs used in the BPF program.
-> > > + * Only the field names and their sizes need to be the
-> > > + * same as the kernel type, the order is irrelevant.
-> > > + */
-> > > +struct mm_struct {
-> > > +       unsigned long start_brk, brk, start_stack;
-> > > +};
-> > > +
-> > > +struct vm_area_struct {
-> > > +       unsigned long start_brk, brk, start_stack;
-> > > +       unsigned long vm_start, vm_end;
-> > > +       struct mm_struct *vm_mm;
-> > > +       unsigned long vm_flags;
-> > > +};
-> > > +
-> > > +BPF_TRACE_3("lsm/file_mprotect", mprotect_audit,
-> > > +           struct vm_area_struct *, vma,
-> > > +           unsigned long, reqprot, unsigned long, prot)
-> > > +{
-> > > +       struct mprotect_audit_log audit_log = {};
-> > > +       int is_heap = 0;
-> > > +
-> > > +       __builtin_preserve_access_index(({
-> >
-> > you don't need __builtin_preserve_access_index, if you mark
-> > vm_area_struct and mm_struct with
-> > __attribute__((preserve_access_index)
->
-> Cool, updated!
->
-> >
-> > > +               is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
-> > > +                                    vma->vm_end <= vma->vm_mm->brk);
-> > > +       }));
-> > > +
-> > > +       audit_log.magic = MPROTECT_AUDIT_MAGIC;
-> > > +       audit_log.is_heap = is_heap;
-> > > +       bpf_lsm_event_output(&perf_buf_map, BPF_F_CURRENT_CPU, &audit_log,
-> > > +                            sizeof(audit_log));
-> >
-> > You test would be much simpler if you use global variables to pass
-> > data back to userspace, instead of using perf buffer.
-> >
-> > Also please see fentry_fexit.c test for example of using BPF skeleton
-> > to shorten and simpify userspace part of test.
->
-> Thanks for the skeleton work!
->
-> This makes using global variables easier and the tests are indeed much
-> simpler, I have updated it for the next revision.
->
-> One follow up question regarding global variables, let's say I have
-> the following global variable defined in the BPF program:
->
-> struct result_info {
->         __u32 count;
-> };
->
-> struct result_info result = {
->         .count = 0,
-> };
->
-> The defintion of result_info needs to be included before the .skel.h
-> as it's not automatically generated or maybe I am missing a
-> trick here?
->
-> For now, I have defined this in a header which gets included both in
-> the program and the test.
+On Wed, 8 Jan 2020, Stephen Smalley wrote:
 
-Yes, ideally all common types should be shared in a common header. My
-initial implementation actually supported dumping out all the types in
-a generated skeleton, but that was inconvenient in a lot of cases, so
-I dropped that.
+> The cover letter subject line and the Kconfig help text refer to it as a
+> BPF-based "MAC and Audit policy".  It has an enforce config option that
+> enables the bpf programs to deny access, providing access control. IIRC, in
+> the earlier discussion threads, the BPF maintainers suggested that Smack and
+> other LSMs could be entirely re-implemented via it in the future, and that
+> such an implementation would be more optimal.
 
->
-> - KP
->
-> >
-> > > +       return 0;
-> > > +}
-> > > --
-> > > 2.20.1
-> > >
+In this case, the eBPF code is similar to a kernel module, rather than a 
+loadable policy file.  It's a loadable mechanism, rather than a policy, in 
+my view.
+
+This would be similar to the difference between iptables rules and 
+loadable eBPF networking code.  I'd be interested to know how the 
+eBPF networking scenarios are handled wrt kernel ABI.
+
+
+> Again, not arguing for or against, but wondering if people fully understand
+> the implications.  If it ends up being useful, people will build access
+> control systems with it, and it directly exposes a lot of kernel internals to
+> userspace.  There was a lot of concern originally about the LSM hook interface
+> becoming a stable ABI and/or about it being misused.  Exposing that interface
+> along with every kernel data structure exposed through it to userspace seems
+> like a major leap.
+
+Agreed this is a leap, although I'm not sure I'd characterize it as 
+exposure to userspace -- it allows dynamic extension of the LSM API from 
+userland, but the code is executed in the kernel.
+
+KP: One thing I'd like to understand better is the attack surface 
+introduced by this.  IIUC, the BTF fields are read only, so the eBPF code 
+should not be able to modify any LSM parameters, correct?
+
+
+>  Even if the mainline kernel doesn't worry about any kind
+> of stable interface guarantees for it, the distros might be forced to provide
+> some kABI guarantees for it to appease ISVs and users...
+
+How is this handled currently for other eBPF use-cases?
+
+-- 
+James Morris
+<jmorris@namei.org>
+
