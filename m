@@ -2,183 +2,137 @@ Return-Path: <SRS0=H0F3=27=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 645ADC282DD
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 17:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C97C33CA4
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 18:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E49D2072E
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 17:53:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huBJfB29"
+	by mail.kernel.org (Postfix) with ESMTP id 20AA120842
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 18:36:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1578681376;
+	bh=ZUQib7bnoTZU/304mmRL5Mwvrc5MIbAoLniN4Uk/qYw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Dfo/0KHOIQT+bek75REfud6glk/u92CoaqEGz9964nlIhjpyUMSUXNLKkPNyyRZke
+	 KSVK/gqJiF3+gAB481Qq70NOig5ifJW/LzDMLogliboVpyKrx7XtO5fzZ+IOGLHKBN
+	 9nTB/qb//lNDG8tbkOpyFPNSHFH380jvXjK/eEI4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728547AbgAJRxK (ORCPT
+        id S1728020AbgAJSgP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Jan 2020 12:53:10 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34800 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728248AbgAJRxJ (ORCPT
+        Fri, 10 Jan 2020 13:36:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43950 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728083AbgAJSgP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:53:09 -0500
-Received: by mail-pl1-f194.google.com with SMTP id x17so1130056pln.1;
-        Fri, 10 Jan 2020 09:53:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7CDQhFdn9jkHo+6/IKHK0dztZerzShVqNerNdFNibYI=;
-        b=huBJfB29GhBFOE6ibGq9rZro83Y9Ry5BVWo7VwnsQnYFJ4BgczzUmF8H9eGx6jMZ2S
-         E7AfCJD4D2kIMp2dTi3SBsXGrju8f7kZHinSSNyqCbc/2hQOefdlR8X+fCeAHtGB6P4N
-         zPf64RFjC82FB2fAeTw6K61/viGwGsDCShGaVxiZSIfuFVzH4rm0YSwHdm/9zG3Km+ZX
-         0LFaoJDiYy6uRdUiUSi6RyUCn7tB9R9BoY+qvuwa3v1pgAfeaMdAOuRbC/rXJTdSEBBo
-         Z0K7m3OF6X0T3n+T5vYsQen7lAih4jZSeI3+6CdNEPvNXEEB+tNg7lm8KUf42GW16loT
-         VDkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7CDQhFdn9jkHo+6/IKHK0dztZerzShVqNerNdFNibYI=;
-        b=sDJnwVhzgcJ1idgb9GoTPjwPdZ5LI2ZmtWUMbgnL9rajxW0jjAfoDEyy0GZCcIFLTZ
-         zoJGGyYpd0u1CLYNM4pbG9gaPWd4MI8NSUERueZd2MK+ZIs5Ga0a3q04+iiEEuuAzn4E
-         sKEEUaZj+IHWH+5peMBIt+EFBT7pnxLQWNp8hx6RMEIQObw2bKTdUNL+moG2fhfj5J+H
-         bzzLte1FHutOhfOaK9JBA+pcWuUQsMLdOCOZWhzTF50h5MNFvAArp5zQY4qe5D8RyKRY
-         5qFR0W6uCcQRjE5/rIC5z+slbWJlUFqJYNS2OjN449+vdH5SOPucomQHeexFuWG4ysVs
-         w1RQ==
-X-Gm-Message-State: APjAAAXomNmfpnLjJ+ijZMUuq3KWmH3EXprA2DII+8YU55qL283DSiWW
-        9uj850cSw2IEf/jeLKI7xX4=
-X-Google-Smtp-Source: APXvYqxSppu3yeNvSqY0JqfiaAqCaesNlytAiUS9HnsE+dbJvdkreE5lle13ppca3R6I/dd3W3n5rA==
-X-Received: by 2002:a17:902:343:: with SMTP id 61mr5753565pld.332.1578678788962;
-        Fri, 10 Jan 2020 09:53:08 -0800 (PST)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::2:ba5e])
-        by smtp.gmail.com with ESMTPSA id w3sm1423944pgj.48.2020.01.10.09.53.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Jan 2020 09:53:08 -0800 (PST)
-Date:   Fri, 10 Jan 2020 09:53:05 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
-        Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF (KRSI)
-Message-ID: <20200110175304.f3j4mtach4mccqtg@ast-mbp.dhcp.thefacebook.com>
-References: <201912301112.A1A63A4@keescook>
- <c4e6cdf2-1233-fc82-ca01-ba84d218f5aa@tycho.nsa.gov>
- <alpine.LRH.2.21.2001090551000.27794@namei.org>
- <e59607cc-1a84-cbdd-5117-7efec86b11ff@tycho.nsa.gov>
- <alpine.LRH.2.21.2001100437550.21515@namei.org>
- <e90e03e3-b92f-6e1a-132f-1b648d9d2139@tycho.nsa.gov>
- <alpine.LRH.2.21.2001100558550.31925@namei.org>
- <20200109194302.GA85350@google.com>
- <8e035f4d-5120-de6a-7ac8-a35841a92b8a@tycho.nsa.gov>
- <20200110152758.GA260168@google.com>
+        Fri, 10 Jan 2020 13:36:15 -0500
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DFBF222D9
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2020 18:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578681373;
+        bh=ZUQib7bnoTZU/304mmRL5Mwvrc5MIbAoLniN4Uk/qYw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=h+t8K1VgQO2sqGDI7eQ7fhLz4uqrI7kcD8o9E7GRSvSk41bGfpwcP9glUFoAvpEDO
+         vKIazUnxJip7Y+EjMYX0HhhIVOP6z+pIhksR/gsQBuQuSZmDtqtPngJW4t/hkoWZMQ
+         2xFlT4rI9w8G0PDoS9dgMdPkyWxgZOQAOXfipC44=
+Received: by mail-wr1-f54.google.com with SMTP id c9so2739052wrw.8
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2020 10:36:13 -0800 (PST)
+X-Gm-Message-State: APjAAAV0IUR75tExUER9AvAE0LvT3kAFgrVqYSelfVrldnEIjFFrHIu2
+        OHpKnCiLgt+UAd1FLnBi0gOofyjPdVayV6JrbOkhzg==
+X-Google-Smtp-Source: APXvYqzCH1wGkq2uxYvjqfJcJaKKKqpsUBHA/6LICwgzdTRsCsItPO4rziFdbUkhHPuHyevVbw3EbFyp7cT5odZ4Uhs=
+X-Received: by 2002:adf:f20b:: with SMTP id p11mr4718822wro.195.1578681371413;
+ Fri, 10 Jan 2020 10:36:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110152758.GA260168@google.com>
-User-Agent: NeoMutt/20180223
+References: <21bf6bb46544eab79e792980f82520f8fbdae9b5.camel@intel.com>
+ <DB882EE8-20B2-4631-A808-E5C968B24CEB@amacapital.net> <cdd157ef011efda92c9434f76141fc3aef174d85.camel@intel.com>
+ <CALCETrV_tGk=B3Hw0h9viW45wMqB_W+rwWzx6LnC3-vSATOUOA@mail.gmail.com>
+ <400be86aab208d0e50a237cdbd3195763396e3ed.camel@intel.com>
+ <CALCETrXXJhkNXmjTX_8VEO39+uE4XECtm=QNTDh1DpncXKhKhw@mail.gmail.com> <96dd98b3c4f73b205b6e669ca87fa64901c117d6.camel@intel.com>
+In-Reply-To: <96dd98b3c4f73b205b6e669ca87fa64901c117d6.camel@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 10 Jan 2020 10:35:59 -0800
+X-Gmail-Original-Message-ID: <CALCETrWjx-D2sdJZbnydPgunNKmxuhYm=+6iPoy0DHEKCMkMsw@mail.gmail.com>
+Message-ID: <CALCETrWjx-D2sdJZbnydPgunNKmxuhYm=+6iPoy0DHEKCMkMsw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] bpf: Make trampolines W^X
+To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc:     "luto@kernel.org" <luto@kernel.org>,
+        "songliubraving@fb.com" <songliubraving@fb.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "kuznet@ms2.inr.ac.ru" <kuznet@ms2.inr.ac.ru>,
+        "mjg59@google.com" <mjg59@google.com>,
+        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "thgarnie@chromium.org" <thgarnie@chromium.org>,
+        "kpsingh@chromium.org" <kpsingh@chromium.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "revest@chromium.org" <revest@chromium.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "namit@vmware.com" <namit@vmware.com>,
+        "jackmanb@chromium.org" <jackmanb@chromium.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "kafai@fb.com" <kafai@fb.com>, "yhs@fb.com" <yhs@fb.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>,
+        "mhalcrow@google.com" <mhalcrow@google.com>,
+        "andriin@fb.com" <andriin@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 10, 2020 at 04:27:58PM +0100, KP Singh wrote:
-> On 09-Jan 14:47, Stephen Smalley wrote:
-> > On 1/9/20 2:43 PM, KP Singh wrote:
-> > > On 10-Jan 06:07, James Morris wrote:
-> > > > On Thu, 9 Jan 2020, Stephen Smalley wrote:
-> > > > 
-> > > > > On 1/9/20 1:11 PM, James Morris wrote:
-> > > > > > On Wed, 8 Jan 2020, Stephen Smalley wrote:
-> > > > > > 
-> > > > > > > The cover letter subject line and the Kconfig help text refer to it as a
-> > > > > > > BPF-based "MAC and Audit policy".  It has an enforce config option that
-> > > > > > > enables the bpf programs to deny access, providing access control. IIRC,
-> > > > > > > in
-> > > > > > > the earlier discussion threads, the BPF maintainers suggested that Smack
-> > > > > > > and
-> > > > > > > other LSMs could be entirely re-implemented via it in the future, and that
-> > > > > > > such an implementation would be more optimal.
-> > > > > > 
-> > > > > > In this case, the eBPF code is similar to a kernel module, rather than a
-> > > > > > loadable policy file.  It's a loadable mechanism, rather than a policy, in
-> > > > > > my view.
-> > > > > 
-> > > > > I thought you frowned on dynamically loadable LSMs for both security and
-> > > > > correctness reasons?
-> > > 
-> > > Based on the feedback from the lists we've updated the design for v2.
-> > > 
-> > > In v2, LSM hook callbacks are allocated dynamically using BPF
-> > > trampolines, appended to a separate security_hook_heads and run
-> > > only after the statically allocated hooks.
-> > > 
-> > > The security_hook_heads for all the other LSMs (SELinux, AppArmor etc)
-> > > still remains __lsm_ro_after_init and cannot be modified. We are still
-> > > working on v2 (not ready for review yet) but the general idea can be
-> > > seen here:
-> > > 
-> > >    https://github.com/sinkap/linux-krsi/blob/patch/v1/trampoline_prototype/security/bpf/lsm.c
-> > > 
-> > > > 
-> > > > Evaluating the security impact of this is the next step. My understanding
-> > > > is that eBPF via BTF is constrained to read only access to hook
-> > > > parameters, and that its behavior would be entirely restrictive.
-> > > > 
-> > > > I'd like to understand the security impact more fully, though.  Can the
-> > > > eBPF code make arbitrary writes to the kernel, or read anything other than
-> > > > the correctly bounded LSM hook parameters?
-> > > > 
-> > > 
-> > > As mentioned, the BPF verifier does not allow writes to BTF types.
-> > > 
-> > > > > And a traditional security module would necessarily fall
-> > > > > under GPL; is the eBPF code required to be likewise?  If not, KRSI is a
-> > > > > gateway for proprietary LSMs...
-> > > > 
-> > > > Right, we do not want this to be a GPL bypass.
-> > > 
-> > > This is not intended to be a GPL bypass and the BPF verifier checks
-> > > for license compatibility of the loaded program with GPL.
-> > 
-> > IIUC, it checks that the program is GPL compatible if it uses a function
-> > marked GPL-only.  But what specifically is marked GPL-only that is required
-> > for eBPF programs using KRSI?
-> 
-> Good point! If no-one objects, I can add it to the BPF_PROG_TYPE_LSM
-> specific verification for the v2 of the patch-set which would require
-> all BPF-LSM programs to be GPL.
+> On Jan 9, 2020, at 3:01 PM, Edgecombe, Rick P <rick.p.edgecombe@intel.com=
+> wrote:
 
-I don't think it's a good idea to enforce license on the program.
-The kernel doesn't do it for modules.
-For years all of BPF tracing progs were GPL because they have to use
-GPL-ed helpers to do anything meaningful.
-So for KRSI just make sure that all helpers are GPL-ed as well.
+>> The vmap code immediately removes PTEs when unmaps occur (which it may
+>> very well do right now -- I haven't checked) but also tracks the
+>> kernel_tlb_gen associated with each record of an
+>> unmapped-but-not-zapped area.  Then we split vm_unmap_aliases() into a
+>> variant that unmaps all aliases and a variant that merely promises to
+>> unmap at least one alias.  The former does what the current code does
+>> except that it skips the IPI if all areas in question have tlb_gen <
+>> flushed_kernel_tlb_gen.  The latter clears all areas with tlb_gen <
+>> flushed_kernel_tlb_gen and, if there weren't any, does
+>> flush_tlb_kernel_range() and flushes everything.
+>>
+>> (Major caveat: this is wrong for the case where
+>> flush_tlb_kernel_range() only flushes some but not all of the kernel.
+>> So this needs considerable work if it's actually going to me useful.
+>> The plain old "take locks and clean up" approach might be a better
+>> bet.)
+>>
+>
+> Hmm. In normal usage (!DEBUG_PAGE_ALLOC), are kernel range tlb shootdowns=
+ common
+> outside of module space users and lazy vmap stuff? A tlb_gen solution mig=
+ht only
+> be worth it in cases where something other than vm_unmap_aliases() and he=
+lpers
+> was doing this frequently.
+
+I suspect that the two bug users aside from vunmap() will be eBPF and,
+eventually, XPFO / =E2=80=9Cexclusive pages=E2=80=9D / less crappy SEV-like
+implementations / actual high quality MKTME stuff / KVM
+side-channel-proof memory.  The latter doesn=E2=80=99t actually exist yet (=
+the
+SEV implementation sidesteps this with a horrible hack involving
+incoherent mappings that are left active with fingers crossed), but it
+really seems like it=E2=80=99s coming.
+
+In general, if we=E2=80=99re going to have a pool of non-RW-direct-mapped
+pages, we also want some moderately efficient way to produce such
+pages.
+
+Right now, creating and freeing eBPF programs in a loop is probably a
+performance disaster on large systems.
