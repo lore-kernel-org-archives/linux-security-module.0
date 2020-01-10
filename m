@@ -2,118 +2,121 @@ Return-Path: <SRS0=H0F3=27=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 213B3C33CA2
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 10:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9D1C33CA4
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 11:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9FE2206ED
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 10:14:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 023E920842
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 11:50:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=yehs2007@zoho.com header.b="CHKE/Ajc"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="b+v985lP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbgAJKOm (ORCPT
+        id S1727648AbgAJLuR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Jan 2020 05:14:42 -0500
-Received: from sender4-pp-o98.zoho.com ([136.143.188.98]:25888 "EHLO
-        sender4-pp-o98.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727168AbgAJKOm (ORCPT
+        Fri, 10 Jan 2020 06:50:17 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:59924 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727710AbgAJLuR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Jan 2020 05:14:42 -0500
-X-Greylist: delayed 905 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Jan 2020 05:14:42 EST
-ARC-Seal: i=1; a=rsa-sha256; t=1578650363; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=LPNKhYD8VGGM3LlOvpkvz4S9ACqCUh4yp3mupX2mqzgp9x1omeg/7mvIiTsDpsTHyVVqJS+QUCZmei1q/tvXFTyeUkp8Q37erGa7Gm4qHuDlyeIoA2FeF3hZSAdqA0tgbh/Bvs16pKErfTS9RoBW04HRg8xdPGTHW+JtM8MBYcc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1578650363; h=Cc:Date:From:Message-ID:Subject:To; 
-        bh=6k+ob4mND5uhGYNS0aLLe9mkja1bcLdOMMO7jcUWhUo=; 
-        b=ZSVBhOl6iI8eQVqe5qm70vgMz6PZeU7tH/5ECA9xpWgXCGBlClXJUoBqOytQor0TMXHqbSjT/Dc4ecK/upGfLUhvzrW+KOtbr9AGn7FHutzjmNDkiovzS6out02Z2Jc0vy0DPwP+1CT8z80f2nLCdgcCzhrRIaLCym1wl+U0+Dw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=yehs2007@zoho.com;
-        dmarc=pass header.from=<yehs2007@zoho.com> header.from=<yehs2007@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id; 
-  b=ejW7ZWQ5OyE9/795JUKXZ6EzmelpS/1GJpbI1mGTt6CO4wZHYu0QoblwEPkYIaERRiuRU91QqmlJ
-    U9DjHv4BALJHW7XObKvsXgjcjNLKGF2c56dOG/a5M8a7ymfizR8F  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1578650363;
-        s=zm2020; d=zoho.com; i=yehs2007@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id;
-        bh=6k+ob4mND5uhGYNS0aLLe9mkja1bcLdOMMO7jcUWhUo=;
-        b=CHKE/Ajc7XKpwGamfC/RhaTQUAM0SXRRovodAMD+cT/cQc+EpZSnQK3V4zmnz1Oz
-        9QCTpc85rLAuLPFJ0xGWClaRLX03T+/F7TA+bZu8Th+JqlsSwZ2qS8dmFglxo2rGJJg
-        MFQZiJfdx6ohi553PqJk/5uviWRdunUqJ/ttm+QY=
-Received: from YEHS1XPF1D05WL.lenovo.com (221.219.123.16 [221.219.123.16]) by mx.zohomail.com
-        with SMTPS id 1578650359384351.6084037024035; Fri, 10 Jan 2020 01:59:19 -0800 (PST)
-From:   Huaisheng Ye <yehs2007@zoho.com>
-To:     paul@paul-moore.com, sds@tycho.nsa.gov, eparis@parisplace.org,
-        jmorris@namei.org, serge@hallyn.com
-Cc:     tyu1@lenovo.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Huaisheng Ye <yehs1@lenovo.com>
-Subject: [PATCH] selinux: remove redundant msg_msg_alloc_security
-Date:   Fri, 10 Jan 2020 17:58:56 +0800
-Message-Id: <20200110095856.76612-1-yehs2007@zoho.com>
-X-Mailer: git-send-email 2.17.0.windows.1
-X-ZohoMailClient: External
+        Fri, 10 Jan 2020 06:50:17 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00ABmBed144146;
+        Fri, 10 Jan 2020 11:49:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=JJW3trWejl6ezxgJ10nAdxvNTgv9rAAla3xEGRMdP/E=;
+ b=b+v985lPgbUpnmfYLSAPubgGWtiRnldTf21hB3pSq9Qbeu9oQnG1ZYcEbanBpuwa1qK8
+ XCvzQ9JFHAHC33/FF0YupPXg5/yNA1mdAUL/9b37kJ3CD9Pnp967WAza78LPOyd7xxYc
+ nWZv9qrnuKJ0BkYnsxUZxqQjHtkgcqTAwUq75KMX84OU+lryMLegyaqRYd63GdUT27Sx
+ UP0x6QUNwWrq6fC1DCj5nkqpJFqBeReAR7ryeJwAZqLkwSrPES9bgGdV9WdyWGD+aQOG
+ 1lXA2DvG0mlTexMwz+hSjWK1VoWwKtUl1d692rFOSBpD174U1iUaUZy7um6b1ZXrdTle ig== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2xakbr9hue-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 Jan 2020 11:49:50 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00ABmuCB051763;
+        Fri, 10 Jan 2020 11:49:50 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2xeh90k0kn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 Jan 2020 11:49:49 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00ABnk8O019563;
+        Fri, 10 Jan 2020 11:49:48 GMT
+Received: from dhcp-10-175-222-124.vpn.oracle.com (/10.175.222.124)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 10 Jan 2020 03:49:46 -0800
+From:   Alan Maguire <alan.maguire@oracle.com>
+To:     skhan@linuxfoundation.org, brendanhiggins@google.com,
+        gregkh@linuxfoundation.org
+Cc:     rafael@kernel.org, jmorris@namei.org, serge@hallyn.com,
+        knut.omang@oracle.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kselftest@vger.kernel.org, sfr@canb.auug.org.au,
+        Alan Maguire <alan.maguire@oracle.com>
+Subject: [PATCH kunit] kunit: building kunit as a module breaks allmodconfig
+Date:   Fri, 10 Jan 2020 11:49:25 +0000
+Message-Id: <1578656965-2993-1-git-send-email-alan.maguire@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9495 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=799
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001100101
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9495 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=860 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001100101
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Huaisheng Ye <yehs1@lenovo.com>
+kunit tests that do not support module build should depend
+on KUNIT=y rather than just KUNIT in Kconfig, otherwise
+they will trigger compilation errors for "make allmodconfig"
+builds.
 
-selinux_msg_msg_alloc_security only calls msg_msg_alloc_security but
-do nothing else. And also msg_msg_alloc_security is just used by the
-former.
-
-Remove the redundant function to simplify the code.
-
-Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+Fixes: 9fe124bf1b77 ("kunit: allow kunit to be loaded as a module")
+Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- security/selinux/hooks.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ drivers/base/Kconfig      | 2 +-
+ security/apparmor/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 9625b99..fb1b9da 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -5882,16 +5882,6 @@ static void ipc_init_security(struct ipc_security_struct *isec, u16 sclass)
- 	isec->sid = current_sid();
- }
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index c3b3b5c..5f0bc74 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -150,7 +150,7 @@ config DEBUG_TEST_DRIVER_REMOVE
  
--static int msg_msg_alloc_security(struct msg_msg *msg)
--{
--	struct msg_security_struct *msec;
--
--	msec = selinux_msg_msg(msg);
--	msec->sid = SECINITSID_UNLABELED;
--
--	return 0;
--}
--
- static int ipc_has_perm(struct kern_ipc_perm *ipc_perms,
- 			u32 perms)
- {
-@@ -5910,7 +5900,12 @@ static int ipc_has_perm(struct kern_ipc_perm *ipc_perms,
+ config PM_QOS_KUNIT_TEST
+ 	bool "KUnit Test for PM QoS features"
+-	depends on KUNIT
++	depends on KUNIT=y
  
- static int selinux_msg_msg_alloc_security(struct msg_msg *msg)
- {
--	return msg_msg_alloc_security(msg);
-+	struct msg_security_struct *msec;
-+
-+	msec = selinux_msg_msg(msg);
-+	msec->sid = SECINITSID_UNLABELED;
-+
-+	return 0;
- }
+ config HMEM_REPORTING
+ 	bool
+diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+index d547930..0fe3368 100644
+--- a/security/apparmor/Kconfig
++++ b/security/apparmor/Kconfig
+@@ -71,7 +71,7 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
  
- /* message queue security operations */
+ config SECURITY_APPARMOR_KUNIT_TEST
+ 	bool "Build KUnit tests for policy_unpack.c"
+-	depends on KUNIT && SECURITY_APPARMOR
++	depends on KUNIT=y && SECURITY_APPARMOR
+ 	help
+ 	  This builds the AppArmor KUnit tests.
+ 
 -- 
 1.8.3.1
-
 
