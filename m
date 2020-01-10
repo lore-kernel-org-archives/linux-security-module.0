@@ -2,101 +2,230 @@ Return-Path: <SRS0=H0F3=27=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC3EAC282DD
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 21:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEADC282DD
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 22:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A34F52072E
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 21:39:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D9262082E
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 22:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578692357;
-	bh=7Gltkh8C8vj0lWm0fqbx6Gr/WMmvGqGiXB3jFfKe47c=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=SQXYjpXRr84L91wofRp/hzQB69y3KSIy1nozzrfsq0u7h4a1fsPJbl2Vi/yirSAGl
-	 dAhKmzKAQzmnopbr/ic7XXIJIBBuzm766ESJXXv8SXsbJ/mZD9OuFhAEfjm7nT9ffz
-	 8HCOWbGxqCIqbwInkGY327rnn+rg7MAtZ+h4p8LY=
+	s=default; t=1578693811;
+	bh=7j23WQ+SHE/7yvpHmS/CjtOS51UI0gESNBj+DtMCOWM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=PX+Wmi2iMcZE8ROTvnHTkH4OqKvCgC6pelsXowzmufn1iCLQ8kvjBOX4Un/RCyQvG
+	 DG8deUE9rOA20pinLJ7YubEteC4YjsuhkCTnLO0GVfHiEdmaag0f5Sg392xPCf92Yc
+	 8B7wBKi2GXhUTBh5DsMa105d68jh1UIWznd5KWtE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbgAJVjN (ORCPT
+        id S1727361AbgAJWDP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Jan 2020 16:39:13 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46839 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbgAJVjN (ORCPT
+        Fri, 10 Jan 2020 17:03:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48758 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727299AbgAJWDN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Jan 2020 16:39:13 -0500
-Received: by mail-io1-f65.google.com with SMTP id t26so3614432ioi.13
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2020 13:39:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=r4PmeZ/898aGumdPWOcSK9D1hCv5M+BfhsqeoQLug0k=;
-        b=ML7g1aGMVB7Qp8hywr4osLv4e9aIFPmirYd1vE8lV2zZG0jw6MHA7xk2G5/1QBpB9A
-         lsFCYoibZbW4Yg+U+lVU8nWRGcQlf5nbru+soLWJxXYIFsF/Qg+8PBBOXz4j+XtgtDS/
-         zIeEaBxxVesBv1PbkWOCVFJp5lJnAbmVRRK1s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=r4PmeZ/898aGumdPWOcSK9D1hCv5M+BfhsqeoQLug0k=;
-        b=FotKW71xhNsLB59o2jvvezitytZNa2TNr+k269HKoNv2JeD/awNpC8646t1hO6z9cp
-         7Mu+er461OVqa0YbmS8vn9cS+sVLT9nMxW5to5WUe7YFj59YsAvZd0+i9D8jG8n1Er8z
-         QljzDs+n5YTSELG5vfsLyvk4IHTOWkiinIFzz0ld4z7om0b2zZJHsGjdXnO0O4C5XpGF
-         S4uP4bJl2PtXmdNuhWRhG6E9MfpimQCeSf/AGfnn5HXev3+KByPdwEjXfk/6tyZ458VJ
-         +hCiVqgr19+CEzIAcTetG01cHFHBt082H+B8ERLp9DMf9sVwn37FHPdXgK2QL4pT/aiM
-         cQpQ==
-X-Gm-Message-State: APjAAAX6fOZzyGRwZS1F8LAMnACVa1v2LltuB4cHhxCGhjxZ/7RY7pPY
-        J6fPcr0FdggsiFGRQCg/pze34Q==
-X-Google-Smtp-Source: APXvYqzSdoMLMiGIeDogdzlJjB5mKTqBKEmCoffAq0etf1KN36GTMK3ghL0iHprY4NA340RAOTssng==
-X-Received: by 2002:a5e:9907:: with SMTP id t7mr4335773ioj.72.1578692352205;
-        Fri, 10 Jan 2020 13:39:12 -0800 (PST)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id v10sm825497iot.12.2020.01.10.13.39.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jan 2020 13:39:11 -0800 (PST)
-Subject: Re: [PATCH kunit] kunit: building kunit as a module breaks
- allmodconfig
-To:     Alan Maguire <alan.maguire@oracle.com>, brendanhiggins@google.com,
-        gregkh@linuxfoundation.org
-Cc:     rafael@kernel.org, jmorris@namei.org, serge@hallyn.com,
-        knut.omang@oracle.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kselftest@vger.kernel.org, sfr@canb.auug.org.au,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <1578656965-2993-1-git-send-email-alan.maguire@oracle.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <bb27a03b-1c3d-567b-caf3-7b0e4a039f6d@linuxfoundation.org>
-Date:   Fri, 10 Jan 2020 14:39:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Fri, 10 Jan 2020 17:03:13 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42F2F20842;
+        Fri, 10 Jan 2020 22:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578693792;
+        bh=7j23WQ+SHE/7yvpHmS/CjtOS51UI0gESNBj+DtMCOWM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=y7m2kOrNX9Jju+hGd/O1WRHQYYnha+t641BRyUhWsEmQWjTL7sxQWHMzo4UU1YgXT
+         IjuchEzSvd8S2Ycr/rQo8TpWHdg6J47It3+0alqn6Xzaw41g6RDfOVjkVJaX2sLrH1
+         c4DIIPKdwHhtXDhbWOxYdrX6jeA/wOU0Tx3GrlKw=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        John Garry <john.garry@huawei.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 03/26] tomoyo: Suppress RCU warning at list_for_each_entry_rcu().
+Date:   Fri, 10 Jan 2020 17:02:45 -0500
+Message-Id: <20200110220308.27784-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200110220308.27784-1-sashal@kernel.org>
+References: <20200110220308.27784-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1578656965-2993-1-git-send-email-alan.maguire@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Alan,
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-On 1/10/20 4:49 AM, Alan Maguire wrote:
-> kunit tests that do not support module build should depend
-> on KUNIT=y rather than just KUNIT in Kconfig, otherwise
-> they will trigger compilation errors for "make allmodconfig"
-> builds.
-> 
-> Fixes: 9fe124bf1b77 ("kunit: allow kunit to be loaded as a module")
-> Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+[ Upstream commit 6bd5ce6089b561f5392460bfb654dea89356ab1b ]
 
-Thanks for fixing this quickly. For future reference, Signed-off-by
-should be last. I fixed it and applied the patch.
+John Garry has reported that allmodconfig kernel on arm64 causes flood of
+"RCU-list traversed in non-reader section!!" warning. I don't know what
+change caused this warning, but this warning is safe because TOMOYO uses
+SRCU lock instead. Let's suppress this warning by explicitly telling that
+the caller is holding SRCU lock.
 
-thanks,
--- Shuah
+Reported-and-tested-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/tomoyo/common.c |  9 ++++++---
+ security/tomoyo/domain.c | 15 ++++++++++-----
+ security/tomoyo/group.c  |  9 ++++++---
+ security/tomoyo/util.c   |  6 ++++--
+ 4 files changed, 26 insertions(+), 13 deletions(-)
+
+diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+index dd3d5942e669..c36bafbcd77e 100644
+--- a/security/tomoyo/common.c
++++ b/security/tomoyo/common.c
+@@ -951,7 +951,8 @@ static bool tomoyo_manager(void)
+ 	exe = tomoyo_get_exe();
+ 	if (!exe)
+ 		return false;
+-	list_for_each_entry_rcu(ptr, &tomoyo_kernel_namespace.policy_list[TOMOYO_ID_MANAGER], head.list) {
++	list_for_each_entry_rcu(ptr, &tomoyo_kernel_namespace.policy_list[TOMOYO_ID_MANAGER], head.list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		if (!ptr->head.is_deleted &&
+ 		    (!tomoyo_pathcmp(domainname, ptr->manager) ||
+ 		     !strcmp(exe, ptr->manager->name))) {
+@@ -1095,7 +1096,8 @@ static int tomoyo_delete_domain(char *domainname)
+ 	if (mutex_lock_interruptible(&tomoyo_policy_lock))
+ 		return -EINTR;
+ 	/* Is there an active domain? */
+-	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list) {
++	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		/* Never delete tomoyo_kernel_domain */
+ 		if (domain == &tomoyo_kernel_domain)
+ 			continue;
+@@ -2778,7 +2780,8 @@ void tomoyo_check_profile(void)
+ 
+ 	tomoyo_policy_loaded = true;
+ 	pr_info("TOMOYO: 2.6.0\n");
+-	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list) {
++	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		const u8 profile = domain->profile;
+ 		struct tomoyo_policy_namespace *ns = domain->ns;
+ 
+diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
+index 8526a0a74023..7869d6a9980b 100644
+--- a/security/tomoyo/domain.c
++++ b/security/tomoyo/domain.c
+@@ -41,7 +41,8 @@ int tomoyo_update_policy(struct tomoyo_acl_head *new_entry, const int size,
+ 
+ 	if (mutex_lock_interruptible(&tomoyo_policy_lock))
+ 		return -ENOMEM;
+-	list_for_each_entry_rcu(entry, list, list) {
++	list_for_each_entry_rcu(entry, list, list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		if (entry->is_deleted == TOMOYO_GC_IN_PROGRESS)
+ 			continue;
+ 		if (!check_duplicate(entry, new_entry))
+@@ -119,7 +120,8 @@ int tomoyo_update_domain(struct tomoyo_acl_info *new_entry, const int size,
+ 	}
+ 	if (mutex_lock_interruptible(&tomoyo_policy_lock))
+ 		goto out;
+-	list_for_each_entry_rcu(entry, list, list) {
++	list_for_each_entry_rcu(entry, list, list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		if (entry->is_deleted == TOMOYO_GC_IN_PROGRESS)
+ 			continue;
+ 		if (!tomoyo_same_acl_head(entry, new_entry) ||
+@@ -166,7 +168,8 @@ void tomoyo_check_acl(struct tomoyo_request_info *r,
+ 	u16 i = 0;
+ 
+ retry:
+-	list_for_each_entry_rcu(ptr, list, list) {
++	list_for_each_entry_rcu(ptr, list, list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		if (ptr->is_deleted || ptr->type != r->param_type)
+ 			continue;
+ 		if (!check_entry(r, ptr))
+@@ -298,7 +301,8 @@ static inline bool tomoyo_scan_transition
+ {
+ 	const struct tomoyo_transition_control *ptr;
+ 
+-	list_for_each_entry_rcu(ptr, list, head.list) {
++	list_for_each_entry_rcu(ptr, list, head.list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		if (ptr->head.is_deleted || ptr->type != type)
+ 			continue;
+ 		if (ptr->domainname) {
+@@ -735,7 +739,8 @@ int tomoyo_find_next_domain(struct linux_binprm *bprm)
+ 
+ 		/* Check 'aggregator' directive. */
+ 		candidate = &exename;
+-		list_for_each_entry_rcu(ptr, list, head.list) {
++		list_for_each_entry_rcu(ptr, list, head.list,
++					srcu_read_lock_held(&tomoyo_ss)) {
+ 			if (ptr->head.is_deleted ||
+ 			    !tomoyo_path_matches_pattern(&exename,
+ 							 ptr->original_name))
+diff --git a/security/tomoyo/group.c b/security/tomoyo/group.c
+index a37c7dc66e44..1cecdd797597 100644
+--- a/security/tomoyo/group.c
++++ b/security/tomoyo/group.c
+@@ -133,7 +133,8 @@ tomoyo_path_matches_group(const struct tomoyo_path_info *pathname,
+ {
+ 	struct tomoyo_path_group *member;
+ 
+-	list_for_each_entry_rcu(member, &group->member_list, head.list) {
++	list_for_each_entry_rcu(member, &group->member_list, head.list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		if (member->head.is_deleted)
+ 			continue;
+ 		if (!tomoyo_path_matches_pattern(pathname, member->member_name))
+@@ -161,7 +162,8 @@ bool tomoyo_number_matches_group(const unsigned long min,
+ 	struct tomoyo_number_group *member;
+ 	bool matched = false;
+ 
+-	list_for_each_entry_rcu(member, &group->member_list, head.list) {
++	list_for_each_entry_rcu(member, &group->member_list, head.list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		if (member->head.is_deleted)
+ 			continue;
+ 		if (min > member->number.values[1] ||
+@@ -191,7 +193,8 @@ bool tomoyo_address_matches_group(const bool is_ipv6, const __be32 *address,
+ 	bool matched = false;
+ 	const u8 size = is_ipv6 ? 16 : 4;
+ 
+-	list_for_each_entry_rcu(member, &group->member_list, head.list) {
++	list_for_each_entry_rcu(member, &group->member_list, head.list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		if (member->head.is_deleted)
+ 			continue;
+ 		if (member->address.is_ipv6 != is_ipv6)
+diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
+index 52752e1a84ed..eba0b3395851 100644
+--- a/security/tomoyo/util.c
++++ b/security/tomoyo/util.c
+@@ -594,7 +594,8 @@ struct tomoyo_domain_info *tomoyo_find_domain(const char *domainname)
+ 
+ 	name.name = domainname;
+ 	tomoyo_fill_path_info(&name);
+-	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list) {
++	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		if (!domain->is_deleted &&
+ 		    !tomoyo_pathcmp(&name, domain->domainname))
+ 			return domain;
+@@ -1028,7 +1029,8 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
+ 		return false;
+ 	if (!domain)
+ 		return true;
+-	list_for_each_entry_rcu(ptr, &domain->acl_info_list, list) {
++	list_for_each_entry_rcu(ptr, &domain->acl_info_list, list,
++				srcu_read_lock_held(&tomoyo_ss)) {
+ 		u16 perm;
+ 		u8 i;
+ 
+-- 
+2.20.1
+
