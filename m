@@ -2,137 +2,146 @@ Return-Path: <SRS0=H0F3=27=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C97C33CA4
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 18:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC70CC282DD
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 19:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20AA120842
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 18:36:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578681376;
-	bh=ZUQib7bnoTZU/304mmRL5Mwvrc5MIbAoLniN4Uk/qYw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Dfo/0KHOIQT+bek75REfud6glk/u92CoaqEGz9964nlIhjpyUMSUXNLKkPNyyRZke
-	 KSVK/gqJiF3+gAB481Qq70NOig5ifJW/LzDMLogliboVpyKrx7XtO5fzZ+IOGLHKBN
-	 9nTB/qb//lNDG8tbkOpyFPNSHFH380jvXjK/eEI4=
+	by mail.kernel.org (Postfix) with ESMTP id A562020842
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 19:40:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="koLrrMaG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbgAJSgP (ORCPT
+        id S1728676AbgAJTkX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Jan 2020 13:36:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43950 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728083AbgAJSgP (ORCPT
+        Fri, 10 Jan 2020 14:40:23 -0500
+Received: from sonic306-8.consmr.mail.bf2.yahoo.com ([74.6.132.47]:33767 "EHLO
+        sonic306-8.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728660AbgAJTkV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Jan 2020 13:36:15 -0500
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DFBF222D9
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2020 18:36:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578681373;
-        bh=ZUQib7bnoTZU/304mmRL5Mwvrc5MIbAoLniN4Uk/qYw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=h+t8K1VgQO2sqGDI7eQ7fhLz4uqrI7kcD8o9E7GRSvSk41bGfpwcP9glUFoAvpEDO
-         vKIazUnxJip7Y+EjMYX0HhhIVOP6z+pIhksR/gsQBuQuSZmDtqtPngJW4t/hkoWZMQ
-         2xFlT4rI9w8G0PDoS9dgMdPkyWxgZOQAOXfipC44=
-Received: by mail-wr1-f54.google.com with SMTP id c9so2739052wrw.8
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2020 10:36:13 -0800 (PST)
-X-Gm-Message-State: APjAAAV0IUR75tExUER9AvAE0LvT3kAFgrVqYSelfVrldnEIjFFrHIu2
-        OHpKnCiLgt+UAd1FLnBi0gOofyjPdVayV6JrbOkhzg==
-X-Google-Smtp-Source: APXvYqzCH1wGkq2uxYvjqfJcJaKKKqpsUBHA/6LICwgzdTRsCsItPO4rziFdbUkhHPuHyevVbw3EbFyp7cT5odZ4Uhs=
-X-Received: by 2002:adf:f20b:: with SMTP id p11mr4718822wro.195.1578681371413;
- Fri, 10 Jan 2020 10:36:11 -0800 (PST)
+        Fri, 10 Jan 2020 14:40:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1578685219; bh=TCZwFe3u+eyFVAhwTghiuuIh3Kd9qo/9L7Vp+eBVimA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=koLrrMaGpCAZGmEf5CSXTbxibXp5+juwfrChXOrMof7hqtTN/dorSFno/kIgTXsyOJNq9iIIx7hLGND3+uAUrm7H9n0TIQcJZ+eIy3TtmwSKsnz7Uzr9cRGLC5vDhZlfg3Iwu5VPnWQFelL3/7aPAAITGoKYIrFrqsUoSW2ec4rbK4D9BO2IBycyahmwToXMbTcqjCfw4X44DbvNhRRWL22Ar2nJiMH7foX0riiWcs/paBDQbK6qYJuULlQZlfcg8ucqRhnrB8DTMD+dEQEtIhY7aDm1J5gb+cAi4ytkltDQvAD1sdFXhyCl7DDd1xHOqY3zRbqgBlX1FKMQYn/YEA==
+X-YMail-OSG: YOYwdwUVM1mAkhv0uA0Bs8FCVZKcL3unUIOVrJLdc19rBxw_7kFiJV3KYB0DBb7
+ 9.o.fwmDY969GNYtRNkB1lejAnyfMpgubJimC1g00LiavX3zYgo_C_KPAGRsp8u5g4xhhc5lzn7J
+ DmJeD6Ui4ecxZKaQQnGQtDUrC0jfwscFJXxme4ky8K4iaxxdbWSdeSFxhWAI9MsHyjySN_XohYYk
+ GpM58P2guy6byBwp4J3i2hhiaRY0FcmA2UtS9LS54NYuz5RuFNmXtWJCLiAygnKQ5IY6bft0rNIC
+ kb4wvZwqYP7NztHtUSIKfgI7kjpcS5h5zvx9Mh8y8.LuEfwrwAoujFHlPsDskE1y4dJu_I6p.vqB
+ YF1aG29D.Z.8v0kOkkBZzybGGxdOn3WZXXL335zE.S7fa0msYGHa5cgZ5T39kHpEsJ1Cm9SuplZN
+ yf5ctqR9lk5aEb315xZkOZEYJNrnyd1hTAd2KGt2NAkGrQEdreHuL1_B1Vna3pHslSGWDV8t5WXz
+ OBXZmIVwXX8o_FFrkCSZOkxNKuCUJoNNKJf4MbVJ0KKsoVlcMBHh5ViqMuemhwg6VoyxqoU4X2cP
+ BfdCb5xvCfgpZw6d9by6TH1nIad33t4Vj03j4SZpYPO3jTxI_4y3MQqEyxR8x8HQBeHVZJbQUnEu
+ yRLVTYiBYg5P1ZE5qA5QgXkN.C3HP.S8rTTkqI61jM3stkRWNEU7pn_5TvfqRGZxD.3779qJ9dg.
+ DVXwAd2o4TbfKmGtfiUeEM7MOHmQF1ZeqIEfZyVdMsHwFJAvuXtw9umGI4N7L0F.BSF3rjbr_wmQ
+ fbDFrVFa5VXi9hh7_rEycBowqt2xlpPZ4N0x04VnemN7TrGFCmVjn8fjGkNQkPR7vXp3sv_1sKdA
+ bMDHO4XrVAXNKi._dkRLhoV_KesBA.4UxFm9p.543zOHlk9rb8wOHvWQjGm8LUI4tSn0SPuMoraQ
+ _Yio2TqmfSTKm0UpmwWhl0RJ431JzFwlcvKR3QPrRpR.kA3U88N97bnH4qPeu_M4vvIxuN7AU1Wr
+ op8wxjGHCTkCfYG9mm6dY46ZxnniRNa8Xhb_EKT0ngX07eD6vsFU3zjbTudoG749PuZTOhW4Ad.3
+ GwpXGbIo2SYBkiK.HvDoVI90rX9D7hKJxg9qVTFl2lg_K4LbAVvnIlBGgUvmZz7FkAm3HmUzECdd
+ p10DPLgeoFV2SJ.plSucteN63jNANXJ0d9Rs7Kd6G_KwfHhgESrmwgBkKqCkodDT0v_8pa2Ot8IH
+ pY4.lJrfUcrWFlr4lfUXDEX_m8GfojE8_jyMS7VA.1YYpojgN2KDd8ck9Uj5MBobOX2YdJnN_7L1
+ k3D4FB97iYhFfKQB67xvux74vfMdL2Mx50AcxyKkJ038k5bhNK3B0pGxyzlRrNYVzelQvnfAw1IM
+ 4sGUn38AfqzQ56jRUCuIJxLxU8V6eiszCRtex
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Fri, 10 Jan 2020 19:40:19 +0000
+Received: by smtp410.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 914338581e9972fab9bf8856862b4e8a;
+          Fri, 10 Jan 2020 19:40:14 +0000 (UTC)
+Subject: Re: [PATCH v13 26/25] Audit: Multiple LSM support in audit rules
+To:     Mimi Zohar <zohar@linux.ibm.com>, casey.schaufler@intel.com,
+        jmorris@namei.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Cc:     keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        sds@tycho.nsa.gov,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        linux-integrity@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20191224235939.7483-1-casey.ref@schaufler-ca.com>
+ <20191224235939.7483-1-casey@schaufler-ca.com>
+ <ee5e4cea-b6c1-fa12-30de-8fc9007d69e9@schaufler-ca.com>
+ <1578587607.5147.63.camel@linux.ibm.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <e6945c33-a540-9d0a-ba71-3602b8e38154@schaufler-ca.com>
+Date:   Fri, 10 Jan 2020 11:40:13 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-References: <21bf6bb46544eab79e792980f82520f8fbdae9b5.camel@intel.com>
- <DB882EE8-20B2-4631-A808-E5C968B24CEB@amacapital.net> <cdd157ef011efda92c9434f76141fc3aef174d85.camel@intel.com>
- <CALCETrV_tGk=B3Hw0h9viW45wMqB_W+rwWzx6LnC3-vSATOUOA@mail.gmail.com>
- <400be86aab208d0e50a237cdbd3195763396e3ed.camel@intel.com>
- <CALCETrXXJhkNXmjTX_8VEO39+uE4XECtm=QNTDh1DpncXKhKhw@mail.gmail.com> <96dd98b3c4f73b205b6e669ca87fa64901c117d6.camel@intel.com>
-In-Reply-To: <96dd98b3c4f73b205b6e669ca87fa64901c117d6.camel@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 10 Jan 2020 10:35:59 -0800
-X-Gmail-Original-Message-ID: <CALCETrWjx-D2sdJZbnydPgunNKmxuhYm=+6iPoy0DHEKCMkMsw@mail.gmail.com>
-Message-ID: <CALCETrWjx-D2sdJZbnydPgunNKmxuhYm=+6iPoy0DHEKCMkMsw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: Make trampolines W^X
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc:     "luto@kernel.org" <luto@kernel.org>,
-        "songliubraving@fb.com" <songliubraving@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "kuznet@ms2.inr.ac.ru" <kuznet@ms2.inr.ac.ru>,
-        "mjg59@google.com" <mjg59@google.com>,
-        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "thgarnie@chromium.org" <thgarnie@chromium.org>,
-        "kpsingh@chromium.org" <kpsingh@chromium.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "revest@chromium.org" <revest@chromium.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "namit@vmware.com" <namit@vmware.com>,
-        "jackmanb@chromium.org" <jackmanb@chromium.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "kafai@fb.com" <kafai@fb.com>, "yhs@fb.com" <yhs@fb.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>,
-        "mhalcrow@google.com" <mhalcrow@google.com>,
-        "andriin@fb.com" <andriin@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1578587607.5147.63.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.14873 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> On Jan 9, 2020, at 3:01 PM, Edgecombe, Rick P <rick.p.edgecombe@intel.com=
-> wrote:
-
->> The vmap code immediately removes PTEs when unmaps occur (which it may
->> very well do right now -- I haven't checked) but also tracks the
->> kernel_tlb_gen associated with each record of an
->> unmapped-but-not-zapped area.  Then we split vm_unmap_aliases() into a
->> variant that unmaps all aliases and a variant that merely promises to
->> unmap at least one alias.  The former does what the current code does
->> except that it skips the IPI if all areas in question have tlb_gen <
->> flushed_kernel_tlb_gen.  The latter clears all areas with tlb_gen <
->> flushed_kernel_tlb_gen and, if there weren't any, does
->> flush_tlb_kernel_range() and flushes everything.
->>
->> (Major caveat: this is wrong for the case where
->> flush_tlb_kernel_range() only flushes some but not all of the kernel.
->> So this needs considerable work if it's actually going to me useful.
->> The plain old "take locks and clean up" approach might be a better
->> bet.)
->>
+On 1/9/2020 8:33 AM, Mimi Zohar wrote:
+> Hi Casey,
 >
-> Hmm. In normal usage (!DEBUG_PAGE_ALLOC), are kernel range tlb shootdowns=
- common
-> outside of module space users and lazy vmap stuff? A tlb_gen solution mig=
-ht only
-> be worth it in cases where something other than vm_unmap_aliases() and he=
-lpers
-> was doing this frequently.
+> On Fri, 2020-01-03 at 10:53 -0800, Casey Schaufler wrote:
+>> With multiple possible security modules supporting audit rule
+>> it is necessary to keep separate data for each module in the
+>> audit rules. This affects IMA as well, as it re-uses the audit
+>> rule list mechanisms.
+> While reviewing this patch, I realized there was a bug in the base IMA
+> code.  With Janne's bug fix, that he just posted, I think this patch
+> can now be simplified.
 
-I suspect that the two bug users aside from vunmap() will be eBPF and,
-eventually, XPFO / =E2=80=9Cexclusive pages=E2=80=9D / less crappy SEV-like
-implementations / actual high quality MKTME stuff / KVM
-side-channel-proof memory.  The latter doesn=E2=80=99t actually exist yet (=
-the
-SEV implementation sidesteps this with a horrible hack involving
-incoherent mappings that are left active with fingers crossed), but it
-really seems like it=E2=80=99s coming.
+How and when do you plan to get Janne's fix in? It's looking like
+stacking won't be in for 5.6.
 
-In general, if we=E2=80=99re going to have a pool of non-RW-direct-mapped
-pages, we also want some moderately efficient way to produce such
-pages.
+> My main concern is the number of warning messages that will be
+> generated.  Any time a new LSM policy is loaded, the labels will be
+> re-evaulated whether or not they are applicable to the particular LSM,
+> causing unnecessary warnings.
 
-Right now, creating and freeing eBPF programs in a loop is probably a
-performance disaster on large systems.
+Uhg. 
+
+>
+> Mimi
+>
