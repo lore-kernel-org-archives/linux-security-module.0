@@ -2,169 +2,192 @@ Return-Path: <SRS0=H0F3=27=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301DCC3F68F
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 15:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A737FC33CA4
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 15:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05A762082E
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 15:13:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E95D2072E
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 15:28:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="d54yzq9X"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F33T91L+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbgAJPNC (ORCPT
+        id S1728152AbgAJP2F (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Jan 2020 10:13:02 -0500
-Received: from UHIL19PA35.eemsg.mail.mil ([214.24.21.194]:21494 "EHLO
-        UHIL19PA35.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727866AbgAJPNC (ORCPT
+        Fri, 10 Jan 2020 10:28:05 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38389 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728141AbgAJP2C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Jan 2020 10:13:02 -0500
-X-EEMSG-check-017: 64783764|UHIL19PA35_ESA_OUT01.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.69,417,1571702400"; 
-   d="scan'208";a="64783764"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by UHIL19PA35.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 10 Jan 2020 15:13:00 +0000
+        Fri, 10 Jan 2020 10:28:02 -0500
+Received: by mail-wm1-f65.google.com with SMTP id u2so2402541wmc.3
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2020 07:28:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1578669180; x=1610205180;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=PFfeXPBw0smxDS0WrH4VA2nq6kHPoNdXc4ScwnMoJbw=;
-  b=d54yzq9XHRTUlpUQNfs445Le/UgymFZE8rnV5YKWhDBmP1gYUjlFus9J
-   q2GmBJqkbxoHtNuZ7/KPdHwoQEuaPbzPUVELSYc3Xc8zAc26TArEYJ3GA
-   i7CdDPu2LDLxNu3wp9AR96pBtROiCedZmqSnOoVqkbvSZSNiGKAnjnDwu
-   0P9J8yuaN0bZlP0VoiAbOztcOzVOnTiJzlZR/hnvs/CkxRezPNWIrZlML
-   elUEhBD62f2GdFNW7bx+m2LQXqCh+8BXgQMuAMwalTzjAbV61M+yXoevK
-   WuCDVKFyiu5n9V4OkN/rPtmG4JjwZhgR/DaDQRGT5wdKKH6Cfphjkte6b
-   g==;
-X-IronPort-AV: E=Sophos;i="5.69,417,1571702400"; 
-   d="scan'208";a="31813261"
-IronPort-PHdr: =?us-ascii?q?9a23=3Ajfh1ExGxjBpYaES0NXCQUp1GYnF86YWxBRYc79?=
- =?us-ascii?q?8ds5kLTJ76pMu9bnLW6fgltlLVR4KTs6sC17ON9fq+Aidevt6oizMrSNR0TR?=
- =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
- =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9vIhi6txvdu8gYjIdtK6s8yA?=
- =?us-ascii?q?bCr2dVdehR2W5mP0+YkQzm5se38p5j8iBQtOwk+sVdT6j0fLk2QKJBAjg+PG?=
- =?us-ascii?q?87+MPktR/YTQuS/XQcSXkZkgBJAwfe8h73WIr6vzbguep83CmaOtD2TawxVD?=
- =?us-ascii?q?+/4apnVAPkhSEaPDE36mHXjtF7grxdrhyvuhdzx5fYbY+ROfZ7eK7WYNEUSn?=
- =?us-ascii?q?dbXstJSiJPHI28YYsMAeQPM+lXoIvyqEcBoxalGQmhBvnixiNUinL436A31f?=
- =?us-ascii?q?kqHwHc3AwnGtIDqGnarMnrO6cKUeC60q/IxijeYfNTwzj97IzIfQ4hoPqRWr?=
- =?us-ascii?q?9watfeyVI0GgPZjlSftYzlPzSP2uQLqGiU9fBsVe2oi245sgx8pCWkyMQ0io?=
- =?us-ascii?q?TRm44YxV/J+T95zYooP9G0VkF2bcC+HJdNsSyRKpF4Tdk4Q25yvSY30rgGuZ?=
- =?us-ascii?q?mmcycU0Jkn3Bvfa+Cfc4iP/xLjSP6dITdmi3Jhf7Kynwqy/lK6yu39S8m0y0?=
- =?us-ascii?q?xGritDktnCsXANzALc5dSdRvth/kauxTaP1wfJ5uFCPU80jrbUJ4Qkwr4xkp?=
- =?us-ascii?q?ofqUXDHinol0XqlKKaa0op9+ey5+nnf7nqvIGQOoBqhg3kL6gigsm/Dv45Mg?=
- =?us-ascii?q?gKUWib4+O81Lj78E3iXbpKleY7krXZsZ/GJcQbobS1AwlO0ok58Rq/ADCm0M?=
- =?us-ascii?q?oAkXkdMF1FYA6Hj5TuO1zWIPH3E/e/g0+ynDt32/zLPKbsA5TKLnjDl7ftZ6?=
- =?us-ascii?q?py60lZyAAr19BQ+4pUCq0dIPL0QkLxrMbXDgI9MwGv2+boEsh91ocHVWKKBa?=
- =?us-ascii?q?+ZN7nSvkGS6u0zJOmMYZcfuCzhJPg9+/7ukXg5lEcDcqmxx5QXcnG4Hu99Lk?=
- =?us-ascii?q?WBe3XsmNYBEXwSvgo6VuPllEONXSRUZ3aoUKI2/is7B56+DYffWoCth6SM3C?=
- =?us-ascii?q?W+Hp1RfGBGEFGMEWzzeoWCQfgMbTydIs57njwDT7ihRJcr1Quyuw/i17pnMu?=
- =?us-ascii?q?3U9zUDtZ39zth16PPcmAoy9TNuC8Sd12GMT2dukmwUQD822bh1oVZhxVebza?=
- =?us-ascii?q?h4n/tYGMRP5/JJTwc2KIXRz+hkBND0XQLBYNCJREy6TdWhBDE7VsgxzMMWY0?=
- =?us-ascii?q?ZhB9WiiQjO3y6rA78TiryKC4U48rnC0HftOsZ90XfG1LUhjlU/R8tPMnCphr?=
- =?us-ascii?q?N79wfNHIPJjUqZmLiwdagG3y7C6n2DzWyQs0FcSgJwVr/FXX8HbEvMsdv5/l?=
- =?us-ascii?q?/CT6OpCbk/KQtO18qCKqpMat30glRLX+njONvAbGKrgWuwBgiHxqmKbIX0f2?=
- =?us-ascii?q?URxiLdCFILkwoL53aJKRA+Bju9o2LZFDFuEVPvY0Xx8ehxsX+7TVE7zxuMb0?=
- =?us-ascii?q?J/07q44QAVhfOCRPMJxL4Euzkuqy9yHFmj29LaEd2ApxBufK9Ee9My/E9H1X?=
- =?us-ascii?q?7Ftwx6JpGhL75thl4FcwhqpE7u0wt4CoNHkcg0q3Mm1hZ9KaWd0AAJSzTN/Y?=
- =?us-ascii?q?35O6bXJ2/9tCGiI/rH11HFio7OpY8d7/Q/7V7kuVftXlIr7nFPy9BI1z6Z4Z?=
- =?us-ascii?q?LQAUwZVpe1Gksv/gJ7vJnCazM8/JvQ3HZhd66uvXuK2dcuHvEk0T6mdtJSMe?=
- =?us-ascii?q?WDDgC2W9YXHcejAOwjn1y4aFQPO+UB2rQzOpada/ae2KOtdN1llTaigHUPtJ?=
- =?us-ascii?q?txyWqQ5iF8TajOxJ9DzPaGiFjUHwzghUus55ik0btPYisfSy/kmCU=3D?=
-X-IPAS-Result: =?us-ascii?q?A2BoAAAAlBhe/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
- =?us-ascii?q?QICAQEBAYF7gX2BbAEgEiqECYkDhmQBAQEBAQEGgRIliW6KJIckCQEBAQEBA?=
- =?us-ascii?q?QEBATcBAYRAAoIWOBMCEAEBAQQBAQEBAQUDAQFshUOCOymCegEBAQECASMEE?=
- =?us-ascii?q?UEQCxUDAgImAgJXBgEMBgIBAYJjP4JXBSCrFnV/M4VJg0OBPYEOKIwzeYEHg?=
- =?us-ascii?q?TgMA4JdPodZgl4EjVSJT0aXToJBgkiTXwYbmmotji2dBSKBWCsIAhgIIQ+DJ?=
- =?us-ascii?q?1AYDZJbF45BIwMwkTABAQ?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 10 Jan 2020 15:12:59 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00AFCJ4C040830;
-        Fri, 10 Jan 2020 10:12:19 -0500
-Subject: Re: [PATCH] selinux: remove redundant msg_msg_alloc_security
-To:     Huaisheng Ye <yehs2007@zoho.com>, paul@paul-moore.com,
-        eparis@parisplace.org, jmorris@namei.org, serge@hallyn.com
-Cc:     tyu1@lenovo.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Huaisheng Ye <yehs1@lenovo.com>
-References: <20200110095856.76612-1-yehs2007@zoho.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <e71932ce-0687-02e5-5f34-980c0cad4ae9@tycho.nsa.gov>
-Date:   Fri, 10 Jan 2020 10:13:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aXkYk1wr3xOcC4kmVHKlnMGgZqSHONG6or7V3cMRBfw=;
+        b=F33T91L+0exJkm4W6ymnTYAWlH6C8rI++wYC55+vSK+32TVCw3utrIIHPL9gWWuR4z
+         Ooq0VqOPl3V1PZOQCVH3wmxk0C3bUiD8MhUezkehT3gFsnucpt/tuSILyO27GZyOpdZV
+         xb0Y2RP5w4A8Lh7Rvv8nzlGJNO4J12Pj6NZ+Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aXkYk1wr3xOcC4kmVHKlnMGgZqSHONG6or7V3cMRBfw=;
+        b=ZnNzvabDVZXa9EGoK+akHjUX9TYngbisQZgVBJWCbyr/HuEIINFekuriZgKlF0+I4G
+         mZYEjDA1DDddkbtIXDMTjiv/GSyQ6cVc1/3rCEeUlanFpxfB3noAQ8X2pMAG5i1sLvpn
+         Ie2GmBSG34/86e25i5E8mYHKCHb4ZfE0hyn390XsG/WMwu0YVAA+8Uco6aUXR2SQzFeR
+         cclx2HP3l3HHhheYace5aqO7EP1ENik6SIno7TSg/eOTiGOROHTLY5TtxwaBDPmDIqxO
+         i4wtKuF/MOYoQLxB0xgMMII1Tug0/qv05Zi5vQNDFW6amxejWtAeoBH2+Ycn0VecfSny
+         t+oQ==
+X-Gm-Message-State: APjAAAVLAoiyJD5q+gxOhmnnqlFBKmXKqBar4jDQRYmPfDacJeyUJKGo
+        B3+dSUEpUvbn9B1A2yjXRTIMmA==
+X-Google-Smtp-Source: APXvYqw0ag02q22hPKuOzI3/vkzH86GFjij0AS1uLwSH4KQPjjBom3rLw/8TFnXp5EIU2M4mQ97Qxw==
+X-Received: by 2002:a1c:541b:: with SMTP id i27mr5205966wmb.137.1578670081018;
+        Fri, 10 Jan 2020 07:28:01 -0800 (PST)
+Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
+        by smtp.gmail.com with ESMTPSA id f1sm2560213wro.85.2020.01.10.07.27.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 07:28:00 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Fri, 10 Jan 2020 16:27:58 +0100
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     KP Singh <kpsingh@chromium.org>, James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF (KRSI)
+Message-ID: <20200110152758.GA260168@google.com>
+References: <CACYkzJ5nYh7eGuru4vQ=2ZWumGPszBRbgqxmhd4WQRXktAUKkQ@mail.gmail.com>
+ <201912301112.A1A63A4@keescook>
+ <c4e6cdf2-1233-fc82-ca01-ba84d218f5aa@tycho.nsa.gov>
+ <alpine.LRH.2.21.2001090551000.27794@namei.org>
+ <e59607cc-1a84-cbdd-5117-7efec86b11ff@tycho.nsa.gov>
+ <alpine.LRH.2.21.2001100437550.21515@namei.org>
+ <e90e03e3-b92f-6e1a-132f-1b648d9d2139@tycho.nsa.gov>
+ <alpine.LRH.2.21.2001100558550.31925@namei.org>
+ <20200109194302.GA85350@google.com>
+ <8e035f4d-5120-de6a-7ac8-a35841a92b8a@tycho.nsa.gov>
 MIME-Version: 1.0
-In-Reply-To: <20200110095856.76612-1-yehs2007@zoho.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e035f4d-5120-de6a-7ac8-a35841a92b8a@tycho.nsa.gov>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/10/20 4:58 AM, Huaisheng Ye wrote:
-> From: Huaisheng Ye <yehs1@lenovo.com>
+On 09-Jan 14:47, Stephen Smalley wrote:
+> On 1/9/20 2:43 PM, KP Singh wrote:
+> > On 10-Jan 06:07, James Morris wrote:
+> > > On Thu, 9 Jan 2020, Stephen Smalley wrote:
+> > > 
+> > > > On 1/9/20 1:11 PM, James Morris wrote:
+> > > > > On Wed, 8 Jan 2020, Stephen Smalley wrote:
+> > > > > 
+> > > > > > The cover letter subject line and the Kconfig help text refer to it as a
+> > > > > > BPF-based "MAC and Audit policy".  It has an enforce config option that
+> > > > > > enables the bpf programs to deny access, providing access control. IIRC,
+> > > > > > in
+> > > > > > the earlier discussion threads, the BPF maintainers suggested that Smack
+> > > > > > and
+> > > > > > other LSMs could be entirely re-implemented via it in the future, and that
+> > > > > > such an implementation would be more optimal.
+> > > > > 
+> > > > > In this case, the eBPF code is similar to a kernel module, rather than a
+> > > > > loadable policy file.  It's a loadable mechanism, rather than a policy, in
+> > > > > my view.
+> > > > 
+> > > > I thought you frowned on dynamically loadable LSMs for both security and
+> > > > correctness reasons?
+> > 
+> > Based on the feedback from the lists we've updated the design for v2.
+> > 
+> > In v2, LSM hook callbacks are allocated dynamically using BPF
+> > trampolines, appended to a separate security_hook_heads and run
+> > only after the statically allocated hooks.
+> > 
+> > The security_hook_heads for all the other LSMs (SELinux, AppArmor etc)
+> > still remains __lsm_ro_after_init and cannot be modified. We are still
+> > working on v2 (not ready for review yet) but the general idea can be
+> > seen here:
+> > 
+> >    https://github.com/sinkap/linux-krsi/blob/patch/v1/trampoline_prototype/security/bpf/lsm.c
+> > 
+> > > 
+> > > Evaluating the security impact of this is the next step. My understanding
+> > > is that eBPF via BTF is constrained to read only access to hook
+> > > parameters, and that its behavior would be entirely restrictive.
+> > > 
+> > > I'd like to understand the security impact more fully, though.  Can the
+> > > eBPF code make arbitrary writes to the kernel, or read anything other than
+> > > the correctly bounded LSM hook parameters?
+> > > 
+> > 
+> > As mentioned, the BPF verifier does not allow writes to BTF types.
+> > 
+> > > > And a traditional security module would necessarily fall
+> > > > under GPL; is the eBPF code required to be likewise?  If not, KRSI is a
+> > > > gateway for proprietary LSMs...
+> > > 
+> > > Right, we do not want this to be a GPL bypass.
+> > 
+> > This is not intended to be a GPL bypass and the BPF verifier checks
+> > for license compatibility of the loaded program with GPL.
 > 
-> selinux_msg_msg_alloc_security only calls msg_msg_alloc_security but
-> do nothing else. And also msg_msg_alloc_security is just used by the
-> former.
-> 
-> Remove the redundant function to simplify the code.
+> IIUC, it checks that the program is GPL compatible if it uses a function
+> marked GPL-only.  But what specifically is marked GPL-only that is required
+> for eBPF programs using KRSI?
 
-This seems to also be true of other _alloc_security functions, probably 
-due to historical reasons.  Further, at least some of these functions no 
-longer perform any allocation; they are just initialization functions 
-now that allocation has been taken to the LSM framework, so possibly 
-could be renamed and made to return void at some point.
+Good point! If no-one objects, I can add it to the BPF_PROG_TYPE_LSM
+specific verification for the v2 of the patch-set which would require
+all BPF-LSM programs to be GPL.
+
+- KP
 
 > 
-> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
-
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-
-> ---
->   security/selinux/hooks.c | 17 ++++++-----------
->   1 file changed, 6 insertions(+), 11 deletions(-)
+> > 
+> > - KP
+> > 
+> > > 
+> > > If these issues can be resolved, this may be a "safe" way to support
+> > > loadable LSM applications.
+> > > 
+> > > Again, I'd be interested in knowing how this is is handled in the
+> > > networking stack (keeping in mind that LSM is a much more invasive API,
+> > > and may not be directly comparable).
+> > > 
+> > > -- 
+> > > James Morris
+> > > <jmorris@namei.org>
+> > > 
 > 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 9625b99..fb1b9da 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -5882,16 +5882,6 @@ static void ipc_init_security(struct ipc_security_struct *isec, u16 sclass)
->   	isec->sid = current_sid();
->   }
->   
-> -static int msg_msg_alloc_security(struct msg_msg *msg)
-> -{
-> -	struct msg_security_struct *msec;
-> -
-> -	msec = selinux_msg_msg(msg);
-> -	msec->sid = SECINITSID_UNLABELED;
-> -
-> -	return 0;
-> -}
-> -
->   static int ipc_has_perm(struct kern_ipc_perm *ipc_perms,
->   			u32 perms)
->   {
-> @@ -5910,7 +5900,12 @@ static int ipc_has_perm(struct kern_ipc_perm *ipc_perms,
->   
->   static int selinux_msg_msg_alloc_security(struct msg_msg *msg)
->   {
-> -	return msg_msg_alloc_security(msg);
-> +	struct msg_security_struct *msec;
-> +
-> +	msec = selinux_msg_msg(msg);
-> +	msec->sid = SECINITSID_UNLABELED;
-> +
-> +	return 0;
->   }
->   
->   /* message queue security operations */
-> 
-
