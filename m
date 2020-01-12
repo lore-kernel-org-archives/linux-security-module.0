@@ -1,231 +1,114 @@
-Return-Path: <SRS0=H0F3=27=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=6a2u=3B=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEADC282DD
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 22:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D54C33CA9
+	for <linux-security-module@archiver.kernel.org>; Sun, 12 Jan 2020 15:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D9262082E
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jan 2020 22:03:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578693811;
-	bh=7j23WQ+SHE/7yvpHmS/CjtOS51UI0gESNBj+DtMCOWM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PX+Wmi2iMcZE8ROTvnHTkH4OqKvCgC6pelsXowzmufn1iCLQ8kvjBOX4Un/RCyQvG
-	 DG8deUE9rOA20pinLJ7YubEteC4YjsuhkCTnLO0GVfHiEdmaag0f5Sg392xPCf92Yc
-	 8B7wBKi2GXhUTBh5DsMa105d68jh1UIWznd5KWtE=
+	by mail.kernel.org (Postfix) with ESMTP id 57B7721556
+	for <linux-security-module@archiver.kernel.org>; Sun, 12 Jan 2020 15:37:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbgAJWDP (ORCPT
+        id S1733063AbgALPhV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Jan 2020 17:03:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48758 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727299AbgAJWDN (ORCPT
+        Sun, 12 Jan 2020 10:37:21 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58884 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733068AbgALPhV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Jan 2020 17:03:13 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42F2F20842;
-        Fri, 10 Jan 2020 22:03:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578693792;
-        bh=7j23WQ+SHE/7yvpHmS/CjtOS51UI0gESNBj+DtMCOWM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y7m2kOrNX9Jju+hGd/O1WRHQYYnha+t641BRyUhWsEmQWjTL7sxQWHMzo4UU1YgXT
-         IjuchEzSvd8S2Ycr/rQo8TpWHdg6J47It3+0alqn6Xzaw41g6RDfOVjkVJaX2sLrH1
-         c4DIIPKdwHhtXDhbWOxYdrX6jeA/wOU0Tx3GrlKw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        John Garry <john.garry@huawei.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 03/26] tomoyo: Suppress RCU warning at list_for_each_entry_rcu().
-Date:   Fri, 10 Jan 2020 17:02:45 -0500
-Message-Id: <20200110220308.27784-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200110220308.27784-1-sashal@kernel.org>
-References: <20200110220308.27784-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+        Sun, 12 Jan 2020 10:37:21 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00CFb55Y013521
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Jan 2020 10:37:20 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xfvq4ahbe-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Jan 2020 10:37:20 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 12 Jan 2020 15:37:18 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 12 Jan 2020 15:37:13 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00CFbCcO11862282
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 12 Jan 2020 15:37:12 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3D9F4AE045;
+        Sun, 12 Jan 2020 15:37:12 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E23E4AE051;
+        Sun, 12 Jan 2020 15:37:10 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.200.88])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 12 Jan 2020 15:37:10 +0000 (GMT)
+Subject: Re: [PATCH v13 26/25] Audit: Multiple LSM support in audit rules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        sds@tycho.nsa.gov,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        linux-integrity@vger.kernel.org
+Date:   Sun, 12 Jan 2020 10:37:10 -0500
+In-Reply-To: <e6945c33-a540-9d0a-ba71-3602b8e38154@schaufler-ca.com>
+References: <20191224235939.7483-1-casey.ref@schaufler-ca.com>
+         <20191224235939.7483-1-casey@schaufler-ca.com>
+         <ee5e4cea-b6c1-fa12-30de-8fc9007d69e9@schaufler-ca.com>
+         <1578587607.5147.63.camel@linux.ibm.com>
+         <e6945c33-a540-9d0a-ba71-3602b8e38154@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20011215-0008-0000-0000-00000348B768
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20011215-0009-0000-0000-00004A690461
+Message-Id: <1578843430.4546.45.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-12_05:2020-01-10,2020-01-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ clxscore=1015 adultscore=0 priorityscore=1501 impostorscore=0 spamscore=0
+ malwarescore=0 bulkscore=0 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001120148
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+On Fri, 2020-01-10 at 11:40 -0800, Casey Schaufler wrote:
+> On 1/9/2020 8:33 AM, Mimi Zohar wrote:
+> > Hi Casey,
+> >
+> > On Fri, 2020-01-03 at 10:53 -0800, Casey Schaufler wrote:
+> >> With multiple possible security modules supporting audit rule
+> >> it is necessary to keep separate data for each module in the
+> >> audit rules. This affects IMA as well, as it re-uses the audit
+> >> rule list mechanisms.
+> > While reviewing this patch, I realized there was a bug in the base IMA
+> > code.  With Janne's bug fix, that he just posted, I think this patch
+> > can now be simplified.
+> 
+> How and when do you plan to get Janne's fix in? It's looking like
+> stacking won't be in for 5.6.
 
-[ Upstream commit 6bd5ce6089b561f5392460bfb654dea89356ab1b ]
+The patch is now in the next-integrity-testing branch.  We'll see how
+it goes.
 
-John Garry has reported that allmodconfig kernel on arm64 causes flood of
-"RCU-list traversed in non-reader section!!" warning. I don't know what
-change caused this warning, but this warning is safe because TOMOYO uses
-SRCU lock instead. Let's suppress this warning by explicitly telling that
-the caller is holding SRCU lock.
-
-Reported-and-tested-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/tomoyo/common.c |  9 ++++++---
- security/tomoyo/domain.c | 15 ++++++++++-----
- security/tomoyo/group.c  |  9 ++++++---
- security/tomoyo/util.c   |  6 ++++--
- 4 files changed, 26 insertions(+), 13 deletions(-)
-
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index dd3d5942e669..c36bafbcd77e 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -951,7 +951,8 @@ static bool tomoyo_manager(void)
- 	exe = tomoyo_get_exe();
- 	if (!exe)
- 		return false;
--	list_for_each_entry_rcu(ptr, &tomoyo_kernel_namespace.policy_list[TOMOYO_ID_MANAGER], head.list) {
-+	list_for_each_entry_rcu(ptr, &tomoyo_kernel_namespace.policy_list[TOMOYO_ID_MANAGER], head.list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		if (!ptr->head.is_deleted &&
- 		    (!tomoyo_pathcmp(domainname, ptr->manager) ||
- 		     !strcmp(exe, ptr->manager->name))) {
-@@ -1095,7 +1096,8 @@ static int tomoyo_delete_domain(char *domainname)
- 	if (mutex_lock_interruptible(&tomoyo_policy_lock))
- 		return -EINTR;
- 	/* Is there an active domain? */
--	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list) {
-+	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		/* Never delete tomoyo_kernel_domain */
- 		if (domain == &tomoyo_kernel_domain)
- 			continue;
-@@ -2778,7 +2780,8 @@ void tomoyo_check_profile(void)
- 
- 	tomoyo_policy_loaded = true;
- 	pr_info("TOMOYO: 2.6.0\n");
--	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list) {
-+	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		const u8 profile = domain->profile;
- 		struct tomoyo_policy_namespace *ns = domain->ns;
- 
-diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
-index 8526a0a74023..7869d6a9980b 100644
---- a/security/tomoyo/domain.c
-+++ b/security/tomoyo/domain.c
-@@ -41,7 +41,8 @@ int tomoyo_update_policy(struct tomoyo_acl_head *new_entry, const int size,
- 
- 	if (mutex_lock_interruptible(&tomoyo_policy_lock))
- 		return -ENOMEM;
--	list_for_each_entry_rcu(entry, list, list) {
-+	list_for_each_entry_rcu(entry, list, list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		if (entry->is_deleted == TOMOYO_GC_IN_PROGRESS)
- 			continue;
- 		if (!check_duplicate(entry, new_entry))
-@@ -119,7 +120,8 @@ int tomoyo_update_domain(struct tomoyo_acl_info *new_entry, const int size,
- 	}
- 	if (mutex_lock_interruptible(&tomoyo_policy_lock))
- 		goto out;
--	list_for_each_entry_rcu(entry, list, list) {
-+	list_for_each_entry_rcu(entry, list, list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		if (entry->is_deleted == TOMOYO_GC_IN_PROGRESS)
- 			continue;
- 		if (!tomoyo_same_acl_head(entry, new_entry) ||
-@@ -166,7 +168,8 @@ void tomoyo_check_acl(struct tomoyo_request_info *r,
- 	u16 i = 0;
- 
- retry:
--	list_for_each_entry_rcu(ptr, list, list) {
-+	list_for_each_entry_rcu(ptr, list, list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		if (ptr->is_deleted || ptr->type != r->param_type)
- 			continue;
- 		if (!check_entry(r, ptr))
-@@ -298,7 +301,8 @@ static inline bool tomoyo_scan_transition
- {
- 	const struct tomoyo_transition_control *ptr;
- 
--	list_for_each_entry_rcu(ptr, list, head.list) {
-+	list_for_each_entry_rcu(ptr, list, head.list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		if (ptr->head.is_deleted || ptr->type != type)
- 			continue;
- 		if (ptr->domainname) {
-@@ -735,7 +739,8 @@ int tomoyo_find_next_domain(struct linux_binprm *bprm)
- 
- 		/* Check 'aggregator' directive. */
- 		candidate = &exename;
--		list_for_each_entry_rcu(ptr, list, head.list) {
-+		list_for_each_entry_rcu(ptr, list, head.list,
-+					srcu_read_lock_held(&tomoyo_ss)) {
- 			if (ptr->head.is_deleted ||
- 			    !tomoyo_path_matches_pattern(&exename,
- 							 ptr->original_name))
-diff --git a/security/tomoyo/group.c b/security/tomoyo/group.c
-index a37c7dc66e44..1cecdd797597 100644
---- a/security/tomoyo/group.c
-+++ b/security/tomoyo/group.c
-@@ -133,7 +133,8 @@ tomoyo_path_matches_group(const struct tomoyo_path_info *pathname,
- {
- 	struct tomoyo_path_group *member;
- 
--	list_for_each_entry_rcu(member, &group->member_list, head.list) {
-+	list_for_each_entry_rcu(member, &group->member_list, head.list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		if (member->head.is_deleted)
- 			continue;
- 		if (!tomoyo_path_matches_pattern(pathname, member->member_name))
-@@ -161,7 +162,8 @@ bool tomoyo_number_matches_group(const unsigned long min,
- 	struct tomoyo_number_group *member;
- 	bool matched = false;
- 
--	list_for_each_entry_rcu(member, &group->member_list, head.list) {
-+	list_for_each_entry_rcu(member, &group->member_list, head.list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		if (member->head.is_deleted)
- 			continue;
- 		if (min > member->number.values[1] ||
-@@ -191,7 +193,8 @@ bool tomoyo_address_matches_group(const bool is_ipv6, const __be32 *address,
- 	bool matched = false;
- 	const u8 size = is_ipv6 ? 16 : 4;
- 
--	list_for_each_entry_rcu(member, &group->member_list, head.list) {
-+	list_for_each_entry_rcu(member, &group->member_list, head.list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		if (member->head.is_deleted)
- 			continue;
- 		if (member->address.is_ipv6 != is_ipv6)
-diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
-index 52752e1a84ed..eba0b3395851 100644
---- a/security/tomoyo/util.c
-+++ b/security/tomoyo/util.c
-@@ -594,7 +594,8 @@ struct tomoyo_domain_info *tomoyo_find_domain(const char *domainname)
- 
- 	name.name = domainname;
- 	tomoyo_fill_path_info(&name);
--	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list) {
-+	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		if (!domain->is_deleted &&
- 		    !tomoyo_pathcmp(&name, domain->domainname))
- 			return domain;
-@@ -1028,7 +1029,8 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
- 		return false;
- 	if (!domain)
- 		return true;
--	list_for_each_entry_rcu(ptr, &domain->acl_info_list, list) {
-+	list_for_each_entry_rcu(ptr, &domain->acl_info_list, list,
-+				srcu_read_lock_held(&tomoyo_ss)) {
- 		u16 perm;
- 		u8 i;
- 
--- 
-2.20.1
+> 
+> > My main concern is the number of warning messages that will be
+> > generated.  Any time a new LSM policy is loaded, the labels will be
+> > re-evaulated whether or not they are applicable to the particular LSM,
+> > causing unnecessary warnings.
+> 
+> Uhg.
 
