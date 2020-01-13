@@ -5,190 +5,216 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BDAC33CAD
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jan 2020 10:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05823C33CAF
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jan 2020 13:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE8220661
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jan 2020 10:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D08042081E
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jan 2020 13:46:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oKkpYKtv"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="obvoQL36"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726109AbgAMKvI (ORCPT
+        id S1726934AbgAMNqE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Jan 2020 05:51:08 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44374 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbgAMKvE (ORCPT
+        Mon, 13 Jan 2020 08:46:04 -0500
+Received: from USAT19PA22.eemsg.mail.mil ([214.24.22.196]:11828 "EHLO
+        USAT19PA22.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbgAMNqD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Jan 2020 05:51:04 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q10so8025885wrm.11
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Jan 2020 02:51:03 -0800 (PST)
+        Mon, 13 Jan 2020 08:46:03 -0500
+X-EEMSG-check-017: 68680305|USAT19PA22_ESA_OUT03.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.69,429,1571702400"; 
+   d="scan'208";a="68680305"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by USAT19PA22.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 13 Jan 2020 13:46:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rX6hYkQTcPkxFSQTp22iI/GTbRzDTSn2mT2N78MPltg=;
-        b=oKkpYKtvG22DswPrnQPe4mDphOZzPeWS9Fm/gBtPFXIi/eh1IzHY8X22AlrD5VKaYE
-         s+qOTZJe21UPh7e2M2/VVXjI1lW86ypWRIgklVRlnZXV2m3TNbBYjdeCk1bOikndC3V+
-         aTL2Zqv9kyPeC8epB3SLemTlwjlE2X2XmGN7A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rX6hYkQTcPkxFSQTp22iI/GTbRzDTSn2mT2N78MPltg=;
-        b=KkbsZzoY1gQ6VWPi/DsBs7t7XQg4MpJGnAzs9S+flNyZup+tyEnOwr3LP+c+/oACZw
-         bLut1gGxmEN67ed/NL5zraKlfEF/SKxPmM2txSWQO+Z2l8oKwKLReEh6jNL+w2EjVl+i
-         mpjIcvyUL3gIt76FswmTlpG4OP1Id+V2n2mLEweUaH4WU1zEC2HGrbdDz/uTl9ZOv1wH
-         AnSrs22vLMYuslMNFk5+bSgpsyO3HMlqzVtFJd623s7jypWE2OnJtMMq93zxejpVsbRy
-         ypYIOsidpXxe/y/Z3pNHeAcHqqUAffyTMkB0QerLWtyROKAubq9880bdISWCVDhhARtu
-         A1zA==
-X-Gm-Message-State: APjAAAWWmpJ5Kh6F5VbSgB/VH+scjU+czbMcqamQRDf+Ffcs1jJnEf9w
-        Hfbm9Fafr0VAbVnFqm6FmyOHuQ==
-X-Google-Smtp-Source: APXvYqzk/HkmF6+cavSIKEIJ+Fq8mnrnSFzOKUU4OvMZdAPLWjQsZPS2kwS1LaOaiSPQQo0ar0Br5A==
-X-Received: by 2002:adf:ef8b:: with SMTP id d11mr12548851wro.45.1578912662627;
-        Mon, 13 Jan 2020 02:51:02 -0800 (PST)
-Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
-        by smtp.gmail.com with ESMTPSA id s3sm13791867wmh.25.2020.01.13.02.51.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 02:51:02 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Mon, 13 Jan 2020 11:51:00 +0100
-To:     Florent Revest <revest@chromium.org>
-Cc:     linux-integrity@vger.kernel.org, kpsingh@chromium.org,
-        mjg59@google.com, zohar@linux.ibm.com, nramas@linux.microsoft.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Florent Revest <revest@google.com>
-Subject: Re: [PATCH v3] ima: add the ability to query the cached hash of a
- given file
-Message-ID: <20200113105100.GA31000@google.com>
-References: <20200113094244.26678-1-revest@chromium.org>
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1578923162; x=1610459162;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=VB1Gg0QpB3xQjqLIw9BZCseVcnO03GV8AR2FwXWgoSY=;
+  b=obvoQL36c6FglQ7b5ycxjAQrbt+v64O2BH6AB3CuItwgZMqvEQrFAyGz
+   TgvhyuNhDZAHt93nf+5hrFzA1GnNk9AoRDyKWT3z3bGG2ayPrbX1OrLG2
+   wstVTerCPqhEWImOFUo27bFqX/8UhRRmG4kTtmO8wu6aOWRNUMJHjImdo
+   2HRMng/baSIdTAqS6oIve7F0CWbCO45KQpB2EGLSYJRoJ+E6vpIkOoqIv
+   kipeB+iWK04+LluPkxWDStD4ZTWm5YnG/K7yrRsDmaKHiHKV28eWR0Lch
+   s0LuPbFMWxUbI5xIUHK3YqrUrsGnCXDiewf7Op+FlEl1iCz57Cgz5WfEB
+   w==;
+X-IronPort-AV: E=Sophos;i="5.69,429,1571702400"; 
+   d="scan'208";a="37677237"
+IronPort-PHdr: =?us-ascii?q?9a23=3AwpjDYRZELjrGaYtlT4EAoY7/LSx+4OfEezUN45?=
+ =?us-ascii?q?9isYplN5qZps+9Yx7h7PlgxGXEQZ/co6odzbaP6Oa6BjRLvMzJmUtBWaQEbw?=
+ =?us-ascii?q?UCh8QSkl5oK+++Imq/EsTXaTcnFt9JTl5v8iLzG0FUHMHjew+a+SXqvnYdFR?=
+ =?us-ascii?q?rlKAV6OPn+FJLMgMSrzeCy/IDYbxlViDanbr5+MRu7oR/PusQUnYduJaY8xg?=
+ =?us-ascii?q?XUqXZUZupawn9lK0iOlBjm/Mew+5Bj8yVUu/0/8sNLTLv3caclQ7FGFToqK2?=
+ =?us-ascii?q?866tHluhnFVguP+2ATUn4KnRpSAgjK9w/1U5HsuSbnrOV92S2aPcrrTbAoXD?=
+ =?us-ascii?q?mp8qlmRAP0hCoBKjU2/nvXishth6xFphyvqQF0z4rNbIybMPdye6XQds4YS2?=
+ =?us-ascii?q?VcRMZcTzFPDJ2yb4UPDOQPM+hXoIb/qFQSohWzHhWsCeH1xzNUmnP706833u?=
+ =?us-ascii?q?I8Gg/GxgwgGNcOvWzJotXpKqgSSeC1w7fOzT7ecv1W3C3y6IzMch8/ofCHQL?=
+ =?us-ascii?q?V9cdHMxkk0DA7FklWRppDlPzOSzOgNtXOb4PB6WeKgjG4ntRh8rz6yzckvko?=
+ =?us-ascii?q?nEnp8Zx1/L+CljwIs5OMe0RFB0bNK6CpdcqieXPJZsTMw4WWFnoiM6x6UDuZ?=
+ =?us-ascii?q?68YScF1owqxwXaa/yba4iI5Q/jVPqJLTd4mn1lfLW/ig6u8Ue60O38V9S00E?=
+ =?us-ascii?q?1QoipElNnMuHcN1wfN5cebUPd94keg1iqP1wDU8O1EJ1w7lbHHJJI7x74wl5?=
+ =?us-ascii?q?4TvVzCHi/whkr2kLebelgr9+Wn8ejqYqjqqoWCO4J7lA3yKLkiltS6AesiMw?=
+ =?us-ascii?q?gOW2ab+f671L3m5UD5W6hFjuYtn6nFsJHVOcQbpqmjDw9TyYYs8QyzDzih0N?=
+ =?us-ascii?q?QGhXUHNk5KeAqbj4j1PFHDOPD5Aum/g1S3jjtn2+zKM7/6D5TMKXjDkLDhca?=
+ =?us-ascii?q?xh5E5bzQo51cpf6I5MCrEdPPLzXVf8tMTCAR8kNwy52P7nB89g1oMaQG6PB6?=
+ =?us-ascii?q?iZMKTIsVCW/O4gP+6MZIoNsjbnN/cl/+LujWM+mVIFY6apxYEYaGq5HvR9OE?=
+ =?us-ascii?q?iZeWDjgs0AEWcRpgo+SPblh0GcXjJJYHayRa087CkhCI26FYfDWpytgLuZ0S?=
+ =?us-ascii?q?e5G51WYXpGCkqNEXfzbIiEXe0DaCeMLc9giDAEUqKhS4A53xG0qAD606ZnLv?=
+ =?us-ascii?q?bT+iAArpLsysJ15+LNmhwp9Tx7FcCd02WNTmFyhG8HWzg23KVnq0xn1liDyb?=
+ =?us-ascii?q?R4g+BfFdFL+/NIUho6OYPHwux+Fd/yXAXBfsmOSFq8XtqmBjQxRMorw9ASe0?=
+ =?us-ascii?q?Z9B8mijhfb0iquAr8VkaGLBZMt/qLHwXf+O9t9y2zH1Kk9j1gqW85PNWq7ia?=
+ =?us-ascii?q?5i8wjcGZXEk1uWl6m0b6QQxi3N+3mZzWqIok5YVBR8UaLfXXAQfkHWt8j25l?=
+ =?us-ascii?q?veT7+yDrQqKhBBxtCGKqtLbN3pkFpHSez9ONTRfW2xgX28BRWWybOWaorlZW?=
+ =?us-ascii?q?Ed0D/aCEgenAAZ5WyGOhQmBie9v2LeCyRjFVbuY0Pq7Ol/p2q3TkwqwAGQaU?=
+ =?us-ascii?q?1uyb619wULhfyTVfwTxKgIuCQ/pDVuGlaywdbWB8CHpwp7c6VWeck970tf1W?=
+ =?us-ascii?q?LFqwx9OYStLqB8iV4eaAR7oljj1xFpBYVGlsgqsnQqwBBuJqKf1VMSPw+fiL?=
+ =?us-ascii?q?DtM7zMKmT081ieZuaCy1zey4zOovgn+vM4rBPouwT/UgI6+mhj+8Fczn/Z45?=
+ =?us-ascii?q?LNFgdUWpX0Fg467xFgpqryeiAn5pjM0XRnPO+zqDCGk9AsA/E/yw2Ied5aPa?=
+ =?us-ascii?q?LCExX9V4UBCtKhJcQqklytfxRCN+dXp4AuOMbzTOeLwK6mOq5bmTuiiWlWqN?=
+ =?us-ascii?q?Rm3lmk6zt3SumO2Y0Mhf6fwF3UBH/HkF69v5Wvysh/bjYIEz/6knnp?=
+X-IPAS-Result: =?us-ascii?q?A2BuAABqcxxe/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
+ =?us-ascii?q?QICAQEBAYF7gX2BbAEgEiqEDIkDhmsGgTeJbookhyQJAQEBAQEBAQEBNwEBh?=
+ =?us-ascii?q?EACghw4EwIQAQEBBAEBAQEBBQMBAWyFQ4I7KYJ6AQEBAQMjBBFBEAsVAwICJ?=
+ =?us-ascii?q?gICVwYBDAYCAQGCYz+CVyWoF3V/M4VJg0+BPYEOKIwzeYEHgTgPgl0+h1mCX?=
+ =?us-ascii?q?gSNVIhwYUaXUYJBgkiTXwYbmmwtji6dByKBWCsIAhgIIQ+DJ1AYDYgNF45BI?=
+ =?us-ascii?q?wMwjR4BAQ?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 13 Jan 2020 13:46:01 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00DDjLDp229665;
+        Mon, 13 Jan 2020 08:45:22 -0500
+Subject: Re: [PATCH] selinux: remove redundant selinux_nlmsg_perm
+To:     Huaisheng Ye <yehs2007@zoho.com>, paul@paul-moore.com,
+        eparis@parisplace.org, jmorris@namei.org, serge@hallyn.com
+Cc:     tyu1@lenovo.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Huaisheng Ye <yehs1@lenovo.com>
+References: <20200112154216.46992-1-yehs2007@zoho.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <e7ec908e-01c1-b76d-f797-545b70a49075@tycho.nsa.gov>
+Date:   Mon, 13 Jan 2020 08:47:00 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200113094244.26678-1-revest@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200112154216.46992-1-yehs2007@zoho.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 13-Jan 10:42, Florent Revest wrote:
-> From: Florent Revest <revest@google.com>
+On 1/12/20 10:42 AM, Huaisheng Ye wrote:
+> From: Huaisheng Ye <yehs1@lenovo.com>
 > 
-> This allows other parts of the kernel (perhaps a stacked LSM allowing
-> system monitoring, eg. the proposed KRSI LSM [1]) to retrieve the hash
-> of a given file from IMA if it's present in the iint cache.
+> selinux_nlmsg_perm is used for only by selinux_netlink_send. Remove
+> the redundant function to simplify the code.
 > 
-> It's true that the existence of the hash means that it's also in the
-> audit logs or in /sys/kernel/security/ima/ascii_runtime_measurements,
-> but it can be difficult to pull that information out for every
-> subsequent exec. This is especially true if a given host has been up
-> for a long time and the file was first measured a long time ago.
-> 
-> It should be kept in mind that this function gives access to cached
-> entries which can be removed, for instance on security_inode_free().
-> 
-> This is based on Peter Moody's patch:
->  https://sourceforge.net/p/linux-ima/mailman/message/33036180/
-> 
-> [1] https://lkml.org/lkml/2019/9/10/393
-> 
-> Signed-off-by: Florent Revest <revest@google.com>
+> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
 
-Reviewed-by: KP Singh <kpsingh@chromium.org>
+The patch itself seems fine but it looks like someone accidentally put 
+pig= in the log message when they meant pid=; that can be fixed via a 
+separate patch.
+
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 
 > ---
->  include/linux/ima.h               |  6 ++++
->  security/integrity/ima/ima_main.c | 49 +++++++++++++++++++++++++++++++
->  2 files changed, 55 insertions(+)
+>   security/selinux/hooks.c | 73 ++++++++++++++++++++++--------------------------
+>   1 file changed, 34 insertions(+), 39 deletions(-)
 > 
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index f4644c54f648..1659217e9b60 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -23,6 +23,7 @@ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
->  extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
->  			      enum kernel_read_file_id id);
->  extern void ima_post_path_mknod(struct dentry *dentry);
-> +extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
->  extern void ima_kexec_cmdline(const void *buf, int size);
->  
->  #ifdef CONFIG_IMA_KEXEC
-> @@ -91,6 +92,11 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
->  	return;
->  }
->  
-> +static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index fb1b9da..9f3f966 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -5507,44 +5507,6 @@ static int selinux_tun_dev_open(void *security)
+>   	return 0;
+>   }
+>   
+> -static int selinux_nlmsg_perm(struct sock *sk, struct sk_buff *skb)
+> -{
+> -	int err = 0;
+> -	u32 perm;
+> -	struct nlmsghdr *nlh;
+> -	struct sk_security_struct *sksec = sk->sk_security;
+> -
+> -	if (skb->len < NLMSG_HDRLEN) {
+> -		err = -EINVAL;
+> -		goto out;
+> -	}
+> -	nlh = nlmsg_hdr(skb);
+> -
+> -	err = selinux_nlmsg_lookup(sksec->sclass, nlh->nlmsg_type, &perm);
+> -	if (err) {
+> -		if (err == -EINVAL) {
+> -			pr_warn_ratelimited("SELinux: unrecognized netlink"
+> -			       " message: protocol=%hu nlmsg_type=%hu sclass=%s"
+> -			       " pig=%d comm=%s\n",
+> -			       sk->sk_protocol, nlh->nlmsg_type,
+> -			       secclass_map[sksec->sclass - 1].name,
+> -			       task_pid_nr(current), current->comm);
+> -			if (!enforcing_enabled(&selinux_state) ||
+> -			    security_get_allow_unknown(&selinux_state))
+> -				err = 0;
+> -		}
+> -
+> -		/* Ignore */
+> -		if (err == -ENOENT)
+> -			err = 0;
+> -		goto out;
+> -	}
+> -
+> -	err = sock_has_perm(sk, perm);
+> -out:
+> -	return err;
+> -}
+> -
+>   #ifdef CONFIG_NETFILTER
+>   
+>   static unsigned int selinux_ip_forward(struct sk_buff *skb,
+> @@ -5873,7 +5835,40 @@ static unsigned int selinux_ipv6_postroute(void *priv,
+>   
+>   static int selinux_netlink_send(struct sock *sk, struct sk_buff *skb)
+>   {
+> -	return selinux_nlmsg_perm(sk, skb);
+> +	int err = 0;
+> +	u32 perm;
+> +	struct nlmsghdr *nlh;
+> +	struct sk_security_struct *sksec = sk->sk_security;
 > +
->  static inline void ima_kexec_cmdline(const void *buf, int size) {}
->  #endif /* CONFIG_IMA */
->  
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 2272c3255c7d..9fe949c6a530 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -445,6 +445,55 @@ int ima_file_check(struct file *file, int mask)
->  }
->  EXPORT_SYMBOL_GPL(ima_file_check);
->  
-> +/**
-> + * ima_file_hash - return the stored measurement if a file has been hashed and
-> + * is in the iint cache.
-> + * @file: pointer to the file
-> + * @buf: buffer in which to store the hash
-> + * @buf_size: length of the buffer
-> + *
-> + * On success, return the hash algorithm (as defined in the enum hash_algo).
-> + * If buf is not NULL, this function also outputs the hash into buf.
-> + * If the hash is larger than buf_size, then only buf_size bytes will be copied.
-> + * It generally just makes sense to pass a buffer capable of holding the largest
-> + * possible hash: IMA_MAX_DIGEST_SIZE.
-> + * The file hash returned is based on the entire file, including the appended
-> + * signature.
-> + *
-> + * If IMA is disabled or if no measurement is available, return -EOPNOTSUPP.
-> + * If the parameters are incorrect, return -EINVAL.
-> + */
-> +int ima_file_hash(struct file *file, char *buf, size_t buf_size)
-> +{
-> +	struct inode *inode;
-> +	struct integrity_iint_cache *iint;
-> +	int hash_algo;
-> +
-> +	if (!file)
-> +		return -EINVAL;
-> +
-> +	if (!ima_policy_flag)
-> +		return -EOPNOTSUPP;
-> +
-> +	inode = file_inode(file);
-> +	iint = integrity_iint_find(inode);
-> +	if (!iint)
-> +		return -EOPNOTSUPP;
-> +
-> +	mutex_lock(&iint->mutex);
-> +	if (buf) {
-> +		size_t copied_size;
-> +
-> +		copied_size = min_t(size_t, iint->ima_hash->length, buf_size);
-> +		memcpy(buf, iint->ima_hash->digest, copied_size);
+> +	if (skb->len < NLMSG_HDRLEN) {
+> +		err = -EINVAL;
+> +		goto out;
 > +	}
-> +	hash_algo = iint->ima_hash->algo;
-> +	mutex_unlock(&iint->mutex);
+> +	nlh = nlmsg_hdr(skb);
 > +
-> +	return hash_algo;
-> +}
-> +EXPORT_SYMBOL_GPL(ima_file_hash);
+> +	err = selinux_nlmsg_lookup(sksec->sclass, nlh->nlmsg_type, &perm);
+> +	if (err) {
+> +		if (err == -EINVAL) {
+> +			pr_warn_ratelimited("SELinux: unrecognized netlink"
+> +			       " message: protocol=%hu nlmsg_type=%hu sclass=%s"
+> +			       " pig=%d comm=%s\n",
+> +			       sk->sk_protocol, nlh->nlmsg_type,
+> +			       secclass_map[sksec->sclass - 1].name,
+> +			       task_pid_nr(current), current->comm);
+> +			if (!enforcing_enabled(&selinux_state) ||
+> +			    security_get_allow_unknown(&selinux_state))
+> +				err = 0;
+> +		}
 > +
->  /**
->   * ima_post_create_tmpfile - mark newly created tmpfile as new
->   * @file : newly created tmpfile
-> -- 
-> 2.25.0.rc1.283.g88dfdc4193-goog
+> +		/* Ignore */
+> +		if (err == -ENOENT)
+> +			err = 0;
+> +		goto out;
+> +	}
+> +
+> +	err = sock_has_perm(sk, perm);
+> +out:
+> +	return err;
+>   }
+>   
+>   static void ipc_init_security(struct ipc_security_struct *isec, u16 sclass)
 > 
+
