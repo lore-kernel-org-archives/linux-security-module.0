@@ -2,162 +2,150 @@ Return-Path: <SRS0=WVaQ=3C=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCF2C33CAE
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jan 2020 15:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F76FC33CAF
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jan 2020 16:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 508A42081E
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jan 2020 15:05:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 234C0214AF
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jan 2020 16:17:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=yehs2007@zoho.com header.b="d6joAXlh"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="RhUdFfCY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728646AbgAMPFV (ORCPT
+        id S1728794AbgAMQRP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Jan 2020 10:05:21 -0500
-Received: from sender4-pp-o98.zoho.com ([136.143.188.98]:25820 "EHLO
-        sender4-pp-o98.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbgAMPFV (ORCPT
+        Mon, 13 Jan 2020 11:17:15 -0500
+Received: from USAT19PA20.eemsg.mail.mil ([214.24.22.194]:9518 "EHLO
+        USAT19PA20.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbgAMQRP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Jan 2020 10:05:21 -0500
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id; 
-  b=oKRxTbyZSWCwEM5f/v753X1q8gS0hHmuC371flxDrr912wa1ebM4k21LFAaAAQXbpH2lcJTYP+Ai
-    p2tXo9cBfPSiEC6YoicKW0WZpyTr+FPkTKfcG34YAZz9U5kvDVki  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1578927908;
-        s=zm2020; d=zoho.com; i=yehs2007@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id;
-        bh=rfEWlhtYauL+JO/JKvLQ0nbc56CpPvRhpax6pnjMJkM=;
-        b=d6joAXlhiYpGfaHyP3tmr9dvjYLB0s1bFKXWL/y75+3b5xRhwpPPodbX8a8y4X7F
-        i21+7W+qKD6/opwKkom7lL47eKyFXdD0qBQKQyFmWrnOuXojjZkDSGvWXQZraNWhNKi
-        TGfpnIAJmRLZcPBSVX+8QSMn89sAWeqbbbEHhteQ=
-Received: from YEHS1XPF1D05WL.lenovo.com (111.197.254.155 [111.197.254.155]) by mx.zohomail.com
-        with SMTPS id 1578927904903470.01076834086973; Mon, 13 Jan 2020 07:05:04 -0800 (PST)
-From:   Huaisheng Ye <yehs2007@zoho.com>
-To:     paul@paul-moore.com, sds@tycho.nsa.gov, eparis@parisplace.org,
-        jmorris@namei.org, serge@hallyn.com
-Cc:     tyu1@lenovo.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Huaisheng Ye <yehs1@lenovo.com>
-Subject: [PATCH v2] selinux: remove redundant selinux_nlmsg_perm
-Date:   Mon, 13 Jan 2020 23:03:31 +0800
-Message-Id: <20200113150331.34108-1-yehs2007@zoho.com>
-X-Mailer: git-send-email 2.17.0.windows.1
-X-ZohoMailClient: External
+        Mon, 13 Jan 2020 11:17:15 -0500
+X-EEMSG-check-017: 68806125|USAT19PA20_ESA_OUT01.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.69,429,1571702400"; 
+   d="scan'208";a="68806125"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by USAT19PA20.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 13 Jan 2020 16:17:11 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1578932231; x=1610468231;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gP5WbfMfhaaUa1KHv4N8zwwxWaToi9Qw7cJSJY+Oevk=;
+  b=RhUdFfCYYRG0lnIB3mW46cfJ84oTW5tAUp770C+WM7NgWBHYQY1qKbgi
+   URMTUn6BD20gvmH81v1EtkdA9qlV/OlAatj2IU6Nd710y7O7T5/jxdDsb
+   bb1WARXXEosLyCOgS0Z84+ReL9dzGM3uVV10Gzjj2ZYToBySIrTtEKsFm
+   cd+FFRG80DSeO4QHfqBptjNcWi6Hna/8vsHotCYawZzCXcrKRlCUZNgFG
+   Ba3eJBru5Sh4mN5E0z5EEb2HhhxgxdN+5s+6JYWDRFDzRp+4YsMwWpvxr
+   qSB12QydonD9sAqbB8iPg/4HS5koMQKjLo2mGH8+h3qXd11tCvoiM19ip
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.69,429,1571702400"; 
+   d="scan'208";a="31875418"
+IronPort-PHdr: =?us-ascii?q?9a23=3AFRsEnB2pdPlPjMrEsmDT+DRfVm0co7zxezQtwd?=
+ =?us-ascii?q?8ZsesXLv3xwZ3uMQTl6Ol3ixeRBMOHsqkC0bWO+PC8EUU7or+5+EgYd5JNUx?=
+ =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
+ =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCezbL9oMhm7rxndusYVjIZtN6081g?=
+ =?us-ascii?q?bHrnxUdupM2GhmP0iTnxHy5sex+J5s7SFdsO8/+sBDTKv3Yb02QaRXAzo6PW?=
+ =?us-ascii?q?814tbrtQTYQguU+nQcSGQWnQFWDAXD8Rr3Q43+sir+tup6xSmaIcj7Rq06VD?=
+ =?us-ascii?q?i+86tmTgLjhykdNz497WrZlMp+gqxGqx6lvhByw4rZbISTOfFjfK3SYMkaSH?=
+ =?us-ascii?q?JBUMhPSiJPDICyYYwAAOQOJutUs4rwqkESoRakGQWgGOXiwSJIiH/s2q061v?=
+ =?us-ascii?q?wsHxza3AM+B9IOsGrbrNPoP6kPVOC61q3IzTHdYPJWxDzw75PIfQ06ofyXQb?=
+ =?us-ascii?q?JxcdbeyUkoFw/fiFWQspbqMyma1uQKrWiW9uxtXv+shW4/swx9vzeiy8g2ho?=
+ =?us-ascii?q?TJm44Z0E7I+CpnzIovONG1TlNwb8S+H5tKrS6aMpN7QsYlQ251pik30qYGuZ?=
+ =?us-ascii?q?unfCgSz5Qn2gLfZ+SHc4eW5hLjU/6cIStii3J/ebK/mg2y/VKhyu36WMm010?=
+ =?us-ascii?q?1KoTRZndXWqnAM1wDc6siASvdn+EeuxS2P2BzJ5uFBIEA0kbLXK58nwrEuip?=
+ =?us-ascii?q?oeqVnPEyD5lUnsjKKaa18o9van5uj5eLnqu4eQN4puhQH/NqQulNa/AeM9Mg?=
+ =?us-ascii?q?UWRGiU5P+82ab//Uz5XLpKjvo2nrPfsJDBP8sXvKG5AwhL0oo78RawEy+m0M?=
+ =?us-ascii?q?gEnXkANF9FYhOHgJTpO17UOvD3EO+wjEi0nzdr3f/GP7vhDYvWLnXYi7jhYb?=
+ =?us-ascii?q?d960hAyAUt19Bf4YxbCq0bLP3vXU/xscTSDgUlPAys3+bnFNJ925scWWKKBa?=
+ =?us-ascii?q?+ZKrnSsV6T5u80JemDfooVtyj8K/Q/4P7ul3A5k0cHfaa1xZsXdGy4HvN+Lk?=
+ =?us-ascii?q?WdYHrshMoBEGgTsgolUuPllECCUSRSZ3auX6Mw/zQ7CIW7AofeQoCinqeM3D?=
+ =?us-ascii?q?m0HpJIfGBKEFOMHmnyd4WCRfgMbDieIsh7kjwLTbKhUZMu1QmytA/mzLpqNv?=
+ =?us-ascii?q?fb+i0ftZPtytd14+nTlQop+DxuEcuSzmGNQHtonm8SWzA226V/q1Rnylifya?=
+ =?us-ascii?q?h4n+BYFdtL6vNOVwc6MoXcz+pgBN/uRA3MZc2JR0i7TdWmGz4xUsg9zMMJY0?=
+ =?us-ascii?q?Z4A9+ilAzM3zK2A78JkLyGHIc0/bzY33jwIcZ91nnH2bI/j1kpXMRPL3eqhq?=
+ =?us-ascii?q?1h+AjJAY7GjUGZm7ytdaQG0y7H7H2DwnaWvEFETA5wVr3IXWgFaUvLqdT0/V?=
+ =?us-ascii?q?vCQKWzCbQjKwdBzMmCKqxQatL3l1lJWPDjONGNK162zn+5GBKg3rqRaM/vfG?=
+ =?us-ascii?q?IH0WPWD01XvRoU+CO9KQUmBiqn61nbBThqGEOnN1jg6sFiuXi7SQky1AjMYE?=
+ =?us-ascii?q?p/genmsiUJjOCRHqtAlokPvz0s/nApTVs=3D?=
+X-IPAS-Result: =?us-ascii?q?A2AtAACulxxe/wHyM5BmHAEBAQEBBwEBEQEEBAEBgWcHA?=
+ =?us-ascii?q?QELAYF8gWwBIBIqjC9ghmwGiyWPTYF7CQEBAQEBAQEBARscAQGEQIIeNAkOA?=
+ =?us-ascii?q?hABAQEEAQEBAQEFAwEBbIVDgjspgygLAUaBUYJnP4JXJasxM4kIgT2BNgGHP?=
+ =?us-ascii?q?4RzeYEHgUeDG4UWhSEEl2uXUYJBgkiTWQwbmmsBLaseOYFYKwgCGAghD4MnU?=
+ =?us-ascii?q?BgNiA0XjkEjAzCNHgEB?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 13 Jan 2020 16:17:00 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00DGGLFL046861;
+        Mon, 13 Jan 2020 11:16:21 -0500
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+To:     paul@paul-moore.com
+Cc:     selinux@vger.kernel.org, omosnace@redhat.com, dhowells@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        richard_c_haines@btinternet.com,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: [RFC PATCH] selinux: implement move_mount hook
+Date:   Mon, 13 Jan 2020 11:18:00 -0500
+Message-Id: <20200113161800.63865-1-sds@tycho.nsa.gov>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Huaisheng Ye <yehs1@lenovo.com>
+commit 2db154b3ea8e ("vfs: syscall: Add move_mount(2) to move mounts around")
+introduced a new move_mount(2) system call and a corresponding new LSM
+security_move_mount hook but did not implement this hook for any existing
+LSM.  This creates a regression for SELinux with respect to consistent
+checking of mounts; the existing selinux_mount hook checks mounton
+permission to the mount point path.  Provide a SELinux hook
+implementation for move_mount that applies this same check for
+consistency.  We may wish to consider defining a new filesystem
+move_mount permission and/or a new dir(ectory) move_mount permission
+and checking it in this hook in the future.
 
-selinux_nlmsg_perm is used for only by selinux_netlink_send. Remove
-the redundant function to simplify the code.
-
-Fix a typo by suggestion from Stephen.
-
-Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+Fixes: 2db154b3ea8e ("vfs: syscall: Add move_mount(2) to move mounts around")
+Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
 ---
- security/selinux/hooks.c | 73 ++++++++++++++++++++++--------------------------
- 1 file changed, 34 insertions(+), 39 deletions(-)
+ security/selinux/hooks.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index fb1b9da..9f3f966 100644
+index 0606e107fca3..244874b103ff 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -5507,44 +5507,6 @@ static int selinux_tun_dev_open(void *security)
- 	return 0;
+@@ -2766,6 +2766,19 @@ static int selinux_mount(const char *dev_name,
+ 		return path_has_perm(cred, path, FILE__MOUNTON);
  }
  
--static int selinux_nlmsg_perm(struct sock *sk, struct sk_buff *skb)
--{
--	int err = 0;
--	u32 perm;
--	struct nlmsghdr *nlh;
--	struct sk_security_struct *sksec = sk->sk_security;
--
--	if (skb->len < NLMSG_HDRLEN) {
--		err = -EINVAL;
--		goto out;
--	}
--	nlh = nlmsg_hdr(skb);
--
--	err = selinux_nlmsg_lookup(sksec->sclass, nlh->nlmsg_type, &perm);
--	if (err) {
--		if (err == -EINVAL) {
--			pr_warn_ratelimited("SELinux: unrecognized netlink"
--			       " message: protocol=%hu nlmsg_type=%hu sclass=%s"
--			       " pig=%d comm=%s\n",
--			       sk->sk_protocol, nlh->nlmsg_type,
--			       secclass_map[sksec->sclass - 1].name,
--			       task_pid_nr(current), current->comm);
--			if (!enforcing_enabled(&selinux_state) ||
--			    security_get_allow_unknown(&selinux_state))
--				err = 0;
--		}
--
--		/* Ignore */
--		if (err == -ENOENT)
--			err = 0;
--		goto out;
--	}
--
--	err = sock_has_perm(sk, perm);
--out:
--	return err;
--}
--
- #ifdef CONFIG_NETFILTER
- 
- static unsigned int selinux_ip_forward(struct sk_buff *skb,
-@@ -5873,7 +5835,40 @@ static unsigned int selinux_ipv6_postroute(void *priv,
- 
- static int selinux_netlink_send(struct sock *sk, struct sk_buff *skb)
++static int selinux_move_mount(const struct path *from_path,
++			      const struct path *to_path)
++{
++	const struct cred *cred = current_cred();
++
++	/*
++	 *  TBD: Check new FILESYSTEM__MOVE_MOUNT permission to
++	 *  from_path->dentry->s_sb and/or new DIR__MOVE_MOUNT
++	 *  permission to from_path?
++	 */
++	return path_has_perm(cred, to_path, FILE__MOUNTON);
++}
++
+ static int selinux_umount(struct vfsmount *mnt, int flags)
  {
--	return selinux_nlmsg_perm(sk, skb);
-+	int err = 0;
-+	u32 perm;
-+	struct nlmsghdr *nlh;
-+	struct sk_security_struct *sksec = sk->sk_security;
-+
-+	if (skb->len < NLMSG_HDRLEN) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+	nlh = nlmsg_hdr(skb);
-+
-+	err = selinux_nlmsg_lookup(sksec->sclass, nlh->nlmsg_type, &perm);
-+	if (err) {
-+		if (err == -EINVAL) {
-+			pr_warn_ratelimited("SELinux: unrecognized netlink"
-+			       " message: protocol=%hu nlmsg_type=%hu sclass=%s"
-+			       " pid=%d comm=%s\n",
-+			       sk->sk_protocol, nlh->nlmsg_type,
-+			       secclass_map[sksec->sclass - 1].name,
-+			       task_pid_nr(current), current->comm);
-+			if (!enforcing_enabled(&selinux_state) ||
-+			    security_get_allow_unknown(&selinux_state))
-+				err = 0;
-+		}
-+
-+		/* Ignore */
-+		if (err == -ENOENT)
-+			err = 0;
-+		goto out;
-+	}
-+
-+	err = sock_has_perm(sk, perm);
-+out:
-+	return err;
- }
+ 	const struct cred *cred = current_cred();
+@@ -6943,6 +6956,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(sb_set_mnt_opts, selinux_set_mnt_opts),
+ 	LSM_HOOK_INIT(sb_clone_mnt_opts, selinux_sb_clone_mnt_opts),
  
- static void ipc_init_security(struct ipc_security_struct *isec, u16 sclass)
++	LSM_HOOK_INIT(move_mount, selinux_move_mount),
++
+ 	LSM_HOOK_INIT(dentry_init_security, selinux_dentry_init_security),
+ 	LSM_HOOK_INIT(dentry_create_files_as, selinux_dentry_create_files_as),
+ 
 -- 
-1.8.3.1
-
+2.24.1
 
