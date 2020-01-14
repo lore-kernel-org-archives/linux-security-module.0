@@ -2,98 +2,81 @@ Return-Path: <SRS0=gHeC=3D=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16468C33CB2
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 16:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545A0C33CB7
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 16:13:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDDBC222C4
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 16:06:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TzvW822l"
+	by mail.kernel.org (Postfix) with ESMTP id 27C7524676
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 16:13:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbgANQGY (ORCPT
+        id S1729335AbgANQMu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jan 2020 11:06:24 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29772 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726342AbgANQGW (ORCPT
+        Tue, 14 Jan 2020 11:12:50 -0500
+Received: from mga07.intel.com ([134.134.136.100]:58605 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729263AbgANQMt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:06:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579017981;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=zFvHM3AeFQ6gPIf7yqo2C1O21SKvnYRszvRgL2Vd76U=;
-        b=TzvW822l8VpsVHzFCieIoIwFnjZa6/QOTrKun6SV3C4XkrMdlLze3ne3+BgM1CIuL+r+g1
-        X7pELBgvVGUD1FVaBwr+d0ymw3ryG3Vc/f5FSshj4Tc1la6lr4qWajiVY7J5eWMTSGP0vF
-        fpeFYHc/sP+HgDtGoCj5Kvr10e1qYw8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-19-IilqvlY_MQGKWipUHzyBQA-1; Tue, 14 Jan 2020 11:06:17 -0500
-X-MC-Unique: IilqvlY_MQGKWipUHzyBQA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 94755593A1;
-        Tue, 14 Jan 2020 16:06:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D51460BE0;
-        Tue, 14 Jan 2020 16:06:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] keys: Fix request_key() cache
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 14 Jan 2020 16:06:14 +0000
-Message-ID: <157901797479.32540.1716642299317411940.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Tue, 14 Jan 2020 11:12:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 08:12:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,433,1571727600"; 
+   d="scan'208";a="217788065"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.255.37.212])
+  by orsmga008.jf.intel.com with ESMTP; 14 Jan 2020 08:12:45 -0800
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        "Suresh Siddha" <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH v24 12/24] x86/sgx: Linux Enclave Driver
+Reply-To: haitao.huang@linux.intel.com
+References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
+ <20191129231326.18076-13-jarkko.sakkinen@linux.intel.com>
+Date:   Tue, 14 Jan 2020 10:12:45 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.0ed4njqcwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <20191129231326.18076-13-jarkko.sakkinen@linux.intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When the key cached by request_key() and co. is cleaned up on exit(), the
-code looks in the wrong task_struct, and so clears the wrong cache.  This
-leads to anomalies in key refcounting when doing, say, a kernel build on an
-afs volume, that then trigger kasan to report a use-after-free when the key
-is viewed in /proc/keys.
+On Fri, 29 Nov 2019 17:13:14 -0600, Jarkko Sakkinen  
+<jarkko.sakkinen@linux.intel.com> wrote:
 
-Fix this by making exit_creds() look in the passed-in task_struct rather
-than in current (the task_struct cleanup code is deferred by RCU and
-potentially run in another task).
+> +static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct  
+> *sigstruct,
+> +			 struct sgx_einittoken *token)
+> +{
+> +	u64 mrsigner[4];
+> +	int ret;
+> +	int i;
+> +	int j;
+> +
+> +	/* Check that the required attributes have been authorized. */
+> +	if (encl->secs_attributes & ~encl->allowed_attributes)
+> +		return -EINVAL;
+> +
 
-Fixes: 7743c48e54ee ("keys: Cache result of request_key*() temporarily in task_struct")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+EACCES to be more specific?
 
- kernel/cred.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/cred.c b/kernel/cred.c
-index c0a4c12d38b2..56395be1c2a8 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -175,8 +175,8 @@ void exit_creds(struct task_struct *tsk)
- 	put_cred(cred);
- 
- #ifdef CONFIG_KEYS_REQUEST_CACHE
--	key_put(current->cached_requested_key);
--	current->cached_requested_key = NULL;
-+	key_put(tsk->cached_requested_key);
-+	tsk->cached_requested_key = NULL;
- #endif
- }
- 
-
+Thanks
+Haitao
