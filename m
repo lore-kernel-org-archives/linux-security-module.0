@@ -1,151 +1,97 @@
-Return-Path: <SRS0=WVaQ=3C=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=gHeC=3D=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F76FC33CAF
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jan 2020 16:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5320C33CAE
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 02:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 234C0214AF
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jan 2020 16:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A65020CC7
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 02:19:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="RhUdFfCY"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C5RRpqXM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbgAMQRP (ORCPT
+        id S1729211AbgANCTJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Jan 2020 11:17:15 -0500
-Received: from USAT19PA20.eemsg.mail.mil ([214.24.22.194]:9518 "EHLO
-        USAT19PA20.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbgAMQRP (ORCPT
+        Mon, 13 Jan 2020 21:19:09 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38737 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728931AbgANCTI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Jan 2020 11:17:15 -0500
-X-EEMSG-check-017: 68806125|USAT19PA20_ESA_OUT01.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.69,429,1571702400"; 
-   d="scan'208";a="68806125"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by USAT19PA20.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 13 Jan 2020 16:17:11 +0000
+        Mon, 13 Jan 2020 21:19:08 -0500
+Received: by mail-pl1-f193.google.com with SMTP id f20so4591905plj.5
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Jan 2020 18:19:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1578932231; x=1610468231;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=gP5WbfMfhaaUa1KHv4N8zwwxWaToi9Qw7cJSJY+Oevk=;
-  b=RhUdFfCYYRG0lnIB3mW46cfJ84oTW5tAUp770C+WM7NgWBHYQY1qKbgi
-   URMTUn6BD20gvmH81v1EtkdA9qlV/OlAatj2IU6Nd710y7O7T5/jxdDsb
-   bb1WARXXEosLyCOgS0Z84+ReL9dzGM3uVV10Gzjj2ZYToBySIrTtEKsFm
-   cd+FFRG80DSeO4QHfqBptjNcWi6Hna/8vsHotCYawZzCXcrKRlCUZNgFG
-   Ba3eJBru5Sh4mN5E0z5EEb2HhhxgxdN+5s+6JYWDRFDzRp+4YsMwWpvxr
-   qSB12QydonD9sAqbB8iPg/4HS5koMQKjLo2mGH8+h3qXd11tCvoiM19ip
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.69,429,1571702400"; 
-   d="scan'208";a="31875418"
-IronPort-PHdr: =?us-ascii?q?9a23=3AFRsEnB2pdPlPjMrEsmDT+DRfVm0co7zxezQtwd?=
- =?us-ascii?q?8ZsesXLv3xwZ3uMQTl6Ol3ixeRBMOHsqkC0bWO+PC8EUU7or+5+EgYd5JNUx?=
- =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
- =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCezbL9oMhm7rxndusYVjIZtN6081g?=
- =?us-ascii?q?bHrnxUdupM2GhmP0iTnxHy5sex+J5s7SFdsO8/+sBDTKv3Yb02QaRXAzo6PW?=
- =?us-ascii?q?814tbrtQTYQguU+nQcSGQWnQFWDAXD8Rr3Q43+sir+tup6xSmaIcj7Rq06VD?=
- =?us-ascii?q?i+86tmTgLjhykdNz497WrZlMp+gqxGqx6lvhByw4rZbISTOfFjfK3SYMkaSH?=
- =?us-ascii?q?JBUMhPSiJPDICyYYwAAOQOJutUs4rwqkESoRakGQWgGOXiwSJIiH/s2q061v?=
- =?us-ascii?q?wsHxza3AM+B9IOsGrbrNPoP6kPVOC61q3IzTHdYPJWxDzw75PIfQ06ofyXQb?=
- =?us-ascii?q?JxcdbeyUkoFw/fiFWQspbqMyma1uQKrWiW9uxtXv+shW4/swx9vzeiy8g2ho?=
- =?us-ascii?q?TJm44Z0E7I+CpnzIovONG1TlNwb8S+H5tKrS6aMpN7QsYlQ251pik30qYGuZ?=
- =?us-ascii?q?unfCgSz5Qn2gLfZ+SHc4eW5hLjU/6cIStii3J/ebK/mg2y/VKhyu36WMm010?=
- =?us-ascii?q?1KoTRZndXWqnAM1wDc6siASvdn+EeuxS2P2BzJ5uFBIEA0kbLXK58nwrEuip?=
- =?us-ascii?q?oeqVnPEyD5lUnsjKKaa18o9van5uj5eLnqu4eQN4puhQH/NqQulNa/AeM9Mg?=
- =?us-ascii?q?UWRGiU5P+82ab//Uz5XLpKjvo2nrPfsJDBP8sXvKG5AwhL0oo78RawEy+m0M?=
- =?us-ascii?q?gEnXkANF9FYhOHgJTpO17UOvD3EO+wjEi0nzdr3f/GP7vhDYvWLnXYi7jhYb?=
- =?us-ascii?q?d960hAyAUt19Bf4YxbCq0bLP3vXU/xscTSDgUlPAys3+bnFNJ925scWWKKBa?=
- =?us-ascii?q?+ZKrnSsV6T5u80JemDfooVtyj8K/Q/4P7ul3A5k0cHfaa1xZsXdGy4HvN+Lk?=
- =?us-ascii?q?WdYHrshMoBEGgTsgolUuPllECCUSRSZ3auX6Mw/zQ7CIW7AofeQoCinqeM3D?=
- =?us-ascii?q?m0HpJIfGBKEFOMHmnyd4WCRfgMbDieIsh7kjwLTbKhUZMu1QmytA/mzLpqNv?=
- =?us-ascii?q?fb+i0ftZPtytd14+nTlQop+DxuEcuSzmGNQHtonm8SWzA226V/q1Rnylifya?=
- =?us-ascii?q?h4n+BYFdtL6vNOVwc6MoXcz+pgBN/uRA3MZc2JR0i7TdWmGz4xUsg9zMMJY0?=
- =?us-ascii?q?Z4A9+ilAzM3zK2A78JkLyGHIc0/bzY33jwIcZ91nnH2bI/j1kpXMRPL3eqhq?=
- =?us-ascii?q?1h+AjJAY7GjUGZm7ytdaQG0y7H7H2DwnaWvEFETA5wVr3IXWgFaUvLqdT0/V?=
- =?us-ascii?q?vCQKWzCbQjKwdBzMmCKqxQatL3l1lJWPDjONGNK162zn+5GBKg3rqRaM/vfG?=
- =?us-ascii?q?IH0WPWD01XvRoU+CO9KQUmBiqn61nbBThqGEOnN1jg6sFiuXi7SQky1AjMYE?=
- =?us-ascii?q?p/genmsiUJjOCRHqtAlokPvz0s/nApTVs=3D?=
-X-IPAS-Result: =?us-ascii?q?A2AtAACulxxe/wHyM5BmHAEBAQEBBwEBEQEEBAEBgWcHA?=
- =?us-ascii?q?QELAYF8gWwBIBIqjC9ghmwGiyWPTYF7CQEBAQEBAQEBARscAQGEQIIeNAkOA?=
- =?us-ascii?q?hABAQEEAQEBAQEFAwEBbIVDgjspgygLAUaBUYJnP4JXJasxM4kIgT2BNgGHP?=
- =?us-ascii?q?4RzeYEHgUeDG4UWhSEEl2uXUYJBgkiTWQwbmmsBLaseOYFYKwgCGAghD4MnU?=
- =?us-ascii?q?BgNiA0XjkEjAzCNHgEB?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 13 Jan 2020 16:17:00 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00DGGLFL046861;
-        Mon, 13 Jan 2020 11:16:21 -0500
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-To:     paul@paul-moore.com
-Cc:     selinux@vger.kernel.org, omosnace@redhat.com, dhowells@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        richard_c_haines@btinternet.com,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: [RFC PATCH] selinux: implement move_mount hook
-Date:   Mon, 13 Jan 2020 11:18:00 -0500
-Message-Id: <20200113161800.63865-1-sds@tycho.nsa.gov>
-X-Mailer: git-send-email 2.24.1
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I7aN7Y1nzik1KbsNshiwY6nugyBpWzW8lv7vF97PZQM=;
+        b=C5RRpqXMfZpMtG14RRkraQFn1Sb5pbDBSB3Cb3uaNQfi/0xa0jM56TSKBtGYYLNo6n
+         tWVPwTFEsCdF+47l7vtn4Fr1RnA6OJhuyLBDUrjWxQQ45xqZS4KPsPekcWf7md5BWqqN
+         y4mtINZx/zEAi+nLD+ji9BLOfL2uI46y8ZAOK7cfFJuLd4mjK04x4Ln4RILVBD7LUPxu
+         67aj+1E82N427JNXgL467Ozglj20XYvWOSxrkp7QD/dF1/C6tlpKrtB0oay4HWoY6h1l
+         6powEnAq0H5y3mvCQXt1bNGGmpkQwichArkoOF08BCpu76t8xY9MMH04iAcDzbD1ZFQ0
+         +4oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I7aN7Y1nzik1KbsNshiwY6nugyBpWzW8lv7vF97PZQM=;
+        b=sgNipvlmYJjECcA/dDyXEtKwEcyOuzTIWr2EUC2iulBRlWS2nHbR+IXlgjMx+hvLTM
+         z2FmFdLuBz1CeUUERrQWT1Lbf25P/LMrsczBqN9EmsdHNGkeNlnqrMFCI3yaosp6LVKh
+         xcEZieGAxN4fg2oSd/SF9i2t4HgnBZmOCe5BhcSkY1gkXcKz+FHDmCrmLA43bME5Xg12
+         mz0h8qHy3/OyWI0a/iUZT8j0ADW4Fk1zW9kJr0PRbUp7xWUVUJJwE7nJc6KUyzALyQPJ
+         cM/GklkZ9kfJn0i0VQCajN1cX4Fx74caUf4SfbE29yr6zbnutAE8MURWQ8poge7AM6uF
+         7M7w==
+X-Gm-Message-State: APjAAAXagpVO3Zz415GS1pFa3aAui03d7uSOu6fFJPQGLQ83imFriu66
+        E+e3JGNd5V9KnvZlN2LN4fl6Ww6+rsVaM2gvmnZfxA==
+X-Google-Smtp-Source: APXvYqz+9AZOJJpTU34QiSXSYDhA2HUFGP93xod3rAKylUqbvfH/Pmt8P197RInxMERv7NI/gqMqrsXBuTOaZAiTkLM=
+X-Received: by 2002:a17:902:fe8d:: with SMTP id x13mr17804616plm.232.1578968347761;
+ Mon, 13 Jan 2020 18:19:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1578656965-2993-1-git-send-email-alan.maguire@oracle.com> <bb27a03b-1c3d-567b-caf3-7b0e4a039f6d@linuxfoundation.org>
+In-Reply-To: <bb27a03b-1c3d-567b-caf3-7b0e4a039f6d@linuxfoundation.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 13 Jan 2020 18:18:56 -0800
+Message-ID: <CAFd5g45qfWtB9yp=MZ=79hR7Z+c7r7nsfMeofxzF0WAbzkvxag@mail.gmail.com>
+Subject: Re: [PATCH kunit] kunit: building kunit as a module breaks allmodconfig
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Alan Maguire <alan.maguire@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
+        jmorris@namei.org, serge@hallyn.com,
+        Knut Omang <knut.omang@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-commit 2db154b3ea8e ("vfs: syscall: Add move_mount(2) to move mounts around")
-introduced a new move_mount(2) system call and a corresponding new LSM
-security_move_mount hook but did not implement this hook for any existing
-LSM.  This creates a regression for SELinux with respect to consistent
-checking of mounts; the existing selinux_mount hook checks mounton
-permission to the mount point path.  Provide a SELinux hook
-implementation for move_mount that applies this same check for
-consistency.  We may wish to consider defining a new filesystem
-move_mount permission and/or a new dir(ectory) move_mount permission
-and checking it in this hook in the future.
+On Fri, Jan 10, 2020 at 1:39 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>
+> Hi Alan,
+>
+> On 1/10/20 4:49 AM, Alan Maguire wrote:
+> > kunit tests that do not support module build should depend
+> > on KUNIT=y rather than just KUNIT in Kconfig, otherwise
+> > they will trigger compilation errors for "make allmodconfig"
+> > builds.
+> >
+> > Fixes: 9fe124bf1b77 ("kunit: allow kunit to be loaded as a module")
+> > Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
+> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>
+> Thanks for fixing this quickly. For future reference, Signed-off-by
+> should be last. I fixed it and applied the patch.
 
-Fixes: 2db154b3ea8e ("vfs: syscall: Add move_mount(2) to move mounts around")
-Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
----
- security/selinux/hooks.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Thanks everyone for taking care of this so quickly in my absence!
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 0606e107fca3..244874b103ff 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2766,6 +2766,19 @@ static int selinux_mount(const char *dev_name,
- 		return path_has_perm(cred, path, FILE__MOUNTON);
- }
- 
-+static int selinux_move_mount(const struct path *from_path,
-+			      const struct path *to_path)
-+{
-+	const struct cred *cred = current_cred();
-+
-+	/*
-+	 *  TBD: Check new FILESYSTEM__MOVE_MOUNT permission to
-+	 *  from_path->dentry->s_sb and/or new DIR__MOVE_MOUNT
-+	 *  permission to from_path?
-+	 */
-+	return path_has_perm(cred, to_path, FILE__MOUNTON);
-+}
-+
- static int selinux_umount(struct vfsmount *mnt, int flags)
- {
- 	const struct cred *cred = current_cred();
-@@ -6943,6 +6956,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(sb_set_mnt_opts, selinux_set_mnt_opts),
- 	LSM_HOOK_INIT(sb_clone_mnt_opts, selinux_sb_clone_mnt_opts),
- 
-+	LSM_HOOK_INIT(move_mount, selinux_move_mount),
-+
- 	LSM_HOOK_INIT(dentry_init_security, selinux_dentry_init_security),
- 	LSM_HOOK_INIT(dentry_create_files_as, selinux_dentry_create_files_as),
- 
--- 
-2.24.1
-
+Cheers
