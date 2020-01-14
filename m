@@ -2,308 +2,176 @@ Return-Path: <SRS0=gHeC=3D=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBB5C33CB1
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 13:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E0EDC33CB2
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 14:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DF142467A
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 13:58:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03E6B2467D
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 14:33:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="coDPkEn8"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="mJ3rLOys"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726038AbgANN64 (ORCPT
+        id S1728952AbgANOd2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jan 2020 08:58:56 -0500
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:34218 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbgANN64 (ORCPT
+        Tue, 14 Jan 2020 09:33:28 -0500
+Received: from UHIL19PA38.eemsg.mail.mil ([214.24.21.197]:37806 "EHLO
+        UHIL19PA38.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbgANOd2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:58:56 -0500
-Received: by mail-qv1-f68.google.com with SMTP id o18so5679013qvf.1
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jan 2020 05:58:54 -0800 (PST)
+        Tue, 14 Jan 2020 09:33:28 -0500
+X-EEMSG-check-017: 65769128|UHIL19PA38_ESA_OUT04.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.69,433,1571702400"; 
+   d="scan'208";a="65769128"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UHIL19PA38.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 14 Jan 2020 14:33:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NT2rbeeehrCKFwNneqy898zk1HYluzR28psC4coKvKs=;
-        b=coDPkEn8iYy2G8HxipCQ87y0FFRgeMOOY33IPLhskqBUIKXtZ910QjeAgem9tZ1Pkt
-         27I0p2K2IK68ZzODRQKcVk6cqV208Qz7+mURw37hgB5fjEdrXQ/vUyxrGF2zaqtFtJrk
-         3k/vWws+QwwqQWMrKSLBqWUO9RZGoOQGEQFQEoq/NJ3Svr7UOXsA8IYecAvbunWJr8LE
-         CvRuIPABAZSCqwNUlRSjfxvHL4dhgf2URqiQ3QL05JAXwH9AhyP26mDXlvolbQUkqbHc
-         PWCBgB4fnirJ9TgYAcYMgDP2GvbjDfKsndX+Glb1wSGXGRAGzVSZfxDckl8VkyOYb7O3
-         F/1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NT2rbeeehrCKFwNneqy898zk1HYluzR28psC4coKvKs=;
-        b=YY0iWNgdtIvF4wpeEppc9DLJfFN/9aLT4PoVjlJMubuGJfPoVoOl3y6qjx/2Il6rwD
-         QNJKNeYdaxFMMHz6wlyupKpuMXdXipt2r0GL1xaoqgOCLRFgglt5J6MA/65NahdF8ZSk
-         LoZz7zbwRDmHjgaDdo1PrWP6x413lRHyPQN2w6iVsOu3aH6bMq0XI6Ih/NptbYOSAH+b
-         0CCUAIqQh4Go9t2JdUqf1QvgBKe1uH8S78fnMzKbeQsdd589GtjAjUFB/co/Tb/mgZDc
-         LoIU/h0p17UoeT/AKvcGlj85mzoz48sWY6HuJly+q5mNnUI69XN7hj0MRBGi5o9EvXK2
-         0vOg==
-X-Gm-Message-State: APjAAAWMUYUsfrJCWv7SixZNIdkHCoWWsuECHsexO1Lk3N3xfAZ7l+s8
-        Xh9IsGZ6jgWewk9OLp4pG5QUbI6Sd4/KsoZhGdMwhg==
-X-Google-Smtp-Source: APXvYqzc/kwdh8naDJDo6WCyilybAVJDZx3f0zFq9EEfK9uG0XaAJfEs9btfxCsM1gJsAs1KJgDfghGIN0Mlc1tCWuw=
-X-Received: by 2002:a05:6214:1874:: with SMTP id eh20mr17117114qvb.122.1579010333769;
- Tue, 14 Jan 2020 05:58:53 -0800 (PST)
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1579012400; x=1610548400;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=HH+lFIzaphgIIcrPyGR6mS0ju04jrXzqWNe7LfdoiUg=;
+  b=mJ3rLOysszU2+HDhhD3xtlzdDG7s1B9R56RZIBy1JIY47zUfkOVvH5ch
+   DnOFjYvn+QiFy0nihjqmwtWILZdRsfRI2olUfsTrsr7nK9DqVq+2Z1Dnc
+   XgDCxO9tc1VQgwbVuTg5T7r6oV6flpQ1WeJ/tQpxW9MmOFrSKB4mVNBfi
+   fbl1Zld8/aqfs4L/Rq0v4WgPOl0pFzEop+iY3fpg2yooAMPXHVuPPK0IK
+   Wh1W+6BAxG7Zx+A3S9E7KuZQJOU0Dde8cARm492LqF9nnRcpmFcux6gTL
+   e5UVekeIPOwosP3YdMKPZbGgF3gmVirJsqJiJDMEPeNecnP1xyGbaecMj
+   g==;
+X-IronPort-AV: E=Sophos;i="5.69,433,1571702400"; 
+   d="scan'208";a="37745736"
+IronPort-PHdr: =?us-ascii?q?9a23=3ArORQfxZci8fxibUK57ZL/wP/LSx+4OfEezUN45?=
+ =?us-ascii?q?9isYplN5qZps6/bB7h7PlgxGXEQZ/co6odzbaP7+a4ASdcvN7B6ClELMUXEU?=
+ =?us-ascii?q?ddyI0/pE8JOIa9E0r1LfrnPWQRPf9pcxtbxUy9KlVfA83kZlff8TWY5D8WHQ?=
+ =?us-ascii?q?jjZ0IufrymUoHdgN6q2O+s5pbdfxtHhCanYbN1MR66sRjdutMZjId/Jas90A?=
+ =?us-ascii?q?fFrmdHd+lZxW5jOFafkwrh6suq85Nv7ipdt+g9+8JcVKnxYrg1Q6FfADk6KW?=
+ =?us-ascii?q?4++dfltQPETQuB53scVnsZnx9VCAXb7x/0Q4n8vDLiuuVyxCeVM8v2TaspWT?=
+ =?us-ascii?q?u59KdkVAXoiCYcODEn9mzcl9F9g7haoBKloBx/3pLUbYSIP/dwYq/RYdUXTn?=
+ =?us-ascii?q?dPUcZLUyxKH52yYY0BAeEcOepUtofwql8LoRa4GAKiBv7gyiVQi3Hrw6M63e?=
+ =?us-ascii?q?QvHwLI0gMuEN0BsmjbotruOacOU+241rXEwSnNYv5U3zr29YjGcgomofGJRb?=
+ =?us-ascii?q?9+bNbRxlc3FwPFkFqQr5HuMS6Q1usXt2ib6/RvVOKygGMgsAF+vyOvy9wwio?=
+ =?us-ascii?q?jJmo0VylfE+T9/wIYuP9K0UkF7Ydm6EJZJsSyRKoV4QsQnQ25yuSY6zKULuZ?=
+ =?us-ascii?q?2lcygQzpQo2RrfZ+aAc4iS7RLvTPyeITNihH17Yr2wmhaz/VK5xuHlT8W0y0?=
+ =?us-ascii?q?hFoTZYktnWt3ANyxzS586aQfV+5keswSuD2g/c5+1eIU04iLDXJ4Auz7IujJ?=
+ =?us-ascii?q?YfrELOFTLslkrslq+ZbEAk9/Ct6+Tgf7rpuIeRN5RxigHiKqQundG/AfggPg?=
+ =?us-ascii?q?gOQWeb/eO82aX//ULjWrVKj+A2krLDvJDbI8QbqKm5AxRL3Yk/8Rq/Ezen38?=
+ =?us-ascii?q?gYnXkANl5Ffg6Ij5P1NF3UJfD4DPO/j0ytkDdt2f/GIqXsDojCI3XMirvsfa?=
+ =?us-ascii?q?tx51RCxAc809xT/Y9YBqkEIP3pW0/xsNLYDgU+Mwyx2+vnE8hy1pgFVGKTAq?=
+ =?us-ascii?q?6WLKPSsViS6uIpOOmDfpUZuDn6K/g7//Lul2M2mUcBfam12psacGi4Ee57I0?=
+ =?us-ascii?q?Wdenfsms0OEXoOvgYnSezqj1qCUSRNaHqoQ6084TQ7Apq8DYjfXoCtnKCB3C?=
+ =?us-ascii?q?CjE51NeG9GDlGMEXH1d4SLQPoMdi2SLdF7kjAeVriuVZUh1Rewuw/+0bZnKf?=
+ =?us-ascii?q?DU+iIAv5L5yNd1//HTlQ019TFsCMSd1maNT3pynmwSWzA5wrtyoVZjxVie0a?=
+ =?us-ascii?q?h3meBYGcZP6PNOVwcwLYTcwPBiC9DuRgLBec+ER0umQtWhDzA+UNYxw9sVY0?=
+ =?us-ascii?q?tmAdWtkA3M3yqwDL8JjbCEGJs08qfE1XjrO8l902rG1LUmj1Q+RstPNGumhr?=
+ =?us-ascii?q?Nw9gTKHI7GjVmWl7uwdaQdwC7M9H6PzW+JvE5FTQ5wVbvKUGsBZkvZs9v5/F?=
+ =?us-ascii?q?nOT7ywBrQ9NAtO18qCJrFNat3zglVMXO3jN8jGY2Kth2ewAg6FxrGJbIrtYW?=
+ =?us-ascii?q?UdxiTdCFMfngAV53mGMBYxBia7r2LZFjxuGkrlY1nw/ulmtHO7Ukg0whmQb0?=
+ =?us-ascii?q?1gy7W1+gQaheaBRPwLwr0LoCchpC91HFa7wd3WEMGNqBF9fKVdZ9M9/ElI1X?=
+ =?us-ascii?q?jftwNjIpysNbxthlkbc1c/g0S7zxxqDq1YmNUu6XYtyxB/b6mf1QBvbTSdiK?=
+ =?us-ascii?q?vsN6XXJ2+6xxWmb6rbyxmKy9qN0rse4/Q/7VP4tUemEVR0oCYv6MVcz3bJvs?=
+ =?us-ascii?q?aCNwEVS5+kFx1m+g=3D=3D?=
+X-IPAS-Result: =?us-ascii?q?A2D3AABizh1e/wHyM5BlHAEBAQEBBwEBEQEEBAEBgWoEA?=
+ =?us-ascii?q?QELAYF8gRhVIBIqhA2JA4VlgQgGgTeJbo9igWcJAQEBAQEBAQEBLwgBAYRAA?=
+ =?us-ascii?q?oIhNwYOAhABAQEEAQEBAQEFAwEBbIU3DII7KYJ7AQUjBBFBEAsYAgImAgJGE?=
+ =?us-ascii?q?RMGAgEBgmM/AYJWJQ+raH8zhDQBgRSDVIE3BoEOKAGMMnmBB4E4D4JdPoF5g?=
+ =?us-ascii?q?h0BEgGDL4JeBJcmRpdSgkKCSYRzjmsGG5ptLZcKlCsjZ3ErCAIYCCEPO4JsE?=
+ =?us-ascii?q?z0YDYgNF4hkhV0jAzABAQqKY4IyAQE?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 14 Jan 2020 14:33:13 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00EEWSLx168723;
+        Tue, 14 Jan 2020 09:32:33 -0500
+Subject: Re: [RFC PATCH] selinux: implement move_mount hook
+To:     paul@paul-moore.com
+Cc:     selinux@vger.kernel.org, omosnace@redhat.com, dhowells@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        richard_c_haines@btinternet.com
+References: <20200113161800.63865-1-sds@tycho.nsa.gov>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <a5839718-8b75-8a8b-189b-bd19e4c85219@tycho.nsa.gov>
+Date:   Tue, 14 Jan 2020 09:33:47 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-References: <000000000000486474059c19f4d7@google.com>
-In-Reply-To: <000000000000486474059c19f4d7@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 14 Jan 2020 14:58:41 +0100
-Message-ID: <CACT4Y+av-ipjsdtsXs4d55w=inNHJqho3s3XKfU0Jo7f98yi8w@mail.gmail.com>
-Subject: Re: inconsistent lock state in ima_process_queued_keys
-To:     syzbot <syzbot+a4a503d7f37292ae1664@syzkaller.appspotmail.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200113161800.63865-1-sds@tycho.nsa.gov>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 14, 2020 at 2:56 PM syzbot
-<syzbot+a4a503d7f37292ae1664@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    1b851f98 Add linux-next specific files for 20200114
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12bcbb25e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3e7d9cf7ebfa08ad
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a4a503d7f37292ae1664
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+a4a503d7f37292ae1664@syzkaller.appspotmail.com
+On 1/13/20 11:18 AM, Stephen Smalley wrote:
+> commit 2db154b3ea8e ("vfs: syscall: Add move_mount(2) to move mounts around")
+> introduced a new move_mount(2) system call and a corresponding new LSM
+> security_move_mount hook but did not implement this hook for any existing
+> LSM.  This creates a regression for SELinux with respect to consistent
+> checking of mounts; the existing selinux_mount hook checks mounton
+> permission to the mount point path.  Provide a SELinux hook
+> implementation for move_mount that applies this same check for
+> consistency.  We may wish to consider defining a new filesystem
+> move_mount permission and/or a new dir(ectory) move_mount permission
+> and checking it in this hook in the future.
+> 
+> Fixes: 2db154b3ea8e ("vfs: syscall: Add move_mount(2) to move mounts around")
+> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
 
-+Lakshmi, you seem to have submitted a number of changes to this file recently.
+NB I cc'd lsm list on this patch just as a heads-up/reminder that this 
+hook hasn't been implemented for any security modules AFAICT, not just 
+SELinux.  I see that there was some discussion of this in the past with 
+a trivial patch proposed by Tetsuo to just disable the syscall when 
+TOMOYO or AppArmor is enabled, but no action seems to have been taken,
+https://lore.kernel.org/linux-security-module/5802b8b1-f734-1670-f83b-465eda133936@i-love.sakura.ne.jp/
+https://lore.kernel.org/linux-security-module/1565365478-6550-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp/
 
-This completely breaks linux-next testing for us, every kernel crashes
-a few minutes after boot.
+The move_mount syscall does check may_mount() and hence requires 
+CAP_SYS_ADMIN for the user namespace associated with the mount 
+namespace, so both SELinux and AppArmor would at least restrict the use 
+of this syscall to processes allowed CAP_SYS_ADMIN by policy, but TOMOYO 
+doesn't implement the capable hook either so move_mount is entirely 
+unrestricted by it at present.  Looks like Smack doesn't implement any 
+mount checking so it doesn't care about move_mount (especially since it 
+requires CAP_SYS_ADMIN already).
 
-2020/01/14 14:45:00 vm-26: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:00 vm-12: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:01 vm-3: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:02 vm-8: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:03 vm-25: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:04 vm-27: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:04 VMs 0, executed 214279, cover 10140, crashes 5, repro 0
-2020/01/14 14:45:05 vm-14: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:05 vm-11: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:06 vm-10: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:07 vm-0: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:08 vm-24: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:09 vm-2: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:10 vm-20: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:11 vm-7: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:12 vm-28: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:12 vm-1: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:13 vm-6: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:14 vm-4: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:14 VMs 0, executed 214279, cover 10140, crashes 17, repro 0
-2020/01/14 14:45:15 vm-17: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:16 vm-16: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:16 vm-19: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:17 vm-15: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:18 vm-29: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:19 vm-21: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:20 vm-23: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:20 vm-13: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:21 vm-9: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:22 vm-5: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:23 vm-22: crash: inconsistent lock state in
-ima_process_queued_keys
-2020/01/14 14:45:24 VMs 0, executed 214279, cover 10140, crashes 28, repro 0
-2020/01/14 14:45:24 vm-18: crash: inconsistent lock state in
-ima_process_queued_keys
-
-
-
-
-> ================================
-> WARNING: inconsistent lock state
-> 5.5.0-rc6-next-20200114-syzkaller #0 Not tainted
-> --------------------------------
-> inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-> syz-executor.5/9563 [HC0[0]:SC1[1]:HE1:SE0] takes:
-> ffffffff8a03aa18 (ima_keys_lock){+.?.}, at: spin_lock
-> include/linux/spinlock.h:338 [inline]
-> ffffffff8a03aa18 (ima_keys_lock){+.?.}, at:
-> ima_process_queued_keys+0x4f/0x320
-> security/integrity/ima/ima_asymmetric_keys.c:144
-> {SOFTIRQ-ON-W} state was registered at:
->    lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4484
->    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->    _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
->    spin_lock include/linux/spinlock.h:338 [inline]
->    ima_queue_key security/integrity/ima/ima_asymmetric_keys.c:111 [inline]
->    ima_post_key_create_or_update+0x234/0x470
-> security/integrity/ima/ima_asymmetric_keys.c:194
->    key_create_or_update+0x6b8/0xcb0 security/keys/key.c:944
->    load_system_certificate_list+0x1ba/0x25e certs/system_keyring.c:161
->    do_one_initcall+0x120/0x820 init/main.c:940
->    do_initcall_level init/main.c:1014 [inline]
->    do_initcalls init/main.c:1022 [inline]
->    do_basic_setup init/main.c:1039 [inline]
->    kernel_init_freeable+0x4ca/0x570 init/main.c:1223
->    kernel_init+0x12/0x1bf init/main.c:1130
->    ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> irq event stamp: 319180
-> hardirqs last  enabled at (319180): [<ffffffff87ec3333>]
-> __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:168 [inline]
-> hardirqs last  enabled at (319180): [<ffffffff87ec3333>]
-> _raw_spin_unlock_irq+0x23/0x80 kernel/locking/spinlock.c:199
-> hardirqs last disabled at (319179): [<ffffffff87ec351a>]
-> __raw_spin_lock_irq include/linux/spinlock_api_smp.h:126 [inline]
-> hardirqs last disabled at (319179): [<ffffffff87ec351a>]
-> _raw_spin_lock_irq+0x3a/0x80 kernel/locking/spinlock.c:167
-> softirqs last  enabled at (316932): [<ffffffff882006cd>]
-> __do_softirq+0x6cd/0x98c kernel/softirq.c:319
-> softirqs last disabled at (319177): [<ffffffff8147800b>] invoke_softirq
-> kernel/softirq.c:373 [inline]
-> softirqs last disabled at (319177): [<ffffffff8147800b>]
-> irq_exit+0x19b/0x1e0 kernel/softirq.c:413
->
-> other info that might help us debug this:
->   Possible unsafe locking scenario:
->
->         CPU0
->         ----
->    lock(ima_keys_lock);
->    <Interrupt>
->      lock(ima_keys_lock);
->
->   *** DEADLOCK ***
->
-> 1 lock held by syz-executor.5/9563:
->   #0: ffffc90000007d50 ((&ima_key_queue_timer)){+.-.}, at: lockdep_copy_map
-> include/linux/lockdep.h:172 [inline]
->   #0: ffffc90000007d50 ((&ima_key_queue_timer)){+.-.}, at:
-> call_timer_fn+0xe0/0x780 kernel/time/timer.c:1394
->
-> stack backtrace:
-> CPU: 0 PID: 9563 Comm: syz-executor.5 Not tainted
-> 5.5.0-rc6-next-20200114-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   <IRQ>
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x197/0x210 lib/dump_stack.c:118
->   print_usage_bug.cold+0x327/0x378 kernel/locking/lockdep.c:3100
->   valid_state kernel/locking/lockdep.c:3111 [inline]
->   mark_lock_irq kernel/locking/lockdep.c:3308 [inline]
->   mark_lock+0xbb4/0x1220 kernel/locking/lockdep.c:3665
->   mark_usage kernel/locking/lockdep.c:3565 [inline]
->   __lock_acquire+0x1e8e/0x4a00 kernel/locking/lockdep.c:3908
->   lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4484
->   __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->   _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
->   spin_lock include/linux/spinlock.h:338 [inline]
->   ima_process_queued_keys+0x4f/0x320
-> security/integrity/ima/ima_asymmetric_keys.c:144
->   ima_timer_handler+0x15/0x20 security/integrity/ima/ima_asymmetric_keys.c:46
->   call_timer_fn+0x1ac/0x780 kernel/time/timer.c:1404
->   expire_timers kernel/time/timer.c:1449 [inline]
->   __run_timers kernel/time/timer.c:1773 [inline]
->   __run_timers kernel/time/timer.c:1740 [inline]
->   run_timer_softirq+0x6c3/0x1790 kernel/time/timer.c:1786
->   __do_softirq+0x262/0x98c kernel/softirq.c:292
->   invoke_softirq kernel/softirq.c:373 [inline]
->   irq_exit+0x19b/0x1e0 kernel/softirq.c:413
->   exiting_irq arch/x86/include/asm/apic.h:536 [inline]
->   smp_apic_timer_interrupt+0x1a3/0x610 arch/x86/kernel/apic/apic.c:1137
->   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
->   </IRQ>
-> RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:752
-> [inline]
-> RIP: 0010:slab_alloc mm/slab.c:3313 [inline]
-> RIP: 0010:kmem_cache_alloc+0x283/0x710 mm/slab.c:3484
-> Code: 7e 0f 85 dc fe ff ff e8 0c 3f 4d ff e9 d2 fe ff ff e8 31 aa c7 ff 48
-> 83 3d 21 84 00 08 00 0f 84 51 03 00 00 48 8b 7d d0 57 9d <0f> 1f 44 00 00
-> e9 68 fe ff ff 31 d2 be 35 02 00 00 48 c7 c7 2e a1
-> RSP: 0018:ffffc9000641fd18 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-> RAX: 0000000000000007 RBX: 0000000000000cc0 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000286
-> RBP: ffffc9000641fd80 R08: ffff8880543b22c0 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880aa5f8a80
-> R13: ffff8880aa5f8a80 R14: 0000000000000cc0 R15: ffff8880a8916600
->   getname_flags fs/namei.c:138 [inline]
->   getname_flags+0xd6/0x5b0 fs/namei.c:128
->   getname fs/namei.c:209 [inline]
->   user_path_mountpoint_at+0x29/0x50 fs/namei.c:2820
->   ksys_umount+0x164/0xef0 fs/namespace.c:1683
->   __do_sys_umount fs/namespace.c:1709 [inline]
->   __se_sys_umount fs/namespace.c:1707 [inline]
->   __x64_sys_umount+0x54/0x80 fs/namespace.c:1707
->   do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x45d977
-> Code: 64 89 04 25 d0 02 00 00 58 5f ff d0 48 89 c7 e8 2f be ff ff 66 2e 0f
-> 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 4d 8c fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffeff269038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-> RAX: ffffffffffffffda RBX: 000000000004d5f3 RCX: 000000000045d977
-> RDX: 000000000000000c RSI: 0000000000000002 RDI: 00007ffeff26a170
-> RBP: 000000000000003c R08: 0000000000000001 R09: 0000000001dc6940
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffeff26a170
-> R13: 00007ffeff26a160 R14: 0000000000000000 R15: 00007ffeff26a170
->
->
 > ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000486474059c19f4d7%40google.com.
+>   security/selinux/hooks.c | 15 +++++++++++++++
+>   1 file changed, 15 insertions(+)
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 0606e107fca3..244874b103ff 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2766,6 +2766,19 @@ static int selinux_mount(const char *dev_name,
+>   		return path_has_perm(cred, path, FILE__MOUNTON);
+>   }
+>   
+> +static int selinux_move_mount(const struct path *from_path,
+> +			      const struct path *to_path)
+> +{
+> +	const struct cred *cred = current_cred();
+> +
+> +	/*
+> +	 *  TBD: Check new FILESYSTEM__MOVE_MOUNT permission to
+> +	 *  from_path->dentry->s_sb and/or new DIR__MOVE_MOUNT
+> +	 *  permission to from_path?
+> +	 */
+> +	return path_has_perm(cred, to_path, FILE__MOUNTON);
+> +}
+> +
+>   static int selinux_umount(struct vfsmount *mnt, int flags)
+>   {
+>   	const struct cred *cred = current_cred();
+> @@ -6943,6 +6956,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+>   	LSM_HOOK_INIT(sb_set_mnt_opts, selinux_set_mnt_opts),
+>   	LSM_HOOK_INIT(sb_clone_mnt_opts, selinux_sb_clone_mnt_opts),
+>   
+> +	LSM_HOOK_INIT(move_mount, selinux_move_mount),
+> +
+>   	LSM_HOOK_INIT(dentry_init_security, selinux_dentry_init_security),
+>   	LSM_HOOK_INIT(dentry_create_files_as, selinux_dentry_create_files_as),
+>   
+> 
+
