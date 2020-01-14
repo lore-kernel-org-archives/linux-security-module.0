@@ -2,81 +2,138 @@ Return-Path: <SRS0=gHeC=3D=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 545A0C33CB7
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 16:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513B8C33C9E
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 16:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27C7524676
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 16:13:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21167214AF
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jan 2020 16:54:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PhSTT93H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbgANQMu (ORCPT
+        id S1728708AbgANQyQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jan 2020 11:12:50 -0500
-Received: from mga07.intel.com ([134.134.136.100]:58605 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729263AbgANQMt (ORCPT
+        Tue, 14 Jan 2020 11:54:16 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:44706 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728688AbgANQyQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:12:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 08:12:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,433,1571727600"; 
-   d="scan'208";a="217788065"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.255.37.212])
-  by orsmga008.jf.intel.com with ESMTP; 14 Jan 2020 08:12:45 -0800
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org,
-        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        "Suresh Siddha" <suresh.b.siddha@intel.com>
-Subject: Re: [PATCH v24 12/24] x86/sgx: Linux Enclave Driver
-Reply-To: haitao.huang@linux.intel.com
-References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
- <20191129231326.18076-13-jarkko.sakkinen@linux.intel.com>
-Date:   Tue, 14 Jan 2020 10:12:45 -0600
+        Tue, 14 Jan 2020 11:54:16 -0500
+Received: from [10.137.112.111] (unknown [131.107.147.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 3BAC320B4798;
+        Tue, 14 Jan 2020 08:54:15 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3BAC320B4798
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1579020855;
+        bh=Ucmyx/fCw1Ra6TuNnQWAln3iWLXAArkz0UXjKyjbhHU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PhSTT93HCojtCk5FZzm1Yc7XHAOgihAHujoeZCsaYCx1X16CwKuWE15Bo0fUYfo8j
+         VnaN0NIcMkJFAXXtMVzGndOX8BDm3aftJvmT05IJbrjT83QmV8dJUwzAk45yi1OQwS
+         imGeSlNiQFKg8kwZJmre3K4C/rXaYjZLiRHth2bo=
+Subject: Re: inconsistent lock state in ima_process_queued_keys
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     syzbot <syzbot+a4a503d7f37292ae1664@syzkaller.appspotmail.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <000000000000486474059c19f4d7@google.com>
+ <CACT4Y+av-ipjsdtsXs4d55w=inNHJqho3s3XKfU0Jo7f98yi8w@mail.gmail.com>
+ <1579013812.12230.21.camel@linux.ibm.com>
+ <CACT4Y+bgQVmibpeJgpwb_JTKW6jx3dzv0M-NGVat8qvJTo4X7A@mail.gmail.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <c98a54b7-ffc1-2ea5-5527-b0c7e381b613@linux.microsoft.com>
+Date:   Tue, 14 Jan 2020 08:54:32 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
+In-Reply-To: <CACT4Y+bgQVmibpeJgpwb_JTKW6jx3dzv0M-NGVat8qvJTo4X7A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.0ed4njqcwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <20191129231326.18076-13-jarkko.sakkinen@linux.intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 29 Nov 2019 17:13:14 -0600, Jarkko Sakkinen  
-<jarkko.sakkinen@linux.intel.com> wrote:
+I am investigating this.
 
-> +static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct  
-> *sigstruct,
-> +			 struct sgx_einittoken *token)
-> +{
-> +	u64 mrsigner[4];
-> +	int ret;
-> +	int i;
-> +	int j;
-> +
-> +	/* Check that the required attributes have been authorized. */
-> +	if (encl->secs_attributes & ~encl->allowed_attributes)
-> +		return -EINVAL;
-> +
+thanks,
+  -lakshmi
 
-EACCES to be more specific?
-
-Thanks
-Haitao
+On 1/14/2020 7:21 AM, Dmitry Vyukov wrote:
+> On Tue, Jan 14, 2020 at 3:57 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>>
+>> On Tue, 2020-01-14 at 14:58 +0100, Dmitry Vyukov wrote:
+>>> On Tue, Jan 14, 2020 at 2:56 PM syzbot
+>>> <syzbot+a4a503d7f37292ae1664@syzkaller.appspotmail.com> wrote:
+>>>>
+>>>> Hello,
+>>>>
+>>>> syzbot found the following crash on:
+>>>>
+>>>> HEAD commit:    1b851f98 Add linux-next specific files for 20200114
+>>>> git tree:       linux-next
+>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12bcbb25e00000
+>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=3e7d9cf7ebfa08ad
+>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=a4a503d7f37292ae1664
+>>>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>>>>
+>>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>>
+>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>>> Reported-by: syzbot+a4a503d7f37292ae1664@syzkaller.appspotmail.com
+>>>
+>>> +Lakshmi, you seem to have submitted a number of changes to this file recently.
+>>>
+>>> This completely breaks linux-next testing for us, every kernel crashes
+>>> a few minutes after boot.
+>>>
+>>> 2020/01/14 14:45:00 vm-26: crash: inconsistent lock state in
+>>> ima_process_queued_keys
+>>
+>> Yikes!  Are you running with an IMA policy?
+> 
+> I don't know.
+> 
+>>   I assume this is being
+>> caused by commit 8f5d2d06f217 ("IMA: Defined timer to free queued
+>> keys".  Does reverting it prevent this from happening?
+> 
+> The following seems to help, but don't know if it's the right fix or not.
+> 
+> diff --git a/security/integrity/ima/ima_asymmetric_keys.c
+> b/security/integrity/ima/ima_asymmetric_keys.c
+> index 61e478f9e8199..49d559501fe62 100644
+> --- a/security/integrity/ima/ima_asymmetric_keys.c
+> +++ b/security/integrity/ima/ima_asymmetric_keys.c
+> @@ -103,17 +103,18 @@ static bool ima_queue_key(struct key *keyring,
+> const void *payload,
+>   {
+>          bool queued = false;
+>          struct ima_key_entry *entry;
+> +       unsigned long flags;
+> 
+>          entry = ima_alloc_key_entry(keyring, payload, payload_len);
+>          if (!entry)
+>                  return false;
+> 
+> -       spin_lock(&ima_keys_lock);
+> +       spin_lock_irqsave(&ima_keys_lock, flags);
+>          if (!ima_process_keys) {
+>                  list_add_tail(&entry->list, &ima_keys);
+>                  queued = true;
+>          }
+> -       spin_unlock(&ima_keys_lock);
+> +       spin_unlock_irqrestore(&ima_keys_lock, flags);
+> 
+>          if (!queued)
+>                  ima_free_key_entry(entry);
+> 
