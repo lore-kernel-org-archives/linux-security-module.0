@@ -2,219 +2,187 @@ Return-Path: <SRS0=2BO2=3E=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3522AC33CB2
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 13:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43521C33CB3
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 13:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2AD22084D
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 13:32:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18E742465A
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 13:39:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HuSYNWEw"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="FOdR+NHL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729149AbgAONcw (ORCPT
+        id S1726418AbgAONju (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jan 2020 08:32:52 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:32512 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729423AbgAONcu (ORCPT
+        Wed, 15 Jan 2020 08:39:50 -0500
+Received: from UPDC19PA20.eemsg.mail.mil ([214.24.27.195]:3176 "EHLO
+        UPDC19PA20.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbgAONju (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:32:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579095169;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=utVDqKWa9w0MxbNr+//nh4VRwHhuaYt/H7MzHznHw2c=;
-        b=HuSYNWEwFntXJUigqVy5RbjDP/E9XoQ8fIBTTcgAtjB3+PRvM1cD46EgMDIFUzHby7vXcB
-        qtkn7lEgoVBHeaJX5dKQeBzv1m1WpUt6CSGtsWpmSIuf2wAULjkzyO3G5pgTtubBTvEQzL
-        Q0DUAi4lYIWpvJz7t4GJYepRd12fYYw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-205-Z5OoyMoLMUy-Z43N4Lej6A-1; Wed, 15 Jan 2020 08:32:45 -0500
-X-MC-Unique: Z5OoyMoLMUy-Z43N4Lej6A-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7F4DE801E72;
-        Wed, 15 Jan 2020 13:32:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C3C2660BF4;
-        Wed, 15 Jan 2020 13:32:40 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 14/14] smack: Implement the watch_key and
- post_notification hooks [ver #3]
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
-        raven@themaw.net, Christian Brauner <christian@brauner.io>,
-        dhowells@redhat.com, keyrings@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-block@vger.kernel.org,
+        Wed, 15 Jan 2020 08:39:50 -0500
+X-EEMSG-check-017: 46066112|UPDC19PA20_ESA_OUT02.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.70,322,1574121600"; 
+   d="scan'208";a="46066112"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UPDC19PA20.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 15 Jan 2020 13:39:46 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1579095586; x=1610631586;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=F4z64fqWGjBoGdnO/i75hVLP2EhpOVX6/eM5yN853IQ=;
+  b=FOdR+NHLaDbOasQ5P99g7U2a9gtPfBwOhDGTPJaOEQTwsyXN+Rlv99l6
+   0/6UgmgQR6Rhtff3XNNQ97Rr7lDjKwpSHJcCaNghqP96+ZdlGaYFBjhKt
+   c0JdSPlXqdzUGfLPjzTGJJTDIc2/7EJ9A572IlGwAi8hoSty2S2fiZShk
+   H75YQj2PSfxfViGOzIDWJdRe/wLwkI3rorQsqn5Q7XEu6Wh2oBRg3Vxtt
+   5ZnkB8EF7rKQc51xRnuJSXeGUp7XAnBScsUKmj5a3pfds4Em8Ix76pgPe
+   fjgsAJTqwtTX0vZj1fkHEWktjoEgTfmoXS1v/L6UVXZffyr1ebQ4RjLan
+   w==;
+X-IronPort-AV: E=Sophos;i="5.70,322,1574121600"; 
+   d="scan'208";a="37800870"
+IronPort-PHdr: =?us-ascii?q?9a23=3AUrDR9B0yn2zbrpDhsmDT+DRfVm0co7zxezQtwd?=
+ =?us-ascii?q?8ZsesSI//xwZ3uMQTl6Ol3ixeRBMOHsq4C07Gd7vqoGTRZp8rY6zZaKN0Efi?=
+ =?us-ascii?q?RGoP1epxYnDs+BBB+zB9/RRAt+Iv5/UkR49WqwK0lfFZW2TVTTpnqv8WxaQU?=
+ =?us-ascii?q?2nZkJ6KevvB4Hdkdm82fys9J3PeQVIgye2ba9vIBmsogjdq8YbjZF+Jqs/xR?=
+ =?us-ascii?q?fEomVEcPlSyW90OF6fhRnx6tq+8ZJ57yhcp/ct/NNcXKvneKg1UaZWByk8PW?=
+ =?us-ascii?q?Av483ruxjDTQ+R6XYZT24bjBlGDRXb4R/jRpv+vTf0ueR72CmBIM35Vqs0Vi?=
+ =?us-ascii?q?i476dqUxDnliEKPCMk/W7Ni8xwiKVboA+9pxF63oXZbp2ZOOZ4c6jAZt4RW3?=
+ =?us-ascii?q?ZPUdhNWCxAGoO8bpUAD+wdPeZDsoLxo0ICoQaiCQWwAe/izDFHhmXy3aYnze?=
+ =?us-ascii?q?ovFw/I1xEkE94XsHnZqND5OaEPWu630abI1y3OYe5I1zfz6IbGcR4vrv+DUr?=
+ =?us-ascii?q?1ybcXfxlIiFx/Gg1iKtYDpIz2Y2+YLvmOG7+RgT+Wvi2s/pg9svjig2N8sio?=
+ =?us-ascii?q?nXiYIT11vK6CB5z5wxJd28VkF6YcOvHZxLty6HLIt7Wd8iQmF0tyY6zb0Ko5?=
+ =?us-ascii?q?i7fDMQx5g9yB7fbOKHfpGO7xn+V+iROS91iG9qdb+wnRq/8VWsxvfiWsS7zl?=
+ =?us-ascii?q?pGtDdJn9/RvX4XzRPT8NKISv5l80ek3jaAyh7c5/lfIUAxiarbM5khwqMslp?=
+ =?us-ascii?q?YLsUTMACv2mELuga+KbEok4Omo6/n8Yrn8p5+cMYF0igblMqswhsOzG/g4Mw?=
+ =?us-ascii?q?gSUGib/uSwzrvj8lHiQLpWlPE2l6jZsJTCKcQaoK62HRNV354+5xuwADqqyt?=
+ =?us-ascii?q?QVkWQdIF5bdx+LkZLlN0zWLPD9F/i/glCskDlxx/DBO73sGo7NIWXYkLr6Yb?=
+ =?us-ascii?q?Z861JTyAo0zdxF4ZJUEasOLOj8Wk/2qtzUFgU5PBCsw+b7FNV90ZsTWGyRDa?=
+ =?us-ascii?q?+fMKPSrF6I6/kgI+iCYY8aojf9K/w/6/7hg345hEURcre00psKcHq4BOhpI1?=
+ =?us-ascii?q?2FYXrwhdcMCWUKvg0+TOzsklGCUzlTZ3aoUKI6/TE0FoSmAJzfSY+3hryB2y?=
+ =?us-ascii?q?G7HpxKaW9cDlCAC2vnd4KBW/0UciKdPtdhkiAYVbimU4IuyQuhtBTkxLtnNe?=
+ =?us-ascii?q?fU4TEXtZL529ho6e3TkQ899SZtA8uByW6BVX17nmQNRzUuxqBwvVR9ykuf0a?=
+ =?us-ascii?q?h/m/FXCcZc5+hXXQY6L5Lc1PB1C9DoVQLccNeJTEipQs+9DDEwSNIx38EBY0?=
+ =?us-ascii?q?JnF9q+iRDD2jKgA6UJmLyTGJw07qXc0mDzJ8Z4zHbGzrMhj1g9QsZUM22pnK?=
+ =?us-ascii?q?t/+BbSB4LTlEWZjamqf7wG3CHR7GeD0XaOvEZAXQ50UKXFW20fZ0TPodTi+E?=
+ =?us-ascii?q?zNU6KuCa4mMgtdyc+OM65Katr0glVbQPfsJs/TY3y+m2iuHxaE3LCMY5Twe2?=
+ =?us-ascii?q?UbwirdDFIIkwcJ/XaJLQI+HDuuo3rCDDxyElLie1js/vd6qHO6SE800g6LYl?=
+ =?us-ascii?q?Z/17q65BEVn+aQS/AN0bIevicutTF0EEy639LMBNqKvxBhc7lEYdMh/FdH0n?=
+ =?us-ascii?q?rUtw9jMZO+NKBtmlkecwN0v071yxp3Cp9Akc8vrHMr0QpyLLiU0FRbdzOXxZ?=
+ =?us-ascii?q?rwIKHYKnHu/BCzbK7bwkne38iQ+qcA9fQ4qlPjsBiqFkU86XVn1cda03+H65?=
+ =?us-ascii?q?XLFQYSVZXxUlgp+BRgvLHVeCo9557O1XJ2K6W0tCHN18grBOs90hygZctQML?=
+ =?us-ascii?q?uYFA/uFM0XH9CuJ/Y3m1itdR8EJPpd9LMwP8+/cvuG36mrPPx+kz68kWtH54?=
+ =?us-ascii?q?V9gQqw8H9DR+jIwpdN8fGR2ATPAyjxile8s+j4hoVNZDVUEXWijyXoGdgVLo?=
+ =?us-ascii?q?91fYBDK2CuKsusy9M205zqW3ge9lmjDlUd1cmBchOUaFr81gRUk08QpCr0tz?=
+ =?us-ascii?q?G/ymlPjzwxrqeZlBfLyuDmeQtPbnVHX0F+nFzsJs6ylNlcU0+2OVt63CC57F?=
+ =?us-ascii?q?r3kvAI7J90KHPeFAIRInn7?=
+X-IPAS-Result: =?us-ascii?q?A2DtAwBcFR9e/wHyM5BkDg4BAQEBAQcBAREBBAQBAYF7g?=
+ =?us-ascii?q?X2BbAEgEoQ5iQOGXAaBEiWJbpFJCQEBAQEBAQEBATcBAYRAAoIjOBMCEAEBA?=
+ =?us-ascii?q?QQBAQEBAQUDAQFshUOCOykBgnoBBSMPAQVBEAsYAgImAgJXBgEMCAEBgmM/g?=
+ =?us-ascii?q?lclpXmBMoVKg0uBPoEOKIwyeYEHgTgMA4IvLj6HWYJeBJARh1+XVIJCgkmTY?=
+ =?us-ascii?q?QYbgkeIA5AkjlydESKBWCsIAhgIIQ+DKE8YDYgNF41oWSMDjhABAQ?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 15 Jan 2020 13:39:45 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00FDcpOt046867;
+        Wed, 15 Jan 2020 08:38:55 -0500
+Subject: Re: Perf Data on LSM in v5.3
+To:     Wenhui Zhang <wenhui@gwmail.gwu.edu>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 15 Jan 2020 13:32:40 +0000
-Message-ID: <157909516006.20155.16914270465856385214.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
-References: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        SELinux <selinux@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        penguin-kernel@i-love.sakura.ne.jp,
+        Paul Moore <paul@paul-moore.com>
+References: <CAOSEQ1poqrUQdRc+ZLNbEoPqgd4MMomeYmefjca_mj-2zxrdUA@mail.gmail.com>
+ <7ebd42d8-5392-90f6-fc08-4364176cfbb6@schaufler-ca.com>
+ <CAOSEQ1p0q4gxVwN3MJkP=xxn4GUVaKsaArtQpxNy5rv7vYvVVw@mail.gmail.com>
+ <abd4dddb-8968-2655-3d80-ce446451b3de@canonical.com>
+ <CAOSEQ1rBu+wRzgk_Jh2RsZpf8Lv1+WUi-Pte-EsBMphnEr4SsQ@mail.gmail.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <e7cfc960-32fb-7712-b21c-37999cf29430@tycho.nsa.gov>
+Date:   Wed, 15 Jan 2020 08:40:19 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <CAOSEQ1rBu+wRzgk_Jh2RsZpf8Lv1+WUi-Pte-EsBMphnEr4SsQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Implement the watch_key security hook in Smack to make sure that a key
-grants the caller Read permission in order to set a watch on a key.
+On 1/14/20 8:00 PM, Wenhui Zhang wrote:
+> Hi, John:
+> 
+> It seems like, the MAC hooks are default to*return 0 or empty void 
+> hooks* if CONFIG_SECURITY, CONFIG_SECURITY_NETWORK , 
+> CONFIG_PAGE_TABLE_ISOLATION, CONFIG_SECURITY_INFINIBAND, 
+> CONFIG_SECURITY_PATH, CONFIG_INTEL_TXT,
+> CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR, 
+> CONFIG_HARDENED_USERCOPY, CONFIG_HARDENED_USERCOPY_FALLBACK *are NOT set*.
+> 
+> If HOOKs are "return 0 or empty void hooks", MAC is not enabled.
+> In runtime of fs-benchmarks, if CONFIG_DEFAULT_SECURITY_DAC=y, then 
+> capability is enabled.
+> 
+> Please correct me if I am wrong.
+> 
+> For the first test, wo-sec is tested with:
+> # CONFIG_SECURITY_DMESG_RESTRICT is not set
+> # CONFIG_SECURITY is not set
+> # CONFIG_SECURITYFS is not set
+> # CONFIG_PAGE_TABLE_ISOLATION is not set
+> # CONFIG_INTEL_TXT is not set
+> CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR=y
+> # CONFIG_HARDENED_USERCOPY is not set
+> CONFIG_FORTIFY_SOURCE=y
+> # CONFIG_STATIC_USERMODEHELPER is not set
+> CONFIG_DEFAULT_SECURITY_DAC=y
+> 
+> 
+> For the second test, w-sec is tested with:
+> # CONFIG_SECURITY_DMESG_RESTRICT is not set
+> CONFIG_SECURITY=y
+> CONFIG_SECURITYFS=y
+> # CONFIG_SECURITY_NETWORK is not set
+> CONFIG_PAGE_TABLE_ISOLATION=y
+> CONFIG_SECURITY_INFINIBAND=y
+> CONFIG_SECURITY_PATH=y
+> CONFIG_INTEL_TXT=y
+> CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR=y
+> CONFIG_HARDENED_USERCOPY=y
+> CONFIG_HARDENED_USERCOPY_FALLBACK=y
+> # CONFIG_HARDENED_USERCOPY_PAGESPAN is not set
+> CONFIG_FORTIFY_SOURCE=y
+> # CONFIG_STATIC_USERMODEHELPER is not set
+> # CONFIG_SECURITY_SMACK is not set
+> # CONFIG_SECURITY_TOMOYO is not set
+> # CONFIG_SECURITY_APPARMOR is not set
+> # CONFIG_SECURITY_LOADPIN is not set
+> # CONFIG_SECURITY_YAMA is not set
+> # CONFIG_SECURITY_SAFESETID is not set
+> # CONFIG_INTEGRITY is not set
+> CONFIG_DEFAULT_SECURITY_DAC=y
+> # 
+> CONFIG_LSM="yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo"
 
-Also implement the post_notification security hook to make sure that the
-notification source is granted Write permission by the watch queue.
+Your configs should only differ with respect to CONFIG_SECURITY* if you 
+want to evaluate LSM, SELinux, etc overheads.  PAGE_TABLE_ISOLATION, 
+INTEL_TXT, and HARDENED_USERCOPY are not relevant to LSM itself.
 
-For the moment, the watch_devices security hook is left unimplemented as
-it's not obvious what the object should be since the queue is global and
-didn't previously exist.
+Also, what benchmarks are you using?  Your own home-grown ones, a set of 
+open source standard benchmarks (if so, which ones?).  You should 
+include both micro and macro benchmarks in your suite.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
----
+How stable are your results?  What kind of variance / standard deviation 
+are you seeing?
 
- include/linux/lsm_audit.h  |    1 +
- security/smack/smack_lsm.c |   82 +++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 82 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-index 915330abf6e5..734d67889826 100644
---- a/include/linux/lsm_audit.h
-+++ b/include/linux/lsm_audit.h
-@@ -74,6 +74,7 @@ struct common_audit_data {
- #define LSM_AUDIT_DATA_FILE	12
- #define LSM_AUDIT_DATA_IBPKEY	13
- #define LSM_AUDIT_DATA_IBENDPORT 14
-+#define LSM_AUDIT_DATA_NOTIFICATION 15
- 	union 	{
- 		struct path path;
- 		struct dentry *dentry;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index ecea41ce919b..71b6f37d49c1 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4273,7 +4273,7 @@ static int smack_key_permission(key_ref_t key_ref,
- 	if (tkp == NULL)
- 		return -EACCES;
- 
--	if (smack_privileged_cred(CAP_MAC_OVERRIDE, cred))
-+	if (smack_privileged(CAP_MAC_OVERRIDE))
- 		return 0;
- 
- #ifdef CONFIG_AUDIT
-@@ -4319,8 +4319,81 @@ static int smack_key_getsecurity(struct key *key, char **_buffer)
- 	return length;
- }
- 
-+
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+/**
-+ * smack_watch_key - Smack access to watch a key for notifications.
-+ * @key: The key to be watched
-+ *
-+ * Return 0 if the @watch->cred has permission to read from the key object and
-+ * an error otherwise.
-+ */
-+static int smack_watch_key(struct key *key)
-+{
-+	struct smk_audit_info ad;
-+	struct smack_known *tkp = smk_of_current();
-+	int rc;
-+
-+	if (key == NULL)
-+		return -EINVAL;
-+	/*
-+	 * If the key hasn't been initialized give it access so that
-+	 * it may do so.
-+	 */
-+	if (key->security == NULL)
-+		return 0;
-+	/*
-+	 * This should not occur
-+	 */
-+	if (tkp == NULL)
-+		return -EACCES;
-+
-+	if (smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()))
-+		return 0;
-+
-+#ifdef CONFIG_AUDIT
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_KEY);
-+	ad.a.u.key_struct.key = key->serial;
-+	ad.a.u.key_struct.key_desc = key->description;
-+#endif
-+	rc = smk_access(tkp, key->security, MAY_READ, &ad);
-+	rc = smk_bu_note("key watch", tkp, key->security, MAY_READ, rc);
-+	return rc;
-+}
-+#endif /* CONFIG_KEY_NOTIFICATIONS */
- #endif /* CONFIG_KEYS */
- 
-+#ifdef CONFIG_WATCH_QUEUE
-+/**
-+ * smack_post_notification - Smack access to post a notification to a queue
-+ * @w_cred: The credentials of the watcher.
-+ * @cred: The credentials of the event source (may be NULL).
-+ * @n: The notification message to be posted.
-+ */
-+static int smack_post_notification(const struct cred *w_cred,
-+				   const struct cred *cred,
-+				   struct watch_notification *n)
-+{
-+	struct smk_audit_info ad;
-+	struct smack_known *subj, *obj;
-+	int rc;
-+
-+	/* Always let maintenance notifications through. */
-+	if (n->type == WATCH_TYPE_META)
-+		return 0;
-+
-+	if (!cred)
-+		return 0;
-+	subj = smk_of_task(smack_cred(cred));
-+	obj = smk_of_task(smack_cred(w_cred));
-+
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_NOTIFICATION);
-+	rc = smk_access(subj, obj, MAY_WRITE, &ad);
-+	rc = smk_bu_note("notification", subj, obj, MAY_WRITE, rc);
-+	return rc;
-+}
-+#endif /* CONFIG_WATCH_QUEUE */
-+
- /*
-  * Smack Audit hooks
-  *
-@@ -4709,8 +4782,15 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(key_free, smack_key_free),
- 	LSM_HOOK_INIT(key_permission, smack_key_permission),
- 	LSM_HOOK_INIT(key_getsecurity, smack_key_getsecurity),
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+	LSM_HOOK_INIT(watch_key, smack_watch_key),
-+#endif
- #endif /* CONFIG_KEYS */
- 
-+#ifdef CONFIG_WATCH_QUEUE
-+	LSM_HOOK_INIT(post_notification, smack_post_notification),
-+#endif
-+
-  /* Audit hooks */
- #ifdef CONFIG_AUDIT
- 	LSM_HOOK_INIT(audit_rule_init, smack_audit_rule_init),
-
+It is hard to get meaningful, reliable performance measurements so going 
+down this road is not to be done lightly.
