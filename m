@@ -2,115 +2,167 @@ Return-Path: <SRS0=2BO2=3E=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43521C33CB3
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 13:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0902C33CB2
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 13:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18E742465A
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 13:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 928022465A
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 13:58:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="FOdR+NHL"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="RleSTTdr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbgAONju (ORCPT
+        id S1729568AbgAON6u (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jan 2020 08:39:50 -0500
-Received: from UPDC19PA20.eemsg.mail.mil ([214.24.27.195]:3176 "EHLO
-        UPDC19PA20.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbgAONju (ORCPT
+        Wed, 15 Jan 2020 08:58:50 -0500
+Received: from UHIL19PA38.eemsg.mail.mil ([214.24.21.197]:42358 "EHLO
+        UHIL19PA38.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729174AbgAON6t (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:39:50 -0500
-X-EEMSG-check-017: 46066112|UPDC19PA20_ESA_OUT02.csd.disa.mil
+        Wed, 15 Jan 2020 08:58:49 -0500
+X-EEMSG-check-017: 66275669|UHIL19PA38_ESA_OUT04.csd.disa.mil
 X-IronPort-AV: E=Sophos;i="5.70,322,1574121600"; 
-   d="scan'208";a="46066112"
+   d="scan'208";a="66275669"
 Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by UPDC19PA20.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 15 Jan 2020 13:39:46 +0000
+  by UHIL19PA38.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 15 Jan 2020 13:58:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1579095586; x=1610631586;
+  s=tycho.nsa.gov; t=1579096709; x=1610632709;
   h=subject:to:cc:references:from:message-id:date:
    mime-version:in-reply-to:content-transfer-encoding;
-  bh=F4z64fqWGjBoGdnO/i75hVLP2EhpOVX6/eM5yN853IQ=;
-  b=FOdR+NHLaDbOasQ5P99g7U2a9gtPfBwOhDGTPJaOEQTwsyXN+Rlv99l6
-   0/6UgmgQR6Rhtff3XNNQ97Rr7lDjKwpSHJcCaNghqP96+ZdlGaYFBjhKt
-   c0JdSPlXqdzUGfLPjzTGJJTDIc2/7EJ9A572IlGwAi8hoSty2S2fiZShk
-   H75YQj2PSfxfViGOzIDWJdRe/wLwkI3rorQsqn5Q7XEu6Wh2oBRg3Vxtt
-   5ZnkB8EF7rKQc51xRnuJSXeGUp7XAnBScsUKmj5a3pfds4Em8Ix76pgPe
-   fjgsAJTqwtTX0vZj1fkHEWktjoEgTfmoXS1v/L6UVXZffyr1ebQ4RjLan
-   w==;
+  bh=QLClkBuRZv3qknPWa5cOYNHfW1CIQKXGZgBLhl3dFOw=;
+  b=RleSTTdreivtUy5OyEVSC+hQLu5xr2deWpZeFp9x66yJ8zzngtk3MPtA
+   kXINMWxI05Nj3IfigL3aunJBTFfneA0QrrFvXJdF661sUdy5myLemYcVF
+   ujlDTQRwTn8NRCmqfTU3650DwfFWQVlbwjWbVWmtwflfA2Ma7R2QgOZ09
+   U/exVW1CqXEp67EZwqO83x+coWyLYnp2m3mru0DEGZDIYUH5tyHpc09yS
+   +hkJLmDiyZrTNDuWiMSyNtRjs+1dRzeK1IPOheSkFtsbsMheTKeMSmFNO
+   7HC+SL8OF9rlxBEIwPUPFSz8VatllKndsxgX6Ni+y0ETTbfV58bc2iSqN
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.70,322,1574121600"; 
-   d="scan'208";a="37800870"
-IronPort-PHdr: =?us-ascii?q?9a23=3AUrDR9B0yn2zbrpDhsmDT+DRfVm0co7zxezQtwd?=
- =?us-ascii?q?8ZsesSI//xwZ3uMQTl6Ol3ixeRBMOHsq4C07Gd7vqoGTRZp8rY6zZaKN0Efi?=
- =?us-ascii?q?RGoP1epxYnDs+BBB+zB9/RRAt+Iv5/UkR49WqwK0lfFZW2TVTTpnqv8WxaQU?=
- =?us-ascii?q?2nZkJ6KevvB4Hdkdm82fys9J3PeQVIgye2ba9vIBmsogjdq8YbjZF+Jqs/xR?=
- =?us-ascii?q?fEomVEcPlSyW90OF6fhRnx6tq+8ZJ57yhcp/ct/NNcXKvneKg1UaZWByk8PW?=
- =?us-ascii?q?Av483ruxjDTQ+R6XYZT24bjBlGDRXb4R/jRpv+vTf0ueR72CmBIM35Vqs0Vi?=
- =?us-ascii?q?i476dqUxDnliEKPCMk/W7Ni8xwiKVboA+9pxF63oXZbp2ZOOZ4c6jAZt4RW3?=
- =?us-ascii?q?ZPUdhNWCxAGoO8bpUAD+wdPeZDsoLxo0ICoQaiCQWwAe/izDFHhmXy3aYnze?=
- =?us-ascii?q?ovFw/I1xEkE94XsHnZqND5OaEPWu630abI1y3OYe5I1zfz6IbGcR4vrv+DUr?=
- =?us-ascii?q?1ybcXfxlIiFx/Gg1iKtYDpIz2Y2+YLvmOG7+RgT+Wvi2s/pg9svjig2N8sio?=
- =?us-ascii?q?nXiYIT11vK6CB5z5wxJd28VkF6YcOvHZxLty6HLIt7Wd8iQmF0tyY6zb0Ko5?=
- =?us-ascii?q?i7fDMQx5g9yB7fbOKHfpGO7xn+V+iROS91iG9qdb+wnRq/8VWsxvfiWsS7zl?=
- =?us-ascii?q?pGtDdJn9/RvX4XzRPT8NKISv5l80ek3jaAyh7c5/lfIUAxiarbM5khwqMslp?=
- =?us-ascii?q?YLsUTMACv2mELuga+KbEok4Omo6/n8Yrn8p5+cMYF0igblMqswhsOzG/g4Mw?=
- =?us-ascii?q?gSUGib/uSwzrvj8lHiQLpWlPE2l6jZsJTCKcQaoK62HRNV354+5xuwADqqyt?=
- =?us-ascii?q?QVkWQdIF5bdx+LkZLlN0zWLPD9F/i/glCskDlxx/DBO73sGo7NIWXYkLr6Yb?=
- =?us-ascii?q?Z861JTyAo0zdxF4ZJUEasOLOj8Wk/2qtzUFgU5PBCsw+b7FNV90ZsTWGyRDa?=
- =?us-ascii?q?+fMKPSrF6I6/kgI+iCYY8aojf9K/w/6/7hg345hEURcre00psKcHq4BOhpI1?=
- =?us-ascii?q?2FYXrwhdcMCWUKvg0+TOzsklGCUzlTZ3aoUKI6/TE0FoSmAJzfSY+3hryB2y?=
- =?us-ascii?q?G7HpxKaW9cDlCAC2vnd4KBW/0UciKdPtdhkiAYVbimU4IuyQuhtBTkxLtnNe?=
- =?us-ascii?q?fU4TEXtZL529ho6e3TkQ899SZtA8uByW6BVX17nmQNRzUuxqBwvVR9ykuf0a?=
- =?us-ascii?q?h/m/FXCcZc5+hXXQY6L5Lc1PB1C9DoVQLccNeJTEipQs+9DDEwSNIx38EBY0?=
- =?us-ascii?q?JnF9q+iRDD2jKgA6UJmLyTGJw07qXc0mDzJ8Z4zHbGzrMhj1g9QsZUM22pnK?=
- =?us-ascii?q?t/+BbSB4LTlEWZjamqf7wG3CHR7GeD0XaOvEZAXQ50UKXFW20fZ0TPodTi+E?=
- =?us-ascii?q?zNU6KuCa4mMgtdyc+OM65Katr0glVbQPfsJs/TY3y+m2iuHxaE3LCMY5Twe2?=
- =?us-ascii?q?UbwirdDFIIkwcJ/XaJLQI+HDuuo3rCDDxyElLie1js/vd6qHO6SE800g6LYl?=
- =?us-ascii?q?Z/17q65BEVn+aQS/AN0bIevicutTF0EEy639LMBNqKvxBhc7lEYdMh/FdH0n?=
- =?us-ascii?q?rUtw9jMZO+NKBtmlkecwN0v071yxp3Cp9Akc8vrHMr0QpyLLiU0FRbdzOXxZ?=
- =?us-ascii?q?rwIKHYKnHu/BCzbK7bwkne38iQ+qcA9fQ4qlPjsBiqFkU86XVn1cda03+H65?=
- =?us-ascii?q?XLFQYSVZXxUlgp+BRgvLHVeCo9557O1XJ2K6W0tCHN18grBOs90hygZctQML?=
- =?us-ascii?q?uYFA/uFM0XH9CuJ/Y3m1itdR8EJPpd9LMwP8+/cvuG36mrPPx+kz68kWtH54?=
- =?us-ascii?q?V9gQqw8H9DR+jIwpdN8fGR2ATPAyjxile8s+j4hoVNZDVUEXWijyXoGdgVLo?=
- =?us-ascii?q?91fYBDK2CuKsusy9M205zqW3ge9lmjDlUd1cmBchOUaFr81gRUk08QpCr0tz?=
- =?us-ascii?q?G/ymlPjzwxrqeZlBfLyuDmeQtPbnVHX0F+nFzsJs6ylNlcU0+2OVt63CC57F?=
- =?us-ascii?q?r3kvAI7J90KHPeFAIRInn7?=
-X-IPAS-Result: =?us-ascii?q?A2DtAwBcFR9e/wHyM5BkDg4BAQEBAQcBAREBBAQBAYF7g?=
- =?us-ascii?q?X2BbAEgEoQ5iQOGXAaBEiWJbpFJCQEBAQEBAQEBATcBAYRAAoIjOBMCEAEBA?=
- =?us-ascii?q?QQBAQEBAQUDAQFshUOCOykBgnoBBSMPAQVBEAsYAgImAgJXBgEMCAEBgmM/g?=
- =?us-ascii?q?lclpXmBMoVKg0uBPoEOKIwyeYEHgTgMA4IvLj6HWYJeBJARh1+XVIJCgkmTY?=
- =?us-ascii?q?QYbgkeIA5AkjlydESKBWCsIAhgIIQ+DKE8YDYgNF41oWSMDjhABAQ?=
+   d="scan'208";a="37802240"
+IronPort-PHdr: =?us-ascii?q?9a23=3ALbayyxxrJHXV67TXCy+O+j09IxM/srCxBDY+r6?=
+ =?us-ascii?q?Qd0eweLfad9pjvdHbS+e9qxAeQG9mCt7Qc0KGL7eigATVGvc/a9ihaMdRlbF?=
+ =?us-ascii?q?wssY0uhQsuAcqIWwXQDcXBSGgEJvlET0Jv5HqhMEJYS47UblzWpWCuv3ZJQk?=
+ =?us-ascii?q?2sfQV6Kf7oFYHMks+5y/69+4HJYwVPmTGxfa5+IA+5oAnMucQam5duJ6g+xh?=
+ =?us-ascii?q?bJo3ZDZuBayX91KV6JkBvw+8m98IR//yhMvv4q6tJNX7j9c6kkV7JTES4oM3?=
+ =?us-ascii?q?oy5M3ltBnDSRWA634BWWgIkRRGHhbI4gjiUpj+riX1uOx92DKHPcLtVrA7RS?=
+ =?us-ascii?q?6i76ZwRxD2jioMKiM0/3vWisx0i6JbvQ6hqhliyIPafI2ZKPxzdb7GcNgEWW?=
+ =?us-ascii?q?ROQNpeVy1ZAoO9cYQPCfYBPf1FpIX5vlcCsAeyCRWpCO7pxDBInHv21rAk3e?=
+ =?us-ascii?q?onHw/NwQgsE8sAvXnQqdn4MroZX+Kow6nS1TjNcu1Y2Tn95obLfB4ur/6DUr?=
+ =?us-ascii?q?BsfsTe0kQvCwDIg0+MpYD5MT6Y1OIAuHWb4ep6UuKvjnYqpRxtojex3scsip?=
+ =?us-ascii?q?fGhoQIwV7Z8CV22oI1JdmmR097fNWpF4BQuDyBN4ZtXsMjQ31nuCY9yrEcv5?=
+ =?us-ascii?q?67ZzIFxI4oxx7YdfyKao6F6Q/tWuaWJDd3nnNleLSniha98Eig1u38VtSv31?=
+ =?us-ascii?q?pQsiVFldzMu3YQ3BLQ8siKUuZx80iu1DqV1w3f9/tILV47mKbFMZIt37g9nY?=
+ =?us-ascii?q?cJv0vZBC/5gkD2gbeTdkUj5+en9fzqYq7jpp+AL490jRz+Mrg2lsy/H+s4Ng?=
+ =?us-ascii?q?8OUnCH+eumzr3j/FD5QK5Qgv03lKnZvpfaJd8FqaGlGQNVzoYi5Aq/Dzehyt?=
+ =?us-ascii?q?gYm2UILElZdx6diojpOlXOLOj5Dfe5nVusjC9my+3JM7DuGJnALmXPnK3/cb?=
+ =?us-ascii?q?ty9UJQ0hc/wcha551OC7EBJPzzWlX2tNzdFhI5KBG7w/38BdVh1oIRRWKPAq?=
+ =?us-ascii?q?iDPKPUql+H/PgjI+aLZI8LoDr9MeQq5+byjX8lnl8QZbOm3Z8JZ3G3APtmIl?=
+ =?us-ascii?q?+VYWHwgtgbC2cKuRQ+TOvriF2eVj5TeW2/X6055j4hCYKmCZ3PSZyqgLyExC?=
+ =?us-ascii?q?27BIFZZnhaClCQFnflb4aEW+8XaCKTJM9hnTwEWKO9RI8hzxGuswr6y7t6Lu?=
+ =?us-ascii?q?rR4CEYsojj1Ndt7e3JiR4y7SB0D9ia02yVTWF0m2QIRyUs3KB+ukxw0VGD3r?=
+ =?us-ascii?q?J9g/NGFNxf/fRJUh01NZTE1ex1F8jyWh7dfteOUFumQcupDi8qTt0txN8OZE?=
+ =?us-ascii?q?V9Fs6+gRDDxSqqBLoVl72WBJwx6K7c2GLxJ8llwXbcyKYhl0UmQtdINWC+mq?=
+ =?us-ascii?q?Fw7RPTCJDJkkiCjKalaaQc0zTQ9GeNyWqBoltYXBdsXqrfR3wQekzWrdHh7E?=
+ =?us-ascii?q?PYU7CuEagnMhdGycOaLqtKa9vpjUhJRfv6O9TRfXixm2GuChaM3b6McoXqdH?=
+ =?us-ascii?q?sH3CnHC0gLjRoT/XCYOgg6HCuhpHjeDDN2H1L1f0zs6fV+qG+8TkIs1A6Kd0?=
+ =?us-ascii?q?Nh2qGr+h4am/OcUekf3rEatyc7rTV7AlK908jRC9qaqAprZL9cbs8l4FdbyW?=
+ =?us-ascii?q?LZsBRwPpihL6Bkm14ffB17v1jw2BprF4VAi8kqrG8qzQZrLKKY105Ody6c3Z?=
+ =?us-ascii?q?/uIbDXNGby8w61a6LM2VHRzsyW+qER5/Q8sVnjuxupFkU6+XV9z9ZVy2ec5o?=
+ =?us-ascii?q?nNDAcKS53xSVo3+gN5p77EeCk94Z3b1Xl2PamzqD/C1MojBPE5xRa4Y9dfLK?=
+ =?us-ascii?q?SEGRfvHMIAAciuKfIlm1yyYxIFO+BS+7A7MNm8d/Sd366qM/xsnDS4gmRb+I?=
+ =?us-ascii?q?p9yF6D9zJgSu7U2JYI2+2Y3guIVzjmllehtMH3lp5faD4OHmq/0y/kBItQZq?=
+ =?us-ascii?q?1veIYHE2CuI9e4xt9mnZ7iR2ZY9EK/B1MBwMKpfBqSYEb53QJMz0QXpnKmlD?=
+ =?us-ascii?q?C3zzxzlDEpoa6f0zLUz+v+cxoHP3ZBRHN+glf0PYi0k9caUVCwbwgriBuo/k?=
+ =?us-ascii?q?n6x69cpKRwK2ncX11EcDTxL2FnSqGwrKaNY9ZT6JM0tiVaSP+zYUqERb77vh?=
+ =?us-ascii?q?QVySXjE3FDyzwheDGqoIv2nxN1iG+GI3ZzqWDWecB0xRvF+NPcQvtR1CIcRC?=
+ =?us-ascii?q?ZkkTnXGkS8P96x8NWWjZjDtOa+V2K6W51cdinryoyAtC+l6mFwHRK/mPWzkM?=
+ =?us-ascii?q?X9EQcmyS/7y8VqVSLQoRb5YInr2KS3POZ8c0lnA1/87MV6GoVgnYcqmJ4Q3n?=
+ =?us-ascii?q?0ajI2P/XUbiWfzLclb2aXmYXURRT4L2d/V4BP52E1iNH2JwZn0WW6HwsR7et?=
+ =?us-ascii?q?m6ZH0Z2jgn48BLD6ee9KZEkjdtolqksQLRZuBwnjIcyfQy83MVnuAJuAUszi?=
+ =?us-ascii?q?WeBbAdAFNUPSrymBSU99q+trlYZH6zcbis00pzhcqhA6+cog5CQ3b5ZowvEj?=
+ =?us-ascii?q?Nw7sVlN1LM1Xzz6pzheNXKatITrBKUmQ/aj+dJMJIxiuYKhS1/NGL/p3Iq1+?=
+ =?us-ascii?q?07jRl00pG8p4eKMHli/KKjAh5fMz31Zt4T+jT3gaZZhMaW0JilHo99FTUTQJ?=
+ =?us-ascii?q?voUfWoHSoRtfv9OQaBCjw8p2yVGbXEBwOQ9EBmr3fXGZCxK36XPGUZzcllRB?=
+ =?us-ascii?q?SFP0xfhwYUXDo+np44CwCl39bhf11n5jAQ4F74pQBByuxzOBXlTmjfowKoYC?=
+ =?us-ascii?q?8uSJeDNBpW8h1C50DNPM2e7uJzBDpV/pO6owCXNmObYAFIB3kTWkOYH1DjIq?=
+ =?us-ascii?q?Wu5d7Y/uiDGOW+NfTObquVpOxeTfiIwZav04tg/zqWKsqPOXxiBeUh2kVfRX?=
+ =?us-ascii?q?B5B9jZmzIXRiwSiy3Nb9CUpBem9SJsqcy/6+7kWAf05YuSDbtSPs5i+xOojq?=
+ =?us-ascii?q?eZMe6fmiJ5JSxf1pMWyn/C0KIf00IKiyFyazmtFqwNujPXQ6LOhKBXCgUWZD?=
+ =?us-ascii?q?5pO8tW8a082w1NOcnVitPpzLJ4iOA6C0tdX1z7hs6pfdAKI326NF7fC0aLLq?=
+ =?us-ascii?q?qJJTLIw8H3eq68TbxQjONJtxy/tzabFFLjPjKemDbzSxCvMOZMjCeBMBxZoo?=
+ =?us-ascii?q?G9fQ5nCXL/Q9L+dh27LNh3gCUwwb01mnzKMmocPiJnc09XoL2f8zlYgu9hFG?=
+ =?us-ascii?q?Fa63plLPWLmzye7+bEKpYWsONrDj5omOJd5XQw06FV4z1cRPxphCvSqcZjo0?=
+ =?us-ascii?q?q7nemB0TdnXx1OqjFEhIKPo0puI7nW9p5FWXzc5hIC8X2QCwgWp9tiEtDvor?=
+ =?us-ascii?q?1QxcbJlKLvKTdC9cjY/c4bB8jSLsKILmYhPAHvGDHKEAsFVzmrNWfYh0xYjv?=
+ =?us-ascii?q?6e7GGarp8/qpL0gpoBVqdbVEApFvMdEkllBsENIJFtUT4/n76Ul9QE6ma5rB?=
+ =?us-ascii?q?nUXM9apIzIVuqOAfXzLzaUlbtEZxwWzr7jI4UcLIv71FF4Zll8govKB1DcXd?=
+ =?us-ascii?q?ZMoyd5dA87vF1N8GRiTm00w0/lchmi4GIXFfOvhh45kBZ+YeA0+Dfp5Fc3IU?=
+ =?us-ascii?q?DKqzUqnEYtntXlhGPZTDmkBaO9TYxXQxHovlI2LJT6XwFrJVm7mUF0OTaCXK?=
+ =?us-ascii?q?5Ylbx+cmF3jxH0tp5GGPoaRqpBNkw+3/aSMs403ExcpyPv/kpO4e/IGNM2jw?=
+ =?us-ascii?q?cxWYK9pHJHnQR4ZZg6IrKGd/kB9URZmq/b5nzg7es22gJLYh9WoW4=3D?=
+X-IPAS-Result: =?us-ascii?q?A2DfBgDBGB9e/wHyM5BkHgELHIN4gRhUASASKoQPiQOGX?=
+ =?us-ascii?q?AaBEiWJbo9igWcJAQEBAQEBAQEBLQoBAYRAAoIjOBMCEAEBAQQBAQEBAQUDA?=
+ =?us-ascii?q?QFshTcMgjspAYJ5AQEBAQIBIw8BBUEQCxgCAiYCAlcGDQgBARWCQgw/AYJWB?=
+ =?us-ascii?q?SAPpHl1gTKFSoNRgTgGgQ4ojDJ5gQeBEScMA4JdPoJLGQKBJySDKIJeBI0zU?=
+ =?us-ascii?q?4ILh1+XVIJCgkmEdIVDiSoGG4JHjEeLYJc5lDQigVgrCAIYCCEPgyhPGA2ID?=
+ =?us-ascii?q?ReDUIpxIwMwDY1TAQE?=
 Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 15 Jan 2020 13:39:45 +0000
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 15 Jan 2020 13:58:27 +0000
 Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00FDcpOt046867;
-        Wed, 15 Jan 2020 08:38:55 -0500
-Subject: Re: Perf Data on LSM in v5.3
-To:     Wenhui Zhang <wenhui@gwmail.gwu.edu>,
-        John Johansen <john.johansen@canonical.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org,
-        SELinux <selinux@vger.kernel.org>,
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00FDve9N056311;
+        Wed, 15 Jan 2020 08:57:44 -0500
+Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF (KRSI)
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     KP Singh <kpsingh@chromium.org>, James Morris <jmorris@namei.org>,
         Kees Cook <keescook@chromium.org>,
-        penguin-kernel@i-love.sakura.ne.jp,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
         Paul Moore <paul@paul-moore.com>
-References: <CAOSEQ1poqrUQdRc+ZLNbEoPqgd4MMomeYmefjca_mj-2zxrdUA@mail.gmail.com>
- <7ebd42d8-5392-90f6-fc08-4364176cfbb6@schaufler-ca.com>
- <CAOSEQ1p0q4gxVwN3MJkP=xxn4GUVaKsaArtQpxNy5rv7vYvVVw@mail.gmail.com>
- <abd4dddb-8968-2655-3d80-ce446451b3de@canonical.com>
- <CAOSEQ1rBu+wRzgk_Jh2RsZpf8Lv1+WUi-Pte-EsBMphnEr4SsQ@mail.gmail.com>
+References: <e59607cc-1a84-cbdd-5117-7efec86b11ff@tycho.nsa.gov>
+ <alpine.LRH.2.21.2001100437550.21515@namei.org>
+ <e90e03e3-b92f-6e1a-132f-1b648d9d2139@tycho.nsa.gov>
+ <alpine.LRH.2.21.2001100558550.31925@namei.org>
+ <20200109194302.GA85350@google.com>
+ <8e035f4d-5120-de6a-7ac8-a35841a92b8a@tycho.nsa.gov>
+ <20200110152758.GA260168@google.com>
+ <20200110175304.f3j4mtach4mccqtg@ast-mbp.dhcp.thefacebook.com>
+ <554ab109-0c23-aa82-779f-732d10f53d9c@tycho.nsa.gov>
+ <49a45583-b4fb-6353-a8d4-6f49287b26eb@tycho.nsa.gov>
+ <20200115024830.4ogd3mi5jy5hwr2v@ast-mbp.dhcp.thefacebook.com>
 From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <e7cfc960-32fb-7712-b21c-37999cf29430@tycho.nsa.gov>
-Date:   Wed, 15 Jan 2020 08:40:19 -0500
+Message-ID: <38a82df5-7610-efe1-d6cd-76f6f68c6110@tycho.nsa.gov>
+Date:   Wed, 15 Jan 2020 08:59:08 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <CAOSEQ1rBu+wRzgk_Jh2RsZpf8Lv1+WUi-Pte-EsBMphnEr4SsQ@mail.gmail.com>
+In-Reply-To: <20200115024830.4ogd3mi5jy5hwr2v@ast-mbp.dhcp.thefacebook.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -118,71 +170,151 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/14/20 8:00 PM, Wenhui Zhang wrote:
-> Hi, John:
+On 1/14/20 9:48 PM, Alexei Starovoitov wrote:
+> On Tue, Jan 14, 2020 at 12:42:22PM -0500, Stephen Smalley wrote:
+>> On 1/14/20 11:54 AM, Stephen Smalley wrote:
+>>> On 1/10/20 12:53 PM, Alexei Starovoitov wrote:
+>>>> On Fri, Jan 10, 2020 at 04:27:58PM +0100, KP Singh wrote:
+>>>>> On 09-Jan 14:47, Stephen Smalley wrote:
+>>>>>> On 1/9/20 2:43 PM, KP Singh wrote:
+>>>>>>> On 10-Jan 06:07, James Morris wrote:
+>>>>>>>> On Thu, 9 Jan 2020, Stephen Smalley wrote:
+>>>>>>>>
+>>>>>>>>> On 1/9/20 1:11 PM, James Morris wrote:
+>>>>>>>>>> On Wed, 8 Jan 2020, Stephen Smalley wrote:
+>>>>>>>>>>
+>>>>>>>>>>> The cover letter subject line and the
+>>>>>>>>>>> Kconfig help text refer to it as a
+>>>>>>>>>>> BPF-based "MAC and Audit policy".  It
+>>>>>>>>>>> has an enforce config option that
+>>>>>>>>>>> enables the bpf programs to deny access,
+>>>>>>>>>>> providing access control. IIRC,
+>>>>>>>>>>> in
+>>>>>>>>>>> the earlier discussion threads, the BPF
+>>>>>>>>>>> maintainers suggested that Smack
+>>>>>>>>>>> and
+>>>>>>>>>>> other LSMs could be entirely
+>>>>>>>>>>> re-implemented via it in the future, and
+>>>>>>>>>>> that
+>>>>>>>>>>> such an implementation would be more optimal.
+>>>>>>>>>>
+>>>>>>>>>> In this case, the eBPF code is similar to a
+>>>>>>>>>> kernel module, rather than a
+>>>>>>>>>> loadable policy file.  It's a loadable
+>>>>>>>>>> mechanism, rather than a policy, in
+>>>>>>>>>> my view.
+>>>>>>>>>
+>>>>>>>>> I thought you frowned on dynamically loadable
+>>>>>>>>> LSMs for both security and
+>>>>>>>>> correctness reasons?
+>>>>>>>
+>>>>>>> Based on the feedback from the lists we've updated the design for v2.
+>>>>>>>
+>>>>>>> In v2, LSM hook callbacks are allocated dynamically using BPF
+>>>>>>> trampolines, appended to a separate security_hook_heads and run
+>>>>>>> only after the statically allocated hooks.
+>>>>>>>
+>>>>>>> The security_hook_heads for all the other LSMs (SELinux, AppArmor etc)
+>>>>>>> still remains __lsm_ro_after_init and cannot be modified. We are still
+>>>>>>> working on v2 (not ready for review yet) but the general idea can be
+>>>>>>> seen here:
+>>>>>>>
+>>>>>>>       https://github.com/sinkap/linux-krsi/blob/patch/v1/trampoline_prototype/security/bpf/lsm.c
+>>>>>>>
+>>>>>>>
+>>>>>>>>
+>>>>>>>> Evaluating the security impact of this is the next
+>>>>>>>> step. My understanding
+>>>>>>>> is that eBPF via BTF is constrained to read only access to hook
+>>>>>>>> parameters, and that its behavior would be entirely restrictive.
+>>>>>>>>
+>>>>>>>> I'd like to understand the security impact more
+>>>>>>>> fully, though.  Can the
+>>>>>>>> eBPF code make arbitrary writes to the kernel, or
+>>>>>>>> read anything other than
+>>>>>>>> the correctly bounded LSM hook parameters?
+>>>>>>>>
+>>>>>>>
+>>>>>>> As mentioned, the BPF verifier does not allow writes to BTF types.
+>>>>>>>
+>>>>>>>>> And a traditional security module would necessarily fall
+>>>>>>>>> under GPL; is the eBPF code required to be
+>>>>>>>>> likewise?  If not, KRSI is a
+>>>>>>>>> gateway for proprietary LSMs...
+>>>>>>>>
+>>>>>>>> Right, we do not want this to be a GPL bypass.
+>>>>>>>
+>>>>>>> This is not intended to be a GPL bypass and the BPF verifier checks
+>>>>>>> for license compatibility of the loaded program with GPL.
+>>>>>>
+>>>>>> IIUC, it checks that the program is GPL compatible if it
+>>>>>> uses a function
+>>>>>> marked GPL-only.  But what specifically is marked GPL-only
+>>>>>> that is required
+>>>>>> for eBPF programs using KRSI?
+>>>>>
+>>>>> Good point! If no-one objects, I can add it to the BPF_PROG_TYPE_LSM
+>>>>> specific verification for the v2 of the patch-set which would require
+>>>>> all BPF-LSM programs to be GPL.
+>>>>
+>>>> I don't think it's a good idea to enforce license on the program.
+>>>> The kernel doesn't do it for modules.
+>>>> For years all of BPF tracing progs were GPL because they have to use
+>>>> GPL-ed helpers to do anything meaningful.
+>>>> So for KRSI just make sure that all helpers are GPL-ed as well.
+>>>
+>>> IIUC, the example eBPF code included in this patch series showed a
+>>> program that used a GPL-only helper for the purpose of reporting event
+>>> output to userspace. But it could have just as easily omitted the use of
+>>> that helper and still implemented its own arbitrary access control model
+>>> on the LSM hooks to which it attached.  It seems like the question is
+>>> whether the kernel developers are ok with exposing the entire LSM hook
+>>> interface and all the associated data structures to non-GPLd code,
+>>> irrespective of what helpers it may or may not use.
+>>
+>> Also, to be clear, while kernel modules aren't necessarily GPL, prior to
+>> this patch series, all Linux security modules were necessarily GPLd in order
+>> to use the LSM interface.
 > 
-> It seems like, the MAC hooks are default to*return 0 or empty void 
-> hooks* if CONFIG_SECURITY, CONFIG_SECURITY_NETWORK , 
-> CONFIG_PAGE_TABLE_ISOLATION, CONFIG_SECURITY_INFINIBAND, 
-> CONFIG_SECURITY_PATH, CONFIG_INTEL_TXT,
-> CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR, 
-> CONFIG_HARDENED_USERCOPY, CONFIG_HARDENED_USERCOPY_FALLBACK *are NOT set*.
-> 
-> If HOOKs are "return 0 or empty void hooks", MAC is not enabled.
-> In runtime of fs-benchmarks, if CONFIG_DEFAULT_SECURITY_DAC=y, then 
-> capability is enabled.
-> 
-> Please correct me if I am wrong.
-> 
-> For the first test, wo-sec is tested with:
-> # CONFIG_SECURITY_DMESG_RESTRICT is not set
-> # CONFIG_SECURITY is not set
-> # CONFIG_SECURITYFS is not set
-> # CONFIG_PAGE_TABLE_ISOLATION is not set
-> # CONFIG_INTEL_TXT is not set
-> CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR=y
-> # CONFIG_HARDENED_USERCOPY is not set
-> CONFIG_FORTIFY_SOURCE=y
-> # CONFIG_STATIC_USERMODEHELPER is not set
-> CONFIG_DEFAULT_SECURITY_DAC=y
-> 
-> 
-> For the second test, w-sec is tested with:
-> # CONFIG_SECURITY_DMESG_RESTRICT is not set
-> CONFIG_SECURITY=y
-> CONFIG_SECURITYFS=y
-> # CONFIG_SECURITY_NETWORK is not set
-> CONFIG_PAGE_TABLE_ISOLATION=y
-> CONFIG_SECURITY_INFINIBAND=y
-> CONFIG_SECURITY_PATH=y
-> CONFIG_INTEL_TXT=y
-> CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR=y
-> CONFIG_HARDENED_USERCOPY=y
-> CONFIG_HARDENED_USERCOPY_FALLBACK=y
-> # CONFIG_HARDENED_USERCOPY_PAGESPAN is not set
-> CONFIG_FORTIFY_SOURCE=y
-> # CONFIG_STATIC_USERMODEHELPER is not set
-> # CONFIG_SECURITY_SMACK is not set
-> # CONFIG_SECURITY_TOMOYO is not set
-> # CONFIG_SECURITY_APPARMOR is not set
-> # CONFIG_SECURITY_LOADPIN is not set
-> # CONFIG_SECURITY_YAMA is not set
-> # CONFIG_SECURITY_SAFESETID is not set
-> # CONFIG_INTEGRITY is not set
-> CONFIG_DEFAULT_SECURITY_DAC=y
-> # 
-> CONFIG_LSM="yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo"
+> Because they use securityfs_create_file() GPL-ed api, right?
+> but not because module license is enforced.
 
-Your configs should only differ with respect to CONFIG_SECURITY* if you 
-want to evaluate LSM, SELinux, etc overheads.  PAGE_TABLE_ISOLATION, 
-INTEL_TXT, and HARDENED_USERCOPY are not relevant to LSM itself.
+No, securityfs was a later addition and is not required by all LSMs 
+either.  Originally LSMs had to register their hooks via 
+register_security(), which was intentionally EXPORT_SYMBOL_GPL() to 
+avoid exposing the LSM interface to non-GPLd modules because there were 
+significant concerns with doing so when LSM was first merged.  Then in 
+20510f2f4e2dabb0ff6c13901807627ec9452f98 ("security: Convert LSM into a 
+static interface"), the ability for loadable modules to use 
+register_security() at all was removed, limiting its use to built-in 
+modules.  In commit b1d9e6b0646d0e5ee5d9050bd236b6c65d66faef ("LSM: 
+Switch to lists of hooks"), register_security() was replaced by 
+security_add_hooks(), but this was likewise not exported for use by 
+modules and could only be used by built-in code.  The bpf LSM is 
+providing a shim that allows eBPF code to attach to these hooks that 
+would otherwise not be exposed to non-GPLd code, so if the bpf LSM does 
+not require the eBPF programs to also be GPLd, then that is a change 
+from current practice.
 
-Also, what benchmarks are you using?  Your own home-grown ones, a set of 
-open source standard benchmarks (if so, which ones?).  You should 
-include both micro and macro benchmarks in your suite.
+>> So allowing non-GPL eBPF-based LSMs would be a
+>> change.
+> 
+> I don't see it this way. seccomp progs technically unlicensed. Yet they can
+> disallow any syscall. Primitive KRSI progs like
+> int bpf-prog(void*) { return REJECT; }
+> would be able to do selectively disable a syscall with an overhead acceptable
+> in production systems (unlike seccomp). I want this use case to be available to
+> people. It's a bait, because to do real progs people would need to GPL them.
+> Key helpers bpf_perf_event_output, bpf_ktime_get_ns, bpf_trace_printk are all
+> GPL-ed. It may look that most networking helpers are not-GPL, but real life is
+> different. To debug programs bpf_trace_printk() is necessary. To have
+> communication with user space bpf_perf_event_output() is necssary. To measure
+> anything or implement timestamps bpf_ktime_get_ns() is necessary. So today all
+> meaninful bpf programs are GPL. Those that are not GPL probably exist, but
+> they're toy programs. Hence I have zero concerns about GPL bypass coming from
+> tracing, networking, and, in the future, KRSI progs too.
 
-How stable are your results?  What kind of variance / standard deviation 
-are you seeing?
-
-It is hard to get meaningful, reliable performance measurements so going 
-down this road is not to be done lightly.
+You have more confidence than I do about that.  I would anticipate 
+developers of out-of-tree LSMs latching onto this bpf LSM and using it 
+to avoid GPL.  I don't see that any of those helpers are truly needed to 
+implement an access control model.
