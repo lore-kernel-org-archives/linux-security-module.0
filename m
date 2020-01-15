@@ -2,238 +2,378 @@ Return-Path: <SRS0=2BO2=3E=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1964CC33C9E
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 02:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A27DC33CB1
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 13:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0D7C24679
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 02:48:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 056972077B
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 13:30:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSf0U8Oq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fkVzISqp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbgAOCsh (ORCPT
+        id S1726472AbgAONat (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jan 2020 21:48:37 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:39142 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728862AbgAOCsh (ORCPT
+        Wed, 15 Jan 2020 08:30:49 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28104 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726483AbgAONar (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jan 2020 21:48:37 -0500
-Received: by mail-pj1-f68.google.com with SMTP id e11so5374786pjt.4;
-        Tue, 14 Jan 2020 18:48:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Sg5fwXgqypeNGg0cxshxZC3htmfkTgOsTSwPjyO8KRQ=;
-        b=jSf0U8Oq1NHwfHbPcxjHWZJDCQiKzMJlXB+44XEvkicd1UEelGtlppjRzgl8aisFta
-         zoNAal11qtUewecWoFqR+G1RykswiP/j247XR5CRkKlbvo29vgfVytKJmcVvLBbwn7K+
-         NJaEjUoawr6RgKbb1dt9AwhGTwO8ur2rR0F57JS3AwJAill2h/f7MtbYEP8g6Ny13Gi4
-         h2pFRz2rXoHjVirsMKzlPS1hDtTIvZhw4TTJDReo9zR4hI7VFIQnsitcm3rDx+lNxWo+
-         3Y4ljlWjl1cy9hhqOp/wTv5bQCZp360eAfN0pB6Ee3QgwANxHA2zwn+E8U6Y5Q3RZGVB
-         tiiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Sg5fwXgqypeNGg0cxshxZC3htmfkTgOsTSwPjyO8KRQ=;
-        b=TfTCNCk0ACDFuntim3ysvnzGsgbMhQok/4ROxOAPU/2FGLWMHBA9XiJ+k90zcN+ENe
-         4cYQvNoZ9ahA4P9xEkCIxV6HsbOCBMRI1rg012I53gGrrHnwbZRbrXxx5TzoR9mWYjpm
-         KVAJYvTuAWWaffmcdOy25GK6CAomNVxdSX3DU2Ee+pOzuK69oBbWQgouDJT7V8frBFRZ
-         uqpd3lN0HOuHeJ/rMfZR3DE20OFelW9pHQShEJgwanTZyf0bEFH1nCTqF0gkymxXWkh3
-         fZvBncLdqgHeGoOTNBLE+XDqYSjZTmTTzVjslu+v7BIaHVvqKD0FlnMyQ0/3EqcfRJmq
-         Li8Q==
-X-Gm-Message-State: APjAAAW1f71bpB6+1hTX+3g++WA/kkcCOompec+O95hOXCCNqhO/3uqB
-        7Bi8E/Laq46UefxoZiRwSd8=
-X-Google-Smtp-Source: APXvYqzprJY/PXBVzlf3V6acMBTwUyrkNwszghAXBDVHCbqurohXr5NrtphwnRX50hsSrnYsWGJPsQ==
-X-Received: by 2002:a17:90b:f0f:: with SMTP id br15mr32499554pjb.138.1579056516270;
-        Tue, 14 Jan 2020 18:48:36 -0800 (PST)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::cae7])
-        by smtp.gmail.com with ESMTPSA id c1sm20049859pfa.51.2020.01.14.18.48.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Jan 2020 18:48:35 -0800 (PST)
-Date:   Tue, 14 Jan 2020 18:48:32 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     KP Singh <kpsingh@chromium.org>, James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        Wed, 15 Jan 2020 08:30:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579095045;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=dSuwXOkLNc2+9CyhIpo9YFvHDt0jRh9GE8hPRzqPdYM=;
+        b=fkVzISqpU3byc3/4wB74jubV1wIRdWezhku1IJggvIw6J0TLmP1ugy/F0SeXMCHPCMlcqN
+        +1+EMpvrTFuJn1IPt9LRPuYKiNwa5f1gODyD6FHRH9/zvXOqBBqyJrrejSn+kpHbW9NUWz
+        LBXQhTVySy88pnhTGTfJwCweefflIas=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-246-yUq0FqlTM4qAN6FBI1N9QA-1; Wed, 15 Jan 2020 08:30:42 -0500
+X-MC-Unique: yUq0FqlTM4qAN6FBI1N9QA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D4ED36A2B2;
+        Wed, 15 Jan 2020 13:30:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 853AD19757;
+        Wed, 15 Jan 2020 13:30:36 +0000 (UTC)
+Subject: [RFC PATCH 00/14] pipe: Keyrings,
+ Block and USB notifications [ver #3]
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
-        Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF (KRSI)
-Message-ID: <20200115024830.4ogd3mi5jy5hwr2v@ast-mbp.dhcp.thefacebook.com>
-References: <e59607cc-1a84-cbdd-5117-7efec86b11ff@tycho.nsa.gov>
- <alpine.LRH.2.21.2001100437550.21515@namei.org>
- <e90e03e3-b92f-6e1a-132f-1b648d9d2139@tycho.nsa.gov>
- <alpine.LRH.2.21.2001100558550.31925@namei.org>
- <20200109194302.GA85350@google.com>
- <8e035f4d-5120-de6a-7ac8-a35841a92b8a@tycho.nsa.gov>
- <20200110152758.GA260168@google.com>
- <20200110175304.f3j4mtach4mccqtg@ast-mbp.dhcp.thefacebook.com>
- <554ab109-0c23-aa82-779f-732d10f53d9c@tycho.nsa.gov>
- <49a45583-b4fb-6353-a8d4-6f49287b26eb@tycho.nsa.gov>
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
+        raven@themaw.net, Christian Brauner <christian@brauner.io>,
+        dhowells@redhat.com, keyrings@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 15 Jan 2020 13:30:35 +0000
+Message-ID: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <49a45583-b4fb-6353-a8d4-6f49287b26eb@tycho.nsa.gov>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 14, 2020 at 12:42:22PM -0500, Stephen Smalley wrote:
-> On 1/14/20 11:54 AM, Stephen Smalley wrote:
-> > On 1/10/20 12:53 PM, Alexei Starovoitov wrote:
-> > > On Fri, Jan 10, 2020 at 04:27:58PM +0100, KP Singh wrote:
-> > > > On 09-Jan 14:47, Stephen Smalley wrote:
-> > > > > On 1/9/20 2:43 PM, KP Singh wrote:
-> > > > > > On 10-Jan 06:07, James Morris wrote:
-> > > > > > > On Thu, 9 Jan 2020, Stephen Smalley wrote:
-> > > > > > > 
-> > > > > > > > On 1/9/20 1:11 PM, James Morris wrote:
-> > > > > > > > > On Wed, 8 Jan 2020, Stephen Smalley wrote:
-> > > > > > > > > 
-> > > > > > > > > > The cover letter subject line and the
-> > > > > > > > > > Kconfig help text refer to it as a
-> > > > > > > > > > BPF-based "MAC and Audit policy".  It
-> > > > > > > > > > has an enforce config option that
-> > > > > > > > > > enables the bpf programs to deny access,
-> > > > > > > > > > providing access control. IIRC,
-> > > > > > > > > > in
-> > > > > > > > > > the earlier discussion threads, the BPF
-> > > > > > > > > > maintainers suggested that Smack
-> > > > > > > > > > and
-> > > > > > > > > > other LSMs could be entirely
-> > > > > > > > > > re-implemented via it in the future, and
-> > > > > > > > > > that
-> > > > > > > > > > such an implementation would be more optimal.
-> > > > > > > > > 
-> > > > > > > > > In this case, the eBPF code is similar to a
-> > > > > > > > > kernel module, rather than a
-> > > > > > > > > loadable policy file.  It's a loadable
-> > > > > > > > > mechanism, rather than a policy, in
-> > > > > > > > > my view.
-> > > > > > > > 
-> > > > > > > > I thought you frowned on dynamically loadable
-> > > > > > > > LSMs for both security and
-> > > > > > > > correctness reasons?
-> > > > > > 
-> > > > > > Based on the feedback from the lists we've updated the design for v2.
-> > > > > > 
-> > > > > > In v2, LSM hook callbacks are allocated dynamically using BPF
-> > > > > > trampolines, appended to a separate security_hook_heads and run
-> > > > > > only after the statically allocated hooks.
-> > > > > > 
-> > > > > > The security_hook_heads for all the other LSMs (SELinux, AppArmor etc)
-> > > > > > still remains __lsm_ro_after_init and cannot be modified. We are still
-> > > > > > working on v2 (not ready for review yet) but the general idea can be
-> > > > > > seen here:
-> > > > > > 
-> > > > > >      https://github.com/sinkap/linux-krsi/blob/patch/v1/trampoline_prototype/security/bpf/lsm.c
-> > > > > > 
-> > > > > > 
-> > > > > > > 
-> > > > > > > Evaluating the security impact of this is the next
-> > > > > > > step. My understanding
-> > > > > > > is that eBPF via BTF is constrained to read only access to hook
-> > > > > > > parameters, and that its behavior would be entirely restrictive.
-> > > > > > > 
-> > > > > > > I'd like to understand the security impact more
-> > > > > > > fully, though.  Can the
-> > > > > > > eBPF code make arbitrary writes to the kernel, or
-> > > > > > > read anything other than
-> > > > > > > the correctly bounded LSM hook parameters?
-> > > > > > > 
-> > > > > > 
-> > > > > > As mentioned, the BPF verifier does not allow writes to BTF types.
-> > > > > > 
-> > > > > > > > And a traditional security module would necessarily fall
-> > > > > > > > under GPL; is the eBPF code required to be
-> > > > > > > > likewise?  If not, KRSI is a
-> > > > > > > > gateway for proprietary LSMs...
-> > > > > > > 
-> > > > > > > Right, we do not want this to be a GPL bypass.
-> > > > > > 
-> > > > > > This is not intended to be a GPL bypass and the BPF verifier checks
-> > > > > > for license compatibility of the loaded program with GPL.
-> > > > > 
-> > > > > IIUC, it checks that the program is GPL compatible if it
-> > > > > uses a function
-> > > > > marked GPL-only.  But what specifically is marked GPL-only
-> > > > > that is required
-> > > > > for eBPF programs using KRSI?
-> > > > 
-> > > > Good point! If no-one objects, I can add it to the BPF_PROG_TYPE_LSM
-> > > > specific verification for the v2 of the patch-set which would require
-> > > > all BPF-LSM programs to be GPL.
-> > > 
-> > > I don't think it's a good idea to enforce license on the program.
-> > > The kernel doesn't do it for modules.
-> > > For years all of BPF tracing progs were GPL because they have to use
-> > > GPL-ed helpers to do anything meaningful.
-> > > So for KRSI just make sure that all helpers are GPL-ed as well.
-> > 
-> > IIUC, the example eBPF code included in this patch series showed a
-> > program that used a GPL-only helper for the purpose of reporting event
-> > output to userspace. But it could have just as easily omitted the use of
-> > that helper and still implemented its own arbitrary access control model
-> > on the LSM hooks to which it attached.  It seems like the question is
-> > whether the kernel developers are ok with exposing the entire LSM hook
-> > interface and all the associated data structures to non-GPLd code,
-> > irrespective of what helpers it may or may not use.
-> 
-> Also, to be clear, while kernel modules aren't necessarily GPL, prior to
-> this patch series, all Linux security modules were necessarily GPLd in order
-> to use the LSM interface. 
 
-Because they use securityfs_create_file() GPL-ed api, right?
-but not because module license is enforced.
+Here's a set of patches to add a general notification queue concept and to
+add event sources such as:
 
-> So allowing non-GPL eBPF-based LSMs would be a
-> change.
+ (1) Keys/keyrings, such as linking and unlinking keys and changing their
+     attributes.
 
-I don't see it this way. seccomp progs technically unlicensed. Yet they can
-disallow any syscall. Primitive KRSI progs like
-int bpf-prog(void*) { return REJECT; }
-would be able to do selectively disable a syscall with an overhead acceptable
-in production systems (unlike seccomp). I want this use case to be available to
-people. It's a bait, because to do real progs people would need to GPL them.
-Key helpers bpf_perf_event_output, bpf_ktime_get_ns, bpf_trace_printk are all
-GPL-ed. It may look that most networking helpers are not-GPL, but real life is
-different. To debug programs bpf_trace_printk() is necessary. To have
-communication with user space bpf_perf_event_output() is necssary. To measure
-anything or implement timestamps bpf_ktime_get_ns() is necessary. So today all
-meaninful bpf programs are GPL. Those that are not GPL probably exist, but
-they're toy programs. Hence I have zero concerns about GPL bypass coming from
-tracing, networking, and, in the future, KRSI progs too.
+ (2) General device events (single common queue) including:
+
+     - Block layer events, such as device errors
+
+     - USB subsystem events, such as device attach/remove, device reset,
+       device errors.
+
+I have patches for adding superblock and mount topology watches also,
+though those are not in this set as there are other dependencies.
+
+LSM hooks are included:
+
+ (1) A set of hooks are provided that allow an LSM to rule on whether or
+     not a watch may be set.  Each of these hooks takes a different
+     "watched object" parameter, so they're not really shareable.  The LSM
+     should use current's credentials.  [Wanted by SELinux & Smack]
+
+ (2) A hook is provided to allow an LSM to rule on whether or not a
+     particular message may be posted to a particular queue.  This is given
+     the credentials from the event generator (which may be the system) and
+     the watch setter.  [Wanted by Smack]
+
+I've provided SELinux and Smack with implementations of some of these hooks.
+
+Why:
+
+ (1) Key/keyring notifications.
+
+     If you have your kerberos tickets in a file/directory, your gnome desktop
+     will monitor that using something like fanotify and tell you if your
+     credentials cache changes.
+
+     We also have the ability to cache your kerberos tickets in the session,
+     user or persistent keyring so that it isn't left around on disk across a
+     reboot or logout.  Keyrings, however, cannot currently be monitored
+     asynchronously, so the desktop has to poll for it - not so good on a
+     laptop.
+
+     This source will allow the desktop to avoid the need to poll.
+
+ (2) USB notifications.
+
+     GregKH was looking for a way to do USB notifications as I was looking to
+     find additional sources to implement.  I'm not sure how he wants to use
+     them, but I'll let him speak to that himself.
+
+ (3) Block notifications.
+
+     This one I was thinking that I could make something like ddrescue better
+     by letting it get notifications this way.  This was a target of
+     convenience since I had a dodgy disk I was trying to rescue.
+
+     It could also potentially be used help systemd, say, detect broken
+     devices and avoid trying to unmount them when trying to reboot the machine.
+
+     I can drop this for now if you prefer.
+
+ (4) Mount notifications.
+
+     This one is wanted to avoid repeated trawling of /proc/mounts or similar
+     to work out changes to the mount object attributes and mount topology.
+     I'm told that the proc file holding the namespace_sem is a point of
+     contention, especially as the process of generating the text descriptions
+     of the mounts/superblocks can be quite involved.
+
+     The notifications directly indicate the mounts involved in any particular
+     event and what the change was.  You can poll /proc/mounts, but all you
+     know is that something changed; you don't know what and you don't know
+     how and reading that file may race with multiple changed being effected.
+
+     I pair this with a new fsinfo() system call that allows, amongst other
+     things, the ability to retrieve in one go an { id, change counter } tuple
+     from all the children of a specified mount, allowing buffer overruns to
+     be cleaned up quickly.
+
+     It's not just Red Hat that's potentially interested in this:
+
+	https://lore.kernel.org/linux-fsdevel/293c9bd3-f530-d75e-c353-ddeabac27cf6@6wind.com/
+
+ (5) Superblock notifications.
+
+     This one is provided to allow systemd or the desktop to more easily
+     detect events such as I/O errors and EDQUOT/ENOSPC.
+
+Design decisions:
+
+ (1) The notification queue is built on top of a standard pipe.  Messages
+     are effectively spliced in.  The pipe is opened with a special flag:
+
+	pipe2(fds, O_NOTIFICATION_PIPE);
+
+     The special flag has the same value as O_EXCL (which doesn't seem like
+     it will ever be applicable in this context)[?].  It is given up front
+     to make it a lot easier to prohibit splice and co. from accessing the
+     pipe.
+
+     [?] Should this be done some other way?  I'd rather not use up a new
+     O_* flag if I can avoid it - should I add a pipe3() system call
+     instead?
+
+     The pipe is then configured::
+
+	ioctl(fds[1], IOC_WATCH_QUEUE_SET_SIZE, queue_depth);
+	ioctl(fds[1], IOC_WATCH_QUEUE_SET_FILTER, &filter);
+
+     Messages are then read out of the pipe using read().
+
+ (2) It should be possible to allow write() to insert data into the
+     notification pipes too, but this is currently disabled as the kernel
+     has to be able to insert messages into the pipe *without* holding
+     pipe->mutex and the code to make this work needs careful auditing.
+
+ (3) sendfile(), splice() and vmsplice() are disabled on notification pipes
+     because of the pipe->mutex issue and also because they sometimes want
+     to revert what they just did - but one or more notification messages
+     might've been interleaved in the ring.
+
+ (4) The kernel inserts messages with the wait queue spinlock held.  This
+     means that pipe_read() and pipe_write() have to take the spinlock to
+     update the queue pointers.
+
+ (5) Records in the buffer are binary, typed and have a length so that they
+     can be of varying size.
+
+     This allows multiple heterogeneous sources to share a common buffer;
+     there are 16 million types available, of which I've used just a few,
+     so there is scope for others to be used.  Tags may be specified when a
+     watchpoint is created to help distinguish the sources.
+
+ (6) Records are filterable as types have up to 256 subtypes that can be
+     individually filtered.  Other filtration is also available.
+
+ (7) Notification pipes don't interfere with each other; each may be bound
+     to a different set of watches.  Any particular notification will be
+     copied to all the queues that are currently watching for it - and only
+     those that are watching for it.
+
+ (8) When recording a notification, the kernel will not sleep, but will
+     rather mark a queue as having lost a message if there's insufficient
+     space.  read() will fabricate a loss notification message at an
+     appropriate point later.
+
+ (9) The notification pipe is created and then watchpoints are attached to
+     it, using one of:
+
+	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fds[1], 0x01);
+	watch_devices(fds[1], 0x02, 0);
+
+     where in both cases, fd indicates the queue and the number after is a
+     tag between 0 and 255.
+
+(10) Watches are removed if either the notification pipe is destroyed or
+     the watched object is destroyed.  In the latter case, a message will
+     be generated indicating the enforced watch removal.
+
+
+Things I want to avoid:
+
+ (1) Introducing features that make the core VFS dependent on the network
+     stack or networking namespaces (ie. usage of netlink).
+
+ (2) Dumping all this stuff into dmesg and having a daemon that sits there
+     parsing the output and distributing it as this then puts the
+     responsibility for security into userspace and makes handling
+     namespaces tricky.  Further, dmesg might not exist or might be
+     inaccessible inside a container.
+
+ (3) Letting users see events they shouldn't be able to see.
+
+
+Testing and manpages:
+
+ (*) The keyutils tree has a pipe-watch branch that has keyctl commands for
+     making use of notifications.  Proposed manual pages can also be found
+     on this branch, though a couple of them really need to go to the main
+     manpages repository instead.
+
+     If the kernel supports the watching of keys, then running "make test"
+     on that branch will cause the testing infrastructure to spawn a
+     monitoring process on the side that monitors a notifications pipe for
+     all the key/keyring changes induced by the tests and they'll all be
+     checked off to make sure they happened.
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/log/?h=pipe-watch
+
+ (*) A test program is provided (samples/watch_queue/watch_test) that can
+     be used to monitor for keyrings, some USB and some block device
+     events.  Information on the notifications is simply logged to stdout.
+
+The kernel patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications-pipe-core
+
+Changes:
+
+ ver #3:
+
+ (*) Rebase to after latest upstream pipe patches.
+ (*) Fix a missing ref get in add_watch_to_object().
+
+ ver #2:
+
+ (*) Declare O_NOTIFICATION_PIPE to use and switch it to be the same value
+     as O_EXCL rather then O_TMPFILE (the latter is a bit nasty in its
+     implementation).
+
+ ver #1:
+
+ (*) Build on top of standard pipes instead of having a driver.
+
+David
+---
+David Howells (14):
+      uapi: General notification queue definitions
+      security: Add hooks to rule on setting a watch
+      security: Add a hook for the point of notification insertion
+      pipe: Add O_NOTIFICATION_PIPE
+      pipe: Add general notification queue support
+      keys: Add a notification facility
+      Add sample notification program
+      pipe: Allow buffers to be marked read-whole-or-error for notifications
+      pipe: Add notification lossage handling
+      Add a general, global device notification watch list
+      block: Add block layer notifications
+      usb: Add USB subsystem notifications
+      selinux: Implement the watch_key security hook
+      smack: Implement the watch_key and post_notification hooks
+
+
+ Documentation/security/keys/core.rst               |   58 ++
+ Documentation/userspace-api/ioctl/ioctl-number.rst |    1 
+ Documentation/watch_queue.rst                      |  385 ++++++++++++
+ arch/alpha/kernel/syscalls/syscall.tbl             |    1 
+ arch/arm/tools/syscall.tbl                         |    1 
+ arch/arm64/include/asm/unistd.h                    |    2 
+ arch/arm64/include/asm/unistd32.h                  |    2 
+ arch/ia64/kernel/syscalls/syscall.tbl              |    1 
+ arch/m68k/kernel/syscalls/syscall.tbl              |    1 
+ arch/microblaze/kernel/syscalls/syscall.tbl        |    1 
+ arch/mips/kernel/syscalls/syscall_n32.tbl          |    1 
+ arch/mips/kernel/syscalls/syscall_n64.tbl          |    1 
+ arch/mips/kernel/syscalls/syscall_o32.tbl          |    1 
+ arch/parisc/kernel/syscalls/syscall.tbl            |    1 
+ arch/powerpc/kernel/syscalls/syscall.tbl           |    1 
+ arch/s390/kernel/syscalls/syscall.tbl              |    1 
+ arch/sh/kernel/syscalls/syscall.tbl                |    1 
+ arch/sparc/kernel/syscalls/syscall.tbl             |    1 
+ arch/x86/entry/syscalls/syscall_32.tbl             |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl             |    1 
+ arch/xtensa/kernel/syscalls/syscall.tbl            |    1 
+ block/Kconfig                                      |    9 
+ block/blk-core.c                                   |   29 +
+ drivers/base/Kconfig                               |    9 
+ drivers/base/Makefile                              |    1 
+ drivers/base/watch.c                               |   90 +++
+ drivers/usb/core/Kconfig                           |    9 
+ drivers/usb/core/devio.c                           |   47 +
+ drivers/usb/core/hub.c                             |    4 
+ fs/pipe.c                                          |  242 +++++--
+ fs/splice.c                                        |   12 
+ include/linux/blkdev.h                             |   15 
+ include/linux/device.h                             |    7 
+ include/linux/key.h                                |    3 
+ include/linux/lsm_audit.h                          |    1 
+ include/linux/lsm_hooks.h                          |   38 +
+ include/linux/pipe_fs_i.h                          |   27 +
+ include/linux/security.h                           |   31 +
+ include/linux/syscalls.h                           |    1 
+ include/linux/usb.h                                |   18 +
+ include/linux/watch_queue.h                        |  127 ++++
+ include/uapi/asm-generic/unistd.h                  |    4 
+ include/uapi/linux/keyctl.h                        |    2 
+ include/uapi/linux/watch_queue.h                   |  158 +++++
+ init/Kconfig                                       |   12 
+ kernel/Makefile                                    |    1 
+ kernel/sys_ni.c                                    |    1 
+ kernel/watch_queue.c                               |  659 ++++++++++++++++++++
+ samples/Kconfig                                    |    6 
+ samples/Makefile                                   |    1 
+ samples/watch_queue/Makefile                       |    7 
+ samples/watch_queue/watch_test.c                   |  251 ++++++++
+ security/keys/Kconfig                              |    9 
+ security/keys/compat.c                             |    3 
+ security/keys/gc.c                                 |    5 
+ security/keys/internal.h                           |   30 +
+ security/keys/key.c                                |   38 +
+ security/keys/keyctl.c                             |   99 +++
+ security/keys/keyring.c                            |   20 -
+ security/keys/request_key.c                        |    4 
+ security/security.c                                |   23 +
+ security/selinux/hooks.c                           |   14 
+ security/smack/smack_lsm.c                         |   82 ++
+ 63 files changed, 2506 insertions(+), 107 deletions(-)
+ create mode 100644 Documentation/watch_queue.rst
+ create mode 100644 drivers/base/watch.c
+ create mode 100644 include/linux/watch_queue.h
+ create mode 100644 include/uapi/linux/watch_queue.h
+ create mode 100644 kernel/watch_queue.c
+ create mode 100644 samples/watch_queue/Makefile
+ create mode 100644 samples/watch_queue/watch_test.c
+
