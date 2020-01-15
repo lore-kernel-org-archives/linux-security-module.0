@@ -2,125 +2,104 @@ Return-Path: <SRS0=2BO2=3E=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8D2C32771
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 19:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67802C33CB2
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 20:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B7242187F
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 19:10:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 407B72081E
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 20:10:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1579119057;
+	bh=65S5eOyLt09Ip2F4rHVAlGMtCApAVFVOvraYSmj4wBs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=CvJxR8Cwo9sR1B81mNvbVQF4WWsTJTxqxQ5JvznpjZBm64DvsRoaD6ZgU+EiWyfD6
+	 Fvz8e3bDQJEtt2uHyP7KfCRyod7PIEbtQeWqmzPNkvElcnBQP8VIzvXYnb1DDuuuBS
+	 JaRMUkVvrLPssZK/XzAdMu3bslg+SQoyqoQbpcKI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbgAOTKD (ORCPT
+        id S1729851AbgAOUK4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jan 2020 14:10:03 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:63576 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725999AbgAOTKD (ORCPT
+        Wed, 15 Jan 2020 15:10:56 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43276 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729830AbgAOUKw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jan 2020 14:10:03 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00FJ8NlI102744
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jan 2020 14:10:02 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xhbvgq4sd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jan 2020 14:10:02 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 15 Jan 2020 19:10:00 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 15 Jan 2020 19:09:55 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00FJ9sij41680902
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Jan 2020 19:09:54 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C520152054;
-        Wed, 15 Jan 2020 19:09:54 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.153.48])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id D7C705204E;
-        Wed, 15 Jan 2020 19:09:53 +0000 (GMT)
-Subject: Re: [PATCH v2] ima: add the ability to query the hash of a given
- file.
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Florent Revest <revest@chromium.org>,
-        KP Singh <kpsingh@chromium.org>
-Cc:     linux-integrity@vger.kernel.org, mjg59@google.com,
-        nramas@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Florent Revest <revest@google.com>
-Date:   Wed, 15 Jan 2020 14:09:53 -0500
-In-Reply-To: <b88cbb1fb39175611e4b31e12a47df240a46dd48.camel@chromium.org>
-References: <20200106162524.164650-1-revest@chromium.org>
-         <20200113104830.GA28588@google.com>
-         <1579113367.5032.19.camel@linux.ibm.com>
-         <b88cbb1fb39175611e4b31e12a47df240a46dd48.camel@chromium.org>
+        Wed, 15 Jan 2020 15:10:52 -0500
+Received: by mail-lf1-f67.google.com with SMTP id 9so13730431lfq.10
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jan 2020 12:10:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V37Vo/FBhU5kltccCSOcOaOV/u6sTU75u7lgAerRHWk=;
+        b=OrYEwmU6lkXsGZWCHNNhtVtpsE6fs3wEj0m6dC3WrtWTeidQt6E9H+zSvKowaPh1ec
+         ugRczy3F4djq+5tAM9KSePUrrGy8RTZj+3Nsfw0drc5nlDq0wGY+b9DTqALVC2112QUl
+         PU4s1hiA953qkOxsAyvqyWsjNb5gpuGJJ8PeA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V37Vo/FBhU5kltccCSOcOaOV/u6sTU75u7lgAerRHWk=;
+        b=F45OF+Miv/FLstBliMRshbMeMJQOFr112jTWWIS0mXv19XECWDduepWau4pZ9CZuDB
+         HanbZlqPCdSo5k3OByXTfskjH0O6604T4tyQ72LLY+AbSV+oytCoe+iElkbHr1FU3oCo
+         0qMHKxOJXZS4YecHVmaCQycDH4KhDqOcvLSRJZ79I8mMV2QQCpKRwYIUmN907OVi1t0L
+         wCSmtfE70JZhH2ZHntPXh5NPrYGa+Mpa8fQ7mU+TS8lGEbya9x8r4/cq5ktXNBYsQyFk
+         qTP6PT5jRrbxgFV+kwxdDZTYht5jOh+UahB8LFLt6tTbo6LibE7X9pbe7YIRuKSC+W7m
+         mgNw==
+X-Gm-Message-State: APjAAAUbbyInuQDjk2zdTeVD8iBWziQw/1whNbDuP7GdpJFlgq5Ds+ja
+        6OzLSPUrwJUrPKU0OtfS2Qzf1b024RA=
+X-Google-Smtp-Source: APXvYqzmJk+2kRMpIJVGmDgwYW3NK04DRjt0/5hyeKIOKOWg8K4zEk7yvMga/ru+fyp6kGXKx728Ww==
+X-Received: by 2002:a19:8a06:: with SMTP id m6mr328859lfd.99.1579119049304;
+        Wed, 15 Jan 2020 12:10:49 -0800 (PST)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id e17sm9772320ljg.101.2020.01.15.12.10.48
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jan 2020 12:10:49 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id m26so19934697ljc.13
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jan 2020 12:10:48 -0800 (PST)
+X-Received: by 2002:a2e:990e:: with SMTP id v14mr74215lji.23.1579119048131;
+ Wed, 15 Jan 2020 12:10:48 -0800 (PST)
+MIME-Version: 1.0
+References: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 15 Jan 2020 12:10:32 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjrrOgznCy3yUmcmQY1z_7vXVr6GbvKiy8cLvWbxpmzcw@mail.gmail.com>
+Message-ID: <CAHk-=wjrrOgznCy3yUmcmQY1z_7vXVr6GbvKiy8cLvWbxpmzcw@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/14] pipe: Keyrings, Block and USB notifications
+ [ver #3]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20011519-0020-0000-0000-000003A0F88C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20011519-0021-0000-0000-000021F873A7
-Message-Id: <1579115393.5032.21.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-15_02:2020-01-15,2020-01-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- suspectscore=0 clxscore=1015 mlxlogscore=929 adultscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001150146
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-01-15 at 19:45 +0100, Florent Revest wrote:
-> On Wed, 2020-01-15 at 13:36 -0500, Mimi Zohar wrote:
-> > On Mon, 2020-01-13 at 11:48 +0100, KP Singh wrote:
-> > > On 06-Jan 17:25, Florent Revest wrote:
-> > > > From: Florent Revest <revest@google.com>
-> > > > 
-> > > > This allows other parts of the kernel (perhaps a stacked LSM
-> > > > allowing
-> > > > system monitoring, eg. the proposed KRSI LSM [1]) to retrieve the
-> > > > hash
-> > > > of a given file from IMA if it's present in the iint cache.
-> > > > 
-> > > > It's true that the existence of the hash means that it's also in
-> > > > the
-> > > > audit logs or in
-> > > > /sys/kernel/security/ima/ascii_runtime_measurements,
-> > > > but it can be difficult to pull that information out for every
-> > > > subsequent exec.  This is especially true if a given host has
-> > > > been up
-> > > > for a long time and the file was first measured a long time ago.
-> > > > 
-> > > > This is based on Peter Moody's patch:
-> > > >  https://sourceforge.net/p/linux-ima/mailman/message/33036180/
-> > > > 
-> > > > [1] https://lkml.org/lkml/2019/9/10/393
-> > > > 
-> > > > Signed-off-by: Florent Revest <revest@google.com>
-> > > 
-> > > Thanks for adding this Florent!
-> > > 
-> > > Reviewed-by: KP Singh <kpsingh@chromium.org>
-> > 
-> > Thanks, this patch is now queued in next-integrity-testing.
-> 
-> Good to hear Mimi! Thank you.
-> 
-> I would just like to make sure that you queued the v3 of this patch
-> though...? (this thread is for the v2 :) ) The v3 includes a couple of
-> comments you asked for.
+So I no longer hate the implementation, but I do want to see the
+actual user space users come out of the woodwork and try this out for
+their use cases.
 
-Oops, yes v3 is queued.
+I'd hate to see a new event queue interface that people then can't
+really use due to it not fulfilling their needs, or can't use for some
+other reason.
 
-Mimi
+We've had a fair number of kernel interfaces that ended up not being
+used all that much, but had one or two minor users and ended up being
+nasty long-term maintenance issues.. I don't want this to become yet
+another such one.
 
+                 Linus
