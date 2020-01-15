@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 935F4C33CB2
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 17:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2B7C47409
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 17:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6832467D
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 17:13:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52B7E24656
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 17:13:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JkYY+k1n"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gZOvsoWn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbgAORN0 (ORCPT
+        id S1729147AbgAORN2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jan 2020 12:13:26 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45805 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729138AbgAORNZ (ORCPT
+        Wed, 15 Jan 2020 12:13:28 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41526 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729169AbgAORN2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jan 2020 12:13:25 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j42so16487191wrj.12
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jan 2020 09:13:24 -0800 (PST)
+        Wed, 15 Jan 2020 12:13:28 -0500
+Received: by mail-wr1-f68.google.com with SMTP id c9so16529056wrw.8
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jan 2020 09:13:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1qpppvmxUsdoHOAo4Mt0fdfqe/zAKnsM8OMMV6DxgYo=;
-        b=JkYY+k1nQptDXMc1K3ZJXsjo5EisX3f4Se8aov6LIW3URg1EZSqPii8H35t2Ba5kRp
-         q3AbE+l2t7G2L+AHhLEma/CQnkJ4UcMWFTaMW8KbfeO+1yHA8NdorBrBU9Ye2uEtrOV/
-         VoaPDoyccqGCcJnIbKLR0oGRhJARcqBUxSlq0=
+        bh=b3NJ2CZ8kBjGjnKwLifa2Rd0VYqXxRjZEy90LqHwLt4=;
+        b=gZOvsoWniHlHh9h21Kxu4FD8G1kLvd5AkOP1w+Fz6LnT80ZgROGkilczKCyE38xgkJ
+         XXhRGIWXyL3OagMSvBfHaI8clTj/ouKIxzFCMBJyQD+eJqVb0Scj6I6C4JK+jKL7fdaT
+         tqyTFAfDLsPunlujzvO6ku+GDMtqs5nhOnocA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1qpppvmxUsdoHOAo4Mt0fdfqe/zAKnsM8OMMV6DxgYo=;
-        b=ssIR/Mr8OZ6zMq6cCORkhxKNEiMmsL8xzu1dj9TserMaRHViAR/i33yHTx7XPhSFw5
-         OVW2QIDNbBDBVrYs2lTWtLYxS/lutfUkGlsW4hvY4B9OfmNraXLYAhQKWbCPhD0gmfrs
-         1ucwjedlv3y36utaa9v0ndpfgBv6+KYLQFIJS3GmiL6z6xryPN/SxNAyKM03fesPgihp
-         F9gdT/YcoGU2BPTXIscMJkOr1is+CK2Cs5VhSzb3qIeARPb2logHh2/djWoMAg1vU81S
-         z3FDvy9CJtIdwRfrP/uUgbMUkslEVG/wst9MzTBrOPV0wWxyKNjEbPtBrEz4pMKPX2qL
-         kYRw==
-X-Gm-Message-State: APjAAAXfQH6nPsgRwjy04ZPrrIRyWcCcjH5FzDm3glEkCu1nM3wGUr0w
-        VnRgowdVDLEbcA9tLvwI1PQBZA==
-X-Google-Smtp-Source: APXvYqz/VjlQXnNTb8DZIKjOpRbcHFB5LHITo4nFweinfMbDgY2p9mOZN9D7fnWO11/ygS2/nbpcYA==
-X-Received: by 2002:a5d:608e:: with SMTP id w14mr33246082wrt.256.1579108404001;
-        Wed, 15 Jan 2020 09:13:24 -0800 (PST)
+        bh=b3NJ2CZ8kBjGjnKwLifa2Rd0VYqXxRjZEy90LqHwLt4=;
+        b=TwKZHd7ZEYMQ8d1i/9NcRdmSoLkiaC83TYyapSupzSSjzwzBVf4i0suk4vzzuSvZpR
+         ySUZcMxcoCh/CaT/5x4AVioX5JQWUg6k6N9lUJvVzQwOzDp83xWFqfAK3BZunSHjajrn
+         n7UYHPBm0BTPhGcdKEaZ1+6pEKkRTkFM/+OOGOG9ii82qTko9OgEJRSs/hBjoqRH4Y/1
+         2Ek0XT7tBwlV5JZH9zTehqkBZ6YcgJHLR0gLHia0oq9/R2myj8aJAO3LR5UYusx1j0kj
+         o0iG/0KKx+oA2q0P1nRu6lHhPwCn+EZGGKghQ8meshUrFRRK1Je1i/zfN6VATz8v7JoN
+         KyWQ==
+X-Gm-Message-State: APjAAAWBpkcbih0TKHH2HYRQW7i+ynH2uztHdGUoA6dyarcGp8uae8WJ
+        Q7i13y1p9Echw4NE48RrwkFPeA==
+X-Google-Smtp-Source: APXvYqyNMe56nhpaM0QPg8Iq77aVz1Uk0rCoiJFQBIjfH0WChRwfqVoiuHVttVDhg0HUIlsXbAlCZQ==
+X-Received: by 2002:a5d:6a8e:: with SMTP id s14mr33286303wru.150.1579108406382;
+        Wed, 15 Jan 2020 09:13:26 -0800 (PST)
 Received: from kpsingh-kernel.localdomain ([2620:0:105f:fd00:84f3:4331:4ae9:c5f1])
-        by smtp.gmail.com with ESMTPSA id d16sm26943227wrg.27.2020.01.15.09.13.23
+        by smtp.gmail.com with ESMTPSA id d16sm26943227wrg.27.2020.01.15.09.13.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 09:13:23 -0800 (PST)
+        Wed, 15 Jan 2020 09:13:25 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
@@ -80,9 +80,9 @@ Cc:     Alexei Starovoitov <ast@kernel.org>,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
         Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [PATCH bpf-next v2 03/10] bpf: lsm: Introduce types for eBPF based LSM
-Date:   Wed, 15 Jan 2020 18:13:26 +0100
-Message-Id: <20200115171333.28811-4-kpsingh@chromium.org>
+Subject: [PATCH bpf-next v2 05/10] bpf: lsm: BTF API for LSM hooks
+Date:   Wed, 15 Jan 2020 18:13:28 +0100
+Message-Id: <20200115171333.28811-6-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200115171333.28811-1-kpsingh@chromium.org>
 References: <20200115171333.28811-1-kpsingh@chromium.org>
@@ -94,163 +94,194 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: KP Singh <kpsingh@google.com>
 
-A new eBPF program type BPF_PROG_TYPE_LSM with an
-expected attach type of BPF_LSM_MAC. Attachment to LSM hooks is not
-implemented in this patch.
+The BTF API provides information required by the BPF verifier to
+attach eBPF programs to the LSM hooks by using the BTF information of
+two types:
 
-On defining the types for the program, the macros expect that
-<prog_name>_prog_ops and <prog_name>_verifier_ops exist. This is
-implicitly required by the macro:
+- struct security_hook_heads: This type provides the offset which
+  a new dynamically allocated security hook must be attached to.
+- union security_list_options: This provides the information about the
+  function prototype required by the hook.
 
-  BPF_PROG_TYPE(BPF_PROG_TYPE_LSM, lsm, ...)
+When the program is loaded:
+
+- The verifier receives the index of a member in struct
+  security_hook_heads to which a program must be attached as
+  prog->aux->lsm_hook_index. The index is one-based for better
+  verification.
+- bpf_lsm_type_by_index is used to determine the func_proto of
+  the LSM hook and updates prog->aux->attach_func_proto
+- bpf_lsm_head_by_index is used to determine the hlist_head to which
+  the BPF program must be attached.
 
 Signed-off-by: KP Singh <kpsingh@google.com>
 ---
- include/linux/bpf_types.h      |  4 ++++
- include/uapi/linux/bpf.h       |  2 ++
- kernel/bpf/syscall.c           |  6 ++++++
- security/bpf/Makefile          |  2 +-
- security/bpf/ops.c             | 28 ++++++++++++++++++++++++++++
- tools/include/uapi/linux/bpf.h |  2 ++
- tools/lib/bpf/libbpf_probes.c  |  1 +
- 7 files changed, 44 insertions(+), 1 deletion(-)
- create mode 100644 security/bpf/ops.c
+ include/linux/bpf_lsm.h |  12 +++++
+ security/bpf/Kconfig    |   1 +
+ security/bpf/hooks.c    | 104 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 117 insertions(+)
 
-diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
-index 9f326e6ef885..2f5b054500d7 100644
---- a/include/linux/bpf_types.h
-+++ b/include/linux/bpf_types.h
-@@ -68,6 +68,10 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_SK_REUSEPORT, sk_reuseport,
- #if defined(CONFIG_BPF_JIT)
- BPF_PROG_TYPE(BPF_PROG_TYPE_STRUCT_OPS, bpf_struct_ops,
- 	      void *, void *)
-+#ifdef CONFIG_SECURITY_BPF
-+BPF_PROG_TYPE(BPF_PROG_TYPE_LSM, lsm,
-+	       void *, void *)
-+#endif /* CONFIG_SECURITY_BPF */
- #endif
+diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+index 9883cf25241c..a9b4f7b41c65 100644
+--- a/include/linux/bpf_lsm.h
++++ b/include/linux/bpf_lsm.h
+@@ -19,6 +19,8 @@ extern struct security_hook_heads bpf_lsm_hook_heads;
  
- BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index 52966e758fe5..b6a725a8a21d 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -176,6 +176,7 @@ enum bpf_prog_type {
- 	BPF_PROG_TYPE_CGROUP_SOCKOPT,
- 	BPF_PROG_TYPE_TRACING,
- 	BPF_PROG_TYPE_STRUCT_OPS,
-+	BPF_PROG_TYPE_LSM,
- };
+ int bpf_lsm_srcu_read_lock(void);
+ void bpf_lsm_srcu_read_unlock(int idx);
++const struct btf_type *bpf_lsm_type_by_index(struct btf *btf, u32 offset);
++const struct btf_member *bpf_lsm_head_by_index(struct btf *btf, u32 id);
  
- enum bpf_attach_type {
-@@ -205,6 +206,7 @@ enum bpf_attach_type {
- 	BPF_TRACE_RAW_TP,
- 	BPF_TRACE_FENTRY,
- 	BPF_TRACE_FEXIT,
-+	BPF_LSM_MAC,
- 	__MAX_BPF_ATTACH_TYPE
- };
- 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index f9db72a96ec0..2945739618c9 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2151,6 +2151,9 @@ static int bpf_prog_attach(const union bpf_attr *attr)
- 	case BPF_LIRC_MODE2:
- 		ptype = BPF_PROG_TYPE_LIRC_MODE2;
- 		break;
-+	case BPF_LSM_MAC:
-+		ptype = BPF_PROG_TYPE_LSM;
-+		break;
- 	case BPF_FLOW_DISSECTOR:
- 		ptype = BPF_PROG_TYPE_FLOW_DISSECTOR;
- 		break;
-@@ -2182,6 +2185,9 @@ static int bpf_prog_attach(const union bpf_attr *attr)
- 	case BPF_PROG_TYPE_LIRC_MODE2:
- 		ret = lirc_prog_attach(attr, prog);
- 		break;
-+	case BPF_PROG_TYPE_LSM:
-+		ret = -EINVAL;
-+		break;
- 	case BPF_PROG_TYPE_FLOW_DISSECTOR:
- 		ret = skb_flow_dissector_bpf_prog_attach(attr, prog);
- 		break;
-diff --git a/security/bpf/Makefile b/security/bpf/Makefile
-index 26a0ab6f99b7..c78a8a056e7e 100644
---- a/security/bpf/Makefile
-+++ b/security/bpf/Makefile
-@@ -2,4 +2,4 @@
- #
- # Copyright 2019 Google LLC.
- 
--obj-$(CONFIG_SECURITY_BPF) := lsm.o
-+obj-$(CONFIG_SECURITY_BPF) := lsm.o ops.o
-diff --git a/security/bpf/ops.c b/security/bpf/ops.c
-new file mode 100644
-index 000000000000..81c2bd9c0495
---- /dev/null
-+++ b/security/bpf/ops.c
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2019 Google LLC.
-+ */
-+
-+#include <linux/filter.h>
-+#include <linux/bpf.h>
-+
-+const struct bpf_prog_ops lsm_prog_ops = {
-+};
-+
-+static const struct bpf_func_proto *get_bpf_func_proto(
-+	enum bpf_func_id func_id, const struct bpf_prog *prog)
+ #define CALL_BPF_LSM_VOID_HOOKS(FUNC, ...)			\
+ 	do {							\
+@@ -65,6 +67,16 @@ static inline int bpf_lsm_srcu_read_lock(void)
+ 	return 0;
+ }
+ static inline void bpf_lsm_srcu_read_unlock(int idx) {}
++static inline const struct btf_type *bpf_lsm_type_by_index(
++	struct btf *btf, u32 index)
 +{
-+	switch (func_id) {
-+	case BPF_FUNC_map_lookup_elem:
-+		return &bpf_map_lookup_elem_proto;
-+	case BPF_FUNC_get_current_pid_tgid:
-+		return &bpf_get_current_pid_tgid_proto;
-+	default:
-+		return NULL;
-+	}
++	return ERR_PTR(-EOPNOTSUPP);
++}
++static inline const struct btf_member *bpf_lsm_head_by_index(
++	struct btf *btf, u32 id)
++{
++	return ERR_PTR(-EOPNOTSUPP);
++}
+ 
+ #endif /* CONFIG_SECURITY_BPF */
+ 
+diff --git a/security/bpf/Kconfig b/security/bpf/Kconfig
+index 595e4ad597ae..9438d899b618 100644
+--- a/security/bpf/Kconfig
++++ b/security/bpf/Kconfig
+@@ -7,6 +7,7 @@ config SECURITY_BPF
+ 	depends on SECURITY
+ 	depends on BPF_SYSCALL
+ 	depends on SRCU
++	depends on DEBUG_INFO_BTF
+ 	help
+ 	  This enables instrumentation of the security hooks with
+ 	  eBPF programs.
+diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
+index b123d9cb4cd4..82725611693d 100644
+--- a/security/bpf/hooks.c
++++ b/security/bpf/hooks.c
+@@ -5,6 +5,8 @@
+  */
+ 
+ #include <linux/bpf_lsm.h>
++#include <linux/bpf.h>
++#include <linux/btf.h>
+ #include <linux/srcu.h>
+ 
+ DEFINE_STATIC_SRCU(security_hook_srcu);
+@@ -18,3 +20,105 @@ void bpf_lsm_srcu_read_unlock(int idx)
+ {
+ 	return srcu_read_unlock(&security_hook_srcu, idx);
+ }
++
++static inline int validate_hlist_head(struct btf *btf, u32 type_id)
++{
++	s32 hlist_id;
++
++	hlist_id = btf_find_by_name_kind(btf, "hlist_head", BTF_KIND_STRUCT);
++	if (hlist_id < 0 || hlist_id != type_id)
++		return -EINVAL;
++
++	return 0;
 +}
 +
-+const struct bpf_verifier_ops lsm_verifier_ops = {
-+	.get_func_proto = get_bpf_func_proto,
-+};
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index 52966e758fe5..b6a725a8a21d 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -176,6 +176,7 @@ enum bpf_prog_type {
- 	BPF_PROG_TYPE_CGROUP_SOCKOPT,
- 	BPF_PROG_TYPE_TRACING,
- 	BPF_PROG_TYPE_STRUCT_OPS,
-+	BPF_PROG_TYPE_LSM,
- };
- 
- enum bpf_attach_type {
-@@ -205,6 +206,7 @@ enum bpf_attach_type {
- 	BPF_TRACE_RAW_TP,
- 	BPF_TRACE_FENTRY,
- 	BPF_TRACE_FEXIT,
-+	BPF_LSM_MAC,
- 	__MAX_BPF_ATTACH_TYPE
- };
- 
-diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
-index 8cc992bc532a..2314889369cc 100644
---- a/tools/lib/bpf/libbpf_probes.c
-+++ b/tools/lib/bpf/libbpf_probes.c
-@@ -107,6 +107,7 @@ probe_load(enum bpf_prog_type prog_type, const struct bpf_insn *insns,
- 	case BPF_PROG_TYPE_CGROUP_SOCKOPT:
- 	case BPF_PROG_TYPE_TRACING:
- 	case BPF_PROG_TYPE_STRUCT_OPS:
-+	case BPF_PROG_TYPE_LSM:
- 	default:
- 		break;
- 	}
++/* Find the BTF representation of the security_hook_heads member for a member
++ * with a given index in struct security_hook_heads.
++ */
++const struct btf_member *bpf_lsm_head_by_index(struct btf *btf, u32 index)
++{
++	const struct btf_member *member;
++	const struct btf_type *t;
++	u32 off, i;
++	int ret;
++
++	t = btf_type_by_name_kind(btf, "security_hook_heads", BTF_KIND_STRUCT);
++	if (WARN_ON_ONCE(IS_ERR(t)))
++		return ERR_CAST(t);
++
++	for_each_member(i, t, member) {
++		/* We've found the id requested and need to check the
++		 * the following:
++		 *
++		 * - Is it at a valid alignment for struct hlist_head?
++		 *
++		 * - Is it a valid hlist_head struct?
++		 */
++		if (index == i) {
++			off = btf_member_bit_offset(t, member);
++			if (off % 8)
++				/* valid c code cannot generate such btf */
++				return ERR_PTR(-EINVAL);
++			off /= 8;
++
++			if (off % __alignof__(struct hlist_head))
++				return ERR_PTR(-EINVAL);
++
++			ret = validate_hlist_head(btf, member->type);
++			if (ret < 0)
++				return ERR_PTR(ret);
++
++			return member;
++		}
++	}
++
++	return ERR_PTR(-ENOENT);
++}
++
++/* Given an index of a member in security_hook_heads return the
++ * corresponding type for the LSM hook. The members of the union
++ * security_list_options have the same name as the security_hook_heads which
++ * is ensured by the LSM_HOOK_INIT macro defined in include/linux/lsm_hooks.h
++ */
++const struct btf_type *bpf_lsm_type_by_index(struct btf *btf, u32 index)
++{
++	const struct btf_member *member, *hook_head = NULL;
++	const struct btf_type *t, *hook_type = NULL;
++	u32 i;
++
++	hook_head = bpf_lsm_head_by_index(btf, index);
++	if (IS_ERR(hook_head))
++		return ERR_PTR(PTR_ERR(hook_head));
++
++	t = btf_type_by_name_kind(btf, "security_list_options", BTF_KIND_UNION);
++	if (WARN_ON_ONCE(IS_ERR(t)))
++		return ERR_CAST(t);
++
++	for_each_member(i, t, member) {
++		if (hook_head->name_off == member->name_off) {
++			/* There should be only one member with the same name
++			 * as the LSM hook. This should never really happen
++			 * and either indicates malformed BTF or someone trying
++			 * trick the LSM.
++			 */
++			if (WARN_ON(hook_type))
++				return ERR_PTR(-EINVAL);
++
++			hook_type = btf_type_by_id(btf, member->type);
++			if (unlikely(!hook_type))
++				return ERR_PTR(-EINVAL);
++
++			if (!btf_type_is_ptr(hook_type))
++				return ERR_PTR(-EINVAL);
++		}
++	}
++
++	if (!hook_type)
++		return ERR_PTR(-ENOENT);
++
++	t = btf_type_by_id(btf, hook_type->type);
++	if (unlikely(!t))
++		return ERR_PTR(-EINVAL);
++
++	return t;
++}
 -- 
 2.20.1
 
