@@ -2,256 +2,204 @@ Return-Path: <SRS0=2BO2=3E=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5955C3F68F
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 15:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D04FFC33CB1
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 15:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9321124656
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 15:41:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99E942053B
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jan 2020 15:43:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="lZbQ+xra"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZQrAJ/O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726506AbgAOPli (ORCPT
+        id S1728896AbgAOPna (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jan 2020 10:41:38 -0500
-Received: from UPDC19PA19.eemsg.mail.mil ([214.24.27.194]:64886 "EHLO
-        UPDC19PA19.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbgAOPli (ORCPT
+        Wed, 15 Jan 2020 10:43:30 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41267 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbgAOPn3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jan 2020 10:41:38 -0500
-X-EEMSG-check-017: 45965506|UPDC19PA19_ESA_OUT01.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.70,322,1574121600"; 
-   d="scan'208";a="45965506"
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by UPDC19PA19.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 15 Jan 2020 15:41:32 +0000
+        Wed, 15 Jan 2020 10:43:29 -0500
+Received: by mail-lj1-f194.google.com with SMTP id h23so19070208ljc.8;
+        Wed, 15 Jan 2020 07:43:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1579102893; x=1610638893;
-  h=subject:from:to:cc:references:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=/39wwLgj7JsPwYlkvaFWgyq5seF5g62wCJkkHut2fRE=;
-  b=lZbQ+xracwFthsH5eptVe3SOs3AuwmTpKGuTMmMqTvptU3XOK0zm0kt5
-   B4/9MhwIyGekfDQJJxrJeZvfP/1woaBIG4LtBn6d/Hm1ap6sNWrtTzSTH
-   ecuqnVmMv3QmlgFS4w4C1isO90rc8+rz5Sd7pIxVkjt65LmDebOEn10EV
-   m894aEXgNrjDGYXtMxFBxVah/jbuNlowzT/Qa8fCX1rvgeYVrfKESeMSn
-   ZYw/O4XikqKDfNoU/AixKCnkjzfaUJ7I5B10xFMtCnr80RWdMT7GYsW/d
-   a0V/uH2sViNyxzVrjx+iNMnrO2Mp52yYBI/kZ1R2SxWRNJ0ExQbsQw8Z9
-   A==;
-X-IronPort-AV: E=Sophos;i="5.70,322,1574121600"; 
-   d="scan'208";a="37812765"
-IronPort-PHdr: =?us-ascii?q?9a23=3A/3tfMxU6kw7I2tGMuzL7xomEVgPV8LGtZVwlr6?=
- =?us-ascii?q?E/grcLSJyIuqrYZRCDtadThVPEFb/W9+hDw7KP9fy5BSpYut3e7DhCKMUKC0?=
- =?us-ascii?q?Zez51O3kQJO42sMQXDNvnkbig3ToxpdWRO2DWFC3VTA9v0fFbIo3e/vnY4Ex?=
- =?us-ascii?q?T7MhdpdKyuQtaBx8u42Pqv9JLNfg5GmCSyYa9oLBWxsA7dqtQajZFtJ6osxR?=
- =?us-ascii?q?bFuGdEdupZyW5qKl+YghLw6tut8JJ5/Clcpvws+9RcXanmeqgzUKBVAikhP2?=
- =?us-ascii?q?0p/sPgqAPNTRGI5nsSU2UWlgRHDg3Y5xzkXZn/rzX3uPNl1CaVIcP5Q7Y0WS?=
- =?us-ascii?q?+/76hwUx/nlD0HNz8i/27JjMF7kb9Wrwigpxx7xI7UfZ2VOf9jda7TYd8WWW?=
- =?us-ascii?q?xMVdtKWidfHo2zcZcAD+sZPeZZsYb9oUcOrQCjDgWoHe/j1yNEimPz0aA83e?=
- =?us-ascii?q?shCwXG1xE+EdwIvnrfsdH5OL4SXO2xyaXFyyjIYfFL1jfn8IXGbxAvr++CXb?=
- =?us-ascii?q?xzf8Tex0YgGAHZgVufsoHlIzCY2/4Rv2SH4edtV+SigHMnpQFrpTivw98hhJ?=
- =?us-ascii?q?TVho0L0lDE9Tt2wIAoLtOlTU50e9qkEJ9OuCCaKoB7RdgiTHxzuCsh1r0HuY?=
- =?us-ascii?q?K0fCgNyJg9wR7fcOaIf5KH4hLkSuacODF1j29mdrKnnxu+7Eetx+LmWsS0zV?=
- =?us-ascii?q?pGtDRJn9bSunwXyhDe7NWMROFn8Ue7wzmP0hje6uRDIU8pi6XWM4Uhwrsslp?=
- =?us-ascii?q?oLtkTDAzP2lF32jKCIckUk/fCl6/j9bbX8p5+cKpR0hhv/MqQolMy/Bv84PR?=
- =?us-ascii?q?YSUGSB5eS91KHs/U3+QLlQiP05jrLZv4zAKcQep665BxdZ0ocl6xmhEzeryM?=
- =?us-ascii?q?kUkHYIIV5feB+LkpLlN0/BLfzmF/uznkygkDJxyPDHOr3hDI/NLn/GkLr5Zr?=
- =?us-ascii?q?Zy9lVcxREvzdFf+51UCrYBLOj1Wk/qrtPUFBA5Mwuqw+r/EtVyypseWX6TAq?=
- =?us-ascii?q?+eKK7Tv0GH5uQvI+mRZY8Yozn9KvYg5/H0jH85nUURfaan3JsKcny3AOlpI1?=
- =?us-ascii?q?iBa3r2ntgBCXsKvhY5TOHyil2CVj5TZ3CoU6I+4TE7CJipDYHYRo+zhryMxz?=
- =?us-ascii?q?u0EYdQZmBBDFCMEGvneJ+AW/sWdC2SJcphmCQeVbe9U48hyQ2utAjixrV7NO?=
- =?us-ascii?q?XU4TMXtJL42dhu++LTlQs99SF6D8SZzW6NVXh4kX8SSDMswK9/pkl9wE+Z0a?=
- =?us-ascii?q?dkm/xYCcBT5/RRXwgmL5Hc1PJ1CtDoVgLaYtiJSEypQsioATE1UN0x2cQDY0?=
- =?us-ascii?q?d7G9W+kB/D2zCmDKMSl7yOHJY06L7T32DtJ8ZhzHbLzKshj1whQstVL22mh7?=
- =?us-ascii?q?V/+hPVB4HTlkWWiaeqeb4b3C7X+2eJ1XCOs11AUA5sTaXFWmgSZk/XrdT/+0?=
- =?us-ascii?q?PDQKaiCa85PQRd1M6CMKpKasHpjFlfQffjP8nRY3+1m2iuHhuI2LyMY5Twe2?=
- =?us-ascii?q?kH3yXSFlIEkwYN8naCLwQ+AT2ho23GBjx0CV3ve1/s8fV5qH6jVU870QWKb0?=
- =?us-ascii?q?xn17qo9R8YnuKcS/wN0bIeoishqCt7HEy7393ID9qMvQ1hfL9TYdkl+ldIyX?=
- =?us-ascii?q?rZtxBhPpynN61ihUARfBpsv0zy0BV3DYZAnNM2o3Mq1gpyLqeY0FJcdzOdx5?=
- =?us-ascii?q?zwPafXKmbq9hC1d6HWwk3e0MqR+qoX8PQ3tVPjvA60Fkoj9XVrytpV3GWG5p?=
- =?us-ascii?q?XMEgUSVYn8Ukcu+xh+oLHafDcy65nP1XJ2Mqm0ryXC1MgzCOsj1BmsZdVfML?=
- =?us-ascii?q?ucHg/oD8IaH9SuKPAtm1WxdhILJv1S9KovMsO+bfSGxaqrMP9lnDKhimRH+p?=
- =?us-ascii?q?5y3liQ+Cp7T+6bl6oCls6V2AuaVn/OjF6nvYijho1CZSwTNmWgzCHlAMheeb?=
- =?us-ascii?q?A0cIoWXzSAOcqyk+5iiobtVngQz1uqA1cLyYf9YhaJR0Ds1g1Xk0IMqDqonj?=
- =?us-ascii?q?XunG88qC0gsqfKhH+G+O/lbhdSfzcWFWQ=3D?=
-X-IPAS-Result: =?us-ascii?q?A2DcAwDtMR9e/wHyM5BkDg4BAQEBAQcBAREBBAQBAYF7g?=
- =?us-ascii?q?X2BbAEgEiqED4kDhlwGgTeJbpFJCQEBAQEBAQEBATcBAYRAAoIjOBMCEAEBA?=
- =?us-ascii?q?QQBAQEBAQUDAQFshUOCOykBgnoBBSMPAQVBEAkCGAICIwMCAkYRBg0GAgEBg?=
- =?us-ascii?q?mM/glclikabdIEyiRGBPoEOKIwyeYEHgTgPgi8uPoQDH4M3gl4EjUWCTIdfl?=
- =?us-ascii?q?1SCQoJJk2EGG4JHiAOERItgq20igVgrCAIYCCEPgydQGA2IDReNaFkjAzCLH?=
- =?us-ascii?q?REXghsBAQ?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 15 Jan 2020 15:41:31 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00FFem4N103813;
-        Wed, 15 Jan 2020 10:40:48 -0500
-Subject: Re: Perf Data on LSM in v5.3
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-To:     Wenhui Zhang <wenhui@gwmail.gwu.edu>
-Cc:     John Johansen <john.johansen@canonical.com>,
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=DpZXkxiLAGNsYRkSxKJ75JmpalW8URD38e3nWz/COXw=;
+        b=fZQrAJ/ODRQHoTBaQ13Aq9AiWSWSFS2Tzs9VZZKN2ih+1hFsmtZ6w486r4pl+UI1rD
+         IPwyGzXq18pXPI9ZBRuUeYXq/G+DsTsfKGy9hKWV9IzmRCirez6rtrG13yWkRk0XQS54
+         hJpTX5vPNftxnKht0s3j2Z8Jgwu6cec2UR1+katu32qUwd9f4uRzqiusd7IwJfukh0B8
+         0Q13v6MutmNkj170UDIODLUA3tH4MebZ1SMDArCNhB0l5RJBiUsSx4cY59TkjRf51+WO
+         p3kDfaMiI2G085hmBICF+zXXA/ITGCQIVyXYMrOQb7B8UPMfzGVetiEecKoSF4vQz6Tq
+         Tv/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DpZXkxiLAGNsYRkSxKJ75JmpalW8URD38e3nWz/COXw=;
+        b=rYKfHYEKTh4/kuLXoOY4tSAqUTwp6Y/ngP/ZOXKyG/CWyoz9zR8pbW8MlR5eINEdW+
+         LZ33Z4UYDbfQd5nF9+7e++vz/trxJGyv0oEvTa8efooUeQKYKfpO+u6DCNqZvyhagrwd
+         O7fIQuGjLvKLZ4M7xTZI11Kpcr7OZixmYXj+Eidgbsabk2H6KqVhrFgXh9ajEcCp38h+
+         Qz5F8NfWQ8FkB+GUPUe7fJsR5e26uZ8Ec150LbwJKGdCOizUxKaUK+0DoIM1xp5VUiO4
+         8hW0+ozIzK+V6OR5vcqhX8G0gV0t3tss2TLbIk5iL8pP+/rcE0ilqojsV/TqXnaJD64t
+         GaoA==
+X-Gm-Message-State: APjAAAWHf3lLw2GdHcAUXHEfbRP74nPSFK4jz4n5u4FBllzwuDpCkCO8
+        rk1CU3T7Kdh5yq09xm/U2DPIY6Sa
+X-Google-Smtp-Source: APXvYqxzllRnG95sS2iIIRvNsDX1mQRaj3Ewhkdm6y1Qnk9Z5hoz8+2a5FcNRlci5QsgWFcViKsDEQ==
+X-Received: by 2002:a2e:3609:: with SMTP id d9mr2049051lja.188.1579103006708;
+        Wed, 15 Jan 2020 07:43:26 -0800 (PST)
+Received: from localhost.localdomain (mobile-user-c1d2e4-97.dhcp.inet.fi. [193.210.228.97])
+        by smtp.gmail.com with ESMTPSA id p136sm9221240lfa.8.2020.01.15.07.43.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 07:43:26 -0800 (PST)
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+To:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, zohar@linux.ibm.com
+Cc:     Janne Karhunen <janne.karhunen@gmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org,
-        SELinux <selinux@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        penguin-kernel@i-love.sakura.ne.jp,
-        Paul Moore <paul@paul-moore.com>
-References: <CAOSEQ1poqrUQdRc+ZLNbEoPqgd4MMomeYmefjca_mj-2zxrdUA@mail.gmail.com>
- <7ebd42d8-5392-90f6-fc08-4364176cfbb6@schaufler-ca.com>
- <CAOSEQ1p0q4gxVwN3MJkP=xxn4GUVaKsaArtQpxNy5rv7vYvVVw@mail.gmail.com>
- <abd4dddb-8968-2655-3d80-ce446451b3de@canonical.com>
- <CAOSEQ1rBu+wRzgk_Jh2RsZpf8Lv1+WUi-Pte-EsBMphnEr4SsQ@mail.gmail.com>
- <e7cfc960-32fb-7712-b21c-37999cf29430@tycho.nsa.gov>
- <2a984c76-a499-53f6-68c5-5d3604094ba4@tycho.nsa.gov>
- <CAOSEQ1o3nhY-svtsFSSv+M=V+NchxmBbhY-FvqoTzJgMnZ1ydw@mail.gmail.com>
- <1479ac1a-b957-f907-b983-c0bcefd51457@tycho.nsa.gov>
-Message-ID: <fe62d7a7-5f7c-cb14-01b1-f3d7fef2862b@tycho.nsa.gov>
-Date:   Wed, 15 Jan 2020 10:42:17 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <1479ac1a-b957-f907-b983-c0bcefd51457@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Konsta Karsisto <konsta.karsisto@gmail.com>
+Subject: [PATCH v4] ima: ima/lsm policy rule loading logic bug fixes
+Date:   Wed, 15 Jan 2020 17:42:30 +0200
+Message-Id: <20200115154230.2048-1-janne.karhunen@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/15/20 10:34 AM, Stephen Smalley wrote:
-> On 1/15/20 10:21 AM, Wenhui Zhang wrote:
->>
->> On Wed, Jan 15, 2020 at 9:08 AM Stephen Smalley <sds@tycho.nsa.gov 
->> <mailto:sds@tycho.nsa.gov>> wrote:
->>
->>     On 1/15/20 8:40 AM, Stephen Smalley wrote:
->>      > On 1/14/20 8:00 PM, Wenhui Zhang wrote:
->>      >> Hi, John:
->>      >>
->>      >> It seems like, the MAC hooks are default to*return 0 or empty 
->> void
->>      >> hooks* if CONFIG_SECURITY, CONFIG_SECURITY_NETWORK ,
->>      >> CONFIG_PAGE_TABLE_ISOLATION, CONFIG_SECURITY_INFINIBAND,
->>      >> CONFIG_SECURITY_PATH, CONFIG_INTEL_TXT,
->>      >> CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR,
->>      >> CONFIG_HARDENED_USERCOPY, CONFIG_HARDENED_USERCOPY_FALLBACK *are
->>     NOT
->>      >> set*.
->>      >>
->>      >> If HOOKs are "return 0 or empty void hooks", MAC is not enabled.
->>      >> In runtime of fs-benchmarks, if CONFIG_DEFAULT_SECURITY_DAC=y, 
->> then
->>      >> capability is enabled.
->>      >>
->>      >> Please correct me if I am wrong.
->>      >>
->>      >> For the first test, wo-sec is tested with:
->>      >> # CONFIG_SECURITY_DMESG_RESTRICT is not set
->>      >> # CONFIG_SECURITY is not set
->>      >> # CONFIG_SECURITYFS is not set
->>      >> # CONFIG_PAGE_TABLE_ISOLATION is not set
->>      >> # CONFIG_INTEL_TXT is not set
->>      >> CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR=y
->>      >> # CONFIG_HARDENED_USERCOPY is not set
->>      >> CONFIG_FORTIFY_SOURCE=y
->>      >> # CONFIG_STATIC_USERMODEHELPER is not set
->>      >> CONFIG_DEFAULT_SECURITY_DAC=y
->>      >>
->>      >>
->>      >> For the second test, w-sec is tested with:
->>      >> # CONFIG_SECURITY_DMESG_RESTRICT is not set
->>      >> CONFIG_SECURITY=y
->>      >> CONFIG_SECURITYFS=y
->>      >> # CONFIG_SECURITY_NETWORK is not set
->>      >> CONFIG_PAGE_TABLE_ISOLATION=y
->>      >> CONFIG_SECURITY_INFINIBAND=y
->>      >> CONFIG_SECURITY_PATH=y
->>      >> CONFIG_INTEL_TXT=y
->>      >> CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR=y
->>      >> CONFIG_HARDENED_USERCOPY=y
->>      >> CONFIG_HARDENED_USERCOPY_FALLBACK=y
->>      >> # CONFIG_HARDENED_USERCOPY_PAGESPAN is not set
->>      >> CONFIG_FORTIFY_SOURCE=y
->>      >> # CONFIG_STATIC_USERMODEHELPER is not set
->>      >> # CONFIG_SECURITY_SMACK is not set
->>      >> # CONFIG_SECURITY_TOMOYO is not set
->>      >> # CONFIG_SECURITY_APPARMOR is not set
->>      >> # CONFIG_SECURITY_LOADPIN is not set
->>      >> # CONFIG_SECURITY_YAMA is not set
->>      >> # CONFIG_SECURITY_SAFESETID is not set
->>      >> # CONFIG_INTEGRITY is not set
->>      >> CONFIG_DEFAULT_SECURITY_DAC=y
->>      >> #
->>      >>
->>     
->> CONFIG_LSM="yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo" 
->>
->>
->>      >>
->>      >
->>      > Your configs should only differ with respect to CONFIG_SECURITY*
->>     if you
->>      > want to evaluate LSM, SELinux, etc overheads.  
->> PAGE_TABLE_ISOLATION,
->>      > INTEL_TXT, and HARDENED_USERCOPY are not relevant to LSM itself.
->>      >
->>      > Also, what benchmarks are you using?  Your own home-grown ones, a
->>     set of
->>      > open source standard benchmarks (if so, which ones?).  You should
->>      > include both micro and macro benchmarks in your suite.
->>      >
->>      > How stable are your results?  What kind of variance / standard
->>     deviation
->>      > are you seeing?
->>      >
->>      > It is hard to get meaningful, reliable performance measurements
->>     so going
->>      > down this road is not to be done lightly.
->>
->>     Also, I note that you don't enable CONFIG_SECURITY_NETWORK above.  
->> That
->>     means you aren't including the base LSM overhead for the networking
->>     security hooks.  So if you then compare that against SELinux (which
->>     requires CONFIG_SECURITY_NETWORK), you are going to end up 
->> attributing
->>     the cost of both the LSM overhead and SELinux overhead all to 
->> SELinux.
->>     If you truly want to isolate the base LSM overhead, you need to 
->> enable
->>     all the hooks.
->>
->> I will give it a try for enabling CONFIG_SECURITY_NETWORK later this 
->> week, however I wonder if this would affect the test results that much.
->> I am testing with LMBench 2.5 , with focusing on filesystem unit 
->> tests, however not network stack at this time.
->> My understanding of why this result is so different from previous 
->> paper 20 years ago, is that the Bottleneck changes.
->> As Chris was testing with 4 cores , each 700MHz CPU, and 128MB memory, 
->> with HDD (latency is about 20,000,000 ns for sequential read).
->> The  Bottleneck of accessing files w/ MAC are mostly on I/O.
->> However hardware setup is different now,  we have much larger and 
->> faster memory (better prefetching as well), with SSD (latency is about 
->> 49,000 ns for sequential read). , while CPU speed is not increasing as 
->> much as that of I/O.
->> The Bottleneck of accessing files w/ MAC are mostly on CPU now.
-> 
-> Don't know if lmbench is still a good benchmark and I recall struggling 
-> with it even back then to get stable results.
-> 
-> Could be bottleneck changes, could be the fact that your kernel config 
-> changes aren't limited to CONFIG_SECURITY* (e.g. PTI introduces 
-> non-trivial overheads), could be changes to LSM since that time (e.g. 
-> stacking support, moving security_ calls out-of-line, more hooks, ...), 
-> could be that running SELinux w/o policy is flooding the system logs 
-> with warnings or other messages since it wasn't really designed to be 
-> used that way past initialization.  Lots of options, can't tell without 
-> more info on your details.
+Keep the ima policy rules around from the beginning even if they appear
+invalid at the time of loading, as they may become active after an lsm
+policy load. However, loading a custom IMA policy with unknown LSM
+labels is only safe after we have transitioned from the "built-in"
+policy rules to a custom IMA policy.
 
-I'd think that these days one would leverage perf and/or lkp for Linux 
-kernel performance measurements, not lmbench.
+Patch also fixes the rule re-use during the lsm policy reload and makes
+some prints a bit more human readable.
 
+Changelog:
+v4:
+- Do not allow the initial policy load refer to non-existing lsm rules.
+v3:
+- Fix too wide policy rule matching for non-initialized LSMs
+v2:
+- Fix log prints
+
+Fixes: b16942455193 ("ima: use the lsm policy update notifier")
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Reported-by: Mimi Zohar <zohar@linux.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
+Signed-off-by: Konsta Karsisto <konsta.karsisto@gmail.com>
+---
+ security/integrity/ima/ima_policy.c | 44 +++++++++++++++++------------
+ 1 file changed, 26 insertions(+), 18 deletions(-)
+
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index a4dde9d575b2..76dc9b3dd0fc 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -265,7 +265,7 @@ static void ima_lsm_free_rule(struct ima_rule_entry *entry)
+ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ {
+ 	struct ima_rule_entry *nentry;
+-	int i, result;
++	int i;
+ 
+ 	nentry = kmalloc(sizeof(*nentry), GFP_KERNEL);
+ 	if (!nentry)
+@@ -279,7 +279,7 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 	memset(nentry->lsm, 0, FIELD_SIZEOF(struct ima_rule_entry, lsm));
+ 
+ 	for (i = 0; i < MAX_LSM_RULES; i++) {
+-		if (!entry->lsm[i].rule)
++		if (!entry->lsm[i].args_p)
+ 			continue;
+ 
+ 		nentry->lsm[i].type = entry->lsm[i].type;
+@@ -288,13 +288,13 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 		if (!nentry->lsm[i].args_p)
+ 			goto out_err;
+ 
+-		result = security_filter_rule_init(nentry->lsm[i].type,
+-						   Audit_equal,
+-						   nentry->lsm[i].args_p,
+-						   &nentry->lsm[i].rule);
+-		if (result == -EINVAL)
+-			pr_warn("ima: rule for LSM \'%d\' is undefined\n",
+-				entry->lsm[i].type);
++		security_filter_rule_init(nentry->lsm[i].type,
++					  Audit_equal,
++					  nentry->lsm[i].args_p,
++					  &nentry->lsm[i].rule);
++		if (!nentry->lsm[i].rule)
++			pr_warn("rule for LSM \'%s\' is undefined\n",
++				(char *)entry->lsm[i].args_p);
+ 	}
+ 	return nentry;
+ 
+@@ -331,7 +331,7 @@ static void ima_lsm_update_rules(void)
+ 	list_for_each_entry_safe(entry, e, &ima_policy_rules, list) {
+ 		needs_update = 0;
+ 		for (i = 0; i < MAX_LSM_RULES; i++) {
+-			if (entry->lsm[i].rule) {
++			if (entry->lsm[i].args_p) {
+ 				needs_update = 1;
+ 				break;
+ 			}
+@@ -341,8 +341,7 @@ static void ima_lsm_update_rules(void)
+ 
+ 		result = ima_lsm_update_rule(entry);
+ 		if (result) {
+-			pr_err("ima: lsm rule update error %d\n",
+-				result);
++			pr_err("lsm rule update error %d\n", result);
+ 			return;
+ 		}
+ 	}
+@@ -403,7 +402,7 @@ static bool ima_match_keyring(struct ima_rule_entry *rule,
+ }
+ 
+ /**
+- * ima_match_rules - determine whether an inode matches the measure rule.
++ * ima_match_rules - determine whether an inode matches the policy rule.
+  * @rule: a pointer to a rule
+  * @inode: a pointer to an inode
+  * @cred: a pointer to a credentials structure for user validation
+@@ -466,9 +465,12 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 		int rc = 0;
+ 		u32 osid;
+ 
+-		if (!rule->lsm[i].rule)
+-			continue;
+-
++		if (!rule->lsm[i].rule) {
++			if (!rule->lsm[i].args_p)
++				continue;
++			else
++				return false;
++		}
+ 		switch (i) {
+ 		case LSM_OBJ_USER:
+ 		case LSM_OBJ_ROLE:
+@@ -880,8 +882,14 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+ 					   entry->lsm[lsm_rule].args_p,
+ 					   &entry->lsm[lsm_rule].rule);
+ 	if (!entry->lsm[lsm_rule].rule) {
+-		kfree(entry->lsm[lsm_rule].args_p);
+-		return -EINVAL;
++		pr_warn("rule for LSM \'%s\' is undefined\n",
++			(char *)entry->lsm[lsm_rule].args_p);
++
++		if (ima_rules == &ima_default_rules) {
++			kfree(entry->lsm[lsm_rule].args_p);
++			result = -EINVAL;
++		} else
++			result = 0;
+ 	}
+ 
+ 	return result;
+-- 
+2.17.1
 
