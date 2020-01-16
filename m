@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B262C33CB7
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F33C33CAF
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 18:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 305C320684
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D149D208C3
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 18:32:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579198318;
-	bh=Z5A90g+/eZtkcA/YgSKg43FyETGEqdOD7qAPa/dHGwk=;
+	s=default; t=1579199546;
+	bh=3GDST97Zptw0/e84om70F9jZkf2LN43fAxlrhDAXbIw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=B0L5I9NInqEUKwtOJWzL44pAX3pJbdYTjccIGUd2zqT3wsuxC+zemvWgd+owBUTAq
-	 e7TO23FM29kXQ40mbUcm1JheY9xijcNwZ1Z733PQFHPrV3vhPuIdRLdjccNlE7Hbbg
-	 HLKERdsidOUsXpxyXEjWdhNxZ7956O0t2SwcJyQ8=
+	b=x48MpRpmsgG6jgcbVTq+2aEhyjC5FDjnmytPZ50cUA0Vy6R4iszwI0icossyuWXY3
+	 ydPq3Uj/Gk+defxLeTT4PaR1e097DC3UlZdbH0F2LllGUr3Av89KcEdcCtIwfPC1rO
+	 E+Q08EYULteltkIjWFGndxenkjlE5HoAZItTMeLU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395312AbgAPSL5 (ORCPT
+        id S2391999AbgAPScZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jan 2020 13:11:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52586 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 13:32:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731650AbgAPRhX (ORCPT
+        id S2391849AbgAPRZA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:23 -0500
+        Thu, 16 Jan 2020 12:25:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2472E246D3;
-        Thu, 16 Jan 2020 17:37:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E33F2246A5;
+        Thu, 16 Jan 2020 17:24:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196243;
-        bh=Z5A90g+/eZtkcA/YgSKg43FyETGEqdOD7qAPa/dHGwk=;
+        s=default; t=1579195499;
+        bh=3GDST97Zptw0/e84om70F9jZkf2LN43fAxlrhDAXbIw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a0AYaeH1JHY+8e2ki9btplhTmAjBDzYI2Jg48ZRU4y8jYyiBM4maEp31QgKh21tDg
-         j30UamRQrxn/lg0L4cKLyau/JTeuZVVrQsibVoSZY16CjMq07virKbaz+7wVRZjGHa
-         klG1Dm5sx1qgjMnJgAX3Hb3ggx6apXCkUgpU02zg=
+        b=BpwG32FE5HKa3b6t5qUW/+4XxzQ/5T354s3lYXPGpVJ7KGKoqMeU88WhEk4NVhWfR
+         2cEoRjbqX8qRwmmHFgCISiVjC0Aazdjilf6aniIuKI4OXoyLa6r7sAeKYPdTezoOC1
+         qMW/SunBZoRi9rc+0ObspA8xfIFFlec9mWpZPtHw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     David Howells <dhowells@redhat.com>,
         James Morris <james.morris@microsoft.com>,
         Sasha Levin <sashal@kernel.org>, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 072/251] keys: Timestamp new keys
-Date:   Thu, 16 Jan 2020 12:33:41 -0500
-Message-Id: <20200116173641.22137-32-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 100/371] keys: Timestamp new keys
+Date:   Thu, 16 Jan 2020 12:19:32 -0500
+Message-Id: <20200116172403.18149-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
-References: <20200116173641.22137-1-sashal@kernel.org>
+In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
+References: <20200116172403.18149-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -75,10 +75,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/security/keys/key.c b/security/keys/key.c
-index 7276d1a009d4..280b4feccdc0 100644
+index 87172f99f73e..17244f5f54c6 100644
 --- a/security/keys/key.c
 +++ b/security/keys/key.c
-@@ -296,6 +296,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+@@ -297,6 +297,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
  	key->gid = gid;
  	key->perm = perm;
  	key->restrict_link = restrict_link;
