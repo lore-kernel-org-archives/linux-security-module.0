@@ -2,90 +2,163 @@ Return-Path: <SRS0=B56X=3F=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CCAC33CB6
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 19:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28994C33CB6
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 19:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7A042072E
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 19:07:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579201654;
-	bh=jfKaQK6oorn73ILJscVNgFsNVYW8RJniFtv+6mkiZ2w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LRxlJnp3naPqzfMUQ5QJVP9KAAQJwyovixriXagpYMO9bdkRdr0nxX2/E+sAY47rb
-	 z09rUlOJOGV2t4EvIdSAvkyc7PET6ScN/ND4uek7HV9YgRWXCnFaYuO2ZU23Hm3hlc
-	 8dNAIuXnNJAgBbGKylU2SwV8Xo9zoW2trD7xY8UY=
+	by mail.kernel.org (Postfix) with ESMTP id 0182E206E6
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 19:11:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oAu9qaet"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388054AbgAPRBR (ORCPT
+        id S2387730AbgAPTLL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:01:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52090 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388052AbgAPRBQ (ORCPT
+        Thu, 16 Jan 2020 14:11:11 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:40069 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437423AbgAPTLK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:01:16 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6253D21582;
-        Thu, 16 Jan 2020 17:01:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194076;
-        bh=jfKaQK6oorn73ILJscVNgFsNVYW8RJniFtv+6mkiZ2w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WECuV9odcAcD28DRWmR4ehhVcSg6BpbxLUGCw+bIJQkz0LsGGXBU4obG9ZlSlXfxK
-         j52qJeEll7hTKxFzu+dqM/Uxfcv5JP5spkyiP96MVjx1j8l9/wuCdYE6bPhIPNx4/o
-         qRF5LeRWmjrKdU8VuZPAbM/rklzagX4KWbtF9bpw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        James Morris <james.morris@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 183/671] keys: Timestamp new keys
-Date:   Thu, 16 Jan 2020 11:51:32 -0500
-Message-Id: <20200116165940.10720-66-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
-References: <20200116165940.10720-1-sashal@kernel.org>
+        Thu, 16 Jan 2020 14:11:10 -0500
+Received: by mail-qv1-f68.google.com with SMTP id dp13so9590853qvb.7;
+        Thu, 16 Jan 2020 11:11:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3OEZx2MjoszDi5bRMEvk6at9kqk898GlGBhsPS60YZE=;
+        b=oAu9qaet49v37A1VgP0LaeMPw44TNjd+84DuWb1JRGRrE+ukvBC3pxHmRLEd9/cHlT
+         DNiDww2RsL5wRM9Pah171TlZcCeGVVQh42LFK10TVFblyeHmSeu9P/z06XX2gy+UBiSb
+         eFJF2CJfbOD2fWQK/Wg+I79B3/+W8MA2ruE2Bo5AfdR+le6U1yjWROe0+k5Kph9vB/yR
+         3OjJu+9TPR2me7OzueGwlEqPFXT+mgE3fGrk2kgeT6DiIwyFgZHgzn2If1rs/Fk/WT//
+         q9DTjBW0P8MLUenVyMzJKX8iq/BMb9s9iIMhF+uoDtcfi9AlvQCWx5QSO/1OW4lhMcmf
+         ji8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3OEZx2MjoszDi5bRMEvk6at9kqk898GlGBhsPS60YZE=;
+        b=r8slrELBPZawiYrBSQRHUk2jaRRpAxbAoBRvlFOQtqDk0ILNHYzz1kzc+pXm17aabL
+         uY4e0FWXKVfpNMYpPZVow7VBKMe53TmgZB8RvnExEp/oSWCSFUF201Pn5uA5SIcQ7Xym
+         e9+SMpo9TX/ZPugUQblepRkL3+dS0aVoJtbm2+0Iz6C9EyajveOKayNj870XO3SxzTg1
+         MTqLlBPe8sgf4zKWkb3aOZp1YFu3XkUjfnSakapyvsv8/cEtCnmAJqaXn0yBUzbYcxdD
+         E+kTRStXAHuLLJIxYWlrwWSIItGCrzTDAJRBdfFaODoTVeDcnWRtuuirL47AHD5hL+te
+         T4GQ==
+X-Gm-Message-State: APjAAAUe6WwtDnutuLXDiuKD+UhXNpYv4j63pBzviJ3VJ3PSD3V4qqmA
+        YC/V3vtkuClR/V+PoDOxOE3IzLATFrroelbErKA=
+X-Google-Smtp-Source: APXvYqw9FIgttSCmKhfwxg+gCy9NRY9si3en5ZFJS6VWOz3YlihoKUoN8mv6ZMAfLxb1JV1nrGcclF7WKhszpNDXPE8=
+X-Received: by 2002:ad4:514e:: with SMTP id g14mr4208129qvq.196.1579201868349;
+ Thu, 16 Jan 2020 11:11:08 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20200115171333.28811-1-kpsingh@chromium.org> <20200115171333.28811-9-kpsingh@chromium.org>
+ <CAEf4BzZodr3LKJuM7QwD38BiEH02Cc1UbtnGpVkCJ00Mf+V_Qg@mail.gmail.com> <20200116124955.GD240584@google.com>
+In-Reply-To: <20200116124955.GD240584@google.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Thu, 16 Jan 2020 11:10:57 -0800
+Message-ID: <CAEf4BzYa+m0OCZXqnNsab+q3+HLboL45eRdBrGdZD+6Z4CRSiQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 08/10] tools/libbpf: Add support for BPF_PROG_TYPE_LSM
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: David Howells <dhowells@redhat.com>
+On Thu, Jan 16, 2020 at 4:49 AM KP Singh <kpsingh@chromium.org> wrote:
+>
+> Thanks for the review Andrii!
+>
+> I will incorporate the fixes in the next revision.
+>
+> On 15-Jan 13:19, Andrii Nakryiko wrote:
+> > On Wed, Jan 15, 2020 at 9:13 AM KP Singh <kpsingh@chromium.org> wrote:
+> > >
+> > > From: KP Singh <kpsingh@google.com>
+> > >
+> > > * Add functionality in libbpf to attach eBPF program to LSM hooks
+> > > * Lookup the index of the LSM hook in security_hook_heads and pass it in
+> > >   attr->lsm_hook_index
+> > >
+> > > Signed-off-by: KP Singh <kpsingh@google.com>
+> > > ---
+> > >  tools/lib/bpf/bpf.c      |   6 +-
+> > >  tools/lib/bpf/bpf.h      |   1 +
+> > >  tools/lib/bpf/libbpf.c   | 143 ++++++++++++++++++++++++++++++++++-----
+> > >  tools/lib/bpf/libbpf.h   |   4 ++
+> > >  tools/lib/bpf/libbpf.map |   3 +
+> > >  5 files changed, 138 insertions(+), 19 deletions(-)
+> > >
 
-[ Upstream commit 7c1857bdbdf1e4c541e45eab477ee23ed4333ea4 ]
+[...]
 
-Set the timestamp on new keys rather than leaving it unset.
+> >
+> > > +{
+> > > +       struct btf *btf = bpf_find_kernel_btf();
+> >
+> > ok, it's probably time to do this right. Let's ensure we load kernel
+> > BTF just once, keep it inside bpf_object while we need it and then
+> > release it after successful load. We are at the point where all the
+> > new types of program is loading/releasing kernel BTF for every section
+> > and it starts to feel very wasteful.
+>
+> Sure, will give it a shot in v3.
 
-Fixes: 31d5a79d7f3d ("KEYS: Do LRU discard in full keyrings")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/keys/key.c | 1 +
- 1 file changed, 1 insertion(+)
+thanks!
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 249a6da4d277..749a5cf27a19 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -297,6 +297,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
- 	key->gid = gid;
- 	key->perm = perm;
- 	key->restrict_link = restrict_link;
-+	key->last_used_at = ktime_get_real_seconds();
- 
- 	if (!(flags & KEY_ALLOC_NOT_IN_QUOTA))
- 		key->flags |= 1 << KEY_FLAG_IN_QUOTA;
--- 
-2.20.1
+[...]
 
+> >
+> > > +               if (!strcmp(btf__name_by_offset(btf, m->name_off), name))
+> > > +                       return j + 1;
+> >
+> > I looked briefly through kernel-side patch introducing lsm_hook_index,
+> > but it didn't seem to explain why this index needs to be (unnaturally)
+> > 1-based. So asking here first as I'm looking through libbpf changes?
+>
+> The lsm_hook_idx is one-based as it makes it easy to validate the
+> input. If we make it zero-based it's hard to check if the user
+> intended to attach to the LSM hook at index 0 or did not set it.
+
+Think about providing FDs. 0 is a valid, though rarely
+intended/correct value. Yet we don't make all FD arguments
+artificially 1-based, right? This extra +1/-1 translation just makes
+for more confusing interface, IMO. If user "accidentally" guessed type
+signature of very first hook, well, so be it... If not, BPF verifier
+will politely refuse. Seems like enough protection.
+
+>
+> We are then up to the verifier to reject the loaded program which
+> may or may not match the signature of the hook at lsm_hook_idx = 0.
+>
+> I will clarify this in the commit log as well.
+>
+
+[...]
