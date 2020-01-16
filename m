@@ -2,90 +2,121 @@ Return-Path: <SRS0=B56X=3F=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F33C33CAF
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 18:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D0CC33CB6
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 18:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D149D208C3
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 18:32:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579199546;
-	bh=3GDST97Zptw0/e84om70F9jZkf2LN43fAxlrhDAXbIw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=x48MpRpmsgG6jgcbVTq+2aEhyjC5FDjnmytPZ50cUA0Vy6R4iszwI0icossyuWXY3
-	 ydPq3Uj/Gk+defxLeTT4PaR1e097DC3UlZdbH0F2LllGUr3Av89KcEdcCtIwfPC1rO
-	 E+Q08EYULteltkIjWFGndxenkjlE5HoAZItTMeLU=
+	by mail.kernel.org (Postfix) with ESMTP id 2E7102077B
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 18:59:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPGCKqX8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391999AbgAPScZ (ORCPT
+        id S2388603AbgAPS7Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jan 2020 13:32:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391849AbgAPRZA (ORCPT
+        Thu, 16 Jan 2020 13:59:16 -0500
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:39397 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388966AbgAPS7P (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:25:00 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E33F2246A5;
-        Thu, 16 Jan 2020 17:24:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195499;
-        bh=3GDST97Zptw0/e84om70F9jZkf2LN43fAxlrhDAXbIw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BpwG32FE5HKa3b6t5qUW/+4XxzQ/5T354s3lYXPGpVJ7KGKoqMeU88WhEk4NVhWfR
-         2cEoRjbqX8qRwmmHFgCISiVjC0Aazdjilf6aniIuKI4OXoyLa6r7sAeKYPdTezoOC1
-         qMW/SunBZoRi9rc+0ObspA8xfIFFlec9mWpZPtHw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        James Morris <james.morris@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 100/371] keys: Timestamp new keys
-Date:   Thu, 16 Jan 2020 12:19:32 -0500
-Message-Id: <20200116172403.18149-43-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
-References: <20200116172403.18149-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        Thu, 16 Jan 2020 13:59:15 -0500
+Received: by mail-wr1-f47.google.com with SMTP id y11so20278849wrt.6;
+        Thu, 16 Jan 2020 10:59:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=2DWGq5gFkTQz9Z549OauU3Snuf7YD40/bBF5v2Ql2zI=;
+        b=FPGCKqX8kIQmBKqhTOE7gZhpo0QuSqWtC+dsBEgOG4E7mC53Z+oSsmnmea0gX5KtBa
+         x13xSnB5MFoQRcweDldi6GH/tXwG13MC70BJ99ln5HLxKodLzQtFRtGEF+BRKTTp38vC
+         D2+p7XWDwpMH9ow/nXhBj+agKPHm6eAxYFOheFPbageZxC5nn4M+YkjlROPwkwcjjxKW
+         la3wIBzi8kfv9ZgxXqmeq0fFxAG1Dr+iJjDuzppPEH8MD43TcYBbIBruUTItQ92hj9LJ
+         fVfigSkyjIoezbBZ3l372/nK0FTMFpdqG90aERrWS4U86uy2FreCmFsS9E0pd6W9RZXV
+         GeJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=2DWGq5gFkTQz9Z549OauU3Snuf7YD40/bBF5v2Ql2zI=;
+        b=ffmGQO8D+Crg7hP+3El5oN73ZkSDP90FsEgbgaKmOvPA/uNL61rfmcpHaR9sK+9PdW
+         3lLVHg4hv7DoS+1kqK3Bvq0XWyQEc/rGAlkI08HEegnj1B9rS3AQ3MCSUUowrKjKJg0K
+         iqETcPn3mlwXq3W1KCZ71BgFSxoYgBgXeG7cAW2MTXv+z1vcZPGfMOUW61w9oHmDI0h5
+         uoqWXGo5zOW1jAgGtEoJHTh5VEUcBssyk5jDAWDol33xm5UID+1tM80xYliDiAFucAAi
+         wRGAtOrTl/fKBncfwsV4EEJQFlrvIiz8SpCSvkQXXzLQQSmphkcyEL8tRsQhSxc1WRR1
+         9H1Q==
+X-Gm-Message-State: APjAAAWc0n6Akm1Df2Nerqv218E/IrWszqg9qssBbkNKOUVp5OqAEPD8
+        qxSm6eloNAurYtMAFZMwcto=
+X-Google-Smtp-Source: APXvYqzYjPgwGGI5+FIdKtuP92i9axf1hPbcu9ABihedq39Srwjpw3NK58jyqgqVSEltCvdwE6yY/A==
+X-Received: by 2002:adf:ebd0:: with SMTP id v16mr4863743wrn.146.1579201153435;
+        Thu, 16 Jan 2020 10:59:13 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2dbe:4a00:e092:254d:41ed:2e49])
+        by smtp.gmail.com with ESMTPSA id f207sm974443wme.9.2020.01.16.10.59.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 10:59:13 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Micah Morton <mortonm@chromium.org>
+Cc:     Joe Perches <joe@perches.com>,
+        linux-security-module@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH RESEND] MAINTAINERS: fix style in SAFESETID SECURITY MODULE
+Date:   Thu, 16 Jan 2020 19:58:44 +0100
+Message-Id: <20200116185844.11201-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: David Howells <dhowells@redhat.com>
+Commit fc5b34a35458 ("Add entry in MAINTAINERS file for SafeSetID LSM")
+slips in some formatting with spaces instead of tabs, which
+./scripts/checkpatch.pl -f MAINTAINERS complains about:
 
-[ Upstream commit 7c1857bdbdf1e4c541e45eab477ee23ed4333ea4 ]
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14394: FILE: MAINTAINERS:14394:
+  +M:     Micah Morton <mortonm@chromium.org>
 
-Set the timestamp on new keys rather than leaving it unset.
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14395: FILE: MAINTAINERS:14395:
+  +S:     Supported
 
-Fixes: 31d5a79d7f3d ("KEYS: Do LRU discard in full keyrings")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14396: FILE: MAINTAINERS:14396:
+  +F:     security/safesetid/
+
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14397: FILE: MAINTAINERS:14397:
+  +F:     Documentation/admin-guide/LSM/SafeSetID.rst
+
+Fixes: fc5b34a35458 ("Add entry in MAINTAINERS file for SafeSetID LSM")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- security/keys/key.c | 1 +
- 1 file changed, 1 insertion(+)
+applies cleanly on v5.5-rc6 and next-20200116
+Micah, please pick this patch.
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 87172f99f73e..17244f5f54c6 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -297,6 +297,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
- 	key->gid = gid;
- 	key->perm = perm;
- 	key->restrict_link = restrict_link;
-+	key->last_used_at = ktime_get_real_seconds();
+ MAINTAINERS | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a66cb722c675..d2aa9db61ab6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14415,10 +14415,10 @@ F:	drivers/media/pci/saa7146/
+ F:	include/media/drv-intf/saa7146*
  
- 	if (!(flags & KEY_ALLOC_NOT_IN_QUOTA))
- 		key->flags |= 1 << KEY_FLAG_IN_QUOTA;
+ SAFESETID SECURITY MODULE
+-M:     Micah Morton <mortonm@chromium.org>
+-S:     Supported
+-F:     security/safesetid/
+-F:     Documentation/admin-guide/LSM/SafeSetID.rst
++M:	Micah Morton <mortonm@chromium.org>
++S:	Supported
++F:	security/safesetid/
++F:	Documentation/admin-guide/LSM/SafeSetID.rst
+ 
+ SAMSUNG AUDIO (ASoC) DRIVERS
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
 -- 
-2.20.1
+2.17.1
 
