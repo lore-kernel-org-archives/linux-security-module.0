@@ -2,120 +2,90 @@ Return-Path: <SRS0=B56X=3F=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A5FAC33CAF
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 19:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2594C33CAF
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 19:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E972C2077B
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 19:17:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579202264;
-	bh=39CBIL1HeS6GavM9qOrDbK5XgU9Hlxmfz33G4BmUXpg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rCJX1GHFCz+WSN12W5UVy8Np6YLbBizyo4wgl9nstxRLEmkazLqmd3P6Zsbn7K7Sq
-	 0JXhTT5Cy9GKlbooUtxKe169l/dQIwNajVJ1UlJBMH/CsHpQlbKfq5nvp8Zvb/Dvjn
-	 ZFte5Qw/YPjhRveB5WJHVsoJAOQneYExEkUnuplU=
+	by mail.kernel.org (Postfix) with ESMTP id 892412073A
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 19:37:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="lQeRJkmR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731305AbgAPQzP (ORCPT
+        id S1730323AbgAPThc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jan 2020 11:55:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40272 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732652AbgAPQzO (ORCPT
+        Thu, 16 Jan 2020 14:37:32 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33400 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729345AbgAPThc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:55:14 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CA1B2465A;
-        Thu, 16 Jan 2020 16:55:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193713;
-        bh=39CBIL1HeS6GavM9qOrDbK5XgU9Hlxmfz33G4BmUXpg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rCMPOt3LO27dvdLGLtYbUyFx2/DcdpdUZTSIq6ketw+XFgIIZIyEI0+PZYkUp6K2x
-         oMC3KqIIM11QKzOgQZgFkEaUFclLdCc866FP1VNAff9jLk3KYU2w9bfiqSALpNkqhV
-         Ozp1wGycr2YKSxuq8XJi1YK1kehSyglg5fceio/Q=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jann Horn <jannh@google.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 009/671] apparmor: don't try to replace stale label in ptrace access check
-Date:   Thu, 16 Jan 2020 11:44:00 -0500
-Message-Id: <20200116165502.8838-9-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
-References: <20200116165502.8838-1-sashal@kernel.org>
+        Thu, 16 Jan 2020 14:37:32 -0500
+Received: by mail-lj1-f194.google.com with SMTP id y6so23942186lji.0
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jan 2020 11:37:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J/6nixoSIoKE6eZ+cJNMdmi8y/6oky8cFSXcKfYMtxQ=;
+        b=lQeRJkmRDyrHLNcLnxExOdsvsc6kYdTstdedfLJdxBc2Hb3NbgtxdXq880Yfcy82zG
+         +B+Vj80m+NtyaXkPaj1oRCBWHZw+GQgQ30H1LhlD5+Kga/+5lKOt7WrVHgEFRKopB44a
+         RFWPlwiohqMayaO3MO4ek0DoQ9Ff1EfnmeIyaoDhopImoqVNumyuBCo9PDfxM1ouTBsY
+         DWUVkhfv5yaDU08IGVaS+B0+gdsSWikaE2NGLkHrZDFpqeqVJ+l8SQOT1CzlM+6bJ+Ym
+         K8Gxs5sKXmBofKEQrueCfPV/lt1FSA0dU8fbsE/pFEJOEhaTyAqPZHacl3xhe+JttXvx
+         cCxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J/6nixoSIoKE6eZ+cJNMdmi8y/6oky8cFSXcKfYMtxQ=;
+        b=osLx264aG+vl328/HWbLEXLWujCVHs9RQYv7LzSS8rmXPqtZm1rMBSyaQEZxsBTsDI
+         e/idg536NMeShls7SVDRLRzZaXjEBN3eOo6Uql2woMOrqzknmVBTHia0nyRc7XZo4z+l
+         r/JRq0Dz0lRpzTypK8FbP/NPhZxVCmy3cdAB2dV+vOCpV91nEicUoW6SYdHfpPDjsGmi
+         OkEd1EMnrHy7bUe4yYXy2/Ypx4VEpdQ2fcqU3GORNJMl9XfIa/EPdhy1CKoCIhr0Wy7S
+         3fMdo9duJVSb6VZGl5w/bE02ObXSaHlIRfWSrjf+vfr9BHQTRFiaYyitZm/SM6Du3Crs
+         4qLA==
+X-Gm-Message-State: APjAAAXag3txpWfBQ04JixDZuxiWS0b7vtMq+QyBKwlwVcKuJYOaj1qU
+        rEFSr1S/sNWbQFXiEfTSOArsQXnppmBwl2RyqNiY
+X-Google-Smtp-Source: APXvYqwKAWhKu2+URonvJ2ikEe5O/sYBlf20qhEgS2M6oEN/BhsztPpWGHIRzliVuWewDjHKHrmByY0zmqg+gZCZzlw=
+X-Received: by 2002:a2e:870b:: with SMTP id m11mr3313585lji.93.1579203450159;
+ Thu, 16 Jan 2020 11:37:30 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20200113150331.34108-1-yehs2007@zoho.com>
+In-Reply-To: <20200113150331.34108-1-yehs2007@zoho.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 16 Jan 2020 14:37:19 -0500
+Message-ID: <CAHC9VhQTa9VcO9Yq4e36zd8ZAVNDb3_tA-uSgmH_aMX2p5QXLA@mail.gmail.com>
+Subject: Re: [PATCH v2] selinux: remove redundant selinux_nlmsg_perm
+To:     Huaisheng Ye <yehs2007@zoho.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>, tyu1@lenovo.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Huaisheng Ye <yehs1@lenovo.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Jann Horn <jannh@google.com>
+On Mon, Jan 13, 2020 at 10:05 AM Huaisheng Ye <yehs2007@zoho.com> wrote:
+> From: Huaisheng Ye <yehs1@lenovo.com>
+>
+> selinux_nlmsg_perm is used for only by selinux_netlink_send. Remove
+> the redundant function to simplify the code.
+>
+> Fix a typo by suggestion from Stephen.
+>
+> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+> ---
+>  security/selinux/hooks.c | 73 ++++++++++++++++++++++--------------------------
+>  1 file changed, 34 insertions(+), 39 deletions(-)
 
-[ Upstream commit 1f8266ff58840d698a1e96d2274189de1bdf7969 ]
+Merged into selinux/next, thanks!
 
-As a comment above begin_current_label_crit_section() explains,
-begin_current_label_crit_section() must run in sleepable context because
-when label_is_stale() is true, aa_replace_current_label() runs, which uses
-prepare_creds(), which can sleep.
-Until now, the ptrace access check (which runs with a task lock held)
-violated this rule.
-
-Also add a might_sleep() assertion to begin_current_label_crit_section(),
-because asserts are less likely to be ignored than comments.
-
-Fixes: b2d09ae449ced ("apparmor: move ptrace checks to using labels")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: John Johansen <john.johansen@canonical.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/apparmor/include/cred.h | 2 ++
- security/apparmor/lsm.c          | 4 ++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
-index e287b7d0d4be..265ae6641a06 100644
---- a/security/apparmor/include/cred.h
-+++ b/security/apparmor/include/cred.h
-@@ -151,6 +151,8 @@ static inline struct aa_label *begin_current_label_crit_section(void)
- {
- 	struct aa_label *label = aa_current_raw_label();
- 
-+	might_sleep();
-+
- 	if (label_is_stale(label)) {
- 		label = aa_get_newest_label(label);
- 		if (aa_replace_current_label(label) == 0)
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 8b8b70620bbe..e3f40c20b9b4 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -114,13 +114,13 @@ static int apparmor_ptrace_access_check(struct task_struct *child,
- 	struct aa_label *tracer, *tracee;
- 	int error;
- 
--	tracer = begin_current_label_crit_section();
-+	tracer = __begin_current_label_crit_section();
- 	tracee = aa_get_task_label(child);
- 	error = aa_may_ptrace(tracer, tracee,
- 			(mode & PTRACE_MODE_READ) ? AA_PTRACE_READ
- 						  : AA_PTRACE_TRACE);
- 	aa_put_label(tracee);
--	end_current_label_crit_section(tracer);
-+	__end_current_label_crit_section(tracer);
- 
- 	return error;
- }
 -- 
-2.20.1
-
+paul moore
+www.paul-moore.com
