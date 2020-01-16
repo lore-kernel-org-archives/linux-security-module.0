@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40795C33CB6
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 16:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F51CC33CB6
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 17:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1367324680
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 16:55:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D669C20684
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jan 2020 17:22:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579193714;
-	bh=5CBKbS1KO/YZE0mKdL4kHfuURCzzDa3uCPuV0/8xM3c=;
+	s=default; t=1579195322;
+	bh=sUEmpbvttt0S4MWyiKJbNj8b+VkU2b5Kh+cieFdT378=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LAb9NTFyzMM5wkQ0ksPpZx4XLMM7DWfeMQ9S23z9pcHjHYsmiD1ddgZ6t5XiV4R2f
-	 n2q4ue/mvmxwTd3mmhnmxhvZWoe53RutHAPfplN+drkZNxrwlP/GTK+F1dZMsog/72
-	 K8qnJ0qjsWvlJ3X8ngd2BMxQDBcu0r/9MH1KuUHE=
+	b=dU3I/dLDp/exUAIW4hg6vq/Uqin5wRjbhdTbsYDJb/J8NOFa2NAXZvpQK9yy4UXha
+	 z+RBfELNOSqdkIBs2O84Z67qtKqrQFUkkkjwUumn19mLSvBT71eHrNtdwl21vMwOUX
+	 QtR0UmWsd97jRkkOkT3ITTsE0UYvHY6bdJbktOYc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731276AbgAPQzN (ORCPT
+        id S2391501AbgAPRVw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jan 2020 11:55:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40204 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:21:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732601AbgAPQzM (ORCPT
+        id S2391200AbgAPRR0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:55:12 -0500
+        Thu, 16 Jan 2020 12:17:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D35BD2467C;
-        Thu, 16 Jan 2020 16:55:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C71E21582;
+        Thu, 16 Jan 2020 17:17:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193711;
-        bh=5CBKbS1KO/YZE0mKdL4kHfuURCzzDa3uCPuV0/8xM3c=;
+        s=default; t=1579195045;
+        bh=sUEmpbvttt0S4MWyiKJbNj8b+VkU2b5Kh+cieFdT378=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sM9NtRFIJcxT9BOhwsrwbXPIu33uE8Faqs27hqNJcgo4Xjylm6sE55x+5o/YdxTN+
-         zSZVjS4gJUZ0Xte64mb/PkBTUzgp9+SEBFCegBXS41FYf/Z0VsvByoX0rPeYhFc2X2
-         DF8Tc4AYsSsmwjx3qRFswnyueKUghkc6SVQKeaxc=
+        b=z30zkRLj1VVOTkOOT8Lko9JuuA+kD9FEAMZlLISnv6iGM+jd5OXVqvLPHe8+dbjRA
+         iqINVjF/+xa9AUkJwlu7zlipNfXuYnhi5DfRF2Xh68hjopnzTU1J7NJ/nnI1LS5eAs
+         DYRs8pq67j7olWgtMthvvD7HTHf4x0u/aTKBdJq0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tony Jones <tonyj@suse.de>,
+Cc:     Jann Horn <jannh@google.com>,
         John Johansen <john.johansen@canonical.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 007/671] apparmor: Fix network performance issue in aa_label_sk_perm
-Date:   Thu, 16 Jan 2020 11:43:58 -0500
-Message-Id: <20200116165502.8838-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 004/371] apparmor: don't try to replace stale label in ptrace access check
+Date:   Thu, 16 Jan 2020 12:11:12 -0500
+Message-Id: <20200116171719.16965-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
-References: <20200116165502.8838-1-sashal@kernel.org>
+In-Reply-To: <20200116171719.16965-1-sashal@kernel.org>
+References: <20200116171719.16965-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -60,86 +60,61 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Tony Jones <tonyj@suse.de>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit 5f997580e8b12b9f585e34cc16304925d26ce49e ]
+[ Upstream commit 1f8266ff58840d698a1e96d2274189de1bdf7969 ]
 
-The netperf benchmark shows a 5.73% reduction in throughput for
-small (64 byte) transfers by unconfined tasks.
+As a comment above begin_current_label_crit_section() explains,
+begin_current_label_crit_section() must run in sleepable context because
+when label_is_stale() is true, aa_replace_current_label() runs, which uses
+prepare_creds(), which can sleep.
+Until now, the ptrace access check (which runs with a task lock held)
+violated this rule.
 
-DEFINE_AUDIT_SK() in aa_label_sk_perm() should not be performed
-unconditionally, rather only when the label is confined.
+Also add a might_sleep() assertion to begin_current_label_crit_section(),
+because asserts are less likely to be ignored than comments.
 
-netperf-tcp
-                            56974a6fc^              56974a6fc
-Min       64         563.48 (   0.00%)      531.17 (  -5.73%)
-Min       128       1056.92 (   0.00%)      999.44 (  -5.44%)
-Min       256       1945.95 (   0.00%)     1867.97 (  -4.01%)
-Min       1024      6761.40 (   0.00%)     6364.23 (  -5.87%)
-Min       2048     11110.53 (   0.00%)    10606.20 (  -4.54%)
-Min       3312     13692.67 (   0.00%)    13158.41 (  -3.90%)
-Min       4096     14926.29 (   0.00%)    14457.46 (  -3.14%)
-Min       8192     18399.34 (   0.00%)    18091.65 (  -1.67%)
-Min       16384    21384.13 (   0.00%)    21158.05 (  -1.06%)
-Hmean     64         564.96 (   0.00%)      534.38 (  -5.41%)
-Hmean     128       1064.42 (   0.00%)     1010.12 (  -5.10%)
-Hmean     256       1965.85 (   0.00%)     1879.16 (  -4.41%)
-Hmean     1024      6839.77 (   0.00%)     6478.70 (  -5.28%)
-Hmean     2048     11154.80 (   0.00%)    10671.13 (  -4.34%)
-Hmean     3312     13838.12 (   0.00%)    13249.01 (  -4.26%)
-Hmean     4096     15009.99 (   0.00%)    14561.36 (  -2.99%)
-Hmean     8192     18975.57 (   0.00%)    18326.54 (  -3.42%)
-Hmean     16384    21440.44 (   0.00%)    21324.59 (  -0.54%)
-Stddev    64           1.24 (   0.00%)        2.85 (-130.64%)
-Stddev    128          4.51 (   0.00%)        6.53 ( -44.84%)
-Stddev    256         11.67 (   0.00%)        8.50 (  27.16%)
-Stddev    1024        48.33 (   0.00%)       75.07 ( -55.34%)
-Stddev    2048        54.82 (   0.00%)       65.16 ( -18.86%)
-Stddev    3312       153.57 (   0.00%)       56.29 (  63.35%)
-Stddev    4096       100.25 (   0.00%)       88.50 (  11.72%)
-Stddev    8192       358.13 (   0.00%)      169.99 (  52.54%)
-Stddev    16384       43.99 (   0.00%)      141.82 (-222.39%)
-
-Signed-off-by: Tony Jones <tonyj@suse.de>
-Fixes: 56974a6fcfef ("apparmor: add base infastructure for socket
-mediation")
+Fixes: b2d09ae449ced ("apparmor: move ptrace checks to using labels")
+Signed-off-by: Jann Horn <jannh@google.com>
 Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/apparmor/net.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ security/apparmor/include/context.h | 2 ++
+ security/apparmor/lsm.c             | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-index bb24cfa0a164..d5d72dd1ca1f 100644
---- a/security/apparmor/net.c
-+++ b/security/apparmor/net.c
-@@ -146,17 +146,20 @@ int aa_af_perm(struct aa_label *label, const char *op, u32 request, u16 family,
- static int aa_label_sk_perm(struct aa_label *label, const char *op, u32 request,
- 			    struct sock *sk)
+diff --git a/security/apparmor/include/context.h b/security/apparmor/include/context.h
+index 6ae07e9aaa17..812cdec9dd3b 100644
+--- a/security/apparmor/include/context.h
++++ b/security/apparmor/include/context.h
+@@ -191,6 +191,8 @@ static inline struct aa_label *begin_current_label_crit_section(void)
  {
--	struct aa_profile *profile;
--	DEFINE_AUDIT_SK(sa, op, sk);
-+	int error = 0;
+ 	struct aa_label *label = aa_current_raw_label();
  
- 	AA_BUG(!label);
- 	AA_BUG(!sk);
- 
--	if (unconfined(label))
--		return 0;
-+	if (!unconfined(label)) {
-+		struct aa_profile *profile;
-+		DEFINE_AUDIT_SK(sa, op, sk);
- 
--	return fn_for_each_confined(label, profile,
--			aa_profile_af_sk_perm(profile, &sa, request, sk));
-+		error = fn_for_each_confined(label, profile,
-+			    aa_profile_af_sk_perm(profile, &sa, request, sk));
-+	}
++	might_sleep();
 +
-+	return error;
- }
+ 	if (label_is_stale(label)) {
+ 		label = aa_get_newest_label(label);
+ 		if (aa_replace_current_label(label) == 0)
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 1346ee5be04f..4f08023101f3 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -108,12 +108,12 @@ static int apparmor_ptrace_access_check(struct task_struct *child,
+ 	struct aa_label *tracer, *tracee;
+ 	int error;
  
- int aa_sk_perm(const char *op, u32 request, struct sock *sk)
+-	tracer = begin_current_label_crit_section();
++	tracer = __begin_current_label_crit_section();
+ 	tracee = aa_get_task_label(child);
+ 	error = aa_may_ptrace(tracer, tracee,
+ 		  mode == PTRACE_MODE_READ ? AA_PTRACE_READ : AA_PTRACE_TRACE);
+ 	aa_put_label(tracee);
+-	end_current_label_crit_section(tracer);
++	__end_current_label_crit_section(tracer);
+ 
+ 	return error;
+ }
 -- 
 2.20.1
 
