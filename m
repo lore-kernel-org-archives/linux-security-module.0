@@ -2,316 +2,224 @@ Return-Path: <SRS0=Fv6r=3G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC5BC33CAF
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jan 2020 00:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD975C33CB1
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jan 2020 12:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC64B214AF
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jan 2020 00:28:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B0CD2082F
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jan 2020 12:07:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OVgpERU0"
+	dkim=temperror (0-bit key) header.d=phytec.de header.i=@phytec.de header.b="KRc4TH8Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729263AbgAQA2Q (ORCPT
+        id S1726917AbgAQMHj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jan 2020 19:28:16 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:34039 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729253AbgAQA2Q (ORCPT
+        Fri, 17 Jan 2020 07:07:39 -0500
+Received: from mickerik.phytec.de ([195.145.39.210]:53582 "EHLO
+        mickerik.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbgAQMHi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jan 2020 19:28:16 -0500
-Received: by mail-qk1-f193.google.com with SMTP id j9so21134163qkk.1;
-        Thu, 16 Jan 2020 16:28:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A6F4ZnavD0e/0chFQ3kgLKefPDVYDYjwgeigG3mgzgo=;
-        b=OVgpERU0SAEtw3TECBcLos0ASYCg7YIeD9Y4/Ao2eH0mpTyzJkhQbfgi1wFeVKfkeZ
-         hdnB5GFT/mrt92iJGgrbPNvht3FkXBgept9Qb6vekQY3doaf9BbWkF7u52xVfFaiNtJ/
-         f81szrToA9mEwByoQTAPv+8HHaVEf62zH4Y9JdritM2pGH7ZQr2I9TfPXktuX0oe4ZRN
-         4VPmG6YsEUwbDeec0dBpWeStKWSOrslt0ufERkNt37DPXWICDnu8TfmtIUB2b1/Ulyo5
-         5vsIxJ2wLzqxg8cUZJLykU/lkKt88LWYmXIrOAvvaFwJfLvL0HXxogWYZDnmTDC0wH97
-         Ks5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A6F4ZnavD0e/0chFQ3kgLKefPDVYDYjwgeigG3mgzgo=;
-        b=cYgdoDCvd+U7gauI7GWHFWHdsMcih1/rnagBXte1KaIEiSXPVHN0SofSU2H7nkkVtj
-         A2ABVRjiPs8R48XsxB2ovCqQiiB0/Ri9ZaON3+bsPnzl73jzwiD4UcgIk2Ho3fxxFFeZ
-         1La6J7J9GcRvmdHnNwHVFMcn1fsMnBnVn5mFMvlKKdLlo1ytH1gGASsTbTn7VTi6vJ7L
-         mvGx/tpaDWfRzDX+EKZIB7Ei2ua1biCBITXAsBJYXgATJtWewkHgpfxfBJyN8F7mfM4y
-         2rsTk+WOHrtbO5gqJPj+62w+OarOmYu0KqsrOH/3alC28NRcM0D78rsPh7nqBOfclEhZ
-         CQ8Q==
-X-Gm-Message-State: APjAAAWmyGcNIneN+7hOqDNPelOPLMl+zWzao4V9d05DPKX2QBT8D7RN
-        z8WsS0R8tl4CLjGTfRfwwdDYcboPnRKWGnwLMdXVRFAUhio=
-X-Google-Smtp-Source: APXvYqwsfFzq80hquq3LspX/KN8hSx+8XNuRLGL/HQaf/j7qBgvYUtZPltNqkh2RP5g3Ixh87lq8IwyPtjgKvxPCZeY=
-X-Received: by 2002:a05:620a:14a2:: with SMTP id x2mr36057955qkj.36.1579220894464;
- Thu, 16 Jan 2020 16:28:14 -0800 (PST)
+        Fri, 17 Jan 2020 07:07:38 -0500
+X-Greylist: delayed 916 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Jan 2020 07:07:38 EST
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a1; c=relaxed/simple;
+        q=dns/txt; i=@phytec.de; t=1579261941; x=1581853941;
+        h=From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=gqK1xeGxQeyBtOyx9mXijyzCeAtztf2bF1PPlgdG9zk=;
+        b=KRc4TH8YJADFqJNSNGnBkkLooNJlNc7jaao3jAE0XAGo0jpITYfLjRJ5t76Zxub9
+        1W9RW/QNO7J1gI/ob5TmWmJdGMrzWke0Zy6E8tB7YWQJqrWbwFJt26uoVMRc73WF
+        iYxd/yx7haB8GpvlcvtUUYcEbJtdW9WjLc2ynrCvQoo=;
+X-AuditID: c39127d2-c07ff70000002a58-65-5e219ff51aef
+Received: from idefix.phytec.de (Unknown_Domain [172.16.0.10])
+        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id CA.8F.10840.5FF912E5; Fri, 17 Jan 2020 12:52:21 +0100 (CET)
+Received: from [172.16.20.241] ([172.16.20.241])
+          by idefix.phytec.de (IBM Domino Release 9.0.1FP7)
+          with ESMTP id 2020011712522129-160139 ;
+          Fri, 17 Jan 2020 12:52:21 +0100 
+Subject: Re: [RFC PATCH 2/2] dm-crypt: Use any key type which is registered
+To:     Franck LENORMAND <franck.lenormand@nxp.com>,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     horia.geanta@nxp.com, silvano.dininno@nxp.com, agk@redhat.com,
+        snitzer@redhat.com, dm-devel@redhat.com, dhowells@redhat.com,
+        jmorris@namei.org, serge@hallyn.com
+References: <1551456599-10603-1-git-send-email-franck.lenormand@nxp.com>
+ <1551456599-10603-3-git-send-email-franck.lenormand@nxp.com>
+From:   Maik Otto <m.otto@phytec.de>
+Message-ID: <97ab8779-1351-0030-7a9f-fababe1f57c2@phytec.de>
+Date:   Fri, 17 Jan 2020 12:52:21 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200115171333.28811-1-kpsingh@chromium.org> <20200115171333.28811-6-kpsingh@chromium.org>
-In-Reply-To: <20200115171333.28811-6-kpsingh@chromium.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 16 Jan 2020 16:28:03 -0800
-Message-ID: <CAEf4BzYJy40csmwfBgtD+UZY3X+hjqpQ=NwjUQ-cwy+RPF8VHA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 05/10] bpf: lsm: BTF API for LSM hooks
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1551456599-10603-3-git-send-email-franck.lenormand@nxp.com>
+X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 17.01.2020 12:52:21,
+        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 17.01.2020 12:52:21
+X-TNEFEvaluated: 1
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsWyRoCBS/frfMU4g6+bRCzWnzrGbPGu6TeL
+        xd53s1ktmla/Z7b4cP4wk8W69YuZLLbeaWKz+NDziM3i/IVz7BZLF19jtmjb+JXRgdvj2u5I
+        j57vyR4b3+1g8ni/7yqbx+dNcgGsUVw2Kak5mWWpRfp2CVwZDeefsxf8V6noaJRrYDwh28XI
+        ySEhYCKx/vY61i5GLg4hga2MEp/3X2KCcM4wSmz584wRpEpYwFvizJ0rzCC2iECBxK+73xlB
+        ipgFljBKrP41lQWio51R4tGdBWBVbAJKEg/nrgazeQVsJCZcmMYCYrMIqEo8fvgSLC4qkCjx
+        ruEtVI2gxMmZT8BqOAU8JWb3LwS7SULgCqPEynWrWSGOFZI4vfgsWAOzgJnEvM0PoWxtiWUL
+        XzNPYBSchWTWLCRls5CULWBkXsUolJuZnJ1alJmtV5BRWZKarJeSuokRGCGHJ6pf2sHYN8fj
+        ECMTB+MhRgkOZiUR3ru9inFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeTfwloQJCaQnlqRmp6YW
+        pBbBZJk4OKUaGGd/nhn4d8b7bTFHrCNKYt40Fyned/N8W3Gn4FGbnObk0I2Huc/Lal6VMIvX
+        qWd56WV9xt5a3OGUlP7cuOgMs7c27Nmib2Iqmv9YF3zTWi80M614R3ZNZblSWAPTMo8Jr1ad
+        FHz9QNZnf/7K4F+POycv/CbItuvhymNS89f/ONbfJsV1Ovu7phJLcUaioRZzUXEiAH2Okfl+
+        AgAA
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 15, 2020 at 9:14 AM KP Singh <kpsingh@chromium.org> wrote:
+Hi
+
+little bug fix, because this version chrashed with access violation
+on an i.MX6Quad with a Mainline Kernel 4.19.88
+
+> There was only 2 key=5Ftype supported by dm-crypt which limits other
+> implementations.
 >
-> From: KP Singh <kpsingh@google.com>
+> This patch allows to use any key=5Ftype which is registered obtaining
+> the key=5Ftype from key framework.
 >
-> The BTF API provides information required by the BPF verifier to
-> attach eBPF programs to the LSM hooks by using the BTF information of
-> two types:
+> This also remove the compilation dependency between dm-crypt and
+> key implementations.
 >
-> - struct security_hook_heads: This type provides the offset which
->   a new dynamically allocated security hook must be attached to.
-> - union security_list_options: This provides the information about the
->   function prototype required by the hook.
->
-> When the program is loaded:
->
-> - The verifier receives the index of a member in struct
->   security_hook_heads to which a program must be attached as
->   prog->aux->lsm_hook_index. The index is one-based for better
->   verification.
-> - bpf_lsm_type_by_index is used to determine the func_proto of
->   the LSM hook and updates prog->aux->attach_func_proto
-> - bpf_lsm_head_by_index is used to determine the hlist_head to which
->   the BPF program must be attached.
->
-> Signed-off-by: KP Singh <kpsingh@google.com>
+> Signed-off-by: Franck LENORMAND <franck.lenormand@nxp.com>
 > ---
->  include/linux/bpf_lsm.h |  12 +++++
->  security/bpf/Kconfig    |   1 +
->  security/bpf/hooks.c    | 104 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 117 insertions(+)
+>   drivers/md/dm-crypt.c    | 11 ++++++-----
+>   include/linux/key-type.h |  2 ++
+>   security/keys/key.c      | 42 ++++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 50 insertions(+), 5 deletions(-)
 >
-> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-> index 9883cf25241c..a9b4f7b41c65 100644
-> --- a/include/linux/bpf_lsm.h
-> +++ b/include/linux/bpf_lsm.h
-> @@ -19,6 +19,8 @@ extern struct security_hook_heads bpf_lsm_hook_heads;
->
->  int bpf_lsm_srcu_read_lock(void);
->  void bpf_lsm_srcu_read_unlock(int idx);
-> +const struct btf_type *bpf_lsm_type_by_index(struct btf *btf, u32 offset);
-> +const struct btf_member *bpf_lsm_head_by_index(struct btf *btf, u32 id);
->
->  #define CALL_BPF_LSM_VOID_HOOKS(FUNC, ...)                     \
->         do {                                                    \
-> @@ -65,6 +67,16 @@ static inline int bpf_lsm_srcu_read_lock(void)
->         return 0;
->  }
->  static inline void bpf_lsm_srcu_read_unlock(int idx) {}
-> +static inline const struct btf_type *bpf_lsm_type_by_index(
-> +       struct btf *btf, u32 index)
-> +{
-> +       return ERR_PTR(-EOPNOTSUPP);
-> +}
-> +static inline const struct btf_member *bpf_lsm_head_by_index(
-> +       struct btf *btf, u32 id)
-> +{
-> +       return ERR_PTR(-EOPNOTSUPP);
-> +}
->
->  #endif /* CONFIG_SECURITY_BPF */
->
-> diff --git a/security/bpf/Kconfig b/security/bpf/Kconfig
-> index 595e4ad597ae..9438d899b618 100644
-> --- a/security/bpf/Kconfig
-> +++ b/security/bpf/Kconfig
-> @@ -7,6 +7,7 @@ config SECURITY_BPF
->         depends on SECURITY
->         depends on BPF_SYSCALL
->         depends on SRCU
-> +       depends on DEBUG_INFO_BTF
->         help
->           This enables instrumentation of the security hooks with
->           eBPF programs.
-> diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
-> index b123d9cb4cd4..82725611693d 100644
-> --- a/security/bpf/hooks.c
-> +++ b/security/bpf/hooks.c
-> @@ -5,6 +5,8 @@
->   */
->
->  #include <linux/bpf_lsm.h>
-> +#include <linux/bpf.h>
-> +#include <linux/btf.h>
->  #include <linux/srcu.h>
->
->  DEFINE_STATIC_SRCU(security_hook_srcu);
-> @@ -18,3 +20,105 @@ void bpf_lsm_srcu_read_unlock(int idx)
->  {
->         return srcu_read_unlock(&security_hook_srcu, idx);
->  }
+> diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+> index dd538e6..e25efc2 100644
+> --- a/drivers/md/dm-crypt.c
+> +++ b/drivers/md/dm-crypt.c
+> @@ -35,6 +35,7 @@
+>   #include <crypto/authenc.h>
+>   #include <linux/rtnetlink.h> /* for struct rtattr and RTA macros only */
+>   #include <keys/user-type.h>
+> +#include <linux/key-type.h>
+>  =20
+>   #include <linux/device-mapper.h>
+>  =20
+> @@ -2010,6 +2011,7 @@ static int crypt=5Fset=5Fkeyring=5Fkey(struct crypt=
+=5Fconfig *cc, const char *key=5Fstring
+>   	int ret;
+>   	struct key *key;
+>   	const struct user=5Fkey=5Fpayload *ukp;
+> +	struct key=5Ftype *type;
+>  =20
+>   	/*
+>   	 * Reject key=5Fstring with whitespace. dm core currently lacks code f=
+or
+> @@ -2025,16 +2027,15 @@ static int crypt=5Fset=5Fkeyring=5Fkey(struct cry=
+pt=5Fconfig *cc, const char *key=5Fstring
+>   	if (!key=5Fdesc || key=5Fdesc =3D=3D key=5Fstring || !strlen(key=5Fdes=
+c + 1))
+>   		return -EINVAL;
+>  =20
+> -	if (strncmp(key=5Fstring, "logon:", key=5Fdesc - key=5Fstring + 1) &&
+> -	    strncmp(key=5Fstring, "user:", key=5Fdesc - key=5Fstring + 1))
+> -		return -EINVAL;
+> +	type =3D get=5Fkey=5Ftype(key=5Fstring, key=5Fdesc - key=5Fstring);
+> +	if (!type)
+> +		return -ENOENT;
+>  =20
+>   	new=5Fkey=5Fstring =3D kstrdup(key=5Fstring, GFP=5FKERNEL);
+>   	if (!new=5Fkey=5Fstring)
+>   		return -ENOMEM;
+>  =20
+> -	key =3D request=5Fkey(key=5Fstring[0] =3D=3D 'l' ? &key=5Ftype=5Flogon =
+: &key=5Ftype=5Fuser,
+> -			  key=5Fdesc + 1, NULL);
+> +	key =3D request=5Fkey(type, key=5Fdesc + 1, NULL);
+>   	if (IS=5FERR(key)) {
+>   		kzfree(new=5Fkey=5Fstring);
+>   		return PTR=5FERR(key);
+> diff --git a/include/linux/key-type.h b/include/linux/key-type.h
+> index bc9af55..2b2167b 100644
+> --- a/include/linux/key-type.h
+> +++ b/include/linux/key-type.h
+> @@ -176,6 +176,8 @@ extern struct key=5Ftype key=5Ftype=5Fkeyring;
+>   extern int register=5Fkey=5Ftype(struct key=5Ftype *ktype);
+>   extern void unregister=5Fkey=5Ftype(struct key=5Ftype *ktype);
+>  =20
+> +extern struct key=5Ftype *get=5Fkey=5Ftype(const char *type=5Fname, size=
+=5Ft string=5Fsize);
 > +
-> +static inline int validate_hlist_head(struct btf *btf, u32 type_id)
-> +{
-> +       s32 hlist_id;
-> +
-> +       hlist_id = btf_find_by_name_kind(btf, "hlist_head", BTF_KIND_STRUCT);
-> +       if (hlist_id < 0 || hlist_id != type_id)
-> +               return -EINVAL;
-
-This feels backwards and expensive. You already have type_id you want
-to check. Do a quick look up, check type and other attributes, if you
-want. There is no need to do linear search for struct named
-"hlist_head".
-
-But in reality, you should trust kernel BTF, you already know that you
-found correct "security_hook_heads" struct, so its member has to be
-hlist_head, no?
-
-> +
-> +       return 0;
-> +}
-> +
-> +/* Find the BTF representation of the security_hook_heads member for a member
-> + * with a given index in struct security_hook_heads.
+>   extern int key=5Fpayload=5Freserve(struct key *key, size=5Ft datalen);
+>   extern int key=5Finstantiate=5Fand=5Flink(struct key *key,
+>   				    const void *data,
+> diff --git a/security/keys/key.c b/security/keys/key.c
+> index 44a80d6..ef76114 100644
+> --- a/security/keys/key.c
+> +++ b/security/keys/key.c
+> @@ -1156,6 +1156,48 @@ void unregister=5Fkey=5Ftype(struct key=5Ftype *kt=
+ype)
+>   }
+>   EXPORT=5FSYMBOL(unregister=5Fkey=5Ftype);
+>  =20
+> +/**
+> + * get=5Fkey=5Ftype - Get the type of key using its name
+> + * @type=5Fname: Name of the key type to get
+> + * @string=5Fsize: Size of the string to match
+> + *
+> + * The functions support null ended string (string=5Fsize =3D=3D 0) as w=
+ell as
+> + * pointer on a string matching a number of characters (string=5Fsize > =
+0)
+> + *
+> + * Returns a pointer on the key type if successful, -ENOENT if the key t=
+ype
+> + * is not registered.
 > + */
-> +const struct btf_member *bpf_lsm_head_by_index(struct btf *btf, u32 index)
+> +struct key=5Ftype *get=5Fkey=5Ftype(const char *type=5Fname, size=5Ft st=
+ring=5Fsize)
 > +{
-> +       const struct btf_member *member;
-> +       const struct btf_type *t;
-> +       u32 off, i;
-> +       int ret;
+> +	struct key=5Ftype *p;
+> +	struct key=5Ftype *ktype =3D ERR=5FPTR(-ENOENT);
 > +
-> +       t = btf_type_by_name_kind(btf, "security_hook_heads", BTF_KIND_STRUCT);
-> +       if (WARN_ON_ONCE(IS_ERR(t)))
-> +               return ERR_CAST(t);
+> +	if (!type=5Fname)
+> +		return ktype;
 > +
-> +       for_each_member(i, t, member) {
-> +               /* We've found the id requested and need to check the
-> +                * the following:
-> +                *
-> +                * - Is it at a valid alignment for struct hlist_head?
-> +                *
-> +                * - Is it a valid hlist_head struct?
-> +                */
-> +               if (index == i) {
+> +	down=5Fwrite(&key=5Ftypes=5Fsem);
 
-Also not efficient. Check index to be < vlen(t), then member =
-btf_type_member(t) + index;
+down=5Fwrite(&key=5Ftypes=5Fsem);=C2=A0 changed to down=5Fread(&key=5Ftypes=
+=5Fsem);
 
-
-> +                       off = btf_member_bit_offset(t, member);
-> +                       if (off % 8)
-> +                               /* valid c code cannot generate such btf */
-> +                               return ERR_PTR(-EINVAL);
-> +                       off /= 8;
 > +
-> +                       if (off % __alignof__(struct hlist_head))
-> +                               return ERR_PTR(-EINVAL);
+> +	/* Search the key type in the list */
+> +	list=5Ffor=5Feach=5Fentry(p, &key=5Ftypes=5Flist, link) {
+> +		if (string=5Fsize) {
+> +			if (strncmp(p->name, type=5Fname, string=5Fsize) =3D=3D 0) {
+> +				ktype =3D p;
+> +				break;
+> +			}
+> +		} else {
+> +			if (strcmp(p->name, type=5Fname) =3D=3D 0) {
+> +				ktype =3D p;
+> +				break;
+> +			}
+> +		}
+> +	}
 > +
-> +                       ret = validate_hlist_head(btf, member->type);
-> +                       if (ret < 0)
-> +                               return ERR_PTR(ret);
+> +	up=5Fread(&key=5Ftypes=5Fsem);
 > +
-> +                       return member;
-
-This feels a bit over-cautious to double-check this. If
-security_hook_heads definition is controlled by kernel sources, then
-we could just trust vmlinux BTF?
-
-> +               }
-> +       }
-> +
-> +       return ERR_PTR(-ENOENT);
+> +	return ktype;
 > +}
+> +EXPORT=5FSYMBOL(get=5Fkey=5Ftype);
 > +
-> +/* Given an index of a member in security_hook_heads return the
-> + * corresponding type for the LSM hook. The members of the union
-> + * security_list_options have the same name as the security_hook_heads which
-> + * is ensured by the LSM_HOOK_INIT macro defined in include/linux/lsm_hooks.h
-> + */
-> +const struct btf_type *bpf_lsm_type_by_index(struct btf *btf, u32 index)
-> +{
-> +       const struct btf_member *member, *hook_head = NULL;
-> +       const struct btf_type *t, *hook_type = NULL;
-> +       u32 i;
-> +
-> +       hook_head = bpf_lsm_head_by_index(btf, index);
-> +       if (IS_ERR(hook_head))
-> +               return ERR_PTR(PTR_ERR(hook_head));
-> +
-> +       t = btf_type_by_name_kind(btf, "security_list_options", BTF_KIND_UNION);
-> +       if (WARN_ON_ONCE(IS_ERR(t)))
-> +               return ERR_CAST(t);
-
-btf_type_by_name_kind() is a linear search (at least right now), so it
-might be a good idea to cache found type_id's of security_list_options
-and security_hook_heads?
-
-> +
-> +       for_each_member(i, t, member) {
-> +               if (hook_head->name_off == member->name_off) {
-> +                       /* There should be only one member with the same name
-> +                        * as the LSM hook. This should never really happen
-> +                        * and either indicates malformed BTF or someone trying
-> +                        * trick the LSM.
-> +                        */
-> +                       if (WARN_ON(hook_type))
-> +                               return ERR_PTR(-EINVAL);
-> +
-> +                       hook_type = btf_type_by_id(btf, member->type);
-> +                       if (unlikely(!hook_type))
-> +                               return ERR_PTR(-EINVAL);
-> +
-> +                       if (!btf_type_is_ptr(hook_type))
-> +                               return ERR_PTR(-EINVAL);
-> +               }
-> +       }
-> +
-> +       if (!hook_type)
-> +               return ERR_PTR(-ENOENT);
-> +
-> +       t = btf_type_by_id(btf, hook_type->type);
-> +       if (unlikely(!t))
-> +               return ERR_PTR(-EINVAL);
-
-why not do this inside the loop when you find correct member and not
-continue processing all the fields?
-
-> +
-> +       return t;
-> +}
-> --
-> 2.20.1
+>   /*
+>    * Initialise the key management state.
+>    */
 >
