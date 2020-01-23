@@ -5,54 +5,54 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A0EC33CB6
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jan 2020 15:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F38C2D0DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jan 2020 15:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6526522522
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jan 2020 15:25:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7D2522522
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jan 2020 15:25:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Jp69RmQk"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nlavn8Nd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbgAWPZK (ORCPT
+        id S1729191AbgAWPZR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Jan 2020 10:25:10 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36568 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbgAWPZK (ORCPT
+        Thu, 23 Jan 2020 10:25:17 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41056 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729186AbgAWPZQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Jan 2020 10:25:10 -0500
-Received: by mail-pg1-f194.google.com with SMTP id k3so1548224pgc.3
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Jan 2020 07:25:10 -0800 (PST)
+        Thu, 23 Jan 2020 10:25:16 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w62so1688018pfw.8
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Jan 2020 07:25:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Q4x5KAd27m8l4DDargFurbUE9qKxXrSpODZZ6bpQ4NY=;
-        b=Jp69RmQkL6xEcGqyr24OfJqADG68GZDN7XOwN3C6RbgKxk3YJckrojP9H/yfiLVGpD
-         qxWHjOfZEMp2p7tz7HOgM5FsSgnfRGBg54bIj9ZW2VfOMvC9cDf9MxtKy4m9AdBGYb8b
-         c/1qg6nFPcx20v7/fvgeAGxLiHhwmCvUw+Ja4=
+        bh=kEB1oX080wywjgXCBoRyFYkLoSte5dO4/3ZyhaJZ/DE=;
+        b=nlavn8NdsmMI/q2XsA201oha0BXlUuH8RnGkC1BIvxU403LFzrSYkpBdqmL3QP/HTg
+         hmYPDD25eHCCrhylXhKl4AqllKqkhGr+kydyTUxzm/YTbpiH3v7h6pnMKkmEUPOfn8WR
+         wovnuUevfvCtC4wl20Qh1U6dB5Tp5kdO+y0s8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q4x5KAd27m8l4DDargFurbUE9qKxXrSpODZZ6bpQ4NY=;
-        b=G21hJWcYDwTlcm7G4UcG8h8ONvK8Y5djRTHfmJkcfqSvWNGgcnK0pvJ1Ga0EbHrv4T
-         H71bt25CovkZQjrJ1v9P1k3fN3dVyyKgT5pNdCKc0xlRQ05/tP8doqt1ILYm69gtn93x
-         YXgIeS96L0omlbTD8IHiHj3pJSGUD2F9w8i7/WEJM/di7K8i9tEJT/Z5pzo5+llfZj0+
-         0hv2zVU3P1LMi0EnY7s+ydPStCd8EHERND4HJfnTV6T27c+3+SsbVXZfUxMUyy6hmmPh
-         ZpETvXx94gEU2iSEg7n8eGc5SerNL6sNd8IajwpZJJdSIQTUBw5aKHhOb//7g4mNg6jc
-         UGGA==
-X-Gm-Message-State: APjAAAUvdnce4/YBKLoJFGPt0gNh7a92AO9QH/Uaozy4EA14ja8y/XFg
-        dEF0b8xCfnMdByDYELnp9KPQdg==
-X-Google-Smtp-Source: APXvYqy69wILp8KzY5eBLZS9Y6shozDIu5m42vqavj1O7DKkYvFz5hDVbewtJW2V8AcxgFhtzKJSDA==
-X-Received: by 2002:a63:2ac2:: with SMTP id q185mr4570434pgq.417.1579793109702;
-        Thu, 23 Jan 2020 07:25:09 -0800 (PST)
+        bh=kEB1oX080wywjgXCBoRyFYkLoSte5dO4/3ZyhaJZ/DE=;
+        b=BMSZPQoB0C4tuv1dB33IES9qEe3/Oh8uB+1251/MrNgsV/TjbkPZg6Iat+IgOQsvb4
+         iFmzZhYx6y7Ob+er5sgMxSm+X0MpSzVcrN0zgoAbqpE0NfQsKRlfOW0eIOI5KkaHEnUU
+         kKIVyiprCIEii+lBt9+kP5kzwgILtPPdzCxjDKStytYfIFW2M2xHH+QZFHg6w3ML1zBJ
+         GIKcPyN233CB5UuZNgibIkHIHUKAEvxHU4yaN25ZWYR+KDco63f5+XK1Aw1ozZTaeSgw
+         joK0pny/8a4qRxNh8bO1LP67J6cTrW+vfhhLRkbOcjx+52XxQmlOMV5H2Mnwo7FLhaf5
+         MYVw==
+X-Gm-Message-State: APjAAAUD8WDe7bT8VrzJbjXgQhkLGJ/z/eewWraQrx/lwVr+/Q7SKTPh
+        Wv7nWxB3TpCfvpQJcXk85qTthw==
+X-Google-Smtp-Source: APXvYqyDy+BxhvzMVB/S5GcwfkjVUhyJGmRoPL38Q027yNhB3kWo2FGgPYIbfK9kYgU36qt3FQW0zw==
+X-Received: by 2002:aa7:82d5:: with SMTP id f21mr8045338pfn.245.1579793115460;
+        Thu, 23 Jan 2020 07:25:15 -0800 (PST)
 Received: from kpsingh-kernel.localdomain ([2a00:79e1:abc:122:bd8d:3f7b:87f7:16d1])
-        by smtp.gmail.com with ESMTPSA id v5sm3108118pfn.122.2020.01.23.07.25.08
+        by smtp.gmail.com with ESMTPSA id v5sm3108118pfn.122.2020.01.23.07.25.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2020 07:25:09 -0800 (PST)
+        Thu, 23 Jan 2020 07:25:14 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
@@ -83,9 +83,9 @@ Cc:     Brendan Jackman <jackmanb@google.com>,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
         Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [PATCH bpf-next v3 01/10] bpf: btf: Add btf_type_by_name_kind
-Date:   Thu, 23 Jan 2020 07:24:31 -0800
-Message-Id: <20200123152440.28956-2-kpsingh@chromium.org>
+Subject: [PATCH bpf-next v3 04/10] bpf: lsm: Add mutable hooks list for the BPF LSM
+Date:   Thu, 23 Jan 2020 07:24:34 -0800
+Message-Id: <20200123152440.28956-5-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200123152440.28956-1-kpsingh@chromium.org>
 References: <20200123152440.28956-1-kpsingh@chromium.org>
@@ -97,64 +97,245 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: KP Singh <kpsingh@google.com>
 
-- The LSM code does the combination of btf_find_by_name_kind and
-  btf_type_by_id a couple of times to figure out the BTF type for
-  security_hook_heads and security_list_options.
-- Add an extern for btf_vmlinux in btf.h
+- The list of hooks registered by an LSM is currently immutable as they
+  are declared with __lsm_ro_after_init and they are attached to a
+  security_hook_heads struct.
+- For the BPF LSM we need to de/register the hooks at runtime. Making
+  the existing security_hook_heads mutable broadens an
+  attack vector, so a separate security_hook_heads is added for only
+  those that ~must~ be mutable.
+- These mutable hooks are run only after all the static hooks have
+  successfully executed.
 
-Signed-off-by: KP Singh <kpsingh@google.com>
+This is based on the ideas discussed in:
+
+  https://lore.kernel.org/lkml/20180408065916.GA2832@ircssh-2.c.rugged-nimbus-611.internal
+
 Reviewed-by: Brendan Jackman <jackmanb@google.com>
 Reviewed-by: Florent Revest <revest@google.com>
 Reviewed-by: Thomas Garnier <thgarnie@google.com>
+Signed-off-by: KP Singh <kpsingh@google.com>
 ---
- include/linux/btf.h |  3 +++
- kernel/bpf/btf.c    | 12 ++++++++++++
- 2 files changed, 15 insertions(+)
+ MAINTAINERS             |  1 +
+ include/linux/bpf_lsm.h | 72 +++++++++++++++++++++++++++++++++++++++++
+ security/bpf/Kconfig    |  1 +
+ security/bpf/Makefile   |  2 +-
+ security/bpf/hooks.c    | 20 ++++++++++++
+ security/bpf/lsm.c      |  7 ++++
+ security/security.c     | 25 +++++++-------
+ 7 files changed, 116 insertions(+), 12 deletions(-)
+ create mode 100644 include/linux/bpf_lsm.h
+ create mode 100644 security/bpf/hooks.c
 
-diff --git a/include/linux/btf.h b/include/linux/btf.h
-index 5c1ea99b480f..d4e859f90a39 100644
---- a/include/linux/btf.h
-+++ b/include/linux/btf.h
-@@ -15,6 +15,7 @@ struct btf_type;
- union bpf_attr;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e2b7f76a1a70..c606b3d89992 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3209,6 +3209,7 @@ L:	linux-security-module@vger.kernel.org
+ L:	bpf@vger.kernel.org
+ S:	Maintained
+ F:	security/bpf/
++F:	include/linux/bpf_lsm.h
  
- extern const struct file_operations btf_fops;
-+extern struct btf *btf_vmlinux;
- 
- void btf_put(struct btf *btf);
- int btf_new_fd(const union bpf_attr *attr);
-@@ -66,6 +67,8 @@ const struct btf_type *
- btf_resolve_size(const struct btf *btf, const struct btf_type *type,
- 		 u32 *type_size, const struct btf_type **elem_type,
- 		 u32 *total_nelems);
-+const struct btf_type *btf_type_by_name_kind(
-+	struct btf *btf, const char *name, u8 kind);
- 
- #define for_each_member(i, struct_type, member)			\
- 	for (i = 0, member = btf_type_member(struct_type);	\
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 32963b6d5a9c..ea53c16802cb 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -441,6 +441,18 @@ const struct btf_type *btf_type_resolve_func_ptr(const struct btf *btf,
- 	return NULL;
- }
- 
-+const struct btf_type *btf_type_by_name_kind(
-+	struct btf *btf, const char *name, u8 kind)
+ BROADCOM B44 10/100 ETHERNET DRIVER
+ M:	Michael Chan <michael.chan@broadcom.com>
+diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+new file mode 100644
+index 000000000000..57c20b2cd2f4
+--- /dev/null
++++ b/include/linux/bpf_lsm.h
+@@ -0,0 +1,72 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * Copyright 2019 Google LLC.
++ */
++
++#ifndef _LINUX_BPF_LSM_H
++#define _LINUX_BPF_LSM_H
++
++#include <linux/bpf.h>
++#include <linux/lsm_hooks.h>
++
++#ifdef CONFIG_SECURITY_BPF
++
++/* Mutable hooks defined at runtime and executed after all the statically
++ * defined LSM hooks.
++ */
++extern struct security_hook_heads bpf_lsm_hook_heads;
++
++int bpf_lsm_srcu_read_lock(void);
++void bpf_lsm_srcu_read_unlock(int idx);
++
++#define CALL_BPF_LSM_VOID_HOOKS(FUNC, ...)			\
++	do {							\
++		struct security_hook_list *P;			\
++		int _idx;					\
++								\
++		if (hlist_empty(&bpf_lsm_hook_heads.FUNC))	\
++			break;					\
++								\
++		_idx = bpf_lsm_srcu_read_lock();		\
++		hlist_for_each_entry(P, &bpf_lsm_hook_heads.FUNC, list) \
++			P->hook.FUNC(__VA_ARGS__);		\
++		bpf_lsm_srcu_read_unlock(_idx);			\
++	} while (0)
++
++#define CALL_BPF_LSM_INT_HOOKS(FUNC, ...) ({			\
++	int _ret = 0;						\
++	do {							\
++		struct security_hook_list *P;			\
++		int _idx;					\
++								\
++		if (hlist_empty(&bpf_lsm_hook_heads.FUNC))	\
++			break;					\
++								\
++		_idx = bpf_lsm_srcu_read_lock();		\
++								\
++		hlist_for_each_entry(P,				\
++			&bpf_lsm_hook_heads.FUNC, list) {	\
++			_ret = P->hook.FUNC(__VA_ARGS__);		\
++			if (_ret && IS_ENABLED(CONFIG_SECURITY_BPF_ENFORCE)) \
++				break;				\
++		}						\
++		bpf_lsm_srcu_read_unlock(_idx);			\
++	} while (0);						\
++	IS_ENABLED(CONFIG_SECURITY_BPF_ENFORCE) ? _ret : 0;	\
++})
++
++#else /* !CONFIG_SECURITY_BPF */
++
++#define CALL_BPF_LSM_INT_HOOKS(FUNC, ...) (0)
++#define CALL_BPF_LSM_VOID_HOOKS(...)
++
++static inline int bpf_lsm_srcu_read_lock(void)
 +{
-+	s32 type_id;
++	return 0;
++}
++static inline void bpf_lsm_srcu_read_unlock(int idx) {}
 +
-+	type_id = btf_find_by_name_kind(btf, name, kind);
-+	if (type_id < 0)
-+		return ERR_PTR(type_id);
++#endif /* CONFIG_SECURITY_BPF */
 +
-+	return btf_type_by_id(btf, type_id);
++#endif /* _LINUX_BPF_LSM_H */
+diff --git a/security/bpf/Kconfig b/security/bpf/Kconfig
+index a5f6c67ae526..595e4ad597ae 100644
+--- a/security/bpf/Kconfig
++++ b/security/bpf/Kconfig
+@@ -6,6 +6,7 @@ config SECURITY_BPF
+ 	bool "BPF-based MAC and audit policy"
+ 	depends on SECURITY
+ 	depends on BPF_SYSCALL
++	depends on SRCU
+ 	help
+ 	  This enables instrumentation of the security hooks with
+ 	  eBPF programs.
+diff --git a/security/bpf/Makefile b/security/bpf/Makefile
+index c78a8a056e7e..c526927c337d 100644
+--- a/security/bpf/Makefile
++++ b/security/bpf/Makefile
+@@ -2,4 +2,4 @@
+ #
+ # Copyright 2019 Google LLC.
+ 
+-obj-$(CONFIG_SECURITY_BPF) := lsm.o ops.o
++obj-$(CONFIG_SECURITY_BPF) := lsm.o ops.o hooks.o
+diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
+new file mode 100644
+index 000000000000..b123d9cb4cd4
+--- /dev/null
++++ b/security/bpf/hooks.c
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2019 Google LLC.
++ */
++
++#include <linux/bpf_lsm.h>
++#include <linux/srcu.h>
++
++DEFINE_STATIC_SRCU(security_hook_srcu);
++
++int bpf_lsm_srcu_read_lock(void)
++{
++	return srcu_read_lock(&security_hook_srcu);
 +}
 +
- /* Types that act only as a source, not sink or intermediate
-  * type when resolving.
++void bpf_lsm_srcu_read_unlock(int idx)
++{
++	return srcu_read_unlock(&security_hook_srcu, idx);
++}
+diff --git a/security/bpf/lsm.c b/security/bpf/lsm.c
+index dc9ac03c7aa0..a25a068e1781 100644
+--- a/security/bpf/lsm.c
++++ b/security/bpf/lsm.c
+@@ -4,6 +4,7 @@
+  * Copyright 2019 Google LLC.
   */
+ 
++#include <linux/bpf_lsm.h>
+ #include <linux/lsm_hooks.h>
+ 
+ /* This is only for internal hooks, always statically shipped as part of the
+@@ -12,6 +13,12 @@
+  */
+ static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {};
+ 
++/* Security hooks registered dynamically by the BPF LSM and must be accessed
++ * by holding bpf_lsm_srcu_read_lock and bpf_lsm_srcu_read_unlock. The mutable
++ * hooks dynamically allocated by the BPF LSM are appeneded here.
++ */
++struct security_hook_heads bpf_lsm_hook_heads;
++
+ static int __init bpf_lsm_init(void)
+ {
+ 	security_add_hooks(bpf_lsm_hooks, ARRAY_SIZE(bpf_lsm_hooks), "bpf");
+diff --git a/security/security.c b/security/security.c
+index 30a8aa700557..95a46ca25dcd 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -27,6 +27,7 @@
+ #include <linux/backing-dev.h>
+ #include <linux/string.h>
+ #include <linux/msg.h>
++#include <linux/bpf_lsm.h>
+ #include <net/flow.h>
+ 
+ #define MAX_LSM_EVM_XATTR	2
+@@ -657,20 +658,22 @@ static void __init lsm_early_task(struct task_struct *task)
+ 								\
+ 		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
+ 			P->hook.FUNC(__VA_ARGS__);		\
++		CALL_BPF_LSM_VOID_HOOKS(FUNC, __VA_ARGS__);	\
+ 	} while (0)
+ 
+-#define call_int_hook(FUNC, IRC, ...) ({			\
+-	int RC = IRC;						\
+-	do {							\
+-		struct security_hook_list *P;			\
+-								\
++#define call_int_hook(FUNC, IRC, ...) ({				\
++	int RC = IRC;							\
++	do {								\
++		struct security_hook_list *P;				\
+ 		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+-			RC = P->hook.FUNC(__VA_ARGS__);		\
+-			if (RC != 0)				\
+-				break;				\
+-		}						\
+-	} while (0);						\
+-	RC;							\
++			RC = P->hook.FUNC(__VA_ARGS__);			\
++			if (RC != 0)					\
++				break;					\
++		}							\
++		if (RC == 0)						\
++			RC = CALL_BPF_LSM_INT_HOOKS(FUNC, __VA_ARGS__);	\
++	} while (0);							\
++	RC;								\
+ })
+ 
+ /* Security operations */
 -- 
 2.20.1
 
