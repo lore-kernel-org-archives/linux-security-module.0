@@ -3,181 +3,316 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D4D0C2D0DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jan 2020 15:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F54C2D0DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jan 2020 15:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4A9621D7D
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jan 2020 15:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3233822464
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jan 2020 15:24:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Liw91XNp"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YUgGvz2R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbgAWPMK (ORCPT
+        id S1728998AbgAWPY4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Jan 2020 10:12:10 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:53435 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726590AbgAWPMK (ORCPT
+        Thu, 23 Jan 2020 10:24:56 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43532 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728992AbgAWPY4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Jan 2020 10:12:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579792329;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TOTDTwuaI0Kk0LUy5rbPDT0f6tV/bdzpgd5A51iAmQw=;
-        b=Liw91XNpW2Keht2Q1ClXCZRASkSQSrbbFXovrJg/eoSftPuVRrPTVROh56KtVBukmsKYQ8
-        ukzjF39WdaasFdnPCRrFDGbUV8enhva+T6FdJ/tB7ocu+QX6jDutvGNybly36j43iyq3vv
-        /8gPWvnKtrXZBCmCyraUHglegnx6sjE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-207-dY3-Hz3EOVSB5G3kVMwjQA-1; Thu, 23 Jan 2020 10:12:04 -0500
-X-MC-Unique: dY3-Hz3EOVSB5G3kVMwjQA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EED9D18B5F95;
-        Thu, 23 Jan 2020 15:12:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-49.rdu2.redhat.com [10.10.120.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A3DED8CCCB;
-        Thu, 23 Jan 2020 15:12:01 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <8ee40192da117d9cdf4eab1e63ab5f77b359801c.camel@btinternet.com>
-References: <8ee40192da117d9cdf4eab1e63ab5f77b359801c.camel@btinternet.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     dhowells@redhat.com,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: SELinux: How to split permissions for keys?
+        Thu, 23 Jan 2020 10:24:56 -0500
+Received: by mail-pg1-f194.google.com with SMTP id u131so1530438pgc.10
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Jan 2020 07:24:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/5KMi+sNCAgo7zXwagBMYnJV1f6hcxVwZ21U5z4bX14=;
+        b=YUgGvz2Rw2MF/+dx7fPF6FuLCXyaIanu7kMuwPOLJOpQAD9QV7hPK3fXG0NJm7jkZQ
+         Q272SYnlagUi3Cf+DFK1VEqE/b1DDlbrVm1GQLBqSoc9HLB1++ckckYc9h4LY3geCNGd
+         ZmOdT9MrmoR74PyGc9jNwArtq7YIW7/3FBvpg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/5KMi+sNCAgo7zXwagBMYnJV1f6hcxVwZ21U5z4bX14=;
+        b=BiP4Sw75M85fxRZZ8gyp5n2iz+h8VIhsrALw3+9IrnzMxOmcZJpay9eZKoaBohmOs/
+         fq5awbOpemsTchwj+CRAU3lGtuK/qzQ5u3p9HjUIwbgdrr0POCLeoPyqWiAIASDPMfXW
+         j0PZn8UjR654rODW28CfQF5OFqMlVNtD/m8VVDoHNCeDHAxZz/PoqiUw7uManxx8d5iL
+         1/AWGq6sRrmKJZWwFdfpa0gCbc507wYcS9QLAXO5R9qLMaIPwroAHeRay4AMmGv0z7/O
+         94f/9OB9Qp2+uVgi7rgIg3zBzdqzspde6FQasx5XOOQyWScj98r/P3tnH887Gr+cvWU1
+         03AA==
+X-Gm-Message-State: APjAAAWnxxtdC4VSDMieVQWBbyzdAnjiEStWjwg7YcVow9nhOGORVfAk
+        wb9ULAwVAkKfzOnQKFkZ+GwQIw==
+X-Google-Smtp-Source: APXvYqwvQCTgBrTFthFd/fDobF215aivw+9jna6cY+f8MGy8Bha2faYSTUHyKXiBAA0JIdIhp5soiA==
+X-Received: by 2002:a65:484d:: with SMTP id i13mr4593036pgs.32.1579793095390;
+        Thu, 23 Jan 2020 07:24:55 -0800 (PST)
+Received: from kpsingh-kernel.localdomain ([2a00:79e1:abc:122:bd8d:3f7b:87f7:16d1])
+        by smtp.gmail.com with ESMTPSA id v5sm3108118pfn.122.2020.01.23.07.24.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jan 2020 07:24:54 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
+Subject: [PATCH bpf-next v3 00/10]  MAC and Audit policy using eBPF (KRSI)
+Date:   Thu, 23 Jan 2020 07:24:30 -0800
+Message-Id: <20200123152440.28956-1-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4057699.1579792320.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 23 Jan 2020 15:12:00 +0000
-Message-ID: <4057700.1579792320@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Stephen,
+From: KP Singh <kpsingh@google.com>
 
-I have patches to split the permissions that are used for keys to make the=
-m a
-bit finer grained and easier to use - and also to move to ACLs rather than
-fixed masks.  See patch "keys: Replace uid/gid/perm permissions checking w=
-ith
-an ACL" here:
+# v2 -> v3 does not change the overall design and has some minor fixes:
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
-/?h=3Dkeys-acl
+* LSM_ORDER_LAST is introduced to represent the behaviour of the BPF LSM
+* Fixed the inadvertent clobbering of the LSM Hook error codes
+* Added GPL license requirement to the commit log
+* The lsm_hook_idx is now the more conventional 0-based index
+* Some changes were split into a separate patch ("Load btf_vmlinux only
+  once per object")
+  https://lore.kernel.org/bpf/20200117212825.11755-1-kpsingh@chromium.org/
+* Addressed Andrii's feedback on the BTF implementation
+* Documentation update for using generated vmlinux.h to simplify
+  programs
+* Rebase
 
-However, I may not have managed the permission mask transformation inside
-SELinux correctly.  Could you lend an eyeball?  The change to the permissi=
-ons
-model is as follows:
+# Changes since v1 (https://lore.kernel.org/bpf/20191220154208.15895-1-kpsingh@chromium.org/):
 
-    The SETATTR permission is split to create two new permissions:
-    =
+* Eliminate the requirement to maintain LSM hooks separately in
+  security/bpf/hooks.h Use BPF trampolines to dynamically allocate
+  security hooks
+* Drop the use of securityfs as bpftool provides the required
+  introspection capabilities.  Update the tests to use the bpf_skeleton
+  and global variables
+* Use O_CLOEXEC anonymous fds to represent BPF attachment in line with
+  the other BPF programs with the possibility to use bpf program pinning
+  in the future to provide "permanent attachment".
+* Drop the logic based on prog names for handling re-attachment.
+* Drop bpf_lsm_event_output from this series and send it as a separate
+  patch.
 
-     (1) SET_SECURITY - which allows the key's owner, group and ACL to be
-         changed and a restriction to be placed on a keyring.
-    =
+# Motivation
 
-     (2) REVOKE - which allows a key to be revoked.
-    =
+Google does analysis of rich runtime security data to detect and thwart
+threats in real-time. Currently, this is done in custom kernel modules
+but we would like to replace this with something that's upstream and
+useful to others.
 
-    The SEARCH permission is split to create:
-    =
+The current kernel infrastructure for providing telemetry (Audit, Perf
+etc.) is disjoint from access enforcement (i.e. LSMs).  Augmenting the
+information provided by audit requires kernel changes to audit, its
+policy language and user-space components. Furthermore, building a MAC
+policy based on the newly added telemetry data requires changes to
+various LSMs and their respective policy languages.
 
-     (1) SEARCH - which allows a keyring to be search and a key to be foun=
-d.
-    =
+This patchset proposes a new stackable and privileged LSM which allows
+the LSM hooks to be implemented using eBPF. This facilitates a unified
+and dynamic (not requiring re-compilation of the kernel) audit and MAC
+policy.
 
-     (2) JOIN - which allows a keyring to be joined as a session keyring.
-    =
+# Why an LSM?
 
-     (3) INVAL - which allows a key to be invalidated.
-    =
+Linux Security Modules target security behaviours rather than the
+kernel's API. For example, it's easy to miss out a newly added system
+call for executing processes (eg. execve, execveat etc.) but the LSM
+framework ensures that all process executions trigger the relevant hooks
+irrespective of how the process was executed.
 
-    The WRITE permission is also split to create:
-    =
+Allowing users to implement LSM hooks at runtime also benefits the LSM
+eco-system by enabling a quick feedback loop from the security community
+about the kind of behaviours that the LSM Framework should be targeting.
 
-     (1) WRITE - which allows a key's content to be altered and links to b=
-e
-         added, removed and replaced in a keyring.
-    =
+# How does it work?
 
-     (2) CLEAR - which allows a keyring to be cleared completely.  This is
-         split out to make it possible to give just this to an administrat=
-or.
-    =
+The LSM introduces a new eBPF (https://docs.cilium.io/en/v1.6/bpf/)
+program type BPF_PROG_TYPE_LSM which can only be attached to LSM hooks.
+Attachment requires CAP_SYS_ADMIN for loading eBPF programs and
+CAP_MAC_ADMIN for modifying MAC policies.
 
-     (3) REVOKE - see above.
+The eBPF programs are attached to a separate security_hook_heads
+maintained by the BPF LSM for mutable hooks and executed after all the
+statically defined hooks (i.e. the ones declared by SELinux, AppArmor,
+Smack etc). This also ensures that statically defined LSM hooks retain
+the behaviour of "being read-only after init", i.e. __lsm_ro_after_init.
 
-The change to SELinux is attached below.
+Upon attachment, a security hook is dynamically allocated with
+arch_bpf_prepare_trampoline which generates code to handle the
+conversion from the signature of the hook to the BPF context and allows
+the JIT'ed BPF program to be called as a C function with the same
+arguments as the LSM hooks. If any of the attached eBPF programs returns
+an error (like ENOPERM), the behaviour represented by the hook is
+denied.
 
-Should the split be pushed down into the SELinux policy rather than trying=
- to
-calculate it?
+Audit logs can be written using a format chosen by the eBPF program to
+the perf events buffer or to global eBPF variables or maps and can be
+further processed in user-space.
 
-Thanks,
-David
----
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 116b4d644f68..c8db5235b01f 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6556,6 +6556,7 @@ static int selinux_key_permission(key_ref_t key_ref,
- {
- 	struct key *key;
- 	struct key_security_struct *ksec;
-+	unsigned oldstyle_perm;
- 	u32 sid;
- =
+# BTF Based Design
 
- 	/* if no specific permissions are requested, we skip the
-@@ -6564,13 +6565,26 @@ static int selinux_key_permission(key_ref_t key_re=
-f,
- 	if (perm =3D=3D 0)
- 		return 0;
- =
+The current design uses BTF
+(https://facebookmicrosites.github.io/bpf/blog/2018/11/14/btf-enhancement.html,
+https://lwn.net/Articles/803258/) which allows verifiable read-only
+structure accesses by field names rather than fixed offsets. This allows
+accessing the hook parameters using a dynamically created context which
+provides a certain degree of ABI stability:
 
-+	oldstyle_perm =3D perm & (KEY_NEED_VIEW | KEY_NEED_READ | KEY_NEED_WRITE=
- |
-+				KEY_NEED_SEARCH | KEY_NEED_LINK);
-+	if (perm & KEY_NEED_SETSEC)
-+		oldstyle_perm |=3D OLD_KEY_NEED_SETATTR;
-+	if (perm & KEY_NEED_INVAL)
-+		oldstyle_perm |=3D KEY_NEED_SEARCH;
-+	if (perm & KEY_NEED_REVOKE && !(perm & OLD_KEY_NEED_SETATTR))
-+		oldstyle_perm |=3D KEY_NEED_WRITE;
-+	if (perm & KEY_NEED_JOIN)
-+		oldstyle_perm |=3D KEY_NEED_SEARCH;
-+	if (perm & KEY_NEED_CLEAR)
-+		oldstyle_perm |=3D KEY_NEED_WRITE;
-+
- 	sid =3D cred_sid(cred);
- =
 
- 	key =3D key_ref_to_ptr(key_ref);
- 	ksec =3D key->security;
- =
+// Only declare the structure and fields intended to be used
+// in the program
+struct vm_area_struct {
+  unsigned long vm_start;
+} __attribute__((preserve_access_index));
 
- 	return avc_has_perm(&selinux_state,
--			    sid, ksec->sid, SECCLASS_KEY, perm, NULL);
-+			    sid, ksec->sid, SECCLASS_KEY, oldstyle_perm, NULL);
- }
- =
+// Declare the eBPF program mprotect_audit which attaches to
+// to the file_mprotect LSM hook and accepts three arguments.
+SEC("lsm/file_mprotect")
+int BPF_PROG(mprotect_audit, struct vm_area_struct *vma,
+       unsigned long reqprot, unsigned long prot)
+{
+  unsigned long vm_start = vma->vm_start;
 
- static int selinux_key_getsecurity(struct key *key, char **_buffer)
+  return 0;
+}
+
+By relocating field offsets, BTF makes a large portion of kernel data
+structures readily accessible across kernel versions without requiring a
+large corpus of BPF helper functions and requiring recompilation with
+every kernel version. The BTF type information is also used by the BPF
+verifier to validate memory accesses within the BPF program and also
+prevents arbitrary writes to the kernel memory.
+
+The limitations of BTF compatibility are described in BPF Co-Re
+(http://vger.kernel.org/bpfconf2019_talks/bpf-core.pdf, i.e. field
+renames, #defines and changes to the signature of LSM hooks).
+
+This design imposes that the MAC policy (eBPF programs) be updated when
+the inspected kernel structures change outside of BTF compatibility
+guarantees. In practice, this is only required when a structure field
+used by a current policy is removed (or renamed) or when the used LSM
+hooks change. We expect the maintenance cost of these changes to be
+acceptable as compared to the previous design
+(https://lore.kernel.org/bpf/20190910115527.5235-1-kpsingh@chromium.org/).
+
+# Why not tracepoints or kprobes?
+
+In order to do MAC with tracepoints or kprobes, we would need to
+override the return value of the security hook. This is not possible
+with tracepoints or call-site kprobes.
+
+Attaching to the return boundary (kretprobe) implies that BPF programs
+would always get called after all the other LSM hooks are called and
+clobber the pre-existing LSM semantics.
+
+Enforcing MAC policy with an actual LSM helps leverage the verified
+semantics of the framework.
+
+# Usage Examples
+
+A simple example and some documentation is included in the patchset.
+
+In order to better illustrate the capabilities of the framework some
+more advanced prototype (not-ready for review) code has also been
+published separately:
+
+* Logging execution events (including environment variables and
+  arguments)
+https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_audit_env.c
+* Detecting deletion of running executables:
+https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_detect_exec_unlink.c
+* Detection of writes to /proc/<pid>/mem:
+
+https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_audit_env.c
+
+We have updated Google's internal telemetry infrastructure and have
+started deploying this LSM on our Linux Workstations. This gives us more
+confidence in the real-world applications of such a system.
+
+KP Singh (10):
+  bpf: btf: Add btf_type_by_name_kind
+  bpf: lsm: Add a skeleton and config options
+  bpf: lsm: Introduce types for eBPF based LSM
+  bpf: lsm: Add mutable hooks list for the BPF LSM
+  bpf: lsm: BTF API for LSM hooks
+  bpf: lsm: Implement attach, detach and execution
+  bpf: lsm: Make the allocated callback RO+X
+  tools/libbpf: Add support for BPF_PROG_TYPE_LSM
+  bpf: lsm: Add selftests for BPF_PROG_TYPE_LSM
+  bpf: lsm: Add Documentation
+
+ Documentation/security/bpf.rst                | 165 +++++++++
+ Documentation/security/index.rst              |   1 +
+ MAINTAINERS                                   |  11 +
+ include/linux/bpf.h                           |   4 +
+ include/linux/bpf_lsm.h                       |  99 ++++++
+ include/linux/bpf_types.h                     |   4 +
+ include/linux/btf.h                           |   3 +
+ include/linux/lsm_hooks.h                     |   1 +
+ include/uapi/linux/bpf.h                      |   6 +
+ kernel/bpf/btf.c                              |  13 +
+ kernel/bpf/syscall.c                          |  51 ++-
+ kernel/bpf/verifier.c                         |  74 +++-
+ security/Kconfig                              |  11 +-
+ security/Makefile                             |   2 +
+ security/bpf/Kconfig                          |  25 ++
+ security/bpf/Makefile                         |   7 +
+ security/bpf/hooks.c                          | 315 ++++++++++++++++++
+ security/bpf/include/bpf_lsm.h                |  70 ++++
+ security/bpf/lsm.c                            |  87 +++++
+ security/bpf/ops.c                            |  30 ++
+ security/security.c                           |  30 +-
+ tools/include/uapi/linux/bpf.h                |   6 +
+ tools/lib/bpf/bpf.c                           |   6 +-
+ tools/lib/bpf/bpf.h                           |   1 +
+ tools/lib/bpf/libbpf.c                        | 104 +++++-
+ tools/lib/bpf/libbpf.h                        |   4 +
+ tools/lib/bpf/libbpf.map                      |   3 +
+ tools/lib/bpf/libbpf_probes.c                 |   1 +
+ tools/testing/selftests/bpf/lsm_helpers.h     |  19 ++
+ .../bpf/prog_tests/lsm_mprotect_audit.c       |  58 ++++
+ .../selftests/bpf/progs/lsm_mprotect_audit.c  |  48 +++
+ 31 files changed, 1229 insertions(+), 30 deletions(-)
+ create mode 100644 Documentation/security/bpf.rst
+ create mode 100644 include/linux/bpf_lsm.h
+ create mode 100644 security/bpf/Kconfig
+ create mode 100644 security/bpf/Makefile
+ create mode 100644 security/bpf/hooks.c
+ create mode 100644 security/bpf/include/bpf_lsm.h
+ create mode 100644 security/bpf/lsm.c
+ create mode 100644 security/bpf/ops.c
+ create mode 100644 tools/testing/selftests/bpf/lsm_helpers.h
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_mprotect_audit.c
+ create mode 100644 tools/testing/selftests/bpf/progs/lsm_mprotect_audit.c
+
+-- 
+2.20.1
 
