@@ -1,111 +1,92 @@
-Return-Path: <SRS0=2Pnf=3L=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=QZUe=3M=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B96F2C2D0DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jan 2020 15:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FC2C3F68F
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jan 2020 08:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92AB221835
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jan 2020 15:56:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2835624125
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jan 2020 08:41:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MrHK1F06"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725868AbgAVP43 (ORCPT
+        id S1726099AbgAWIll (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Jan 2020 10:56:29 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15010 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726103AbgAVP43 (ORCPT
+        Thu, 23 Jan 2020 03:41:41 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34328 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgAWIll (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Jan 2020 10:56:29 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00MFmL8j050852
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Jan 2020 10:56:27 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xp93ppnaj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Jan 2020 10:56:27 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 22 Jan 2020 15:56:25 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Jan 2020 15:56:21 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00MFuKQE37159168
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Jan 2020 15:56:20 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 792F252057;
-        Wed, 22 Jan 2020 15:56:20 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.146.245])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id B2D8552054;
-        Wed, 22 Jan 2020 15:56:19 +0000 (GMT)
-Subject: Re: [PATCH v2] ima: export the measurement list when needed
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Janne Karhunen <janne.karhunen@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Cc:     Ken Goldman <kgold@linux.ibm.com>, david.safford@gmail.com,
-        monty.wiseman@ge.com
-Date:   Wed, 22 Jan 2020 10:56:19 -0500
-In-Reply-To: <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
+        Thu, 23 Jan 2020 03:41:41 -0500
+Received: by mail-lf1-f67.google.com with SMTP id l18so1700600lfc.1;
+        Thu, 23 Jan 2020 00:41:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UyvUctf+qJyIsi+eU7dg970I4xk9OoLbCIf8MD5kDRY=;
+        b=MrHK1F061wna3tijOCU4KH6liyiYUCgR+POobFfZe5hQOhOScpnJ6ExdInWZO1jaSM
+         nfV9RsLqYojqpoLZ72Urxi0bm4i+e/568/6sMcBqmKmstw9PRz0Al+S498NNMqa0ImRM
+         iwzpXAgNJQrvFeylVEBdnN0NhmZWmhS6aOFAgGjeySe2BO1wYuffLRu7DCnaKbIG/gZ3
+         UDIwsdRhUC5f/OX6CsHPiKIhxYr6OS5SzBZNTBMvmSiFKAiYsDPGwUcme2syx6RjVGVF
+         XT5J1IFk+rTplhMR5sQjAhrQ1xxWlF5ZnR2r2hZxLBVSF41xpYoU6BGju6IVo2fyOMb+
+         ZDbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UyvUctf+qJyIsi+eU7dg970I4xk9OoLbCIf8MD5kDRY=;
+        b=fW9Br2zswysdZN6j4msuyhic52Gq5TF33ojGgiruVbkxGcYm1k85jH2iO/F2xY5+6Y
+         TNt72dOwVX25VYBCHo0A1HPpTQTtd9Agg2buWjCtzU9Dm+ht+fzVzh/3InPY6WdeDq0b
+         JfiZxxd/5sVYSjFJ49irscTzxMNaOe4NFl0eM/SOAT9FishSB/SW7Fi6bvxXciRoFCja
+         ACxRBcW6LemjU6eWNhU2YjWLNdv44nKWUroW7YZpyfpexqikCmTiG/EVa697jTis+Rhs
+         FIJyWU+JCpk6jEj0GZTIAAr/kuPc8tbpG8yDoMZK3XAoGfLMjairNM7VX8VCB+ZWhres
+         QMFw==
+X-Gm-Message-State: APjAAAXMTTrzpAN12WyI1VKu8E1U2S/6P0VF6fGvCxqC4A7P2vDYEPSs
+        FgOxXIepVnpRs5cVOYvG3ZXUKL9h44f7T5gGG/C4Ew==
+X-Google-Smtp-Source: APXvYqxq1PMY9h9u7/7/tbPcBgMeaIa+vVbpcKz5u/krFu8NV0KvjehPakfPqGeaYoSbwk4CqEMnZV7BqQ9wKAK/pI0=
+X-Received: by 2002:a05:6512:78:: with SMTP id i24mr4152255lfo.10.1579768899124;
+ Thu, 23 Jan 2020 00:41:39 -0800 (PST)
+MIME-Version: 1.0
 References: <20200108111743.23393-1-janne.karhunen@gmail.com>
-         <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
+ <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com> <1579708579.5182.77.camel@linux.ibm.com>
+In-Reply-To: <1579708579.5182.77.camel@linux.ibm.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Thu, 23 Jan 2020 10:41:27 +0200
+Message-ID: <CAE=NcraSfo0fwxCnFQd08Ga59DsvxPTch-n_iN7fxt+3RdmP+A@mail.gmail.com>
+Subject: Re: [PATCH v2] ima: export the measurement list when needed
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Ken Goldman <kgold@linux.ibm.com>, david.safford@gmail.com,
+        monty.wiseman@ge.com
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20012215-0016-0000-0000-000002DFBE34
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012215-0017-0000-0000-000033426A86
-Message-Id: <1579708579.5182.77.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-17_05:2020-01-16,2020-01-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=999 suspectscore=2
- impostorscore=0 priorityscore=1501 phishscore=0 adultscore=0 clxscore=1015
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001220141
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Janne,
+On Wed, Jan 22, 2020 at 5:56 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
 
-On Fri, 2020-01-10 at 10:48 +0200, Janne Karhunen wrote:
-> On Wed, Jan 8, 2020 at 1:18 PM Janne Karhunen <janne.karhunen@gmail.com> wrote:
-> >
-> > Some systems can end up carrying lots of entries in the ima
-> > measurement list. Since every entry is using a bit of kernel
-> > memory, allow the sysadmin to export the measurement list to
-> > the filesystem to free up some memory.
-> 
-> Hopefully this addressed comments from everyone. The flush event can
-> now be triggered by the admin anytime and unique file names can be
-> used for each flush (log.1, log.2, ...) etc, so getting to the correct
-> item should be easy.
-> 
-> While it can now be argued that since this is an admin-driven event,
-> kernel does not need to write the file. However, the intention is to
-> bring out a second patch a bit later that adds a variable to define
-> the max number of entries to be kept in the kernel memory and
-> workqueue based automatic flushing. In those cases the kernel has to
-> be able to write the file without any help from the admin..
+> > While it can now be argued that since this is an admin-driven event,
+> > kernel does not need to write the file. However, the intention is to
+> > bring out a second patch a bit later that adds a variable to define
+> > the max number of entries to be kept in the kernel memory and
+> > workqueue based automatic flushing. In those cases the kernel has to
+> > be able to write the file without any help from the admin..
+>
+> I don't think it is common, and probably not acceptable, for the
+> kernel to open a file for writing.
 
-I don't think it is common, and probably not acceptable, for the
-kernel to open a file for writing.
- 
-As exporting the binary measurement list should be the equivalent of
-displaying the binary measurement list and redirecting the output to a
-file, the same mechanism used for displaying the binary measurement
-list should be re-used for exporting it.  Just as carrying the
-measurement list across kexec re-uses the same method.
+Ok. It just means that the kernel cannot do its own memory management
+and will depend on the user flushing the memory often enough to
+prevent something bad from happening. Is this more common in the
+kernel than writing out a file?
 
-Mimi
 
+-- 
+Janne
