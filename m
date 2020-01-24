@@ -2,199 +2,325 @@ Return-Path: <SRS0=wJOd=3N=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40587C2D0DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jan 2020 14:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD07DC2D0DB
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jan 2020 14:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA39220838
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jan 2020 14:16:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EF5D20838
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jan 2020 14:29:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kmOyBuxl"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="gu8hDz5b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388917AbgAXOQM (ORCPT
+        id S2391133AbgAXO3E (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jan 2020 09:16:12 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:55499 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388843AbgAXOQM (ORCPT
+        Fri, 24 Jan 2020 09:29:04 -0500
+Received: from UPDC19PA24.eemsg.mail.mil ([214.24.27.199]:28619 "EHLO
+        UPDC19PA24.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390967AbgAXO3D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:16:12 -0500
-Received: by mail-pj1-f65.google.com with SMTP id d5so1087801pjz.5
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2020 06:16:11 -0800 (PST)
+        Fri, 24 Jan 2020 09:29:03 -0500
+X-EEMSG-check-017: 49352935|UPDC19PA24_ESA_OUT06.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.70,357,1574121600"; 
+   d="scan'208";a="49352935"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by UPDC19PA24.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 24 Jan 2020 14:28:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ASOtb96BI6lTR6mu+ywHC0FfQOfd7+/ZeIlUMSQ1MgU=;
-        b=kmOyBuxl6PiajDWOBlWoRTw9yCno28+dJhqCOaiVgt6OckuzVAlVVZRw10RbyxwIBa
-         uzMgDELMRyNUlNoW+CptCJeZidIZIYqFTEpTEhkuNiGGPZE/WdP8i3rmgFINfGzlkZdo
-         sLYYApupXDdvLWAGmDrqQIwwialBjxVF2Ry8Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ASOtb96BI6lTR6mu+ywHC0FfQOfd7+/ZeIlUMSQ1MgU=;
-        b=H9EEYFmHu+C/5WVBi6xyS1YuNlqWUR82LWVe2pWGnzSAgiVCel1GKZkxQ8VpgpRlUS
-         ib15iQu89Yh/F6AgL6IwEB9HRdjsLvYLoYXnZjU/z3+Cj1Cg6PRIkv7tAfFyatOSwF5D
-         Xx/J+QnJHZsgn1i+bxVH61qC+JndlY4icCRl+OWwjSuw0zrLsAqeaTiJFX9mHKY/RLUz
-         c/2hckch5RJvtUkgwG2NKmbaW8HUN5lwi9Nud0t07+155bFu7xnbUjWRkui1jfnyJmKI
-         RpeIwd8C+wOh5ZSEt5cznXbZmSsxvKBAcApvlrFI+HqsWOI5aLXwNwU48Pd44N6uYdy6
-         16cA==
-X-Gm-Message-State: APjAAAWoDfjMkhE8XL5SEPd9LdCAZDSBYbMWZ2lJclE6vSCNy8ZiQmFs
-        nOS4dBdApzKL1vfAa3NijFB57A==
-X-Google-Smtp-Source: APXvYqwNRhkmJ4mbSYJLO0PmKxo+8nA6r5QBn7/anONeoROTjVfQayIadlHpsoWWf7cq2t4MlfwYcQ==
-X-Received: by 2002:a17:90a:2203:: with SMTP id c3mr3394823pje.68.1579875371008;
-        Fri, 24 Jan 2020 06:16:11 -0800 (PST)
-Received: from chromium.org ([2601:647:4903:8020:88e3:d812:557:e2e5])
-        by smtp.gmail.com with ESMTPSA id v8sm6549623pff.151.2020.01.24.06.16.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 06:16:10 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Fri, 24 Jan 2020 06:16:00 -0800
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: Re: [PATCH bpf-next v3 08/10] tools/libbpf: Add support for
- BPF_PROG_TYPE_LSM
-Message-ID: <20200124141600.GB21334@chromium.org>
-References: <20200123152440.28956-1-kpsingh@chromium.org>
- <20200123152440.28956-9-kpsingh@chromium.org>
- <CAEf4BzZ7gmCTzxw4f=fp=j2_buBQ3rV8m3qWH8s-ySY6sGVPzw@mail.gmail.com>
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1579876139; x=1611412139;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=y/MifIdzpslyux55djl130lL5OFeBNcPDNU3yOPrKM8=;
+  b=gu8hDz5bqCj/WBlcU2rhjm0/bA7nRcfcu7rv9uYrO+qdwXV6ktBrmstn
+   iX9Vdu2LHx1bGmb46RHQ+sq5ssu84BpJ/Z5lj0wbBbccI8s/OBM82TWVj
+   iGYL+0FLVDGB6i9NeHLiOu3RxnTwRayzGnPCkm62f6UmwGpnoNFRPbhFe
+   0d2PyM3ezQu8u/dDWhMRHhyDI6ayrGAX+c3X0oCPOcamepJwZGxIYRrZb
+   FkyCsFvHelC6sk6ItvKL4tn5TRdZ5pYSvS6b8RvqSkgFiDAKnZZasIDWL
+   QT2sbzoozmWup88LT8iMub17IkALHFuH3o9YJOvGfzIvl/kVfxSiXOFiK
+   A==;
+X-IronPort-AV: E=Sophos;i="5.70,357,1574121600"; 
+   d="scan'208";a="32294364"
+IronPort-PHdr: =?us-ascii?q?9a23=3A3sUJ6xfy1ZDpINdZauSA9NHKlGMj4u6mDksu8p?=
+ =?us-ascii?q?Mizoh2WeGdxc2/ZBCN2/xhgRfzUJnB7Loc0qyK6vymAzBLv8zJ8ChbNsAVDF?=
+ =?us-ascii?q?ld0YRetjdjKfbNMVf8Iv/uYn5yN+V5f3ghwUuGN1NIEt31fVzYry76xzcTHh?=
+ =?us-ascii?q?LiKVg9fbytScbdgMutyu+95YDYbRlWizqhe7NyKwi9oRnMusUMjoZuN6k8xg?=
+ =?us-ascii?q?HXrnZHdOhbxH1kLk+Xkxrg+8u85pFu/zletv4768JMTaD2dLkkQLJFCzgrL3?=
+ =?us-ascii?q?o779DxuxnZSguP6HocUmEInRdNHgPI8hL0UIrvvyXjruZy1zWUMsPwTbAvRD?=
+ =?us-ascii?q?St9LxrRwPyiCcGLDE27mfagdFtga1BoRKhoxt/w5PIYIyQKfFzcL/Rcc8cSG?=
+ =?us-ascii?q?FcRctaSTBPDZ2gYIsOF+oBPPhXr4/hp1sVsBCyARCgCP7zxjNUg3P726M10/?=
+ =?us-ascii?q?4lEQrbwgIuGdwAu2nQoNnsKqsfVeW5wa/VxjvBcvxWwy/w5pXWfBAvof+CXr?=
+ =?us-ascii?q?x+fsTexkYtCwzLgU6dqZDnMj6PyugBr2aW4uhmWOmyi2AnsQZxoj23y8kxlo?=
+ =?us-ascii?q?nGmJoVylDa+iV/3Y07ONi4R1R/Yd6gDpRRtzyROoxtQsw/WGFlozo6y70atp?=
+ =?us-ascii?q?67eygG0pInxwXFZPCdfIiI5QzjWf+XLDxlh3xlYKqyiwu9/EWv0OHxVtS43E?=
+ =?us-ascii?q?xUoidKjNXArG0B2hrO4cadUPR95F2u2TOX2gDW7eFLPF47mLLAK54k3r4wjp?=
+ =?us-ascii?q?0TsVnfHiPumEX5kquWdkI89+i08evneLTmpoKHN4NuiwH+NKoumsukAesmLg?=
+ =?us-ascii?q?cCRXSb+OSg273j+k31WrNKgeEtkqbFqpzaIMUbpqqhDw9U1IYs9Qq/Ai+73N?=
+ =?us-ascii?q?kXknQLNlJIdA+dg4T3NFzCPur0Aeqnj1SpijhrxvTGPrP7ApXKK3jOiKzhcq?=
+ =?us-ascii?q?tm60NH1AoyzcxQ55JTCr0bJvLzQVX+uMbXDh8+LQy42/znB8ll1oMCRWKPBb?=
+ =?us-ascii?q?eUP7/Ivl+T+O0uI/KBZJQJtzb9Mfcl+vDujXsnll8HZKWmwYEYZGqkEfRhJk?=
+ =?us-ascii?q?WTeWDsjcsZEWcWogo+S/Tnh0GYXj5IeXmzX7gw5ionB4KmF4jDW46tgLif0y?=
+ =?us-ascii?q?ehBZBWZ2ZGCkySHnfsbYmLR/AMaCeKKM97jjMETaShS5Mm1Ry2tg/6zr1nLv?=
+ =?us-ascii?q?DO+i0ZrpLuz9516PfWlR4s9Dx4FcOd03uCT2tshGMHWyc23LxjoUx60lqD1a?=
+ =?us-ascii?q?l4g/pFFd1c/v9JSRk1OoLBz+xgCtDyRgLAcs6MSFahX9qmHDUxQcwqzt8QbE?=
+ =?us-ascii?q?ZyBc+iggrA3yW0Gb8VkaKEBJgu/qLbxXjxKN53y2za26k5k1kmXsxPOHW9hq?=
+ =?us-ascii?q?Fh8wjTBojJk1iWlquxa6Qc0zDC9H2ZwWqNok5YSghwXrvBXXwFYUvWt9v57F?=
+ =?us-ascii?q?vYT7CyEbQnLhdBycmaJ6tJdNLmk05GS+vkONTZYGK8gHu/BRaSxrOLaYrqen?=
+ =?us-ascii?q?gd3CDHBEgDiQAT8m6MNRIiCSe5v2LeEDtuGErtY0Pr8el+rmm3Tk0zzwGKdU?=
+ =?us-ascii?q?Jh0aG19QAThfGHV/wcxLQEuCAnqzV1AFmyxdbWB8CcqApmeaVWeck970tf1W?=
+ =?us-ascii?q?LFqwx9OYStL7h8iV4YfAR3okLu1xNuBoVDj8cqtnUqwxR2Ka+D0VNNbjeY3Z?=
+ =?us-ascii?q?fuOrLJMGXy5wqga63L2lHEytma4KEP5+oip1XhpAGjDlAi/Gl/09lJz3uc4Y?=
+ =?us-ascii?q?3HDBIIXpLsVkY67AB6qKvHYik5/o/U0HpsMa6usjDcwd4mGOwlyhPzN+tYZY?=
+ =?us-ascii?q?iNDwLjW/YRB8GzJugngRD9ZRsfMfF676U0Nt6oc/acnaWieu1nmWTixW9O+4?=
+ =?us-ascii?q?1slFmH9yNhROrFxb4Exe2V2k2MUDK4xFWktdrtmJtsYzgXE2v5zjLrQMZVZ6?=
+ =?us-ascii?q?tvbcMQBGyzOcyr15B7gJLwX3Nw6lGuHRUF1dWvdB7UaEbymUVL2EAWp2G3sT?=
+ =?us-ascii?q?W3wiYykDwzqKebmivUzLfMbh0Cb1VXSXFigFGkGo29i9QXTQD8dAQyvAe07k?=
+ =?us-ascii?q?b9ga5AreJwKHeFEhQARDT/M2w3Cvj4jbGFecMarcpy4Cg=3D?=
+X-IPAS-Result: =?us-ascii?q?A2BrAgDP/Spe/wHyM5BlHAEBAQEBBwEBEQEEBAEBgXuBf?=
+ =?us-ascii?q?YFtIBIqhBKJA4Z3BoE3iW+KJYckCQEBAQEBAQEBATcBAYRAAoJGOBMCEAEBA?=
+ =?us-ascii?q?QQBAQEBAQUDAQFshUOCOykBgnoBBSMEEUEQCxgCAiYCAlcGAQwGAgEBgmM/g?=
+ =?us-ascii?q?lclrQB/M4VKgzGBPoEOKowxeYEHgREnD4JdPodZgl4EllNhRpdegkOCTJNlB?=
+ =?us-ascii?q?huafC2OM50eIoFYKwgCGAghDzuCbFAYDYgNF45BIwMwjHdfAQE?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 24 Jan 2020 14:28:58 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00OESC5D238741;
+        Fri, 24 Jan 2020 09:28:15 -0500
+Subject: Re: [PATCH v14 06/23] Use lsmblob in security_secctx_to_secid
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
+References: <20200124002306.3552-1-casey@schaufler-ca.com>
+ <20200124002306.3552-7-casey@schaufler-ca.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <79e2f4d8-ea0a-b255-8b07-258a6d8da673@tycho.nsa.gov>
+Date:   Fri, 24 Jan 2020 09:29:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzZ7gmCTzxw4f=fp=j2_buBQ3rV8m3qWH8s-ySY6sGVPzw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200124002306.3552-7-casey@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> On Thu, Jan 23, 2020 at 7:25 AM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > From: KP Singh <kpsingh@google.com>
-> >
-> > * Add functionality in libbpf to attach eBPF program to LSM hooks
-> > * Lookup the index of the LSM hook in security_hook_heads and pass it in
-> >   attr->lsm_hook_idx
-> >
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> > Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> > Reviewed-by: Florent Revest <revest@google.com>
-> > Reviewed-by: Thomas Garnier <thgarnie@google.com>
-> > ---
+On 1/23/20 7:22 PM, Casey Schaufler wrote:
+> Change security_secctx_to_secid() to fill in a lsmblob instead
+> of a u32 secid. Multiple LSMs may be able to interpret the
+> string, and this allows for setting whichever secid is
+> appropriate. In some cases there is scaffolding where other
+> interfaces have yet to be converted.
 > 
-> Looks good, but see few nits below.
-> 
-> Acked-by: Andrii Nakryiko <andriin@fb.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Thanks!
+I acked v13 of this patch and don't see any real change here, so:
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 
+> ---
+>   include/linux/security.h          |  5 +++--
+>   kernel/cred.c                     |  4 +---
+>   net/netfilter/nft_meta.c          | 12 +++++++-----
+>   net/netfilter/xt_SECMARK.c        |  5 ++++-
+>   net/netlabel/netlabel_unlabeled.c | 14 ++++++++------
+>   security/security.c               | 18 +++++++++++++++---
+>   6 files changed, 38 insertions(+), 20 deletions(-)
 > 
-> >  tools/lib/bpf/bpf.c      |   6 ++-
-> >  tools/lib/bpf/bpf.h      |   1 +
-> >  tools/lib/bpf/libbpf.c   | 104 +++++++++++++++++++++++++++++++++++++--
-> >  tools/lib/bpf/libbpf.h   |   4 ++
-> >  tools/lib/bpf/libbpf.map |   3 ++
-> >  5 files changed, 114 insertions(+), 4 deletions(-)
-> >
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index e53ff7eebcc5..5ad7cc8abd55 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -496,7 +496,8 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
+>   int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+>   int security_ismaclabel(const char *name);
+>   int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+> -int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
+> +int security_secctx_to_secid(const char *secdata, u32 seclen,
+> +			     struct lsmblob *blob);
+>   void security_release_secctx(char *secdata, u32 seclen);
+>   void security_inode_invalidate_secctx(struct inode *inode);
+>   int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+> @@ -1302,7 +1303,7 @@ static inline int security_secid_to_secctx(u32 secid, char **secdata, u32 *secle
+>   
+>   static inline int security_secctx_to_secid(const char *secdata,
+>   					   u32 seclen,
+> -					   u32 *secid)
+> +					   struct lsmblob *blob)
+>   {
+>   	return -EOPNOTSUPP;
+>   }
+> diff --git a/kernel/cred.c b/kernel/cred.c
+> index 490d72825aa5..b41c2bbd357f 100644
+> --- a/kernel/cred.c
+> +++ b/kernel/cred.c
+> @@ -756,14 +756,12 @@ EXPORT_SYMBOL(set_security_override);
+>   int set_security_override_from_ctx(struct cred *new, const char *secctx)
+>   {
+>   	struct lsmblob blob;
+> -	u32 secid;
+>   	int ret;
+>   
+> -	ret = security_secctx_to_secid(secctx, strlen(secctx), &secid);
+> +	ret = security_secctx_to_secid(secctx, strlen(secctx), &blob);
+>   	if (ret < 0)
+>   		return ret;
+>   
+> -	lsmblob_init(&blob, secid);
+>   	return set_security_override(new, &blob);
+>   }
+>   EXPORT_SYMBOL(set_security_override_from_ctx);
+> diff --git a/net/netfilter/nft_meta.c b/net/netfilter/nft_meta.c
+> index 9740b554fdb3..259c78d2f371 100644
+> --- a/net/netfilter/nft_meta.c
+> +++ b/net/netfilter/nft_meta.c
+> @@ -625,21 +625,23 @@ static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
+>   
+>   static int nft_secmark_compute_secid(struct nft_secmark *priv)
+>   {
+> -	u32 tmp_secid = 0;
+> +	struct lsmblob blob;
+>   	int err;
+>   
+> -	err = security_secctx_to_secid(priv->ctx, strlen(priv->ctx), &tmp_secid);
+> +	err = security_secctx_to_secid(priv->ctx, strlen(priv->ctx), &blob);
+>   	if (err)
+>   		return err;
+>   
+> -	if (!tmp_secid)
+> +	if (!lsmblob_is_set(&blob))
+>   		return -ENOENT;
+>   
+> -	err = security_secmark_relabel_packet(tmp_secid);
+> +	/* Using le[0] is scaffolding */
+> +	err = security_secmark_relabel_packet(blob.secid[0]);
+>   	if (err)
+>   		return err;
+>   
+> -	priv->secid = tmp_secid;
+> +	/* Using le[0] is scaffolding */
+> +	priv->secid = blob.secid[0];
+>   	return 0;
+>   }
+>   
+> diff --git a/net/netfilter/xt_SECMARK.c b/net/netfilter/xt_SECMARK.c
+> index 2317721f3ecb..2d68416b4552 100644
+> --- a/net/netfilter/xt_SECMARK.c
+> +++ b/net/netfilter/xt_SECMARK.c
+> @@ -45,13 +45,14 @@ secmark_tg(struct sk_buff *skb, const struct xt_action_param *par)
+>   
+>   static int checkentry_lsm(struct xt_secmark_target_info *info)
+>   {
+> +	struct lsmblob blob;
+>   	int err;
+>   
+>   	info->secctx[SECMARK_SECCTX_MAX - 1] = '\0';
+>   	info->secid = 0;
+>   
+>   	err = security_secctx_to_secid(info->secctx, strlen(info->secctx),
+> -				       &info->secid);
+> +				       &blob);
+>   	if (err) {
+>   		if (err == -EINVAL)
+>   			pr_info_ratelimited("invalid security context \'%s\'\n",
+> @@ -59,6 +60,8 @@ static int checkentry_lsm(struct xt_secmark_target_info *info)
+>   		return err;
+>   	}
+>   
+> +	/* scaffolding during the transition */
+> +	info->secid = blob.secid[0];
+>   	if (!info->secid) {
+>   		pr_info_ratelimited("unable to map security context \'%s\'\n",
+>   				    info->secctx);
+> diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+> index d2e4ab8d1cb1..7a5a87f15736 100644
+> --- a/net/netlabel/netlabel_unlabeled.c
+> +++ b/net/netlabel/netlabel_unlabeled.c
+> @@ -881,7 +881,7 @@ static int netlbl_unlabel_staticadd(struct sk_buff *skb,
+>   	void *addr;
+>   	void *mask;
+>   	u32 addr_len;
+> -	u32 secid;
+> +	struct lsmblob blob;
+>   	struct netlbl_audit audit_info;
+>   
+>   	/* Don't allow users to add both IPv4 and IPv6 addresses for a
+> @@ -905,12 +905,13 @@ static int netlbl_unlabel_staticadd(struct sk_buff *skb,
+>   	ret_val = security_secctx_to_secid(
+>   		                  nla_data(info->attrs[NLBL_UNLABEL_A_SECCTX]),
+>   				  nla_len(info->attrs[NLBL_UNLABEL_A_SECCTX]),
+> -				  &secid);
+> +				  &blob);
+>   	if (ret_val != 0)
+>   		return ret_val;
+>   
+> +	/* scaffolding with the [0] */
+>   	return netlbl_unlhsh_add(&init_net,
+> -				 dev_name, addr, mask, addr_len, secid,
+> +				 dev_name, addr, mask, addr_len, blob.secid[0],
+>   				 &audit_info);
+>   }
+>   
+> @@ -932,7 +933,7 @@ static int netlbl_unlabel_staticadddef(struct sk_buff *skb,
+>   	void *addr;
+>   	void *mask;
+>   	u32 addr_len;
+> -	u32 secid;
+> +	struct lsmblob blob;
+>   	struct netlbl_audit audit_info;
+>   
+>   	/* Don't allow users to add both IPv4 and IPv6 addresses for a
+> @@ -954,12 +955,13 @@ static int netlbl_unlabel_staticadddef(struct sk_buff *skb,
+>   	ret_val = security_secctx_to_secid(
+>   		                  nla_data(info->attrs[NLBL_UNLABEL_A_SECCTX]),
+>   				  nla_len(info->attrs[NLBL_UNLABEL_A_SECCTX]),
+> -				  &secid);
+> +				  &blob);
+>   	if (ret_val != 0)
+>   		return ret_val;
+>   
+> +	/* scaffolding with the [0] */
+>   	return netlbl_unlhsh_add(&init_net,
+> -				 NULL, addr, mask, addr_len, secid,
+> +				 NULL, addr, mask, addr_len, blob.secid[0],
+>   				 &audit_info);
+>   }
+>   
+> diff --git a/security/security.c b/security/security.c
+> index b7404bfc8938..c722cd495517 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1970,10 +1970,22 @@ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+>   }
+>   EXPORT_SYMBOL(security_secid_to_secctx);
+>   
+> -int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+> +int security_secctx_to_secid(const char *secdata, u32 seclen,
+> +			     struct lsmblob *blob)
+>   {
+> -	*secid = 0;
+> -	return call_int_hook(secctx_to_secid, 0, secdata, seclen, secid);
+> +	struct security_hook_list *hp;
+> +	int rc;
+> +
+> +	lsmblob_init(blob, 0);
+> +	hlist_for_each_entry(hp, &security_hook_heads.secctx_to_secid, list) {
+> +		if (WARN_ON(hp->lsmid->slot < 0 || hp->lsmid->slot >= lsm_slot))
+> +			continue;
+> +		rc = hp->hook.secctx_to_secid(secdata, seclen,
+> +					      &blob->secid[hp->lsmid->slot]);
+> +		if (rc != 0)
+> +			return rc;
+> +	}
+> +	return 0;
+>   }
+>   EXPORT_SYMBOL(security_secctx_to_secid);
+>   
 > 
-> [...]
-> 
-> > @@ -5084,6 +5099,8 @@ __bpf_object__open(const char *path, const void *obj_buf, size_t obj_buf_sz,
-> >                 if (prog->type != BPF_PROG_TYPE_UNSPEC)
-> >                         continue;
-> >
-> > +
-> > +
-> 
-> why these extra lines?
 
-Ah this might have crept in my latest rebase. Will remove these.
-
-> 
-> >                 err = libbpf_prog_type_by_name(prog->section_name, &prog_type,
-> >                                                &attach_type);
-> >                 if (err == -ESRCH)
-> > @@ -6160,6 +6177,7 @@ bool bpf_program__is_##NAME(const struct bpf_program *prog)       \
-> >  }                                                              \
-> >
-> >  BPF_PROG_TYPE_FNS(socket_filter, BPF_PROG_TYPE_SOCKET_FILTER);
-> > +BPF_PROG_TYPE_FNS(lsm, BPF_PROG_TYPE_LSM);
-> >  BPF_PROG_TYPE_FNS(kprobe, BPF_PROG_TYPE_KPROBE);
-> >  BPF_PROG_TYPE_FNS(sched_cls, BPF_PROG_TYPE_SCHED_CLS);
-> >  BPF_PROG_TYPE_FNS(sched_act, BPF_PROG_TYPE_SCHED_ACT);
-> > @@ -6226,6 +6244,8 @@ static struct bpf_link *attach_raw_tp(const struct bpf_sec_def *sec,
-> >                                       struct bpf_program *prog);
-> >  static struct bpf_link *attach_trace(const struct bpf_sec_def *sec,
-> >                                      struct bpf_program *prog);
-> > +static struct bpf_link *attach_lsm(const struct bpf_sec_def *sec,
-> > +                                  struct bpf_program *prog);
-> >
-> >  struct bpf_sec_def {
-> >         const char *sec;
-> > @@ -6272,6 +6292,9 @@ static const struct bpf_sec_def section_defs[] = {
-> >         SEC_DEF("freplace/", EXT,
-> >                 .is_attach_btf = true,
-> >                 .attach_fn = attach_trace),
-> > +       SEC_DEF("lsm/", LSM,
-> > +               .expected_attach_type = BPF_LSM_MAC,
-> 
-> curious, will there be non-MAC LSM programs? if yes, how they are
-> going to be different and which prefix will we use then?
-
-One can think BPF_LSM_AUDIT programs which will only be used to log
-information from the LSM hooks and not enforce a policy. Currently,
-one can sort of do that by disabling CONFIG_SECURITY_BPF_ENFORCE but
-that's an all or none hammer.
-
-> 
-> > +               .attach_fn = attach_lsm),
-> >         BPF_PROG_SEC("xdp",                     BPF_PROG_TYPE_XDP),
-> >         BPF_PROG_SEC("perf_event",              BPF_PROG_TYPE_PERF_EVENT),
-> >         BPF_PROG_SEC("lwt_in",                  BPF_PROG_TYPE_LWT_IN),
-> > @@ -6533,6 +6556,44 @@ static int bpf_object__collect_struct_ops_map_reloc(struct bpf_object *obj,
-> >         return -EINVAL;
-> >  }
-> >
-> > +static __s32 find_lsm_hook_idx(struct bpf_program *prog)
-> 
-> nit: I'd stick to int for return result, we barely ever use __s32 in libbpf.c
-
-Sure. Changed to int.
-
-- KP
-
-> 
-> [...]
