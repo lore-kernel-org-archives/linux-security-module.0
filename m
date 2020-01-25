@@ -1,71 +1,317 @@
-Return-Path: <SRS0=wJOd=3N=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=7Wqb=3O=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C5DC35242
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jan 2020 21:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F4EC3F68F
+	for <linux-security-module@archiver.kernel.org>; Sat, 25 Jan 2020 13:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B82E32077C
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jan 2020 21:55:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FF292071A
+	for <linux-security-module@archiver.kernel.org>; Sat, 25 Jan 2020 13:06:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729159AbgAXVzd (ORCPT
+        id S1729213AbgAYNGt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jan 2020 16:55:33 -0500
-Received: from namei.org ([65.99.196.166]:59698 "EHLO namei.org"
+        Sat, 25 Jan 2020 08:06:49 -0500
+Received: from monster.unsafe.ru ([5.9.28.80]:41220 "EHLO mail.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729152AbgAXVzc (ORCPT
+        id S1726080AbgAYNGr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jan 2020 16:55:32 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 00OLtNMn007070;
-        Fri, 24 Jan 2020 21:55:23 GMT
-Date:   Sat, 25 Jan 2020 08:55:23 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     KP Singh <kpsingh@chromium.org>
-cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>, bpf@vger.kernel.org
-Subject: Re: [PATCH bpf-next v3 04/10] bpf: lsm: Add mutable hooks list for
- the BPF LSM
-In-Reply-To: <20200124012501.GA8709@chromium.org>
-Message-ID: <alpine.LRH.2.21.2001250852070.6744@namei.org>
-References: <20200123152440.28956-1-kpsingh@chromium.org> <20200123152440.28956-5-kpsingh@chromium.org> <29157a88-7049-906e-fe92-b7a1e2183c6b@schaufler-ca.com> <20200123175942.GA131348@google.com> <5004b3f4-ca5b-a546-4e87-b852cc248079@schaufler-ca.com>
- <20200123222436.GA1598@chromium.org> <f571b719-e11f-416e-4232-f99036e38f15@schaufler-ca.com> <20200124012501.GA8709@chromium.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Sat, 25 Jan 2020 08:06:47 -0500
+Received: from localhost.localdomain (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.unsafe.ru (Postfix) with ESMTPSA id 54C65C61B35;
+        Sat, 25 Jan 2020 13:06:38 +0000 (UTC)
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH v7 00/11] proc: modernize proc to support multiple private instances
+Date:   Sat, 25 Jan 2020 14:05:30 +0100
+Message-Id: <20200125130541.450409-1-gladkov.alexey@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 23 Jan 2020, KP Singh wrote:
+Greetings!
 
-> 
-> > If you want to put mutable hook handling in the infrastructure
-> > you need to make it general mutable hook handling as opposed to
-> > BPF hook handling. I don't know if that would be acceptable for
-> > all the reasons called out about dynamic module loading.
-> 
-> We can have generic mutable hook handling and if an LSM doesn't
---> provide a mutable security_hook_heads, it would not allow dynamic
-> hooks / dynamic module loading.
-> 
-> So, in practice it will just be the BPF LSM that allows mutable hooks
-> and the other existing LSMs won't. I guess it will be cleaner than
-> calling the BPF hooks directly from the LSM code (i.e in security.c)
+Preface:
+--------
+This is patchset v7 to modernize procfs and make it able to support multiple
+private instances per the same pid namespace.
 
-I'm inclined to only have mutable hooks for KRSI, not for all LSMs. This 
-is a special case and we don't need to provide this for anyone else.
+This patchset can be applied on top of v5.4-rc7-49-g0e3f1ad80fc8
 
-Btw, folks, PLEASE trim replies.
 
+Procfs modernization:
+---------------------
+Historically procfs was always tied to pid namespaces, during pid
+namespace creation we internally create a procfs mount for it. However,
+this has the effect that all new procfs mounts are just a mirror of the
+internal one, any change, any mount option update, any new future
+introduction will propagate to all other procfs mounts that are in the
+same pid namespace.
+
+This may have solved several use cases in that time. However today we
+face new requirements, and making procfs able to support new private
+instances inside same pid namespace seems a major point. If we want to
+to introduce new features and security mechanisms we have to make sure
+first that we do not break existing usecases. Supporting private procfs
+instances will allow to support new features and behaviour without
+propagating it to all other procfs mounts.
+
+Today procfs is more of a burden especially to some Embedded, IoT,
+sandbox, container use cases. In user space we are over-mounting null
+or inaccessible files on top to hide files and information. If we want
+to hide pids we have to create PID namespaces otherwise mount options
+propagate to all other proc mounts, changing a mount option value in one
+mount will propagate to all other proc mounts. If we want to introduce
+new features, then they will propagate to all other mounts too, resulting
+either maybe new useful functionality or maybe breaking stuff. We have
+also to note that userspace should not workaround procfs, the kernel
+should just provide a sane simple interface.
+
+In this regard several developers and maintainers pointed out that
+there are problems with procfs and it has to be modernized:
+
+"Here's another one: split up and modernize /proc." by Andy Lutomirski [1]
+
+Discussion about kernel pointer leaks:
+
+"And yes, as Kees and Daniel mentioned, it's definitely not just dmesg.
+In fact, the primary things tend to be /proc and /sys, not dmesg
+itself." By Linus Torvalds [2]
+
+Lot of other areas in the kernel and filesystems have been updated to be
+able to support private instances, devpts is one major example [3].
+
+Which will be used for:
+
+1) Embedded systems and IoT: usually we have one supervisor for
+apps, we have some lightweight sandbox support, however if we create
+pid namespaces we have to manage all the processes inside too,
+where our goal is to be able to run a bunch of apps each one inside
+its own mount namespace, maybe use network namespaces for vlans
+setups, but right now we only want mount namespaces, without all the
+other complexity. We want procfs to behave more like a real file system,
+and block access to inodes that belong to other users. The 'hidepid=' will
+not work since it is a shared mount option.
+
+2) Containers, sandboxes and Private instances of file systems - devpts case
+Historically, lot of file systems inside Linux kernel view when instantiated
+were just a mirror of an already created and mounted filesystem. This was the
+case of devpts filesystem, it seems at that time the requirements were to
+optimize things and reuse the same memory, etc. This design used to work but not
+anymore with today's containers, IoT, hostile environments and all the privacy
+challenges that Linux faces.
+
+In that regards, devpts was updated so that each new mounts is a total
+independent file system by the following patches:
+
+"devpts: Make each mount of devpts an independent filesystem" by
+Eric W. Biederman [3] [4]
+
+3) Linux Security Modules have multiple ptrace paths inside some
+subsystems, however inside procfs, the implementation does not guarantee
+that the ptrace() check which triggers the security_ptrace_check() hook
+will always run. We have the 'hidepid' mount option that can be used to
+force the ptrace_may_access() check inside has_pid_permissions() to run.
+The problem is that 'hidepid' is per pid namespace and not attached to
+the mount point, any remount or modification of 'hidepid' will propagate
+to all other procfs mounts.
+
+This also does not allow to support Yama LSM easily in desktop and user
+sessions. Yama ptrace scope which restricts ptrace and some other
+syscalls to be allowed only on inferiors, can be updated to have a
+per-task context, where the context will be inherited during fork(),
+clone() and preserved across execve(). If we support multiple private
+procfs instances, then we may force the ptrace_may_access() on
+/proc/<pids>/ to always run inside that new procfs instances. This will
+allow to specifiy on user sessions if we should populate procfs with
+pids that the user can ptrace or not.
+
+By using Yama ptrace scope, some restricted users will only be able to see
+inferiors inside /proc, they won't even be able to see their other
+processes. Some software like Chromium, Firefox's crash handler, Wine
+and others are already using Yama to restrict which processes can be
+ptracable. With this change this will give the possibility to restrict
+/proc/<pids>/ but more importantly this will give desktop users a
+generic and usuable way to specifiy which users should see all processes
+and which user can not.
+
+Side notes:
+
+* This covers the lack of seccomp where it is not able to parse
+arguments, it is easy to install a seccomp filter on direct syscalls
+that operate on pids, however /proc/<pid>/ is a Linux ABI using
+filesystem syscalls. With this change all LSMs should be able to analyze
+open/read/write/close... on /proc/<pid>/
+
+4) This will allow to implement new features either in kernel or
+userspace without having to worry about procfs.
+In containers, sandboxes, etc we have workarounds to hide some /proc
+inodes, this should be supported natively without doing extra complex
+work, the kernel should be able to support sane options that work with
+today and future Linux use cases.
+
+5) Creation of new superblock with all procfs options for each procfs
+mount will fix the ignoring of mount options. The problem is that the
+second mount of procfs in the same pid namespace ignores the mount
+options. The mount options are ignored without error until procfs is
+remounted.
+
+Before:
+
+# grep ^proc /proc/mounts
+proc /proc proc rw,relatime,hidepid=2 0 0
+
+# strace -e mount mount -o hidepid=1 -t proc proc /tmp/proc
+mount("proc", "/tmp/proc", "proc", 0, "hidepid=1") = 0
++++ exited with 0 +++
+
+# grep ^proc /proc/mounts
+proc /proc proc rw,relatime,hidepid=2 0 0
+proc /tmp/proc proc rw,relatime,hidepid=2 0 0
+
+# mount -o remount,hidepid=1 -t proc proc /tmp/proc
+
+# grep ^proc /proc/mounts
+proc /proc proc rw,relatime,hidepid=1 0 0
+proc /tmp/proc proc rw,relatime,hidepid=1 0 0
+
+After:
+
+# grep ^proc /proc/mounts
+proc /proc proc rw,relatime,hidepid=2 0 0
+
+# mount -o hidepid=1 -t proc proc /tmp/proc
+
+# grep ^proc /proc/mounts
+proc /proc proc rw,relatime,hidepid=2 0 0
+proc /tmp/proc proc rw,relatime,hidepid=1 0 0
+
+
+Introduced changes:
+-------------------
+Each mount of procfs creates a separate procfs instance with its own
+mount options.
+
+This series adds few new mount options:
+
+* New 'hidepid=4' mount option to show only ptraceable processes in the procfs.
+This allows to support lightweight sandboxes in Embedded Linux, also
+solves the case for LSM where now with this mount option, we make sure
+that they have a ptrace path in procfs.
+
+* 'subset=pidfs' that allows to hide non-pid inodes from procfs. It can be used
+in containers and sandboxes, as these are already trying to hide and block
+access to procfs inodes anyway.
+
+
+ChangeLog:
+----------
+# v7:
+* 'pidonly=1' renamed to 'subset=pidfs' as Alexey Dobriyan suggested.
+* HIDEPID_* moved to uapi/ as they are user interface to mount().
+  Suggested-by Alexey Dobriyan <adobriyan@gmail.com>
+
+# v6:
+* 'hidepid=' and 'gid=' mount options are moved from pid namespace to superblock.
+* 'newinstance' mount option removed as Eric W. Biederman suggested.
+   Mount of procfs always creates a new instance.
+* 'limit_pids' renamed to 'hidepid=3'.
+* I took into account the comment of Linus Torvalds [7].
+* Documentation added.
+
+# v5:
+* Fixed a bug that caused a problem with the Fedora boot.
+* The 'pidonly' option is visible among the mount options.
+
+# v2:
+* Renamed mount options to 'newinstance' and 'pids='
+   Suggested-by: Andy Lutomirski <luto@kernel.org>
+* Fixed order of commit, Suggested-by: Andy Lutomirski <luto@kernel.org>
+* Many bug fixes.
+
+# v1:
+* Removed 'unshared' mount option and replaced it with 'limit_pids'
+   which is attached to the current procfs mount.
+   Suggested-by Andy Lutomirski <luto@kernel.org>
+* Do not fill dcache with pid entries that we can not ptrace.
+* Many bug fixes.
+
+
+References:
+-----------
+[1] https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2017-January/004215.html
+[2] http://www.openwall.com/lists/kernel-hardening/2017/10/05/5
+[3] https://lwn.net/Articles/689539/
+[4] http://lxr.free-electrons.com/source/Documentation/filesystems/devpts.txt?v=3.14
+[5] https://lkml.org/lkml/2017/5/2/407
+[6] https://lkml.org/lkml/2017/5/3/357
+[7] https://lkml.org/lkml/2018/5/11/505
+
+
+Alexey Gladkov (11):
+  proc: Rename struct proc_fs_info to proc_fs_opts
+  proc: add proc_fs_info struct to store proc information
+  proc: move /proc/{self|thread-self} dentries to proc_fs_info
+  proc: move hide_pid, pid_gid from pid_namespace to proc_fs_info
+  proc: add helpers to set and get proc hidepid and gid mount options
+  proc: support mounting procfs instances inside same pid namespace
+  proc: flush task dcache entries from all procfs instances
+  proc: instantiate only pids that we can ptrace on 'hidepid=4' mount
+    option
+  proc: add option to mount only a pids subset
+  docs: proc: add documentation for "hidepid=4" and "subset=pidfs"
+    options and new mount behavior
+  proc: Move hidepid values to uapi as they are user interface to mount
+
+ Documentation/filesystems/proc.txt |  53 ++++++++++++
+ fs/locks.c                         |   6 +-
+ fs/proc/base.c                     |  69 ++++++++++++----
+ fs/proc/generic.c                  |   9 ++
+ fs/proc/inode.c                    |  21 +++--
+ fs/proc/internal.h                 |  30 +++++++
+ fs/proc/root.c                     | 128 +++++++++++++++++++++++------
+ fs/proc/self.c                     |   4 +-
+ fs/proc/thread_self.c              |   6 +-
+ fs/proc_namespace.c                |  14 ++--
+ include/linux/pid_namespace.h      |  54 +++++++++---
+ include/linux/proc_fs.h            |  25 +++++-
+ include/uapi/linux/proc_fs.h       |  13 +++
+ 13 files changed, 355 insertions(+), 77 deletions(-)
+ create mode 100644 include/uapi/linux/proc_fs.h
 
 -- 
-James Morris
-<jmorris@namei.org>
+2.24.1
 
