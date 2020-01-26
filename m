@@ -1,134 +1,131 @@
-Return-Path: <SRS0=7Wqb=3O=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=cLeu=3P=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA13C3F68F
-	for <linux-security-module@archiver.kernel.org>; Sat, 25 Jan 2020 18:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FFBC35246
+	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jan 2020 15:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71D9E2071E
-	for <linux-security-module@archiver.kernel.org>; Sat, 25 Jan 2020 18:45:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579977948;
-	bh=A7WTXqLdUu+CmDmtHBI7lHSK6Jj/P5gnEhhaLf29Mcc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=TH6j0J96CHDQnpS2U7ByR9ZbwMTLWOTLwmjkLUAHZBNrf1xwB3zHXkJLCjbmNB7D2
-	 DjkaE9YpqtTvCf/91sJziaHulyiatpl4uMf2oOpWclj2VCFqxi2ALpblpU7LSQFutJ
-	 8vmpgl8cySSxXQvz3eCNwjPCuMClzb0qL/VITfbw=
+	by mail.kernel.org (Postfix) with ESMTP id DCA3E2071A
+	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jan 2020 15:47:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sny0Gkwe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbgAYSpr (ORCPT
+        id S1728925AbgAZPre (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 25 Jan 2020 13:45:47 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43012 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbgAYSpq (ORCPT
+        Sun, 26 Jan 2020 10:47:34 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:45690 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbgAZPrd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 25 Jan 2020 13:45:46 -0500
-Received: by mail-lj1-f196.google.com with SMTP id a13so6251025ljm.10
-        for <linux-security-module@vger.kernel.org>; Sat, 25 Jan 2020 10:45:45 -0800 (PST)
+        Sun, 26 Jan 2020 10:47:33 -0500
+Received: by mail-yb1-f196.google.com with SMTP id x191so3689882ybg.12;
+        Sun, 26 Jan 2020 07:47:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=agKBgndk3wOWKqvCTJf0yLyX2bJKGsFMAU50Ri7/n9U=;
-        b=ebrkpC8lWGHzj/TTwQVlGmpfBj+LMhP3xc48s3IkdXLpfPBkmBQH8glAibN3NZzhJ7
-         eaX+oPyIl6RK4Fcu/p33lei0jipvUcU+PHgqX1Ir4aJDuHlpLIX4SbceygCECD/xiFMl
-         QwEsuOsJJnKRw8LKLW82q3yqXp++TF+4Q343k=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=2xbk8AdWIZmse3B+nB63l0NWf7gcst2GZzaX7cH6+Rk=;
+        b=Sny0GkweHawfCGschvMy3kTofssyVxPCS0Xe31agFEXH2DnfkqrnpH9Qyfc0gNUm2S
+         7/AxdrHFGQwY2H2dwiP6rvG6tCa7XACRTKzmPzFznJhJj08lAQpMtHczqCjOGVCU3x+i
+         zKP8nUcKQMAGb+UYmJb/7ryPB9Mw/U2oiz1UKb0fPoF4mF5BudiQ2dEx90xLxw5otSAp
+         9fmRu8WNfNuljNOayIvT5boniU6zQErTGsj2ZcYbdPf9aYoDfo7PhcvB8UrjlDlca8ve
+         jVuxbKvrGw1ydhKIIlA+chqZ+AFVeyamBxcdcAyYqTIT47/2VyegmFJdmAFCjlMdBUt1
+         zm2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=agKBgndk3wOWKqvCTJf0yLyX2bJKGsFMAU50Ri7/n9U=;
-        b=un155KA7huW3MyentLtJXEvE3VVvk2jmMrwRZD1TOLe9WpCKkMqRvZLKvbCVRNVlwI
-         CcKWyC8n+J3q4q7KLynSMIpenKaoeT2SdjpxOCwOPc7x+1vc6dtKCXRwoCnNLVEie8+j
-         OjHU80ZV11M1wH79Q0DR2DFRUNy/zFHz1rY/hGdne+AA7SifvQe6FSOy8GKyrWowyQEI
-         gpydjsozqJqsC4PfBRFwwopCfXc3EZICUPOhjhdW/YtkGrpt8cgaqbhkWRWlAIIVq6Hi
-         uq55y4K5G5cpLIrwbtHqvJTeDUZlfL3p7kFy+rESDDqNFe/wx/OJANLto+0k2kAx/ubZ
-         4WlA==
-X-Gm-Message-State: APjAAAWDR/92HCHm/XCpirWa9k6Cxh5iNkSVj09yNRuGuapSvTvOeVKG
-        gKf1SSQRbEUabbx0r/5VqExneAHJ4HQ=
-X-Google-Smtp-Source: APXvYqwZIrdQjjuLDpxbo8wwqBIo3QZUrvuRsZoVrSa9cn3T5+05YT7rYk8d4YblMccZRkRrT0IABw==
-X-Received: by 2002:a2e:7d01:: with SMTP id y1mr5935851ljc.100.1579977943190;
-        Sat, 25 Jan 2020 10:45:43 -0800 (PST)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id m15sm5377576ljg.4.2020.01.25.10.45.41
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Jan 2020 10:45:42 -0800 (PST)
-Received: by mail-lj1-f172.google.com with SMTP id q8so6248536ljj.11
-        for <linux-security-module@vger.kernel.org>; Sat, 25 Jan 2020 10:45:41 -0800 (PST)
-X-Received: by 2002:a05:651c:ce:: with SMTP id 14mr2080983ljr.241.1579977941361;
- Sat, 25 Jan 2020 10:45:41 -0800 (PST)
-MIME-Version: 1.0
-References: <20200125130541.450409-1-gladkov.alexey@gmail.com> <20200125130541.450409-8-gladkov.alexey@gmail.com>
-In-Reply-To: <20200125130541.450409-8-gladkov.alexey@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 25 Jan 2020 10:45:25 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiGNSQCA8TYa1Akp0_GRpe=ELKDPkDX5nzM5R=oDy1U+Q@mail.gmail.com>
-Message-ID: <CAHk-=wiGNSQCA8TYa1Akp0_GRpe=ELKDPkDX5nzM5R=oDy1U+Q@mail.gmail.com>
-Subject: Re: [PATCH v7 07/11] proc: flush task dcache entries from all procfs instances
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=2xbk8AdWIZmse3B+nB63l0NWf7gcst2GZzaX7cH6+Rk=;
+        b=sE1iBQhXJKqk3dnxjrV84NaUng/MThGt9t4HXisR7umWdEscNHW3Sg/wEZ0zaf7OvN
+         oJ8oyJhABgxVxqkMNOsr1Ccfr5NMiCPVfiwQZa/tOm1nH2z0OJvqoIUQz4h6l5S6HWO4
+         P8y5GyZ6Eni1VpMdG2xJtoL5L7DkgTMXLQL95dTz7N1Ly6mAwbu85aT2M5ENkvzrFU5u
+         SBFlnZlX4U1aKEhqW8Zx+IT+sutIXZQxlM8Qb0BNH+hXha4ygBYjxcSOfnAPOVtOQnvi
+         M91hy0QxtPf9zbiyYlzjEDtljPThXRgQ8vpmoaRIf1QSrK+0afZtOfXmb90dVaDyrFye
+         ZU1Q==
+X-Gm-Message-State: APjAAAW5L59UXXt3D77Rzc/IUjwT4Y7uevQMB8UGCTGWmIJxIdcE/y4j
+        WiNsddUUqxQM4MK/QIM/ldw=
+X-Google-Smtp-Source: APXvYqxvf/6JwAOXZhkX95ONMDryWNE+o/mE5fN9F9087lRqh1nXGJlr9CV8HaTXjy7HRjgfZPOGKQ==
+X-Received: by 2002:a25:ef51:: with SMTP id w17mr10381069ybm.477.1580053652415;
+        Sun, 26 Jan 2020 07:47:32 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d188sm1747466ywe.50.2020.01.26.07.47.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 26 Jan 2020 07:47:31 -0800 (PST)
+Date:   Sun, 26 Jan 2020 07:47:30 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
+        raven@themaw.net, Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 07/14] Add sample notification program [ver #3]
+Message-ID: <20200126154730.GA18893@roeck-us.net>
+References: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
+ <157909509882.20155.1159021562184142124.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <157909509882.20155.1159021562184142124.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jan 25, 2020 at 5:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
->
-> This allows to flush dcache entries of a task on multiple procfs mounts
-> per pid namespace.
+On Wed, Jan 15, 2020 at 01:31:38PM +0000, David Howells wrote:
+> The sample program is run like:
+> 
+> 	./samples/watch_queue/watch_test
+> 
+> and watches "/" for mount changes and the current session keyring for key
+> changes:
+> 
+> 	# keyctl add user a a @s
+> 	1035096409
+> 	# keyctl unlink 1035096409 @s
+> 
+> producing:
+> 
+> 	# ./watch_test
+> 	read() = 16
+> 	NOTIFY[000]: ty=000001 sy=02 i=00000110
+> 	KEY 2ffc2e5d change=2[linked] aux=1035096409
+> 	read() = 16
+> 	NOTIFY[000]: ty=000001 sy=02 i=00000110
+> 	KEY 2ffc2e5d change=3[unlinked] aux=1035096409
+> 
+> Other events may be produced, such as with a failing disk:
+> 
+> 	read() = 22
+> 	NOTIFY[000]: ty=000003 sy=02 i=00000416
+> 	USB 3-7.7 dev-reset e=0 r=0
+> 	read() = 24
+> 	NOTIFY[000]: ty=000002 sy=06 i=00000418
+> 	BLOCK 00800050 e=6[critical medium] s=64000ef8
+> 
+> This corresponds to:
+> 
+> 	blk_update_request: critical medium error, dev sdf, sector 1677725432 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+> 
+> in dmesg.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-From a quick read-through, this is the only one I really react negatively to.
+mips:allmodconfig:
 
-The locking looks odd. It only seems to protect the new proc_mounts
-list, but then it's a whole big rwsem, and it's taken over all of
-proc_flush_task_mnt(), and the locking is exported to all over as a
-result of that - including the dummy functions for "there is no proc"
-case.
+samples/watch_queue/watch_test.c: In function ‘keyctl_watch_key’:
+samples/watch_queue/watch_test.c:34:17: error: ‘__NR_keyctl’ undeclared
 
-And proc_flush_task_mnt() itself should need no locking over any of
-it, so it's all just for the silly looping over the list.
-
-So
-
- (a) this looks fishy and feels wrong - I get a very strong feeling
-that the locking is wrong to begin with, and could/should have been
-done differently
-
- (b) all the locking should have been internal to /proc, and those
-wrappers shouldn't exist in a common header file (and certainly not
-for the non-proc case).
-
-Yes, (a) is just a feeling, and I don't have any great suggestions.
-Maybe make it an RCU list and use a spinlock for updating it?
-
-But (b) is pretty much a non-starter in this form. Those wrappers
-shouldn't be in a globally exported core header file. No way.
-
-               Linus
+Guenter
