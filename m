@@ -2,130 +2,117 @@ Return-Path: <SRS0=cLeu=3P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FFBC35246
-	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jan 2020 15:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1432C35247
+	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jan 2020 17:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCA3E2071A
-	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jan 2020 15:47:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sny0Gkwe"
+	by mail.kernel.org (Postfix) with ESMTP id 924A8206F0
+	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jan 2020 17:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbgAZPre (ORCPT
+        id S1725838AbgAZRBS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 26 Jan 2020 10:47:34 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:45690 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbgAZPrd (ORCPT
+        Sun, 26 Jan 2020 12:01:18 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18576 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726173AbgAZRBS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 26 Jan 2020 10:47:33 -0500
-Received: by mail-yb1-f196.google.com with SMTP id x191so3689882ybg.12;
-        Sun, 26 Jan 2020 07:47:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=2xbk8AdWIZmse3B+nB63l0NWf7gcst2GZzaX7cH6+Rk=;
-        b=Sny0GkweHawfCGschvMy3kTofssyVxPCS0Xe31agFEXH2DnfkqrnpH9Qyfc0gNUm2S
-         7/AxdrHFGQwY2H2dwiP6rvG6tCa7XACRTKzmPzFznJhJj08lAQpMtHczqCjOGVCU3x+i
-         zKP8nUcKQMAGb+UYmJb/7ryPB9Mw/U2oiz1UKb0fPoF4mF5BudiQ2dEx90xLxw5otSAp
-         9fmRu8WNfNuljNOayIvT5boniU6zQErTGsj2ZcYbdPf9aYoDfo7PhcvB8UrjlDlca8ve
-         jVuxbKvrGw1ydhKIIlA+chqZ+AFVeyamBxcdcAyYqTIT47/2VyegmFJdmAFCjlMdBUt1
-         zm2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=2xbk8AdWIZmse3B+nB63l0NWf7gcst2GZzaX7cH6+Rk=;
-        b=sE1iBQhXJKqk3dnxjrV84NaUng/MThGt9t4HXisR7umWdEscNHW3Sg/wEZ0zaf7OvN
-         oJ8oyJhABgxVxqkMNOsr1Ccfr5NMiCPVfiwQZa/tOm1nH2z0OJvqoIUQz4h6l5S6HWO4
-         P8y5GyZ6Eni1VpMdG2xJtoL5L7DkgTMXLQL95dTz7N1Ly6mAwbu85aT2M5ENkvzrFU5u
-         SBFlnZlX4U1aKEhqW8Zx+IT+sutIXZQxlM8Qb0BNH+hXha4ygBYjxcSOfnAPOVtOQnvi
-         M91hy0QxtPf9zbiyYlzjEDtljPThXRgQ8vpmoaRIf1QSrK+0afZtOfXmb90dVaDyrFye
-         ZU1Q==
-X-Gm-Message-State: APjAAAW5L59UXXt3D77Rzc/IUjwT4Y7uevQMB8UGCTGWmIJxIdcE/y4j
-        WiNsddUUqxQM4MK/QIM/ldw=
-X-Google-Smtp-Source: APXvYqxvf/6JwAOXZhkX95ONMDryWNE+o/mE5fN9F9087lRqh1nXGJlr9CV8HaTXjy7HRjgfZPOGKQ==
-X-Received: by 2002:a25:ef51:: with SMTP id w17mr10381069ybm.477.1580053652415;
-        Sun, 26 Jan 2020 07:47:32 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d188sm1747466ywe.50.2020.01.26.07.47.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 26 Jan 2020 07:47:31 -0800 (PST)
-Date:   Sun, 26 Jan 2020 07:47:30 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
-        raven@themaw.net, Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 07/14] Add sample notification program [ver #3]
-Message-ID: <20200126154730.GA18893@roeck-us.net>
-References: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
- <157909509882.20155.1159021562184142124.stgit@warthog.procyon.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Sun, 26 Jan 2020 12:01:18 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00QGxBrL019860
+        for <linux-security-module@vger.kernel.org>; Sun, 26 Jan 2020 12:01:17 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xrjq56e5k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Sun, 26 Jan 2020 12:01:16 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 26 Jan 2020 17:01:14 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 26 Jan 2020 17:01:11 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00QH0JRf44171560
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 26 Jan 2020 17:00:20 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 03A8811C04A;
+        Sun, 26 Jan 2020 17:01:11 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2ECC511C052;
+        Sun, 26 Jan 2020 17:01:10 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.205.7])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 26 Jan 2020 17:01:10 +0000 (GMT)
+Subject: Re: [PATCH v2] ima: export the measurement list when needed
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Janne Karhunen <janne.karhunen@gmail.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Ken Goldman <kgold@linux.ibm.com>, david.safford@gmail.com,
+        monty.wiseman@ge.com, "Serge E. Hallyn" <serge@hallyn.com>
+Date:   Sun, 26 Jan 2020 12:01:09 -0500
+In-Reply-To: <CAE=NcraSfo0fwxCnFQd08Ga59DsvxPTch-n_iN7fxt+3RdmP+A@mail.gmail.com>
+References: <20200108111743.23393-1-janne.karhunen@gmail.com>
+         <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
+         <1579708579.5182.77.camel@linux.ibm.com>
+         <CAE=NcraSfo0fwxCnFQd08Ga59DsvxPTch-n_iN7fxt+3RdmP+A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <157909509882.20155.1159021562184142124.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-AS-GCONF: 00
+x-cbid: 20012617-0028-0000-0000-000003D48843
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20012617-0029-0000-0000-00002498CA09
+Message-Id: <1580058069.5990.36.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-26_02:2020-01-24,2020-01-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 malwarescore=0 mlxlogscore=899
+ lowpriorityscore=0 mlxscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2001260147
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 15, 2020 at 01:31:38PM +0000, David Howells wrote:
-> The sample program is run like:
+On Thu, 2020-01-23 at 10:41 +0200, Janne Karhunen wrote:
+> On Wed, Jan 22, 2020 at 5:56 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
 > 
-> 	./samples/watch_queue/watch_test
+> > > While it can now be argued that since this is an admin-driven event,
+> > > kernel does not need to write the file. However, the intention is to
+> > > bring out a second patch a bit later that adds a variable to define
+> > > the max number of entries to be kept in the kernel memory and
+> > > workqueue based automatic flushing. In those cases the kernel has to
+> > > be able to write the file without any help from the admin..
+> >
+> > I don't think it is common, and probably not acceptable, for the
+> > kernel to open a file for writing.
 > 
-> and watches "/" for mount changes and the current session keyring for key
-> changes:
-> 
-> 	# keyctl add user a a @s
-> 	1035096409
-> 	# keyctl unlink 1035096409 @s
-> 
-> producing:
-> 
-> 	# ./watch_test
-> 	read() = 16
-> 	NOTIFY[000]: ty=000001 sy=02 i=00000110
-> 	KEY 2ffc2e5d change=2[linked] aux=1035096409
-> 	read() = 16
-> 	NOTIFY[000]: ty=000001 sy=02 i=00000110
-> 	KEY 2ffc2e5d change=3[unlinked] aux=1035096409
-> 
-> Other events may be produced, such as with a failing disk:
-> 
-> 	read() = 22
-> 	NOTIFY[000]: ty=000003 sy=02 i=00000416
-> 	USB 3-7.7 dev-reset e=0 r=0
-> 	read() = 24
-> 	NOTIFY[000]: ty=000002 sy=06 i=00000418
-> 	BLOCK 00800050 e=6[critical medium] s=64000ef8
-> 
-> This corresponds to:
-> 
-> 	blk_update_request: critical medium error, dev sdf, sector 1677725432 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> 
-> in dmesg.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
+> Ok. It just means that the kernel cannot do its own memory management
+> and will depend on the user flushing the memory often enough to
+> prevent something bad from happening. Is this more common in the
+> kernel than writing out a file?
 
-mips:allmodconfig:
+Ok, there are examples of both passing a file descriptor and passing a
+pathname from userspace, but even in the case of passing a pathname,
+userspace normally creates the file.
 
-samples/watch_queue/watch_test.c: In function ‘keyctl_watch_key’:
-samples/watch_queue/watch_test.c:34:17: error: ‘__NR_keyctl’ undeclared
+There's been discussion in the past of defining an integrity
+capability.  Are we at that point where we really do need to define an
+integrity capability or is everyone comfortable with relying on
+CAP_SYS_ADMIN?
 
-Guenter
+When implementing this feature of exporting and truncating the
+measurement list, please keep in mind how this would work in the
+context of IMA namespaces.
+
+thanks,
+
+Mimi
+
