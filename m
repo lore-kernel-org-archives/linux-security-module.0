@@ -2,111 +2,81 @@ Return-Path: <SRS0=BnuI=3Q=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9483EC35247
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 09:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0C0C2D0DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 11:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6655521569
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 09:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E64B215A4
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 11:39:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qtxvWxOb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aleUufWQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729144AbgA0JDR (ORCPT
+        id S1730317AbgA0Ljn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Jan 2020 04:03:17 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45209 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728783AbgA0JDR (ORCPT
+        Mon, 27 Jan 2020 06:39:43 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:45508 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727346AbgA0Ljm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Jan 2020 04:03:17 -0500
-Received: by mail-lf1-f65.google.com with SMTP id 203so5620504lfa.12;
-        Mon, 27 Jan 2020 01:03:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DXfnqEIQEOAhuNRF2FUN6s3o9e2/oC31wR3fFMNGkiE=;
-        b=qtxvWxObid+2MA4/tm/VpUDXwukFbWbCwYUzze8luXOh4IZFk0pwnYvJHB4Ii1lGO1
-         DWIgw8K1bL6pfUkhnjzdPadDlkK8IgmZ+35odazC5GSkIrsYKEwtFZVCgYzHBGX1QOfb
-         kLTHac/tjeLJxKSiHJhwaSVJBRA1yQD+ZQ/JR5xhBXC8x1Qp6kfnPuWgQSeXAp71tnR9
-         sYQafvmx6eUHXSJeBiExiTtKF3iiMMoEcABm9sPH/wgM2YaiX79QtV0t8tsTc0nB3tA9
-         LxIfuGB2ShaalZpofVsEz/EN53UgxnpTXGG8X4CwQgp1FvUs3uJYPJk5V4wWn1Gt1/g0
-         2hzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DXfnqEIQEOAhuNRF2FUN6s3o9e2/oC31wR3fFMNGkiE=;
-        b=ovZeNYH7sFg94Aw+c1AhL0SMeGoOtKJJRS7K2mtaYje5Dr932xfF4+U3v/cJ2nx4Ci
-         veqLiJFumVgDL1PYxejIGL+LLF6yF9QCbO0QWiwA2F9VS6asM98KmKBEs9sHPun4Qh1R
-         pLbKnls2zxnSeP3MR7Xk0OVis6W/+Z9Qa5H/vNmKiiNW4exXfgU5hNJsqVXhZ4Lk+UjD
-         ee2DjEqlowQHPAd04DuLacK87aigb1NnsvJYjZSqMuqhoF1vg6fDbM2pPT7wqHekcoWx
-         kX3fvxcGYgLJvpZpgxZLokpsad4mGJlQF1WJeZ62Fzp2G+MQXmxIm2YjLhKEhJrVZ4IP
-         Hm6w==
-X-Gm-Message-State: APjAAAVS1L85p5aWbggdHccKukXROxh9NF31iI+xxIzJzNOkogi/Ba/s
-        v88843KLcDb/CinXu1yaVACexXPJL2nqMVk94mU=
-X-Google-Smtp-Source: APXvYqxkofUqRYz+zn0PnNHWJ1ZSGZdXmiBbKJjh5pseS2rOXfP47mtwrF46PrrLbzfzuHkJK2Vd6GP+lBvoUKhaWwA=
-X-Received: by 2002:ac2:485c:: with SMTP id 28mr7533478lfy.118.1580115795046;
- Mon, 27 Jan 2020 01:03:15 -0800 (PST)
+        Mon, 27 Jan 2020 06:39:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580125181;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+7W2zyC7XytaLgF9eenYTPBkYQQ7A4oiE0WMio8GFgc=;
+        b=aleUufWQ3l8GX2Fyc9Nmzpuq9Cz4t2LbQ4SaZTAU98/Nzk9QRXqiAx6/Lb4d+KnqSBLIxH
+        21Z+GhkyqwvpG/a9EWeWA8qHLtzJcJHw69HFD+a4AO0UL8gkPaJdfXadMVZzqxsZwYy5ch
+        NKRxCTYJanF3Xt9kWOgz0ISQNZ8Gnt0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-115-UkgspV3UPPaycqOGmDdcFA-1; Mon, 27 Jan 2020 06:39:38 -0500
+X-MC-Unique: UkgspV3UPPaycqOGmDdcFA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8D139DB82;
+        Mon, 27 Jan 2020 11:39:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-99.rdu2.redhat.com [10.10.120.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F3DD287026;
+        Mon, 27 Jan 2020 11:39:34 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <af9dcaa7-6e4f-281a-2bae-fb605cc55d2d@virtuozzo.com>
+References: <af9dcaa7-6e4f-281a-2bae-fb605cc55d2d@virtuozzo.com>
+To:     Vasily Averin <vvs@virtuozzo.com>
+Cc:     dhowells@redhat.com, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH 1/1] proc_keys_next should increase position index
 MIME-Version: 1.0
-References: <20200108111743.23393-1-janne.karhunen@gmail.com>
- <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
- <1579708579.5182.77.camel@linux.ibm.com> <CAE=NcraSfo0fwxCnFQd08Ga59DsvxPTch-n_iN7fxt+3RdmP+A@mail.gmail.com>
- <1580058069.5990.36.camel@linux.ibm.com>
-In-Reply-To: <1580058069.5990.36.camel@linux.ibm.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Mon, 27 Jan 2020 11:03:03 +0200
-Message-ID: <CAE=Ncrawp7BPikkg0-ww2dO2_+tDPkaGxCpwMbDX4yqYWuYBWQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ima: export the measurement list when needed
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Ken Goldman <kgold@linux.ibm.com>, david.safford@gmail.com,
-        monty.wiseman@ge.com, "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1451507.1580125174.1@warthog.procyon.org.uk>
+Date:   Mon, 27 Jan 2020 11:39:34 +0000
+Message-ID: <1451508.1580125174@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Jan 26, 2020 at 7:01 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+I don't see the effect you're talking about with /proc/keys.  I see the
+following:
 
-> > > I don't think it is common, and probably not acceptable, for the
-> > > kernel to open a file for writing.
-> >
-> > Ok. It just means that the kernel cannot do its own memory management
-> > and will depend on the user flushing the memory often enough to
-> > prevent something bad from happening. Is this more common in the
-> > kernel than writing out a file?
->
-> Ok, there are examples of both passing a file descriptor and passing a
-> pathname from userspace, but even in the case of passing a pathname,
-> userspace normally creates the file.
+	[root@andromeda ~]# dd if=/proc/keys bs=40 skip=1
+	dd: /proc/keys: cannot skip to specified offset
 
-Sorry, I was slow to get your proposal. I'll try to see how that would
-look like.
+and then it follows up with the normal content with no obvious duplicates (the
+lines are numbered ascendingly in the first column).
 
+I think I may be being confused by what you mean by "the last line".
 
-> There's been discussion in the past of defining an integrity
-> capability.  Are we at that point where we really do need to define an
-> integrity capability or is everyone comfortable with relying on
-> CAP_SYS_ADMIN?
+David
 
-Every time something like this is being proposed there is a lot of
-shouting from people that they want their root user (renamed as
-CAP_SYS_ADMIN) back. I'd be happy with such bit and several others,
-too.
-
-
-> When implementing this feature of exporting and truncating the
-> measurement list, please keep in mind how this would work in the
-> context of IMA namespaces.
-
-That could be rough. I'll try to think about it.
-
-
---
-Janne
