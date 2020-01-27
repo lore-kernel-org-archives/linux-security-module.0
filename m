@@ -2,163 +2,159 @@ Return-Path: <SRS0=BnuI=3Q=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF25C2D0DB
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 17:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61273C3F68F
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 17:16:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD6B124658
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 17:07:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39EC622527
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 17:16:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="kVSgV8hr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbgA0RH0 (ORCPT
+        id S1726101AbgA0RQ5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Jan 2020 12:07:26 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2309 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727586AbgA0RH0 (ORCPT
+        Mon, 27 Jan 2020 12:16:57 -0500
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com ([66.163.187.152]:36684
+        "EHLO sonic316-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725828AbgA0RQ5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Jan 2020 12:07:26 -0500
-Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id BBBAF1FB86A83793CFCF;
-        Mon, 27 Jan 2020 17:07:24 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by smtpsuk.huawei.com (10.201.108.33) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Mon, 27 Jan 2020 17:07:15 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <jarkko.sakkinen@linux.intel.com>,
-        <james.bottomley@hansenpartnership.com>,
-        <linux-integrity@vger.kernel.org>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 8/8] ima: switch to ima_hash_algo for boot aggregate
-Date:   Mon, 27 Jan 2020 18:04:43 +0100
-Message-ID: <20200127170443.21538-9-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200127170443.21538-1-roberto.sassu@huawei.com>
-References: <20200127170443.21538-1-roberto.sassu@huawei.com>
+        Mon, 27 Jan 2020 12:16:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1580145415; bh=0fViQReKy+gFlmgn9ij5P4aUkBWO2S6xe3/RWlH4sP4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=kVSgV8hrjdV+B5ORUx8iNgZ0zx1j+PLe5fdUyew3ACONDAi6imuRD0ltiN4tF248aJeRkm3G1soJNvqJeyLnf1JbxvY3Nzyd9Z+DqzUQ6iCJ+iYyfRZUUkQK39Fe40aGsNUlmfSuQ5CxREuOwLH4rgYg0yN6JEkmRXDvyMQz9LdEiUVXw8ISgQLcGC4EYeoc+zb3bEuO8OFlExeATqPFvlJ7NtshJZhGppF75sUyfABx8hpbBLFouUMI40wtUBbJ3q+XVcLjnVi6Ys9aQKXgwe2X7SYBZmSVoJRcOcmUJY6aruIzzx9U9cfVdmOQn3wsq3EEaXFSw5LlWAjl9YlP6w==
+X-YMail-OSG: 08dyS_cVM1lxW7J_zFDsIs9d10Goy.Wvd6pAF9NqL_7mJij3lKclBRi3QPKNFaY
+ 4fDxOqJgtEOjTP2vPXMPtyL.s1iRst.H9798vqS5_O17.yAG9ib4Rb8jGZi4B0dMaHG4TuAjiNft
+ 87nMZBJ.DGs3d8LpsTwiyiZWwLjMjNT8jRkbfZhQ2tcsytAKTfRwIM6q3DIoAv3VjB.7_dA7B7f3
+ Wqfaq1S19HDS61WGjsnn34DLa7dqOib7zO4uR1DkQYDo4Sr35VKnkBqq2gMZ.8K7wRAXqc1mH4J8
+ SG8jSJGYY_Qdl9o2AobqunuE9sMdOyf4I_.zoWBhjOLn4TWz1TxlaIT6QbziDu7HmG3.rcltq0RS
+ 2lvLnhXCucYudX0IZPbjsREwkLVLw9Xw56KcONLlJkYjc6FFF1pjhI2gk6I8s2wikg86Uxz1VW_u
+ wroguNKWWiA_LGkr1uT_uwVEQ3WefCNnbpjzNkJXxlC_tP_tTqQ_Guwhya_4CMmUPhBOLKCzw9eJ
+ jEmazR4leQjuNS2mIBrQdcDwI4bHGbq76aRZHzRGcaSeYr2NlKq0gDMFBkQOl_7mtoJdob.8oPTg
+ zFJ6O87FWW6UJYN3fKk4U05glJX2jLV.e_Us3liumAR3.Xp6JVF4Nwdb_0WD1lXIbr7du5ayHY_3
+ e4DiKQN..knq14slgNjKvhofiD.84McVpShScEFcJzj63vZr4fk2_Xc876ScZqDPIhBNHUiuhlsQ
+ mAQHxdeFkIZqFusWI7XijCcHVCIk4eHkgehJHLLXBcbIEQ5g5I8pRyoAognDbm2ek7wUEuAAets4
+ Z3XXw94ScxZ_3IWHp7T1X69R0wi2CgnoYuTvohklnolQx14Bp3w98KvtZ5MpJBJdDz1b_YTqWi1O
+ xnyqTeRX5IjQJCqOGN4.58RFMt.ogDcxqg7rWzJWoNPBMXGcvBhHK0n62QFcXDQsSwyxLRrgz4jP
+ ytRqmTwq3aNlehLOM9RfJiRXDSwJ96GF31vK1oUSrkAG9yzjrczRzJbKwkEYfcz5nYhhV8lusG7C
+ z67.89o7gKmJ_kqmAzPrmcj.KbHMpmq3UQ6EphNqVniAxJ4TcMYsxzT9bkk_SiK.foSfepY.Vp.W
+ oVu30FAeAq9Q18SYV0..xv0WdpaihjQjmS3aZbnuBF4tHXVF9rsR_lRanlJRtzaX_E9hlEa0oV_G
+ jKE8F2wXa2mEUMxoXyc.xMeYu1tQFFgDBHoncGNnymJCJfSAX3BmAry08Z.rOR17Lxl55zTJe35l
+ lmpaFmE11vWvWnw010cTphG2MS_jGzijVa2n6LToMN9gXfXHA0jsu0yXP32kAhZ7KEgEycgEQQ3t
+ ShyNj6vO7KVAPY7CFYFSySDTUncXMz8y9_90enyz.DSMABtRdLVoBMNbBpQPhVpzDyQHP16NE3HA
+ hFMY4k3phDNGVs5y92wBjV3FyaFA-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Mon, 27 Jan 2020 17:16:55 +0000
+Received: by smtp420.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 913935b546cfccf16602707797098b0d;
+          Mon, 27 Jan 2020 17:16:49 +0000 (UTC)
+Subject: Re: [PATCH v14 00/23] LSM: Module stacking for AppArmor
+To:     Stephen Smalley <sds@tycho.nsa.gov>, casey.schaufler@intel.com,
+        jmorris@namei.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Cc:     keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
+References: <20200124002306.3552-1-casey.ref@schaufler-ca.com>
+ <20200124002306.3552-1-casey@schaufler-ca.com>
+ <22585291-b7e0-5a22-6682-168611d902fa@tycho.nsa.gov>
+ <6b717a13-3586-5854-0eee-617798f92d34@schaufler-ca.com>
+ <de97dc66-7f5b-21f0-cf3d-a1485acbc1c9@tycho.nsa.gov>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <24227f64-096c-1f26-1cca-2abf497593b3@schaufler-ca.com>
+Date:   Mon, 27 Jan 2020 09:16:49 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.160]
-X-CFilter-Loop: Reflected
+In-Reply-To: <de97dc66-7f5b-21f0-cf3d-a1485acbc1c9@tycho.nsa.gov>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.15116 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-boot_aggregate is the first entry of IMA measurement list. Its purpose is
-to link pre-boot measurements to IMA measurements. As IMA was designed to
-work with a TPM 1.2, the SHA1 PCR bank was always selected.
+On 1/27/2020 8:14 AM, Stephen Smalley wrote:
+> On 1/24/20 4:49 PM, Casey Schaufler wrote:
+>> On 1/24/2020 1:04 PM, Stephen Smalley wrote:
+>>> On 1/23/20 7:22 PM, Casey Schaufler wrote:
+>>>> This patchset provides the changes required for
+>>>> the AppArmor security module to stack safely with any other.
+>>>>
+>>>> v14: Rebase to 5.5-rc5
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Incorporate feedback from v13
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Use an array of audit rules (=
+patch 0002)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Significant change, removed A=
+cks (patch 0002)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Remove unneeded include (patc=
+h 0013)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Use context.len correctly (pa=
+tch 0015)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Reorder code to be more sensi=
+ble (patch 0016)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Drop SO_PEERCONTEXT as it's n=
+ot needed yet (patch 0023)
+>>>
+>>> I don't know for sure if this is your bug, but it happens every time =
+I boot with your patches applied and not at all on stock v5.5-rc5 so here=
+ it is.=C2=A0 Will try to bisect as time permits but not until next week.=
+ Trigger seems to be loading the tun driver.
+>>
+>> Thanks. I will have a look as well.
+>
+> Bisection led to the first patch in the series, "LSM: Infrastructure ma=
+nagement of the sock security". Still not sure if the bug is in the patch=
+ itself or just being surfaced by it.
 
-Currently, even if a TPM 2.0 is used, the SHA1 PCR bank is selected.
-However, the assumption that the SHA1 PCR bank is always available is not
-correct, as PCR banks can be selected with the PCR_Allocate() TPM command.
+It looks like the tun code is making a private socket in tun_chr_open()
+without initializing the sk_security member. It's possible that this used=
 
-This patch tries to use ima_hash_algo as hash algorithm for boot_aggregate.
-If no PCR bank uses that algorithm, the patch scans the allocated PCR banks
-and selects the first for which the mapping between TPM algorithm ID and
-crypto algorithm ID is known. If no suitable algorithm is found, an error
-is returned.
+to work implicitly, but I don't see how the change should have broken tha=
+t.
+Investigation continues.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima_crypto.c | 38 +++++++++++++++++------------
- security/integrity/ima/ima_init.c   |  6 ++---
- 2 files changed, 25 insertions(+), 19 deletions(-)
 
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index f84dfd8fc5ca..9bf5e69945b7 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -780,25 +780,27 @@ static void __init ima_pcrread(u32 idx, struct tpm_digest *d)
- /*
-  * Calculate the boot aggregate hash
-  */
--static int __init ima_calc_boot_aggregate_tfm(char *digest,
--					      struct crypto_shash *tfm)
-+static int __init ima_calc_boot_aggregate_tfm(char *digest, int bank_idx)
- {
--	struct tpm_digest d = { .alg_id = TPM_ALG_SHA1, .digest = {0} };
-+	struct tpm_digest d = { .digest = {0} };
- 	int rc;
- 	u32 i;
--	SHASH_DESC_ON_STACK(shash, tfm);
-+	SHASH_DESC_ON_STACK(shash, ima_algo_array[bank_idx].tfm);
- 
--	shash->tfm = tfm;
-+	shash->tfm = ima_algo_array[bank_idx].tfm;
- 
- 	rc = crypto_shash_init(shash);
- 	if (rc != 0)
- 		return rc;
- 
-+	d.alg_id = ima_tpm_chip->allocated_banks[bank_idx].alg_id;
-+
- 	/* cumulative sha1 over tpm registers 0-7 */
- 	for (i = TPM_PCR0; i < TPM_PCR8; i++) {
- 		ima_pcrread(i, &d);
- 		/* now accumulate with current aggregate */
--		rc = crypto_shash_update(shash, d.digest, TPM_DIGEST_SIZE);
-+		rc = crypto_shash_update(shash, d.digest,
-+			ima_tpm_chip->allocated_banks[bank_idx].digest_size);
- 	}
- 	if (!rc)
- 		crypto_shash_final(shash, digest);
-@@ -807,17 +809,21 @@ static int __init ima_calc_boot_aggregate_tfm(char *digest,
- 
- int __init ima_calc_boot_aggregate(struct ima_digest_data *hash)
- {
--	struct crypto_shash *tfm;
--	int rc;
-+	int bank_idx = ima_hash_algo_idx;
- 
--	tfm = ima_alloc_tfm(hash->algo);
--	if (IS_ERR(tfm))
--		return PTR_ERR(tfm);
--
--	hash->length = crypto_shash_digestsize(tfm);
--	rc = ima_calc_boot_aggregate_tfm(hash->digest, tfm);
-+	if (bank_idx >= ima_tpm_chip->nr_allocated_banks) {
-+		for (bank_idx = 0; bank_idx < ima_tpm_chip->nr_allocated_banks;
-+		     bank_idx++)
-+			if (ima_algo_array[bank_idx].tfm)
-+				break;
- 
--	ima_free_tfm(tfm);
-+		if (bank_idx == ima_tpm_chip->nr_allocated_banks) {
-+			pr_err("No suitable algo found for boot aggregate\n");
-+			return -ENOENT;
-+		}
-+	}
- 
--	return rc;
-+	hash->algo = ima_algo_array[bank_idx].algo;
-+	hash->length = crypto_shash_digestsize(ima_algo_array[bank_idx].tfm);
-+	return ima_calc_boot_aggregate_tfm(hash->digest, bank_idx);
- }
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 195cb4079b2b..b4da190a33ba 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -51,14 +51,14 @@ static int __init ima_add_boot_aggregate(void)
- 	int violation = 0;
- 	struct {
- 		struct ima_digest_data hdr;
--		char digest[TPM_DIGEST_SIZE];
-+		char digest[SHA512_DIGEST_SIZE];
- 	} hash;
- 
- 	memset(iint, 0, sizeof(*iint));
- 	memset(&hash, 0, sizeof(hash));
- 	iint->ima_hash = &hash.hdr;
--	iint->ima_hash->algo = HASH_ALGO_SHA1;
--	iint->ima_hash->length = SHA1_DIGEST_SIZE;
-+	iint->ima_hash->algo = ima_hash_algo;
-+	iint->ima_hash->length = hash_digest_size[ima_hash_algo];
- 
- 	if (ima_tpm_chip) {
- 		result = ima_calc_boot_aggregate(&hash.hdr);
--- 
-2.17.1
 
