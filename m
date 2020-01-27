@@ -1,118 +1,124 @@
-Return-Path: <SRS0=cLeu=3P=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=BnuI=3Q=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1432C35247
-	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jan 2020 17:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2C8C35247
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 08:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 924A8206F0
-	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jan 2020 17:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B432C218AC
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 08:48:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkCRU32B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725838AbgAZRBS (ORCPT
+        id S1727673AbgA0Isg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 26 Jan 2020 12:01:18 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18576 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726173AbgAZRBS (ORCPT
+        Mon, 27 Jan 2020 03:48:36 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42458 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726769AbgA0Isf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 26 Jan 2020 12:01:18 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00QGxBrL019860
-        for <linux-security-module@vger.kernel.org>; Sun, 26 Jan 2020 12:01:17 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xrjq56e5k-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Sun, 26 Jan 2020 12:01:16 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 26 Jan 2020 17:01:14 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 26 Jan 2020 17:01:11 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00QH0JRf44171560
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 26 Jan 2020 17:00:20 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 03A8811C04A;
-        Sun, 26 Jan 2020 17:01:11 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2ECC511C052;
-        Sun, 26 Jan 2020 17:01:10 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.205.7])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 26 Jan 2020 17:01:10 +0000 (GMT)
+        Mon, 27 Jan 2020 03:48:35 -0500
+Received: by mail-lj1-f194.google.com with SMTP id y4so9723249ljj.9;
+        Mon, 27 Jan 2020 00:48:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VCcnWs6s8gn29MYaAd9oQBT5MAE70m/6K+dI3egtdag=;
+        b=TkCRU32B3zvdFqtWytk2gIyvGmNpvCdc26ssNl5uPcPtF89ktfWW8N7sARpETKLxS+
+         cgB857pNCTR6pGsKdOXkMvOGPPVgFvBkU5Uy80ZzUFd7uMRuOPi834ZJrcr77C6un6aI
+         SxedSPElnVpLFP3v+kjr1EmQROoqT1z63qJzE4LVnW1ierev84SjACc0wqVY0KVho2JL
+         DPyR5sZbk+j5LEBvzHxc/vO2ltU+w1tGb3REpKr8efVL0YgAr81YL3roTJ4ed+4KU4os
+         PvQWmIj5M08xp92Knzs1ShRernVWU+BvyhrH6ghk5g95uyOh7w8yRL5/3XMh5sYIFHg8
+         4pgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VCcnWs6s8gn29MYaAd9oQBT5MAE70m/6K+dI3egtdag=;
+        b=eafOJe+D2Zc8izTU1yRc6NLfoE6PBR8qFXxdmUqguz9KSr1ypiIT21UDpuQTR9h46Q
+         qiYLY0JaJV37R37+d5dJPF9hQJivNATj7nd8yedLATUztwWJ3ACXUPIEY9CiG55BHWmk
+         5FE/W49UdaTZpMNFugRFNIJO6qfndfJxpWkco2EWX5Nut+wA0Y3YkBCun4y7QVZPyUJ4
+         UsHboSKSUTvrNMUrYC7l/FxB+SqP0JFBJz0L4xwBEGqF8Gprh9fqTvyRhhIYLCUZsH01
+         FX48ZXATvDdJej9nmRmsCTyHHEHVpPjc6JctTuf94ese3HxZk5vWAR6m6+VwUebPnJmQ
+         auJQ==
+X-Gm-Message-State: APjAAAWYRemhrb5Z9o15y0zg/HcNySPUx7uKKLk/RyYDMjTZ/ehGIedH
+        Wr/QsVA9ud8O/ynKdayQGynB9D6WMPwi8pufd/I=
+X-Google-Smtp-Source: APXvYqxq6o4JgOHgHipWwikSFjr2/AjO0cQPj15tfmEIrEN0nZiDvF7q48mGKUPWvO0DLdJZIe9S+Bh8gzNtQpV7qno=
+X-Received: by 2002:a2e:9110:: with SMTP id m16mr9486657ljg.140.1580114913295;
+ Mon, 27 Jan 2020 00:48:33 -0800 (PST)
+MIME-Version: 1.0
+References: <20200108111743.23393-1-janne.karhunen@gmail.com> <1a8c2fb4698eaa72be219413e373c5829a7cd652.camel@gmail.com>
+In-Reply-To: <1a8c2fb4698eaa72be219413e373c5829a7cd652.camel@gmail.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Mon, 27 Jan 2020 10:48:21 +0200
+Message-ID: <CAE=NcrYEyfj9028aP+MYAnFJdX9NJ3Lvy1wiECbNv59HRaDMLg@mail.gmail.com>
 Subject: Re: [PATCH v2] ima: export the measurement list when needed
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Janne Karhunen <janne.karhunen@gmail.com>
+To:     david.safford@gmail.com
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        Ken Goldman <kgold@linux.ibm.com>, david.safford@gmail.com,
-        monty.wiseman@ge.com, "Serge E. Hallyn" <serge@hallyn.com>
-Date:   Sun, 26 Jan 2020 12:01:09 -0500
-In-Reply-To: <CAE=NcraSfo0fwxCnFQd08Ga59DsvxPTch-n_iN7fxt+3RdmP+A@mail.gmail.com>
-References: <20200108111743.23393-1-janne.karhunen@gmail.com>
-         <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
-         <1579708579.5182.77.camel@linux.ibm.com>
-         <CAE=NcraSfo0fwxCnFQd08Ga59DsvxPTch-n_iN7fxt+3RdmP+A@mail.gmail.com>
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>,
+        "Wiseman, Monty (GE Global Research, US)" <monty.wiseman@ge.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20012617-0028-0000-0000-000003D48843
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012617-0029-0000-0000-00002498CA09
-Message-Id: <1580058069.5990.36.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-26_02:2020-01-24,2020-01-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 bulkscore=0 adultscore=0 malwarescore=0 mlxlogscore=899
- lowpriorityscore=0 mlxscore=0 clxscore=1015 phishscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1911200001 definitions=main-2001260147
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-01-23 at 10:41 +0200, Janne Karhunen wrote:
-> On Wed, Jan 22, 2020 at 5:56 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> 
-> > > While it can now be argued that since this is an admin-driven event,
-> > > kernel does not need to write the file. However, the intention is to
-> > > bring out a second patch a bit later that adds a variable to define
-> > > the max number of entries to be kept in the kernel memory and
-> > > workqueue based automatic flushing. In those cases the kernel has to
-> > > be able to write the file without any help from the admin..
+On Fri, Jan 24, 2020 at 4:46 PM <david.safford@gmail.com> wrote:
+
+> > Some systems can end up carrying lots of entries in the ima
+> > measurement list. Since every entry is using a bit of kernel
+> > memory, allow the sysadmin to export the measurement list to
+> > the filesystem to free up some memory.
 > >
-> > I don't think it is common, and probably not acceptable, for the
-> > kernel to open a file for writing.
-> 
-> Ok. It just means that the kernel cannot do its own memory management
-> and will depend on the user flushing the memory often enough to
-> prevent something bad from happening. Is this more common in the
-> kernel than writing out a file?
+> > Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
+>
+> I like this approach, as it will work easily for measurement lists in
+> any format, and it will work for user or kernel triggering.
 
-Ok, there are examples of both passing a file descriptor and passing a
-pathname from userspace, but even in the case of passing a pathname,
-userspace normally creates the file.
+Yes, that was the point..
 
-There's been discussion in the past of defining an integrity
-capability.  Are we at that point where we really do need to define an
-integrity capability or is everyone comfortable with relying on
-CAP_SYS_ADMIN?
 
-When implementing this feature of exporting and truncating the
-measurement list, please keep in mind how this would work in the
-context of IMA namespaces.
+> I'm getting an OOPS, though, whenever I write a filename to the
+> securityfs file (e.g. echo /var/log/ima.log > list_name).
+> Here's the relevant from syslog:
+>
+>   BUG: unable to handle page fault for address: 00005650a0e7fe30
+>   #PF: supervisor read access in kernel mode
+>   #PF: error_code(0x0001) - permissions violation
+>
+>   Oops: 0001 [#1] SMP NOPTI
+>
+>   RIP: 0010:ima_write_list_name+0x35/0x114
+>
+> I haven't had time to debug this. Any suggestions?
 
-thanks,
+Interesting. I'm not a X86 man, but it looks like a SMAP trap to me.
+In other words, the kernel was not allowed to read that
+"/var/log/ima.log" string as SMAP protection was active for that piece
+of memory. I was under the impression that the SMAP is disabled while
+the copy_from_user is running..
 
-Mimi
+I'll try on the X86 hardware and see if I can reproduce, maybe its off
+by one read or something. Only X86 target I tested was QEMU.
 
+
+> > +#define secfs_mnt    "/sys/kernel/security"
+> > +#define am_filename  "/integrity/ima/ascii_runtime_measurements"
+>
+> You probably really want to export the binary data, as that's
+> what's needed for attestation. (Or both, but that's trickier.)
+
+That's why the file name was left as an argument to the export
+function; you can export either one. I suppose we'd need some setting
+to tell it which one to export.
+
+
+--
+Janne
