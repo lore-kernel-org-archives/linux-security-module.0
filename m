@@ -2,135 +2,69 @@ Return-Path: <SRS0=BnuI=3Q=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D22C2D0DB
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 23:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA52C33CB7
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 23:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 389252465B
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 23:24:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4325C2467C
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 23:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580169323;
+	bh=/RHbzCKM561zYe8Wjo0KSVUZ77qX9Vyf1BOcLlnjz/Q=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=HTwPMcR5zdYU/YqBNpo7oy0yKWTltSAzbTDnpA2zUwkk6eLei6uLB4AXiyLUJYcMb
+	 VzgZuOz07/XQG7tZDgZBs8X/UH2/AqyKfDXnYn8vt+X9e7tH71DMw4SAjdn7R8ckMB
+	 ikFuJcOl0tDYdVgDivE8oB2Ucn4pqW73UEJVuOD0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726099AbgA0XYC (ORCPT
+        id S1727453AbgA0XzJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Jan 2020 18:24:02 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:59724 "EHLO mail.unsafe.ru"
+        Mon, 27 Jan 2020 18:55:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbgA0XYC (ORCPT
+        id S1726565AbgA0XzF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Jan 2020 18:24:02 -0500
-Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id B5A60C61B0E;
-        Mon, 27 Jan 2020 23:23:54 +0000 (UTC)
-Date:   Tue, 28 Jan 2020 00:23:53 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v7 07/11] proc: flush task dcache entries from all procfs
- instances
-Message-ID: <20200127232352.s3mvvfkrta3i5h7w@comp-core-i7-2640m-0182e6>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20200125130541.450409-1-gladkov.alexey@gmail.com>
- <20200125130541.450409-8-gladkov.alexey@gmail.com>
- <CAHk-=wiGNSQCA8TYa1Akp0_GRpe=ELKDPkDX5nzM5R=oDy1U+Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wiGNSQCA8TYa1Akp0_GRpe=ELKDPkDX5nzM5R=oDy1U+Q@mail.gmail.com>
+        Mon, 27 Jan 2020 18:55:05 -0500
+Subject: Re: [GIT PULL] SELinux patches for v5.6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580169305;
+        bh=/RHbzCKM561zYe8Wjo0KSVUZ77qX9Vyf1BOcLlnjz/Q=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=QBSWodMLhwQyJ6CUCjO0ksG0WuSjc1emxTEFfmkt2BILXwhNXOO7qxJOe3ZZ78zhi
+         tFDYdf5MOeVLAJObvZQjkMN6v86xyJcHh1XBY7BwMId80gl0GgjnerMndGLWMiTcXL
+         fJjAP1XUrk+M98FqR7XuXAoMnHXcf1QdNbqucBMg=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAHC9VhR_5564up7u1V-PRXOz_RRfTLj16m508qgNvdWC8gcRTA@mail.gmail.com>
+References: <CAHC9VhR_5564up7u1V-PRXOz_RRfTLj16m508qgNvdWC8gcRTA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhR_5564up7u1V-PRXOz_RRfTLj16m508qgNvdWC8gcRTA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ tags/selinux-pr-20200127
+X-PR-Tracked-Commit-Id: 98aa00345de54b8340dc2ddcd87f446d33387b5e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b1dba2473114588be3df916bf629a61bdcc83737
+Message-Id: <158016930519.17044.11033207196664253320.pr-tracker-bot@kernel.org>
+Date:   Mon, 27 Jan 2020 23:55:05 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jan 25, 2020 at 10:45:25AM -0800, Linus Torvalds wrote:
-> On Sat, Jan 25, 2020 at 5:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
-> >
-> > This allows to flush dcache entries of a task on multiple procfs mounts
-> > per pid namespace.
-> 
-> From a quick read-through, this is the only one I really react negatively to.
-> 
-> The locking looks odd. It only seems to protect the new proc_mounts
-> list, but then it's a whole big rwsem, and it's taken over all of
-> proc_flush_task_mnt(), and the locking is exported to all over as a
-> result of that - including the dummy functions for "there is no proc"
-> case.
-> 
-> And proc_flush_task_mnt() itself should need no locking over any of
-> it, so it's all just for the silly looping over the list.
+The pull request you sent on Mon, 27 Jan 2020 17:26:18 -0500:
 
-Thank you, I will rework this part.
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20200127
 
-> So
-> 
->  (a) this looks fishy and feels wrong - I get a very strong feeling
-> that the locking is wrong to begin with, and could/should have been
-> done differently
-> 
->  (b) all the locking should have been internal to /proc, and those
-> wrappers shouldn't exist in a common header file (and certainly not
-> for the non-proc case).
-> 
-> Yes, (a) is just a feeling, and I don't have any great suggestions.
-> Maybe make it an RCU list and use a spinlock for updating it?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b1dba2473114588be3df916bf629a61bdcc83737
 
-I’m thinking, is it possible to get rid of proc_flush_task at all ?
-Maybe we can try to flush dcache during readdir for example.
-
-> But (b) is pretty much a non-starter in this form. Those wrappers
-> shouldn't be in a globally exported core header file. No way.
-> 
->                Linus
-> 
+Thank you!
 
 -- 
-Rgrds, legion
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
