@@ -2,164 +2,119 @@ Return-Path: <SRS0=BnuI=3Q=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54656C2D0DB
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 17:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A50C2D0DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 19:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235CE207FD
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 17:34:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="oD/eweId"
+	by mail.kernel.org (Postfix) with ESMTP id 4DFE124681
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 19:29:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726210AbgA0Rel (ORCPT
+        id S1726327AbgA0T3L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Jan 2020 12:34:41 -0500
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com ([66.163.187.152]:35780
-        "EHLO sonic316-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725897AbgA0Rek (ORCPT
+        Mon, 27 Jan 2020 14:29:11 -0500
+Received: from relay.sw.ru ([185.231.240.75]:47718 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725845AbgA0T3L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Jan 2020 12:34:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1580146478; bh=A/ZYBcsKjndslC0dUgOAmvGgLpzj7T5uRCYfgFS3GvE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=oD/eweIdtKTSTazSa57JvtWG/Ur6KJau1xTaDaXu0fn2kE7mHLIM15rWDnBv7CbzbrumR6S62Moz84mkhs7L5mo36hXdBO/EM7NkQWMVFEhP3qBa4B7FIXHkL0AVS0eI0ymgmlMG1gAnvhSnFspmhr6KtIMnwuex9ak8fk6f4HFiyeSRFXqxCIK9Q0Ya1kbiCvoHVYXNYByqOtPw23lObnZA8EXJrnPoUG35zG/nsCQtAjtHUfxHxRCXPIh487uusbeZbSqOK9yVRaOquwW+H64CXeZcb+zghECA3gz1mgbivkjP7h1pV/UoNj3JxaiP7KnPu220dtuhS1Sgagc81g==
-X-YMail-OSG: UIEmYk8VM1nUFo.TG2huX.9Yf51YUwgGeR8.Rvcw3gyDo4HZzBN2aLT_OB8VGHI
- kS7rbKIRDliKAg7ib45TdfcTIc_xLiJ1WKXWdY1T7GW4Puc4ZvA52vaO.m8o4Ab3iCESw8KADzma
- PGluHQSY602GWkHEtwo0iPPb3M4bof.lL2bsoa.CrE6RcXJVRQaqgwU72v8fP73E2wexNDoSxNly
- rOvNoSpi610HvpH20r8LrzJe6hreZa_6KZ3zRuASUqjWAF.f7bz4C01idFzW.vcFnfgAXoHkt13k
- 3qujb9Bprbg3lYbOop0IoE_Ib6LWK5mXONn3_kkJRxgIXCFnUr4PbIM275ZpzljexMIx1WafrCQF
- b4bACrL1105_87yi1A3cTBWk8zrnjaVBfB.bPlxev4nJOytcU840_VMc7oeMfALnYDCHpA783Vg0
- xUp8_wmq3XuF8FOdslHyRPtDuFBGoplpVr90QyXUgGv9MTOivh5Ka.AkpIcFY4WQLsqehA0Pnzx.
- .vWVaTnTfpA2M4p12oKeXMa0IVmeV3a2kMUgCIEo4iQH.qq.zIn354f8MMAqt1Q7xoD6yiV8UGKT
- v5_yG.1rixf38soN.FiiltyrA7DOX3ULseALlv6iBrqVQkvHQtjMXnXwBq_rXjBY.1ag7mvYjc4P
- WjlRlhFNAo7PsPH7eDT6rdd7Mkq7U.rKion58rhW33AlQc1lSSVeDw8snQztC_jqmW498bp_KRGQ
- b380DccyPa88oLc9YLtwSALuNIL4F6euqqj1WDW6U0zOTV3SYG5xS82WQoUu6027T2AtCFQdkba1
- CbJaYp9r1nMQJ5iHpzwmWym8OtnCM6b99YAabd3blil4Z95bpZgBwBQY5LnP470v4xWZEOv.8Dch
- 0m58RKwW38RfnQaLO0euItesA8IlIsmOcqwFtt.kvIC5AVCUcfcMsgqsMbu70hxulzVdycTJV9qA
- Kl6.lT3carJ4JpnfWNMcjbIYUJ1tfW1CmyAC7q2oNq.zmxQ9lfhctTVYdT6Fu5Zx4zdIkI4l2O_E
- N5qNg1UWqtvet4Xf8NlZfN7_TfRyjNbjf9J9B4YARcTnAyu3HQ9Z4klX7n4uNFTYPpsXnAX2_UuV
- 3SkcZV9hz54bALb22w8toJKqd50IGJjjB7qH.zjt4p3cileUt3ozvy.DmtUO2rFEkUilQEYWUc42
- 9wu05HdGCmzwyAjSRTT3Bfkgg_8GfrxfcMNKzB2pIFDLpQKbPv42zOWcyG7Z0jAzujHo0K5fvLxh
- FdT639sycg8aGvwzWQBXX4mYUfNSQiHFkCIrNVA458SyEdmQbgwBaZcQNo7qnEsu.I8D_xHIbDcN
- LQdxDicOW6m9ATstAdC38W80PRhnZDk0vj2NDmg0hkfMr2d9w12cc8Izs5q9hYRRX98HQcksJqIc
- FAD9Ls4YWSPs3Nwv.Ii_KXKdvS1f.Vw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Mon, 27 Jan 2020 17:34:38 +0000
-Received: by smtp429.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 0e6883b3604d029b21a83e85a9420c9f;
-          Mon, 27 Jan 2020 17:34:33 +0000 (UTC)
-Subject: Re: KASAN slab-out-of-bounds in tun_chr_open/sock_init_data (Was: Re:
- [PATCH v14 00/23] LSM: Module stacking for AppArmor)
-To:     Stephen Smalley <sds@tycho.nsa.gov>, casey.schaufler@intel.com,
-        jmorris@namei.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Cc:     keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        lorenzo@google.com, "David S. Miller" <davem@davemloft.net>,
-        amade@asmblr.net,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        maxk@qti.qualcomm.com, Casey Schaufler <casey@schaufler-ca.com>
-References: <20200124002306.3552-1-casey.ref@schaufler-ca.com>
- <20200124002306.3552-1-casey@schaufler-ca.com>
- <22585291-b7e0-5a22-6682-168611d902fa@tycho.nsa.gov>
- <6b717a13-3586-5854-0eee-617798f92d34@schaufler-ca.com>
- <de97dc66-7f5b-21f0-cf3d-a1485acbc1c9@tycho.nsa.gov>
- <628f018e-5a88-295b-9e4d-b4c6a49645b5@tycho.nsa.gov>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <736cf361-1eaf-2d5e-ffc5-c5cda6e2ec7d@schaufler-ca.com>
-Date:   Mon, 27 Jan 2020 09:34:33 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Mon, 27 Jan 2020 14:29:11 -0500
+Received: from vvs-ws.sw.ru ([172.16.24.21])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <vvs@virtuozzo.com>)
+        id 1iwA31-00072K-M9; Mon, 27 Jan 2020 22:27:47 +0300
+Subject: Re: [PATCH 1/1] proc_keys_next should increase position index
+To:     David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+References: <af9dcaa7-6e4f-281a-2bae-fb605cc55d2d@virtuozzo.com>
+ <1451508.1580125174@warthog.procyon.org.uk>
+From:   Vasily Averin <vvs@virtuozzo.com>
+Message-ID: <eaacb0b2-fd0d-480e-1868-0a1284c20185@virtuozzo.com>
+Date:   Mon, 27 Jan 2020 22:27:47 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <628f018e-5a88-295b-9e4d-b4c6a49645b5@tycho.nsa.gov>
+In-Reply-To: <1451508.1580125174@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-X-Mailer: WebService/1.1.15116 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/27/2020 8:56 AM, Stephen Smalley wrote:
-> On 1/27/20 11:14 AM, Stephen Smalley wrote:
->> On 1/24/20 4:49 PM, Casey Schaufler wrote:
->>> On 1/24/2020 1:04 PM, Stephen Smalley wrote:
->>>> On 1/23/20 7:22 PM, Casey Schaufler wrote:
->>>>> This patchset provides the changes required for
->>>>> the AppArmor security module to stack safely with any other.
->>>>>
->>>>> v14: Rebase to 5.5-rc5
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Incorporate feedback from v13
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Use an array of audit rules =
-(patch 0002)
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Significant change, removed =
-Acks (patch 0002)
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Remove unneeded include (pat=
-ch 0013)
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Use context.len correctly (p=
-atch 0015)
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Reorder code to be more sens=
-ible (patch 0016)
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Drop SO_PEERCONTEXT as it's =
-not needed yet (patch 0023)
->>>>
->>>> I don't know for sure if this is your bug, but it happens every time=
- I boot with your patches applied and not at all on stock v5.5-rc5 so her=
-e it is.=C2=A0 Will try to bisect as time permits but not until next week=
-=2E Trigger seems to be loading the tun driver.
->>>
->>> Thanks. I will have a look as well.
->>
->> Bisection led to the first patch in the series, "LSM: Infrastructure m=
-anagement of the sock security". Still not sure if the bug is in the patc=
-h itself or just being surfaced by it.
->
-> Looks like the bug is pre-existing to me and just exposed by your patch=
-=2E
+On 1/27/20 2:39 PM, David Howells wrote:
+> I don't see the effect you're talking about with /proc/keys.  I see the
+> following:
+> 
+> 	[root@andromeda ~]# dd if=/proc/keys bs=40 skip=1
+> 	dd: /proc/keys: cannot skip to specified offset
+> 
+> and then it follows up with the normal content with no obvious duplicates (the
+> lines are numbered ascendingly in the first column).
+> 
+> I think I may be being confused by what you mean by "the last line".
 
-OK, thanks. I don't see how moving the allocation ought to have
-perturbed that, but it's good to know what happened.=20
+on unpatched kernel
+
+$ uname -a
+Linux vvsx1 5.3.0-26-generic #28~18.04.1-Ubuntu SMP Wed Dec 18 16:40:14 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
+
+$ dd if=/proc/keys bs=1  # VvS: full usual output
+0f6bfdf5 I--Q---     2 perm 3f010000  1000  1000 user      4af2f79ab8848d0a: 740
+1fb91b32 I--Q---     3 perm 1f3f0000  1000 65534 keyring   _uid.1000: 2
+27589480 I--Q---     1 perm 0b0b0000     0     0 user      invocation_id: 16
+2f33ab67 I--Q---   152 perm 3f030000     0     0 keyring   _ses: 2
+33f1d8fa I--Q---     4 perm 3f030000  1000  1000 keyring   _ses: 1
+3d427fda I--Q---     2 perm 3f010000  1000  1000 user      69ec44aec7678e5a: 740
+3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
+521+0 records in
+521+0 records out
+521 bytes copied, 0,00123769 s, 421 kB/s
+
+$ dd if=/proc/keys bs=500 skip=1  # read after lseek in middle of last line
+dd: /proc/keys: cannot skip to specified offset
+g   _uid_ses.1000: 1        <<<< end of last line
+3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1   <<<< and whole last lien again
+0+1 records in
+0+1 records out
+97 bytes copied, 0,000135035 s, 718 kB/s
+
+$ dd if=/proc/keys bs=1000 skip=1   # read after lseek beyond end of file
+dd: /proc/keys: cannot skip to specified offset
+3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1   <<<< generates last line
+0+1 records in
+0+1 records out
+76 bytes copied, 0,000119981 s, 633 kB/s
+
+On patched kernel:
+[test@localhost ~]$ uname -a
+Linux localhost.localdomain 5.5.0-rc6-00151-gd8d014f #8 SMP Fri Jan 24 13:25:06 MSK 2020 x86_64 x86_64 x86_64 GNU/Linux
+
+[test@localhost ~]$ dd if=/proc/keys bs=1
+06e8bec5 I--Q---     4 perm 1f3f0000  1000 65534 keyring   _uid.1000: empty
+1b7ee8ed I--Q---    11 perm 3f030000  1000  1000 keyring   _ses: 1
+2c1a365d I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
+3f5823b4 I--Q---     6 perm 3f030000  1000  1000 keyring   _ses: 1
+286+0 records in
+286+0 records out
+286 bytes copied, 0,000414581 s, 690 kB/s
+
+[test@localhost ~]$ dd if=/proc/keys bs=270 skip=1  # VvS: read after lseek in middle of last line
+dd: /proc/keys: cannot skip to specified offset
+yring   _ses: 1   <<<< only end of last line was generated, as expected
+0+1 records in
+0+1 records out
+16 bytes copied, 7,7199e-05 s, 207 kB/s
+
+[test@localhost ~]$ dd if=/proc/keys bs=1000 skip=1   # VvS: read after lseek beond end of file
+dd: /proc/keys: cannot skip to specified offset
+0+0 records in   <<<< nothing was generated, as expected
+0+0 records out
+0 bytes copied, 8,8036e-05 s, 0,0 kB/s
+
 
 
