@@ -1,70 +1,71 @@
-Return-Path: <SRS0=BnuI=3Q=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=y/rA=3R=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA52C33CB7
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 23:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA03C33CB3
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jan 2020 04:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4325C2467C
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jan 2020 23:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1580169323;
-	bh=/RHbzCKM561zYe8Wjo0KSVUZ77qX9Vyf1BOcLlnjz/Q=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=HTwPMcR5zdYU/YqBNpo7oy0yKWTltSAzbTDnpA2zUwkk6eLei6uLB4AXiyLUJYcMb
-	 VzgZuOz07/XQG7tZDgZBs8X/UH2/AqyKfDXnYn8vt+X9e7tH71DMw4SAjdn7R8ckMB
-	 ikFuJcOl0tDYdVgDivE8oB2Ucn4pqW73UEJVuOD0=
+	by mail.kernel.org (Postfix) with ESMTP id 278B62467B
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jan 2020 04:17:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbgA0XzJ (ORCPT
+        id S1726443AbgA1ERK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Jan 2020 18:55:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54348 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbgA0XzF (ORCPT
+        Mon, 27 Jan 2020 23:17:10 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:61040 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726080AbgA1ERK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Jan 2020 18:55:05 -0500
-Subject: Re: [GIT PULL] SELinux patches for v5.6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580169305;
-        bh=/RHbzCKM561zYe8Wjo0KSVUZ77qX9Vyf1BOcLlnjz/Q=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=QBSWodMLhwQyJ6CUCjO0ksG0WuSjc1emxTEFfmkt2BILXwhNXOO7qxJOe3ZZ78zhi
-         tFDYdf5MOeVLAJObvZQjkMN6v86xyJcHh1XBY7BwMId80gl0GgjnerMndGLWMiTcXL
-         fJjAP1XUrk+M98FqR7XuXAoMnHXcf1QdNbqucBMg=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAHC9VhR_5564up7u1V-PRXOz_RRfTLj16m508qgNvdWC8gcRTA@mail.gmail.com>
-References: <CAHC9VhR_5564up7u1V-PRXOz_RRfTLj16m508qgNvdWC8gcRTA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAHC9VhR_5564up7u1V-PRXOz_RRfTLj16m508qgNvdWC8gcRTA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
- tags/selinux-pr-20200127
-X-PR-Tracked-Commit-Id: 98aa00345de54b8340dc2ddcd87f446d33387b5e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b1dba2473114588be3df916bf629a61bdcc83737
-Message-Id: <158016930519.17044.11033207196664253320.pr-tracker-bot@kernel.org>
-Date:   Mon, 27 Jan 2020 23:55:05 +0000
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        Mon, 27 Jan 2020 23:17:10 -0500
+Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 00S4H69H049054;
+        Tue, 28 Jan 2020 13:17:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav108.sakura.ne.jp);
+ Tue, 28 Jan 2020 13:17:06 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav108.sakura.ne.jp)
+Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 00S4H6PL049050
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 28 Jan 2020 13:17:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Subject: [GIT PULL] TOMOYO patches for v5.6
+Message-ID: <cdf30cd3-8b0e-9014-0474-ce978e6bcc3b@i-love.sakura.ne.jp>
+Date:   Tue, 28 Jan 2020 13:17:03 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Mon, 27 Jan 2020 17:26:18 -0500:
+The following changes since commit a8772fad0172aeae339144598b809fd8d4823331:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20200127
+  tomoyo: Use atomic_t for statistics counter (2020-01-02 12:53:49 +0900)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b1dba2473114588be3df916bf629a61bdcc83737
+are available in the git repository at:
 
-Thank you!
+  git://git.osdn.net/gitroot/tomoyo/tomoyo-test1.git tags/tomoyo-pr-20200128
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+for you to fetch changes up to a8772fad0172aeae339144598b809fd8d4823331:
+
+  tomoyo: Use atomic_t for statistics counter (2020-01-02 12:53:49 +0900)
+
+----------------------------------------------------------------
+Hello, Linus.
+
+One "int -> atomic_t" conversion patch for suppressing KCSAN's warning.
+
+----------------------------------------------------------------
