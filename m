@@ -2,124 +2,85 @@ Return-Path: <SRS0=y/rA=3R=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0737C2D0DB
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jan 2020 14:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C792C33CB2
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jan 2020 21:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96F0C24683
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jan 2020 14:58:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J30K3AOR"
+	by mail.kernel.org (Postfix) with ESMTP id E5C4422522
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jan 2020 21:19:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbgA1O6x (ORCPT
+        id S1726438AbgA1VT3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Jan 2020 09:58:53 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45109 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726634AbgA1O6w (ORCPT
+        Tue, 28 Jan 2020 16:19:29 -0500
+Received: from namei.org ([65.99.196.166]:60442 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726211AbgA1VT2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:58:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580223532;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=J9dup7HkrusSVVs3WtrZZpcnlSHPtUcbtBH6WbbXS20=;
-        b=J30K3AORJ3u894nARd8dIl1Z30S+r4Q/OamxYtefkwp+hkTdfx4+9EZLUGAX0FGGjgvTdp
-        p3dVKHZIYWQiu56NmsW+HJZcuZz1xMLSLUvXxen3u9qD24RmxhHGvNth9qq6AjjgqkCYBs
-        8KZIF0F/gaXYoVo2IQfEHfgh8EgTqBc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-295-qOK9YP5uP1yGI5aGU72MxA-1; Tue, 28 Jan 2020 09:58:47 -0500
-X-MC-Unique: qOK9YP5uP1yGI5aGU72MxA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 879C18010C9;
-        Tue, 28 Jan 2020 14:58:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.70])
-        by smtp.corp.redhat.com (Postfix) with SMTP id A7FC85C290;
-        Tue, 28 Jan 2020 14:58:39 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 28 Jan 2020 15:58:43 +0100 (CET)
-Date:   Tue, 28 Jan 2020 15:58:38 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v7 02/11] proc: add proc_fs_info struct to store proc
- information
-Message-ID: <20200128145837.GD17943@redhat.com>
-References: <20200125130541.450409-1-gladkov.alexey@gmail.com>
- <20200125130541.450409-3-gladkov.alexey@gmail.com>
- <20200128134337.GC17943@redhat.com>
+        Tue, 28 Jan 2020 16:19:28 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 00SLGD0G004501;
+        Tue, 28 Jan 2020 21:16:14 GMT
+Date:   Wed, 29 Jan 2020 08:16:13 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "james.bottomley@hansenpartnership.com" 
+        <james.bottomley@hansenpartnership.com>,
+        Serge Hallyn <serge@hallyn.com>, Will Deacon <will@kernel.org>,
+        Robert Richter <rric@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        oprofile-list@lists.sf.net
+Subject: Re: [PATCH v6 01/10] capabilities: introduce CAP_PERFMON to kernel
+ and user space
+In-Reply-To: <62274abc-6067-9121-9397-c9b626ca5f7a@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.2001290815420.2204@namei.org>
+References: <74d524ab-ac11-a7b8-1052-eba10f117e09@linux.intel.com> <62274abc-6067-9121-9397-c9b626ca5f7a@linux.intel.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200128134337.GC17943@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 01/28, Oleg Nesterov wrote:
->
-> On 01/25, Alexey Gladkov wrote:
-> >
-> >  static int proc_init_fs_context(struct fs_context *fc)
-> >  {
-> >  	struct proc_fs_context *ctx;
-> > +	struct pid_namespace *pid_ns;
-> >
-> >  	ctx = kzalloc(sizeof(struct proc_fs_context), GFP_KERNEL);
-> >  	if (!ctx)
-> >  		return -ENOMEM;
-> >
-> > -	ctx->pid_ns = get_pid_ns(task_active_pid_ns(current));
-> > +	pid_ns = get_pid_ns(task_active_pid_ns(current));
-> > +
-> > +	if (!pid_ns->proc_mnt) {
-> > +		ctx->fs_info = kzalloc(sizeof(struct proc_fs_info), GFP_KERNEL);
-> > +		if (!ctx->fs_info) {
-> > +			kfree(ctx);
-> > +			return -ENOMEM;
-> > +		}
-> > +		ctx->fs_info->pid_ns = pid_ns;
-> > +	} else {
-> > +		ctx->fs_info = proc_sb_info(pid_ns->proc_mnt->mnt_sb);
-> > +	}
-> > +
->
-> it seems that this code lacks put_pid_ns() if pid_ns->proc_mnt != NULL
-> or if kzalloc() fails?
+On Tue, 28 Jan 2020, Alexey Budankov wrote:
 
-OK, this is fixed in 6/11.
+> 
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> ---
+>  include/linux/capability.h          | 4 ++++
+>  include/uapi/linux/capability.h     | 8 +++++++-
+>  security/selinux/include/classmap.h | 4 ++--
+>  3 files changed, 13 insertions(+), 3 deletions(-)
 
-Oleg.
+
+Acked-by: James Morris <jamorris@linux.microsoft.com>
+
+
+-- 
+James Morris
+<jmorris@namei.org>
 
