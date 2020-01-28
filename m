@@ -2,63 +2,34 @@ Return-Path: <SRS0=y/rA=3R=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0619CC3F68F
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jan 2020 21:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E082C2D0DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jan 2020 21:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D84F32467E
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jan 2020 21:21:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D8BA2173E
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jan 2020 21:25:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbgA1VVF (ORCPT
+        id S1726257AbgA1VY7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Jan 2020 16:21:05 -0500
-Received: from namei.org ([65.99.196.166]:60568 "EHLO namei.org"
+        Tue, 28 Jan 2020 16:24:59 -0500
+Received: from namei.org ([65.99.196.166]:60576 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbgA1VVF (ORCPT
+        id S1726211AbgA1VY7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Jan 2020 16:21:05 -0500
+        Tue, 28 Jan 2020 16:24:59 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 00SLIGx1004605;
-        Tue, 28 Jan 2020 21:18:16 GMT
-Date:   Wed, 29 Jan 2020 08:18:16 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 00SLOtER004936;
+        Tue, 28 Jan 2020 21:24:55 GMT
+Date:   Wed, 29 Jan 2020 08:24:55 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        Serge Hallyn <serge@hallyn.com>, Will Deacon <will@kernel.org>,
-        Robert Richter <rric@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        oprofile-list@lists.sf.net
-Subject: Re: [PATCH v6 10/10] drivers/oprofile: open access for CAP_PERFMON
- privileged process
-In-Reply-To: <eff5e211-7114-f854-f53f-08491f9dcc26@linux.intel.com>
-Message-ID: <alpine.LRH.2.21.2001290818090.2204@namei.org>
-References: <74d524ab-ac11-a7b8-1052-eba10f117e09@linux.intel.com> <eff5e211-7114-f854-f53f-08491f9dcc26@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Security subsystem changes for v5.6
+Message-ID: <alpine.LRH.2.21.2001290823510.4816@namei.org>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -66,50 +37,50 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 28 Jan 2020, Alexey Budankov wrote:
+Just one minor fix this time. Please pull.
 
-> 
-> Open access to monitoring for CAP_PERFMON privileged process. Providing
-> the access under CAP_PERFMON capability singly, without the rest of
-> CAP_SYS_ADMIN credentials, excludes chances to misuse the credentials and
-> makes operation more secure.
-> 
-> CAP_PERFMON implements the principal of least privilege for performance
-> monitoring and observability operations (POSIX IEEE 1003.1e 2.2.2.39 principle
-> of least privilege: A security design principle that states that a process
-> or program be granted only those privileges (e.g., capabilities) necessary
-> to accomplish its legitimate function, and only for the time that such
-> privileges are actually required)
-> 
-> For backward compatibility reasons access to the monitoring remains open
-> for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage for secure
-> monitoring is discouraged with respect to CAP_PERFMON capability.
-> 
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> ---
->  drivers/oprofile/event_buffer.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The following changes since commit 219d54332a09e8d8741c1e1982f5eae56099de85:
 
+  Linux 5.4 (2019-11-24 16:32:01 -0800)
 
-Acked-by: James Morris <jamorris@linux.microsoft.com>
+are available in the Git repository at:
 
-> 
-> diff --git a/drivers/oprofile/event_buffer.c b/drivers/oprofile/event_buffer.c
-> index 12ea4a4ad607..6c9edc8bbc95 100644
-> --- a/drivers/oprofile/event_buffer.c
-> +++ b/drivers/oprofile/event_buffer.c
-> @@ -113,7 +113,7 @@ static int event_buffer_open(struct inode *inode, struct file *file)
->  {
->  	int err = -EPERM;
->  
-> -	if (!capable(CAP_SYS_ADMIN))
-> +	if (!perfmon_capable())
->  		return -EPERM;
->  
->  	if (test_and_set_bit_lock(0, &buffer_opened))
-> 
+  git://git.kernel.org:/pub/scm/linux/kernel/git/jmorris/linux-security for-v5.6
 
--- 
-James Morris
-<jmorris@namei.org>
+for you to fetch changes up to 10c2d111c906599942efd13109061885631c4a0c:
 
+  security: remove EARLY_LSM_COUNT which never used (2020-01-27 11:19:41 -0800)
+
+----------------------------------------------------------------
+Alex Shi (1):
+      security: remove EARLY_LSM_COUNT which never used
+
+ security/security.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+---
+commit 10c2d111c906599942efd13109061885631c4a0c
+Author: Alex Shi <alex.shi@linux.alibaba.com>
+Date:   Tue Jan 21 16:50:03 2020 +0800
+
+    security: remove EARLY_LSM_COUNT which never used
+    
+    This macro is never used from it was introduced in commit e6b1db98cf4d5
+    ("security: Support early LSMs"), better to remove it.
+    
+    Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+    Acked-by: Serge Hallyn <serge@hallyn.com>
+    Signed-off-by: James Morris <jmorris@namei.org>
+
+diff --git a/security/security.c b/security/security.c
+index 1bc000f834e2..344bf1327d7e 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -33,7 +33,6 @@
+ 
+ /* How many LSMs were built into the kernel? */
+ #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
+-#define EARLY_LSM_COUNT (__end_early_lsm_info - __start_early_lsm_info)
+ 
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static BLOCKING_NOTIFIER_HEAD(blocking_lsm_notifier_chain);
