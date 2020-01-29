@@ -2,100 +2,72 @@ Return-Path: <SRS0=O5tY=3S=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_DBL_ABUSE_MALW,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8D9C2D0DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jan 2020 16:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CADD8C2D0DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jan 2020 18:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C9142071E
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jan 2020 16:03:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZdO1rpUQ"
+	by mail.kernel.org (Postfix) with ESMTP id B342D206D4
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jan 2020 18:16:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbgA2QDE (ORCPT
+        id S1727436AbgA2SQc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Jan 2020 11:03:04 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48688 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbgA2QDE (ORCPT
+        Wed, 29 Jan 2020 13:16:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43232 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726245AbgA2SQc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Jan 2020 11:03:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=up63fpfGYOvkp3SBYBCK24upbKtaXQK6d7PtLy0cev8=; b=ZdO1rpUQOR0SM6EoYPZcn4JDT
-        rNZ3sHm8mZrDvYiY5E3OQPXSNDtuzvvyYWMTEfJJZm7ouV0Pfkxt0A5w5clE3nTH9HCbHEx86BBtp
-        6juLb2UL5QT61MbPuGdmvcU/tcfri/3PyajzJEp4x/xWLGljUIFmn8Nbh9jSYIgvZPMeSteD03SRw
-        XYVnL8Ln47CE0D+Gws6DTVw/6tlYFzTf2p7maGQN02vRE6V+Yvb02p2UIYDlWoPVTPRMbx//gBNSU
-        kcgzWSPUmFGN/EOY7lygHL3FaH5qWjL6DuOx//Gd9S2BC8EuEpH9DWXQ/4igwg3lKKFEeFt3kDOEM
-        1D+RgIX9g==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwpnv-0007TM-3C; Wed, 29 Jan 2020 16:02:59 +0000
-Subject: Re: mmotm 2020-01-28-20-05 uploaded (security/security.c)
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <20200129040640.6PNuz0vcp%akpm@linux-foundation.org>
- <56177bc4-441d-36f4-fe73-4e86edf02899@infradead.org>
- <CAHC9VhRW68ccE_8HJnv4anFdSgkY2Yk3612LPCT5o4+vXQGqQA@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <30511826-765f-6b10-7bad-b950b3941295@infradead.org>
-Date:   Wed, 29 Jan 2020 08:02:57 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRW68ccE_8HJnv4anFdSgkY2Yk3612LPCT5o4+vXQGqQA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 29 Jan 2020 13:16:32 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 3A99EB27D;
+        Wed, 29 Jan 2020 18:16:30 +0000 (UTC)
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     dhowells@redhat.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dave@stgolabs.net,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH] security, keys: Optimize barrier usage for Rmw atomic  bitops
+Date:   Wed, 29 Jan 2020 10:06:25 -0800
+Message-Id: <20200129180625.24486-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/29/20 5:51 AM, Paul Moore wrote:
-> On Tue, Jan 28, 2020 at 11:52 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 1/28/20 8:06 PM, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2020-01-28-20-05 has been uploaded to
->>>
->>>    http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>>
->>
->> security/security.c contains duplicate lines for <lockdown_reasons> array:
-> 
-> Hmmm.  Commit 59438b46471a ("security,lockdown,selinux: implement
-> SELinux lockdown"), which was merged into Linus' tree during the
-> current merge window, moved the lockdown_reasons array from
-> security/lockdown/lockdown.c to security/security.c; is there another
-> tree in linux-next which is moving lockdown_reasons into
-> security/security.c?
-> 
+For both set and clear_bit, we can avoid the unnecessary barriers
+on non LL/SC architectures, such as x86. Instead, use the
+smp_mb__{before,after}_atomic() calls.
 
-Somehow in mmotm those lines of code were merged 2x:
-once from origin.patch and once from linux-next.patch.
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ security/keys/gc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Looks more like a mmotm merge issue, not a security/ issue.
-
+diff --git a/security/keys/gc.c b/security/keys/gc.c
+index 671dd730ecfc..ce7b4c22e3c4 100644
+--- a/security/keys/gc.c
++++ b/security/keys/gc.c
+@@ -102,7 +102,7 @@ void key_gc_keytype(struct key_type *ktype)
+ 
+ 	key_gc_dead_keytype = ktype;
+ 	set_bit(KEY_GC_REAPING_KEYTYPE, &key_gc_flags);
+-	smp_mb();
++	smp_mb__after_atomic();
+ 	set_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags);
+ 
+ 	kdebug("schedule");
+@@ -308,7 +308,7 @@ static void key_garbage_collector(struct work_struct *work)
+ 
+ 	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3)) {
+ 		kdebug("dead wake");
+-		smp_mb();
++		smp_mb__before_atomic();
+ 		clear_bit(KEY_GC_REAPING_KEYTYPE, &key_gc_flags);
+ 		wake_up_bit(&key_gc_flags, KEY_GC_REAPING_KEYTYPE);
+ 	}
 -- 
-~Randy
+2.16.4
 
