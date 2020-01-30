@@ -2,78 +2,102 @@ Return-Path: <SRS0=X2V5=3T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A232C33C9E
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 08:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5ECC33C9E
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 10:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF82E206D5
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 08:47:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDFA2206D5
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 10:17:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbgA3Iru (ORCPT
+        id S1726893AbgA3KRu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Jan 2020 03:47:50 -0500
-Received: from mga04.intel.com ([192.55.52.120]:25438 "EHLO mga04.intel.com"
+        Thu, 30 Jan 2020 05:17:50 -0500
+Received: from relay.sw.ru ([185.231.240.75]:49286 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726757AbgA3Iru (ORCPT
+        id S1726873AbgA3KRu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Jan 2020 03:47:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 00:47:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,381,1574150400"; 
-   d="scan'208";a="232840310"
-Received: from kvehmane-mobl.ger.corp.intel.com (HELO jsakkine-mobl1) ([10.237.50.119])
-  by orsmga006.jf.intel.com with ESMTP; 30 Jan 2020 00:47:45 -0800
-Message-ID: <50afe1f50297b02af52621b6738ffff0c24f1bdf.camel@linux.intel.com>
-Subject: Re: [PATCH 1/8] tpm: initialize crypto_id of allocated_banks to
- HASH_ALGO__LAST
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, zohar@linux.ibm.com,
-        james.bottomley@hansenpartnership.com,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Thu, 30 Jan 2020 10:47:44 +0200
-In-Reply-To: <20200127170443.21538-2-roberto.sassu@huawei.com>
-References: <20200127170443.21538-1-roberto.sassu@huawei.com>
-         <20200127170443.21538-2-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        Thu, 30 Jan 2020 05:17:50 -0500
+Received: from vvs-ws.sw.ru ([172.16.24.21])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <vvs@virtuozzo.com>)
+        id 1ix6s8-0003ku-SN; Thu, 30 Jan 2020 13:16:29 +0300
+From:   Vasily Averin <vvs@virtuozzo.com>
+Subject: [PATCH v2] keys: proc_keys_next should increase position index
+To:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+References: <eaacb0b2-fd0d-480e-1868-0a1284c20185@virtuozzo.com>
+Message-ID: <22307ecd-3254-6077-8bc7-02693338b586@virtuozzo.com>
+Date:   Thu, 30 Jan 2020 13:16:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <eaacb0b2-fd0d-480e-1868-0a1284c20185@virtuozzo.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-01-27 at 18:04 +0100, Roberto Sassu wrote:
-> chip->allocated_banks contains the list of TPM algorithm IDs of allocated
-> PCR banks. It also contains the corresponding ID of the crypto subsystem,
-> so that users of the TPM driver can calculate a digest for a PCR extend
-> operation.
-> 
-> However, if there is no mapping between TPM algorithm ID and crypto ID, the
-> crypto_id field in chip->allocated_banks remains set to zero (the array is
-> allocated and initialized with kcalloc() in tpm2_get_pcr_allocation()).
-> Zero should not be used as value for unknown mappings, as it is a valid
-> crypto ID (HASH_ALGO_MD4).
-> 
-> This patch initializes crypto_id to HASH_ALGO__LAST.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>---
+If seq_file .next fuction does not change position index,
+read after some lseek can generate unexpected output:
 
-Remarks:
+$ dd if=/proc/keys bs=1  # full usual output
+0f6bfdf5 I--Q---     2 perm 3f010000  1000  1000 user      4af2f79ab8848d0a: 740
+1fb91b32 I--Q---     3 perm 1f3f0000  1000 65534 keyring   _uid.1000: 2
+27589480 I--Q---     1 perm 0b0b0000     0     0 user      invocation_id: 16
+2f33ab67 I--Q---   152 perm 3f030000     0     0 keyring   _ses: 2
+33f1d8fa I--Q---     4 perm 3f030000  1000  1000 keyring   _ses: 1
+3d427fda I--Q---     2 perm 3f010000  1000  1000 user      69ec44aec7678e5a: 740
+3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
+521+0 records in
+521+0 records out
+521 bytes copied, 0,00123769 s, 421 kB/s
 
-* After the subsystem tag, short summary starts with a capital lettter.
-* Missing fixes tag and cc tag to stable.
-* A struct called allocated_banks does not exist.
-* Please prefer using an imperative sentence when describing the action
-  to take e.g. "Thus, initialize crypto_id to HASH_ALGO__LAST".
+$ dd if=/proc/keys bs=500 skip=1  # read after lseek in middle of last line
+dd: /proc/keys: cannot skip to specified offset
+g   _uid_ses.1000: 1        <<<< end of last line
+3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
+   <<<< and whole last lien again
+0+1 records in
+0+1 records out
+97 bytes copied, 0,000135035 s, 718 kB/s
 
-/Jarkko
+$ dd if=/proc/keys bs=1000 skip=1   # read after lseek beyond end of file
+dd: /proc/keys: cannot skip to specified offset
+3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
+   <<<< generates last line
+0+1 records in
+0+1 records out
+76 bytes copied, 0,000119981 s, 633 kB/s
+
+Cc: stable@vger.kernel.org
+Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
+https://bugzilla.kernel.org/show_bug.cgi?id=206283
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+---
+ security/keys/proc.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/security/keys/proc.c b/security/keys/proc.c
+index 415f3f1..d0cde66 100644
+--- a/security/keys/proc.c
++++ b/security/keys/proc.c
+@@ -139,6 +139,8 @@ static void *proc_keys_next(struct seq_file *p, void *v, loff_t *_pos)
+ 	n = key_serial_next(p, v);
+ 	if (n)
+ 		*_pos = key_node_serial(n);
++	else
++		(*_pos)++;
+ 	return n;
+ }
+ 
+-- 
+1.8.3.1
 
