@@ -2,102 +2,100 @@ Return-Path: <SRS0=X2V5=3T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5ECC33C9E
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 10:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 888AEC2D0DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 16:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDFA2206D5
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 10:17:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67E5F20707
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 16:11:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgA3KRu (ORCPT
+        id S1727247AbgA3QLR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Jan 2020 05:17:50 -0500
-Received: from relay.sw.ru ([185.231.240.75]:49286 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726873AbgA3KRu (ORCPT
+        Thu, 30 Jan 2020 11:11:17 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2331 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727107AbgA3QLQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Jan 2020 05:17:50 -0500
-Received: from vvs-ws.sw.ru ([172.16.24.21])
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <vvs@virtuozzo.com>)
-        id 1ix6s8-0003ku-SN; Thu, 30 Jan 2020 13:16:29 +0300
-From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH v2] keys: proc_keys_next should increase position index
-To:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <eaacb0b2-fd0d-480e-1868-0a1284c20185@virtuozzo.com>
-Message-ID: <22307ecd-3254-6077-8bc7-02693338b586@virtuozzo.com>
-Date:   Thu, 30 Jan 2020 13:16:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <eaacb0b2-fd0d-480e-1868-0a1284c20185@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
+        Thu, 30 Jan 2020 11:11:16 -0500
+Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id BAA1C81DE1A523018B18;
+        Thu, 30 Jan 2020 16:11:14 +0000 (GMT)
+Received: from fraeml701-chm.china.huawei.com (10.206.15.50) by
+ lhreml707-cah.china.huawei.com (10.201.108.48) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 30 Jan 2020 16:11:13 +0000
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml701-chm.china.huawei.com (10.206.15.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Thu, 30 Jan 2020 17:11:13 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1713.004;
+ Thu, 30 Jan 2020 17:11:13 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "james.bottomley@hansenpartnership.com" 
+        <james.bottomley@hansenpartnership.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: [PATCH 1/8] tpm: initialize crypto_id of allocated_banks to
+ HASH_ALGO__LAST
+Thread-Topic: [PATCH 1/8] tpm: initialize crypto_id of allocated_banks to
+ HASH_ALGO__LAST
+Thread-Index: AQHV1TQUqrSCCRsJMUCD8Unf5gKCoagC2LQAgACMVSA=
+Date:   Thu, 30 Jan 2020 16:11:12 +0000
+Message-ID: <8c15cf66708a4d38916b8ca39f26b5f6@huawei.com>
+References: <20200127170443.21538-1-roberto.sassu@huawei.com>
+         <20200127170443.21538-2-roberto.sassu@huawei.com>
+ <50afe1f50297b02af52621b6738ffff0c24f1bdf.camel@linux.intel.com>
+In-Reply-To: <50afe1f50297b02af52621b6738ffff0c24f1bdf.camel@linux.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-If seq_file .next fuction does not change position index,
-read after some lseek can generate unexpected output:
-
-$ dd if=/proc/keys bs=1  # full usual output
-0f6bfdf5 I--Q---     2 perm 3f010000  1000  1000 user      4af2f79ab8848d0a: 740
-1fb91b32 I--Q---     3 perm 1f3f0000  1000 65534 keyring   _uid.1000: 2
-27589480 I--Q---     1 perm 0b0b0000     0     0 user      invocation_id: 16
-2f33ab67 I--Q---   152 perm 3f030000     0     0 keyring   _ses: 2
-33f1d8fa I--Q---     4 perm 3f030000  1000  1000 keyring   _ses: 1
-3d427fda I--Q---     2 perm 3f010000  1000  1000 user      69ec44aec7678e5a: 740
-3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
-521+0 records in
-521+0 records out
-521 bytes copied, 0,00123769 s, 421 kB/s
-
-$ dd if=/proc/keys bs=500 skip=1  # read after lseek in middle of last line
-dd: /proc/keys: cannot skip to specified offset
-g   _uid_ses.1000: 1        <<<< end of last line
-3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
-   <<<< and whole last lien again
-0+1 records in
-0+1 records out
-97 bytes copied, 0,000135035 s, 718 kB/s
-
-$ dd if=/proc/keys bs=1000 skip=1   # read after lseek beyond end of file
-dd: /proc/keys: cannot skip to specified offset
-3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
-   <<<< generates last line
-0+1 records in
-0+1 records out
-76 bytes copied, 0,000119981 s, 633 kB/s
-
-Cc: stable@vger.kernel.org
-Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
-https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
----
- security/keys/proc.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/security/keys/proc.c b/security/keys/proc.c
-index 415f3f1..d0cde66 100644
---- a/security/keys/proc.c
-+++ b/security/keys/proc.c
-@@ -139,6 +139,8 @@ static void *proc_keys_next(struct seq_file *p, void *v, loff_t *_pos)
- 	n = key_serial_next(p, v);
- 	if (n)
- 		*_pos = key_node_serial(n);
-+	else
-+		(*_pos)++;
- 	return n;
- }
- 
--- 
-1.8.3.1
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYXJra28gU2Fra2luZW4gW21h
+aWx0bzpqYXJra28uc2Fra2luZW5AbGludXguaW50ZWwuY29tXQ0KPiBTZW50OiBUaHVyc2RheSwg
+SmFudWFyeSAzMCwgMjAyMCA5OjQ4IEFNDQo+IFRvOiBSb2JlcnRvIFNhc3N1IDxyb2JlcnRvLnNh
+c3N1QGh1YXdlaS5jb20+OyB6b2hhckBsaW51eC5pYm0uY29tOw0KPiBqYW1lcy5ib3R0b21sZXlA
+aGFuc2VucGFydG5lcnNoaXAuY29tOyBsaW51eC1pbnRlZ3JpdHlAdmdlci5rZXJuZWwub3JnDQo+
+IENjOiBsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxA
+dmdlci5rZXJuZWwub3JnOw0KPiBTaWx2aXUgVmxhc2NlYW51IDxTaWx2aXUuVmxhc2NlYW51QGh1
+YXdlaS5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS84XSB0cG06IGluaXRpYWxpemUgY3J5
+cHRvX2lkIG9mIGFsbG9jYXRlZF9iYW5rcyB0bw0KPiBIQVNIX0FMR09fX0xBU1QNCj4gDQo+IE9u
+IE1vbiwgMjAyMC0wMS0yNyBhdCAxODowNCArMDEwMCwgUm9iZXJ0byBTYXNzdSB3cm90ZToNCj4g
+PiBjaGlwLT5hbGxvY2F0ZWRfYmFua3MgY29udGFpbnMgdGhlIGxpc3Qgb2YgVFBNIGFsZ29yaXRo
+bSBJRHMgb2YgYWxsb2NhdGVkDQo+ID4gUENSIGJhbmtzLiBJdCBhbHNvIGNvbnRhaW5zIHRoZSBj
+b3JyZXNwb25kaW5nIElEIG9mIHRoZSBjcnlwdG8gc3Vic3lzdGVtLA0KPiA+IHNvIHRoYXQgdXNl
+cnMgb2YgdGhlIFRQTSBkcml2ZXIgY2FuIGNhbGN1bGF0ZSBhIGRpZ2VzdCBmb3IgYSBQQ1IgZXh0
+ZW5kDQo+ID4gb3BlcmF0aW9uLg0KPiA+DQo+ID4gSG93ZXZlciwgaWYgdGhlcmUgaXMgbm8gbWFw
+cGluZyBiZXR3ZWVuIFRQTSBhbGdvcml0aG0gSUQgYW5kIGNyeXB0byBJRCwNCj4gdGhlDQo+ID4g
+Y3J5cHRvX2lkIGZpZWxkIGluIGNoaXAtPmFsbG9jYXRlZF9iYW5rcyByZW1haW5zIHNldCB0byB6
+ZXJvICh0aGUgYXJyYXkgaXMNCj4gPiBhbGxvY2F0ZWQgYW5kIGluaXRpYWxpemVkIHdpdGgga2Nh
+bGxvYygpIGluIHRwbTJfZ2V0X3Bjcl9hbGxvY2F0aW9uKCkpLg0KPiA+IFplcm8gc2hvdWxkIG5v
+dCBiZSB1c2VkIGFzIHZhbHVlIGZvciB1bmtub3duIG1hcHBpbmdzLCBhcyBpdCBpcyBhIHZhbGlk
+DQo+ID4gY3J5cHRvIElEIChIQVNIX0FMR09fTUQ0KS4NCj4gPg0KPiA+IFRoaXMgcGF0Y2ggaW5p
+dGlhbGl6ZXMgY3J5cHRvX2lkIHRvIEhBU0hfQUxHT19fTEFTVC4NCj4gPg0KPiA+IFNpZ25lZC1v
+ZmYtYnk6IFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNvbT4tLS0NCj4gDQo+
+IFJlbWFya3M6DQo+IA0KPiAqIEFmdGVyIHRoZSBzdWJzeXN0ZW0gdGFnLCBzaG9ydCBzdW1tYXJ5
+IHN0YXJ0cyB3aXRoIGEgY2FwaXRhbCBsZXR0dGVyLg0KPiAqIE1pc3NpbmcgZml4ZXMgdGFnIGFu
+ZCBjYyB0YWcgdG8gc3RhYmxlLg0KPiAqIEEgc3RydWN0IGNhbGxlZCBhbGxvY2F0ZWRfYmFua3Mg
+ZG9lcyBub3QgZXhpc3QuDQo+ICogUGxlYXNlIHByZWZlciB1c2luZyBhbiBpbXBlcmF0aXZlIHNl
+bnRlbmNlIHdoZW4gZGVzY3JpYmluZyB0aGUgYWN0aW9uDQo+ICAgdG8gdGFrZSBlLmcuICJUaHVz
+LCBpbml0aWFsaXplIGNyeXB0b19pZCB0byBIQVNIX0FMR09fX0xBU1QiLg0KDQpUaGFua3MuIEkg
+d2lsbCBmaXggdGhlc2UgaXNzdWVzIGluIHRoZSBuZXh0IHZlcnNpb24gb2YgdGhlIHBhdGNoIHNl
+dC4NCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhS
+QiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExpIEppYW4sIFNoaSBZYW5saQ0K
