@@ -1,144 +1,204 @@
-Return-Path: <SRS0=O5tY=3S=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=X2V5=3T=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF04C2D0DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jan 2020 22:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A98C33CB2
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 02:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46E0520702
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jan 2020 22:54:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UxmaH9oP"
+	by mail.kernel.org (Postfix) with ESMTP id 8602F2070E
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 02:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580349694;
+	bh=a4KWsJRiuNAu+S0um97LfdSQg/QjtCJtt53SgVg+TF8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=cP9QcM2fpDCtQ92IHD4g9X08FgIVuJRr3oyg8I3hg8PY/ROVgYEWBlJGZy2xnC4hi
+	 ymGbrVgtsPVzoUMTR9SlvsfSsQPnj+G58WMKa6Ak10FeveTcoLuiTqiOPDqDpwtyY9
+	 mLB3euvKJTD28yzLC65D63RPxpPXOUGilsHJXALM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbgA2WyO (ORCPT
+        id S1726774AbgA3CBd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Jan 2020 17:54:14 -0500
-Received: from sonic312-27.consmr.mail.bf2.yahoo.com ([74.6.128.89]:36658 "EHLO
-        sonic312-27.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726401AbgA2WyO (ORCPT
+        Wed, 29 Jan 2020 21:01:33 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45594 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726632AbgA3CBd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Jan 2020 17:54:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1580338452; bh=3wknnWUBj6qFIGuljZKDjmuGgec62eX9+MWDo24faJc=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=UxmaH9oPQll6no4+a1Wma5URYyPY2vcHwqxPq22aWrQ5l5uKFPB08JFu3Pwdh9BLBnbgMsm0ArETKm5YUXeVHJHkDWwdwOH52FB/aysEgNhxEroILwZj9odS9+d9Oiv6+2Fbdm2B0rXIiRXP9fDOKoW5xXmRWeXfbCYMyP2kuF+0GyLk0wmIwQMKkEgYcD9DExQOCN5IY6IR4tDN1NzUJGoWdUxB+K5YHB2fybQIMBNu4tSVLbCfxZ4PkFe5NzSWtYzmTBsWWrd1j5B6408GYCe983Slip6FeF7UjlapYcr0JaySA/Xl3x8h1bOQ3gvOXbmD6tlWgxqXdsFfPmP8aQ==
-X-YMail-OSG: prhkVm8VM1mAz.U9DQtdpC.HTfw81S58m61UkzokY4ixMaGHbns6NmcpQr4a2OO
- gDSoVjk2gUs9frIiaIW_9yNvSV92eLzx.TmnyS.hPWN0ZxpBs7uUFzLxSIGIgXqOAVWrgGBtxTqx
- WoQ.vP6CK.ZkOV2M2nj9hjdwL8jXtJdVMUwJjvE8tmS6STcKJx7yEsx8S1_w.v.EPhkL5YaMmawM
- SsokPF3oSgWss4YWMjXvnIadQMkhYXtfuJ8fAeJMYoQPgY137x.o2jr2ufOWVDkvJqLvLDZFY8x8
- MS1V7yaAcRSQiQ8RKjP4ZnsQEHUVkpO3vnTY4DuZ5zxsP2aSCHt5zX.M7zXE2xpDV5QFBuKuw7uf
- 48cP9.qJSrdRfuL6hriJJoBLQCjegOb0tsdcEVnONrdCIjV9QW6YYG6XITZjiKquePGoVKPfOorw
- hXv7LTA5LWn1GB72wvwvnZoOBToGRovajlx9o9Tt_P5epk9WqmvT3cDoKgFwwDcritMbm8wslgQf
- 9Gg6yC_QTMZJF_.IeHKOxcLbXwWoNm.hckZMKGqm4WYnNgJu8f0nbailjDr6Gr70CEQeC9vNLGoi
- kG0eueAktZ3QXfNDrRsONHfqCRL7nmIGHlFAYMR4NEQLbjg2eHwBI2v_7mt09SMtKX0bMw1FHOMr
- 5B40nfH5RsvLgaS2U10FGM7NUhWRHqIVrVRk.6KjtBexHrTt4QuLeUDX5gO_Q.RIzGzS_1PZZex_
- Ve7Q7Ni_OTvS5ciShhrcX9jwve6MWGqGYG4CPdZejLi5dPh1gJmB2q1OMhfAJPP9CmWqTR2mXynJ
- 6gb82DlCdtnvtrvzSvptY3tH7rb2H397mqC6oKXJcNfrOsAteS3HapQC7XR2vR3XeDM8_UDuOtOh
- x2v8oAss6eCp2.5iD3_O_891oRYQYwJdBXgXTa3fV_eXzbFr5IurCxnYMV3GC1Wp8cufeOHUpLU.
- MvlhB_V4RaswCQ9efFsk_kfzAsf4J..8Z2f9kO8xXQnpgDd6t0MRZRABW1udV4r95xCo4TEh205G
- UBusO8CpxR42gbba2BvWqk7oB7sp3hD_EcfrHoTf0.WVLsTCFfjlWG92yPLbLroo3vJJxU8I51Sx
- UQ4VsSEq1Y.jJOBcwzeakrVsBFkpTrmqOrYl1lzfp8ALmChxNoT7G_Xj85ze5VsSnMshIQVY2JBa
- gMD5OlJQu8y.wTiaOA7zRio28h8K1P1rtahTTlWgA8aY2l7smNpfxXPr4Ev5El4jH2pxssCAtWaL
- XvokjrL4yrF2xv8VH7kNgtsIvcEGUByqT.PY5HociFPa8EHfl8T_0U.3RbbK_IEJ0.kOMmWgTLKE
- CYurqEPhFBHXWtscEjSQ5MmTta5JQPg1ulYlYVEq3C6DLhrGFroh9tcS1H7sHntIpZdSurYo41b4
- wLoflNzqQTwrJAFSaO7IykDjDEmjE
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.bf2.yahoo.com with HTTP; Wed, 29 Jan 2020 22:54:12 +0000
-Received: by smtp417.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d9bd0d7869ff9b44bd25a04729356b77;
-          Wed, 29 Jan 2020 22:54:10 +0000 (UTC)
-Subject: Re: linux-next: Tree for Jan 29 (security/smack/)
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200129155431.76bd7f25@canb.auug.org.au>
- <e66a563e-b612-c5b6-7bdd-b55113a9b822@infradead.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <3ac1c817-b310-c8f8-6990-1602db540106@schaufler-ca.com>
-Date:   Wed, 29 Jan 2020 14:54:09 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Wed, 29 Jan 2020 21:01:33 -0500
+Received: by mail-io1-f65.google.com with SMTP id i11so2109616ioi.12
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Jan 2020 18:01:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SLLmNga7Fg92j7Wp0mHpBfgEy1+qMj+VIGuo+fS2/qk=;
+        b=a+JuYJP7DExfh7Xj7D1MP+WDtc/4pqFZPRUg5vQnLk8/ZyMguwk24cOHfvPd/+sGjo
+         h/Bex96QHbUA/Do6IBNm3aQUtZ0/MIKqTX6OzyaprNtd5rcC2BwqmSEmVBo/H2cKZlIX
+         UwRdkikLwwWO0ZxE/cPRXFdIK2yswvPPSnjfk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SLLmNga7Fg92j7Wp0mHpBfgEy1+qMj+VIGuo+fS2/qk=;
+        b=GTgdrEyF2IvIdMo9qbjBaBifnjtCbe+tMS9YJrHNvtoLH5EDXbydghZ4Fe9qYJAZEi
+         BYH2q3jUj9NMvkUHo8jlIgSst5pzdjEqlF5FuiQCUR5hs7xXwnjFnSzDMVU2tmtRn4m1
+         /dv1hc6TiHq40tADrP55/qCEQl4CYeECRLsQ08NSOIFr0fuPeqMJw+sU7VAsSXO5EG3E
+         OG440tNLgvNjdT7/bwkEr9CFOXK71zJQkhm3ZAY6AzM1iB4cK8+6UPBOzrbiIdgyc+lV
+         O0PGaVQduEuuecnYHC+EQD8MQ9Rbk6kOSAz3OOS3xlrvP4gCXVJQpnw9KUUsrwuYqzRq
+         pLFQ==
+X-Gm-Message-State: APjAAAVtt33kc5ArbybgWDKIJkcNZnbBco4fBRMn7XSORrJ8IonKLiYU
+        IUL5dDbcf7YsVt6JKDfiyTcB3Q==
+X-Google-Smtp-Source: APXvYqwIZP1v3iiH4xKUKmxt616Y3bG9d/QnCJDyKghwbYBWw8lWb+GqRRh4rI20P6dDFb83B1oLRQ==
+X-Received: by 2002:a6b:c742:: with SMTP id x63mr2231819iof.162.1580349692648;
+        Wed, 29 Jan 2020 18:01:32 -0800 (PST)
+Received: from localhost.localdomain (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id n17sm1306437ile.68.2020.01.29.18.01.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jan 2020 18:01:31 -0800 (PST)
+From:   Shuah Khan <skhan@linuxfoundation.org>
+To:     jmorris@namei.org, serge@hallyn.com, mpe@ellerman.id.au,
+        zohar@linux.ibm.com, erichte@linux.ibm.com, nayna@linux.ibm.com,
+        yuehaibing@huawei.com
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] security/integrity: Include __func__ in messages for easier debug
+Date:   Wed, 29 Jan 2020 19:01:29 -0700
+Message-Id: <20200130020129.15328-1-skhan@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <e66a563e-b612-c5b6-7bdd-b55113a9b822@infradead.org>
-Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.15116 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/29/2020 2:18 PM, Randy Dunlap wrote:
-> On 1/28/20 8:54 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Please do not add any v5.7 material to your linux-next included
->> branches until after v5.6-rc1 has been released.
->>
->> Changes since 20200128:
->>
-This keeps coming up. It's in David Howells' watch queue changes.
-David, could you please fix this?
+Change messages to messages to make it easier to debug. The following
+error message isn't informative enough to figure out what failed.
 
-> ../security/smack/smack_lsm.c: In function �smack_post_notification�:
-> ../security/smack/smack_lsm.c:4383:7: error: dereferencing pointer to incomplete type �struct watch_notification�
->   if (n->type == WATCH_TYPE_META)
->        ^~
->   CC      kernel/time/hrtimer.o
-> ../security/smack/smack_lsm.c:4383:17: error: �WATCH_TYPE_META� undeclared (first use in this function); did you mean �TCA_PIE_BETA�?
->   if (n->type == WATCH_TYPE_META)
->                  ^~~~~~~~~~~~~~~
->                  TCA_PIE_BETA
->
->
-> Probably just missing
-> #include <linux/watch_queue.h>
->
->
+Couldn't get size: 0x800000000000000e
+
+Change messages to include function information.
+
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+---
+ .../integrity/platform_certs/load_powerpc.c     | 14 ++++++++------
+ security/integrity/platform_certs/load_uefi.c   | 17 ++++++++++-------
+ 2 files changed, 18 insertions(+), 13 deletions(-)
+
+diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+index a2900cb85357..621454148fbc 100644
+--- a/security/integrity/platform_certs/load_powerpc.c
++++ b/security/integrity/platform_certs/load_powerpc.c
+@@ -25,7 +25,7 @@ static __init void *get_cert_list(u8 *key, unsigned long keylen, uint64_t *size)
+ 
+ 	rc = secvar_ops->get(key, keylen, NULL, size);
+ 	if (rc) {
+-		pr_err("Couldn't get size: %d\n", rc);
++		pr_err("%s: Couldn't get size: %d\n", __func__, rc);
+ 		return NULL;
+ 	}
+ 
+@@ -36,7 +36,7 @@ static __init void *get_cert_list(u8 *key, unsigned long keylen, uint64_t *size)
+ 	rc = secvar_ops->get(key, keylen, db, size);
+ 	if (rc) {
+ 		kfree(db);
+-		pr_err("Error reading %s var: %d\n", key, rc);
++		pr_err("%s: Error reading %s var: %d\n", __func__, key, rc);
+ 		return NULL;
+ 	}
+ 
+@@ -69,23 +69,25 @@ static int __init load_powerpc_certs(void)
+ 	 */
+ 	db = get_cert_list("db", 3, &dbsize);
+ 	if (!db) {
+-		pr_err("Couldn't get db list from firmware\n");
++		pr_err("%s: Couldn't get db list from firmware\n", __func__);
+ 	} else {
+ 		rc = parse_efi_signature_list("powerpc:db", db, dbsize,
+ 					      get_handler_for_db);
+ 		if (rc)
+-			pr_err("Couldn't parse db signatures: %d\n", rc);
++			pr_err("%s: Couldn't parse db signatures: %d\n",
++				__func__, rc);
+ 		kfree(db);
+ 	}
+ 
+ 	dbx = get_cert_list("dbx", 4,  &dbxsize);
+ 	if (!dbx) {
+-		pr_info("Couldn't get dbx list from firmware\n");
++		pr_info("%s: Couldn't get dbx list from firmware\n", __func__);
+ 	} else {
+ 		rc = parse_efi_signature_list("powerpc:dbx", dbx, dbxsize,
+ 					      get_handler_for_dbx);
+ 		if (rc)
+-			pr_err("Couldn't parse dbx signatures: %d\n", rc);
++			pr_err("%s: Couldn't parse dbx signatures: %d\n",
++				__func__, rc);
+ 		kfree(dbx);
+ 	}
+ 
+diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+index 111898aad56e..c3cf6575abc1 100644
+--- a/security/integrity/platform_certs/load_uefi.c
++++ b/security/integrity/platform_certs/load_uefi.c
+@@ -44,7 +44,7 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+ 
+ 	status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
+ 	if (status != EFI_BUFFER_TOO_SMALL) {
+-		pr_err("Couldn't get size: 0x%lx\n", status);
++		pr_err("%s: Couldn't get size: 0x%lx\n", __func__, status);
+ 		return NULL;
+ 	}
+ 
+@@ -55,7 +55,7 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+ 	status = efi.get_variable(name, guid, NULL, &lsize, db);
+ 	if (status != EFI_SUCCESS) {
+ 		kfree(db);
+-		pr_err("Error reading db var: 0x%lx\n", status);
++		pr_err("%s: Error reading db var: 0x%lx\n", __func__, status);
+ 		return NULL;
+ 	}
+ 
+@@ -85,13 +85,14 @@ static int __init load_uefi_certs(void)
+ 	if (!uefi_check_ignore_db()) {
+ 		db = get_cert_list(L"db", &secure_var, &dbsize);
+ 		if (!db) {
+-			pr_err("MODSIGN: Couldn't get UEFI db list\n");
++			pr_err("%s: MODSIGN: Couldn't get UEFI db list\n",
++				__func__);
+ 		} else {
+ 			rc = parse_efi_signature_list("UEFI:db",
+ 					db, dbsize, get_handler_for_db);
+ 			if (rc)
+-				pr_err("Couldn't parse db signatures: %d\n",
+-				       rc);
++				pr_err("%s: Couldn't parse db signatures: %d\n",
++				       __func__, rc);
+ 			kfree(db);
+ 		}
+ 	}
+@@ -103,7 +104,8 @@ static int __init load_uefi_certs(void)
+ 		rc = parse_efi_signature_list("UEFI:MokListRT",
+ 					      mok, moksize, get_handler_for_db);
+ 		if (rc)
+-			pr_err("Couldn't parse MokListRT signatures: %d\n", rc);
++			pr_err("%s: Couldn't parse MokListRT signatures: %d\n",
++				__func__, rc);
+ 		kfree(mok);
+ 	}
+ 
+@@ -115,7 +117,8 @@ static int __init load_uefi_certs(void)
+ 					      dbx, dbxsize,
+ 					      get_handler_for_dbx);
+ 		if (rc)
+-			pr_err("Couldn't parse dbx signatures: %d\n", rc);
++			pr_err("%s: Couldn't parse dbx signatures: %d\n",
++				__func__, rc);
+ 		kfree(dbx);
+ 	}
+ 
+-- 
+2.20.1
+
