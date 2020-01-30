@@ -2,100 +2,113 @@ Return-Path: <SRS0=X2V5=3T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 888AEC2D0DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 16:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5152C3F68F
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 22:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67E5F20707
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 16:11:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EC78214AF
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jan 2020 22:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbgA3QLR (ORCPT
+        id S1726320AbgA3W0S (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Jan 2020 11:11:17 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2331 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727107AbgA3QLQ (ORCPT
+        Thu, 30 Jan 2020 17:26:18 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39828 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725985AbgA3W0S (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Jan 2020 11:11:16 -0500
-Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id BAA1C81DE1A523018B18;
-        Thu, 30 Jan 2020 16:11:14 +0000 (GMT)
-Received: from fraeml701-chm.china.huawei.com (10.206.15.50) by
- lhreml707-cah.china.huawei.com (10.201.108.48) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 30 Jan 2020 16:11:13 +0000
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml701-chm.china.huawei.com (10.206.15.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Thu, 30 Jan 2020 17:11:13 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1713.004;
- Thu, 30 Jan 2020 17:11:13 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH 1/8] tpm: initialize crypto_id of allocated_banks to
- HASH_ALGO__LAST
-Thread-Topic: [PATCH 1/8] tpm: initialize crypto_id of allocated_banks to
- HASH_ALGO__LAST
-Thread-Index: AQHV1TQUqrSCCRsJMUCD8Unf5gKCoagC2LQAgACMVSA=
-Date:   Thu, 30 Jan 2020 16:11:12 +0000
-Message-ID: <8c15cf66708a4d38916b8ca39f26b5f6@huawei.com>
+        Thu, 30 Jan 2020 17:26:18 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00UM74nL084971
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Jan 2020 17:26:17 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xv7b4h1ep-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Jan 2020 17:26:17 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 30 Jan 2020 22:26:14 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 30 Jan 2020 22:26:11 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00UMQA0l32178278
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Jan 2020 22:26:10 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB30B5204E;
+        Thu, 30 Jan 2020 22:26:10 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.209.158])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E0E3652051;
+        Thu, 30 Jan 2020 22:26:09 +0000 (GMT)
+Subject: Re: [PATCH 7/8] ima: use ima_hash_algo for collision detection in
+ the measurement list
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        jarkko.sakkinen@linux.intel.com,
+        james.bottomley@hansenpartnership.com,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Thu, 30 Jan 2020 17:26:09 -0500
+In-Reply-To: <20200127170443.21538-8-roberto.sassu@huawei.com>
 References: <20200127170443.21538-1-roberto.sassu@huawei.com>
-         <20200127170443.21538-2-roberto.sassu@huawei.com>
- <50afe1f50297b02af52621b6738ffff0c24f1bdf.camel@linux.intel.com>
-In-Reply-To: <50afe1f50297b02af52621b6738ffff0c24f1bdf.camel@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+         <20200127170443.21538-8-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20013022-0020-0000-0000-000003A5A584
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20013022-0021-0000-0000-000021FD5D09
+Message-Id: <1580423169.6104.18.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-30_07:2020-01-30,2020-01-30 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ adultscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
+ mlxlogscore=999 bulkscore=0 mlxscore=0 impostorscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2001300147
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYXJra28gU2Fra2luZW4gW21h
-aWx0bzpqYXJra28uc2Fra2luZW5AbGludXguaW50ZWwuY29tXQ0KPiBTZW50OiBUaHVyc2RheSwg
-SmFudWFyeSAzMCwgMjAyMCA5OjQ4IEFNDQo+IFRvOiBSb2JlcnRvIFNhc3N1IDxyb2JlcnRvLnNh
-c3N1QGh1YXdlaS5jb20+OyB6b2hhckBsaW51eC5pYm0uY29tOw0KPiBqYW1lcy5ib3R0b21sZXlA
-aGFuc2VucGFydG5lcnNoaXAuY29tOyBsaW51eC1pbnRlZ3JpdHlAdmdlci5rZXJuZWwub3JnDQo+
-IENjOiBsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxA
-dmdlci5rZXJuZWwub3JnOw0KPiBTaWx2aXUgVmxhc2NlYW51IDxTaWx2aXUuVmxhc2NlYW51QGh1
-YXdlaS5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS84XSB0cG06IGluaXRpYWxpemUgY3J5
-cHRvX2lkIG9mIGFsbG9jYXRlZF9iYW5rcyB0bw0KPiBIQVNIX0FMR09fX0xBU1QNCj4gDQo+IE9u
-IE1vbiwgMjAyMC0wMS0yNyBhdCAxODowNCArMDEwMCwgUm9iZXJ0byBTYXNzdSB3cm90ZToNCj4g
-PiBjaGlwLT5hbGxvY2F0ZWRfYmFua3MgY29udGFpbnMgdGhlIGxpc3Qgb2YgVFBNIGFsZ29yaXRo
-bSBJRHMgb2YgYWxsb2NhdGVkDQo+ID4gUENSIGJhbmtzLiBJdCBhbHNvIGNvbnRhaW5zIHRoZSBj
-b3JyZXNwb25kaW5nIElEIG9mIHRoZSBjcnlwdG8gc3Vic3lzdGVtLA0KPiA+IHNvIHRoYXQgdXNl
-cnMgb2YgdGhlIFRQTSBkcml2ZXIgY2FuIGNhbGN1bGF0ZSBhIGRpZ2VzdCBmb3IgYSBQQ1IgZXh0
-ZW5kDQo+ID4gb3BlcmF0aW9uLg0KPiA+DQo+ID4gSG93ZXZlciwgaWYgdGhlcmUgaXMgbm8gbWFw
-cGluZyBiZXR3ZWVuIFRQTSBhbGdvcml0aG0gSUQgYW5kIGNyeXB0byBJRCwNCj4gdGhlDQo+ID4g
-Y3J5cHRvX2lkIGZpZWxkIGluIGNoaXAtPmFsbG9jYXRlZF9iYW5rcyByZW1haW5zIHNldCB0byB6
-ZXJvICh0aGUgYXJyYXkgaXMNCj4gPiBhbGxvY2F0ZWQgYW5kIGluaXRpYWxpemVkIHdpdGgga2Nh
-bGxvYygpIGluIHRwbTJfZ2V0X3Bjcl9hbGxvY2F0aW9uKCkpLg0KPiA+IFplcm8gc2hvdWxkIG5v
-dCBiZSB1c2VkIGFzIHZhbHVlIGZvciB1bmtub3duIG1hcHBpbmdzLCBhcyBpdCBpcyBhIHZhbGlk
-DQo+ID4gY3J5cHRvIElEIChIQVNIX0FMR09fTUQ0KS4NCj4gPg0KPiA+IFRoaXMgcGF0Y2ggaW5p
-dGlhbGl6ZXMgY3J5cHRvX2lkIHRvIEhBU0hfQUxHT19fTEFTVC4NCj4gPg0KPiA+IFNpZ25lZC1v
-ZmYtYnk6IFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNvbT4tLS0NCj4gDQo+
-IFJlbWFya3M6DQo+IA0KPiAqIEFmdGVyIHRoZSBzdWJzeXN0ZW0gdGFnLCBzaG9ydCBzdW1tYXJ5
-IHN0YXJ0cyB3aXRoIGEgY2FwaXRhbCBsZXR0dGVyLg0KPiAqIE1pc3NpbmcgZml4ZXMgdGFnIGFu
-ZCBjYyB0YWcgdG8gc3RhYmxlLg0KPiAqIEEgc3RydWN0IGNhbGxlZCBhbGxvY2F0ZWRfYmFua3Mg
-ZG9lcyBub3QgZXhpc3QuDQo+ICogUGxlYXNlIHByZWZlciB1c2luZyBhbiBpbXBlcmF0aXZlIHNl
-bnRlbmNlIHdoZW4gZGVzY3JpYmluZyB0aGUgYWN0aW9uDQo+ICAgdG8gdGFrZSBlLmcuICJUaHVz
-LCBpbml0aWFsaXplIGNyeXB0b19pZCB0byBIQVNIX0FMR09fX0xBU1QiLg0KDQpUaGFua3MuIEkg
-d2lsbCBmaXggdGhlc2UgaXNzdWVzIGluIHRoZSBuZXh0IHZlcnNpb24gb2YgdGhlIHBhdGNoIHNl
-dC4NCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhS
-QiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExpIEppYW4sIFNoaSBZYW5saQ0K
+On Mon, 2020-01-27 at 18:04 +0100, Roberto Sassu wrote:
+> Before calculating a digest for each PCR bank, collisions were detected
+> with a SHA1 digest. This patch includes ima_hash_algo among the algorithms
+> used to calculate the template digest and checks collisions on that digest.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+
+Definitely needed to protect against a sha1 collision attack.
+
+<snip>
+
+>  
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> index ebaf0056735c..a9bb45de6db9 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -51,7 +51,7 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+>  	if (!*entry)
+>  		return -ENOMEM;
+>  
+> -	(*entry)->digests = kcalloc(ima_tpm_chip->nr_allocated_banks + 1,
+> +	(*entry)->digests = kcalloc(ima_tpm_chip->nr_allocated_banks + 2,
+>  				    sizeof(*(*entry)->digests), GFP_NOFS);
+>  	if (!(*entry)->digests) {
+>  		result = -ENOMEM;
+
+I would prefer not having to allocate and use "nr_allocated_banks + 1"
+everywhere, but I understand the need for it.  I'm not sure this patch
+warrants allocating +2.  Perhaps, if a TPM bank doesn't exist for the
+IMA default hash algorithm, use a different algorithm or, worst case,
+continue using the ima_sha1_idx.
+
+Mimi
+
