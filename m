@@ -2,172 +2,178 @@ Return-Path: <SRS0=n7+0=3X=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F703C35247
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Feb 2020 15:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B151C3F68F
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Feb 2020 18:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20D9B217BA
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Feb 2020 15:15:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E38BB2087E
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Feb 2020 18:53:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="dpTS20mK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbgBCPP3 (ORCPT
+        id S1729824AbgBCSxp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Feb 2020 10:15:29 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54238 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729062AbgBCPP3 (ORCPT
+        Mon, 3 Feb 2020 13:53:45 -0500
+Received: from USFB19PA34.eemsg.mail.mil ([214.24.26.197]:25465 "EHLO
+        USFB19PA34.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728546AbgBCSxo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Feb 2020 10:15:29 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 013FCwGH029343;
-        Mon, 3 Feb 2020 10:15:09 -0500
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xxhfahuk8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Feb 2020 10:15:08 -0500
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 013FEtRo002103;
-        Mon, 3 Feb 2020 15:15:08 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma02dal.us.ibm.com with ESMTP id 2xw0y6e89g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Feb 2020 15:15:07 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 013FF6wf45220128
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 3 Feb 2020 15:15:06 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F4216BE05A;
-        Mon,  3 Feb 2020 15:15:05 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9F0DCBE05B;
-        Mon,  3 Feb 2020 15:15:04 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.160.115.135])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon,  3 Feb 2020 15:15:04 +0000 (GMT)
-Subject: Re: [PATCH] security/integrity: Include __func__ in messages for
- easier debug
-To:     Joe Perches <joe@perches.com>,
-        Shuah Khan <skhan@linuxfoundation.org>, jmorris@namei.org,
-        serge@hallyn.com, mpe@ellerman.id.au, zohar@linux.ibm.com,
-        erichte@linux.ibm.com, nayna@linux.ibm.com, yuehaibing@huawei.com
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200130020129.15328-1-skhan@linuxfoundation.org>
- <ab2e19123cc15e3f8039b0d36e6ebae385db700e.camel@perches.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Message-ID: <79d7b969-9b7d-7853-356b-876e444d3390@linux.vnet.ibm.com>
-Date:   Mon, 3 Feb 2020 10:15:03 -0500
+        Mon, 3 Feb 2020 13:53:44 -0500
+X-EEMSG-check-017: 52852881|USFB19PA34_ESA_OUT04.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.70,398,1574121600"; 
+   d="scan'208";a="52852881"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by USFB19PA34.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 03 Feb 2020 18:53:34 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1580756014; x=1612292014;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=c0tNOfoenOczbEUNoUXRS3C9BeX4as5DpwOpBqZAVok=;
+  b=dpTS20mK6qCqQHGHFGc5lfOyoOFz/TPdWN9fSTP6TtKvOtrtw59aaBzR
+   LqUD70V0+SqRrAc/7QgWdxjDxn+uFQyqX1vl52wQtc/Iw6+UeJKoxP4fI
+   nYRRh2Kedkevyab70M0sufRc8lF6xsBRUZQngXQ1xdkXC/fLzii//ZLXn
+   Ak92J+DGFfjnAot+fOwmSEDtQcjWYlEMgRAB5P2AQNEyNfJR4UShX0d6K
+   u9W/6snw8g+ReKxAPCSY2/hxDFxxbqKqRRmk278TwO848X8CpQNVM5KJu
+   Umuk92hUGXnvnlouhsAhT7A+ehuOvTeaYsEaS4tv87Escv04E2ZTSJXEf
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.70,398,1574121600"; 
+   d="scan'208";a="32623636"
+IronPort-PHdr: =?us-ascii?q?9a23=3AKFTXShASMP2+qGqR08PIUyQJP3N1i/DPJgcQr6?=
+ =?us-ascii?q?AfoPdwSP3+p8uwAkXT6L1XgUPTWs2DsrQY0raQ7/+rADVcqdbZ6TZeKccKD0?=
+ =?us-ascii?q?dEwewt3CUYSPafDkP6KPO4JwcbJ+9lEGFfwnegLEJOE9z/bVCB6le77DoVBw?=
+ =?us-ascii?q?mtfVEtfre9FYHdldm42P6v8JPPfQpImCC9YbRvJxmqsAndrMYbjZZtJ6orxR?=
+ =?us-ascii?q?bEoHREd/lLyW5nOFmfmwrw6tqq8JNs7ihdtegt+9JcXan/Yq81UaFWADM6Pm?=
+ =?us-ascii?q?4v+cblrwPDTQyB5nsdVmUZjB9FCBXb4R/5Q5n8rDL0uvJy1yeGM8L2S6s0WS?=
+ =?us-ascii?q?m54KdwVBDokiYHOCUn/2zRl8d9kbhUoBOlpxx43o7UfISYP+dwc6/BYd8XQ3?=
+ =?us-ascii?q?dKU91PXCJdHIyzc4oPD/IAPelGqYn9u0AOpga6CQW1Ge/j1iNEinrw0KI0ye?=
+ =?us-ascii?q?QhFRzN0hImEdwArX/YqMz5OakWXOywyqTD0DfNYO5M2Trl9YbGbB4hr/GPU7?=
+ =?us-ascii?q?x+f8XexksgGB/KgFiLtYzoPSmY2vgRv2WV7edtU/+khW49qwF2pzii3toiip?=
+ =?us-ascii?q?XXiYINylDL6yN5y5soK929UkF7ZdqkH4VQtiqHMIZ2Wd4tQ3pztSYmyrwJpZ?=
+ =?us-ascii?q?67fC8QxJQh3B7QceaLc4eP4hL9TeucJypzinF9eL+nmhq//ketxvf8W8Wpyl?=
+ =?us-ascii?q?pGsCVInsfWunwQ0RHY99KJReFn/ki73DaCzwXT6uZZLk8qjafbMJshwqIolp?=
+ =?us-ascii?q?oUrETDAjf6mEXog6+ScUUp4vSo5P79YrXnu5+cLJV4igD4MqQgncy/Gvo3PR?=
+ =?us-ascii?q?QUU2iH+eWzyL3j/UrjTLVMkvI2ibXWvIrfJcQaoq61Gw5V0oA95BajFzqqzd?=
+ =?us-ascii?q?sVkHYdIF9FZR6LlZblNl7QLPziEPuzm1Gsny1qx/DCML3hGJLNLn3bnbf6YL?=
+ =?us-ascii?q?l98FVRyBYzzN9D55JUDasNIPToWkDrrtDYARg5MxKsz+b9FNp9zp8eWX6IAq?=
+ =?us-ascii?q?KBLKzdq0SI6fwvIuSXf48apDb9JOI45/7giX82h0UdcbC10pQNcny3AvNmI0?=
+ =?us-ascii?q?CBa3r2ntgBCXsKvhY5TOHylFKNSyVTaGiyXq4m/TE0FIKmAp3eRoCjhLyOwj?=
+ =?us-ascii?q?27E4ZXZmBAFlCDD3Poe5+YVPcLbSKYOtVhnSAcVbi9V48h0gmjtA3/y7pgNO?=
+ =?us-ascii?q?rU4CwYtYn42dhz/eLTkA899T1uA8SayWGNQHl+nnkUSD8uwKB/vUt9x0+H0a?=
+ =?us-ascii?q?h5hfxYCNNS6+pSUggkKZHc0vZ6C9HuWgPBZ9uJTVGmTci7ATE1UN082MEOY0?=
+ =?us-ascii?q?ljFNW4lBzD3DSlA6UTl7OVAJw46KXc32L+J8xl0XbJyLEhj0U6QstILWCmnb?=
+ =?us-ascii?q?Bw9wzSB47PjkWYmL2ndboT3CHT7meP12mOs19CUA52T6rFWWoTZkzMrdT2/k?=
+ =?us-ascii?q?nCVaOhCaw7Mgtdzs6PMqhKZcP3glVdWPjjP9PeY2GqlmisBRaI3LSMbI/re2?=
+ =?us-ascii?q?UA2SXREk8Ekxoc/XyeLwgxGj+ho37CDDxpDV/vYUTs8el4qH+hTE80yAGKYF?=
+ =?us-ascii?q?dn17qu5BEVg+eRRO8J0bICvychrTR0E0qn0NLSEdaPuw1hfKBEa9Mn/FhHzX?=
+ =?us-ascii?q?7ZtxB6PpG4N6BtmFgecwtqv0Pv0RV7E4ZAntYwrHMs0gVyLbmV0FJYezOc2p?=
+ =?us-ascii?q?DwJKPYJnPp/B+1aK7Wx0ve38yM9qcJ9vs0sVfjvBmxHEo473pny8VV02eb5p?=
+ =?us-ascii?q?jSFAodS4/xUkIs+hhivb7afy0965rR1X1rNqm0qCHN18g1C+sizxbzN+tYZY?=
+ =?us-ascii?q?iNDwLjW/YRB8GzJugngRD9ZRsfMfF676U0Nt6oc/acnaWieu1nmWTixW9O+4?=
+ =?us-ascii?q?1slFmH9yNhROrFxb4Exe2V2k2MUDK4xFWktdrtmJtsYzgXE2v5zjLrQMZVZ6?=
+ =?us-ascii?q?tvbcMQBGyzOcyr15B7gJLwX3Nw6lGuHRUF1dWvdB7UaEbymUVL2EAWp2G3sT?=
+ =?us-ascii?q?W3wiYykDwzqKebmivUzLfMbh0Cb1VXSXFigFGkGo29i9QXTQD8dAQyvAe07k?=
+ =?us-ascii?q?b9ga5AreJwKHeFEhQARDT/M2w3Cvj4jbGFecMarcpz4Cg=3D?=
+X-IPAS-Result: =?us-ascii?q?A2BdAACnaDhe/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
+ =?us-ascii?q?QICAQEBAYF7gX2BbSASKoQUiQOGXgEBBoE3iW+RSQkBAQEBAQEBAQE3AQGEQ?=
+ =?us-ascii?q?AKCWDgTAhABAQEEAQEBAQEFAwEBbIVDgjspAYMBAQEBAQMjFUEQCxEDAQIBA?=
+ =?us-ascii?q?gImAgJPCAYBDAYCAQGCYz+CVyWrZ3WBMoVKg0aBPoEOKogshA55gQeBOA+CX?=
+ =?us-ascii?q?T6HW4JeBJZXYUaXZIJFgk6TbAYbmwiOYZ0rIoFYKwgCGAghD4MnUBgNnQEjA?=
+ =?us-ascii?q?zCPCQEB?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 03 Feb 2020 18:53:32 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 013IqeQ6060853;
+        Mon, 3 Feb 2020 13:52:40 -0500
+Subject: Re: [PATCH v14 22/23] LSM: Add /proc attr entry for full LSM context
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
+References: <20200124002306.3552-1-casey@schaufler-ca.com>
+ <20200124002306.3552-23-casey@schaufler-ca.com>
+ <1de8338a-9c1c-c13b-16f0-e47ebec0e7ea@tycho.nsa.gov>
+ <f3dea066-1f6d-4b92-1a5b-dac25b58aae7@tycho.nsa.gov>
+ <9afb8d9d-a590-0e13-bf46-53a347ea15dd@schaufler-ca.com>
+ <6bd3e393-e1df-7117-d15a-81cb1946807b@tycho.nsa.gov>
+ <446935fa-2926-c346-a273-ae1ecbb072cd@schaufler-ca.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <09d96236-715a-344a-38bc-c05208698125@tycho.nsa.gov>
+Date:   Mon, 3 Feb 2020 13:54:45 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <ab2e19123cc15e3f8039b0d36e6ebae385db700e.camel@perches.com>
+In-Reply-To: <446935fa-2926-c346-a273-ae1ecbb072cd@schaufler-ca.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-03_04:2020-02-02,2020-02-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- phishscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxlogscore=999 spamscore=0 clxscore=1011 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1911200001 definitions=main-2002030114
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 1/29/20 10:08 PM, Joe Perches wrote:
-> On Wed, 2020-01-29 at 19:01 -0700, Shuah Khan wrote:
->> Change messages to messages to make it easier to debug. The following
->> error message isn't informative enough to figure out what failed.
->> Change messages to include function information.
->>
->> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
->> ---
->>   .../integrity/platform_certs/load_powerpc.c     | 14 ++++++++------
->>   security/integrity/platform_certs/load_uefi.c   | 17 ++++++++++-------
->>   2 files changed, 18 insertions(+), 13 deletions(-)
->>
->> diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
-> perhaps instead add #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> so all the pr_<level> logging is more specific.
->
-> This would prefix all pr_<level> output with "integrity: "
->
-> 3integrity: Couldn't get size: 0x%lx
-> 3integrity: Error reading db var: 0x%lx
-> 3integrity: MODSIGN: Couldn't get UEFI db list
-> 3integrity: Couldn't parse db signatures: %d
-> 6integrity: Couldn't get UEFI MokListRT
-> 3integrity: Couldn't parse MokListRT signatures: %d
-> 6integrity: Couldn't get UEFI dbx list
-> 3integrity: Couldn't parse dbx signatures: %d
->
-> 5integrity: Platform Keyring initialized
-> 6integrity: Error adding keys to platform keyring %s
->
+On 1/31/20 5:10 PM, Casey Schaufler wrote:
+>  From c4085435215653b7c4d07a35a9df308120441d79 Mon Sep 17 00:00:00 2001
+> From: Casey Schaufler <casey@schaufler-ca.com>
+> Date: Fri, 31 Jan 2020 13:57:23 -0800
+> Subject: [PATCH v14] LSM: Move "context" format enforcement into security
+>   modules
+> 
+> Document in lsm_hooks.h what is expected of a security module that
+> supplies the "context" attribute.  Add handling of the "context"
+> attribute to SELinux, Smack and AppArmor security modules. The
+> AppArmor implementation provides a different string for "context"
+> than it does for other attributes to conform with the "context"
+> format.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->   security/integrity/platform_certs/load_powerpc.c     | 3 +++
->   security/integrity/platform_certs/load_uefi.c        | 2 ++
->   security/integrity/platform_certs/platform_keyring.c | 2 ++
->   3 files changed, 7 insertions(+)
->
-> diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
-> index a2900c..5cfbd0 100644
-> --- a/security/integrity/platform_certs/load_powerpc.c
-> +++ b/security/integrity/platform_certs/load_powerpc.c
-> @@ -5,6 +5,9 @@
+>   include/linux/lsm_hooks.h            |  6 ++++++
+>   security/apparmor/include/procattr.h |  2 +-
+>   security/apparmor/lsm.c              |  8 ++++++--
+>   security/apparmor/procattr.c         | 11 +++++++----
+>   security/security.c                  |  2 +-
+>   security/selinux/hooks.c             |  2 +-
+>   security/smack/smack_lsm.c           |  2 +-
+>   7 files changed, 23 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 2bf82e1cf347..61977a33f2c3 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1321,6 +1321,12 @@
+>    *	@pages contains the number of pages.
+>    *	Return 0 if permission is granted.
 >    *
->    *      - loads keys and hashes stored and controlled by the firmware.
->    */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
+> + * @getprocattr:
+> + *	Provide the named process attribute for display in special files in
+> + *	the /proc/.../attr directory.  Attribute naming and the data displayed
+> + *	is at the discretion of the security modules.  The exception is the
+> + *	"context" attribute, which will contain the security context of the
+> + *	task as a nul terminated text string without trailing whitespace.
 
-Looks good. How about slight addition in it as below:
+I'd suggest something like the following instead:
+* @getprocattr
+*   Get the value of process attribute @name for task @p into a buffer
+*   allocated by the security module and returned via @value.  The
+*   caller will free the returned buffer via kfree.  The set of
+*   attribute names is fixed by proc but the format of @value is up
+*   to the security module authors except for the "context" attribute,
+*   whose value is required to be a NUL-terminated printable ASCII
+*   string without trailing whitespace.
+*   @p the task whose attribute is being fetched
+*   @name the name of the process attribute being fetched
+*   @value set to point to the buffer containing the attribute value
+*   Return the length of @value including the NUL on success, or -errno 
+on error.
 
-#define pr_fmt(fmt) KBUILD_MODNAME ": load_powerpc: " fmt
-
-
->   #include <linux/kernel.h>
->   #include <linux/sched.h>
->   #include <linux/cred.h>
-> diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-> index 111898a..480450a 100644
-> --- a/security/integrity/platform_certs/load_uefi.c
-> +++ b/security/integrity/platform_certs/load_uefi.c
-> @@ -1,5 +1,7 @@
->   // SPDX-License-Identifier: GPL-2.0
->   
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-
-Similarly...
-
-#define pr_fmt(fmt) KBUILD_MODNAME ": load_uefi: " fmt
-
-> +
->   #include <linux/kernel.h>
->   #include <linux/sched.h>
->   #include <linux/cred.h>
-> diff --git a/security/integrity/platform_certs/platform_keyring.c b/security/integrity/platform_certs/platform_keyring.c
-> index 7646e35..9bd2846 100644
-> --- a/security/integrity/platform_certs/platform_keyring.c
-> +++ b/security/integrity/platform_certs/platform_keyring.c
-> @@ -6,6 +6,8 @@
->    * Author(s): Nayna Jain <nayna@linux.ibm.com>
->    */
->   
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-
-Same here...
-
-#define pr_fmt(fmt) KBUILD_MODNAME ": platform_keyring:  " fmt
-
-Thanks & Regards,
-
-       - Nayna
-
+The printable ASCII bit is based on what the dbus maintainer requested 
+in previous discussions.  The question of whether the terminating NUL 
+should be included in the returned length was otherwise left ambiguous 
+and inconsistent in your patch among the different security modules; if 
+you prefer not including it in the length returned by the security 
+modules, you'll need to adjust SELinux at least to not do so for "context".
