@@ -4,176 +4,119 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B151C3F68F
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Feb 2020 18:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 907D6C35249
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Feb 2020 18:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E38BB2087E
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Feb 2020 18:53:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="dpTS20mK"
+	by mail.kernel.org (Postfix) with ESMTP id 6B31B2086A
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Feb 2020 18:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580756128;
+	bh=aU6fT25DxtRCHhfhKhLA3qZuJBIi/kULcOFBgTIdv+s=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=GgEe/33nWaxfFjFLEekCeinoW0Bfp6WmELp5G6ZO2D63lP6kvu5/KW7Hh4Ry+0wmO
+	 gKs/fktU4gYVkemeBykozIavA5DJ7XkNndHutYzRbRG8cYceg+CehdDKrkb5T2DSpA
+	 Mjb8wIVFJEM+M2G8LuU3slVmOVMnS+frR5V+MW6c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729824AbgBCSxp (ORCPT
+        id S1727275AbgBCSz1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Feb 2020 13:53:45 -0500
-Received: from USFB19PA34.eemsg.mail.mil ([214.24.26.197]:25465 "EHLO
-        USFB19PA34.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728546AbgBCSxo (ORCPT
+        Mon, 3 Feb 2020 13:55:27 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38828 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728483AbgBCSz0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Feb 2020 13:53:44 -0500
-X-EEMSG-check-017: 52852881|USFB19PA34_ESA_OUT04.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.70,398,1574121600"; 
-   d="scan'208";a="52852881"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by USFB19PA34.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 03 Feb 2020 18:53:34 +0000
+        Mon, 3 Feb 2020 13:55:26 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a9so537813wmj.3
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Feb 2020 10:55:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1580756014; x=1612292014;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=c0tNOfoenOczbEUNoUXRS3C9BeX4as5DpwOpBqZAVok=;
-  b=dpTS20mK6qCqQHGHFGc5lfOyoOFz/TPdWN9fSTP6TtKvOtrtw59aaBzR
-   LqUD70V0+SqRrAc/7QgWdxjDxn+uFQyqX1vl52wQtc/Iw6+UeJKoxP4fI
-   nYRRh2Kedkevyab70M0sufRc8lF6xsBRUZQngXQ1xdkXC/fLzii//ZLXn
-   Ak92J+DGFfjnAot+fOwmSEDtQcjWYlEMgRAB5P2AQNEyNfJR4UShX0d6K
-   u9W/6snw8g+ReKxAPCSY2/hxDFxxbqKqRRmk278TwO848X8CpQNVM5KJu
-   Umuk92hUGXnvnlouhsAhT7A+ehuOvTeaYsEaS4tv87Escv04E2ZTSJXEf
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.70,398,1574121600"; 
-   d="scan'208";a="32623636"
-IronPort-PHdr: =?us-ascii?q?9a23=3AKFTXShASMP2+qGqR08PIUyQJP3N1i/DPJgcQr6?=
- =?us-ascii?q?AfoPdwSP3+p8uwAkXT6L1XgUPTWs2DsrQY0raQ7/+rADVcqdbZ6TZeKccKD0?=
- =?us-ascii?q?dEwewt3CUYSPafDkP6KPO4JwcbJ+9lEGFfwnegLEJOE9z/bVCB6le77DoVBw?=
- =?us-ascii?q?mtfVEtfre9FYHdldm42P6v8JPPfQpImCC9YbRvJxmqsAndrMYbjZZtJ6orxR?=
- =?us-ascii?q?bEoHREd/lLyW5nOFmfmwrw6tqq8JNs7ihdtegt+9JcXan/Yq81UaFWADM6Pm?=
- =?us-ascii?q?4v+cblrwPDTQyB5nsdVmUZjB9FCBXb4R/5Q5n8rDL0uvJy1yeGM8L2S6s0WS?=
- =?us-ascii?q?m54KdwVBDokiYHOCUn/2zRl8d9kbhUoBOlpxx43o7UfISYP+dwc6/BYd8XQ3?=
- =?us-ascii?q?dKU91PXCJdHIyzc4oPD/IAPelGqYn9u0AOpga6CQW1Ge/j1iNEinrw0KI0ye?=
- =?us-ascii?q?QhFRzN0hImEdwArX/YqMz5OakWXOywyqTD0DfNYO5M2Trl9YbGbB4hr/GPU7?=
- =?us-ascii?q?x+f8XexksgGB/KgFiLtYzoPSmY2vgRv2WV7edtU/+khW49qwF2pzii3toiip?=
- =?us-ascii?q?XXiYINylDL6yN5y5soK929UkF7ZdqkH4VQtiqHMIZ2Wd4tQ3pztSYmyrwJpZ?=
- =?us-ascii?q?67fC8QxJQh3B7QceaLc4eP4hL9TeucJypzinF9eL+nmhq//ketxvf8W8Wpyl?=
- =?us-ascii?q?pGsCVInsfWunwQ0RHY99KJReFn/ki73DaCzwXT6uZZLk8qjafbMJshwqIolp?=
- =?us-ascii?q?oUrETDAjf6mEXog6+ScUUp4vSo5P79YrXnu5+cLJV4igD4MqQgncy/Gvo3PR?=
- =?us-ascii?q?QUU2iH+eWzyL3j/UrjTLVMkvI2ibXWvIrfJcQaoq61Gw5V0oA95BajFzqqzd?=
- =?us-ascii?q?sVkHYdIF9FZR6LlZblNl7QLPziEPuzm1Gsny1qx/DCML3hGJLNLn3bnbf6YL?=
- =?us-ascii?q?l98FVRyBYzzN9D55JUDasNIPToWkDrrtDYARg5MxKsz+b9FNp9zp8eWX6IAq?=
- =?us-ascii?q?KBLKzdq0SI6fwvIuSXf48apDb9JOI45/7giX82h0UdcbC10pQNcny3AvNmI0?=
- =?us-ascii?q?CBa3r2ntgBCXsKvhY5TOHylFKNSyVTaGiyXq4m/TE0FIKmAp3eRoCjhLyOwj?=
- =?us-ascii?q?27E4ZXZmBAFlCDD3Poe5+YVPcLbSKYOtVhnSAcVbi9V48h0gmjtA3/y7pgNO?=
- =?us-ascii?q?rU4CwYtYn42dhz/eLTkA899T1uA8SayWGNQHl+nnkUSD8uwKB/vUt9x0+H0a?=
- =?us-ascii?q?h5hfxYCNNS6+pSUggkKZHc0vZ6C9HuWgPBZ9uJTVGmTci7ATE1UN082MEOY0?=
- =?us-ascii?q?ljFNW4lBzD3DSlA6UTl7OVAJw46KXc32L+J8xl0XbJyLEhj0U6QstILWCmnb?=
- =?us-ascii?q?Bw9wzSB47PjkWYmL2ndboT3CHT7meP12mOs19CUA52T6rFWWoTZkzMrdT2/k?=
- =?us-ascii?q?nCVaOhCaw7Mgtdzs6PMqhKZcP3glVdWPjjP9PeY2GqlmisBRaI3LSMbI/re2?=
- =?us-ascii?q?UA2SXREk8Ekxoc/XyeLwgxGj+ho37CDDxpDV/vYUTs8el4qH+hTE80yAGKYF?=
- =?us-ascii?q?dn17qu5BEVg+eRRO8J0bICvychrTR0E0qn0NLSEdaPuw1hfKBEa9Mn/FhHzX?=
- =?us-ascii?q?7ZtxB6PpG4N6BtmFgecwtqv0Pv0RV7E4ZAntYwrHMs0gVyLbmV0FJYezOc2p?=
- =?us-ascii?q?DwJKPYJnPp/B+1aK7Wx0ve38yM9qcJ9vs0sVfjvBmxHEo473pny8VV02eb5p?=
- =?us-ascii?q?jSFAodS4/xUkIs+hhivb7afy0965rR1X1rNqm0qCHN18g1C+sizxbzN+tYZY?=
- =?us-ascii?q?iNDwLjW/YRB8GzJugngRD9ZRsfMfF676U0Nt6oc/acnaWieu1nmWTixW9O+4?=
- =?us-ascii?q?1slFmH9yNhROrFxb4Exe2V2k2MUDK4xFWktdrtmJtsYzgXE2v5zjLrQMZVZ6?=
- =?us-ascii?q?tvbcMQBGyzOcyr15B7gJLwX3Nw6lGuHRUF1dWvdB7UaEbymUVL2EAWp2G3sT?=
- =?us-ascii?q?W3wiYykDwzqKebmivUzLfMbh0Cb1VXSXFigFGkGo29i9QXTQD8dAQyvAe07k?=
- =?us-ascii?q?b9ga5AreJwKHeFEhQARDT/M2w3Cvj4jbGFecMarcpz4Cg=3D?=
-X-IPAS-Result: =?us-ascii?q?A2BdAACnaDhe/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
- =?us-ascii?q?QICAQEBAYF7gX2BbSASKoQUiQOGXgEBBoE3iW+RSQkBAQEBAQEBAQE3AQGEQ?=
- =?us-ascii?q?AKCWDgTAhABAQEEAQEBAQEFAwEBbIVDgjspAYMBAQEBAQMjFUEQCxEDAQIBA?=
- =?us-ascii?q?gImAgJPCAYBDAYCAQGCYz+CVyWrZ3WBMoVKg0aBPoEOKogshA55gQeBOA+CX?=
- =?us-ascii?q?T6HW4JeBJZXYUaXZIJFgk6TbAYbmwiOYZ0rIoFYKwgCGAghD4MnUBgNnQEjA?=
- =?us-ascii?q?zCPCQEB?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 03 Feb 2020 18:53:32 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 013IqeQ6060853;
-        Mon, 3 Feb 2020 13:52:40 -0500
-Subject: Re: [PATCH v14 22/23] LSM: Add /proc attr entry for full LSM context
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
-References: <20200124002306.3552-1-casey@schaufler-ca.com>
- <20200124002306.3552-23-casey@schaufler-ca.com>
- <1de8338a-9c1c-c13b-16f0-e47ebec0e7ea@tycho.nsa.gov>
- <f3dea066-1f6d-4b92-1a5b-dac25b58aae7@tycho.nsa.gov>
- <9afb8d9d-a590-0e13-bf46-53a347ea15dd@schaufler-ca.com>
- <6bd3e393-e1df-7117-d15a-81cb1946807b@tycho.nsa.gov>
- <446935fa-2926-c346-a273-ae1ecbb072cd@schaufler-ca.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <09d96236-715a-344a-38bc-c05208698125@tycho.nsa.gov>
-Date:   Mon, 3 Feb 2020 13:54:45 -0500
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ie8CpiNgWDcburcuPjt9H+F+5SRbzWgUOwncPrTzNjY=;
+        b=VaUcSm01GK2R+CNaS7gDPrQciZt9PkQZViXyJJN1yKtmv5CEpy6eHLWR7NHgUXiP+w
+         NGdJdKcjqITXZ6FgRLg/5ib+Sf7Fzhrg+IZjXvecsrs29ShnFPdpitU2qpYIcs6TnE7m
+         coHz6yHHPGGVS3TQrMNKlpHbYs14wOtYBtq2Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ie8CpiNgWDcburcuPjt9H+F+5SRbzWgUOwncPrTzNjY=;
+        b=PlbdR+2QtRySrfIeVv+cGlfe0ZHX9rBkEgA11WvkS86904fDi6p7YOvH8UamAh08XT
+         H0KuwgXrg7ZnSYJGa2yqijQ1xS9M2ec+mlv8edlUceeqwWltOw4EXKLWk4qW5v5F8r3C
+         IpmITgkCzZ1HFF0v6OJ5AwxMV0hq7uaqEnyQGrLX8fNxN4zokIrr2vG7EGusgTaVXtT5
+         x1KzXRkFDYsNwBWONRIjxUwfmDDpv4tzDyUy+xVqk4hNjhXndxg5nr+mCqJhzhWxpppU
+         kCFejZmGUaonJtG7I2NbGQW3hJwJcrVYO3ZbXgOdClleYNgB1Or854Pf5LIYupYjUe65
+         1vXQ==
+X-Gm-Message-State: APjAAAUo+npouN7fW72VeK4TJffGSvKYazwPoSyvz9CFF7GSPBUVPCTM
+        NYeVK2PQDM7OZaJPrS8+ZYvbDw==
+X-Google-Smtp-Source: APXvYqy0iI5mT5cFrZRL2s+mHaug6jkUnHE10yjltHvFAP0FlmSRkbUXH7Jq571mpmoVVFVJjqUibQ==
+X-Received: by 2002:a1c:7717:: with SMTP id t23mr461827wmi.17.1580756124265;
+        Mon, 03 Feb 2020 10:55:24 -0800 (PST)
+Received: from [172.16.13.174] (host81-133-38-158.in-addr.btopenworld.com. [81.133.38.158])
+        by smtp.gmail.com with ESMTPSA id h10sm24728152wre.3.2020.02.03.10.55.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Feb 2020 10:55:23 -0800 (PST)
+Subject: Re: [PATCH] security/integrity: Include __func__ in messages for
+ easier debug
+To:     Mimi Zohar <zohar@linux.ibm.com>, Joe Perches <joe@perches.com>,
+        jmorris@namei.org, serge@hallyn.com, mpe@ellerman.id.au,
+        erichte@linux.ibm.com, nayna@linux.ibm.com, yuehaibing@huawei.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20200130020129.15328-1-skhan@linuxfoundation.org>
+ <ab2e19123cc15e3f8039b0d36e6ebae385db700e.camel@perches.com>
+ <1580736077.5585.4.camel@linux.ibm.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <475ab05c-300b-fdbe-5de0-6fce8d1a360d@linuxfoundation.org>
+Date:   Mon, 3 Feb 2020 11:55:22 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <446935fa-2926-c346-a273-ae1ecbb072cd@schaufler-ca.com>
+In-Reply-To: <1580736077.5585.4.camel@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/31/20 5:10 PM, Casey Schaufler wrote:
->  From c4085435215653b7c4d07a35a9df308120441d79 Mon Sep 17 00:00:00 2001
-> From: Casey Schaufler <casey@schaufler-ca.com>
-> Date: Fri, 31 Jan 2020 13:57:23 -0800
-> Subject: [PATCH v14] LSM: Move "context" format enforcement into security
->   modules
+On 2/3/20 6:21 AM, Mimi Zohar wrote:
+> On Wed, 2020-01-29 at 19:08 -0800, Joe Perches wrote:
+>> On Wed, 2020-01-29 at 19:01 -0700, Shuah Khan wrote:
+>>> Change messages to messages to make it easier to debug. The following
+>>> error message isn't informative enough to figure out what failed.
+>>> Change messages to include function information.
+>>>
+>>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+>>> ---
+>>>   .../integrity/platform_certs/load_powerpc.c     | 14 ++++++++------
+>>>   security/integrity/platform_certs/load_uefi.c   | 17 ++++++++++-------
+>>>   2 files changed, 18 insertions(+), 13 deletions(-)
+>>>
+>>> diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+>>
+>> perhaps instead add #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>> so all the pr_<level> logging is more specific.
+>>
+>> This would prefix all pr_<level> output with "integrity: "
 > 
-> Document in lsm_hooks.h what is expected of a security module that
-> supplies the "context" attribute.  Add handling of the "context"
-> attribute to SELinux, Smack and AppArmor security modules. The
-> AppArmor implementation provides a different string for "context"
-> than it does for other attributes to conform with the "context"
-> format.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->   include/linux/lsm_hooks.h            |  6 ++++++
->   security/apparmor/include/procattr.h |  2 +-
->   security/apparmor/lsm.c              |  8 ++++++--
->   security/apparmor/procattr.c         | 11 +++++++----
->   security/security.c                  |  2 +-
->   security/selinux/hooks.c             |  2 +-
->   security/smack/smack_lsm.c           |  2 +-
->   7 files changed, 23 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 2bf82e1cf347..61977a33f2c3 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -1321,6 +1321,12 @@
->    *	@pages contains the number of pages.
->    *	Return 0 if permission is granted.
->    *
-> + * @getprocattr:
-> + *	Provide the named process attribute for display in special files in
-> + *	the /proc/.../attr directory.  Attribute naming and the data displayed
-> + *	is at the discretion of the security modules.  The exception is the
-> + *	"context" attribute, which will contain the security context of the
-> + *	task as a nul terminated text string without trailing whitespace.
 
-I'd suggest something like the following instead:
-* @getprocattr
-*   Get the value of process attribute @name for task @p into a buffer
-*   allocated by the security module and returned via @value.  The
-*   caller will free the returned buffer via kfree.  The set of
-*   attribute names is fixed by proc but the format of @value is up
-*   to the security module authors except for the "context" attribute,
-*   whose value is required to be a NUL-terminated printable ASCII
-*   string without trailing whitespace.
-*   @p the task whose attribute is being fetched
-*   @name the name of the process attribute being fetched
-*   @value set to point to the buffer containing the attribute value
-*   Return the length of @value including the NUL on success, or -errno 
-on error.
+Joe! Sorry for the delay in getting back to you.
 
-The printable ASCII bit is based on what the dbus maintainer requested 
-in previous discussions.  The question of whether the terminating NUL 
-should be included in the returned length was otherwise left ambiguous 
-and inconsistent in your patch among the different security modules; if 
-you prefer not including it in the length returned by the security 
-modules, you'll need to adjust SELinux at least to not do so for "context".
+> Agreed.  Joe, could you post a patch with a proper patch description
+> for this?
+> 
+
+I have been looking into this a bit more and there is an opportunity
+here to add #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt to integrity.h
+and get rid of duplicate defines.
+
+thanks,
+-- Shuah
+
+
+
