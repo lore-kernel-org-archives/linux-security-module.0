@@ -2,76 +2,93 @@ Return-Path: <SRS0=9aR4=3Z=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE69C352A2
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Feb 2020 21:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5601FC3F68F
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Feb 2020 23:41:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCC5B214AF
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Feb 2020 21:58:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 342C3214AF
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Feb 2020 23:41:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbgBEV6B (ORCPT
+        id S1727519AbgBEXls (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Feb 2020 16:58:01 -0500
-Received: from mga02.intel.com ([134.134.136.20]:57372 "EHLO mga02.intel.com"
+        Wed, 5 Feb 2020 18:41:48 -0500
+Received: from mga06.intel.com ([134.134.136.31]:21263 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727106AbgBEV6A (ORCPT
+        id S1727170AbgBEXls (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Feb 2020 16:58:00 -0500
+        Wed, 5 Feb 2020 18:41:48 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 13:58:00 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 15:41:47 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,407,1574150400"; 
-   d="scan'208";a="231848039"
-Received: from gtobin-mobl1.ger.corp.intel.com (HELO localhost) ([10.251.85.85])
-  by orsmga003.jf.intel.com with ESMTP; 05 Feb 2020 13:57:57 -0800
-Date:   Wed, 5 Feb 2020 23:57:56 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+   d="scan'208";a="432036325"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Feb 2020 15:41:45 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1izUIj-0004su-6l; Thu, 06 Feb 2020 07:41:45 +0800
+Date:   Thu, 6 Feb 2020 07:41:18 +0800
+From:   kbuild test robot <lkp@intel.com>
 To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
-        linux-integrity@vger.kernel.org,
+Cc:     kbuild-all@lists.01.org, zohar@linux.ibm.com,
+        James.Bottomley@HansenPartnership.com,
+        jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] tpm: Initialize crypto_id of allocated_banks to
- HASH_ALGO__LAST
-Message-ID: <20200205215756.GA24468@linux.intel.com>
-References: <20200205103317.29356-1-roberto.sassu@huawei.com>
- <20200205103317.29356-2-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v2 6/8] ima: Allocate and initialize tfm for each PCR bank
+Message-ID: <202002060720.CVTYGnC7%lkp@intel.com>
+References: <20200205103317.29356-7-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200205103317.29356-2-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200205103317.29356-7-roberto.sassu@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 05, 2020 at 11:33:10AM +0100, Roberto Sassu wrote:
-> chip->allocated_banks, an array of tpm_bank_info structures, contains the
-> list of TPM algorithm IDs of allocated PCR banks. It also contains the
-> corresponding ID of the crypto subsystem, so that users of the TPM driver
-> can calculate a digest for a PCR extend operation.
-> 
-> However, if there is no mapping between TPM algorithm ID and crypto ID, the
-> crypto_id field of tpm_bank_info remains set to zero (the array is
-> allocated and initialized with kcalloc() in tpm2_get_pcr_allocation()).
-> Zero should not be used as value for unknown mappings, as it is a valid
-> crypto ID (HASH_ALGO_MD4).
-> 
-> Thus, initialize crypto_id to HASH_ALGO__LAST.
-> 
-> Fixes: 879b589210a9 ("tpm: retrieve digest size of unknown algorithms with PCR read")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Petr Vorel <pvorel@suse.cz>
-> Cc: stable@vger.kernel.org
+Hi Roberto,
 
-Cc should be first.
+Thank you for the patch! Perhaps something to improve:
 
-/Jarkko
+[auto build test WARNING on integrity/next-integrity]
+[also build test WARNING on jss-tpmdd/next v5.5 next-20200205]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+url:    https://github.com/0day-ci/linux/commits/Roberto-Sassu/ima-support-stronger-algorithms-for-attestation/20200205-233901
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-154-g1dc00f87-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> security/integrity/ima/ima_crypto.c:72:12: sparse: sparse: symbol 'ima_init_ima_crypto' was not declared. Should it be static?
+   security/integrity/ima/ima_crypto.c:545:36: sparse: sparse: invalid assignment: |=
+   security/integrity/ima/ima_crypto.c:545:36: sparse:    left side has type unsigned int
+   security/integrity/ima/ima_crypto.c:545:36: sparse:    right side has type restricted fmode_t
+   security/integrity/ima/ima_crypto.c:565:28: sparse: sparse: invalid assignment: &=
+   security/integrity/ima/ima_crypto.c:565:28: sparse:    left side has type unsigned int
+   security/integrity/ima/ima_crypto.c:565:28: sparse:    right side has type restricted fmode_t
+   security/integrity/ima/ima_crypto.c:592:52: sparse: sparse: restricted __le32 degrades to integer
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
