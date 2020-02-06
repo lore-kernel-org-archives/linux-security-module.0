@@ -2,129 +2,176 @@ Return-Path: <SRS0=1co8=32=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1C6C33CAC
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 17:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D1FC33CAC
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 18:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAAD621741
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 17:31:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cft+KM4y";
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dHf6zWpp"
+	by mail.kernel.org (Postfix) with ESMTP id 05D8421775
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 18:03:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbgBFRb0 (ORCPT
+        id S1727747AbgBFSDo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Feb 2020 12:31:26 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:46186 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727358AbgBFRbZ (ORCPT
+        Thu, 6 Feb 2020 13:03:44 -0500
+Received: from mga04.intel.com ([192.55.52.120]:38928 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727662AbgBFSDo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Feb 2020 12:31:25 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016HT02e086564;
-        Thu, 6 Feb 2020 17:30:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=K7CsAWV2I/Wti1tewqOHLMGUyy3ZOyrmWzgUJOIuDs8=;
- b=cft+KM4yzNXLP8s8te4EHuys/zL2HE6HROTBRYHZHoNua5cV5+sHx6ovQBIPmYrPVqob
- YWStUNHZsixtEZIy1FOK0rUSIHLRnn7aojxNXfWR8D6t9m+X8845KYOQS7Qk8Reudja+
- VYxh3ESrExFP0vPGvfvHSVOIeV01KhnBx1+njmsOwHO1XWcSfpoDtPKF2sYiEzRDMRtZ
- YODeQUYUiqPRA3RfMhtcGoIk5ajMqFavzbP3c+Sn73izq07LRlu25aADSwwkrHhgFqqW
- wNkyPzCdM2UKkpJOkvJA6T6Bkvx8Nf9XVQVoH0IcYo8Kf1IKN9oxMWin/RLqlWljEJpx Qg== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2019-08-05; bh=K7CsAWV2I/Wti1tewqOHLMGUyy3ZOyrmWzgUJOIuDs8=;
- b=dHf6zWppr3Yia16MMaFkgbgR/O4RMxwWOWlQnBousthFxssHT7I0WbGPh3A5vDP3mWg3
- ADww0m2V2syA4CY2CDBHkT8OPLWOyd4rb/j7kt+0vBlocn3GUji+u42TAcBy7KSbZxJo
- +ZBySFbPx9okyIvV4sYJUSh9TFCAw2PMli3rW8gLNBlC1LY9Z/H/lcWhrShZPr1GPGWG
- 36N8x6XFCFDb2yMPwN5D85Q9ox0WUL7G03p1qzYBdq1rKsJsQtMmmntpe0fjghGiqU3Q
- lQ/uhEbusHi7lbyvB22hjYQW2cGB9yGMULLMblhEm7njR7PhIl308A75ysWYiw83LgmP Yw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2xykbpk84s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 17:30:51 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016HTkeZ172387;
-        Thu, 6 Feb 2020 17:30:51 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2y0mnk3g76-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 17:30:51 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 016HUmfl017145;
-        Thu, 6 Feb 2020 17:30:48 GMT
-Received: from dhcp-10-65-154-237.vpn.oracle.com (/10.65.154.237)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Feb 2020 09:30:48 -0800
+        Thu, 6 Feb 2020 13:03:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 10:03:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,410,1574150400"; 
+   d="scan'208";a="236053402"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 06 Feb 2020 10:03:42 -0800
+Received: from [10.251.88.4] (abudanko-mobl.ccr.corp.intel.com [10.251.88.4])
+        by linux.intel.com (Postfix) with ESMTP id 1AA19580698;
+        Thu,  6 Feb 2020 10:03:32 -0800 (PST)
+Subject: Re: [PATCH v5 01/10] capabilities: introduce CAP_PERFMON to kernel
+ and user space
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        oprofile-list@lists.sf.net, Andy Lutomirski <luto@amacapital.net>
+References: <0548c832-7f4b-dc4c-8883-3f2b6d351a08@linux.intel.com>
+ <9b77124b-675d-5ac7-3741-edec575bd425@linux.intel.com>
+ <64cab472-806e-38c4-fb26-0ffbee485367@tycho.nsa.gov>
+ <05297eff-8e14-ccdf-55a4-870c64516de8@linux.intel.com>
+ <CAADnVQK-JzK-GUk4KOozn4c1xr=7TiCpB9Fi0QDC9nE6iVn8iQ@mail.gmail.com>
+ <537bdb28-c9e4-f44f-d665-25250065a6bb@linux.intel.com>
+ <63d9700f-231d-7973-5307-3e56a48c54cb@linux.intel.com>
+ <d7213569-9578-7201-6106-f5ebc95bd6be@tycho.nsa.gov>
+ <ac0dbab7-de47-ee34-bb88-4c43d3538b7d@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <2b608e26-354b-3df9-aea9-58e56dc0c5e5@linux.intel.com>
+Date:   Thu, 6 Feb 2020 21:03:31 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
+MIME-Version: 1.0
+In-Reply-To: <ac0dbab7-de47-ee34-bb88-4c43d3538b7d@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC PATCH 1/2] ima: Implement support for uncompressed module
- appended signatures
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-In-Reply-To: <fda8b3e4-e3aa-a83a-0ddc-8ec096e67316@linux.microsoft.com>
-Date:   Thu, 6 Feb 2020 10:30:45 -0700
-Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, geert@linux-m68k.org,
-        gregkh@linuxfoundation.org, nayna@linux.ibm.com,
-        tglx@linutronix.de, bauerman@linux.ibm.com, mpe@ellerman.id.au,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9347B826-F924-4625-89CF-713303D8336D@oracle.com>
-References: <20200206164226.24875-1-eric.snowberg@oracle.com>
- <20200206164226.24875-2-eric.snowberg@oracle.com>
- <fda8b3e4-e3aa-a83a-0ddc-8ec096e67316@linux.microsoft.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-X-Mailer: Apple Mail (2.3273)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2002060132
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2002060132
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-> On Feb 6, 2020, at 10:07 AM, Lakshmi Ramasubramanian =
-<nramas@linux.microsoft.com> wrote:
->=20
-> On 2/6/2020 8:42 AM, Eric Snowberg wrote:
->=20
->>  @@ -31,6 +32,7 @@ static const char * const =
-keyring_name[INTEGRITY_KEYRING_MAX] =3D {
->>  	".ima",
->>  #endif
->>  	".platform",
->> +	".builtin_trusted_keys",
->>  };
->>    #ifdef CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
->> @@ -45,8 +47,11 @@ static struct key *integrity_keyring_from_id(const =
-unsigned int id)
->>  		return ERR_PTR(-EINVAL);
->>    	if (!keyring[id]) {
->> -		keyring[id] =3D
->> -			request_key(&key_type_keyring, keyring_name[id], =
-NULL);
->> +		if (id =3D=3D INTEGRITY_KEYRING_KERNEL)
->> +			keyring[id] =3D VERIFY_USE_SECONDARY_KEYRING;
->=20
-> Since "Built-In Trusted Keyring" or "Secondary Trusted Keyring" is =
-used, would it be more appropriate to name this identifier =
-INTEGRITY_KEYRING_BUILTIN_OR_SECONDARY?
+On 22.01.2020 17:25, Alexey Budankov wrote:
+> 
+> On 22.01.2020 17:07, Stephen Smalley wrote:
+>> On 1/22/20 5:45 AM, Alexey Budankov wrote:
+>>>
+>>> On 21.01.2020 21:27, Alexey Budankov wrote:
+>>>>
+>>>> On 21.01.2020 20:55, Alexei Starovoitov wrote:
+>>>>> On Tue, Jan 21, 2020 at 9:31 AM Alexey Budankov
+>>>>> <alexey.budankov@linux.intel.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 21.01.2020 17:43, Stephen Smalley wrote:
+>>>>>>> On 1/20/20 6:23 AM, Alexey Budankov wrote:
+>>>>>>>>
+>>>>>>>> Introduce CAP_PERFMON capability designed to secure system performance
+>>>>>>>> monitoring and observability operations so that CAP_PERFMON would assist
+>>>>>>>> CAP_SYS_ADMIN capability in its governing role for perf_events, i915_perf
+>>>>>>>> and other performance monitoring and observability subsystems.
+>>>>>>>>
+>>>>>>>> CAP_PERFMON intends to harden system security and integrity during system
+>>>>>>>> performance monitoring and observability operations by decreasing attack
+>>>>>>>> surface that is available to a CAP_SYS_ADMIN privileged process [1].
+>>>>>>>> Providing access to system performance monitoring and observability
+>>>>>>>> operations under CAP_PERFMON capability singly, without the rest of
+>>>>>>>> CAP_SYS_ADMIN credentials, excludes chances to misuse the credentials and
+>>>>>>>> makes operation more secure.
+>>>>>>>>
+>>>>>>>> CAP_PERFMON intends to take over CAP_SYS_ADMIN credentials related to
+>>>>>>>> system performance monitoring and observability operations and balance
+>>>>>>>> amount of CAP_SYS_ADMIN credentials following the recommendations in the
+>>>>>>>> capabilities man page [1] for CAP_SYS_ADMIN: "Note: this capability is
+>>>>>>>> overloaded; see Notes to kernel developers, below."
+>>>>>>>>
+>>>>>>>> Although the software running under CAP_PERFMON can not ensure avoidance
+>>>>>>>> of related hardware issues, the software can still mitigate these issues
+>>>>>>>> following the official embargoed hardware issues mitigation procedure [2].
+>>>>>>>> The bugs in the software itself could be fixed following the standard
+>>>>>>>> kernel development process [3] to maintain and harden security of system
+>>>>>>>> performance monitoring and observability operations.
+>>>>>>>>
+>>>>>>>> [1] http://man7.org/linux/man-pages/man7/capabilities.7.html
+>>>>>>>> [2] https://www.kernel.org/doc/html/latest/process/embargoed-hardware-issues.html
+>>>>>>>> [3] https://www.kernel.org/doc/html/latest/admin-guide/security-bugs.html
+<SNIP>
+>>>>>>>>
+>>>>>>>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>>>>>>>
+>>>>>>> Why _noaudit()?  Normally only used when a permission failure is non-fatal to the operation.  Otherwise, we want the audit message.
+>>>
+>>> So far so good, I suggest using the simplest version for v6:
+>>>
+>>> static inline bool perfmon_capable(void)
+>>> {
+>>>     return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
+>>> }
+>>>
+>>> It keeps the implementation simple and readable. The implementation is more
+>>> performant in the sense of calling the API - one capable() call for CAP_PERFMON
+>>> privileged process.
+>>>
+>>> Yes, it bloats audit log for CAP_SYS_ADMIN privileged and unprivileged processes,
+>>> but this bloating also advertises and leverages using more secure CAP_PERFMON
+>>> based approach to use perf_event_open system call.
+>>
+>> I can live with that.  We just need to document that when you see both a CAP_PERFMON and a CAP_SYS_ADMIN audit message for a process, try only allowing CAP_PERFMON first and see if that resolves the issue.  We have a similar issue with CAP_DAC_READ_SEARCH versus CAP_DAC_OVERRIDE.
+> 
+> perf security [1] document can be updated, at least, to align and document 
+> this audit logging specifics.
 
-I=E2=80=99m open to changing INTEGRITY_KEYRING_KERNEL to =
-INTEGRITY_KEYRING_BUILTIN_OR_SECONDARY if that seems more appropriate.
+And I plan to update the document right after this patch set is accepted.
+Feel free to let me know of the places in the kernel docs that also
+require update w.r.t CAP_PERFMON extension.
 
+~Alexey
+
+> 
+> ~Alexey
+> 
+> [1] https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html
+> 
