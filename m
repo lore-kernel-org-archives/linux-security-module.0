@@ -2,140 +2,143 @@ Return-Path: <SRS0=1co8=32=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F944C352A2
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 12:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A623DC3F68F
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 14:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FCB5217F4
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 12:31:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87D3A214AF
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 14:14:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbgBFMbW (ORCPT
+        id S1727980AbgBFOOC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Feb 2020 07:31:22 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:26482 "EHLO
+        Thu, 6 Feb 2020 09:14:02 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29218 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727511AbgBFMbW (ORCPT
+        by vger.kernel.org with ESMTP id S1727415AbgBFOOB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Feb 2020 07:31:22 -0500
+        Thu, 6 Feb 2020 09:14:01 -0500
 Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 016CPEQb064164
-        for <linux-security-module@vger.kernel.org>; Thu, 6 Feb 2020 07:31:21 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xyhm8hnmb-1
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 016EC5vX061169
+        for <linux-security-module@vger.kernel.org>; Thu, 6 Feb 2020 09:14:00 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y0ktr9g1m-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 06 Feb 2020 07:31:21 -0500
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Feb 2020 09:14:00 -0500
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 6 Feb 2020 12:31:19 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 6 Feb 2020 14:13:58 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Feb 2020 12:31:15 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 016CVEm047906816
+        Thu, 6 Feb 2020 14:13:55 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 016EDsud61276348
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Feb 2020 12:31:14 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 547D911C04C;
-        Thu,  6 Feb 2020 12:31:14 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 663DA11C05B;
-        Thu,  6 Feb 2020 12:31:13 +0000 (GMT)
+        Thu, 6 Feb 2020 14:13:54 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0FE614C040;
+        Thu,  6 Feb 2020 14:13:54 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EE1774C052;
+        Thu,  6 Feb 2020 14:13:52 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.85.140.59])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Feb 2020 12:31:13 +0000 (GMT)
-Subject: Re: [PATCH v2 2/8] ima: Switch to ima_hash_algo for boot aggregate
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Feb 2020 14:13:52 +0000 (GMT)
+Subject: Re: [PATCH v2] ima: export the measurement list when needed
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Date:   Thu, 06 Feb 2020 07:31:12 -0500
-In-Reply-To: <17bfd3e2b7fa4f31a46a6688e4a6e34f@huawei.com>
-References: <20200205103317.29356-1-roberto.sassu@huawei.com>
-         <20200205103317.29356-3-roberto.sassu@huawei.com>
-         <1580936432.5585.309.camel@linux.ibm.com>
-         <b1507c1121b64b3abc00e154fcfeef65@huawei.com>
-         <1580991426.5585.334.camel@linux.ibm.com>
-         <17bfd3e2b7fa4f31a46a6688e4a6e34f@huawei.com>
+To:     Janne Karhunen <janne.karhunen@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Cc:     Ken Goldman <kgold@linux.ibm.com>, david.safford@gmail.com,
+        monty.wiseman@ge.com, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Thu, 06 Feb 2020 09:13:52 -0500
+In-Reply-To: <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
+References: <20200108111743.23393-1-janne.karhunen@gmail.com>
+         <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 20020612-0008-0000-0000-000003504B1D
+x-cbid: 20020614-0020-0000-0000-000003A799A8
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20020612-0009-0000-0000-00004A70DEEB
-Message-Id: <1580992272.5585.337.camel@linux.ibm.com>
+x-cbparentid: 20020614-0021-0000-0000-000021FF691C
+Message-Id: <1580998432.5585.411.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-06_01:2020-02-06,2020-02-06 signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- lowpriorityscore=0 spamscore=0 clxscore=1015 adultscore=0 phishscore=0
- priorityscore=1501 bulkscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002060094
+ impostorscore=0 malwarescore=0 suspectscore=2 phishscore=0 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002060107
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-02-06 at 12:28 +0000, Roberto Sassu wrote:
-> > -----Original Message-----
-> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> > Sent: Thursday, February 6, 2020 1:17 PM
-> > To: Roberto Sassu <roberto.sassu@huawei.com>;
-> > James.Bottomley@HansenPartnership.com;
-> > jarkko.sakkinen@linux.intel.com
-> > Cc: linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; Silviu Vlasceanu
-> > <Silviu.Vlasceanu@huawei.com>; stable@vger.kernel.org
-> > Subject: Re: [PATCH v2 2/8] ima: Switch to ima_hash_algo for boot
-> > aggregate
-> > 
-> > On Thu, 2020-02-06 at 09:36 +0000, Roberto Sassu wrote:
-> > > > Hi Roberto,
-> > > >
-> > > > On Wed, 2020-02-05 at 11:33 +0100, Roberto Sassu wrote:
-> > > >
-> > > > <snip>
-> > > >
-> > > > > Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > > > Suggested-by: James Bottomley
-> > > > <James.Bottomley@HansenPartnership.com>
-> > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > Cc: stable@vger.kernel.org
-> > > >
-> > > > Cc'ing stable resulted in Sasha's automated message.  If you're going
-> > > > to Cc stable, then please include the stable kernel release (e.g. Cc:
-> > > > stable@vger.kernel.org # v5.3).  Also please include a "Fixes" tag.
-> > > >  Normally only bug fixes are backported.
-> > >
-> > > Ok, will add the kernel version. I also thought which commit I should
-> > > mention in the Fixes tag. IMA always read the SHA1 bank from the
-> > > beginning. I could mention the patch that introduces the new API
-> > > to read other banks, but I'm not sure. What do you think?
-> > 
-> > This patch is dependent on nr_allocated_banks.  Please try applying
-> > this patch to the earliest stable kernel with the commit that
-> > introduces nr_allocated_banks and test to make sure it works properly.
-> 
-> It also depends on 879b589210a9 ("tpm: retrieve digest size of unknown"
-> algorithms with PCR read") which exported the mapping between TPM
-> algorithm ID and crypto ID, and changed the definition of tpm_pcr_read()
-> to read non-SHA1 PCR banks. It requires many patches, so backporting it
-> is not a trivial task. I think the earliest kernel this patch can be backported to
-> is 5.1.
+Hi Janne,
 
-Agreed.  Thank you for checking.
+On Fri, 2020-01-10 at 10:48 +0200, Janne Karhunen wrote:
+> On Wed, Jan 8, 2020 at 1:18 PM Janne Karhunen <janne.karhunen@gmail.com> wrote:
+> >
+> > Some systems can end up carrying lots of entries in the ima
+> > measurement list. Since every entry is using a bit of kernel
+> > memory, allow the sysadmin to export the measurement list to
+> > the filesystem to free up some memory.
+> 
+> Hopefully this addressed comments from everyone. The flush event can
+> now be triggered by the admin anytime and unique file names can be
+> used for each flush (log.1, log.2, ...) etc, so getting to the correct
+> item should be easy.
+> 
+> While it can now be argued that since this is an admin-driven event,
+> kernel does not need to write the file. However, the intention is to
+> bring out a second patch a bit later that adds a variable to define
+> the max number of entries to be kept in the kernel memory and
+> workqueue based automatic flushing. In those cases the kernel has to
+> be able to write the file without any help from the admin..
+
+The implications of exporting and removing records from the IMA-
+measurement list needs to be considered carefully.  Verifying a TPM
+quote will become dependent on knowing where the measurements are
+stored.  The existing measurement list is stored in kernel memory and,
+barring a kernel memory attack, is protected from modification.
+ Before upstreaming this or a similar patch, there needs to be a
+discussion as to how the measurement list will be protected once is it
+exported to userspace.
+
+This patch now attempts to address two very different scenarios.  The
+first scenario is where userspace is requesting exporting and removing
+of the measurement list records.  The other scenario is the kernel
+exporting and removing of the measurement list records.  Conflating
+these two different use cases might not be the right solution, as we
+originally thought.
+
+The kernel already exports the IMA measurement list to userspace via a
+securityfs file.  From a userspace perspective, missing is the ability
+of removing N number of records.  In this scenario, userspace would be
+responsible for safely storing the measurements (e.g. blockchain).
+ The kernel would only be responsible for limiting permission, perhaps
+based on a capability, before removing records from the measurement
+list. 
+
+In the kernel usecase, somehow the kernel would need to safely export
+the measurement list, or some portion of the measurement list, to a
+file and then delete that portion.  What protects the exported records
+stored in a file from modification?
+
+Instead of exporting the measurement records, one option as suggested
+by Amir Goldstein, would be to use a vfs_tmpfile() to get an anonymous
+file for backing store.  The existing securityfs measurement lists
+would then read from this private copy of the anonymous file.
+
+I've Cc'ed fsdevel for additional comments/suggestions.
+
+thanks,
 
 Mimi
 
