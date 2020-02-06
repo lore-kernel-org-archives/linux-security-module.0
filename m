@@ -2,149 +2,213 @@ Return-Path: <SRS0=1co8=32=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E3B2C33CAC
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 18:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B66C3F68F
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 19:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E073214AF
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 18:38:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4BFB21741
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 19:02:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="o/Lt4WJz";
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VTgkMLbl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbgBFSiZ (ORCPT
+        id S1727831AbgBFTCG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Feb 2020 13:38:25 -0500
-Received: from mga06.intel.com ([134.134.136.31]:12657 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727358AbgBFSiY (ORCPT
+        Thu, 6 Feb 2020 14:02:06 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:36096 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbgBFTCG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Feb 2020 13:38:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 10:38:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,410,1574150400"; 
-   d="scan'208";a="279752683"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 06 Feb 2020 10:38:22 -0800
-Received: from [10.251.88.4] (abudanko-mobl.ccr.corp.intel.com [10.251.88.4])
-        by linux.intel.com (Postfix) with ESMTP id D2C645803E3;
-        Thu,  6 Feb 2020 10:38:15 -0800 (PST)
-Subject: Re: [PATCH v6 01/10] capabilities: introduce CAP_PERFMON to kernel
- and user space
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        oprofile-list@lists.sf.net
-References: <576a6141-36d4-14c0-b395-8d195892b916@linux.intel.com>
- <a4c5da70-b6d1-b133-9b64-34e164834b03@linux.intel.com>
- <5be0f67c-17e2-7861-37f3-a0f8a82be8f0@tycho.nsa.gov>
- <1bcb4cb1-98c4-cc1a-b8e3-fd8a0e1e606f@linux.intel.com>
- <06cdca0e-65f2-b58d-a84e-5a1907aa9eb5@tycho.nsa.gov>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <e5d8dc64-6573-21f5-80dd-64cfbf72e13f@linux.intel.com>
-Date:   Thu, 6 Feb 2020 21:38:14 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <06cdca0e-65f2-b58d-a84e-5a1907aa9eb5@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 6 Feb 2020 14:02:06 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016IwCqd163636;
+        Thu, 6 Feb 2020 19:01:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=lH/mJ5tGFIX33JIoc+qsJCjWo7qPkQB0LSW8LE0MD1w=;
+ b=o/Lt4WJz0UrQ6SM2iCE9ovbFzloijnS/UyCk/WKSNnVsb8dCMB9LvS2ENzXnO4xnBj9d
+ 2T+kRryRtQGwQJk6cZgWUGuKkzhiwns0Yq+hmB1FFpohI2CZv3mRUGlBDgYklCN2St7h
+ KDLeIqc2Ehvo4EW40UnAvO3J1Jdq8r6JWC8OgazhjSNDjWyvsID3dvBLf+bIcTxBqo/x
+ e/EkW5P850FLYgvuTkekpWzE5IvxhgZ2cY3h0bd5HXLnPAhlHa6LpzQdc6wfjFlteoq5
+ 3c5/U9iG0ZI0KS4cPC/K8j38gaxquWTMtl1ZdnQ0iUPNTcLsKBYI6XplXwPM6IcWQqZu +w== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=lH/mJ5tGFIX33JIoc+qsJCjWo7qPkQB0LSW8LE0MD1w=;
+ b=VTgkMLbl+d+AdGGYxmhhYYlS96GEW457GVncYqIxmjd2042F20+5mS7EDcQXe4EgkddV
+ DuVlrJcB4EFazBIkkxJMEvHHwXi12fhDBbOlBF8QZliXydk9QBSY3hftpNyA3Vv3xZHn
+ LIExMfFm84RhxGO57tNgfkd8cIEDtNy6CMjRKlNyHDQ5SOl6O5eoHLs93piuawUNhVsJ
+ WfawAw3n32wWKIiAx9c4XfGnJJ99NLaaijk2RaL8Tl5xkqnbTtNlyqI22iEg65ungtaC
+ NMQZ6pAIkIO8KSEPbVHmiR2puZRp9qzFR1S60J/H+ZzVUFarP1T3OaSA3qwoB5EvpQXt VA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2xykbpkqwp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Feb 2020 19:01:30 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016IwX4e177134;
+        Thu, 6 Feb 2020 19:01:29 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2y080dv9e9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Feb 2020 19:01:29 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 016J1Svw004501;
+        Thu, 6 Feb 2020 19:01:28 GMT
+Received: from dhcp-10-65-154-237.vpn.oracle.com (/10.65.154.237)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Feb 2020 11:01:27 -0800
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [RFC PATCH 1/2] ima: Implement support for uncompressed module
+ appended signatures
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+In-Reply-To: <1581012329.5585.439.camel@linux.ibm.com>
+Date:   Thu, 6 Feb 2020 12:01:26 -0700
+Cc:     dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, geert@linux-m68k.org,
+        gregkh@linuxfoundation.org, nayna@linux.ibm.com,
+        tglx@linutronix.de, bauerman@linux.ibm.com, mpe@ellerman.id.au,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <73919AC1-E13A-4B35-B811-B0FFBC7E8644@oracle.com>
+References: <20200206164226.24875-1-eric.snowberg@oracle.com>
+ <20200206164226.24875-2-eric.snowberg@oracle.com>
+ <1581012329.5585.439.camel@linux.ibm.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+X-Mailer: Apple Mail (2.3273)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2002060138
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2002060138
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 06.02.2020 21:30, Stephen Smalley wrote:
-> On 2/6/20 1:26 PM, Alexey Budankov wrote:
->>
->> On 06.02.2020 21:23, Stephen Smalley wrote:
->>> On 2/5/20 12:30 PM, Alexey Budankov wrote:
->>>>
->>>> Introduce CAP_PERFMON capability designed to secure system performance
->>>> monitoring and observability operations so that CAP_PERFMON would assist
->>>> CAP_SYS_ADMIN capability in its governing role for performance monitoring
->>>> and observability subsystems.
->>>>
->>>> CAP_PERFMON hardens system security and integrity during performance
->>>> monitoring and observability operations by decreasing attack surface that
->>>> is available to a CAP_SYS_ADMIN privileged process [2]. Providing the access
->>>> to system performance monitoring and observability operations under CAP_PERFMON
->>>> capability singly, without the rest of CAP_SYS_ADMIN credentials, excludes
->>>> chances to misuse the credentials and makes the operation more secure.
->>>> Thus, CAP_PERFMON implements the principal of least privilege for performance
->>>> monitoring and observability operations (POSIX IEEE 1003.1e: 2.2.2.39 principle
->>>> of least privilege: A security design principle that states that a process
->>>> or program be granted only those privileges (e.g., capabilities) necessary
->>>> to accomplish its legitimate function, and only for the time that such
->>>> privileges are actually required)
->>>>
->>>> CAP_PERFMON meets the demand to secure system performance monitoring and
->>>> observability operations for adoption in security sensitive, restricted,
->>>> multiuser production environments (e.g. HPC clusters, cloud and virtual compute
->>>> environments), where root or CAP_SYS_ADMIN credentials are not available to
->>>> mass users of a system, and securely unblocks accessibility of system performance monitoring and observability operations beyond root and CAP_SYS_ADMIN use cases.
->>>>
->>>> CAP_PERFMON takes over CAP_SYS_ADMIN credentials related to system performance
->>>> monitoring and observability operations and balances amount of CAP_SYS_ADMIN
->>>> credentials following the recommendations in the capabilities man page [1]
->>>> for CAP_SYS_ADMIN: "Note: this capability is overloaded; see Notes to kernel
->>>> developers, below." For backward compatibility reasons access to system
->>>> performance monitoring and observability subsystems of the kernel remains
->>>> open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN capability
->>>> usage for secure system performance monitoring and observability operations
->>>> is discouraged with respect to the designed CAP_PERFMON capability.
->>>>
->>>> Although the software running under CAP_PERFMON can not ensure avoidance
->>>> of related hardware issues, the software can still mitigate these issues
->>>> following the official hardware issues mitigation procedure [2]. The bugs
->>>> in the software itself can be fixed following the standard kernel development
->>>> process [3] to maintain and harden security of system performance monitoring
->>>> and observability operations.
->>>>
->>>> [1] http://man7.org/linux/man-pages/man7/capabilities.7.html
->>>> [2] https://www.kernel.org/doc/html/latest/process/embargoed-hardware-issues.html
->>>> [3] https://www.kernel.org/doc/html/latest/admin-guide/security-bugs.html
->>>>
->>>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->>>
->>> This will require a small update to the selinux-testsuite to correctly reflect the new capability requirements, but that's easy enough.
->>
->> Is the suite a part of the kernel sources or something else?
-> 
-> It is external,
-> https://github.com/SELinuxProject/selinux-testsuite
-> 
-> I wasn't suggesting that your patch be blocked on updating the testsuite, just noting that it will need to be done.
+> On Feb 6, 2020, at 11:05 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>=20
+> On Thu, 2020-02-06 at 11:42 -0500, Eric Snowberg wrote:
+>> Currently IMA can validate compressed modules containing appended
+>> signatures.  This adds the ability to also validate uncompressed
+>> modules when appraise_type=3Dimasig|modsig.
+>>=20
+>> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+>=20
+> Your patch description in no way matches the code.
+>=20
 
-Ok. Thanks!
+How about if I changed the description to the following:
 
-~Alexey
+Currently IMA can only validate compressed modules containing appended
+signatures when appraise_type=3Dimasig|modsig.  An uncompressed module =
+that=20
+is internally signed must still be ima signed. =20
 
+Add the ability to validate the uncompress module by validating it =
+against
+keys contained within the .builtin_trusted_keys keyring. Now when using =
+a
+policy such as:
+
+appraise func=3DMODULE_CHECK appraise_type=3Dimasig|modsig
+
+It will load modules containing an appended signature when either =
+compressed
+or uncompressed.
+
+
+>> ---
+>> security/integrity/digsig.c           | 9 +++++++--
+>> security/integrity/ima/ima_appraise.c | 3 +++
+>> security/integrity/integrity.h        | 3 ++-
+>> 3 files changed, 12 insertions(+), 3 deletions(-)
+>>=20
+>> diff --git a/security/integrity/digsig.c =
+b/security/integrity/digsig.c
+>> index ea1aae3d07b3..5e0c4d04ab9d 100644
+>> --- a/security/integrity/digsig.c
+>> +++ b/security/integrity/digsig.c
+>> @@ -15,6 +15,7 @@
+>> #include <linux/key-type.h>
+>> #include <linux/digsig.h>
+>> #include <linux/vmalloc.h>
+>> +#include <linux/verification.h>
+>> #include <crypto/public_key.h>
+>> #include <keys/system_keyring.h>
+>>=20
+>> @@ -31,6 +32,7 @@ static const char * const =
+keyring_name[INTEGRITY_KEYRING_MAX] =3D {
+>> 	".ima",
+>> #endif
+>> 	".platform",
+>> +	".builtin_trusted_keys",
+>> };
+>>=20
+>> #ifdef CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
+>> @@ -45,8 +47,11 @@ static struct key *integrity_keyring_from_id(const =
+unsigned int id)
+>> 		return ERR_PTR(-EINVAL);
+>>=20
+>> 	if (!keyring[id]) {
+>> -		keyring[id] =3D
+>> -			request_key(&key_type_keyring, keyring_name[id], =
+NULL);
+>> +		if (id =3D=3D INTEGRITY_KEYRING_KERNEL)
+>> +			keyring[id] =3D VERIFY_USE_SECONDARY_KEYRING;
+>> +		else
+>> +			keyring[id] =3D request_key(&key_type_keyring,
+>> +						  keyring_name[id], =
+NULL);
+>> 		if (IS_ERR(keyring[id])) {
+>> 			int err =3D PTR_ERR(keyring[id]);
+>> 			pr_err("no %s keyring: %d\n", keyring_name[id], =
+err);
+>> diff --git a/security/integrity/ima/ima_appraise.c =
+b/security/integrity/ima/ima_appraise.c
+>> index 300c8d2943c5..4c009c55d620 100644
+>> --- a/security/integrity/ima/ima_appraise.c
+>> +++ b/security/integrity/ima/ima_appraise.c
+>> @@ -294,6 +294,9 @@ static int modsig_verify(enum ima_hooks func, =
+const struct modsig *modsig,
+>> 	    func =3D=3D KEXEC_KERNEL_CHECK)
+>> 		rc =3D =
+integrity_modsig_verify(INTEGRITY_KEYRING_PLATFORM,
+>> 					     modsig);
+>> +	if (rc && func =3D=3D MODULE_CHECK)
+>> +		rc =3D integrity_modsig_verify(INTEGRITY_KEYRING_KERNEL, =
+modsig);
+>> +
+>> 	if (rc) {
+>> 		*cause =3D "invalid-signature";
+>> 		*status =3D INTEGRITY_FAIL;
+>> diff --git a/security/integrity/integrity.h =
+b/security/integrity/integrity.h
+>> index 73fc286834d7..63f0e6bff0e0 100644
+>> --- a/security/integrity/integrity.h
+>> +++ b/security/integrity/integrity.h
+>> @@ -145,7 +145,8 @@ int integrity_kernel_read(struct file *file, =
+loff_t offset,
+>> #define INTEGRITY_KEYRING_EVM		0
+>> #define INTEGRITY_KEYRING_IMA		1
+>> #define INTEGRITY_KEYRING_PLATFORM	2
+>> -#define INTEGRITY_KEYRING_MAX		3
+>> +#define INTEGRITY_KEYRING_KERNEL	3
+>> +#define INTEGRITY_KEYRING_MAX		4
+>>=20
+>> extern struct dentry *integrity_dir;
+>>=20
+>=20
 
