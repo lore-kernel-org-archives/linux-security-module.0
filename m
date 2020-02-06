@@ -2,115 +2,116 @@ Return-Path: <SRS0=1co8=32=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361A5C352A2
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 19:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 859B9C35247
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 20:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19688222C2
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 19:10:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6000D2192A
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 20:25:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbgBFTKa (ORCPT
+        id S1728021AbgBFUZP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Feb 2020 14:10:30 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:61130 "EHLO
+        Thu, 6 Feb 2020 15:25:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25880 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727738AbgBFTKa (ORCPT
+        by vger.kernel.org with ESMTP id S1727845AbgBFUZP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Feb 2020 14:10:30 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 016J6VWx075672
-        for <linux-security-module@vger.kernel.org>; Thu, 6 Feb 2020 14:10:29 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y0nnfe7b7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 06 Feb 2020 14:10:28 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 6 Feb 2020 19:10:26 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Feb 2020 19:10:21 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 016JAJcU53674176
+        Thu, 6 Feb 2020 15:25:15 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 016KDlEa060947;
+        Thu, 6 Feb 2020 15:22:12 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y0kne6euw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Feb 2020 15:22:12 -0500
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 016KEXKf063196;
+        Thu, 6 Feb 2020 15:22:12 -0500
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y0kne6eu6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Feb 2020 15:22:12 -0500
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 016KJUhW002391;
+        Thu, 6 Feb 2020 20:22:10 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma05wdc.us.ibm.com with ESMTP id 2xykc9qtdq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Feb 2020 20:22:10 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 016KM90S34799880
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Feb 2020 19:10:20 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C811252051;
-        Thu,  6 Feb 2020 19:10:19 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.140.59])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 5EFF252050;
-        Thu,  6 Feb 2020 19:10:18 +0000 (GMT)
-Subject: Re: [RFC PATCH 1/2] ima: Implement support for uncompressed module
- appended signatures
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, geert@linux-m68k.org,
+        Thu, 6 Feb 2020 20:22:09 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 171E9BE053;
+        Thu,  6 Feb 2020 20:22:09 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9DE00BE054;
+        Thu,  6 Feb 2020 20:22:05 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.160.44.62])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Feb 2020 20:22:05 +0000 (GMT)
+Subject: Re: [RFC PATCH 0/2] ima: uncompressed module appraisal support
+To:     Eric Snowberg <eric.snowberg@oracle.com>,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com
+Cc:     zohar@linux.ibm.com, dhowells@redhat.com, geert@linux-m68k.org,
         gregkh@linuxfoundation.org, nayna@linux.ibm.com,
         tglx@linutronix.de, bauerman@linux.ibm.com, mpe@ellerman.id.au,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 06 Feb 2020 14:10:17 -0500
-In-Reply-To: <73919AC1-E13A-4B35-B811-B0FFBC7E8644@oracle.com>
 References: <20200206164226.24875-1-eric.snowberg@oracle.com>
-         <20200206164226.24875-2-eric.snowberg@oracle.com>
-         <1581012329.5585.439.camel@linux.ibm.com>
-         <73919AC1-E13A-4B35-B811-B0FFBC7E8644@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
+Date:   Thu, 6 Feb 2020 15:22:04 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <20200206164226.24875-1-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 X-TM-AS-GCONF: 00
-x-cbid: 20020619-0012-0000-0000-0000038460E2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20020619-0013-0000-0000-000021C0CFF4
-Message-Id: <1581016217.5585.449.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-06_03:2020-02-06,2020-02-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 clxscore=1015 mlxlogscore=999 adultscore=0 priorityscore=1501
- bulkscore=0 suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002060139
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 mlxlogscore=999 adultscore=0 impostorscore=0
+ phishscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002060149
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-02-06 at 12:01 -0700, Eric Snowberg wrote:
-> > On Feb 6, 2020, at 11:05 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > 
-> > On Thu, 2020-02-06 at 11:42 -0500, Eric Snowberg wrote:
-> >> Currently IMA can validate compressed modules containing appended
-> >> signatures.  This adds the ability to also validate uncompressed
-> >> modules when appraise_type=imasig|modsig.
-> >> 
-> >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> > 
-> > Your patch description in no way matches the code.
-> > 
-> 
-> How about if I changed the description to the following:
-> 
-> Currently IMA can only validate compressed modules containing appended
-> signatures when appraise_type=imasig|modsig.  An uncompressed module that 
-> is internally signed must still be ima signed.  
-> 
-> Add the ability to validate the uncompress module by validating it against
-> keys contained within the .builtin_trusted_keys keyring. Now when using a
-> policy such as:
-> 
-> appraise func=MODULE_CHECK appraise_type=imasig|modsig
-> 
-> It will load modules containing an appended signature when either compressed
-> or uncompressed.
 
-We - Nayna and I - will be commenting on the cover letter shortly.  I
-think that will help clarify the problem(s).
+On 2/6/20 11:42 AM, Eric Snowberg wrote:
+> When booting with either "ima_policy=secure_boot module.sig_enforce=1"
+> or building a kernel with CONFIG_IMA_ARCH_POLICY and booting with
+> "ima_policy=secure_boot", module loading behaves differently based on if
+> the module is compressed or not.  Originally when appraising a module
+> with ima it had to be uncompressed and ima signed.  Recent changes in 5.4
+> have allowed internally signed modules to load [1].  But this only works
+> if the internally signed module is compressed.  The uncompressed module
+> that is internally signed must still be ima signed. This patch series
+> tries to bring the two in line.
 
-Mimi
+We (Mimi and I) have been trying to understand the cover letter. It 
+seems "by internally signed" you are referring to modules signed with 
+build time generated keys.
+
+Our interpretation of the cover letter is that IMA originally did not 
+support appended signatures and now does. Since the modules are signed 
+with build time generated keys, the signature verification still fails, 
+as the keys are only available on the .builtin keyring and not the .ima 
+keyring.
+
+Lastly, there is nothing in these patches that indicate that the kernel 
+modules being compressed/uncompressed is related to the signature 
+verification.
+
+Thanks & Regards,
+
+      - Nayna
 
