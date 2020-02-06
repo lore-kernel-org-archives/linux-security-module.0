@@ -2,64 +2,64 @@ Return-Path: <SRS0=1co8=32=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4826CC33CAC
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 16:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A370BC352A2
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 16:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B4B320838
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 16:43:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A539222C2
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Feb 2020 16:45:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X5hxHqbB";
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PMg+zArV"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Rm4fw9qs";
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SqlFTqpl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbgBFQn3 (ORCPT
+        id S1727695AbgBFQpM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Feb 2020 11:43:29 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:36102 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbgBFQn3 (ORCPT
+        Thu, 6 Feb 2020 11:45:12 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:52420 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727593AbgBFQpL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Feb 2020 11:43:29 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016GcZtm031451;
-        Thu, 6 Feb 2020 16:42:48 GMT
+        Thu, 6 Feb 2020 11:45:11 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016GcnbI050769;
+        Thu, 6 Feb 2020 16:42:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2020-01-29;
- bh=L4o/oM6TBlLfqTsyZEuVQ+YJnHAjTzD6fxlj3/5p29I=;
- b=X5hxHqbBErx93Bot+gLyxS+z/ors04Dv73zZAvGLM4JRVMJQsVKbHX/HxtCJdsFiN9Yl
- PTvkhd4/J4H7YBnHk8XibvSiNbruICvowofTHaKdyGM7X9yeSvcNfF2nuR9m6KDH03+y
- HGFXMniwrgIQ4EnEHNzN+NudvbcCsZ2/JkTZXR8hEi7WLG6w/adxZEIYy+JRPGD5C78A
- 1AAXmiv7XYU1pPg4yHMcNJzAN71ze/+NJyrnbldMS7nPD+IwiEEttyYc6kwkgDABtnik
- aRw+82100ioHfJpShp/ZbFGBBcuBJ9kO9XNdAlHw1aapCBtzBBPAWWjv74KrDGBWtEf5 Vg== 
+ subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
+ bh=mOd/toCf6IcfjIYE08cObI/VB0Rx512cP6g2PbHIXoQ=;
+ b=Rm4fw9qsTxTuQKGOf2eAh31Ow77Nu1oftxFWkCVXieAGjLVrnx9C0Dw8v00YJjIeND9B
+ 4w/UYlbAiTrNE8RxmyTYs1N2VjMmlPBeXg+MZXAdNUUzcG66yfDPpnPw415XmnyJe5Gx
+ fDnRPZYfexuSoSyZe65E9ma1HLi+P24vqxwx4DE5dZXPyw6eOFhCn67P4Zr2UFiB2Q4a
+ R1wu5KHMR35SGCHg1l4UIbR6uYcsX6QJDdAEWlWYkyabsbwTW4bw1Cj12dzUuZ1SIwag
+ tFO5p23AgvxvOpiikBaFMWGj8wjr2+TCY4Tn+tVUQL+Jp5bnGRMLD3lxAPLjW26XsdVo tA== 
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2019-08-05;
- bh=L4o/oM6TBlLfqTsyZEuVQ+YJnHAjTzD6fxlj3/5p29I=;
- b=PMg+zArVe77/IKCn8wzSyHWnkBGnrWzXgyrENmL6equDuXXseJ4Rs/7ZLnY4lGy4sL5S
- VYWVXfZYuDa4ZF3DjHC08xO3a+zZJGbhQThYQm/4H7oyNPksHF0OLQWbCBPDEFgGFxaD
- sYJjQhdCw8in7mIoEQ0If9URa5lVq9SAYqEI9SVaA4Plou9yGZ8pnq9kBVjhaD1f6HSc
- QXFk6k4wh/QL3rXDZC0tZAG7c5am4J3v8NunK08Y0wrbkvc5/pgKJYq0s+4WPgE4PLMP
- EhagD0VCe4zbyHUaSkDuhP5VsCwUUh7wV2NXo0tV+tVab4BJo3ZylQ2/3FMJlSQ+Cmas xg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2xykbpax3y-1
+ subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
+ bh=mOd/toCf6IcfjIYE08cObI/VB0Rx512cP6g2PbHIXoQ=;
+ b=SqlFTqplMp2Z1yKySBLpekymcQsblolEpUZZwgGxODcBKcXQcVEyP9y+kVGuOYu6/XnF
+ XCf/DypZBF6OXmCbW7jzCeIeGzqMwUZfW+x7hBCiQYWuUoenWvVo80ofzuzjn1UEarKw
+ SXLAphomROT4GDCKsTNT2mtKetH8g7LxoY2zCf3q4Wk4JEaZUn2ynntQeaAfOl5wyeBQ
+ giLglDKn6UMsUKTjWSW0UtZ5GBKyzE9sQjDSHemd4Ott+T6umU+WOgZkI+pn/30/M/cc
+ l22moEyy98Pe1TtiwnjyEgUl+/UQAQBXS3BBejc4ZYHBMnjK+H1yifX+Y2VGx4NhHEb8 ZA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2xykbpawdf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 16:42:47 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016Gd8kU102463;
-        Thu, 6 Feb 2020 16:42:47 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2y080dj7af-1
+        Thu, 06 Feb 2020 16:42:45 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016Gd8Rr009698;
+        Thu, 6 Feb 2020 16:42:44 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2y0mnk0n9k-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 16:42:46 +0000
+        Thu, 06 Feb 2020 16:42:44 +0000
 Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 016GgciP024401;
-        Thu, 6 Feb 2020 16:42:38 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 016GgdMW017902;
+        Thu, 6 Feb 2020 16:42:40 GMT
 Received: from localhost.us.oracle.com (/10.147.27.2)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Feb 2020 08:42:37 -0800
+        with ESMTP ; Thu, 06 Feb 2020 08:42:39 -0800
 From:   Eric Snowberg <eric.snowberg@oracle.com>
 To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
         serge@hallyn.com
@@ -69,10 +69,12 @@ Cc:     dhowells@redhat.com, geert@linux-m68k.org,
         bauerman@linux.ibm.com, mpe@ellerman.id.au,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 0/2] ima: uncompressed module appraisal support
-Date:   Thu,  6 Feb 2020 11:42:24 -0500
-Message-Id: <20200206164226.24875-1-eric.snowberg@oracle.com>
+Subject: [RFC PATCH 2/2] ima: Change default secure_boot policy to include appended signatures
+Date:   Thu,  6 Feb 2020 11:42:26 -0500
+Message-Id: <20200206164226.24875-3-eric.snowberg@oracle.com>
 X-Mailer: git-send-email 2.18.1
+In-Reply-To: <20200206164226.24875-1-eric.snowberg@oracle.com>
+References: <20200206164226.24875-1-eric.snowberg@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
@@ -80,7 +82,7 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ma
  engine=8.0.1-1911140001 definitions=main-2002060127
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
  definitions=main-2002060127
@@ -88,33 +90,46 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When booting with either "ima_policy=secure_boot module.sig_enforce=1"
-or building a kernel with CONFIG_IMA_ARCH_POLICY and booting with
-"ima_policy=secure_boot", module loading behaves differently based on if
-the module is compressed or not.  Originally when appraising a module
-with ima it had to be uncompressed and ima signed.  Recent changes in 5.4 
-have allowed internally signed modules to load [1].  But this only works 
-if the internally signed module is compressed.  The uncompressed module
-that is internally signed must still be ima signed. This patch series
-tries to bring the two in line.
+Change the default secure_boot policy from:
 
-I'm sending this as an RFC in case this was done intentionally.  Or
-maybe there is another way around this problem?  I also realize the 
-uncompressed module will be verified again with module_sig_check.  I'm 
-open to suggestions on improvement if this is seen as a problem.
+appraise func=MODULE_CHECK appraise_type=imasig
+appraise func=FIRMWARE_CHECK appraise_type=imasig
+appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig
+appraise func=POLICY_CHECK appraise_type=imasig
 
-[1] https://patchwork.kernel.org/cover/10986023
+to
 
-Eric Snowberg (2):
-  ima: Implement support for uncompressed module appended signatures
-  ima: Change default secure_boot policy to include appended signatures
+appraise func=MODULE_CHECK appraise_type=imasig|modsig
+appraise func=FIRMWARE_CHECK appraise_type=imasig
+appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig
+appraise func=POLICY_CHECK appraise_type=imasig
 
- security/integrity/digsig.c           | 9 +++++++--
- security/integrity/ima/ima_appraise.c | 3 +++
- security/integrity/ima/ima_policy.c   | 4 ++--
- security/integrity/integrity.h        | 3 ++-
- 4 files changed, 14 insertions(+), 5 deletions(-)
+This will allow appended signatures to work with the default
+secure_boot policy.
 
+Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+---
+ security/integrity/ima/ima_policy.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index ef8dfd47c7e3..5d835715b472 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -189,11 +189,11 @@ static struct ima_rule_entry build_appraise_rules[] __ro_after_init = {
+ 
+ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
+ 	{.action = APPRAISE, .func = MODULE_CHECK,
+-	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED},
+ 	{.action = APPRAISE, .func = FIRMWARE_CHECK,
+ 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+ 	{.action = APPRAISE, .func = KEXEC_KERNEL_CHECK,
+-	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED},
+ 	{.action = APPRAISE, .func = POLICY_CHECK,
+ 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+ };
 -- 
 2.18.1
 
