@@ -2,58 +2,181 @@ Return-Path: <SRS0=8IvT=33=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71EE4C2BA83
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Feb 2020 17:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2515C2BA83
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Feb 2020 17:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 503FB214AF
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Feb 2020 17:03:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F7D920838
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Feb 2020 17:40:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgBGRDj (ORCPT
+        id S1727118AbgBGRkM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Feb 2020 12:03:39 -0500
-Received: from mga05.intel.com ([192.55.52.43]:8882 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726867AbgBGRDj (ORCPT
+        Fri, 7 Feb 2020 12:40:12 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:10978 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727028AbgBGRkL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Feb 2020 12:03:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2020 09:03:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,414,1574150400"; 
-   d="scan'208";a="432625760"
-Received: from hhuan26-mobl1.amr.corp.intel.com ([10.254.45.144])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Feb 2020 09:03:37 -0800
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org,
-        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
-        "Jarkko Sakkinen" <jarkko.sakkinen@intel.com>,
-        linux-security-module@vger.kernel.org, haitao.huang@linux.intel.com
-Subject: Re: [PATCH v25 10/21] x86/sgx: Linux Enclave Driver
-References: <20200204060545.31729-1-jarkko.sakkinen@linux.intel.com>
- <20200204060545.31729-11-jarkko.sakkinen@linux.intel.com>
-Date:   Fri, 07 Feb 2020 11:03:37 -0600
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.0fmm0bufwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
-In-Reply-To: <20200204060545.31729-11-jarkko.sakkinen@linux.intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+        Fri, 7 Feb 2020 12:40:11 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 017HaO5e136633
+        for <linux-security-module@vger.kernel.org>; Fri, 7 Feb 2020 12:40:11 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y0nedk1da-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 07 Feb 2020 12:40:10 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 7 Feb 2020 17:40:09 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 7 Feb 2020 17:40:05 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 017He3kU49479916
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Feb 2020 17:40:03 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C40724C052;
+        Fri,  7 Feb 2020 17:40:03 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 441914C040;
+        Fri,  7 Feb 2020 17:40:02 +0000 (GMT)
+Received: from dhcp-9-31-103-165.watson.ibm.com (unknown [9.31.103.165])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  7 Feb 2020 17:40:02 +0000 (GMT)
+Subject: Re: [RFC PATCH 0/2] ima: uncompressed module appraisal support
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     Nayna <nayna@linux.vnet.ibm.com>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com, dhowells@redhat.com,
+        geert@linux-m68k.org, gregkh@linuxfoundation.org,
+        nayna@linux.ibm.com, tglx@linutronix.de, bauerman@linux.ibm.com,
+        mpe@ellerman.id.au, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 07 Feb 2020 12:40:01 -0500
+In-Reply-To: <330BDFAC-E778-4E9D-A2D2-DD81B745F6AB@oracle.com>
+References: <20200206164226.24875-1-eric.snowberg@oracle.com>
+         <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
+         <09D68C13-75E2-4BD6-B4E6-F765B175C7FD@oracle.com>
+         <1581087096.5585.597.camel@linux.ibm.com>
+         <330BDFAC-E778-4E9D-A2D2-DD81B745F6AB@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20020717-0008-0000-0000-00000350C7B9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20020717-0009-0000-0000-00004A715FB8
+Message-Id: <1581097201.5585.613.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-07_02:2020-02-07,2020-02-07 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ malwarescore=0 spamscore=0 suspectscore=3 adultscore=0 mlxlogscore=999
+ mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002070129
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Tested-by: Haitao Huang<haitao.huang@linux.intel.com>
+On Fri, 2020-02-07 at 09:57 -0700, Eric Snowberg wrote:
+> > On Feb 7, 2020, at 7:51 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > 
+> > On Thu, 2020-02-06 at 14:40 -0700, Eric Snowberg wrote:
+> > 
+> > <snip>
+> > 
+> >> Currently the upstream code will fail if the module is uncompressed.
+> >> If you compress the same module it will load with the current
+> >> upstream code.
+> >> 
+> >>> Lastly, there is nothing in these patches that indicate that the
+> >> kernel modules being compressed/uncompressed is related to the
+> >> signature verification.
+> >>>  
+> >> 
+> >> Basically if you have the following setup:
+> >> 
+> >> Kernel built with CONFIG_IMA_ARCH_POLICY or kernel booted with
+> >> module.sig_enforce=1 along with the following ima policy:
+> >> 
+> >> appraise func=MODULE_CHECK appraise_type=imasig|modsig
+> > 
+> > Enabling CONFIG_IMA_ARCH_POLICY or module.sig_enforce=1 behave totally
+> > differently.  CONFIG_IMA_ARCH_POLICY coordinates between the IMA
+> > signature verification and the original module_sig_check()
+> > verification.  Either one signature verification method is enabled or
+> > the other, but not both.
+> > 
+> > The existing IMA x86 arch policy has not been updated to support
+> > appended signatures.
+> 
+> That is not what I’m seeing.  Appended signatures mostly work.  They just
+> don’t work thru the finit_module system call.
+> 
+> > To understand what is happening, we need to analyze each scenario
+> > separately.
+> > 
+> > - If CONFIG_MODULE_SIG is configured or enabled on the boot command
+> > line ("module.sig_enforce = 1"), then the IMA arch x86 policy WILL NOT
+> > require an IMA signature.
+> 
+> All tests below are without my change
+> x86 booted with module.sig_enforce=1
+> 
+> empty ima policy
+
+Sure, in this example the IMA arch x86 policy is not configured and
+there is no custom IMA policy - no IMA.
+
+> $ cat /sys/kernel/security/ima/policy
+
+On a real system, you would want to require a signed IMA policy.
+
+> $ insmod ./foo.ko.xz   <— loads ok
+> $ rmmod foo
+> $ unxz ./foo.ko.xz
+> $ insmod ./foo.ko      <— loads ok
+> $ rmmod foo
+> 
+> add in module appraisal 
+
+Sure, the current system 
+
+> $ echo "appraise func=MODULE_CHECK appraise_type=imasig|modsig" >
+> /sys/kernel/security/ima/policy
+> 
+> $ insmod ./foo.ko.xz   <— loads ok
+> $ rmmod foo
+
+Sure, CONFIG_MODULE_SIG is configured or enabled on the boot command
+line ("module.sig_enforce = 1").  IMA won't prevent the init_module()
+syscall.
+
+> 
+> $ insmod ./foo.ko
+> insmod: ERROR: could not insert module ./foo.ko: Permission denied
+> 
+> last entry from audit log:
+> type=INTEGRITY_DATA msg=audit(1581089373.076:83): pid=2874 uid=0
+> auid=0 ses=1 subj=unconfined_u:unconfined_r:unconfined_t:s0-
+> s0:c0.c1023 op=appraise_data cause=invalid-signature comm="insmod"
+> name="/root/keys/modules/foo.ko" dev="dm-0" ino=10918365
+> res=0^]UID="root" AUID=“root"
+> 
+> This is because modsig_verify() will be called from within
+> ima_appraise_measurement(), 
+> since try_modsig is true.  Then modsig_verify() will return
+> INTEGRITY_FAIL.
+
+Why is it an "invalid signature"?  For that you need to look at the
+kernel messages.  Most likely it can't find the public key on the .ima
+keyring to verify the signature.
+
+Mimi
+
