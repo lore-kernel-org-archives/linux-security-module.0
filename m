@@ -3,124 +3,159 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7429CC352A5
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Feb 2020 13:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A53C04EB5
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Feb 2020 14:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5714C217BA
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Feb 2020 13:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D59C121741
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Feb 2020 14:51:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbgBGNjX (ORCPT
+        id S1726954AbgBGOvs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Feb 2020 08:39:23 -0500
-Received: from mga17.intel.com ([192.55.52.151]:44098 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726861AbgBGNjW (ORCPT
+        Fri, 7 Feb 2020 09:51:48 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58578 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726901AbgBGOvs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Feb 2020 08:39:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2020 05:39:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,413,1574150400"; 
-   d="scan'208";a="220798400"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga007.jf.intel.com with ESMTP; 07 Feb 2020 05:39:21 -0800
-Received: from [10.125.252.178] (abudanko-mobl.ccr.corp.intel.com [10.125.252.178])
-        by linux.intel.com (Postfix) with ESMTP id 7EB57580458;
-        Fri,  7 Feb 2020 05:39:13 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v5 01/10] capabilities: introduce CAP_PERFMON to kernel
- and user space
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        oprofile-list@lists.sf.net, Andy Lutomirski <luto@amacapital.net>
-References: <875zgizkyk.fsf@nanos.tec.linutronix.de>
-Organization: Intel Corp.
-Message-ID: <7d6f4210-423f-e454-3910-9f8e17dff1aa@linux.intel.com>
-Date:   Fri, 7 Feb 2020 16:39:12 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <875zgizkyk.fsf@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Fri, 7 Feb 2020 09:51:48 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 017Enl0Y142095
+        for <linux-security-module@vger.kernel.org>; Fri, 7 Feb 2020 09:51:46 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y0mdy106w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 07 Feb 2020 09:51:46 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 7 Feb 2020 14:51:44 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 7 Feb 2020 14:51:40 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 017EojeT38863280
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Feb 2020 14:50:45 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9CCC74C044;
+        Fri,  7 Feb 2020 14:51:38 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 015AF4C040;
+        Fri,  7 Feb 2020 14:51:37 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.201.239])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  7 Feb 2020 14:51:36 +0000 (GMT)
+Subject: Re: [RFC PATCH 0/2] ima: uncompressed module appraisal support
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>,
+        Nayna <nayna@linux.vnet.ibm.com>
+Cc:     dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, geert@linux-m68k.org,
+        gregkh@linuxfoundation.org, nayna@linux.ibm.com,
+        tglx@linutronix.de, bauerman@linux.ibm.com, mpe@ellerman.id.au,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 07 Feb 2020 09:51:36 -0500
+In-Reply-To: <09D68C13-75E2-4BD6-B4E6-F765B175C7FD@oracle.com>
+References: <20200206164226.24875-1-eric.snowberg@oracle.com>
+         <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
+         <09D68C13-75E2-4BD6-B4E6-F765B175C7FD@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20020714-4275-0000-0000-0000039EF3C5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20020714-4276-0000-0000-000038B323FD
+Message-Id: <1581087096.5585.597.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-07_01:2020-02-07,2020-02-07 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 spamscore=0 adultscore=0 mlxscore=0 clxscore=1015
+ malwarescore=0 priorityscore=1501 phishscore=0 suspectscore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002070114
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, 2020-02-06 at 14:40 -0700, Eric Snowberg wrote:
 
-On 07.02.2020 14:38, Thomas Gleixner wrote:
-> Alexey Budankov <alexey.budankov@linux.intel.com> writes:
->> On 22.01.2020 17:25, Alexey Budankov wrote:
->>> On 22.01.2020 17:07, Stephen Smalley wrote:
->>>>> It keeps the implementation simple and readable. The implementation is more
->>>>> performant in the sense of calling the API - one capable() call for CAP_PERFMON
->>>>> privileged process.
->>>>>
->>>>> Yes, it bloats audit log for CAP_SYS_ADMIN privileged and unprivileged processes,
->>>>> but this bloating also advertises and leverages using more secure CAP_PERFMON
->>>>> based approach to use perf_event_open system call.
->>>>
->>>> I can live with that.  We just need to document that when you see
->>>> both a CAP_PERFMON and a CAP_SYS_ADMIN audit message for a process,
->>>> try only allowing CAP_PERFMON first and see if that resolves the
->>>> issue.  We have a similar issue with CAP_DAC_READ_SEARCH versus
->>>> CAP_DAC_OVERRIDE.
->>>
->>> perf security [1] document can be updated, at least, to align and document 
->>> this audit logging specifics.
->>
->> And I plan to update the document right after this patch set is accepted.
->> Feel free to let me know of the places in the kernel docs that also
->> require update w.r.t CAP_PERFMON extension.
-> 
-> The documentation update wants be part of the patch set and not planned
-> to be done _after_ the patch set is merged.
+<snip>
 
-Well, accepted. It is going to make patches #11 and beyond.
+> Currently the upstream code will fail if the module is uncompressed.
+>  If you compress the same module it will load with the current
+> upstream code.
+> 
+> > Lastly, there is nothing in these patches that indicate that the
+> kernel modules being compressed/uncompressed is related to the
+> signature verification.
+> > 
+> 
+> Basically if you have the following setup:
+> 
+> Kernel built with CONFIG_IMA_ARCH_POLICY or kernel booted with
+> module.sig_enforce=1 along with the following ima policy:
+> 
+> appraise func=MODULE_CHECK appraise_type=imasig|modsig
 
-Thanks,
-Alexey
+Enabling CONFIG_IMA_ARCH_POLICY or module.sig_enforce=1 behave totally
+differently.  CONFIG_IMA_ARCH_POLICY coordinates between the IMA
+signature verification and the original module_sig_check()
+verification.  Either one signature verification method is enabled or
+the other, but not both.
+
+The existing IMA x86 arch policy has not been updated to support
+appended signatures.
+
+To understand what is happening, we need to analyze each scenario
+separately.
+
+- If CONFIG_MODULE_SIG is configured or enabled on the boot command
+line ("module.sig_enforce = 1"), then the IMA arch x86 policy WILL NOT
+require an IMA signature.
+
+- If CONFIG_MODULE_SIG is NOT configured or enabled on the boot
+command line, then the IMA arch x86 policy WILL require an IMA
+signature.
+
+- If CONFIG_MODULE_SIG is configured or enabled on the boot command
+line, the IMA arch x86 policy is not configured, and the above policy
+rule is defined, an appended signature will be verified by both IMA
+and module_sig_check().
+  
+> 
+> If you have a module foo.ko that contains a valid appended signature
+> but is not ima signed, it will fail to load.
+
+That would only happen in the second scenario or in the last scenario
+if the key is not found.
+
+> Now if the end user simply compresses the same foo.ko, making it
+> foo.ko.xz.  The module will load.
+
+This implies that CONFIG_MODULE_SIG is configured or enabled on the
+boot command line, like the first scenario described above, or in the
+last scenario and the key is found.
 
 > 
-> Thanks,
-> 
->         tglx
-> 
+> Modules can be loaded thru two different syscalls, finit_module and
+> init_module.  The changes added in [1] work if you use the
+> init_module syscall.  My change adds support when the finit_module
+> syscall gets used instead.
+
+With the IMA arch x86 policy, without CONFIG_MODULE_SIG configured or
+enabled on the boot command line, IMA will prevent the init_module()
+syscall.  This is intentional.
+
+Your second patch (2/2) changes the arch x86 policy rule to allow
+appended signatures.  The reason for any other changes needs to be
+clearer.  I suggest you look at the audit log and kernel messages, as
+well as the kexec selftests, to better understand what is happening.
+
+Mimi
+
