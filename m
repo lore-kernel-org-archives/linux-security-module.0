@@ -2,176 +2,81 @@ Return-Path: <SRS0=iK7v=36=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E3CC352A3
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 10:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A2BC352A5
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 11:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B94E20873
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 10:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4BC020733
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 11:56:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbgBJKGA (ORCPT
+        id S1727347AbgBJL4Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 05:06:00 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2400 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726451AbgBJKF7 (ORCPT
+        Mon, 10 Feb 2020 06:56:16 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:49732 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727061AbgBJL4Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 05:05:59 -0500
-Received: from lhreml704-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 2E71E2FBB5E367A0ACF8;
-        Mon, 10 Feb 2020 10:05:58 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by smtpsuk.huawei.com (10.201.108.45) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Mon, 10 Feb 2020 10:05:44 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <James.Bottomley@HansenPartnership.com>,
-        <jarkko.sakkinen@linux.intel.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v3 8/8] ima: Use ima_hash_algo for collision detection in the measurement list
-Date:   Mon, 10 Feb 2020 11:04:50 +0100
-Message-ID: <20200210100450.22168-1-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 10 Feb 2020 06:56:16 -0500
+Received: from localhost (unknown [IPv6:2001:4d48:ad58:9a00::6dd])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: smcv)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 3C6C629289F;
+        Mon, 10 Feb 2020 11:56:14 +0000 (GMT)
+Date:   Mon, 10 Feb 2020 11:56:11 +0000
+From:   Simon McVittie <smcv@collabora.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
+Subject: Re: [PATCH v14 22/23] LSM: Add /proc attr entry for full LSM context
+Message-ID: <20200210115611.GA13930@horizon>
+References: <20200124002306.3552-1-casey@schaufler-ca.com>
+ <20200124002306.3552-23-casey@schaufler-ca.com>
+ <1de8338a-9c1c-c13b-16f0-e47ebec0e7ea@tycho.nsa.gov>
+ <f3dea066-1f6d-4b92-1a5b-dac25b58aae7@tycho.nsa.gov>
+ <9afb8d9d-a590-0e13-bf46-53a347ea15dd@schaufler-ca.com>
+ <6bd3e393-e1df-7117-d15a-81cb1946807b@tycho.nsa.gov>
+ <446935fa-2926-c346-a273-ae1ecbb072cd@schaufler-ca.com>
+ <09d96236-715a-344a-38bc-c05208698125@tycho.nsa.gov>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.160]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <09d96236-715a-344a-38bc-c05208698125@tycho.nsa.gov>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Before calculating a digest for each PCR bank, collisions were detected
-with a SHA1 digest. This patch includes ima_hash_algo among the algorithms
-used to calculate the template digest and checks collisions on that digest.
+On Mon, 03 Feb 2020 at 13:54:45 -0500, Stephen Smalley wrote:
+> The printable ASCII bit is based on what the dbus maintainer requested in
+> previous discussions.
 
-The position in the measurement entry array of the template digest
-calculated with the default IMA algorithm is stored in the
-ima_hash_algo_idx global variable and is determined at IMA initialization
-time.
+I thought in previous discussions, we had come to the conclusion that
+I can't assume it's 7-bit ASCII. (If I *can* assume that for this new
+API, that's even better.)
 
-Changelog
+To be clear, when I say ASCII I mean a sequence of bytes != '\0' with
+their high bit unset (x & 0x7f == x) and the obvious mapping to/from
+Unicode (bytes '\1' to '\x7f' represent codepoints U+0001 to U+007F). Is
+that the same thing you mean?
 
-v2:
-- add __ro_after_init to declaration of ima_hash_algo_idx (suggested by
-  Mimi)
-- replace ima_num_template_digests with
-  NR_BANKS(ima_tpm_chip) + ima_extra_slots(suggested by Mimi)
-- use ima_hash_algo_idx to access ima_algo_array elements in
-  ima_init_crypto()
+I thought the conclusion we had come to in previous conversations was
+that the LSM context is what GLib calls a "bytestring", the same as
+filenames and environment variables - an opaque sequence of bytes != '\0',
+with no further guarantees, and no specified encoding or mapping to/from
+Unicode (most likely some superset of ASCII like UTF-8 or Latin-1,
+but nobody knows which one, and they could equally well be some binary
+encoding with no Unicode meaning, as long as it avoids '\0').
 
-v1:
-- increment ima_num_template_digests before kcalloc() (suggested by Mimi)
-- check if ima_tpm_chip is NULL
+If I can safely assume that a new kernel <-> user-space API is constrained
+to UTF-8 or a UTF-8 subset like ASCII, then I can provide more friendly
+APIs for user-space features built over it. If that isn't possible, the
+next best thing is a "bytestring" like filenames, environment variables,
+and most kernel <-> user-space strings in general.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima.h        |  1 +
- security/integrity/ima/ima_crypto.c | 19 ++++++++++++++++++-
- security/integrity/ima/ima_queue.c  |  8 ++++----
- 3 files changed, 23 insertions(+), 5 deletions(-)
-
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index f04bec2ab83f..15663711d0ec 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -53,6 +53,7 @@ extern int ima_policy_flag;
- /* set during initialization */
- extern int ima_hash_algo;
- extern int ima_sha1_idx __ro_after_init;
-+extern int ima_hash_algo_idx __ro_after_init;
- extern int ima_extra_slots __ro_after_init;
- extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 5ebe31576f7b..84e2b239d31c 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -65,6 +65,7 @@ struct ima_algo_desc {
- };
- 
- int ima_sha1_idx __ro_after_init;
-+int ima_hash_algo_idx __ro_after_init;
- /* Additional number of slots in ima_algo_array for SHA1 and default IMA algo */
- int ima_extra_slots __ro_after_init;
- 
-@@ -121,15 +122,25 @@ int __init ima_init_crypto(void)
- 		return rc;
- 
- 	ima_sha1_idx = -1;
-+	ima_hash_algo_idx = -1;
- 
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip); i++) {
- 		algo = ima_tpm_chip->allocated_banks[i].crypto_id;
- 		if (algo == HASH_ALGO_SHA1)
- 			ima_sha1_idx = i;
-+
-+		if (algo == ima_hash_algo)
-+			ima_hash_algo_idx = i;
- 	}
- 
--	if (ima_sha1_idx < 0)
-+	if (ima_sha1_idx < 0) {
- 		ima_sha1_idx = NR_BANKS(ima_tpm_chip) + ima_extra_slots++;
-+		if (ima_hash_algo == HASH_ALGO_SHA1)
-+			ima_hash_algo_idx = ima_sha1_idx;
-+	}
-+
-+	if (ima_hash_algo_idx < 0)
-+		ima_hash_algo_idx = NR_BANKS(ima_tpm_chip) + ima_extra_slots++;
- 
- 	ima_algo_array = kcalloc(NR_BANKS(ima_tpm_chip) + ima_extra_slots,
- 				 sizeof(*ima_algo_array), GFP_KERNEL);
-@@ -178,6 +189,12 @@ int __init ima_init_crypto(void)
- 		ima_algo_array[ima_sha1_idx].algo = HASH_ALGO_SHA1;
- 	}
- 
-+	if (ima_hash_algo_idx >= NR_BANKS(ima_tpm_chip) &&
-+	    ima_hash_algo_idx != ima_sha1_idx) {
-+		ima_algo_array[ima_hash_algo_idx].tfm = ima_shash_tfm;
-+		ima_algo_array[ima_hash_algo_idx].algo = ima_hash_algo;
-+	}
-+
- 	return 0;
- out_array:
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip) + ima_extra_slots; i++) {
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 7f7509774b85..58983d0f0214 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -57,8 +57,8 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 	key = ima_hash_key(digest_value);
- 	rcu_read_lock();
- 	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
--		rc = memcmp(qe->entry->digests[ima_sha1_idx].digest,
--			    digest_value, TPM_DIGEST_SIZE);
-+		rc = memcmp(qe->entry->digests[ima_hash_algo_idx].digest,
-+			    digest_value, hash_digest_size[ima_hash_algo]);
- 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
- 			ret = qe;
- 			break;
-@@ -110,7 +110,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
- 
- 	atomic_long_inc(&ima_htable.len);
- 	if (update_htable) {
--		key = ima_hash_key(entry->digests[ima_sha1_idx].digest);
-+		key = ima_hash_key(entry->digests[ima_hash_algo_idx].digest);
- 		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
- 	}
- 
-@@ -162,7 +162,7 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
- 			   const char *op, struct inode *inode,
- 			   const unsigned char *filename)
- {
--	u8 *digest = entry->digests[ima_sha1_idx].digest;
-+	u8 *digest = entry->digests[ima_hash_algo_idx].digest;
- 	struct tpm_digest *digests_arg = entry->digests;
- 	const char *audit_cause = "hash_added";
- 	char tpm_audit_cause[AUDIT_CAUSE_LEN_MAX];
--- 
-2.17.1
-
+    smcv
