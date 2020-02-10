@@ -2,90 +2,102 @@ Return-Path: <SRS0=iK7v=36=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A4B9C35254
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 18:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C5EC352A5
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 18:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0424520656
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 18:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581359788;
-	bh=YRMERBGZ8987hvH9lRSoazOKWCQx+VOKpk/WDol0H0A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Z7SlsfveT0OIWKIPoO5vFhSoK1XFgrh/ubV4Rl2zuDS34yH+86eba8tHBH8uOPfeU
-	 lLqPMopL2lwo8aIvatKt2XQpcmacU/1S3kjjRaZGUBX+tLa6c/cIyIGg9LtBKxXhgQ
-	 doavNOktb+NTfdpoIP2A9eZ7H2T86/fGpD1R2H6w=
+	by mail.kernel.org (Postfix) with ESMTP id 7131A20870
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 18:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbgBJSgY (ORCPT
+        id S1727434AbgBJS46 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 13:36:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727477AbgBJSgY (ORCPT
+        Mon, 10 Feb 2020 13:56:58 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:48909 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbgBJS45 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 13:36:24 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB4DB20675;
-        Mon, 10 Feb 2020 18:36:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581359783;
-        bh=YRMERBGZ8987hvH9lRSoazOKWCQx+VOKpk/WDol0H0A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JxsQ+K2zIBVfotr5CTTHqBIGvls/92V7dMI9Q4pd9S/qqXtQzQ/DTiTFJUI3npQ3R
-         PJ2Ck3i7IkeQfROZ3y8tPQE45fTASFlLfqptL7woZj8iC/eKqU2rQ55B20v1zHg1+n
-         PfpB1g2nGA+Rj8i0Ze48HAcJSNKVtPfxYpW5QJ7w=
-Date:   Mon, 10 Feb 2020 10:36:21 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Ken Goldman <kgold@linux.ibm.com>
-Cc:     "Van Leeuwen, Pascal" <pvanleeuwen@rambus.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Ken Goldman <kgold@linux.ibm.com>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] crypto: sm3 - add a new alias name sm3-256
-Message-ID: <20200210183620.GA137710@gmail.com>
-References: <20200207092219.115056-1-tianjia.zhang@linux.alibaba.com>
- <20200207092219.115056-2-tianjia.zhang@linux.alibaba.com>
- <20200210031717.GA5198@sol.localdomain>
- <1a623251-e83a-3b70-9fbd-8e929a23f7d8@linux.ibm.com>
- <7a496bb15f264eab920bf081338d67af@MN2PR20MB2973.namprd20.prod.outlook.com>
- <CY4PR0401MB36523805F71721000F188F2FC3190@CY4PR0401MB3652.namprd04.prod.outlook.com>
- <9683f764-c8c7-e123-b5f6-4f155bd1b10b@linux.ibm.com>
+        Mon, 10 Feb 2020 13:56:57 -0500
+Received: from static-50-53-33-191.bvtn.or.frontiernet.net ([50.53.33.191] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1j1EEk-0002Ki-UK; Mon, 10 Feb 2020 18:56:51 +0000
+Subject: Re: [PATCH v14 22/23] LSM: Add /proc attr entry for full LSM context
+To:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Simon McVittie <smcv@collabora.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        keescook@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com
+References: <20200124002306.3552-1-casey@schaufler-ca.com>
+ <20200124002306.3552-23-casey@schaufler-ca.com>
+ <1de8338a-9c1c-c13b-16f0-e47ebec0e7ea@tycho.nsa.gov>
+ <f3dea066-1f6d-4b92-1a5b-dac25b58aae7@tycho.nsa.gov>
+ <9afb8d9d-a590-0e13-bf46-53a347ea15dd@schaufler-ca.com>
+ <6bd3e393-e1df-7117-d15a-81cb1946807b@tycho.nsa.gov>
+ <446935fa-2926-c346-a273-ae1ecbb072cd@schaufler-ca.com>
+ <09d96236-715a-344a-38bc-c05208698125@tycho.nsa.gov>
+ <20200210115611.GA13930@horizon>
+ <94aaf6c8-cc69-5804-2d45-3b8c96689331@tycho.nsa.gov>
+ <04442c9f-430e-c922-b078-7cff8f36a45f@tycho.nsa.gov>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+Message-ID: <418a9deb-fecc-4040-efb9-469bc8f4625a@canonical.com>
+Date:   Mon, 10 Feb 2020 10:56:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9683f764-c8c7-e123-b5f6-4f155bd1b10b@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <04442c9f-430e-c922-b078-7cff8f36a45f@tycho.nsa.gov>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[Please fix your email client; you dropped all non-list recipients from Cc,
-and I had to manually add them back...]
-
-On Mon, Feb 10, 2020 at 01:02:42PM -0500, Ken Goldman wrote:
-> On 2/10/2020 12:01 PM, Van Leeuwen, Pascal wrote:
-> > Well, the current specification surely doesn't define anything else and is
-> > already over a decade old. So what would be the odds that they add a
-> > different blocksize variant_now_  AND still call that SM3-something?
+On 2/10/20 6:55 AM, Stephen Smalley wrote:
+> On 2/10/20 8:25 AM, Stephen Smalley wrote:
+>> On 2/10/20 6:56 AM, Simon McVittie wrote:
+>>> On Mon, 03 Feb 2020 at 13:54:45 -0500, Stephen Smalley wrote:
+>>>> The printable ASCII bit is based on what the dbus maintainer requested in
+>>>> previous discussions.
+>>>
+>>> I thought in previous discussions, we had come to the conclusion that
+>>> I can't assume it's 7-bit ASCII. (If I *can* assume that for this new
+>>> API, that's even better.)
+>>>
+>>> To be clear, when I say ASCII I mean a sequence of bytes != '\0' with
+>>> their high bit unset (x & 0x7f == x) and the obvious mapping to/from
+>>> Unicode (bytes '\1' to '\x7f' represent codepoints U+0001 to U+007F). Is
+>>> that the same thing you mean?
+>>
+>> I mean the subset of 7-bit ASCII that satisfies isprint() using the "C" locale.  That is already true for SELinux with the existing interfaces. I can't necessarily speak for the others.
 > 
-> I just got a note from a cryptographer who said there were discussions last
-> year about a future SM3 with 512 bit output.
+> Looks like Smack labels are similarly restricted, per Documentation/admin-guide/LSM/Smack.rst.  So I guess the only one that is perhaps unclear is AppArmor, since its labels are typically derived from pathnames?  Can an AppArmor label returned via its getprocattr() hook be any legal pathname?
 > 
-> Given that, why not plan ahead and use sm3-256?  Is there any downside?
-> Is the cost any more than 4 bytes in some source code?
 
-If renaming sm3 to sm3-256 in the crypto API, no.  If adding sm3-256 alongside
-sm3, then yes there is a cost to that because from the crypto API's perspective
-they will be separate algorithms that each need to be registered, tested, etc.
+yes sadly, as much as I would like to depracate/remove it the pathname based profile names are a byte string. AppArmor supports a more restricted profile name and I have been trying to get people to move to it for 12 years with only limited success.
 
-- Eric
+>>> I thought the conclusion we had come to in previous conversations was
+>>> that the LSM context is what GLib calls a "bytestring", the same as
+>>> filenames and environment variables - an opaque sequence of bytes != '\0',
+>>> with no further guarantees, and no specified encoding or mapping to/from
+>>> Unicode (most likely some superset of ASCII like UTF-8 or Latin-1,
+>>> but nobody knows which one, and they could equally well be some binary
+>>> encoding with no Unicode meaning, as long as it avoids '\0').
+>>>
+>>> If I can safely assume that a new kernel <-> user-space API is constrained
+>>> to UTF-8 or a UTF-8 subset like ASCII, then I can provide more friendly
+>>> APIs for user-space features built over it. If that isn't possible, the
+>>> next best thing is a "bytestring" like filenames, environment variables,
+>>> and most kernel <-> user-space strings in general.
+>>>
+>>>      smcv
+>>>
+>>
+> 
+
