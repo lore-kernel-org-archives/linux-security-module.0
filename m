@@ -2,106 +2,261 @@ Return-Path: <SRS0=iK7v=36=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FEBC352A5
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 21:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9777CC352A5
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 22:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FC9A2070A
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 21:27:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="t2h8CUoW"
+	by mail.kernel.org (Postfix) with ESMTP id 700B52082F
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 22:23:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbgBJV1z (ORCPT
+        id S1727575AbgBJWXv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 16:27:55 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44457 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727414AbgBJV1z (ORCPT
+        Mon, 10 Feb 2020 17:23:51 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11672 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727254AbgBJWXt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 16:27:55 -0500
-Received: by mail-ed1-f68.google.com with SMTP id g19so2106840eds.11
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 13:27:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=FsSlvm/Axt7sRTfVXvar8r8VgRRFNW92E5RmRgg0FNo=;
-        b=t2h8CUoWU6lO/TpiUHXzrdlMs9sL6OymwU/3XgYBNaZ7GG+QIs2krf1qGUYApv4ife
-         QMRvwPCjaeuPQ2C7woIJ6j4rFRP0kF4asBbCsM5peS8yN0p8kqbCGbOR0HyGVGYJ6kjY
-         YRWdVPoJhTbRXNqhafmOzRyeesqZ42VMilkkMmjMC7RkFIYbl5rbq+H7DUlqeyZIuSe3
-         Wy9w8Jsz3DiBPClC4o8QBxIdtGN5xMJHv2350ixjhO0ChLErc70NPj3CS8CFaGTQR3kI
-         MZUmz/wXwG5GBc9Mj4tCBRqxtukRCEh/0bPBrBZwNHOjLM0mgtiYkrVeC6PZsbdrYRgw
-         zfrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=FsSlvm/Axt7sRTfVXvar8r8VgRRFNW92E5RmRgg0FNo=;
-        b=gX77wP30nrSs2YAKJjJ/GJARcVc4hQLgNL4voqYnpzaYZBOKIMn+0Jk3k3G+awT1+C
-         h/uURkuO/8gXTRFxbxVyCAm/2ONGs/Tphxu0BK4s982aiDZ7fVluNBsuoquBH7NFSOu5
-         s3l+mYO6hszdNby9qJGCothReM2Fd/FEz0rUkyLBln1T0pdsk7DS2g8LG4VTktUdWYW0
-         S8IBwF59To9SqhhBbl8CM1NfCPjAvK3ZmglT3HR4HFYW1f5HtTAZpoq7IHLC5xKfDwdc
-         ws4RQE81kVr5Ox2ChCB9naUt7f82rgRLgXQmjHnRVg1zT5o0aoNksmQ+R0gzjMO1PsUd
-         u8LA==
-X-Gm-Message-State: APjAAAW1M4HQnarj6BKuUSZ6enmKyf2HkP04UQK6OwXJOqXGYa7fKrDt
-        39Nby4wQmpf13e5mW9jBlCbFzmCNubVoIyNESbdN
-X-Google-Smtp-Source: APXvYqw6cQpdwc83SlSrKVH9MBzQRS1LOB8fuQYZ+BoKOqEcwlHzK4oUfMSGgZoOBdq/XgSdOkR5rBTuh0R6GPbhJmc=
-X-Received: by 2002:aa7:cd49:: with SMTP id v9mr3014459edw.269.1581370073082;
- Mon, 10 Feb 2020 13:27:53 -0800 (PST)
-MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 10 Feb 2020 16:27:42 -0500
-Message-ID: <CAHC9VhRegJC9MP2pAGV_htOVNiBYSzxJ3xBFk7trwRpLniBY+w@mail.gmail.com>
-Subject: [GIT PULL] SELinux fixes for v5.6 (#1)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        Mon, 10 Feb 2020 17:23:49 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01AMJLOH012299
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 17:23:46 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y38gxgthj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 17:23:46 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 10 Feb 2020 22:23:44 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 10 Feb 2020 22:23:42 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01AMMlbZ42861018
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Feb 2020 22:22:47 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BFC97AE04D;
+        Mon, 10 Feb 2020 22:23:41 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D3D2BAE051;
+        Mon, 10 Feb 2020 22:23:40 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.140.79])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 10 Feb 2020 22:23:40 +0000 (GMT)
+Subject: Re: [PATCH v3 2/8] ima: Switch to ima_hash_algo for boot aggregate
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        James.Bottomley@HansenPartnership.com,
+        jarkko.sakkinen@linux.intel.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        stable@vger.kernel.org
+Date:   Mon, 10 Feb 2020 17:23:40 -0500
+In-Reply-To: <20200210100048.21448-3-roberto.sassu@huawei.com>
+References: <20200210100048.21448-1-roberto.sassu@huawei.com>
+         <20200210100048.21448-3-roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20021022-0028-0000-0000-000003D95262
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20021022-0029-0000-0000-0000249DBF8E
+Message-Id: <1581373420.5585.920.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-10_07:2020-02-10,2020-02-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=2
+ lowpriorityscore=0 spamscore=0 bulkscore=0 impostorscore=0 mlxscore=0
+ adultscore=0 clxscore=1015 malwarescore=0 phishscore=0 priorityscore=1501
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002100156
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On Mon, 2020-02-10 at 11:00 +0100, Roberto Sassu wrote:
+> boot_aggregate is the first entry of IMA measurement list. Its purpose is
+> to link pre-boot measurements to IMA measurements. As IMA was designed to
+> work with a TPM 1.2, the SHA1 PCR bank was always selected.
+> 
+> Currently, even if a TPM 2.0 is used, the SHA1 PCR bank is selected.
+> However, the assumption that the SHA1 PCR bank is always available is not
+> correct, as PCR banks can be selected with the PCR_Allocate() TPM command.
+> 
+> This patch tries to use ima_hash_algo as hash algorithm for boot_aggregate.
+> If no PCR bank uses that algorithm, the patch tries to find the SHA256 PCR
+> bank (which is mandatory in the TCG PC Client specification). 
 
-Two small fixes for v5.6-rcX: one fixes a locking problem in the
-recently merged label translation code, the other fixes an
-embarrassing "binderfs"/"binder" filesystem name check.
+Up to here, the patch description matches the code.
+> If also this
+> bank is not found, the patch selects the first one. If the TPM algorithm
+> of that bank is not mapped to a crypto ID, boot_aggregate is set to zero.
 
-Please merge for the next -rcX release, thank you.
+This comment and the one inline are left over from previous version.
 
--Paul
+> 
+> Changelog
+> 
+> v1:
+> - add Mimi's comments
+> - if there is no PCR bank for the IMA default algorithm use SHA256
+>   (suggested by James Bottomley)
+> 
+> Cc: stable@vger.kernel.org # 5.1.x
+> Fixes: 879b589210a9 ("tpm: retrieve digest size of unknown algorithms with PCR read")
+> Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
---
-The following changes since commit 98aa00345de54b8340dc2ddcd87f446d33387b5e:
+Thanks, Roberto.  This patch is dependent on 1/8.  As soon as there's
+a topic branch, I'll queue this, removing the extraneous comments.
 
- selinux: fix regression introduced by move_mount(2) syscall
-   (2020-01-20 07:42:37 -0500)
+Mimi
 
-are available in the Git repository at:
+> ---
+>  security/integrity/ima/ima_crypto.c | 45 +++++++++++++++++++++++++----
+>  security/integrity/ima/ima_init.c   | 22 ++++++++++----
+>  2 files changed, 56 insertions(+), 11 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> index 73044fc6a952..f2f41a2bc3d4 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -655,18 +655,29 @@ static void __init ima_pcrread(u32 idx, struct tpm_digest *d)
+>  }
+>  
+>  /*
+> - * Calculate the boot aggregate hash
+> + * The boot_aggregate is a cumulative hash over TPM registers 0 - 7.  With
+> + * TPM 1.2 the boot_aggregate was based on reading the SHA1 PCRs, but with
+> + * TPM 2.0 hash agility, TPM chips could support multiple TPM PCR banks,
+> + * allowing firmware to configure and enable different banks.
+> + *
+> + * Knowing which TPM bank is read to calculate the boot_aggregate digest
+> + * needs to be conveyed to a verifier.  For this reason, use the same
+> + * hash algorithm for reading the TPM PCRs as for calculating the boot
+> + * aggregate digest as stored in the measurement list.
+>   */
+> -static int __init ima_calc_boot_aggregate_tfm(char *digest,
+> +static int __init ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
+>  					      struct crypto_shash *tfm)
+>  {
+> -	struct tpm_digest d = { .alg_id = TPM_ALG_SHA1, .digest = {0} };
+> +	struct tpm_digest d = { .alg_id = alg_id, .digest = {0} };
+>  	int rc;
+>  	u32 i;
+>  	SHASH_DESC_ON_STACK(shash, tfm);
+>  
+>  	shash->tfm = tfm;
+>  
+> +	pr_devel("calculating the boot-aggregate based on TPM bank: %04x\n",
+> +		 d.alg_id);
+> +
+>  	rc = crypto_shash_init(shash);
+>  	if (rc != 0)
+>  		return rc;
+> @@ -675,7 +686,8 @@ static int __init ima_calc_boot_aggregate_tfm(char *digest,
+>  	for (i = TPM_PCR0; i < TPM_PCR8; i++) {
+>  		ima_pcrread(i, &d);
+>  		/* now accumulate with current aggregate */
+> -		rc = crypto_shash_update(shash, d.digest, TPM_DIGEST_SIZE);
+> +		rc = crypto_shash_update(shash, d.digest,
+> +					 crypto_shash_digestsize(tfm));
+>  	}
+>  	if (!rc)
+>  		crypto_shash_final(shash, digest);
+> @@ -685,14 +697,35 @@ static int __init ima_calc_boot_aggregate_tfm(char *digest,
+>  int __init ima_calc_boot_aggregate(struct ima_digest_data *hash)
+>  {
+>  	struct crypto_shash *tfm;
+> -	int rc;
+> +	u16 crypto_id, alg_id;
+> +	int rc, i, bank_idx = 0;
+> +
+> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
+> +		crypto_id = ima_tpm_chip->allocated_banks[i].crypto_id;
+> +		if (crypto_id == hash->algo) {
+> +			bank_idx = i;
+> +			break;
+> +		}
+> +
+> +		if (crypto_id == HASH_ALGO_SHA256)
+> +			bank_idx = i;
+> +	}
+> +
+> +	if (bank_idx == 0 &&
+> +	    ima_tpm_chip->allocated_banks[0].crypto_id == HASH_ALGO__LAST) {
+> +		pr_err("No suitable TPM algorithm for boot aggregate\n");
+> +		return 0;
+> +	}
+> +
+> +	hash->algo = ima_tpm_chip->allocated_banks[bank_idx].crypto_id;
+>  
+>  	tfm = ima_alloc_tfm(hash->algo);
+>  	if (IS_ERR(tfm))
+>  		return PTR_ERR(tfm);
+>  
+>  	hash->length = crypto_shash_digestsize(tfm);
+> -	rc = ima_calc_boot_aggregate_tfm(hash->digest, tfm);
+> +	alg_id = ima_tpm_chip->allocated_banks[bank_idx].alg_id;
+> +	rc = ima_calc_boot_aggregate_tfm(hash->digest, alg_id, tfm);
+>  
+>  	ima_free_tfm(tfm);
+>  
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> index 5d55ade5f3b9..fbd7a8e28a6b 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -27,7 +27,7 @@ struct tpm_chip *ima_tpm_chip;
+>  /* Add the boot aggregate to the IMA measurement list and extend
+>   * the PCR register.
+>   *
+> - * Calculate the boot aggregate, a SHA1 over tpm registers 0-7,
+> + * Calculate the boot aggregate, a hash over tpm registers 0-7,
+>   * assuming a TPM chip exists, and zeroes if the TPM chip does not
+>   * exist.  Add the boot aggregate measurement to the measurement
+>   * list and extend the PCR register.
+> @@ -51,15 +51,27 @@ static int __init ima_add_boot_aggregate(void)
+>  	int violation = 0;
+>  	struct {
+>  		struct ima_digest_data hdr;
+> -		char digest[TPM_DIGEST_SIZE];
+> +		char digest[TPM_MAX_DIGEST_SIZE];
+>  	} hash;
+>  
+>  	memset(iint, 0, sizeof(*iint));
+>  	memset(&hash, 0, sizeof(hash));
+>  	iint->ima_hash = &hash.hdr;
+> -	iint->ima_hash->algo = HASH_ALGO_SHA1;
+> -	iint->ima_hash->length = SHA1_DIGEST_SIZE;
+> -
+> +	iint->ima_hash->algo = ima_hash_algo;
+> +	iint->ima_hash->length = hash_digest_size[ima_hash_algo];
+> +
+> +	/*
+> +	 * With TPM 2.0 hash agility, TPM chips could support multiple TPM
+> +	 * PCR banks, allowing firmware to configure and enable different
+> +	 * banks.  The SHA1 bank is not necessarily enabled.
+> +	 *
+> +	 * Use the same hash algorithm for reading the TPM PCRs as for
+> +	 * calculating the boot aggregate digest.  Preference is given to
+> +	 * the configured IMA default hash algorithm.  Otherwise, use the
+> +	 * TPM required banks - SHA256 for TPM 2.0, SHA1 for TPM 1.2. If
+> +	 * SHA256 is not available, use the first PCR bank and if that is
+> +	 * not mapped to a crypto ID, set boot_aggregate to zero.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20200210
+The last line of the above comment is left over from the previous
+version.
 
-for you to fetch changes up to 39a706fbcf2694bfb651bed9041d44c3f4fa8078:
+> +	 */
+>  	if (ima_tpm_chip) {
+>  		result = ima_calc_boot_aggregate(&hash.hdr);
+>  		if (result < 0) {
 
- selinux: fix sidtab string cache locking (2020-02-05 18:31:10 -0500)
-
-----------------------------------------------------------------
-selinux/stable-5.6 PR 20200210
-
-----------------------------------------------------------------
-Hridya Valsaraju (1):
-     selinux: fix typo in filesystem name
-
-Ondrej Mosnacek (1):
-     selinux: fix sidtab string cache locking
-
-security/selinux/hooks.c     |  2 +-
-security/selinux/ss/sidtab.c | 12 +++---------
-2 files changed, 4 insertions(+), 10 deletions(-)
-
--- 
-paul moore
-www.paul-moore.com
