@@ -1,82 +1,53 @@
 Return-Path: <SRS0=iK7v=36=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,PDS_TONAME_EQ_TOLOCAL_SHORT,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A2BC352A5
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 11:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDE2C352A3
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 12:07:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4BC020733
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 11:56:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30BEB20842
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 12:07:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbgBJL4Q (ORCPT
+        id S1727061AbgBJMHD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 06:56:16 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49732 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbgBJL4Q (ORCPT
+        Mon, 10 Feb 2020 07:07:03 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:47839 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726950AbgBJMHD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 06:56:16 -0500
-Received: from localhost (unknown [IPv6:2001:4d48:ad58:9a00::6dd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: smcv)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 3C6C629289F;
-        Mon, 10 Feb 2020 11:56:14 +0000 (GMT)
-Date:   Mon, 10 Feb 2020 11:56:11 +0000
-From:   Simon McVittie <smcv@collabora.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
-Subject: Re: [PATCH v14 22/23] LSM: Add /proc attr entry for full LSM context
-Message-ID: <20200210115611.GA13930@horizon>
-References: <20200124002306.3552-1-casey@schaufler-ca.com>
- <20200124002306.3552-23-casey@schaufler-ca.com>
- <1de8338a-9c1c-c13b-16f0-e47ebec0e7ea@tycho.nsa.gov>
- <f3dea066-1f6d-4b92-1a5b-dac25b58aae7@tycho.nsa.gov>
- <9afb8d9d-a590-0e13-bf46-53a347ea15dd@schaufler-ca.com>
- <6bd3e393-e1df-7117-d15a-81cb1946807b@tycho.nsa.gov>
- <446935fa-2926-c346-a273-ae1ecbb072cd@schaufler-ca.com>
- <09d96236-715a-344a-38bc-c05208698125@tycho.nsa.gov>
+        Mon, 10 Feb 2020 07:07:03 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DW;RN=12;SR=0;TI=W4_5790132_DEFAULT_0AC264CC_1581336418827_o7001c68b;
+Received: from WS-web (tianjia.zhang@linux.alibaba.com[W4_5790132_DEFAULT_0AC264CC_1581336418827_o7001c68b]) by e01e07467.eu6 at Mon, 10 Feb 2020 20:06:58 +0800
+Date:   Mon, 10 Feb 2020 20:06:58 +0800
+From:   "Tianjia Zhang" <tianjia.zhang@linux.alibaba.com>
+To:     "linux-crypto-owner" <linux-crypto-owner@vger.kernel.org>,
+        "ebiggers" <ebiggers@kernel.org>
+Cc:     "herbert" <herbert@gondor.apana.org.au>,
+        "davem" <davem@davemloft.net>, "zohar" <zohar@linux.ibm.com>,
+        "dmitry.kasatkin" <dmitry.kasatkin@gmail.com>,
+        "jmorris" <jmorris@namei.org>, "serge" <serge@hallyn.com>,
+        "linux-crypto" <linux-crypto@vger.kernel.org>,
+        "linux-integrity" <linux-integrity@vger.kernel.org>,
+        "linux-security-module" <linux-security-module@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>
+Reply-To: "Tianjia Zhang" <tianjia.zhang@linux.alibaba.com>
+Message-ID: <44ccb074-e2f4-4b6d-b33c-a91ca7393ebe.tianjia.zhang@linux.alibaba.com>
+Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIDEvMl0gY3J5cHRvOiBzbTMgLSBhZGQgYSBuZXcgYWxpYXMgbmFt?=
+  =?UTF-8?B?ZSBzbTMtMjU2?=
+X-Mailer: [Alimail-Mailagent revision 3][W4_5790132][DEFAULT][Chrome]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09d96236-715a-344a-38bc-c05208698125@tycho.nsa.gov>
+References: <20200207092219.115056-1-tianjia.zhang@linux.alibaba.com> <20200207092219.115056-2-tianjia.zhang@linux.alibaba.com>,<20200210031717.GA5198@sol.localdomain>,<b7ce247b-ede1-4b01-bb11-894c042679e1.tianjia.zhang@linux.alibaba.com>
+x-aliyun-mail-creator: W4_5790132_DEFAULT_MzYTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4xOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNzkuMC4zOTQ1LjExNyBTYWZhcmkvNTM3LjM2zc
+In-Reply-To: <b7ce247b-ede1-4b01-bb11-894c042679e1.tianjia.zhang@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 03 Feb 2020 at 13:54:45 -0500, Stephen Smalley wrote:
-> The printable ASCII bit is based on what the dbus maintainer requested in
-> previous discussions.
-
-I thought in previous discussions, we had come to the conclusion that
-I can't assume it's 7-bit ASCII. (If I *can* assume that for this new
-API, that's even better.)
-
-To be clear, when I say ASCII I mean a sequence of bytes != '\0' with
-their high bit unset (x & 0x7f == x) and the obvious mapping to/from
-Unicode (bytes '\1' to '\x7f' represent codepoints U+0001 to U+007F). Is
-that the same thing you mean?
-
-I thought the conclusion we had come to in previous conversations was
-that the LSM context is what GLib calls a "bytestring", the same as
-filenames and environment variables - an opaque sequence of bytes != '\0',
-with no further guarantees, and no specified encoding or mapping to/from
-Unicode (most likely some superset of ASCII like UTF-8 or Latin-1,
-but nobody knows which one, and they could equally well be some binary
-encoding with no Unicode meaning, as long as it avoids '\0').
-
-If I can safely assume that a new kernel <-> user-space API is constrained
-to UTF-8 or a UTF-8 subset like ASCII, then I can provide more friendly
-APIs for user-space features built over it. If that isn't possible, the
-next best thing is a "bytestring" like filenames, environment variables,
-and most kernel <-> user-space strings in general.
-
-    smcv
+SXQgaXMgYWxzbyBhIGdvb2QgaWRlYSB0byBjaGFuZ2UgInNtMy0yNTYiIHRvICJzbTMiIGluIGhh
+c2hfaW5mbywgSSB3aWxsIHN1Ym1pdCBhIG5ldyBwYXRjaCB0byBmaXggdGhpcyBwcm9ibGVtLg==
