@@ -2,59 +2,59 @@ Return-Path: <SRS0=iK7v=36=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F49C35254
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 18:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB7CC352A5
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 18:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86F6920838
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 18:29:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6419A2085B
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 18:31:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581359378;
-	bh=75Y6o+R2RT1l2imBwb+jNktBnqH/sCmtNtwqXoR4Pes=;
+	s=default; t=1581359460;
+	bh=omPLg79kMPvUSKiyNNvd0/ylILD31wzwomGJPrNGyQg=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=WKaM4oH5+9MauQMQI5toXNWcIQ3JEB0hfz4gNvzjM4Ie6cnqs7vbiVCk1Xzxwml45
-	 pq+4oO38iSjll3EfWB3OCvoyFMxD+RGpwHf8t2jWdqUytaZg5jLGyCWJmGwixcqsnR
-	 LpKKinGHzM5C66lID4+MdsRQm9jWt5rQdw4hyOP4=
+	b=KkHK6P/p/tDwNLEArowwkv3Yi/IhdVkgiMMTrWUmX8li0yB7asNSgza4obL0P1hlp
+	 RMy3d1o2zKbe85M+lfc0JXPgQ/B1UMfLz+6ROETaDMSc05pEJJKj/41UrWil98rKVB
+	 NJ1iGGCOIuX5rukxyVsTF46TdpEEsdF8V+C0GMiU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbgBJS3i (ORCPT
+        id S1727481AbgBJSa7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 13:29:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49412 "EHLO mail.kernel.org"
+        Mon, 10 Feb 2020 13:30:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726831AbgBJS3h (ORCPT
+        id S1726950AbgBJSa7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 13:29:37 -0500
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+        Mon, 10 Feb 2020 13:30:59 -0500
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF71C2085B
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 18:29:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3094820873
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 18:30:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581359377;
-        bh=75Y6o+R2RT1l2imBwb+jNktBnqH/sCmtNtwqXoR4Pes=;
+        s=default; t=1581359458;
+        bh=omPLg79kMPvUSKiyNNvd0/ylILD31wzwomGJPrNGyQg=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=EF8eHmVaJ5TifBzp1HvD/JNbwlvbm/aA4/9GdfxXGs3EBE23gGR5jRMoWysBmEhEv
-         bM6+LM746QhXKsuJTk3aLNyym1Qk1hyrZeoazQHonF+iT4ek20ZURTP7yQAWWJKVQT
-         HDcYXHCPea9x7ocZPOeejOQ7WIoXpvg6lSfHI8Z8=
-Received: by mail-wr1-f47.google.com with SMTP id k11so9015301wrd.9
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 10:29:36 -0800 (PST)
-X-Gm-Message-State: APjAAAU+snIjXRGswKaVxaInpyXnd9teLUHuQdm1L5cnV7WV8HgahGKH
-        6RJSpW/FqOq+0rhB+Zj3Z7PGSA1dO3Sm35o/GlmyFQ==
-X-Google-Smtp-Source: APXvYqxWu0bxr7kTaxx7yZUgmkxyJ8dLufVkbPuDhZYClHKf5Jt0/P1jTw5e62T+H/SIPu7YOj0kdetnzt7Dw9LkXbw=
-X-Received: by 2002:a5d:4cc9:: with SMTP id c9mr3278410wrt.70.1581359375255;
- Mon, 10 Feb 2020 10:29:35 -0800 (PST)
+        b=dZmJEdXyo7TiCuP494908+DDQqiXuByAFM/5ZYZdUBh1RBbsjG4Nj8BtvNderACDu
+         buUtqSZaMUtzDuCNulwdaDkgV5kqZL7lno4QgAbQ/lGQBv705tgeTFjmzJtXJCSjQ1
+         BFRJCZcEs4eVwRoiOiwkJ6JclPVFDKSbcrF3PIR0=
+Received: by mail-wr1-f51.google.com with SMTP id r11so5811559wrq.10
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 10:30:58 -0800 (PST)
+X-Gm-Message-State: APjAAAXtgrqme/OEZ95TFtKiaJ+zbqk37jK6U7BvczvSGGhzMk1MzACA
+        foTR5y/Tr5klXu2zYVvyZU6OuttF6Ht3iRznBGTjeg==
+X-Google-Smtp-Source: APXvYqzr7b50VDslir7PKIqAsDCapDo139eIqmv/8TM15nWdMYYpgSAHPnXtkGdcaP89mSWD9lXJHS+xhiOGpQ18who=
+X-Received: by 2002:adf:ea85:: with SMTP id s5mr3242839wrm.75.1581359456683;
+ Mon, 10 Feb 2020 10:30:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com> <20200210150519.538333-11-gladkov.alexey@gmail.com>
-In-Reply-To: <20200210150519.538333-11-gladkov.alexey@gmail.com>
+References: <20200210150519.538333-1-gladkov.alexey@gmail.com> <20200210150519.538333-6-gladkov.alexey@gmail.com>
+In-Reply-To: <20200210150519.538333-6-gladkov.alexey@gmail.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 10 Feb 2020 10:29:23 -0800
-X-Gmail-Original-Message-ID: <CALCETrWOXXYy5fo+D0wVBEviyk38ACqvO5Fep_oTEY6+UrS=4g@mail.gmail.com>
-Message-ID: <CALCETrWOXXYy5fo+D0wVBEviyk38ACqvO5Fep_oTEY6+UrS=4g@mail.gmail.com>
-Subject: Re: [PATCH v8 10/11] docs: proc: add documentation for "hidepid=4"
- and "subset=pidfs" options and new mount behavior
+Date:   Mon, 10 Feb 2020 10:30:45 -0800
+X-Gmail-Original-Message-ID: <CALCETrVjv04OOdzGNf7sRmRR-KUgY7xdMXA236nHZ1arn0KwVQ@mail.gmail.com>
+Message-ID: <CALCETrVjv04OOdzGNf7sRmRR-KUgY7xdMXA236nHZ1arn0KwVQ@mail.gmail.com>
+Subject: Re: [PATCH v8 05/11] proc: add helpers to set and get proc hidepid
+ and gid mount options
 To:     Alexey Gladkov <gladkov.alexey@gmail.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
@@ -86,55 +86,12 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 On Mon, Feb 10, 2020 at 7:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
 >
-> Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
-> ---
->  Documentation/filesystems/proc.txt | 53 ++++++++++++++++++++++++++++++
->  1 file changed, 53 insertions(+)
->
-> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-> index 99ca040e3f90..4741fd092f36 100644
-> --- a/Documentation/filesystems/proc.txt
-> +++ b/Documentation/filesystems/proc.txt
-> @@ -50,6 +50,8 @@ Table of Contents
->    4    Configuring procfs
->    4.1  Mount options
->
-> +  5    Filesystem behavior
-> +
->  ------------------------------------------------------------------------------
->  Preface
->  ------------------------------------------------------------------------------
-> @@ -2021,6 +2023,7 @@ The following mount options are supported:
->
->         hidepid=        Set /proc/<pid>/ access mode.
->         gid=            Set the group authorized to learn processes information.
-> +       subset=         Show only the specified subset of procfs.
->
->  hidepid=0 means classic mode - everybody may access all /proc/<pid>/ directories
->  (default).
-> @@ -2042,6 +2045,56 @@ information about running processes, whether some daemon runs with elevated
->  privileges, whether other user runs some sensitive program, whether other users
->  run any program at all, etc.
->
-> +hidepid=4 means that procfs should only contain /proc/<pid>/ directories
-> +that the caller can ptrace.
+> This is a cleaning patch to add helpers to set and get proc mount
+> options instead of directly using them. This make it easy to track
+> what's happening and easy to update in future.
 
-I have a couple of minor nits here.
+On a cursory inspection, this looks like it obfuscates the code, and I
+don't see where it does something useful later in the series.  What is
+this abstraction for?
 
-First, perhaps we could stop using magic numbers and use words.
-hidepid=ptraceable is actually comprehensible, whereas hidepid=4
-requires looking up what '4' means.
-
-Second, there is PTRACE_MODE_ATTACH and PTRACE_MODE_READ.  Which is it?
-
-> +
->  gid= defines a group authorized to learn processes information otherwise
->  prohibited by hidepid=.  If you use some daemon like identd which needs to learn
->  information about processes information, just add identd to this group.
-
-How is this better than just creating an entirely separate mount a
-different hidepid and a different gid owning it?  In any event,
-usually gid= means that this gid is the group owner of inodes.  Let's
-call it something different.  gid_override_hidepid might be credible.
-But it's also really weird -- do different groups really see different
-contents when they read a directory?
+--Andy
