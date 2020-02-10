@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B74ABC352A3
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 15:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9D7C3B186
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 15:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 925F120714
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 15:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 559C32080C
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 15:06:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729232AbgBJPGP (ORCPT
+        id S1729202AbgBJPGN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 10:06:15 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:54062 "EHLO mail.unsafe.ru"
+        Mon, 10 Feb 2020 10:06:13 -0500
+Received: from monster.unsafe.ru ([5.9.28.80]:53774 "EHLO mail.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729207AbgBJPGP (ORCPT
+        id S1729098AbgBJPGM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:06:15 -0500
+        Mon, 10 Feb 2020 10:06:12 -0500
 Received: from comp-core-i7-2640m-0182e6.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id EDF07C61AB0;
-        Mon, 10 Feb 2020 15:06:11 +0000 (UTC)
+        by mail.unsafe.ru (Postfix) with ESMTPSA id D75FDC61B1E;
+        Mon, 10 Feb 2020 15:06:07 +0000 (UTC)
 From:   Alexey Gladkov <gladkov.alexey@gmail.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
@@ -51,9 +51,9 @@ Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>,
         Solar Designer <solar@openwall.com>
-Subject: [PATCH v8 06/11] proc: support mounting procfs instances inside same pid namespace
-Date:   Mon, 10 Feb 2020 16:05:14 +0100
-Message-Id: <20200210150519.538333-7-gladkov.alexey@gmail.com>
+Subject: [PATCH v8 04/11] proc: move hide_pid, pid_gid from pid_namespace to proc_fs_info
+Date:   Mon, 10 Feb 2020 16:05:12 +0100
+Message-Id: <20200210150519.538333-5-gladkov.alexey@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200210150519.538333-1-gladkov.alexey@gmail.com>
 References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
@@ -63,166 +63,184 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch allows to have multiple procfs instances inside the
-same pid namespace. The aim here is lightweight sandboxes, and to allow
-that we have to modernize procfs internals.
+This is a preparation patch that moves hide_pid and pid_gid parameters
+to be stored inside procfs fs_info struct instead of making them per pid
+namespace. Since we want to support multiple procfs instances we need to
+make sure that all proc-specific parameters are also per-superblock.
 
-1) The main aim of this work is to have on embedded systems one
-supervisor for apps. Right now we have some lightweight sandbox support,
-however if we create pid namespacess we have to manages all the
-processes inside too, where our goal is to be able to run a bunch of
-apps each one inside its own mount namespace without being able to
-notice each other. We only want to use mount namespaces, and we want
-procfs to behave more like a real mount point.
-
-2) Linux Security Modules have multiple ptrace paths inside some
-subsystems, however inside procfs, the implementation does not guarantee
-that the ptrace() check which triggers the security_ptrace_check() hook
-will always run. We have the 'hidepid' mount option that can be used to
-force the ptrace_may_access() check inside has_pid_permissions() to run.
-The problem is that 'hidepid' is per pid namespace and not attached to
-the mount point, any remount or modification of 'hidepid' will propagate
-to all other procfs mounts.
-
-This also does not allow to support Yama LSM easily in desktop and user
-sessions. Yama ptrace scope which restricts ptrace and some other
-syscalls to be allowed only on inferiors, can be updated to have a
-per-task context, where the context will be inherited during fork(),
-clone() and preserved across execve(). If we support multiple private
-procfs instances, then we may force the ptrace_may_access() on
-/proc/<pids>/ to always run inside that new procfs instances. This will
-allow to specifiy on user sessions if we should populate procfs with
-pids that the user can ptrace or not.
-
-By using Yama ptrace scope, some restricted users will only be able to see
-inferiors inside /proc, they won't even be able to see their other
-processes. Some software like Chromium, Firefox's crash handler, Wine
-and others are already using Yama to restrict which processes can be
-ptracable. With this change this will give the possibility to restrict
-/proc/<pids>/ but more importantly this will give desktop users a
-generic and usuable way to specifiy which users should see all processes
-and which users can not.
-
-Side notes:
-* This covers the lack of seccomp where it is not able to parse
-arguments, it is easy to install a seccomp filter on direct syscalls
-that operate on pids, however /proc/<pid>/ is a Linux ABI using
-filesystem syscalls. With this change LSMs should be able to analyze
-open/read/write/close...
-
-In the new patchset version I removed the 'newinstance' option
-as Eric W. Biederman suggested.
-
-Cc: Kees Cook <keescook@chromium.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
 ---
- fs/proc/root.c | 41 ++++++++++++++++++-----------------------
- 1 file changed, 18 insertions(+), 23 deletions(-)
+ fs/proc/base.c                | 18 +++++++++---------
+ fs/proc/inode.c               |  9 ++++-----
+ fs/proc/root.c                | 10 ++++++++--
+ include/linux/pid_namespace.h |  8 --------
+ include/linux/proc_fs.h       |  9 +++++++++
+ 5 files changed, 30 insertions(+), 24 deletions(-)
 
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index efd76c004e86..5d5cba4c899b 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -82,7 +82,7 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 1eb366ad8b06..caca1929fee1 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -695,13 +695,13 @@ int proc_setattr(struct dentry *dentry, struct iattr *attr)
+  * May current process learn task's sched/cmdline info (for hide_pid_min=1)
+  * or euid/egid (for hide_pid_min=2)?
+  */
+-static bool has_pid_permissions(struct pid_namespace *pid,
++static bool has_pid_permissions(struct proc_fs_info *fs_info,
+ 				 struct task_struct *task,
+ 				 int hide_pid_min)
+ {
+-	if (pid->hide_pid < hide_pid_min)
++	if (fs_info->hide_pid < hide_pid_min)
+ 		return true;
+-	if (in_group_p(pid->pid_gid))
++	if (in_group_p(fs_info->pid_gid))
+ 		return true;
+ 	return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
+ }
+@@ -709,18 +709,18 @@ static bool has_pid_permissions(struct pid_namespace *pid,
+ 
+ static int proc_pid_permission(struct inode *inode, int mask)
+ {
+-	struct pid_namespace *pid = proc_pid_ns(inode);
++	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
+ 	struct task_struct *task;
+ 	bool has_perms;
+ 
+ 	task = get_proc_task(inode);
+ 	if (!task)
+ 		return -ESRCH;
+-	has_perms = has_pid_permissions(pid, task, HIDEPID_NO_ACCESS);
++	has_perms = has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS);
+ 	put_task_struct(task);
+ 
+ 	if (!has_perms) {
+-		if (pid->hide_pid == HIDEPID_INVISIBLE) {
++		if (fs_info->hide_pid == HIDEPID_INVISIBLE) {
+ 			/*
+ 			 * Let's make getdents(), stat(), and open()
+ 			 * consistent with each other.  If a process
+@@ -1784,7 +1784,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+ 		u32 request_mask, unsigned int query_flags)
+ {
+ 	struct inode *inode = d_inode(path->dentry);
+-	struct pid_namespace *pid = proc_pid_ns(inode);
++	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
+ 	struct task_struct *task;
+ 
+ 	generic_fillattr(inode, stat);
+@@ -1794,7 +1794,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+ 	rcu_read_lock();
+ 	task = pid_task(proc_pid(inode), PIDTYPE_PID);
+ 	if (task) {
+-		if (!has_pid_permissions(pid, task, HIDEPID_INVISIBLE)) {
++		if (!has_pid_permissions(fs_info, task, HIDEPID_INVISIBLE)) {
+ 			rcu_read_unlock();
+ 			/*
+ 			 * This doesn't prevent learning whether PID exists,
+@@ -3344,7 +3344,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
+ 		unsigned int len;
+ 
+ 		cond_resched();
+-		if (!has_pid_permissions(ns, iter.task, HIDEPID_INVISIBLE))
++		if (!has_pid_permissions(fs_info, iter.task, HIDEPID_INVISIBLE))
+ 			continue;
+ 
+ 		len = snprintf(name, sizeof(name), "%u", iter.tgid);
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index b631608dfbcc..b90c233e5968 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -105,12 +105,11 @@ void __init proc_init_kmemcache(void)
+ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ {
+ 	struct proc_fs_info *fs_info = proc_sb_info(root->d_sb);
+-	struct pid_namespace *pid = fs_info->pid_ns;
+ 
+-	if (!gid_eq(pid->pid_gid, GLOBAL_ROOT_GID))
+-		seq_printf(seq, ",gid=%u", from_kgid_munged(&init_user_ns, pid->pid_gid));
+-	if (pid->hide_pid != HIDEPID_OFF)
+-		seq_printf(seq, ",hidepid=%u", pid->hide_pid);
++	if (!gid_eq(fs_info->pid_gid, GLOBAL_ROOT_GID))
++		seq_printf(seq, ",gid=%u", from_kgid_munged(&init_user_ns, fs_info->pid_gid));
++	if (fs_info->hide_pid != HIDEPID_OFF)
++		seq_printf(seq, ",hidepid=%u", fs_info->hide_pid);
+ 
  	return 0;
  }
- 
--static void proc_apply_options(struct super_block *s,
-+static void proc_apply_options(struct proc_fs_info *fs_info,
- 			       struct fs_context *fc,
- 			       struct pid_namespace *pid_ns,
- 			       struct user_namespace *user_ns)
-@@ -90,15 +90,17 @@ static void proc_apply_options(struct super_block *s,
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index 637e26cc795e..1ca47d446aa4 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -89,10 +89,16 @@ static void proc_apply_options(struct super_block *s,
+ {
  	struct proc_fs_context *ctx = fc->fs_private;
  
- 	if (pid_ns->proc_mnt) {
--		struct proc_fs_info *fs_info = proc_sb_info(pid_ns->proc_mnt->mnt_sb);
--		proc_fs_set_pid_gid(ctx->fs_info, proc_fs_pid_gid(fs_info));
--		proc_fs_set_hide_pid(ctx->fs_info, proc_fs_hide_pid(fs_info));
-+		struct proc_fs_info *pidns_fs_info = proc_sb_info(pid_ns->proc_mnt->mnt_sb);
++	if (pid_ns->proc_mnt) {
++		struct proc_fs_info *fs_info = proc_sb_info(pid_ns->proc_mnt->mnt_sb);
++		ctx->fs_info->pid_gid = fs_info->pid_gid;
++		ctx->fs_info->hide_pid = fs_info->hide_pid;
++	}
 +
-+		proc_fs_set_pid_gid(fs_info, proc_fs_pid_gid(pidns_fs_info));
-+		proc_fs_set_hide_pid(fs_info, proc_fs_hide_pid(pidns_fs_info));
- 	}
- 
  	if (ctx->mask & (1 << Opt_gid))
--		proc_fs_set_pid_gid(ctx->fs_info, make_kgid(user_ns, ctx->gid));
-+		proc_fs_set_pid_gid(fs_info, make_kgid(user_ns, ctx->gid));
-+
+-		pid_ns->pid_gid = make_kgid(user_ns, ctx->gid);
++		ctx->fs_info->pid_gid = make_kgid(user_ns, ctx->gid);
  	if (ctx->mask & (1 << Opt_hidepid))
--		proc_fs_set_hide_pid(ctx->fs_info, ctx->hidepid);
-+		proc_fs_set_hide_pid(fs_info, ctx->hidepid);
+-		pid_ns->hide_pid = ctx->hidepid;
++		ctx->fs_info->hide_pid = ctx->hidepid;
  }
  
  static int proc_fill_super(struct super_block *s, struct fs_context *fc)
-@@ -108,7 +110,7 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
- 	struct inode *root_inode;
- 	int ret;
+diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
+index f91a8bf6e09e..66f47f1afe0d 100644
+--- a/include/linux/pid_namespace.h
++++ b/include/linux/pid_namespace.h
+@@ -15,12 +15,6 @@
  
--	proc_apply_options(s, fc, pid_ns, current_user_ns());
-+	proc_apply_options(ctx->fs_info, fc, pid_ns, current_user_ns());
+ struct fs_pin;
  
- 	/* User space would break if executables or devices appear on proc */
- 	s->s_iflags |= SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
-@@ -118,6 +120,7 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
- 	s->s_magic = PROC_SUPER_MAGIC;
- 	s->s_op = &proc_sops;
- 	s->s_time_gran = 1;
-+	s->s_fs_info = ctx->fs_info;
- 
- 	/*
- 	 * procfs isn't actually a stacking filesystem; however, there is
-@@ -157,15 +160,13 @@ static int proc_reconfigure(struct fs_context *fc)
- 
- 	sync_filesystem(sb);
- 
--	proc_apply_options(sb, fc, pid, current_user_ns());
-+	proc_apply_options(fs_info, fc, pid, current_user_ns());
- 	return 0;
- }
- 
- static int proc_get_tree(struct fs_context *fc)
- {
--	struct proc_fs_context *ctx = fc->fs_private;
+-enum { /* definitions for pid_namespace's hide_pid field */
+-	HIDEPID_OFF	  = 0,
+-	HIDEPID_NO_ACCESS = 1,
+-	HIDEPID_INVISIBLE = 2,
+-};
 -
--	return get_tree_keyed(fc, proc_fill_super, ctx->fs_info);
-+	return get_tree_nodev(fc, proc_fill_super);
- }
+ struct pid_namespace {
+ 	struct kref kref;
+ 	struct idr idr;
+@@ -39,8 +33,6 @@ struct pid_namespace {
+ 	struct user_namespace *user_ns;
+ 	struct ucounts *ucounts;
+ 	struct work_struct proc_work;
+-	kgid_t pid_gid;
+-	int hide_pid;
+ 	int reboot;	/* group exit code if this pidns was rebooted */
+ 	struct ns_common ns;
+ } __randomize_layout;
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 59162988998e..5f0b1b7e4271 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -12,10 +12,19 @@ struct proc_dir_entry;
+ struct seq_file;
+ struct seq_operations;
  
- static void proc_fs_context_free(struct fs_context *fc)
-@@ -186,25 +187,19 @@ static const struct fs_context_operations proc_fs_context_ops = {
- static int proc_init_fs_context(struct fs_context *fc)
- {
- 	struct proc_fs_context *ctx;
--	struct pid_namespace *pid_ns;
- 
- 	ctx = kzalloc(sizeof(struct proc_fs_context), GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
- 
--	pid_ns = get_pid_ns(task_active_pid_ns(current));
--
--	if (!pid_ns->proc_mnt) {
--		ctx->fs_info = kzalloc(sizeof(struct proc_fs_info), GFP_KERNEL);
--		if (!ctx->fs_info) {
--			kfree(ctx);
--			return -ENOMEM;
--		}
--		ctx->fs_info->pid_ns = pid_ns;
--	} else {
--		ctx->fs_info = proc_sb_info(pid_ns->proc_mnt->mnt_sb);
-+	ctx->fs_info = kzalloc(sizeof(struct proc_fs_info), GFP_KERNEL);
-+	if (!ctx->fs_info) {
-+		kfree(ctx);
-+		return -ENOMEM;
- 	}
- 
-+	ctx->fs_info->pid_ns = get_pid_ns(task_active_pid_ns(current));
++/* definitions for hide_pid field */
++enum {
++	HIDEPID_OFF	  = 0,
++	HIDEPID_NO_ACCESS = 1,
++	HIDEPID_INVISIBLE = 2,
++};
 +
- 	put_user_ns(fc->user_ns);
- 	fc->user_ns = get_user_ns(ctx->fs_info->pid_ns->user_ns);
- 	fc->fs_private = ctx;
+ struct proc_fs_info {
+ 	struct pid_namespace *pid_ns;
+ 	struct dentry *proc_self;        /* For /proc/self */
+ 	struct dentry *proc_thread_self; /* For /proc/thread-self */
++	kgid_t pid_gid;
++	int hide_pid;
+ };
+ 
+ static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
 -- 
 2.24.1
 
