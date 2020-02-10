@@ -1,231 +1,122 @@
-Return-Path: <SRS0=oZKn=35=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=iK7v=36=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE7EC2BA83
-	for <linux-security-module@archiver.kernel.org>; Sun,  9 Feb 2020 21:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E7EC2BA83
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 03:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB9F2080C
-	for <linux-security-module@archiver.kernel.org>; Sun,  9 Feb 2020 21:27:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 272BA214DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 03:17:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581304651;
+	bh=4+xrRrrol/aiyGAllkyxm+BcBdBXEdtB/xYpBE5mqp0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sEU8nCsiVBoEvUJ4IOrl92mOQRAKGxSNoAcHP1llHGkyHIaHLThp4s38Btg1F+Lge
+	 BLLHX300TeKQ0zF7QZ/6T7C58/ljXm8WXzu2Ivlstv4Xtp7BaRabgsjTz9bImUp99s
+	 BmisexKj+6bMFdYv0IRy4BupMWmTj3e8XlK+l3OA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbgBIV1h (ORCPT
+        id S1727429AbgBJDRa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 9 Feb 2020 16:27:37 -0500
-Received: from mga04.intel.com ([192.55.52.120]:34864 "EHLO mga04.intel.com"
+        Sun, 9 Feb 2020 22:17:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727892AbgBIV1h (ORCPT
+        id S1726958AbgBJDRa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 9 Feb 2020 16:27:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 13:27:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,422,1574150400"; 
-   d="scan'208";a="405398862"
-Received: from jradtke-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.22.75])
-  by orsmga005.jf.intel.com with ESMTP; 09 Feb 2020 13:27:31 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v26 13/22] x86/sgx: Add provisioning
-Date:   Sun,  9 Feb 2020 23:26:00 +0200
-Message-Id: <20200209212609.7928-14-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
-References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
+        Sun, 9 Feb 2020 22:17:30 -0500
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24D7A20870;
+        Mon, 10 Feb 2020 03:17:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581304649;
+        bh=4+xrRrrol/aiyGAllkyxm+BcBdBXEdtB/xYpBE5mqp0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZY3kL5ThzVIfNdnLnxnWJF8NCVdguistyR88GLQzeaLdSldvkzWM0WyvKl7S7//l2
+         h5CyQ8dnqSJ6Efw9f9tk5mkx4zoPvPz4vob/qxmC05uRe/5Cu6uam5Y2Ru8O1XGBik
+         yhe3fqyYtW+mYcZH3HutsVZ1Qs3A+LfbR5eQKDag=
+Date:   Sun, 9 Feb 2020 19:17:17 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] crypto: sm3 - add a new alias name sm3-256
+Message-ID: <20200210031717.GA5198@sol.localdomain>
+References: <20200207092219.115056-1-tianjia.zhang@linux.alibaba.com>
+ <20200207092219.115056-2-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=a
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200207092219.115056-2-tianjia.zhang@linux.alibaba.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In order to provide a mechanism for devilering provisoning rights:
+On Fri, Feb 07, 2020 at 05:22:18PM +0800, Tianjia Zhang wrote:
+> The name sm3-256 is defined in hash_algo_name in hash_info, but the
+> algorithm name implemented in sm3_generic.c is sm3, which will cause
+> the sm3-256 algorithm to be not found in some application scenarios of
+> the hash algorithm, and an ENOENT error will occur. For example,
+> IMA, keys, and other subsystems that reference hash_algo_name cannot use
+> the hash algorithm of sm3. This patch adds an alias name sm3-256 to sm3,
+> which can better solve the above problems.
+> 
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> ---
+>  crypto/sm3_generic.c | 21 +++++++++++++++++----
+>  1 file changed, 17 insertions(+), 4 deletions(-)
+> 
+> diff --git a/crypto/sm3_generic.c b/crypto/sm3_generic.c
+> index 3468975215ca..ded41031bd5f 100644
+> --- a/crypto/sm3_generic.c
+> +++ b/crypto/sm3_generic.c
+> @@ -163,7 +163,7 @@ int crypto_sm3_finup(struct shash_desc *desc, const u8 *data,
+>  }
+>  EXPORT_SYMBOL(crypto_sm3_finup);
+>  
+> -static struct shash_alg sm3_alg = {
+> +static struct shash_alg sm3_algs[2] = { {
+>  	.digestsize	=	SM3_DIGEST_SIZE,
+>  	.init		=	sm3_base_init,
+>  	.update		=	crypto_sm3_update,
+> @@ -176,16 +176,28 @@ static struct shash_alg sm3_alg = {
+>  		.cra_blocksize	 =	SM3_BLOCK_SIZE,
+>  		.cra_module	 =	THIS_MODULE,
+>  	}
+> -};
+> +}, {
+> +	.digestsize	=	SM3_DIGEST_SIZE,
+> +	.init		=	sm3_base_init,
+> +	.update		=	crypto_sm3_update,
+> +	.final		=	sm3_final,
+> +	.finup		=	crypto_sm3_finup,
+> +	.descsize	=	sizeof(struct sm3_state),
+> +	.base		=	{
+> +		.cra_name	 =	"sm3-256",
+> +		.cra_blocksize	 =	SM3_BLOCK_SIZE,
+> +		.cra_module	 =	THIS_MODULE,
+> +	}
+> +} };
 
-1. Add a new device file /dev/sgx/provision that works as a token for
-   allowing an enclave to have the provisioning privileges.
-2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
-   following data structure:
+According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
+SM3 always produces a 256-bit hash value.  E.g., it says:
 
-   struct sgx_enclave_set_attribute {
-           __u64 addr;
-           __u64 attribute_fd;
-   };
+	"SM3 produces an output hash value of 256 bits long"
 
-A daemon could sit on top of /dev/sgx/provision and send a file
-descriptor of this file to a process that needs to be able to provision
-enclaves.
+and
 
-The way this API is used is straight-forward. Lets assume that dev_fd is
-a handle to /dev/sgx/enclave and prov_fd is a handle to
-/dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
-initialize an enclave with the PROVISIONKEY attribute by
+	"SM3 is a hash function that generates a 256-bit hash value."
 
-params.addr = <enclave address>;
-params.token_fd = prov_fd;
+I don't see any mention of "SM3-256".
 
-ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
+So why not just keep it as "sm3" and change hash_info.c instead?
+Since the name there is currently wrong, no one can be using it yet.
 
-Cc: linux-security-module@vger.kernel.org
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
- arch/x86/kernel/cpu/sgx/driver.c | 14 ++++++++++
- arch/x86/kernel/cpu/sgx/driver.h |  2 ++
- arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
- 4 files changed, 74 insertions(+)
-
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 5edb08ab8fd0..57d0d30c79b3 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -25,6 +25,8 @@ enum sgx_page_flags {
- 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
- #define SGX_IOC_ENCLAVE_INIT \
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-+#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
-+	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -63,4 +65,13 @@ struct sgx_enclave_init {
- 	__u64 sigstruct;
- };
- 
-+/**
-+ * struct sgx_enclave_set_attribute - parameter structure for the
-+ *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
-+ * @attribute_fd:	file handle of the attribute file in the securityfs
-+ */
-+struct sgx_enclave_set_attribute {
-+	__u64 attribute_fd;
-+};
-+
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index b4aa7b9f8376..d90114cec1c3 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -150,6 +150,13 @@ static struct miscdevice sgx_dev_enclave = {
- 	.fops = &sgx_encl_fops,
- };
- 
-+static struct miscdevice sgx_dev_provision = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "provision",
-+	.nodename = "sgx/provision",
-+	.fops = &sgx_provision_fops,
-+};
-+
- int __init sgx_drv_init(void)
- {
- 	unsigned int eax, ebx, ecx, edx;
-@@ -190,5 +197,12 @@ int __init sgx_drv_init(void)
- 		return ret;
- 	}
- 
-+	ret = misc_register(&sgx_dev_provision);
-+	if (ret) {
-+		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
-+		misc_deregister(&sgx_dev_enclave);
-+		return ret;
-+	}
-+
- 	return 0;
- }
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index e4063923115b..72747d01c046 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
- extern u64 sgx_xfrm_reserved_mask;
- extern u32 sgx_xsave_size_tbl[64];
- 
-+extern const struct file_operations sgx_provision_fops;
-+
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
- 
- int sgx_drv_init(void);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 83513cdfd1c0..262001df3ae4 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -663,6 +663,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
- 
-+/**
-+ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
-+ * @filep:	open file to /dev/sgx
-+ * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
-+ *
-+ * Mark the enclave as being allowed to access a restricted attribute bit.
-+ * The requested attribute is specified via the attribute_fd field in the
-+ * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
-+ * handle to an SGX attribute file, e.g. “/dev/sgx/provision".
-+ *
-+ * Failure to explicitly request access to a restricted attribute will cause
-+ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-+ * is access to the PROVISION_KEY.
-+ *
-+ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
-+ *
-+ * Return: 0 on success, -errno otherwise
-+ */
-+static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
-+					  void __user *arg)
-+{
-+	struct sgx_enclave_set_attribute params;
-+	struct file *attribute_file;
-+	int ret;
-+
-+	if (copy_from_user(&params, arg, sizeof(params)))
-+		return -EFAULT;
-+
-+	attribute_file = fget(params.attribute_fd);
-+	if (!attribute_file)
-+		return -EINVAL;
-+
-+	if (attribute_file->f_op != &sgx_provision_fops) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
-+	ret = 0;
-+
-+out:
-+	fput(attribute_file);
-+	return ret;
-+}
- 
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
-@@ -686,6 +730,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_INIT:
- 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
-+		ret = sgx_ioc_enclave_set_attribute(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
--- 
-2.20.1
-
+- Eric
