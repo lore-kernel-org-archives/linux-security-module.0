@@ -2,131 +2,106 @@ Return-Path: <SRS0=iK7v=36=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E02C3B186
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 20:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FEBC352A5
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 21:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AC1321569
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 20:34:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FC9A2070A
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 21:27:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="t2h8CUoW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbgBJUeB (ORCPT
+        id S1727773AbgBJV1z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 15:34:01 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:8224 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727433AbgBJUeB (ORCPT
+        Mon, 10 Feb 2020 16:27:55 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44457 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727414AbgBJV1z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 15:34:01 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01AKU374130724
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 15:34:00 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1u56ampu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 15:34:00 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 10 Feb 2020 20:33:57 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Feb 2020 20:33:53 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01AKXpFe52560028
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Feb 2020 20:33:51 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BFA2D4C04E;
-        Mon, 10 Feb 2020 20:33:51 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 21EB04C040;
-        Mon, 10 Feb 2020 20:33:50 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.140.79])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 10 Feb 2020 20:33:50 +0000 (GMT)
-Subject: Re: [RFC PATCH 0/2] ima: uncompressed module appraisal support
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     Nayna <nayna@linux.vnet.ibm.com>, dmitry.kasatkin@gmail.com,
-        jmorris@namei.org, serge@hallyn.com, dhowells@redhat.com,
-        geert@linux-m68k.org, gregkh@linuxfoundation.org,
-        nayna@linux.ibm.com, tglx@linutronix.de, bauerman@linux.ibm.com,
-        mpe@ellerman.id.au, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Mon, 10 Feb 2020 15:33:49 -0500
-In-Reply-To: <90E53A33-530B-40FB-9982-2818FFD78D73@oracle.com>
-References: <20200206164226.24875-1-eric.snowberg@oracle.com>
-         <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
-         <09D68C13-75E2-4BD6-B4E6-F765B175C7FD@oracle.com>
-         <1581087096.5585.597.camel@linux.ibm.com>
-         <330BDFAC-E778-4E9D-A2D2-DD81B745F6AB@oracle.com>
-         <1581097201.5585.613.camel@linux.ibm.com>
-         <764C5FC8-DF0C-4B7A-8B5B-FD8B83F31568@oracle.com>
-         <1581100125.5585.623.camel@linux.ibm.com>
-         <992E95D5-D4B9-4913-A36F-BB47631DFE0A@oracle.com>
-         <1581101672.5585.628.camel@linux.ibm.com>
-         <C25E5885-F00B-48C0-AEF1-FA3014B2FDA6@oracle.com>
-         <1581205431.5585.645.camel@linux.ibm.com>
-         <0F13CB66-6962-44AC-A20D-CCBD82B43625@oracle.com>
-         <1581354556.5585.827.camel@linux.ibm.com>
-         <90E53A33-530B-40FB-9982-2818FFD78D73@oracle.com>
+        Mon, 10 Feb 2020 16:27:55 -0500
+Received: by mail-ed1-f68.google.com with SMTP id g19so2106840eds.11
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 13:27:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=FsSlvm/Axt7sRTfVXvar8r8VgRRFNW92E5RmRgg0FNo=;
+        b=t2h8CUoWU6lO/TpiUHXzrdlMs9sL6OymwU/3XgYBNaZ7GG+QIs2krf1qGUYApv4ife
+         QMRvwPCjaeuPQ2C7woIJ6j4rFRP0kF4asBbCsM5peS8yN0p8kqbCGbOR0HyGVGYJ6kjY
+         YRWdVPoJhTbRXNqhafmOzRyeesqZ42VMilkkMmjMC7RkFIYbl5rbq+H7DUlqeyZIuSe3
+         Wy9w8Jsz3DiBPClC4o8QBxIdtGN5xMJHv2350ixjhO0ChLErc70NPj3CS8CFaGTQR3kI
+         MZUmz/wXwG5GBc9Mj4tCBRqxtukRCEh/0bPBrBZwNHOjLM0mgtiYkrVeC6PZsbdrYRgw
+         zfrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=FsSlvm/Axt7sRTfVXvar8r8VgRRFNW92E5RmRgg0FNo=;
+        b=gX77wP30nrSs2YAKJjJ/GJARcVc4hQLgNL4voqYnpzaYZBOKIMn+0Jk3k3G+awT1+C
+         h/uURkuO/8gXTRFxbxVyCAm/2ONGs/Tphxu0BK4s982aiDZ7fVluNBsuoquBH7NFSOu5
+         s3l+mYO6hszdNby9qJGCothReM2Fd/FEz0rUkyLBln1T0pdsk7DS2g8LG4VTktUdWYW0
+         S8IBwF59To9SqhhBbl8CM1NfCPjAvK3ZmglT3HR4HFYW1f5HtTAZpoq7IHLC5xKfDwdc
+         ws4RQE81kVr5Ox2ChCB9naUt7f82rgRLgXQmjHnRVg1zT5o0aoNksmQ+R0gzjMO1PsUd
+         u8LA==
+X-Gm-Message-State: APjAAAW1M4HQnarj6BKuUSZ6enmKyf2HkP04UQK6OwXJOqXGYa7fKrDt
+        39Nby4wQmpf13e5mW9jBlCbFzmCNubVoIyNESbdN
+X-Google-Smtp-Source: APXvYqw6cQpdwc83SlSrKVH9MBzQRS1LOB8fuQYZ+BoKOqEcwlHzK4oUfMSGgZoOBdq/XgSdOkR5rBTuh0R6GPbhJmc=
+X-Received: by 2002:aa7:cd49:: with SMTP id v9mr3014459edw.269.1581370073082;
+ Mon, 10 Feb 2020 13:27:53 -0800 (PST)
+MIME-Version: 1.0
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 10 Feb 2020 16:27:42 -0500
+Message-ID: <CAHC9VhRegJC9MP2pAGV_htOVNiBYSzxJ3xBFk7trwRpLniBY+w@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v5.6 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021020-0012-0000-0000-000003859968
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021020-0013-0000-0000-000021C21253
-Message-Id: <1581366829.5585.898.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-10_07:2020-02-10,2020-02-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- mlxlogscore=999 impostorscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002100148
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-02-10 at 12:24 -0700, Eric Snowberg wrote:
-> > On Feb 10, 2020, at 10:09 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+Hi Linus,
 
-> >> 
-> >> Ok, understood, “modsig” refers to strictly kernel module appended signatures
-> >> without regard to the keyring that verifies it.  Since there are inconsistencies
-> >> here, would you consider something like my first patch?  It will verify an 
-> >> uncompressed kernel module containing an appended signature  when the public key
-> >> is contained within the kernel keyring instead of the ima keyring.  Why force a 
-> >> person to add the same keys into the ima keyring for validation?  Especially when
-> >> the kernel keyring is now used to verify appended signatures in the compressed
-> >> modules.
-> > 
-> > Different use case scenarios have different requirements.  Suppose for
-> > example that the group creating the kernel image is not the same as
-> > using it.  The group using the kernel image could sign all files,
-> > including kernel modules (imasig), with their own private key. Only
-> > files that they signed would be permitted.  Your proposal would break
-> > the current expectations, allowing kernel modules signed by someone
-> > else to be loaded.
-> > 
-> 
-> All the end user needs to do is compress any module created by the group that built
-> the original kernel image to work around the scenario above.  Then the appended 
-> signature in the compressed module will be verified by the kernel keyring. Does 
-> this mean there is a security problem that should be fixed, if this is a concern?
+Two small fixes for v5.6-rcX: one fixes a locking problem in the
+recently merged label translation code, the other fixes an
+embarrassing "binderfs"/"binder" filesystem name check.
 
-Again, the issue isn't compressed/uncompressed kernel modules, but the
-syscall used to load the kernel module.  IMA can prevent using the the
-init_module syscall.  Refer to the ima_load_data() LOADING_MODULE
-case.
+Please merge for the next -rcX release, thank you.
 
-Mimi
+-Paul
 
+--
+The following changes since commit 98aa00345de54b8340dc2ddcd87f446d33387b5e:
+
+ selinux: fix regression introduced by move_mount(2) syscall
+   (2020-01-20 07:42:37 -0500)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20200210
+
+for you to fetch changes up to 39a706fbcf2694bfb651bed9041d44c3f4fa8078:
+
+ selinux: fix sidtab string cache locking (2020-02-05 18:31:10 -0500)
+
+----------------------------------------------------------------
+selinux/stable-5.6 PR 20200210
+
+----------------------------------------------------------------
+Hridya Valsaraju (1):
+     selinux: fix typo in filesystem name
+
+Ondrej Mosnacek (1):
+     selinux: fix sidtab string cache locking
+
+security/selinux/hooks.c     |  2 +-
+security/selinux/ss/sidtab.c | 12 +++---------
+2 files changed, 4 insertions(+), 10 deletions(-)
+
+-- 
+paul moore
+www.paul-moore.com
