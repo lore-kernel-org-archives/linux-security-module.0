@@ -1,53 +1,78 @@
 Return-Path: <SRS0=iK7v=36=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,PDS_TONAME_EQ_TOLOCAL_SHORT,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDE2C352A3
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 12:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E6AC352A3
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 12:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30BEB20842
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 12:07:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEB4C2051A
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 12:49:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbgBJMHD (ORCPT
+        id S1730276AbgBJMou (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 07:07:03 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:47839 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726950AbgBJMHD (ORCPT
+        Mon, 10 Feb 2020 07:44:50 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:60893 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730700AbgBJMou (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:07:03 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DW;RN=12;SR=0;TI=W4_5790132_DEFAULT_0AC264CC_1581336418827_o7001c68b;
-Received: from WS-web (tianjia.zhang@linux.alibaba.com[W4_5790132_DEFAULT_0AC264CC_1581336418827_o7001c68b]) by e01e07467.eu6 at Mon, 10 Feb 2020 20:06:58 +0800
-Date:   Mon, 10 Feb 2020 20:06:58 +0800
-From:   "Tianjia Zhang" <tianjia.zhang@linux.alibaba.com>
-To:     "linux-crypto-owner" <linux-crypto-owner@vger.kernel.org>,
-        "ebiggers" <ebiggers@kernel.org>
-Cc:     "herbert" <herbert@gondor.apana.org.au>,
-        "davem" <davem@davemloft.net>, "zohar" <zohar@linux.ibm.com>,
-        "dmitry.kasatkin" <dmitry.kasatkin@gmail.com>,
-        "jmorris" <jmorris@namei.org>, "serge" <serge@hallyn.com>,
-        "linux-crypto" <linux-crypto@vger.kernel.org>,
-        "linux-integrity" <linux-integrity@vger.kernel.org>,
-        "linux-security-module" <linux-security-module@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>
-Reply-To: "Tianjia Zhang" <tianjia.zhang@linux.alibaba.com>
-Message-ID: <44ccb074-e2f4-4b6d-b33c-a91ca7393ebe.tianjia.zhang@linux.alibaba.com>
-Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIDEvMl0gY3J5cHRvOiBzbTMgLSBhZGQgYSBuZXcgYWxpYXMgbmFt?=
-  =?UTF-8?B?ZSBzbTMtMjU2?=
-X-Mailer: [Alimail-Mailagent revision 3][W4_5790132][DEFAULT][Chrome]
-MIME-Version: 1.0
-References: <20200207092219.115056-1-tianjia.zhang@linux.alibaba.com> <20200207092219.115056-2-tianjia.zhang@linux.alibaba.com>,<20200210031717.GA5198@sol.localdomain>,<b7ce247b-ede1-4b01-bb11-894c042679e1.tianjia.zhang@linux.alibaba.com>
-x-aliyun-mail-creator: W4_5790132_DEFAULT_MzYTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4xOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNzkuMC4zOTQ1LjExNyBTYWZhcmkvNTM3LjM2zc
-In-Reply-To: <b7ce247b-ede1-4b01-bb11-894c042679e1.tianjia.zhang@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+        Mon, 10 Feb 2020 07:44:50 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R481e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Tpbr4vV_1581338685;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0Tpbr4vV_1581338685)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 10 Feb 2020 20:44:45 +0800
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+To:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, ebiggers@kernel.org
+Cc:     linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] ima: add sm3 algorithm to hash algorithm configuration list
+Date:   Mon, 10 Feb 2020 20:44:40 +0800
+Message-Id: <20200210124440.23929-3-tianjia.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200210124440.23929-1-tianjia.zhang@linux.alibaba.com>
+References: <20200210124440.23929-1-tianjia.zhang@linux.alibaba.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-SXQgaXMgYWxzbyBhIGdvb2QgaWRlYSB0byBjaGFuZ2UgInNtMy0yNTYiIHRvICJzbTMiIGluIGhh
-c2hfaW5mbywgSSB3aWxsIHN1Ym1pdCBhIG5ldyBwYXRjaCB0byBmaXggdGhpcyBwcm9ibGVtLg==
+sm3 has been supported by the ima hash algorithm, but it is not
+yet in the Kconfig configuration list. After adding, both ima and tpm2
+can support sm3 well.
+
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+---
+ security/integrity/ima/Kconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 838476d780e5..ace6762c1cf1 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -112,6 +112,10 @@ choice
+ 	config IMA_DEFAULT_HASH_WP512
+ 		bool "WP512"
+ 		depends on CRYPTO_WP512=y && !IMA_TEMPLATE
++
++	config IMA_DEFAULT_HASH_SM3
++		bool "SM3"
++		depends on CRYPTO_SM3=y && !IMA_TEMPLATE
+ endchoice
+ 
+ config IMA_DEFAULT_HASH
+@@ -121,6 +125,7 @@ config IMA_DEFAULT_HASH
+ 	default "sha256" if IMA_DEFAULT_HASH_SHA256
+ 	default "sha512" if IMA_DEFAULT_HASH_SHA512
+ 	default "wp512" if IMA_DEFAULT_HASH_WP512
++	default "sm3" if IMA_DEFAULT_HASH_SM3
+ 
+ config IMA_WRITE_POLICY
+ 	bool "Enable multiple writes to the IMA policy"
+-- 
+2.17.1
+
