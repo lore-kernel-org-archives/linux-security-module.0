@@ -2,114 +2,119 @@ Return-Path: <SRS0=iK7v=36=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F00C352A5
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 17:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE43CC352A5
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 17:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 883EE2085B
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 17:42:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C47262080C
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 17:46:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581356811;
+	bh=s36p1l4ZPlQFYPOrfr/fxqnjD5UfABvmtBfZytlVlp4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=qbk9NHTBNLTZxDF5yUvNrvnsilL0zSN2BCp6bu1W5EDondIoTwRi9idzv5JlmyOBH
+	 m3iEESSTBEgM1NJ6ZUABrsTbXIFsHp823AuoY6ZoQeFrIgd43VKS2MyinLVxLifTUD
+	 ygPNwOVmGyw8geHWd6swEUFzbIMkGFBgrtd4Gn50=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbgBJRma (ORCPT
+        id S1727582AbgBJRqu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 12:42:30 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54034 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727937AbgBJRm3 (ORCPT
+        Mon, 10 Feb 2020 12:46:50 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39038 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728042AbgBJRqs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 12:42:29 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01AHc3xe138972
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 12:42:28 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1tp1hf1n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 12:42:28 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 10 Feb 2020 17:42:26 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Feb 2020 17:42:21 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01AHgK0452297812
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Feb 2020 17:42:20 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6C1B352050;
-        Mon, 10 Feb 2020 17:42:20 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.140.79])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 72B1E5204F;
-        Mon, 10 Feb 2020 17:42:18 +0000 (GMT)
-Subject: Re: [PATCH 1/2] crypto: rename sm3-256 to sm3 in hash_algo_name
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        ebiggers@kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 10 Feb 2020 12:42:18 -0500
-In-Reply-To: <20200210124440.23929-2-tianjia.zhang@linux.alibaba.com>
-References: <20200210124440.23929-1-tianjia.zhang@linux.alibaba.com>
-         <20200210124440.23929-2-tianjia.zhang@linux.alibaba.com>
+        Mon, 10 Feb 2020 12:46:48 -0500
+Received: by mail-lj1-f196.google.com with SMTP id o15so8220196ljg.6
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 09:46:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cMABvWd/7c4TphsJ+M/Bzt18EBtYsvxejNNk0qYwcjM=;
+        b=AJWGb7viPUuSlXbBtks15QbiGc0V+5N1kFBw6HmGv/BocUHZwmHNnivHvSwIiPeEQm
+         1fliH10RGyoPY6yV4O5rwY5izrulFkNof0M2GsGbSrfCirug6Mx7f0jNvrzCMioGftQD
+         acWtx/PsAUjj64YLYfwg5kSuWK5If6M0QpBoQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cMABvWd/7c4TphsJ+M/Bzt18EBtYsvxejNNk0qYwcjM=;
+        b=dLU94MTz8ZCkIdrb+36f64wrdiPA4m9ZM3hBP1f0QlAnOOAB2Z5qfMwYfCpPiNnG7f
+         +bqzJogtdN1r+BBhn8due2QDYJGcXo+niii6+8UJ9PHT4On3yTQaMLnQ8zTKbQNXCkpX
+         fTOOuPYFRQwSG94673bIxZvDCX+CeK+w4q1HGK+LNi78R7kHH7kXIp5KjLqn8QABms1I
+         nEPCHTFKRQy9uf94iQeILZ7m8fAj0KC9h10wavXntDsmEXKzAMRSnnz2+QHoDFrUwkLC
+         5KFZ6DezQa4kpos5FaLjmms5X7OCdYmFrwYnV+/rhgoOMQAnTWpyYwwTpBxssirNvHGM
+         MX4g==
+X-Gm-Message-State: APjAAAXlx+af+KNY5F06tmwpVlNkL8JtOupKHPhvPg/3sb2d/uqx5Rfg
+        NWDgAIyhXNilGTfrEuUtsqMsy39Nfuw=
+X-Google-Smtp-Source: APXvYqwz+PuicCoMRpbEcK9RhtZEXg+Qb56jox8xvgy/uZVlttcM+t+MTlW98tcJzWONdcvN9iNgUg==
+X-Received: by 2002:a2e:9110:: with SMTP id m16mr1579762ljg.140.1581356804897;
+        Mon, 10 Feb 2020 09:46:44 -0800 (PST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id n206sm485436lfd.50.2020.02.10.09.46.42
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Feb 2020 09:46:43 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id x14so8176477ljd.13
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2020 09:46:42 -0800 (PST)
+X-Received: by 2002:a2e:461a:: with SMTP id t26mr1591348lja.204.1581356802297;
+ Mon, 10 Feb 2020 09:46:42 -0800 (PST)
+MIME-Version: 1.0
+References: <20200210150519.538333-1-gladkov.alexey@gmail.com> <20200210150519.538333-8-gladkov.alexey@gmail.com>
+In-Reply-To: <20200210150519.538333-8-gladkov.alexey@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 10 Feb 2020 09:46:26 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh05FniF0xJYqcFrmGeCvOJUqR0UL4jTC-_LvpsfNCkNw@mail.gmail.com>
+Message-ID: <CAHk-=wh05FniF0xJYqcFrmGeCvOJUqR0UL4jTC-_LvpsfNCkNw@mail.gmail.com>
+Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021017-0012-0000-0000-000003859262
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021017-0013-0000-0000-000021C20B02
-Message-Id: <1581356538.5585.833.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-10_06:2020-02-10,2020-02-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 spamscore=0 clxscore=1015 bulkscore=0 phishscore=0
- mlxscore=0 lowpriorityscore=0 suspectscore=0 adultscore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002100132
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[Cc'ing Jarkko]
+On Mon, Feb 10, 2020 at 7:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
+>
+> This allows to flush dcache entries of a task on multiple procfs mounts
+> per pid namespace.
+>
+> The RCU lock is used because the number of reads at the task exit time
+> is much larger than the number of procfs mounts.
 
-On Mon, 2020-02-10 at 20:44 +0800, Tianjia Zhang wrote:
-> The name sm3-256 is defined in hash_algo_name in hash_info, but the
-> algorithm name implemented in sm3_generic.c is sm3, which will cause
-> the sm3-256 algorithm to be not found in some application scenarios of
-> the hash algorithm, and an ENOENT error will occur. For example,
-> IMA, keys, and other subsystems that reference hash_algo_name all use
-> the hash algorithm of sm3.
-> 
-> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Ok, this looks better to me than the previous version.
 
-Missing is the "Fixes" tag and Cc'ing the person who upstreamed "sm3-
-256" in the first place.
+But that may be the "pee-in-the-snow" effect, and I _really_ want
+others to take a good look at the whole series.
 
-Mimi
+The right people seem to be cc'd, but this is pretty core, and /proc
+has a tendency to cause interesting issues because of how it's
+involved in a lot of areas indirectly.
 
-> ---
->  crypto/hash_info.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/crypto/hash_info.c b/crypto/hash_info.c
-> index c754cb75dd1a..a49ff96bde77 100644
-> --- a/crypto/hash_info.c
-> +++ b/crypto/hash_info.c
-> @@ -26,7 +26,7 @@ const char *const hash_algo_name[HASH_ALGO__LAST] = {
->  	[HASH_ALGO_TGR_128]	= "tgr128",
->  	[HASH_ALGO_TGR_160]	= "tgr160",
->  	[HASH_ALGO_TGR_192]	= "tgr192",
-> -	[HASH_ALGO_SM3_256]	= "sm3-256",
-> +	[HASH_ALGO_SM3_256]	= "sm3",
->  	[HASH_ALGO_STREEBOG_256] = "streebog256",
->  	[HASH_ALGO_STREEBOG_512] = "streebog512",
->  };
+Al, Oleg, Andy, Eric?
 
+             Linus
