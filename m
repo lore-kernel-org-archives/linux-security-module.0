@@ -2,60 +2,61 @@ Return-Path: <SRS0=MM4E=37=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8ADDC3B188
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 12:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC25C352A3
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 12:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2147206DB
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 12:44:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1572A206DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 12:45:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kze4zHOP"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Mz/Z2r+U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727964AbgBKMox (ORCPT
+        id S1727916AbgBKMpv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Feb 2020 07:44:53 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33180 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbgBKMow (ORCPT
+        Tue, 11 Feb 2020 07:45:51 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46772 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727895AbgBKMpv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:44:52 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m10so2197080wmc.0
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Feb 2020 04:44:51 -0800 (PST)
+        Tue, 11 Feb 2020 07:45:51 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z7so12157884wrl.13
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Feb 2020 04:45:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=iMv6R54aFlLhM7hktRN4UrtHbbiQS0KKmyFbwzLRwQE=;
-        b=kze4zHOP05trixg7lfqDQ0EfT802h2tJrCV1oUaIaKhzSF/a33//7hXB84H2cQAfUB
-         k4YAmYXqB4gAUf1sVlb/QngOGTY7gru46hU4WLj7OOA4AymxgwwLspbboQy325BKDIfH
-         0SQzwVtL6cDddo/cEiOwJDrk8iqBZKyNTh/X4=
+        bh=C9q8BGu7IB7PXt2yUMUBykDSQ0B6YXHjWHvkwjJyPU4=;
+        b=Mz/Z2r+UYxnjdLLVzkoZoBQVAuezwg4Xnwp3DOGa2wS7dUDOCMCMfxYlGRovBodSYd
+         1eoYYXHQI0cvtBwC45WV5/QfIxbvaGM3+Mq5paj29D1BmneE39YBBXxE2vhYJyjmgQNA
+         cfD6Ae6hI59JebLeC5+AswAzqZMnHk02PwZjY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iMv6R54aFlLhM7hktRN4UrtHbbiQS0KKmyFbwzLRwQE=;
-        b=Wq2WGccBjYdwOpGGn0lr8Odgu7Kg5N/XvNJ8kgZp+OHJKGbggBnjrMHxm3rgwbMnyp
-         MKd4jThOHz+7n+2cXuUenSbhjN/CjvwJ7+qGJ2MYf4hxqvM9P/hKAueOnc/5wZnOePvJ
-         SblLP+Y0cOK20RZXDtsfshC5KEZIXi6pWWzG11Ob1jnjOwwTmSVsICZzt5ypMCEquSfo
-         cCa2QyFlrmUxIHpSCUiMenJDhPO4nsQurkRfE3jouwbKIZYrlK3XA9EA32zg+9jA/7zL
-         uZZMUga5S5oiUiUXfxqyZxK58g1ekNhv4yXTJ2SiuQKiKhWKCFF2ZNXa1kVub7vzvTS2
-         dr5A==
-X-Gm-Message-State: APjAAAUhsxBVlzZxqdNUmVpyO4EuHjrbwEsCN9xZNy/KZ+cuBRai9vOu
-        5O7Mx3yjzJZ0dqZXCOUaYRQEOQ==
-X-Google-Smtp-Source: APXvYqwU63IGIZUgRdotZLcl4cgyRkgh3ytCON4EAV4iW5e6Kkfs5FxGUFw9Rr6Yqz9lcKK3SiSx2w==
-X-Received: by 2002:a05:600c:d6:: with SMTP id u22mr5530222wmm.77.1581425090945;
-        Tue, 11 Feb 2020 04:44:50 -0800 (PST)
+        bh=C9q8BGu7IB7PXt2yUMUBykDSQ0B6YXHjWHvkwjJyPU4=;
+        b=qt6OhEoxkkJBjYfLjCKvIda/UxjrdKKtVcvlKTSSbMg0aiI2INchRpczYygOqkIw7E
+         NmNy/JC5jqS057PjZ6D0Z0D4/5cfpPeVvG9kzQMFWbmSzvqqCujSMt1BYEQX9KglsttT
+         e76GsHdThYZIP0JIF0PHDAtQ30OVjznP0qtccZ2Tzuh+ePjK54yY/vSRizxqsZAXUqr5
+         W/dGKdiNXl0J6Q5onlyu97TpHVGgcKdkF8Te5RgdNkmnvMdgwImJPTvUeCMC9QYkU2Ct
+         OAxU67WOTa1tLWL7Rnw6Y1TFyoxb9EgN+pRxppkylnydFvTkTfEHaHcY/BfbdKlulVYw
+         S20Q==
+X-Gm-Message-State: APjAAAWfNDTJ75d7bislpve5TggsVKGWkNh+BFDTRd5PdJxsq5muF743
+        ArtzJgp1yyVqCBkwzxAiDbIHeA==
+X-Google-Smtp-Source: APXvYqzAKYr3XKAmFzgDScO7mcJ05XPCyWTrDngMYlhcutSKBK5Ht3CrGf4S4X8JhNdaS07YsYKUNg==
+X-Received: by 2002:a5d:4446:: with SMTP id x6mr8281334wrr.312.1581425149398;
+        Tue, 11 Feb 2020 04:45:49 -0800 (PST)
 Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
-        by smtp.gmail.com with ESMTPSA id i204sm3780608wma.44.2020.02.11.04.44.49
+        by smtp.gmail.com with ESMTPSA id w15sm5371585wrs.80.2020.02.11.04.45.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 04:44:50 -0800 (PST)
+        Tue, 11 Feb 2020 04:45:48 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
 X-Google-Original-From: KP Singh <kpsingh>
-Date:   Tue, 11 Feb 2020 13:44:48 +0100
+Date:   Tue, 11 Feb 2020 13:45:47 +0100
 To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Cc:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
         bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
@@ -86,48 +87,54 @@ Cc:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
         Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: Re: [PATCH bpf-next v3 03/10] bpf: lsm: Introduce types for eBPF
- based LSM
-Message-ID: <20200211124448.GB96694@google.com>
+Subject: Re: [PATCH bpf-next v3 02/10] bpf: lsm: Add a skeleton and config
+ options
+Message-ID: <20200211124547.GC96694@google.com>
 References: <20200123152440.28956-1-kpsingh@chromium.org>
- <20200123152440.28956-4-kpsingh@chromium.org>
- <20200210235811.pbzvlok6rin7lctd@ast-mbp>
+ <20200123152440.28956-3-kpsingh@chromium.org>
+ <20200210235214.ypb56vrkvzol3qdu@ast-mbp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200210235811.pbzvlok6rin7lctd@ast-mbp>
+In-Reply-To: <20200210235214.ypb56vrkvzol3qdu@ast-mbp>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10-Feb 15:58, Alexei Starovoitov wrote:
-> On Thu, Jan 23, 2020 at 07:24:33AM -0800, KP Singh wrote:
-> > +
-> > +static const struct bpf_func_proto *get_bpf_func_proto(
-> > +	enum bpf_func_id func_id, const struct bpf_prog *prog)
-> > +{
-> > +	switch (func_id) {
-> > +	case BPF_FUNC_map_lookup_elem:
-> > +		return &bpf_map_lookup_elem_proto;
-> > +	case BPF_FUNC_get_current_pid_tgid:
-> > +		return &bpf_get_current_pid_tgid_proto;
-> > +	default:
-> > +		return NULL;
-> > +	}
-> > +}
-> > +
-> > +const struct bpf_verifier_ops lsm_verifier_ops = {
-> > +	.get_func_proto = get_bpf_func_proto,
-> > +};
+On 10-Feb 15:52, Alexei Starovoitov wrote:
+> On Thu, Jan 23, 2020 at 07:24:32AM -0800, KP Singh wrote:
+> >  
+> > +BPF SECURITY MODULE
+> > +M:	KP Singh <kpsingh@chromium.org>
+> > +L:	linux-security-module@vger.kernel.org
+> > +L:	bpf@vger.kernel.org
+> > +S:	Maintained
+> > +F:	security/bpf/
 > 
-> Why artificially limit it like this?
-> It will cause a lot of churn in the future. Like allowing map update and
-> delete, in addition to lookup, will be an obvious next step.
-> I think allowing tracing_func_proto() from the start is cleaner.
+> Instead of creating new entry I think it's more appropriate
+> to add this to main BPF entry like:
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c74e4ea714a5..f656ddec0722 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3147,6 +3147,7 @@ R:        Martin KaFai Lau <kafai@fb.com>
+>  R:     Song Liu <songliubraving@fb.com>
+>  R:     Yonghong Song <yhs@fb.com>
+>  R:     Andrii Nakryiko <andriin@fb.com>
+> +R:     KP Singh <kpsingh@chromium.org>
 
-Sure, I will replace it to use tracing_func_proto in the next
-revision.
+I am okay with this too :) Will update it in the next revision.
 
 - KP
 
+>  L:     netdev@vger.kernel.org
+>  L:     bpf@vger.kernel.org
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+> @@ -3172,6 +3173,7 @@ F:        samples/bpf/
+>  F:     tools/bpf/
+>  F:     tools/lib/bpf/
+>  F:     tools/testing/selftests/bpf/
+> +F:     security/bpf/
+>  K:     bpf
+>  N:     bpf
