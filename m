@@ -1,127 +1,180 @@
-Return-Path: <SRS0=iK7v=36=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=MM4E=37=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED1CC352A4
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 23:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B01C3B186
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 01:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A888420673
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Feb 2020 23:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EB1F20661
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 01:05:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jOicBg6E"
+	dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b="V3Z2D62h";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Htshbs9y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbgBJX6Q (ORCPT
+        id S1727523AbgBKBF5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 18:58:16 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34380 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727490AbgBJX6Q (ORCPT
+        Mon, 10 Feb 2020 20:05:57 -0500
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:55373 "EHLO
+        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727505AbgBKBF4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 18:58:16 -0500
-Received: by mail-pg1-f193.google.com with SMTP id j4so4746789pgi.1;
-        Mon, 10 Feb 2020 15:58:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ecnhmrr02m11MvZnIXErIkdoBlLHRUvHjs8abNILLO4=;
-        b=jOicBg6EVEA407Dzu72yN32aWil8i3M++pQe4B4Sp01hvwUBjlj+UraPSgjeowRfxc
-         rsP6/Uk29lQkTdHGqrXXn3FhLRAzIewCf0ffaNclqCdCr02XenqCGo9sso48IEvOO3o2
-         bQN6tZ4aXIa2VcroBSM1EDy+vaPP02vJ94BkyiI670QBKsqnIZh2L3aAdLCBepLX97N7
-         ygYACF8NElDDT86eBFxb+TWV1Hz8pRvBF0SWI8o7uElFYKppW0sqr15VZXZmt4SH4OoQ
-         USqIiWOONNXB3U15+8lwLynYGMVbc+CNqvOnh7hiDgobgXCmetJhVHs3Yq+Y7v6g8TCk
-         RcnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ecnhmrr02m11MvZnIXErIkdoBlLHRUvHjs8abNILLO4=;
-        b=Vf+RhLthEwC9iFL+0Dy6FiO6NACSBCRw8Zy+rxH2jzZ7nNGaxPa35aYpwthl102n7/
-         I9j2NGit3H5Ie/sR3pl1N0Zl7HYqx7PaDK3EnxmnHEY6DswbsgkAUuGBmOjKaudvp7zg
-         aCMthvssDEcJhqutJNmH0VsV1sbUStYnGDWlL+ib09lMANPvxAC6MnKJXqwM6GfySSGs
-         jAz/YBZ+isQuD8yVwbMyW6npNM/dQLLfaTxkZyAEhZbTIkXK1wmfHqXfP299KyE2gYoY
-         +3KCymBz6t/au+RHdEe4IZ0oEqqMiI2lXJJdqbanRIC3hDNT50em/6YqkYLENzL5+Zvd
-         rmnw==
-X-Gm-Message-State: APjAAAW3Zff77w6qn/XInZkFlYiNREcv4giDc7Z8DUyEB3Q9J5MZoDba
-        KbzYTNKHFE29/OM21Pi+o48=
-X-Google-Smtp-Source: APXvYqzRirYSTB3POFj4Z/KykVthxZd07mfAm+G4rwNkAKJwEVP3dAGHbCKNNSmlXaEhandiR5Dezw==
-X-Received: by 2002:a63:e755:: with SMTP id j21mr4135479pgk.330.1581379095567;
-        Mon, 10 Feb 2020 15:58:15 -0800 (PST)
-Received: from ast-mbp ([2620:10d:c090:200::2:685c])
-        by smtp.gmail.com with ESMTPSA id n2sm1189089pgn.71.2020.02.10.15.58.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Feb 2020 15:58:14 -0800 (PST)
-Date:   Mon, 10 Feb 2020 15:58:12 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        Mon, 10 Feb 2020 20:05:56 -0500
+X-Greylist: delayed 566 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Feb 2020 20:05:56 EST
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.west.internal (Postfix) with ESMTP id 7842D616;
+        Mon, 10 Feb 2020 19:56:29 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 10 Feb 2020 19:56:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=BRKC1Q2crlqSmyJltbGVPx60D4o
+        E6HR1IKWysJB/xmk=; b=V3Z2D62h2p2geUkz1ivzOU/STOqjNIPDn0Nt4X8KrWs
+        4cRhPbM20kAxyZv9un1daHYw7TZcAFobebmYpWwbsPrlSx65MTLayVDjc2ftUdUG
+        QlggkEtUJfgvdz/dqgwl5KtAaTe3u+Fq3h2f6V6H2uGpvkNDs22Ws3QFNy2lNheY
+        FPImjQhi1NTxyzo2eLpHf92QARyUyj3UislevoqCP6YE6O6wjT9KeTWuiV7DYBiX
+        qRLDp7xScsr6zc/BsX9YVZsQFx33Jqb/yqGXKTFePJDE31NHzbGhw3DfdeES7djf
+        LokYUWl9dq/Wh7LCYGbpKc84fyZtueqRlZN28wL7LFA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=BRKC1Q
+        2crlqSmyJltbGVPx60D4oE6HR1IKWysJB/xmk=; b=Htshbs9ypNG6jEppMXTnn8
+        cFsnUxgiqPDZLIKLOH9WeXUfT/cTKOkm+AuDs9XiCgCCQs6Nl7U9Ee2C1YXlxPDi
+        Tla4D8TMbNoq1qMQOtVkL2ld45vD//jVug62+vNcuPkri0rr8voQrImeXh3OkOAa
+        q+bKUXbREfMMcx+voJkooztPI8hVFOyRshBkvEaBxgSnh/D3i8i8KQavbrstjdFz
+        XVpmeh5y+R5AxP+ECB7oX7Tfq3WmP/W+h1WP3m6KRUOUo9WvLdG4Z+7WxL/ON6Lr
+        GrXPKA43zlm+x56y0LWVCf/n03I89pg6FJmqca+oFg5yZIsC6t0KkzT9COS59taw
+        ==
+X-ME-Sender: <xms:vPtBXtyM2ztfKtemdxr7di2FeyiO9JOs3htTwSwNHghvmtIhZwcc8Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedriedvgddvjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
+    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuffhomhgrih
+    hnpehkvghrnhgvlhdrohhrghenucfkphepieejrdduiedtrddvudejrddvhedtnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghsse
+    grnhgrrhgriigvlhdruggv
+X-ME-Proxy: <xmx:vPtBXkDqDa_oJdxnD02XP-QYN1Ilt1u5O2NAOpBQ5LLs3ReOgDO7KQ>
+    <xmx:vPtBXgJKwvzzk7kOkz32scZWplNg74F2fWtyqKFCro9Lx1Gl7E8DUA>
+    <xmx:vPtBXkN8kIb0XEZTbwinLnIgrFzIOEf9tuxSbfDNeY_qTHXCN_aI-g>
+    <xmx:vftBXmRMXBgZM7LgwQFLrSWk-w66oJWQUE8irDhrWy7-U2xTHvoIvPHm41A>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id DB4F03060840;
+        Mon, 10 Feb 2020 19:56:27 -0500 (EST)
+Date:   Mon, 10 Feb 2020 16:56:26 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: Re: [PATCH bpf-next v3 03/10] bpf: lsm: Introduce types for eBPF
- based LSM
-Message-ID: <20200210235811.pbzvlok6rin7lctd@ast-mbp>
-References: <20200123152440.28956-1-kpsingh@chromium.org>
- <20200123152440.28956-4-kpsingh@chromium.org>
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 00/14] pipe: Keyrings, Block and USB notifications
+ [ver #3]
+Message-ID: <20200211005626.7yqjf5rbs3vbwagd@alap3.anarazel.de>
+References: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
+ <CAHk-=wjrrOgznCy3yUmcmQY1z_7vXVr6GbvKiy8cLvWbxpmzcw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200123152440.28956-4-kpsingh@chromium.org>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <CAHk-=wjrrOgznCy3yUmcmQY1z_7vXVr6GbvKiy8cLvWbxpmzcw@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 23, 2020 at 07:24:33AM -0800, KP Singh wrote:
-> +
-> +static const struct bpf_func_proto *get_bpf_func_proto(
-> +	enum bpf_func_id func_id, const struct bpf_prog *prog)
-> +{
-> +	switch (func_id) {
-> +	case BPF_FUNC_map_lookup_elem:
-> +		return &bpf_map_lookup_elem_proto;
-> +	case BPF_FUNC_get_current_pid_tgid:
-> +		return &bpf_get_current_pid_tgid_proto;
-> +	default:
-> +		return NULL;
-> +	}
-> +}
-> +
-> +const struct bpf_verifier_ops lsm_verifier_ops = {
-> +	.get_func_proto = get_bpf_func_proto,
-> +};
+Hi,
 
-Why artificially limit it like this?
-It will cause a lot of churn in the future. Like allowing map update and
-delete, in addition to lookup, will be an obvious next step.
-I think allowing tracing_func_proto() from the start is cleaner.
+I only just now noticed this work after Dave Chinner pointed towards the
+feature in the email leading to
+https://lore.kernel.org/linux-fsdevel/20200211000405.5fohxgpt554gmnhu@alap3.anarazel.de/
+
+On 2020-01-15 12:10:32 -0800, Linus Torvalds wrote:
+> So I no longer hate the implementation, but I do want to see the
+> actual user space users come out of the woodwork and try this out for
+> their use cases.
+
+Postgres has been looking for something roughly like this, fwiw (or
+well, been forced to).
+
+While it's better than it used to be (due to b4678df184b3), we still
+have problems to reliably detect buffered IO errors, especially when
+done across multiple processes.  We can't easily keep an fd open that
+predates all writes to a file until, and ensure that fsyncs will happen
+only on that fd. The primary reasons for that are
+1) every connection (& some internal jobs) is a process, and neither do
+want to to fsyncing each touched file in short-lived connections, nor is
+it desirable to have to add the complication of having to transfer fds
+between processes just to reliably get an error in fsync().
+2) we have to cope with having more files open than allowed, so we have
+a layer that limits the number of OS level FDs open at the same time. We
+don't want to fsync whenever we have to juggle open fds though, as
+that'd be too costly.
+
+So it'd good to have a way to *reliably* know when writeback io failed,
+so we can abort a checkpoint if necessary, and instead perform journal
+replay.
+
+
+For our purposes we'd probably want errors on the fs/superblock level,
+rather than block devices. It's not always easy to map between blockdevs
+and relevant filesystems, there are errors above the block layer, and we
+definitely don'tt want to crash & restart a database just because
+somebody pulled an USB storage device that didn't have any of the
+database's data on it.
+
+An earlier version of this patchset had some support for that, albeit
+perhaps not fully implemented (no errors raised, afaict?):
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=notifications&id=338eec77a0cb29a7d2ae9350066c1990408ae58e
+
+Is the plan to pick this up again once the basic feature is in?
+
+
+A few notes from the email referenced above (that actually seem to belong
+into this thread more than the other:
+
+1) From the angle of reliably needing to detect writeback errors, I find it
+somewhat concerning that an LSM may end up entirely filtering away error
+notifications, without a consumer being able to detect that:
+
++void __post_watch_notification(struct watch_list *wlist,
++			       struct watch_notification *n,
++			       const struct cred *cred,
++			       u64 id)
++{
+...
++		if (security_post_notification(watch->cred, cred, n) < 0)
++			continue;
+
+It's an unpleasant thought that an overly restrictive [-ly configured]
+LSM could lead to silently swallowing data integrity errors.
+
+2) It'd be good if there were documentation, aimed at userland consumers
+of this, explaining what the delivery guarantees are. To be useful for
+us, it needs to be guaranteed that consuming all notifications ensures
+that there are no pending notifications queued up somewhere (so we can
+do fsync(data); fsync(journal); check_for_errors();
+durable_rename(checkpoint_state.tmp, checkpoint_state);).
+
+3) What will the permission model for accessing the notifications be?
+It seems currently anyone, even within a container/namespace or
+something, will see blockdev errors from everywhere?  The earlier
+superblock support (I'm not sure I like that name btw, hard to
+understand for us userspace folks), seems to have required exec
+permission, but nothing else.
+
+Greetings,
+
+Andres Freund
