@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA54C3B186
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77578C352A3
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03D3020656
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:01:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58F6520708
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730209AbgBKQ7g (ORCPT
+        id S1728811AbgBKRBQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Feb 2020 11:59:36 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53400 "EHLO
+        Tue, 11 Feb 2020 12:01:16 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53591 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729541AbgBKQ7f (ORCPT
+        with ESMTP id S1727786AbgBKRBP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:59:35 -0500
+        Tue, 11 Feb 2020 12:01:15 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j1YsU-00014T-MF; Tue, 11 Feb 2020 16:59:14 +0000
+        id 1j1Ysh-00014T-DW; Tue, 11 Feb 2020 16:59:27 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -40,9 +40,9 @@ Cc:     smbarber@chromium.org, Alexander Viro <viro@zeniv.linux.org.uk>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 09/24] capability: privileged_wrt_inode_uidgid(): handle fsid mappings
-Date:   Tue, 11 Feb 2020 17:57:38 +0100
-Message-Id: <20200211165753.356508-10-christian.brauner@ubuntu.com>
+Subject: [PATCH 22/24] sys:__sys_setresuid(): handle fsid mappings
+Date:   Tue, 11 Feb 2020 17:57:51 +0100
+Message-Id: <20200211165753.356508-23-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200211165753.356508-1-christian.brauner@ubuntu.com>
 References: <20200211165753.356508-1-christian.brauner@ubuntu.com>
@@ -52,50 +52,68 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Switch privileged_wrt_inode_uidgid() to lookup fsids in the fsid mappings. If
-no fsid mappings are setup the behavior is unchanged, i.e. fsids are looked up
-in the id mappings.
+Switch setresuid() to lookup fsids in the fsid mappings. If no fsid mappings
+are setup the behavior is unchanged, i.e. fsids are looked up in the id
+mappings.
 
-Filesystems that share a superblock in all user namespaces they are mounted in
-will retain their old semantics even with the introduction of fsidmappings.
+During setresuid() the kfsuid is set to the keuid corresponding the euid that is
+requested by userspace. If the requested euid is -1 the kfsuid is reset to the
+current keuid. For the latter case this means we need to lookup the
+corresponding userspace euid corresponding to the current keuid in the id
+mappings and translate this euid into the corresponding kfsuid in the fsid
+mappings.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- kernel/capability.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ kernel/sys.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/capability.c b/kernel/capability.c
-index 1444f3954d75..de7edd5c9900 100644
---- a/kernel/capability.c
-+++ b/kernel/capability.c
-@@ -19,6 +19,8 @@
- #include <linux/pid_namespace.h>
- #include <linux/user_namespace.h>
- #include <linux/uaccess.h>
-+#include <linux/fsuidgid.h>
-+#include <linux/fs.h>
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 41551c01c3eb..3b98ce84607d 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -650,11 +650,12 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
+ 	const struct cred *old;
+ 	struct cred *new;
+ 	int retval;
+-	kuid_t kruid, keuid, ksuid;
++	kuid_t kruid, keuid, ksuid, kfsuid;
  
- /*
-  * Leveraged for setting/resetting capabilities
-@@ -484,10 +486,15 @@ EXPORT_SYMBOL(file_ns_capable);
-  *
-  * Return true if the inode uid and gid are within the namespace.
-  */
--bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode)
-+bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
-+				 const struct inode *inode)
- {
--	return kuid_has_mapping(ns, inode->i_uid) &&
--		kgid_has_mapping(ns, inode->i_gid);
-+	if (is_userns_visible(inode->i_sb->s_iflags))
-+		return kuid_has_mapping(ns, inode->i_uid) &&
-+		       kgid_has_mapping(ns, inode->i_gid);
+ 	kruid = make_kuid(ns, ruid);
+ 	keuid = make_kuid(ns, euid);
+ 	ksuid = make_kuid(ns, suid);
++	kfsuid = make_kfsuid(ns, euid);
+ 
+ 	if ((ruid != (uid_t) -1) && !uid_valid(kruid))
+ 		return -EINVAL;
+@@ -665,6 +666,9 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
+ 	if ((suid != (uid_t) -1) && !uid_valid(ksuid))
+ 		return -EINVAL;
+ 
++	if ((euid != (uid_t) -1) && !uid_valid(kfsuid))
++		return -EINVAL;
 +
-+	return kfsuid_has_mapping(ns, inode->i_uid) &&
-+	       kfsgid_has_mapping(ns, inode->i_gid);
- }
+ 	new = prepare_creds();
+ 	if (!new)
+ 		return -ENOMEM;
+@@ -692,11 +696,15 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
+ 				goto error;
+ 		}
+ 	}
+-	if (euid != (uid_t) -1)
++	if (euid != (uid_t) -1) {
+ 		new->euid = keuid;
++	} else {
++		uid_t fsuid = from_kuid_munged(new->user_ns, new->euid);
++		kfsuid = make_kfsuid(ns, fsuid);
++	}
+ 	if (suid != (uid_t) -1)
+ 		new->suid = ksuid;
+-	new->fsuid = new->euid;
++	new->fsuid = kfsuid;
  
- /**
+ 	retval = security_task_fix_setuid(new, old, LSM_SETID_RES);
+ 	if (retval < 0)
 -- 
 2.25.0
 
