@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B7EC352A3
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA54C3B186
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F071C20656
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03D3020656
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:01:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbgBKRBD (ORCPT
+        id S1730209AbgBKQ7g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Feb 2020 12:01:03 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53557 "EHLO
+        Tue, 11 Feb 2020 11:59:36 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53400 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728316AbgBKRAx (ORCPT
+        with ESMTP id S1729541AbgBKQ7f (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Feb 2020 12:00:53 -0500
+        Tue, 11 Feb 2020 11:59:35 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j1Ysj-00014T-PM; Tue, 11 Feb 2020 16:59:29 +0000
+        id 1j1YsU-00014T-MF; Tue, 11 Feb 2020 16:59:14 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -40,9 +40,9 @@ Cc:     smbarber@chromium.org, Alexander Viro <viro@zeniv.linux.org.uk>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 24/24] devpts: handle fsid mappings
-Date:   Tue, 11 Feb 2020 17:57:53 +0100
-Message-Id: <20200211165753.356508-25-christian.brauner@ubuntu.com>
+Subject: [PATCH 09/24] capability: privileged_wrt_inode_uidgid(): handle fsid mappings
+Date:   Tue, 11 Feb 2020 17:57:38 +0100
+Message-Id: <20200211165753.356508-10-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200211165753.356508-1-christian.brauner@ubuntu.com>
 References: <20200211165753.356508-1-christian.brauner@ubuntu.com>
@@ -52,54 +52,50 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When a uid or gid mount option is specified with devpts have it lookup the
-corresponding kfsids in the fsid mappings. If no fsid mappings are setup the
-behavior is unchanged, i.e. fsids are looked up in the id mappings.
+Switch privileged_wrt_inode_uidgid() to lookup fsids in the fsid mappings. If
+no fsid mappings are setup the behavior is unchanged, i.e. fsids are looked up
+in the id mappings.
+
+Filesystems that share a superblock in all user namespaces they are mounted in
+will retain their old semantics even with the introduction of fsidmappings.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- fs/devpts/inode.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ kernel/capability.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index 42e5a766d33c..139958892572 100644
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -24,6 +24,7 @@
- #include <linux/parser.h>
- #include <linux/fsnotify.h>
- #include <linux/seq_file.h>
+diff --git a/kernel/capability.c b/kernel/capability.c
+index 1444f3954d75..de7edd5c9900 100644
+--- a/kernel/capability.c
++++ b/kernel/capability.c
+@@ -19,6 +19,8 @@
+ #include <linux/pid_namespace.h>
+ #include <linux/user_namespace.h>
+ #include <linux/uaccess.h>
 +#include <linux/fsuidgid.h>
++#include <linux/fs.h>
  
- #define DEVPTS_DEFAULT_MODE 0600
  /*
-@@ -277,7 +278,7 @@ static int parse_mount_options(char *data, int op, struct pts_mount_opts *opts)
- 		case Opt_uid:
- 			if (match_int(&args[0], &option))
- 				return -EINVAL;
--			uid = make_kuid(current_user_ns(), option);
-+			uid = make_kfsuid(current_user_ns(), option);
- 			if (!uid_valid(uid))
- 				return -EINVAL;
- 			opts->uid = uid;
-@@ -286,7 +287,7 @@ static int parse_mount_options(char *data, int op, struct pts_mount_opts *opts)
- 		case Opt_gid:
- 			if (match_int(&args[0], &option))
- 				return -EINVAL;
--			gid = make_kgid(current_user_ns(), option);
-+			gid = make_kfsgid(current_user_ns(), option);
- 			if (!gid_valid(gid))
- 				return -EINVAL;
- 			opts->gid = gid;
-@@ -410,7 +411,7 @@ static int devpts_show_options(struct seq_file *seq, struct dentry *root)
- 			   from_kuid_munged(&init_user_ns, opts->uid));
- 	if (opts->setgid)
- 		seq_printf(seq, ",gid=%u",
--			   from_kgid_munged(&init_user_ns, opts->gid));
-+			   from_kfsgid_munged(&init_user_ns, opts->gid));
- 	seq_printf(seq, ",mode=%03o", opts->mode);
- 	seq_printf(seq, ",ptmxmode=%03o", opts->ptmxmode);
- 	if (opts->max < NR_UNIX98_PTY_MAX)
+  * Leveraged for setting/resetting capabilities
+@@ -484,10 +486,15 @@ EXPORT_SYMBOL(file_ns_capable);
+  *
+  * Return true if the inode uid and gid are within the namespace.
+  */
+-bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode)
++bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
++				 const struct inode *inode)
+ {
+-	return kuid_has_mapping(ns, inode->i_uid) &&
+-		kgid_has_mapping(ns, inode->i_gid);
++	if (is_userns_visible(inode->i_sb->s_iflags))
++		return kuid_has_mapping(ns, inode->i_uid) &&
++		       kgid_has_mapping(ns, inode->i_gid);
++
++	return kfsuid_has_mapping(ns, inode->i_uid) &&
++	       kfsgid_has_mapping(ns, inode->i_gid);
+ }
+ 
+ /**
 -- 
 2.25.0
 
