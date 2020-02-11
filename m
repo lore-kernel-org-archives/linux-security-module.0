@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1225FC3B187
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 16:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF967C3B187
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 16:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF696215A4
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 16:59:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1DC121739
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 16:59:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731040AbgBKQ7v (ORCPT
+        id S1731024AbgBKQ7r (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Feb 2020 11:59:51 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53496 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731021AbgBKQ7r (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 11 Feb 2020 11:59:47 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53492 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730986AbgBKQ7p (ORCPT
+        <rfc822;linux-security-module@vger.kernel.org>);
+        Tue, 11 Feb 2020 11:59:45 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j1Ysa-00014T-VY; Tue, 11 Feb 2020 16:59:21 +0000
+        id 1j1Ysf-00014T-4B; Tue, 11 Feb 2020 16:59:25 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -39,9 +39,9 @@ Cc:     smbarber@chromium.org, Alexander Viro <viro@zeniv.linux.org.uk>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 15/24] commoncap:cap_bprm_set_creds(): handle fsid mappings
-Date:   Tue, 11 Feb 2020 17:57:44 +0100
-Message-Id: <20200211165753.356508-16-christian.brauner@ubuntu.com>
+Subject: [PATCH 19/24] sys:__sys_setgid(): handle fsid mappings
+Date:   Tue, 11 Feb 2020 17:57:48 +0100
+Message-Id: <20200211165753.356508-20-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200211165753.356508-1-christian.brauner@ubuntu.com>
 References: <20200211165753.356508-1-christian.brauner@ubuntu.com>
@@ -51,52 +51,56 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-During exec the kfsids are currently reset to the effective kids. To retain the
-same semantics with the introduction of fsid mappings, we lookup the userspace
-effective id in the id mappings and translate the effective id into the
-corresponding kfsid in the fsidmapping. This means, the behavior is unchanged
-when no fsid mappings are setup and the semantics stay the same even when fsid
-mappings are setup.
+Switch setgid() to lookup fsids in the fsid mappings. If no fsid mappings are
+setup the behavior is unchanged, i.e. fsids are looked up in the id mappings.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- security/commoncap.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ kernel/sys.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index ecfa0d0c250e..8d1a81e98610 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -811,7 +811,10 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 	struct cred *new = bprm->cred;
- 	bool effective = false, has_fcap = false, is_setid;
- 	int ret;
--	kuid_t root_uid;
-+	kuid_t root_uid, kfsuid;
-+	kgid_t kfsgid;
-+	uid_t fsuid;
-+	gid_t fsgid;
+diff --git a/kernel/sys.c b/kernel/sys.c
+index afaec8d46bc5..11f41e0a4974 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -416,24 +416,31 @@ long __sys_setgid(gid_t gid)
+ 	const struct cred *old;
+ 	struct cred *new;
+ 	int retval;
+-	kgid_t kgid;
++	kgid_t kgid, kfsgid;
  
- 	if (WARN_ON(!cap_ambient_invariant_ok(old)))
- 		return -EPERM;
-@@ -848,8 +851,15 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 						   old->cap_permitted);
- 	}
+ 	kgid = make_kgid(ns, gid);
+ 	if (!gid_valid(kgid))
+ 		return -EINVAL;
  
--	new->suid = new->fsuid = new->euid;
--	new->sgid = new->fsgid = new->egid;
-+	fsuid = from_kuid_munged(new->user_ns, new->euid);
-+	kfsuid = make_kfsuid(new->user_ns, fsuid);
-+	new->suid = new->euid;
-+	new->fsuid = kfsuid;
++	kfsgid = make_kfsgid(ns, gid);
++	if (!gid_valid(kfsgid))
++		return -EINVAL;
 +
-+	fsgid = from_kgid_munged(new->user_ns, new->egid);
-+	kfsgid = make_kfsgid(new->user_ns, fsgid);
-+	new->sgid = new->egid;
-+	new->fsgid = kfsgid;
+ 	new = prepare_creds();
+ 	if (!new)
+ 		return -ENOMEM;
+ 	old = current_cred();
  
- 	/* File caps or setid cancels ambient. */
- 	if (has_fcap || is_setid)
+ 	retval = -EPERM;
+-	if (ns_capable(old->user_ns, CAP_SETGID))
+-		new->gid = new->egid = new->sgid = new->fsgid = kgid;
+-	else if (gid_eq(kgid, old->gid) || gid_eq(kgid, old->sgid))
+-		new->egid = new->fsgid = kgid;
+-	else
++	if (ns_capable(old->user_ns, CAP_SETGID)) {
++		new->gid = new->egid = new->sgid = kgid;
++		new->fsgid = kfsgid;
++	} else if (gid_eq(kgid, old->gid) || gid_eq(kgid, old->sgid)) {
++		new->egid = kgid;
++		new->fsgid = kfsgid;
++	} else {
+ 		goto error;
++	}
+ 
+ 	return commit_creds(new);
+ 
 -- 
 2.25.0
 
