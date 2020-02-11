@@ -2,196 +2,193 @@ Return-Path: <SRS0=MM4E=37=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF8AC3B187
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 20:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBD7C35242
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 20:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADE3220708
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 20:34:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEEF4206D6
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 20:56:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qeozm3+R"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oSTwn0d9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbgBKUeR (ORCPT
+        id S1728771AbgBKU4O (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Feb 2020 15:34:17 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33239 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728019AbgBKUeR (ORCPT
+        Tue, 11 Feb 2020 15:56:14 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45660 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbgBKU4N (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Feb 2020 15:34:17 -0500
-Received: by mail-ot1-f66.google.com with SMTP id b18so11562555otp.0
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Feb 2020 12:34:16 -0800 (PST)
+        Tue, 11 Feb 2020 15:56:13 -0500
+Received: by mail-oi1-f195.google.com with SMTP id v19so14168668oic.12
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Feb 2020 12:56:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=q11zsssSHeKjTpfbV0UQcFcGMIVXHOWVWu3BFYxakp4=;
-        b=qeozm3+R7EnJiUqxAO5WKU6Hyo8tOvNoKIv3sqG0gwJnruWChpe1RHY1CoExS/DHwK
-         he5Szs4itn3GjZWTFLBu9ib1jeaKQF7I8F/J6ZCd+raCeXX8Ml8qL2LsKQzBrsvmpZWi
-         LQGGl/dWBrexM2f/haFE13HCd+3IpMAZkvvGpB5n55Z5/Ag2N3RjnXl8xgLc2+1aFkTR
-         UPSbLDiLCbU/Cb4J4f2WFKJTYxS11Fr3qOVTalvoCvAxRpL5kc/w5gTC8sfJ/NDgEgT6
-         jeFEpLJm7a3am8dmDSuwym2sTtDNasMRQr77XiJDdvOXMmN3Pf70q/USLL7OUWvG29yX
-         4aCA==
+         :cc:content-transfer-encoding;
+        bh=8CmYe462WzzksuPoSriUQOLEMXkyrL5p8rPiP/wqsQE=;
+        b=oSTwn0d967GW3bvPpoBPc4xhMNU+afmUYTMc5sQAtO/Ma8lCfPJAv7HDesC+gIohzv
+         DkMgSufBV3LkIlRnO8ywR8ElxhA0xazO1a2X1EbTK9CPzmmDGuVdsOscmiYi9VuWm70X
+         X4QugCq1j+ND5muENF+hw/7uZsm0+pB5emMxJt5J03IBuPoLcY5imni1oxNwtN0QogdK
+         WAEagflmLFa9Wa5QWR/mFSJKRXQpW/pCGiRZEZdFevJ2+fsXxxJwszGEIlweNqHKaZQR
+         OT/n2MH+QFAJl9CN6AifWx4rVch6UDYBcDpoOITmpCYfCzaqslfwsQD44XYhI2I7wpvH
+         apqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=q11zsssSHeKjTpfbV0UQcFcGMIVXHOWVWu3BFYxakp4=;
-        b=ty827dGW0IHBp0WOtoCCPBwBIHrMml4S/a2VwG/QP/OG/+x2gTs6mRIBRYQKeT5ptP
-         U22zyJvCI1slAuXg87gAJ7IOHrMmStWTw6OCkP7HjPUD5x7iT100PESiAWhWs/PJUbCI
-         tRL5V5NUTmyJoDVj04QDDcm1QQr8lUu6B0ZpCf70ioy0XWTJAaSkZjzp2qfhO7xwM/uq
-         wlfA7mBHGFIPWZnZvE8thvDjoZalegffgEgl8qcScPnYO3zhMCCJXO7inZJrZhcXLhqE
-         FzgQWTN+rv/gpFL6vBPbtZLMJWGarQ6Q0GSGd6bcMkxRaJFvwWVt0TtnX05NREdNpo2C
-         uMCg==
-X-Gm-Message-State: APjAAAX+6VoddraqT185Chmn96HcYxsxkRf/75CJ2drtG4GdT0c65AhS
-        YnJsqwfD6lFNf4xYFOy1bEXiFxfcWTCNRSOwndo1iw==
-X-Google-Smtp-Source: APXvYqwN+vAsdRxgGOaSrJORQpfpoOK0DTUx7e2DVI860NZpm9RoWnlwAaQwqmRW/lEAu1tBxxXl1zt3MnY8gyqlm3Y=
-X-Received: by 2002:a9d:65c1:: with SMTP id z1mr6936015oth.180.1581453255514;
- Tue, 11 Feb 2020 12:34:15 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8CmYe462WzzksuPoSriUQOLEMXkyrL5p8rPiP/wqsQE=;
+        b=lXh/TUXuV+b2wzcZUT6RgtyhD5+aFNaIG+wM0gysGBjOOiiz3JWkmI/Qg1jl9gf3bj
+         9zgsIFAeL7cND0j8d6qfFpHgn+8SfDj/g7DMRtVPJqPu0G+Bmrp34oTptOdt4fYbQlD5
+         JmHc1nQ7JF4k0+SyU4ezZxYrJVHPMkGNZhI1eC9BJVPpAvzJq42c9xDPTEkk0oddDNos
+         r94k/iWsFn2tetFryMBoNXIo7+C6qqPzjkoZ/YIJhTMHuNCfx0rjf73c/Hb6Wh8xksCn
+         Ll3sDtqZfJ5d1bVlIJJqmvyjecnfeIde0UPAMOUWi+6esUFj+K+L47xzx1+UIBA/hJFF
+         xndA==
+X-Gm-Message-State: APjAAAUJ4L4avA9HkC/J7eLGiAKixpc8zmlZ6yosaoMU+TBYNvgynz6J
+        aa52jwK0A05MmlSzcufmg40YTXErZFLhopb7Sc4Jdw==
+X-Google-Smtp-Source: APXvYqwwlaPw3WuE7pvp2R5+l4ejpzIZmHKNHqXHYwDJ9Aqnqi8TIPcj6j2+bVdD0QcpNjFx5mAc4EwEtqlmtCOsHEY=
+X-Received: by 2002:aca:b187:: with SMTP id a129mr4153590oif.175.1581454572660;
+ Tue, 11 Feb 2020 12:56:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20200123152440.28956-1-kpsingh@chromium.org> <20200123152440.28956-5-kpsingh@chromium.org>
- <20200211031208.e6osrcathampoog7@ast-mbp> <20200211124334.GA96694@google.com>
- <20200211175825.szxaqaepqfbd2wmg@ast-mbp> <CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com>
- <20200211190943.sysdbz2zuz5666nq@ast-mbp> <CAG48ez2gvo1dA4P1L=ASz7TRfbH-cgLZLmOPmr0NweayL-efLw@mail.gmail.com>
- <20200211201039.om6xqoscfle7bguz@ast-mbp>
-In-Reply-To: <20200211201039.om6xqoscfle7bguz@ast-mbp>
+References: <20200211165753.356508-1-christian.brauner@ubuntu.com>
+In-Reply-To: <20200211165753.356508-1-christian.brauner@ubuntu.com>
 From:   Jann Horn <jannh@google.com>
-Date:   Tue, 11 Feb 2020 21:33:49 +0100
-Message-ID: <CAG48ez1qGqF9z7APajFyzjZh82YxFV9sHE64f5kdKBeH9J3YPg@mail.gmail.com>
-Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
- mutable hooks list for the BPF LSM]
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     KP Singh <kpsingh@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        bpf@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+Date:   Tue, 11 Feb 2020 21:55:46 +0100
+Message-ID: <CAG48ez1GKOfXDZFD7-hGGjT8L9YEojn94DU5_=W8HL3pzdrCgg@mail.gmail.com>
+Subject: Re: [PATCH 00/24] user_namespace: introduce fsid mappings
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, smbarber@chromium.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
         James Morris <jmorris@namei.org>,
         Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kernel Team <kernel-team@fb.com>
+        Jonathan Corbet <corbet@lwn.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-()On Tue, Feb 11, 2020 at 9:10 PM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
-> On Tue, Feb 11, 2020 at 08:36:18PM +0100, Jann Horn wrote:
-> > On Tue, Feb 11, 2020 at 8:09 PM Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > > On Tue, Feb 11, 2020 at 07:44:05PM +0100, Jann Horn wrote:
-> > > > On Tue, Feb 11, 2020 at 6:58 PM Alexei Starovoitov
-> > > > <alexei.starovoitov@gmail.com> wrote:
-> > > > > On Tue, Feb 11, 2020 at 01:43:34PM +0100, KP Singh wrote:
-> > > > [...]
-> > > > > > * When using the semantic provided by fexit, the BPF LSM program will
-> > > > > >   always be executed and will be able to override / clobber the
-> > > > > >   decision of LSMs which appear before it in the ordered list. This
-> > > > > >   semantic is very different from what we currently have (i.e. the BPF
-> > > > > >   LSM hook is only called if all the other LSMs allow the action) and
-> > > > > >   seems to be bypassing the LSM framework.
-> > > > >
-> > > > > It that's a concern it's trivial to add 'if (RC == 0)' check to fexit
-> > > > > trampoline generator specific to lsm progs.
-> > > > [...]
-> > > > > Using fexit mechanism and bpf_sk_storage generalization is
-> > > > > all that is needed. None of it should touch security/*.
-> > > >
-> > > > If I understand your suggestion correctly, that seems like a terrible
-> > > > idea to me from the perspective of inspectability and debuggability.
-> > > > If at runtime, a function can branch off elsewhere to modify its
-> > > > decision, I want to see that in the source code. If someone e.g.
-> > > > changes the parameters or the locking rules around a security hook,
-> > > > how are they supposed to understand the implications if that happens
-> > > > through some magic fexit trampoline that is injected at runtime?
-> > >
-> > > I'm not following the concern. There is error injection facility that is
-> > > heavily used with and without bpf. In this case there is really no difference
-> > > whether trampoline is used with direct call or indirect callback via function
-> > > pointer. Both will jump to bpf prog. The _source code_ of bpf program will
-> > > _always_ be available for humans to examine via "bpftool prog dump" since BTF
-> > > is required. So from inspectability and debuggability point of view lsm+bpf
-> > > stuff is way more visible than any builtin LSM. At any time people will be able
-> > > to see what exactly is running on the system. Assuming folks can read C code.
-> >
-> > You said that you want to use fexit without touching security/, which
-> > AFAIU means that the branch from security_*() to the BPF LSM will be
-> > invisible in the *kernel's* source code unless the reader already
-> > knows about the BPF LSM. But maybe I'm just misunderstanding your
-> > idea.
-> >
-> > If a random developer is trying to change the locking rules around
-> > security_blah(), and wants to e.g. figure out whether it's okay to
-> > call that thing with a spinlock held, or whether one of the arguments
-> > is actually used, or stuff like that, the obvious way to verify that
-> > is to follow all the direct and indirect calls made from
-> > security_blah(). It's tedious, but it works, unless something is
-> > hooked up to it in a way that is visible in no way in the source code.
-> >
-> > I agree that the way in which the call happens behind the scenes
-> > doesn't matter all that much - I don't really care all that much
-> > whether it's an indirect call, a runtime-patched direct call in inline
-> > assembly, or an fexit hook. What I do care about is that someone
-> > reading through any affected function can immediately see that the
-> > branch exists - in other words, ideally, I'd like it to be something
-> > happening in the method body, but if you think that's unacceptable, I
-> > think there should at least be a function attribute that makes it very
-> > clear what's going on.
+On Tue, Feb 11, 2020 at 5:59 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+> This is the implementation of shiftfs which was cooked up during lunch at
+> Linux Plumbers 2019 the day after the container's microconference. The
+> idea is a design-stew from St=C3=A9phane, Aleksa, Eric, and myself. Back =
+then
+> we all were quite busy with other work and couldn't really sit down and
+> implement it. But I took a few days last week to do this work, including
+> demos and performance testing.
+> This implementation does not require us to touch the vfs substantially
+> at all. Instead, we implement shiftfs via fsid mappings.
+> With this patch, it took me 20 mins to port both LXD and LXC to support
+> shiftfs via fsid mappings.
 >
-> Got it. Then let's whitelist them ?
-> All error injection points are marked with ALLOW_ERROR_INJECTION().
-> We can do something similar here, but let's do it via BTF and avoid
-> abusing yet another elf section for this mark.
-> I think BTF_TYPE_EMIT() should work. Just need to pick explicit enough
-> name and extensive comment about what is going on.
-
-Sounds reasonable to me. :)
-
-> Locking rules and cleanup around security_blah() shouldn't change though.
-> Like security_task_alloc() should be paired with security_task_free().
-> And so on. With bpf_sk_storage like logic the alloc/free of scratch
-> space will be similar to the way socket and bpf progs deal with it.
+> For anyone wanting to play with this the branch can be pulled from:
+> https://github.com/brauner/linux/tree/fsid_mappings
+> https://gitlab.com/brauner/linux/-/tree/fsid_mappings
+> https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=
+=3Dfsid_mappings
 >
-> Some of the lsm hooks are in critical path. Like security_socket_sendmsg().
-> retpoline hurts. If we go with indirect calls right now it will be harder to
-> optimize later. It took us long time to come up with bpf trampoline and build
-> bpf dispatcher on top of it to remove single indirect call from XDP runtime.
-> For bpf+lsm would be good to avoid it from the start.
+> The main use case for shiftfs for us is in allowing shared writable
+> storage to multiple containers using non-overlapping id mappings.
+> In such a scenario you want the fsids to be valid and identical in both
+> containers for the shared mount. A demo for this exists in [3].
+> If you don't want to read on, go straight to the other demos below in
+> [1] and [2].
 
-Just out of curiosity: Are fexit hooks really much cheaper than indirect calls?
+I guess essentially this means that you want to have UID separation
+between containers to prevent the containers - or their owners - from
+interfering between each other, but for filesystem access, you don't
+want to isolate them from each other using DAC controls on the files
+and folders inside the containers' directory hierarchies, instead
+relying on mode-0700 parent directories to restrict access to the
+container owner? Or would you still have separate UIDs for e.g. the
+container's UID range 0-65535, and then map the shared UID range at
+100000, or something like that?
 
-AFAIK ftrace on x86-64 replaces the return pointer for fexit
-instrumentation (see prepare_ftrace_return()). So when the function
-returns, there is one return misprediction for branching into
-return_to_handler(), and then the processor's internal return stack
-will probably be misaligned so that after ftrace_return_to_handler()
-is done running, all the following returns will also be mispredicted.
+> People not as familiar with user namespaces might not be aware that fsid
+> mappings already exist. Right now, fsid mappings are always identical to
+> id mappings. Specifically, the kernel will lookup fsuids in the uid
+> mappings and fsgids in the gid mappings of the relevant user namespace.
 
-So I would've thought that fexit hooks would have at least roughly the
-same impact as indirect calls - indirect calls via retpoline do one
-mispredicted branch, fexit hooks do at least two AFAICS. But I guess
-indirect calls could still be slower if fexit benefits from having all
-the mispredicted pointers stored on the cache-hot stack while the
-indirect branch target is too infrequently accessed to be in L1D, or
-something like that?
+That's a bit like saying that a kernel without CONFIG_USER_NS still
+has user ID mappings, they just happen to be identity mappings. :P
+
+> With this patch series we simply introduce the ability to create fsid
+> mappings that are different from the id mappings of a user namespace.
+>
+> In the usual case of running an unprivileged container we will have
+> setup an id mapping, e.g. 0 100000 100000. The on-disk mapping will
+> correspond to this id mapping, i.e. all files which we want to appear as
+> 0:0 inside the user namespace will be chowned to 100000:100000 on the
+> host. This works, because whenever the kernel needs to do a filesystem
+> access it will lookup the corresponding uid and gid in the idmapping
+> tables of the container.
+> Now think about the case where we want to have an id mapping of 0 100000
+> 100000 but an on-disk mapping of 0 300000 100000 which is needed to e.g.
+> share a single on-disk mapping with multiple containers that all have
+> different id mappings.
+> This will be problematic. Whenever a filesystem access is requested, the
+> kernel will now try to lookup a mapping for 300000 in the id mapping
+> tables of the user namespace but since there is none the files will
+> appear to be owned by the overflow id, i.e. usually 65534:65534 or
+> nobody:nogroup.
+>
+> With fsid mappings we can solve this by writing an id mapping of 0
+> 100000 100000 and an fsid mapping of 0 300000 100000. On filesystem
+> access the kernel will now lookup the mapping for 300000 in the fsid
+> mapping tables of the user namespace. And since such a mapping exists,
+> the corresponding files will have correct ownership.
+
+Sorry to bring up something as disgusting as setuid execution, but:
+What happens when there's a setuid root file with ->i_uid=3D=3D300000? I
+guess the only way to make that work inside the containers would be
+something like make_kuid(current_user_ns(),
+from_kfsuid(current_user_ns(), inode->i_uid)) in the setuid execve
+path?
+
+> A note on proc (and sys), the proc filesystem is special in sofar as it
+> only has a single superblock that is (currently but might be about to
+> change) visible in all user namespaces (same goes for sys). This means
+> it has special semantics in many ways, including how file ownership and
+> access works. The fsid mapping implementation does not alter how proc
+> (and sys) ownership works. proc and sys will both continue to lookup
+> filesystem access in id mapping tables.
+
+In your example, a process with namespaced UID set (0, 0, 0, 0) will
+have kernel UIDs (100000, 100000, 100000, 300000), right? And then if
+I want to open /proc/$pid/personality of another process with the same
+UIDs, may_open() will call inode_permission() -> do_inode_permission()
+-> generic_permission() -> acl_permission_check(), which will compare
+current_fsuid() (which is 300000) against inode->i_uid. But
+inode->i_uid was filled by proc_pid_make_inode()->task_dump_owner(),
+which set inode->i_uid to 100000, right?
+
+Also, e.g. __ptrace_may_access() uses cred->fsuid for a comparison
+with another task's real/effective/saved UID.
+
+[...]
+> # Demos
+> [1]: Create a container with different id and fsid mappings.
+>      https://asciinema.org/a/300233
+> [2]: Create a container with id mappings but without fsid mappings.
+>      https://asciinema.org/a/300234
+> [3]: Share storage between multiple containers with non-overlapping id
+>      mappings.
+>      https://asciinema.org/a/300235
+
+(I really dislike this asciinema thing; if you want to quickly glance
+through the output instead of reading at the same speed as it was
+typed, a simple pastebin works much better unless you absolutely have
+to show things that use stuff like ncurses UI.)
