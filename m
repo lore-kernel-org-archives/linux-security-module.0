@@ -2,108 +2,126 @@ Return-Path: <SRS0=MM4E=37=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E315AC352A3
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 23:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6605C35242
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 23:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5704206D6
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 23:24:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA48206D6
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 23:26:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLJeqEt5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbgBKXYJ (ORCPT
+        id S1727795AbgBKX00 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Feb 2020 18:24:09 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10418 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727906AbgBKXYJ (ORCPT
+        Tue, 11 Feb 2020 18:26:26 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44782 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbgBKX00 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Feb 2020 18:24:09 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01BNJSPD080359
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Feb 2020 18:24:08 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1tpdc5p7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Feb 2020 18:24:07 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 11 Feb 2020 23:24:05 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Feb 2020 23:24:02 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01BNO1Gv57147548
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Feb 2020 23:24:01 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 245B5AE045;
-        Tue, 11 Feb 2020 23:24:01 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DC249AE057;
-        Tue, 11 Feb 2020 23:23:59 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.128.4])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Feb 2020 23:23:59 +0000 (GMT)
-Subject: Re: [PATCH 1/2] crypto: rename sm3-256 to sm3 in hash_algo_name
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        ebiggers@kernel.org
-Cc:     linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 11 Feb 2020 18:23:59 -0500
-In-Reply-To: <1581457759.5125.18.camel@linux.ibm.com>
-References: <20200210124440.23929-1-tianjia.zhang@linux.alibaba.com>
-         <20200210124440.23929-2-tianjia.zhang@linux.alibaba.com>
-         <1581457759.5125.18.camel@linux.ibm.com>
+        Tue, 11 Feb 2020 18:26:26 -0500
+Received: by mail-lj1-f195.google.com with SMTP id q8so96263ljj.11;
+        Tue, 11 Feb 2020 15:26:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=b+UnFJdAm9s/f93leG1ycIqg/kGef55fT1Md7EMcfbM=;
+        b=kLJeqEt5CYtm8yUjPsFzYb9Z+Y0vuRc0rVpStu4m6kw4CA52xUgmo2SVKD4xLYQwpb
+         tRAheeXe9hu0u6CraeycsJ7+itG45yM4VnVBDtbo/IUeWC0LpB7pIU8dzTssDeFwAR7j
+         MtOxnPATkeSWcwTKri1i6ZRt/N/Aj23R2ijnr5hagD6F3i1mMp69nf35zwu+xnOOxizG
+         NwLxQyjonLIlZwmnM+ZONki0vHWJShUSPHsiZRQqU/psifcRvbDaCmW3YpIm7byLezLX
+         YIKBLGgdczORPtgVgwPYXN1Oq4oDncolkZ6Z1y9+gt4TNSM7bjsLOG6k1vqj/+bp78q1
+         B/fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b+UnFJdAm9s/f93leG1ycIqg/kGef55fT1Md7EMcfbM=;
+        b=JOqqR0yZqsqTSqhWQoCRjD+yJjEVBtCIKrY9MbntqRXmRvVoeUNy/BFPdIbfn5XxZv
+         AEPCVfR0+IEMQZtDglHE6K+GhW3AP1VqxnkraAla5wG2bUos/UjShwMsSjpjYo5xwC/F
+         Of7KM433HDarzsU8kwdeFvuI38l+UBZYqfUxzbEJZd1zxJvh5cVXkz6BPRMfkWhKehS6
+         YAWuD8uCTE0pfQGAhkaM0kgDPH727mal9rXM8dK8xGrHKIw8xaQac2ZVKRgZTL5EdP84
+         ztlsgtHSwXyD27Ma2s5Cx70P4BjzwlNV+bQDZv6kJevgB3fxrezhBt+bDHnlhT2zoTUe
+         WGTQ==
+X-Gm-Message-State: APjAAAUj9BKdwePx9YOrtSdsTj2MsuFyB6GwLqYPMcKOyEqhiEffOqix
+        BmejVLGPS/uVIxIXyMmtsKoHQ3Z/MV11PBgGqao=
+X-Google-Smtp-Source: APXvYqwaKatfhBd0fIQTVs5Yimze4i5NNaCnOiThpMyD9BiV7j3UfnGigS0KE40nNkDY0UIiFZWe669eMpM7R9PkmoA=
+X-Received: by 2002:a2e:8145:: with SMTP id t5mr5874745ljg.144.1581463584142;
+ Tue, 11 Feb 2020 15:26:24 -0800 (PST)
+MIME-Version: 1.0
+References: <20200123152440.28956-1-kpsingh@chromium.org> <20200123152440.28956-5-kpsingh@chromium.org>
+ <20200211031208.e6osrcathampoog7@ast-mbp> <20200211124334.GA96694@google.com>
+ <20200211175825.szxaqaepqfbd2wmg@ast-mbp> <CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com>
+ <20200211190943.sysdbz2zuz5666nq@ast-mbp> <CAG48ez2gvo1dA4P1L=ASz7TRfbH-cgLZLmOPmr0NweayL-efLw@mail.gmail.com>
+ <20200211201039.om6xqoscfle7bguz@ast-mbp> <CAG48ez1qGqF9z7APajFyzjZh82YxFV9sHE64f5kdKBeH9J3YPg@mail.gmail.com>
+ <20200211213819.j4ltrjjkuywihpnv@ast-mbp>
+In-Reply-To: <20200211213819.j4ltrjjkuywihpnv@ast-mbp>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Tue, 11 Feb 2020 15:26:12 -0800
+Message-ID: <CAADnVQLsiWgSBXbuxmpkC9TS8d1aQRw2zDHG8J6E=kfcRoXtKQ@mail.gmail.com>
+Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
+ mutable hooks list for the BPF LSM]
+To:     Jann Horn <jannh@google.com>
+Cc:     KP Singh <kpsingh@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kernel Team <kernel-team@fb.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021123-4275-0000-0000-000003A0404F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021123-4276-0000-0000-000038B47942
-Message-Id: <1581463439.5125.72.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-11_07:2020-02-11,2020-02-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 suspectscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002110149
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-02-11 at 16:49 -0500, Mimi Zohar wrote:
-> On Mon, 2020-02-10 at 20:44 +0800, Tianjia Zhang wrote:
-> > The name sm3-256 is defined in hash_algo_name in hash_info, but the
-> > algorithm name implemented in sm3_generic.c is sm3, which will cause
-> > the sm3-256 algorithm to be not found in some application scenarios of
-> > the hash algorithm, and an ENOENT error will occur. For example,
-> > IMA, keys, and other subsystems that reference hash_algo_name all use
-> > the hash algorithm of sm3.
-> > 
-> > Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> 
-> The "hash_map" needs to be updated to reflect this change.
-> 
-> static struct tpm2_hash tpm2_hash_map[] = {
->         {HASH_ALGO_SHA1, TPM_ALG_SHA1},
->         {HASH_ALGO_SHA256, TPM_ALG_SHA256},
->         {HASH_ALGO_SHA384, TPM_ALG_SHA384},
->         {HASH_ALGO_SHA512, TPM_ALG_SHA512},
->         {HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
-> };
+On Tue, Feb 11, 2020 at 1:38 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Tue, Feb 11, 2020 at 09:33:49PM +0100, Jann Horn wrote:
+> > >
+> > > Got it. Then let's whitelist them ?
+> > > All error injection points are marked with ALLOW_ERROR_INJECTION().
+> > > We can do something similar here, but let's do it via BTF and avoid
+> > > abusing yet another elf section for this mark.
+> > > I think BTF_TYPE_EMIT() should work. Just need to pick explicit enough
+> > > name and extensive comment about what is going on.
+> >
+> > Sounds reasonable to me. :)
+>
+> awesome :)
 
-Never mind, the enum name "HASH_ALGO_SM3_256" didn't change.  Just the
-string changed.
-
-Mimi
-
+Looks like the kernel already provides this whitelisting.
+$ bpftool btf dump file /sys/kernel/btf/vmlinux |grep FUNC|grep '\<security_'
+gives the list of all LSM hooks that lsm-bpf will be able to attach to.
+There are two exceptions there security_add_hooks() and security_init().
+Both are '__init'. Too late for lsm-bpf to touch.
+So filtering BTF funcs by 'security_' prefix will be enough.
+It should be documented though.
+The number of attachable funcs depends on kconfig which is
+a nice property and further strengthen the point that
+lsm-bpf is very much kernel specific.
+We probably should blacklist security_bpf*() hooks though.
+Otherwise inception fans will have a field day.
+Disallowing bpf with bpf :)
