@@ -2,309 +2,153 @@ Return-Path: <SRS0=MM4E=37=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B45C3B188
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 04:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 415AFC3B187
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 07:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 441C82082F
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 04:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1340620870
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 07:47:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rambus.com header.i=@rambus.com header.b="M/7iS8TA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbgBKEDG (ORCPT
+        id S1727789AbgBKHrm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 23:03:06 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:43848 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728001AbgBKEDG (ORCPT
+        Tue, 11 Feb 2020 02:47:42 -0500
+Received: from us-smtp-delivery-148.mimecast.com ([216.205.24.148]:59591 "EHLO
+        us-smtp-delivery-148.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727697AbgBKHrm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 23:03:06 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j1MlJ-0000du-Pq; Mon, 10 Feb 2020 21:03:01 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j1MlI-0002ui-L3; Mon, 10 Feb 2020 21:03:01 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
-        <20200210150519.538333-8-gladkov.alexey@gmail.com>
-        <87v9odlxbr.fsf@x220.int.ebiederm.org>
-Date:   Mon, 10 Feb 2020 22:01:06 -0600
-In-Reply-To: <87v9odlxbr.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Mon, 10 Feb 2020 19:36:08 -0600")
-Message-ID: <87d0allqm5.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 11 Feb 2020 02:47:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rambus.com;
+        s=mimecast20161209; t=1581407260;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yi69RZrYM5y2k1f16rw/mtrnHWssfjhZ7X5ko5PeHLo=;
+        b=M/7iS8TAyuran9WHnlNNM80zy6r+dSbTFkT/3TKZxoShZXQzsCKKtFbQ1JyIj0SRVuhLr7
+        2jC7nlGa2Ql62lcstVUK5DRZHQJ89o9frx1ys44VKK7xFVfQGaz4JfPr8KjjwuaLpQIv8m
+        gewZPdRy+MT1T4NFhEbKU0CN4WqHSYc=
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com
+ (mail-bn8nam12lp2173.outbound.protection.outlook.com [104.47.55.173])
+ (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-391-tZ2jPCVePsGkWv7OxJz_kg-1; Tue, 11 Feb 2020 02:47:38 -0500
+Received: from SN4PR0401MB3663.namprd04.prod.outlook.com (10.167.133.19) by
+ SN4PR0401MB3551.namprd04.prod.outlook.com (10.167.129.152) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.21; Tue, 11 Feb 2020 07:47:36 +0000
+Received: from SN4PR0401MB3663.namprd04.prod.outlook.com
+ ([fe80::c071:99a5:6da8:924e]) by SN4PR0401MB3663.namprd04.prod.outlook.com
+ ([fe80::c071:99a5:6da8:924e%7]) with mapi id 15.20.2707.030; Tue, 11 Feb 2020
+ 07:47:35 +0000
+From:   "Van Leeuwen, Pascal" <pvanleeuwen@rambus.com>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] crypto: rename sm3-256 to sm3 in hash_algo_name
+Thread-Topic: [PATCH 1/2] crypto: rename sm3-256 to sm3 in hash_algo_name
+Thread-Index: AQHV4A/19AwGoOkcZEG8ivP2s3l+UKgVnvzA
+Date:   Tue, 11 Feb 2020 07:47:35 +0000
+Message-ID: <SN4PR0401MB366384487DB71207FD64A89FC3180@SN4PR0401MB3663.namprd04.prod.outlook.com>
+References: <20200210124440.23929-1-tianjia.zhang@linux.alibaba.com>
+ <42b6db00b1864da9ad76a8d5964fdb74@MN2PR20MB2973.namprd20.prod.outlook.com>
+In-Reply-To: <42b6db00b1864da9ad76a8d5964fdb74@MN2PR20MB2973.namprd20.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [188.204.2.113]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: bd9b058a-f7bd-4f6e-6607-08d7aec6a908
+x-ms-traffictypediagnostic: SN4PR0401MB3551:
+x-microsoft-antispam-prvs: <SN4PR0401MB35518A8AAF4427B24D6BDA5CC3180@SN4PR0401MB3551.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0310C78181
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39850400004)(346002)(376002)(366004)(199004)(189003)(71200400001)(316002)(7696005)(478600001)(2906002)(6506007)(53546011)(54906003)(26005)(110136005)(8936002)(4326008)(186003)(8676002)(86362001)(55016002)(66476007)(9686003)(81156014)(81166006)(66446008)(64756008)(66946007)(76116006)(66556008)(7416002)(52536014)(33656002)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN4PR0401MB3551;H:SN4PR0401MB3663.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: +pnP7vcaX2z3G5aubULp+UgF6yEoOFoVVojpcyr+kE8DV8+7XDAA0bs34soNivbyrVlLaKN5GSt8V1CwVnfcAU49nF3BO2JpC4JkgoeSx/3oh8OmWqHHvj0DKbuiURNMHDedwgJydFavxkllgMjGS/F5k5MtdRkyLNW8cfqtI6Azm3qOomYU41WB2j7WlZJzJPBFqEoMRzOZSXFQ69/pBlTnr/lLUGJQ85Sh/D3t6S2+k5UQn4XO/rIolfhEXD//sYVmPxodTY46o3WyaNMVvCfNkKhH+5xgzAJSB76LTFbzUR61AbV10Ddu2ROU+QXhbD58O0TdCFQb+49JVx/f/m4rsU9OFDNG9OYSxP57POUA31nQvmZAspZIKVpDGM9W35co9gpQrylVV3HO2hu0CeI1XAWorrdg9PLSWiKtml5A2QWzVutesRsrKVwcxkrD
+x-ms-exchange-antispam-messagedata: OPG8b6RSwKoAi7prNlTpxNR9PjI2pCjOJWONc8HdlwTJFJCj+dXfq7Vv2o75kr6RNuKxsY7kV2ZvxVm/kFwLkrNPon7RhI+WjURPyg5x+l5bbfULQf8SVTV8U4OofUW0uG/tgSuHqkO7kBNx6wO63g==
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1j1MlI-0002ui-L3;;;mid=<87d0allqm5.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19Iatqt5yA9btGS91rLdTgZuh4QYly8b1g=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-OriginatorOrg: rambus.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd9b058a-f7bd-4f6e-6607-08d7aec6a908
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2020 07:47:35.6413
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: bd0ba799-c2b9-413c-9c56-5d1731c4827c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: l8HW6al+ehDCyyVzGEcoEhJJQOjdntOBPzxaU6P/6TTAaobtMhM9YwwFnuNIF2YxkZ6FFpAhcg1bpOpbdX0Leg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3551
+X-MC-Unique: tZ2jPCVePsGkWv7OxJz_kg-1
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: rambus.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1jcnlwdG8tb3duZXJA
+dmdlci5rZXJuZWwub3JnIDxsaW51eC1jcnlwdG8tb3duZXJAdmdlci5rZXJuZWwub3JnPiBPbiBC
+ZWhhbGYgT2YgVGlhbmppYSBaaGFuZw0KPiBTZW50OiBNb25kYXksIEZlYnJ1YXJ5IDEwLCAyMDIw
+IDE6NDUgUE0NCj4gVG86IGhlcmJlcnRAZ29uZG9yLmFwYW5hLm9yZy5hdTsgZGF2ZW1AZGF2ZW1s
+b2Z0Lm5ldDsgem9oYXJAbGludXguaWJtLmNvbTsgZG1pdHJ5Lmthc2F0a2luQGdtYWlsLmNvbTsg
+am1vcnJpc0BuYW1laS5vcmc7DQo+IHNlcmdlQGhhbGx5bi5jb207IGViaWdnZXJzQGtlcm5lbC5v
+cmcNCj4gQ2M6IGxpbnV4LWNyeXB0b0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWludGVncml0eUB2
+Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmc7IGxp
+bnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQQVRDSCAxLzJdIGNy
+eXB0bzogcmVuYW1lIHNtMy0yNTYgdG8gc20zIGluIGhhc2hfYWxnb19uYW1lDQo+DQo+IDw8PCBF
+eHRlcm5hbCBFbWFpbCA+Pj4NCj4gQ0FVVElPTjogVGhpcyBlbWFpbCBvcmlnaW5hdGVkIGZyb20g
+b3V0c2lkZSBvZiB0aGUgb3JnYW5pemF0aW9uLiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBh
+dHRhY2htZW50cyB1bmxlc3MgeW91IHJlY29nbml6ZSB0aGUNCj4gc2VuZGVyL3NlbmRlciBhZGRy
+ZXNzIGFuZCBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUuDQo+DQo+DQo+IFRoZSBuYW1lIHNtMy0y
+NTYgaXMgZGVmaW5lZCBpbiBoYXNoX2FsZ29fbmFtZSBpbiBoYXNoX2luZm8sIGJ1dCB0aGUNCj4g
+YWxnb3JpdGhtIG5hbWUgaW1wbGVtZW50ZWQgaW4gc20zX2dlbmVyaWMuYyBpcyBzbTMsIHdoaWNo
+IHdpbGwgY2F1c2UNCj4gdGhlIHNtMy0yNTYgYWxnb3JpdGhtIHRvIGJlIG5vdCBmb3VuZCBpbiBz
+b21lIGFwcGxpY2F0aW9uIHNjZW5hcmlvcyBvZg0KPiB0aGUgaGFzaCBhbGdvcml0aG0sIGFuZCBh
+biBFTk9FTlQgZXJyb3Igd2lsbCBvY2N1ci4gRm9yIGV4YW1wbGUsDQo+IElNQSwga2V5cywgYW5k
+IG90aGVyIHN1YnN5c3RlbXMgdGhhdCByZWZlcmVuY2UgaGFzaF9hbGdvX25hbWUgYWxsIHVzZQ0K
+PiB0aGUgaGFzaCBhbGdvcml0aG0gb2Ygc20zLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBUaWFuamlh
+IFpoYW5nIDx0aWFuamlhLnpoYW5nQGxpbnV4LmFsaWJhYmEuY29tPg0KUmV2aWV3ZWQtYnk6IFBh
+c2NhbCB2YW4gTGVldXdlbiA8cHZhbmxlZXV3ZW5AcmFtYnVzLmNvbT4NCg0KPiAtLS0NCj4gIGNy
+eXB0by9oYXNoX2luZm8uYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigr
+KSwgMSBkZWxldGlvbigtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvY3J5cHRvL2hhc2hfaW5mby5jIGIv
+Y3J5cHRvL2hhc2hfaW5mby5jDQo+IGluZGV4IGM3NTRjYjc1ZGQxYS4uYTQ5ZmY5NmJkZTc3IDEw
+MDY0NA0KPiAtLS0gYS9jcnlwdG8vaGFzaF9pbmZvLmMNCj4gKysrIGIvY3J5cHRvL2hhc2hfaW5m
+by5jDQo+IEBAIC0yNiw3ICsyNiw3IEBAIGNvbnN0IGNoYXIgKmNvbnN0IGhhc2hfYWxnb19uYW1l
+W0hBU0hfQUxHT19fTEFTVF0gPSB7DQo+ICAgICAgICAgW0hBU0hfQUxHT19UR1JfMTI4XSAgICAg
+PSAidGdyMTI4IiwNCj4gICAgICAgICBbSEFTSF9BTEdPX1RHUl8xNjBdICAgICA9ICJ0Z3IxNjAi
+LA0KPiAgICAgICAgIFtIQVNIX0FMR09fVEdSXzE5Ml0gICAgID0gInRncjE5MiIsDQo+IC0gICAg
+ICAgW0hBU0hfQUxHT19TTTNfMjU2XSAgICAgPSAic20zLTI1NiIsDQo+ICsgICAgICAgW0hBU0hf
+QUxHT19TTTNfMjU2XSAgICAgPSAic20zIiwNCj4gICAgICAgICBbSEFTSF9BTEdPX1NUUkVFQk9H
+XzI1Nl0gPSAic3RyZWVib2cyNTYiLA0KPiAgICAgICAgIFtIQVNIX0FMR09fU1RSRUVCT0dfNTEy
+XSA9ICJzdHJlZWJvZzUxMiIsDQo+ICB9Ow0KPiAtLQ0KPiAyLjE3LjENCg0KUmVnYXJkcywNClBh
+c2NhbCB2YW4gTGVldXdlbg0KU2lsaWNvbiBJUCBBcmNoaXRlY3QgTXVsdGktUHJvdG9jb2wgRW5n
+aW5lcywgUmFtYnVzIFNlY3VyaXR5DQpSYW1idXMgUk9UVyBIb2xkaW5nIEJWDQorMzEtNzMgNjU4
+MTk1Mw0KDQpOb3RlOiBUaGUgSW5zaWRlIFNlY3VyZS9WZXJpbWF0cml4IFNpbGljb24gSVAgdGVh
+bSB3YXMgcmVjZW50bHkgYWNxdWlyZWQgYnkgUmFtYnVzLg0KUGxlYXNlIGJlIHNvIGtpbmQgdG8g
+dXBkYXRlIHlvdXIgZS1tYWlsIGFkZHJlc3MgYm9vayB3aXRoIG15IG5ldyBlLW1haWwgYWRkcmVz
+cy4NCg0KDQoqKiBUaGlzIG1lc3NhZ2UgYW5kIGFueSBhdHRhY2htZW50cyBhcmUgZm9yIHRoZSBz
+b2xlIHVzZSBvZiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpLiBJdCBtYXkgY29udGFpbiBpbmZv
+cm1hdGlvbiB0aGF0IGlzIGNvbmZpZGVudGlhbCBhbmQgcHJpdmlsZWdlZC4gSWYgeW91IGFyZSBu
+b3QgdGhlIGludGVuZGVkIHJlY2lwaWVudCBvZiB0aGlzIG1lc3NhZ2UsIHlvdSBhcmUgcHJvaGli
+aXRlZCBmcm9tIHByaW50aW5nLCBjb3B5aW5nLCBmb3J3YXJkaW5nIG9yIHNhdmluZyBpdC4gUGxl
+YXNlIGRlbGV0ZSB0aGUgbWVzc2FnZSBhbmQgYXR0YWNobWVudHMgYW5kIG5vdGlmeSB0aGUgc2Vu
+ZGVyIGltbWVkaWF0ZWx5LiAqKg0KDQpSYW1idXMgSW5jLjxodHRwOi8vd3d3LnJhbWJ1cy5jb20+
+DQo=
 
-> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
->
->> This allows to flush dcache entries of a task on multiple procfs mounts
->> per pid namespace.
->>
->> The RCU lock is used because the number of reads at the task exit time
->> is much larger than the number of procfs mounts.
->
-> A couple of quick comments.
->
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Andy Lutomirski <luto@kernel.org>
->> Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
->> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
->> Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
->> ---
->>  fs/proc/base.c                | 20 +++++++++++++++-----
->>  fs/proc/root.c                | 27 ++++++++++++++++++++++++++-
->>  include/linux/pid_namespace.h |  2 ++
->>  include/linux/proc_fs.h       |  2 ++
->>  4 files changed, 45 insertions(+), 6 deletions(-)
->>
->> diff --git a/fs/proc/base.c b/fs/proc/base.c
->> index 4ccb280a3e79..24b7c620ded3 100644
->> --- a/fs/proc/base.c
->> +++ b/fs/proc/base.c
->> @@ -3133,7 +3133,7 @@ static const struct inode_operations proc_tgid_base_inode_operations = {
->>  	.permission	= proc_pid_permission,
->>  };
->>  
->> -static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
->> +static void proc_flush_task_mnt_root(struct dentry *mnt_root, pid_t pid, pid_t tgid)
-> Perhaps just rename things like:
->> +static void proc_flush_task_root(struct dentry *root, pid_t pid, pid_t tgid)
->>  {
->
-> I don't think the mnt_ prefix conveys any information, and it certainly
-> makes everything longer and more cumbersome.
->
->>  	struct dentry *dentry, *leader, *dir;
->>  	char buf[10 + 1];
->> @@ -3142,7 +3142,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
->>  	name.name = buf;
->>  	name.len = snprintf(buf, sizeof(buf), "%u", pid);
->>  	/* no ->d_hash() rejects on procfs */
->> -	dentry = d_hash_and_lookup(mnt->mnt_root, &name);
->> +	dentry = d_hash_and_lookup(mnt_root, &name);
->>  	if (dentry) {
->>  		d_invalidate(dentry);
->>  		dput(dentry);
->> @@ -3153,7 +3153,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
->>  
->>  	name.name = buf;
->>  	name.len = snprintf(buf, sizeof(buf), "%u", tgid);
->> -	leader = d_hash_and_lookup(mnt->mnt_root, &name);
->> +	leader = d_hash_and_lookup(mnt_root, &name);
->>  	if (!leader)
->>  		goto out;
->>  
->> @@ -3208,14 +3208,24 @@ void proc_flush_task(struct task_struct *task)
->>  	int i;
->>  	struct pid *pid, *tgid;
->>  	struct upid *upid;
->> +	struct dentry *mnt_root;
->> +	struct proc_fs_info *fs_info;
->>  
->>  	pid = task_pid(task);
->>  	tgid = task_tgid(task);
->>  
->>  	for (i = 0; i <= pid->level; i++) {
->>  		upid = &pid->numbers[i];
->> -		proc_flush_task_mnt(upid->ns->proc_mnt, upid->nr,
->> -					tgid->numbers[i].nr);
->> +
->> +		rcu_read_lock();
->> +		list_for_each_entry_rcu(fs_info, &upid->ns->proc_mounts, pidns_entry) {
->> +			mnt_root = fs_info->m_super->s_root;
->> +			proc_flush_task_mnt_root(mnt_root, upid->nr, tgid->numbers[i].nr);
->> +		}
->> +		rcu_read_unlock();
->> +
->> +		mnt_root = upid->ns->proc_mnt->mnt_root;
->> +		proc_flush_task_mnt_root(mnt_root, upid->nr, tgid->numbers[i].nr);
->
-> I don't think this following of proc_mnt is needed.  It certainly
-> shouldn't be.  The loop through all of the super blocks should be
-> enough.
->
-> Once this change goes through.  UML can be given it's own dedicated
-> proc_mnt for the initial pid namespace, and proc_mnt can be removed
-> entirely.
->
-> Unless something has changed recently UML is the only other user of
-> pid_ns->proc_mnt.  That proc_mnt really only exists to make the loop in
-> proc_flush_task easy to write.
->
-> It also probably makes sense to take the rcu_read_lock() over
-> that entire for loop.
->
->
->>  	}
->>  }
->>  
->> diff --git a/fs/proc/root.c b/fs/proc/root.c
->> index 5d5cba4c899b..e2bb015da1a8 100644
->> --- a/fs/proc/root.c
->> +++ b/fs/proc/root.c
->> @@ -149,7 +149,22 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
->>  	if (ret) {
->>  		return ret;
->>  	}
->> -	return proc_setup_thread_self(s);
->> +
->> +	ret = proc_setup_thread_self(s);
->> +	if (ret) {
->> +		return ret;
->> +	}
->> +
->> +	/*
->> +	 * back reference to flush dcache entries at process exit time.
->> +	 */
->> +	ctx->fs_info->m_super = s;
->> +
->> +	spin_lock(&pid_ns->proc_mounts_lock);
->> +	list_add_tail_rcu(&ctx->fs_info->pidns_entry, &pid_ns->proc_mounts);
->> +	spin_unlock(&pid_ns->proc_mounts_lock);
->> +
->> +	return 0;
->>  }
->>  
->>  static int proc_reconfigure(struct fs_context *fc)
->> @@ -211,10 +226,17 @@ static void proc_kill_sb(struct super_block *sb)
->>  {
->>  	struct proc_fs_info *fs_info = proc_sb_info(sb);
->>  
->> +	spin_lock(&fs_info->pid_ns->proc_mounts_lock);
->> +	list_del_rcu(&fs_info->pidns_entry);
->> +	spin_unlock(&fs_info->pid_ns->proc_mounts_lock);
->> +
->> +	synchronize_rcu();
->> +
->
-> Rather than a heavyweight synchronize_rcu here,
-> it probably makes sense to instead to change
->
-> 	kfree(fs_info)
-> to
-> 	kfree_rcu(fs_info, some_rcu_head_in_fs_info)
->
-> Or possibly doing a full call_rcu.
->
-> The problem is that synchronize_rcu takes about 10ms when HZ=100.
-> Which makes synchronize_rcu incredibly expensive on any path where
-> anything can wait for it.
-
-I take it back.
-
-The crucial thing to insert a rcu delay before is
-shrink_dcache_for_umount.
-
-With the call chain:
-kill_anon_super
-    generic_shutdown_super
-        shrink_dcache_for_umount.
-
-So we do need synchronize_rcu or to put everything below this point into
-a call_rcu function.
-
-The practical concern is mntput calls does task_work_add.
-The task_work function is cleanup_mnt.
-When called cleanup_mnt calls deactivate_locked_super
-which in turn calls proc_kill_sb.
-
-Which is a long way of saying that the code will delay the
-exit of the process that calls mntput by 10ms (or
-however syncrhonize_rcu runs).
-
-We probably don't care.  But that is long enough in to be user
-visible, and potentially cause problems.
-
-But all it requires putting the code below in it's own
-function and triggering it with call_rcu if that causes a regression
-by bying so slow.
-
->>  	if (fs_info->proc_self)
->>  		dput(fs_info->proc_self);
->>  	if (fs_info->proc_thread_self)
->>  		dput(fs_info->proc_thread_self);
->> +
->>  	kill_anon_super(sb);
->>  	put_pid_ns(fs_info->pid_ns);
->>  	kfree(fs_info);
->> @@ -336,6 +358,9 @@ int pid_ns_prepare_proc(struct pid_namespace *ns)
->>  		ctx->fs_info->pid_ns = ns;
->>  	}
->>  
->> +	spin_lock_init(&ns->proc_mounts_lock);
->> +	INIT_LIST_HEAD_RCU(&ns->proc_mounts);
->> +
->>  	mnt = fc_mount(fc);
->>  	put_fs_context(fc);
->>  	if (IS_ERR(mnt))
->> diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
->> index 66f47f1afe0d..c36af1dfd862 100644
->> --- a/include/linux/pid_namespace.h
->> +++ b/include/linux/pid_namespace.h
->> @@ -26,6 +26,8 @@ struct pid_namespace {
->>  	struct pid_namespace *parent;
->>  #ifdef CONFIG_PROC_FS
->>  	struct vfsmount *proc_mnt; /* Internal proc mounted during each new pidns */
->> +	spinlock_t proc_mounts_lock;
->> +	struct list_head proc_mounts; /* list of separated procfs mounts */
->>  #endif
->>  #ifdef CONFIG_BSD_PROCESS_ACCT
->>  	struct fs_pin *bacct;
->> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
->> index 5f0b1b7e4271..f307940f8311 100644
->> --- a/include/linux/proc_fs.h
->> +++ b/include/linux/proc_fs.h
->> @@ -20,6 +20,8 @@ enum {
->>  };
->>  
->>  struct proc_fs_info {
->> +	struct list_head pidns_entry;    /* Node in procfs_mounts of a pidns */
->> +	struct super_block *m_super;
->>  	struct pid_namespace *pid_ns;
->>  	struct dentry *proc_self;        /* For /proc/self */
->>  	struct dentry *proc_thread_self; /* For /proc/thread-self */
->
->
-> Eric
