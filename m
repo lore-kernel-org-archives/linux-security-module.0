@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C25C352A3
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 16:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1225FC3B187
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 16:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3F772086A
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 16:59:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF696215A4
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 16:59:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730946AbgBKQ7h (ORCPT
+        id S1731040AbgBKQ7v (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Feb 2020 11:59:37 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53406 "EHLO
+        Tue, 11 Feb 2020 11:59:51 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53496 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729829AbgBKQ7f (ORCPT
+        with ESMTP id S1731021AbgBKQ7r (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:59:35 -0500
+        Tue, 11 Feb 2020 11:59:47 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j1YsO-00014T-Fl; Tue, 11 Feb 2020 16:59:08 +0000
+        id 1j1Ysa-00014T-VY; Tue, 11 Feb 2020 16:59:21 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -39,9 +39,9 @@ Cc:     smbarber@chromium.org, Alexander Viro <viro@zeniv.linux.org.uk>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 01/24] user_namespace: introduce fsid mappings infrastructure
-Date:   Tue, 11 Feb 2020 17:57:30 +0100
-Message-Id: <20200211165753.356508-2-christian.brauner@ubuntu.com>
+Subject: [PATCH 15/24] commoncap:cap_bprm_set_creds(): handle fsid mappings
+Date:   Tue, 11 Feb 2020 17:57:44 +0100
+Message-Id: <20200211165753.356508-16-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200211165753.356508-1-christian.brauner@ubuntu.com>
 References: <20200211165753.356508-1-christian.brauner@ubuntu.com>
@@ -51,267 +51,52 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This introduces the infrastructure to setup fsid mappings which will be used in
-later patches.
-All new code depends on CONFIG_USER_NS_FSID=y. It currently defaults to "N".
-If CONFIG_USER_NS_FSID is not set, no new code is added.
-
-In this patch fsuid_m_show() and fsgid_m_show() are introduced. They are
-identical to uid_m_show() and gid_m_show() until we introduce from_kfsuid() and
-from_kfsgid() in a follow-up patch.
+During exec the kfsids are currently reset to the effective kids. To retain the
+same semantics with the introduction of fsid mappings, we lookup the userspace
+effective id in the id mappings and translate the effective id into the
+corresponding kfsid in the fsidmapping. This means, the behavior is unchanged
+when no fsid mappings are setup and the semantics stay the same even when fsid
+mappings are setup.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- include/linux/user_namespace.h |  10 +++
- init/Kconfig                   |  11 +++
- kernel/user.c                  |  22 ++++++
- kernel/user_namespace.c        | 122 +++++++++++++++++++++++++++++++++
- 4 files changed, 165 insertions(+)
+ security/commoncap.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index fb9f4f799554..ffbd5e7e5ec7 100644
---- a/include/linux/user_namespace.h
-+++ b/include/linux/user_namespace.h
-@@ -55,6 +55,10 @@ enum ucount_type {
- struct user_namespace {
- 	struct uid_gid_map	uid_map;
- 	struct uid_gid_map	gid_map;
-+#ifdef CONFIG_USER_NS_FSID
-+	struct uid_gid_map	fsuid_map;
-+	struct uid_gid_map	fsgid_map;
-+#endif
- 	struct uid_gid_map	projid_map;
- 	atomic_t		count;
- 	struct user_namespace	*parent;
-@@ -126,6 +130,12 @@ struct seq_operations;
- extern const struct seq_operations proc_uid_seq_operations;
- extern const struct seq_operations proc_gid_seq_operations;
- extern const struct seq_operations proc_projid_seq_operations;
-+#ifdef CONFIG_USER_NS_FSID
-+extern const struct seq_operations proc_fsuid_seq_operations;
-+extern const struct seq_operations proc_fsgid_seq_operations;
-+extern ssize_t proc_fsuid_map_write(struct file *, const char __user *, size_t, loff_t *);
-+extern ssize_t proc_fsgid_map_write(struct file *, const char __user *, size_t, loff_t *);
-+#endif
- extern ssize_t proc_uid_map_write(struct file *, const char __user *, size_t, loff_t *);
- extern ssize_t proc_gid_map_write(struct file *, const char __user *, size_t, loff_t *);
- extern ssize_t proc_projid_map_write(struct file *, const char __user *, size_t, loff_t *);
-diff --git a/init/Kconfig b/init/Kconfig
-index a34064a031a5..4da082e4f787 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1102,6 +1102,17 @@ config USER_NS
+diff --git a/security/commoncap.c b/security/commoncap.c
+index ecfa0d0c250e..8d1a81e98610 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -811,7 +811,10 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 	struct cred *new = bprm->cred;
+ 	bool effective = false, has_fcap = false, is_setid;
+ 	int ret;
+-	kuid_t root_uid;
++	kuid_t root_uid, kfsuid;
++	kgid_t kfsgid;
++	uid_t fsuid;
++	gid_t fsgid;
  
- 	  If unsure, say N.
+ 	if (WARN_ON(!cap_ambient_invariant_ok(old)))
+ 		return -EPERM;
+@@ -848,8 +851,15 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 						   old->cap_permitted);
+ 	}
  
-+config USER_NS_FSID
-+	bool "User namespace fsid mappings"
-+	depends on USER_NS
-+	default n
-+	help
-+	  This allows containers, to alter their filesystem id mappings.
-+	  With this containers with different id mappings can still share
-+	  the same filesystem.
+-	new->suid = new->fsuid = new->euid;
+-	new->sgid = new->fsgid = new->egid;
++	fsuid = from_kuid_munged(new->user_ns, new->euid);
++	kfsuid = make_kfsuid(new->user_ns, fsuid);
++	new->suid = new->euid;
++	new->fsuid = kfsuid;
 +
-+	  If unsure, say N.
-+
- config PID_NS
- 	bool "PID Namespaces"
- 	default y
-diff --git a/kernel/user.c b/kernel/user.c
-index 5235d7f49982..2ccaea9b810b 100644
---- a/kernel/user.c
-+++ b/kernel/user.c
-@@ -55,6 +55,28 @@ struct user_namespace init_user_ns = {
- 			},
- 		},
- 	},
-+#ifdef CONFIG_USER_NS_FSID
-+	.fsuid_map = {
-+		.nr_extents = 1,
-+		{
-+			.extent[0] = {
-+				.first = 0,
-+				.lower_first = 0,
-+				.count = 4294967295U,
-+			},
-+		},
-+	},
-+	.fsgid_map = {
-+		.nr_extents = 1,
-+		{
-+			.extent[0] = {
-+				.first = 0,
-+				.lower_first = 0,
-+				.count = 4294967295U,
-+			},
-+		},
-+	},
-+#endif
- 	.count = ATOMIC_INIT(3),
- 	.owner = GLOBAL_ROOT_UID,
- 	.group = GLOBAL_ROOT_GID,
-diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index 8eadadc478f9..cbdf456f95f0 100644
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -191,6 +191,16 @@ static void free_user_ns(struct work_struct *work)
- 			kfree(ns->projid_map.forward);
- 			kfree(ns->projid_map.reverse);
- 		}
-+#ifdef CONFIG_USER_NS_FSID
-+		if (ns->fsgid_map.nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
-+			kfree(ns->fsgid_map.forward);
-+			kfree(ns->fsgid_map.reverse);
-+		}
-+		if (ns->fsuid_map.nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
-+			kfree(ns->fsuid_map.forward);
-+			kfree(ns->fsuid_map.reverse);
-+		}
-+#endif
- 		retire_userns_sysctls(ns);
- 		key_free_user_ns(ns);
- 		ns_free_inum(&ns->ns);
-@@ -637,6 +647,50 @@ static int projid_m_show(struct seq_file *seq, void *v)
- 	return 0;
- }
++	fsgid = from_kgid_munged(new->user_ns, new->egid);
++	kfsgid = make_kfsgid(new->user_ns, fsgid);
++	new->sgid = new->egid;
++	new->fsgid = kfsgid;
  
-+#ifdef CONFIG_USER_NS_FSID
-+static int fsuid_m_show(struct seq_file *seq, void *v)
-+{
-+	struct user_namespace *ns = seq->private;
-+	struct uid_gid_extent *extent = v;
-+	struct user_namespace *lower_ns;
-+	uid_t lower;
-+
-+	lower_ns = seq_user_ns(seq);
-+	if ((lower_ns == ns) && lower_ns->parent)
-+		lower_ns = lower_ns->parent;
-+
-+	lower = from_kuid(lower_ns, KUIDT_INIT(extent->lower_first));
-+
-+	seq_printf(seq, "%10u %10u %10u\n",
-+		extent->first,
-+		lower,
-+		extent->count);
-+
-+	return 0;
-+}
-+
-+static int fsgid_m_show(struct seq_file *seq, void *v)
-+{
-+	struct user_namespace *ns = seq->private;
-+	struct uid_gid_extent *extent = v;
-+	struct user_namespace *lower_ns;
-+	gid_t lower;
-+
-+	lower_ns = seq_user_ns(seq);
-+	if ((lower_ns == ns) && lower_ns->parent)
-+		lower_ns = lower_ns->parent;
-+
-+	lower = from_kgid(lower_ns, KGIDT_INIT(extent->lower_first));
-+
-+	seq_printf(seq, "%10u %10u %10u\n",
-+		extent->first,
-+		lower,
-+		extent->count);
-+
-+	return 0;
-+}
-+#endif
-+
- static void *m_start(struct seq_file *seq, loff_t *ppos,
- 		     struct uid_gid_map *map)
- {
-@@ -674,6 +728,22 @@ static void *projid_m_start(struct seq_file *seq, loff_t *ppos)
- 	return m_start(seq, ppos, &ns->projid_map);
- }
- 
-+#ifdef CONFIG_USER_NS_FSID
-+static void *fsuid_m_start(struct seq_file *seq, loff_t *ppos)
-+{
-+	struct user_namespace *ns = seq->private;
-+
-+	return m_start(seq, ppos, &ns->fsuid_map);
-+}
-+
-+static void *fsgid_m_start(struct seq_file *seq, loff_t *ppos)
-+{
-+	struct user_namespace *ns = seq->private;
-+
-+	return m_start(seq, ppos, &ns->fsgid_map);
-+}
-+#endif
-+
- static void *m_next(struct seq_file *seq, void *v, loff_t *pos)
- {
- 	(*pos)++;
-@@ -706,6 +776,22 @@ const struct seq_operations proc_projid_seq_operations = {
- 	.show = projid_m_show,
- };
- 
-+#ifdef CONFIG_USER_NS_FSID
-+const struct seq_operations proc_fsuid_seq_operations = {
-+	.start = fsuid_m_start,
-+	.stop = m_stop,
-+	.next = m_next,
-+	.show = fsuid_m_show,
-+};
-+
-+const struct seq_operations proc_fsgid_seq_operations = {
-+	.start = fsgid_m_start,
-+	.stop = m_stop,
-+	.next = m_next,
-+	.show = fsgid_m_show,
-+};
-+#endif
-+
- static bool mappings_overlap(struct uid_gid_map *new_map,
- 			     struct uid_gid_extent *extent)
- {
-@@ -1081,6 +1167,42 @@ ssize_t proc_projid_map_write(struct file *file, const char __user *buf,
- 			 &ns->projid_map, &ns->parent->projid_map);
- }
- 
-+#ifdef CONFIG_USER_NS_FSID
-+ssize_t proc_fsuid_map_write(struct file *file, const char __user *buf,
-+			     size_t size, loff_t *ppos)
-+{
-+	struct seq_file *seq = file->private_data;
-+	struct user_namespace *ns = seq->private;
-+	struct user_namespace *seq_ns = seq_user_ns(seq);
-+
-+	if (!ns->parent)
-+		return -EPERM;
-+
-+	if ((seq_ns != ns) && (seq_ns != ns->parent))
-+		return -EPERM;
-+
-+	return map_write(file, buf, size, ppos, CAP_SETUID, &ns->fsuid_map,
-+			 &ns->parent->fsuid_map);
-+}
-+
-+ssize_t proc_fsgid_map_write(struct file *file, const char __user *buf,
-+			     size_t size, loff_t *ppos)
-+{
-+	struct seq_file *seq = file->private_data;
-+	struct user_namespace *ns = seq->private;
-+	struct user_namespace *seq_ns = seq_user_ns(seq);
-+
-+	if (!ns->parent)
-+		return -EPERM;
-+
-+	if ((seq_ns != ns) && (seq_ns != ns->parent))
-+		return -EPERM;
-+
-+	return map_write(file, buf, size, ppos, CAP_SETGID, &ns->fsgid_map,
-+			 &ns->parent->fsgid_map);
-+}
-+#endif
-+
- static bool new_idmap_permitted(const struct file *file,
- 				struct user_namespace *ns, int cap_setid,
- 				struct uid_gid_map *new_map)
+ 	/* File caps or setid cancels ambient. */
+ 	if (has_fcap || is_setid)
 -- 
 2.25.0
 
