@@ -2,156 +2,309 @@ Return-Path: <SRS0=MM4E=37=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D76F7C352A4
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 03:12:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B45C3B188
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 04:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF6062080C
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 03:12:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiFfmrpP"
+	by mail.kernel.org (Postfix) with ESMTP id 441C82082F
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 04:03:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbgBKDMS (ORCPT
+        id S1728018AbgBKEDG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Feb 2020 22:12:18 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40960 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbgBKDMS (ORCPT
+        Mon, 10 Feb 2020 23:03:06 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:43848 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728001AbgBKEDG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Feb 2020 22:12:18 -0500
-Received: by mail-pf1-f196.google.com with SMTP id j9so4712068pfa.8;
-        Mon, 10 Feb 2020 19:12:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oRkW2XcGN+ZHJ9q4kvQ0RJqBXUTFywBUYhv5rDLEKt4=;
-        b=LiFfmrpPkGv8orByK7ryOHRuSbxDPbDtap4XnRxM2WiWbrTLuzoVc1WzE3+7o0+j7a
-         96q4pj8s1P7YiIyXttfVHAJMWqN0u4W7UTvLRkCKaF6188tyHJ9Kam0mBBMK2ou11mCt
-         jLN51YfcQlpWz3VXPS604ua96Z85QQyG1ZJdSA46P6mdFbCWBR/w0jeBRzP3SDXP0Skw
-         ub49gjtxGJARvm2R6E1/Gl6aqCPLKlazBLChN+xS5mcMGEqi7nrXWS4JWjnLnOm3iXqo
-         O/BsniCzd3omUK/KMjnsUueVdfdn90UIN2p4vTvbPAac2GeFq4PvayCtIqtYRXcuMRvN
-         AAjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oRkW2XcGN+ZHJ9q4kvQ0RJqBXUTFywBUYhv5rDLEKt4=;
-        b=nvQO1BFOv60It4HHEoSYI+Sfj0r9knR5a//SBwRedbpsljUpPlsr7RhoP27N6g0VTS
-         3sBq73SYilnMim4d6FiBpBoy67nSVP/7KxM+ccd61xXyoEX6VH6s8VMK61S+tqdPQ9Te
-         o5xedbnQ2Am1uI5TkYc92V0TCkDINJl6bDg7KuOes0CDtxlz61cjwKMEK0Ni7S2D6Sot
-         3M+E3SGgHJfQ6fDegATw2/lnnarPHdZib8FSz4oMCo6qLIYfOGXnFr1UPMBZP3G2JQoD
-         cRR/WV47H+MVWllS4lMLpNtjqEDafc6NjR8frqxXxgybpH72NDB3KvO0DYdbdnEaFjf9
-         ahsQ==
-X-Gm-Message-State: APjAAAVPd+9iaLw6BEP4A2C/+enyUZuRCgo3bGrLW+ybVIauK2zdt/55
-        cQIe69FlCvfoV7amWsnxOJc=
-X-Google-Smtp-Source: APXvYqwc01uHRhO/VzOcwfGgjJ6ss+01OI/rhtKnBbJ8zS2rIV8h2kZFXUDdDbS9ZO4xzuWRtCdwqw==
-X-Received: by 2002:aa7:9edd:: with SMTP id r29mr4230502pfq.14.1581390737242;
-        Mon, 10 Feb 2020 19:12:17 -0800 (PST)
-Received: from ast-mbp ([2620:10d:c090:400::3:8bd])
-        by smtp.gmail.com with ESMTPSA id 3sm761134pjg.27.2020.02.10.19.12.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Feb 2020 19:12:16 -0800 (PST)
-Date:   Mon, 10 Feb 2020 19:12:10 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        Mon, 10 Feb 2020 23:03:06 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j1MlJ-0000du-Pq; Mon, 10 Feb 2020 21:03:01 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j1MlI-0002ui-L3; Mon, 10 Feb 2020 21:03:01 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-team@fb.com
-Subject: Re: [PATCH bpf-next v3 04/10] bpf: lsm: Add mutable hooks list for
- the BPF LSM
-Message-ID: <20200211031208.e6osrcathampoog7@ast-mbp>
-References: <20200123152440.28956-1-kpsingh@chromium.org>
- <20200123152440.28956-5-kpsingh@chromium.org>
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
+References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
+        <20200210150519.538333-8-gladkov.alexey@gmail.com>
+        <87v9odlxbr.fsf@x220.int.ebiederm.org>
+Date:   Mon, 10 Feb 2020 22:01:06 -0600
+In-Reply-To: <87v9odlxbr.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Mon, 10 Feb 2020 19:36:08 -0600")
+Message-ID: <87d0allqm5.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200123152440.28956-5-kpsingh@chromium.org>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain
+X-XM-SPF: eid=1j1MlI-0002ui-L3;;;mid=<87d0allqm5.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19Iatqt5yA9btGS91rLdTgZuh4QYly8b1g=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 23, 2020 at 07:24:34AM -0800, KP Singh wrote:
-> +#define CALL_BPF_LSM_INT_HOOKS(FUNC, ...) ({			\
-> +	int _ret = 0;						\
-> +	do {							\
-> +		struct security_hook_list *P;			\
-> +		int _idx;					\
-> +								\
-> +		if (hlist_empty(&bpf_lsm_hook_heads.FUNC))	\
-> +			break;					\
-> +								\
-> +		_idx = bpf_lsm_srcu_read_lock();		\
-> +								\
-> +		hlist_for_each_entry(P,				\
-> +			&bpf_lsm_hook_heads.FUNC, list) {	\
-> +			_ret = P->hook.FUNC(__VA_ARGS__);		\
-> +			if (_ret && IS_ENABLED(CONFIG_SECURITY_BPF_ENFORCE)) \
-> +				break;				\
-> +		}						\
-> +		bpf_lsm_srcu_read_unlock(_idx);			\
-> +	} while (0);						\
-> +	IS_ENABLED(CONFIG_SECURITY_BPF_ENFORCE) ? _ret : 0;	\
-> +})
+ebiederm@xmission.com (Eric W. Biederman) writes:
 
-This extra CONFIG_SECURITY_BPF_ENFORCE doesn't make sense to me.
-Why do all the work for bpf-lsm and ignore return code? Such framework already
-exists. For audit only case the user could have kprobed security_*() in
-security/security.c and had access to exactly the same data. There is no need
-in any of these patches if audit the only use case.
-Obviously bpf-lsm has to be capable of making go/no-go decision, so
-my preference is to drop this extra kconfig knob.
-I think the agreement seen in earlier comments in this thread that the prefered
-choice is to always have bpf-based lsm to be equivalent to LSM_ORDER_LAST. In
-such case how about using bpf-trampoline fexit logic instead?
-Pros:
-- no changes to security/ directory
-- no changes to call_int_hook() macro
-- patches 4, 5, 6 no longer necessary
-- when security is off all security_*() hooks do single
-  if (hlist_empty(&bpf_lsm_hook_heads.FUNC)) check.
-  With patch 4 there will two such checks. Tiny perf penalty.
-  With fexit approach there will be no extra check.
-- fexit approach is fast even on kernels compiled with retpoline, since
-  its using direct calls
-Cons:
-- bpf trampoline so far is x86 only and arm64 support is wip
+> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
+>
+>> This allows to flush dcache entries of a task on multiple procfs mounts
+>> per pid namespace.
+>>
+>> The RCU lock is used because the number of reads at the task exit time
+>> is much larger than the number of procfs mounts.
+>
+> A couple of quick comments.
+>
+>> Cc: Kees Cook <keescook@chromium.org>
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+>> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+>> Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+>> ---
+>>  fs/proc/base.c                | 20 +++++++++++++++-----
+>>  fs/proc/root.c                | 27 ++++++++++++++++++++++++++-
+>>  include/linux/pid_namespace.h |  2 ++
+>>  include/linux/proc_fs.h       |  2 ++
+>>  4 files changed, 45 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/proc/base.c b/fs/proc/base.c
+>> index 4ccb280a3e79..24b7c620ded3 100644
+>> --- a/fs/proc/base.c
+>> +++ b/fs/proc/base.c
+>> @@ -3133,7 +3133,7 @@ static const struct inode_operations proc_tgid_base_inode_operations = {
+>>  	.permission	= proc_pid_permission,
+>>  };
+>>  
+>> -static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
+>> +static void proc_flush_task_mnt_root(struct dentry *mnt_root, pid_t pid, pid_t tgid)
+> Perhaps just rename things like:
+>> +static void proc_flush_task_root(struct dentry *root, pid_t pid, pid_t tgid)
+>>  {
+>
+> I don't think the mnt_ prefix conveys any information, and it certainly
+> makes everything longer and more cumbersome.
+>
+>>  	struct dentry *dentry, *leader, *dir;
+>>  	char buf[10 + 1];
+>> @@ -3142,7 +3142,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
+>>  	name.name = buf;
+>>  	name.len = snprintf(buf, sizeof(buf), "%u", pid);
+>>  	/* no ->d_hash() rejects on procfs */
+>> -	dentry = d_hash_and_lookup(mnt->mnt_root, &name);
+>> +	dentry = d_hash_and_lookup(mnt_root, &name);
+>>  	if (dentry) {
+>>  		d_invalidate(dentry);
+>>  		dput(dentry);
+>> @@ -3153,7 +3153,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
+>>  
+>>  	name.name = buf;
+>>  	name.len = snprintf(buf, sizeof(buf), "%u", tgid);
+>> -	leader = d_hash_and_lookup(mnt->mnt_root, &name);
+>> +	leader = d_hash_and_lookup(mnt_root, &name);
+>>  	if (!leader)
+>>  		goto out;
+>>  
+>> @@ -3208,14 +3208,24 @@ void proc_flush_task(struct task_struct *task)
+>>  	int i;
+>>  	struct pid *pid, *tgid;
+>>  	struct upid *upid;
+>> +	struct dentry *mnt_root;
+>> +	struct proc_fs_info *fs_info;
+>>  
+>>  	pid = task_pid(task);
+>>  	tgid = task_tgid(task);
+>>  
+>>  	for (i = 0; i <= pid->level; i++) {
+>>  		upid = &pid->numbers[i];
+>> -		proc_flush_task_mnt(upid->ns->proc_mnt, upid->nr,
+>> -					tgid->numbers[i].nr);
+>> +
+>> +		rcu_read_lock();
+>> +		list_for_each_entry_rcu(fs_info, &upid->ns->proc_mounts, pidns_entry) {
+>> +			mnt_root = fs_info->m_super->s_root;
+>> +			proc_flush_task_mnt_root(mnt_root, upid->nr, tgid->numbers[i].nr);
+>> +		}
+>> +		rcu_read_unlock();
+>> +
+>> +		mnt_root = upid->ns->proc_mnt->mnt_root;
+>> +		proc_flush_task_mnt_root(mnt_root, upid->nr, tgid->numbers[i].nr);
+>
+> I don't think this following of proc_mnt is needed.  It certainly
+> shouldn't be.  The loop through all of the super blocks should be
+> enough.
+>
+> Once this change goes through.  UML can be given it's own dedicated
+> proc_mnt for the initial pid namespace, and proc_mnt can be removed
+> entirely.
+>
+> Unless something has changed recently UML is the only other user of
+> pid_ns->proc_mnt.  That proc_mnt really only exists to make the loop in
+> proc_flush_task easy to write.
+>
+> It also probably makes sense to take the rcu_read_lock() over
+> that entire for loop.
+>
+>
+>>  	}
+>>  }
+>>  
+>> diff --git a/fs/proc/root.c b/fs/proc/root.c
+>> index 5d5cba4c899b..e2bb015da1a8 100644
+>> --- a/fs/proc/root.c
+>> +++ b/fs/proc/root.c
+>> @@ -149,7 +149,22 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
+>>  	if (ret) {
+>>  		return ret;
+>>  	}
+>> -	return proc_setup_thread_self(s);
+>> +
+>> +	ret = proc_setup_thread_self(s);
+>> +	if (ret) {
+>> +		return ret;
+>> +	}
+>> +
+>> +	/*
+>> +	 * back reference to flush dcache entries at process exit time.
+>> +	 */
+>> +	ctx->fs_info->m_super = s;
+>> +
+>> +	spin_lock(&pid_ns->proc_mounts_lock);
+>> +	list_add_tail_rcu(&ctx->fs_info->pidns_entry, &pid_ns->proc_mounts);
+>> +	spin_unlock(&pid_ns->proc_mounts_lock);
+>> +
+>> +	return 0;
+>>  }
+>>  
+>>  static int proc_reconfigure(struct fs_context *fc)
+>> @@ -211,10 +226,17 @@ static void proc_kill_sb(struct super_block *sb)
+>>  {
+>>  	struct proc_fs_info *fs_info = proc_sb_info(sb);
+>>  
+>> +	spin_lock(&fs_info->pid_ns->proc_mounts_lock);
+>> +	list_del_rcu(&fs_info->pidns_entry);
+>> +	spin_unlock(&fs_info->pid_ns->proc_mounts_lock);
+>> +
+>> +	synchronize_rcu();
+>> +
+>
+> Rather than a heavyweight synchronize_rcu here,
+> it probably makes sense to instead to change
+>
+> 	kfree(fs_info)
+> to
+> 	kfree_rcu(fs_info, some_rcu_head_in_fs_info)
+>
+> Or possibly doing a full call_rcu.
+>
+> The problem is that synchronize_rcu takes about 10ms when HZ=100.
+> Which makes synchronize_rcu incredibly expensive on any path where
+> anything can wait for it.
 
-By plugging into fexit I'm proposing to let bpf-lsm prog type modify return
-value. Currently bpf-fexit prog type has read-only access to it. Adding write
-access is a straightforward verifier change. The bpf progs from patch 9 will
-still look exactly the same way:
-SEC("lsm/file_mprotect")
-int BPF_PROG(mprotect_audit, struct vm_area_struct *vma,
-            unsigned long reqprot, unsigned long prot) { ... }
-The difference that libbpf will be finding btf_id of security_file_mprotect()
-function and adding fexit trampoline to it instead of going via
-security_list_options and its own lsm_hook_idx uapi. I think reusing existing
-tracing facilities to attach and multiplex multiple programs is cleaner. More
-code reuse. Unified testing of lsm and tracing, etc.
+I take it back.
+
+The crucial thing to insert a rcu delay before is
+shrink_dcache_for_umount.
+
+With the call chain:
+kill_anon_super
+    generic_shutdown_super
+        shrink_dcache_for_umount.
+
+So we do need synchronize_rcu or to put everything below this point into
+a call_rcu function.
+
+The practical concern is mntput calls does task_work_add.
+The task_work function is cleanup_mnt.
+When called cleanup_mnt calls deactivate_locked_super
+which in turn calls proc_kill_sb.
+
+Which is a long way of saying that the code will delay the
+exit of the process that calls mntput by 10ms (or
+however syncrhonize_rcu runs).
+
+We probably don't care.  But that is long enough in to be user
+visible, and potentially cause problems.
+
+But all it requires putting the code below in it's own
+function and triggering it with call_rcu if that causes a regression
+by bying so slow.
+
+>>  	if (fs_info->proc_self)
+>>  		dput(fs_info->proc_self);
+>>  	if (fs_info->proc_thread_self)
+>>  		dput(fs_info->proc_thread_self);
+>> +
+>>  	kill_anon_super(sb);
+>>  	put_pid_ns(fs_info->pid_ns);
+>>  	kfree(fs_info);
+>> @@ -336,6 +358,9 @@ int pid_ns_prepare_proc(struct pid_namespace *ns)
+>>  		ctx->fs_info->pid_ns = ns;
+>>  	}
+>>  
+>> +	spin_lock_init(&ns->proc_mounts_lock);
+>> +	INIT_LIST_HEAD_RCU(&ns->proc_mounts);
+>> +
+>>  	mnt = fc_mount(fc);
+>>  	put_fs_context(fc);
+>>  	if (IS_ERR(mnt))
+>> diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
+>> index 66f47f1afe0d..c36af1dfd862 100644
+>> --- a/include/linux/pid_namespace.h
+>> +++ b/include/linux/pid_namespace.h
+>> @@ -26,6 +26,8 @@ struct pid_namespace {
+>>  	struct pid_namespace *parent;
+>>  #ifdef CONFIG_PROC_FS
+>>  	struct vfsmount *proc_mnt; /* Internal proc mounted during each new pidns */
+>> +	spinlock_t proc_mounts_lock;
+>> +	struct list_head proc_mounts; /* list of separated procfs mounts */
+>>  #endif
+>>  #ifdef CONFIG_BSD_PROCESS_ACCT
+>>  	struct fs_pin *bacct;
+>> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+>> index 5f0b1b7e4271..f307940f8311 100644
+>> --- a/include/linux/proc_fs.h
+>> +++ b/include/linux/proc_fs.h
+>> @@ -20,6 +20,8 @@ enum {
+>>  };
+>>  
+>>  struct proc_fs_info {
+>> +	struct list_head pidns_entry;    /* Node in procfs_mounts of a pidns */
+>> +	struct super_block *m_super;
+>>  	struct pid_namespace *pid_ns;
+>>  	struct dentry *proc_self;        /* For /proc/self */
+>>  	struct dentry *proc_thread_self; /* For /proc/thread-self */
+>
+>
+> Eric
