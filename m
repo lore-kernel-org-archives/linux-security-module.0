@@ -2,177 +2,212 @@ Return-Path: <SRS0=MM4E=37=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCD1C3B186
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85966C35242
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCF3E20848
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A8E4206D7
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Feb 2020 17:58:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ATvl/L3t"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCn2Wxhb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729671AbgBKRdz (ORCPT
+        id S1729796AbgBKR6b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Feb 2020 12:33:55 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:55534 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729669AbgBKRdz (ORCPT
+        Tue, 11 Feb 2020 12:58:31 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37958 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727887AbgBKR6b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Feb 2020 12:33:55 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01BHWZmD127875;
-        Tue, 11 Feb 2020 17:33:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=ZTcGVgHgraMOZBpC35dpCZY9cj88Yni9DaxHSLbn1QI=;
- b=ATvl/L3tQz/8dk9eq9GxVgTQvMIfyGT+39ALanE+ImerkpFi8HDNxocHp+jC+HkpcZuE
- cR5oe3qXPp9yUzXKpTjHvvCPsUwUzRog2VGGbFeIpTQ7bAC/5F3KcOx1gZDnJQoSql/U
- EeV+H742SPicBUvTDaxD4QSMaWrp5KWlgWy8/JLBKjxVwJC2ynOoG49Z0UV+azi47Y+z
- eKEOe8JiEL1Hnzh43/RYiX1gPiERrGlVn3tSa4JHsXjG+Gx77q0Sea+bsgq8nbfmjf8v
- GPZ3Xvvbw6a/nkn/y2KaHZVehmChTaAzNvmX70TvhWHJI0S//7U7g40/8K/83HdoZRJc CQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2y2jx656pm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Feb 2020 17:33:16 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01BHSDoX010841;
-        Tue, 11 Feb 2020 17:33:16 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2y26hvarrt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Feb 2020 17:33:15 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01BHX5HL032092;
-        Tue, 11 Feb 2020 17:33:05 GMT
-Received: from dhcp-10-65-186-145.vpn.oracle.com (/10.65.186.145)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Feb 2020 09:33:05 -0800
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC PATCH 0/2] ima: uncompressed module appraisal support
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-In-Reply-To: <1581366829.5585.898.camel@linux.ibm.com>
-Date:   Tue, 11 Feb 2020 10:33:25 -0700
-Cc:     Nayna <nayna@linux.vnet.ibm.com>, dmitry.kasatkin@gmail.com,
-        jmorris@namei.org, serge@hallyn.com, dhowells@redhat.com,
-        geert@linux-m68k.org, gregkh@linuxfoundation.org,
-        nayna@linux.ibm.com, tglx@linutronix.de, bauerman@linux.ibm.com,
-        mpe@ellerman.id.au, linux-integrity@vger.kernel.org,
+        Tue, 11 Feb 2020 12:58:31 -0500
+Received: by mail-pl1-f195.google.com with SMTP id t6so4565075plj.5;
+        Tue, 11 Feb 2020 09:58:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rptgnpdljC5x2bhptwLXpbtKJ/HkIadlAqVDXaT95LU=;
+        b=eCn2WxhbxODwWTEQoefBVinrom6bS+mgcBkXBuHwVC4mipCdsujuGpAh2CeQ1w/fG+
+         NHNsbrWdzQKZbKF4YsDIR4lUOMYbtyBWJ9Ca8AP9Xfkc/3MRpyNiOlp6YIXFFpyRTq5/
+         KiLp/jrYJ+45+/nJOEAkt1cCUMciUY8WZIT2vHcuGW/YTb11XUvaObIsJTrZmq0RRsKL
+         +fmo420j77BIqDkdks8pYM1l0RhcpyQS5rWoG0KBWZuK3gTaMj2V6elXOIGT4cjD2b2v
+         lOXd8jMqcwXBN60bcFFch9l4L6+zIouf/bJSXIOy8BZgs8fNlZSK9DFV+HBgQ6twF+C5
+         Okbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rptgnpdljC5x2bhptwLXpbtKJ/HkIadlAqVDXaT95LU=;
+        b=QvgFgO5pDHcDUKqEOilaauyxuHgLMMOme+I9BSIE1iaLBfThZxtPM5ai0iJrkRd+AL
+         CU5D0uasAPeey6cZNn1RCHqpolLRpprCs8CikQZDVat+1hshfm8Hte6mhIaQeCLPHqT6
+         85glL78TtNOJGBCWT6PALtAtSvzfKH2Vtaznydif3X5yFFCbne1b8iuxsYizuMOpzWPQ
+         U9MpsdAWwMDRmAm6GZUZ4FEP3zuXt2WBztGzyfU1BQi9SQfl60LFBD++6d2C5qR7zy7J
+         rVozxv/Hb4jP7eRuewW8t8LjE1wcy2YU3VQWxFpDkliFErpUxgsrYc+U8Ttj2P+4u92a
+         LLJw==
+X-Gm-Message-State: APjAAAWCrRIFnUEsb5GhdWBmRGDeJu6R4Vdo03MV/DLXfR6t7ZAB/o+G
+        czp+33P8aZt+TOZ7LXxjHtM=
+X-Google-Smtp-Source: APXvYqyq0aeXQPknw0aJdqRVkPfZrGR5i6YUVphYlNhjXpItzPVkQdArr7E199v9AJHzFp1eUC+rxA==
+X-Received: by 2002:a17:90a:3243:: with SMTP id k61mr5093197pjb.43.1581443910071;
+        Tue, 11 Feb 2020 09:58:30 -0800 (PST)
+Received: from ast-mbp ([2620:10d:c090:200::1:aeb4])
+        by smtp.gmail.com with ESMTPSA id e9sm3993074pjt.16.2020.02.11.09.58.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Feb 2020 09:58:29 -0800 (PST)
+Date:   Tue, 11 Feb 2020 09:58:27 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0842A02F-3166-4E29-9CC5-9E4C5057E270@oracle.com>
-References: <20200206164226.24875-1-eric.snowberg@oracle.com>
- <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
- <09D68C13-75E2-4BD6-B4E6-F765B175C7FD@oracle.com>
- <1581087096.5585.597.camel@linux.ibm.com>
- <330BDFAC-E778-4E9D-A2D2-DD81B745F6AB@oracle.com>
- <1581097201.5585.613.camel@linux.ibm.com>
- <764C5FC8-DF0C-4B7A-8B5B-FD8B83F31568@oracle.com>
- <1581100125.5585.623.camel@linux.ibm.com>
- <992E95D5-D4B9-4913-A36F-BB47631DFE0A@oracle.com>
- <1581101672.5585.628.camel@linux.ibm.com>
- <C25E5885-F00B-48C0-AEF1-FA3014B2FDA6@oracle.com>
- <1581205431.5585.645.camel@linux.ibm.com>
- <0F13CB66-6962-44AC-A20D-CCBD82B43625@oracle.com>
- <1581354556.5585.827.camel@linux.ibm.com>
- <90E53A33-530B-40FB-9982-2818FFD78D73@oracle.com>
- <1581366829.5585.898.camel@linux.ibm.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-X-Mailer: Apple Mail (2.3273)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- bulkscore=0 adultscore=0 malwarescore=0 suspectscore=3 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002110122
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=3 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002110122
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-team@fb.com
+Subject: Re: [PATCH bpf-next v3 04/10] bpf: lsm: Add mutable hooks list for
+ the BPF LSM
+Message-ID: <20200211175825.szxaqaepqfbd2wmg@ast-mbp>
+References: <20200123152440.28956-1-kpsingh@chromium.org>
+ <20200123152440.28956-5-kpsingh@chromium.org>
+ <20200211031208.e6osrcathampoog7@ast-mbp>
+ <20200211124334.GA96694@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211124334.GA96694@google.com>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Feb 11, 2020 at 01:43:34PM +0100, KP Singh wrote:
+> 
+> > Pros:
+> > - no changes to security/ directory
+> 
+> * We do need to initialize the BPF LSM as a proper LSM (i.e. in
+>   security/bpf) because it needs access to security blobs. This is
+>   only possible statically for now as they should be set after boot
+>   time to provide guarantees to any helper that uses information in
+>   security blobs. I have proposed how we could make this dynamic as a
+>   discussion topic for the BPF conference:
+> 
+>     https://lore.kernel.org/bpf/20200127171516.GA2710@chromium.org
+> 
+>   As you can see from some of the prototype use cases e.g:
+> 
+>     https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_detect_exec_unlink.c
+> 
+>   that they do rely on security blobs and that they are key in doing
+>   meaningful security analysis.
 
-> On Feb 10, 2020, at 1:33 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
->=20
-> On Mon, 2020-02-10 at 12:24 -0700, Eric Snowberg wrote:
->>> On Feb 10, 2020, at 10:09 AM, Mimi Zohar <zohar@linux.ibm.com> =
-wrote:
->=20
->>>>=20
->>>> Ok, understood, =E2=80=9Cmodsig=E2=80=9D refers to strictly kernel =
-module appended signatures
->>>> without regard to the keyring that verifies it.  Since there are =
-inconsistencies
->>>> here, would you consider something like my first patch?  It will =
-verify an=20
->>>> uncompressed kernel module containing an appended signature  when =
-the public key
->>>> is contained within the kernel keyring instead of the ima keyring.  =
-Why force a=20
->>>> person to add the same keys into the ima keyring for validation?  =
-Especially when
->>>> the kernel keyring is now used to verify appended signatures in the =
-compressed
->>>> modules.
->>>=20
->>> Different use case scenarios have different requirements.  Suppose =
-for
->>> example that the group creating the kernel image is not the same as
->>> using it.  The group using the kernel image could sign all files,
->>> including kernel modules (imasig), with their own private key. Only
->>> files that they signed would be permitted.  Your proposal would =
-break
->>> the current expectations, allowing kernel modules signed by someone
->>> else to be loaded.
->>>=20
->>=20
->> All the end user needs to do is compress any module created by the =
-group that built
->> the original kernel image to work around the scenario above.  Then =
-the appended=20
->> signature in the compressed module will be verified by the kernel =
-keyring. Does=20
->> this mean there is a security problem that should be fixed, if this =
-is a concern?
->=20
-> Again, the issue isn't compressed/uncompressed kernel modules, but the
-> syscall used to load the kernel module.  IMA can prevent using the the
-> init_module syscall.  Refer to the ima_load_data() LOADING_MODULE
-> case.
+above example doesn't use security blob from bpf prog.
+Are you referring to
+https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/security/bpf/ops.c#L455
+Then it's a bpf helper that is using it. And that helper could have been
+implemented differently. I think it should be a separate discussion on merits
+of such helper, its api, and its implementation.
 
-Within the ima_load_data() LOADING_MODULE case, to prevent IMA from =
-using
-the init_module syscall, is_module_sig_enforced() must return false. =
-Currently
-when is_module_sig_enforced() returns true, the kernel keyring is always =
-used
-for verification.
+At the same time I agree that additional scratch space accessible by lsm in
+inode->i_security, cred->security and other kernel structs is certainly
+necessary, but it's a nack to piggy back on legacy lsm way of doing it. The
+implementation of bpf_lsm_blob_sizes.lbs_inode fits one single purpose. It's
+fine for builtin LSM where blob sizes and code that uses it lives in one place
+in the kernel and being modified at once when need for more space arises. For
+bpf progs such approach is a non starter. Progs need to have flexible amount
+scratch space. Thankfully this problem is not new. It was solved already.
+Please see how bpf_sk_storage is implemented. It's a flexible amount of scratch
+spaces available to bpf progs that is available in every socket. It's done on
+demand. No space is wasted when progs are not using it. Not all sockets has to
+have it either. I strongly believe that the same approach should be used for
+scratch space in inode, cred, etc. It can be a union of existing 'void
+*security' pointer or a new pointer. net/core/bpf_sk_storage.c implementation
+is not socket specific. It can be generalized for inode, cred, task, etc.
 
-What if I change this part of my patch from
+> * When using the semantic provided by fexit, the BPF LSM program will
+>   always be executed and will be able to override / clobber the
+>   decision of LSMs which appear before it in the ordered list. This
+>   semantic is very different from what we currently have (i.e. the BPF
+>   LSM hook is only called if all the other LSMs allow the action) and
+>   seems to be bypassing the LSM framework.
 
-+       if (rc && func =3D=3D MODULE_CHECK)
+It that's a concern it's trivial to add 'if (RC == 0)' check to fexit
+trampoline generator specific to lsm progs.
 
-to
+> * Not all security_* wrappers simply call the attached hooks and return
+>   their exit code and not all of them pass the same arguments to the
+>   hook e.g. security_bprm_check, security_file_open,
+>   security_task_alloc to just name a few. Illustrating this further
+>   using security_task_alloc as an example:
+> 
+> 	rc = call_int_hook(task_alloc, 0, task, clone_flags);
+> 	if (unlikely(rc))
+> 		security_task_free(task);
+> 	return rc;
+> 
+> Which means we would leak task_structs in this case. While
+> call_int_hook is sort of equivalent to the fexit trampoline for most
+> hooks, it's not really the case for some (quite important) LSM hooks.
 
-+       sig_enforce =3D is_module_sig_enforced();
-+       if (sig_enforce && rc && func =3D=3D MODULE_CHECK)
+let's look at them one by one.
+1.
+security_bprm_check() calling ima_bprm_check.
+I think it's layering violation.
+Was it that hard to convince vfs folks to add it in fs/exec.c where
+it belongs?
 
-Now when the init_module syscall is available, finit_module syscall will =
-use
-both the ima keyring and kernel keyring for verification.  When the
-init_module syscall is blocked from use, the finit_module syscall will =
-only use
-the ima keyring for validation.  I believe this would satisfy both your =
-use
-case and mine.
+2.
+security_file_open() calling fsnotify_perm().
+Same layering violation and it's clearly broken.
+When CONFIG_SECURITY is not defined:
+static inline int security_file_open(struct file *file)
+{
+        return 0;
+}
+There is no call to fsnotify_perm().
+So fsnotify_open/mkdir/etc() work fine with and without CONFIG_SECURITY,
+but fsnotify_perm() events can be lost depending on kconfig.
+fsnotify_perm() should be moved in fs/open.c.
 
+3.
+security_task_alloc(). hmm.
+when CONFIG_SECURITY is enabled and corresponding LSM with
+non zero blob_sizes.lbs_task is registered that hook allocates
+memory even if task_alloc is empty.
+Doing security_task_free() in that hook also looks wrong.
+It should have been:
+diff --git a/kernel/fork.c b/kernel/fork.c
+index ef82feb4bddc..a0d31e781341 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2062,7 +2062,7 @@ static __latent_entropy struct task_struct *copy_process(
+        shm_init_task(p);
+        retval = security_task_alloc(p, clone_flags);
+        if (retval)
+-               goto bad_fork_cleanup_audit;
++               goto bad_fork_cleanup_security;
+Same issue with security_file_alloc().
+
+I think this layering issues should be fixed, but it's not a blocker for
+lsm-bpf to proceed. Using fexit mechanism and bpf_sk_storage generalization is
+all that is needed. None of it should touch security/*.
