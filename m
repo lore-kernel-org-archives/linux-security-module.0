@@ -2,303 +2,216 @@ Return-Path: <SRS0=6rCu=4A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091BCC3B186
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 15:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 370C6C3F68F
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 15:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5C8A2082F
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 15:44:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D870206D7
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 15:52:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="e7IXQSAH"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sT/NjdFV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbgBLPoZ (ORCPT
+        id S1728052AbgBLPwP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Feb 2020 10:44:25 -0500
-Received: from UPDC19PA23.eemsg.mail.mil ([214.24.27.198]:17007 "EHLO
-        UPDC19PA23.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbgBLPoY (ORCPT
+        Wed, 12 Feb 2020 10:52:15 -0500
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com ([66.163.190.38]:33783
+        "EHLO sonic307-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728410AbgBLPwO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:44:24 -0500
-X-EEMSG-check-017: 58433205|UPDC19PA23_ESA_OUT05.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.70,433,1574121600"; 
-   d="scan'208";a="58433205"
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by UPDC19PA23.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 12 Feb 2020 15:44:19 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1581522260; x=1613058260;
-  h=subject:from:to:cc:references:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=Nr7dM1SRxxK3wZoWZ5jzQnpKE/lg6bUGC83oPiR+z0E=;
-  b=e7IXQSAHUxqJhsubOYcqGBoAQ5PB+ace+Sn6wDvRlIkC7xEKIJQvXT1S
-   FlVJlKj1n5sVNHC7XitF1y2VbJ79rjSmeamEEBx3LSaQFuLXVedghR6Lg
-   clmD5YIT/LhqBZTIfpQyQxhuIuyXAZboSuEM5kH4t+dP7BrG5K9+M1NSO
-   GpYxyiSGCsmBkYtQyQcR7vqaTDOJ+n2kg67tq2LI1Gxso3B5mPzxUTPxK
-   mxxDPhDpKS8u8Q9WlRhpko+4J9fqcvAEq5p+iZk+y0hDuv4Q52fXKsAc2
-   ABsocPCwO4ziJFTrk7AErJdbXBkZ/gdzoONbAARxqcvsRBtwPc7rgxY25
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.70,433,1574121600"; 
-   d="scan'208";a="39015106"
-IronPort-PHdr: =?us-ascii?q?9a23=3A52qiURBQllbcRbsweQO0UyQJP3N1i/DPJgcQr6?=
- =?us-ascii?q?AfoPdwSP/6p8SwAkXT6L1XgUPTWs2DsrQY0raQ7f2rCTRIyK3CmU5BWaQEbw?=
- =?us-ascii?q?UCh8QSkl5oK+++Imq/EsTXaTcnFt9JTl5v8iLzG0FUHMHjew+a+SXqvnYdFR?=
- =?us-ascii?q?rlKAV6OPn+FJLMgMSrzeCy/IDYbxlViDanbr5+MRq7oR/Qu8QWjodvKbo9wQ?=
- =?us-ascii?q?bVr3VVfOhb2WxnKVWPkhjm+8y+5oRj8yNeu/Ig885PT6D3dLkmQLJbETorLX?=
- =?us-ascii?q?k76NXkuhffQwSP4GAcUngNnRpTHwfF9hD6UYzvvSb8q+FwxTOVPczyTbAzRD?=
- =?us-ascii?q?Si86JmQwLmhSsbKzI09nzch9duh6xHvh2uux1/w5bVYI6LMvp+Yrjdds4eSW?=
- =?us-ascii?q?ZYQ8pdSzBNDoa6YoQBFeoBOftToZf7qVUAsBCyARCgCe3rxzNNgHL9wK803P?=
- =?us-ascii?q?k7EQzewQIuH8wAsHrXotv7OqgdXuK6w7XHwzjYc/Nb2i3w5JTUfh0vo/yBW6?=
- =?us-ascii?q?97f8rLyUkoEgPIlkieqZD7MDON1uQCrW6b5Pd9W+KqkWEnrwVxrSavx8wxjY?=
- =?us-ascii?q?TJnZ8aykvf+CVlwIc6Od24SElhbd6iC5tfrTuWN4RxQsM8WmxlvjsxxL4euZ?=
- =?us-ascii?q?OjYSQHx5sqywTfZvCaaYSE/B3uWPiLLTtlgn9uZaixiAyo8Ue6z+3xTsy00F?=
- =?us-ascii?q?FXoSVbitTMrXUN1wDL6siAV/t94l+t2TaR2ADX7eFJOVw0mrDBK54g374wjY?=
- =?us-ascii?q?AfsUXFHi/4n0X2l7GZeVk+9ui06+XofrXmppiGO49ylg7+Kbghlta6AeQ5Ng?=
- =?us-ascii?q?gCR2mb+eKi273/5UD1XbpHg/IsnqTZrZzWP9oXq6GnDwNPz4ov8xO/AC2n0N?=
- =?us-ascii?q?Qck3kHNlVFeBefgojyJl7OO+v1Deu/gluwkDdrwOrKPrv6AprXNHTDn7Dhfa?=
- =?us-ascii?q?hl505G1AUz1cxf545TCrwZOv3zXlH+tdPGAR45KQC72PvnB8hn2YMYWmKPBb?=
- =?us-ascii?q?GZPbjWsV+J4OIvPuaNaJUUuDb7N/gq+frugWUlll8aeKmjxYEXZ2ygHvR6P0?=
- =?us-ascii?q?WZZmLhjc0FEWgUsQsxUu3qhEeZUT5PfXmyRaU85i88CIKnEYfDQZ6tjaeO3C?=
- =?us-ascii?q?e+BJJWZ2RGBkqQHnfvcoWOQ+0MZz6KIs99jjwEUqCsS5c/2hGyqgD60btmI/?=
- =?us-ascii?q?HV+i0eu5LjzsJ66PDNmh4o6DN4FcOd03uCT2tshGMHWyc23LxjoUx60lqMy7?=
- =?us-ascii?q?R3g/lGGtFI5PNGTB06NZjCwOx+EdzyXRjBftiRQla8XtqmGS0xTs42w9IWZk?=
- =?us-ascii?q?Z9GtOijh/E3yexGb8aiaGEBJwu/aLAxXT+O8F9y3Pe3qk7k1YmWtdPNXGhhq?=
- =?us-ascii?q?Nn9QjcHYjJk0SDm6asdKQc3zPN9GOZwmeVuEFYUQhwUbjKXHwFZ0vWq8j56V?=
- =?us-ascii?q?3GT7O0FbsnNQ5Bw9aYKqRWct3pkUlGRPD7NdTcZGKxnGGwCgyTxr+WaIrlYW?=
- =?us-ascii?q?Ud3DncCEgCjQ8T+22LNQw/BienvmLfAyZiFVPpY0Pw7+Z+rGm3QVMzzwGPd0?=
- =?us-ascii?q?dhzaa6+gYJhfyATPMexqgEuCA8pDVuHVa90NXWB8CepwpgYqVcYMgw4FZB1W?=
- =?us-ascii?q?LFqQN9OoasILxlhl4baw53pV/h1w1rCoVclsgntGglwxR0KaKYy15BdC2X3Y?=
- =?us-ascii?q?r2OrLJLmn+5gyga7TM1VHF0NaW+6EP6Psip1XkpgGpGVIo82973NlNz3uc+p?=
- =?us-ascii?q?LKARIKUZ3rT0Y38wV6p6rBbykm/YzU0GZjPrOuvj/FwdIpC/Mvygy8cNdHLK?=
- =?us-ascii?q?OECAjyHtUfB8i2NuMngEambhYAPO9M7q40Otmpd/2c1K6qIelshiipjXlf6o?=
- =?us-ascii?q?Bnzk2M7zZ8SvLP35sdwfGXxA6HWCnnjFu7qc/3npxEZS0VHmq6zSjrGo5Qa7?=
- =?us-ascii?q?ZyfYkRD2euONO4xtNmh5H3QX5Y6FijCE0c2M+yeRqSbkT90RdM2kQQpHytgT?=
- =?us-ascii?q?G4wCBskzE1sqqf2zTDw//8exodNW5EWnJvjVf2Loiwi9AbXE6oYxI1mxui4E?=
- =?us-ascii?q?bw37Jbq7hnL2nPXUdIeDD7L2NnUqu3rLqCec9P6IgzvCVRSuu8ZE6VSr/nrx?=
- =?us-ascii?q?sdySPjEHNUxConeDGyppX5gxt6hXqTLXZyqHrZfdt8ygrB69PGWfFR2TwGST?=
- =?us-ascii?q?JihjnNA1iwJcWm/dKRl53bqOCxS3qhVoFPcSns1Y6AsTG05XdpARGlhfCzh8?=
- =?us-ascii?q?HnEQwg3i/9ytZnTj/HrAz5YoXxy6u6NudndFFyBFDg88p6Bp1+kowoiZEKw3?=
- =?us-ascii?q?gah4ma8GEEkWjtK9Vb37zxbH4XST4M2d7V7xDv2Fd/IXKR24L5SnKdz9N7aN?=
- =?us-ascii?q?mhfmMbwSE94N5QCKeS8rNEmTF5ol2irQLeefJ9hCsSyeMy6H4GhOEEoAgtzi?=
- =?us-ascii?q?KZArAJB0ZVJjbsmAqV4NC+tqpXeHyjfqS31Ep7hdqhFq2NohlAWHblfZcvBT?=
- =?us-ascii?q?V/7sZkPVLI0X3z7JzkedbKYdISsB2UjwnPj+xPJJ0tkfoKgDJtOXjhsn091+?=
- =?us-ascii?q?47kRtu0Imks4idMWpt+qO5DQReNjDuaMMT/TbtjalansmIxYygApJhGjATVp?=
- =?us-ascii?q?vyUf2oCC4StejgNwuWET08rmqbFqHFEg+E6EdpsWnCHIqoN36NIXkW19RiSA?=
- =?us-ascii?q?OBK0xYhQAeRC86kYIhFgC22Mzhd1906SoV5lHmpRpD0ORoOAThXWfFvguocT?=
- =?us-ascii?q?c0SJmELBpW7QFC5kHVPNea7uJyGSFY45KgoBaMKmydewRHE2UJVlaYCFDkO7?=
- =?us-ascii?q?mk/cPA/PSABuqiM/vOZq2DqepEWPeNxZKu0pZm/zCDNsiUPXltEec72kxdUn?=
- =?us-ascii?q?B9AcjZnC8PSyMPnSLXc8GbvAu8+jFwrs2n6/TrXwTv5YSLC7tTLNVg4Aq2jr?=
- =?us-ascii?q?2dN+6RgiZ5Ji1V1p0XynPS1Lcf21sSgTl0dzaxCbQAqTLNTKXIl69TDh4bbC?=
- =?us-ascii?q?VzO9VM764m0QlBI8rbhcnz1rFlgP86FU1FVVjgmsGvfsEKIme9NE/ZC0aPLr?=
- =?us-ascii?q?iJOTrLw8Tva6OmVbJQlPlUtwG3uTuDD0/jMTCDljbyWhCrMOFMijybPABEuI?=
- =?us-ascii?q?G6dBZtCGfiQMj7ZRKlKNV3lyE5waUohnPWMm4RKTx8c0JLrr2N4iJUm/Z/FH?=
- =?us-ascii?q?Jb7npjM+aEnz2U7/fXKpkIq/tnGCd0mPxA4HQ81bRV6DtIRPtvmCvdttRuuU?=
- =?us-ascii?q?2pkvGTyjp7VxpDsjJLhIONvUV/NqTV74JAVmjY8xIQ92WQCggKptt8Bt3qvK?=
- =?us-ascii?q?Bf18XPlKbtJzpZ7dLU8tUTB9LOJMKELnUhKxzpFyDQDAcfSj6rL27fjVRHkP?=
- =?us-ascii?q?6O7n2VsoQ6qp/0lZoVVLBbUF01FvUHCkVqB9ECPph3US0+kbKBj84H+2C+rB?=
- =?us-ascii?q?/PS8VepJzHUeiSAfr3IjaDkbZEfwcIwa//LYkLN4373VBiZUd+nIjTFErQU9?=
- =?us-ascii?q?9MrzZlbg81u0VN7GN+Qnc920L/dAyi/mIcGuCvnh41lgt+Zvwt+C3r41ctKV?=
- =?us-ascii?q?rAvDEwn1UpmdX5nTCRdyb8LKOxXYFQFir1uFE9MovhTAZvbA2yhlBrOSzaR7?=
- =?us-ascii?q?JekbRgb3pniAzCtptVH/5TU6lEbAUXxfGNaPUiyU5cpTm/xU9b+evFDoNvlA?=
- =?us-ascii?q?8rcZ6qsnJB1BpjbMYpKqDJOaVG0EZQi7mKvi+pzeAx3BQeK1wK8GKTfC4Hol?=
- =?us-ascii?q?cHNqI8Kyqv5Oxs5hSImyFfd2gUS/oqvvVq+1s5O+SBySLgzrFCJlmrOOyFKq?=
- =?us-ascii?q?OVomvAmtCSQlM2yEwIk1JI/bx30cc4b0qUTFojzLqXFxQHL8rNMxxaYNRI+3?=
- =?us-ascii?q?fOZyqOtv/NwZ1tNYWnCu/oVfOOtLoTgk+8GAYpHoIM7tkOH5W1yEHXM93nLL?=
- =?us-ascii?q?AcxRUw/wTkOk+FDO9SdRKVnzcIvdu/wIV03YZDPDEdB3tyMSGt6rbQvA8qj+?=
- =?us-ascii?q?KJXM0qbXcCQosEKnU2VdW9my5BpXRACze30uMdyAec9jP8oiXQDCLgb9d4YP?=
- =?us-ascii?q?eUZAhsCM2t+Tkl6Ki2h0Tb8pPAKGHmLd5ioMPA6fsGp5abDPNZVb19s1rAm4?=
- =?us-ascii?q?lfXHGlSWvPHsSpKJfqc4ksbMD0BWy+UlCljTI6Udvxb56RKf2hhQz4SJccmp?=
- =?us-ascii?q?SX1TYgMtH1QjgaFgd9tqcJ+a51Yw4EfbI/YBj1p0I/MbCyJEGT1dD4EEi3Lj?=
- =?us-ascii?q?4DdOVS1eW3YfRsyiMoauKrgC87QooS0/i88UlLQooDyB7Z26DwNMFlTSHvFy?=
- =?us-ascii?q?kFKE30ri0jmj0kb71jzw=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2CWAwCVHERe/wHyM5BlHQEBAQkBEQUFAYF7gX2BbAEgE?=
- =?us-ascii?q?iqEFIkDhmQBAQEBAQEGgTeJcJFJCQEBAQEBAQEBATcBAYRAAoJtOBMCEAEBA?=
- =?us-ascii?q?QQBAQEBAQUDAQFshUOCOykBgwEBAQEBAgEjBAsBBUEQCQIYAgImAgJXBg0GA?=
- =?us-ascii?q?gEBgmM/glcFII9umwR1fzOJDIE+gQ4qjD55gQeBEScPgl0+h1uCXgSNTYJPh?=
- =?us-ascii?q?298lm+CRIJOikaJNQYcgkiIEpA7Lat0IoFYKwgCGAghD4MnUBgNjikXFY4sI?=
- =?us-ascii?q?wMwApFfAQE?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 12 Feb 2020 15:44:13 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 01CFhBBb080468;
-        Wed, 12 Feb 2020 10:43:11 -0500
-Subject: Re: [PATCH v5 01/10] capabilities: introduce CAP_PERFMON to kernel
- and user space
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robert Richter <rric@kernel.org>,
+        Wed, 12 Feb 2020 10:52:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1581522732; bh=4bDYcDU7Mlh6f5S31FmwUTk/wsFQm+13ahLvA0T7G9M=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=sT/NjdFVI2M2HYotcKH5LgV8HpQBwFK3oN7BjP4LSbhqb/ESgr0O8K7rY3K28GLDwcoIoz7bihE/r/ZBHxzXfQn/D60TamWEvv0xKW0l9wXDSURP/icO155r2bwhwRR1ZFyKIo4At0pRpdV7Ig/DG9bAQXe64Xxc+7BtPUTI+BZLTANbafpvc/5ervpbKpONnwr+0C40UPd7qOd+c833IW0uvPmarsBuPYOrMD2SCJciC2UJtTqLS+Sp4sGpDPG5vs7Bv6o1kJ7gmtlzKKwa9IoYpJDlnLt3m8ZRt6CLIci0saPvGK3XpJqmV1P/Zi1leuaSiRDrUGoDmDAql4IszA==
+X-YMail-OSG: MZ6b8JMVM1mj8C6.wZxAxcY5SEAf488LG6hoWbNqHvNT9NEAaRUGiBHXwUqQ.7P
+ Ss31bOxqex0COunhZwX3mppFFpAsZuyIJh8nJEFWZj3Ha7020xjesUAx.poNJ7wh9S.utwPru6NP
+ OZqoMl0pOU64X96BQIzz31vaWL0XI4pjrvYVj7wAKMmgHiWroaKq4ma5at8HhdFJ6lUIAId4mwFI
+ Mt48gZMXIQbuPlXFsBC7dsisCE6zh8VFXtbaGwZRK.M5CzIa2pPPkVbdX2kmKGlRe1.8KB5BFkVh
+ CgcQjbA_1p.9Fv1OEuZamMNJW3uZ3_oUmpUQXGytvA2w.Sl1f1kknUsOdtp9eUZYGiFrzjZqCf13
+ anPtcKrZk0Qx7NoGw9jKcJrcKFbnjGjbcA8g7vrX6h.NLsAMlGZ9IU_HDkmWjl4QVjEKyF85RfxX
+ lsa5D2G9WIrAyFDHvisKglBiWNw8ILc9J2qLK_YfkjjLWdf6IEBShWtRQprH8PSrT21bLXsdCExN
+ dyabnD6Seu8JvWlIgfaOlcHbArI2LnlxpFc0z1o4URrXbQjXkW_LybDJyt_ivhP5iExugowkN9CO
+ StXkh5_bMmyESFNwHBz8MJ05fTGFQJi_OSDlX02etKINeiJ8fEzhcw4lVoihDv._vPRtsyEYMCOY
+ LR05wNApX7IVbR8ok4q9O3MDHXfNR3mcp4QFaghZ40pm1tYIoNvguSKT_GebSXgPwyNR8GH0uA3Y
+ PW2zGtqkNkXiv.DlVPWG60bDlaXNJbjgxPyvxpfWGlH82kLPXyeJbFQCYczefKGt49hTcaaG1vwF
+ AFWhSFmdPRYWHUjTSvFYR4ynTVAg7q6L0HfO63OOJFk0N_9YcSLamW0aJ2d8GlPBmdDh7oCbbdqP
+ 7nTKQb.OuHHbF0oJxPG0FrAhGKuJcJmbpwkL8Z_Aud..L3KBQTgg.HpXV0hCadZ7iZ9kERWKii3D
+ GYxMTwjSlbuyxJskNs4u1idhzWCrEHvxVIY.wk0vbeHS0aqkkWtYh9m2f6nHRa9B5GM8.CprivPd
+ mtBMQnskCnayT_7d9ie4iR.T_qw7BZ4gC5SMOvz2draXHjVAQMRt.dQ7OH4qZUSRhTE7PaIaX9dl
+ pid047U1N81QQHnxD7JV0xpeNMYYZ4uiIiPDXjufM1rMK8AynpC2KwBMAJzhkfZtw4Ygliy6UE4T
+ vFmnFbOMhVYEulvuxh0IMY803TndZo1WZ45pvvo8.KLkcyHu9JXOzxQDHWnXSjCIl_jGKitDWAEm
+ SMnFP.D7pTBuGKrj1PlZW0tOZBwRtldx4LkexDKY.rNSsWupEVpFaqFZKbHgA9c2zkG4ADEXNIAG
+ A9d4kzrMXW0Ch7CixDcOY5ugle3jK34jTysv4e_aZkJfnr6mvQZhAj2z12eRvAlqb4p7SiiqNQpm
+ TZqxS_sFAr7UTPc4XpSNsX55Ht6hEiBcy7Q--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Wed, 12 Feb 2020 15:52:12 +0000
+Received: by smtp428.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b49c7ee0068c6dfa494419f9447be234;
+          Wed, 12 Feb 2020 15:52:12 +0000 (UTC)
+Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
+ mutable hooks list for the BPF LSM]
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Jann Horn <jannh@google.com>, KP Singh <kpsingh@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        oprofile-list@lists.sf.net, Andy Lutomirski <luto@amacapital.net>
-References: <0548c832-7f4b-dc4c-8883-3f2b6d351a08@linux.intel.com>
- <9b77124b-675d-5ac7-3741-edec575bd425@linux.intel.com>
- <64cab472-806e-38c4-fb26-0ffbee485367@tycho.nsa.gov>
- <05297eff-8e14-ccdf-55a4-870c64516de8@linux.intel.com>
- <CAADnVQK-JzK-GUk4KOozn4c1xr=7TiCpB9Fi0QDC9nE6iVn8iQ@mail.gmail.com>
- <537bdb28-c9e4-f44f-d665-25250065a6bb@linux.intel.com>
- <63d9700f-231d-7973-5307-3e56a48c54cb@linux.intel.com>
- <d7213569-9578-7201-6106-f5ebc95bd6be@tycho.nsa.gov>
- <2e38c33d-f085-1320-8cc2-45f74b6ad86d@linux.intel.com>
- <dd6a1382-7b2f-a6e6-a1ac-009566d7f556@tycho.nsa.gov>
- <8141da2e-49cf-c02d-69e9-8a7cbdc91431@linux.intel.com>
- <7c367905-e8c9-7665-d923-c850e05c757a@tycho.nsa.gov>
-Message-ID: <280e6644-c129-15f6-ea5c-0f66bf764e0f@tycho.nsa.gov>
-Date:   Wed, 12 Feb 2020 10:45:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kernel Team <kernel-team@fb.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200211124334.GA96694@google.com>
+ <20200211175825.szxaqaepqfbd2wmg@ast-mbp>
+ <CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com>
+ <20200211190943.sysdbz2zuz5666nq@ast-mbp>
+ <CAG48ez2gvo1dA4P1L=ASz7TRfbH-cgLZLmOPmr0NweayL-efLw@mail.gmail.com>
+ <20200211201039.om6xqoscfle7bguz@ast-mbp>
+ <CAG48ez1qGqF9z7APajFyzjZh82YxFV9sHE64f5kdKBeH9J3YPg@mail.gmail.com>
+ <20200211213819.j4ltrjjkuywihpnv@ast-mbp>
+ <CAADnVQLsiWgSBXbuxmpkC9TS8d1aQRw2zDHG8J6E=kfcRoXtKQ@mail.gmail.com>
+ <1cd10710-a81b-8f9b-696d-aa40b0a67225@iogearbox.net>
+ <20200212024542.gdsafhvqykucdp4h@ast-mbp>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <bee0fd08-b9f2-83e4-2882-475b81c74303@schaufler-ca.com>
+Date:   Wed, 12 Feb 2020 07:52:09 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <7c367905-e8c9-7665-d923-c850e05c757a@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200212024542.gdsafhvqykucdp4h@ast-mbp>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.15199 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/12/20 10:21 AM, Stephen Smalley wrote:
-> On 2/12/20 8:53 AM, Alexey Budankov wrote:
->> On 12.02.2020 16:32, Stephen Smalley wrote:
->>> On 2/12/20 3:53 AM, Alexey Budankov wrote:
->>>> Hi Stephen,
->>>>
->>>> On 22.01.2020 17:07, Stephen Smalley wrote:
->>>>> On 1/22/20 5:45 AM, Alexey Budankov wrote:
->>>>>>
->>>>>> On 21.01.2020 21:27, Alexey Budankov wrote:
->>>>>>>
->>>>>>> On 21.01.2020 20:55, Alexei Starovoitov wrote:
->>>>>>>> On Tue, Jan 21, 2020 at 9:31 AM Alexey Budankov
->>>>>>>> <alexey.budankov@linux.intel.com> wrote:
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> On 21.01.2020 17:43, Stephen Smalley wrote:
->>>>>>>>>> On 1/20/20 6:23 AM, Alexey Budankov wrote:
->>>>>>>>>>>
->>>> <SNIP>
->>>>>>>>>>> Introduce CAP_PERFMON capability designed to secure system 
->>>>>>>>>>> performance
->>>>>>>>>>
->>>>>>>>>> Why _noaudit()?  Normally only used when a permission failure 
->>>>>>>>>> is non-fatal to the operation.  Otherwise, we want the audit 
->>>>>>>>>> message.
->>>>>>
->>>>>> So far so good, I suggest using the simplest version for v6:
->>>>>>
->>>>>> static inline bool perfmon_capable(void)
->>>>>> {
->>>>>>       return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
->>>>>> }
->>>>>>
->>>>>> It keeps the implementation simple and readable. The 
->>>>>> implementation is more
->>>>>> performant in the sense of calling the API - one capable() call 
->>>>>> for CAP_PERFMON
->>>>>> privileged process.
->>>>>>
->>>>>> Yes, it bloats audit log for CAP_SYS_ADMIN privileged and 
->>>>>> unprivileged processes,
->>>>>> but this bloating also advertises and leverages using more secure 
->>>>>> CAP_PERFMON
->>>>>> based approach to use perf_event_open system call.
->>>>>
->>>>> I can live with that.  We just need to document that when you see 
->>>>> both a CAP_PERFMON and a CAP_SYS_ADMIN audit message for a process, 
->>>>> try only allowing CAP_PERFMON first and see if that resolves the 
->>>>> issue.  We have a similar issue with CAP_DAC_READ_SEARCH versus 
->>>>> CAP_DAC_OVERRIDE.
->>>>
->>>> I am trying to reproduce this double logging with CAP_PERFMON.
->>>> I am using the refpolicy version with enabled perf_event tclass [1], 
->>>> in permissive mode.
->>>> When running perf stat -a I am observing this AVC audit messages:
->>>>
->>>> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { open } for  
->>>> pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t 
->>>> tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { kernel } 
->>>> for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t 
->>>> tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { cpu } for  
->>>> pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t 
->>>> tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>> type=AVC msg=audit(1581496695.666:8692): avc:  denied  { write } 
->>>> for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t 
->>>> tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>>
->>>> However there is no capability related messages around. I suppose my 
->>>> refpolicy should
->>>> be modified somehow to observe capability related AVCs.
->>>>
->>>> Could you please comment or clarify on how to enable caps related 
->>>> AVCs in order
->>>> to test the concerned logging.
->>>
->>> The new perfmon permission has to be defined in your policy; you'll 
->>> have a message in dmesg about "Permission perfmon in class 
->>> capability2 not defined in policy.".  You can either add it to the 
->>> common cap2 definition in refpolicy/policy/flask/access_vectors and 
->>> rebuild your policy or extract your base module as CIL, add it there, 
->>> and insert the updated module.
->>
->> Yes, I already have it like this:
->> common cap2
->> {
->> <------>mac_override<--># unused by SELinux
->> <------>mac_admin
->> <------>syslog
->> <------>wake_alarm
->> <------>block_suspend
->> <------>audit_read
->> <------>perfmon
->> }
->>
->> dmesg stopped reporting perfmon as not defined but audit.log still 
->> doesn't report CAP_PERFMON denials.
->> BTW, audit even doesn't report CAP_SYS_ADMIN denials, however 
->> perfmon_capable() does check for it.
-> 
-> Some denials may be silenced by dontaudit rules; semodule -DB will strip 
-> those and semodule -B will restore them.  Other possibility is that the 
-> process doesn't have CAP_PERFMON in its effective set and therefore 
-> never reaches SELinux at all; denied first by the capability module.
+On 2/11/2020 6:45 PM, Alexei Starovoitov wrote:
+> On Wed, Feb 12, 2020 at 01:09:07AM +0100, Daniel Borkmann wrote:
+>> Another approach could be to have a special nop inside call_int_hook()
+>> macro which would then get patched to avoid these situations. Somewhat
+>> similar like static keys where it could be defined anywhere in text but
+>> with updating of call_int_hook()'s RC for the verdict.
 
-Also, the fact that your denials are showing up in user_systemd_t 
-suggests that something is off in your policy or userspace/distro; I 
-assume that is a domain type for the systemd --user instance, but your 
-shell and commands shouldn't be running in that domain (user_t would be 
-more appropriate for that).
+Tell me again why you can't register your BPF hooks like all the
+other security modules do? You keep reintroducing BPF as a special
+case, and I don't see why.
+
+> Sounds nice in theory. I couldn't quite picture how that would look
+> in the code, so I hacked:
+> diff --git a/security/security.c b/security/security.c
+> index 565bc9b67276..ce4bc1e5e26c 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/string.h>
+>  #include <linux/msg.h>
+>  #include <net/flow.h>
+> +#include <linux/jump_label.h>
+>
+>  #define MAX_LSM_EVM_XATTR      2
+>
+> @@ -678,12 +679,26 @@ static void __init lsm_early_task(struct task_struct *task)
+>   *     This is a hook that returns a value.
+>   */
+>
+> +#define LSM_HOOK_NAME(FUNC) \
+> +       DEFINE_STATIC_KEY_FALSE(bpf_lsm_key_##FUNC);
+> +#include <linux/lsm_hook_names.h>
+> +#undef LSM_HOOK_NAME
+> +__diag_push();
+> +__diag_ignore(GCC, 8, "-Wstrict-prototypes", "");
+> +#define LSM_HOOK_NAME(FUNC) \
+> +       int bpf_lsm_call_##FUNC() {return 0;}
+> +#include <linux/lsm_hook_names.h>
+> +#undef LSM_HOOK_NAME
+> +__diag_pop();
+> +
+>  #define call_void_hook(FUNC, ...)                              \
+>         do {                                                    \
+>                 struct security_hook_list *P;                   \
+>                                                                 \
+>                 hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
+>                         P->hook.FUNC(__VA_ARGS__);              \
+> +               if (static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
+> +                      (void)bpf_lsm_call_##FUNC(__VA_ARGS__); \
+>         } while (0)
+>
+>  #define call_int_hook(FUNC, IRC, ...) ({                       \
+> @@ -696,6 +711,8 @@ static void __init lsm_early_task(struct task_struct *task)
+>                         if (RC != 0)                            \
+>                                 break;                          \
+>                 }                                               \
+> +               if (RC == IRC && static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
+> +                      RC = bpf_lsm_call_##FUNC(__VA_ARGS__); \
+>         } while (0);                                            \
+>         RC;                                                     \
+>  })
+>
+> The assembly looks good from correctness and performance points.
+> union security_list_options can be split into lsm_hook_names.h too
+> to avoid __diag_ignore. Is that what you have in mind?
+> I don't see how one can improve call_int_hook() macro without
+> full refactoring of linux/lsm_hooks.h
+> imo static_key doesn't have to be there in the first set. We can add this
+> optimization later.
