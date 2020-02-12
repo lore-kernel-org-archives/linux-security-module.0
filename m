@@ -2,192 +2,151 @@ Return-Path: <SRS0=6rCu=4A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E5FC352A4
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 16:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E79C3B186
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 16:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8E9E21569
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 16:04:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C030C2082F
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 16:08:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GANCPNe9"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="DMYLzdmb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728698AbgBLQEd (ORCPT
+        id S1727264AbgBLQII (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Feb 2020 11:04:33 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42852 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727960AbgBLQEd (ORCPT
+        Wed, 12 Feb 2020 11:08:08 -0500
+Received: from UCOL19PA37.eemsg.mail.mil ([214.24.24.197]:54372 "EHLO
+        UCOL19PA37.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726351AbgBLQII (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Feb 2020 11:04:33 -0500
-Received: by mail-wr1-f66.google.com with SMTP id k11so3019596wrd.9
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Feb 2020 08:04:31 -0800 (PST)
+        Wed, 12 Feb 2020 11:08:08 -0500
+X-EEMSG-check-017: 75880296|UCOL19PA37_ESA_OUT04.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.70,433,1574121600"; 
+   d="scan'208";a="75880296"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UCOL19PA37.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 12 Feb 2020 16:08:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KiqSA/av2ZNWBE7nJHGVa6/1LBWU3I7cZAwdWxWzGmE=;
-        b=GANCPNe9XjsbmeyJHI+SqNuFhFhrU5no91yuB/KbQIxyRrRL2oqnecs84I6PI/QFGs
-         0tOu2a8IbgyAQNajlvF4iGbdZkTzztqH1wn352I4W+zIv3zTlm73NfMid12H8TlJlTz/
-         q4VKWsBQ4W3eQD87vL2C3NiCwHrFZGuhegr5o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KiqSA/av2ZNWBE7nJHGVa6/1LBWU3I7cZAwdWxWzGmE=;
-        b=F1Z62akyaxm00uOFR3Qfb18CGoSvwv/DuE87UQ0LH7EEXNI1zkeIOK5/HbUGpqiCyp
-         fITsY7/IzRM4KAvqUret0FMXykWlJpzWXbZnwV+DS/qzhUnJ8r9RFYsAusqVM6mpDQ65
-         IDySa6idfY7tYZb6AgYEpXJtgnwziPoJGeZ3ryHOH04sC4f2xFuVJNAG9c003CU5pWnU
-         I3xL8lhEFHmBaudZIpizFEGJXcxOV5Gka9nnk1Ng7VbC8kqKnCDnxi2uZ5E1IvcVhAlV
-         bf9ZuPIFSPx9o4bxzPdUqpFQLzL66IpwVJEKPT8WQvpiF2LhYOPkgTPRKO3Qiv+Qf62y
-         TUgA==
-X-Gm-Message-State: APjAAAWEKvCHxXEZyK14Cvp67twxQ6jm4QorDBXCh2gq/Do/ULfGjirI
-        66hcM3prjIxeo4DezPNY7qeMBw==
-X-Google-Smtp-Source: APXvYqwiFlaR/PcLMnFrEko6dVuZAo41bD1fmgeH/VsTsTT+BFsSRrriqlqG425HJ7hspZN+2aM0cQ==
-X-Received: by 2002:a5d:4b88:: with SMTP id b8mr16010468wrt.343.1581523470287;
-        Wed, 12 Feb 2020 08:04:30 -0800 (PST)
-Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
-        by smtp.gmail.com with ESMTPSA id b21sm1346559wmd.37.2020.02.12.08.04.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 08:04:29 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Wed, 12 Feb 2020 17:04:27 +0100
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Jann Horn <jannh@google.com>, KP Singh <kpsingh@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
- mutable hooks list for the BPF LSM]
-Message-ID: <20200212160427.GA259057@google.com>
-References: <CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com>
- <20200211190943.sysdbz2zuz5666nq@ast-mbp>
- <CAG48ez2gvo1dA4P1L=ASz7TRfbH-cgLZLmOPmr0NweayL-efLw@mail.gmail.com>
- <20200211201039.om6xqoscfle7bguz@ast-mbp>
- <CAG48ez1qGqF9z7APajFyzjZh82YxFV9sHE64f5kdKBeH9J3YPg@mail.gmail.com>
- <20200211213819.j4ltrjjkuywihpnv@ast-mbp>
- <CAADnVQLsiWgSBXbuxmpkC9TS8d1aQRw2zDHG8J6E=kfcRoXtKQ@mail.gmail.com>
- <1cd10710-a81b-8f9b-696d-aa40b0a67225@iogearbox.net>
- <20200212024542.gdsafhvqykucdp4h@ast-mbp>
- <ff6dec98-5e33-4603-1b90-e4bff23695cc@iogearbox.net>
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1581523684; x=1613059684;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=uN7BWYfFlarg/9dMcbM62w2KFdcNjYRfT5/e+zn2Jl8=;
+  b=DMYLzdmb4HwW0+tBLxDhG7v9zo0D++s9zEllwrcIKQaihpsxdvd5LLMr
+   A8Qt1jNumZ3evwDrQtRv7dItPjCfBhRjZTYqm34MeRIPk2zcwo+mNDuMZ
+   NmFVNmIqfeUf61cbyHfoA2/i1yo3e3/aNRTzhWEMjqgp+3ZlAF326bhLf
+   b9ui0nrDdsnpOUTVv2GD/OhFuMVxU7Y/Gk8eAPZgDLFv77t8Z6f1hTxmU
+   I7uxfyrykiGzzq+ZAf3jXTSYDI6x9po/ujddO0nNcreLc/bM8CyEhaK2k
+   5PgnmJdDDdSNYjoCieKA3JmsgvhjvrtHgU6AxCfFssY4P2zqpnbiyHSqr
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.70,433,1574121600"; 
+   d="scan'208";a="39017286"
+IronPort-PHdr: =?us-ascii?q?9a23=3ABTz/DhFDHCidnRVFgVggw51GYnF86YWxBRYc79?=
+ =?us-ascii?q?8ds5kLTJ76o82ybnLW6fgltlLVR4KTs6sC17OK9f69Ejxdqb+681k8M7V0Hy?=
+ =?us-ascii?q?cfjssXmwFySOWkMmbcaMDQUiohAc5ZX0Vk9XzoeWJcGcL5ekGA6ibqtW1aFR?=
+ =?us-ascii?q?rwLxd6KfroEYDOkcu3y/qy+5rOaAlUmTaxe7x/IAi5oAnLt8QbgYRuJ6Uxxx?=
+ =?us-ascii?q?DUvnZGZuNayH9nKl6Ugxvy/Nq78oR58yRXtfIh9spAXrv/cq8lU7FWDykoPn?=
+ =?us-ascii?q?4s6sHzuhbNUQWA5n0HUmULiRVIGBTK7Av7XpjqrCT3sPd21TSAMs33SbA0Xi?=
+ =?us-ascii?q?mi77tuRRT1hioLKyI1/WfKgcFrkqlVvAyuqAB+w47MYYGaKvx+fr/GfdgHQW?=
+ =?us-ascii?q?ZNR9tdWzBdDo+5aYYAAfABPeJFpIfjoVUAowa1CQ21CO/xzjJEg3n71rA43e?=
+ =?us-ascii?q?s8CwHLxBEuEcwAsHrUr9v7OqkdXu+3w6bUwjvOdO9W1DXn5YTUbhwsr/OBUL?=
+ =?us-ascii?q?RtesTR00kvEAbFg02Np4z5ITyVzuQNvHad7+F9SOyvjnQoqwV1ojexxsYnl4?=
+ =?us-ascii?q?7EhpkIxVDf7ih53IY0KsG4SE58e9KkFoBQuDuAO4t5RcMiXXhltSAnwbMFoZ?=
+ =?us-ascii?q?62ZDUGxZsoyhLFa/GLbpKE7gzsWeqPOzt0mXRoc6+liRmo60iv0Oj8W9Gx0F?=
+ =?us-ascii?q?ZNsyVKjMHBtmsI1xzP8siHTeZ9/lu51TaPyQ/T7uZELFgolaXBMZ4hw6Mwlo?=
+ =?us-ascii?q?EJvUTCGC/2lkL2jLSIeUo44OSo9+Tmbanmpp+bLYN0jB3xMr8ylcClBOQ4Mw?=
+ =?us-ascii?q?wOU3Ca+eS6yrLj4VX0TKhFg/A5iKXUsI3WKd4FqqO2HQNZyJsv5w66Dzi80d?=
+ =?us-ascii?q?QYmXcHLEhCeBKCl4XpIEzBIOvjAPejg1WjjDdrx/fcMr3nGZXCNGLPkLjmfb?=
+ =?us-ascii?q?Zj80Jc0hY8zchD55JIDbEMOO/8VVX3tNPECR85Nxe5w+ngCNV62YMeXXyADr?=
+ =?us-ascii?q?WFP6PVtF+C/vgvLPWUZI8JpDb9LOAo6OL0gn8ih1AcfbKk3YALZ3C4BPtmPk?=
+ =?us-ascii?q?uZYX7yjdcbCGsFohAxQPb2h12FVD5Zf2yyUL4k5jEnFIKmCp/ORpysgLyE2S?=
+ =?us-ascii?q?e7A4dWZnpcBVGMCnroeIKEW/ADaCKWPMBtiCALVb+kS4U5zxGhqBf6y6Z7Lu?=
+ =?us-ascii?q?rT4iAYs5Xj1MN15+DImhEy8jt0D8uZ026TVW17gmQIRzou1qBlvUN90kuD0b?=
+ =?us-ascii?q?R/g/FAE9xT4fBJXxw1NZ7byOx6BNTyVRzbctiVT1amR82sASstQdIp398Of0?=
+ =?us-ascii?q?F9Fs2mjhDE3CqlHaQVl7yEBJw1763cxWL+Kt1yy3bB06khgF0mTdVVOWK6ga?=
+ =?us-ascii?q?5/8hDZB5TVnEWBi6aqaaMc0TbJ9GeCy2qOoU5ZXBdzUarbR3AfYFXZrdDi60?=
+ =?us-ascii?q?PcQL+hF64nPhFCycGcMKtKbMPmjVFcSPfkItTebHq7m32sChaQ2rOMcI3qdn?=
+ =?us-ascii?q?0Z3CXcDkgEjg8S8W+cOggmByesuHzeDDNwGlL1eU/s8vdxqGm9TkAqywGGdU?=
+ =?us-ascii?q?ph16C6+hQNn/yTV+sT3q4YuCcmszh0B0iy39bXC9qGugpgc75RYc0y4FhZz2?=
+ =?us-ascii?q?LVrQ99MYK6L6BkmFEedx57v0T01xV4Eo9Ai9QlrGs2zApuLqKVyFdBdzKe3Z?=
+ =?us-ascii?q?DtNbzbM3Ly8w6zZK7LwFHe0cqW+6cW5PQ9rFXsoRypFk48/Hh8zdlV3GWT5o?=
+ =?us-ascii?q?/QAAoRT53xSEA3+AZ+p73AZSk9/YzUhjVQNvyYuznD1tZhL+whww2rftBZPe?=
+ =?us-ascii?q?vQGAb0GMoeL8epL+Mulh6iaRdSeKh5/bU5LoudfPuPxaCvMfwoyDmvlmlWyJ?=
+ =?us-ascii?q?t20kuR+S5xUKvD1tAOxPTOjSWdUDKpt0usqsD6n8h/YDgWGmeugXz/CJV5er?=
+ =?us-ascii?q?x5fYFND3ynZcKw2IMt1NbWR3dE+Qv7VBs908izdE/XNgas0A=3D=3D?=
+X-IPAS-Result: =?us-ascii?q?A2AmBAB3IkRe/wHyM5BlHAEBAQEBBwEBEQEEBAEBgXsCg?=
+ =?us-ascii?q?XuBGFUgEiqEFIkDhmUBAQEBAQEGgRIlgQGIb5FKCQEBAQEBAQEBAScQBAEBh?=
+ =?us-ascii?q?EACgm04EwIQAQEBBQEBAQEBBQMBAWyFQ0IBEAGBZykBgwIBBSMVQRALDgoCA?=
+ =?us-ascii?q?iYCAlcGAQwGAgEBgmM/AYJWJat6gTKFSoNKgT6BDioBjD15gQeBEScMA4IoN?=
+ =?us-ascii?q?T6EI4M4gl4EjWmCM4cpRpdrgkSCT4R+jn4GHJsVjmiXLYYRIoFYKwgCGAghD?=
+ =?us-ascii?q?zuCbAlHGA2OJI5dIwMwDYMAjBKCQgEB?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 12 Feb 2020 16:08:03 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 01CG75qt091651;
+        Wed, 12 Feb 2020 11:07:05 -0500
+Subject: Re: [PATCH v2 0/6] Harden userfaultfd
+To:     Daniel Colascione <dancol@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Tim Murray <timmurray@google.com>, Nosh Minwalla <nosh@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>, selinux@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
+References: <20200211225547.235083-1-dancol@google.com>
+ <9ae20f6e-c5c0-4fd7-5b61-77218d19480b@schaufler-ca.com>
+ <CAKOZueuh2MR4UKi60-GVgPkXjncHx8J=mTTjRquB82CfS7DxBA@mail.gmail.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <245a7c82-93f6-1e1d-9250-499e00972f10@tycho.nsa.gov>
+Date:   Wed, 12 Feb 2020 11:09:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff6dec98-5e33-4603-1b90-e4bff23695cc@iogearbox.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKOZueuh2MR4UKi60-GVgPkXjncHx8J=mTTjRquB82CfS7DxBA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12-Feb 14:27, Daniel Borkmann wrote:
-> On 2/12/20 3:45 AM, Alexei Starovoitov wrote:
-> > On Wed, Feb 12, 2020 at 01:09:07AM +0100, Daniel Borkmann wrote:
-> > > 
-> > > Another approach could be to have a special nop inside call_int_hook()
-> > > macro which would then get patched to avoid these situations. Somewhat
-> > > similar like static keys where it could be defined anywhere in text but
-> > > with updating of call_int_hook()'s RC for the verdict.
-> > 
-> > Sounds nice in theory. I couldn't quite picture how that would look
-> > in the code, so I hacked:
-> > diff --git a/security/security.c b/security/security.c
-> > index 565bc9b67276..ce4bc1e5e26c 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -28,6 +28,7 @@
-> >   #include <linux/string.h>
-> >   #include <linux/msg.h>
-> >   #include <net/flow.h>
-> > +#include <linux/jump_label.h>
-> > 
-> >   #define MAX_LSM_EVM_XATTR      2
-> > 
-> > @@ -678,12 +679,26 @@ static void __init lsm_early_task(struct task_struct *task)
-> >    *     This is a hook that returns a value.
-> >    */
-> > 
-> > +#define LSM_HOOK_NAME(FUNC) \
-> > +       DEFINE_STATIC_KEY_FALSE(bpf_lsm_key_##FUNC);
-> > +#include <linux/lsm_hook_names.h>
-> > +#undef LSM_HOOK_NAME
-> > +__diag_push();
-> > +__diag_ignore(GCC, 8, "-Wstrict-prototypes", "");
-> > +#define LSM_HOOK_NAME(FUNC) \
-> > +       int bpf_lsm_call_##FUNC() {return 0;}
-> > +#include <linux/lsm_hook_names.h>
-> > +#undef LSM_HOOK_NAME
-> > +__diag_pop();
-> > +
-> >   #define call_void_hook(FUNC, ...)                              \
-> >          do {                                                    \
-> >                  struct security_hook_list *P;                   \
-> >                                                                  \
-> >                  hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
-> >                          P->hook.FUNC(__VA_ARGS__);              \
-> > +               if (static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
-> > +                      (void)bpf_lsm_call_##FUNC(__VA_ARGS__); \
-> >          } while (0)
-> > 
-> >   #define call_int_hook(FUNC, IRC, ...) ({                       \
-> > @@ -696,6 +711,8 @@ static void __init lsm_early_task(struct task_struct *task)
-> >                          if (RC != 0)                            \
-> >                                  break;                          \
-> >                  }                                               \
-> > +               if (RC == IRC && static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
-> > +                      RC = bpf_lsm_call_##FUNC(__VA_ARGS__); \
+On 2/11/20 6:27 PM, Daniel Colascione wrote:
+> On Tue, Feb 11, 2020 at 3:13 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>
+>> On 2/11/2020 2:55 PM, Daniel Colascione wrote:
+>>> Userfaultfd in unprivileged contexts could be potentially very
+>>> useful. We'd like to harden userfaultfd to make such unprivileged use
+>>> less risky. This patch series allows SELinux to manage userfaultfd
+>>> file descriptors and allows administrators to limit userfaultfd to
+>>> servicing user-mode faults, increasing the difficulty of using
+>>> userfaultfd in exploit chains invoking delaying kernel faults.
+>>>
+>>> A new anon_inodes interface allows callers to opt into SELinux
+>>> management of anonymous file objects. In this mode, anon_inodes
+>>> creates new ephemeral inodes for anonymous file objects instead of
+>>> reusing a singleton dummy inode. A new LSM hook gives security modules
+>>> an opportunity to configure and veto these ephemeral inodes.
+>>>
+>>> Existing anon_inodes users must opt into the new functionality.
+>>>
+>>> Daniel Colascione (6):
+>>>    Add a new flags-accepting interface for anonymous inodes
+>>>    Add a concept of a "secure" anonymous file
+>>>    Teach SELinux about a new userfaultfd class
+>>>    Wire UFFD up to SELinux
+>>>    Let userfaultfd opt out of handling kernel-mode faults
+>>>    Add a new sysctl for limiting userfaultfd to user mode faults
+>>
+>> This must be posted to the linux Security Module list
+>> <linux-security-module@vger.kernel.org>
 > 
-> Nit: the `RC == IRC` test could be moved behind the static_branch_unlikely() so
-> that it would be bypassed when not enabled.
-> 
-> >          } while (0);                                            \
-> >          RC;                                                     \
-> >   })
-> > 
-> > The assembly looks good from correctness and performance points.
-> > union security_list_options can be split into lsm_hook_names.h too
-> > to avoid __diag_ignore. Is that what you have in mind?
-> > I don't see how one can improve call_int_hook() macro without
-> > full refactoring of linux/lsm_hooks.h
-> > imo static_key doesn't have to be there in the first set. We can add this
-> > optimization later.
-> 
-> Yes, like the above diff looks good, and then we'd dynamically attach the program
-> at bpf_lsm_call_##FUNC()'s fexit hook for a direct jump, so all the security_blah()
-> internals could stay as-is which then might also address Jann's concerns wrt
-> concrete annotation as well as potential locking changes inside security_blah().
-> Agree that patching out via static key could be optional but since you were talking
-> about avoiding indirect jumps..
+> Added. I thought selinux@ was sufficient.
 
-I like this approach as well. Will give it a go and update the
-patches. Thanks a lot for your inputs!
-
-- KP
-
-> 
-> Thanks,
-> Daniel
+scripts/get_maintainer.pl can be helpful in identifying relevant lists 
+and maintainers for each patch.  I don't use its output blindly as it 
+tends to over-approximate but since your patches span the VFS, LSM 
+framework, and selinux, you do need to include relevant 
+maintainers/lists for each.
