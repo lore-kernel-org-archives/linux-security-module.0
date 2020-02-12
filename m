@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DAFC2BA83
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 14:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D3EC3B186
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 15:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 256312082F
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 14:58:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED75020714
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 15:00:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbgBLO6E (ORCPT
+        id S1727531AbgBLPAn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Feb 2020 09:58:04 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:56832 "EHLO mail.unsafe.ru"
+        Wed, 12 Feb 2020 10:00:43 -0500
+Received: from monster.unsafe.ru ([5.9.28.80]:59254 "EHLO mail.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727665AbgBLO6E (ORCPT
+        id S1727231AbgBLPAn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Feb 2020 09:58:04 -0500
+        Wed, 12 Feb 2020 10:00:43 -0500
 Received: from comp-core-i7-2640m-0182e6 (nat-pool-brq-t.redhat.com [213.175.37.10])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id E4866C61AB0;
-        Wed, 12 Feb 2020 14:58:00 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 15:57:59 +0100
+        by mail.unsafe.ru (Postfix) with ESMTPSA id 9F5EFC61AB0;
+        Wed, 12 Feb 2020 15:00:39 +0000 (UTC)
+Date:   Wed, 12 Feb 2020 16:00:38 +0100
 From:   Alexey Gladkov <gladkov.alexey@gmail.com>
 To:     Andy Lutomirski <luto@kernel.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -51,9 +51,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>,
         Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v8 05/11] proc: add helpers to set and get proc hidepid
- and gid mount options
-Message-ID: <20200212145759.7dwtgnsetk7osycw@comp-core-i7-2640m-0182e6>
+Subject: Re: [PATCH v8 03/11] proc: move /proc/{self|thread-self} dentries to
+ proc_fs_info
+Message-ID: <20200212150038.rr364l5kjcgbmr3g@comp-core-i7-2640m-0182e6>
 Mail-Followup-To: Andy Lutomirski <luto@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
@@ -77,31 +77,35 @@ Mail-Followup-To: Andy Lutomirski <luto@kernel.org>,
         Oleg Nesterov <oleg@redhat.com>,
         Solar Designer <solar@openwall.com>
 References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
- <20200210150519.538333-6-gladkov.alexey@gmail.com>
- <CALCETrVjv04OOdzGNf7sRmRR-KUgY7xdMXA236nHZ1arn0KwVQ@mail.gmail.com>
+ <20200210150519.538333-4-gladkov.alexey@gmail.com>
+ <CALCETrWGpRr86tVKJU-sEMcg+x0Yzp+TbiBhrAc71RaO8=DYGQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrVjv04OOdzGNf7sRmRR-KUgY7xdMXA236nHZ1arn0KwVQ@mail.gmail.com>
+In-Reply-To: <CALCETrWGpRr86tVKJU-sEMcg+x0Yzp+TbiBhrAc71RaO8=DYGQ@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 10, 2020 at 10:30:45AM -0800, Andy Lutomirski wrote:
+On Mon, Feb 10, 2020 at 10:23:23AM -0800, Andy Lutomirski wrote:
 > On Mon, Feb 10, 2020 at 7:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
 > >
-> > This is a cleaning patch to add helpers to set and get proc mount
-> > options instead of directly using them. This make it easy to track
-> > what's happening and easy to update in future.
+> > This is a preparation patch that moves /proc/{self|thread-self} dentries
+> > to be stored inside procfs fs_info struct instead of making them per pid
+> > namespace. Since we want to support multiple procfs instances we need to
+> > make sure that these dentries are also per-superblock instead of
+> > per-pidns,
 > 
-> On a cursory inspection, this looks like it obfuscates the code, and I
-> don't see where it does something useful later in the series.  What is
-> this abstraction for?
+> The changelog makes perfect sense so far...
+> 
+> > unmounting a private procfs won't clash with other procfs
+> > mounts.
+> 
+> This doesn't parse as part of the previous sentence.  I'm also not
+> convinced that this really involves unmounting per se.  Maybe just
+> delete these words.
 
-To be honest, this part is from Djalal Harouni. For me, these wrappers
-exist for a slight increase in readability.
-
-I will not cry if you tell me to remove them :)
+Sure. I will remove this part.
 
 -- 
 Rgrds, legion
