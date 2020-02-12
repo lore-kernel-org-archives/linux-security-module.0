@@ -2,90 +2,122 @@ Return-Path: <SRS0=6rCu=4A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E743C3B186
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 20:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B17C8C352A4
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 21:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E99552467B
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 20:41:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84877218AC
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 21:08:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSaubYsu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbgBLUlb (ORCPT
+        id S1727420AbgBLVIS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Feb 2020 15:41:31 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43908 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbgBLUla (ORCPT
+        Wed, 12 Feb 2020 16:08:18 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42422 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727138AbgBLVIS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Feb 2020 15:41:30 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1yp3-00Bb9p-0J; Wed, 12 Feb 2020 20:41:25 +0000
-Date:   Wed, 12 Feb 2020 20:41:24 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs
- instances
-Message-ID: <20200212204124.GR23230@ZenIV.linux.org.uk>
-References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
- <87v9odlxbr.fsf@x220.int.ebiederm.org>
- <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
- <87tv3vkg1a.fsf@x220.int.ebiederm.org>
- <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
- <87v9obipk9.fsf@x220.int.ebiederm.org>
- <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
- <20200212200335.GO23230@ZenIV.linux.org.uk>
- <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
- <20200212203833.GQ23230@ZenIV.linux.org.uk>
+        Wed, 12 Feb 2020 16:08:18 -0500
+Received: by mail-qk1-f194.google.com with SMTP id o28so2189848qkj.9;
+        Wed, 12 Feb 2020 13:08:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=5skQ4pXUf/HDFGAeb5bLaBWEPVpcuLwc5TmCpIE/Zyo=;
+        b=RSaubYsu2PWhj6d5WiWqImtwe+11ZkV5ynHfHfILKjiCGuE++75mluwkFvI8SVZwZ2
+         FVcajjueWqco3jr0Ow8mWAloqkkz/nZRTVvMCaxsWYaaozSBLYtlqBPDl2d4JuFAqNKT
+         4eM2bs0OP/sfoQPzSkrUIs84Z3nu+rJZqi4v7IUXscqVEZZbW98vR/RBjUUqx2TtekX0
+         TdKQebQLkAL6NS0smHmAjLDkyMj9kl1d3gbFGuxjAksiARkiSvUrHsLzvzMMSA61Tl7B
+         H3vZG2gITk1NdYTBU9v+AdkE/hfM87Q4MMY58PzHJjTjgVBPmQ+ApC8uSo0XfEPwidZz
+         KPfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=5skQ4pXUf/HDFGAeb5bLaBWEPVpcuLwc5TmCpIE/Zyo=;
+        b=ZgokC7Y6FrXXjUb8B8PX2v5SAVc7i2e2srbpkKx3dM/zoKuJtZcFHD4jcw4AgT7BEc
+         n5aTpNgi5prO6A02lnr8BHCUySwzQkJ67y1fi0IsxtnnRnjO5Y+0EFguVEBzBhQmDi+K
+         9iRJcM95OOZzryonGPlvAYNVRB7hvQl4E5XZSgPYcYN7qnhUJX5d97lrhAt/LFDtsgni
+         HfXHUvIixJTJFCMutMhNBfuQz2V+65Q7taw0EHPKhzrNpNYWGVwpHkL+gPzydyqQrVvT
+         bgULXjYshikcMmdinIvOrzdMIXokg1B6GPwDa+W1AUC6E5ofotQdf1EcKfDTMq3qZn8m
+         d+5Q==
+X-Gm-Message-State: APjAAAVbjcMtDHiT6nSQcz1jAfYIGa+6b+IlMAGA7dxzsbpS6gKxmwni
+        RII/Kfa6Fk7KSB1sTKZgSKY=
+X-Google-Smtp-Source: APXvYqxNOTEW/N3+A4eKLqICOc+Xj7XuhY3/asbxxLTsVO2pIzik8Myh1FUcd23UCDxfesq9IpEl8Q==
+X-Received: by 2002:ae9:e10a:: with SMTP id g10mr9186036qkm.493.1581541697333;
+        Wed, 12 Feb 2020 13:08:17 -0800 (PST)
+Received: from localhost.localdomain (pool-74-108-111-89.nycmny.fios.verizon.net. [74.108.111.89])
+        by smtp.gmail.com with ESMTPSA id t7sm32885qkm.136.2020.02.12.13.08.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2020 13:08:16 -0800 (PST)
+Message-ID: <6b787049b965c8056d0e27360e2eaa8fa2f38b35.camel@gmail.com>
+Subject: Re: [PATCH v2] ima: export the measurement list when needed
+From:   david.safford@gmail.com
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Cc:     Ken Goldman <kgold@linux.ibm.com>, monty.wiseman@ge.com,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Wed, 12 Feb 2020 16:08:15 -0500
+In-Reply-To: <1581462616.5125.69.camel@linux.ibm.com>
+References: <20200108111743.23393-1-janne.karhunen@gmail.com>
+         <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
+         <1580998432.5585.411.camel@linux.ibm.com>
+         <40f780ffe2ddc879e5fa4443c098c0f1d331390f.camel@gmail.com>
+         <1581366258.5585.891.camel@linux.ibm.com>
+         <fab03a0b8cc9dc93f2d0db51071521ce82e2b96b.camel@gmail.com>
+         <1581462616.5125.69.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212203833.GQ23230@ZenIV.linux.org.uk>
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 12, 2020 at 08:38:33PM +0000, Al Viro wrote:
-> On Wed, Feb 12, 2020 at 12:35:04PM -0800, Linus Torvalds wrote:
-> > On Wed, Feb 12, 2020 at 12:03 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > What's to prevent racing with fs shutdown while you are doing the second part?
-> > 
-> > I was thinking that only the proc_flush_task() code would do this.
-> > 
-> > And that holds a ref to the vfsmount through upid->ns.
-> > 
-> > So I wasn't suggesting doing this in general - just splitting up the
-> > implementation of d_invalidate() so that proc_flush_task_mnt() could
-> > delay the complex part to after having traversed the RCU-protected
-> > list.
-> > 
-> > But hey - I missed this part of the problem originally, so maybe I'm
-> > just missing something else this time. Wouldn't be the first time.
-> 
-> Wait, I thought the whole point of that had been to allow multiple
-> procfs instances for the same userns?  Confused...
+On Tue, 2020-02-11 at 18:10 -0500, Mimi Zohar wrote:
+> On Tue, 2020-02-11 at 11:10 -0500, david.safford@gmail.com wrote:
 
-s/userns/pidns/, sorry
+> > <snip>
+> > 
+> This new feature will require setting up some infrastructure for
+> storing the partial measurement list(s) in order to validate a TPM
+> quote.  Userspace already can save partial measurement list(s) without
+> any kernel changes.  The entire measurement list does not need to be
+> read each time.  lseek can read past the last record previously read.
+>  The only new aspect is truncating the in kernel measurement list in
+> order to free kernel memory.
+
+This is a pretty important new feature.
+A lot of people can't use IMA because of the memory issue.
+Also, I really think we need to let administrators choose the tradeoffs
+of keeping the list in memory, on a local file, or only on the 
+attestation server, as best fits their use cases.
+> 
+> < snip> 
+> 
+> Until there is proof that the measurement list can be exported to a
+> file before kexec, instead of carrying the measurement list across
+> kexec, and a TPM quote can be validated after the kexec, there isn't a
+> compelling reason for the kernel needing to truncate the measurement
+> list.
+
+If this approach doesn't work with all the kexec use cases, then it is 
+useless, and the ball is in my court to prove that it does. Fortunately
+I have to test that anyway for the coming TLV support.
+
+Working on it...
+
+dave
+
+> Mimi
+> 
+
