@@ -6,135 +6,117 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBA0C3B186
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 17:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D05C352A4
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 18:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7218D21734
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 17:14:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P6cMLBiM"
+	by mail.kernel.org (Postfix) with ESMTP id CF83B2073C
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 18:51:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581533496;
+	bh=s0rQQJgReY1pvJWTDvRS2Q9eLU7aX05/Am/N2h5REPM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=iVfWG7QOz3JcbAi1X5xcCJGypg6OfADB20pwnyDxVyJX+l0/S4XUbVfeh1X6ldPH/
+	 cfURlmCtTDIhYQxLea/JKRsyePsCbATkNxLe8qNqtwYHjVaepOc+8i2v4UhejSRIJy
+	 BkwywI+uFdn/FRxfTWF3uZyo1rcJjbcMwTU8naVc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbgBLROf (ORCPT
+        id S1727600AbgBLSvg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Feb 2020 12:14:35 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:28025 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727372AbgBLROe (ORCPT
+        Wed, 12 Feb 2020 13:51:36 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42937 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbgBLSvf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Feb 2020 12:14:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581527673;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZlzwEzNiccH3o0niIX8xD7eyzL1HDM0gYSAdm/M/+bg=;
-        b=P6cMLBiMj4104Lsx8izYBFc3rdJz+hGSI7rbZ1TYyx7fF9VS08TO5sXjDm4nbGm7nQBWOQ
-        Cbp/MTCkuBTL0M7gAac6kT//0oSCbdporqY6JuT/hyheTV/oXMUIiQrj0xbeK6Eooe8jhG
-        s+4GiiU8bSkQS6zuoZWV5vh4ObWUhLc=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-143-yklTj6_-OsmdqfYvUmAMag-1; Wed, 12 Feb 2020 12:14:23 -0500
-Received: by mail-qk1-f198.google.com with SMTP id z64so1790894qke.10
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Feb 2020 09:14:23 -0800 (PST)
+        Wed, 12 Feb 2020 13:51:35 -0500
+Received: by mail-ed1-f68.google.com with SMTP id e10so3613521edv.9
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Feb 2020 10:51:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8S2w7jKfhj8nqr2BEN6cbFr7nckGF3MBI5pTAOk2Bgk=;
+        b=E/vN3AE3iyzGDOzjrhIyYOh5wyK5H3COrkDAy4Yb/0fuIwlyf50yEW7S/x5cDf9tHW
+         zWbCuDLoLaAGtRSBjikTyE8yY06byotE/cGEhEbxOklsxfNCa9G0PsCjeYAs62WP1DSa
+         M2BG1IabKnVo1IvqnOENDDauUUlMg+SJyMK4U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZlzwEzNiccH3o0niIX8xD7eyzL1HDM0gYSAdm/M/+bg=;
-        b=EfUZoUeX9lOnsLDDkQIWSsP32CuU83B5B3rd+3GWJXrC6aafw0jwa1IPlgZw0AN1+L
-         aaPQ/EIssQ/FMQ1wI/3kxax8CVd5+CDgtJ4oZR89x5P1o2WvsPsh6FxCUK9d4OI8+g5H
-         pIksNxzpT3Eib7VB2QRMf9pgEBUCCs/q4qzqSpGnaN+T9IVWSgdNnNnYXUlp998oDfwL
-         dqjydvz++y5MsumNsHR73P7mZVeoBtMUrHmOzRm6P1NuEmsQxNedm6wePl8OqZ5u5HfL
-         iJ802Vkg6Ud2AJkFt+Jf8dO5KIaijSl+GukebiYDYRYyaQ8HBhNsVsSMbartx4+oFBCw
-         K4Fw==
-X-Gm-Message-State: APjAAAU6jjZX4zUNmJLFd3B+6ODueHpIjy9MSvnRh7yUBBiUASRfS60T
-        OeLnZghCvMhU41NX4Pf9AjEnCkW9o4ZozsqRcvOo9PNnfKiOn7AbXSwfn2KghxAUlx9Tq/W/4cl
-        jbrtIwlDEt64vxmoVy1RWpLEKAzJvY5EKbzOb
-X-Received: by 2002:a05:620a:222d:: with SMTP id n13mr11979660qkh.268.1581527660854;
-        Wed, 12 Feb 2020 09:14:20 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzkBuso307AexlODAGhzhSt7xIaqCNCooqpP0T3zyoh42+euME4eIvwxrDj9MwaFP9lZlCvOQ==
-X-Received: by 2002:a05:620a:222d:: with SMTP id n13mr11979579qkh.268.1581527659873;
-        Wed, 12 Feb 2020 09:14:19 -0800 (PST)
-Received: from xz-x1 ([2607:9880:19c8:32::2])
-        by smtp.gmail.com with ESMTPSA id t16sm511565qkg.96.2020.02.12.09.14.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 09:14:19 -0800 (PST)
-Date:   Wed, 12 Feb 2020 12:14:16 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Daniel Colascione <dancol@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Nosh Minwalla <nosh@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 0/6] Harden userfaultfd
-Message-ID: <20200212171416.GD1083891@xz-x1>
-References: <20200211225547.235083-1-dancol@google.com>
- <202002112332.BE71455@keescook>
- <CAG48ez0ogRxvCK1aCnviN+nBqp6gmbUD7NjaMKvA7bF=esAc1A@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8S2w7jKfhj8nqr2BEN6cbFr7nckGF3MBI5pTAOk2Bgk=;
+        b=da6TYjClB4naS/BP2Tzbm0Yx53vt/0qotlT1EmmYtbcPunaaPOaZbzbV1PmvSxgA8L
+         AupurjRhYg5ppHNTCrQ61HRTG2BRAfSDpN++5s7fvlCkjcAyIQwLnECDh3otNe4SktjY
+         mUjjSFX/6ltkEyZK/Mqbz3ClKuSY9b7K8HoLiuu2OklD649tWvpNIa5zvNs9D0F00Cw9
+         zArTV3u/GWCIfHsRP+sD4EfLxYLUGKT/jOTvwghF/j7S0IrXL+L2S1cV+W7qqMLArt5q
+         9EaGqGW5o8wf/aOfjwNlgsVjmFrbAOEI+Y26zZYF/CN2NZ5n9IiWoQUC9MozConibNq5
+         pzzQ==
+X-Gm-Message-State: APjAAAXmbrzaHxkYM6D8Arsl2mMzJJNs7WnvCIfqz8OLnAF/kn8eB/GQ
+        ntCCHuZ41NRh4EuLraTyoSU4A/ANGKc=
+X-Google-Smtp-Source: APXvYqxjI8NMfUXIu4e6vvr1bopwdno/jlEyZ9iXZ1fZ3Wqonriz1r1QASSmhNYbpmIXdVYj7mzcXA==
+X-Received: by 2002:a17:906:af4b:: with SMTP id ly11mr12642730ejb.220.1581533492873;
+        Wed, 12 Feb 2020 10:51:32 -0800 (PST)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
+        by smtp.gmail.com with ESMTPSA id u13sm100102ejz.69.2020.02.12.10.51.32
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2020 10:51:32 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id w15so3686154wru.4
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Feb 2020 10:51:32 -0800 (PST)
+X-Received: by 2002:a2e:97cc:: with SMTP id m12mr8440902ljj.241.1581533122702;
+ Wed, 12 Feb 2020 10:45:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez0ogRxvCK1aCnviN+nBqp6gmbUD7NjaMKvA7bF=esAc1A@mail.gmail.com>
-X-MC-Unique: yklTj6_-OsmdqfYvUmAMag-1
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
+ <20200210150519.538333-8-gladkov.alexey@gmail.com> <87v9odlxbr.fsf@x220.int.ebiederm.org>
+ <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6> <87tv3vkg1a.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87tv3vkg1a.fsf@x220.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 12 Feb 2020 10:45:06 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+Message-ID: <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 12, 2020 at 05:54:35PM +0100, Jann Horn wrote:
-> On Wed, Feb 12, 2020 at 8:51 AM Kees Cook <keescook@chromium.org> wrote:
-> > On Tue, Feb 11, 2020 at 02:55:41PM -0800, Daniel Colascione wrote:
-> > >   Let userfaultfd opt out of handling kernel-mode faults
-> > >   Add a new sysctl for limiting userfaultfd to user mode faults
-> >
-> > Now this I'm very interested in. Can you go into more detail about two
-> > things:
-> [...]
-> > - Why is this needed in addition to the existing vm.unprivileged_userfaultfd
-> >   sysctl? (And should this maybe just be another setting for that
-> >   sysctl, like "2"?)
-> >
-> > As to the mechanics of the change, I'm not sure I like the idea of adding
-> > a UAPI flag for this. Why not just retain the permission check done at
-> > open() and if kernelmode faults aren't allowed, ignore them? This would
-> > require no changes to existing programs and gains the desired defense.
-> > (And, I think, the sysctl value could be bumped to "2" as that's a
-> > better default state -- does qemu actually need kernelmode traps?)
-> 
-> I think this might be necessary for I/O emulation? As in, if before
-> getting migrated, the guest writes some data into a buffer, then the
-> guest gets migrated, and then while the postcopy migration stuff is
-> still running, the guest tells QEMU to write that data from
-> guest-physical memory to disk or whatever; I think in that case, QEMU
-> will do something like a pwrite() syscall where the userspace pointer
-> points into the memory area containing guest-physical memory, which
-> would return -EFAULT if userfaultfd was restricted to userspace
-> accesses.
-> 
-> This was described in this old presentation about why userfaultfd is
-> better than a SIGSEGV handler:
-> https://drive.google.com/file/d/0BzyAwvVlQckeSzlCSDFmRHVybzQ/view
-> (slide 6) (recording at https://youtu.be/pC8cWWRVSPw?t=463)
+On Wed, Feb 12, 2020 at 7:01 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Fundamentally proc_flush_task is an optimization.  Just getting rid of
+> dentries earlier.  At least at one point it was an important
+> optimization because the old process dentries would just sit around
+> doing nothing for anyone.
 
-Right. AFAICT QEMU uses it far more than disk IOs.  A guest page can
-be accessed by any kernel component on the destination host during a
-postcopy procedure.  It can be as simple as when a vcpu writes to a
-missing guest page which still resides on the source host, then KVM
-will get a page fault and trap into userfaultfd asking for that page.
-The same thing happens to other modules like vhost, etc., as long as a
-missing guest page is touched by a kernel module.
+I'm pretty sure it's still important. It's very easy to generate a
+_ton_ of dentries with /proc.
 
-Thanks,
+> I wonder if instead of invalidating specific dentries we could instead
+> fire wake up a shrinker and point it at one or more instances of proc.
 
--- 
-Peter Xu
+It shouldn't be the dentries themselves that are a freeing problem.
+They're being RCU-free'd anyway because of lookup. It's the
+proc_mounts list that is the problem, isn't it?
 
+So it's just fs_info that needs to be rcu-delayed because it contains
+that list. Or is there something else?
+
+               Linus
