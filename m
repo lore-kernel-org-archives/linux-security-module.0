@@ -2,165 +2,248 @@ Return-Path: <SRS0=6rCu=4A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E632C2BA83
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 13:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F158C3F68F
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 13:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4654620873
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 13:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9FF220873
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 13:31:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="dTj/HpjM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbgBLN11 (ORCPT
+        id S1728022AbgBLNbs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Feb 2020 08:27:27 -0500
-Received: from www62.your-server.de ([213.133.104.62]:57368 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbgBLN11 (ORCPT
+        Wed, 12 Feb 2020 08:31:48 -0500
+Received: from UPDC19PA21.eemsg.mail.mil ([214.24.27.196]:12688 "EHLO
+        UPDC19PA21.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727951AbgBLNbs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Feb 2020 08:27:27 -0500
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1j1s2v-0004et-Je; Wed, 12 Feb 2020 14:27:18 +0100
-Received: from [2001:1620:665:0:5795:5b0a:e5d5:5944] (helo=linux-3.fritz.box)
-        by sslproxy03.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1j1s2u-000X31-Sa; Wed, 12 Feb 2020 14:27:16 +0100
-Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
- mutable hooks list for the BPF LSM]
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Jann Horn <jannh@google.com>, KP Singh <kpsingh@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        Wed, 12 Feb 2020 08:31:48 -0500
+X-EEMSG-check-017: 58189834|UPDC19PA21_ESA_OUT03.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.70,433,1574121600"; 
+   d="scan'208";a="58189834"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by UPDC19PA21.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 12 Feb 2020 13:31:42 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1581514302; x=1613050302;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=4E6NdF8sYemfNDGEjWXx29tiVX+0McGJ92YpwPd8UrY=;
+  b=dTj/HpjMFK+CwtnbH1SUjnUs2qiieY9aegIGStqkXVcTHbj+T2exW639
+   aIjwWvVLPAP4BJLSKBWac+8oco+GIVASc643tIjmyfDuS3Jpo/WOEHcpW
+   N4WtMkFSwcMQUuHeM/VVNNBrbJDLXsHT0nA685D5I+aOvoNrJ+EabyQan
+   lviQytvbflrE+FZfn1MomFLbGsE6U8+jeqeux1VOF3JwK0dfG2zEoMXNx
+   M7GAWD6zAnydXscQnpbc9UpmuoTUcvOKl1eI/W7yGPxyLWItRD226wxjc
+   bszB71lu6n34OjpkpqGDTPaCE/VjLtQLHfxiYNpEgBwB7LG/no1CKEixq
+   w==;
+X-IronPort-AV: E=Sophos;i="5.70,428,1574121600"; 
+   d="scan'208";a="32966495"
+IronPort-PHdr: =?us-ascii?q?9a23=3AQxEdcxMOstBwQrwplEYl6mtUPXoX/o7sNwtQ0K?=
+ =?us-ascii?q?IMzox0Kf37r8bcNUDSrc9gkEXOFd2Cra4d16yI7uu9AyQp2tWojjMrSNR0TR?=
+ =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
+ =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9vIxi6twTcu8kZjYZiNKo61w?=
+ =?us-ascii?q?fErGZPd+lKymxkIk6ekQzh7cmq5p5j9CpQu/Ml98FeVKjxYro1Q79FAjk4Km?=
+ =?us-ascii?q?45/MLkuwXNQguJ/XscT34ZkgFUDAjf7RH1RYn+vy3nvedgwiaaPMn2TbcpWT?=
+ =?us-ascii?q?S+6qpgVRHlhDsbOzM/7WrakdJ7gr5Frx29phx/24/Ub5+TNPpiZaPWYNcWSX?=
+ =?us-ascii?q?NcUspNSyBNB4WxYIUVD+oFIO1WsY/zqVUTphe6HAWhCufixjpOi3Tr36M1zv?=
+ =?us-ascii?q?4hHBnb0gI+EdIAsHfaotv7O6gdU++60KbGwC7fb/5Vwzrx9JTEfx4jrPyKQL?=
+ =?us-ascii?q?l+cdDRyU4qFw7dk1uQtZLqPyuV1usTtWiQ8vduVee1hG4jrwF+vDiuzdorh4?=
+ =?us-ascii?q?nSm40V0UvJ9Tl5wYkpJd24T1R3Ydi/EJRKrS2aOIx2Qt07TmxupS00yaUGtI?=
+ =?us-ascii?q?amcCUFx5kr3R7SZ+Gdf4SW7R/vSvydLSp+iXl4YrywnQyy/lKlyuDkU8m010?=
+ =?us-ascii?q?tFoTRdn9nXs3ANywTT6s+aSvth5kuh2SiA1wTU6uxcPUA7j7DbK588wr4rjJ?=
+ =?us-ascii?q?YTsELDHiHxmEXtkqCZal8o+vSo6uv7YrXmoYWQN4lohQHlLqsigMm/AeU8Mg?=
+ =?us-ascii?q?QWXmib//qz1KH78EHkT7hHgec6n6nEvJzAO8gWqbC1DxVI3oo77hawFTam0N?=
+ =?us-ascii?q?AWnXkdK1JFfQqKj5P0NFHVO/34Efe+jEiskDds3fzGOKbhDY/XInjMl7fhY6?=
+ =?us-ascii?q?5x61RAxwor0dBf+5VUB6kbL/L3REDwu8LXDx8jPwOv3uboFc9y1oUdWWKIHK?=
+ =?us-ascii?q?+UK6fSsV6O5uIyLOiAfo4VuDDhK/c74/7il2M2mVgYfaOxx5sYdGi4Huh6I0?=
+ =?us-ascii?q?WeeXfjmNMBHnkFvwUgTezmkkaCUSJJaHaoWKI8+DY7CIO6DYfEWICgm7OB3C?=
+ =?us-ascii?q?KhEZ1XYmBKEEyDEXDtd4+cQfcDdDqSItN9kjwDTbWhU5Eu1Q2wuw/gyrtqNe?=
+ =?us-ascii?q?vU+isWtZL5ztd6+vPcmgsv+jBuCMSdyW6NRXlunmwUXz82wLx/oUtlx1iZza?=
+ =?us-ascii?q?d4huJXGMdQ5/xXSAc6M4DTz+hgB9D1QALBcc+DSEy6TdW+HTExUtUxzscLY0?=
+ =?us-ascii?q?Z8HdWigRfD0jGwA7ALirOLBIY78r7G03ftIMZ9zm7M1LM9gFk+XstPKWqmi7?=
+ =?us-ascii?q?Z99wfJAY7Jkl+Vl6CrdaQfwS7N8H2MwHGKvEFZVg5wTKrEUWoeZkvQsdT2+E?=
+ =?us-ascii?q?fCQ6WyBrQgNwtL0dSCJbdSat31kVVGQ+/uONbZY2K2nWe/Hw2IyqmIbIXwe2?=
+ =?us-ascii?q?UdwCTdCE4anAAV5nuGMQk+BiG8o2PRFjBuFFTvY1/y/ul6sn+0Ukg0zwSSZU?=
+ =?us-ascii?q?17y7W14gIVheCbS/4LxLIEvzouqy91HFay2NLaEcSApwt/fKVdet494VFH1X?=
+ =?us-ascii?q?7HuAx5JJCvM6dihlsGeQRto0zuzwl3CplHkcUyt3wl0gxyKaKD3VNCaTyYx5?=
+ =?us-ascii?q?bwNaPTKmXo4B+vcbTZ2kre0NaX/KcP5+40q1L5vAGmDkAi6Wlo08FJ03uA4Z?=
+ =?us-ascii?q?XHFBISXojsUkYz6hh6vKrXYjIn6IPRznJjK7O4sjjY29ImHOEl0Aqvf89DMK?=
+ =?us-ascii?q?OYEw//C8gaB9CwJ+ExhVepahYEM/5I9K4xJcymceGK2K+2M+p6hj2mkHxN4J?=
+ =?us-ascii?q?ph3UKU6yp8VunI0o4Hw/6C2wuISSz8gE26vcDwhYBEeTYSHm+7ySf6BI9cfa?=
+ =?us-ascii?q?1ycpwNCWe1PcK3wM1+iIT3W35E8l6sGUkG2NSpeRqTd1zxxxFf1UMSoXa/gy?=
+ =?us-ascii?q?u30yR0ky01rqqYxCHO2PrtdAAIOmFVX2RijU3jIYywj9EaWkikdRQmlByg5U?=
+ =?us-ascii?q?zi3ahUuLx/L3XPQUdPZyX2LWRiUqyqtrqYYs5P84glsSNNX+S5f1+aS6Txox?=
+ =?us-ascii?q?wA0yPsB2Fe3iw0dym2upXlmBx3kGycLHd3rHrdY81/2AnQ68bASv5W2DoLXz?=
+ =?us-ascii?q?N3iSPSBlSmI9ap+tCUnY/Zsu+iT2KhSoFTcS7zwIOFriS7/25qDQeln/Cuht?=
+ =?us-ascii?q?3nFRI10Snm2NRxTyrIthP8bpP32KS9NOJtZlNoC0Pk68pmBoF+lZM9hIsK2X?=
+ =?us-ascii?q?gbmpqY5nkHnnnpMdVdx63+aGABRTkRw97a+ALlwlFsLmqVx4LlUXWQ2tFuZ8?=
+ =?us-ascii?q?KmYm4N2SIy8dpKCKGK47xAhyd1pUC4rQ3Ja/hngjgd0ecu6GIdg+wRugotyS?=
+ =?us-ascii?q?GdAqsIEkRDJyzjiQmH79Cko6VLfmqgbb+w1E9ml9C7EL6Cuh1cWGr+epo6By?=
+ =?us-ascii?q?Bw7d5yMFbN0H3194Hld8PcbdMVth2IjRjAi/JZJ442lvoPnSBnI37yvWU5y+?=
+ =?us-ascii?q?4nihxjxY+1vJKdJGVr/aK2GBhYOyb6Z8MU/THtgqJekdiM04+zGZVhHy0BXI?=
+ =?us-ascii?q?H0QvKwDDISqfPnOh6PED04t3eUAqDQHRSf6Eh4tH/ACZOrOGuSJHYDzNVuXg?=
+ =?us-ascii?q?WSJEtagAoMRjU1goY5Fhy2xMzmaEp2/DQR6UD3qxRWzOJnKgfwUn3FqAezaj?=
+ =?us-ascii?q?c0SYOfLBpV7gFD4UfYKsie7uN1HyFF8Zyttg2NKmqHZwtWCWEFQFCLB1fmPr?=
+ =?us-ascii?q?O2/9nP7/CYBvaiL/vJebiOr/ZRV/KIxZOvz4tm+TmMO96MPnZ8Ff073FRMXX?=
+ =?us-ascii?q?RjF8TegTUPRDQdlzjRYM6DuBe85ip3o9ik8PTsXgLv6o+PC7pPMdp04RC5m7?=
+ =?us-ascii?q?mDN++WhCZ2MjtY2IgDyWXUx7gY2V4YkztueCW1EbQcqS7NS7rdmqtWDx4cbS?=
+ =?us-ascii?q?N8Ks9I47gz3gVXPc7UkNX12aN2j/ErEVdFUV3hmseyaMwLJWG9KE3IBEKROL?=
+ =?us-ascii?q?uaIj3Lxtn9YbmgRr1IkOVUqxqwtC6HE0/sOjSCmCLkVxSuMeFKkSGbIAZeuI?=
+ =?us-ascii?q?a7chZsBmnvVs/pZQOjOt9tkTI22aE0hm/NNWMENTh8ckVNrqCf7C9BgfVwBX?=
+ =?us-ascii?q?ZB7nx7IumAgCuZ8ebYJYgMsfdxASR7ifha4HIkxLtR9i1EQ+Z1mCTKpN50v1?=
+ =?us-ascii?q?6mivWPyiZgUBdWrjZLhYSLvVhtOKnA7ZlPR2rL/A8X7WWRFxQLp8JpCtjou6?=
+ =?us-ascii?q?9N19jPkLz8JSxc89Lb48QcHdLYKMGZP3o7NxrmBjrUABECTT6xOmHVn1Zdn+?=
+ =?us-ascii?q?2K9n2Jspg6rYDhmIEQRb9fVVw1EO4aC0t+EdwcL5d4QCkknaSYjMEW/3q+qg?=
+ =?us-ascii?q?feRMFAspDATPKSDu3lKCyFgrlcexsI3bT4IJwSNo39x0xtdF16kJ3FG0reUt?=
+ =?us-ascii?q?FAuSlhbg4voEVR63hyVGMz21j7ZQyz/XAcC+W0nh0qigt5eeQh7jDs4004Jl?=
+ =?us-ascii?q?DSvis/jFExmcn5gTCWaDPxKKawXYdLCyv7rkQxKon0Qxx0bQ2pgUNpLynER7?=
+ =?us-ascii?q?1PgLt6b2xrixHTuYFJGfFCSa1IehgQxeuYZ/8wy1RTtj2nxVNb5evCEZZikA?=
+ =?us-ascii?q?oqcZixr3NPwwJjdMI6KbXNK6VX0FhdnaaOvi6z1uAt2w8SPUEN8WKWeCESo0?=
+ =?us-ascii?q?MILaMqJy2y/uxj8QaCgSdMeHAQV/o2pfJn7kc9O+WGzyL93L9PM1q+N/aaL6?=
+ =?us-ascii?q?+AuGjPi9SIQlUu2UMMjERF+bl20dw/c0qPTUwvzb2RFxoTNcXYNA5acdBd+2?=
+ =?us-ascii?q?XJcSaJq+XNzop/P5+hGeDwUe+OqKEUj1qgHAYoGYQM88sAEoC00E7GN8fnIq?=
+ =?us-ascii?q?cJyQg25Av1PlWFF+9EeAyEkDgZucGz1px30pdHJjEbH2p9NT+75rHNpg8lmP?=
+ =?us-ascii?q?CDRss5Ym8GXosYMXI7QMq6mzZDv3RHAjm30+YZxxab4z/4pyTQFyX8YsFnZP?=
+ =?us-ascii?q?eVfhNsFMq29S8k86i4k1LX9IvRJ33iP9R4ptDP8f8ap4qAC/5MSbl9rlvcm4?=
+ =?us-ascii?q?5DSnOwVm7AC8K6KILoa4ktcdz7EHK6Xka5iz0rU8eidOqqe4GMjBHlVM5+rY?=
+ =?us-ascii?q?WS2jMkK4fpHzUTCxph4ese6Kt6ZgodS546ZwP48QU4K6G7Zgyf14P9bXyqLG?=
+ =?us-ascii?q?5tU/RHzei8L4dSxi4oY/7ynGAsVbkm3uK39ggLX5hMgRbAk6XwL7JCWDT+Ty?=
+ =?us-ascii?q?QOMz7EojA0wi04bbc/?=
+X-IPAS-Result: =?us-ascii?q?A2BPBACF/ENe/wHyM5BmHgELHIN4gWwBIBIqhBSJA4ZlA?=
+ =?us-ascii?q?QEBAQEBBoE3iXCRSQkBAQEBAQEBAQE3AQGEQAKCbTgTAhABAQEEAQEBAQEFA?=
+ =?us-ascii?q?wEBbIVDgjspAYMCAQUdBg8BBUEQCQIYAgImAgJXBg0GAgEBgmM/glclj1Gbe?=
+ =?us-ascii?q?YEyhUqDSIE+gQ4qjD55gQeBEScPgl0+h1uCXgSNTYJPh298lm+CRIJOikaJN?=
+ =?us-ascii?q?QYcgkiIEpA7Lat0IoFYKwgCGAghD4MnUBgNjikXFY4sIwMwApFfAQE?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 12 Feb 2020 13:31:40 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 01CDU4TT018798;
+        Wed, 12 Feb 2020 08:30:10 -0500
+Subject: Re: [PATCH v5 01/10] capabilities: introduce CAP_PERFMON to kernel
+ and user space
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "james.bottomley@hansenpartnership.com" 
+        <james.bottomley@hansenpartnership.com>,
+        Serge Hallyn <serge@hallyn.com>,
         James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kernel Team <kernel-team@fb.com>
-References: <20200211124334.GA96694@google.com>
- <20200211175825.szxaqaepqfbd2wmg@ast-mbp>
- <CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com>
- <20200211190943.sysdbz2zuz5666nq@ast-mbp>
- <CAG48ez2gvo1dA4P1L=ASz7TRfbH-cgLZLmOPmr0NweayL-efLw@mail.gmail.com>
- <20200211201039.om6xqoscfle7bguz@ast-mbp>
- <CAG48ez1qGqF9z7APajFyzjZh82YxFV9sHE64f5kdKBeH9J3YPg@mail.gmail.com>
- <20200211213819.j4ltrjjkuywihpnv@ast-mbp>
- <CAADnVQLsiWgSBXbuxmpkC9TS8d1aQRw2zDHG8J6E=kfcRoXtKQ@mail.gmail.com>
- <1cd10710-a81b-8f9b-696d-aa40b0a67225@iogearbox.net>
- <20200212024542.gdsafhvqykucdp4h@ast-mbp>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <ff6dec98-5e33-4603-1b90-e4bff23695cc@iogearbox.net>
-Date:   Wed, 12 Feb 2020 14:27:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        oprofile-list@lists.sf.net, Andy Lutomirski <luto@amacapital.net>
+References: <0548c832-7f4b-dc4c-8883-3f2b6d351a08@linux.intel.com>
+ <9b77124b-675d-5ac7-3741-edec575bd425@linux.intel.com>
+ <64cab472-806e-38c4-fb26-0ffbee485367@tycho.nsa.gov>
+ <05297eff-8e14-ccdf-55a4-870c64516de8@linux.intel.com>
+ <CAADnVQK-JzK-GUk4KOozn4c1xr=7TiCpB9Fi0QDC9nE6iVn8iQ@mail.gmail.com>
+ <537bdb28-c9e4-f44f-d665-25250065a6bb@linux.intel.com>
+ <63d9700f-231d-7973-5307-3e56a48c54cb@linux.intel.com>
+ <d7213569-9578-7201-6106-f5ebc95bd6be@tycho.nsa.gov>
+ <2e38c33d-f085-1320-8cc2-45f74b6ad86d@linux.intel.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <dd6a1382-7b2f-a6e6-a1ac-009566d7f556@tycho.nsa.gov>
+Date:   Wed, 12 Feb 2020 08:32:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200212024542.gdsafhvqykucdp4h@ast-mbp>
+In-Reply-To: <2e38c33d-f085-1320-8cc2-45f74b6ad86d@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.102.1/25721/Wed Feb 12 06:24:38 2020)
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/12/20 3:45 AM, Alexei Starovoitov wrote:
-> On Wed, Feb 12, 2020 at 01:09:07AM +0100, Daniel Borkmann wrote:
+On 2/12/20 3:53 AM, Alexey Budankov wrote:
+> Hi Stephen,
+> 
+> On 22.01.2020 17:07, Stephen Smalley wrote:
+>> On 1/22/20 5:45 AM, Alexey Budankov wrote:
+>>>
+>>> On 21.01.2020 21:27, Alexey Budankov wrote:
+>>>>
+>>>> On 21.01.2020 20:55, Alexei Starovoitov wrote:
+>>>>> On Tue, Jan 21, 2020 at 9:31 AM Alexey Budankov
+>>>>> <alexey.budankov@linux.intel.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 21.01.2020 17:43, Stephen Smalley wrote:
+>>>>>>> On 1/20/20 6:23 AM, Alexey Budankov wrote:
+>>>>>>>>
+> <SNIP>
+>>>>>>>> Introduce CAP_PERFMON capability designed to secure system performance
+>>>>>>>
+>>>>>>> Why _noaudit()?  Normally only used when a permission failure is non-fatal to the operation.  Otherwise, we want the audit message.
+>>>
+>>> So far so good, I suggest using the simplest version for v6:
+>>>
+>>> static inline bool perfmon_capable(void)
+>>> {
+>>>      return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
+>>> }
+>>>
+>>> It keeps the implementation simple and readable. The implementation is more
+>>> performant in the sense of calling the API - one capable() call for CAP_PERFMON
+>>> privileged process.
+>>>
+>>> Yes, it bloats audit log for CAP_SYS_ADMIN privileged and unprivileged processes,
+>>> but this bloating also advertises and leverages using more secure CAP_PERFMON
+>>> based approach to use perf_event_open system call.
 >>
->> Another approach could be to have a special nop inside call_int_hook()
->> macro which would then get patched to avoid these situations. Somewhat
->> similar like static keys where it could be defined anywhere in text but
->> with updating of call_int_hook()'s RC for the verdict.
+>> I can live with that.  We just need to document that when you see both a CAP_PERFMON and a CAP_SYS_ADMIN audit message for a process, try only allowing CAP_PERFMON first and see if that resolves the issue.  We have a similar issue with CAP_DAC_READ_SEARCH versus CAP_DAC_OVERRIDE.
 > 
-> Sounds nice in theory. I couldn't quite picture how that would look
-> in the code, so I hacked:
-> diff --git a/security/security.c b/security/security.c
-> index 565bc9b67276..ce4bc1e5e26c 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -28,6 +28,7 @@
->   #include <linux/string.h>
->   #include <linux/msg.h>
->   #include <net/flow.h>
-> +#include <linux/jump_label.h>
+> I am trying to reproduce this double logging with CAP_PERFMON.
+> I am using the refpolicy version with enabled perf_event tclass [1], in permissive mode.
+> When running perf stat -a I am observing this AVC audit messages:
 > 
->   #define MAX_LSM_EVM_XATTR      2
+> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { open } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
+> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { kernel } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
+> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { cpu } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
+> type=AVC msg=audit(1581496695.666:8692): avc:  denied  { write } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
 > 
-> @@ -678,12 +679,26 @@ static void __init lsm_early_task(struct task_struct *task)
->    *     This is a hook that returns a value.
->    */
+> However there is no capability related messages around. I suppose my refpolicy should
+> be modified somehow to observe capability related AVCs.
 > 
-> +#define LSM_HOOK_NAME(FUNC) \
-> +       DEFINE_STATIC_KEY_FALSE(bpf_lsm_key_##FUNC);
-> +#include <linux/lsm_hook_names.h>
-> +#undef LSM_HOOK_NAME
-> +__diag_push();
-> +__diag_ignore(GCC, 8, "-Wstrict-prototypes", "");
-> +#define LSM_HOOK_NAME(FUNC) \
-> +       int bpf_lsm_call_##FUNC() {return 0;}
-> +#include <linux/lsm_hook_names.h>
-> +#undef LSM_HOOK_NAME
-> +__diag_pop();
-> +
->   #define call_void_hook(FUNC, ...)                              \
->          do {                                                    \
->                  struct security_hook_list *P;                   \
->                                                                  \
->                  hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
->                          P->hook.FUNC(__VA_ARGS__);              \
-> +               if (static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
-> +                      (void)bpf_lsm_call_##FUNC(__VA_ARGS__); \
->          } while (0)
-> 
->   #define call_int_hook(FUNC, IRC, ...) ({                       \
-> @@ -696,6 +711,8 @@ static void __init lsm_early_task(struct task_struct *task)
->                          if (RC != 0)                            \
->                                  break;                          \
->                  }                                               \
-> +               if (RC == IRC && static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
-> +                      RC = bpf_lsm_call_##FUNC(__VA_ARGS__); \
+> Could you please comment or clarify on how to enable caps related AVCs in order
+> to test the concerned logging.
 
-Nit: the `RC == IRC` test could be moved behind the static_branch_unlikely() so
-that it would be bypassed when not enabled.
+The new perfmon permission has to be defined in your policy; you'll have 
+a message in dmesg about "Permission perfmon in class capability2 not 
+defined in policy.".  You can either add it to the common cap2 
+definition in refpolicy/policy/flask/access_vectors and rebuild your 
+policy or extract your base module as CIL, add it there, and insert the 
+updated module.
 
->          } while (0);                                            \
->          RC;                                                     \
->   })
-> 
-> The assembly looks good from correctness and performance points.
-> union security_list_options can be split into lsm_hook_names.h too
-> to avoid __diag_ignore. Is that what you have in mind?
-> I don't see how one can improve call_int_hook() macro without
-> full refactoring of linux/lsm_hooks.h
-> imo static_key doesn't have to be there in the first set. We can add this
-> optimization later.
 
-Yes, like the above diff looks good, and then we'd dynamically attach the program
-at bpf_lsm_call_##FUNC()'s fexit hook for a direct jump, so all the security_blah()
-internals could stay as-is which then might also address Jann's concerns wrt
-concrete annotation as well as potential locking changes inside security_blah().
-Agree that patching out via static key could be optional but since you were talking
-about avoiding indirect jumps..
-
-Thanks,
-Daniel
