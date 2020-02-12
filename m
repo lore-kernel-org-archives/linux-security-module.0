@@ -2,39 +2,65 @@ Return-Path: <SRS0=6rCu=4A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78537C352A3
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 00:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C041C3B187
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 02:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A370206D6
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 00:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2E4C20842
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 02:45:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7Q3Gvd2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbgBLAJQ (ORCPT
+        id S1727565AbgBLCps (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Feb 2020 19:09:16 -0500
-Received: from www62.your-server.de ([213.133.104.62]:39780 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbgBLAJQ (ORCPT
+        Tue, 11 Feb 2020 21:45:48 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46838 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727535AbgBLCps (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Feb 2020 19:09:16 -0500
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1j1faW-0007DH-Se; Wed, 12 Feb 2020 01:09:09 +0100
-Received: from [85.7.42.192] (helo=pc-9.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1j1faW-000ETx-4j; Wed, 12 Feb 2020 01:09:08 +0100
-Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
- mutable hooks list for the BPF LSM]
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Jann Horn <jannh@google.com>
-Cc:     KP Singh <kpsingh@chromium.org>,
+        Tue, 11 Feb 2020 21:45:48 -0500
+Received: by mail-pf1-f194.google.com with SMTP id k29so432490pfp.13;
+        Tue, 11 Feb 2020 18:45:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4XsJvZXSh2poOw0ny0DD0U8QzL/E8gANM6N3f870hLw=;
+        b=R7Q3Gvd2nDYBCLMXNS1vwZ0+M9mzlo3zCghlPUswvarbQvL30kk6zl6inWgVLGyASy
+         eVE3HnI/MR/yKUvTyIqbpIOXDNFZpzmDOsXsaraq46Y0ecARv15XKiYROhmCVf38+kbU
+         FqaCxMb6unzp+gUAcoTWEfXdhUWey/OHj7oHwZAEn5fyH3PJzuCT+va3rZJCQAk70XJk
+         H90ouN0z8TEFkBICvIVZDA8O6Szz9IYyzSECSzq0aWShDdMcQ+/7BWlS8SGwkULYjSvu
+         LMKAThnpVFBe5nBAqPejEM0WvRq8Rx2wGL1PslOQtJ6MBeeHQt2Y+kaWPQvRNqRJH2Z0
+         KSzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4XsJvZXSh2poOw0ny0DD0U8QzL/E8gANM6N3f870hLw=;
+        b=gqT7VBKWeygWIsPiNB9zMW7Xj5cdqP+vKkAJYtBOsb17aaLHlBTw2jbTa6EGPPZiMR
+         QG4k7BX/89VgIXFlllvAXeBoq2sqCjEPmoLBZVSqSwCIag/dAhvU2Q7r2DqC62Kz87eV
+         L0e/HnWTeESZnS+ifgpsIjVEmnjAnzLOSiP0sQakF88+rRoG2VHwzKaftWCEzAIScFKX
+         Z36tfuM968ddfy7ItlfzHudDbmCow3rwpdGXKnrYZZfrqakZKCbmfIqrdjZkwMPhaH2A
+         bj19bT6yYsORRsJyCExbzfQW8HhRG10X74lKZ87OgHRytgAg+p6AB/iFzQoSVl0aCIK4
+         T5mg==
+X-Gm-Message-State: APjAAAUPNALH/tggHKw04v7PD/sqqtjlFrZ52j9wCTwzs5obpCckoi7n
+        nU4ck7wm52eUcJex4168yYY=
+X-Google-Smtp-Source: APXvYqzqpZ6Ew8o6WvQIBZA0g9+/hsicYC2YDFE69RecwXpDRWIymv7bvw6BB65CPLE2HrNCYaDdcQ==
+X-Received: by 2002:a63:74b:: with SMTP id 72mr9804384pgh.162.1581475547125;
+        Tue, 11 Feb 2020 18:45:47 -0800 (PST)
+Received: from ast-mbp ([2620:10d:c090:200::1:aeb4])
+        by smtp.gmail.com with ESMTPSA id c10sm5449516pgj.49.2020.02.11.18.45.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Feb 2020 18:45:46 -0800 (PST)
+Date:   Tue, 11 Feb 2020 18:45:44 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Jann Horn <jannh@google.com>, KP Singh <kpsingh@chromium.org>,
         kernel list <linux-kernel@vger.kernel.org>,
         bpf <bpf@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
@@ -50,7 +76,7 @@ Cc:     KP Singh <kpsingh@chromium.org>,
         Brendan Gregg <brendan.d.gregg@gmail.com>,
         Matthew Garrett <mjg59@google.com>,
         Christian Brauner <christian@brauner.io>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
@@ -58,9 +84,10 @@ Cc:     KP Singh <kpsingh@chromium.org>,
         "David S. Miller" <davem@davemloft.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kernel Team <kernel-team@fb.com>
-References: <20200123152440.28956-1-kpsingh@chromium.org>
- <20200123152440.28956-5-kpsingh@chromium.org>
- <20200211031208.e6osrcathampoog7@ast-mbp> <20200211124334.GA96694@google.com>
+Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
+ mutable hooks list for the BPF LSM]
+Message-ID: <20200212024542.gdsafhvqykucdp4h@ast-mbp>
+References: <20200211124334.GA96694@google.com>
  <20200211175825.szxaqaepqfbd2wmg@ast-mbp>
  <CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com>
  <20200211190943.sysdbz2zuz5666nq@ast-mbp>
@@ -69,71 +96,78 @@ References: <20200123152440.28956-1-kpsingh@chromium.org>
  <CAG48ez1qGqF9z7APajFyzjZh82YxFV9sHE64f5kdKBeH9J3YPg@mail.gmail.com>
  <20200211213819.j4ltrjjkuywihpnv@ast-mbp>
  <CAADnVQLsiWgSBXbuxmpkC9TS8d1aQRw2zDHG8J6E=kfcRoXtKQ@mail.gmail.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <1cd10710-a81b-8f9b-696d-aa40b0a67225@iogearbox.net>
-Date:   Wed, 12 Feb 2020 01:09:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ <1cd10710-a81b-8f9b-696d-aa40b0a67225@iogearbox.net>
 MIME-Version: 1.0
-In-Reply-To: <CAADnVQLsiWgSBXbuxmpkC9TS8d1aQRw2zDHG8J6E=kfcRoXtKQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.102.1/25720/Mon Feb 10 12:53:41 2020)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1cd10710-a81b-8f9b-696d-aa40b0a67225@iogearbox.net>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/12/20 12:26 AM, Alexei Starovoitov wrote:
-> On Tue, Feb 11, 2020 at 1:38 PM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
->>
->> On Tue, Feb 11, 2020 at 09:33:49PM +0100, Jann Horn wrote:
->>>>
->>>> Got it. Then let's whitelist them ?
->>>> All error injection points are marked with ALLOW_ERROR_INJECTION().
->>>> We can do something similar here, but let's do it via BTF and avoid
->>>> abusing yet another elf section for this mark.
->>>> I think BTF_TYPE_EMIT() should work. Just need to pick explicit enough
->>>> name and extensive comment about what is going on.
->>>
->>> Sounds reasonable to me. :)
->>
->> awesome :)
+On Wed, Feb 12, 2020 at 01:09:07AM +0100, Daniel Borkmann wrote:
 > 
-> Looks like the kernel already provides this whitelisting.
-> $ bpftool btf dump file /sys/kernel/btf/vmlinux |grep FUNC|grep '\<security_'
-> gives the list of all LSM hooks that lsm-bpf will be able to attach to.
-> There are two exceptions there security_add_hooks() and security_init().
-> Both are '__init'. Too late for lsm-bpf to touch.
-> So filtering BTF funcs by 'security_' prefix will be enough.
-> It should be documented though.
-> The number of attachable funcs depends on kconfig which is
-> a nice property and further strengthen the point that
-> lsm-bpf is very much kernel specific.
-> We probably should blacklist security_bpf*() hooks though.
+> Another approach could be to have a special nop inside call_int_hook()
+> macro which would then get patched to avoid these situations. Somewhat
+> similar like static keys where it could be defined anywhere in text but
+> with updating of call_int_hook()'s RC for the verdict.
 
-One thing that is not quite clear to me wrt the fexit approach; assuming
-we'd whitelist something like security_inode_link():
+Sounds nice in theory. I couldn't quite picture how that would look
+in the code, so I hacked:
+diff --git a/security/security.c b/security/security.c
+index 565bc9b67276..ce4bc1e5e26c 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -28,6 +28,7 @@
+ #include <linux/string.h>
+ #include <linux/msg.h>
+ #include <net/flow.h>
++#include <linux/jump_label.h>
 
-int security_inode_link(struct dentry *old_dentry, struct inode *dir,
-                          struct dentry *new_dentry)
-{
-         if (unlikely(IS_PRIVATE(d_backing_inode(old_dentry))))
-                 return 0;
-         return call_int_hook(inode_link, 0, old_dentry, dir, new_dentry);
-}
+ #define MAX_LSM_EVM_XATTR      2
 
-Would this then mean the BPF prog needs to reimplement above check by
-probing old_dentry->d_inode to later ensure its verdict stays 0 there
-too, or that such extra code is to be moved to call-sites instead? If
-former, what about more complex logic?
+@@ -678,12 +679,26 @@ static void __init lsm_early_task(struct task_struct *task)
+  *     This is a hook that returns a value.
+  */
 
-Another approach could be to have a special nop inside call_int_hook()
-macro which would then get patched to avoid these situations. Somewhat
-similar like static keys where it could be defined anywhere in text but
-with updating of call_int_hook()'s RC for the verdict.
++#define LSM_HOOK_NAME(FUNC) \
++       DEFINE_STATIC_KEY_FALSE(bpf_lsm_key_##FUNC);
++#include <linux/lsm_hook_names.h>
++#undef LSM_HOOK_NAME
++__diag_push();
++__diag_ignore(GCC, 8, "-Wstrict-prototypes", "");
++#define LSM_HOOK_NAME(FUNC) \
++       int bpf_lsm_call_##FUNC() {return 0;}
++#include <linux/lsm_hook_names.h>
++#undef LSM_HOOK_NAME
++__diag_pop();
++
+ #define call_void_hook(FUNC, ...)                              \
+        do {                                                    \
+                struct security_hook_list *P;                   \
+                                                                \
+                hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
+                        P->hook.FUNC(__VA_ARGS__);              \
++               if (static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
++                      (void)bpf_lsm_call_##FUNC(__VA_ARGS__); \
+        } while (0)
 
-Thanks,
-Daniel
+ #define call_int_hook(FUNC, IRC, ...) ({                       \
+@@ -696,6 +711,8 @@ static void __init lsm_early_task(struct task_struct *task)
+                        if (RC != 0)                            \
+                                break;                          \
+                }                                               \
++               if (RC == IRC && static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
++                      RC = bpf_lsm_call_##FUNC(__VA_ARGS__); \
+        } while (0);                                            \
+        RC;                                                     \
+ })
+
+The assembly looks good from correctness and performance points.
+union security_list_options can be split into lsm_hook_names.h too
+to avoid __diag_ignore. Is that what you have in mind?
+I don't see how one can improve call_int_hook() macro without
+full refactoring of linux/lsm_hooks.h
+imo static_key doesn't have to be there in the first set. We can add this
+optimization later.
