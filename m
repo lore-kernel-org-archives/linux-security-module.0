@@ -2,172 +2,169 @@ Return-Path: <SRS0=6rCu=4A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C041C3B187
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 02:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 126A9C3B186
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 07:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2E4C20842
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 02:45:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE44A2073C
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 07:51:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7Q3Gvd2"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nhg3rKGm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbgBLCps (ORCPT
+        id S1728383AbgBLHvC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Feb 2020 21:45:48 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46838 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbgBLCps (ORCPT
+        Wed, 12 Feb 2020 02:51:02 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46989 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728379AbgBLHvC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Feb 2020 21:45:48 -0500
-Received: by mail-pf1-f194.google.com with SMTP id k29so432490pfp.13;
-        Tue, 11 Feb 2020 18:45:47 -0800 (PST)
+        Wed, 12 Feb 2020 02:51:02 -0500
+Received: by mail-pg1-f193.google.com with SMTP id b35so629197pgm.13
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Feb 2020 23:51:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4XsJvZXSh2poOw0ny0DD0U8QzL/E8gANM6N3f870hLw=;
-        b=R7Q3Gvd2nDYBCLMXNS1vwZ0+M9mzlo3zCghlPUswvarbQvL30kk6zl6inWgVLGyASy
-         eVE3HnI/MR/yKUvTyIqbpIOXDNFZpzmDOsXsaraq46Y0ecARv15XKiYROhmCVf38+kbU
-         FqaCxMb6unzp+gUAcoTWEfXdhUWey/OHj7oHwZAEn5fyH3PJzuCT+va3rZJCQAk70XJk
-         H90ouN0z8TEFkBICvIVZDA8O6Szz9IYyzSECSzq0aWShDdMcQ+/7BWlS8SGwkULYjSvu
-         LMKAThnpVFBe5nBAqPejEM0WvRq8Rx2wGL1PslOQtJ6MBeeHQt2Y+kaWPQvRNqRJH2Z0
-         KSzw==
+         :content-disposition:in-reply-to;
+        bh=yiz9WBSdL7NQOdvbn80An19iJZYDNk/obNeFYG2L8Bs=;
+        b=nhg3rKGmLf/ztkCT+0gU6qiovpFdDomiRBtx3D5rpDSWaazkpSyqNkRTpVLBE9itSC
+         Y7XnYaE4y5gNB0j5dMsvQxQI9z8S0g219xc81Yv/dTG9AvrN2ditkF9z9IIJ60b6K0Cs
+         kOsenjKrpqo7cf+WM5hrgiUr1mMxkX8CsxpAc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4XsJvZXSh2poOw0ny0DD0U8QzL/E8gANM6N3f870hLw=;
-        b=gqT7VBKWeygWIsPiNB9zMW7Xj5cdqP+vKkAJYtBOsb17aaLHlBTw2jbTa6EGPPZiMR
-         QG4k7BX/89VgIXFlllvAXeBoq2sqCjEPmoLBZVSqSwCIag/dAhvU2Q7r2DqC62Kz87eV
-         L0e/HnWTeESZnS+ifgpsIjVEmnjAnzLOSiP0sQakF88+rRoG2VHwzKaftWCEzAIScFKX
-         Z36tfuM968ddfy7ItlfzHudDbmCow3rwpdGXKnrYZZfrqakZKCbmfIqrdjZkwMPhaH2A
-         bj19bT6yYsORRsJyCExbzfQW8HhRG10X74lKZ87OgHRytgAg+p6AB/iFzQoSVl0aCIK4
-         T5mg==
-X-Gm-Message-State: APjAAAUPNALH/tggHKw04v7PD/sqqtjlFrZ52j9wCTwzs5obpCckoi7n
-        nU4ck7wm52eUcJex4168yYY=
-X-Google-Smtp-Source: APXvYqzqpZ6Ew8o6WvQIBZA0g9+/hsicYC2YDFE69RecwXpDRWIymv7bvw6BB65CPLE2HrNCYaDdcQ==
-X-Received: by 2002:a63:74b:: with SMTP id 72mr9804384pgh.162.1581475547125;
-        Tue, 11 Feb 2020 18:45:47 -0800 (PST)
-Received: from ast-mbp ([2620:10d:c090:200::1:aeb4])
-        by smtp.gmail.com with ESMTPSA id c10sm5449516pgj.49.2020.02.11.18.45.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Feb 2020 18:45:46 -0800 (PST)
-Date:   Tue, 11 Feb 2020 18:45:44 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Jann Horn <jannh@google.com>, KP Singh <kpsingh@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
- mutable hooks list for the BPF LSM]
-Message-ID: <20200212024542.gdsafhvqykucdp4h@ast-mbp>
-References: <20200211124334.GA96694@google.com>
- <20200211175825.szxaqaepqfbd2wmg@ast-mbp>
- <CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com>
- <20200211190943.sysdbz2zuz5666nq@ast-mbp>
- <CAG48ez2gvo1dA4P1L=ASz7TRfbH-cgLZLmOPmr0NweayL-efLw@mail.gmail.com>
- <20200211201039.om6xqoscfle7bguz@ast-mbp>
- <CAG48ez1qGqF9z7APajFyzjZh82YxFV9sHE64f5kdKBeH9J3YPg@mail.gmail.com>
- <20200211213819.j4ltrjjkuywihpnv@ast-mbp>
- <CAADnVQLsiWgSBXbuxmpkC9TS8d1aQRw2zDHG8J6E=kfcRoXtKQ@mail.gmail.com>
- <1cd10710-a81b-8f9b-696d-aa40b0a67225@iogearbox.net>
+         :mime-version:content-disposition:in-reply-to;
+        bh=yiz9WBSdL7NQOdvbn80An19iJZYDNk/obNeFYG2L8Bs=;
+        b=AHDgFVvjOlDr1XEGzBGcu1iQsEajfPTx33eoPPEaVtP+TAs0PHkKrLXoq1ZNSRJ7O7
+         p01Jg0jFaG5Gh0sZW/Idh8s8S1rsRhyOEtdJwA7wVmIviO0vV90kN+Hist1F7cVVv09D
+         MSgrRop1ZocTbAE7tasNv4/7KrhTagYczKZaVf72zGc5aSiBADIBn8dppyNfUDl7Oi/x
+         lD7SRBOjy0vUTjnXesYnXORmu53sJvEUonp7aEqKykBHZAWwoZnrG3q92tLPcctziMh+
+         wU7RusRSZGgRF7Q7NcaSMj4zBBwv50j4T+mYL5e5krYFfH6VRrkwJYgRoruyeZTJztBG
+         ZTZQ==
+X-Gm-Message-State: APjAAAVYa7XHf7DAUoY8Qbh/hQJXCZEOqp4zEGl2H7F6raIrOXqy/bbP
+        BCN6kFvcaSOV59Hj0qdzxJMsqQ==
+X-Google-Smtp-Source: APXvYqyPQNw1fJJzxrr+Vej5UzAZPt9dUWwkqtIGchQ+MVvd9EJarctCHQVbAN0x96enDO2Wl9uRtg==
+X-Received: by 2002:a63:5558:: with SMTP id f24mr6981271pgm.92.1581493860306;
+        Tue, 11 Feb 2020 23:51:00 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b98sm5858832pjc.16.2020.02.11.23.50.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2020 23:50:59 -0800 (PST)
+Date:   Tue, 11 Feb 2020 23:50:58 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     timmurray@google.com, nosh@google.com, nnk@google.com,
+        lokeshgidra@google.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, selinux@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] Harden userfaultfd
+Message-ID: <202002112332.BE71455@keescook>
+References: <20200211225547.235083-1-dancol@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1cd10710-a81b-8f9b-696d-aa40b0a67225@iogearbox.net>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20200211225547.235083-1-dancol@google.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 12, 2020 at 01:09:07AM +0100, Daniel Borkmann wrote:
+Hi!
+
+Firstly, thanks for working on this! It's been on my TODO list for a
+while. :)
+
+Casey already recommended including the LSM list to CC (since this is a
+new LSM -- there are many LSMs). Additionally, the series should
+probably be sent _to_ the userfaultfd maintainers:
+	Andrea Arcangeli <aarcange@redhat.com>
+	Mike Rapoport <rppt@linux.ibm.com>
+and I'd also CC a couple other people that have done recent work:
+	Peter Xu <peterx@redhat.com>
+	Jann Horn <jannh@google.com>
+
+More notes below...
+
+On Tue, Feb 11, 2020 at 02:55:41PM -0800, Daniel Colascione wrote:
+> Userfaultfd in unprivileged contexts could be potentially very
+> useful. We'd like to harden userfaultfd to make such unprivileged use
+> less risky. This patch series allows SELinux to manage userfaultfd
+> file descriptors and allows administrators to limit userfaultfd to
+> servicing user-mode faults, increasing the difficulty of using
+> userfaultfd in exploit chains invoking delaying kernel faults.
+
+I actually think these are two very different goals and likely the
+series could be split into two for them. One is LSM hooking of
+userfaultfd and the SELinux attachment, and the other is the user-mode
+fault restrictions. And they would likely go via separate trees (LSM
+through James's LSM tree, and probably akpm's -mm tree for the sysctl).
+
+> A new anon_inodes interface allows callers to opt into SELinux
+> management of anonymous file objects. In this mode, anon_inodes
+> creates new ephemeral inodes for anonymous file objects instead of
+> reusing a singleton dummy inode. A new LSM hook gives security modules
+> an opportunity to configure and veto these ephemeral inodes.
 > 
-> Another approach could be to have a special nop inside call_int_hook()
-> macro which would then get patched to avoid these situations. Somewhat
-> similar like static keys where it could be defined anywhere in text but
-> with updating of call_int_hook()'s RC for the verdict.
+> Existing anon_inodes users must opt into the new functionality.
+> 
+> Daniel Colascione (6):
+>   Add a new flags-accepting interface for anonymous inodes
+>   Add a concept of a "secure" anonymous file
+>   Teach SELinux about a new userfaultfd class
+>   Wire UFFD up to SELinux
 
-Sounds nice in theory. I couldn't quite picture how that would look
-in the code, so I hacked:
-diff --git a/security/security.c b/security/security.c
-index 565bc9b67276..ce4bc1e5e26c 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -28,6 +28,7 @@
- #include <linux/string.h>
- #include <linux/msg.h>
- #include <net/flow.h>
-+#include <linux/jump_label.h>
+The above is the first "series"... I don't have much opinion about it,
+though I do like the idea of making userfaultfd visible to the LSM.
 
- #define MAX_LSM_EVM_XATTR      2
+>   Let userfaultfd opt out of handling kernel-mode faults
+>   Add a new sysctl for limiting userfaultfd to user mode faults
 
-@@ -678,12 +679,26 @@ static void __init lsm_early_task(struct task_struct *task)
-  *     This is a hook that returns a value.
-  */
+Now this I'm very interested in. Can you go into more detail about two
+things:
 
-+#define LSM_HOOK_NAME(FUNC) \
-+       DEFINE_STATIC_KEY_FALSE(bpf_lsm_key_##FUNC);
-+#include <linux/lsm_hook_names.h>
-+#undef LSM_HOOK_NAME
-+__diag_push();
-+__diag_ignore(GCC, 8, "-Wstrict-prototypes", "");
-+#define LSM_HOOK_NAME(FUNC) \
-+       int bpf_lsm_call_##FUNC() {return 0;}
-+#include <linux/lsm_hook_names.h>
-+#undef LSM_HOOK_NAME
-+__diag_pop();
-+
- #define call_void_hook(FUNC, ...)                              \
-        do {                                                    \
-                struct security_hook_list *P;                   \
-                                                                \
-                hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
-                        P->hook.FUNC(__VA_ARGS__);              \
-+               if (static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
-+                      (void)bpf_lsm_call_##FUNC(__VA_ARGS__); \
-        } while (0)
+- What is the threat being solved? (I understand the threat, but detailing
+  it in the commit log is important for people who don't know it. Existing
+  commit cefdca0a86be517bc390fc4541e3674b8e7803b0 gets into some of the
+  details already, but I'd like to see reference to external sources like
+  https://duasynt.com/blog/linux-kernel-heap-spray)
 
- #define call_int_hook(FUNC, IRC, ...) ({                       \
-@@ -696,6 +711,8 @@ static void __init lsm_early_task(struct task_struct *task)
-                        if (RC != 0)                            \
-                                break;                          \
-                }                                               \
-+               if (RC == IRC && static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
-+                      RC = bpf_lsm_call_##FUNC(__VA_ARGS__); \
-        } while (0);                                            \
-        RC;                                                     \
- })
+- Why is this needed in addition to the existing vm.unprivileged_userfaultfd
+  sysctl? (And should this maybe just be another setting for that
+  sysctl, like "2"?)
 
-The assembly looks good from correctness and performance points.
-union security_list_options can be split into lsm_hook_names.h too
-to avoid __diag_ignore. Is that what you have in mind?
-I don't see how one can improve call_int_hook() macro without
-full refactoring of linux/lsm_hooks.h
-imo static_key doesn't have to be there in the first set. We can add this
-optimization later.
+As to the mechanics of the change, I'm not sure I like the idea of adding
+a UAPI flag for this. Why not just retain the permission check done at
+open() and if kernelmode faults aren't allowed, ignore them? This would
+require no changes to existing programs and gains the desired defense.
+(And, I think, the sysctl value could be bumped to "2" as that's a
+better default state -- does qemu actually need kernelmode traps?)
+
+Thanks again for the patches!
+
+-Kees
+
+> 
+>  Documentation/admin-guide/sysctl/vm.rst | 13 ++++
+>  fs/anon_inodes.c                        | 89 +++++++++++++++++--------
+>  fs/userfaultfd.c                        | 29 ++++++--
+>  include/linux/anon_inodes.h             | 27 ++++++--
+>  include/linux/lsm_hooks.h               |  8 +++
+>  include/linux/security.h                |  2 +
+>  include/linux/userfaultfd_k.h           |  3 +
+>  include/uapi/linux/userfaultfd.h        |  9 +++
+>  kernel/sysctl.c                         |  9 +++
+>  security/security.c                     |  8 +++
+>  security/selinux/hooks.c                | 68 +++++++++++++++++++
+>  security/selinux/include/classmap.h     |  2 +
+>  12 files changed, 229 insertions(+), 38 deletions(-)
+> 
+> -- 
+> 2.25.0.225.g125e21ebc7-goog
+> 
+
+-- 
+Kees Cook
