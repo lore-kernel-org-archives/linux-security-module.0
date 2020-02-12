@@ -2,134 +2,123 @@ Return-Path: <SRS0=6rCu=4A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EDFC3B187
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 19:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F64FC3B186
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 19:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CD352082F
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 19:18:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 395AF206B6
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 19:41:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="giYfyWNc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbgBLTSj (ORCPT
+        id S1728809AbgBLTlN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Feb 2020 14:18:39 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:49190 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbgBLTSi (ORCPT
+        Wed, 12 Feb 2020 14:41:13 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:21260 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727372AbgBLTlN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:18:38 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j1xWr-0003Xk-B0; Wed, 12 Feb 2020 12:18:33 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j1xWq-0000bg-Ky; Wed, 12 Feb 2020 12:18:33 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Wed, 12 Feb 2020 14:41:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581536471;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/niUyGCzwKmL8P0YFidMu7QFy/0jVujYkp3YM5pI1SY=;
+        b=giYfyWNcxyHRiDVjf8DWi3QX11vIaGpmWJxo5H/Wf9zwAmq2AJFbbD7ncZZ2gDx73mwcx+
+        AglDG1/qPBJZ5sDmf+1mKHiV5puyqkQNw7CKUep8QwXUpukZFyOr69tUBo5LqvbR86n1yH
+        WBzL4lum+VylPJvVNkhauHbp2Jep140=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-216-UosBqSVOMsOqpSSGjRWgwA-1; Wed, 12 Feb 2020 14:41:09 -0500
+X-MC-Unique: UosBqSVOMsOqpSSGjRWgwA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E0246A0CBF;
+        Wed, 12 Feb 2020 19:41:06 +0000 (UTC)
+Received: from mail (ovpn-122-89.rdu2.redhat.com [10.10.122.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8EE086E40A;
+        Wed, 12 Feb 2020 19:41:01 +0000 (UTC)
+Date:   Wed, 12 Feb 2020 14:41:00 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
+        Daniel Colascione <dancol@google.com>,
+        Tim Murray <timmurray@google.com>,
+        Nosh Minwalla <nosh@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
-        <20200210150519.538333-8-gladkov.alexey@gmail.com>
-        <87v9odlxbr.fsf@x220.int.ebiederm.org>
-        <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
-        <87tv3vkg1a.fsf@x220.int.ebiederm.org>
-        <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
-Date:   Wed, 12 Feb 2020 13:16:38 -0600
-In-Reply-To: <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
-        (Linus Torvalds's message of "Wed, 12 Feb 2020 10:45:06 -0800")
-Message-ID: <87v9obipk9.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        SElinux list <selinux@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 0/6] Harden userfaultfd
+Message-ID: <20200212194100.GA29809@redhat.com>
+References: <20200211225547.235083-1-dancol@google.com>
+ <202002112332.BE71455@keescook>
+ <CAG48ez0ogRxvCK1aCnviN+nBqp6gmbUD7NjaMKvA7bF=esAc1A@mail.gmail.com>
+ <20200212171416.GD1083891@xz-x1>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1j1xWq-0000bg-Ky;;;mid=<87v9obipk9.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+FpT+28WqNfECAgpxZXu0sEMmAMmxCfO0=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200212171416.GD1083891@xz-x1>
+User-Agent: Mutt/1.13.1 (2019-12-14)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+Hello everyone,
 
-> On Wed, Feb 12, 2020 at 7:01 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
->> Fundamentally proc_flush_task is an optimization.  Just getting rid of
->> dentries earlier.  At least at one point it was an important
->> optimization because the old process dentries would just sit around
->> doing nothing for anyone.
->
-> I'm pretty sure it's still important. It's very easy to generate a
-> _ton_ of dentries with /proc.
->
->> I wonder if instead of invalidating specific dentries we could instead
->> fire wake up a shrinker and point it at one or more instances of proc.
->
-> It shouldn't be the dentries themselves that are a freeing problem.
-> They're being RCU-free'd anyway because of lookup. It's the
-> proc_mounts list that is the problem, isn't it?
->
-> So it's just fs_info that needs to be rcu-delayed because it contains
-> that list. Or is there something else?
+On Wed, Feb 12, 2020 at 12:14:16PM -0500, Peter Xu wrote:
+> Right. AFAICT QEMU uses it far more than disk IOs.  A guest page can
+> be accessed by any kernel component on the destination host during a
+> postcopy procedure.  It can be as simple as when a vcpu writes to a
+> missing guest page which still resides on the source host, then KVM
+> will get a page fault and trap into userfaultfd asking for that page.
+> The same thing happens to other modules like vhost, etc., as long as a
+> missing guest page is touched by a kernel module.
 
-The fundamental dcache thing we are playing with is:
+Correct.
 
-	dentry = d_hash_and_lookup(proc_root, &name);
-	if (dentry) {
-		d_invalidate(dentry);
-		dput(dentry);
-	}
+How does the android garbage collection work to make sure there cannot
+be kernel faults on the missing memory?
 
-As Al pointed out upthread dput and d_invalidate can both sleep.
+If I understood correctly (I didn't have much time to review sorry)
+what's proposed with regard to limiting uffd events from kernel
+faults, the only use case I know that could deal with it is the
+UFFD_FEATURE_SIGBUS but that's not normal userfaultfd: that's also the
+only feature required from uffd to implement a pure malloc library in
+userland that never takes the mmap sem for writing to implement
+userland mremap/mmap/munmap lib calls (as those will convert to
+UFFDIO_ZEROPAGE and MADV_DONTNEED internally to the lib and there will
+be always a single vma). We just need to extend UFFDIO_ZEROPAGE to map
+the THP zeropage to make this future pure-uffd malloc lib perform
+better.
 
-The dput can potentially go away if we use __d_lookup_rcu instead of
-d_lookup.
+On the other end I'm also planning a mremap_vma_merge userland syscall
+that will merge fragmented vmas.
 
-The challenge is d_invalidate.
+Currently once you have a nice heap all contiguous but with small
+objects and you free the fragments you can't build THP anymore even if
+you make the memory virtually contiguous again by calling mremap. That
+just build up a ton of vmas slowing down the app forever and also
+preventing THP collapsing ever again.
 
-It has the fundamentally sleeping detach_mounts loop.  Even
-shrink_dcache_parent has a cond_sched() in there to ensure it doesn't
-live lock the system.
+mremap_vma_merge will require no new kernel feature, but it
+fundamentally must be able to handle kernel faults. If databases
+starts to use that, how can you enable this feature without breaking
+random apps then?
 
-We could and arguabley should set DCACHE_CANT_MOUNT on the proc pid
-dentries.  Which will prevent having to deal with mounts.
+So it'd be a feature usable only by one user (Android) perhaps? And
+only until you start defragging the vmas of small objects?
 
-But I don't see an easy way of getting shrink_dcache_parent to run
-without sleeping.  Ideas?
-
-
-Eric
-
-
-
-
-
-
+Thanks,
+Andrea
 
