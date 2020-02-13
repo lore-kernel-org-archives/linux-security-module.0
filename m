@@ -2,266 +2,208 @@ Return-Path: <SRS0=7Hmq=4B=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A8BC3B18B
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 14:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EACDC3B18B
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 15:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B4E2222C2
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 14:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26A29217F4
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 15:32:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="SoYPC9wW"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DiI/7neU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730165AbgBMOAH (ORCPT
+        id S2387659AbgBMPc4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Feb 2020 09:00:07 -0500
-Received: from mail-co1nam11on2120.outbound.protection.outlook.com ([40.107.220.120]:44128
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730036AbgBMOAH (ORCPT
+        Thu, 13 Feb 2020 10:32:56 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:48444 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729110AbgBMPcz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Feb 2020 09:00:07 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZHALXOmemsJToDTcHfbLo7Wi/l4EhZTPgzsT7ApFAPJoNasdiXj+LB9cVizzMX6Nu8NXQM1LcPrxzNjdeVNmnYVYlco7noqO67HzwhttupyX2sTvFfR9Wt83qo4Z9+RgcXDji1uN0T9xZZJMbuXifz5QCVTkTrxUYqJ0yOWIexHVPGcqiD3oXPv5Ty/5ZhPhAi3+D83NlQIS9flGKymUcWifZwLWWSFhoTlQpoRsH4BJnYyCjwvqHYxNcytw23mS+eNhEQ8q4/I1Iu+FTcv+4ekHdUwwg+J92oM8G2tQpo99bzVkvYgr/rdEeyMQAvMQut8w9MN9C80SewWLZFclTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NIU37tZkVlHbyFJyTV4+QGUxuhrr/iXpGQSs/ZgSVII=;
- b=SH1hi6DRAzn+r807dBFvDueRTbj2EHyh+oVmevaDVC6azSGO6lphRhd2lHsVgW6aRKqTS/GWc0C/+kyibRWjm4zHazNNdbIXoUfeWo570uE8+5ouOOlCXSZ/GgpgbssXcFuACp8Xb1WPXQp+1AjMjMxfQxqSu9G7cFCoGxQWbPZqOTPOUW+es5sOWRRZLUwoNVQp1QvqP0AU3S8JhxJfSCvmgcIt5b/Mcyxjvvx7fZpHbyLZW3VNeZegXCz9K8B7MikdhW65r1cmUNY8vPCsKDwmnBiVkf2iDF0zZPzxxzIHSdF0fhVZsRVUMk6EBri1oWKbjwS+yVYqIdjmR3enLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
- dkim=pass header.d=fortanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NIU37tZkVlHbyFJyTV4+QGUxuhrr/iXpGQSs/ZgSVII=;
- b=SoYPC9wWWhICakNycVVNrGNzILFQoRPiWuQxTC9jMu1U4IDVQuMh5/KmfL7vt1rSQ8DIrrqIbBKKmmcvPMMMY5fZMfkXUNQ4prnD+1Q3sYyJWkdF3/4sMWkKlas8v2rqFtCTIiknmKdPDo8Pt7i3DZQA3NUqPAVD2tTfqYuhcvQ=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=jethro@fortanix.com; 
-Received: from BYAPR11MB3734.namprd11.prod.outlook.com (20.178.239.29) by
- BYAPR11MB2919.namprd11.prod.outlook.com (20.177.226.213) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.21; Thu, 13 Feb 2020 14:00:02 +0000
-Received: from BYAPR11MB3734.namprd11.prod.outlook.com
- ([fe80::180:d484:4d3f:fd99]) by BYAPR11MB3734.namprd11.prod.outlook.com
- ([fe80::180:d484:4d3f:fd99%7]) with mapi id 15.20.2729.025; Thu, 13 Feb 2020
- 14:00:02 +0000
-Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>
-References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
- <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
-From:   Jethro Beekman <jethro@fortanix.com>
-Message-ID: <d17c50a7-6900-731b-43a2-d6e49b8eb44d@fortanix.com>
-Date:   Thu, 13 Feb 2020 14:59:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-In-Reply-To: <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
+        Thu, 13 Feb 2020 10:32:55 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DFVL2u087216;
+        Thu, 13 Feb 2020 15:32:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=nLC1XhZL5VR2V0P2gKcFuXLzPZi3XK6RyGdvcBrsv9w=;
+ b=DiI/7neUr9RKyLP6yEfLdkG8PapQNmmiHJ0BNCUviMgsNgpKlq7xze5jUrGxI5lvMwgV
+ J86upwxKsEsBmNBvCxeMqbb7ryU/5esZXXAwcgqr0TNB+xJFhw7Ts/1d48xRI3CK9mas
+ xfGGikCd9Gsna5kl4VUZcva1T7s8W1KNHLjNwW/HI61h5sF0aeIGTNaPqD73GLJnBLRI
+ 4raRctGYvUAuOvaVb5qT6+8uuuMp92bB+wU41otQNPcGTmwFr64bEa0bzy5e2/i+ou2f
+ wOCEzsPu6h7rtzbyFxY3SidoUcbcgzjHTglhZH2Oi4bLrVSgVicV49pKLttyjyuB6v5M kw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2y2p3stmem-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Feb 2020 15:32:07 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DFTqtC059633;
+        Thu, 13 Feb 2020 15:32:06 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2y4k36ujgc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Feb 2020 15:32:06 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01DFVtos031481;
+        Thu, 13 Feb 2020 15:31:55 GMT
+Received: from dhcp-10-65-188-99.vpn.oracle.com (/10.65.188.99)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 13 Feb 2020 07:31:55 -0800
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO2P265CA0218.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:b::14) To BYAPR11MB3734.namprd11.prod.outlook.com
- (2603:10b6:a03:fe::29)
-MIME-Version: 1.0
-Received: from [10.195.0.226] (212.61.132.179) by LO2P265CA0218.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:b::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend Transport; Thu, 13 Feb 2020 13:59:57 +0000
-X-Originating-IP: [212.61.132.179]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6c421f50-3b1a-4975-c01e-08d7b08d04f8
-X-MS-TrafficTypeDiagnostic: BYAPR11MB2919:
-X-Microsoft-Antispam-PRVS: <BYAPR11MB29195A8170A0131131468CCEAA1A0@BYAPR11MB2919.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-Forefront-PRVS: 031257FE13
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(39830400003)(366004)(346002)(376002)(199004)(189003)(8676002)(66476007)(52116002)(26005)(54906003)(66946007)(186003)(4001150100001)(508600001)(31686004)(53546011)(16576012)(316002)(16526019)(66556008)(7416002)(6486002)(36756003)(8936002)(2906002)(86362001)(31696002)(4326008)(2616005)(6666004)(81156014)(81166006)(5660300002)(956004);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR11MB2919;H:BYAPR11MB3734.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: fortanix.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +dmZiQkJICCYzCoXtRv6KDoBK0BzSYEa7VKJZ7G6cBkEwt4oxUecQMntEpMw7eXCBjX5MrDVU2flJPmJp5hBzFsZRPDql5/PkxqSv28fsR+Sr/88ScmF1W+UlyHzo3upcVfNvDjNGJQiw2CDKy/IY8qnxX47ULho9OvYK6f6rx7rGknb+2MR367xcPmDERHbmuk8xvFvJSk4usL/ALUzE8DbQbNGGcUXncELcW/kduN+f/t0Rx1LhAEbvB07ea1mSZMrQHca21CUnfWCPtwKUWUpLN9Ay679mfRwMH+wOXuJXM21hCKru4d00tN7ytWjBZKqI8Q15AiByc8f7HrAtDQk5BuTe0t9lxfggYmr71CYfV/dXKPc5MoBymYajmSum/Zzo9ARA9DXU3MV7xomRF51EBqAS3OXuKpsEVI4F2JyQ6Qt0QGsSm9qpofB1oqE
-X-MS-Exchange-AntiSpam-MessageData: zfsLGCFPonbQozrX+1oZjs3HHOgGgundyWmCCIjPuDgTLpES5f3/EVWqBN3Wlrw5wFyzFZKahmGoFotTZtjTDjVfQlFMQYLyGN60+bgCMuLPQdCpZDiVLXb1sACRUgoKHgzPokA+lvbDmo2r4x3z4A==
-X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c421f50-3b1a-4975-c01e-08d7b08d04f8
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2020 14:00:02.0570
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: de7becae-4883-43e8-82c7-7dbdbb988ae6
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hwWytOlp9mwfjxrJ9bNkNuQnd0kT5PpwHlbmCPz9f30pHozYYTcC/Ksf1JuGuGiWOUWoQde4Aqk6ZfJAguX5aQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2919
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [RFC PATCH 0/2] ima: uncompressed module appraisal support
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+In-Reply-To: <eae8aa2d-1874-ba72-0452-a55bc811bd3d@linux.vnet.ibm.com>
+Date:   Thu, 13 Feb 2020 08:32:33 -0700
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com, dhowells@redhat.com,
+        geert@linux-m68k.org, gregkh@linuxfoundation.org,
+        nayna@linux.ibm.com, tglx@linutronix.de, bauerman@linux.ibm.com,
+        mpe@ellerman.id.au, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A0B7848D-519A-4A81-BFC2-DC86CA995CFD@oracle.com>
+References: <20200206164226.24875-1-eric.snowberg@oracle.com>
+ <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
+ <09D68C13-75E2-4BD6-B4E6-F765B175C7FD@oracle.com>
+ <1581087096.5585.597.camel@linux.ibm.com>
+ <330BDFAC-E778-4E9D-A2D2-DD81B745F6AB@oracle.com>
+ <1581097201.5585.613.camel@linux.ibm.com>
+ <764C5FC8-DF0C-4B7A-8B5B-FD8B83F31568@oracle.com>
+ <1581100125.5585.623.camel@linux.ibm.com>
+ <992E95D5-D4B9-4913-A36F-BB47631DFE0A@oracle.com>
+ <1581101672.5585.628.camel@linux.ibm.com>
+ <C25E5885-F00B-48C0-AEF1-FA3014B2FDA6@oracle.com>
+ <1581205431.5585.645.camel@linux.ibm.com>
+ <0F13CB66-6962-44AC-A20D-CCBD82B43625@oracle.com>
+ <1581354556.5585.827.camel@linux.ibm.com>
+ <90E53A33-530B-40FB-9982-2818FFD78D73@oracle.com>
+ <1581366829.5585.898.camel@linux.ibm.com>
+ <0842A02F-3166-4E29-9CC5-9E4C5057E270@oracle.com>
+ <eae8aa2d-1874-ba72-0452-a55bc811bd3d@linux.vnet.ibm.com>
+To:     Nayna <nayna@linux.vnet.ibm.com>
+X-Mailer: Apple Mail (2.3273)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 adultscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 suspectscore=3 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002130120
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
+ suspectscore=3 mlxlogscore=999 priorityscore=1501 clxscore=1015
+ impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002130120
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-02-09 22:25, Jarkko Sakkinen wrote:
-> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
-> can be used by applications to set aside private regions of code and
-> data. The code outside the SGX hosted software entity is disallowed to
-> access the memory inside the enclave enforced by the CPU. We call these
-> entities as enclaves.
-> 
-> This commit implements a driver that provides an ioctl API to construct
-> and run enclaves. Enclaves are constructed from pages residing in
-> reserved physical memory areas. The contents of these pages can only be
-> accessed when they are mapped as part of an enclave, by a hardware
-> thread running inside the enclave.
-> 
-> The starting state of an enclave consists of a fixed measured set of
-> pages that are copied to the EPC during the construction process by
-> using ENCLS leaf functions and Software Enclave Control Structure (SECS)
-> that defines the enclave properties.
-> 
-> Enclave are constructed by using ENCLS leaf functions ECREATE, EADD and
-> EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
-> the EPC and EINIT check a given signed measurement and moves the enclave
-> into a state ready for execution.
-> 
-> An initialized enclave can only be accessed through special Thread Control
-> Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
-> function converts a thread into enclave mode and continues the execution in
-> the offset defined by the TCS provided to EENTER. An enclave is exited
-> through syscall, exception, interrupts or by explicitly calling another
-> ENCLU leaf EEXIT.
-> 
-> The permissions, which enclave page is added will set the limit for maximum
-> permissions that can be set for mmap() and mprotect(). This will
-> effectively allow to build different security schemes between producers and
-> consumers of enclaves. Later on we can increase granularity with LSM hooks
-> for page addition (i.e. for producers) and mapping of the enclave (i.e. for
-> consumers)
-> 
-> Cc: linux-security-module@vger.kernel.org
-> Cc: Nathaniel McCallum <npmccallum@redhat.com>
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-> Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
-> Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
->  arch/x86/include/uapi/asm/sgx.h               |  66 ++
->  arch/x86/kernel/cpu/sgx/Makefile              |   3 +
->  arch/x86/kernel/cpu/sgx/driver.c              | 194 +++++
->  arch/x86/kernel/cpu/sgx/driver.h              |  30 +
->  arch/x86/kernel/cpu/sgx/encl.c                | 329 +++++++++
->  arch/x86/kernel/cpu/sgx/encl.h                |  87 +++
->  arch/x86/kernel/cpu/sgx/ioctl.c               | 697 ++++++++++++++++++
->  arch/x86/kernel/cpu/sgx/main.c                |  12 +-
->  arch/x86/kernel/cpu/sgx/reclaim.c             |   1 +
->  10 files changed, 1419 insertions(+), 1 deletion(-)
->  create mode 100644 arch/x86/include/uapi/asm/sgx.h
->  create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
->  create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
->  create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
->  create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
->  create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
-> 
-> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> index 2e91370dc159..1c54dd2704db 100644
-> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> @@ -321,6 +321,7 @@ Code  Seq#    Include File                                           Comments
->                                                                       <mailto:tlewis@mindspring.com>
->  0xA3  90-9F  linux/dtlk.h
->  0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
-> +0xA4  00-1F  uapi/asm/sgx.h                                          Intel SGX subsystem (a legit conflict as TEE and SGX do not co-exist)
->  0xAA  00-3F  linux/uapi/linux/userfaultfd.h
->  0xAB  00-1F  linux/nbd.h
->  0xAC  00-1F  linux/raw.h
-> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> new file mode 100644
-> index 000000000000..5edb08ab8fd0
-> --- /dev/null
-> +++ b/arch/x86/include/uapi/asm/sgx.h
-> @@ -0,0 +1,66 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
-> +/*
-> + * Copyright(c) 2016-19 Intel Corporation.
-> + */
-> +#ifndef _UAPI_ASM_X86_SGX_H
-> +#define _UAPI_ASM_X86_SGX_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/ioctl.h>
-> +
-> +/**
-> + * enum sgx_epage_flags - page control flags
-> + * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
-> + *			ENCLS[EEXTEND] operations.
-> + */
-> +enum sgx_page_flags {
-> +	SGX_PAGE_MEASURE	= 0x01,
-> +};
-> +
-> +#define SGX_MAGIC 0xA4
-> +
-> +#define SGX_IOC_ENCLAVE_CREATE \
-> +	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
-> +#define SGX_IOC_ENCLAVE_ADD_PAGES \
-> +	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
-> +#define SGX_IOC_ENCLAVE_INIT \
-> +	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-> +
-> +/**
-> + * struct sgx_enclave_create - parameter structure for the
-> + *                             %SGX_IOC_ENCLAVE_CREATE ioctl
-> + * @src:	address for the SECS page data
-> + */
-> +struct sgx_enclave_create  {
-> +	__u64	src;
-> +};
-> +
-> +/**
-> + * struct sgx_enclave_add_pages - parameter structure for the
-> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
-> + * @src:	start address for the page data
-> + * @offset:	starting page offset
-> + * @length:	length of the data (multiple of the page size)
-> + * @secinfo:	address for the SECINFO data
-> + * @flags:	page control flags
-> + * @count:	number of bytes added (multiple of the page size)
-> + */
-> +struct sgx_enclave_add_pages {
-> +	__u64	src;
-> +	__u64	offset;
-> +	__u64	length;
-> +	__u64	secinfo;
-> +	__u64	flags;
-> +	__u64	count;
-> +};
 
-Compared to the last time I looked at the patch set, this API removes the ability to measure individual pages chunks. That is not acceptable.
+> On Feb 12, 2020, at 7:04 AM, Nayna <nayna@linux.vnet.ibm.com> wrote:
+>=20
+>=20
+> On 2/11/20 12:33 PM, Eric Snowberg wrote:
+>>> On Feb 10, 2020, at 1:33 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>>>=20
+>>> On Mon, 2020-02-10 at 12:24 -0700, Eric Snowberg wrote:
+>>>>> On Feb 10, 2020, at 10:09 AM, Mimi Zohar <zohar@linux.ibm.com> =
+wrote:
+>>>>>> Ok, understood, =E2=80=9Cmodsig=E2=80=9D refers to strictly =
+kernel module appended signatures
+>>>>>> without regard to the keyring that verifies it.  Since there are =
+inconsistencies
+>>>>>> here, would you consider something like my first patch?  It will =
+verify an
+>>>>>> uncompressed kernel module containing an appended signature  when =
+the public key
+>>>>>> is contained within the kernel keyring instead of the ima =
+keyring.  Why force a
+>>>>>> person to add the same keys into the ima keyring for validation?  =
+Especially when
+>>>>>> the kernel keyring is now used to verify appended signatures in =
+the compressed
+>>>>>> modules.
+>>>>> Different use case scenarios have different requirements.  Suppose =
+for
+>>>>> example that the group creating the kernel image is not the same =
+as
+>>>>> using it.  The group using the kernel image could sign all files,
+>>>>> including kernel modules (imasig), with their own private key. =
+Only
+>>>>> files that they signed would be permitted.  Your proposal would =
+break
+>>>>> the current expectations, allowing kernel modules signed by =
+someone
+>>>>> else to be loaded.
+>>>>>=20
+>>>> All the end user needs to do is compress any module created by the =
+group that built
+>>>> the original kernel image to work around the scenario above.  Then =
+the appended
+>>>> signature in the compressed module will be verified by the kernel =
+keyring. Does
+>>>> this mean there is a security problem that should be fixed, if this =
+is a concern?
+>>> Again, the issue isn't compressed/uncompressed kernel modules, but =
+the
+>>> syscall used to load the kernel module.  IMA can prevent using the =
+the
+>>> init_module syscall.  Refer to the ima_load_data() LOADING_MODULE
+>>> case.
+>> Within the ima_load_data() LOADING_MODULE case, to prevent IMA from =
+using
+>> the init_module syscall, is_module_sig_enforced() must return false. =
+Currently
+>> when is_module_sig_enforced() returns true, the kernel keyring is =
+always used
+>> for verification.
+>>=20
+>> What if I change this part of my patch from
+>>=20
+>> +       if (rc && func =3D=3D MODULE_CHECK)
+>>=20
+>> to
+>>=20
+>> +       sig_enforce =3D is_module_sig_enforced();
+>> +       if (sig_enforce && rc && func =3D=3D MODULE_CHECK)
+>>=20
+>> Now when the init_module syscall is available, finit_module syscall =
+will use
+>> both the ima keyring and kernel keyring for verification.  When the
+>> init_module syscall is blocked from use, the finit_module syscall =
+will only use
+>> the ima keyring for validation.  I believe this would satisfy both =
+your use
+>> case and mine.
+>>=20
+> There are two syscalls - init_module, finit_module - and two signature =
+verification methods. The problem you are trying to address is the =
+finit_module syscall, using both signature verification methods. Why =
+enable both signature verification methods ?
 
-On 2019-10-11 16:37, Sean Christopherson wrote:
-> Hiding the 256-byte granualarity from userspace is a good idea as it's not
-> intrinsically tied to the SGX architecture and exists only because of
-> latency requirements.
+I am enabling both in my patch since a person can turn around and use =
+the other syscall by=20
+simply compressing their module.  Now their module is verified by a =
+different keyring.=20
+Other than completely disabling the init_module syscall, which we =
+don=E2=80=99t do, there is nothing=20
+preventing them from doing that.  We have one kernel config per =
+architecture. We build
+and sign the modules with an appended signature.
 
-What do you mean by "it's not intrinsically tied to the SGX architecture"? This is a fundamental part of the SGX instruction set. This is the instruction definition from the SDM: "EEXTEND—Extend Uninitialized Enclave Measurement by 256 Bytes".
+I can not predict all the ways someone will use a kernel built from this =
+single config. =20
+I do believe if someone has IMA working with module verification and =
+appended signatures,
+some are not going to understand why their module that was compressed =
+and loading=20
+(via syscall init_module) suddenly fails to load (via syscall =
+finit_module) once they=20
+uncompress it. =20
 
-The exact sequence of EADD/EEXTEND calls is part of the enclave hash. The OS mustn't arbitrarily restrict how an enclave may be loaded. If the enclave loader were to follows OS-specific restrictions, that would result in effectively different enclaves. Because of these interoperability concerns, 256-byte granularity *must* be exposed through the UAPI.
 
-Besides only partially measuring a page, there are some other fringe cases that are technically possible, although I haven't seen any toolchains that do that. These include not interleaving EADD and EEXTEND, not using logical ordering for the EEXTENDs, and call EEXTEND multiple times on the same chunk. Maximum interoperability would require supporting any EADD/EEXTEND sequence.
-
-Maybe we should just add an EEXTEND@offset ioctl? This would give fine-grained control when needed (one could set flags=0 in the add pages ioctl and interleave with EEXTEND as needed). If you're ok adding an EEXTEND ioctl I don't think this issue needs to block landing the driver in its current form, in which case:
-
-Tested-by: Jethro Beekman <jethro@fortanix.com>
-
-Sorry for being super late with this, I know you asked me for feedback about this specific point in October. However, I did previously mention several times that being able to measure individual 256-byte chunks is necessary.
-
---
-Jethro Beekman | Fortanix
