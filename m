@@ -1,165 +1,142 @@
-Return-Path: <SRS0=6rCu=4A=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=7Hmq=4B=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BB6C3B186
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 23:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DCEC352A4
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 00:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBD20206B6
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Feb 2020 23:41:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eMdIVKSn"
+	by mail.kernel.org (Postfix) with ESMTP id 59F3F20714
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 00:55:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581555334;
+	bh=4uvldRuyIv1cDszKDs6APHQYKSaXNPxB+JSUbcUjM54=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=uU6rPkTAa1JBqMFRqBB3r4+kGw3OdQRt+PfVsY0j+uScjX2dO7nwxbOe/KgH6vUgN
+	 jn3B4tX4Q85VPTzXqThaXOYDUuNnhvYaPl4bbpx03B9cMSyjeoVRH1c9nEnxp24DzZ
+	 LVrk4hVwM0w1XsINK1CuTY79T6FLbM8mf1LSyz+s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729185AbgBLXld (ORCPT
+        id S1729313AbgBMAzd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Feb 2020 18:41:33 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:25563 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729190AbgBLXlc (ORCPT
+        Wed, 12 Feb 2020 19:55:33 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34935 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbgBMAzc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:41:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581550891;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OQDr5ebf155fcZ1EU9k3LjSOmIORyHdnxl3xLxcFMjY=;
-        b=eMdIVKSnfwBpGzSGT4vlqXKTSBicg/9yEtLUke74+Kt/HzKJbwzTZJmNE6LOOn2/Vqb2MJ
-        1eZ0fi9AAAfW3DaeAQfyGr+EjlvTnEyiSEE0s4x4L+pHh8RU/iNoI8NNm2TBUpucHItE+/
-        OyAj/6XyE+cY1z0LbeTzM9hI2nfoz4w=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-394-wq3_P8QhNASyMq3xTcID_Q-1; Wed, 12 Feb 2020 18:41:25 -0500
-X-MC-Unique: wq3_P8QhNASyMq3xTcID_Q-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56A62107ACC5;
-        Wed, 12 Feb 2020 23:41:23 +0000 (UTC)
-Received: from mail (ovpn-122-89.rdu2.redhat.com [10.10.122.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 83EA91001281;
-        Wed, 12 Feb 2020 23:41:20 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 18:41:19 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tim Murray <timmurray@google.com>,
-        Nosh Minwalla <nosh@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 0/6] Harden userfaultfd
-Message-ID: <20200212234119.GB29809@redhat.com>
-References: <20200211225547.235083-1-dancol@google.com>
- <202002112332.BE71455@keescook>
- <CAG48ez0ogRxvCK1aCnviN+nBqp6gmbUD7NjaMKvA7bF=esAc1A@mail.gmail.com>
- <20200212171416.GD1083891@xz-x1>
- <20200212194100.GA29809@redhat.com>
- <CAKOZuevusieaKCt5r-jnQ5ArGfw5Otszq2CAcrqFi6MYxkKwtA@mail.gmail.com>
+        Wed, 12 Feb 2020 19:55:32 -0500
+Received: by mail-ed1-f65.google.com with SMTP id f8so4691508edv.2
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Feb 2020 16:55:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kqI0VbPVaJfcsCTXac52W5YMJCYaSOj7FaTDjIsxYoQ=;
+        b=RRc0XamveMQXj/q8pfpDyw3+6RSQiI77zx4rXZCf1ovpx19fhSLX9IAuu7EAbdT6D5
+         hRgPzQzTBFhOQsMCJ5pC8fUtChqlceueXHqMOFdtZldjIC/GLh+J70scUbbfpK2vng/u
+         uee+XaR52NHzT1hMiW+QFymxjV6nraNw8Kd1U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kqI0VbPVaJfcsCTXac52W5YMJCYaSOj7FaTDjIsxYoQ=;
+        b=R0Y/NuH33Oax3aMQjHLTbNlVU414RuH9C9gi9EDoE4VPuk0mULhIlINlgaJLLLy+Xq
+         cVFU2te5bclJmnMXE1EYouplERmpsBgBiXCXGWVqzdYVSShg66TcHBFaAEZfndL8wwNH
+         ps4hLa2SOAMDNK4GP36XkpvbNGd8eFpKst52e3+TwrKveuHJYWOkLDIAj2M7qHuGwxm8
+         zBqeqEh7IEgxYHtuLFUz0ftrxtZ5hIPaO3UEWEz886qar5865Dt4ppU21Uo5sYmpxaL0
+         yoPZ3qQGAFY7po/sSN67B2EAgyKx/KLyZ+vUqjyGX78Na0GjQbbfjlQReARKRWgUJejD
+         GqCw==
+X-Gm-Message-State: APjAAAXnWSx8Mchxb3lwKraS/4rx56/IEpjAfguLzFEl8zN251/ILYbh
+        Zt10nfKS8RwSCu7lwaDlV8GlLLHqJEQ=
+X-Google-Smtp-Source: APXvYqyemWARYqwDGk5DzzO5zDGo8Ms88v6x2wAVhvhc3BiaxpCfAwD9ewtWnHhKvuhlzAUuZoEGNA==
+X-Received: by 2002:aa7:d856:: with SMTP id f22mr12304064eds.61.1581555330694;
+        Wed, 12 Feb 2020 16:55:30 -0800 (PST)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id f25sm50559ejx.33.2020.02.12.16.55.30
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2020 16:55:30 -0800 (PST)
+Received: by mail-ed1-f52.google.com with SMTP id f8so4691441edv.2
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Feb 2020 16:55:30 -0800 (PST)
+X-Received: by 2002:a2e:580c:: with SMTP id m12mr9459753ljb.150.1581554910763;
+ Wed, 12 Feb 2020 16:48:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKOZuevusieaKCt5r-jnQ5ArGfw5Otszq2CAcrqFi6MYxkKwtA@mail.gmail.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
+ <87v9odlxbr.fsf@x220.int.ebiederm.org> <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
+ <87tv3vkg1a.fsf@x220.int.ebiederm.org> <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+ <87v9obipk9.fsf@x220.int.ebiederm.org> <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
+ <20200212200335.GO23230@ZenIV.linux.org.uk> <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
+ <20200212203833.GQ23230@ZenIV.linux.org.uk> <20200212204124.GR23230@ZenIV.linux.org.uk>
+ <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com> <87lfp7h422.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87lfp7h422.fsf@x220.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 12 Feb 2020 16:48:14 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+Message-ID: <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Daniel,
+On Wed, Feb 12, 2020 at 1:48 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> The good news is proc_flush_task isn't exactly called from process exit.
+> proc_flush_task is called during zombie clean up. AKA release_task.
 
-On Wed, Feb 12, 2020 at 12:04:39PM -0800, Daniel Colascione wrote:
-> We don't pass pointers to the heap into system calls. (Big primitive
-> arrays, ByteBuffer, etc. are allocated off the regular heap.)
+Yeah, that at least avoids some of the nasty locking while dying debug problems.
 
-That sounds pretty restrictive, I wonder what you gain by enforcing
-that invariant or if it just happened incidentally for some other
-reason?  Do you need to copy that memory every time if you need to do
-I/O on it? Are you sure this won't need to change any time soon to
-increase performance?
+But the one I was more worried about was actually the lock contention
+issue with lots of processes. The lock is basically a single global
+lock in many situations - yes, it's technically per-ns, but in a lot
+of cases you really only have one namespace anyway.
 
-> I don't understand what you mean. The purpose of preventing UFFD from
-> handling kernel faults is exploit mitigation.
+And we've had problems with global locks in this area before, notably
+the one you call out:
 
-That part was clear. What wasn't clear is what the new feature
-does exactly and what it blocks, because it's all about blocking or
-how does it make things more secure?
+> Further after proc_flush_task does it's thing the code goes
+> and does "write_lock_irq(&task_list_lock);"
 
-> The key requirement here is the ability to prevent unprivileged
-> processes from using UFFD to widen kernel exploit windows by
-> preventing UFFD from taking kernel faults. Forcing unprivileged
-> processes to use UFFD only with UFFD_FEATURE_SIGBUS would satisfy this
-> requirement, but it's much less flexible and unnecessarily couples two
-> features.
+Yeah, so it's not introducing a new issue, but it is potentially
+making something we already know is bad even worse.
 
-I mentioned it in case you could use something like that model.
+> What would be downside of having a mutex for a list of proc superblocks?
+> A mutex that is taken for both reading and writing the list.
 
-> > On the other end I'm also planning a mremap_vma_merge userland syscall
-> > that will merge fragmented vmas.
-> 
-> This is probably a separate discussion, but does that operation really
-> need to be a system call? Historically, userspace has operated mostly
+That's what the original patch actually was, and I was hoping we could
+avoid that thing.
 
-mremap_vma_merge was not intended as a system call, if implemented as
-a system call it wouldn't use uffd.
+An rwsem would be possibly better, since most cases by far are likely
+about reading.
 
-> on page ranges and not VMAs per se, and the kernel has been free to
+And yes, I'm very aware of the task_list_lock, but it's literally why
+I don't want to make a new one.
 
-Userland doesn't need to know anything.. unless it wants to optimize.
+I'm _hoping_ we can some day come up with something better than task_list_lock.
 
-The userland can know full well if it does certain mremap operations
-and puts its ranges virtually contiguous in a non linear way, so that
-the kernel cannot merge the vmas.
-
-> merge and split VMAs as needed for its internal purposes. This
-> approach has serious negative side effects (like making munmap
-> fallible: see [1]), but it is what it is.
-> 
-> [1] https://lore.kernel.org/linux-mm/CAKOZuetOD6MkGPVvYFLj5RXh200FaDyu3sQqZviVRhTFFS3fjA@mail.gmail.com/
-
-The fact it's fallible is a secondary concern here. Even if you make
-it unlimited, if it grows it slowdown everything and also prevents THP
-to be collapsed. Even the scalability of the mmap_sem worsens.
-
-> > Currently once you have a nice heap all contiguous but with small
-> > objects and you free the fragments you can't build THP anymore even if
-> > you make the memory virtually contiguous again by calling mremap. That
-> > just build up a ton of vmas slowing down the app forever and also
-> > preventing THP collapsing ever again.
-> 
-> Shouldn't the THP background kthread take care of merging VMAs?
-
-The solution can't depend on any THP feature, because the buildup of
-vmas is a scalability issue and a performance regression over time
-even if THP is not configured in the kernel. However once that's
-solved THP also gets naturally optimized.
-
-What should happen (in my view) is just the simplest solution that can
-defrag and forcefully merge the vmas without having to stop or restart
-the app.
-
-> Presumably, those apps wouldn't issue the system call on address
-> ranges managed with a non-kernel-fault UFFD.
-
-So the new security feature won't have to block kernel faults on those
-apps and they can run side by side with the blocked app?
-
-> We shouldn't be fragmenting at all, either at the memory level or the
-> VMA level. The GC is a moving collector, and we don't punch holes in
-> the heap.
-
-That sounds good.
-
-Thanks,
-Andrea
-
+            Linus
